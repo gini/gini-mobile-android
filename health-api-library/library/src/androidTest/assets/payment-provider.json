@@ -1,0 +1,10 @@
+{
+  "id": "7e72441c-32f8-11eb-b611-c3190574373c",
+  "name": "ING-DiBa",
+  "linkTemplate": "ingdiba://example/payments/",
+  "packageNameAndroid": "com.example.bank",
+  "minAppVersion": {
+    "ios": "4.3.2",
+    "android": "3.5.1"
+  }
+}

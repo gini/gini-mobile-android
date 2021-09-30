@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <domain-config>
+        <trustkit-config
+            disableDefaultReportUri="true"
+            enforcePinning="true" />
+        <domain includeSubdomains="false">pay-api.gini.net</domain>
+        <pin-set>
+            <!-- old *.gini.net public key-->
+            <pin digest="SHA-256">cNzbGowA+LNeQ681yMm8ulHxXiGojHE8qAjI+M7bIxU=</pin>
+            <!-- new *.gini.net public key, active from around June 2020 -->
+            <pin digest="SHA-256">zEVdOCzXU8euGVuMJYPr3DUU/d1CaKevtr0dW0XzZNo=</pin>
+        </pin-set>
+        <domain-config>
+            <trustkit-config
+                disableDefaultReportUri="true"
+                enforcePinning="true" />
+            <domain includeSubdomains="false">accounting-api.gini.net</domain>
+        </domain-config>
+        <domain-config>
+            <trustkit-config
+                disableDefaultReportUri="true"
+                enforcePinning="true" />
+            <domain includeSubdomains="false">user.gini.net</domain>
+        </domain-config>
+    </domain-config>
+</network-security-config>

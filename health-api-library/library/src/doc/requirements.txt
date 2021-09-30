@@ -1,0 +1,1 @@
+-e git+git@github.com:gini/gini_sphinx_theme_sdk.git#egg=gini_sphinx_theme-master
