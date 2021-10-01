@@ -1,5 +1,5 @@
-import net.gini.gradle.DokkaConfig
-import net.gini.gradle.MavenPublishConfig
+import net.gini.gradle.DokkaPlugin
+import net.gini.gradle.MavenPublishPlugin
 import net.gini.gradle.Versions
 
 plugins {
@@ -60,8 +60,8 @@ dependencies {
     androidTestImplementation("androidx.multidex:multidex:2.0.1")
 }
 
-apply<MavenPublishConfig>()
-apply<DokkaConfig>()
+apply<MavenPublishPlugin>()
+apply<DokkaPlugin>()
 
 // TODO: fix
 //apply from: file("repository.gradle")

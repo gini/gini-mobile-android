@@ -9,7 +9,7 @@ import org.gradle.kotlin.dsl.getByName
 import org.gradle.kotlin.dsl.getByType
 import org.jetbrains.dokka.gradle.DokkaTask
 
-class DokkaConfig: Plugin<Project> {
+class DokkaPlugin: Plugin<Project> {
 
     override fun apply(target: Project) {
         target.plugins.apply("org.jetbrains.dokka")
