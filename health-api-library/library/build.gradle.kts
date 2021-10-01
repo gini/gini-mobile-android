@@ -1,6 +1,4 @@
-import net.gini.gradle.DokkaPlugin
-import net.gini.gradle.MavenPublishPlugin
-import net.gini.gradle.Versions
+import net.gini.gradle.*
 
 plugins {
     id("com.android.library")
@@ -62,58 +60,7 @@ dependencies {
 
 apply<MavenPublishPlugin>()
 apply<DokkaPlugin>()
+apply<TestPropertiesPlugin>()
 
-// TODO: fix
-//apply from: file("repository.gradle")
-//
-//// TODO: create test.properties file
-//def getLocalProperties = {
-//    File propertiesFile = file('local.properties')
-//    if (propertiesFile.exists()) {
-//        Properties properties = new Properties()
-//        propertiesFile.withInputStream { instr ->
-//            properties.load(instr)
-//        }
-//        return properties
-//    }
-//}
-//
-//def setProperty(key, props, localProps) {
-//    if (project.hasProperty(key)) {
-//        props[key] = project.property(key)
-//    } else {
-//        props[key] = localProps?.get(key) ?: ''
-//    }
-//}
-//
-//task createTestPropertyFile {
-//    doLast {
-//        def propertyFile = new File("$projectDir/src/androidTest/assets/test.properties")
-//        if (!propertyFile.exists()) propertyFile.createNewFile()
-//        def props = new Properties()
-//
-//        def localProperties = getLocalProperties()
-//
-//        setProperty('testClientId', props, localProperties)
-//        setProperty('testClientSecret', props, localProperties)
-//        setProperty('testClientIdAccounting', props, localProperties)
-//        setProperty('testClientSecretAccounting', props, localProperties)
-//        setProperty('testApiUri', props, localProperties)
-//        setProperty('testApiUriAccounting', props, localProperties)
-//        setProperty('testUserCenterUri', props, localProperties)
-//
-//        propertyFile.withWriter("utf-8") {
-//            props.store(it, "test properties")
-//        }
-//    }
-//}
-//
-//tasks.whenTaskAdded { task ->
-//    if (task.name.endsWith("Test")) {
-//        task.dependsOn.add(createTestPropertyFile)
-//    }
-//}
-//
-//
-//// TODO: remove this
+//// TODO: remove this?
 //apply from: rootProject.file('gradle/javadoc_coverage.gradle')
