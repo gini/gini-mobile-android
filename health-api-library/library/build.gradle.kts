@@ -43,19 +43,19 @@ dependencies {
     api("com.android.volley:volley:1.2.1")
     api("com.parse.bolts:bolts-android:1.4.0")
     implementation("com.datatheorem.android.trustkit:trustkit:1.1.3")
-    implementation("androidx.core:core-ktx:1.6.0")
     implementation("androidx.preference:preference-ktx:1.1.1")
+    implementation("androidx.core:core-ktx:${Versions.Deps.androidXCore}")
 
-    kapt("com.squareup.moshi:moshi-kotlin-codegen:1.12.0")
-    implementation("com.squareup.moshi:moshi:1.12.0")
+    kapt("com.squareup.moshi:moshi-kotlin-codegen:${Versions.Deps.moshi}")
+    implementation("com.squareup.moshi:moshi:${Versions.Deps.moshi}")
 
     // Mocks for testing.
-    androidTestImplementation("org.mockito:mockito-core:3.10.0")
-    androidTestImplementation("org.mockito:mockito-android:3.10.0")
-    androidTestImplementation("androidx.test:runner:1.4.0")
-    androidTestImplementation("androidx.test:rules:1.4.0")
-    androidTestImplementation("androidx.test.ext:junit:1.1.3")
-    androidTestImplementation("androidx.multidex:multidex:2.0.1")
+    androidTestImplementation("org.mockito:mockito-core:${Versions.Test.mockito}")
+    androidTestImplementation("org.mockito:mockito-android:${Versions.Test.mockito}")
+    androidTestImplementation("androidx.test:runner:${Versions.Test.androidXTest}")
+    androidTestImplementation("androidx.test:rules:${Versions.Test.androidXTest}")
+    androidTestImplementation("androidx.test.ext:junit:${Versions.Test.androidXTestJUnit}")
+    androidTestImplementation("androidx.multidex:multidex:${Versions.Deps.androidXMultiDex}")
 }
 
 apply<MavenPublishPlugin>()
