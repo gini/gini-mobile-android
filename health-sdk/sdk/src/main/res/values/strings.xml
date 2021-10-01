@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gpb_amount_hint">Amount</string>
+    <string name="gpb_purpose_hint">Purpose</string>
+    <string name="gpb_recipient_hint">Recipient</string>
+    <string name="gpb_iban_hint">IBAN</string>
+    <string name="gpb_pay_button">Pay</string>
+    <string name="gpb_bank_placeholder">Bank</string>
+    <string name="gpb_error_failed_to_load_image">Failed to load image</string>
+    <string name="gpb_error_input_empty">Required</string>
+    <string name="gpb_error_input_invalid_iban">Invalid IBAN</string>
+    <string name="gpb_error_input_invalid_Currency">Invalid currency</string>
+    <string name="gpb_error_input_no_currency">Missing currency</string>
+    <string name="gpb_error_input_amount_format">Invalid format</string>
+    <string name="gpb_error_document">Failed to load document</string>
+    <string name="gpb_error_payment_details">Failed to get payment details</string>
+    <string name="gpb_error_bank_not_found">Failed to start Bank app</string>
+    <string name="gpb_error_open_bank">Failed to make payment request</string>
+    <string name="gpb_snackbar_retry">Retry</string>
+</resources>

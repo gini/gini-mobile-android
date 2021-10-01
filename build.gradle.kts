@@ -29,5 +29,7 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        // For PhotoView
+        maven { url = java.net.URI.create("https://jitpack.io") }
     }
 }

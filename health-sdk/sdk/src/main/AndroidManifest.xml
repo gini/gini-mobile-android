@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="net.gini.pay.ginipaybusiness">
+
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+            <!-- It has to match the scheme in Bank.kt -->
+            <data android:scheme="ginipay" android:host="payment"/>
+        </intent>
+    </queries>
+
+</manifest>

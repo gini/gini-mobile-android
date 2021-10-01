@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Business Example</string>
+    <string name="take_photo">Take Photo</string>
+    <string name="import_file">Import</string>
+    <string name="payment">Pay</string>
+    <string name="upload_failed">Upload failed</string>
+    <string name="upload_succeeded">Upload succeeded</string>
+    <string name="no_bank">No bank app installed</string>
+    <string name="upload">Upload</string>
+    <string name="invoice">Invoice</string>
+</resources>

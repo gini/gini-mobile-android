@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="GiniPay.PaymentButtonStyle" parent="Root.GiniPay.PaymentButtonStyle">
+        <item name="android:layout_height">74dp</item>
+        <item name="android:insetTop">16dp</item>
+        <item name="android:insetBottom">16dp</item>
+        <item name="cornerRadius">5dp</item>
+    </style>
+    <style name="GiniPay.BankButtonStyle" parent="Root.GiniPay.BankButtonStyle">
+        <item name="android:layout_height">74dp</item>
+        <item name="android:insetTop">16dp</item>
+        <item name="android:insetBottom">16dp</item>
+        <item name="cornerRadius">5dp</item>
+    </style>
+
+    <style name="PaymentInput.TextAppearance.Hint" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="GiniPay.PaymentInputStyle" parent="Root.GiniPay.PaymentInputStyle">
+        <item name="android:textSize">16sp</item>
+        <item name="hintTextAppearance">@style/PaymentInput.TextAppearance.Hint</item>
+    </style>
+</resources>

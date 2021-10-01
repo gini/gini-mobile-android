@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="#86E8E8E8">
+    <item android:drawable="@drawable/gpb_payment_review_close_button" />
+</ripple>
