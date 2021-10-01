@@ -43,8 +43,9 @@ dependencies {
     api("com.android.volley:volley:1.2.1")
     api("com.parse.bolts:bolts-android:1.4.0")
     implementation("com.datatheorem.android.trustkit:trustkit:1.1.3")
-    implementation("androidx.preference:preference-ktx:1.1.1")
     implementation("androidx.core:core-ktx:${Versions.Deps.androidXCore}")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.Deps.coroutines}")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.Deps.coroutines}")
 
     kapt("com.squareup.moshi:moshi-kotlin-codegen:${Versions.Deps.moshi}")
     implementation("com.squareup.moshi:moshi:${Versions.Deps.moshi}")
