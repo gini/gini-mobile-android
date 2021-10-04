@@ -1,6 +1,7 @@
 package net.gini.gradle
 
 import com.android.build.gradle.LibraryExtension
+import net.gini.gradle.extensions.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.dependencies
@@ -15,7 +16,7 @@ class DokkaPlugin: Plugin<Project> {
         target.plugins.apply("org.jetbrains.dokka")
 
         target.dependencies {
-            add("dokkaHtmlPlugin", "org.jetbrains.dokka:kotlin-as-java-plugin:${Versions.Tools.dokka}")
+            add("dokkaHtmlPlugin", target.libs.findDependency("dokka-kotlinAsJavaPlugin").get())
         }
 
         target.tasks.getByName<DokkaTask>("dokkaHtml") {

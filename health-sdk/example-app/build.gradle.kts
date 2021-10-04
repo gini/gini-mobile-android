@@ -1,17 +1,15 @@
-import net.gini.gradle.Versions
-
 plugins {
     id("com.android.application")
     id("kotlin-android")
 }
 
 android {
-    compileSdk = Versions.Android.compileSdk
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
         applicationId = "net.gini.pay.app"
-        minSdk = Versions.Android.minSdk
-        targetSdk = Versions.Android.targetSdk
+        minSdk = libs.versions.android.minSdk.get().toInt()
+        targetSdk =libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
         versionName ="1.0"
 
@@ -40,21 +38,20 @@ dependencies {
 
     implementation(project(":health-sdk:sdk"))
 
-    implementation("androidx.core:core-ktx:${Versions.Deps.androidXCore}")
-    implementation("androidx.activity:activity-ktx:${Versions.Deps.activity}")
-    implementation("androidx.fragment:fragment-ktx:${Versions.Deps.fragment}")
-    implementation("androidx.appcompat:appcompat:${Versions.Deps.appCompat}")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.Deps.androidXLifecycle}")
-    implementation("com.google.android.material:material:${Versions.Deps.material}")
-    implementation("androidx.constraintlayout:constraintlayout:${Versions.Deps.constraintLayout}")
-    val koinVersion = "2.2.2"
-    implementation("io.insert-koin:koin-androidx-scope:$koinVersion")
-    implementation("io.insert-koin:koin-androidx-viewmodel:$koinVersion")
-    implementation("io.insert-koin:koin-androidx-fragment:$koinVersion")
-    implementation("dev.chrisbanes.insetter:insetter:0.5.0")
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.activity.ktx)
+    implementation(libs.androidx.fragment.ktx)
+    implementation(libs.androidx.appcompat.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.material)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.koin.androidx.scope)
+    implementation(libs.koin.androidx.viewmodel)
+    implementation(libs.koin.androidx.fragment)
+    implementation(libs.insetter)
 
-    testImplementation("junit:junit:${Versions.Test.jUnit}")
+    testImplementation(libs.junit)
 
-    androidTestImplementation("androidx.test.ext:junit:${Versions.Test.androidXTestJUnit}")
-    androidTestImplementation("androidx.test.espresso:espresso-core:${Versions.Test.espresso}")
+    androidTestImplementation(libs.androidx.test.junit)
+    androidTestImplementation(libs.androidx.test.espresso.core)
 }

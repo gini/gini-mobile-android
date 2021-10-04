@@ -1,24 +1,18 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
-//val agpVersion = "7.0.2".also { extra.set("agpVersion", it) }
-//val kotlinVersion = "1.5.0".also { extra.set("kotlinVersion", it) }
-//val dokkaVersion = "1.5.0".also { extra.set("dokkaVersion", it) }
-
 buildscript {
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
-        // Keep versions in sync with Versions.kt
-        // We'll switch to version catalogs once it's ready: https://docs.gradle.org/current/userguide/platforms.html
-        val agpVersion: String by project
-        classpath("com.android.tools.build:gradle:$agpVersion")
-        val kotlinVersion: String by project
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-        val dokkaVersion: String by project
-        classpath("org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion")
-        classpath("org.jetbrains.dokka:kotlin-as-java-plugin:$dokkaVersion")
+        // Found this "magic" code at https://blog.stylingandroid.com/gradle-version-catalogs/
+        val libs = project.extensions.getByType<VersionCatalogsExtension>().named("libs") as org.gradle.accessors.dm.LibrariesForLibs
+
+        classpath(libs.android.gradleplugin)
+        classpath(libs.kotlin.gradleplugin)
+        classpath(libs.dokka.gradleplugin)
+        classpath(libs.dokka.kotlinAsJavaPlugin)
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle.kts files

@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    compileSdk = Versions.Android.compileSdk
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        minSdk = Versions.Android.minSdk
-        targetSdk = Versions.Android.targetSdk
+        minSdk = libs.versions.android.minSdk.get().toInt()
+        targetSdk = libs.versions.android.targetSdk.get().toInt()
 
         // Use the test runner with JUnit4 support
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -43,20 +43,18 @@ dependencies {
     api("com.android.volley:volley:1.2.1")
     api("com.parse.bolts:bolts-android:1.4.0")
     implementation("com.datatheorem.android.trustkit:trustkit:1.1.3")
-    implementation("androidx.core:core-ktx:${Versions.Deps.androidXCore}")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.Deps.coroutines}")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.Deps.coroutines}")
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
+    kapt(libs.moshi.codegen)
+    implementation(libs.moshi.core)
 
-    kapt("com.squareup.moshi:moshi-kotlin-codegen:${Versions.Deps.moshi}")
-    implementation("com.squareup.moshi:moshi:${Versions.Deps.moshi}")
-
-    // Mocks for testing.
-    androidTestImplementation("org.mockito:mockito-core:${Versions.Test.mockito}")
-    androidTestImplementation("org.mockito:mockito-android:${Versions.Test.mockito}")
-    androidTestImplementation("androidx.test:runner:${Versions.Test.androidXTest}")
-    androidTestImplementation("androidx.test:rules:${Versions.Test.androidXTest}")
-    androidTestImplementation("androidx.test.ext:junit:${Versions.Test.androidXTestJUnit}")
-    androidTestImplementation("androidx.multidex:multidex:${Versions.Deps.androidXMultiDex}")
+    androidTestImplementation(libs.mockito.core)
+    androidTestImplementation(libs.mockito.android)
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.test.rules)
+    androidTestImplementation(libs.androidx.test.junit)
+    androidTestImplementation(libs.androidx.multidex)
 }
 
 apply<MavenPublishPlugin>()

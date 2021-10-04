@@ -1,7 +1,4 @@
-import net.gini.gradle.DokkaPlugin
-import net.gini.gradle.MavenPublishPlugin
-import net.gini.gradle.Versions
-import java.net.URI
+import net.gini.gradle.*
 
 plugins {
     id("com.android.library")
@@ -10,11 +7,11 @@ plugins {
 }
 
 android {
-    compileSdk = Versions.Android.compileSdk
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        minSdk = Versions.Android.minSdk
-        targetSdk = Versions.Android.targetSdk
+        minSdk = libs.versions.android.minSdk.get().toInt()
+        targetSdk = libs.versions.android.targetSdk.get().toInt()
 
         // Use the test runner with JUnit4 support
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -53,25 +50,25 @@ dependencies {
 
     api(project(":health-api-library:library"))
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.Deps.coroutines}")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.Deps.coroutines}")
-    implementation("androidx.lifecycle:lifecycle-common-java8:${Versions.Deps.androidXLifecycle}")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.Deps.androidXLifecycle}")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:${Versions.Deps.androidXLifecycle}")
-    implementation("com.google.android.material:material:${Versions.Deps.material}")
-    implementation("androidx.constraintlayout:constraintlayout:${Versions.Deps.constraintLayout}")
-    implementation("androidx.fragment:fragment-ktx:${Versions.Deps.fragment}")
-    implementation("androidx.viewpager2:viewpager2:1.0.0")
-    implementation("com.github.chrisbanes:PhotoView:2.3.0")
-    implementation("dev.chrisbanes.insetter:insetter:0.5.0")
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.androidx.lifecycle.common.java8)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.material)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.fragment.ktx)
+    implementation(libs.androidx.viewpager2)
+    implementation(libs.photoview)
+    implementation(libs.insetter)
 
-    testImplementation("junit:junit:4.13.2")
-    testImplementation("io.mockk:mockk:1.11.0")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.Deps.coroutines}")
-    testImplementation("app.cash.turbine:turbine:0.4.1")
+    testImplementation(libs.junit)
+    testImplementation(libs.mockk)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.turbine)
 
-    androidTestImplementation("androidx.test.ext:junit:1.1.3")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
+    androidTestImplementation(libs.androidx.test.junit)
+    androidTestImplementation(libs.androidx.test.espresso.core)
 }
 
 apply<MavenPublishPlugin>()
