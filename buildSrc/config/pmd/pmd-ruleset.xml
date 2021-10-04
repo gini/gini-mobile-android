@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<!--
+  ~ Copyright 2015 Vincent Brison.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~    http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Android Application Rules"
+    xmlns="http://pmd.sf.net/ruleset/1.0.0"
+    xsi:noNamespaceSchemaLocation="http://pmd.sf.net/ruleset_xml_schema.xsd"
+    xsi:schemaLocation="http://pmd.sf.net/ruleset/1.0.0 http://pmd.sf.net/ruleset_xml_schema.xsd">
+
+    <description>Custom ruleset for Android application</description>
+
+    <exclude-pattern>.*/R.java</exclude-pattern>
+    <exclude-pattern>.*/gen/.*</exclude-pattern>
+
+    <rule ref="category/java/bestpractices.xml">
+        <exclude name="UnusedImports" />
+        <exclude name="AccessorMethodGeneration" />
+        <exclude name="ArrayIsStoredDirectly" />
+        <exclude name="MethodReturnsInternalArray" />
+        <exclude name="AccessorClassGeneration" />
+        <exclude name="UseVarargs" />
+        <exclude name="GuardLogStatement" />
+    </rule>
+    <rule ref="category/java/performance.xml">
+        <exclude name="UseStringBufferForStringAppends" />
+        <exclude name="AvoidFileStream" />
+        <exclude name="OptimizableToArrayCall" />
+    </rule>
+    <rule ref="category/java/errorprone.xml">
+        <exclude name="BeanMembersShouldSerialize" />
+        <exclude name="DataflowAnomalyAnalysis" />
+        <exclude name="UseProperClassLoader" />
+        <exclude name="AvoidLiteralsInIfCondition" />
+        <exclude name="MissingBreakInSwitch" />
+        <exclude name="AvoidDuplicateLiterals" />
+        <exclude name="ReturnEmptyArrayRatherThanNull" />
+        <exclude name="EmptyCatchBlock" />
+        <exclude name="AssignmentInOperand" />
+    </rule>
+    <rule ref="category/java/design.xml">
+        <exclude name="LawOfDemeter" />
+        <exclude name="NcssCount" />
+        <exclude name="TooManyMethods" />
+        <exclude name="TooManyFields" />
+        <exclude name="ExcessiveImports" />
+        <exclude name="ExcessiveClassLength" />
+        <exclude name="GodClass" />
+        <exclude name="CyclomaticComplexity" />
+        <exclude name="NPathComplexity" />
+        <exclude name="AvoidCatchingGenericException" />
+        <exclude name="ExcessivePublicCount" />
+    </rule>
+    <rule ref="category/java/multithreading.xml">
+        <exclude name="DoNotUseThreads" />
+        <exclude name="AvoidSynchronizedAtMethodLevel" />
+        <exclude name="UseConcurrentHashMap" />
+    </rule>
+</ruleset>

@@ -73,6 +73,7 @@ dependencies {
 
 apply<MavenPublishPlugin>()
 apply<DokkaPlugin>()
+apply<CodeAnalysisPlugin>()
 
 // TODO: how to modernize code quality checks?
 // apply from: rootProject.file('gradle/codequality.gradle')

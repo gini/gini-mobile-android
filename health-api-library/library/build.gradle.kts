@@ -60,6 +60,7 @@ dependencies {
 apply<MavenPublishPlugin>()
 apply<DokkaPlugin>()
 apply<TestPropertiesPlugin>()
+apply<CodeAnalysisPlugin>()
 
 //// TODO: remove this?
 //apply from: rootProject.file('gradle/javadoc_coverage.gradle')
