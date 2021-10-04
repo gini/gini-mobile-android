@@ -18,12 +18,3 @@ buildscript {
         // in the individual module build.gradle.kts files
     }
 }
-
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-        // For PhotoView
-        maven { url = java.net.URI.create("https://jitpack.io") }
-    }
-}
