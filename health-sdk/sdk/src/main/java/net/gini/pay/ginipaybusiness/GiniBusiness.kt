@@ -13,16 +13,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
-import net.gini.android.Gini
-import net.gini.android.models.Document
+import net.gini.android.health.api.Gini
+import net.gini.android.core.api.models.Document
 import net.gini.pay.ginipaybusiness.requirement.Requirement
 import net.gini.pay.ginipaybusiness.requirement.internalCheckRequirements
 import net.gini.pay.ginipaybusiness.review.ReviewFragment
-import net.gini.pay.ginipaybusiness.review.model.PaymentDetails
-import net.gini.pay.ginipaybusiness.review.model.PaymentRequest
-import net.gini.pay.ginipaybusiness.review.model.ResultWrapper
-import net.gini.pay.ginipaybusiness.review.model.toPaymentDetails
-import net.gini.pay.ginipaybusiness.review.model.wrapToResult
+import net.gini.pay.ginipaybusiness.review.model.*
 
 /**
  * [GiniBusiness] is the main class for interacting with Gini Pay Business SDK.

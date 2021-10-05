@@ -6,7 +6,6 @@ import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 import static com.android.volley.Request.Method.DELETE;
 import static com.android.volley.Request.Method.GET;
 import static com.android.volley.Request.Method.POST;
-import static com.android.volley.Request.Method.PUT;
 
 import static net.gini.android.helpers.TestUtils.areEqualURIs;
 
@@ -24,9 +23,14 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 
-import net.gini.android.authorization.Session;
-import net.gini.android.requests.DefaultRetryPolicyFactory;
-import net.gini.android.requests.RetryPolicyFactory;
+import net.gini.android.core.api.ApiCommunicator;
+import net.gini.android.core.api.DocumentMetadata;
+import net.gini.android.core.api.GiniApiType;
+import net.gini.android.core.api.MediaTypes;
+import net.gini.android.core.api.Utils;
+import net.gini.android.core.api.authorization.Session;
+import net.gini.android.core.api.requests.DefaultRetryPolicyFactory;
+import net.gini.android.core.api.requests.RetryPolicyFactory;
 
 import org.json.JSONArray;
 import org.json.JSONException;

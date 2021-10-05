@@ -11,6 +11,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.NoCache;
 
+import net.gini.android.core.api.RequestQueueBuilder;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

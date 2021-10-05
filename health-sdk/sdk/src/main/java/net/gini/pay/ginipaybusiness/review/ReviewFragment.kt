@@ -13,7 +13,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.transition.TransitionManager
 import com.google.android.material.math.MathUtils.lerp
 import com.google.android.material.snackbar.Snackbar
@@ -21,7 +20,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import dev.chrisbanes.insetter.applyInsetter
 import dev.chrisbanes.insetter.windowInsetTypesOf
 import kotlinx.coroutines.flow.collect
-import net.gini.android.models.Document
+import net.gini.android.core.api.models.Document
 import net.gini.pay.ginipaybusiness.GiniBusiness
 import net.gini.pay.ginipaybusiness.R
 import net.gini.pay.ginipaybusiness.databinding.GpbFragmentReviewBinding

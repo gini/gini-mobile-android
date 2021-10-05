@@ -6,9 +6,9 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import net.gini.android.models.Document
-import net.gini.android.models.PaymentProvider
-import net.gini.android.models.PaymentRequestInput
+import net.gini.android.core.api.models.Document
+import net.gini.android.core.api.models.PaymentProvider
+import net.gini.android.core.api.models.PaymentRequestInput
 import net.gini.pay.ginipaybusiness.GiniBusiness
 import net.gini.pay.ginipaybusiness.review.bank.BankApp
 import net.gini.pay.ginipaybusiness.review.error.NoBankSelected
@@ -16,9 +16,7 @@ import net.gini.pay.ginipaybusiness.review.error.NoProviderForPackageName
 import net.gini.pay.ginipaybusiness.review.model.PaymentDetails
 import net.gini.pay.ginipaybusiness.review.model.PaymentRequest
 import net.gini.pay.ginipaybusiness.review.model.ResultWrapper
-import net.gini.pay.ginipaybusiness.review.model.withFeedback
 import net.gini.pay.ginipaybusiness.review.pager.DocumentPageAdapter
-import net.gini.pay.ginipaybusiness.util.adjustToLocalDecimalSeparation
 import net.gini.pay.ginipaybusiness.util.toBackendFormat
 
 internal class ReviewViewModel(internal val giniBusiness: GiniBusiness) : ViewModel() {

@@ -8,7 +8,7 @@ import static org.junit.Assert.assertNotNull;
 import androidx.test.filters.SmallTest;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
-import net.gini.android.authorization.Session;
+import net.gini.android.core.api.authorization.Session;
 
 import org.json.JSONException;
 import org.json.JSONObject;

@@ -13,8 +13,11 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import com.android.volley.Cache;
 import com.android.volley.RetryPolicy;
 
-import net.gini.android.authorization.Session;
-import net.gini.android.authorization.SessionManager;
+import net.gini.android.core.api.DocumentTaskManager;
+import net.gini.android.core.api.authorization.Session;
+import net.gini.android.core.api.authorization.SessionManager;
+import net.gini.android.health.api.Gini;
+import net.gini.android.health.api.GiniBuilder;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

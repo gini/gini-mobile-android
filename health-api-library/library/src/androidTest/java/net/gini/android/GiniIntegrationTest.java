@@ -22,22 +22,25 @@ import androidx.test.filters.SdkSuppress;
 
 import com.android.volley.toolbox.NoCache;
 
-import net.gini.android.authorization.EncryptedCredentialsStore;
-import net.gini.android.authorization.UserCredentials;
+import net.gini.android.core.api.DocumentTaskManager;
+import net.gini.android.core.api.authorization.EncryptedCredentialsStore;
+import net.gini.android.core.api.authorization.UserCredentials;
+import net.gini.android.health.api.Gini;
+import net.gini.android.health.api.GiniBuilder;
 import net.gini.android.helpers.TestUtils;
-import net.gini.android.models.Box;
-import net.gini.android.models.CompoundExtraction;
-import net.gini.android.models.Document;
-import net.gini.android.models.Extraction;
-import net.gini.android.models.ExtractionsContainer;
-import net.gini.android.models.Payment;
-import net.gini.android.models.PaymentProvider;
-import net.gini.android.models.PaymentRequest;
-import net.gini.android.models.PaymentRequestInput;
-import net.gini.android.models.ResolvePaymentInput;
-import net.gini.android.models.ResolvedPayment;
-import net.gini.android.models.SpecificExtraction;
-import net.gini.android.requests.ErrorEvent;
+import net.gini.android.core.api.models.Box;
+import net.gini.android.core.api.models.CompoundExtraction;
+import net.gini.android.core.api.models.Document;
+import net.gini.android.core.api.models.Extraction;
+import net.gini.android.core.api.models.ExtractionsContainer;
+import net.gini.android.core.api.models.Payment;
+import net.gini.android.core.api.models.PaymentProvider;
+import net.gini.android.core.api.models.PaymentRequest;
+import net.gini.android.core.api.models.PaymentRequestInput;
+import net.gini.android.core.api.models.ResolvePaymentInput;
+import net.gini.android.core.api.models.ResolvedPayment;
+import net.gini.android.core.api.models.SpecificExtraction;
+import net.gini.android.core.api.requests.ErrorEvent;
 
 import org.json.JSONException;
 import org.junit.Before;
@@ -55,7 +58,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Function;
 
 import bolts.Continuation;
 import bolts.Task;

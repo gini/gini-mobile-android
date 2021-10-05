@@ -2,8 +2,8 @@ package net.gini.pay.ginipaybusiness.review.model
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
-import net.gini.android.models.ExtractionsContainer
-import net.gini.android.models.SpecificExtraction
+import net.gini.android.core.api.models.ExtractionsContainer
+import net.gini.android.core.api.models.SpecificExtraction
 
 @Parcelize
 data class PaymentDetails(

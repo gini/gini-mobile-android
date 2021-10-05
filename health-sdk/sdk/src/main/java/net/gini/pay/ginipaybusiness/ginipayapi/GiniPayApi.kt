@@ -1,9 +1,9 @@
 package net.gini.pay.ginipaybusiness.ginipayapi
 
 import android.content.Context
-import net.gini.android.Gini
-import net.gini.android.GiniBuilder
-import net.gini.android.authorization.SessionManager
+import net.gini.android.health.api.Gini
+import net.gini.android.health.api.GiniBuilder
+import net.gini.android.core.api.authorization.SessionManager
 
 /**
  * Minimal configuration for Gini API

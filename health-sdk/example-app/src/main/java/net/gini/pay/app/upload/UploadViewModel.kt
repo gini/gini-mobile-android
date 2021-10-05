@@ -8,8 +8,8 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import net.gini.android.Gini
-import net.gini.android.MediaTypes
+import net.gini.android.health.api.Gini
+import net.gini.android.core.api.MediaTypes
 import net.gini.pay.app.util.getBytes
 import net.gini.pay.ginipaybusiness.GiniBusiness
 

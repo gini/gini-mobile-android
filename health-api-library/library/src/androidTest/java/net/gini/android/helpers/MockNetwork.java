@@ -5,7 +5,7 @@ import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
 
-import net.gini.android.Utils;
+import net.gini.android.core.api.Utils;
 
 import java.util.HashMap;
 import java.util.Map;

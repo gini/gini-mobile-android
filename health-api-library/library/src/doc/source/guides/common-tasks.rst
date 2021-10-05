@@ -26,9 +26,9 @@ The following example shows how to create a new document from a byte array conta
 
 .. code-block:: java
 
-    import net.gini.android.Gini;
+    import net.gini.android.health.api.Gini;
     import net.gini.android.DocumentTaskManager;
-    import net.gini.android.models.Document;
+    import net.gini.android.core.api.models.Document;
     
     ...
     
@@ -99,10 +99,10 @@ example shows how to achieve this in detail.
 
 .. code-block:: java
 
-        import net.gini.android.Gini;
+        import net.gini.android.health.api.Gini;
         import net.gini.android.DocumentTaskManager;
-        import net.gini.android.models.Document;
-        import net.gini.android.models.SpecificExtraction;
+        import net.gini.android.core.api.models.Document;
+        import net.gini.android.core.api.models.SpecificExtraction;
         
         ...
         

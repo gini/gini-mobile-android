@@ -7,11 +7,11 @@ import io.mockk.mockk
 import java.util.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
-import net.gini.android.DocumentManager
-import net.gini.android.Gini
-import net.gini.android.models.Document
-import net.gini.android.models.ExtractionsContainer
-import net.gini.android.models.SpecificExtraction
+import net.gini.android.core.api.DocumentManager
+import net.gini.android.health.api.Gini
+import net.gini.android.core.api.models.Document
+import net.gini.android.core.api.models.ExtractionsContainer
+import net.gini.android.core.api.models.SpecificExtraction
 import net.gini.pay.ginipaybusiness.review.model.PaymentDetails
 import net.gini.pay.ginipaybusiness.review.model.ResultWrapper
 import org.junit.Assert.*

@@ -11,6 +11,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.android.volley.VolleyError;
 
+import net.gini.android.core.api.RequestTaskCompletionSource;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
