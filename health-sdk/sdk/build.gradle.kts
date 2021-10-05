@@ -15,7 +15,7 @@ android {
 
         // Use the test runner with JUnit4 support
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-//        consumerProguardFiles "consumer-rules.pro"
+        consumerProguardFiles("consumer-rules.pro")
 
         // TODO: inject version code and name
 //        buildConfigField("int', 'VERSION_CODE', "${rootProject.ext.versionCode}"

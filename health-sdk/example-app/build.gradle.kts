@@ -7,7 +7,7 @@ android {
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "net.gini.pay.app"
+        applicationId = "net.gini.android.health.sdk.exampleapp"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk =libs.versions.android.targetSdk.get().toInt()
         versionCode = 1

@@ -19,6 +19,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("net.gini.pay.ginipaybusiness.test", appContext.packageName)
+        assertEquals("net.gini.android.health.sdk", appContext.packageName)
     }
 }

@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.GiniPayBusiness" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="Theme.GiniHealthExample" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/blue</item>
         <item name="colorPrimaryVariant">@color/blue_light</item>
@@ -17,7 +17,7 @@
         <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
         <!-- Customize your theme here. -->
     </style>
-    <style name="Theme.GiniPayBussiness.Review" parent="Theme.GiniPayBusiness">
+    <style name="Theme.GiniPayBussiness.Review" parent="Theme.GiniHealthExample">
         <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
     </style>
 </resources>

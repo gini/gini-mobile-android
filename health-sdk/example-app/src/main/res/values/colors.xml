@@ -12,6 +12,6 @@
     <color name="gray10">#E6E7ED</color>
     <color name="selected_dot">#90000000</color>
 
-    <color name="gpb_input_stroke_default">@color/gray10</color>
-    <color name="gbp_input_stroke_active">@color/blue</color>
+    <color name="ghs_input_stroke_default">@color/gray10</color>
+    <color name="ghs_input_stroke_active">@color/blue</color>
 </resources>
