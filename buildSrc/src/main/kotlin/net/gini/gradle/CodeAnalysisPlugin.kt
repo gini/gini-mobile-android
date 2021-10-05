@@ -42,7 +42,7 @@ class CodeAnalysisPlugin: Plugin<Project> {
             )
             source = target.fileTree("src")
             include("**/*.java")
-            exclude("**/gen/**", "**/androidTest/**", "**/test/**", "**/testShared/**", "**/com/ortiz/**")
+            exclude("**/androidTest/**", "**/test/**")
             classpath = target.files()
         }
     }
@@ -61,7 +61,7 @@ class CodeAnalysisPlugin: Plugin<Project> {
 
             source = target.fileTree("src")
             include("**/*.java")
-            exclude("**/gen/**", "**/androidTest/**", "**/test/**", "**/testShared/**", "**/com/ortiz/**")
+            exclude("**/androidTest/**", "**/test/**")
         }
     }
 
