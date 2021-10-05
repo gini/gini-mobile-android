@@ -16,7 +16,9 @@ import net.gini.pay.ginipaybusiness.review.error.NoProviderForPackageName
 import net.gini.pay.ginipaybusiness.review.model.PaymentDetails
 import net.gini.pay.ginipaybusiness.review.model.PaymentRequest
 import net.gini.pay.ginipaybusiness.review.model.ResultWrapper
+import net.gini.pay.ginipaybusiness.review.model.withFeedback
 import net.gini.pay.ginipaybusiness.review.pager.DocumentPageAdapter
+import net.gini.pay.ginipaybusiness.util.adjustToLocalDecimalSeparation
 import net.gini.pay.ginipaybusiness.util.toBackendFormat
 
 internal class ReviewViewModel(internal val giniBusiness: GiniBusiness) : ViewModel() {
@@ -78,13 +80,13 @@ internal class ReviewViewModel(internal val giniBusiness: GiniBusiness) : ViewMo
     }
 
     private suspend fun getPaymentProviderForPackage(packageName: String): PaymentProvider {
-        return giniBusiness.giniApi.documentManager.getPaymentProviders().find { it.packageName == packageName }
+        return giniBusiness.giniHealthAPI.documentManager.getPaymentProviders().find { it.packageName == packageName }
             ?: throw NoProviderForPackageName(packageName)
     }
 
     private suspend fun getPaymentRequest(bank: BankApp): PaymentRequest {
         return PaymentRequest(
-            id = giniBusiness.giniApi.documentManager.createPaymentRequest(
+            id = giniBusiness.giniHealthAPI.documentManager.createPaymentRequest(
                 PaymentRequestInput(
                     paymentProvider = getPaymentProviderForPackage(bank.packageName).id,
                     recipient = paymentDetails.value.recipient,
@@ -124,7 +126,7 @@ internal class ReviewViewModel(internal val giniBusiness: GiniBusiness) : ViewMo
             try {
                 when (val documentResult = giniBusiness.documentFlow.value) {
                     is ResultWrapper.Success -> paymentDetails.value.extractions?.let { extractionsContainer ->
-                        giniBusiness.giniApi.documentManager.sendFeedback(
+                        giniBusiness.giniHealthAPI.documentManager.sendFeedback(
                             documentResult.value,
                             extractionsContainer.specificExtractions.withFeedback(paymentDetails.value),
                             extractionsContainer.compoundExtractions

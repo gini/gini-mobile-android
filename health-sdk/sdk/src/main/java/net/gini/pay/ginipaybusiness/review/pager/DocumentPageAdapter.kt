@@ -44,7 +44,7 @@ internal class DocumentPageAdapter(private val giniBusiness: GiniBusiness) :
         fun onBind(page: Page) {
             imageLoadingScope.launch {
                 loadingView.isVisible = true
-                when (val imageResult = wrapToResult { giniBusiness.giniApi.documentManager.getPageImage(page.documentId, page.number) }) {
+                when (val imageResult = wrapToResult { giniBusiness.giniHealthAPI.documentManager.getPageImage(page.documentId, page.number) }) {
                     is ResultWrapper.Error -> {
                         loadingView.isVisible = false
                         errorView.isVisible = true

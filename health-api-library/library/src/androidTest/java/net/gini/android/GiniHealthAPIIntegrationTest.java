@@ -25,8 +25,8 @@ import com.android.volley.toolbox.NoCache;
 import net.gini.android.core.api.DocumentTaskManager;
 import net.gini.android.core.api.authorization.EncryptedCredentialsStore;
 import net.gini.android.core.api.authorization.UserCredentials;
-import net.gini.android.health.api.Gini;
-import net.gini.android.health.api.GiniBuilder;
+import net.gini.android.health.api.GiniHealthAPI;
+import net.gini.android.health.api.GiniHealthAPIBuilder;
 import net.gini.android.helpers.TestUtils;
 import net.gini.android.core.api.models.Box;
 import net.gini.android.core.api.models.CompoundExtraction;
@@ -64,9 +64,9 @@ import bolts.Task;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class GiniIntegrationTest {
+public class GiniHealthAPIIntegrationTest {
 
-    private Gini gini;
+    private GiniHealthAPI giniHealthAPI;
     private String clientId;
     private String clientSecret;
     private String apiUri;
@@ -91,7 +91,7 @@ public class GiniIntegrationTest {
 
         resetTrustKit();
 
-        gini = new GiniBuilder(getApplicationContext(), clientId, clientSecret, "example.com").
+        giniHealthAPI = new GiniHealthAPIBuilder(getApplicationContext(), clientId, clientSecret, "example.com").
                 setApiBaseUrl(apiUri).
                 setUserCenterApiBaseUrl(userCenterUri).
                 setConnectionTimeoutInMs(60000).
@@ -116,7 +116,7 @@ public class GiniIntegrationTest {
 
     @Test
     public void processDocumentWithCustomCache() throws IOException, JSONException, InterruptedException {
-        gini = new GiniBuilder(getApplicationContext(), clientId, clientSecret, "example.com").
+        giniHealthAPI = new GiniHealthAPIBuilder(getApplicationContext(), clientId, clientSecret, "example.com").
                 setApiBaseUrl(apiUri).
                 setUserCenterApiBaseUrl(userCenterUri).
                 setConnectionTimeoutInMs(60000).
@@ -174,7 +174,7 @@ public class GiniIntegrationTest {
         Map<String, CompoundExtraction> feedbackCompound = new HashMap<>();
         feedbackCompound.put("lineItems", compoundExtraction);
 
-        final Task<Document> sendFeedback = gini.getDocumentTaskManager().sendFeedbackForExtractions(document, feedback, feedbackCompound);
+        final Task<Document> sendFeedback = giniHealthAPI.getDocumentTaskManager().sendFeedbackForExtractions(document, feedback, feedbackCompound);
         sendFeedback.waitForCompletion();
         if (sendFeedback.isFaulted()) {
             Log.e("TEST", Log.getStackTraceString(sendFeedback.getError()));
@@ -203,7 +203,7 @@ public class GiniIntegrationTest {
         feedback.put("bic", extractions.get("bic"));
         feedback.put("paymentRecipient", extractions.get("paymentRecipient"));
 
-        final Task<Document> sendFeedback = gini.getDocumentTaskManager().sendFeedbackForExtractions(document, feedback);
+        final Task<Document> sendFeedback = giniHealthAPI.getDocumentTaskManager().sendFeedbackForExtractions(document, feedback);
         sendFeedback.waitForCompletion();
         if (sendFeedback.isFaulted()) {
             Log.e("TEST", Log.getStackTraceString(sendFeedback.getError()));
@@ -232,7 +232,7 @@ public class GiniIntegrationTest {
         feedback.put("bic", extractions.get("bic"));
         feedback.put("paymentRecipient", extractions.get("paymentRecipient"));
 
-        final Task<Document> sendFeedback = gini.getDocumentTaskManager().sendFeedbackForExtractions(document, feedback);
+        final Task<Document> sendFeedback = giniHealthAPI.getDocumentTaskManager().sendFeedbackForExtractions(document, feedback);
         sendFeedback.waitForCompletion();
         if (sendFeedback.isFaulted()) {
             Log.e("TEST", Log.getStackTraceString(sendFeedback.getError()));
@@ -268,7 +268,7 @@ public class GiniIntegrationTest {
         Map<String, CompoundExtraction> feedbackCompound = new HashMap<>();
         feedbackCompound.put("lineItems", compoundExtractions.get("lineItems"));
 
-        final Task<Document> sendFeedback = gini.getDocumentTaskManager().sendFeedbackForExtractions(document, feedback, feedbackCompound);
+        final Task<Document> sendFeedback = giniHealthAPI.getDocumentTaskManager().sendFeedbackForExtractions(document, feedback, feedbackCompound);
         sendFeedback.waitForCompletion();
         if (sendFeedback.isFaulted()) {
             Log.e("TEST", Log.getStackTraceString(sendFeedback.getError()));
@@ -281,7 +281,7 @@ public class GiniIntegrationTest {
     public void documentUploadWorksAfterNewUserWasCreatedIfUserWasInvalid() throws IOException, JSONException, InterruptedException {
         EncryptedCredentialsStore credentialsStore = new EncryptedCredentialsStore(
                 getApplicationContext().getSharedPreferences("GiniTests", Context.MODE_PRIVATE), getApplicationContext());
-        gini = new GiniBuilder(getApplicationContext(), clientId, clientSecret, "example.com").
+        giniHealthAPI = new GiniHealthAPIBuilder(getApplicationContext(), clientId, clientSecret, "example.com").
                 setApiBaseUrl(apiUri).
                 setUserCenterApiBaseUrl(userCenterUri).
                 setConnectionTimeoutInMs(60000).
@@ -308,7 +308,7 @@ public class GiniIntegrationTest {
         // Upload a document to make sure we have a valid user
         EncryptedCredentialsStore credentialsStore = new EncryptedCredentialsStore(
                 getApplicationContext().getSharedPreferences("GiniTests", Context.MODE_PRIVATE), getApplicationContext());
-        gini = new GiniBuilder(getApplicationContext(), clientId, clientSecret, "example.com").
+        giniHealthAPI = new GiniHealthAPIBuilder(getApplicationContext(), clientId, clientSecret, "example.com").
                 setApiBaseUrl(apiUri).
                 setUserCenterApiBaseUrl(userCenterUri).
                 setConnectionTimeoutInMs(60000).
@@ -325,7 +325,7 @@ public class GiniIntegrationTest {
         // Create another Gini instance with a new email domain (to simulate an app update)
         // and verify that the new email domain is used
         String newEmailDomain = "beispiel.com";
-        gini = new GiniBuilder(getApplicationContext(), clientId, clientSecret, newEmailDomain).
+        giniHealthAPI = new GiniHealthAPIBuilder(getApplicationContext(), clientId, clientSecret, newEmailDomain).
                 setApiBaseUrl(apiUri).
                 setUserCenterApiBaseUrl(userCenterUri).
                 setConnectionTimeoutInMs(60000).
@@ -341,7 +341,7 @@ public class GiniIntegrationTest {
     @Test
     public void publicKeyPinningWithMatchingPublicKey() throws Exception {
         resetTrustKit();
-        gini = new GiniBuilder(getApplicationContext(), clientId, clientSecret, "example.com").
+        giniHealthAPI = new GiniHealthAPIBuilder(getApplicationContext(), clientId, clientSecret, "example.com").
                 setNetworkSecurityConfigResId(net.gini.android.test.R.xml.network_security_config).
                 setApiBaseUrl(apiUri).
                 setUserCenterApiBaseUrl(userCenterUri).
@@ -358,7 +358,7 @@ public class GiniIntegrationTest {
     @Test
     public void publicKeyPinningWithCustomCache() throws Exception {
         resetTrustKit();
-        gini = new GiniBuilder(getApplicationContext(), clientId, clientSecret, "example.com").
+        giniHealthAPI = new GiniHealthAPIBuilder(getApplicationContext(), clientId, clientSecret, "example.com").
                 setNetworkSecurityConfigResId(net.gini.android.test.R.xml.network_security_config).
                 setApiBaseUrl(apiUri).
                 setUserCenterApiBaseUrl(userCenterUri).
@@ -378,7 +378,7 @@ public class GiniIntegrationTest {
     @SdkSuppress(maxSdkVersion = Build.VERSION_CODES.JELLY_BEAN_MR1)
     public void publicKeyPinningWithWrongPublicKey() throws Exception {
         resetTrustKit();
-        gini = new GiniBuilder(getApplicationContext(), clientId, clientSecret, "example.com").
+        giniHealthAPI = new GiniHealthAPIBuilder(getApplicationContext(), clientId, clientSecret, "example.com").
                 setNetworkSecurityConfigResId(net.gini.android.test.R.xml.wrong_network_security_config).
                 setApiBaseUrl(apiUri).
                 setUserCenterApiBaseUrl(userCenterUri).
@@ -390,7 +390,7 @@ public class GiniIntegrationTest {
         assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream);
 
         final byte[] testDocument = TestUtils.createByteArray(testDocumentAsStream);
-        final DocumentTaskManager documentTaskManager = gini.getDocumentTaskManager();
+        final DocumentTaskManager documentTaskManager = giniHealthAPI.getDocumentTaskManager();
 
         final Task<Document> upload = documentTaskManager.createPartialDocument(testDocument, "image/jpeg", "test.jpeg", DocumentTaskManager.DocumentType.INVOICE);
         final Task<Document> processDocument = upload.onSuccessTask(new Continuation<Document, Task<Document>>() {
@@ -421,7 +421,7 @@ public class GiniIntegrationTest {
     @SdkSuppress(maxSdkVersion = Build.VERSION_CODES.JELLY_BEAN_MR1)
     public void publicKeyPinningWithMultiplePublicKeys() throws Exception {
         resetTrustKit();
-        gini = new GiniBuilder(getApplicationContext(), clientId, clientSecret, "example.com").
+        giniHealthAPI = new GiniHealthAPIBuilder(getApplicationContext(), clientId, clientSecret, "example.com").
                 setNetworkSecurityConfigResId(net.gini.android.test.R.xml.multiple_keys_network_security_config).
                 setApiBaseUrl(apiUri).
                 setUserCenterApiBaseUrl(userCenterUri).
@@ -444,7 +444,7 @@ public class GiniIntegrationTest {
 
         final byte[] testDocument = TestUtils.createByteArray(testDocumentAsStream);
 
-        final Task<Document> task = gini.getDocumentTaskManager()
+        final Task<Document> task = giniHealthAPI.getDocumentTaskManager()
                 .createPartialDocument(testDocument, "image/png", null, null);
         task.waitForCompletion();
 
@@ -460,12 +460,12 @@ public class GiniIntegrationTest {
 
         final byte[] testDocument = TestUtils.createByteArray(testDocumentAsStream);
 
-        final Task<String> task = gini.getDocumentTaskManager()
+        final Task<String> task = giniHealthAPI.getDocumentTaskManager()
                 .createPartialDocument(testDocument, "image/png", null, null)
                 .onSuccessTask(new Continuation<Document, Task<String>>() {
                     @Override
                     public Task<String> then(final Task<Document> task) throws Exception {
-                        return gini.getDocumentTaskManager().deleteDocument(task.getResult().getId());
+                        return giniHealthAPI.getDocumentTaskManager().deleteDocument(task.getResult().getId());
                     }
                 });
         task.waitForCompletion();
@@ -482,7 +482,7 @@ public class GiniIntegrationTest {
         final byte[] page1 = TestUtils.createByteArray(page1Stream);
 
         final AtomicReference<Document> partialDocument = new AtomicReference<>();
-        final Task<String> task = gini.getDocumentTaskManager()
+        final Task<String> task = giniHealthAPI.getDocumentTaskManager()
                 .createPartialDocument(page1, "image/png", null, null)
                 .onSuccessTask(new Continuation<Document, Task<Document>>() {
                     @Override
@@ -491,12 +491,12 @@ public class GiniIntegrationTest {
                         partialDocument.set(document);
                         final LinkedHashMap<Document, Integer> documentRotationDeltaMap = new LinkedHashMap<>();
                         documentRotationDeltaMap.put(document, 0);
-                        return gini.getDocumentTaskManager().createCompositeDocument(documentRotationDeltaMap, null);
+                        return giniHealthAPI.getDocumentTaskManager().createCompositeDocument(documentRotationDeltaMap, null);
                     }
                 }).onSuccessTask(new Continuation<Document, Task<String>>() {
                     @Override
                     public Task<String> then(final Task<Document> task) throws Exception {
-                        return gini.getDocumentTaskManager().deletePartialDocumentAndParents(partialDocument.get().getId());
+                        return giniHealthAPI.getDocumentTaskManager().deletePartialDocumentAndParents(partialDocument.get().getId());
                     }
                 });
         task.waitForCompletion();
@@ -513,7 +513,7 @@ public class GiniIntegrationTest {
         final byte[] page1 = TestUtils.createByteArray(page1Stream);
 
         final AtomicReference<Document> partialDocument = new AtomicReference<>();
-        final Task<String> task = gini.getDocumentTaskManager()
+        final Task<String> task = giniHealthAPI.getDocumentTaskManager()
                 .createPartialDocument(page1, "image/png", null, null)
                 .onSuccessTask(new Continuation<Document, Task<Document>>() {
                     @Override
@@ -522,12 +522,12 @@ public class GiniIntegrationTest {
                         partialDocument.set(document);
                         final LinkedHashMap<Document, Integer> documentRotationDeltaMap = new LinkedHashMap<>();
                         documentRotationDeltaMap.put(document, 0);
-                        return gini.getDocumentTaskManager().createCompositeDocument(documentRotationDeltaMap, null);
+                        return giniHealthAPI.getDocumentTaskManager().createCompositeDocument(documentRotationDeltaMap, null);
                     }
                 }).onSuccessTask(new Continuation<Document, Task<String>>() {
                     @Override
                     public Task<String> then(final Task<Document> task) throws Exception {
-                        return gini.getDocumentTaskManager().deleteDocument(partialDocument.get().getId());
+                        return giniHealthAPI.getDocumentTaskManager().deleteDocument(partialDocument.get().getId());
                     }
                 });
         task.waitForCompletion();
@@ -551,7 +551,7 @@ public class GiniIntegrationTest {
 
         final List<Document> partialDocuments = new ArrayList<>();
         final AtomicReference<Document> compositeDocument = new AtomicReference<>();
-        final DocumentTaskManager documentTaskManager = gini.getDocumentTaskManager();
+        final DocumentTaskManager documentTaskManager = giniHealthAPI.getDocumentTaskManager();
         final Task<ExtractionsContainer> task = documentTaskManager
                 .createPartialDocument(page1, "image/png", null, null)
                 .onSuccessTask(new Continuation<Document, Task<Document>>() {
@@ -640,7 +640,7 @@ public class GiniIntegrationTest {
         final byte[] page1 = TestUtils.createByteArray(page1Stream);
 
         final AtomicReference<Document> partialDocument = new AtomicReference<>();
-        final Task<String> task = gini.getDocumentTaskManager()
+        final Task<String> task = giniHealthAPI.getDocumentTaskManager()
                 .createPartialDocument(page1, "image/png", null, null)
                 .onSuccessTask(new Continuation<Document, Task<Document>>() {
                     @Override
@@ -649,12 +649,12 @@ public class GiniIntegrationTest {
                         partialDocument.set(document);
                         final LinkedHashMap<Document, Integer> documentRotationDeltaMap = new LinkedHashMap<>();
                         documentRotationDeltaMap.put(document, 0);
-                        return gini.getDocumentTaskManager().createCompositeDocument(documentRotationDeltaMap, null);
+                        return giniHealthAPI.getDocumentTaskManager().createCompositeDocument(documentRotationDeltaMap, null);
                     }
                 }).onSuccessTask(new Continuation<Document, Task<String>>() {
                     @Override
                     public Task<String> then(final Task<Document> task) throws Exception {
-                        return gini.getDocumentTaskManager().deleteDocument(task.getResult().getId());
+                        return giniHealthAPI.getDocumentTaskManager().deleteDocument(task.getResult().getId());
                     }
                 });
         task.waitForCompletion();
@@ -664,20 +664,20 @@ public class GiniIntegrationTest {
 
     @Test
     public void testGetPaymentProviders() throws Exception {
-        Task<List<PaymentProvider>> task = gini.getDocumentTaskManager().getPaymentProviders();
+        Task<List<PaymentProvider>> task = giniHealthAPI.getDocumentTaskManager().getPaymentProviders();
         task.waitForCompletion();
         assertNotNull(task.getResult());
     }
 
     @Test
     public void testGetPaymentProvider() throws Exception {
-        Task<List<PaymentProvider>> listTask = gini.getDocumentTaskManager().getPaymentProviders();
+        Task<List<PaymentProvider>> listTask = giniHealthAPI.getDocumentTaskManager().getPaymentProviders();
         listTask.waitForCompletion();
         assertNotNull(listTask.getResult());
 
         final List<PaymentProvider> providers = listTask.getResult();
 
-        Task<PaymentProvider> task = gini.getDocumentTaskManager().getPaymentProvider(providers.get(0).getId());
+        Task<PaymentProvider> task = giniHealthAPI.getDocumentTaskManager().getPaymentProvider(providers.get(0).getId());
         task.waitForCompletion();
         assertEquals(providers.get(0), task.getResult());
     }
@@ -695,7 +695,7 @@ public class GiniIntegrationTest {
         createPaymentTask.waitForCompletion();
         String id = createPaymentTask.getResult();
 
-        Task<PaymentRequest> paymentRequestTask = gini.getDocumentTaskManager().getPaymentRequest(id);
+        Task<PaymentRequest> paymentRequestTask = giniHealthAPI.getDocumentTaskManager().getPaymentRequest(id);
         paymentRequestTask.waitForCompletion();
         assertNotNull(paymentRequestTask.getResult());
     }
@@ -706,13 +706,13 @@ public class GiniIntegrationTest {
         createPaymentTask.waitForCompletion();
         String id = createPaymentTask.getResult();
 
-        Task<PaymentRequest> paymentRequestTask = gini.getDocumentTaskManager().getPaymentRequest(id);
+        Task<PaymentRequest> paymentRequestTask = giniHealthAPI.getDocumentTaskManager().getPaymentRequest(id);
         paymentRequestTask.waitForCompletion();
 
         PaymentRequest paymentRequest = paymentRequestTask.getResult();
         final ResolvePaymentInput resolvePaymentInput = new ResolvePaymentInput(paymentRequest.getRecipient(), paymentRequest.getIban(), paymentRequest.getAmount(), paymentRequest.getPurpose(), null);
 
-        Task<ResolvedPayment> resolvePaymentRequestTask = gini.getDocumentTaskManager().resolvePaymentRequest(id, resolvePaymentInput);
+        Task<ResolvedPayment> resolvePaymentRequestTask = giniHealthAPI.getDocumentTaskManager().resolvePaymentRequest(id, resolvePaymentInput);
         resolvePaymentRequestTask.waitForCompletion();
         assertNotNull(resolvePaymentRequestTask.getResult());
     }
@@ -723,16 +723,16 @@ public class GiniIntegrationTest {
         createPaymentTask.waitForCompletion();
         String id = createPaymentTask.getResult();
 
-        Task<PaymentRequest> paymentRequestTask = gini.getDocumentTaskManager().getPaymentRequest(id);
+        Task<PaymentRequest> paymentRequestTask = giniHealthAPI.getDocumentTaskManager().getPaymentRequest(id);
         paymentRequestTask.waitForCompletion();
 
         PaymentRequest paymentRequest = paymentRequestTask.getResult();
         final ResolvePaymentInput resolvePaymentInput = new ResolvePaymentInput(paymentRequest.getRecipient(), paymentRequest.getIban(), paymentRequest.getAmount(), paymentRequest.getPurpose(), null);
 
-        Task<ResolvedPayment> resolvePaymentRequestTask = gini.getDocumentTaskManager().resolvePaymentRequest(id, resolvePaymentInput);
+        Task<ResolvedPayment> resolvePaymentRequestTask = giniHealthAPI.getDocumentTaskManager().resolvePaymentRequest(id, resolvePaymentInput);
         resolvePaymentRequestTask.waitForCompletion();
 
-        Task<Payment> getPaymentRequestTask = gini.getDocumentTaskManager().getPayment(id);
+        Task<Payment> getPaymentRequestTask = giniHealthAPI.getDocumentTaskManager().getPayment(id);
         getPaymentRequestTask.waitForCompletion();
         assertNotNull(getPaymentRequestTask.getResult());
         assertEquals(paymentRequest.getRecipient(), getPaymentRequestTask.getResult().getRecipient());
@@ -752,7 +752,7 @@ public class GiniIntegrationTest {
         Map<Document, Map<String, SpecificExtraction>> documentWithExtractions = processDocument(testDocument, "image/jpeg", "test.jpg", DocumentTaskManager.DocumentType.INVOICE);
         Document document = documentWithExtractions.keySet().iterator().next();
 
-        Task<byte[]> task = gini.getDocumentTaskManager().getPageImage(document.getId(), 1);
+        Task<byte[]> task = giniHealthAPI.getDocumentTaskManager().getPageImage(document.getId(), 1);
         task.waitForCompletion();
         assertNotNull(task.getResult());
         byte[] bytes = task.getResult();
@@ -766,7 +766,7 @@ public class GiniIntegrationTest {
                 "not available", BuildConfig.VERSION_NAME, "Error logging integration test"
         );
 
-        final Task<Void> requestTask = gini.getDocumentTaskManager().logErrorEvent(errorEvent);
+        final Task<Void> requestTask = giniHealthAPI.getDocumentTaskManager().logErrorEvent(errorEvent);
         requestTask.waitForCompletion();
 
         assertNull(requestTask.getError());
@@ -782,7 +782,7 @@ public class GiniIntegrationTest {
         Document document = documentWithExtractions.keySet().iterator().next();
         Map<String, SpecificExtraction> extractions = documentWithExtractions.get(document);
 
-        Task<List<PaymentProvider>> listTask = gini.getDocumentTaskManager().getPaymentProviders();
+        Task<List<PaymentProvider>> listTask = giniHealthAPI.getDocumentTaskManager().getPaymentProviders();
         listTask.waitForCompletion();
         assertNotNull(listTask.getResult());
         final List<PaymentProvider> providers = listTask.getResult();
@@ -797,7 +797,7 @@ public class GiniIntegrationTest {
 //                Objects.requireNonNull(extractions.get("bic")).getValue(),
                 document.getUri().toString()
         );
-        return gini.getDocumentTaskManager().createPaymentRequest(paymentRequest);
+        return giniHealthAPI.getDocumentTaskManager().createPaymentRequest(paymentRequest);
     }
 
     private String extractEmailDomain(String email) {
@@ -825,7 +825,7 @@ public class GiniIntegrationTest {
     private Map<Document, ExtractionsContainer> processDocument(byte[] documentBytes, String contentType, String filename, DocumentTaskManager.DocumentType documentType,
                                                                 ExtractionsCallback extractionsCallback)
             throws InterruptedException {
-        final DocumentTaskManager documentTaskManager = gini.getDocumentTaskManager();
+        final DocumentTaskManager documentTaskManager = giniHealthAPI.getDocumentTaskManager();
 
         final Task<Document> uploadPartial = documentTaskManager.createPartialDocument(documentBytes, contentType, filename, documentType);
         final Task<Document> createComposite = uploadPartial.onSuccessTask(task -> {

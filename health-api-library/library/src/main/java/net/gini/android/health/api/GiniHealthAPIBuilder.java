@@ -31,7 +31,7 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.annotation.XmlRes;
 
-public class GiniBuilder {
+public class GiniHealthAPIBuilder {
 
     private final Context mContext;
 
@@ -68,8 +68,8 @@ public class GiniBuilder {
      * @param clientSecret Your application's client secret for the Gini API.
      * @param emailDomain  The email domain which is used for created Gini users.
      */
-    public GiniBuilder(@NonNull final Context context, @NonNull final String clientId,
-                       @NonNull final String clientSecret, @NonNull final String emailDomain) {
+    public GiniHealthAPIBuilder(@NonNull final Context context, @NonNull final String clientId,
+                                @NonNull final String clientSecret, @NonNull final String emailDomain) {
         mContext = context;
         mEmailDomain = emailDomain;
         mClientSecret = clientSecret;
@@ -84,7 +84,7 @@ public class GiniBuilder {
      * @param context        Your application's Context instance (Android).
      * @param sessionManager The SessionManager to use.
      */
-    public GiniBuilder(@NonNull final Context context, @NonNull final SessionManager sessionManager) {
+    public GiniHealthAPIBuilder(@NonNull final Context context, @NonNull final SessionManager sessionManager) {
         mContext = context;
         mSessionManager = sessionManager;
         mGiniApiType = GiniApiType.DEFAULT;
@@ -96,7 +96,7 @@ public class GiniBuilder {
      * @param networkSecurityConfigResId xml resource id
      * @return The builder instance to enable chaining.
      */
-    public GiniBuilder setNetworkSecurityConfigResId(@XmlRes final int networkSecurityConfigResId) {
+    public GiniHealthAPIBuilder setNetworkSecurityConfigResId(@XmlRes final int networkSecurityConfigResId) {
         mNetworkSecurityConfigResId = networkSecurityConfigResId;
         return this;
     }
@@ -107,7 +107,7 @@ public class GiniBuilder {
      * @param newUrl The URL of the Gini API which is used by the requests of the library.
      * @return The builder instance to enable chaining.
      */
-    public GiniBuilder setApiBaseUrl(@NonNull String newUrl) {
+    public GiniHealthAPIBuilder setApiBaseUrl(@NonNull String newUrl) {
         if (!newUrl.endsWith("/")) {
             newUrl += "/";
         }
@@ -121,7 +121,7 @@ public class GiniBuilder {
      * @param newUrl The URL of the Gini User Center API which is used by the requests of the library.
      * @return The builder instance to enable chaining.
      */
-    public GiniBuilder setUserCenterApiBaseUrl(@NonNull String newUrl) {
+    public GiniHealthAPIBuilder setUserCenterApiBaseUrl(@NonNull String newUrl) {
         if (!newUrl.endsWith("/")) {
             newUrl += "/";
         }
@@ -136,7 +136,7 @@ public class GiniBuilder {
      *
      * @return The builder instance to enable chaining.
      */
-    public GiniBuilder setGiniApiType(@NonNull final GiniApiType giniApiType) {
+    public GiniHealthAPIBuilder setGiniApiType(@NonNull final GiniApiType giniApiType) {
         mGiniApiType = giniApiType;
         return this;
     }
@@ -148,7 +148,7 @@ public class GiniBuilder {
      * @param connectionTimeoutInMs initial timeout
      * @return The builder instance to enable chaining.
      */
-    public GiniBuilder setConnectionTimeoutInMs(final int connectionTimeoutInMs) {
+    public GiniHealthAPIBuilder setConnectionTimeoutInMs(final int connectionTimeoutInMs) {
         if (connectionTimeoutInMs < 0) {
             throw new IllegalArgumentException("connectionTimeoutInMs can't be less than 0");
         }
@@ -162,7 +162,7 @@ public class GiniBuilder {
      * @param maxNumberOfRetries maximal number of retries.
      * @return The builder instance to enable chaining.
      */
-    public GiniBuilder setMaxNumberOfRetries(final int maxNumberOfRetries) {
+    public GiniHealthAPIBuilder setMaxNumberOfRetries(final int maxNumberOfRetries) {
         if (maxNumberOfRetries < 0) {
             throw new IllegalArgumentException("maxNumberOfRetries can't be less than 0");
         }
@@ -177,7 +177,7 @@ public class GiniBuilder {
      * @param backOffMultiplier the backoff multiplication factor
      * @return The builder instance to enable chaining.
      */
-    public GiniBuilder setConnectionBackOffMultiplier(final float backOffMultiplier) {
+    public GiniHealthAPIBuilder setConnectionBackOffMultiplier(final float backOffMultiplier) {
         if (backOffMultiplier < 0.0) {
             throw new IllegalArgumentException("backOffMultiplier can't be less than 0");
         }
@@ -192,7 +192,7 @@ public class GiniBuilder {
      * @param credentialsStore A credentials store instance (specified by the CredentialsStore interface).
      * @return The builder instance to enable chaining.
      */
-    public GiniBuilder setCredentialsStore(@NonNull CredentialsStore credentialsStore) {
+    public GiniHealthAPIBuilder setCredentialsStore(@NonNull CredentialsStore credentialsStore) {
         mCredentialsStore = checkNotNull(credentialsStore);
         return this;
     }
@@ -204,7 +204,7 @@ public class GiniBuilder {
      * @param cache A cache instance (specified by the com.android.volley.Cache interface).
      * @return The builder instance to enable chaining.
      */
-    public GiniBuilder setCache(@NonNull Cache cache) {
+    public GiniHealthAPIBuilder setCache(@NonNull Cache cache) {
         mCache = cache;
         return this;
     }
@@ -214,8 +214,8 @@ public class GiniBuilder {
      *
      * @return The fully configured Gini instance.
      */
-    public Gini build() {
-        return new Gini(getDocumentTaskManager(), getCredentialsStore());
+    public GiniHealthAPI build() {
+        return new GiniHealthAPI(getDocumentTaskManager(), getCredentialsStore());
     }
 
     /**

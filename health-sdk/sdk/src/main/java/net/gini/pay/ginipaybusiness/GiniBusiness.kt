@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
-import net.gini.android.health.api.Gini
+import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.core.api.models.Document
 import net.gini.pay.ginipaybusiness.requirement.Requirement
 import net.gini.pay.ginipaybusiness.requirement.internalCheckRequirements
@@ -31,7 +31,7 @@ import net.gini.pay.ginipaybusiness.review.model.*
  *  3. Display [ReviewFragment].
  *
  * [setDocumentForReview] can be called with:
- *  1. [Document] instance in the case the upload was performed with Gini Pay Api lib ([Gini]).
+ *  1. [Document] instance in the case the upload was performed with Gini Pay Api lib ([GiniHealthAPI]).
  *  2. Document id, this will probably be the case when there's backend integration between the Business Client and Gini.
  *      This method will make a network call to obtain a [Document] instance so the other one is preferred if you have the [Document] instance.
  *
@@ -39,9 +39,9 @@ import net.gini.pay.ginipaybusiness.review.model.*
  *  so that they can be observed anywhere, the main purpose for this is to observe errors.
  */
 class GiniBusiness(
-    val giniApi: Gini
+    val giniHealthAPI: GiniHealthAPI
 ) {
-    private val documentManager = giniApi.documentManager
+    private val documentManager = giniHealthAPI.documentManager
 
     private var registryOwner = WeakReference<SavedStateRegistryOwner?>(null)
     private var savedStateObserver: LifecycleEventObserver? = null

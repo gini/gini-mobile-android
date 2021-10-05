@@ -8,7 +8,7 @@ import java.util.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import net.gini.android.core.api.DocumentManager
-import net.gini.android.health.api.Gini
+import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.models.ExtractionsContainer
 import net.gini.android.core.api.models.SpecificExtraction
@@ -41,13 +41,13 @@ fun copyExtractions(extractions: ExtractionsContainer) = ExtractionsContainer(
 class GiniBusinessTest {
 
     private lateinit var giniBusiness: GiniBusiness
-    private val giniApi: Gini = mockk(relaxed = true) { Gini::class.java }
+    private val giniHealthAPI: GiniHealthAPI = mockk(relaxed = true) { GiniHealthAPI::class.java }
     private val documentManager: DocumentManager = mockk { DocumentManager::class.java }
 
     @Before
     fun setUp() {
-        every { giniApi.documentManager } returns documentManager
-        giniBusiness = GiniBusiness(giniApi)
+        every { giniHealthAPI.documentManager } returns documentManager
+        giniBusiness = GiniBusiness(giniHealthAPI)
     }
 
     @Test

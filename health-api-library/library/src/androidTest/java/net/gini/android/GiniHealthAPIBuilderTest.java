@@ -16,8 +16,8 @@ import com.android.volley.RetryPolicy;
 import net.gini.android.core.api.DocumentTaskManager;
 import net.gini.android.core.api.authorization.Session;
 import net.gini.android.core.api.authorization.SessionManager;
-import net.gini.android.health.api.Gini;
-import net.gini.android.health.api.GiniBuilder;
+import net.gini.android.health.api.GiniHealthAPI;
+import net.gini.android.health.api.GiniHealthAPIBuilder;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,38 +26,38 @@ import bolts.Task;
 
 @SmallTest
 @RunWith(AndroidJUnit4.class)
-public class GiniBuilderTest {
+public class GiniHealthAPIBuilderTest {
 
     @Test
     public void testBuilderReturnsGiniInstance() {
-        GiniBuilder builder = new GiniBuilder(getApplicationContext(), "clientId", "clientSecret", "@example.com");
+        GiniHealthAPIBuilder builder = new GiniHealthAPIBuilder(getApplicationContext(), "clientId", "clientSecret", "@example.com");
         assertNotNull(builder.build());
     }
 
     @Test
     public void testBuilderReturnsCorrectConfiguredGiniInstance() {
-        GiniBuilder builder = new GiniBuilder(getApplicationContext(), "clientId", "clientSecret", "@example.com");
-        Gini giniInstance = builder.build();
+        GiniHealthAPIBuilder builder = new GiniHealthAPIBuilder(getApplicationContext(), "clientId", "clientSecret", "@example.com");
+        GiniHealthAPI giniHealthAPI = builder.build();
 
-        assertNotNull(giniInstance.getDocumentTaskManager());
-        assertNotNull(giniInstance.getCredentialsStore());
+        assertNotNull(giniHealthAPI.getDocumentTaskManager());
+        assertNotNull(giniHealthAPI.getCredentialsStore());
     }
 
     @Test
     public void testBuilderWorksWithAlternativeSessionManager() {
         final SessionManager sessionManager = new NullSessionManager();
 
-        final GiniBuilder builder = new GiniBuilder(getApplicationContext(), sessionManager);
-        final Gini giniInstance = builder.build();
+        final GiniHealthAPIBuilder builder = new GiniHealthAPIBuilder(getApplicationContext(), sessionManager);
+        final GiniHealthAPI giniHealthAPI = builder.build();
 
-        assertNotNull(giniInstance);
-        assertNotNull(giniInstance.getDocumentTaskManager());
-        assertNotNull(giniInstance.getCredentialsStore());
+        assertNotNull(giniHealthAPI);
+        assertNotNull(giniHealthAPI.getDocumentTaskManager());
+        assertNotNull(giniHealthAPI.getCredentialsStore());
     }
 
     @Test
     public void testSetWrongConnectionTimeout() {
-        GiniBuilder builder = new GiniBuilder(getApplicationContext(), "clientId", "clientSecret", "@example.com");
+        GiniHealthAPIBuilder builder = new GiniHealthAPIBuilder(getApplicationContext(), "clientId", "clientSecret", "@example.com");
         try {
             builder.setConnectionTimeoutInMs(-1);
             fail("IllegalArgumentException should be thrown");
@@ -67,7 +67,7 @@ public class GiniBuilderTest {
 
     @Test
     public void testSetWrongConnectionMaxNumberOfRetries() {
-        GiniBuilder builder = new GiniBuilder(getApplicationContext(), "clientId", "clientSecret", "@example.com");
+        GiniHealthAPIBuilder builder = new GiniHealthAPIBuilder(getApplicationContext(), "clientId", "clientSecret", "@example.com");
         try {
             builder.setMaxNumberOfRetries(-1);
             fail("IllegalArgumentException should be thrown");
@@ -77,7 +77,7 @@ public class GiniBuilderTest {
 
     @Test
     public void testSetWrongConnectionBackOffMultiplier() {
-        GiniBuilder builder = new GiniBuilder(getApplicationContext(), "clientId", "clientSecret", "@example.com");
+        GiniHealthAPIBuilder builder = new GiniHealthAPIBuilder(getApplicationContext(), "clientId", "clientSecret", "@example.com");
         try {
             builder.setConnectionBackOffMultiplier(-1);
             fail("IllegalArgumentException should be thrown");
@@ -87,13 +87,13 @@ public class GiniBuilderTest {
 
     @Test
     public void testRetryPolicyWiring() {
-        GiniBuilder builder = new GiniBuilder(getApplicationContext(), "clientId", "clientSecret", "@example.com");
+        GiniHealthAPIBuilder builder = new GiniHealthAPIBuilder(getApplicationContext(), "clientId", "clientSecret", "@example.com");
         builder.setConnectionTimeoutInMs(3333);
         builder.setMaxNumberOfRetries(66);
         builder.setConnectionBackOffMultiplier(1.3636f);
-        Gini gini = builder.build();
+        GiniHealthAPI giniHealthAPI = builder.build();
 
-        final DocumentTaskManager documentTaskManager = gini.getDocumentTaskManager();
+        final DocumentTaskManager documentTaskManager = giniHealthAPI.getDocumentTaskManager();
         final RetryPolicy retryPolicy = documentTaskManager.mApiCommunicator.mRetryPolicyFactory.newRetryPolicy();
         assertEquals(3333, retryPolicy.getCurrentTimeout());
         assertEquals(0, retryPolicy.getCurrentRetryCount());
@@ -101,12 +101,12 @@ public class GiniBuilderTest {
 
     @Test
     public void testVolleyCacheConfiguration() {
-        GiniBuilder builder = new GiniBuilder(getApplicationContext(), "clientId", "clientSecret", "@example.com");
+        GiniHealthAPIBuilder builder = new GiniHealthAPIBuilder(getApplicationContext(), "clientId", "clientSecret", "@example.com");
         NullCache nullCache = new NullCache();
         builder.setCache(nullCache);
-        Gini giniInstance = builder.build();
+        GiniHealthAPI giniHealthAPI = builder.build();
 
-        assertSame(giniInstance.getDocumentTaskManager().mApiCommunicator.mRequestQueue.getCache(), nullCache);
+        assertSame(giniHealthAPI.getDocumentTaskManager().mApiCommunicator.mRequestQueue.getCache(), nullCache);
     }
 
     private static final class NullCache implements Cache {

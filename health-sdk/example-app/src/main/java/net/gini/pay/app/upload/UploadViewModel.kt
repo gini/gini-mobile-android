@@ -8,13 +8,13 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import net.gini.android.health.api.Gini
+import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.core.api.MediaTypes
 import net.gini.pay.app.util.getBytes
 import net.gini.pay.ginipaybusiness.GiniBusiness
 
 class UploadViewModel(
-    private val giniApi: Gini,
+    private val giniHealthAPI: GiniHealthAPI,
     val giniBusiness: GiniBusiness,
 ) : ViewModel() {
     private val _uploadState: MutableStateFlow<UploadState> = MutableStateFlow(UploadState.Loading)
@@ -27,13 +27,13 @@ class UploadViewModel(
                 val documentPages = pageUris.map { pageUri ->
                     val stream = contentResolver.openInputStream(pageUri)
                     check(stream != null) { "ContentResolver failed" }
-                    giniApi.documentManager.createPartialDocument(
+                    giniHealthAPI.documentManager.createPartialDocument(
                         stream.getBytes(),
                         MimeTypeMap.getSingleton().getExtensionFromMimeType(contentResolver.getType(pageUri)) ?: MediaTypes.IMAGE_JPEG
                     )
                 }
-                val document = giniApi.documentManager.createCompositeDocument(documentPages)
-                val polledDocument = giniApi.documentManager.pollDocument(document)
+                val document = giniHealthAPI.documentManager.createCompositeDocument(documentPages)
+                val polledDocument = giniHealthAPI.documentManager.pollDocument(document)
                 _uploadState.value = UploadState.Success(polledDocument.id)
                 setDocumentForReview(polledDocument.id)
             } catch (throwable: Throwable) {

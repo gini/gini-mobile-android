@@ -4,11 +4,11 @@ import net.gini.android.core.api.DocumentManager;
 import net.gini.android.core.api.DocumentTaskManager;
 import net.gini.android.core.api.authorization.CredentialsStore;
 
-public class Gini {
+public class GiniHealthAPI {
     private final DocumentTaskManager mDocumentTaskManager;
     private final CredentialsStore mCredentialsStore;
 
-    protected Gini(final DocumentTaskManager documentTaskManager, final CredentialsStore credentialsStore) {
+    protected GiniHealthAPI(final DocumentTaskManager documentTaskManager, final CredentialsStore credentialsStore) {
         mDocumentTaskManager = documentTaskManager;
         mCredentialsStore = credentialsStore;
     }
