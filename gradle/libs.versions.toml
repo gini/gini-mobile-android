@@ -53,3 +53,5 @@ mockito-android = { module = "org.mockito:mockito-android", version.ref = "mocki
 mockk = "io.mockk:mockk:1.11.0"
 turbine = "app.cash.turbine:turbine:0.4.1"
 junit = "junit:junit:4.13.2"
+detekt-gradle = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.18.1"
+ktlint-gradle = "org.jlleitschuh.gradle:ktlint-gradle:10.2.0"

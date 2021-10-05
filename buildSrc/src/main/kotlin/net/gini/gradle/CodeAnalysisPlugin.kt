@@ -1,6 +1,7 @@
 package net.gini.gradle
 
 import com.android.build.gradle.LibraryExtension
+import io.gitlab.arturbosch.detekt.extensions.DetektExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.quality.Checkstyle
@@ -10,15 +11,18 @@ import org.gradle.kotlin.dsl.register
 import net.gini.gradle.extensions.libs
 import org.gradle.api.plugins.quality.Pmd
 import org.gradle.api.plugins.quality.PmdExtension
+import org.gradle.kotlin.dsl.plugins
+import org.jlleitschuh.gradle.ktlint.KtlintExtension
+import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
 
 class CodeAnalysisPlugin: Plugin<Project> {
 
     override fun apply(target: Project) {
         configureCheckstyle(target)
         configurePmd(target)
+        configureDetekt(target)
         configureAndroidLint(target)
-        // TODO: add ktlint
-        // TODO: add detekt
+        configureKtlint(target)
     }
 
     private fun configureCheckstyle(target: Project) {
@@ -66,6 +70,28 @@ class CodeAnalysisPlugin: Plugin<Project> {
             lint {
                 isAbortOnError = false
                 lintConfig = target.file("${target.rootDir}/buildSrc/config/lint/lint.xml")
+            }
+        }
+    }
+
+    private fun configureDetekt(target: Project) {
+        target.plugins.apply("io.gitlab.arturbosch.detekt")
+
+        target.extensions.getByType<DetektExtension>().apply {
+            isIgnoreFailures = true
+            source = target.files("src/main/java")
+        }
+    }
+
+    private fun configureKtlint(target: Project) {
+        target.plugins.apply("org.jlleitschuh.gradle.ktlint")
+
+        target.extensions.getByType<KtlintExtension>().apply {
+            ignoreFailures.set(true)
+            outputToConsole.set(false)
+            android.set(true)
+            reporters {
+                reporter(ReporterType.HTML)
             }
         }
     }
