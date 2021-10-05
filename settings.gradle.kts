@@ -6,7 +6,7 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         // For PhotoView
-        maven { url = java.net.URI.create("https://jitpack.io") }
+        maven("https://jitpack.io")
     }
 }
 
