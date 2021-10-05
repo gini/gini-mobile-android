@@ -1,4 +1,6 @@
-import net.gini.gradle.*
+import net.gini.gradle.CodeAnalysisPlugin
+import net.gini.gradle.DokkaPlugin
+import net.gini.gradle.TestPropertiesPlugin
 
 plugins {
     id("com.android.library")
@@ -62,5 +64,5 @@ apply<DokkaPlugin>()
 apply<TestPropertiesPlugin>()
 apply<CodeAnalysisPlugin>()
 
-//// TODO: remove this?
-//apply from: rootProject.file('gradle/javadoc_coverage.gradle')
+// TODO: remove this?
+// apply from: rootProject.file('gradle/javadoc_coverage.gradle')
