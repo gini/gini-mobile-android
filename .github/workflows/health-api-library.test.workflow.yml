@@ -4,7 +4,7 @@ on: [push]
 #    paths:
 #      - 'health-api-library/**'
 jobs:
-  test:
+  test-health-api-library:
     runs-on: macos-latest
     strategy:
       matrix:
@@ -13,13 +13,11 @@ jobs:
       - name: checkout
         uses: actions/checkout@v2
 
-      - name: gradle cache
-        uses: actions/cache@v2
+      - uses: actions/setup-java@v2
         with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*') }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}-${{ hashFiles('**/buildSrc/**/*.kt') }}
+          distribution: 'temurin'
+          java-version: '11'
+          cache: 'gradle'
 
       - name: avd cache
         uses: actions/cache@v2
@@ -36,7 +34,7 @@ jobs:
         with:
           api-level: ${{ matrix.api-level }}
           force-avd-creation: false
-          emulator-options: -no-window -gpu swiftshader_indirect -no-audio -no-boot-anim -camera-back none -prop persist.sys.language=en -prop persist.sys.country=US
+          emulator-options: -no-window -gpu swiftshader_indirect -no-audio -no-boot-anim -camera-back none
           disable-animations: true
           script: echo "Generated AVD snapshot for caching."
 
