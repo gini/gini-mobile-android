@@ -7,6 +7,7 @@ import android.net.Uri;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
@@ -106,7 +107,8 @@ public class DocumentTaskManager {
     /**
      * The ApiCommunicator instance which is used to communicate with the Gini API.
      */
-    final ApiCommunicator mApiCommunicator;  // Visible for testing
+    @VisibleForTesting
+    public final ApiCommunicator mApiCommunicator;
 
     /**
      * The ApiCommunicator instance which is used to communicate with the Gini API.

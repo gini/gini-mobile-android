@@ -1,4 +1,4 @@
-package net.gini.android;
+package net.gini.android.health.api;
 
 import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 import static net.gini.android.helpers.TrustKitHelper.resetTrustKit;
@@ -22,6 +22,7 @@ import androidx.test.filters.SdkSuppress;
 
 import com.android.volley.toolbox.NoCache;
 
+import net.gini.android.BuildConfig;
 import net.gini.android.core.api.DocumentTaskManager;
 import net.gini.android.core.api.authorization.EncryptedCredentialsStore;
 import net.gini.android.core.api.authorization.UserCredentials;
