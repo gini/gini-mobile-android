@@ -56,3 +56,9 @@ jobs:
             health-api-library:library:connectedCheck
             -PtestClientId="$client_id" -PtestClientSecret="$client_secret"
             -PtestApiUri="$api_uri" -PtestUserCenterUri="$user_center_uri"
+
+      - name: archive instrumented test results
+        uses: actions/upload-artifact@v2
+        with:
+          name: health-api-library-instrumented-test-results
+          path: health-api-library/library/build/outputs/androidTest-results/connected
