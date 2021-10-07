@@ -59,6 +59,7 @@ jobs:
             -PtestApiUri="$api_uri" -PtestUserCenterUri="$user_center_uri"
 
       - name: archive instrumented test results
+        if: always()
         uses: actions/upload-artifact@v2
         with:
           name: health-api-library-instrumented-test-results
