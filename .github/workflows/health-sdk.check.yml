@@ -47,7 +47,7 @@ jobs:
           echo "clientId=$client_id\nclientSecret=$client_secret" > health-sdk/example-app/src/main/resources/client.properties
 
       - name: build example app
-        run: ./gradlew health-sdk:example-app:assemble
+        run: ./gradlew health-sdk:example-app:assembleDebug
 
       - name: archive example app
         uses: actions/upload-artifact@v2
