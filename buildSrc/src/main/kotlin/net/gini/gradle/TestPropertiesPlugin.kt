@@ -37,6 +37,14 @@ class TestPropertiesPlugin : Plugin<Project> {
         target.tasks.register<WriteProperties>("injectTestProperties") {
             val extension = target.extensions.getByName<TestPropertiesPluginExtension>("testProperties")
 
+            val properties = extension.properties.get()
+
+            doLast {
+                if (properties.isEmpty()) {
+                    throw IllegalArgumentException("No test properties found. Configure the TestPropertiesPluginExtension to add properties.")
+                }
+            }
+
             outputFile = target.file(extension.targetFilePath.get())
             encoding = "UTF-8"
             comment = """
@@ -45,10 +53,8 @@ class TestPropertiesPlugin : Plugin<Project> {
                     Automatically injected by injectTestProperties at ${ZonedDateTime.now()}.
                 """.trimIndent()
 
-            val properties = extension.properties.get()
-
             if (properties.isEmpty()) {
-                throw IllegalArgumentException("No test properties found. Configure the TestPropertiesPluginExtension to add properties.")
+                return@register
             }
 
             properties(properties as Map<String, Any>)
