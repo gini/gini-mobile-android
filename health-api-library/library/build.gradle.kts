@@ -1,6 +1,7 @@
 import net.gini.gradle.CodeAnalysisPlugin
 import net.gini.gradle.DokkaPlugin
 import net.gini.gradle.TestPropertiesPlugin
+import net.gini.gradle.TestPropertiesPluginExtension
 
 plugins {
     id("com.android.library")
@@ -63,6 +64,15 @@ apply<MavenPublishPlugin>()
 apply<DokkaPlugin>()
 apply<TestPropertiesPlugin>()
 apply<CodeAnalysisPlugin>()
+
+configure<TestPropertiesPluginExtension> {
+    properties.apply {
+        (project.properties["testClientId"] as? String)?.let { put("testClientId", it) }
+        (project.properties["testClientSecret"] as? String)?.let { put("testClientSecret", it) }
+        (project.properties["testApiUri"] as? String)?.let { put("testApiUri", it) }
+        (project.properties["testUserCenterUri"] as? String)?.let { put("testUserCenterUri", it) }
+    }
+}
 
 // TODO: remove this?
 // apply from: rootProject.file('gradle/javadoc_coverage.gradle')
