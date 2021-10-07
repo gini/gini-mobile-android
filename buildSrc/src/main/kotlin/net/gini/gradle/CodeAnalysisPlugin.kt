@@ -15,6 +15,11 @@ import org.gradle.kotlin.dsl.plugins
 import org.jlleitschuh.gradle.ktlint.KtlintExtension
 import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
 
+/**
+ * Created by Alpár Szotyori on 04.10.21.
+ *
+ * Copyright (c) 2021 Gini GmbH.
+ */
 class CodeAnalysisPlugin: Plugin<Project> {
 
     override fun apply(target: Project) {

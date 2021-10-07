@@ -10,6 +10,11 @@ import org.gradle.kotlin.dsl.*
 import org.jetbrains.dokka.gradle.DokkaTask
 import java.net.URI
 
+/**
+ * Created by Alpár Szotyori on 30.09.21.
+ *
+ * Copyright (c) 2021 Gini GmbH.
+ */
 class MavenPublishPlugin: Plugin<Project> {
 
     override fun apply(target: Project) {
