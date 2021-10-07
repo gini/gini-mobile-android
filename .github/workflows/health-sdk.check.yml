@@ -23,7 +23,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v2
         with:
-          name: health-sdk-instrumented-test-results
+          name: health-sdk-unit-test-results
           path: health-sdk/sdk/build/reports/tests
 
   android-lint:
