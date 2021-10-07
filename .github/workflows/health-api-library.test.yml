@@ -38,11 +38,21 @@ jobs:
           disable-animations: true
           script: echo "Generated AVD snapshot for caching."
 
-      - name: build and run tests
+      - name: run instrumented tests
+        env:
+          client_id: ${{ secrets.HEALTH_API_LIBRARY_TEST_CLIENT_ID }}
+          client_secret: ${{ secrets.HEALTH_API_LIBRARY_TEST_CLIENT_SECRET }}
+          api_uri: "https://pay-api.gini.net"
+          user_center_uri: "https://user.gini.net"
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ matrix.api-level }}
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: ./gradlew health-api-library:library:connectedCheck
+          script: >
+            ./gradlew
+            health-api-library:library:injectTestProperties
+            health-api-library:library:connectedCheck
+            -PtestClientId="$client_id" -PtestClientSecret="$client_secret"
+            -PtestApiUri="$api_uri" -PtestUserCenterUri="$user_center_uri"
