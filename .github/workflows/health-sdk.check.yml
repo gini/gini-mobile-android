@@ -26,48 +26,6 @@ jobs:
           name: health-sdk-instrumented-test-results
           path: health-sdk/sdk/build/reports/tests
 
-  checkstyle:
-    runs-on: ubuntu-latest
-    steps:
-      - name: checkout
-        uses: actions/checkout@v2
-
-      - uses: actions/setup-java@v2
-        with:
-          distribution: 'temurin'
-          java-version: '11'
-          cache: 'gradle'
-
-      - name: run checkstyle
-        run: ./gradlew health-sdk:sdk:checkstyle
-
-      - name: archive checkstyle report
-        uses: actions/upload-artifact@v2
-        with:
-          name: health-sdk-checkstyle-report
-          path: health-sdk/sdk/build/reports/checkstyle/*.html
-
-  pmd:
-    runs-on: ubuntu-latest
-    steps:
-      - name: checkout
-        uses: actions/checkout@v2
-
-      - uses: actions/setup-java@v2
-        with:
-          distribution: 'temurin'
-          java-version: '11'
-          cache: 'gradle'
-
-      - name: run pmd
-        run: ./gradlew health-sdk:sdk:pmd
-
-      - name: archive pmd report
-        uses: actions/upload-artifact@v2
-        with:
-          name: health-sdk-pmd-report
-          path: health-sdk/sdk/build/reports/pmd/*.html
-
   android-lint:
     runs-on: ubuntu-latest
     steps:
