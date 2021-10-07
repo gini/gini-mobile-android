@@ -41,8 +41,8 @@ jobs:
 
       - name: run instrumented tests
         env:
-          client_id: ${{ secrets.HEALTH_API_LIBRARY_TEST_CLIENT_ID }}
-          client_secret: ${{ secrets.HEALTH_API_LIBRARY_TEST_CLIENT_SECRET }}
+          client_id: gini-mobile-test
+          client_secret: ${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}
           api_uri: "https://pay-api.gini.net"
           user_center_uri: "https://user.gini.net"
         uses: reactivecircus/android-emulator-runner@v2
