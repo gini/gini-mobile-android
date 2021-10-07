@@ -26,6 +26,35 @@ jobs:
           name: health-sdk-unit-test-results
           path: health-sdk/sdk/build/reports/tests
 
+  build-example-app:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+          cache: 'gradle'
+
+      - name: inject credentials
+        env:
+          client_id: gini-mobile-test
+          client_secret: ${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}
+        run: |
+          mkdir -p health-sdk/example-app/src/main/resources
+          echo "clientId=$client_id\nclientSecret=$client_secret" > health-sdk/example-app/src/main/resources/client.properties
+
+      - name: build example app
+        run: ./gradlew health-sdk:example-app:assemble
+
+      - name: archive example app
+        uses: actions/upload-artifact@v2
+        with:
+          name: health-sdk-example-app
+          path: health-sdk/example-app/build/outputs/apk
+
   android-lint:
     runs-on: ubuntu-latest
     steps:
