@@ -38,16 +38,11 @@ jobs:
           java-version: '11'
           cache: 'gradle'
 
-      - name: inject credentials
+      - name: build example app
         env:
           client_id: gini-mobile-test
           client_secret: ${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}
-        run: |
-          mkdir -p health-sdk/example-app/src/main/resources
-          echo "clientId=$client_id\nclientSecret=$client_secret" > health-sdk/example-app/src/main/resources/client.properties
-
-      - name: build example app
-        run: ./gradlew health-sdk:example-app:assembleDebug
+        run: ./gradlew health-sdk:example-app:assembleDebug -PclientId="$client_id" -PclientSecret="$client_secret"
 
       - name: archive example app
         uses: actions/upload-artifact@v2

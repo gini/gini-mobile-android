@@ -54,7 +54,6 @@ jobs:
           disable-animations: true
           script: >
             ./gradlew
-            health-api-library:library:injectTestProperties
             health-api-library:library:connectedCheck
             -PtestClientId="$client_id" -PtestClientSecret="$client_secret"
             -PtestApiUri="$api_uri" -PtestUserCenterUri="$user_center_uri"
