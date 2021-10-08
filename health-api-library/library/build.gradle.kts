@@ -63,9 +63,17 @@ apply<PropertiesPlugin>()
 apply<CodeAnalysisPlugin>()
 
 tasks.register<CreatePropertiesTask>("injectTestProperties") {
+    val propertiesMap = mutableMapOf<String, String>()
+
+    doFirst {
+        propertiesMap.clear()
+        propertiesMap.putAll(readLocalPropertiesToMap(project,
+            listOf("testClientId", "testClientSecret", "testApiUri", "testUserCenterUri")))
+    }
+
     destinations.put(
         file("src/androidTest/assets/test.properties"),
-        readLocalPropertiesToMap(project, listOf("testClientId", "testClientSecret", "testApiUri", "testUserCenterUri"))
+        propertiesMap
     )
 }
 

@@ -63,9 +63,16 @@ dependencies {
 apply<PropertiesPlugin>()
 
 tasks.register<CreatePropertiesTask>("injectClientCredentials") {
+    val propertiesMap = mutableMapOf<String, String>()
+
+    doFirst {
+        propertiesMap.clear()
+        propertiesMap.putAll(readLocalPropertiesToMap(project, listOf("clientId", "clientSecret")))
+    }
+
     destinations.put(
         file("src/main/resources/client.properties"),
-        readLocalPropertiesToMap(project, listOf("clientId", "clientSecret"))
+        propertiesMap
     )
 }
 
