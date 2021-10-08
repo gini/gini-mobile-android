@@ -68,3 +68,9 @@ tasks.register<CreatePropertiesTask>("injectClientCredentials") {
         readLocalPropertiesToMap(project, listOf("clientId", "clientSecret"))
     )
 }
+
+afterEvaluate {
+    tasks.filter { it.name.startsWith("assemble", ignoreCase = true) }.forEach {
+        it.dependsOn(tasks.getByName("injectClientCredentials"))
+    }
+}
