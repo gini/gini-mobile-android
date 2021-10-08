@@ -69,5 +69,11 @@ tasks.register<CreatePropertiesTask>("injectTestProperties") {
     )
 }
 
+afterEvaluate {
+    tasks.filter { it.name.endsWith("test", ignoreCase = true) }.forEach {
+        it.dependsOn(tasks.getByName("injectTestProperties"))
+    }
+}
+
 // TODO: remove this?
 // apply from: rootProject.file('gradle/javadoc_coverage.gradle')
