@@ -1,3 +1,7 @@
+import net.gini.gradle.CreatePropertiesTask
+import net.gini.gradle.PropertiesPlugin
+import net.gini.gradle.readLocalPropertiesToMap
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -54,4 +58,13 @@ dependencies {
 
     androidTestImplementation(libs.androidx.test.junit)
     androidTestImplementation(libs.androidx.test.espresso.core)
+}
+
+apply<PropertiesPlugin>()
+
+tasks.register<CreatePropertiesTask>("injectClientCredentials") {
+    destinations.put(
+        file("src/main/resources/client.properties"),
+        readLocalPropertiesToMap(project, listOf("clientId", "clientSecret"))
+    )
 }

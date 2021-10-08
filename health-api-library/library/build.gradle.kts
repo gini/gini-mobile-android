@@ -1,7 +1,4 @@
-import net.gini.gradle.CodeAnalysisPlugin
-import net.gini.gradle.DokkaPlugin
-import net.gini.gradle.TestPropertiesPlugin
-import net.gini.gradle.TestPropertiesPluginExtension
+import net.gini.gradle.*
 
 plugins {
     id("com.android.library")
@@ -62,16 +59,14 @@ dependencies {
 
 apply<MavenPublishPlugin>()
 apply<DokkaPlugin>()
-apply<TestPropertiesPlugin>()
+apply<PropertiesPlugin>()
 apply<CodeAnalysisPlugin>()
 
-configure<TestPropertiesPluginExtension> {
-    properties.apply {
-        (project.properties["testClientId"] as? String)?.let { put("testClientId", it) }
-        (project.properties["testClientSecret"] as? String)?.let { put("testClientSecret", it) }
-        (project.properties["testApiUri"] as? String)?.let { put("testApiUri", it) }
-        (project.properties["testUserCenterUri"] as? String)?.let { put("testUserCenterUri", it) }
-    }
+tasks.register<CreatePropertiesTask>("injectTestProperties") {
+    destinations.put(
+        file("src/androidTest/assets/test.properties"),
+        readLocalPropertiesToMap(project, listOf("testClientId", "testClientSecret", "testApiUri", "testUserCenterUri"))
+    )
 }
 
 // TODO: remove this?
