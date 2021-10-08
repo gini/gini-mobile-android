@@ -65,7 +65,7 @@ private fun readProperties(project: Project, propertiesPath: String): Properties
     val propertiesFile = project.file(propertiesPath)
 
     if (!propertiesFile.exists()) {
-        throw IllegalArgumentException("No properties file set. Configure the LoadPropertiesTask and set a localPropertiesPath.")
+        return Properties()
     }
 
     val props = Properties()
