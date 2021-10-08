@@ -1,0 +1,32 @@
+{
+  "id": "${id}",
+  "creationDate": 1360623867402,
+  "name": "scanned.jpg",
+  "progress": "COMPLETED",
+  "origin": "UPLOAD",
+  "sourceClassification": "SCANNED",
+  "pageCount": 1,
+  "pages" : [
+    {
+      "images" : {
+        "750x900" : "http://pay-api.gini.net/documents/${id}/pages/1/750x900",
+        "1280x1810" : "http://pay-api.gini.net/documents/${id}/pages/1/1280x1810"
+      },
+      "pageNumber" : 1
+    }
+  ],
+  "_links": {
+    "extractions": "https://pay-api.gini.net/documents/${id}/extractions",
+    "layout": "https://pay-api.gini.net/documents/${id}/layout",
+    "document": "https://pay-api.gini.net/documents/${id}",
+    "processed": "https://pay-api.gini.net/documents/${id}/processed"
+  },
+  "compositeDocuments": [
+    {
+      "document": "https://pay-api.gini.net/documents/1111"
+    },
+    {
+      "document": "https://pay-api.gini.net/documents/2222"
+    }
+  ]
+}

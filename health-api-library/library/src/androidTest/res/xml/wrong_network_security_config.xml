@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <domain-config>
+        <trustkit-config
+            disableDefaultReportUri="true"
+            enforcePinning="true" />
+        <domain>pay-api.gini.net</domain>
+        <pin-set>
+            <!-- fotoueberweisung.net -->
+            <pin digest="SHA-256">5MrKlfPJKoIKf+SzQcuOisMuosa5SIo/nh/qFTYTJGs=</pin>
+            <!-- google.de -->
+            <pin digest="SHA-256">jbsPuaspgylMHjWVsJiG5ndgWC1S0H5QEzj1OTIDQgg=</pin>
+        </pin-set>
+        <domain-config>
+            <trustkit-config
+                disableDefaultReportUri="true"
+                enforcePinning="true" />
+            <domain>user.gini.net</domain>
+        </domain-config>
+    </domain-config>
+</network-security-config>

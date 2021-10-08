@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="GiniHealth" />
+
+    <style name="Root" />
+    <!-- Root styles shouldn't be overridden, instead override their descendant styles -->
+    <style name="Root.GiniHealth" />
+
+    <style name="Root.GiniHealth.PaymentInputLayoutStyle" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
+        <item name="boxStrokeColor">@color/ghs_input_box_stroke_color</item>
+        <item name="boxBackgroundColor">@color/ghs_input_box_background_color</item>
+        <item name="errorIconDrawable">@null</item>
+    </style>
+
+    <!-- Style for TextInputLayouts in ReviewFragment -->
+    <style name="GiniHealth.PaymentInputLayoutStyle" parent="Root.GiniHealth.PaymentInputLayoutStyle" />
+
+    <style name="Root.GiniHealth.PaymentInputStyle" parent="Widget.MaterialComponents.TextInputEditText.FilledBox">
+        <item name="android:paddingTop">25dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:paddingStart">0dp</item>
+        <item name="android:paddingEnd">0dp</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <!-- Style for TextInputEditTexts in ReviewFragment -->
+    <style name="GiniHealth.PaymentInputStyle" parent="Root.GiniHealth.PaymentInputStyle" />
+
+    <style name="Root.GiniHealth.PaymentInputStyle.Amount">
+        <item name="android:gravity">end</item>
+    </style>
+
+    <!-- Style for the amount TextInputEditText in ReviewFragment -->
+    <style name="GiniHealth.PaymentInputStyle.Amount" parent="Root.GiniHealth.PaymentInputStyle.Amount" />
+
+    <!-- Style for the ViewPager2 that displays the pages of the document in ReviewFragment -->
+    <style name="GiniHealth.DocumentPagerStyle" />
+
+    <style name="GiniHealth.DocumentListStyle" />
+
+    <style name="Root.GiniHealth.PagePhotoStyle">
+        <item name="android:paddingTop">@dimen/ghs_page_padding_top</item>
+    </style>
+
+    <!-- Style for ImageView that displays the page of a document in ReviewFragment -->
+    <style name="GiniHealth.PagePhotoStyle" parent="Root.GiniHealth.PagePhotoStyle" />
+
+    <style name="Root.GiniHealth.PageIndicatorStyle">
+        <item name="android:layout_marginBottom">16dp</item>
+    </style>
+
+    <!-- Style for the page indicator under the ViewPager in ReviewFragment -->
+    <style name="GiniHealth.PageIndicatorStyle" parent="Root.GiniHealth.PageIndicatorStyle" />
+
+    <style name="Root.GiniHealth.PageErrorText">
+        <item name="android:textColor">@color/ghs_page_error</item>
+    </style>
+
+    <!-- Style for error text that is displayed when loading a page fails -->
+    <style name="GiniHealth.PageErrorText" parent="Root.GiniHealth.PageErrorText" />
+
+    <!-- Style for retry button that is displayed when loading a page fails -->
+    <style name="GiniHealth.PageErrorRetry" parent="Widget.MaterialComponents.Button.OutlinedButton" />
+
+    <style name="Root.GiniHealth.PaymentDetailsCard">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/ghs_payment_details_background</item>
+        <item name="android:elevation">12dp</item>
+        <item name="android:paddingTop">@dimen/ghs_payment_details_padding_vertical</item>
+        <item name="android:paddingStart">@dimen/ghs_payment_details_padding_horizontal</item>
+        <item name="android:paddingEnd">@dimen/ghs_payment_details_padding_horizontal</item>
+        <item name="android:paddingBottom">0dp</item>
+    </style>
+
+    <!-- Style for the Payment Details card in ReviewFragment -->
+    <style name="GiniHealth.PaymentDetailsCard" parent="Root.GiniHealth.PaymentDetailsCard" />
+
+    <style name="Root.GiniHealth.BankButtonStyle" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:drawableLeft">@drawable/ic_bank</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:gravity">start|center_vertical</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="textAllCaps">false</item>
+        <item name="layout_constraintHorizontal_weight">.4</item>
+    </style>
+
+    <!-- Style for the bank button in ReviewFragment -->
+    <style name="GiniHealth.BankButtonStyle" parent="Root.GiniHealth.BankButtonStyle" />
+
+    <style name="Root.GiniHealth.PaymentButtonStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">@dimen/ghs_payment_button_spacing</item>
+        <item name="backgroundTint">@color/ghs_payment_button_background</item>
+        <item name="layout_constraintHorizontal_weight">.6</item>
+    </style>
+
+    <!-- Style for Pay button in ReviewFragment -->
+    <style name="GiniHealth.PaymentButtonStyle" parent="Root.GiniHealth.PaymentButtonStyle" />
+
+    <style name="Root.GiniHealth.PaymentButtonProgressStyle">
+        <item name="android:padding">8dp</item>
+        <item name="android:translationZ" tools:targetApi="lollipop">100dp</item>
+    </style>
+
+    <!-- Style for the progress indicator that is displayed on top of the Pay button in ReviewFragment -->
+    <style name="GiniHealth.PaymentButtonProgressStyle" parent="Root.GiniHealth.PaymentButtonProgressStyle" />
+
+    <style name="Root.GiniHealth.CloseButtonStyle" parent="Widget.AppCompat.ImageButton">
+        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:layout_marginEnd">16dp</item>
+        <item name="android:minWidth">50dp</item>
+        <item name="android:minHeight">50dp</item>
+        <item name="android:background">@drawable/ghs_close_button</item>
+    </style>
+
+    <!-- Style for close button in ReviewFragment -->
+    <style name="GiniHealth.CloseButtonStyle" parent="Root.GiniHealth.CloseButtonStyle"/>
+
+</resources>
