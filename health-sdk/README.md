@@ -36,12 +36,11 @@ Example Apps
 ### Health
 
 The health example app is in the `:health-sdk:example-app` module.
-It needs `health-sdk/example-app/src/main/resources/client.properties` with credentials:
+It needs `health-sdk/example-app/local.properties` with credentials:
 ```
 clientId=*******
 clientSecret=*******
 ```
-Note: `resources` needs to be a java resources folder, not a regular folder.
 
 ### Bank
 
