@@ -1,4 +1,4 @@
-package net.gini.android.core.models;
+package net.gini.android.core.api.models;
 
 import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 

@@ -1,0 +1,114 @@
+name: Check Health SDK
+on: [push]
+#  push:
+#    paths:
+#      - 'health-sdk/**'
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+          cache: 'gradle'
+
+      - name: run unit tests
+        run: ./gradlew health-sdk:sdk:test
+
+      - name: archive unit test results
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: health-sdk-unit-test-results
+          path: health-sdk/sdk/build/reports/tests
+
+  build-example-app:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+          cache: 'gradle'
+
+      - name: build example app
+        env:
+          client_id: gini-mobile-test
+          client_secret: ${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}
+        run: ./gradlew health-sdk:example-app:assembleDebug -PclientId="$client_id" -PclientSecret="$client_secret"
+
+      - name: archive example app
+        uses: actions/upload-artifact@v2
+        with:
+          name: health-sdk-example-app
+          path: health-sdk/example-app/build/outputs/apk
+
+  android-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+          cache: 'gradle'
+
+      - name: run android lint
+        run: ./gradlew health-sdk:sdk:lint
+
+      - name: archive android lint report
+        uses: actions/upload-artifact@v2
+        with:
+          name: health-sdk-android-lint-report
+          path: health-sdk/sdk/build/reports/lint-results*.html
+
+  detekt:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+          cache: 'gradle'
+
+      - name: run detekt
+        run: ./gradlew health-sdk:sdk:detekt
+
+      - name: archive detekt report
+        uses: actions/upload-artifact@v2
+        with:
+          name: health-sdk-detekt-report
+          path: health-sdk/sdk/build/reports/detekt/*.html
+
+  ktlint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+          cache: 'gradle'
+
+      - name: run ktlint
+        run: ./gradlew health-sdk:sdk:ktlintCheck
+
+      - name: archive ktlint report
+        uses: actions/upload-artifact@v2
+        with:
+          name: health-sdk-ktlint-report
+          path: health-sdk/sdk/build/reports/ktlint/**/*.html

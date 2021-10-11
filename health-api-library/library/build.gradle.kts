@@ -1,6 +1,4 @@
-import net.gini.gradle.CodeAnalysisPlugin
-import net.gini.gradle.DokkaPlugin
-import net.gini.gradle.TestPropertiesPlugin
+import net.gini.gradle.*
 
 plugins {
     id("com.android.library")
@@ -61,8 +59,29 @@ dependencies {
 
 apply<MavenPublishPlugin>()
 apply<DokkaPlugin>()
-apply<TestPropertiesPlugin>()
+apply<PropertiesPlugin>()
 apply<CodeAnalysisPlugin>()
+
+tasks.register<CreatePropertiesTask>("injectTestProperties") {
+    val propertiesMap = mutableMapOf<String, String>()
+
+    doFirst {
+        propertiesMap.clear()
+        propertiesMap.putAll(readLocalPropertiesToMap(project,
+            listOf("testClientId", "testClientSecret", "testApiUri", "testUserCenterUri")))
+    }
+
+    destinations.put(
+        file("src/androidTest/assets/test.properties"),
+        propertiesMap
+    )
+}
+
+afterEvaluate {
+    tasks.filter { it.name.endsWith("test", ignoreCase = true) }.forEach {
+        it.dependsOn(tasks.getByName("injectTestProperties"))
+    }
+}
 
 // TODO: remove this?
 // apply from: rootProject.file('gradle/javadoc_coverage.gradle')

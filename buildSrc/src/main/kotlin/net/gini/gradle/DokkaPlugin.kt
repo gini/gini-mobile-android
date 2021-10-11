@@ -10,6 +10,11 @@ import org.gradle.kotlin.dsl.getByName
 import org.gradle.kotlin.dsl.getByType
 import org.jetbrains.dokka.gradle.DokkaTask
 
+/**
+ * Created by Alpár Szotyori on 30.09.21.
+ *
+ * Copyright (c) 2021 Gini GmbH.
+ */
 class DokkaPlugin: Plugin<Project> {
 
     override fun apply(target: Project) {

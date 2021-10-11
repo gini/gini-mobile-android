@@ -1,3 +1,7 @@
+import net.gini.gradle.CreatePropertiesTask
+import net.gini.gradle.PropertiesPlugin
+import net.gini.gradle.readLocalPropertiesToMap
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -54,4 +58,26 @@ dependencies {
 
     androidTestImplementation(libs.androidx.test.junit)
     androidTestImplementation(libs.androidx.test.espresso.core)
+}
+
+apply<PropertiesPlugin>()
+
+tasks.register<CreatePropertiesTask>("injectClientCredentials") {
+    val propertiesMap = mutableMapOf<String, String>()
+
+    doFirst {
+        propertiesMap.clear()
+        propertiesMap.putAll(readLocalPropertiesToMap(project, listOf("clientId", "clientSecret")))
+    }
+
+    destinations.put(
+        file("src/main/resources/client.properties"),
+        propertiesMap
+    )
+}
+
+afterEvaluate {
+    tasks.filter { it.name.startsWith("assemble", ignoreCase = true) }.forEach {
+        it.dependsOn(tasks.getByName("injectClientCredentials"))
+    }
 }

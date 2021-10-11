@@ -23,9 +23,9 @@ import androidx.annotation.VisibleForTesting;
 public class DocumentMetadata {
 
     @VisibleForTesting
-    static final String HEADER_FIELD_NAME_PREFIX = "X-Document-Metadata-";
+    public static final String HEADER_FIELD_NAME_PREFIX = "X-Document-Metadata-";
     @VisibleForTesting
-    static final String BRANCH_ID_HEADER_FIELD_NAME = HEADER_FIELD_NAME_PREFIX + "BranchId";
+    public static final String BRANCH_ID_HEADER_FIELD_NAME = HEADER_FIELD_NAME_PREFIX + "BranchId";
 
 
     private final Map<String, String> mMetadataMap = new HashMap<>();
@@ -45,7 +45,7 @@ public class DocumentMetadata {
     }
 
     @VisibleForTesting
-    DocumentMetadata(@Nullable CharsetEncoder charsetEncoder) {
+    public DocumentMetadata(@Nullable CharsetEncoder charsetEncoder) {
         mAsciiCharsetEncoder = charsetEncoder;
     }
 
@@ -64,7 +64,7 @@ public class DocumentMetadata {
     }
 
     @VisibleForTesting
-    boolean isASCIIEncodable(@NonNull final String string) {
+    public boolean isASCIIEncodable(@NonNull final String string) {
         if (mAsciiCharsetEncoder != null) {
             return mAsciiCharsetEncoder.canEncode(string);
         }
@@ -99,7 +99,8 @@ public class DocumentMetadata {
     }
 
     @NonNull
-    Map<String, String> getMetadata() {
+    @VisibleForTesting
+    public Map<String, String> getMetadata() {
         return mMetadataMap;
     }
 }

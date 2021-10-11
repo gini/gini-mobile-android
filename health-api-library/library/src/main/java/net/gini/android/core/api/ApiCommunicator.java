@@ -35,6 +35,8 @@ import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
+
 import bolts.Task;
 
 
@@ -48,9 +50,10 @@ public class ApiCommunicator {
 
     private final GiniApiType mGiniApiType;
     private final Uri mBaseUri;
-    final RequestQueue mRequestQueue; // Visible for testing
-    // Visible for testing
-    final RetryPolicyFactory mRetryPolicyFactory;
+    @VisibleForTesting
+    public final RequestQueue mRequestQueue; // Visible for testing
+    @VisibleForTesting
+    public final RetryPolicyFactory mRetryPolicyFactory;
 
     public ApiCommunicator(final String baseUriString,
             final GiniApiType giniApiType,

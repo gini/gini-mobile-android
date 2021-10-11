@@ -1,4 +1,4 @@
-package net.gini.android;
+package net.gini.android.core.api;
 
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;

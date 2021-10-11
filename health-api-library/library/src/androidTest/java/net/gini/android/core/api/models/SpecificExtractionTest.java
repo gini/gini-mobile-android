@@ -1,4 +1,4 @@
-package net.gini.android.core.models;
+package net.gini.android.core.api.models;
 
 import static net.gini.android.helpers.ParcelHelper.doRoundTrip;
 

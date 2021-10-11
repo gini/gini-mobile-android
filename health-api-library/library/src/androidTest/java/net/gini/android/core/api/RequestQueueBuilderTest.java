@@ -1,4 +1,4 @@
-package net.gini.android;
+package net.gini.android.core.api;
 
 import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 
