@@ -1,8 +1,8 @@
 name: Check Health API Library
-on: [push]
-#  push:
-#    paths:
-#      - 'health-api-library/**'
+on:
+  push:
+    paths:
+      - 'health-api-library/**'
 jobs:
   test:
     runs-on: macos-latest
