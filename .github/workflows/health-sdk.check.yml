@@ -1,8 +1,8 @@
 name: Check Health SDK
-on: [push]
-#  push:
-#    paths:
-#      - 'health-sdk/**'
+on:
+  push:
+    paths:
+      - 'health-sdk/**'
 jobs:
   test:
     runs-on: ubuntu-latest
