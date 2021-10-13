@@ -3,6 +3,8 @@ on:
   push:
     paths:
       - 'health-sdk/**'
+    tags:
+      - 'health-sdk;**'
 jobs:
   test:
     runs-on: ubuntu-latest
