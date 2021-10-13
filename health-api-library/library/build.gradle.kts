@@ -57,7 +57,7 @@ dependencies {
     androidTestImplementation(libs.androidx.multidex)
 }
 
-apply<MavenPublishPlugin>()
+apply<PublishToMavenPlugin>()
 apply<DokkaPlugin>()
 apply<PropertiesPlugin>()
 apply<CodeAnalysisPlugin>()

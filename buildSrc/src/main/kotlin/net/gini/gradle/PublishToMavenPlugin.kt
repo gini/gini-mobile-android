@@ -15,7 +15,7 @@ import java.net.URI
  *
  * Copyright (c) 2021 Gini GmbH.
  */
-class MavenPublishPlugin: Plugin<Project> {
+class PublishToMavenPlugin: Plugin<Project> {
 
     override fun apply(target: Project) {
         target.plugins.apply("maven-publish")
@@ -51,10 +51,10 @@ class MavenPublishPlugin: Plugin<Project> {
                         // Customizes attributes of the publication
                         val groupId: String by target
                         val artifactId: String by target
-                        val version: String by target
+                        val versionName: String by target
                         this.groupId = groupId
                         this.artifactId = artifactId
-                        this.version = version
+                        this.version = versionName
                     }
                 }
 
@@ -77,8 +77,6 @@ class MavenPublishPlugin: Plugin<Project> {
 
                     addMavenRepository(repoUrlPropertyName = "mavenOpenRepoUrl", repoName = "open")
                     addMavenRepository(repoUrlPropertyName = "mavenSnapshotsRepoUrl", repoName = "snapshots")
-                    addMavenRepository(repoUrlPropertyName = "mavenLocalRepoUrl", repoName = "local",
-                        requiresCredentials = false)
                 }
             }
         }
