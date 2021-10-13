@@ -1,10 +1,13 @@
 name: Check Health SDK
+
 on:
   push:
     paths:
       - 'health-sdk/**'
-    tags:
-      - 'health-sdk;**'
+    tags-ignore:
+      - '**'
+  workflow_call:
+
 jobs:
   test:
     runs-on: ubuntu-latest
