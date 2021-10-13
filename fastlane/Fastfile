@@ -33,7 +33,7 @@ platform :android do
     (project_id, module_id, git_tag, build_number) = 
       check_and_get_options(options, [:project_id, :module_id, :git_tag, :build_number], UI)
 
-    version = get_example_app_version(project_id, "example-app", git_tag, UI)
+    version = get_project_version(project_id, git_tag, UI)
 
     UI.message "Will release to Maven Central module :#{project_id}:#{module_id} with version #{version} and build number #{build_number}"
     
