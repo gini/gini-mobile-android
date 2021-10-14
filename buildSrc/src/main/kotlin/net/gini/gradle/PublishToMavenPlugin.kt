@@ -20,6 +20,17 @@ import java.util.*
 class PublishToMavenPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
+        configureMavenPublish(target)
+
+        target.tasks.create("printVersion") {
+            doLast {
+                val version: String by target
+                println(version)
+            }
+        }
+    }
+
+    private fun configureMavenPublish(target: Project) {
         target.plugins.apply("maven-publish")
 
         val sourcesJar = target.tasks.register<Jar>("sourcesJar") {
@@ -53,10 +64,10 @@ class PublishToMavenPlugin : Plugin<Project> {
                         // Customizes attributes of the publication
                         val groupId: String by target
                         val artifactId: String by target
-                        val versionName: String by target
+                        val version: String by target
                         this.groupId = groupId
                         this.artifactId = artifactId
-                        this.version = versionName
+                        this.version = version
                     }
                 }
 
@@ -76,29 +87,29 @@ class PublishToMavenPlugin : Plugin<Project> {
                                     credentials {
                                         username = properties["repoUser"] as? String ?: throw InvalidUserDataException(
                                             """
-                                                Missing maven repo username for "$repoUrl". 
-                                                You need to pass it in using "-PrepoUser=<user>".
-                                            """.trimIndent()
+                                                    Missing maven repo username for "$repoUrl". 
+                                                    You need to pass it in using "-PrepoUser=<user>".
+                                                """.trimIndent()
                                         )
 
                                         password =
                                             properties["repoPassword"] as? String ?: throw InvalidUserDataException(
                                                 """
-                                                Missing maven repo password for "$repoUrl". 
-                                                You need to pass it in using "-PrepoPassword=<password>".
-                                            """.trimIndent()
+                                                    Missing maven repo password for "$repoUrl". 
+                                                    You need to pass it in using "-PrepoPassword=<password>".
+                                                """.trimIndent()
                                             )
                                     }
                                 }
                             }
                         } ?: if (required) logger.warn(
                             """
-                                WARNING:
-                                Missing property "$repoUrlPropertyName".
-                                You need to pass it in using "-P$repoUrlPropertyName=<url>" to be able to 
-                                use the "publishReleasePublicationTo${repoName.capitalize(Locale.getDefault())}Repository" task.
-                                
-                            """.trimIndent()
+                                    WARNING:
+                                    Missing property "$repoUrlPropertyName".
+                                    You need to pass it in using "-P$repoUrlPropertyName=<url>" to be able to 
+                                    use the "publishReleasePublicationTo${repoName.capitalize(Locale.getDefault())}Repository" task.
+                                    
+                                """.trimIndent()
                         )
                     }
 
