@@ -70,6 +70,6 @@ dependencies {
     androidTestImplementation(libs.androidx.test.espresso.core)
 }
 
-apply<MavenPublishPlugin>()
+apply<PublishToMavenPlugin>()
 apply<DokkaPlugin>()
 apply<CodeAnalysisPlugin>()
