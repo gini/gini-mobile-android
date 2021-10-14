@@ -29,11 +29,15 @@ jobs:
           ruby-version: 2.7
           bundler-cache: true
 
-      - uses: maierj/fastlane-action@v2.0.1
+      - name: "publish to gini's maven repo at https://repo.gini.net/nexus/content/repositories/open"
+        uses: maierj/fastlane-action@v2.0.1
         with:
-          lane: 'publish_to_maven'
+          lane: 'publish_to_maven_repo'
           options: >
             { 
+              "repo_url": "https://repo.gini.net/nexus/content/repositories/open",
+              "repo_user": "${{ secrets.GINI_EXTERNAL_NEXUS_USER }}",
+              "repo_password": "${{ secrets.GINI_EXTERNAL_NEXUS_PASSWORD }}",
               "project_id": "health-api-library", 
               "module_id": "library", 
               "build_number": "${{ github.run_number }}",
