@@ -1,6 +1,7 @@
 package net.gini.gradle
 
 import com.android.build.gradle.LibraryExtension
+import org.gradle.api.InvalidUserDataException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.publish.PublishingExtension
@@ -9,13 +10,14 @@ import org.gradle.api.tasks.bundling.Jar
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.dokka.gradle.DokkaTask
 import java.net.URI
+import java.util.*
 
 /**
  * Created by Alpár Szotyori on 30.09.21.
  *
  * Copyright (c) 2021 Gini GmbH.
  */
-class PublishToMavenPlugin: Plugin<Project> {
+class PublishToMavenPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
         target.plugins.apply("maven-publish")
@@ -60,22 +62,51 @@ class PublishToMavenPlugin: Plugin<Project> {
 
                 repositories {
 
-                    fun addMavenRepository(repoUrlPropertyName: String, repoName: String, requiresCredentials: Boolean = true) {
-                        project.properties[repoUrlPropertyName]?.let { repoUrl ->
+                    fun addMavenRepository(
+                        repoUrlPropertyName: String,
+                        repoName: String,
+                        requiresCredentials: Boolean = true,
+                        required: Boolean = false
+                    ) {
+                        properties[repoUrlPropertyName]?.let { repoUrl ->
                             maven {
                                 name = repoName
                                 url = URI.create(repoUrl as String)
                                 if (requiresCredentials) {
                                     credentials {
-                                        username = project.properties["repoUser"] as? String ?: "invalidUsername"
-                                        password = project.properties["repoPassword"] as? String ?: "invalidPassword"
+                                        username = properties["repoUser"] as? String ?: throw InvalidUserDataException(
+                                            """
+                                                Missing maven repo username for "$repoUrl". 
+                                                You need to pass it in using "-PrepoUser=<user>".
+                                            """.trimIndent()
+                                        )
+
+                                        password =
+                                            properties["repoPassword"] as? String ?: throw InvalidUserDataException(
+                                                """
+                                                Missing maven repo password for "$repoUrl". 
+                                                You need to pass it in using "-PrepoPassword=<password>".
+                                            """.trimIndent()
+                                            )
                                     }
                                 }
                             }
-                        }
+                        } ?: if (required) logger.warn(
+                            """
+                                WARNING:
+                                Missing property "$repoUrlPropertyName".
+                                You need to pass it in using "-P$repoUrlPropertyName=<url>" to be able to 
+                                use the "publishReleasePublicationTo${repoName.capitalize(Locale.getDefault())}Repository" task.
+                                
+                            """.trimIndent()
+                        )
                     }
 
-                    addMavenRepository(repoUrlPropertyName = "mavenOpenRepoUrl", repoName = "open")
+                    addMavenRepository(
+                        repoUrlPropertyName = "mavenReleasesRepoUrl",
+                        repoName = "releases",
+                        required = true
+                    )
                     addMavenRepository(repoUrlPropertyName = "mavenSnapshotsRepoUrl", repoName = "snapshots")
                 }
             }
@@ -83,4 +114,3 @@ class PublishToMavenPlugin: Plugin<Project> {
     }
 
 }
-
