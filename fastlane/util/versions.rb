@@ -5,7 +5,7 @@
 #
 # Halts and prints an error if the project id is not in the tag.
 #
-def get_project_version(project_id, tag, ui)
+def get_project_version_from_tag(project_id, tag, ui)
   tag = normalize_tag(tag)
   components = tag.split(';')
 
@@ -27,7 +27,7 @@ end
 #
 # Halts and prints an error if the project id or example app id is not in the tag.
 #
-def get_example_app_version(project_id, example_app_id, tag, ui)
+def get_example_app_version_from_tag(project_id, example_app_id, tag, ui)
   tag = normalize_tag(tag)
   components = tag.split(';')
 
@@ -48,4 +48,12 @@ end
 
 def normalize_tag(tag)
   tag.delete_prefix("refs/tags/")
+end
+
+##
+# Retrieve the version from the project's "gradle.properties" file.
+#
+def get_project_version_from_gradle(project_id, module_id)
+  version = sh("cd .. && ./gradlew #{project_id}:#{module_id}:printVersion -q")
+  version.strip
 end
