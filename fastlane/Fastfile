@@ -13,7 +13,7 @@
 # Uncomment the line if you want fastlane to automatically update itself
 # update_fastlane         
 
-load 'util/tags.rb'
+load 'util/versions.rb'
 load 'util/lanes.rb'
 
 default_platform(:android)
@@ -36,20 +36,30 @@ platform :android do
     (repo_url, repo_user, repo_password, project_id, module_id, git_tag, build_number) = 
       check_and_get_options(options, [:repo_url, :repo_user, :repo_password, :project_id, :module_id, :git_tag, :build_number], UI)
 
-    version = get_project_version(project_id, git_tag, UI)
+    tag_version = get_project_version_from_tag(project_id, git_tag, UI)
+    project_version = get_project_version_from_gradle(project_id, module_id)
+
+    if tag_version != project_version
+      UI.abort_with_message!  <<~MESSAGE
+        Version in the tag is different from the project version:
+          * tag       : #{tag_version}
+          * project   : #{project_version}
+        
+        Change the version in the tag or update the project's version in "#{project_id}/#{module_id}/gradle.properties".
+      MESSAGE
+    end
     
     UI.message <<~MESSAGE
       Will release to a maven repository:
         * repository url  : #{repo_url}
         * gradle module   : #{project_id}:#{module_id}
-        * version         : #{version}
+        * version         : #{project_version}
         * build number    : #{build_number} 
     MESSAGE
 
     gradle(
       task: "#{project_id}:#{module_id}:publishReleasePublicationToReleasesRepository",
       properties: { 
-        "versionName" => version, 
         "versionCode" => build_number,
         "mavenReleasesRepoUrl" => repo_url,
         "repoUser" => repo_user,
@@ -61,7 +71,7 @@ platform :android do
       Successfully released to a maven repository:
         * repository url  : #{repo_url}
         * gradle module   : #{project_id}:#{module_id}
-        * version         : #{version}
+        * version         : #{project_version}
         * build number    : #{build_number} 
     MESSAGE
   end
