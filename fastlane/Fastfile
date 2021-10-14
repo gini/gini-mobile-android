@@ -21,29 +21,49 @@ default_platform(:android)
 platform :android do
 
   desc <<~DOC
-    Publish a project to Maven Central.
+    Publish a project to a maven repository.
     
     Parameters:
+      repo_url      - the url of the maven repository
+      repo_user     - the username to use for authentication
+      repo_password - the password to use for authentication
       project_id    - the id of the project to be released (e.g., health-sdk, health-api-lib)"
       module_id     - the id of the project's module to be released (e.g., sdk, lib)"
       git_tag       - the git tag name used to release the project
       build_number  - the build number to use in the release"
   DOC
-  lane :publish_to_maven do |options|
-    (project_id, module_id, git_tag, build_number) = 
-      check_and_get_options(options, [:project_id, :module_id, :git_tag, :build_number], UI)
+  lane :publish_to_maven_repo do |options|
+    (repo_url, repo_user, repo_password, project_id, module_id, git_tag, build_number) = 
+      check_and_get_options(options, [:repo_url, :repo_user, :repo_password, :project_id, :module_id, :git_tag, :build_number], UI)
 
     version = get_project_version(project_id, git_tag, UI)
-
-    UI.message "Will release to Maven Central module :#{project_id}:#{module_id} with version #{version} and build number #{build_number}"
     
-    # TODO: release to maven central
+    UI.message <<~MESSAGE
+      Will release to a maven repository:
+        * repository url  : #{repo_url}
+        * gradle module   : #{project_id}:#{module_id}
+        * version         : #{version}
+        * build number    : #{build_number} 
+    MESSAGE
+
     gradle(
-      task: "#{project_id}:#{module_id}:publishReleasePublicationToMavenLocal",
-      properties: { "versionName" => version, "versionCode" => build_number }
+      task: "#{project_id}:#{module_id}:publishReleasePublicationToReleasesRepository",
+      properties: { 
+        "versionName" => version, 
+        "versionCode" => build_number,
+        "mavenReleasesRepoUrl" => repo_url,
+        "repoUser" => repo_user,
+        "repoPassword" => repo_password
+      }
     )
 
-    UI.success "Released to Maven Central module :#{project_id}:#{module_id} with version #{version} and build number #{build_number}"
+    UI.success <<~MESSAGE
+      Successfully released to a maven repository:
+        * repository url  : #{repo_url}
+        * gradle module   : #{project_id}:#{module_id}
+        * version         : #{version}
+        * build number    : #{build_number} 
+    MESSAGE
   end
 
 end

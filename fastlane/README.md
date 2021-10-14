@@ -16,13 +16,16 @@ or alternatively using `brew install fastlane`
 
 # Available Actions
 ## Android
-### android publish_to_maven
+### android publish_to_maven_repo
 ```
-fastlane android publish_to_maven
+fastlane android publish_to_maven_repo
 ```
-Publish a project to Maven Central.
+Publish a project to a maven repository.
 
 Parameters:
+  repo_url      - the url of the maven repository
+  repo_user     - the username to use for authentication
+  repo_password - the password to use for authentication
   project_id    - the id of the project to be released (e.g., health-sdk, health-api-lib)"
   module_id     - the id of the project's module to be released (e.g., sdk, lib)"
   git_tag       - the git tag name used to release the project
