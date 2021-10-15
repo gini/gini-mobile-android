@@ -16,7 +16,8 @@ android {
         // Use the test runner with JUnit4 support
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField("String", "VERSION_NAME", "\"${version}\"")
+        buildConfigField("String", "VERSION_NAME", "\"$version\"")
+        buildConfigField("String", "VERSION_CODE", "\"${properties["versionCode"]}\"")
     }
     buildTypes {
         getByName("debug") {
@@ -57,7 +58,7 @@ dependencies {
     androidTestImplementation(libs.androidx.multidex)
 }
 
-apply<MavenPublishPlugin>()
+apply<PublishToMavenPlugin>()
 apply<DokkaPlugin>()
 apply<PropertiesPlugin>()
 apply<CodeAnalysisPlugin>()

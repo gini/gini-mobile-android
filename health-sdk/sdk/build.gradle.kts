@@ -17,9 +17,8 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
 
-        // TODO: inject version code and name
-//        buildConfigField("int', 'VERSION_CODE', "${rootProject.ext.versionCode}"
-//        buildConfigField("String', 'VERSION_NAME', "\"${rootProject.ext.versionName}\""
+        buildConfigField("String", "VERSION_NAME", "\"$version\"")
+        buildConfigField("String", "VERSION_CODE", "\"${properties["versionCode"]}\"")
     }
 
     buildFeatures {
@@ -71,6 +70,6 @@ dependencies {
     androidTestImplementation(libs.androidx.test.espresso.core)
 }
 
-apply<MavenPublishPlugin>()
+apply<PublishToMavenPlugin>()
 apply<DokkaPlugin>()
 apply<CodeAnalysisPlugin>()
