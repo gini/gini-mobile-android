@@ -1,12 +1,12 @@
 Flow
 ====
 
-``GiniBusiness`` is the main class for interacting with the Gini Health SDK.
+``GiniHealth`` is the main class for interacting with the Gini Health SDK.
 It provides a way to submit a document for reviewing its extracted payment details and
 let's the user make the payment with one of the payment providers.
 
 The recommended flow is to:
- 1. Call ``GiniBusiness.checkRequirements()`` to make sure that the flow can be completed.
+ 1. Call ``GiniHealth.checkRequirements()`` to make sure that the flow can be completed.
  2. Call one of the overloads of ``setDocumentForReview``, to submit a document.
  3. Display ``ReviewFragment``.
 
@@ -44,17 +44,17 @@ To instantiate it you need to create a ``FragmentFactory`` and set it to fragmen
 
 .. code-block:: kotlin
 
-    class ReviewFragmentFactory(private val giniBusiness: GiniBusiness) : FragmentFactory() {
+    class ReviewFragmentFactory(private val giniHealth: GiniHealth) : FragmentFactory() {
         override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
-            return ReviewFragment(giniBusiness)
+            return ReviewFragment(giniHealth)
         }
     }
 
-    supportFragmentManager.fragmentFactory = ReviewFragmentFactory(giniBusiness)
+    supportFragmentManager.fragmentFactory = ReviewFragmentFactory(giniHealth)
 
 
 ReviewFragment handles errors by default, displaying snackbars for errors, but it
-can be configured to ignore them, in which case all flows of ``GiniBusiness`` should
+can be configured to ignore them, in which case all flows of ``GiniHealth`` should
 be observed for errors.
 
 

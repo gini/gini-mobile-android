@@ -2,8 +2,8 @@
 License
 =======
 
-The Gini Health SDK are licensed under a Private License and
-also integrate several third party libraries. 
+The Gini Health SDK for Android is licensed under a Private License and
+also integrates several third party libraries. 
 
 .. IMPORTANT::
    Always make sure to ship all license notices and permissions with your application.

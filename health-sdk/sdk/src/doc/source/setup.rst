@@ -7,6 +7,8 @@ Installation
 To install add our Maven repo to the root build.gradle file and add it as a dependency to your app
 module's build.gradle.
 
+TODO: update this section after we have released to Maven Central
+
 build.gradle:
 
 .. code-block:: groovy
@@ -22,7 +24,7 @@ app/build.gradle:
 .. code-block:: groovy
 
     dependencies {
-        implementation 'net.gini:gini-pay-business-sdk:1.0.5'
+        implementation 'net.gini:gini-health-sdk:1.0.5'
     }
 
 Gini Pay Deep Link For Your App
@@ -32,6 +34,8 @@ In order for banking apps to be able to return the user to your app after the pa
 register one of your activities to respond to a deep link scheme known by the Gini Pay API.
 
 You should already have a scheme and host from us. Please contact us in case you don't have them.
+
+TODO: update scheme once we updated it on the backend for the gini-mobile-test client id
 
 The following is an example for the deep link ``ginipay-business://payment-requester``:
 
