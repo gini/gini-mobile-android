@@ -2,12 +2,12 @@
 License
 =======
 
-The Android SDK for the Gini API is licensed under a MIT/Expat license. Please
+The Gini Health API Library for Android is licensed under an MIT/Expat license. Please
 make sure to ship all license notices and permissions with your application.
 
 ::
 
-   Copyright (c) 2014-2019 Gini GmbH
+   Copyright (c) 2014-2021 Gini GmbH
    
    Permission is hereby granted, free of charge, to any person obtaining a copy
    of this software and associated documentation files (the "Software"), to deal

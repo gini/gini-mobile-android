@@ -1,5 +1,5 @@
-Gini Pay API Library for Android documentation
-==================================
+Gini Health API Library for Android documentation
+=================================================
 
 How to build from source
 ------------------------

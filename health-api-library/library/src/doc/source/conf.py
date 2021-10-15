@@ -45,7 +45,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'Gini Pay API Library for Android'
+project = u'Gini Health API Library for Android'
 copyright = u'2014-2021, Gini GmbH'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -182,12 +182,12 @@ html_show_copyright = False
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'GiniAPIdoc'
+htmlhelp_basename = 'GiniHealthAPILibraryAndroidDoc'
 
 
 # -- Options for LaTeX output ---------------------------------------------
 
-latex_elements = {
+#latex_elements = {
 # The paper size ('letterpaper' or 'a4paper').
 #'papersize': 'letterpaper',
 
@@ -196,15 +196,15 @@ latex_elements = {
 
 # Additional stuff for the LaTeX preamble.
 #'preamble': '',
-}
+#}
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
-latex_documents = [
-  ('index', 'GiniAPI.tex', u'Gini API Documentation',
-   u'Gini', 'manual'),
-]
+# latex_documents = [
+#   ('index', 'GiniHealthAPILibraryAndroid.tex', u'Gini API Documentation',
+#    u'Gini', 'manual'),
+# ]
 
 # The name of an image file (relative to this directory) to place at the top of
 # the title page.
@@ -231,10 +231,10 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [
-    ('index', 'giniapi', u'Gini API Documentation',
-     [u'Gini'], 1)
-]
+# man_pages = [
+#     ('index', 'giniapi', u'Gini API Documentation',
+#      [u'Gini'], 1)
+# ]
 
 # If true, show URL addresses after external links.
 #man_show_urls = False
@@ -245,11 +245,11 @@ man_pages = [
 # Grouping the document tree into Texinfo files. List of tuples
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
-texinfo_documents = [
-  ('index', 'GiniAPI', u'Gini API Documentation',
-   u'Gini', 'GiniAPI', 'One line description of project.',
-   'Miscellaneous'),
-]
+# texinfo_documents = [
+#   ('index', 'GiniAPI', u'Gini API Documentation',
+#    u'Gini', 'GiniAPI', 'One line description of project.',
+#    'Miscellaneous'),
+# ]
 
 # Documents to append as an appendix to all manuals.
 #texinfo_appendices = []
