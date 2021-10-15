@@ -106,7 +106,8 @@ html_theme = 'gini_sphinx_theme'
 # further.  For a list of options available for each theme, see the
 # documentation.
 html_theme_options = {
-    "google_analytics_id": os.environ.get("GOOGLE_ANALYTICS_ID")
+    "google_analytics_id": os.environ.get("GOOGLE_ANALYTICS_ID"),
+    "logo_path": "_static/logo_flat.png"
 }
 
 # Add any paths that contain custom themes here, relative to this directory.

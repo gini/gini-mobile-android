@@ -1,3 +1,5 @@
+![Gini Health API Library for Android](./logo.png)
+
 Gini Health API Library for Android
 ===================================
 
