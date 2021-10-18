@@ -4,39 +4,32 @@
 Working with Tasks
 ==================
 
-The Gini Pay API Library makes heavy use of the concept of tasks. Tasks are convenient when you want to
-execute work in succession, each one waiting for the previous to finish (comparable to
-Promises in JavaScript). This is a common pattern when working with Gini's remote API. The Gini
-Android SDK uses `facebook's task implementation, which is called bolts
-<https://github.com/BoltsFramework/Bolts-Android>`_. Before you continue reading this guide, we
-strongly encourage you to read the `short guide for the Bolts framework
+The Gini Health API Library makes heavy use of the concept of tasks. Tasks are convenient when you want to execute work
+in succession, each one waiting for the previous to finish (comparable to Promises in JavaScript). This is a common
+pattern when working with Gini's remote APIs. The Gini Health API Library uses `facebook's task implementation, which is
+called bolts <https://github.com/BoltsFramework/Bolts-Android>`_. Before you continue reading this guide, we strongly
+encourage you to read the `short guide for the Bolts framework
 <https://github.com/BoltsFramework/Bolts-Android/blob/master/Readme.md#tasks>`_.
 
 Upload a document
 =================
 
-As the key aspect of the Gini API is to provide information extraction for analyzing documents, the
+As the key aspect of the Gini Health API is to provide information extraction for analyzing documents, the
 API is mainly built around the concept of documents. A document can be any written representation of
 information such as invoices, reminders, contracts and so on.
 
-The Gini Pay API Library supports creating documents from images, PDFs or UTF-8 encoded text. Images are
+The Gini Health API Library supports creating documents from images, PDFs or UTF-8 encoded text. Images are
 usually a picture of a paper document which was taken with the device's camera.
 
 The following example shows how to create a new document from a byte array containing a JPEG image.
 
 .. code-block:: java
-
-    import net.gini.android.health.api.Gini;
-    import net.gini.android.DocumentTaskManager;
-    import net.gini.android.core.api.models.Document;
     
-    ...
-    
-    // Assuming that `gini` is an instance of the `Gini` facade class and `imageBytes`
+    // Assuming that `giniHealthApi` is an instance of the `GiniHealthAPI` facade class and `imageBytes`
     // is an instance of a byte array containing a JPEG image, 
     // e.g. from a picture taken by the camera
     
-    DocumentTaskManager documentTaskManager = gini.getDocumentTaskManager();
+    DocumentTaskManager documentTaskManager = giniHealthApi.getDocumentTaskManager();
     documentTaskManager.createPartialDocument(imageBytes, "image/jpeg", "myFirstDocument.jpg", null)
         .onSuccess(new Continuation<Document, Void>() {
             @Override
@@ -53,7 +46,7 @@ one page also should be uploaded as a partial document.
 
     PDFs and UTF-8 encoded text should also be uploaded as partial documents. Even though PDFs might
     contain multiple pages and text is "pageless", creating partial documents for these keeps your
-    interaction with Gini consistent for all the supported document types.
+    interaction with the library consistent for all the supported document types.
 
 Extractions are not available for partial documents. Creating a partial document is analogous to an
 upload. For retrieving extractions see :ref:`getting-extractions`.
@@ -98,18 +91,11 @@ used to fetch the extractions after the processing of the document is completed.
 example shows how to achieve this in detail.
 
 .. code-block:: java
-
-        import net.gini.android.health.api.Gini;
-        import net.gini.android.DocumentTaskManager;
-        import net.gini.android.core.api.models.Document;
-        import net.gini.android.core.api.models.SpecificExtraction;
         
-        ...
-        
-        // Assuming that `gini` is an instance of the `Gini` facade class and `partialDocuments` is
+        // Assuming that `giniHealthApi` is an instance of the `GiniHealthAPI` facade class and `partialDocuments` is
         // a list of `Documents` which were returned by `createPartialDocument(...)` calls
 
-        final DocumentTaskManager documentTaskManager = gini.getDocumentTaskManager();
+        final DocumentTaskManager documentTaskManager = giniHealthApi.getDocumentTaskManager();
         documentTaskManager.createCompositeDocument(partialDocuments, null)
             .onSuccessTask(
                 new Continuation<Document, Task<Document>>() {
@@ -189,7 +175,7 @@ to Gini.
 Handling errors
 ===================
 
-Currently, the Gini Pay API Library doesn't have intelligent error-handling mechanisms. All errors that
+Currently, the Gini Health API Library doesn't have intelligent error-handling mechanisms. All errors that
 occur during executing a task are handed over transparently. You can react on those errors in the
 ``onError(...)`` method of the task. We may add better error-handling mechanisms in the future. At
 the moment we recommend checking the network status when a task failed and retrying the task.

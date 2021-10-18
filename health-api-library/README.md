@@ -1,7 +1,11 @@
-Gini Health API Library
-=======================
+![Gini Health API Library for Android](./logo.png)
 
-A library for communicating with the [Gini Pay API](https://pay-api.gini.net/documentation/). It allows you to easily add
+Gini Health API Library for Android
+===================================
+
+TODO: replace https://pay-api.gini.net links with the one for the Health API once it's available
+
+A library for communicating with the [Gini Health API](https://pay-api.gini.net/documentation/). It allows you to easily add
 [payment information extraction](https://pay-api.gini.net/documentation/#document-extractions-for-payment) capabilities
 to your app. It also enables your app to create or resolve [payment requests](https://pay-api.gini.net/documentation/#payments).
 
@@ -11,6 +15,8 @@ It also provides secure payment information sharing between clients via payment 
 
 Documentation
 -------------
+
+TODO: update guide url before releasing the documentation
 
 See the [integration guide](https://developer.gini.net/gini-health-api-lib-android/) for detailed guidance on how to
 integrate the Gini Health API Library into your app.
