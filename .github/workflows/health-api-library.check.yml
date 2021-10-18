@@ -47,6 +47,7 @@ jobs:
           script: echo "Generated AVD snapshot for caching."
 
       - name: run instrumented tests
+        timeout-minutes: 10
         env:
           client_id: gini-mobile-test
           client_secret: ${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}
