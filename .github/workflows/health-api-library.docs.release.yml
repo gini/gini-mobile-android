@@ -34,7 +34,9 @@ jobs:
               "project_id": "health-api-library", 
               "module_id": "library",
               "git_tag": "${{ github.ref }}",
-              "ci": "true"
+              "ci": "true",
+              "git_user": "${{ secrets.RELEASE_GITHUB_USER }}",
+              "git_password": "${{ secrets.RELEASE_GITHUB_PASSWORD }}"
             }
 
       - name: archive documentation

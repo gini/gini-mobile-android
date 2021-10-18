@@ -119,10 +119,12 @@ platform :android do
       module_id     - the id of the project's module to be released (e.g., sdk, lib)"
       git_tag       - the git tag name used to release the documentation
       ci            - set to "true" if running on a CI machine
+      git_user     - the username to use for git authentication
+      git_password - the password to use for git authentication
   DOC
   lane :release_documentation do |options|
-    (project_id, module_id, git_tag, ci) = 
-      check_and_get_options(options, [:project_id, :module_id, :git_tag, :ci], UI)
+    (project_id, module_id, git_tag, ci, git_user, git_password) = 
+      check_and_get_options(options, [:project_id, :module_id, :git_tag, :ci, :git_user, :git_password], UI)
 
     build_documentation(project_id: project_id, module_id: module_id)
 
@@ -153,7 +155,7 @@ platform :android do
     end
     
     sh("rm -rf gh-pages")
-    sh("git clone -b gh-pages https://github.com/gini/gini-mobile-android.git gh-pages")
+    sh("git clone -b gh-pages https://#{git_user}:#{git_password}@github.com/gini/gini-mobile-android.git gh-pages")
 
     Dir.chdir("gh-pages") do
       UI.message "Clear out the existing documentation"

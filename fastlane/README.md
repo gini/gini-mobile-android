@@ -52,6 +52,8 @@ Parameters:
   module_id     - the id of the project's module to be released (e.g., sdk, lib)"
   git_tag       - the git tag name used to release the documentation
   ci            - set to "true" if running on a CI machine
+  git_user     - the username to use for git authentication
+  git_password - the password to use for git authentication
 
 
 ----
