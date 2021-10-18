@@ -33,7 +33,8 @@ jobs:
             { 
               "project_id": "health-api-library", 
               "module_id": "library",
-              "git_tag": "${{ github.ref }}" 
+              "git_tag": "${{ github.ref }}",
+              "ci": "true"
             }
 
       - name: archive documentation

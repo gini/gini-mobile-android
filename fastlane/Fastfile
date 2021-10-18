@@ -15,6 +15,7 @@
 
 load 'util/versions.rb'
 load 'util/lanes.rb'
+load 'util/git.rb'
 
 default_platform(:android)
 
@@ -117,10 +118,11 @@ platform :android do
       project_id    - the id of the project to be released (e.g., health-sdk, health-api-lib)"
       module_id     - the id of the project's module to be released (e.g., sdk, lib)"
       git_tag       - the git tag name used to release the documentation
+      ci            - set to "true" if running on a CI machine
   DOC
   lane :release_documentation do |options|
-    (project_id, module_id, git_tag) = 
-      check_and_get_options(options, [:project_id, :module_id, :git_tag], UI)
+    (project_id, module_id, git_tag, ci) = 
+      check_and_get_options(options, [:project_id, :module_id, :git_tag, :ci], UI)
 
     build_documentation(project_id: project_id, module_id: module_id)
 
@@ -146,6 +148,10 @@ platform :android do
         * url                 : http://developer.gini.net/gini-mobile-android/#{project_id}/html
     MESSAGE
 
+    if ci
+      configure_git_on_ci_machines("Team Mobile Schorsch", "team-mobile@gini.net")
+    end
+    
     sh("rm -rf gh-pages")
     sh("git clone -b gh-pages https://github.com/gini/gini-mobile-android.git gh-pages")
 
