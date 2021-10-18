@@ -76,5 +76,39 @@ platform :android do
     MESSAGE
   end
 
+  desc <<~DOC
+    Build project documentation.
+    
+    Parameters:
+      project_id    - the id of the project to be released (e.g., health-sdk, health-api-lib)"
+      module_id     - the id of the project's module to be released (e.g., sdk, lib)"
+  DOC
+  lane :build_documentation do |options|
+    (project_id, module_id) = 
+      check_and_get_options(options, [:project_id, :module_id], UI)
+
+    UI.message <<~MESSAGE
+      Building documentation:
+        * gradle module   : #{project_id}:#{module_id}
+    MESSAGE
+
+    UI.message "Building reference documentation (dokka)"
+    gradle(task: "#{project_id}:#{module_id}:dokkaHtml")
+
+    UI.message "Building integration guide (Sphinx)"
+    Dir.chdir("../#{project_id}/#{module_id}/src/doc") do
+      sh("pip install -r requirements.txt")
+      sh("make html")
+    end
+
+    sh("cp -a ../#{project_id}/#{module_id}/src/doc/build/* ../#{project_id}/#{module_id}/build/docs")
+
+    UI.success <<~MESSAGE
+      Documentation successfully built:
+        * gradle module   : #{project_id}:#{module_id}
+        * available at    : #{project_id}/#{module_id}/build/docs
+    MESSAGE
+  end
+
 end
 
