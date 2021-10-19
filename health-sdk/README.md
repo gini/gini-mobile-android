@@ -14,10 +14,8 @@ also provides a secure channel for sharing payment related information between c
 Documentation
 -------------
 
-TODO: update urls before releasing the documentation
-
-* [Integration Guide](http://developer.gini.net/gini-health-sdk-android/html/)
-* [Reference Docs](http://developer.gini.net/gini-health-sdk-android/ginicapture/dokka/index.html)
+* [Integration Guide](https://developer.gini.net/gini-mobile-android/health-sdk/html/)
+* [Reference Docs](https://developer.gini.net/gini-mobile-android/health-sdk/dokka/index.html)
 
 Example Apps
 ------------
