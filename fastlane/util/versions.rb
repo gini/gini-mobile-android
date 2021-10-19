@@ -54,6 +54,6 @@ end
 # Retrieve the version from the project's "gradle.properties" file.
 #
 def get_project_version_from_gradle(project_id, module_id)
-  version = sh("cd .. && ./gradlew #{project_id}:#{module_id}:printVersion -q")
-  version.strip
+  output = sh("cd .. && ./gradlew #{project_id}:#{module_id}:printVersion -q")
+  output.lines.last.strip
 end
