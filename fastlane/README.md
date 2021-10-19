@@ -31,6 +31,19 @@ Parameters:
   git_tag       - the git tag name used to release the project
   build_number  - the build number to use in the release"
 
+### android publish_to_maven_snapshots_repo
+```
+fastlane android publish_to_maven_snapshots_repo
+```
+Publish a project to a maven snapshots repository.
+
+Parameters:
+  repo_url      - the url of the maven snapshots repository
+  repo_user     - the username to use for authentication
+  repo_password - the password to use for authentication
+  project_id    - the id of the project to be released (e.g., health-sdk, health-api-lib)"
+  module_id     - the id of the project's module to be released (e.g., sdk, lib)"
+
 ### android build_documentation
 ```
 fastlane android build_documentation

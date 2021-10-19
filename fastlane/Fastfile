@@ -78,6 +78,50 @@ platform :android do
   end
 
   desc <<~DOC
+    Publish a project to a maven snapshots repository.
+    
+    Parameters:
+      repo_url      - the url of the maven snapshots repository
+      repo_user     - the username to use for authentication
+      repo_password - the password to use for authentication
+      project_id    - the id of the project to be released (e.g., health-sdk, health-api-lib)"
+      module_id     - the id of the project's module to be released (e.g., sdk, lib)"
+  DOC
+  lane :publish_to_maven_snapshots_repo do |options|
+    (repo_url, repo_user, repo_password, project_id, module_id) = 
+      check_and_get_options(options, [:repo_url, :repo_user, :repo_password, :project_id, :module_id], UI)
+
+    project_version = get_project_version_from_gradle(project_id, module_id)
+
+    snapshot_version = "#{project_version}-SNAPSHOT"
+
+    UI.message <<~MESSAGE
+      Will release to a maven snapshots repository:
+        * repository url  : #{repo_url}
+        * gradle module   : #{project_id}:#{module_id}
+        * version         : #{snapshot_version}
+    MESSAGE
+
+    gradle(
+      task: "#{project_id}:#{module_id}:publishReleasePublicationToSnapshotsRepository",
+      properties: {
+        "version" => snapshot_version,
+        "versionCode" => 0,
+        "mavenSnapshotsRepoUrl" => repo_url,
+        "repoUser" => repo_user,
+        "repoPassword" => repo_password
+      }
+    )
+
+    UI.success <<~MESSAGE
+      Successfully released to a maven snapshots repository:
+        * repository url  : #{repo_url}
+        * gradle module   : #{project_id}:#{module_id}
+        * version         : #{snapshot_version}
+    MESSAGE
+  end
+
+  desc <<~DOC
     Build project documentation.
     
     Parameters:

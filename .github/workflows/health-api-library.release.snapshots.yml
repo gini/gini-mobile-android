@@ -1,0 +1,38 @@
+name: Release snapshot of Health API Library
+
+on:
+  push:
+  # pull_request:
+
+jobs:
+  release-snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: setup java
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+          cache: 'gradle'
+
+      - name: setup ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7
+          bundler-cache: true
+
+      - name: "publish to gini's maven snapshots repo at https://repo.gini.net/nexus/content/repositories/snapshots"
+        uses: maierj/fastlane-action@v2.0.1
+        with:
+          lane: 'publish_to_maven_snapshots_repo'
+          options: >
+            { 
+              "repo_url": "https://repo.gini.net/nexus/content/repositories/snapshots",
+              "repo_user": "${{ secrets.GINI_EXTERNAL_NEXUS_USER }}",
+              "repo_password": "${{ secrets.GINI_EXTERNAL_NEXUS_PASSWORD }}",
+              "project_id": "health-api-library", 
+              "module_id": "library"
+            }
