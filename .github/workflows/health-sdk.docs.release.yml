@@ -1,0 +1,46 @@
+name: Release docs for Health SDK
+
+on:
+  push:
+    tags:
+      - 'health-sdk;[0-9]+.[0-9]+.[0-9]+;doc**'
+  workflow_call:
+
+jobs:
+  release-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: setup java
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+          cache: 'gradle'
+
+      - name: setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '2.7.x'
+
+      - name: release documentation
+        uses: maierj/fastlane-action@v2.0.1
+        with:
+          lane: 'release_documentation'
+          options: >
+            { 
+              "project_id": "health-sdk", 
+              "module_id": "sdk",
+              "git_tag": "${{ github.ref }}",
+              "ci": "true",
+              "git_user": "${{ secrets.RELEASE_GITHUB_USER }}",
+              "git_password": "${{ secrets.RELEASE_GITHUB_PASSWORD }}"
+            }
+
+      - name: archive documentation
+        uses: actions/upload-artifact@v2
+        with:
+          name: health-sdk-documentation
+          path: health-sdk/sdk/build/docs
