@@ -1,0 +1,95 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+$dokka.location:net.gini.android.health.sdk.requirement////PointingToDeclaration/sdk/net.gini.android.health.sdk.requirement/index.html
+$dokka.location:net.gini.android.health.sdk.requirement/Requirement.NoBank///PointingToDeclaration/sdk/net.gini.android.health.sdk.requirement/-requirement/-no-bank/index.html
+$dokka.location:net.gini.android.health.sdk.requirement/Requirement///PointingToDeclaration/sdk/net.gini.android.health.sdk.requirement/-requirement/index.html
+$dokka.location:net.gini.android.health.sdk.review.bank////PointingToDeclaration/sdk/net.gini.android.health.sdk.review.bank/index.html
+$dokka.location:net.gini.android.health.sdk.review.bank/BankApp///PointingToDeclaration/sdk/net.gini.android.health.sdk.review.bank/-bank-app/index.html
+$dokka.location:net.gini.android.health.sdk.review.bank/BankApp/BankApp/#android.content.pm.PackageManager#android.content.pm.ResolveInfo/PointingToDeclaration/sdk/net.gini.android.health.sdk.review.bank/-bank-app/-bank-app.html
+$dokka.location:net.gini.android.health.sdk.review.bank/BankApp/getIconDrawable/#android.content.pm.PackageManager/PointingToDeclaration/sdk/net.gini.android.health.sdk.review.bank/-bank-app/get-icon-drawable.html
+$dokka.location:net.gini.android.health.sdk.review.bank/BankApp/getIntent/#kotlin.String/PointingToDeclaration/sdk/net.gini.android.health.sdk.review.bank/-bank-app/get-intent.html
+$dokka.location:net.gini.android.health.sdk.review.bank/BankApp/getName/#/PointingToDeclaration/sdk/net.gini.android.health.sdk.review.bank/-bank-app/get-name.html
+$dokka.location:net.gini.android.health.sdk.review.bank/BankApp/getPackageName/#/PointingToDeclaration/sdk/net.gini.android.health.sdk.review.bank/-bank-app/get-package-name.html
+$dokka.location:net.gini.android.health.sdk.review.bank/BankApp/getVersion/#/PointingToDeclaration/sdk/net.gini.android.health.sdk.review.bank/-bank-app/get-version.html
+$dokka.location:net.gini.android.health.sdk.review.bank/BankKt///PointingToDeclaration/sdk/net.gini.android.health.sdk.review.bank/-bank-kt/index.html
+$dokka.location:net.gini.android.health.sdk.review.bank/BankKt/getBankQueryIntent/#/PointingToDeclaration/sdk/net.gini.android.health.sdk.review.bank/-bank-kt/get-bank-query-intent.html
+$dokka.location:net.gini.android.health.sdk.review.bank/BankKt/getBanks/android.content.pm.PackageManager#/PointingToDeclaration/sdk/net.gini.android.health.sdk.review.bank/-bank-kt/get-banks.html
+$dokka.location:net.gini.android.health.sdk.review.error////PointingToDeclaration/sdk/net.gini.android.health.sdk.review.error/index.html
+$dokka.location:net.gini.android.health.sdk.review.error/NoBankSelected///PointingToDeclaration/sdk/net.gini.android.health.sdk.review.error/-no-bank-selected/index.html
+$dokka.location:net.gini.android.health.sdk.review.error/NoBankSelected/NoBankSelected/#/PointingToDeclaration/sdk/net.gini.android.health.sdk.review.error/-no-bank-selected/-no-bank-selected.html
+$dokka.location:net.gini.android.health.sdk.review.error/NoBankSelected/getCause/#/PointingToDeclaration/sdk/net.gini.android.health.sdk.review.error/-no-bank-selected/get-cause.html
+$dokka.location:net.gini.android.health.sdk.review.error/NoBankSelected/getMessage/#/PointingToDeclaration/sdk/net.gini.android.health.sdk.review.error/-no-bank-selected/get-message.html
+$dokka.location:net.gini.android.health.sdk.review.error/NoProviderForPackageName///PointingToDeclaration/sdk/net.gini.android.health.sdk.review.error/-no-provider-for-package-name/index.html
+$dokka.location:net.gini.android.health.sdk.review.error/NoProviderForPackageName/NoProviderForPackageName/#kotlin.String/PointingToDeclaration/sdk/net.gini.android.health.sdk.review.error/-no-provider-for-package-name/-no-provider-for-package-name.html
+$dokka.location:net.gini.android.health.sdk.review.error/NoProviderForPackageName/getCause/#/PointingToDeclaration/sdk/net.gini.android.health.sdk.review.error/-no-provider-for-package-name/get-cause.html
+$dokka.location:net.gini.android.health.sdk.review.error/NoProviderForPackageName/getMessage/#/PointingToDeclaration/sdk/net.gini.android.health.sdk.review.error/-no-provider-for-package-name/get-message.html
+$dokka.location:net.gini.android.health.sdk.review.model////PointingToDeclaration/sdk/net.gini.android.health.sdk.review.model/index.html
+$dokka.location:net.gini.android.health.sdk.review.model/ExtractionResultKt///PointingToDeclaration/sdk/net.gini.android.health.sdk.review.model/-extraction-result-kt/index.html
+$dokka.location:net.gini.android.health.sdk.review.model/ExtractionResultKt/wrapToResult/#kotlin.coroutines.SuspendFunction0[TypeParam(bounds=[kotlin.Any?])]/PointingToDeclaration/sdk/net.gini.android.health.sdk.review.model/-extraction-result-kt/wrap-to-result.html
+$dokka.location:net.gini.android.health.sdk.review.model/PaymentDetails///PointingToDeclaration/sdk/net.gini.android.health.sdk.review.model/-payment-details/index.html
+$dokka.location:net.gini.android.health.sdk.review.model/PaymentDetails/PaymentDetails/#kotlin.String#kotlin.String#kotlin.String#kotlin.String#net.gini.android.core.api.models.ExtractionsContainer?/PointingToDeclaration/sdk/net.gini.android.health.sdk.review.model/-payment-details/-payment-details.html
+$dokka.location:net.gini.android.health.sdk.review.model/PaymentDetails/getAmount/#/PointingToDeclaration/sdk/net.gini.android.health.sdk.review.model/-payment-details/get-amount.html
+$dokka.location:net.gini.android.health.sdk.review.model/PaymentDetails/getIban/#/PointingToDeclaration/sdk/net.gini.android.health.sdk.review.model/-payment-details/get-iban.html
+$dokka.location:net.gini.android.health.sdk.review.model/PaymentDetails/getPurpose/#/PointingToDeclaration/sdk/net.gini.android.health.sdk.review.model/-payment-details/get-purpose.html
+$dokka.location:net.gini.android.health.sdk.review.model/PaymentDetails/getRecipient/#/PointingToDeclaration/sdk/net.gini.android.health.sdk.review.model/-payment-details/get-recipient.html
+$dokka.location:net.gini.android.health.sdk.review.model/PaymentDetailsKt///PointingToDeclaration/sdk/net.gini.android.health.sdk.review.model/-payment-details-kt/index.html
+$dokka.location:net.gini.android.health.sdk.review.model/PaymentDetailsKt/getIsPayable/net.gini.android.health.sdk.review.model.PaymentDetails#/PointingToDeclaration/sdk/net.gini.android.health.sdk.review.model/-payment-details-kt/get-is-payable.html
+$dokka.location:net.gini.android.health.sdk.review.model/PaymentRequest///PointingToDeclaration/sdk/net.gini.android.health.sdk.review.model/-payment-request/index.html
+$dokka.location:net.gini.android.health.sdk.review.model/PaymentRequest/PaymentRequest/#kotlin.String#net.gini.android.health.sdk.review.bank.BankApp/PointingToDeclaration/sdk/net.gini.android.health.sdk.review.model/-payment-request/-payment-request.html
+$dokka.location:net.gini.android.health.sdk.review.model/PaymentRequest/getBankApp/#/PointingToDeclaration/sdk/net.gini.android.health.sdk.review.model/-payment-request/get-bank-app.html
+$dokka.location:net.gini.android.health.sdk.review.model/PaymentRequest/getId/#/PointingToDeclaration/sdk/net.gini.android.health.sdk.review.model/-payment-request/get-id.html
+$dokka.location:net.gini.android.health.sdk.review.model/ResultWrapper.Error///PointingToDeclaration/sdk/net.gini.android.health.sdk.review.model/-result-wrapper/-error/index.html
+$dokka.location:net.gini.android.health.sdk.review.model/ResultWrapper.Error/ResultWrapper.Error/#kotlin.Throwable/PointingToDeclaration/sdk/net.gini.android.health.sdk.review.model/-result-wrapper/-error/-result-wrapper.-error.html
+$dokka.location:net.gini.android.health.sdk.review.model/ResultWrapper.Error/getError/#/PointingToDeclaration/sdk/net.gini.android.health.sdk.review.model/-result-wrapper/-error/get-error.html
+$dokka.location:net.gini.android.health.sdk.review.model/ResultWrapper.Loading///PointingToDeclaration/sdk/net.gini.android.health.sdk.review.model/-result-wrapper/-loading/index.html
+$dokka.location:net.gini.android.health.sdk.review.model/ResultWrapper.Loading/ResultWrapper.Loading/#/PointingToDeclaration/sdk/net.gini.android.health.sdk.review.model/-result-wrapper/-loading/-result-wrapper.-loading.html
+$dokka.location:net.gini.android.health.sdk.review.model/ResultWrapper.Success///PointingToDeclaration/sdk/net.gini.android.health.sdk.review.model/-result-wrapper/-success/index.html
+$dokka.location:net.gini.android.health.sdk.review.model/ResultWrapper.Success/ResultWrapper.Success/#TypeParam(bounds=[kotlin.Any?])/PointingToDeclaration/sdk/net.gini.android.health.sdk.review.model/-result-wrapper/-success/-result-wrapper.-success.html
+$dokka.location:net.gini.android.health.sdk.review.model/ResultWrapper.Success/getValue/#/PointingToDeclaration/sdk/net.gini.android.health.sdk.review.model/-result-wrapper/-success/get-value.html
+$dokka.location:net.gini.android.health.sdk.review.model/ResultWrapper///PointingToDeclaration/sdk/net.gini.android.health.sdk.review.model/-result-wrapper/index.html
+$dokka.location:net.gini.android.health.sdk.review////PointingToDeclaration/sdk/net.gini.android.health.sdk.review/index.html
+$dokka.location:net.gini.android.health.sdk.review/ReviewConfiguration///PointingToDeclaration/sdk/net.gini.android.health.sdk.review/-review-configuration/index.html
+$dokka.location:net.gini.android.health.sdk.review/ReviewConfiguration/ReviewConfiguration/#kotlin.Boolean#kotlin.Boolean/PointingToDeclaration/sdk/net.gini.android.health.sdk.review/-review-configuration/-review-configuration.html
+$dokka.location:net.gini.android.health.sdk.review/ReviewConfiguration/getHandleErrorsInternally/#/PointingToDeclaration/sdk/net.gini.android.health.sdk.review/-review-configuration/get-handle-errors-internally.html
+$dokka.location:net.gini.android.health.sdk.review/ReviewConfiguration/getShowCloseButton/#/PointingToDeclaration/sdk/net.gini.android.health.sdk.review/-review-configuration/get-show-close-button.html
+$dokka.location:net.gini.android.health.sdk.review/ReviewFragment///PointingToDeclaration/sdk/net.gini.android.health.sdk.review/-review-fragment/index.html
+$dokka.location:net.gini.android.health.sdk.review/ReviewFragment/ReviewFragment/#net.gini.android.health.sdk.GiniHealth#net.gini.android.health.sdk.review.ReviewConfiguration#net.gini.android.health.sdk.review.ReviewFragmentListener?/PointingToDeclaration/sdk/net.gini.android.health.sdk.review/-review-fragment/-review-fragment.html
+$dokka.location:net.gini.android.health.sdk.review/ReviewFragment/onCreateView/#android.view.LayoutInflater#android.view.ViewGroup?#android.os.Bundle?/PointingToDeclaration/sdk/net.gini.android.health.sdk.review/-review-fragment/on-create-view.html
+$dokka.location:net.gini.android.health.sdk.review/ReviewFragment/onViewCreated/#android.view.View#android.os.Bundle?/PointingToDeclaration/sdk/net.gini.android.health.sdk.review/-review-fragment/on-view-created.html
+$dokka.location:net.gini.android.health.sdk.review/ReviewFragmentListener.Companion///PointingToDeclaration/sdk/net.gini.android.health.sdk.review/-review-fragment-listener/-companion/index.html
+$dokka.location:net.gini.android.health.sdk.review/ReviewFragmentListener///PointingToDeclaration/sdk/net.gini.android.health.sdk.review/-review-fragment-listener/index.html
+$dokka.location:net.gini.android.health.sdk.review/ReviewFragmentListener/onCloseReview/#/PointingToDeclaration/sdk/net.gini.android.health.sdk.review/-review-fragment-listener/on-close-review.html
+$dokka.location:net.gini.android.health.sdk.util////PointingToDeclaration/sdk/net.gini.android.health.sdk.util/index.html
+$dokka.location:net.gini.android.health.sdk.util/GiniHealthAPIKt///PointingToDeclaration/sdk/net.gini.android.health.sdk.util/-gini-health-a-p-i-kt/index.html
+$dokka.location:net.gini.android.health.sdk.util/GiniHealthAPIKt/getGiniApi/#android.content.Context#kotlin.String#kotlin.String#kotlin.String/PointingToDeclaration/sdk/net.gini.android.health.sdk.util/-gini-health-a-p-i-kt/get-gini-api.html
+$dokka.location:net.gini.android.health.sdk.util/GiniHealthAPIKt/getGiniApi/#android.content.Context#net.gini.android.core.api.authorization.SessionManager/PointingToDeclaration/sdk/net.gini.android.health.sdk.util/-gini-health-a-p-i-kt/get-gini-api.html
+$dokka.location:net.gini.android.health.sdk////PointingToDeclaration/sdk/net.gini.android.health.sdk/index.html
+$dokka.location:net.gini.android.health.sdk/GiniHealth.Companion///PointingToDeclaration/sdk/net.gini.android.health.sdk/-gini-health/-companion/index.html
+$dokka.location:net.gini.android.health.sdk/GiniHealth.PaymentState.Error///PointingToDeclaration/sdk/net.gini.android.health.sdk/-gini-health/-payment-state/-error/index.html
+$dokka.location:net.gini.android.health.sdk/GiniHealth.PaymentState.Error/GiniHealth.PaymentState.Error/#kotlin.Throwable/PointingToDeclaration/sdk/net.gini.android.health.sdk/-gini-health/-payment-state/-error/-gini-health.-payment-state.-error.html
+$dokka.location:net.gini.android.health.sdk/GiniHealth.PaymentState.Error/getThrowable/#/PointingToDeclaration/sdk/net.gini.android.health.sdk/-gini-health/-payment-state/-error/get-throwable.html
+$dokka.location:net.gini.android.health.sdk/GiniHealth.PaymentState.Loading///PointingToDeclaration/sdk/net.gini.android.health.sdk/-gini-health/-payment-state/-loading/index.html
+$dokka.location:net.gini.android.health.sdk/GiniHealth.PaymentState.NoAction///PointingToDeclaration/sdk/net.gini.android.health.sdk/-gini-health/-payment-state/-no-action/index.html
+$dokka.location:net.gini.android.health.sdk/GiniHealth.PaymentState.Success///PointingToDeclaration/sdk/net.gini.android.health.sdk/-gini-health/-payment-state/-success/index.html
+$dokka.location:net.gini.android.health.sdk/GiniHealth.PaymentState.Success/GiniHealth.PaymentState.Success/#net.gini.android.health.sdk.review.model.PaymentRequest/PointingToDeclaration/sdk/net.gini.android.health.sdk/-gini-health/-payment-state/-success/-gini-health.-payment-state.-success.html
+$dokka.location:net.gini.android.health.sdk/GiniHealth.PaymentState.Success/getPaymentRequest/#/PointingToDeclaration/sdk/net.gini.android.health.sdk/-gini-health/-payment-state/-success/get-payment-request.html
+$dokka.location:net.gini.android.health.sdk/GiniHealth.PaymentState///PointingToDeclaration/sdk/net.gini.android.health.sdk/-gini-health/-payment-state/index.html
+$dokka.location:net.gini.android.health.sdk/GiniHealth///PointingToDeclaration/sdk/net.gini.android.health.sdk/-gini-health/index.html
+$dokka.location:net.gini.android.health.sdk/GiniHealth/GiniHealth/#net.gini.android.health.api.GiniHealthAPI/PointingToDeclaration/sdk/net.gini.android.health.sdk/-gini-health/-gini-health.html
+$dokka.location:net.gini.android.health.sdk/GiniHealth/checkIfDocumentIsPayable/#kotlin.String/PointingToDeclaration/sdk/net.gini.android.health.sdk/-gini-health/check-if-document-is-payable.html
+$dokka.location:net.gini.android.health.sdk/GiniHealth/checkRequirements/#android.content.pm.PackageManager/PointingToDeclaration/sdk/net.gini.android.health.sdk/-gini-health/check-requirements.html
+$dokka.location:net.gini.android.health.sdk/GiniHealth/getDocumentFlow/#/PointingToDeclaration/sdk/net.gini.android.health.sdk/-gini-health/get-document-flow.html
+$dokka.location:net.gini.android.health.sdk/GiniHealth/getGiniHealthAPI/#/PointingToDeclaration/sdk/net.gini.android.health.sdk/-gini-health/get-gini-health-a-p-i.html
+$dokka.location:net.gini.android.health.sdk/GiniHealth/getOpenBankState/#/PointingToDeclaration/sdk/net.gini.android.health.sdk/-gini-health/get-open-bank-state.html
+$dokka.location:net.gini.android.health.sdk/GiniHealth/getPaymentFlow/#/PointingToDeclaration/sdk/net.gini.android.health.sdk/-gini-health/get-payment-flow.html
+$dokka.location:net.gini.android.health.sdk/GiniHealth/setDocumentForReview/#kotlin.String#net.gini.android.health.sdk.review.model.PaymentDetails?/PointingToDeclaration/sdk/net.gini.android.health.sdk/-gini-health/set-document-for-review.html
+$dokka.location:net.gini.android.health.sdk/GiniHealth/setDocumentForReview/#net.gini.android.core.api.models.Document/PointingToDeclaration/sdk/net.gini.android.health.sdk/-gini-health/set-document-for-review.html
+$dokka.location:net.gini.android.health.sdk/GiniHealth/setSavedStateRegistryOwner/#androidx.savedstate.SavedStateRegistryOwner#kotlinx.coroutines.CoroutineScope/PointingToDeclaration/sdk/net.gini.android.health.sdk/-gini-health/set-saved-state-registry-owner.html
+net.gini.android.health.sdk
+net.gini.android.health.sdk.requirement
+net.gini.android.health.sdk.review
+net.gini.android.health.sdk.review.bank
+net.gini.android.health.sdk.review.error
+net.gini.android.health.sdk.review.model
+net.gini.android.health.sdk.util
+
