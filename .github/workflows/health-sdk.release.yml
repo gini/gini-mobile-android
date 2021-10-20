@@ -36,7 +36,7 @@ jobs:
           options: >
             { 
               "repo_url": "https://repo.gini.net/nexus/content/repositories/open",
-              "repo_user": "${{ secrets.GINI_EXTERNAL_NEXUS_USER }}",
+              "repo_user": "jenkins",
               "repo_password": "${{ secrets.GINI_EXTERNAL_NEXUS_PASSWORD }}",
               "project_id": "health-sdk",
               "module_id": "sdk",
