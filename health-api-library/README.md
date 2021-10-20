@@ -16,10 +16,8 @@ It also provides secure payment information sharing between clients via payment 
 Documentation
 -------------
 
-TODO: update guide url before releasing the documentation
-
-See the [integration guide](https://developer.gini.net/gini-health-api-lib-android/) for detailed guidance on how to
-integrate the Gini Health API Library into your app.
+* [Integration Guide](http://developer.gini.net/gini-mobile-android/health-api-library/html/)
+* [Reference Docs](http://developer.gini.net/gini-mobile-android/health-api-library/dokka/index.html)
 
 Dependencies
 ------------

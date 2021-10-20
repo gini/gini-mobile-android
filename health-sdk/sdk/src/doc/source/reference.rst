@@ -1,8 +1,6 @@
 Reference Docs
 ==============
 
-You can view the reference documentations here:
+You can view the reference documentation here:
 
-TODO: use the new url before releasing the documentation
-
-* `Gini Health SDK KDoc <http://developer.gini.net/gini-health-sdk-android/kdoc/index.html>`_
+* `Gini Health SDK reference documentation <https://developer.gini.net/gini-mobile-android/health-sdk/dokka/index.html>`_

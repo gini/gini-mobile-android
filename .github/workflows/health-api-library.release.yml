@@ -43,3 +43,7 @@ jobs:
               "build_number": "${{ github.run_number }}",
               "git_tag": "${{ github.ref }}" 
             }
+    
+    release-documentation:
+      needs: release
+      uses: gini/gini-mobile-android/.github/workflows/health-api-library.docs.release.yml@main

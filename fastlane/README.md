@@ -31,6 +31,30 @@ Parameters:
   git_tag       - the git tag name used to release the project
   build_number  - the build number to use in the release"
 
+### android build_documentation
+```
+fastlane android build_documentation
+```
+Build project documentation.
+
+Parameters:
+  project_id    - the id of the project to be released (e.g., health-sdk, health-api-lib)"
+  module_id     - the id of the project's module to be released (e.g., sdk, lib)"
+
+### android release_documentation
+```
+fastlane android release_documentation
+```
+Release project documentation.
+
+Parameters:
+  project_id    - the id of the project to be released (e.g., health-sdk, health-api-lib)"
+  module_id     - the id of the project's module to be released (e.g., sdk, lib)"
+  git_tag       - the git tag name used to release the documentation
+  ci            - set to "true" if running on a CI machine
+  git_user     - the username to use for git authentication
+  git_password - the password to use for git authentication
+
 
 ----
 

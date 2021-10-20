@@ -15,6 +15,7 @@
 
 load 'util/versions.rb'
 load 'util/lanes.rb'
+load 'util/git.rb'
 
 default_platform(:android)
 
@@ -76,5 +77,111 @@ platform :android do
     MESSAGE
   end
 
+  desc <<~DOC
+    Build project documentation.
+    
+    Parameters:
+      project_id    - the id of the project to be released (e.g., health-sdk, health-api-lib)"
+      module_id     - the id of the project's module to be released (e.g., sdk, lib)"
+  DOC
+  lane :build_documentation do |options|
+    (project_id, module_id) = 
+      check_and_get_options(options, [:project_id, :module_id], UI)
+
+    UI.message <<~MESSAGE
+      Building documentation:
+        * gradle module   : #{project_id}:#{module_id}
+    MESSAGE
+
+    UI.message "Building reference documentation (dokka)"
+    gradle(task: "#{project_id}:#{module_id}:dokkaHtml")
+
+    UI.message "Building integration guide (Sphinx)"
+    Dir.chdir("../#{project_id}/#{module_id}/src/doc") do
+      sh("pip install -r requirements.txt")
+      sh("make html")
+    end
+
+    sh("cp -a ../#{project_id}/#{module_id}/src/doc/build/* ../#{project_id}/#{module_id}/build/docs")
+
+    UI.success <<~MESSAGE
+      Documentation successfully built:
+        * gradle module   : #{project_id}:#{module_id}
+        * available at    : #{project_id}/#{module_id}/build/docs
+    MESSAGE
+  end
+
+  desc <<~DOC
+    Release project documentation.
+    
+    Parameters:
+      project_id    - the id of the project to be released (e.g., health-sdk, health-api-lib)"
+      module_id     - the id of the project's module to be released (e.g., sdk, lib)"
+      git_tag       - the git tag name used to release the documentation
+      ci            - set to "true" if running on a CI machine
+      git_user     - the username to use for git authentication
+      git_password - the password to use for git authentication
+  DOC
+  lane :release_documentation do |options|
+    (project_id, module_id, git_tag, ci, git_user, git_password) = 
+      check_and_get_options(options, [:project_id, :module_id, :git_tag, :ci, :git_user, :git_password], UI)
+
+    build_documentation(project_id: project_id, module_id: module_id)
+
+    tag_version = get_project_version_from_tag(project_id, git_tag, UI)
+    project_version = get_project_version_from_gradle(project_id, module_id)
+
+    if tag_version != project_version
+      UI.abort_with_message!  <<~MESSAGE
+        Version in the tag is different from the project version:
+          * tag       : #{tag_version}
+          * project   : #{project_version}
+        
+        Change the version in the tag or update the project's version in "#{project_id}/#{module_id}/gradle.properties".
+      MESSAGE
+    end
+
+    UI.message <<~MESSAGE
+      Releasing documentation:
+        * gradle module       : #{project_id}:#{module_id}
+        * git tag             : #{git_tag}
+        * destination branch  : gh-pages
+        * destination folder  : #{project_id}/
+        * url                 : http://developer.gini.net/gini-mobile-android/#{project_id}/html
+    MESSAGE
+
+    if ci
+      configure_git_on_ci_machines("Team Mobile Schorsch", "team-mobile@gini.net")
+    end
+    
+    sh("rm -rf gh-pages")
+    sh("git clone -b gh-pages https://#{git_user}:#{git_password}@github.com/gini/gini-mobile-android.git gh-pages")
+
+    Dir.chdir("gh-pages") do
+      UI.message "Clear out the existing documentation"
+      sh("git rm -rf #{project_id} --ignore-unmatch && git clean -fd")
+
+      UI.message "Copy over the current documentation"
+      sh("cp -R ../../#{project_id}/#{module_id}/build/docs/ #{project_id}")
+
+      UI.message "Disable jekyll"
+      sh("touch .nojekyll")
+
+      UI.message "Commit and push the new documentation"
+      sh("git add --all")
+      sh("git diff --quiet --exit-code --cached || git commit -m 'Release #{project_id} documentation for tag #{git_tag}' --author='Team Mobile <team-mobile@gini.net>'")
+      sh("git remote show origin")
+      sh("git push origin gh-pages")
+    end
+
+    UI.message <<~MESSAGE
+      Documentation released:
+        * gradle module       : #{project_id}:#{module_id}
+        * git tag             : #{git_tag}
+        * destination branch  : gh-pages
+        * destination folder  : #{project_id}/
+        * url                 : http://developer.gini.net/gini-mobile-android/#{project_id}/html
+    MESSAGE
+  end
 end
 
