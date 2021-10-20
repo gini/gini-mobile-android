@@ -8,8 +8,8 @@ on:
 jobs:
   check:
     uses: gini/gini-mobile-android/.github/workflows/health-sdk.check.yml@main
-      with:
-        GINI_MOBILE_TEST_CLIENT_SECRET: ${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}
+    secrets:
+      GINI_MOBILE_TEST_CLIENT_SECRET: ${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}
         
   release:
     needs: check
@@ -66,6 +66,6 @@ jobs:
   release-documentation:
     needs: release
     uses: gini/gini-mobile-android/.github/workflows/health-sdk.docs.release.yml@main
-      with:
-        RELEASE_GITHUB_USER: ${{ secrets.RELEASE_GITHUB_USER }}
-        RELEASE_GITHUB_PASSWORD: ${{ secrets.RELEASE_GITHUB_PASSWORD }}
+    secrets:
+      RELEASE_GITHUB_USER: ${{ secrets.RELEASE_GITHUB_USER }}
+      RELEASE_GITHUB_PASSWORD: ${{ secrets.RELEASE_GITHUB_PASSWORD }}
