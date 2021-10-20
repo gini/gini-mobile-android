@@ -8,7 +8,9 @@ on:
 jobs:
   check:
     uses: gini/gini-mobile-android/.github/workflows/health-sdk.check.yml@main
-
+      with:
+        GINI_MOBILE_TEST_CLIENT_SECRET: ${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}
+        
   release:
     needs: check
     runs-on: ubuntu-latest
