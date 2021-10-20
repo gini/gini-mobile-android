@@ -106,19 +106,16 @@ platform :android do
 
     project_version = get_project_version_from_gradle(project_id, module_id)
 
-    snapshot_version = "#{project_version}-SNAPSHOT"
-
     UI.message <<~MESSAGE
       Will release to a maven snapshots repository:
         * repository url  : #{repo_url}
         * gradle module   : #{project_id}:#{module_id}
-        * version         : #{snapshot_version}
+        * version         : #{project_version}
     MESSAGE
 
     gradle(
       task: "#{project_id}:#{module_id}:publishReleasePublicationToSnapshotsRepository",
       properties: {
-        "version" => snapshot_version,
         "versionCode" => 0,
         "mavenSnapshotsRepoUrl" => repo_url,
         "repoUser" => repo_user,
@@ -133,7 +130,7 @@ platform :android do
       Successfully released to a maven snapshots repository:
         * repository url  : #{repo_url}
         * gradle module   : #{project_id}:#{module_id}
-        * version         : #{snapshot_version}
+        * version         : #{project_version}
     MESSAGE
   end
 
