@@ -2,7 +2,7 @@
 License
 =======
 
-The Gini Health API Library for Android is licensed under an MIT/Expat license. Please
+The Gini Health API Library for Android is licensed under an MIT license. Please
 make sure to ship all license notices and permissions with your application.
 
 ::

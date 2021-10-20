@@ -8,6 +8,7 @@ import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.kotlin.dsl.*
+import org.gradle.plugins.signing.SigningExtension
 import org.jetbrains.dokka.gradle.DokkaTask
 import java.net.URI
 import java.util.*
@@ -32,6 +33,7 @@ class PublishToMavenPlugin : Plugin<Project> {
 
     private fun configureMavenPublish(target: Project) {
         target.plugins.apply("maven-publish")
+        target.plugins.apply("signing")
 
         val sourcesJar = target.tasks.register<Jar>("sourcesJar") {
             archiveClassifier.set("sources")
@@ -68,7 +70,50 @@ class PublishToMavenPlugin : Plugin<Project> {
                         this.groupId = groupId
                         this.artifactId = artifactId
                         this.version = version
+
+                        pom {
+                            name.set(getPropertyOrEmpty("pomName"))
+                            description.set(getPropertyOrEmpty("pomDescription"))
+                            url.set(getPropertyOrEmpty("pomUrl"))
+                            licenses {
+                                license {
+                                    name.set(getPropertyOrEmpty("pomLicenseName"))
+                                    url.set(getPropertyOrEmpty("pomLicenseUrl"))
+                                }
+                            }
+                            developers {
+                                developer {
+                                    id.set(getPropertyOrEmpty("pomDeveloperId"))
+                                    name.set(getPropertyOrEmpty("pomDeveloperName"))
+                                    email.set(getPropertyOrEmpty("pomDeveloperEmail"))
+                                }
+                            }
+                            scm {
+                                connection.set(getPropertyOrEmpty("pomScmConnection"))
+                                developerConnection.set(getPropertyOrEmpty("pomScmDeveloperConnection"))
+                                url.set(getPropertyOrEmpty("pomScmUrl"))
+                            }
+                        }
                     }
+                }
+
+                val signingKey: String? by target
+                val signingPassword: String? by target
+
+                if (signingKey != null && signingPassword != null) {
+                    extensions.getByType<SigningExtension>().apply {
+                        useInMemoryPgpKeys(signingKey, signingPassword)
+                        sign(publications["release"])
+                    }
+                } else {
+                    logger.warn(
+                        """
+                            WARNING:
+                            Maven release will not be signed.
+                            Pass in -PsigningKey=<key> and -PsigningPassword=<password> to sign the release.
+                            See https://docs.gradle.org/current/userguide/signing_plugin.html#sec:in-memory-keys.
+                        """.trimIndent()
+                    )
                 }
 
                 repositories {
@@ -125,3 +170,15 @@ class PublishToMavenPlugin : Plugin<Project> {
     }
 
 }
+
+private fun Project.getPropertyOrEmpty(property: String): String =
+    properties[property] as? String ?: run {
+            logger.warn(
+                """
+                    WARNING:
+                    Missing property for maven publishing: $property 
+                    You need to pass it in using "-P$property=<value>" or add it to gradle.properties.
+                """.trimIndent()
+            )
+            ""
+    }

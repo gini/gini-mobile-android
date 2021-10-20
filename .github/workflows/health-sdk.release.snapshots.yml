@@ -31,8 +31,25 @@ jobs:
           options: >
             { 
               "repo_url": "https://repo.gini.net/nexus/content/repositories/snapshots",
-              "repo_user": "${{ secrets.GINI_EXTERNAL_NEXUS_USER }}",
+              "repo_user": "jenkins",
               "repo_password": "${{ secrets.GINI_EXTERNAL_NEXUS_PASSWORD }}",
               "project_id": "health-sdk", 
-              "module_id": "sdk"
+              "module_id": "sdk",
+              "signing_key": "${{ secrets.MAVEN_CENTRAL_SIGNING_KEY }}",
+              "signing_password": "${{ secrets.MAVEN_CENTRAL_SIGNING_PASSWORD }}"
+            }
+
+      - name: "publish to Maven Central snapshots repo at https://oss.sonatype.org/content/repositories/snapshots/"
+        uses: maierj/fastlane-action@v2.0.1
+        with:
+          lane: 'publish_to_maven_snapshots_repo'
+          options: >
+            {
+              "repo_url": "https://oss.sonatype.org/content/repositories/snapshots/",
+              "repo_user": "alpar.gini",
+              "repo_password": "${{ secrets.MAVEN_CENTRAL_PASSWORD }}",
+              "project_id": "health-sdk",
+              "module_id": "sdk",
+              "signing_key": "${{ secrets.MAVEN_CENTRAL_SIGNING_KEY }}",
+              "signing_password": "${{ secrets.MAVEN_CENTRAL_SIGNING_PASSWORD }}"
             }
