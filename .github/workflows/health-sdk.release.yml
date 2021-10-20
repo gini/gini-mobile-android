@@ -41,7 +41,9 @@ jobs:
               "project_id": "health-sdk",
               "module_id": "sdk",
               "build_number": "${{ github.run_number }}",
-              "git_tag": "${{ github.ref }}" 
+              "git_tag": "${{ github.ref }}",
+              "signing_key_base64": "${{ secrets.MAVEN_CENTRAL_SIGNING_KEY_BASE64 }}",
+              "signing_password": "${{ secrets.MAVEN_CENTRAL_SIGNING_PASSWORD }}"
             }
 
       - name: "publish to Maven Central staging repo at https://oss.sonatype.org/service/local/staging/deploy/maven2/"
@@ -55,7 +57,7 @@ jobs:
               "repo_password": "${{ secrets.MAVEN_CENTRAL_PASSWORD }}",
               "project_id": "health-sdk",
               "module_id": "sdk",
-              "signing_key": "${{ secrets.MAVEN_CENTRAL_SIGNING_KEY }}",
+              "signing_key_base64": "${{ secrets.MAVEN_CENTRAL_SIGNING_KEY_BASE64 }}",
               "signing_password": "${{ secrets.MAVEN_CENTRAL_SIGNING_PASSWORD }}"
             }
 

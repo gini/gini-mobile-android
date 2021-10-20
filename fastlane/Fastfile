@@ -17,6 +17,8 @@ load 'util/versions.rb'
 load 'util/lanes.rb'
 load 'util/git.rb'
 
+require 'base64'
+
 default_platform(:android)
 
 platform :android do
@@ -25,21 +27,21 @@ platform :android do
     Publish a project to a maven repository.
     
     Parameters:
-      repo_url          - the url of the maven repository
-      repo_user         - the username to use for authentication
-      repo_password     - the password to use for authentication
-      project_id        - the id of the project to be released (e.g., health-sdk, health-api-lib)"
-      module_id         - the id of the project's module to be released (e.g., sdk, lib)"
-      git_tag           - the git tag name used to release the project
-      build_number      - the build number to use in the release
-      signing_key       - the ascii-armored pgp secret key (see https://docs.gradle.org/current/userguide/signing_plugin.html#sec:in-memory-keys)
-      signing_password  - the password for the signing key
+      repo_url            - the url of the maven repository
+      repo_user           - the username to use for authentication
+      repo_password       - the password to use for authentication
+      project_id          - the id of the project to be released (e.g., health-sdk, health-api-lib)"
+      module_id           - the id of the project's module to be released (e.g., sdk, lib)"
+      git_tag             - the git tag name used to release the project
+      build_number        - the build number to use in the release
+      signing_key_base64  - the base64 encoded ascii-armored pgp secret key (see https://docs.gradle.org/current/userguide/signing_plugin.html#sec:in-memory-keys)
+      signing_password    - the password for the signing key
   DOC
   lane :publish_to_maven_repo do |options|
     (repo_url, repo_user, repo_password, project_id, 
-      module_id, git_tag, build_number, signing_key, signing_password) = 
+      module_id, git_tag, build_number, signing_key_base64, signing_password) = 
         check_and_get_options(options, [:repo_url, :repo_user, :repo_password, :project_id, 
-          :module_id, :git_tag, :build_number, :signing_key, :signing_password], UI)
+          :module_id, :git_tag, :build_number, :signing_key_base64, :signing_password], UI)
 
     tag_version = get_project_version_from_tag(project_id, git_tag, UI)
     project_version = get_project_version_from_gradle(project_id, module_id)
@@ -69,9 +71,10 @@ platform :android do
         "mavenReleasesRepoUrl" => repo_url,
         "repoUser" => repo_user,
         "repoPassword" => repo_password,
-        "signingKey" => signing_key,
+        "signingKey" => Base64.decode64(signing_key_base64),
         "signingPassword" => signing_password
-      }
+      },
+      print_command: false
     )
 
     UI.success <<~MESSAGE
@@ -87,19 +90,19 @@ platform :android do
     Publish a project to a maven snapshots repository.
     
     Parameters:
-      repo_url          - the url of the maven snapshots repository
-      repo_user         - the username to use for authentication
-      repo_password     - the password to use for authentication
-      project_id        - the id of the project to be released (e.g., health-sdk, health-api-lib)"
-      module_id         - the id of the project's module to be released (e.g., sdk, lib)"
-      signing_key       - the ascii-armored pgp secret key (see https://docs.gradle.org/current/userguide/signing_plugin.html#sec:in-memory-keys)
-      signing_password  - the password for the signing key
+      repo_url            - the url of the maven snapshots repository
+      repo_user           - the username to use for authentication
+      repo_password       - the password to use for authentication
+      project_id          - the id of the project to be released (e.g., health-sdk, health-api-lib)"
+      module_id           - the id of the project's module to be released (e.g., sdk, lib)"
+      signing_key_base64  - the base64 ascii-armored pgp secret key (see https://docs.gradle.org/current/userguide/signing_plugin.html#sec:in-memory-keys)
+      signing_password    - the password for the signing key
   DOC
   lane :publish_to_maven_snapshots_repo do |options|
     (repo_url, repo_user, repo_password, project_id, 
-      module_id, signing_key, signing_password) = 
+      module_id, signing_key_base64, signing_password) = 
         check_and_get_options(options, [:repo_url, :repo_user, :repo_password, :project_id,
-          :module_id, :signing_key, :signing_password], UI)
+          :module_id, :signing_key_base64, :signing_password], UI)
 
     project_version = get_project_version_from_gradle(project_id, module_id)
 
@@ -120,9 +123,10 @@ platform :android do
         "mavenSnapshotsRepoUrl" => repo_url,
         "repoUser" => repo_user,
         "repoPassword" => repo_password,
-        "signingKey" => signing_key,
+        "signingKey" => Base64.decode64(signing_key_base64),
         "signingPassword" => signing_password
-      }
+      },
+      print_command: false
     )
 
     UI.success <<~MESSAGE

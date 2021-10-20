@@ -35,7 +35,7 @@ jobs:
               "repo_password": "${{ secrets.GINI_EXTERNAL_NEXUS_PASSWORD }}",
               "project_id": "health-api-library", 
               "module_id": "library",
-              "signing_key": "${{ secrets.MAVEN_CENTRAL_SIGNING_KEY }}",
+              "signing_key_base64": "${{ secrets.MAVEN_CENTRAL_SIGNING_KEY_BASE64 }}",
               "signing_password": "${{ secrets.MAVEN_CENTRAL_SIGNING_PASSWORD }}"
             }
 
@@ -50,6 +50,6 @@ jobs:
               "repo_password": "${{ secrets.MAVEN_CENTRAL_PASSWORD }}",
               "project_id": "health-api-library",
               "module_id": "library",
-              "signing_key": "${{ secrets.MAVEN_CENTRAL_SIGNING_KEY }}",
+              "signing_key_base64": "${{ secrets.MAVEN_CENTRAL_SIGNING_KEY_BASE64 }}",
               "signing_password": "${{ secrets.MAVEN_CENTRAL_SIGNING_PASSWORD }}"
             }
