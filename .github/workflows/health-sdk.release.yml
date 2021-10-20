@@ -59,3 +59,6 @@ jobs:
               "signing_password": "${{ secrets.MAVEN_CENTRAL_SIGNING_PASSWORD }}"
             }
 
+    release-documentation:
+      needs: release
+      uses: gini/gini-mobile-android/.github/workflows/health-sdk.docs.release.yml@main
