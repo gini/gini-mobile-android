@@ -4,27 +4,14 @@ Getting started
 Installation
 ------------
 
-To install add our Maven repo to the root build.gradle file and add it as a dependency to your app
-module's build.gradle.
-
-TODO: update this section after we have released to Maven Central
+Add our sdk to your dependencies:
 
 build.gradle:
 
 .. code-block:: groovy
 
-    repositories {
-        maven {
-            url 'https://repo.gini.net/nexus/content/repositories/open
-        }
-    }
-
-app/build.gradle:
-
-.. code-block:: groovy
-
     dependencies {
-        implementation 'net.gini:gini-health-sdk:1.0.5'
+        implementation 'net.gini.android:gini-health-sdk:1.0.0'
     }
 
 Gini Pay Deep Link For Your App
