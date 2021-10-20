@@ -44,6 +44,21 @@ jobs:
               "git_tag": "${{ github.ref }}" 
             }
     
+      - name: "publish to Maven Central staging repo at https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+        uses: maierj/fastlane-action@v2.0.1
+        with:
+          lane: 'publish_to_maven_snapshots_repo'
+          options: >
+            {
+              "repo_url": "https://oss.sonatype.org/service/local/staging/deploy/maven2/",
+              "repo_user": "alpar.gini",
+              "repo_password": "${{ secrets.MAVEN_CENTRAL_PASSWORD }}",
+              "project_id": "health-api-library",
+              "module_id": "library",
+              "signing_key": "${{ secrets.MAVEN_CENTRAL_SIGNING_KEY }}",
+              "signing_password": "${{ secrets.MAVEN_CENTRAL_SIGNING_PASSWORD }}"
+            }
+
     release-documentation:
       needs: release
       uses: gini/gini-mobile-android/.github/workflows/health-api-library.docs.release.yml@main
