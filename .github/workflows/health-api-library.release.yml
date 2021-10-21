@@ -51,7 +51,7 @@ jobs:
       - name: "publish to Maven Central staging repo at https://oss.sonatype.org/service/local/staging/deploy/maven2/"
         uses: maierj/fastlane-action@v2.0.1
         with:
-          lane: 'publish_to_maven_snapshots_repo'
+          lane: 'publish_to_maven_repo'
           options: >
             {
               "repo_url": "https://oss.sonatype.org/service/local/staging/deploy/maven2/",
@@ -59,6 +59,8 @@ jobs:
               "repo_password": "${{ secrets.MAVEN_CENTRAL_PASSWORD }}",
               "project_id": "health-api-library",
               "module_id": "library",
+              "build_number": "${{ github.run_number }}",
+              "git_tag": "${{ github.ref }}",
               "signing_key_base64": "${{ secrets.MAVEN_CENTRAL_SIGNING_KEY_BASE64 }}",
               "signing_password": "${{ secrets.MAVEN_CENTRAL_SIGNING_PASSWORD }}"
             }
