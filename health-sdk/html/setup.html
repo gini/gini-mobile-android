@@ -154,20 +154,10 @@
 <h1>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
-<p>To install add our Maven repo to the root build.gradle file and add it as a dependency to your app
-module’s build.gradle.</p>
-<p>TODO: update this section after we have released to Maven Central</p>
+<p>Add our sdk to your dependencies:</p>
 <p>build.gradle:</p>
-<div class="highlight-groovy notranslate"><div class="highlight"><pre><span></span>repositories {
-    maven {
-        url &#39;https://repo.gini.net/nexus/content/repositories/open
-    }
-}
-</pre></div>
-</div>
-<p>app/build.gradle:</p>
 <div class="highlight-groovy notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span> <span class="o">{</span>
-    <span class="n">implementation</span> <span class="s1">&#39;net.gini:gini-health-sdk:1.0.5&#39;</span>
+    <span class="n">implementation</span> <span class="s1">&#39;net.gini.android:gini-health-sdk:1.0.0&#39;</span>
 <span class="o">}</span>
 </pre></div>
 </div>
