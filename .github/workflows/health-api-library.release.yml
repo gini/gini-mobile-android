@@ -7,7 +7,9 @@ on:
 
 jobs:
   check:
-    uses: gini/gini-mobile-android/.github/workflows/health-api-library.check.yml@main
+    uses: gini/gini-mobile-android/.github/workflows/health-api-library.check.yml@PIA-1927-release-to-maven-central
+    secrets:
+      GINI_MOBILE_TEST_CLIENT_SECRET: ${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}
 
   release:
     needs: check
@@ -36,14 +38,36 @@ jobs:
           options: >
             { 
               "repo_url": "https://repo.gini.net/nexus/content/repositories/open",
-              "repo_user": "${{ secrets.GINI_EXTERNAL_NEXUS_USER }}",
+              "repo_user": "jenkins",
               "repo_password": "${{ secrets.GINI_EXTERNAL_NEXUS_PASSWORD }}",
               "project_id": "health-api-library", 
               "module_id": "library", 
               "build_number": "${{ github.run_number }}",
-              "git_tag": "${{ github.ref }}" 
+              "git_tag": "${{ github.ref }}",
+              "signing_key_base64": "${{ secrets.MAVEN_CENTRAL_SIGNING_KEY_BASE64 }}",
+              "signing_password": "${{ secrets.MAVEN_CENTRAL_SIGNING_PASSWORD }}"
             }
     
-    release-documentation:
-      needs: release
-      uses: gini/gini-mobile-android/.github/workflows/health-api-library.docs.release.yml@main
+      - name: "publish to Maven Central staging repo at https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+        uses: maierj/fastlane-action@v2.0.1
+        with:
+          lane: 'publish_to_maven_repo'
+          options: >
+            {
+              "repo_url": "https://oss.sonatype.org/service/local/staging/deploy/maven2/",
+              "repo_user": "alpar.gini",
+              "repo_password": "${{ secrets.MAVEN_CENTRAL_PASSWORD }}",
+              "project_id": "health-api-library",
+              "module_id": "library",
+              "build_number": "${{ github.run_number }}",
+              "git_tag": "${{ github.ref }}",
+              "signing_key_base64": "${{ secrets.MAVEN_CENTRAL_SIGNING_KEY_BASE64 }}",
+              "signing_password": "${{ secrets.MAVEN_CENTRAL_SIGNING_PASSWORD }}"
+            }
+
+  release-documentation:
+    needs: release
+    uses: gini/gini-mobile-android/.github/workflows/health-api-library.docs.release.yml@PIA-1927-release-to-maven-central
+    secrets:
+      RELEASE_GITHUB_USER: ${{ secrets.RELEASE_GITHUB_USER }}
+      RELEASE_GITHUB_PASSWORD: ${{ secrets.RELEASE_GITHUB_PASSWORD }}

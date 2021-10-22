@@ -23,13 +23,30 @@ fastlane android publish_to_maven_repo
 Publish a project to a maven repository.
 
 Parameters:
-  repo_url      - the url of the maven repository
-  repo_user     - the username to use for authentication
-  repo_password - the password to use for authentication
-  project_id    - the id of the project to be released (e.g., health-sdk, health-api-lib)"
-  module_id     - the id of the project's module to be released (e.g., sdk, lib)"
-  git_tag       - the git tag name used to release the project
-  build_number  - the build number to use in the release"
+  repo_url            - the url of the maven repository
+  repo_user           - the username to use for authentication
+  repo_password       - the password to use for authentication
+  project_id          - the id of the project to be released (e.g., health-sdk, health-api-lib)"
+  module_id           - the id of the project's module to be released (e.g., sdk, lib)"
+  git_tag             - the git tag name used to release the project
+  build_number        - the build number to use in the release
+  signing_key_base64  - the base64 encoded ascii-armored pgp secret key (see https://docs.gradle.org/current/userguide/signing_plugin.html#sec:in-memory-keys)
+  signing_password    - the password for the signing key
+
+### android publish_to_maven_snapshots_repo
+```
+fastlane android publish_to_maven_snapshots_repo
+```
+Publish a project to a maven snapshots repository.
+
+Parameters:
+  repo_url            - the url of the maven snapshots repository
+  repo_user           - the username to use for authentication
+  repo_password       - the password to use for authentication
+  project_id          - the id of the project to be released (e.g., health-sdk, health-api-lib)"
+  module_id           - the id of the project's module to be released (e.g., sdk, lib)"
+  signing_key_base64  - the base64 ascii-armored pgp secret key (see https://docs.gradle.org/current/userguide/signing_plugin.html#sec:in-memory-keys)
+  signing_password    - the password for the signing key
 
 ### android build_documentation
 ```

@@ -8,26 +8,12 @@ Getting started
 First of all: Add the library to your build
 ===========================================
 
-The Gini Health API Library for Android is provided as an aar archive. You can integrate it in your gradle based project by
-adding it as a dependency. In order to gain access to the aar file, you have to add the Gini Maven
-repository to your build script.
-
-TODO: update this section after we released to Maven Central
+build.gradle:
 
 .. code-block:: groovy
 
-    repositories {
-        maven {
-            url "https://repo.gini.net/nexus/content/repositories/public"
-        }
-        ...
-    }
-
     dependencies {
-        implementation('net.gini:gini-health-api-lib-android:1.0.2@aar'){
-            transitive = true
-        }
-        ...
+        implementation 'net.gini.android:gini-health-api-lib:1.0.0'
     }
 
 Integrating the Gini Health API Library
