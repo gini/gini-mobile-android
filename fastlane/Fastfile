@@ -30,8 +30,8 @@ platform :android do
       repo_url            - the url of the maven repository
       repo_user           - the username to use for authentication
       repo_password       - the password to use for authentication
-      project_id          - the id of the project to be released (e.g., health-sdk, health-api-lib)"
-      module_id           - the id of the project's module to be released (e.g., sdk, lib)"
+      project_id          - the id of the project to be released (e.g., health-sdk, health-api-lib)
+      module_id           - the id of the project's module to be released (e.g., sdk, lib)
       git_tag             - the git tag name used to release the project
       build_number        - the build number to use in the release
       signing_key_base64  - the base64 encoded ascii-armored pgp secret key (see https://docs.gradle.org/current/userguide/signing_plugin.html#sec:in-memory-keys)
@@ -93,8 +93,8 @@ platform :android do
       repo_url            - the url of the maven snapshots repository
       repo_user           - the username to use for authentication
       repo_password       - the password to use for authentication
-      project_id          - the id of the project to be released (e.g., health-sdk, health-api-lib)"
-      module_id           - the id of the project's module to be released (e.g., sdk, lib)"
+      project_id          - the id of the project to be released (e.g., health-sdk, health-api-lib)
+      module_id           - the id of the project's module to be released (e.g., sdk, lib)
       signing_key_base64  - the base64 ascii-armored pgp secret key (see https://docs.gradle.org/current/userguide/signing_plugin.html#sec:in-memory-keys)
       signing_password    - the password for the signing key
   DOC
@@ -172,8 +172,8 @@ platform :android do
     Release project documentation.
     
     Parameters:
-      project_id    - the id of the project to be released (e.g., health-sdk, health-api-lib)"
-      module_id     - the id of the project's module to be released (e.g., sdk, lib)"
+      project_id    - the id of the project to be released (e.g., health-sdk, health-api-lib)
+      module_id     - the id of the project's module to be released (e.g., sdk, lib)
       git_tag       - the git tag name used to release the documentation
       ci            - set to "true" if running on a CI machine
       git_user     - the username to use for git authentication
@@ -227,11 +227,10 @@ platform :android do
       UI.message "Commit and push the new documentation"
       sh("git add --all")
       sh("git diff --quiet --exit-code --cached || git commit -m 'Release #{project_id} documentation for tag #{git_tag}' --author='Team Mobile <team-mobile@gini.net>'")
-      sh("git remote show origin")
       sh("git push origin gh-pages")
     end
 
-    UI.message <<~MESSAGE
+    UI.success <<~MESSAGE
       Documentation released:
         * gradle module       : #{project_id}:#{module_id}
         * git tag             : #{git_tag}
