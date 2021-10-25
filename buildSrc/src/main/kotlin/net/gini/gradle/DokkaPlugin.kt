@@ -4,10 +4,9 @@ import com.android.build.gradle.LibraryExtension
 import net.gini.gradle.extensions.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.get
-import org.gradle.kotlin.dsl.getByName
-import org.gradle.kotlin.dsl.getByType
+import org.gradle.api.artifacts.ProjectDependency
+import org.gradle.kotlin.dsl.*
+import org.jetbrains.dokka.gradle.DokkaCollectorTask
 import org.jetbrains.dokka.gradle.DokkaTask
 
 /**
@@ -24,8 +23,18 @@ class DokkaPlugin: Plugin<Project> {
             add("dokkaHtmlPlugin", target.libs.findDependency("dokka.kotlinAsJava").get())
         }
 
-        target.tasks.getByName<DokkaTask>("dokkaHtml") {
+        target.tasks.create<DokkaCollectorTask>("dokkaHtmlSiblingCollector") {
             outputDirectory.set(target.file("${target.buildDir}/docs/dokka"))
+
+            addChildTask("${target.path}:dokkaHtml")
+
+            (target.configurations.getByName("api").dependencies +
+                    target.configurations.getByName("implementation").dependencies)
+                .filterIsInstance<ProjectDependency>()
+                .forEach { addChildTask("${it.dependencyProject.path}:dokkaHtml") }
+        }
+
+        target.tasks.getByName<DokkaTask>("dokkaHtml") {
             this.dokkaSourceSets.named("main").configure {
                 noAndroidSdkLink.set(false)
 
@@ -40,9 +49,21 @@ class DokkaPlugin: Plugin<Project> {
             }
         }
 
+        target.tasks.create<DokkaCollectorTask>("dokkaJavadocSiblingCollector") {
+            outputDirectory.set(target.file("${target.buildDir}/docs/dokka"))
+
+            addChildTask("${target.path}:dokkaJavadoc")
+
+            (target.configurations.getByName("api").dependencies +
+                    target.configurations.getByName("implementation").dependencies)
+                .filterIsInstance<ProjectDependency>()
+                .forEach { addChildTask("${it.dependencyProject.path}:dokkaJavadoc") }
+        }
+
         target.tasks.getByName<DokkaTask>("dokkaJavadoc") {
             outputDirectory.set(target.file("${target.buildDir}/docs/dokka-javadoc"))
         }
+
     }
 
 }

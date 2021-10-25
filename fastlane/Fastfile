@@ -151,7 +151,7 @@ platform :android do
     MESSAGE
 
     UI.message "Building reference documentation (dokka)"
-    gradle(task: "#{project_id}:#{module_id}:dokkaHtml")
+    gradle(task: "#{project_id}:#{module_id}:dokkaHtmlSiblingCollector")
 
     UI.message "Building integration guide (Sphinx)"
     Dir.chdir("../#{project_id}/#{module_id}/src/doc") do
