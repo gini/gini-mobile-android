@@ -8,7 +8,7 @@ import net.gini.android.core.api.internal.GiniCoreAPI;
 import net.gini.android.core.api.internal.GiniCoreAPIBuilder;
 import androidx.annotation.NonNull;
 
-public class GiniHealthAPIBuilder extends GiniCoreAPIBuilder {
+public class GiniHealthAPIBuilder extends GiniCoreAPIBuilder<GiniHealthAPI> {
 
     /**
      * Constructor to initialize a new builder instance where anonymous Gini users are used. <b>This requires access to
@@ -40,8 +40,9 @@ public class GiniHealthAPIBuilder extends GiniCoreAPIBuilder {
     /**
      * Builds the GiniHealthAPI instance with the configuration settings of the builder instance.
      *
-     * @return The fully configured Gini instance.
+     * @return The fully configured GiniHealthAPI instance.
      */
+    @Override
     public GiniHealthAPI build() {
         return new GiniHealthAPI(getDocumentTaskManager(), getCredentialsStore());
     }

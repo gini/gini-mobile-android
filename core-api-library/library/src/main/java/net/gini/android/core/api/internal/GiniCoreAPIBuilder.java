@@ -31,7 +31,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GiniCoreAPIBuilder {
+public abstract class GiniCoreAPIBuilder<T extends GiniCoreAPI> {
 
     private final Context mContext;
 
@@ -94,7 +94,7 @@ public class GiniCoreAPIBuilder {
      * @param networkSecurityConfigResId xml resource id
      * @return The builder instance to enable chaining.
      */
-    public GiniCoreAPIBuilder setNetworkSecurityConfigResId(@XmlRes final int networkSecurityConfigResId) {
+    public GiniCoreAPIBuilder<T> setNetworkSecurityConfigResId(@XmlRes final int networkSecurityConfigResId) {
         mNetworkSecurityConfigResId = networkSecurityConfigResId;
         return this;
     }
@@ -105,7 +105,7 @@ public class GiniCoreAPIBuilder {
      * @param newUrl The URL of the Gini API which is used by the requests of the library.
      * @return The builder instance to enable chaining.
      */
-    public GiniCoreAPIBuilder setApiBaseUrl(@NonNull String newUrl) {
+    public GiniCoreAPIBuilder<T> setApiBaseUrl(@NonNull String newUrl) {
         if (!newUrl.endsWith("/")) {
             newUrl += "/";
         }
@@ -119,7 +119,7 @@ public class GiniCoreAPIBuilder {
      * @param newUrl The URL of the Gini User Center API which is used by the requests of the library.
      * @return The builder instance to enable chaining.
      */
-    public GiniCoreAPIBuilder setUserCenterApiBaseUrl(@NonNull String newUrl) {
+    public GiniCoreAPIBuilder<T> setUserCenterApiBaseUrl(@NonNull String newUrl) {
         if (!newUrl.endsWith("/")) {
             newUrl += "/";
         }
@@ -134,7 +134,7 @@ public class GiniCoreAPIBuilder {
      *
      * @return The builder instance to enable chaining.
      */
-    public GiniCoreAPIBuilder setGiniApiType(@NonNull final GiniApiType giniApiType) {
+    public GiniCoreAPIBuilder<T> setGiniApiType(@NonNull final GiniApiType giniApiType) {
         mGiniApiType = giniApiType;
         return this;
     }
@@ -151,7 +151,7 @@ public class GiniCoreAPIBuilder {
      * @param connectionTimeoutInMs initial timeout
      * @return The builder instance to enable chaining.
      */
-    public GiniCoreAPIBuilder setConnectionTimeoutInMs(final int connectionTimeoutInMs) {
+    public GiniCoreAPIBuilder<T> setConnectionTimeoutInMs(final int connectionTimeoutInMs) {
         if (connectionTimeoutInMs < 0) {
             throw new IllegalArgumentException("connectionTimeoutInMs can't be less than 0");
         }
@@ -165,7 +165,7 @@ public class GiniCoreAPIBuilder {
      * @param maxNumberOfRetries maximal number of retries.
      * @return The builder instance to enable chaining.
      */
-    public GiniCoreAPIBuilder setMaxNumberOfRetries(final int maxNumberOfRetries) {
+    public GiniCoreAPIBuilder<T> setMaxNumberOfRetries(final int maxNumberOfRetries) {
         if (maxNumberOfRetries < 0) {
             throw new IllegalArgumentException("maxNumberOfRetries can't be less than 0");
         }
@@ -180,7 +180,7 @@ public class GiniCoreAPIBuilder {
      * @param backOffMultiplier the backoff multiplication factor
      * @return The builder instance to enable chaining.
      */
-    public GiniCoreAPIBuilder setConnectionBackOffMultiplier(final float backOffMultiplier) {
+    public GiniCoreAPIBuilder<T> setConnectionBackOffMultiplier(final float backOffMultiplier) {
         if (backOffMultiplier < 0.0) {
             throw new IllegalArgumentException("backOffMultiplier can't be less than 0");
         }
@@ -195,7 +195,7 @@ public class GiniCoreAPIBuilder {
      * @param credentialsStore A credentials store instance (specified by the CredentialsStore interface).
      * @return The builder instance to enable chaining.
      */
-    public GiniCoreAPIBuilder setCredentialsStore(@NonNull CredentialsStore credentialsStore) {
+    public GiniCoreAPIBuilder<T> setCredentialsStore(@NonNull CredentialsStore credentialsStore) {
         mCredentialsStore = checkNotNull(credentialsStore);
         return this;
     }
@@ -207,19 +207,17 @@ public class GiniCoreAPIBuilder {
      * @param cache A cache instance (specified by the com.android.volley.Cache interface).
      * @return The builder instance to enable chaining.
      */
-    public GiniCoreAPIBuilder setCache(@NonNull Cache cache) {
+    public GiniCoreAPIBuilder<T> setCache(@NonNull Cache cache) {
         mCache = cache;
         return this;
     }
 
     /**
-     * Builds the GiniCoreAPI instance with the configuration settings of the builder instance.
+     * Builds an instance with the configuration settings of the builder instance.
      *
-     * @return The fully configured Gini instance.
+     * @return The fully configured instance.
      */
-    GiniCoreAPI build() {
-        return new GiniCoreAPI(getDocumentTaskManager(), getCredentialsStore());
-    }
+    public abstract T build();
 
     /**
      * Helper method to create (and store) the RequestQueue which is used for both the requests to the Gini API and the

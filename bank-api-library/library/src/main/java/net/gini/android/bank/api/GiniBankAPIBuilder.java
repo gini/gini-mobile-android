@@ -8,7 +8,7 @@ import net.gini.android.core.api.GiniApiType;
 import net.gini.android.core.api.authorization.SessionManager;
 import net.gini.android.core.api.internal.GiniCoreAPIBuilder;
 
-public class GiniBankAPIBuilder extends GiniCoreAPIBuilder {
+public class GiniBankAPIBuilder extends GiniCoreAPIBuilder<GiniBankAPI> {
 
     /**
      * Constructor to initialize a new builder instance where anonymous Gini users are used. <b>This requires access to
@@ -40,8 +40,9 @@ public class GiniBankAPIBuilder extends GiniCoreAPIBuilder {
     /**
      * Builds the GiniBankAPI instance with the configuration settings of the builder instance.
      *
-     * @return The fully configured Gini instance.
+     * @return The fully configured GiniBankAPI instance.
      */
+    @Override
     public GiniBankAPI build() {
         return new GiniBankAPI(getDocumentTaskManager(), getCredentialsStore());
     }

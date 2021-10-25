@@ -6,6 +6,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
 
+import android.content.Context;
+
+import androidx.annotation.NonNull;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.SmallTest;
 
@@ -25,17 +28,16 @@ import bolts.Task;
 @SmallTest
 @RunWith(AndroidJUnit4.class)
 public class GiniCoreAPIBuilderTest {
-
     @Test
     public void testBuilderReturnsGiniInstance() {
-        GiniCoreAPIBuilder builder = new GiniCoreAPIBuilder(getApplicationContext(), "clientId", "clientSecret", "@example.com");
+        CoreAPIBuilder builder = new CoreAPIBuilder(getApplicationContext(), "clientId", "clientSecret", "@example.com")
         builder.setGiniApiType(GiniApiType.DEFAULT);
         assertNotNull(builder.build());
     }
 
     @Test
     public void testBuilderReturnsCorrectConfiguredGiniInstance() {
-        GiniCoreAPIBuilder builder = new GiniCoreAPIBuilder(getApplicationContext(), "clientId", "clientSecret", "@example.com");
+        CoreAPIBuilder builder = new CoreAPIBuilder(getApplicationContext(), "clientId", "clientSecret", "@example.com");
         builder.setGiniApiType(GiniApiType.DEFAULT);
         GiniCoreAPI giniHealthAPI = builder.build();
 
@@ -47,7 +49,7 @@ public class GiniCoreAPIBuilderTest {
     public void testBuilderWorksWithAlternativeSessionManager() {
         final SessionManager sessionManager = new NullSessionManager();
 
-        final GiniCoreAPIBuilder builder = new GiniCoreAPIBuilder(getApplicationContext(), sessionManager);
+        final CoreAPIBuilder builder = new CoreAPIBuilder(getApplicationContext(), sessionManager);
         builder.setGiniApiType(GiniApiType.DEFAULT);
         final GiniCoreAPI giniHealthAPI = builder.build();
 
@@ -58,7 +60,7 @@ public class GiniCoreAPIBuilderTest {
 
     @Test
     public void testSetWrongConnectionTimeout() {
-        GiniCoreAPIBuilder builder = new GiniCoreAPIBuilder(getApplicationContext(), "clientId", "clientSecret", "@example.com");
+        CoreAPIBuilder builder = new CoreAPIBuilder(getApplicationContext(), "clientId", "clientSecret", "@example.com");
         try {
             builder.setConnectionTimeoutInMs(-1);
             fail("IllegalArgumentException should be thrown");
@@ -68,7 +70,7 @@ public class GiniCoreAPIBuilderTest {
 
     @Test
     public void testSetWrongConnectionMaxNumberOfRetries() {
-        GiniCoreAPIBuilder builder = new GiniCoreAPIBuilder(getApplicationContext(), "clientId", "clientSecret", "@example.com");
+        CoreAPIBuilder builder = new CoreAPIBuilder(getApplicationContext(), "clientId", "clientSecret", "@example.com");
         try {
             builder.setMaxNumberOfRetries(-1);
             fail("IllegalArgumentException should be thrown");
@@ -78,7 +80,7 @@ public class GiniCoreAPIBuilderTest {
 
     @Test
     public void testSetWrongConnectionBackOffMultiplier() {
-        GiniCoreAPIBuilder builder = new GiniCoreAPIBuilder(getApplicationContext(), "clientId", "clientSecret", "@example.com");
+        CoreAPIBuilder builder = new CoreAPIBuilder(getApplicationContext(), "clientId", "clientSecret", "@example.com");
         try {
             builder.setConnectionBackOffMultiplier(-1);
             fail("IllegalArgumentException should be thrown");
@@ -88,7 +90,7 @@ public class GiniCoreAPIBuilderTest {
 
     @Test
     public void testRetryPolicyWiring() {
-        GiniCoreAPIBuilder builder = new GiniCoreAPIBuilder(getApplicationContext(), "clientId", "clientSecret", "@example.com");
+        CoreAPIBuilder builder = new CoreAPIBuilder(getApplicationContext(), "clientId", "clientSecret", "@example.com");
         builder.setGiniApiType(GiniApiType.DEFAULT);
         builder.setConnectionTimeoutInMs(3333);
         builder.setMaxNumberOfRetries(66);
@@ -103,13 +105,29 @@ public class GiniCoreAPIBuilderTest {
 
     @Test
     public void testVolleyCacheConfiguration() {
-        GiniCoreAPIBuilder builder = new GiniCoreAPIBuilder(getApplicationContext(), "clientId", "clientSecret", "@example.com");
+        CoreAPIBuilder builder = new CoreAPIBuilder(getApplicationContext(), "clientId", "clientSecret", "@example.com");
         builder.setGiniApiType(GiniApiType.DEFAULT);
         NullCache nullCache = new NullCache();
         builder.setCache(nullCache);
         GiniCoreAPI giniHealthAPI = builder.build();
 
         assertSame(giniHealthAPI.getDocumentTaskManager().mApiCommunicator.mRequestQueue.getCache(), nullCache);
+    }
+
+    private static class CoreAPIBuilder extends GiniCoreAPIBuilder<GiniCoreAPI> {
+
+        protected CoreAPIBuilder(@NonNull Context context, @NonNull String clientId, @NonNull String clientSecret, @NonNull String emailDomain) {
+            super(context, clientId, clientSecret, emailDomain);
+        }
+
+        protected CoreAPIBuilder(@NonNull Context context, @NonNull SessionManager sessionManager) {
+            super(context, sessionManager);
+        }
+
+        @Override
+        public GiniCoreAPI build() {
+            return new GiniCoreAPI(getDocumentTaskManager(), getCredentialsStore());
+        }
     }
 
     private static final class NullCache implements Cache {

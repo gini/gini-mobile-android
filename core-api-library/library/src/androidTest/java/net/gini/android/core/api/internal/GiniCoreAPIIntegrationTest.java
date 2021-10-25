@@ -25,6 +25,7 @@ import com.android.volley.toolbox.NoCache;
 import net.gini.android.core.api.DocumentTaskManager;
 import net.gini.android.core.api.GiniApiType;
 import net.gini.android.core.api.authorization.EncryptedCredentialsStore;
+import net.gini.android.core.api.authorization.SessionManager;
 import net.gini.android.core.api.authorization.UserCredentials;
 import net.gini.android.core.api.models.Box;
 import net.gini.android.core.api.models.CompoundExtraction;
@@ -90,7 +91,7 @@ public class GiniCoreAPIIntegrationTest {
 
         resetTrustKit();
 
-        giniHealthAPI = new GiniCoreAPIBuilder(getApplicationContext(), clientId, clientSecret, "example.com").
+        giniHealthAPI = new CoreAPIBuilder(getApplicationContext(), clientId, clientSecret, "example.com").
                 setGiniApiType(apiType).
                 setApiBaseUrl(apiUri).
                 setUserCenterApiBaseUrl(userCenterUri).
@@ -116,7 +117,7 @@ public class GiniCoreAPIIntegrationTest {
 
     @Test
     public void processDocumentWithCustomCache() throws IOException, JSONException, InterruptedException {
-        giniHealthAPI = new GiniCoreAPIBuilder(getApplicationContext(), clientId, clientSecret, "example.com").
+        giniHealthAPI = new CoreAPIBuilder(getApplicationContext(), clientId, clientSecret, "example.com").
                 setGiniApiType(apiType).
                 setApiBaseUrl(apiUri).
                 setUserCenterApiBaseUrl(userCenterUri).
@@ -283,7 +284,7 @@ public class GiniCoreAPIIntegrationTest {
     public void documentUploadWorksAfterNewUserWasCreatedIfUserWasInvalid() throws IOException, JSONException, InterruptedException {
         EncryptedCredentialsStore credentialsStore = new EncryptedCredentialsStore(
                 getApplicationContext().getSharedPreferences("GiniTests", Context.MODE_PRIVATE), getApplicationContext());
-        giniHealthAPI = new GiniCoreAPIBuilder(getApplicationContext(), clientId, clientSecret, "example.com").
+        giniHealthAPI = new CoreAPIBuilder(getApplicationContext(), clientId, clientSecret, "example.com").
                 setGiniApiType(apiType).
                 setApiBaseUrl(apiUri).
                 setUserCenterApiBaseUrl(userCenterUri).
@@ -311,7 +312,7 @@ public class GiniCoreAPIIntegrationTest {
         // Upload a document to make sure we have a valid user
         EncryptedCredentialsStore credentialsStore = new EncryptedCredentialsStore(
                 getApplicationContext().getSharedPreferences("GiniTests", Context.MODE_PRIVATE), getApplicationContext());
-        giniHealthAPI = new GiniCoreAPIBuilder(getApplicationContext(), clientId, clientSecret, "example.com").
+        giniHealthAPI = new CoreAPIBuilder(getApplicationContext(), clientId, clientSecret, "example.com").
                 setGiniApiType(apiType).
                 setApiBaseUrl(apiUri).
                 setUserCenterApiBaseUrl(userCenterUri).
@@ -329,7 +330,7 @@ public class GiniCoreAPIIntegrationTest {
         // Create another Gini instance with a new email domain (to simulate an app update)
         // and verify that the new email domain is used
         String newEmailDomain = "beispiel.com";
-        giniHealthAPI = new GiniCoreAPIBuilder(getApplicationContext(), clientId, clientSecret, newEmailDomain).
+        giniHealthAPI = new CoreAPIBuilder(getApplicationContext(), clientId, clientSecret, newEmailDomain).
                 setGiniApiType(apiType).
                 setApiBaseUrl(apiUri).
                 setUserCenterApiBaseUrl(userCenterUri).
@@ -346,7 +347,7 @@ public class GiniCoreAPIIntegrationTest {
     @Test
     public void publicKeyPinningWithMatchingPublicKey() throws Exception {
         resetTrustKit();
-        giniHealthAPI = new GiniCoreAPIBuilder(getApplicationContext(), clientId, clientSecret, "example.com").
+        giniHealthAPI = new CoreAPIBuilder(getApplicationContext(), clientId, clientSecret, "example.com").
                 setNetworkSecurityConfigResId(net.gini.android.core.api.test.R.xml.network_security_config).
                 setGiniApiType(apiType).
                 setApiBaseUrl(apiUri).
@@ -364,7 +365,7 @@ public class GiniCoreAPIIntegrationTest {
     @Test
     public void publicKeyPinningWithCustomCache() throws Exception {
         resetTrustKit();
-        giniHealthAPI = new GiniCoreAPIBuilder(getApplicationContext(), clientId, clientSecret, "example.com").
+        giniHealthAPI = new CoreAPIBuilder(getApplicationContext(), clientId, clientSecret, "example.com").
                 setNetworkSecurityConfigResId(net.gini.android.core.api.test.R.xml.network_security_config).
                 setGiniApiType(apiType).
                 setApiBaseUrl(apiUri).
@@ -385,7 +386,7 @@ public class GiniCoreAPIIntegrationTest {
     @SdkSuppress(maxSdkVersion = Build.VERSION_CODES.JELLY_BEAN_MR1)
     public void publicKeyPinningWithWrongPublicKey() throws Exception {
         resetTrustKit();
-        giniHealthAPI = new GiniCoreAPIBuilder(getApplicationContext(), clientId, clientSecret, "example.com").
+        giniHealthAPI = new CoreAPIBuilder(getApplicationContext(), clientId, clientSecret, "example.com").
                 setNetworkSecurityConfigResId(net.gini.android.core.api.test.R.xml.wrong_network_security_config).
                 setGiniApiType(apiType).
                 setApiBaseUrl(apiUri).
@@ -429,7 +430,7 @@ public class GiniCoreAPIIntegrationTest {
     @SdkSuppress(maxSdkVersion = Build.VERSION_CODES.JELLY_BEAN_MR1)
     public void publicKeyPinningWithMultiplePublicKeys() throws Exception {
         resetTrustKit();
-        giniHealthAPI = new GiniCoreAPIBuilder(getApplicationContext(), clientId, clientSecret, "example.com").
+        giniHealthAPI = new CoreAPIBuilder(getApplicationContext(), clientId, clientSecret, "example.com").
                 setNetworkSecurityConfigResId(net.gini.android.core.api.test.R.xml.multiple_keys_network_security_config).
                 setGiniApiType(apiType).
                 setApiBaseUrl(apiUri).
@@ -864,5 +865,21 @@ public class GiniCoreAPIIntegrationTest {
 
     private interface ExtractionsCallback {
         void onExtractionsAvailable(@NonNull final ExtractionsContainer extractionsContainer);
+    }
+
+    private static class CoreAPIBuilder extends GiniCoreAPIBuilder<GiniCoreAPI> {
+
+        protected CoreAPIBuilder(@NonNull Context context, @NonNull String clientId, @NonNull String clientSecret, @NonNull String emailDomain) {
+            super(context, clientId, clientSecret, emailDomain);
+        }
+
+        protected CoreAPIBuilder(@NonNull Context context, @NonNull SessionManager sessionManager) {
+            super(context, sessionManager);
+        }
+
+        @Override
+        public GiniCoreAPI build() {
+            return new GiniCoreAPI(getDocumentTaskManager(), getCredentialsStore());
+        }
     }
 }
