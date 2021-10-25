@@ -16,5 +16,7 @@ include("core-api-library:library")
 
 include("health-api-library:library")
 
+include("bank-api-library:library")
+
 include("health-sdk:sdk")
 include("health-sdk:example-app")
