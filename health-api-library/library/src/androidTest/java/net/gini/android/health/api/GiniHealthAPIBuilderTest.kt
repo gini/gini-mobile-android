@@ -1,4 +1,4 @@
-package net.gini.android.health.api.internal
+package net.gini.android.health.api
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
