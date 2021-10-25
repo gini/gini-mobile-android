@@ -1,3 +1,3 @@
-# Module ginipaylib
+# Module library
 
-## Gini Pay API Library for Android
+## Gini Health API Library for Android

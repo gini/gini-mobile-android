@@ -41,9 +41,8 @@ android {
 }
 
 dependencies {
-    api("com.android.volley:volley:1.2.1")
-    api("com.parse.bolts:bolts-android:1.4.0")
-    implementation("com.datatheorem.android.trustkit:trustkit:1.1.3")
+    api(project(":core-api-library:library"))
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
@@ -52,6 +51,7 @@ dependencies {
 
     androidTestImplementation(libs.mockito.core)
     androidTestImplementation(libs.mockito.android)
+    androidTestImplementation(libs.mockito.kotlin)
     androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(libs.androidx.test.rules)
     androidTestImplementation(libs.androidx.test.junit)
@@ -60,29 +60,4 @@ dependencies {
 
 apply<PublishToMavenPlugin>()
 apply<DokkaPlugin>()
-apply<PropertiesPlugin>()
 apply<CodeAnalysisPlugin>()
-
-tasks.register<CreatePropertiesTask>("injectTestProperties") {
-    val propertiesMap = mutableMapOf<String, String>()
-
-    doFirst {
-        propertiesMap.clear()
-        propertiesMap.putAll(readLocalPropertiesToMap(project,
-            listOf("testClientId", "testClientSecret", "testApiUri", "testUserCenterUri")))
-    }
-
-    destinations.put(
-        file("src/androidTest/assets/test.properties"),
-        propertiesMap
-    )
-}
-
-afterEvaluate {
-    tasks.filter { it.name.endsWith("test", ignoreCase = true) }.forEach {
-        it.dependsOn(tasks.getByName("injectTestProperties"))
-    }
-}
-
-// TODO: remove this?
-// apply from: rootProject.file('gradle/javadoc_coverage.gradle')
