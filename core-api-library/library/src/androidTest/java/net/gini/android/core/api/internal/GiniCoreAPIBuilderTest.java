@@ -30,7 +30,7 @@ import bolts.Task;
 public class GiniCoreAPIBuilderTest {
     @Test
     public void testBuilderReturnsGiniInstance() {
-        CoreAPIBuilder builder = new CoreAPIBuilder(getApplicationContext(), "clientId", "clientSecret", "@example.com")
+        CoreAPIBuilder builder = new CoreAPIBuilder(getApplicationContext(), "clientId", "clientSecret", "@example.com");
         builder.setGiniApiType(GiniApiType.DEFAULT);
         assertNotNull(builder.build());
     }
