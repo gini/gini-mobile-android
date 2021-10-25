@@ -60,6 +60,7 @@ jobs:
             core-api-library:library:connectedCheck
             -PtestClientId="gini-mobile-test"
             -PtestClientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
+            -PtestApiType="DEFAULT"
             -PtestApiUri="https://pay-api.gini.net"
             -PtestUserCenterUri="https://user.gini.net"
 
