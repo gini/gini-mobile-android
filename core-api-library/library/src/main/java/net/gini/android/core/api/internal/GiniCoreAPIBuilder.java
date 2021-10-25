@@ -213,11 +213,11 @@ public class GiniCoreAPIBuilder {
     }
 
     /**
-     * Builds the Gini instance with the configuration settings of the builder instance.
+     * Builds the GiniCoreAPI instance with the configuration settings of the builder instance.
      *
      * @return The fully configured Gini instance.
      */
-    public GiniCoreAPI build() {
+    GiniCoreAPI build() {
         return new GiniCoreAPI(getDocumentTaskManager(), getCredentialsStore());
     }
 
@@ -299,7 +299,7 @@ public class GiniCoreAPIBuilder {
      * @return The CredentialsStore instance.
      */
     @NonNull
-    private synchronized CredentialsStore getCredentialsStore() {
+    protected synchronized CredentialsStore getCredentialsStore() {
         if (mCredentialsStore == null) {
             SharedPreferences sharedPreferences = mContext.getSharedPreferences("Gini",
                     Context.MODE_PRIVATE);
@@ -362,7 +362,7 @@ public class GiniCoreAPIBuilder {
      * @return The DocumentTaskManager instance.
      */
     @NonNull
-    private synchronized DocumentTaskManager getDocumentTaskManager() {
+    protected synchronized DocumentTaskManager getDocumentTaskManager() {
         if (mDocumentTaskManager == null) {
             mDocumentTaskManager = new DocumentTaskManager(getApiCommunicator(),
                     getSessionManager(), mGiniApiType, getMoshi());

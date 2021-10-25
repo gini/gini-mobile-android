@@ -4,6 +4,7 @@ import android.content.Context;
 
 import net.gini.android.core.api.GiniApiType;
 import net.gini.android.core.api.authorization.SessionManager;
+import net.gini.android.core.api.internal.GiniCoreAPI;
 import net.gini.android.core.api.internal.GiniCoreAPIBuilder;
 import androidx.annotation.NonNull;
 
@@ -34,6 +35,15 @@ public class GiniHealthAPIBuilder extends GiniCoreAPIBuilder {
     public GiniHealthAPIBuilder(@NonNull final Context context, @NonNull final SessionManager sessionManager) {
         super(context, sessionManager);
         setGiniApiType(GiniApiType.HEALTH);
+    }
+
+    /**
+     * Builds the GiniHealthAPI instance with the configuration settings of the builder instance.
+     *
+     * @return The fully configured Gini instance.
+     */
+    public GiniHealthAPI build() {
+        return new GiniHealthAPI(getDocumentTaskManager(), getCredentialsStore());
     }
 
 }
