@@ -4,6 +4,7 @@ import com.android.build.gradle.LibraryExtension
 import net.gini.gradle.extensions.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.dokka.gradle.DokkaCollectorTask
@@ -28,10 +29,7 @@ class DokkaPlugin: Plugin<Project> {
 
             addChildTask("${target.path}:dokkaHtml")
 
-            (target.configurations.getByName("api").dependencies +
-                    target.configurations.getByName("implementation").dependencies)
-                .filterIsInstance<ProjectDependency>()
-                .forEach { addChildTask("${it.dependencyProject.path}:dokkaHtml") }
+            addSiblingDokkaTasksRecursive(target.configurations.asMap["api"]?.dependencies, "dokkaHtml")
         }
 
         target.tasks.getByName<DokkaTask>("dokkaHtml") {
@@ -54,10 +52,7 @@ class DokkaPlugin: Plugin<Project> {
 
             addChildTask("${target.path}:dokkaJavadoc")
 
-            (target.configurations.getByName("api").dependencies +
-                    target.configurations.getByName("implementation").dependencies)
-                .filterIsInstance<ProjectDependency>()
-                .forEach { addChildTask("${it.dependencyProject.path}:dokkaJavadoc") }
+            addSiblingDokkaTasksRecursive(target.configurations.asMap["api"]?.dependencies, "dokkaJavadoc")
         }
 
         target.tasks.getByName<DokkaTask>("dokkaJavadoc") {
@@ -65,5 +60,15 @@ class DokkaPlugin: Plugin<Project> {
         }
 
     }
+}
 
+private fun DokkaCollectorTask.addSiblingDokkaTasksRecursive(dependencies: Set<Dependency>?, dokkaTaskName: String) {
+    dependencies
+        ?.filterIsInstance<ProjectDependency>()
+        ?.forEach {
+            addChildTask("${it.dependencyProject.path}:$dokkaTaskName")
+            addSiblingDokkaTasksRecursive(
+                it.dependencyProject.configurations.asMap["api"]?.dependencies,
+                dokkaTaskName)
+        }
 }
