@@ -7,6 +7,8 @@ on:
     tags-ignore:
       - '**'
   pull_request:
+    paths:
+      - 'bank-api-library/**'
 
 jobs:
   build-docs:
