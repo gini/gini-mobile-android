@@ -93,7 +93,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#public-key-pinning">Public Key Pinning</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#configure-pinning">Configure Pinning</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id4">TrustKit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#trustkit-2">TrustKit</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#enable-pinning">Enable Pinning</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#extract-hash-from-gini-net">Extract Hash From gini.net</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#extract-hash-from-public-key">Extract Hash From Public Key</a></li>
@@ -106,7 +106,7 @@
 <li class="toctree-l3"><a class="reference internal" href="common-tasks.html#setting-the-document-type-hint">Setting the document type hint</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="common-tasks.html#getting-extractions">Getting extractions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="common-tasks.html#getting-extractions-1">Getting extractions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="common-tasks.html#sending-feedback">Sending feedback</a></li>
 <li class="toctree-l2"><a class="reference internal" href="common-tasks.html#report-an-extraction-error-to-gini">Report an extraction error to Gini</a></li>
 <li class="toctree-l2"><a class="reference internal" href="common-tasks.html#handling-errors">Handling errors</a></li>
@@ -202,6 +202,9 @@ with this configuration would be <code class="docutils literal notranslate"><spa
 <div class="section" id="public-key-pinning">
 <h2>Public Key Pinning<a class="headerlink" href="#public-key-pinning" title="Permalink to this headline">¶</a></h2>
 <p>Public key pinning is provided using the <a class="reference external" href="https://developer.android.com/training/articles/security-config.html">Android Network Security Configuration</a> and <a class="reference external" href="https://github.com/datatheorem/TrustKit-Android">TrustKit</a>.</p>
+<div class="system-message">
+<p class="system-message-title">System Message: INFO/1 (<tt class="docutils">/home/runner/work/gini-mobile-android/gini-mobile-android/health-api-library/library/src/doc/source/guides/getting-started.rst</tt>, line 5); <em><a href="#trustkit-1">backlink</a></em></p>
+Duplicate explicit target name: “trustkit”.</div>
 <p>To use public key pinning you need to create an <a class="reference external" href="https://developer.android.com/training/articles/security-config.html">Android network security configuration</a> xml file. This
 configuration is supported natively on Android Nougat (API Level 24) and newer. For versions between
 API Level 21 and 23 the Gini Health API Library relies on <a class="reference external" href="https://github.com/datatheorem/TrustKit-Android">TrustKit</a>.</p>
@@ -249,8 +252,11 @@ from the public key (see <a class="reference internal" href="#extract-hash-from-
 to security vulnerabilities.</p>
 </div>
 </div>
-<div class="section" id="id4">
-<h3>TrustKit<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="trustkit-2">
+<h3>TrustKit<a class="headerlink" href="#trustkit-2" title="Permalink to this headline">¶</a></h3>
+<div class="system-message">
+<p class="system-message-title">System Message: INFO/1 (<tt class="docutils">/home/runner/work/gini-mobile-android/gini-mobile-android/health-api-library/library/src/doc/source/guides/getting-started.rst</tt>, line 5); <em><a href="#trustkit-3">backlink</a></em></p>
+Duplicate explicit target name: “trustkit”.</div>
 <p>The <a class="reference external" href="https://github.com/datatheorem/TrustKit-Android">TrustKit</a> configuration tag
 <code class="docutils literal notranslate"><span class="pre">&lt;trustkit-config&gt;</span></code> is required in order to disable TrustKit reporting and to enforce public key
 pinning. This is important because without it TrustKit won’t throw <code class="docutils literal notranslate"><span class="pre">CertificateExceptions</span></code> if the

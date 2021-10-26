@@ -1,5 +1,9 @@
 $dokka.format:html-v1
 $dokka.linkExtension:html
+$dokka.location:kotlin/PaymentRequest.Status/getName/#/PointingToDeclaration/library/net.gini.android.core.api.models/-payment-request/-status/get-name.html
+$dokka.location:kotlin/PaymentRequest.Status/getOrdinal/#/PointingToDeclaration/library/net.gini.android.core.api.models/-payment-request/-status/get-ordinal.html
+$dokka.location:kotlin/ResolvedPayment.Status/getName/#/PointingToDeclaration/library/net.gini.android.core.api.models/-resolved-payment/-status/get-name.html
+$dokka.location:kotlin/ResolvedPayment.Status/getOrdinal/#/PointingToDeclaration/library/net.gini.android.core.api.models/-resolved-payment/-status/get-ordinal.html
 $dokka.location:net.gini.android.core.api.authorization.crypto////PointingToDeclaration/library/net.gini.android.core.api.authorization.crypto/index.html
 $dokka.location:net.gini.android.core.api.authorization.crypto/GiniCrypto///PointingToDeclaration/library/net.gini.android.core.api.authorization.crypto/-gini-crypto/index.html
 $dokka.location:net.gini.android.core.api.authorization.crypto/GiniCrypto/decrypt/#java.lang.String/PointingToDeclaration/library/net.gini.android.core.api.authorization.crypto/-gini-crypto/decrypt.html
@@ -97,6 +101,23 @@ $dokka.location:net.gini.android.core.api.internal/BundleHelper/bundleToMap/#and
 $dokka.location:net.gini.android.core.api.internal/BundleHelper/bundleToMap/#android.os.Bundle/PointingToDeclaration/library/net.gini.android.core.api.internal/-bundle-helper/bundle-to-map.html
 $dokka.location:net.gini.android.core.api.internal/BundleHelper/mapListToBundleList/#java.util.List<java.util.Map<java.lang.String,V>>/PointingToDeclaration/library/net.gini.android.core.api.internal/-bundle-helper/map-list-to-bundle-list.html
 $dokka.location:net.gini.android.core.api.internal/BundleHelper/mapToBundle/#java.util.Map<java.lang.String,V>/PointingToDeclaration/library/net.gini.android.core.api.internal/-bundle-helper/map-to-bundle.html
+$dokka.location:net.gini.android.core.api.internal/GiniCoreAPI///PointingToDeclaration/library/net.gini.android.core.api.internal/-gini-core-a-p-i/index.html
+$dokka.location:net.gini.android.core.api.internal/GiniCoreAPI/getCredentialsStore/#/PointingToDeclaration/library/net.gini.android.core.api.internal/-gini-core-a-p-i/get-credentials-store.html
+$dokka.location:net.gini.android.core.api.internal/GiniCoreAPI/getDocumentManager/#/PointingToDeclaration/library/net.gini.android.core.api.internal/-gini-core-a-p-i/get-document-manager.html
+$dokka.location:net.gini.android.core.api.internal/GiniCoreAPI/getDocumentTaskManager/#/PointingToDeclaration/library/net.gini.android.core.api.internal/-gini-core-a-p-i/get-document-task-manager.html
+$dokka.location:net.gini.android.core.api.internal/GiniCoreAPIBuilder///PointingToDeclaration/library/net.gini.android.core.api.internal/-gini-core-a-p-i-builder/index.html
+$dokka.location:net.gini.android.core.api.internal/GiniCoreAPIBuilder/build/#/PointingToDeclaration/library/net.gini.android.core.api.internal/-gini-core-a-p-i-builder/build.html
+$dokka.location:net.gini.android.core.api.internal/GiniCoreAPIBuilder/getGiniApiType/#/PointingToDeclaration/library/net.gini.android.core.api.internal/-gini-core-a-p-i-builder/get-gini-api-type.html
+$dokka.location:net.gini.android.core.api.internal/GiniCoreAPIBuilder/getSessionManager/#/PointingToDeclaration/library/net.gini.android.core.api.internal/-gini-core-a-p-i-builder/get-session-manager.html
+$dokka.location:net.gini.android.core.api.internal/GiniCoreAPIBuilder/setApiBaseUrl/#java.lang.String/PointingToDeclaration/library/net.gini.android.core.api.internal/-gini-core-a-p-i-builder/set-api-base-url.html
+$dokka.location:net.gini.android.core.api.internal/GiniCoreAPIBuilder/setCache/#com.android.volley.Cache/PointingToDeclaration/library/net.gini.android.core.api.internal/-gini-core-a-p-i-builder/set-cache.html
+$dokka.location:net.gini.android.core.api.internal/GiniCoreAPIBuilder/setConnectionBackOffMultiplier/#float/PointingToDeclaration/library/net.gini.android.core.api.internal/-gini-core-a-p-i-builder/set-connection-back-off-multiplier.html
+$dokka.location:net.gini.android.core.api.internal/GiniCoreAPIBuilder/setConnectionTimeoutInMs/#int/PointingToDeclaration/library/net.gini.android.core.api.internal/-gini-core-a-p-i-builder/set-connection-timeout-in-ms.html
+$dokka.location:net.gini.android.core.api.internal/GiniCoreAPIBuilder/setCredentialsStore/#net.gini.android.core.api.authorization.CredentialsStore/PointingToDeclaration/library/net.gini.android.core.api.internal/-gini-core-a-p-i-builder/set-credentials-store.html
+$dokka.location:net.gini.android.core.api.internal/GiniCoreAPIBuilder/setGiniApiType/#net.gini.android.core.api.GiniApiType/PointingToDeclaration/library/net.gini.android.core.api.internal/-gini-core-a-p-i-builder/set-gini-api-type.html
+$dokka.location:net.gini.android.core.api.internal/GiniCoreAPIBuilder/setMaxNumberOfRetries/#int/PointingToDeclaration/library/net.gini.android.core.api.internal/-gini-core-a-p-i-builder/set-max-number-of-retries.html
+$dokka.location:net.gini.android.core.api.internal/GiniCoreAPIBuilder/setNetworkSecurityConfigResId/#int/PointingToDeclaration/library/net.gini.android.core.api.internal/-gini-core-a-p-i-builder/set-network-security-config-res-id.html
+$dokka.location:net.gini.android.core.api.internal/GiniCoreAPIBuilder/setUserCenterApiBaseUrl/#java.lang.String/PointingToDeclaration/library/net.gini.android.core.api.internal/-gini-core-a-p-i-builder/set-user-center-api-base-url.html
 $dokka.location:net.gini.android.core.api.models////PointingToDeclaration/library/net.gini.android.core.api.models/index.html
 $dokka.location:net.gini.android.core.api.models/Box///PointingToDeclaration/library/net.gini.android.core.api.models/-box/index.html
 $dokka.location:net.gini.android.core.api.models/Box/Box/#int#double#double#double#double/PointingToDeclaration/library/net.gini.android.core.api.models/-box/-box.html
@@ -180,8 +201,6 @@ $dokka.location:net.gini.android.core.api.models/PaymentRequest.Status.INVALID//
 $dokka.location:net.gini.android.core.api.models/PaymentRequest.Status.OPEN///PointingToDeclaration/library/net.gini.android.core.api.models/-payment-request/-status/-o-p-e-n/index.html
 $dokka.location:net.gini.android.core.api.models/PaymentRequest.Status.PAID///PointingToDeclaration/library/net.gini.android.core.api.models/-payment-request/-status/-p-a-i-d/index.html
 $dokka.location:net.gini.android.core.api.models/PaymentRequest.Status///PointingToDeclaration/library/net.gini.android.core.api.models/-payment-request/-status/index.html
-$dokka.location:net.gini.android.core.api.models/PaymentRequest.Status/getName/#/PointingToDeclaration/library/net.gini.android.core.api.models/-payment-request/-status/get-name.html
-$dokka.location:net.gini.android.core.api.models/PaymentRequest.Status/getOrdinal/#/PointingToDeclaration/library/net.gini.android.core.api.models/-payment-request/-status/get-ordinal.html
 $dokka.location:net.gini.android.core.api.models/PaymentRequest///PointingToDeclaration/library/net.gini.android.core.api.models/-payment-request/index.html
 $dokka.location:net.gini.android.core.api.models/PaymentRequest/PaymentRequest/#kotlin.String#kotlin.String?#kotlin.String#kotlin.String#kotlin.String?#kotlin.String#kotlin.String#net.gini.android.core.api.models.PaymentRequest.Status/PointingToDeclaration/library/net.gini.android.core.api.models/-payment-request/-payment-request.html
 $dokka.location:net.gini.android.core.api.models/PaymentRequest/getAmount/#/PointingToDeclaration/library/net.gini.android.core.api.models/-payment-request/get-amount.html
@@ -212,8 +231,6 @@ $dokka.location:net.gini.android.core.api.models/ResolvedPayment.Status.INVALID/
 $dokka.location:net.gini.android.core.api.models/ResolvedPayment.Status.OPEN///PointingToDeclaration/library/net.gini.android.core.api.models/-resolved-payment/-status/-o-p-e-n/index.html
 $dokka.location:net.gini.android.core.api.models/ResolvedPayment.Status.PAID///PointingToDeclaration/library/net.gini.android.core.api.models/-resolved-payment/-status/-p-a-i-d/index.html
 $dokka.location:net.gini.android.core.api.models/ResolvedPayment.Status///PointingToDeclaration/library/net.gini.android.core.api.models/-resolved-payment/-status/index.html
-$dokka.location:net.gini.android.core.api.models/ResolvedPayment.Status/getName/#/PointingToDeclaration/library/net.gini.android.core.api.models/-resolved-payment/-status/get-name.html
-$dokka.location:net.gini.android.core.api.models/ResolvedPayment.Status/getOrdinal/#/PointingToDeclaration/library/net.gini.android.core.api.models/-resolved-payment/-status/get-ordinal.html
 $dokka.location:net.gini.android.core.api.models/ResolvedPayment///PointingToDeclaration/library/net.gini.android.core.api.models/-resolved-payment/index.html
 $dokka.location:net.gini.android.core.api.models/ResolvedPayment/ResolvedPayment/#kotlin.String#kotlin.String#kotlin.String#kotlin.String?#kotlin.String#kotlin.String#net.gini.android.core.api.models.ResolvedPayment.Status/PointingToDeclaration/library/net.gini.android.core.api.models/-resolved-payment/-resolved-payment.html
 $dokka.location:net.gini.android.core.api.models/ResolvedPayment/getAmount/#/PointingToDeclaration/library/net.gini.android.core.api.models/-resolved-payment/get-amount.html
@@ -372,7 +389,9 @@ $dokka.location:net.gini.android.core.api/DocumentTaskManager/resolvePaymentRequ
 $dokka.location:net.gini.android.core.api/DocumentTaskManager/sendFeedbackForExtractions/#net.gini.android.core.api.models.Document#java.util.Map<java.lang.String,net.gini.android.core.api.models.SpecificExtraction>#java.util.Map<java.lang.String,net.gini.android.core.api.models.CompoundExtraction>/PointingToDeclaration/library/net.gini.android.core.api/-document-task-manager/send-feedback-for-extractions.html
 $dokka.location:net.gini.android.core.api/DocumentTaskManager/sendFeedbackForExtractions/#net.gini.android.core.api.models.Document#java.util.Map<java.lang.String,net.gini.android.core.api.models.SpecificExtraction>/PointingToDeclaration/library/net.gini.android.core.api/-document-task-manager/send-feedback-for-extractions.html
 $dokka.location:net.gini.android.core.api/GiniApiType.ACCOUNTING///PointingToDeclaration/library/net.gini.android.core.api/-gini-api-type/-a-c-c-o-u-n-t-i-n-g/index.html
+$dokka.location:net.gini.android.core.api/GiniApiType.BANK///PointingToDeclaration/library/net.gini.android.core.api/-gini-api-type/-b-a-n-k/index.html
 $dokka.location:net.gini.android.core.api/GiniApiType.DEFAULT///PointingToDeclaration/library/net.gini.android.core.api/-gini-api-type/-d-e-f-a-u-l-t/index.html
+$dokka.location:net.gini.android.core.api/GiniApiType.HEALTH///PointingToDeclaration/library/net.gini.android.core.api/-gini-api-type/-h-e-a-l-t-h/index.html
 $dokka.location:net.gini.android.core.api/GiniApiType///PointingToDeclaration/library/net.gini.android.core.api/-gini-api-type/index.html
 $dokka.location:net.gini.android.core.api/GiniApiType/getBaseUrl/#/PointingToDeclaration/library/net.gini.android.core.api/-gini-api-type/get-base-url.html
 $dokka.location:net.gini.android.core.api/GiniApiType/getGiniCompositeJsonMediaType/#/PointingToDeclaration/library/net.gini.android.core.api/-gini-api-type/get-gini-composite-json-media-type.html
@@ -398,23 +417,10 @@ $dokka.location:net.gini.android.core.api/Utils/checkNotNull/#T/PointingToDeclar
 $dokka.location:net.gini.android.core.api/Utils/mapToUrlEncodedString/#java.util.Map<java.lang.String,java.lang.String>/PointingToDeclaration/library/net.gini.android.core.api/-utils/map-to-url-encoded-string.html
 $dokka.location:net.gini.android.health.api////PointingToDeclaration/library/net.gini.android.health.api/index.html
 $dokka.location:net.gini.android.health.api/GiniHealthAPI///PointingToDeclaration/library/net.gini.android.health.api/-gini-health-a-p-i/index.html
-$dokka.location:net.gini.android.health.api/GiniHealthAPI/getCredentialsStore/#/PointingToDeclaration/library/net.gini.android.health.api/-gini-health-a-p-i/get-credentials-store.html
-$dokka.location:net.gini.android.health.api/GiniHealthAPI/getDocumentManager/#/PointingToDeclaration/library/net.gini.android.health.api/-gini-health-a-p-i/get-document-manager.html
-$dokka.location:net.gini.android.health.api/GiniHealthAPI/getDocumentTaskManager/#/PointingToDeclaration/library/net.gini.android.health.api/-gini-health-a-p-i/get-document-task-manager.html
 $dokka.location:net.gini.android.health.api/GiniHealthAPIBuilder///PointingToDeclaration/library/net.gini.android.health.api/-gini-health-a-p-i-builder/index.html
 $dokka.location:net.gini.android.health.api/GiniHealthAPIBuilder/GiniHealthAPIBuilder/#android.content.Context#java.lang.String#java.lang.String#java.lang.String/PointingToDeclaration/library/net.gini.android.health.api/-gini-health-a-p-i-builder/-gini-health-a-p-i-builder.html
 $dokka.location:net.gini.android.health.api/GiniHealthAPIBuilder/GiniHealthAPIBuilder/#android.content.Context#net.gini.android.core.api.authorization.SessionManager/PointingToDeclaration/library/net.gini.android.health.api/-gini-health-a-p-i-builder/-gini-health-a-p-i-builder.html
 $dokka.location:net.gini.android.health.api/GiniHealthAPIBuilder/build/#/PointingToDeclaration/library/net.gini.android.health.api/-gini-health-a-p-i-builder/build.html
-$dokka.location:net.gini.android.health.api/GiniHealthAPIBuilder/getSessionManager/#/PointingToDeclaration/library/net.gini.android.health.api/-gini-health-a-p-i-builder/get-session-manager.html
-$dokka.location:net.gini.android.health.api/GiniHealthAPIBuilder/setApiBaseUrl/#java.lang.String/PointingToDeclaration/library/net.gini.android.health.api/-gini-health-a-p-i-builder/set-api-base-url.html
-$dokka.location:net.gini.android.health.api/GiniHealthAPIBuilder/setCache/#com.android.volley.Cache/PointingToDeclaration/library/net.gini.android.health.api/-gini-health-a-p-i-builder/set-cache.html
-$dokka.location:net.gini.android.health.api/GiniHealthAPIBuilder/setConnectionBackOffMultiplier/#float/PointingToDeclaration/library/net.gini.android.health.api/-gini-health-a-p-i-builder/set-connection-back-off-multiplier.html
-$dokka.location:net.gini.android.health.api/GiniHealthAPIBuilder/setConnectionTimeoutInMs/#int/PointingToDeclaration/library/net.gini.android.health.api/-gini-health-a-p-i-builder/set-connection-timeout-in-ms.html
-$dokka.location:net.gini.android.health.api/GiniHealthAPIBuilder/setCredentialsStore/#net.gini.android.core.api.authorization.CredentialsStore/PointingToDeclaration/library/net.gini.android.health.api/-gini-health-a-p-i-builder/set-credentials-store.html
-$dokka.location:net.gini.android.health.api/GiniHealthAPIBuilder/setGiniApiType/#net.gini.android.core.api.GiniApiType/PointingToDeclaration/library/net.gini.android.health.api/-gini-health-a-p-i-builder/set-gini-api-type.html
-$dokka.location:net.gini.android.health.api/GiniHealthAPIBuilder/setMaxNumberOfRetries/#int/PointingToDeclaration/library/net.gini.android.health.api/-gini-health-a-p-i-builder/set-max-number-of-retries.html
-$dokka.location:net.gini.android.health.api/GiniHealthAPIBuilder/setNetworkSecurityConfigResId/#int/PointingToDeclaration/library/net.gini.android.health.api/-gini-health-a-p-i-builder/set-network-security-config-res-id.html
-$dokka.location:net.gini.android.health.api/GiniHealthAPIBuilder/setUserCenterApiBaseUrl/#java.lang.String/PointingToDeclaration/library/net.gini.android.health.api/-gini-health-a-p-i-builder/set-user-center-api-base-url.html
 net.gini.android.core.api
 net.gini.android.core.api.authorization
 net.gini.android.core.api.authorization.crypto
