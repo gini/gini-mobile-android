@@ -7,7 +7,7 @@ on:
 
 jobs:
   check:
-    uses: gini/gini-mobile-android/.github/workflows/health-api-library.check.yml@PIA-1935-create-bank-api-library
+    uses: gini/gini-mobile-android/.github/workflows/health-api-library.check.yml@main
 
   release:
     needs: check
