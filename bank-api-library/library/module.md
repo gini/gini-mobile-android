@@ -1,3 +1,3 @@
 # Module library
 
-## Gini Health API Library for Android
+## Gini Bank API Library for Android

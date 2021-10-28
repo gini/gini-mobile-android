@@ -1,4 +1,4 @@
-Gini Health API Library for Android documentation
+Gini Bank API Library for Android documentation
 =================================================
 
 How to build from source

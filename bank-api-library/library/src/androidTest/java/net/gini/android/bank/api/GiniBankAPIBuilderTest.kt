@@ -17,14 +17,14 @@ import org.mockito.kotlin.mock
 class GiniBankAPIBuilderTest {
 
     @Test
-    fun constructors_useTheHealthAPI() {
+    fun constructors_useTheBankAPI() {
         val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
 
-        var healthAPIBuilder = GiniBankAPIBuilder(targetContext, "", "", "")
-        assertEquals(healthAPIBuilder.giniApiType, GiniApiType.BANK)
+        var bankAPIBuilder = GiniBankAPIBuilder(targetContext, "", "", "")
+        assertEquals(bankAPIBuilder.giniApiType, GiniApiType.BANK)
 
-        healthAPIBuilder = GiniBankAPIBuilder(targetContext, mock())
-        assertEquals(healthAPIBuilder.giniApiType, GiniApiType.BANK)
+        bankAPIBuilder = GiniBankAPIBuilder(targetContext, mock())
+        assertEquals(bankAPIBuilder.giniApiType, GiniApiType.BANK)
     }
 
 }
