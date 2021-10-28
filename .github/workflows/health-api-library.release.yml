@@ -7,9 +7,7 @@ on:
 
 jobs:
   check:
-    uses: gini/gini-mobile-android/.github/workflows/health-api-library.check.yml@main
-    secrets:
-      GINI_MOBILE_TEST_CLIENT_SECRET: ${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}
+    uses: gini/gini-mobile-android/.github/workflows/health-api-library.check.yml@PIA-1935-create-bank-api-library
 
   release:
     needs: check

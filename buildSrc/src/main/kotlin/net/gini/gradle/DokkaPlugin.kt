@@ -4,10 +4,10 @@ import com.android.build.gradle.LibraryExtension
 import net.gini.gradle.extensions.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.get
-import org.gradle.kotlin.dsl.getByName
-import org.gradle.kotlin.dsl.getByType
+import org.gradle.api.artifacts.Dependency
+import org.gradle.api.artifacts.ProjectDependency
+import org.gradle.kotlin.dsl.*
+import org.jetbrains.dokka.gradle.DokkaCollectorTask
 import org.jetbrains.dokka.gradle.DokkaTask
 
 /**
@@ -24,8 +24,15 @@ class DokkaPlugin: Plugin<Project> {
             add("dokkaHtmlPlugin", target.libs.findDependency("dokka.kotlinAsJava").get())
         }
 
-        target.tasks.getByName<DokkaTask>("dokkaHtml") {
+        target.tasks.create<DokkaCollectorTask>("dokkaHtmlSiblingCollector") {
             outputDirectory.set(target.file("${target.buildDir}/docs/dokka"))
+
+            addChildTask("${target.path}:dokkaHtml")
+
+            addSiblingDokkaTasksRecursive(target.configurations.asMap["api"]?.dependencies, "dokkaHtml")
+        }
+
+        target.tasks.getByName<DokkaTask>("dokkaHtml") {
             this.dokkaSourceSets.named("main").configure {
                 noAndroidSdkLink.set(false)
 
@@ -40,9 +47,28 @@ class DokkaPlugin: Plugin<Project> {
             }
         }
 
+        target.tasks.create<DokkaCollectorTask>("dokkaJavadocSiblingCollector") {
+            outputDirectory.set(target.file("${target.buildDir}/docs/dokka"))
+
+            addChildTask("${target.path}:dokkaJavadoc")
+
+            addSiblingDokkaTasksRecursive(target.configurations.asMap["api"]?.dependencies, "dokkaJavadoc")
+        }
+
         target.tasks.getByName<DokkaTask>("dokkaJavadoc") {
             outputDirectory.set(target.file("${target.buildDir}/docs/dokka-javadoc"))
         }
-    }
 
+    }
+}
+
+private fun DokkaCollectorTask.addSiblingDokkaTasksRecursive(dependencies: Set<Dependency>?, dokkaTaskName: String) {
+    dependencies
+        ?.filterIsInstance<ProjectDependency>()
+        ?.forEach {
+            addChildTask("${it.dependencyProject.path}:$dokkaTaskName")
+            addSiblingDokkaTasksRecursive(
+                it.dependencyProject.configurations.asMap["api"]?.dependencies,
+                dokkaTaskName)
+        }
 }

@@ -4,9 +4,15 @@ on:
   push:
     paths:
       - 'health-sdk/**'
+      - 'health-api-library/**'
+      - 'core-api-library/**'
     tags-ignore:
       - '**'
   pull_request:
+    paths:
+      - 'health-sdk/**'
+      - 'health-api-library/**'
+      - 'core-api-library/**'
   workflow_call:
     secrets:
       GINI_MOBILE_TEST_CLIENT_SECRET:

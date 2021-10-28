@@ -1,0 +1,46 @@
+name: Build docs for Bank API Library
+
+on:
+  push:
+    paths:
+      - 'bank-api-library/**'
+    tags-ignore:
+      - '**'
+  pull_request:
+    paths:
+      - 'bank-api-library/**'
+
+jobs:
+  build-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: setup java
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+          cache: 'gradle'
+
+      - name: setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '2.7.x'
+
+      - name: build documentation
+        uses: maierj/fastlane-action@v2.0.1
+        with:
+          lane: 'build_documentation'
+          options: >
+            { 
+              "project_id": "bank-api-library",
+              "module_id": "library"
+            }
+
+      - name: archive documentation
+        uses: actions/upload-artifact@v2
+        with:
+          name: bank-api-library-documentation
+          path: bank-api-library/library/build/docs

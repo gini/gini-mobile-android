@@ -4,20 +4,21 @@ on:
   push:
     paths:
       - 'health-api-library/**'
+      - 'core-api-library/**'
     tags-ignore:
       - '**'
   pull_request:
+    paths:
+      - 'health-api-library/**'
+      - 'core-api-library/**'
   workflow_call:
-    secrets:
-      GINI_MOBILE_TEST_CLIENT_SECRET:
-        required: true
 
 jobs:
   test:
     runs-on: macos-latest
     strategy:
       matrix:
-        api-level: [22, 26, 31]
+        api-level: [31]
     steps:
       - name: checkout
         uses: actions/checkout@v2
@@ -51,11 +52,6 @@ jobs:
 
       - name: run instrumented tests
         timeout-minutes: 20
-        env:
-          client_id: gini-mobile-test
-          client_secret: ${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}
-          api_uri: "https://pay-api.gini.net"
-          user_center_uri: "https://user.gini.net"
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ matrix.api-level }}
@@ -64,10 +60,7 @@ jobs:
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           script: >
-            ./gradlew
-            health-api-library:library:connectedCheck
-            -PtestClientId="$client_id" -PtestClientSecret="$client_secret"
-            -PtestApiUri="$api_uri" -PtestUserCenterUri="$user_center_uri"
+            ./gradlew health-api-library:library:connectedCheck
 
       - name: archive instrumented test results
         if: always()
