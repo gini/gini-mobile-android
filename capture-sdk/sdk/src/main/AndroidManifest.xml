@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="net.gini.android.capture">
+
+    <uses-permission android:name="android.permission.VIBRATE"/>
+
+    <application>
+        <activity
+            android:name="net.gini.android.capture.camera.CameraActivity"
+            android:exported="false"
+            android:label="@string/gc_title_camera"
+            android:theme="@style/GiniCaptureTheme" />
+        <activity
+            android:name="net.gini.android.capture.review.ReviewActivity"
+            android:exported="false"
+            android:label="@string/gc_title_review"
+            android:theme="@style/GiniCaptureTheme" />
+        <activity
+            android:name="net.gini.android.capture.analysis.AnalysisActivity"
+            android:exported="false"
+            android:label="@string/gc_title_analysis"
+            android:theme="@style/GiniCaptureTheme" />
+        <activity
+            android:name="net.gini.android.capture.noresults.NoResultsActivity"
+            android:exported="false"
+            android:theme="@style/GiniCaptureTheme" />
+        <activity
+            android:name="net.gini.android.capture.onboarding.OnboardingActivity"
+            android:exported="false"
+            android:label="@string/gc_title_onboarding"
+            android:theme="@style/GiniCaptureTheme.Transparent" />
+        <activity
+            android:name="net.gini.android.capture.internal.fileimport.FileChooserActivity"
+            android:exported="false"
+            android:theme="@style/GiniCaptureTheme.Chooser" />
+        <activity
+            android:name="net.gini.android.capture.help.HelpActivity"
+            android:exported="false"
+            android:label="@string/gc_title_help"
+            android:theme="@style/GiniCaptureTheme" />
+        <activity
+            android:name="net.gini.android.capture.help.PhotoTipsActivity"
+            android:exported="false"
+            android:label="@string/gc_title_photo_tips"
+            android:theme="@style/GiniCaptureTheme" />
+        <activity
+            android:name="net.gini.android.capture.help.SupportedFormatsActivity"
+            android:exported="false"
+            android:label="@string/gc_title_supported_formats"
+            android:theme="@style/GiniCaptureTheme" />
+        <activity
+            android:name="net.gini.android.capture.help.FileImportActivity"
+            android:exported="false"
+            android:label="@string/gc_title_file_import"
+            android:theme="@style/GiniCaptureTheme" />
+        <activity
+            android:name="net.gini.android.capture.review.multipage.MultiPageReviewActivity"
+            android:exported="false"
+            android:label="@string/gc_title_multi_page_review"
+            android:theme="@style/GiniCaptureTheme" />
+
+
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.google.android.gms.vision.DEPENDENCIES"
+            android:value="barcode" />
+    </application>
+
+</manifest>

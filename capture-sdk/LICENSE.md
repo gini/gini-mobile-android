@@ -1,0 +1,1 @@
+Moved to https://developer.gini.net/gini-capture-sdk-android/html/license.html

@@ -1,0 +1,51 @@
+<resources>
+    <string name="app_name">Screen API Example</string>
+
+    <string name="additional_onboarding_page">This is a custom page example.</string>
+
+    <string name="title_extractions">Extractions</string>
+    <string name="title_no_extractions">No Extractions</string>
+
+    <string name="start_gini_capture_sdk">Start Gini Capture SDK</string>
+
+    <string name="menu_item_feedback">Send Feedback</string>
+    <string name="menu_item_view_picture">View Picture</string>
+    <string name="document_size_too_large">Diese Datei ist leider größer als 5MB.</string>
+    <string name="unsupported_document_type">Nur Dateien vom Format jpg oder pdf können analysiert werden.</string>
+
+    <string name="storage_permission_denied_message">Nur mit Datei-Zugriff können gespeicherte Rechnungen hochgeladen werden.</string>
+    <string name="grant_access">Zugriff erteilen</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="storage_permission_rationale">Um gespeicherte Bilder oder PDFs zu analysieren, wird Datei-Zugriff auf dem Gerät benötigt.</string>
+    <string name="camera_permission_denied_message">Nur mit Kamera-Zugriff können Sie die Gini Capture SDK verwenden.</string>
+    <string name="camera_permission_rationale">Um Rechnungen fotografieren zu können, wird Kamera-Zugriff benötigt.</string>
+
+    <string name="gini_api_type_label">Gini API Type</string>
+    <string-array name="gini_api_types">
+        <item>BANK</item>
+    </string-array>
+
+    <string name="custom_help_screen_title">Custom Help Screen</string>
+    <string name="custom_help_screen_greeting">This is a custom help screen.</string>
+
+    <!-- String customization examples -->
+
+    <!--<string name="gc_title_camera">Dokument fotografieren</string>-->
+    <!--<string name="gc_title_onboarding">Anleitung</string>-->
+    <!--<string name="gc_title_review">Foto überprüfen</string>-->
+
+    <!--<string name="gc_show_onboarding">Hilfe</string>-->
+    <!--<string name="gc_select_from_camera_roll">Eigenes Bild auswählen</string>-->
+
+    <!--<string name="gc_camera_error_no_permission">Um Dokumente zu fotografieren, erlaube Gini Pay den Zugriff auf die Kamera.</string>-->
+    <!--<string name="gc_camera_error_no_permission_button_title">Zugriff erlauben</string>-->
+
+    <!--<string name="gc_onboarding_flat">Dokument flach fotografieren\n</string>-->
+    <!--<string name="gc_onboarding_parallel">Handy parallel\nzum Dokument\nhalten</string>-->
+    <!--<string name="gc_onboarding_align">Dokument\nvollständig in\nRahmen einpassen</string>-->
+
+    <!--<string name="gc_review_bottom_panel_text">Dokument vollständig, scharf und in Leserichtung?\n\nDoppeltippen um Schärfe zu prüfen.</string>-->
+
+    <!--<string name="gc_document_analysis_error_retry">Wiederholen</string>-->
+
+</resources>

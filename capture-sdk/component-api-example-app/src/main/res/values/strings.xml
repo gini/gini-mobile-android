@@ -1,0 +1,68 @@
+<resources>
+    <string name="app_name">Component API Example</string>
+
+    <string name="start_gini_capture_sdk">Start Gini Capture Capture SDK</string>
+
+    <string name="title_camera">Camera Screen</string>
+    <string name="title_onboarding">Onboarding Screen</string>
+    <string name="title_review">Review Screen</string>
+    <string name="title_extractions">Extractions</string>
+    <string name="title_no_extractions">No Extractions</string>
+
+    <string name="menu_item_feedback">Send Feedback</string>
+
+    <string name="retry_analysis">Wiederholen</string>
+    <string name="document_size_too_large">Diese Datei ist leider größer als 5MB.</string>
+
+    <string name="storage_permission_denied_message">Nur mit Datei-Zugriff können gespeicherte Rechnungen hochgeladen werden.</string>
+    <string name="grant_access">Zugriff erteilen</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="storage_permission_rationale">Um gespeicherte Bilder oder PDFs zu analysieren, wird Datei-Zugriff auf dem Gerät benötigt.</string>
+    <string name="camera_permission_denied_message">Nur mit Kamera-Zugriff können Sie die Gini Capture SDK verwenden.</string>
+    <string name="camera_permission_rationale">Um Rechnungen fotografieren zu können, wird Kamera-Zugriff benötigt.</string>
+    <string name="amount_changed_feedback_message">Amount changed to %1$s</string>
+    <string name="amount_added_feedback_message">Added amount of %1$s</string>
+    <string name="feedback_error">Feedback error: %1$s</string>
+    <string name="feedbacl_successful">Feedback successful</string>
+    <string name="feedback_error_no_gini_api_document">Feedback not set: no Gini Api Document available</string>
+    <string name="unknown_error">unknown</string>
+    <string name="unfulfilled_requirements">Requirements not fulfilled: %1$s</string>
+    <string name="analysis_failed">Analysis failed: %1$s</string>
+    <string name="gini_capture_error">Error: %1$s - %2$s</string>
+    <string name="one_moment_please">Einen Moment bitte …</string>
+    <string name="ok">OK</string>
+    <string name="camera_screen_title">Seite abfotografieren</string>
+    <string name="camera_screen_subtitle">Vollständig in den Rahmen einpassen</string>
+    <string name="no_results_screen_title">Keine Ergebnisse</string>
+    <string name="no_results_screen_subtitle">Wir haben ein paar Tipps für Sie</string>
+    <string name="review_screen_title">Seite überprüfen</string>
+    <string name="review_screen_subtitle">Vollständig, scharf und in Leserichtung?</string>
+    <string name="multi_page_review_screen_title">Seiten überprüfen</string>
+    <string name="multi_page_review_screen_subtitle">Vollständig und Seiten geordnet?</string>
+    <string name="additional_onboarding_page">This is a custom page example.</string>
+
+    <string name="gini_api_type_label">Gini API Type</string>
+    <string-array name="gini_api_types">
+        <item>BANK</item>
+    </string-array>
+
+    <!-- String customization examples -->
+
+    <!--<string name="gc_title_camera">Dokument fotografieren</string>-->
+    <!--<string name="gc_title_onboarding">Anleitung</string>-->
+    <!--<string name="gc_title_review">Foto überprüfen</string>-->
+
+    <!--<string name="gc_show_onboarding">Hilfe</string>-->
+    <!--<string name="gc_select_from_camera_roll">Eigenes Bild auswählen</string>-->
+
+    <!--<string name="gc_camera_error_no_permission">Um Dokumente zu fotografieren, erlaube Gini Pay den Zugriff auf die Kamera.</string>-->
+    <!--<string name="gc_camera_error_no_permission_button_title">Zugriff erlauben</string>-->
+
+    <!--<string name="gc_onboarding_flat">Dokument flach fotografieren\n</string>-->
+    <!--<string name="gc_onboarding_parallel">Handy parallel\nzum Dokument\nhalten</string>-->
+    <!--<string name="gc_onboarding_align">Dokument\nvollständig in\nRahmen einpassen</string>-->
+
+    <!--<string name="gc_review_bottom_panel_text">Dokument vollständig, scharf und in Leserichtung?\n\nDoppeltippen um Schärfe zu prüfen.</string>-->
+
+    <!--<string name="gc_document_analysis_error_retry">Wiederholen</string>-->
+</resources>

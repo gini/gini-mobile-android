@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/gc_help_item_background"
+    android:foreground="?attr/selectableItemBackground"
+    android:orientation="vertical">
+
+    <net.gini.android.capture.internal.ui.CustomFontTextView
+        android:id="@+id/gc_help_item_title"
+        style="@style/GiniCaptureTheme.Help.Item.TextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/gc_help_item_margin"
+        tools:text="@string/gc_help_item_photo_tips_title" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gc_help_activity_background" />
+</LinearLayout>

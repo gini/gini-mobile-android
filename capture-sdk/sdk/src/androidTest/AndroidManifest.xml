@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="net.gini.android.capture.test">
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <application
+        android:name="androidx.multidex.MultiDexApplication"
+        android:largeHeap="true">
+        <activity
+            android:name="net.gini.android.capture.review.ReviewActivityTestSpy"
+            android:label="@string/gc_title_review"
+            android:theme="@style/GiniCaptureTheme" />
+        <activity
+            android:name="net.gini.android.capture.analysis.AnalysisActivityTestSpy"
+            android:theme="@style/GiniCaptureTheme" />
+        <activity
+            android:name="net.gini.android.capture.internal.ui.ErrorSnackbarTestActivity"
+            android:theme="@style/GiniCaptureTheme" />
+        <activity android:name="net.gini.android.capture.internal.camera.api.NoOpActivity" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="net.gini.android.capture.test.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths" />
+        </provider>
+
+        <activity
+            android:name="net.gini.android.capture.camera.CameraActivityFake"
+            android:theme="@style/GiniCaptureTheme" />
+        <activity
+            android:name="net.gini.android.capture.camera.CameraFragmentHostActivityNotListener"
+            android:theme="@style/GiniCaptureTheme" />
+        <activity
+            android:name="net.gini.android.capture.camera.CameraFragmentHostActivity"
+            android:theme="@style/GiniCaptureTheme" />
+        <activity
+            android:name="net.gini.android.capture.onboarding.OnboardingFragmentHostActivityNotListener"
+            android:theme="@style/GiniCaptureTheme" />
+        <activity
+            android:name="net.gini.android.capture.onboarding.OnboardingFragmentHostActivity"
+            android:theme="@style/GiniCaptureTheme" />
+        <activity
+            android:name="net.gini.android.capture.review.ReviewFragmentHostActivityNotListener"
+            android:theme="@style/GiniCaptureTheme" />
+        <activity
+            android:name="net.gini.android.capture.review.ReviewFragmentHostActivity"
+            android:theme="@style/GiniCaptureTheme" />
+        <activity
+            android:name="net.gini.android.capture.analysis.AnalysisFragmentHostActivityNotListener"
+            android:theme="@style/GiniCaptureTheme" />
+        <activity
+            android:name="net.gini.android.capture.analysis.AnalysisFragmentHostActivity"
+            android:theme="@style/GiniCaptureTheme" />
+    </application>
+
+</manifest>

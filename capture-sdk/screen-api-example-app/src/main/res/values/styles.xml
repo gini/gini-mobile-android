@@ -1,0 +1,51 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <!-- Example of customizing the Camera Screen no camera permission error's text style -->
+    <!--<style name="GiniCaptureTheme.Camera.Error.NoPermission.TextStyle" parent="Root.GiniCaptureTheme.Camera.Error.NoPermission.TextStyle">-->
+        <!--<item name="android:textStyle">bold</item>-->
+        <!--<item name="android:textSize">30sp</item>-->
+        <!--<item name="gcCustomFont">Cave-Story.ttf</item>-->
+    <!--</style>-->
+
+    <!-- Example of customizing the Camera Screen no camera permission error button's text style -->
+    <!--<style name="GiniCaptureTheme.Camera.Error.NoPermission.Button.TextStyle" parent="Root.GiniCaptureTheme.Camera.Error.NoPermission.Button.TextStyle">-->
+        <!--<item name="android:textStyle">italic</item>-->
+        <!--<item name="android:textSize">30sp</item>-->
+        <!--<item name="gcCustomFont">Cave-Story.ttf</item>-->
+    <!--</style>-->
+
+    <!-- Example of customizing the Review Screen bottom panel's text style -->
+    <!--<style name="GiniCaptureTheme.Review.BottomPanel.TextStyle" parent="Root.GiniCaptureTheme.Review.BottomPanel.TextStyle">-->
+        <!--<item name="android:textStyle">bold</item>-->
+        <!--<item name="android:textSize">16sp</item>-->
+        <!--<item name="gcCustomFont">fonts/Warenhaus-Standard.ttf</item>-->
+    <!--</style>-->
+
+    <!-- Example of customizing the Onboarding Screen's text style -->
+    <!--<style name="GiniCaptureTheme.Onboarding.Message.TextStyle" parent="Root.GiniCaptureTheme.Onboarding.Message.TextStyle">-->
+        <!--<item name="android:textSize">40sp</item>-->
+    <!--</style>-->
+
+    <!-- Example of customizing the Analysis Screen error snackbar's text style -->
+    <!--<style name="GiniCaptureTheme.Snackbar.Error.TextStyle" parent="Root.GiniCaptureTheme.Snackbar.Error.TextStyle">-->
+        <!--<item name="android:textStyle">bold</item>-->
+        <!--<item name="android:textSize">16sp</item>-->
+        <!--<item name="gcCustomFont"/>-->
+    <!--</style>-->
+
+    <!-- Example of customizing the Analysis Screen error snackbar button's text style -->
+    <!--<style name="GiniCaptureTheme.Snackbar.Error.Button.TextStyle" parent="Root.GiniCaptureTheme.Snackbar.Error.Button.TextStyle">-->
+        <!--<item name="android:textStyle">bold|italic</item>-->
+        <!--<item name="android:textSize">16sp</item>-->
+        <!--<item name="gcCustomFont"/>-->
+    <!--</style>-->
+
+</resources>

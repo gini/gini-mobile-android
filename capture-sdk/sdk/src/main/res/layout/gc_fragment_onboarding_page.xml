@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <View
+        android:id="@+id/gc_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="@string/gc_onboarding_page_fragment_background_alpha"
+        android:background="@color/gc_onboarding_page_fragment_background" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/gc_onboarding_vertical_margin">
+
+        <ImageView
+            android:id="@+id/gc_image_onboarding"
+            android:layout_width="@dimen/gc_onboarding_illustration_size"
+            android:layout_height="@dimen/gc_onboarding_illustration_size"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="@dimen/gc_onboarding_illustration_vertical_margin"
+            tools:src="@drawable/gc_onboarding_flat" />
+
+        <!--suppress AndroidDomInspection -->
+        <net.gini.android.capture.internal.ui.CustomFontTextView
+            android:id="@+id/gc_text_message"
+            style="@style/GiniCaptureTheme.Onboarding.Message.TextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginEnd="@dimen/gc_onboarding_message_horizontal_margin"
+            android:layout_marginLeft="@dimen/gc_onboarding_message_horizontal_margin"
+            android:layout_marginRight="@dimen/gc_onboarding_message_horizontal_margin"
+            android:layout_marginStart="@dimen/gc_onboarding_message_horizontal_margin"
+            android:gravity="center"
+            android:maxWidth="@dimen/gc_onboarding_message_max_width"
+            tools:text="Dokument flach\nauf eine einfarbige\nFläche legen" />
+    </LinearLayout>
+
+</RelativeLayout>
