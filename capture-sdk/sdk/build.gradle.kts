@@ -7,9 +7,9 @@ plugins {
     id("com.hiya.jacoco-android")
 }
 
-
 jacoco {
-    toolVersion = "0.8.7"
+    toolVersion = libs.versions.jacoco.get()
+
 }
 
 android {
@@ -37,7 +37,6 @@ android {
         }
     }
 
-    // TODO: is this still needed?
     packagingOptions {
         resources {
             // Fix for DuplicateFileException when using Espresso (https://code.google.com/p/android/issues/detail?id=195331)
@@ -119,9 +118,6 @@ dependencies {
 
     androidTestUtil(libs.androidx.test.orchestrator)
 }
-
-// TODO: is this needed?
-//apply from: rootProject.file("gradle/multidex_for_tests.gradle")
 
 apply<PublishToMavenPlugin>()
 apply<DokkaPlugin>()
