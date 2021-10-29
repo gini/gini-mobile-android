@@ -88,6 +88,48 @@ jobs:
           name: capture-sdk-component-api-example-app
           path: capture-sdk/component-api-example-app/build/outputs/apk
 
+  checkstyle:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+          cache: 'gradle'
+
+      - name: run checkstyle
+        run: ./gradlew capture-sdk:sdk:checkstyle
+
+      - name: archive checkstyle report
+        uses: actions/upload-artifact@v2
+        with:
+          name: capture-sdk-checkstyle-report
+          path: capture-sdk/sdk/build/reports/checkstyle/*.html
+
+  pmd:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+          cache: 'gradle'
+
+      - name: run pmd
+        run: ./gradlew capture-sdk:sdk:pmd
+
+      - name: archive pmd report
+        uses: actions/upload-artifact@v2
+        with:
+          name: capture-sdk-pmd-report
+          path: capture-sdk/sdk/build/reports/pmd/*.html
+
   android-lint:
     runs-on: ubuntu-latest
     steps:
