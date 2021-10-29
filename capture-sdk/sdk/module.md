@@ -1,4 +1,4 @@
-# Module ginicapture
+# Module sdk
 
 ## Gini Capture SDK for Android
 
@@ -26,7 +26,7 @@ Due to in-memory image handling applications using the Gini Capture SDK must ena
 
 The Gini Capture SDK can be used on tablets too. We have adapted some UI elements to offer a better experience to tablet users and
 removed the camera flash requirement for tablets since flash is not present on all tablets. For more information please consult our guide
-[Supporting Tablets](http://developer.gini.net/gini-capture-sdk-android/html/updating-to-2-4-0.html#tablet-support).
+[Supporting Tablets](http://developer.gini.net/gini-mobile-android/capture-sdk/sdk/html/updating-to-2-4-0.html#tablet-support).
 
 ### Requirements
 

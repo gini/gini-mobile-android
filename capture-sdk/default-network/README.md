@@ -16,10 +16,8 @@ creating a new `GiniCapture`.
 Documentation
 -------------
 
-// TODO: update links
-
-* [Integration Guide](http://developer.gini.net/gini-capture-sdk-android/html/) and
-* [Default Network Library Reference Docs](http://developer.gini.net/gini-capture-sdk-android/network/javadoc/index.html)
+* [Integration Guide](http://developer.gini.net/gini-mobile-android/capture-sdk/default-network/html/) and
+* [Default Network Library Reference Docs](http://developer.gini.net/gini-mobile-android/capture-sdk/default-network/dokka/index.html)
 
 Example
 -------

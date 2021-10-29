@@ -203,8 +203,8 @@ platform :android do
         * gradle module       : #{project_id}:#{module_id}
         * git tag             : #{git_tag}
         * destination branch  : gh-pages
-        * destination folder  : #{project_id}/
-        * url                 : http://developer.gini.net/gini-mobile-android/#{project_id}/html
+        * destination folder  : #{project_id}/#{module_id}
+        * url                 : http://developer.gini.net/gini-mobile-android/#{project_id}/#{module_id}/html
     MESSAGE
 
     if ci
@@ -219,7 +219,7 @@ platform :android do
       sh("git rm -rf #{project_id} --ignore-unmatch && git clean -fd")
 
       UI.message "Copy over the current documentation"
-      sh("cp -R ../../#{project_id}/#{module_id}/build/docs/ #{project_id}")
+      sh("mkdir -p #{project_id}/#{module_id} && cp -R ../../#{project_id}/#{module_id}/build/docs/ #{project_id}/#{module_id}")
 
       UI.message "Disable jekyll"
       sh("touch .nojekyll")
@@ -235,8 +235,8 @@ platform :android do
         * gradle module       : #{project_id}:#{module_id}
         * git tag             : #{git_tag}
         * destination branch  : gh-pages
-        * destination folder  : #{project_id}/
-        * url                 : http://developer.gini.net/gini-mobile-android/#{project_id}/html
+        * destination folder  : #{project_id}/#{module_id}
+        * url                 : http://developer.gini.net/gini-mobile-android/#{project_id}/#{module_id}/html
     MESSAGE
   end
 end

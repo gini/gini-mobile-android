@@ -1,1 +1,1 @@
-Moved to http://developer.gini.net/gini-mobile-android/bank-api-library/html/license.html
+Moved to http://developer.gini.net/gini-mobile-android/bank-api-library/library/html/license.html

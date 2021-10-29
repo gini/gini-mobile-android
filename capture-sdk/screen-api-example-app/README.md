@@ -8,7 +8,7 @@ The Gini Bank API Library is used for analyzing documents and sending feedback.
 Before analyzing documents with the Screen API example app, you need to set your Gini Bank API client id and secret by creating a
 `local.properties` file in this folder containing a `clientId` and a `clientSecret` property.
 
-You can find more information about the Screen API in our [integration guide](https://developer.gini.net/gini-capture-sdk-android/html/integration.html#screen-api).
+You can find more information about the Screen API in our [integration guide](https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/html/integration.html#screen-api).
 
 Overview
 ========

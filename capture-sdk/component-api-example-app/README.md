@@ -3,16 +3,12 @@ Component API Example App
 
 This example app provides you with a sample usage of the Gini Capture SDK's Component API.
 
-// TODO: update links
-
-The [Gini Bank API Library](https://github.com/gini/gini-pay-api-lib-android) is used for analyzing documents and sending feedback.
+The [Gini Bank API Library](https://github.com/gini/gini-mobile-android/tree/main/bank-api-library) is used for analyzing documents and sending feedback.
 
 Before analyzing documents with the Component API example app, you need to set your Gini Bank API client id and secret by creating a
 `local.properties` file in this folder containing a `clientId` and a `clientSecret` property.
 
-// TODO: update links
-
-You can find more information about the Component API in our [integration guide](https://developer.gini.net/gini-capture-sdk-android/html/integration.html#component-api).
+You can find more information about the Component API in our [integration guide](https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/html/integration.html#component-api).
 
 Overview
 ========
