@@ -224,7 +224,7 @@ platform :android do
       sh("git rm -rf #{project_id} --ignore-unmatch && git clean -fd")
 
       UI.message "Copy over the current documentation"
-      sh("mkdir -p #{project_id}/#{module_id} && cp -R ../../#{project_id}/#{module_id}/build/docs/ #{project_id}/#{module_id}")
+      sh("mkdir -p #{project_id}/#{module_id} && cp -R ../../#{project_id}/#{module_id}/build/docs/* #{project_id}/#{module_id}")
 
       UI.message "Disable jekyll"
       sh("touch .nojekyll")
