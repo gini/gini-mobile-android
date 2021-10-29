@@ -34,6 +34,15 @@ fun readLocalPropertiesToMap(project: Project, propertyNames: List<String>): Map
     }
 }
 
+fun readLocalPropertiesToMapSilent(project: Project, propertyNames: List<String>): Map<String, String> {
+    val localProps = readProperties(project, "local.properties")
+
+    return propertyNames.fold(mutableMapOf()) { map, name ->
+        map[name] = localProps.getProperty(name) ?: project.extra.properties[name] as? String ?: ""
+        return@fold map
+    }
+}
+
 fun loadLocalProperties(project: Project, propertyNames: List<String>) {
     val localProps = readProperties(project, "local.properties")
 

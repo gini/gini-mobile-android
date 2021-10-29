@@ -50,7 +50,7 @@ android {
     }
 
     buildTypes {
-        val credentials = readLocalPropertiesToMap(project, listOf("clientId", "clientSecret"))
+        val credentials = readLocalPropertiesToMapSilent(project, listOf("clientId", "clientSecret"))
 
         debug {
             resValue("string", "gini_api_client_id", credentials["clientId"] ?: "")
