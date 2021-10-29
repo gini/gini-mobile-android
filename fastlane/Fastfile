@@ -153,13 +153,18 @@ platform :android do
     UI.message "Building reference documentation (dokka)"
     gradle(task: "#{project_id}:#{module_id}:dokkaHtmlSiblingCollector")
 
-    UI.message "Building integration guide (Sphinx)"
-    Dir.chdir("../#{project_id}/#{module_id}/src/doc") do
-      sh("pip install -r requirements.txt")
-      sh("make html")
-    end
+    sphinx_doc_dir = "../#{project_id}/#{module_id}/src/doc"
 
-    sh("cp -a ../#{project_id}/#{module_id}/src/doc/build/* ../#{project_id}/#{module_id}/build/docs")
+    if Dir.exists? sphinx_doc_dir
+      UI.message "Building integration guide (Sphinx)"
+
+      Dir.chdir(sphinx_doc_dir) do
+        sh("pip install -r requirements.txt")
+        sh("make html")
+      end
+
+      sh("cp -a ../#{project_id}/#{module_id}/src/doc/build/* ../#{project_id}/#{module_id}/build/docs")
+    end
 
     UI.success <<~MESSAGE
       Documentation successfully built:
