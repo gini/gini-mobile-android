@@ -130,7 +130,7 @@ tasks.getByName<DokkaTask>("dokkaHtml") {
             suppress.set(true)
         }
         perPackageOption {
-            matchingRegex.set("""net\.gini\.android\.capture\.internal""")
+            matchingRegex.set("""net\.gini\.android\.capture\.internal.*""")
             suppress.set(true)
         }
         perPackageOption {
