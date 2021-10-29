@@ -1,0 +1,281 @@
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>GiniHealth</title>
+<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../../";</script><script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script><link href="../../../styles/style.css" rel="Stylesheet"><link href="../../../styles/logo-styles.css" rel="Stylesheet"><link href="../../../styles/jetbrains-mono.css" rel="Stylesheet"><link href="../../../styles/main.css" rel="Stylesheet"><script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script><script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script><script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script><script type="text/javascript" src="../../../scripts/main.js" async="async"></script>  </head>
+  <body>
+    <div id="container">
+      <div id="leftColumn"><a href="../../../index.html">
+          <div id="logo"></div>
+        </a>
+        <div id="paneSearch"></div>
+        <div id="sideMenu"></div>
+      </div>
+      <div id="main">
+        <div id="leftToggler"><span class="icon-toggler"></span></div>
+<script type="text/javascript" src="../../../scripts/main.js"></script>        <div class="main-content" id="content" pageIds="sdk::net.gini.android.health.sdk/GiniHealth///PointingToDeclaration//1426029261">
+          <div class="navigation-wrapper" id="navigation-wrapper">
+            <div class="breadcrumbs"><a href="../../../index.html">sdk</a>/<a href="../index.html">net.gini.android.health.sdk</a>/<a href="index.html">GiniHealth</a></div>
+            <div class="pull-right d-flex">
+              <div id="searchBar"></div>
+            </div>
+          </div>
+          <div class="cover ">
+            <h1 class="cover"><span>Gini</span><wbr></wbr><span><span>Health</span></span></h1>
+            <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace">public final class <a href="index.html">GiniHealth</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><p class="paragraph"><a href="index.html">GiniHealth</a> is the main class for interacting with the Gini Health SDK. It provides a way to submit a document for reviewing its extracted payment details and let's the user make the payment with one of the payment providers.</p><p class="paragraph">The recommended flow is:</p><ol><li><p class="paragraph">Call <a href="check-requirements.html">checkRequirements</a> to make sure that the flow can be completed.</p></li><li><p class="paragraph">Call one of the overloads of <a href="set-document-for-review.html">setDocumentForReview</a>, to submit a document.</p></li><li><p class="paragraph">Display <a href="../../net.gini.android.health.sdk.review/-review-fragment/index.html">ReviewFragment</a>.</p></li></ol><p class="paragraph"><a href="set-document-for-review.html">setDocumentForReview</a> can be called with:</p><ol><li><p class="paragraph"><a href="../../net.gini.android.core.api.models/-document/index.html">Document</a> instance in the case the upload was performed with Gini Pay Api lib (<a href="../../net.gini.android.health.api/-gini-health-a-p-i/index.html">GiniHealthAPI</a>).</p></li><li><p class="paragraph">Document id, this will probably be the case when there's backend integration between the Health SDK and the Gini Health API.     This method will make a network call to obtain a <a href="../../net.gini.android.core.api.models/-document/index.html">Document</a> instance so the other one is preferred if you have the <a href="../../net.gini.android.core.api.models/-document/index.html">Document</a> instance.</p></li></ol><p class="paragraph"><a href="index.html#1634510022%2FProperties%2F1426029261">documentFlow</a>, <a href="index.html#2001869271%2FProperties%2F1426029261">paymentFlow</a>, <a href="index.html#-295393792%2FProperties%2F1426029261">openBankState</a> are used by the ReviewFragment to observe their state, but they are public so that they can be observed anywhere, the main purpose for this is to observe errors.</p></div></div>
+          </div>
+          <div class="tabbedcontent">
+            <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="Types">Types</button><button class="section-tab" data-togglable="Constructors">Constructors</button><button class="section-tab" data-togglable="Functions">Functions</button><button class="section-tab" data-togglable="Properties">Properties</button></div>
+            <div class="tabs-section-body">
+              <h2 class="tabbedcontent">Constructors</h2>
+              <div class="table" data-togglable="Constructors"><a data-name="370674194%2FConstructors%2F1426029261" anchor-label="GiniHealth" id="370674194%2FConstructors%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
+                  <div class="main-subrow keyValue TabbedContent">
+                    <div class=""><span class="inline-flex"><a href="-gini-health.html">GiniHealth</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="370674194%2FConstructors%2F1426029261"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block"><a href="index.html">GiniHealth</a> <a href="-gini-health.html">GiniHealth</a>(<a href="../../net.gini.android.health.api/-gini-health-a-p-i/index.html">GiniHealthAPI</a> giniHealthAPI)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <h2 class="">Types</h2>
+              <div class="table" data-togglable="Types"><a data-name="-385188750%2FClasslikes%2F1426029261" anchor-label="Companion" id="-385188750%2FClasslikes%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-companion/index.html"><span><span>Companion</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-385188750%2FClasslikes%2F1426029261"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace">public class <a href="-companion/index.html">Companion</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+</div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="739353465%2FClasslikes%2F1426029261" anchor-label="PaymentState" id="739353465%2FClasslikes%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-payment-state/index.html"><span>Payment</span><wbr></wbr><span><span>State</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="739353465%2FClasslikes%2F1426029261"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace">public class <a href="-payment-state/index.html">PaymentState</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+</div>
+</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <h2 class="">Functions</h2>
+              <div class="table" data-togglable="Functions"><a data-name="-2016364115%2FFunctions%2F1426029261" anchor-label="checkIfDocumentIsPayable" id="-2016364115%2FFunctions%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="check-if-document-is-payable.html"><span>check</span><wbr></wbr><span>If</span><wbr></wbr><span>Document</span><wbr></wbr><span>Is</span><wbr></wbr><span><span>Payable</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2016364115%2FFunctions%2F1426029261"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block">final <a href="https://developer.android.com/reference/kotlin/java/lang/Boolean.html">Boolean</a> <a href="check-if-document-is-payable.html">checkIfDocumentIsPayable</a>(<a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> documentId)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<div class="brief "><p class="paragraph">Checks whether the document is payable by fetching the document and its extractions from the Gini Pay API and verifying that the extractions contain an IBAN.</p></div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="391806379%2FFunctions%2F1426029261" anchor-label="checkRequirements" id="391806379%2FFunctions%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="check-requirements.html"><span>check</span><wbr></wbr><span><span>Requirements</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="391806379%2FFunctions%2F1426029261"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block">final <a href="https://developer.android.com/reference/kotlin/java/util/List.html">List</a>&lt;<a href="../../net.gini.android.health.sdk.requirement/-requirement/index.html">Requirement</a>&gt; <a href="check-requirements.html">checkRequirements</a>(<a href="https://developer.android.com/reference/kotlin/android/content/pm/PackageManager.html">PackageManager</a> packageManager)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<div class="brief "><p class="paragraph">Checks the required conditions needed to finish the payment flow to avoid unnecessary document upload. See <a href="../../net.gini.android.health.sdk.requirement/-requirement/index.html">Requirement</a> for possible requirements.</p></div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="69617196%2FFunctions%2F1426029261" anchor-label="getDocumentFlow" id="69617196%2FFunctions%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="get-document-flow.html"><span>get</span><wbr></wbr><span>Document</span><wbr></wbr><span><span>Flow</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="69617196%2FFunctions%2F1426029261"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block">final <span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span>&lt;<a href="../../net.gini.android.health.sdk.review.model/-result-wrapper/index.html">ResultWrapper</a>&lt;<a href="../../net.gini.android.core.api.models/-document/index.html">Document</a>&gt;&gt; <a href="get-document-flow.html">getDocumentFlow</a>()<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<div class="brief "><p class="paragraph">A flow for getting the <a href="../../net.gini.android.core.api.models/-document/index.html">Document</a> set for review <a href="set-document-for-review.html">setDocumentForReview</a>.</p></div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="2088427044%2FFunctions%2F1426029261" anchor-label="getGiniHealthAPI" id="2088427044%2FFunctions%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="get-gini-health-a-p-i.html"><span>get</span><wbr></wbr><span>Gini</span><wbr></wbr><span>Health</span><wbr></wbr><span><span>API</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2088427044%2FFunctions%2F1426029261"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block">final <a href="../../net.gini.android.health.api/-gini-health-a-p-i/index.html">GiniHealthAPI</a> <a href="get-gini-health-a-p-i.html">getGiniHealthAPI</a>()<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+</div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-1562431142%2FFunctions%2F1426029261" anchor-label="getOpenBankState" id="-1562431142%2FFunctions%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="get-open-bank-state.html"><span>get</span><wbr></wbr><span>Open</span><wbr></wbr><span>Bank</span><wbr></wbr><span><span>State</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1562431142%2FFunctions%2F1426029261"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block">final <span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span>&lt;<a href="-payment-state/index.html">GiniHealth.PaymentState</a>&gt; <a href="get-open-bank-state.html">getOpenBankState</a>()<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<div class="brief "><p class="paragraph">A flow that exposes the state of opening the bank. You can collect this flow to get information about the errors of this action.</p></div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="1674294193%2FFunctions%2F1426029261" anchor-label="getPaymentFlow" id="1674294193%2FFunctions%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="get-payment-flow.html"><span>get</span><wbr></wbr><span>Payment</span><wbr></wbr><span><span>Flow</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1674294193%2FFunctions%2F1426029261"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block">final <span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span>&lt;<a href="../../net.gini.android.health.sdk.review.model/-result-wrapper/index.html">ResultWrapper</a>&lt;<a href="../../net.gini.android.health.sdk.review.model/-payment-details/index.html">PaymentDetails</a>&gt;&gt; <a href="get-payment-flow.html">getPaymentFlow</a>()<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<div class="brief "><p class="paragraph">A flow for getting extracted <a href="../../net.gini.android.health.sdk.review.model/-payment-details/index.html">PaymentDetails</a> for the document set for review (see <a href="set-document-for-review.html">setDocumentForReview</a>).</p></div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="1489758193%2FFunctions%2F1426029261" anchor-label="setDocumentForReview" id="1489758193%2FFunctions%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="set-document-for-review.html"><span>set</span><wbr></wbr><span>Document</span><wbr></wbr><span>For</span><wbr></wbr><span><span>Review</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1489758193%2FFunctions%2F1426029261"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block">final <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html">Unit</a> <a href="set-document-for-review.html">setDocumentForReview</a>(<a href="../../net.gini.android.core.api.models/-document/index.html">Document</a> document)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="symbol monospace block">final <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html">Unit</a> <a href="set-document-for-review.html">setDocumentForReview</a>(<a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> documentId, <a href="../../net.gini.android.health.sdk.review.model/-payment-details/index.html">PaymentDetails</a> paymentDetails)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<div class="brief "><p class="paragraph">Sets a <a href="../../net.gini.android.core.api.models/-document/index.html">Document</a> for review. Results can be collected from <a href="index.html#1634510022%2FProperties%2F1426029261">documentFlow</a> and <a href="index.html#2001869271%2FProperties%2F1426029261">paymentFlow</a>.</p></div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="2132275259%2FFunctions%2F1426029261" anchor-label="setSavedStateRegistryOwner" id="2132275259%2FFunctions%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="set-saved-state-registry-owner.html"><span>set</span><wbr></wbr><span>Saved</span><wbr></wbr><span>State</span><wbr></wbr><span>Registry</span><wbr></wbr><span><span>Owner</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2132275259%2FFunctions%2F1426029261"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block">final <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html">Unit</a> <a href="set-saved-state-registry-owner.html">setSavedStateRegistryOwner</a>(<a href="https://developer.android.com/reference/kotlin/androidx/savedstate/SavedStateRegistryOwner.html">SavedStateRegistryOwner</a> registryOwner, <span data-unresolved-link="kotlinx.coroutines/CoroutineScope///PointingToDeclaration/">CoroutineScope</span> retryScope)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<div class="brief "><p class="paragraph">Sets a lifecycle observer to handle state restoration after the system kills the app.</p></div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <h2 class="">Properties</h2>
+              <div class="table" data-togglable="Properties"><a data-name="1634510022%2FProperties%2F1426029261" anchor-label="documentFlow" id="1634510022%2FProperties%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="index.html#1634510022%2FProperties%2F1426029261">documentFlow</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1634510022%2FProperties%2F1426029261"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><a data-name="1634510022%2FProperties%2F1426029261" anchor-label="documentFlow" id="1634510022%2FProperties%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a><div class="symbol monospace block">private final <span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span>&lt;<a href="../../net.gini.android.health.sdk.review.model/-result-wrapper/index.html">ResultWrapper</a>&lt;<a href="../../net.gini.android.core.api.models/-document/index.html">Document</a>&gt;&gt; <a href="index.html#1634510022%2FProperties%2F1426029261">documentFlow</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="1634510022%2FProperties%2F1426029261" anchor-label="documentFlow" id="1634510022%2FProperties%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a><p class="paragraph">A flow for getting the <a href="../../net.gini.android.core.api.models/-document/index.html">Document</a> set for review <a href="set-document-for-review.html">setDocumentForReview</a>.</p></div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-939502902%2FProperties%2F1426029261" anchor-label="giniHealthAPI" id="-939502902%2FProperties%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="index.html#-939502902%2FProperties%2F1426029261">giniHealthAPI</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-939502902%2FProperties%2F1426029261"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><a data-name="-939502902%2FProperties%2F1426029261" anchor-label="giniHealthAPI" id="-939502902%2FProperties%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a><div class="symbol monospace block">private final <a href="../../net.gini.android.health.api/-gini-health-a-p-i/index.html">GiniHealthAPI</a> <a href="index.html#-939502902%2FProperties%2F1426029261">giniHealthAPI</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-295393792%2FProperties%2F1426029261" anchor-label="openBankState" id="-295393792%2FProperties%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="index.html#-295393792%2FProperties%2F1426029261">openBankState</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-295393792%2FProperties%2F1426029261"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><a data-name="-295393792%2FProperties%2F1426029261" anchor-label="openBankState" id="-295393792%2FProperties%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a><div class="symbol monospace block">private final <span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span>&lt;<a href="-payment-state/index.html">GiniHealth.PaymentState</a>&gt; <a href="index.html#-295393792%2FProperties%2F1426029261">openBankState</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="-295393792%2FProperties%2F1426029261" anchor-label="openBankState" id="-295393792%2FProperties%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a><p class="paragraph">A flow that exposes the state of opening the bank. You can collect this flow to get information about the errors of this action.</p></div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="2001869271%2FProperties%2F1426029261" anchor-label="paymentFlow" id="2001869271%2FProperties%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
+                <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="index.html#2001869271%2FProperties%2F1426029261">paymentFlow</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2001869271%2FProperties%2F1426029261"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><a data-name="2001869271%2FProperties%2F1426029261" anchor-label="paymentFlow" id="2001869271%2FProperties%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a><div class="symbol monospace block">private final <span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span>&lt;<a href="../../net.gini.android.health.sdk.review.model/-result-wrapper/index.html">ResultWrapper</a>&lt;<a href="../../net.gini.android.health.sdk.review.model/-payment-details/index.html">PaymentDetails</a>&gt;&gt; <a href="index.html#2001869271%2FProperties%2F1426029261">paymentFlow</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="2001869271%2FProperties%2F1426029261" anchor-label="paymentFlow" id="2001869271%2FProperties%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a><p class="paragraph">A flow for getting extracted <a href="../../net.gini.android.health.sdk.review.model/-payment-details/index.html">PaymentDetails</a> for the document set for review (see <a href="set-document-for-review.html">setDocumentForReview</a>).</p></div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footer"><span class="go-to-top-icon"><a href="#content"></a></span><span>© 2021 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span></div>
+      </div>
+    </div>
+  </body>
+</html>
+
