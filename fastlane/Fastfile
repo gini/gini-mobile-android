@@ -221,7 +221,7 @@ platform :android do
 
     Dir.chdir("gh-pages") do
       UI.message "Clear out the existing documentation"
-      sh("git rm -rf #{project_id} --ignore-unmatch && git clean -fd")
+      sh("git rm -rf #{project_id}/#{module_id} --ignore-unmatch && git clean -fd")
 
       UI.message "Copy over the current documentation"
       sh("mkdir -p #{project_id}/#{module_id} && cp -R ../../#{project_id}/#{module_id}/build/docs/* #{project_id}/#{module_id}")
