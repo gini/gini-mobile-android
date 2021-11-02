@@ -23,22 +23,14 @@ results:
 Installation
 ------------
 
-The Gini Capture SDK is available in our maven repository which you need to add to your ``build.gradle`` first:
+Add the Gini Capture SDK to your app's dependencies:
 
-.. code:: groovy
+build.gradle:
 
-    repositories {
-        maven {
-            url 'https://repo.gini.net/nexus/content/repositories/open'
-        }
-    }
-
-Now you can add the Gini Capture SDK to your app's dependencies:
-
-.. code:: groovy
+.. code-block:: groovy
 
     dependencies {
-        implementation 'net.gini:gini-capture-sdk:1.4.1'
+        implementation 'net.gini.android:gini-capture-sdk:1.0.0'
     }
 
 After syncing Gradle you can start integrating the Gini Capture SDK.
