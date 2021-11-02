@@ -74,7 +74,7 @@ You should call ``GiniBank.releaseCapture()`` after the SDK returned control to 
 sent feedback to the Gini Bank API and is not using the capture feature anymore.
 
 To view all the configuration options see the documentation of `CaptureConfiguration
-<http://developer.gini.net/gini-mobile-android/tree/main/bank-sdk/sdk/dokka/sdk/net.gini.android.bank.sdk.capture/-capture-configuration/index.html>`_.
+<http://developer.gini.net/gini-mobile-android/bank-sdk/sdk/dokka/sdk/net.gini.android.bank.sdk.capture/-capture-configuration/index.html>`_.
 
 Information about the configurable features are available on the `Capture Features <capture-features.html>`_ page.
 
@@ -138,9 +138,9 @@ The default networking implementations are the ``GiniCaptureDefaultNetworkServic
 
 For all configuration options of the default networking implementation see the documentation of
 `GiniCaptureDefaultNetworkService.Builder
-<http://developer.gini.net/gini-capture-sdk-android/network/javadoc/net/gini/android/capture/network/GiniCaptureDefaultNetworkService.Builder.html>`_
+<https://developer.gini.net/gini-mobile-android/capture-sdk/default-network/dokka/default-network/net.gini.android.capture.network/-gini-capture-default-network-service/-builder/index.html>`_
 and `GiniCaptureDefaultNetworkApi.Builder
-<http://developer.gini.net/gini-capture-sdk-android/network/javadoc/net/gini/android/capture/network/GiniCaptureDefaultNetworkApi.Builder.html>`_.
+<https://developer.gini.net/gini-mobile-android/capture-sdk/default-network/dokka/default-network/net.gini.android.capture.network/-gini-capture-default-network-api/-builder/index.html>`_.
 
 Custom Implementation
 ^^^^^^^^^^^^^^^^^^^^^
@@ -150,13 +150,13 @@ You can also provide your own networking by implementing the ``GiniCaptureNetwor
 
 * ``GiniCaptureNetworkService``
    This interface is used to upload, analyze and delete documents. See the `reference documentation
-   <http://developer.gini.net/gini-capture-sdk-android/ginicapture/dokka/ginicapture/net.gini.android.capture.network/-gini-capture-network-service/index.html>`_
+   <https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/dokka/sdk/net.gini.android.capture.network/-gini-capture-network-service/index.html>`_
    for details.
 
 * ``GiniCaptureNetworkApi``
    This interface is used to declare network tasks which should be called by you outside of the Gini Capture SDK (e.g.,
    for sending feedback after the user saw and potentielly corrected the extractions).  See the `reference documentation
-   <http://developer.gini.net/gini-capture-sdk-android/ginicapture/dokka/ginicapture/net.gini.android.capture.network/-gini-capture-network-api/index.html>`_
+   <https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/dokka/sdk/net.gini.android.capture.network/-gini-capture-network-api/index.html>`_
    for details.
 
 You may also use the `Gini Bank API Library <https://github.com/gini/gini-mobile-android/tree/main/bank-api-library>`_
