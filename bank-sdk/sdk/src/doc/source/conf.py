@@ -45,7 +45,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'Gini Capture SDK for Android'
+project = u'Gini Bank SDK for Android'
 copyright = u'2014-2021, Gini GmbH'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -106,7 +106,8 @@ html_theme = 'gini_sphinx_theme'
 # further.  For a list of options available for each theme, see the
 # documentation.
 html_theme_options = {
-    "google_analytics_id": os.environ.get("GOOGLE_ANALYTICS_ID")
+    "google_analytics_id": os.environ.get("GOOGLE_ANALYTICS_ID"),
+    "logo_path": "_static/logo_flat.png"
 }
 
 # Add any paths that contain custom themes here, relative to this directory.
@@ -182,7 +183,7 @@ html_show_copyright = False
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'GiniAPIdoc'
+htmlhelp_basename = 'GiniBankSDKdoc'
 
 
 # -- Options for LaTeX output ---------------------------------------------

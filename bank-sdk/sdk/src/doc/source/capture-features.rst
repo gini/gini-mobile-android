@@ -4,11 +4,11 @@ Invoice Capture Features
 Features from the Gini Capture SDK
 ----------------------------------
 
-The capture feature uses our `Gini Capture SDK <https://github.com/gini/gini-capture-sdk-android/>`_. All features
+The capture feature uses our `Gini Capture SDK <https://github.com/gini/gini-mobile-android/tree/main/capture-sdk>`_. All features
 listed in its `documentation <https://developer.gini.net/gini-capture-sdk-android/html/features.html>`_ can be used here
 as well.
 
-An important difference is in how you configure the capture features. In the Gini Pay Bank SDK you need to use the
+An important difference is in how you configure the capture features. In the Gini Bank SDK you need to use the
 ``CaptureConfiguration`` instead of the Gini Capture SDK's ``GiniCapture.Builder``. The configuration names are the same
 so you can easily map them to the ``CaptureConfiguration``.
 
@@ -22,9 +22,9 @@ feature which allows importing of files from other apps via Android's "open with
 Screen API
 ^^^^^^^^^^
 
-To handle imported files using the Gini Pay Bank SDK you need to register an activity result handler with the
+To handle imported files using the Gini Bank SDK you need to register an activity result handler with the
 ``CaptureFlowImportContract()`` and then pass the incoming intent to
-``GiniPayBank.GiniPayBank.startCaptureFlowForIntent()``:
+``GiniBank.startCaptureFlowForIntent()``:
 
 .. code-block:: java
 
@@ -75,25 +75,25 @@ To handle imported files using the Gini Pay Bank SDK you need to register an act
             .show()
     }
 
-    fun startGiniPayBankSDKForImportedFile(importedFileIntent: Intent) {
+    fun startGiniBankSDKForImportedFile(importedFileIntent: Intent) {
         // Configure capture first
         configureCapture();
 
         fileImportCancellationToken = 
-            GiniPayBank.startCaptureFlowForIntent(captureImportLauncher, this, importedFileIntent)
+            GiniBank.startCaptureFlowForIntent(captureImportLauncher, this, importedFileIntent)
     }
 
 Component API
 ^^^^^^^^^^^^^
 
 When using the Component API you need to create a ``Document`` from the intent using
-``GiniPayBank.createDocumentForImportedFiles()`` and then continue either to the ``ReviewFragmentCompat``,
+``GiniBank.createDocumentForImportedFiles()`` and then continue either to the ``ReviewFragmentCompat``,
 ``MultiPageReviewFragment`` or ``AnalysisFragmentCompat``:
 
 .. code-block:: java
 
-    fun startGiniPayBankSDKForImportedFile(importedFileIntent: Intent) {
-        GiniPayBank.createDocumentForImportedFiles(importedFileIntent, this, object : AsyncCallback<Document, ImportedFileValidationException> {
+    fun startGiniBankSDKForImportedFile(importedFileIntent: Intent) {
+        GiniBank.createDocumentForImportedFiles(importedFileIntent, this, object : AsyncCallback<Document, ImportedFileValidationException> {
             override fun onSuccess(result: Document) {
                 if (result.isReviewable) {
                     // If you have enabled capturing documents with multiple pages:
@@ -131,15 +131,17 @@ To enable this feature simply set ``returnAssistantEnabled`` to ``true`` in the 
 Screen API
 ~~~~~~~~~~~
 
-When integrating using the Screen API it is enough to enable the return assistant feature. The Gini Pay Bank SDK will
+When integrating using the Screen API it is enough to enable the return assistant feature. The Gini Bank SDK will
 show the return assistant automatically if the invoice contained payable items and will update the extractions returned
 to your app according to the user's changes.
 
 The ``amountToPay`` extraction is updated to be the sum of items the user decided to pay. It includes discounts and
 additional charges that might be present on the invoice.
 
+// TODO: update links after Bank API is available
+
 The extractions related to the return assistant are stored in the ``compoundExtractions`` field of the
-``CaptureResult``. See the Gini Pay API's `documentation
+``CaptureResult``. See the Gini Bank API's `documentation
 <https://pay-api.gini.net/documentation/#return-assistant-extractions>`_ to learn about the return assistant's compound
 extractions.
 
@@ -152,7 +154,7 @@ Using the Component API is more challenging. You need to manage three additional
 .. note::
 
    See the Component API example app's `digitalinvoice package
-   <https://github.com/gini/gini-pay-bank-sdk-android/tree/main/appcomponentapi/src/main/java/net/gini/pay/appcomponentapi/digitalinvoice>`_
+   <https://github.com/gini/gini-mobile-android/tree/main/bank-sdk/component-api-example-app/src/main/java/net/gini/pay/appcomponentapi/digitalinvoice>`_
    for a sample integration.
 
 The following diagram extends the one found in the Gini Capture SDK's `Component API guide
@@ -260,12 +262,16 @@ data extractions as described in the `Sending Feedback <integration.html#sending
 Custom Networking Implementation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-If you use your own networking implementation and directly communicate with the Gini Pay API then see `this section
+// TODO: update links after Bank API is available
+
+If you use your own networking implementation and directly communicate with the Gini Bank API then see `this section
 <https://pay-api.gini.net/documentation/#submitting-feedback-on-extractions>`_ in its documentation on how to send
 feedback for the compound extractions.
 
-In case you use the Gini Pay API Library then sending compound extraction feedback is very similar to how it's shown in `this section
-<https://developer.gini.net/gini-pay-api-lib-android/guides/common-tasks.html#sending-feedback>`_ in its documentation. The only difference is that you need to also pass in the ``CompoundExtraction`` map to ``DocumentTaskManager.sendFeebackForExtractions()``:
+In case you use the Gini Bank API Library then sending compound extraction feedback is very similar to how it's shown in
+`this section <https://developer.gini.net/gini-mobile-android/bank-api-library/library/html/guides/common-tasks.html#sending-feedback>`_
+in its documentation. The only difference is that you need to also pass in the ``CompoundExtraction`` map to
+``DocumentTaskManager.sendFeebackForExtractions()``:
 
 .. code-block:: java
 
