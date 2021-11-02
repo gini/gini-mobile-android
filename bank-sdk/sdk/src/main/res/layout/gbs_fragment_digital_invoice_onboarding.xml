@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gbs_digital_invoice_onboarding_fragment_background"
+    android:orientation="vertical"
+    android:clickable="true"
+    tools:context=".digitalinvoice.onboarding.DigitalInvoiceOnboardingFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/onboarding_text_1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginStart="@dimen/gbs_digital_invoice_onboarding_text_1_horiztonal_margin"
+            android:layout_marginTop="@dimen/gbs_digital_invoice_onboarding_text_1_vertical_margin"
+            android:layout_marginEnd="@dimen/gbs_digital_invoice_onboarding_text_1_horiztonal_margin"
+            android:gravity="center"
+            android:text="@string/gbs_digital_invoice_onboarding_text_1"
+            android:textAppearance="@style/GiniCaptureTheme.DigitalInvoice.Onboarding.Title.TextStyle"
+            app:layout_constraintBottom_toTopOf="@id/digital_invoice_image"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="spread_inside" />
+
+        <ImageView
+            android:id="@+id/digital_invoice_image"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/gbs_digital_invoice_onboarding_hero_image_vertical_margin"
+            android:src="@drawable/gbs_digital_invoice_list_image"
+            app:layout_constraintBottom_toTopOf="@id/onboarding_text_2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_percent="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/onboarding_text_1"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:id="@+id/onboarding_text_2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginStart="@dimen/gbs_digital_invoice_onboarding_text_2_horiztonal_margin"
+            android:layout_marginTop="@dimen/gbs_digital_invoice_onboarding_text_2_vertical_margin"
+            android:layout_marginEnd="@dimen/gbs_digital_invoice_onboarding_text_2_horiztonal_margin"
+            android:layout_marginBottom="@dimen/gbs_digital_invoice_onboarding_text_2_vertical_margin_bottom"
+            android:gravity="center"
+            android:lineSpacingMultiplier="1.3"
+            android:text="@string/gbs_digital_invoice_onboarding_text_2"
+            android:textAppearance="@style/GiniCaptureTheme.DigitalInvoice.Onboarding.TextStyle"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/digital_invoice_image" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/done_button"
+        style="@style/GiniCaptureTheme.DigitalInvoice.Onboarding.Done.Button"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/gbs_digital_invoice_onboarding_done_button_height"
+        android:layout_marginLeft="@dimen/gbs_digital_invoice_onboarding_done_button_margin"
+        android:layout_marginRight="@dimen/gbs_digital_invoice_onboarding_done_button_margin"
+        android:layout_marginBottom="@dimen/gbs_digital_invoice_onboarding_done_button_margin_bottom"
+        android:text="@string/gbs_digital_invoice_onboarding_done_button_title" />
+
+    <Button
+        android:id="@+id/do_not_show_button"
+        style="@style/GiniCaptureTheme.DigitalInvoice.Onboarding.Dismiss.Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/gbs_digital_invoice_onboarding_done_button_margin"
+        android:layout_marginRight="@dimen/gbs_digital_invoice_onboarding_done_button_margin"
+        android:layout_marginBottom="@dimen/gbs_digital_invoice_onboarding_done_button_margin"
+        android:minHeight="0dp"
+        android:text="@string/gbs_digital_invoice_onboarding_do_not_show_button_title"
+        android:textAllCaps="false" />
+
+</LinearLayout>

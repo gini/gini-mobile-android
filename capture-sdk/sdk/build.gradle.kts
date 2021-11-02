@@ -9,7 +9,6 @@ plugins {
 
 jacoco {
     toolVersion = libs.versions.jacoco.get()
-
 }
 
 android {

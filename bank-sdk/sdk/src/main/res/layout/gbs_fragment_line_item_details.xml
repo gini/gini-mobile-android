@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gbs_digital_invoice_line_item_details_background"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:fitsSystemWindows="true"
+    android:focusableInTouchMode="true"
+    android:paddingStart="0dp"
+    android:paddingTop="@dimen/gbs_digital_invoice_line_item_details_padding"
+    android:paddingEnd="@dimen/gbs_digital_invoice_line_item_details_padding"
+    tools:context=".digitalinvoice.details.LineItemDetailsFragment">
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/checkbox"
+        style="@style/GiniCaptureTheme.DigitalInvoice.Switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/gbs_digital_invoice_line_details_switch_margin_left"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        android:padding="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:showText="false"
+        app:switchPadding="0dp" />
+
+    <TextView
+        android:id="@+id/checkbox_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:textAppearance="@style/GiniCaptureTheme.DigitalInvoice.LineItemDetails.Checkbox.TextStyle"
+        app:layout_constraintBottom_toBottomOf="@id/checkbox"
+        app:layout_constraintStart_toEndOf="@id/checkbox"
+        app:layout_constraintTop_toTopOf="@id/checkbox"
+        tools:text="1 item selected" />
+
+    <!--    android:textColorHint="@color/gbs_digital_invoice_line_item_details_input_field_hint_text"-->
+    <!--    app:boxBackgroundColor="@color/gbs_digital_invoice_box_background_color"-->
+    <!--    app:endIconDrawable="@drawable/gbs_digital_invoice_input_clear_icon"-->
+    <!--    app:backgroundTint="@color/gbs_digital_invoice_line_item_details_input_line"-->
+    <!--    app:endIconMode="clear_text"-->
+    <!--    app:hintEnabled="false"-->
+    <!--    app:errorEnabled="false"-->
+    <!--    app:expandedHintEnabled="false"-->
+    <!--    app:helperTextEnabled="false"-->
+
+    <TextView
+        android:id="@+id/description_hint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/gbs_digital_invoice_line_item_details_padding"
+        android:layout_marginTop="@dimen/gbs_digital_invoice_line_item_details_description_margin_top"
+        android:text="@string/gbs_digital_invoice_line_item_details_description_label"
+        android:textAppearance="@style/GiniCaptureTheme.DigitalInvoice.LineItemDetails.InputField.Hint.TextStyle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/checkbox" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/description_container"
+        style="@style/Root.GiniCaptureTheme.DigitalInvoice.LineItemDetails.InputField.Style"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/gbs_digital_invoice_line_item_details_input_height"
+        android:layout_marginStart="@dimen/gbs_digital_invoice_line_item_details_padding"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/description_hint">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/description"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:inputType="text"
+            android:nextFocusDown="@id/quantity"
+            android:paddingStart="0dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="0dp"
+            tools:text="Nike Sportswear Air Max 97 - Sneaker Low" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:id="@+id/quantity_hint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/gbs_digital_invoice_line_item_details_padding"
+        android:layout_marginTop="@dimen/gbs_digital_invoice_line_item_details_quantity_and_gross_price_margin_top"
+        android:text="@string/gbs_digital_invoice_line_item_details_quantity_label"
+        android:textAppearance="@style/GiniCaptureTheme.DigitalInvoice.LineItemDetails.InputField.Hint.TextStyle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/description_container" />
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/quantity_container"
+        style="@style/Root.GiniCaptureTheme.DigitalInvoice.LineItemDetails.InputField.Style"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/gbs_digital_invoice_line_item_details_input_height"
+        android:layout_marginStart="@dimen/gbs_digital_invoice_line_item_details_padding"
+        app:layout_constraintEnd_toStartOf="@id/multiplier"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/quantity_hint">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/quantity"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:inputType="number"
+            android:nextFocusDown="@id/gross_price"
+            android:paddingStart="0dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="0dp"
+            android:selectAllOnFocus="true"
+            android:textAppearance="@style/GiniCaptureTheme.DigitalInvoice.LineItemDetails.InputField.TextStyle"
+            tools:text="1" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:id="@+id/multiplier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/gbs_digital_invoice_line_currency_margin_bottom"
+        android:gravity="center"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:text="X"
+        android:textColor="@color/gbs_digital_invoice_line_item_details_multiplication_symbol"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@id/quantity_container"
+        app:layout_constraintEnd_toStartOf="@id/gross_price_container"
+        app:layout_constraintStart_toEndOf="@id/quantity_container"
+        app:layout_constraintTop_toTopOf="@id/quantity_container"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/price_hint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/gbs_digital_invoice_line_item_details_quantity_and_gross_price_margin_top"
+        android:text="@string/gbs_digital_invoice_line_item_details_gross_price_label"
+        android:textAppearance="@style/GiniCaptureTheme.DigitalInvoice.LineItemDetails.InputField.Hint.TextStyle"
+        app:layout_constraintStart_toStartOf="@id/gross_price_container"
+        app:layout_constraintTop_toBottomOf="@id/description_container" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/gross_price_container"
+        style="@style/Root.GiniCaptureTheme.DigitalInvoice.LineItemDetails.InputField.Style"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/gbs_digital_invoice_line_item_details_input_height"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/multiplier"
+        app:layout_constraintTop_toTopOf="@id/quantity_container">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/gross_price"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:digits="0123456789.,"
+            android:inputType="numberDecimal"
+            android:paddingStart="@dimen/gbs_digital_invoice_line_item_details_price_padding"
+            android:paddingTop="8dp"
+            android:paddingEnd="0dp"
+            android:selectAllOnFocus="true"
+            android:textAppearance="@style/GiniCaptureTheme.DigitalInvoice.LineItemDetails.InputField.TextStyle"
+            tools:text="152.95" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <TextView
+        android:id="@+id/currency"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/gbs_digital_invoice_line_currency_margin_bottom"
+        android:text="EUR"
+        android:textAppearance="@style/GiniCaptureTheme.DigitalInvoice.LineItemDetails.InputField.TextStyle"
+        app:layout_constraintBottom_toBottomOf="@id/gross_price_container"
+        app:layout_constraintStart_toStartOf="@id/gross_price_container"
+        app:layout_constraintTop_toTopOf="@id/quantity_container"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/total_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/gross_price_total_integral_part"
+        android:layout_alignBottom="@id/gross_price_total_integral_part"
+        android:layout_marginStart="@dimen/gbs_digital_invoice_line_item_details_padding"
+        android:layout_marginEnd="@dimen/gbs_digital_invoice_line_item_details_total_label_margin_end"
+        android:layout_toStartOf="@id/gross_price_total_integral_part"
+        android:text="@string/gbs_digital_invoice_line_item_details_total_label"
+        android:textAppearance="@style/GiniCaptureTheme.DigitalInvoice.LineItemDetails.Total.TextStyle"
+        app:layout_constraintBottom_toBottomOf="@id/gross_price_total_integral_part"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/gross_price_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/gbs_digital_invoice_line_item_details_gross_price_label_margin_top"
+        android:text="@string/gbs_digital_invoice_line_item_total_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/quantity_container" />
+
+    <TextView
+        android:id="@+id/gross_price_total_integral_part"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toStartOf="@+id/gross_price_total_fractional_part"
+        android:includeFontPadding="false"
+        android:textAppearance="@style/GiniCaptureTheme.DigitalInvoice.TotalGrossPrice.Integral.TextStyle"
+        app:layout_constraintEnd_toStartOf="@id/gross_price_total_fractional_part"
+        app:layout_constraintTop_toTopOf="@id/gross_price_total_fractional_part"
+        tools:text="€0" />
+
+    <TextView
+        android:id="@+id/gross_price_total_fractional_part"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/gbs_digital_invoice_line_item_details_gross_price_margin_top"
+        android:textAppearance="@style/GiniCaptureTheme.DigitalInvoice.TotalGrossPrice.Fractional.TextStyle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/gross_price_label"
+        tools:text=".00" />
+
+    <Button
+        android:id="@+id/save_button"
+        style="@style/Widget.MaterialComponents.Button"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/gbs_digital_invoice_line_item_details_save_button_height"
+        android:layout_marginStart="@dimen/gbs_digital_invoice_line_item_details_padding"
+        android:layout_marginBottom="@dimen/gbs_digital_invoice_line_item_details_padding"
+        android:text="@string/gbs_digital_invoice_line_item_details_save"
+        android:textColor="@color/gbs_digital_invoice_line_item_details_save_button_text"
+        app:backgroundTint="@color/gbs_digital_invoice_line_item_details_save_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
