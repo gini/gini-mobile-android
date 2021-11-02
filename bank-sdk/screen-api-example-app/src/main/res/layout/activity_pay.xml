@@ -100,7 +100,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
-            android:id="@+id/return_to_business"
+            android:id="@+id/return_to_payment_initiator_app"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/return_to_business"

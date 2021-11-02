@@ -41,7 +41,7 @@ import net.gini.android.bank.sdk.pay.getRequestId
  *  - [getRequestId] to extract the id from the [Intent]
  *  - [getPaymentRequest] to get payment details set by the business app.
  *  - [resolvePaymentRequest] to mark the [PaymentRequest] as paid.
- *  - [returnToBusiness] to return to the business app that started the flow.
+ *  - [returnToPaymentInitiatorApp] to return to the app that started the flow.
  */
 object GiniBank {
 
@@ -170,12 +170,12 @@ object GiniBank {
     }
 
     /**
-     * Starts the Business app that started the payment flow.
+     * Starts the app that started the payment flow.
      *
      * @param context used to call startActivity.
      * @param resolvedPayment the object returned by [resolvePaymentRequest]
      */
-    fun returnToBusiness(context: Context, resolvedPayment: ResolvedPayment) {
+    fun returnToPaymentInitiatorApp(context: Context, resolvedPayment: ResolvedPayment) {
         context.startActivity(resolvedPayment.getBusinessIntent())
     }
 }

@@ -14,6 +14,10 @@ Replace `net.gini:gini-pay-bank-sdk:<version>` with `net.gini.android:gini-bank-
 
 * Replace `net.gini.pay.bank.*` with `net.gini.android.bank.sdk.*`.
 
+# Update methods
+
+* Replace `GiniPayBank.returnToBusiness()` with `GiniBank.returnToPaymentInitiatorApp()`.
+
 # Update styles
 
 * Replace `gpb_` prefixes of android resource names with `gbs_`.

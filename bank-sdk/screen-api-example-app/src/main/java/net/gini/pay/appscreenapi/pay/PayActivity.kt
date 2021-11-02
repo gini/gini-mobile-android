@@ -52,7 +52,7 @@ class PayActivity : AppCompatActivity() {
                 when (result) {
                     is ResultWrapper.Success -> {
                         binding.resolvePayment.isVisible = false
-                        binding.returnToBusiness.isVisible = true
+                        binding.returnToPaymentInitiatorApp.isVisible = true
                     }
                     is ResultWrapper.Error -> {
                         Toast.makeText(this@PayActivity, result.error.message, Toast.LENGTH_LONG).show()
@@ -69,9 +69,9 @@ class PayActivity : AppCompatActivity() {
             viewModel.onPay(binding.getPaymentDetails())
         }
 
-        binding.returnToBusiness.setOnClickListener {
+        binding.returnToPaymentInitiatorApp.setOnClickListener {
             try {
-                viewModel.returnToBusiness(this@PayActivity)
+                viewModel.returnToPaymentInitiatorApp(this@PayActivity)
             } catch (t: Throwable) {
                 Toast.makeText(this@PayActivity, t.message, Toast.LENGTH_LONG).show()
             }

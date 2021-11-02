@@ -42,9 +42,9 @@ class PayViewModel(
         }
     }
 
-    fun returnToBusiness(context: Context) {
+    fun returnToPaymentInitiatorApp(context: Context) {
         val payment = paymentState.value
         if (payment is ResultWrapper.Success)
-        giniBank.returnToBusiness(context, payment.value)
+        giniBank.returnToPaymentInitiatorApp(context, payment.value)
     }
 }
