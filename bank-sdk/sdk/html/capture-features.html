@@ -1,0 +1,460 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Invoice Capture Features &mdash; Gini Bank SDK for Android 2.0 documentation</title>
+  
+
+  
+  
+
+  
+  <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,400italic,600italic|Source+Code+Pro|Roboto+Slab:400,700" rel="stylesheet" type="text/css" />
+
+  
+  
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:'./',
+        VERSION:'2.0',
+        COLLAPSE_INDEX:false,
+        FILE_SUFFIX:'.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/language_data.js"></script>
+
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+    <script type="text/javascript">
+        jQuery(function () {
+            SphinxRtdTheme.StickyNav.enable();
+        });
+    </script>
+  
+
+  
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Gini Bank SDK for Android 2.0 documentation" href="index.html"/>
+        <link rel="next" title="Customization" href="customization.html"/>
+        <link rel="prev" title="Integration" href="integration.html"/> 
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="index.html" id="gini-logo">
+          <img src="_static/logo_flat.png" />
+        </a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="getting-started.html#requirements">Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting-started.html#installation">Installation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="integration.html">Integration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="integration.html#capturing-invoices">Capturing Invoices</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#android-manifest">Android Manifest</a></li>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#requirements-check">Requirements Check</a></li>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#configuration">Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#tablet-support">Tablet Support</a></li>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#networking">Networking</a></li>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#capture-flow">Capture Flow</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="integration.html#handling-payment-requests">Handling Payment Requests</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#id5">Networking</a></li>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#id7">Android Manifest</a></li>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#package-name">Package Name</a></li>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#receive-payment-requests">Receive Payment Requests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#testing">Testing</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Invoice Capture Features</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#features-from-the-gini-capture-sdk">Features from the Gini Capture SDK</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#file-import-open-with">File Import (Open With)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#return-assistant">Return Assistant</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">Screen API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">Component API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sending-feedback">Sending Feedback</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="customization.html">Customization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="migrating-from-gvl.html">Migrating from the Gini Vision Library</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#kotlin">Kotlin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#gini-capture-sdk">Gini Capture SDK</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#gini-bank-api-library">Gini Bank API Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#requirements">Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#screen-api">Screen API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#component-api">Component API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#open-with">Open With</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="migrating-from-gvl.html#id3">Screen API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrating-from-gvl.html#id4">Component API</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#networking">Networking</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="migrating-from-gvl.html#default">Default</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrating-from-gvl.html#custom">Custom</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#event-tracking">Event Tracking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#customization">Customization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">Reference Doc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Gini Bank SDK for Android</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Invoice Capture Features</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="invoice-capture-features">
+<h1>Invoice Capture Features<a class="headerlink" href="#invoice-capture-features" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="features-from-the-gini-capture-sdk">
+<h2>Features from the Gini Capture SDK<a class="headerlink" href="#features-from-the-gini-capture-sdk" title="Permalink to this headline">¶</a></h2>
+<p>The capture feature uses our <a class="reference external" href="https://github.com/gini/gini-mobile-android/tree/main/capture-sdk">Gini Capture SDK</a>. All features
+listed in its <a class="reference external" href="https://developer.gini.net/gini-capture-sdk-android/html/features.html">documentation</a> can be used here
+as well.</p>
+<p>An important difference is in how you configure the capture features. In the Gini Bank SDK you need to use the
+<code class="docutils literal notranslate"><span class="pre">CaptureConfiguration</span></code> instead of the Gini Capture SDK’s <code class="docutils literal notranslate"><span class="pre">GiniCapture.Builder</span></code>. The configuration names are the same
+so you can easily map them to the <code class="docutils literal notranslate"><span class="pre">CaptureConfiguration</span></code>.</p>
+<div class="section" id="file-import-open-with">
+<h3>File Import (Open With)<a class="headerlink" href="#file-import-open-with" title="Permalink to this headline">¶</a></h3>
+<p>Another difference is related to the <a class="reference external" href="https://developer.gini.net/gini-capture-sdk-android/html/features.html#file-import-open-with">file import</a> (or “open with”)
+feature which allows importing of files from other apps via Android’s “open with” or “share” functionality.</p>
+<div class="section" id="screen-api">
+<h4>Screen API<a class="headerlink" href="#screen-api" title="Permalink to this headline">¶</a></h4>
+<p>To handle imported files using the Gini Bank SDK you need to register an activity result handler with the
+<code class="docutils literal notranslate"><span class="pre">CaptureFlowImportContract()</span></code> and then pass the incoming intent to
+<code class="docutils literal notranslate"><span class="pre">GiniBank.startCaptureFlowForIntent()</span></code>:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// Use the androidx&#39;s Activity Result API to register a handler for the capture result.</span>
+<span class="n">val</span> <span class="n">captureImportLauncher</span> <span class="o">=</span> <span class="n">registerForActivityResult</span><span class="p">(</span><span class="n">CaptureFlowImportContract</span><span class="p">())</span> <span class="p">{</span> <span class="n">result</span><span class="p">:</span> <span class="n">CaptureResult</span> <span class="o">-&gt;</span>
+    <span class="n">when</span> <span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">is</span> <span class="n">CaptureResult</span><span class="p">.</span><span class="na">Success</span> <span class="o">-&gt;</span> <span class="p">{</span>
+            <span class="n">handleExtractions</span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="na">specificExtractions</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="n">is</span> <span class="n">CaptureResult</span><span class="p">.</span><span class="na">Error</span> <span class="o">-&gt;</span> <span class="p">{</span>
+            <span class="n">when</span> <span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="na">value</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">is</span> <span class="n">ResultError</span><span class="p">.</span><span class="na">Capture</span> <span class="o">-&gt;</span> <span class="p">{</span>
+                    <span class="n">val</span> <span class="n">captureError</span><span class="p">:</span> <span class="n">GiniCaptureError</span> <span class="o">=</span> <span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="na">value</span> <span class="n">as</span> <span class="n">ResultError</span><span class="p">.</span><span class="na">Capture</span><span class="p">).</span><span class="na">giniCaptureError</span>
+                    <span class="n">handleCaptureError</span><span class="p">(</span><span class="n">captureError</span><span class="p">)</span>
+                <span class="p">}</span>
+                <span class="n">is</span> <span class="n">ResultError</span><span class="p">.</span><span class="na">FileImport</span> <span class="o">-&gt;</span> <span class="p">{</span>
+                    <span class="n">val</span> <span class="n">fileImportError</span> <span class="o">=</span> <span class="n">result</span><span class="p">.</span><span class="na">value</span> <span class="n">as</span> <span class="n">ResultError</span><span class="p">.</span><span class="na">FileImport</span>
+                    <span class="nf">handleFileImportError</span><span class="p">(</span><span class="n">fileImportError</span><span class="p">)</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="n">CaptureResult</span><span class="p">.</span><span class="na">Empty</span> <span class="o">-&gt;</span> <span class="p">{</span>
+            <span class="n">handleNoExtractions</span><span class="p">()</span>
+        <span class="p">}</span>
+        <span class="n">CaptureResult</span><span class="p">.</span><span class="na">Cancel</span> <span class="o">-&gt;</span> <span class="p">{</span>
+            <span class="n">handleCancellation</span><span class="p">()</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">fun</span> <span class="nf">handleFileImportError</span><span class="p">(</span><span class="n">exception</span><span class="p">:</span> <span class="n">ImportedFileValidationException</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="n">message</span> <span class="o">=</span> <span class="p">...</span>
+    <span class="n">exception</span><span class="p">.</span><span class="na">validationError</span><span class="o">?</span><span class="p">.</span><span class="na">let</span> <span class="p">{</span> <span class="n">validationError</span> <span class="o">-&gt;</span>
+        <span class="c1">// Get the default message</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="n">getString</span><span class="p">(</span><span class="n">validationError</span><span class="p">.</span><span class="na">textResource</span><span class="p">)</span>
+        <span class="c1">// Or use custom messages</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="n">when</span> <span class="p">(</span><span class="n">validationError</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">FileImportValidator</span><span class="p">.</span><span class="na">Error</span><span class="p">.</span><span class="na">TYPE_NOT_SUPPORTED</span> <span class="o">-&gt;</span> <span class="p">...</span>
+            <span class="n">FileImportValidator</span><span class="p">.</span><span class="na">Error</span><span class="p">.</span><span class="na">SIZE_TOO_LARGE</span> <span class="o">-&gt;</span> <span class="p">...</span>
+            <span class="n">FileImportValidator</span><span class="p">.</span><span class="na">Error</span><span class="p">.</span><span class="na">TOO_MANY_PDF_PAGES</span> <span class="o">-&gt;</span> <span class="p">...</span>
+            <span class="n">FileImportValidator</span><span class="p">.</span><span class="na">Error</span><span class="p">.</span><span class="na">PASSWORD_PROTECTED_PDF</span> <span class="o">-&gt;</span> <span class="p">...</span>
+            <span class="n">FileImportValidator</span><span class="p">.</span><span class="na">Error</span><span class="p">.</span><span class="na">TOO_MANY_DOCUMENT_PAGES</span> <span class="o">-&gt;</span> <span class="p">...</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">AlertDialog</span><span class="p">.</span><span class="na">Builder</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+        <span class="p">.</span><span class="na">setMessage</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="p">.</span><span class="na">setPositiveButton</span><span class="p">(</span><span class="s">&quot;OK&quot;</span><span class="p">)</span> <span class="p">{</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="n">finish</span><span class="p">()</span> <span class="p">}</span>
+        <span class="p">.</span><span class="na">show</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="n">fun</span> <span class="nf">startGiniBankSDKForImportedFile</span><span class="p">(</span><span class="n">importedFileIntent</span><span class="p">:</span> <span class="n">Intent</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Configure capture first</span>
+    <span class="n">configureCapture</span><span class="p">();</span>
+
+    <span class="n">fileImportCancellationToken</span> <span class="o">=</span>
+        <span class="n">GiniBank</span><span class="p">.</span><span class="na">startCaptureFlowForIntent</span><span class="p">(</span><span class="n">captureImportLauncher</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="n">importedFileIntent</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="component-api">
+<h4>Component API<a class="headerlink" href="#component-api" title="Permalink to this headline">¶</a></h4>
+<p>When using the Component API you need to create a <code class="docutils literal notranslate"><span class="pre">Document</span></code> from the intent using
+<code class="docutils literal notranslate"><span class="pre">GiniBank.createDocumentForImportedFiles()</span></code> and then continue either to the <code class="docutils literal notranslate"><span class="pre">ReviewFragmentCompat</span></code>,
+<code class="docutils literal notranslate"><span class="pre">MultiPageReviewFragment</span></code> or <code class="docutils literal notranslate"><span class="pre">AnalysisFragmentCompat</span></code>:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">fun</span> <span class="nf">startGiniBankSDKForImportedFile</span><span class="p">(</span><span class="n">importedFileIntent</span><span class="p">:</span> <span class="n">Intent</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">GiniBank</span><span class="p">.</span><span class="na">createDocumentForImportedFiles</span><span class="p">(</span><span class="n">importedFileIntent</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="n">object</span> <span class="p">:</span> <span class="n">AsyncCallback</span><span class="o">&lt;</span><span class="n">Document</span><span class="p">,</span> <span class="n">ImportedFileValidationException</span><span class="o">&gt;</span> <span class="p">{</span>
+        <span class="n">override</span> <span class="n">fun</span> <span class="nf">onSuccess</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n">Document</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="na">isReviewable</span><span class="p">)</span> <span class="p">{</span>
+                <span class="c1">// If you have enabled capturing documents with multiple pages:</span>
+                <span class="n">launchMultiPageReviewScreen</span><span class="p">()</span>
+                <span class="c1">// OR if you didn&#39;t:</span>
+                <span class="n">launchSinglePageReviewScreen</span><span class="p">()</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="n">launchAnalysisScreen</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="p">}</span>
+            <span class="n">finish</span><span class="p">()</span>
+        <span class="p">}</span>
+
+        <span class="n">override</span> <span class="n">fun</span> <span class="nf">onError</span><span class="p">(</span><span class="n">exception</span><span class="p">:</span> <span class="n">ImportedFileValidationException</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">handleFileImportError</span><span class="p">(</span><span class="n">exception</span><span class="p">)</span>
+        <span class="p">}</span>
+
+        <span class="n">override</span> <span class="n">fun</span> <span class="nf">onCancelled</span><span class="p">()</span> <span class="p">{</span>
+            <span class="c1">// Handle cancellation.</span>
+        <span class="p">}</span>
+    <span class="p">})</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="return-assistant">
+<h2>Return Assistant<a class="headerlink" href="#return-assistant" title="Permalink to this headline">¶</a></h2>
+<p>The return assistant feature allows your users to view and edit payable items in an invoice. The total amount is
+updated to be the sum of only those items which the user opts to pay.</p>
+<p>To enable this feature simply set <code class="docutils literal notranslate"><span class="pre">returnAssistantEnabled</span></code> to <code class="docutils literal notranslate"><span class="pre">true</span></code> in the <code class="docutils literal notranslate"><span class="pre">CaptureConfiguration</span></code>:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">CaptureConfiguration</span><span class="p">(</span><span class="n">returnAssistantEnabled</span> <span class="o">=</span> <span class="kc">true</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="section" id="id1">
+<h3>Screen API<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>When integrating using the Screen API it is enough to enable the return assistant feature. The Gini Bank SDK will
+show the return assistant automatically if the invoice contained payable items and will update the extractions returned
+to your app according to the user’s changes.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">amountToPay</span></code> extraction is updated to be the sum of items the user decided to pay. It includes discounts and
+additional charges that might be present on the invoice.</p>
+<p>// TODO: update links after Bank API is available</p>
+<p>The extractions related to the return assistant are stored in the <code class="docutils literal notranslate"><span class="pre">compoundExtractions</span></code> field of the
+<code class="docutils literal notranslate"><span class="pre">CaptureResult</span></code>. See the Gini Bank API’s <a class="reference external" href="https://pay-api.gini.net/documentation/#return-assistant-extractions">documentation</a> to learn about the return assistant’s compound
+extractions.</p>
+</div>
+<div class="section" id="id3">
+<h3>Component API<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>Using the Component API is more challenging. You need to manage three additional fragments: <code class="docutils literal notranslate"><span class="pre">DigitalInvoiceFragment</span></code>,
+<code class="docutils literal notranslate"><span class="pre">DigitalInvoiceOnboardingFragment</span></code> and <code class="docutils literal notranslate"><span class="pre">LineItemDetailsFragment</span></code>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">See the Component API example app’s <a class="reference external" href="https://github.com/gini/gini-mobile-android/tree/main/bank-sdk/component-api-example-app/src/main/java/net/gini/pay/appcomponentapi/digitalinvoice">digitalinvoice package</a>
+for a sample integration.</p>
+</div>
+<p>The following diagram extends the one found in the Gini Capture SDK’s <a class="reference external" href="https://developer.gini.net/gini-capture-sdk-android/html/integration.html#component-api">Component API guide</a>. It shows the possible flows
+through the SDK based on the listener method invocations. For brevity each fragment’s listener is shown next to it. In
+your integration you will provide the listener implementations and handle the listener method calls. You should navigate
+to the appropriate fragment based on this diagram.</p>
+<p>The part related to the return assistant is in the lower right corner:</p>
+<a class="reference internal image-reference" href="_images/Return-Assistant-Component-API.jpg"><img alt="Diagram of possible flows through the SDK with the Component API fragments and their listeners including the return assistant." src="_images/Return-Assistant-Component-API.jpg" style="width: 100%;" /></a>
+<div class="section" id="digitalinvoicefragment">
+<h4>DigitalInvoiceFragment<a class="headerlink" href="#digitalinvoicefragment" title="Permalink to this headline">¶</a></h4>
+<p>This is the entry point for the return assistant. It displays the line items extracted from an invoice and their total
+price. The user can deselect line items which should not be paid for and also edit the quantity, price or description of
+each line item. The total price is always updated to include only the selected line items.</p>
+<p>The returned extractions in the <code class="docutils literal notranslate"><span class="pre">DigitalInvoiceFragmentListener.onPayInvoice()</span></code> are updated to include the user’s
+modifications:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">amountToPay</span></code> in the specific extractions is updated to contain the sum of the selected line items’ prices.</li>
+<li>The line items in the compound extractions are also updated according to the user’s modifications.</li>
+</ul>
+<p>Before showing the <code class="docutils literal notranslate"><span class="pre">DigitalInvoiceFragment</span></code> you should validate the compound extractions
+using the <code class="docutils literal notranslate"><span class="pre">LineItemsValidator</span></code>. These extractions are returned in the <code class="docutils literal notranslate"><span class="pre">AnalysisFragmentListener.onExtractionsAvailable()]</span></code>
+listener method:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">override</span> <span class="n">fun</span> <span class="nf">onExtractionsAvailable</span><span class="p">(</span>
+    <span class="n">extractions</span><span class="p">:</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span> <span class="n">GiniCaptureSpecificExtraction</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="n">compoundExtractions</span><span class="p">:</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span> <span class="n">GiniCaptureCompoundExtraction</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="n">returnReasons</span><span class="p">:</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">GiniCaptureReturnReason</span><span class="o">&gt;</span>
+<span class="p">)</span> <span class="p">{</span>
+    <span class="k">try</span> <span class="p">{</span>
+        <span class="c1">// Check whether the compound extractions contain valid line items or not</span>
+        <span class="n">LineItemsValidator</span><span class="p">.</span><span class="na">validate</span><span class="p">(</span><span class="n">compoundExtractions</span><span class="p">)</span>
+
+        <span class="c1">// At this point there are valid line items and you can start the return assistant</span>
+        <span class="n">val</span> <span class="n">fragment</span> <span class="o">=</span> <span class="n">DigitalInvoiceFragment</span><span class="p">.</span><span class="na">createInstance</span><span class="p">(</span><span class="n">extractions</span><span class="p">,</span> <span class="n">compoundExtractions</span><span class="p">,</span> <span class="n">returnReasons</span><span class="p">)</span>
+        <span class="n">startReturnAssistant</span><span class="p">(</span><span class="n">fragment</span><span class="p">)</span>
+
+    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="n">notUsed</span><span class="p">:</span> <span class="n">DigitalInvoiceException</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// There were no valid line items and you can proceed directly to handling the extractions</span>
+        <span class="c1">// without the return assistant</span>
+        <span class="n">handleExtractions</span><span class="p">(</span><span class="n">extractions</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>A <code class="docutils literal notranslate"><span class="pre">DigitalInvoiceFragmentListener</span></code> instance must be available before the <code class="docutils literal notranslate"><span class="pre">DigitalInvoiceFragment</span></code> is attached to an
+Activity. Failing to do so will throw an exception. The listener instance can be provided either implicitly by making
+the hosting Activity implement the <code class="docutils literal notranslate"><span class="pre">DigitalInvoiceFragmentListener</span></code> interface or explicitly by setting the listener
+using the <code class="docutils literal notranslate"><span class="pre">DigitalInvoiceFragment.listener</span></code> property.</p>
+</div>
+<div class="section" id="digitalinvoiceonboardingfragment">
+<h4>DigitalInvoiceOnboardingFragment<a class="headerlink" href="#digitalinvoiceonboardingfragment" title="Permalink to this headline">¶</a></h4>
+<p>This fragment shows the onboarding screen related to the return assistant. It displays information about the return
+assistant to the user.</p>
+<p>You should show the <code class="docutils literal notranslate"><span class="pre">DigitalInvoiceOnboardingFragment</span></code> when the <code class="docutils literal notranslate"><span class="pre">DigitalInvoiceFragmentListener.showOnboarding()</span></code> is
+called.</p>
+<p>A <code class="docutils literal notranslate"><span class="pre">DigitalInvoiceOnboardingFragmentListener</span></code> instance must be available before the
+<code class="docutils literal notranslate"><span class="pre">DigitalInvoiceOnboardingFragment</span></code> is attached to an activity. Failing to do so will throw an exception. The listener
+instance can be provided either implicitly by making the host Activity implement the
+<code class="docutils literal notranslate"><span class="pre">DigitalInvoiceOnboardingFragmentListener</span></code> interface or explicitly by setting the listener using the
+<code class="docutils literal notranslate"><span class="pre">DigitalInvoiceOnboardingFragment.listener</span></code> property.</p>
+</div>
+<div class="section" id="lineitemdetailsfragment">
+<h4>LineItemDetailsFragment<a class="headerlink" href="#lineitemdetailsfragment" title="Permalink to this headline">¶</a></h4>
+<p>This fragment allows the user to edit the details of a line item: description, quantity and price. It also allows the
+user to deselect the line item.</p>
+<p>The returned line item in the <code class="docutils literal notranslate"><span class="pre">LineItemDetailsFragmentListener.onSave()</span></code> listener method is updated to contain the
+user’s modifications.</p>
+<p>You should show the LineItemDetailsFragment when the <code class="docutils literal notranslate"><span class="pre">DigitalInvoiceFragmentListener.onEditLineItem()</span></code> is called.</p>
+<p>A <code class="docutils literal notranslate"><span class="pre">LineItemDetailsFragmentListener</span></code> instance must be available before the <code class="docutils literal notranslate"><span class="pre">LineItemDetailsFragment</span></code> is attached to
+an activity. Failing to do so will throw an exception. The listener instance can be provided either implicitly by making
+the host Activity implement the <code class="docutils literal notranslate"><span class="pre">LineItemDetailsFragmentListener</span></code> interface or explicitly by setting the listener
+using the <code class="docutils literal notranslate"><span class="pre">LineItemDetailsFragment.listener</span></code> property.</p>
+</div>
+</div>
+<div class="section" id="sending-feedback">
+<h3>Sending Feedback<a class="headerlink" href="#sending-feedback" title="Permalink to this headline">¶</a></h3>
+<p>Your app should send feedback for the extractions related to the return assistant. These extractions are found in the
+<code class="docutils literal notranslate"><span class="pre">compoundExtractions</span></code> field of the <code class="docutils literal notranslate"><span class="pre">CaptureResult</span></code> if you are using the Screen API and in the
+<code class="docutils literal notranslate"><span class="pre">compoundExtractions</span></code> parameter of the <code class="docutils literal notranslate"><span class="pre">DigitalInvoiceFragmentListener.onPayInvoice()</span></code> listener method if you use
+the Component API.</p>
+<div class="section" id="default-networking-implementation">
+<h4>Default Networking Implementation<a class="headerlink" href="#default-networking-implementation" title="Permalink to this headline">¶</a></h4>
+<p>If you use the <code class="docutils literal notranslate"><span class="pre">GiniCaptureDefaultNetworkService</span></code> and the <code class="docutils literal notranslate"><span class="pre">GiniCaptureDefaultNetworkApi</span></code> then sending feedback for
+the return assistant extractions is done by the <code class="docutils literal notranslate"><span class="pre">GiniCaptureDefaultNetworkApi</span></code> when you send feedback for the payment
+data extractions as described in the <a class="reference external" href="integration.html#sending-feedback">Sending Feedback</a> section.</p>
+</div>
+<div class="section" id="custom-networking-implementation">
+<h4>Custom Networking Implementation<a class="headerlink" href="#custom-networking-implementation" title="Permalink to this headline">¶</a></h4>
+<p>// TODO: update links after Bank API is available</p>
+<p>If you use your own networking implementation and directly communicate with the Gini Bank API then see <a class="reference external" href="https://pay-api.gini.net/documentation/#submitting-feedback-on-extractions">this section</a> in its documentation on how to send
+feedback for the compound extractions.</p>
+<p>In case you use the Gini Bank API Library then sending compound extraction feedback is very similar to how it’s shown in
+<a class="reference external" href="https://developer.gini.net/gini-mobile-android/bank-api-library/library/html/guides/common-tasks.html#sending-feedback">this section</a>
+in its documentation. The only difference is that you need to also pass in the <code class="docutils literal notranslate"><span class="pre">CompoundExtraction</span></code> map to
+<code class="docutils literal notranslate"><span class="pre">DocumentTaskManager.sendFeebackForExtractions()</span></code>:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// Extractions seen and accepted by the user (including user modifications)</span>
+<span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span> <span class="n">SpecificExtraction</span><span class="o">&gt;</span> <span class="n">specificExtractionFeedback</span><span class="p">;</span>
+
+<span class="c1">// Return assistant extractions as returned by the CaptureResult or DigitalInvoiceFragmentListener</span>
+<span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span> <span class="n">CompoundExtraction</span><span class="o">&gt;</span> <span class="n">compoundExtractionFeedback</span><span class="p">;</span>
+
+<span class="kd">final</span> <span class="n">Task</span><span class="o">&lt;</span><span class="n">Document</span><span class="o">&gt;</span> <span class="n">sendFeedback</span> <span class="o">=</span> <span class="n">documentTaskManager</span><span class="p">.</span><span class="na">sendFeedbackForExtractions</span><span class="p">(</span><span class="n">document</span><span class="p">,</span>
+        <span class="n">specificExtractionFeedback</span><span class="p">,</span> <span class="n">compoundExtractionFeedback</span><span class="p">);</span>
+<span class="n">sendFeedback</span><span class="p">.</span><span class="na">waitForCompletion</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="customization.html" class="btn btn-neutral float-right" title="Customization">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="integration.html" class="btn btn-neutral" title="Integration"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+    </p>
+  </div>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  
+</body>
+</html>
