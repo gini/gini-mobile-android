@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@android:color/transparent"
+    android:paddingStart="@dimen/gbs_digital_invoice_addon_horizontal_padding"
+    android:paddingTop="@dimen/gbs_digital_invoice_addon_vertical_padding"
+    android:paddingEnd="@dimen/gbs_digital_invoice_addon_horizontal_padding"
+    android:paddingBottom="@dimen/gbs_digital_invoice_addon_vertical_padding">
+
+    <TextView
+        android:id="@+id/gbs_addon_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/gbs_addon_price_total_integral_part"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="@dimen/gbs_digital_invoice_addon_name_margin_right"
+        android:textAppearance="@style/GiniCaptureTheme.DigitalInvoice.Addon.Name.TextStyle"
+        app:layout_constraintEnd_toStartOf="@id/gbs_addon_price_total_integral_part"
+        app:layout_constraintBottom_toBottomOf="@id/gbs_addon_price_total_integral_part"
+        tools:text="Discount:"/>
+
+    <TextView
+        android:id="@+id/gbs_addon_price_total_integral_part"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/gbs_addon_price_total_fractional_part"
+        android:includeFontPadding="false"
+        android:textAppearance="@style/GiniCaptureTheme.DigitalInvoice.Addon.Price.Integral.TextStyle"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/gbs_addon_price_total_fractional_part"
+        tools:text="-€9.99" />
+
+    <TextView
+        android:id="@+id/gbs_addon_price_total_fractional_part"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/GiniCaptureTheme.DigitalInvoice.Addon.Price.Fractional.TextStyle"
+        android:layout_marginEnd="@dimen/gbs_digital_invoice_addon_price_margin_right"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text=".90" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

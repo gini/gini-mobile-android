@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">Screen API Example</string>
+    <string name="start_gini_capture_sdk">Start Gini Bank SDK</string>
+    <string name="recipient_hint">recipient</string>
+    <string name="iban_hint">IBAN</string>
+    <string name="amount_hint">Amount</string>
+    <string name="purpose_hint">Purpose</string>
+    <string name="return_to_business">Return to Business</string>
+    <string name="resolve_payment">Pay</string>
+
+    <string name="custom_help_screen_title">Custom Help Screen</string>
+    <string name="custom_help_screen_greeting">This is a custom help screen.</string>
+
+    <!-- String customization examples -->
+
+    <!--<string name="gc_title_camera">Dokument fotografieren</string>-->
+    <!--<string name="gc_title_onboarding">Anleitung</string>-->
+    <!--<string name="gc_title_review">Foto überprüfen</string>-->
+
+    <!--<string name="gc_show_onboarding">Hilfe</string>-->
+    <!--<string name="gc_select_from_camera_roll">Eigenes Bild auswählen</string>-->
+
+    <!--<string name="gc_camera_error_no_permission">Um Dokumente zu fotografieren, erlaube Gini Pay den Zugriff auf die Kamera.</string>-->
+    <!--<string name="gc_camera_error_no_permission_button_title">Zugriff erlauben</string>-->
+
+    <!--<string name="gc_onboarding_flat">Dokument flach fotografieren\n</string>-->
+    <!--<string name="gc_onboarding_parallel">Handy parallel\nzum Dokument\nhalten</string>-->
+    <!--<string name="gc_onboarding_align">Dokument\nvollständig in\nRahmen einpassen</string>-->
+
+    <!--<string name="gc_review_bottom_panel_text">Dokument vollständig, scharf und in Leserichtung?\n\nDoppeltippen um Schärfe zu prüfen.</string>-->
+
+    <!--<string name="gc_document_analysis_error_retry">Wiederholen</string>-->
+</resources>

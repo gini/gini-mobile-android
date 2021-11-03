@@ -14,9 +14,9 @@ IBAN, BIC, payment reference, etc.) in an invoice.
 Documentation
 -------------
 
-* [Integration Guide](http://developer.gini.net/gini-mobile-android/capture-sdk/sdk/html/) and
-* [Gini Capture Reference Docs](http://developer.gini.net/gini-mobile-android/capture-sdk/sdk/dokka/index.html)
-* [Network Library Reference Docs](http://developer.gini.net/gini-mobile-android/capture-sdk/default-network/dokka/index.html)
+* [Integration Guide](https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/html/) and
+* [Gini Capture Reference Docs](https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/dokka/index.html)
+* [Network Library Reference Docs](https://developer.gini.net/gini-mobile-android/capture-sdk/default-network/dokka/index.html)
 
 Examples
 --------

@@ -1,0 +1,1 @@
+Moved to https://developer.gini.net/gini-mobile-android/bank-sdk/html/license.html

@@ -16,15 +16,15 @@ It also provides secure payment information sharing between clients via payment 
 Documentation
 -------------
 
-* [Integration Guide](http://developer.gini.net/gini-mobile-android/bank-api-library/library/html/)
-* [Reference Docs](http://developer.gini.net/gini-mobile-android/bank-api-library/library/dokka/index.html)
+* [Integration Guide](https://developer.gini.net/gini-mobile-android/bank-api-library/library/html/)
+* [Reference Docs](https://developer.gini.net/gini-mobile-android/bank-api-library/library/dokka/index.html)
 
 Dependencies
 ------------
 
 The Gini Bank API Library has the following dependencies:
 
-* [Volley from Google](http://developer.android.com/training/volley/index.html) ([AOSP Repository](https://android.googlesource.com/platform/frameworks/volley))
+* [Volley from Google](https://developer.android.com/training/volley/index.html) ([AOSP Repository](https://android.googlesource.com/platform/frameworks/volley))
 * [Bolts from facebook](https://github.com/BoltsFramework/Bolts-Android)
 * [TrustKit from DataTheorem](https://github.com/datatheorem/TrustKit-Android)
 

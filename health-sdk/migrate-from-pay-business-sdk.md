@@ -1,6 +1,8 @@
-# Migrate from Pay API Library to Health API Library
+# Update dependency declaration
 
-See the Health API Library's [migration guide](../health-api-library/migrate-from-pay-api-lib.md).
+We are publishing to Maven Central and you can remove our maven repo ("https://repo.gini.net/nexus/content/repositories/open") from your repositories.
+
+Replace `net.gini:gini-pay-business-sdk:<version>` with `net.gini.android:gini-health-sdk:<version>`.
 
 # Update classes
 
@@ -14,5 +16,7 @@ See the Health API Library's [migration guide](../health-api-library/migrate-fro
 # Update styles
 
 * Replace `gpb_` prefixes of android resource names with `ghs_`.
-* Replace `GiniPay` in style names with `GiniHealth`.
-* 
+
+# Migrate from Pay API Library to Health API Library
+
+See the Health API Library's [migration guide](../health-api-library/migrate-from-pay-api-lib.md).

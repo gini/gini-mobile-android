@@ -1,0 +1,46 @@
+name: Build docs for Bank SDK
+
+on:
+  push:
+    paths:
+      - 'bank-sdk/**'
+    tags-ignore:
+      - '**'
+  pull_request:
+    paths:
+      - 'bank-sdk/**'
+
+jobs:
+  build-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: setup java
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+          cache: 'gradle'
+
+      - name: setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '2.7.x'
+
+      - name: build documentation
+        uses: maierj/fastlane-action@v2.0.1
+        with:
+          lane: 'build_documentation'
+          options: >
+            { 
+              "project_id": "bank-sdk",
+              "module_id": "sdk"
+            }
+
+      - name: archive documentation
+        uses: actions/upload-artifact@v2
+        with:
+          name: bank-sdk-documentation
+          path: bank-sdk/sdk/build/docs
