@@ -1,0 +1,62 @@
+name: Build docs for Capture SDK
+
+on:
+  push:
+    paths:
+      - 'capture-sdk/**'
+    tags-ignore:
+      - '**'
+  pull_request:
+    paths:
+      - 'capture-sdk/**'
+
+jobs:
+  build-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: setup java
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+          cache: 'gradle'
+
+      - name: setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '2.7.x'
+
+      - name: build sdk documentation
+        uses: maierj/fastlane-action@v2.0.1
+        with:
+          lane: 'build_documentation'
+          options: >
+            { 
+              "project_id": "capture-sdk",
+              "module_id": "sdk"
+            }
+
+      - name: archive sdk documentation
+        uses: actions/upload-artifact@v2
+        with:
+          name: capture-sdk-documentation
+          path: capture-sdk/sdk/build/docs
+
+      - name: build default network library documentation
+        uses: maierj/fastlane-action@v2.0.1
+        with:
+          lane: 'build_documentation'
+          options: >
+            {
+              "project_id": "capture-sdk",
+              "module_id": "default-network"
+            }
+
+      - name: archive default network library documentation
+        uses: actions/upload-artifact@v2
+        with:
+          name: capture-sdk-default-network-documentation
+          path: capture-sdk/default-network/build/docs

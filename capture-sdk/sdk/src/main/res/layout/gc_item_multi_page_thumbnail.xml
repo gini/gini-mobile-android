@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="@dimen/gc_multi_page_review_thumbnail_card_width"
+    android:layout_height="@dimen/gc_multi_page_review_thumbnail_card_height"
+    android:layout_marginBottom="@dimen/gc_multi_page_review_thumbnail_card_vertical_margin"
+    android:layout_marginEnd="@dimen/gc_multi_page_review_thumbnail_card_horizontal_margin"
+    android:layout_marginLeft="@dimen/gc_multi_page_review_thumbnail_card_horizontal_margin"
+    android:layout_marginRight="@dimen/gc_multi_page_review_thumbnail_card_horizontal_margin"
+    android:layout_marginStart="@dimen/gc_multi_page_review_thumbnail_card_horizontal_margin"
+    android:layout_marginTop="@dimen/gc_multi_page_review_thumbnail_card_vertical_margin"
+    app:cardBackgroundColor="@color/gc_multi_page_review_thumbnail_card_background"
+    app:cardCornerRadius="5dp"
+    app:cardElevation="4dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <net.gini.android.capture.review.RotatableImageViewContainer
+            android:id="@+id/gc_thumbnail_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/gc_handle"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:foreground="#33000000" />
+
+        <RelativeLayout
+            android:id="@+id/gc_handle"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/gc_multi_page_review_thumbnail_card_handle_height"
+            android:layout_alignParentBottom="true">
+
+            <net.gini.android.capture.internal.ui.CustomFontTextView
+                android:id="@+id/gc_badge"
+                style="@style/GiniCaptureTheme.Review.MultiPage.ThumbnailBadge.TextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:background="@drawable/gc_thumbnail_badge_background"
+                android:gravity="center"
+                tools:ignore="RelativeOverlap"
+                tools:text="3" />
+
+            <ImageView
+                android:id="@+id/gc_bumps"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                app:srcCompat="@drawable/gc_bumps_icon" />
+
+            <View
+                android:id="@+id/gc_highlight"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/gc_multi_page_review_thumbnail_card_highlight_height"
+                android:layout_alignParentBottom="true"
+                android:background="@color/gc_multi_page_thumbnail_highlight_strip" />
+        </RelativeLayout>
+
+        <ProgressBar
+            android:id="@+id/gc_activity_indicator"
+            android:layout_width="64dp"
+            android:layout_height="match_parent"
+            android:layout_above="@id/gc_handle"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:indeterminateOnly="true"
+            android:indeterminateTint="@color/gc_analysis_activity_indicator"
+            android:indeterminateTintMode="src_in"
+            android:padding="@dimen/gc_review_progressbar_padding"
+            android:visibility="invisible"
+            tools:targetApi="lollipop"
+            tools:visibility="visible" />
+
+        <RelativeLayout
+            android:layout_width="64dp"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/gc_handle"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true">
+
+            <ImageView
+                android:id="@+id/gc_upload_result_icon_background"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:src="@drawable/gc_multi_page_upload_success_icon_background"
+                android:visibility="invisible"
+                tools:visibility="visible" />
+
+            <ImageView
+                android:id="@+id/gc_upload_result_icon_foreground"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:src="@drawable/gc_multi_page_upload_success_icon_foreground"
+                android:visibility="invisible"
+                tools:visibility="visible" />
+
+        </RelativeLayout>
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>

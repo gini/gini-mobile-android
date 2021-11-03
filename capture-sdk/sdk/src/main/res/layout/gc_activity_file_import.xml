@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gc_file_import_activity_background"
+    android:fillViewport="true"
+    tools:context="net.gini.android.capture.help.FileImportActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <net.gini.android.capture.internal.ui.CustomFontTextView
+            android:id="@+id/gc_file_import_header"
+            style="@style/GiniCaptureTheme.Help.FileImport.Header.TextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/gc_file_import_header_margin"
+            android:text="@string/gc_file_import_header" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/gc_file_import_separator" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/gc_file_import_section_number_margin"
+            android:layout_marginEnd="@dimen/gc_file_import_section_number_margin"
+            android:layout_marginLeft="@dimen/gc_file_import_section_number_margin"
+            android:layout_marginRight="@dimen/gc_file_import_section_number_margin"
+            android:layout_marginStart="@dimen/gc_file_import_section_number_margin"
+            android:layout_marginTop="@dimen/gc_file_import_section_number_margin_top"
+            android:background="@drawable/gc_file_import_section_number_background"
+            android:gravity="center"
+            android:text="1"
+            android:textColor="@color/gc_file_import_section_number"
+            tools:ignore="HardcodedText" />
+
+        <net.gini.android.capture.internal.ui.CustomFontTextView
+            style="@style/GiniCaptureTheme.Help.FileImport.Section.Title.TextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/gc_file_import_section_title_margin"
+            android:text="@string/gc_file_import_section_1_title" />
+
+        <net.gini.android.capture.internal.ui.CustomFontTextView
+            style="@style/GiniCaptureTheme.Help.FileImport.Section.Body.TextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/gc_file_import_section_body_margin"
+            android:text="@string/gc_file_import_section_1_body" />
+
+        <ImageView
+            android:id="@+id/gc_section_1_illustration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="@dimen/gc_file_import_illustration_margin"
+            android:src="@drawable/gc_file_import_section_1_illustration"
+            android:visibility="gone" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/gc_file_import_separator" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/gc_file_import_section_number_margin"
+            android:layout_marginEnd="@dimen/gc_file_import_section_number_margin"
+            android:layout_marginLeft="@dimen/gc_file_import_section_number_margin"
+            android:layout_marginRight="@dimen/gc_file_import_section_number_margin"
+            android:layout_marginStart="@dimen/gc_file_import_section_number_margin"
+            android:layout_marginTop="@dimen/gc_file_import_section_number_margin_top"
+            android:background="@drawable/gc_file_import_section_number_background"
+            android:gravity="center"
+            android:text="2"
+            android:textColor="@color/gc_file_import_section_number"
+            tools:ignore="HardcodedText" />
+
+        <net.gini.android.capture.internal.ui.CustomFontTextView
+            style="@style/GiniCaptureTheme.Help.FileImport.Section.Title.TextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/gc_file_import_section_title_margin"
+            android:text="@string/gc_file_import_section_2_title" />
+
+        <net.gini.android.capture.internal.ui.CustomFontTextView
+            style="@style/GiniCaptureTheme.Help.FileImport.Section.Body.TextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/gc_file_import_section_body_margin"
+            android:text="@string/gc_file_import_section_2_body" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="@dimen/gc_file_import_illustration_margin"
+            android:src="@drawable/gc_file_import_section_2_illustration" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/gc_file_import_separator" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/gc_file_import_section_number_margin"
+            android:layout_marginEnd="@dimen/gc_file_import_section_number_margin"
+            android:layout_marginLeft="@dimen/gc_file_import_section_number_margin"
+            android:layout_marginRight="@dimen/gc_file_import_section_number_margin"
+            android:layout_marginStart="@dimen/gc_file_import_section_number_margin"
+            android:layout_marginTop="@dimen/gc_file_import_section_number_margin_top"
+            android:background="@drawable/gc_file_import_section_number_background"
+            android:gravity="center"
+            android:text="3"
+            android:textColor="@color/gc_file_import_section_number"
+            tools:ignore="HardcodedText" />
+
+        <net.gini.android.capture.internal.ui.CustomFontTextView
+            style="@style/GiniCaptureTheme.Help.FileImport.Section.Title.TextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/gc_file_import_section_title_margin"
+            android:text="@string/gc_file_import_section_3_title" />
+
+        <net.gini.android.capture.internal.ui.CustomFontTextView
+            style="@style/GiniCaptureTheme.Help.FileImport.Section.Body.TextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/gc_file_import_section_body_margin"
+            android:text="@string/gc_file_import_section_3_body" />
+
+        <net.gini.android.capture.internal.ui.CustomFontTextView
+            style="@style/GiniCaptureTheme.Help.FileImport.Section.Body.TextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/gc_file_import_section_body_margin"
+            android:text="@string/gc_file_import_section_3_body_2" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="@dimen/gc_file_import_illustration_margin"
+            android:src="@drawable/gc_file_import_section_3_illustration" />
+
+        <net.gini.android.capture.internal.ui.CustomFontTextView
+            style="@style/GiniCaptureTheme.Help.FileImport.Section.Title.TextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/gc_file_import_section_title_margin"
+            android:text="@string/gc_file_import_section_3_clear_app_defaults_title" />
+
+        <net.gini.android.capture.internal.ui.CustomFontTextView
+            style="@style/GiniCaptureTheme.Help.FileImport.Section.Body.TextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/gc_file_import_section_body_margin"
+            android:text="@string/gc_file_import_section_3_clear_app_defaults_body"/>
+
+    </LinearLayout>
+
+</ScrollView>

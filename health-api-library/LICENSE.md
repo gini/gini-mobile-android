@@ -1,1 +1,1 @@
-Moved to http://developer.gini.net/gini-mobile-android/health-api-library/html/license.html
+Moved to http://developer.gini.net/gini-mobile-android/health-api-library/library/html/license.html

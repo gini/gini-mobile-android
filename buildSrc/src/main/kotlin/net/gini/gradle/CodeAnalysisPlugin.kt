@@ -1,6 +1,8 @@
 package net.gini.gradle
 
 import com.android.build.gradle.LibraryExtension
+import com.android.build.api.dsl.ApplicationExtension
+import com.android.build.api.dsl.Lint
 import io.gitlab.arturbosch.detekt.extensions.DetektExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -11,7 +13,7 @@ import org.gradle.kotlin.dsl.register
 import net.gini.gradle.extensions.libs
 import org.gradle.api.plugins.quality.Pmd
 import org.gradle.api.plugins.quality.PmdExtension
-import org.gradle.kotlin.dsl.plugins
+import org.gradle.kotlin.dsl.findByType
 import org.jlleitschuh.gradle.ktlint.KtlintExtension
 import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
 
@@ -71,11 +73,14 @@ class CodeAnalysisPlugin: Plugin<Project> {
     }
 
     private fun configureAndroidLint(target: Project) {
-        target.extensions.getByType<LibraryExtension>().apply {
-            lint {
-                isAbortOnError = false
-                lintConfig = target.file("${target.rootDir}/buildSrc/config/lint/lint.xml")
-            }
+        configureAndroidLint(target, target.extensions.findByType<LibraryExtension>()?.lint)
+        configureAndroidLint(target, target.extensions.findByType<ApplicationExtension>()?.lint)
+    }
+
+    private fun configureAndroidLint(target: Project, lint: Lint?) {
+        lint?.apply {
+            isAbortOnError = false
+            lintConfig = target.file("${target.rootDir}/buildSrc/config/lint/lint.xml")
         }
     }
 

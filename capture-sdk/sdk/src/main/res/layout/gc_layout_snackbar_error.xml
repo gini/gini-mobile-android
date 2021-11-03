@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/gc_layout_error"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/gc_snackbar_error_background">
+
+    <net.gini.android.capture.internal.ui.CustomFontTextView
+        android:id="@+id/gc_text_error"
+        style="@style/GiniCaptureTheme.Snackbar.Error.TextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_toStartOf="@+id/gc_button_error"
+        android:paddingBottom="@dimen/gc_snackbar_error_vertical_padding"
+        android:paddingLeft="@dimen/gc_snackbar_error_horizontal_padding"
+        android:paddingRight="@dimen/gc_snackbar_error_horizontal_padding"
+        android:paddingTop="@dimen/gc_snackbar_error_vertical_padding"
+        android:textColor="@color/gc_snackbar_error_text"
+        tools:text="This is an error. Sorry ... " />
+
+    <net.gini.android.capture.internal.ui.CustomFontButton
+        android:id="@+id/gc_button_error"
+        style="@style/GiniCaptureTheme.Snackbar.Error.Button.TextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:background="@null"
+        android:paddingBottom="@dimen/gc_snackbar_error_vertical_padding"
+        android:paddingLeft="@dimen/gc_snackbar_error_horizontal_padding"
+        android:paddingRight="@dimen/gc_snackbar_error_horizontal_padding"
+        android:paddingTop="@dimen/gc_snackbar_error_vertical_padding"
+        android:textColor="@drawable/gc_snackbar_error_button_title_color"
+        android:visibility="gone"
+        tools:text="FIX IT!"
+        tools:visibility="visible" />
+</RelativeLayout>

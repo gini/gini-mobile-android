@@ -7,6 +7,8 @@ dependencyResolutionManagement {
         mavenCentral()
         // For PhotoView
         maven("https://jitpack.io")
+        // For com.hiya:jacoco-android
+        maven("https://plugins.gradle.org/m2/")
     }
 }
 
@@ -20,3 +22,9 @@ include("bank-api-library:library")
 
 include("health-sdk:sdk")
 include("health-sdk:example-app")
+
+include("capture-sdk:sdk")
+include("capture-sdk:default-network")
+include("capture-sdk:example-app-shared-code")
+include("capture-sdk:screen-api-example-app")
+include("capture-sdk:component-api-example-app")

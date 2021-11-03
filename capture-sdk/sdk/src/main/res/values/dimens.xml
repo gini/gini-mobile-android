@@ -1,0 +1,121 @@
+<resources>
+    <dimen name="gc_camera_button_vertical_margin">20dp</dimen>
+    <dimen name="gc_camera_upload_hint_container_width">0dp</dimen>
+    <dimen name="gc_camera_upload_hint_container_top_margin">0dp</dimen>
+    <dimen name="gc_camera_upload_hint_container_horizontal_margin">24dp</dimen>
+    <dimen name="gc_camera_upload_hint_container_padding">24dp</dimen>
+    <dimen name="gc_camera_upload_hint_container_padding_right">16dp</dimen>
+    <dimen name="gc_camera_upload_hint_container_close_button_padding">8dp</dimen>
+    <dimen name="gc_camera_upload_hint_text_right_margin">8dp</dimen>
+    <dimen name="gc_camera_qr_code_scanner_hint_arrow_margin">8dp</dimen>
+    <dimen name="gc_camera_upload_button_size">48dp</dimen>
+    <dimen name="gc_camera_upload_button_left_margin">40dp</dimen>
+    <dimen name="gc_camera_upload_button_top_margin">0dp</dimen>
+    <dimen name="gc_camera_upload_button_subtitle_bottom_padding">4dp</dimen>
+    <dimen name="gc_camera_image_stack_top_margin">8dp</dimen>
+    <dimen name="gc_camera_image_stack_right_margin">40dp</dimen>
+    <dimen name="gc_camera_image_stack_left_margin">40dp</dimen>
+    <dimen name="gc_camera_image_stack_badge_size">20dp</dimen>
+    <dimen name="gc_camera_activity_indicator_padding">16dp</dimen>
+    <dimen name="gc_camera_qrcode_detected_popup_horizontal_margin">24dp</dimen>
+    <dimen name="gc_camera_qrcode_detected_popup_vertical_margin">16dp</dimen>
+    <dimen name="gc_camera_qrcode_detected_popup_horizontal_padding">12dp</dimen>
+    <dimen name="gc_camera_qrcode_detected_popup_vertical_padding">8dp</dimen>
+    <dimen name="gc_camera_qrcode_detected_popup_text_horizontal_margin">8dp</dimen>
+    <dimen name="gc_camera_qrcode_detected_popup_width">0dp</dimen>
+    <dimen name="gc_camera_qrcode_icon_size">32dp</dimen>
+
+    <dimen name="gc_onboarding_indicators_vertical_margin">41dp</dimen>
+    <dimen name="gc_onboarding_indicator_width">10dp</dimen>
+    <dimen name="gc_onboarding_indicator_height">10dp</dimen>
+    <dimen name="gc_onboarding_illustration_size">160dp</dimen>
+    <dimen name="gc_onboarding_illustration_vertical_margin">40dp</dimen>
+    <dimen name="gc_onboarding_message_horizontal_margin">16dp</dimen>
+    <dimen name="gc_onboarding_message_max_width">600dp</dimen>
+    <dimen name="gc_onboarding_vertical_margin">100dp</dimen>
+
+    <dimen name="gc_review_button_rotate_vertical_margin">7dp</dimen>
+    <dimen name="gc_review_button_rotate_horizontal_margin">8dp</dimen>
+    <dimen name="gc_review_bottom_panel_horizontal_padding">16dp</dimen>
+    <dimen name="gc_review_bottom_panel_vertical_padding">16dp</dimen>
+    <dimen name="gc_review_progressbar_padding">16dp</dimen>
+
+    <dimen name="gc_fab_vertical_margin">16dp</dimen>
+    <dimen name="gc_fab_horizontal_margin">16dp</dimen>
+    <dimen name="gc_fab_width">56dp</dimen>
+    <dimen name="gc_fab_height">56dp</dimen>
+    <dimen name="gc_fab_shadow_width_selected">58dp</dimen>
+    <dimen name="gc_fab_shadow_height_selected">58dp</dimen>
+    <dimen name="gc_fab_mini_width">40dp</dimen>
+    <dimen name="gc_fab_mini_height">40dp</dimen>
+    <dimen name="gc_fab_mini_shadow_width_selected">42dp</dimen>
+    <dimen name="gc_fab_mini_shadow_height_selected">42dp</dimen>
+
+    <dimen name="gc_snackbar_error_vertical_padding">14dp</dimen>
+    <dimen name="gc_snackbar_error_horizontal_padding">24dp</dimen>
+
+    <dimen name="gc_multi_page_review_page_indicator_bottom_margin">16dp</dimen>
+    <dimen name="gc_multi_page_review_bottom_toolbar_height">48dp</dimen>
+    <dimen name="gc_multi_page_review_thumbnail_cards_container_horizontal_padding">8dp</dimen>
+    <dimen name="gc_multi_page_review_thumbnail_card_height">164dp</dimen>
+    <dimen name="gc_multi_page_review_thumbnail_card_width">96dp</dimen>
+    <dimen name="gc_multi_page_review_thumbnail_card_vertical_margin">8dp</dimen>
+    <dimen name="gc_multi_page_review_thumbnail_card_horizontal_margin">16dp</dimen>
+    <dimen name="gc_multi_page_review_thumbnail_card_handle_height">36dp</dimen>
+    <dimen name="gc_multi_page_review_thumbnail_card_highlight_height">2dp</dimen>
+    <dimen name="gc_multi_page_review_plus_button_subtitle_padding">8dp</dimen>
+
+    <dimen name="gc_analysis_pdf_info_padding">16dp</dimen>
+    <dimen name="gc_analysis_pdf_filename_height">24dp</dimen>
+    <dimen name="gc_analysis_pdf_page_count_top_margin">4dp</dimen>
+    <dimen name="gc_analysis_hint_headline_bottom_margin">16dp</dimen>
+    <dimen name="gc_analysis_hint_headline_horizontal_margin">16dp</dimen>
+    <dimen name="gc_analysis_hint_container_width">0dp</dimen>
+    <dimen name="gc_analysis_hint_container_height">48dp</dimen>
+    <dimen name="gc_analysis_hint_container_bottom_margin">32dp</dimen>
+    <dimen name="gc_analysis_hint_container_horizontal_margin">16dp</dimen>
+    <dimen name="gc_analysis_hint_icon_size">32dp</dimen>
+    <dimen name="gc_analysis_hint_icon_margin">8dp</dimen>
+    <dimen name="gc_analysis_hint_text_height">48dp</dimen>
+    <dimen name="gc_analysis_hint_text_left_margin">16dp</dimen>
+
+    <dimen name="gc_noresults_header_padding">16dp</dimen>
+    <dimen name="gc_noresults_header_drawable_padding">16dp</dimen>
+    <dimen name="gc_noresults_tip_icon_size">64dp</dimen>
+    <dimen name="gc_noresults_tip_icon_margin">16dp</dimen>
+    <dimen name="gc_noresults_tip_text_top_margin">16dp</dimen>
+    <dimen name="gc_noresults_tip_text_bottom_margin">16dp</dimen>
+    <dimen name="gc_noresults_tip_text_right_margin">16dp</dimen>
+    <dimen name="gc_noresults_tip_text_left_margin">8dp</dimen>
+    <dimen name="gc_noresults_tip_text_max_width">250dp</dimen>
+    <dimen name="gc_noresults_space_height_for_bottom_button">64dp</dimen>
+    <dimen name="gc_noresults_bottom_button_height">48dp</dimen>
+    <dimen name="gc_noresults_bottom_button_margin">16dp</dimen>
+    <dimen name="gc_noresults_bottom_button_max_width">300dp</dimen>
+
+    <dimen name="gc_help_item_margin">24dp</dimen>
+
+    <dimen name="gc_photo_tips_tip_icon_size">64dp</dimen>
+    <dimen name="gc_photo_tips_tip_icon_margin">16dp</dimen>
+    <dimen name="gc_photo_tips_tip_text_top_margin">16dp</dimen>
+    <dimen name="gc_photo_tips_tip_text_bottom_margin">16dp</dimen>
+    <dimen name="gc_photo_tips_tip_text_right_margin">16dp</dimen>
+    <dimen name="gc_photo_tips_tip_text_left_margin">8dp</dimen>
+    <dimen name="gc_photo_tips_tip_text_max_width">250dp</dimen>
+    <dimen name="gc_photo_tips_space_height_for_bottom_button">64dp</dimen>
+    <dimen name="gc_photo_tips_bottom_button_height">48dp</dimen>
+    <dimen name="gc_photo_tips_bottom_button_margin">16dp</dimen>
+    <dimen name="gc_photo_tips_bottom_button_max_width">300dp</dimen>
+
+    <dimen name="gc_supported_formats_item_margin">24dp</dimen>
+    <dimen name="gc_supported_formats_item_header_margin">24dp</dimen>
+
+    <dimen name="gc_file_import_content_width">0dp</dimen>
+    <dimen name="gc_file_import_header_margin">16dp</dimen>
+    <dimen name="gc_file_import_section_number_margin">16dp</dimen>
+    <dimen name="gc_file_import_section_number_margin_top">32dp</dimen>
+    <dimen name="gc_file_import_section_title_margin">16dp</dimen>
+    <dimen name="gc_file_import_section_body_margin">16dp</dimen>
+    <dimen name="gc_file_import_illustration_margin">32dp</dimen>
+
+</resources>

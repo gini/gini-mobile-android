@@ -153,13 +153,18 @@ platform :android do
     UI.message "Building reference documentation (dokka)"
     gradle(task: "#{project_id}:#{module_id}:dokkaHtmlSiblingCollector")
 
-    UI.message "Building integration guide (Sphinx)"
-    Dir.chdir("../#{project_id}/#{module_id}/src/doc") do
-      sh("pip install -r requirements.txt")
-      sh("make html")
-    end
+    sphinx_doc_dir = "../#{project_id}/#{module_id}/src/doc"
 
-    sh("cp -a ../#{project_id}/#{module_id}/src/doc/build/* ../#{project_id}/#{module_id}/build/docs")
+    if Dir.exists? sphinx_doc_dir
+      UI.message "Building integration guide (Sphinx)"
+
+      Dir.chdir(sphinx_doc_dir) do
+        sh("pip install -r requirements.txt")
+        sh("make html")
+      end
+
+      sh("cp -a ../#{project_id}/#{module_id}/src/doc/build/* ../#{project_id}/#{module_id}/build/docs")
+    end
 
     UI.success <<~MESSAGE
       Documentation successfully built:
@@ -203,8 +208,8 @@ platform :android do
         * gradle module       : #{project_id}:#{module_id}
         * git tag             : #{git_tag}
         * destination branch  : gh-pages
-        * destination folder  : #{project_id}/
-        * url                 : http://developer.gini.net/gini-mobile-android/#{project_id}/html
+        * destination folder  : #{project_id}/#{module_id}
+        * url                 : http://developer.gini.net/gini-mobile-android/#{project_id}/#{module_id}/html
     MESSAGE
 
     if ci
@@ -216,10 +221,10 @@ platform :android do
 
     Dir.chdir("gh-pages") do
       UI.message "Clear out the existing documentation"
-      sh("git rm -rf #{project_id} --ignore-unmatch && git clean -fd")
+      sh("git rm -rf #{project_id}/#{module_id} --ignore-unmatch && git clean -fd")
 
       UI.message "Copy over the current documentation"
-      sh("cp -R ../../#{project_id}/#{module_id}/build/docs/ #{project_id}")
+      sh("mkdir -p #{project_id}/#{module_id} && cp -R ../../#{project_id}/#{module_id}/build/docs/* #{project_id}/#{module_id}")
 
       UI.message "Disable jekyll"
       sh("touch .nojekyll")
@@ -235,8 +240,8 @@ platform :android do
         * gradle module       : #{project_id}:#{module_id}
         * git tag             : #{git_tag}
         * destination branch  : gh-pages
-        * destination folder  : #{project_id}/
-        * url                 : http://developer.gini.net/gini-mobile-android/#{project_id}/html
+        * destination folder  : #{project_id}/#{module_id}
+        * url                 : http://developer.gini.net/gini-mobile-android/#{project_id}/#{module_id}/html
     MESSAGE
   end
 end
