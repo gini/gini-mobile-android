@@ -74,7 +74,7 @@ You should call ``GiniBank.releaseCapture()`` after the SDK returned control to 
 sent feedback to the Gini Bank API and is not using the capture feature anymore.
 
 To view all the configuration options see the documentation of `CaptureConfiguration
-<http://developer.gini.net/gini-mobile-android/bank-sdk/sdk/dokka/sdk/net.gini.android.bank.sdk.capture/-capture-configuration/index.html>`_.
+<https://developer.gini.net/gini-mobile-android/bank-sdk/sdk/dokka/sdk/net.gini.android.bank.sdk.capture/-capture-configuration/index.html>`_.
 
 Information about the configurable features are available on the `Capture Features <capture-features.html>`_ page.
 
