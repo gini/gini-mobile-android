@@ -13,7 +13,7 @@ provides a secure channel for sharing payment related information between client
 Documentation
 -------------
 * [Integration Guide](https://developer.gini.net/gini-mobile-android/bank-sdk/sdk/html/)
-* [Reference Docs](http://developer.gini.net/gini-mobile-android/bank-sdk/sdk/dokka/index.html)
+* [Reference Docs](https://developer.gini.net/gini-mobile-android/bank-sdk/sdk/dokka/index.html)
 
 Examples
 --------

@@ -4,7 +4,7 @@ Features
 The Gini Capture SDK provides various features you can enable and configure. All of the features are configured during
 creation of a new ``GiniCapture`` instance. Specifically the ``GiniCapture.Builder`` is used to configure the Gini
 Capture SDK. It's `reference documentation
-<http://developer.gini.net/gini-mobile-android/capture-sdk/sdk/dokka/sdk/net.gini.android.capture/-gini-capture/-builder/index.html>`_
+<https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/dokka/sdk/net.gini.android.capture/-gini-capture/-builder/index.html>`_
 lists all the options.
 
 .. note::
@@ -141,7 +141,7 @@ You can intercept the imported document and deny the Gini Capture SDK from using
 
 If you use the *Screen API* then you need to subclass the ``CameraActivity`` and override the
 ``onCheckImportedDocument`` method. See it's `reference documentation
-<http://developer.gini.net/gini-mobile-android/capture-sdk/sdk/dokka/sdk/net.gini.android.capture.camera/-camera-activity/on-check-imported-document.html>`_
+<https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/dokka/sdk/net.gini.android.capture.camera/-camera-activity/on-check-imported-document.html>`_
 for details.
 
 With the *Component API* you can intercept the document in the ``CameraFragmentListener.onCheckImportedDocument()``
@@ -471,7 +471,7 @@ Screen + Component        Analysis Screen           ``AnalysisScreenEvent.RETRY`
 ========================  ========================  ===================================================================  =====================================================  ==========================
 
 The supported events are listed for each screen in a dedicated enum. You can view these enums in our `reference documentation
-<http://developer.gini.net/gini-mobile-android/capture-sdk/sdk/dokka/sdk/net.gini.android.capture.tracking/index.html>`_.
+<https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/dokka/sdk/net.gini.android.capture.tracking/index.html>`_.
 
 Error Logging
 -------------

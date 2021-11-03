@@ -64,7 +64,8 @@ android {
 }
 
 dependencies {
-    implementation(project(":bank-sdk:sdk"))
+//    implementation(project(":bank-sdk:sdk"))
+    implementation("net.gini.android:gini-bank-sdk:0.0.1")
 
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.activity.ktx)
