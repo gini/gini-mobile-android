@@ -17,6 +17,9 @@ on:
 jobs:
   test:
     runs-on: macos-latest
+    strategy:
+      matrix:
+        api-level: [ 22, 26, 31 ]
     steps:
       - name: checkout
         uses: actions/checkout@v2
@@ -41,7 +44,7 @@ jobs:
         if: steps.avd-cache.outputs.cache-hit != 'true'
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 31
+          api-level: ${{ matrix.api-level }}
           arch: x86_64
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -no-audio -no-boot-anim -camera-back none
@@ -52,7 +55,7 @@ jobs:
         timeout-minutes: 20
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 31
+          api-level: ${{ matrix.api-level }}
           arch: x86_64
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
