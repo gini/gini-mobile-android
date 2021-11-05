@@ -10,7 +10,7 @@ Replace `net.gini:gini-pay-bank-sdk:<version>` with `net.gini.android:gini-bank-
 
 * Replace `net.gini.pay.bank.ginipayapi.GiniPayApi` with `net.gini.android.bank.sdk.util.GiniBankAPI`.
 * Replace `net.gini.pay.bank.GiniPayBank` with `net.gini.android.bank.sdk.GiniBank`.
-* Replace `net.gini.pay.bank.pay.Business` with `net.gini.android.bank.sdk.pay^.PaymentRequestIntent`
+* Replace `net.gini.pay.bank.pay.Business` with `net.gini.android.bank.sdk.pay.PaymentRequestIntent`
 
 ## Update packages
 
