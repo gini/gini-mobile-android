@@ -232,7 +232,7 @@ platform :android do
       UI.message "Commit and push the new documentation"
       sh("git add --all")
       sh("git diff --quiet --exit-code --cached || git commit -m 'Release #{project_id} documentation for tag #{git_tag}' --author='Team Mobile <team-mobile@gini.net>'")
-      sh("git push origin gh-pages")
+      git_push_with_retry("gh-pages", UI)
     end
 
     UI.success <<~MESSAGE
