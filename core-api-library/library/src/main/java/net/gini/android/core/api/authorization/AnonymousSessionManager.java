@@ -4,6 +4,7 @@ package net.gini.android.core.api.authorization;
 import static net.gini.android.core.api.Utils.CHARSET_UTF8;
 import static net.gini.android.core.api.Utils.checkNotNull;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.android.volley.VolleyError;
@@ -15,6 +16,7 @@ import java.util.UUID;
 
 import bolts.Continuation;
 import bolts.Task;
+import bolts.TaskCompletionSource;
 
 
 /**
@@ -63,9 +65,8 @@ public class AnonymousSessionManager implements SessionManager {
 
     @Override
     public Task<Session> getSession() {
-        final Task<Session>.TaskCompletionSource completionSource = Task.create();
+        final TaskCompletionSource<Session> completionSource = new TaskCompletionSource<>();
 
-        // First of all, try to reuse an active session.
         synchronized (this) {
             if (mCurrentSession != null && !mCurrentSession.hasExpired()) {
                 return Task.forResult(mCurrentSession);
@@ -75,42 +76,38 @@ public class AnonymousSessionManager implements SessionManager {
             }
             mCurrentSessionTask = completionSource.getTask();
         }
-        // Otherwise try to log in the user and store the session or if user was invalid create
-        // a new user.
-        loginUser().continueWithTask(new Continuation<Session, Task<Session>>() {
-            @Override
-            public Task<Session> then(Task<Session> task) throws Exception {
+
+        Task<Session> sessionTask;
+
+        final UserCredentials userCredentials = mCredentialsStore.getUserCredentials();
+        if (userCredentials == null) {
+            sessionTask = createUser().onSuccessTask(task -> loginUser());
+        } else {
+            sessionTask = loginUser().continueWithTask(task -> {
                 if (task.isFaulted()) {
                     if (isInvalidUserError(task)) {
                         mCredentialsStore.deleteUserCredentials();
-                        return createUser().onSuccessTask(new Continuation<UserCredentials, Task<Session>>() {
-                            @Override
-                            public Task<Session> then(Task<UserCredentials> task) throws Exception {
-                                return loginUser();
-                            }
-                        });
+                        return createUser().onSuccessTask(task1 -> loginUser());
                     }
                 }
                 return task;
-            }
-        }).continueWith(new Continuation<Session, Object>() {
-            @Override
-            public Object then(Task<Session> task) throws Exception {
-                if (task.isFaulted()) {
-                    setCurrentSessionTask(null);
-                    completionSource.setError(task.getError());
-                } else if (task.isCancelled()) {
-                    setCurrentSessionTask(null);
-                    completionSource.setCancelled();
-                } else {
-                    Session session = task.getResult();
-                    setSession(session);
-                    setCurrentSessionTask(null);
-                    completionSource.setResult(session);
-                }
+            });
+        }
 
-                return null;
+        sessionTask.continueWith(task -> {
+            if (task.isFaulted()) {
+                setCurrentSessionTask(null);
+                completionSource.setError(task.getError());
+            } else if (task.isCancelled()) {
+                setCurrentSessionTask(null);
+                completionSource.setCancelled();
+            } else {
+                Session session = task.getResult();
+                setSession(session);
+                setCurrentSessionTask(null);
+                completionSource.setResult(session);
             }
+            return null;
         });
 
         return completionSource.getTask();
@@ -151,36 +148,27 @@ public class AnonymousSessionManager implements SessionManager {
             if (hasUserCredentialsEmailDomain(mEmailDomain, userCredentials)) {
                 credentialsTask = Task.forResult(userCredentials);
             } else {
-                final String oldEmail = userCredentials.getUsername();
-                final String newEmail = generateUsername();
-                credentialsTask = mUserCenterManager.loginUser(userCredentials)
-                        .onSuccessTask(new Continuation<Session, Task<JSONObject>>() {
-                            @Override
-                            public Task<JSONObject> then(Task<Session> task) throws Exception {
-                                return mUserCenterManager.updateEmail(newEmail, oldEmail, task.getResult());
-                            }
-                        })
-                        .onSuccess(new Continuation<JSONObject, UserCredentials>() {
-                            @Override
-                            public UserCredentials then(Task<JSONObject> task) throws Exception {
-                                mCredentialsStore.deleteUserCredentials();
-                                UserCredentials newCredentials = new UserCredentials(newEmail, userCredentials.getPassword());
-                                mCredentialsStore.storeUserCredentials(newCredentials);
-                                return newCredentials;
-                            }
-                        });
+                credentialsTask = updateEmailDomain(userCredentials);
             }
-        } else {
-            credentialsTask = createUser();
-        }
 
-        // And log in the user when the user credentials are available.
-        return credentialsTask.onSuccessTask(new Continuation<UserCredentials, Task<Session>>() {
-            @Override
-            public Task<Session> then(Task<UserCredentials> task) throws Exception {
-                return mUserCenterManager.loginUser(task.getResult());
-            }
-        });
+            // And log in the user when the user credentials are available.
+            return credentialsTask.onSuccessTask(task -> mUserCenterManager.loginUser(task.getResult()));
+        } else {
+            return Task.forError(new IllegalStateException("Missing user credentials."));
+        }
+    }
+
+    private Task<UserCredentials> updateEmailDomain(@NonNull final UserCredentials userCredentials) {
+        final String oldEmail = userCredentials.getUsername();
+        final String newEmail = generateUsername();
+        return mUserCenterManager.loginUser(userCredentials)
+                .onSuccessTask(task -> mUserCenterManager.updateEmail(newEmail, oldEmail, task.getResult()))
+                .onSuccess(task -> {
+                    mCredentialsStore.deleteUserCredentials();
+                    UserCredentials newCredentials = new UserCredentials(newEmail, userCredentials.getPassword());
+                    mCredentialsStore.storeUserCredentials(newCredentials);
+                    return newCredentials;
+                });
     }
 
     // Visible for testing
