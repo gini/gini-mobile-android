@@ -117,12 +117,19 @@ public class AnonymousSessionManager implements SessionManager {
     private boolean isInvalidUserError(Task<Session> task) {
         if (task.getError() instanceof VolleyError) {
             VolleyError error = (VolleyError) task.getError();
-            if (error.networkResponse != null
-                    && error.networkResponse.data != null) {
-                try {
-                    JSONObject responseJson = new JSONObject(new String(error.networkResponse.data, CHARSET_UTF8));
-                    return responseJson.get("error").equals("invalid_grant");
-                } catch (JSONException ignore) {
+            if (error.networkResponse != null) {
+                switch (error.networkResponse.statusCode) {
+                    case 400:
+                        if (error.networkResponse.data != null) {
+                            try {
+                                JSONObject responseJson = new JSONObject(new String(error.networkResponse.data, CHARSET_UTF8));
+                                return responseJson.get("error").equals("invalid_grant");
+                            } catch (JSONException ignore) {
+                            }
+                        }
+                        break;
+                    case 401:
+                        return true;
                 }
             }
         }
