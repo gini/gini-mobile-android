@@ -43,7 +43,7 @@ android {
 dependencies {
     api("com.android.volley:volley:1.2.1")
     api("com.parse.bolts:bolts-android:1.4.0")
-    implementation("com.datatheorem.android.trustkit:trustkit:1.1.3")
+    implementation("com.datatheorem.android.trustkit:trustkit:1.1.5")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.kotlinx.coroutines.core)
