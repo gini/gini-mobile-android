@@ -155,7 +155,7 @@ private fun PaymentDetails.overwriteEmptyFields(value: PaymentDetails): PaymentD
 )
 
 internal fun getReviewViewModelFactory(giniHealth: GiniHealth) = object : ViewModelProvider.Factory {
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
         @Suppress("UNCHECKED_CAST")
         return ReviewViewModel(giniHealth) as T
     }

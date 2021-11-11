@@ -118,7 +118,7 @@ internal class DigitalInvoiceActivity : AppCompatActivity(), DigitalInvoiceFragm
     }
 
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         super.onCreateOptionsMenu(menu)
         menuInflater.inflate(R.menu.gbs_menu_digital_invoice, menu)
         return true

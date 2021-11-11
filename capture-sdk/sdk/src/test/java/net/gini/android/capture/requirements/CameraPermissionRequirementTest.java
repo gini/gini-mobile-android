@@ -12,7 +12,7 @@ import android.content.pm.PackageManager;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import org.mockito.Matchers;
+import org.mockito.ArgumentMatchers;
 
 import androidx.annotation.NonNull;
 
@@ -42,8 +42,8 @@ public class CameraPermissionRequirementTest {
         when(context.getPackageManager()).thenReturn(packageManager);
         final String packageName = "permission.test";
         when(context.getPackageName()).thenReturn(packageName);
-        when(packageManager.checkPermission(Matchers.eq(Manifest.permission.CAMERA),
-                Matchers.eq(packageName)))
+        when(packageManager.checkPermission(ArgumentMatchers.eq(Manifest.permission.CAMERA),
+                ArgumentMatchers.eq(packageName)))
                 .thenReturn(cameraPermissionGranted ? PackageManager.PERMISSION_GRANTED
                         : PackageManager.PERMISSION_DENIED);
         return context;

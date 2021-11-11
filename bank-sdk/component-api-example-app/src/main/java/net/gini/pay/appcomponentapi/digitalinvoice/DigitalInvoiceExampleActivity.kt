@@ -71,7 +71,7 @@ class DigitalInvoiceExampleActivity : AppCompatActivity(), DigitalInvoiceFragmen
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         super.onCreateOptionsMenu(menu)
         menuInflater.inflate(net.gini.android.bank.sdk.R.menu.gbs_menu_digital_invoice, menu)
         return true
