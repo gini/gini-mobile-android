@@ -1,5 +1,11 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
+import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
+
+plugins {
+    alias(libs.plugins.lookForDependencyUpdates)
+}
+
 buildscript {
     repositories {
         google()
@@ -8,9 +14,6 @@ buildscript {
         maven("https://plugins.gradle.org/m2/")
     }
     dependencies {
-        // Found this "magic" code at https://blog.stylingandroid.com/gradle-version-catalogs/
-        val libs = project.extensions.getByType<VersionCatalogsExtension>().named("libs") as org.gradle.accessors.dm.LibrariesForLibs
-
         classpath(libs.android.gradle)
         classpath(libs.kotlin.gradle)
         classpath(libs.dokka.gradle)

@@ -84,3 +84,6 @@ logback-android-core = "com.github.tony19:logback-android-core:1.1.1-6"
 logback-android-classic = "com.github.tony19:logback-android-classic:1.1.1-6"
 jacocoAndroid = "com.hiya:jacoco-android:0.2"
 slf4j-api = "org.slf4j:slf4j-api:1.7.30"
+
+[plugins]
+lookForDependencyUpdates = "com.github.ben-manes.versions:0.39.0"
