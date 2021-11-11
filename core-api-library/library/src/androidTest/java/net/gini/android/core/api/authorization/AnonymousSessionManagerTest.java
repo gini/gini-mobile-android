@@ -210,7 +210,7 @@ public class AnonymousSessionManagerTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testThatExistingUserIsDeletedAndNewUserIsCreatedIfExistingIsInvalid() throws InterruptedException {
-        makeLoginRequestFailOnce()
+        makeLoginRequestFailOnceWithInvalidGrantError()
                 .thenReturn(Task.forResult(new Session(UUID.randomUUID().toString(), new Date())));
 
         Task<Session> sessionTask = mAnonymousSessionSessionManager.getSession();
@@ -220,7 +220,7 @@ public class AnonymousSessionManagerTest {
         verify(mUserCenterManager).createUser(any(UserCredentials.class));
     }
 
-    private OngoingStubbing<Task<Session>> makeLoginRequestFailOnce() {
+    private OngoingStubbing<Task<Session>> makeLoginRequestFailOnceWithInvalidGrantError() {
         when(mCredentialsStore.getUserCredentials()).thenReturn(new UserCredentials(email("foo"), "1234"));
         String invalidGrantErrorJson = "{\"error\": \"invalid_grant\"}";
         return when(mUserCenterManager.loginUser(any(UserCredentials.class)))
@@ -229,10 +229,32 @@ public class AnonymousSessionManagerTest {
                                 true))));
     }
 
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testThatExistingUserIsDeletedAndNewUserIsCreatedIfExistingIsUnauthorized() throws InterruptedException {
+        makeLoginRequestFailOnceWith401StatusCode()
+                .thenReturn(Task.forResult(new Session(UUID.randomUUID().toString(), new Date())));
+
+        Task<Session> sessionTask = mAnonymousSessionSessionManager.getSession();
+        sessionTask.waitForCompletion();
+
+        verify(mCredentialsStore).deleteUserCredentials();
+        verify(mUserCenterManager).createUser(any(UserCredentials.class));
+    }
+
+    private OngoingStubbing<Task<Session>> makeLoginRequestFailOnceWith401StatusCode() {
+        when(mCredentialsStore.getUserCredentials()).thenReturn(new UserCredentials(email("foo"), "1234"));
+        String invalidGrantErrorJson = "{\"error\": \"Speak, friend, and enter.\"}";
+        return when(mUserCenterManager.loginUser(any(UserCredentials.class)))
+                .thenReturn(Task.<Session>forError(new VolleyError(
+                        new NetworkResponse(401, invalidGrantErrorJson.getBytes(CHARSET_UTF8), Collections.<String, String>emptyMap(),
+                                true))));
+    }
+
     @SuppressWarnings({"unchecked", "ThrowableResultOfMethodCallIgnored"})
     @Test
     public void testThatCreateUserErrorIsReturnedWhenNewUserIsCreatedIfExistingIsInvalid() throws InterruptedException {
-        makeLoginRequestFailOnce();
+        makeLoginRequestFailOnceWithInvalidGrantError();
         when(mUserCenterManager.createUser(any(UserCredentials.class)))
                 .thenReturn(Task.<User>forError(
                         new VolleyError(new NetworkResponse(503, null, Collections.singletonMap("Some-Header", "10"), true))));
