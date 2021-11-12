@@ -4,6 +4,7 @@ import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.getByName
+import net.gini.gradle.extensions.forEachAndroidProject
 
 /**
  * Created by Alpár Szotyori on 11.11.21.
@@ -24,24 +25,17 @@ class VersionsPlugin : Plugin<Project> {
     }
 
     private fun applyPluginToAllAndroidProjects(target: Project, parentProject: Project, pluginId: String) {
-        parentProject.childProjects.forEach { (name, childProject) ->
-            childProject.afterEvaluate {
-                if (childProject.plugins.hasPlugin("com.android.library") ||
-                    childProject.plugins.hasPlugin("com.android.application")
-                ) {
-                    childProject.plugins.apply(pluginId)
+        parentProject.forEachAndroidProject(runAfterEvaluate = true) { androidProject ->
+            androidProject.plugins.apply(pluginId)
 
-                    val dependencyUpdateTask =
-                        childProject.tasks.getByName<DependencyUpdatesTask>("dependencyUpdates").apply {
-                            outputDir = "${childProject.buildDir}/dependencyUpdates"
-                            rejectVersionIf { isNotSemver(candidate.version) }
-                        }
-
-                    target.tasks.getByName("dependencyUpdatesForAndroidProjects")
-                        .dependsOn(dependencyUpdateTask)
+            val dependencyUpdateTask =
+                androidProject.tasks.getByName<DependencyUpdatesTask>("dependencyUpdates").apply {
+                    outputDir = "${androidProject.buildDir}/dependencyUpdates"
+                    rejectVersionIf { isNotSemver(candidate.version) }
                 }
-            }
-            applyPluginToAllAndroidProjects(target, childProject, pluginId)
+
+            target.tasks.getByName("dependencyUpdatesForAndroidProjects")
+                .dependsOn(dependencyUpdateTask)
         }
     }
 

@@ -13,3 +13,19 @@ import org.gradle.kotlin.dsl.getByType
 
 internal val Project.libs: VersionCatalog
     get() = extensions.getByType<VersionCatalogsExtension>().named("libs")
+
+internal fun Project.forEachAndroidProject(runAfterEvaluate: Boolean = false, action: (Project) -> Unit) {
+    this.childProjects.forEach { (_, childProject) ->
+        if (runAfterEvaluate) {
+            childProject.afterEvaluate {
+                if (childProject.isAndroidProject) action(childProject)
+            }
+        } else {
+            if (childProject.isAndroidProject) action(childProject)
+        }
+        childProject.forEachAndroidProject(runAfterEvaluate, action)
+    }
+}
+
+internal val Project.isAndroidProject: Boolean
+    get() = plugins.hasPlugin("com.android.library") || plugins.hasPlugin("com.android.application")

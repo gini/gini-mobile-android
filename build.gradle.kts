@@ -1,5 +1,6 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
+import net.gini.gradle.ProjectDependenciesPlugin
 import net.gini.gradle.VersionsPlugin
 
 buildscript {
@@ -24,5 +25,5 @@ buildscript {
     }
 }
 
-
 apply<VersionsPlugin>()
+apply<ProjectDependenciesPlugin>()
