@@ -97,7 +97,7 @@ data class LineItemDetailsInput(
     val returnReasons: List<GiniCaptureReturnReason>,
 )
 
-class LineItemDetailsContract : ActivityResultContract<LineItemDetailsInput, SelectableLineItem>() {
+class LineItemDetailsContract : ActivityResultContract<LineItemDetailsInput, SelectableLineItem?>() {
     override fun createIntent(context: Context, input: LineItemDetailsInput) =
         Intent(context, LineItemDetailsExampleActivity::class.java).apply {
             putExtra(EXTRA_IN_SELECTABLE_LINE_ITEM, input.item)

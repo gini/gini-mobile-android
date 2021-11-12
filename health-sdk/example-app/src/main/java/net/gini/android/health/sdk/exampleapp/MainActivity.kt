@@ -74,8 +74,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun importResult(uri: Uri) {
-        startActivity(UploadActivity.getStartIntent(this, listOf(uri)))
+    private fun importResult(uri: Uri?) {
+        uri?.let {
+            startActivity(UploadActivity.getStartIntent(this, listOf(it)))
+        } ?: run {
+            Toast.makeText(this, "No document received", Toast.LENGTH_LONG).show()
+        }
     }
 
     private fun showMissingRequirements(requirements: List<Requirement>) {

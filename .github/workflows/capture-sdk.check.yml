@@ -6,6 +6,7 @@ on:
       - 'capture-sdk/**'
       - 'bank-api-library/**'
       - 'core-api-library/**'
+      - 'gradle/**'
     tags-ignore:
       - '**'
   pull_request:
@@ -13,6 +14,7 @@ on:
       - 'capture-sdk/**'
       - 'bank-api-library/**'
       - 'core-api-library/**'
+      - 'gradle/**'
   workflow_call:
     secrets:
       GINI_MOBILE_TEST_CLIENT_SECRET:

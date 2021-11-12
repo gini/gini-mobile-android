@@ -5,12 +5,14 @@ on:
     paths:
       - 'health-api-library/**'
       - 'core-api-library/**'
+      - 'gradle/**'
     tags-ignore:
       - '**'
   pull_request:
     paths:
       - 'health-api-library/**'
       - 'core-api-library/**'
+      - 'gradle/**'
   workflow_call:
 
 jobs:
