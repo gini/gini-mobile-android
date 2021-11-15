@@ -35,3 +35,10 @@ end
 def git_create_release_tag(project_id, version)
   sh("git tag -a '#{project_id};#{version}' -m '#{project_id};#{version}'")
 end
+
+##
+# Pushes the release tag of this format: `<project-id>;<version>`.
+#
+def git_push_release_tag(project_id, version)
+  sh("git push origin '#{project_id};#{version}'")
+end

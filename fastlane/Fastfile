@@ -280,6 +280,10 @@ platform :android do
         else
           to_be_released.push project
           git_create_release_tag(project[:project_id], project[:version])
+
+          if UI.confirm("Push release tag?")
+            git_push_release_tag(project[:project_id], project[:version])
+          end
         end
       end
 
