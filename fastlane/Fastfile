@@ -244,5 +244,59 @@ platform :android do
         * url                 : http://developer.gini.net/gini-mobile-android/#{project_id}/#{module_id}/html
     MESSAGE
   end
-end
 
+  desc <<~DOC
+    Create release tags for all projects that have different versions than their latest release tag.
+  DOC
+  lane :create_release_tags do |options|
+    
+    # Not all modules require own release tags (some are released automatically with other modules)
+    ignored_modules = [/capture-sdk\/default-network/]
+
+    Dir.chdir("..") do
+      # Gather all non-ingored projects which have artifactId and version in their gradle.properties
+      projects = Dir["./**/gradle.properties"]
+        .map { |properties_file|
+          if ignored_modules.find { |ignored| properties_file =~ ignored }
+            next nil
+          end
+
+          contents = File.open(properties_file).read
+
+          if contents =~ /artifactId=/ && contents =~ /version=/
+            components = properties_file.split("/")
+            { :project_id => components[1], :version => contents.match(/.*version=(.+)\n.*/)[1] }
+          end
+        }
+        .compact
+
+      up_to_date = []
+      to_be_released = []
+
+      # Create release tags for projects which have different versions than their latest release tag
+      projects.each do |project|
+        if project[:version] == get_latest_version_from_release_tags(project[:project_id], UI)
+          up_to_date.push project
+        else
+          to_be_released.push project
+          git_create_release_tag(project[:project_id], project[:version])
+        end
+      end
+
+      if to_be_released.empty?
+        UI.success "All projects are up-to-date. No release tags needed."
+      else
+        UI.message <<~MESSAGE
+            Following projects are up-to-date:
+              #{up_to_date.map{ |project| "- #{project[:project_id]} #{project[:version]}" }.join("\n  ") }
+          MESSAGE
+
+        UI.success <<~MESSAGE
+            Created release tags for:
+              #{to_be_released.map{ |project| "- #{project[:project_id]} #{project[:version]}" }.join("\n  ") }
+          MESSAGE
+      end
+    end
+  end
+
+end

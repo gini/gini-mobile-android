@@ -57,3 +57,11 @@ def get_project_version_from_gradle(project_id, module_id)
   output = sh("cd .. && ./gradlew #{project_id}:#{module_id}:printVersion -q")
   output.lines.last.strip
 end
+
+##
+# Retrieve the projects version from its latest release tag.
+#
+def get_latest_version_from_release_tags(project_id, ui)
+  latest_version_tag = sh("git tag --list '#{project_id};*'", log: false).split.last
+  get_project_version_from_tag(project_id, latest_version_tag, ui)
+end

@@ -72,6 +72,12 @@ Parameters:
   git_user     - the username to use for git authentication
   git_password - the password to use for git authentication
 
+### android create_release_tags
+```
+fastlane android create_release_tags
+```
+Create release tags for all projects that have different versions than their latest release tag.
+
 
 ----
 

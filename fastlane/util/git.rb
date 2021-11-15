@@ -28,3 +28,10 @@ def git_push_with_retry(branch, ui)
     end
   end
 end
+
+##
+# Creates a release tag with this format: `<project-id>;<version>`.
+#
+def git_create_release_tag(project_id, version)
+  sh("git tag -a '#{project_id};#{version}' -m '#{project_id};#{version}'")
+end
