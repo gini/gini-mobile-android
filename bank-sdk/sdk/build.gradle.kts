@@ -3,6 +3,7 @@ import net.gini.gradle.*
 plugins {
     id("com.android.library")
     kotlin("android")
+    kotlin("kapt")
     id("kotlin-parcelize")
     id("com.hiya.jacoco-android")
 }
@@ -32,7 +33,9 @@ android {
 
     buildTypes {
         debug {
-            isTestCoverageEnabled = true
+            // Disabled due to jacoco throwing an exception: "Unexpected SMAP line: *S KotlinDebug"
+            // This workaround didn't help either: https://youtrack.jetbrains.com/issue/KT-44757#focus=Comments-27-5247441.0-0
+            isTestCoverageEnabled = false
         }
         release {
             isMinifyEnabled = false
@@ -64,6 +67,8 @@ dependencies {
 
     testImplementation(libs.junit)
 
+    androidTestImplementation(libs.moshi.core)
+    kaptAndroidTest(libs.moshi.codegen)
     androidTestImplementation(libs.androidx.test.junit.ktx)
     androidTestImplementation(libs.androidx.test.espresso.core)
 }
@@ -72,3 +77,24 @@ dependencies {
 apply<PublishToMavenPlugin>()
 apply<DokkaPlugin>()
 apply<CodeAnalysisPlugin>()
+
+tasks.register<CreatePropertiesTask>("injectTestProperties") {
+    val propertiesMap = mutableMapOf<String, String>()
+
+    doFirst {
+        propertiesMap.clear()
+        propertiesMap.putAll(readLocalPropertiesToMap(project,
+            listOf("testClientId", "testClientSecret", "testApiUri", "testUserCenterUri")))
+    }
+
+    destinations.put(
+        file("src/androidTest/assets/test.properties"),
+        propertiesMap
+    )
+}
+
+afterEvaluate {
+    tasks.filter { it.name.endsWith("test", ignoreCase = true) }.forEach {
+        it.dependsOn(tasks.getByName("injectTestProperties"))
+    }
+}
