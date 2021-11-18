@@ -46,15 +46,17 @@ jobs:
           name: bank-sdk-unit-test-results
           path: bank-sdk/sdk/build/reports/tests
 
-      - name: create unit test coverage report
-        run: ./gradlew bank-sdk:sdk:jacocoTestDebugUnitTestReport
-
-      - name: archive unit test coverage report
-        if: always()
-        uses: actions/upload-artifact@v2
-        with:
-          name: bank-sdk-unit-test-coverage
-          path: bank-sdk/sdk/build/jacoco/jacocoHtml
+#      Disabled due to jacoco throwing an exception: "Unexpected SMAP line: *S KotlinDebug"
+#      This workaround didn't help either: https://youtrack.jetbrains.com/issue/KT-44757#focus=Comments-27-5247441.0-0
+#      - name: create unit test coverage report
+#        run: ./gradlew bank-sdk:sdk:jacocoTestDebugUnitTestReport
+#
+#      - name: archive unit test coverage report
+#        if: always()
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: bank-sdk-unit-test-coverage
+#          path: bank-sdk/sdk/build/jacoco/jacocoHtml
 
   build-example-apps:
     runs-on: ubuntu-latest
