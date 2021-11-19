@@ -3,6 +3,7 @@ import net.gini.gradle.*
 plugins {
     id("com.android.library")
     kotlin("android")
+    kotlin("kapt")
 }
 
 android {
@@ -44,6 +45,10 @@ dependencies {
     testImplementation(libs.truth)
     testImplementation(libs.mockito.core)
 
+    androidTestImplementation(libs.moshi.core)
+    kaptAndroidTest(libs.moshi.codegen)
+    androidTestImplementation(libs.kotlinx.coroutines.core)
+    androidTestImplementation(libs.kotlinx.coroutines.android)
     androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(libs.androidx.test.junit)
     androidTestImplementation(libs.truth)
@@ -55,3 +60,24 @@ dependencies {
 apply<PublishToMavenPlugin>()
 apply<CodeAnalysisPlugin>()
 apply<DokkaPlugin>()
+
+tasks.register<CreatePropertiesTask>("injectTestProperties") {
+    val propertiesMap = mutableMapOf<String, String>()
+
+    doFirst {
+        propertiesMap.clear()
+        propertiesMap.putAll(readLocalPropertiesToMap(project,
+            listOf("testClientId", "testClientSecret", "testApiUri", "testUserCenterUri")))
+    }
+
+    destinations.put(
+        file("src/androidTest/assets/test.properties"),
+        propertiesMap
+    )
+}
+
+afterEvaluate {
+    tasks.filter { it.name.endsWith("test", ignoreCase = true) }.forEach {
+        it.dependsOn(tasks.getByName("injectTestProperties"))
+    }
+}
