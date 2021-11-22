@@ -78,6 +78,12 @@ fastlane android create_release_tags
 ```
 Create release tags for all projects that have different versions than their latest release tag.
 
+### android create_documentation_release_tags
+```
+fastlane android create_documentation_release_tags
+```
+Create documentation release tags for all projects that have documentation that changed since their latest release.
+
 
 ----
 

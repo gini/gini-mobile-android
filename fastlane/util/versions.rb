@@ -1,3 +1,5 @@
+load 'util/git.rb'
+
 ##
 # Extract the project version from the tag.
 #
@@ -59,9 +61,9 @@ def get_project_version_from_gradle(project_id, module_id)
 end
 
 ##
-# Retrieve the projects version from its latest release tag.
+# Retrieve the project's version from its latest release tag.
 #
 def get_latest_version_from_release_tags(project_id, ui)
-  latest_version_tag = sh("git tag --list '#{project_id};*'", log: false).split.last
+  latest_version_tag = get_latest_release_tag(project_id)
   get_project_version_from_tag(project_id, latest_version_tag, ui)
 end

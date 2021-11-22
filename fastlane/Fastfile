@@ -303,4 +303,50 @@ platform :android do
     end
   end
 
+  desc <<~DOC
+    Create documentation release tags for all projects that have documentation that changed since their latest release.
+  DOC
+  lane :create_documentation_release_tags do
+    Dir.chdir("..") do
+      new_doc_release_tags = Dir["./**/src/doc"]
+        .filter { |doc_dir|
+          # Gather all projects which have documentation that changed since the last release
+          components = doc_dir.split("/")
+          project_id = components[1]
+          did_folder_change_since_last_release(project_id, doc_dir, UI)
+        }
+        .map { |doc_dir|
+          # Create documentation release tags
+          components = doc_dir.split("/")
+          project_id = components[1]
+          latest_release_tag = get_latest_release_tag(project_id)
+
+          if match = latest_release_tag.match(/(^.*?;)doc-([0-9]+)/)
+            next_doc_release_nr = match.captures[1].to_i + 1
+            "#{match.captures[0]}doc-#{next_doc_release_nr}"
+          else
+            "#{latest_release_tag};doc-1"
+          end
+        }
+      
+      if new_doc_release_tags.empty?
+        UI.success "Every documentation is up-to-date. No documentation release tags needed."
+      else
+        # Create and push tags
+        new_doc_release_tags.each do |new_doc_release_tag|
+          git_create_tag(new_doc_release_tag)
+
+          if UI.confirm("Push documentation release tag?")
+            git_push_tag(new_doc_release_tag)
+          end
+        end
+        
+        UI.success <<~MESSAGE
+            Created documentation release tags for:
+              #{new_doc_release_tags.map{ |tag| "- #{tag}" }.join("\n  ") }
+          MESSAGE
+      end
+    end
+  end
+
 end
