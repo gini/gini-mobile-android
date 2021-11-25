@@ -5,13 +5,14 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModel
-import java.io.File
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import net.gini.android.health.sdk.exampleapp.pager.PagerAdapter
+import kotlinx.coroutines.launch
 import net.gini.android.health.sdk.GiniHealth
+import net.gini.android.health.sdk.exampleapp.pager.PagerAdapter
 import net.gini.android.health.sdk.requirement.Requirement
-import net.gini.android.health.sdk.exampleapp.BuildConfig
+import java.io.File
 
 class MainViewModel(
     private val giniHealth: GiniHealth,
@@ -41,5 +42,11 @@ class MainViewModel(
 
     fun checkRequirements(packageManager: PackageManager): List<Requirement> {
         return giniHealth.checkRequirements(packageManager)
+    }
+
+    fun setDocumentForReview(documentId: String) {
+        viewModelScope.launch {
+            giniHealth.setDocumentForReview(documentId)
+        }
     }
 }

@@ -73,7 +73,7 @@ class ReviewActivity : AppCompatActivity() {
 
     companion object {
         private const val EXTRA_URIS = "EXTRA_URIS"
-        fun getStartIntent(context: Context, pages: List<Uri>): Intent = Intent(context, ReviewActivity::class.java).apply {
+        fun getStartIntent(context: Context, pages: List<Uri> = emptyList()): Intent = Intent(context, ReviewActivity::class.java).apply {
             putParcelableArrayListExtra(EXTRA_URIS, if (pages is ArrayList<Uri>) pages else ArrayList<Uri>().apply { addAll(pages) })
         }
 
