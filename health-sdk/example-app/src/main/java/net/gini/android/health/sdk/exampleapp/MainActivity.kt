@@ -71,6 +71,7 @@ class MainActivity : AppCompatActivity() {
     private fun photoResult(saved: Boolean) {
         if (saved) {
             viewModel.onPhotoSaved()
+            binding.upload.isEnabled = true
         }
     }
 
