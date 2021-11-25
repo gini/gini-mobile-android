@@ -1,16 +1,22 @@
 package net.gini.android.health.sdk.review
 
+import android.app.Application
+import android.content.pm.PackageManager
+import android.content.pm.ResolveInfo
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.models.PaymentProvider
 import net.gini.android.core.api.models.PaymentRequestInput
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.review.bank.BankApp
+import net.gini.android.health.sdk.review.bank.getInstalledPaymentProviderBankApps
 import net.gini.android.health.sdk.review.error.NoBankSelected
 import net.gini.android.health.sdk.review.error.NoProviderForPackageName
 import net.gini.android.health.sdk.review.model.PaymentDetails
@@ -29,14 +35,18 @@ internal class ReviewViewModel(internal val giniHealth: GiniHealth) : ViewModel(
     private val _paymentValidation = MutableSharedFlow<List<ValidationMessage>>(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
     val paymentValidation: SharedFlow<List<ValidationMessage>> = _paymentValidation
 
-    var selectedBank: BankApp? = null
+    private val _bankApps = MutableStateFlow<BankAppsState>(BankAppsState.Loading)
+    val bankApps: StateFlow<BankAppsState> = _bankApps
 
-    val isPaymentButtonEnabled: Flow<Boolean> = giniHealth.openBankState
-        .combine(paymentDetails) { paymentState, paymentDetails ->
+    private var _selectedBank = MutableStateFlow<BankApp?>(null)
+    var selectedBank: StateFlow<BankApp?> = _selectedBank
+
+    val isPaymentButtonEnabled: Flow<Boolean> =
+        combine(giniHealth.openBankState, paymentDetails, selectedBank) { paymentState, paymentDetails, selectedBank ->
             val noEmptyFields = paymentDetails.recipient.isNotEmpty() && paymentDetails.iban.isNotEmpty() &&
                     paymentDetails.amount.isNotEmpty() && paymentDetails.purpose.isNotEmpty()
             val isLoading = (paymentState is GiniHealth.PaymentState.Loading)
-            !isLoading && noEmptyFields
+            !isLoading && noEmptyFields && selectedBank != null
         }
 
     init {
@@ -48,6 +58,26 @@ internal class ReviewViewModel(internal val giniHealth: GiniHealth) : ViewModel(
                     ))
                 }
             }
+        }
+    }
+
+    suspend fun getBankApps(packageManager: PackageManager) {
+        _bankApps.value = BankAppsState.Loading
+        withContext(viewModelScope.coroutineContext) {
+            _bankApps.value = try {
+                val paymentProviders = giniHealth.giniHealthAPI.documentManager.getPaymentProviders()
+                // TODO: handle the rare case when there are no valid bank apps
+                BankAppsState.Success(packageManager.getInstalledPaymentProviderBankApps(paymentProviders))
+            } catch (e: Exception) {
+                BankAppsState.Error(e)
+            }
+        }
+    }
+
+    fun initSelectedBank() {
+        if (_selectedBank.value == null) {
+            // TODO: try to use saved selected bank first
+            _selectedBank.value = (_bankApps.value as? BankAppsState.Success)?.bankApps?.firstOrNull()
         }
     }
 
@@ -88,6 +118,7 @@ internal class ReviewViewModel(internal val giniHealth: GiniHealth) : ViewModel(
         return PaymentRequest(
             id = giniHealth.giniHealthAPI.documentManager.createPaymentRequest(
                 PaymentRequestInput(
+                    // TODO: remove from list of installed bank apps those that are not a payment provider
                     paymentProvider = getPaymentProviderForPackage(bank.packageName).id,
                     recipient = paymentDetails.value.recipient,
                     iban = paymentDetails.value.iban,
@@ -103,12 +134,14 @@ internal class ReviewViewModel(internal val giniHealth: GiniHealth) : ViewModel(
     fun onPayment() {
         viewModelScope.launch {
             val valid = validatePaymentDetails()
+            // TODO: emit error if not valid
             if (valid) {
                 giniHealth.setOpenBankState(GiniHealth.PaymentState.Loading)
+                // TODO: first get the payment request and handle error before proceeding
                 sendFeedback()
                 giniHealth.setOpenBankState(try {
                     selectedBank?.let { bankApp ->
-                        GiniHealth.PaymentState.Success(getPaymentRequest(bankApp))
+                        GiniHealth.PaymentState.Success(getPaymentRequest(_selectedBank.value!!))
                     } ?: GiniHealth.PaymentState.Error(NoBankSelected())
                 } catch (throwable: Throwable) {
                     GiniHealth.PaymentState.Error(throwable)
@@ -143,6 +176,12 @@ internal class ReviewViewModel(internal val giniHealth: GiniHealth) : ViewModel(
         viewModelScope.launch {
             giniHealth.retryDocumentReview()
         }
+    }
+
+    sealed class BankAppsState {
+        object Loading : BankAppsState()
+        class Success(val bankApps: List<BankApp>) : BankAppsState()
+        class Error(val throwable: Throwable) : BankAppsState()
     }
 }
 

@@ -1,7 +1,7 @@
 package net.gini.android.health.sdk.requirement
 
 import android.content.pm.PackageManager
-import net.gini.android.health.sdk.review.bank.getBanks
+import net.gini.android.health.sdk.review.bank.getInstalledBankApps
 
 /**
  * The [Requirement] types that are checked as preconditions for Review Screen.
@@ -17,4 +17,4 @@ internal fun internalCheckRequirements(packageManager: PackageManager): List<Req
     if (!atLeastOneBank(packageManager)) add(Requirement.NoBank)
 }
 
-private fun atLeastOneBank(packageManager: PackageManager): Boolean = packageManager.getBanks().isNotEmpty()
+private fun atLeastOneBank(packageManager: PackageManager): Boolean = packageManager.getInstalledBankApps().isNotEmpty()
