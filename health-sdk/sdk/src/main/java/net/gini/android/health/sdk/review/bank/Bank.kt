@@ -45,6 +45,7 @@ data class BankApp(
     val version: String,
     val icon: Drawable,
     val colors: BankAppColors,
+    val paymentProvider: PaymentProvider,
     private val launchIntent: Intent
 ) {
 
@@ -77,6 +78,7 @@ data class BankApp(
                     backgroundColor = Color.MAGENTA,
                     textColor = Color.WHITE
                 ),
+                paymentProvider = paymentProvider,
                 launchIntent = installedBankApp.launchIntent
             )
         }

@@ -109,17 +109,11 @@ internal class ReviewViewModel(internal val giniHealth: GiniHealth) : ViewModel(
         return items.isEmpty()
     }
 
-    private suspend fun getPaymentProviderForPackage(packageName: String): PaymentProvider {
-        return giniHealth.giniHealthAPI.documentManager.getPaymentProviders().find { it.packageName == packageName }
-            ?: throw NoProviderForPackageName(packageName)
-    }
-
     private suspend fun getPaymentRequest(bank: BankApp): PaymentRequest {
         return PaymentRequest(
             id = giniHealth.giniHealthAPI.documentManager.createPaymentRequest(
                 PaymentRequestInput(
-                    // TODO: remove from list of installed bank apps those that are not a payment provider
-                    paymentProvider = getPaymentProviderForPackage(bank.packageName).id,
+                    paymentProvider = bank.paymentProvider.id,
                     recipient = paymentDetails.value.recipient,
                     iban = paymentDetails.value.iban,
                     amount = "${paymentDetails.value.amount.toBackendFormat()}:EUR",
