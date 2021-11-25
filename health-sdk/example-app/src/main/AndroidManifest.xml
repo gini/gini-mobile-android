@@ -41,7 +41,7 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="net.gini.pay.app.fileprovider"
+            android:authorities="net.gini.android.health.sdk.exampleapp.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
