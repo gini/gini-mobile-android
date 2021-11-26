@@ -161,6 +161,7 @@ class ReviewFragment(
                 bank.isEnabled = false
             }
             is ReviewViewModel.BankAppsState.Error -> {
+                // TODO: show error?
                 bank.isEnabled = false
             }
             is ReviewViewModel.BankAppsState.Success -> {
@@ -301,6 +302,9 @@ class ReviewFragment(
             viewModel.onPayment()
         }
         close.setOnClickListener { listener?.onCloseReview() }
+        bank.setOnClickListener {
+            BankSelectionFragment().show(childFragmentManager, BankSelectionFragment.TAG)
+        }
         // TODO: add bank selection button click listener and show bank selection sheet
     }
 

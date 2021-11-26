@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="GiniHealth" />
-
-    <style name="Root" />
     <!-- Root styles shouldn't be overridden, instead override their descendant styles -->
-    <style name="Root.GiniHealth" />
+    <style name="Root.GiniHealth" parent="Theme.MaterialComponents.Light"/>
 
     <style name="Root.GiniHealth.PaymentInputLayoutStyle" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
         <item name="boxStrokeColor">@color/ghs_input_box_stroke_color</item>
@@ -35,9 +32,11 @@
     <style name="GiniHealth.PaymentInputStyle.Amount" parent="Root.GiniHealth.PaymentInputStyle.Amount" />
 
     <!-- Style for the ViewPager2 that displays the pages of the document in ReviewFragment -->
-    <style name="GiniHealth.DocumentPagerStyle" />
+    <style name="Root.GiniHealth.DocumentPagerStyle" />
+    <style name="GiniHealth.DocumentPagerStyle" parent="Root.GiniHealth.DocumentPagerStyle"/>
 
-    <style name="GiniHealth.DocumentListStyle" />
+    <style name="Root.GiniHealth.DocumentListStyle" />
+    <style name="GiniHealth.DocumentListStyle" parent="Root.GiniHealth.DocumentListStyle"/>
 
     <style name="Root.GiniHealth.PagePhotoStyle">
         <item name="android:paddingTop">@dimen/ghs_page_padding_top</item>
@@ -120,5 +119,85 @@
 
     <!-- Style for close button in ReviewFragment -->
     <style name="GiniHealth.CloseButtonStyle" parent="Root.GiniHealth.CloseButtonStyle"/>
+
+    <style name="Root.GiniHealth.BankSelection.TitleStyle" parent="Widget.MaterialComponents.TextView">
+        <item name="android:textAppearance">@style/GiniHealth.BankSelection.TextAppearance.Title</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingVertical">16dp</item>
+        <item name="android:background">@drawable/ghs_payment_details_background</item>
+    </style>
+    <style name="GiniHealth.BankSelection.TitleStyle" parent="Root.GiniHealth.BankSelection.TitleStyle"/>
+
+    <style name="Root.GiniHealth.BankSelection.TextAppearance.Title" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="android:gravity">center</item>
+    </style>
+    <style name="GiniHealth.BankSelection.TextAppearance.Title" parent="Root.GiniHealth.BankSelection.TextAppearance.Title"/>
+
+    <style name="Root.GiniHealth.BankSelection.ThemeOverlay.BottomSheetDialog" parent="ThemeOverlay.MaterialComponents.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/GiniHealth.BankSelection.BottomSheetDialog</item>
+    </style>
+    <style name="GiniHealth.BankSelection.ThemeOverlay.BottomSheetDialog" parent="Root.GiniHealth.BankSelection.ThemeOverlay.BottomSheetDialog"/>
+
+    <style name="Root.GiniHealth.BankSelection.BottomSheetDialog" parent="Widget.MaterialComponents.BottomSheet.Modal">
+        <item name="android:background">@drawable/ghs_payment_details_background</item>
+        <item name="android:elevation">12dp</item>
+        <item name="shapeAppearance">@null</item>
+    </style>
+    <style name="GiniHealth.BankSelection.BottomSheetDialog" parent="Root.GiniHealth.BankSelection.BottomSheetDialog" />
+
+    <style name="Root.GiniHealth.BankSelection.BottomSheetDialog.ShapeAppearance" parent="ShapeAppearance.MaterialComponents.LargeComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">@dimen/ghs_payment_details_radius</item>
+    </style>
+    <style name="GiniHealth.BankSelection.BottomSheetDialog.ShapeAppearance" parent="Root.GiniHealth.BankSelection.BottomSheetDialog.ShapeAppearance"/>
+
+    <style name="Root.GiniHealth.BankSelection.ItemIconStyle" parent="">
+        <item name="android:layout_width">28dp</item>
+        <item name="android:layout_height">28dp</item>
+        <item name="android:layout_marginStart">8dp</item>
+        <item name="android:layout_marginTop">14dp</item>
+        <item name="android:layout_marginBottom">14dp</item>
+    </style>
+    <style name="GiniHealth.BankSelection.ItemIconStyle" parent="Root.GiniHealth.BankSelection.ItemIconStyle"/>
+
+    <style name="Root.GiniHealth.BankSelection.ItemTextStyle" parent="Widget.MaterialComponents.TextView">
+        <item name="android:textAppearance">@style/GiniHealth.BankSelection.TextAppearance.Name</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginHorizontal">16dp</item>
+        <item name="android:layout_marginVertical">16dp</item>
+    </style>
+    <style name="GiniHealth.BankSelection.ItemTextStyle" parent="Root.GiniHealth.BankSelection.ItemTextStyle"/>
+
+    <style name="Root.GiniHealth.BankSelection.TextAppearance.Name" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="android:gravity">center</item>
+    </style>
+    <style name="GiniHealth.BankSelection.TextAppearance.Name" parent="Root.GiniHealth.BankSelection.TextAppearance.Name"/>
+
+    <style name="Root.GiniHealth.BankSelection.ItemCheckmarkStyle" parent="">
+        <item name="android:layout_width">28dp</item>
+        <item name="android:layout_height">28dp</item>
+        <item name="android:layout_marginTop">14dp</item>
+        <item name="android:layout_marginEnd">8dp</item>
+        <item name="android:layout_marginBottom">14dp</item>
+    </style>
+    <style name="GiniHealth.BankSelection.ItemCheckmarkStyle" parent="Root.GiniHealth.BankSelection.ItemCheckmarkStyle"/>
+
+    <style name="Root.GiniHealth.BankSelection.ItemSeparatorStyle" parent="">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:layout_marginStart">8dp</item>
+        <item name="android:layout_marginTop">14dp</item>
+        <item name="android:layout_marginEnd">8dp</item>
+        <item name="android:background">@color/ghs_list_item_separator</item>
+    </style>
+    <style name="GiniHealth.BankSelection.ItemSeparatorStyle" parent="Root.GiniHealth.BankSelection.ItemSeparatorStyle" />
+
+    <style name="Root.GiniHealth.BankSelection.ListStyle" parent="">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingTop">48sp</item>
+    </style>
+    <style name="GiniHealth.BankSelection.ListStyle" parent="Root.GiniHealth.BankSelection.ListStyle" />
 
 </resources>
