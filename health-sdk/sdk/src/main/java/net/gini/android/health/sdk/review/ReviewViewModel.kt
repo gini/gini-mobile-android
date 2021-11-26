@@ -134,8 +134,8 @@ internal class ReviewViewModel(internal val giniHealth: GiniHealth) : ViewModel(
                 // TODO: first get the payment request and handle error before proceeding
                 sendFeedback()
                 giniHealth.setOpenBankState(try {
-                    selectedBank?.let { bankApp ->
-                        GiniHealth.PaymentState.Success(getPaymentRequest(_selectedBank.value!!))
+                    _selectedBank.value?.let { bankApp ->
+                        GiniHealth.PaymentState.Success(getPaymentRequest(bankApp))
                     } ?: GiniHealth.PaymentState.Error(NoBankSelected())
                 } catch (throwable: Throwable) {
                     GiniHealth.PaymentState.Error(throwable)
