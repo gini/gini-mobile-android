@@ -17,7 +17,7 @@
         <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
         <!-- Customize your theme here. -->
     </style>
-    <style name="Theme.GiniPayBussiness.Review" parent="Theme.GiniHealthExample">
+    <style name="Theme.GiniHealthExample.Review" parent="Theme.GiniHealthExample">
         <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
     </style>
 </resources>
