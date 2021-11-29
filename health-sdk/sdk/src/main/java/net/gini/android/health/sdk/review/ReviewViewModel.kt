@@ -1,9 +1,6 @@
 package net.gini.android.health.sdk.review
 
-import android.app.Application
 import android.content.pm.PackageManager
-import android.content.pm.ResolveInfo
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -12,13 +9,11 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.gini.android.core.api.models.Document
-import net.gini.android.core.api.models.PaymentProvider
 import net.gini.android.core.api.models.PaymentRequestInput
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.review.bank.BankApp
 import net.gini.android.health.sdk.review.bank.getInstalledPaymentProviderBankApps
 import net.gini.android.health.sdk.review.error.NoBankSelected
-import net.gini.android.health.sdk.review.error.NoProviderForPackageName
 import net.gini.android.health.sdk.review.model.PaymentDetails
 import net.gini.android.health.sdk.review.model.PaymentRequest
 import net.gini.android.health.sdk.review.model.ResultWrapper
@@ -79,6 +74,10 @@ internal class ReviewViewModel(internal val giniHealth: GiniHealth) : ViewModel(
             // TODO: try to use saved selected bank first
             _selectedBank.value = (_bankApps.value as? BankAppsState.Success)?.bankApps?.firstOrNull()
         }
+    }
+
+    fun setSelectedBank(selectedBank: BankApp) {
+        _selectedBank.value = selectedBank
     }
 
     fun getPages(document: Document): List<DocumentPageAdapter.Page> {

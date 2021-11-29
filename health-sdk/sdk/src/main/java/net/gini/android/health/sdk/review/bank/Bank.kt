@@ -22,8 +22,7 @@ fun PackageManager.getInstalledBankApps(): List<InstalledBankApp> = queryIntentA
 
 
 fun PackageManager.getInstalledPaymentProviderBankApps(paymentProviders: List<PaymentProvider>): List<BankApp> =
-    (queryIntentActivities(getBankQueryIntent(), 0) + queryIntentActivities(getBankQueryIntent(), 0)
-            + queryIntentActivities(getBankQueryIntent(), 0))
+    (queryIntentActivities(getBankQueryIntent(), 0))
         .map { InstalledBankApp.fromResolveInfo(it, this) }
         .mapNotNull { installedApp ->
             // Keep only those installed bank apps which have a corresponding payment provider

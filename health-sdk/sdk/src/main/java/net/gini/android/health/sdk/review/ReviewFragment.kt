@@ -11,7 +11,7 @@ import androidx.core.view.*
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.transition.TransitionManager
 import com.google.android.material.math.MathUtils.lerp
@@ -85,7 +85,7 @@ class ReviewFragment(
     private val listener: ReviewFragmentListener? = null
 ) : Fragment() {
 
-    private val viewModel: ReviewViewModel by viewModels { getReviewViewModelFactory(giniHealth) }
+    private val viewModel: ReviewViewModel by activityViewModels { getReviewViewModelFactory(giniHealth) }
     private var binding: GhsFragmentReviewBinding by autoCleared()
     private var documentPageAdapter: DocumentPageAdapter by autoCleared()
 
@@ -305,7 +305,6 @@ class ReviewFragment(
         bank.setOnClickListener {
             BankSelectionFragment().show(childFragmentManager, BankSelectionFragment.TAG)
         }
-        // TODO: add bank selection button click listener and show bank selection sheet
     }
 
     private fun GhsFragmentReviewBinding.applyInsets() {
