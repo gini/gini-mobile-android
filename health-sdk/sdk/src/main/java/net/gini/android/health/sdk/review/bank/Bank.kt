@@ -42,8 +42,8 @@ data class BankApp(
     val name: String,
     val packageName: String,
     val version: String,
-    val icon: Drawable,
-    val colors: BankAppColors,
+    val icon: Drawable?,
+    val colors: BankAppColors?,
     val paymentProvider: PaymentProvider,
     private val launchIntent: Intent
 ) {
@@ -71,12 +71,9 @@ data class BankApp(
                 packageName = paymentProvider.packageName,
                 version = installedBankApp.version,
                 // TODO: use paymentProvider.icon
-                icon = ResourcesCompat.getDrawable(getSystem(), android.R.drawable.ic_dialog_email, null)!!,
+                icon = null,
                 // TODO: use paymentProvider.colors
-                colors = BankAppColors(
-                    backgroundColor = Color.MAGENTA,
-                    textColor = Color.WHITE
-                ),
+                colors = null,
                 paymentProvider = paymentProvider,
                 launchIntent = installedBankApp.launchIntent
             )

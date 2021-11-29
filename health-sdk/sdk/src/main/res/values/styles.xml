@@ -77,7 +77,7 @@
     <style name="GiniHealth.PaymentDetailsCard" parent="Root.GiniHealth.PaymentDetailsCard" />
 
     <style name="Root.GiniHealth.BankButtonStyle" parent="Widget.MaterialComponents.Button.OutlinedButton">
-        <item name="android:drawableLeft">@drawable/ic_bank</item>
+        <item name="android:drawableLeft">@drawable/ghs_bank_icon</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">0dp</item>
         <item name="android:gravity">start|center_vertical</item>

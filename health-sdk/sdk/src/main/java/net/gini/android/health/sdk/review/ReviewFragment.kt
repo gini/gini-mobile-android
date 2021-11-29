@@ -144,14 +144,17 @@ class ReviewFragment(
 
     private fun GhsFragmentReviewBinding.showSelectedBank(bankApp: BankApp?) {
         bankApp?.let {
-            val icon = bankApp.icon.apply {
-                val size = resources.getDimension(R.dimen.ghs_bank_icon_size).toInt()
-                setBounds(0, 0, size, size)
+            bankApp.icon?.let { icon ->
+                bank.setCompoundDrawables(icon.apply {
+                    val size = resources.getDimension(R.dimen.ghs_bank_icon_size).toInt()
+                    setBounds(0, 0, size, size)
+                }, null, null, null)
             }
-            bank.setCompoundDrawables(icon, null, null, null)
             bank.text = bankApp.name
-            payment.setBackgroundColor(bankApp.colors.backgroundColor)
-            payment.setTextColor(bankApp.colors.textColor)
+            bankApp.colors?.let { colors ->
+                payment.setBackgroundColor(colors.backgroundColor)
+                payment.setTextColor(colors.textColor)
+            }
         }
     }
 
