@@ -310,7 +310,9 @@ class ReviewFragment(
         }
         close.setOnClickListener { listener?.onCloseReview() }
         bank.setOnClickListener {
-            BankSelectionFragment().show(childFragmentManager, BankSelectionFragment.TAG)
+            if (childFragmentManager.findFragmentByTag(BankSelectionFragment.TAG) == null) {
+                BankSelectionFragment().show(childFragmentManager, BankSelectionFragment.TAG)
+            }
         }
     }
 
