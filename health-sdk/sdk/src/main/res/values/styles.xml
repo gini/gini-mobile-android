@@ -90,12 +90,13 @@
     <!-- Style for the bank button in ReviewFragment -->
     <style name="GiniHealth.BankButtonStyle" parent="Root.GiniHealth.BankButtonStyle" />
 
-    <style name="Root.GiniHealth.PaymentButtonStyle">
+    <style name="Root.GiniHealth.PaymentButtonStyle" parent="Widget.MaterialComponents.Button">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginStart">@dimen/ghs_payment_button_spacing</item>
         <item name="backgroundTint">@color/ghs_payment_button_background</item>
         <item name="layout_constraintHorizontal_weight">.6</item>
+        <item name="android:textAllCaps">false</item>
     </style>
 
     <!-- Style for Pay button in ReviewFragment -->
