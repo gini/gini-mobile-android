@@ -13,4 +13,6 @@
     <item name="ghs_input_amount_weight" format="float" type="dimen">0.3</item>
     <dimen name="ghs_bank_icon_size">16dp</dimen>
     <dimen name="ghs_page_padding_top">0dp</dimen>
+    <dimen name="ghs_bank_edit_icon_size">10dp</dimen>
+    <dimen name="ghs_bank_edit_icon_padding">4dp</dimen>
 </resources>
