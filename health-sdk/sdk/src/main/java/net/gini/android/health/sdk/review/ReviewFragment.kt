@@ -150,8 +150,8 @@ class ReviewFragment(
             }
             bank.setCompoundDrawables(icon, null, null, null)
             bank.text = bankApp.name
-            bank.setBackgroundColor(bankApp.colors.backgroundColor)
-            bank.setTextColor(bankApp.colors.textColor)
+            payment.setBackgroundColor(bankApp.colors.backgroundColor)
+            payment.setTextColor(bankApp.colors.textColor)
         }
     }
 
