@@ -165,7 +165,7 @@ class ReviewFragment(
                 bank.isEnabled = false
             }
             is ReviewViewModel.BankAppsState.Success -> {
-                bank.isEnabled = true
+                bank.isEnabled = bankAppsState.bankApps.isNotEmpty()
             }
         }
     }
