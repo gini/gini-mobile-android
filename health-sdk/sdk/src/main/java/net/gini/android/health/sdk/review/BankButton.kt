@@ -29,14 +29,18 @@ internal class BankButton @JvmOverloads constructor(
             setBounds(0, 0, editIconSize, editIconSize)
         }
 
+    var showEditIcon = true
+
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
 
-        canvas?.apply {
-            save()
-            translate((width - editIconSize - editIconPadding).toFloat(), insetTop.toFloat() + editIconPadding)
-            editIconDrawable?.draw(this)
-            restore()
+        if (showEditIcon) {
+            canvas?.apply {
+                save()
+                translate((width - editIconSize - editIconPadding).toFloat(), insetTop.toFloat() + editIconPadding)
+                editIconDrawable?.draw(this)
+                restore()
+            }
         }
     }
 }

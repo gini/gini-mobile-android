@@ -162,13 +162,16 @@ class ReviewFragment(
         when(bankAppsState) {
             ReviewViewModel.BankAppsState.Loading -> {
                 bank.isEnabled = false
+                bank.showEditIcon = false
             }
             is ReviewViewModel.BankAppsState.Error -> {
                 // TODO: show error?
                 bank.isEnabled = false
+                bank.showEditIcon = false
             }
             is ReviewViewModel.BankAppsState.Success -> {
                 bank.isEnabled = bankAppsState.bankApps.isNotEmpty()
+                bank.showEditIcon = bankAppsState.bankApps.size > 1
             }
         }
     }
