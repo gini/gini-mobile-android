@@ -171,6 +171,7 @@ class ReviewFragment(
             }
             is ReviewViewModel.BankAppsState.Success -> {
                 bank.isEnabled = bankAppsState.bankApps.isNotEmpty()
+                bank.isClickable = bankAppsState.bankApps.size > 1
                 bank.showEditIcon = bankAppsState.bankApps.size > 1
             }
         }
