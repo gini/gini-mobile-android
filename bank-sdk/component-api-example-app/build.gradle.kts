@@ -11,8 +11,7 @@ android {
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        // TODO: change it once we update our example payment provider: "net.gini.android.bank.sdk.componentapiexample"
-        applicationId = "net.gini.pay.appcomponentapi"
+        applicationId = "net.gini.android.bank.sdk.componentapiexample"
 
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
