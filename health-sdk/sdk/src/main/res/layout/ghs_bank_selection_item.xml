@@ -9,11 +9,11 @@
     <ImageView
         android:id="@+id/icon"
         style="@style/GiniHealth.BankSelection.ItemIconStyle"
-        android:src="@drawable/ghs_dot_selected"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/text"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/ghs_dot_selected" />
 
     <TextView
         android:id="@+id/text"
@@ -29,7 +29,9 @@
         style="@style/GiniHealth.BankSelection.ItemCheckmarkStyle"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/text" />
+        app:layout_constraintStart_toEndOf="@id/text"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/ghs_checkmark" />
 
     <View
         android:id="@+id/separator"

@@ -1,7 +1,7 @@
 package net.gini.android.health.sdk.review
 
 import android.annotation.SuppressLint
-import android.content.res.Resources
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -44,7 +44,7 @@ class BankSelectionFragment : BottomSheetDialogFragment() {
 
         binding.banksList.apply {
             layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-            adapter = BankAppsAdapter(emptyList())
+            adapter = BankAppsAdapter(emptyList(), view.context)
             itemAnimator?.changeDuration = 0
         }
 
@@ -84,7 +84,9 @@ class BankSelectionFragment : BottomSheetDialogFragment() {
     }
 }
 
-class BankAppsAdapter(bankApps: List<BankApp>) : RecyclerView.Adapter<BankAppsAdapter.ViewHolder>() {
+class BankAppsAdapter(bankApps: List<BankApp>, context: Context) : RecyclerView.Adapter<BankAppsAdapter.ViewHolder>() {
+
+    private val checkmarkIcon = ResourcesCompat.getDrawable(context.resources, R.drawable.ghs_checkmark, context.theme)
 
     var bankApps: List<BankApp> = bankApps
         @SuppressLint("NotifyDataSetChanged")
@@ -118,11 +120,7 @@ class BankAppsAdapter(bankApps: List<BankApp>) : RecyclerView.Adapter<BankAppsAd
             icon.setImageDrawable(bankApp.icon)
             text.text = bankApp.name
             checkmark.setImageDrawable(
-                if (bankApp.packageName == bankApps[selectedBankAppPosition].packageName) ResourcesCompat.getDrawable(
-                    Resources.getSystem(),
-                    android.R.drawable.ic_input_add,
-                    null
-                )!! else null
+                if (bankApp.packageName == bankApps[selectedBankAppPosition].packageName) checkmarkIcon else null
             )
             separator.isVisible = position != bankApps.lastIndex
             root.setOnClickListener {

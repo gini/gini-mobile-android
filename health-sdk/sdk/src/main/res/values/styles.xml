@@ -176,10 +176,10 @@
     <style name="GiniHealth.BankSelection.TextAppearance.Name" parent="Root.GiniHealth.BankSelection.TextAppearance.Name"/>
 
     <style name="Root.GiniHealth.BankSelection.ItemCheckmarkStyle" parent="">
-        <item name="android:layout_width">28dp</item>
-        <item name="android:layout_height">28dp</item>
+        <item name="android:layout_width">18dp</item>
+        <item name="android:layout_height">14dp</item>
         <item name="android:layout_marginTop">14dp</item>
-        <item name="android:layout_marginEnd">8dp</item>
+        <item name="android:layout_marginEnd">12dp</item>
         <item name="android:layout_marginBottom">14dp</item>
     </style>
     <style name="GiniHealth.BankSelection.ItemCheckmarkStyle" parent="Root.GiniHealth.BankSelection.ItemCheckmarkStyle"/>
