@@ -28,6 +28,7 @@ import net.gini.android.core.api.models.Document
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.R
 import net.gini.android.health.sdk.databinding.GhsFragmentReviewBinding
+import net.gini.android.health.sdk.preferences.UserPreferences
 import net.gini.android.health.sdk.review.bank.BankApp
 import net.gini.android.health.sdk.review.model.PaymentDetails
 import net.gini.android.health.sdk.review.model.ResultWrapper
@@ -90,7 +91,7 @@ class ReviewFragment(
     private val listener: ReviewFragmentListener? = null
 ) : Fragment() {
 
-    private val viewModel: ReviewViewModel by activityViewModels { getReviewViewModelFactory(giniHealth) }
+    private val viewModel: ReviewViewModel by activityViewModels { getReviewViewModelFactory(giniHealth, UserPreferences(requireContext())) }
     private var binding: GhsFragmentReviewBinding by autoCleared()
     private var documentPageAdapter: DocumentPageAdapter by autoCleared()
 

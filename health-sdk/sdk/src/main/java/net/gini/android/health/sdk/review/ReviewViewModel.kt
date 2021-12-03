@@ -11,6 +11,9 @@ import kotlinx.coroutines.withContext
 import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.models.PaymentRequestInput
 import net.gini.android.health.sdk.GiniHealth
+import net.gini.android.health.sdk.preferences.UserPreference
+import net.gini.android.health.sdk.preferences.UserPreference.PreferredBankApp
+import net.gini.android.health.sdk.preferences.UserPreferences
 import net.gini.android.health.sdk.review.bank.BankApp
 import net.gini.android.health.sdk.review.bank.getInstalledPaymentProviderBankApps
 import net.gini.android.health.sdk.review.error.NoBankSelected
@@ -22,7 +25,7 @@ import net.gini.android.health.sdk.review.pager.DocumentPageAdapter
 import net.gini.android.health.sdk.util.adjustToLocalDecimalSeparation
 import net.gini.android.health.sdk.util.toBackendFormat
 
-internal class ReviewViewModel(internal val giniHealth: GiniHealth) : ViewModel() {
+internal class ReviewViewModel(internal val giniHealth: GiniHealth, private val userPreferences: UserPreferences) : ViewModel() {
 
     private val _paymentDetails = MutableStateFlow(PaymentDetails("", "", "", ""))
     val paymentDetails: StateFlow<PaymentDetails> = _paymentDetails
@@ -71,13 +74,17 @@ internal class ReviewViewModel(internal val giniHealth: GiniHealth) : ViewModel(
 
     fun initSelectedBank() {
         if (_selectedBank.value == null) {
-            // TODO: try to use saved selected bank first
-            _selectedBank.value = (_bankApps.value as? BankAppsState.Success)?.bankApps?.firstOrNull()
+            _selectedBank.value = (_bankApps.value as? BankAppsState.Success)?.bankApps?.let { bankApps ->
+                userPreferences.get(PreferredBankApp())?.let { preferredBank ->
+                    bankApps.firstOrNull { it.packageName == preferredBank.value } ?: bankApps.firstOrNull()
+                } ?: bankApps.firstOrNull()
+            }
         }
     }
 
     fun setSelectedBank(selectedBank: BankApp) {
         _selectedBank.value = selectedBank
+        userPreferences.set(PreferredBankApp(selectedBank.packageName))
     }
 
     fun getPages(document: Document): List<DocumentPageAdapter.Page> {
@@ -186,9 +193,9 @@ private fun PaymentDetails.overwriteEmptyFields(value: PaymentDetails): PaymentD
     extractions = extractions ?: value.extractions,
 )
 
-internal fun getReviewViewModelFactory(giniHealth: GiniHealth) = object : ViewModelProvider.Factory {
+internal fun getReviewViewModelFactory(giniHealth: GiniHealth, userPreferences: UserPreferences) = object : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         @Suppress("UNCHECKED_CAST")
-        return ReviewViewModel(giniHealth) as T
+        return ReviewViewModel(giniHealth, userPreferences) as T
     }
 }
