@@ -1,12 +1,16 @@
 package net.gini.android.health.sdk.review
 
 import android.content.ActivityNotFoundException
+import android.content.res.ColorStateList
+import android.graphics.drawable.StateListDrawable
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.ColorUtils
 import androidx.core.view.*
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -28,6 +32,7 @@ import net.gini.android.health.sdk.review.bank.BankApp
 import net.gini.android.health.sdk.review.model.PaymentDetails
 import net.gini.android.health.sdk.review.model.ResultWrapper
 import net.gini.android.health.sdk.review.pager.DocumentPageAdapter
+import net.gini.android.health.sdk.util.*
 import net.gini.android.health.sdk.util.amountWatcher
 import net.gini.android.health.sdk.util.autoCleared
 import net.gini.android.health.sdk.util.setTextIfDifferent
@@ -110,7 +115,7 @@ class ReviewFragment(
             removePagerConstraint()
         }
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            viewModel.getBankApps(requireActivity().packageManager)
+            viewModel.getBankApps(requireActivity())
             viewModel.initSelectedBank()
         }
     }
@@ -144,17 +149,10 @@ class ReviewFragment(
 
     private fun GhsFragmentReviewBinding.showSelectedBank(bankApp: BankApp?) {
         bankApp?.let {
-            bankApp.icon?.let { icon ->
-                bank.setCompoundDrawables(icon.apply {
-                    val size = resources.getDimension(R.dimen.ghs_bank_icon_size).toInt()
-                    setBounds(0, 0, size, size)
-                }, null, null, null)
-            }
+            bank.icon = bankApp.icon ?: ResourcesCompat.getDrawable(resources, R.drawable.ghs_bank_icon, requireContext().theme)
             bank.text = bankApp.name
-            bankApp.colors?.let { colors ->
-                payment.setBackgroundColor(colors.backgroundColor)
-                payment.setTextColor(colors.textColor)
-            }
+            payment.setBackgroundTint(bankApp.colors.backgroundColor)
+            payment.setTextColorTint(bankApp.colors.textColor)
         }
     }
 

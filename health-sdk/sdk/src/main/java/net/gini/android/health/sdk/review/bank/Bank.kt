@@ -1,15 +1,16 @@
 package net.gini.android.health.sdk.review.bank
 
 import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
-import android.content.res.Resources.getSystem
+import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import androidx.annotation.ColorInt
-import androidx.core.content.res.ResourcesCompat
 import net.gini.android.core.api.models.PaymentProvider
 
 internal const val Scheme = "ginipay" // It has to match the scheme in query tag in manifest
@@ -21,7 +22,7 @@ fun PackageManager.getInstalledBankApps(): List<InstalledBankApp> = queryIntentA
     .map { InstalledBankApp.fromResolveInfo(it, this) }
 
 
-fun PackageManager.getInstalledPaymentProviderBankApps(paymentProviders: List<PaymentProvider>): List<BankApp> =
+fun PackageManager.getInstalledPaymentProviderBankApps(paymentProviders: List<PaymentProvider>, context: Context): List<BankApp> =
     queryIntentActivities(getBankQueryIntent(), 0)
         .map { InstalledBankApp.fromResolveInfo(it, this) }
         .mapNotNull { installedApp ->
@@ -29,7 +30,7 @@ fun PackageManager.getInstalledPaymentProviderBankApps(paymentProviders: List<Pa
             paymentProviders
                 .find { provider -> provider.packageName == installedApp.packageName }
                 ?.let { paymentProvider ->
-                    BankApp.fromPaymentProvider(paymentProvider, installedApp)
+                    BankApp.fromPaymentProvider(paymentProvider, installedApp, context)
                 }
         }
 
@@ -43,7 +44,7 @@ data class BankApp(
     val packageName: String,
     val version: String,
     val icon: Drawable?,
-    val colors: BankAppColors?,
+    val colors: BankAppColors,
     val paymentProvider: PaymentProvider,
     private val launchIntent: Intent
 ) {
@@ -55,7 +56,8 @@ data class BankApp(
     companion object {
         internal fun fromPaymentProvider(
             paymentProvider: PaymentProvider,
-            installedBankApp: InstalledBankApp
+            installedBankApp: InstalledBankApp,
+            context: Context,
         ): BankApp {
             if (paymentProvider.packageName != installedBankApp.packageName) {
                 throw IllegalArgumentException(
@@ -70,10 +72,14 @@ data class BankApp(
                 name = paymentProvider.name,
                 packageName = paymentProvider.packageName,
                 version = installedBankApp.version,
-                // TODO: use paymentProvider.icon
-                icon = null,
-                // TODO: use paymentProvider.colors
-                colors = null,
+                icon = BitmapFactory.decodeByteArray(paymentProvider.icon, 0, paymentProvider.icon.size)
+                    ?.let { bitmap ->
+                        BitmapDrawable(context.resources, bitmap)
+                    },
+                colors = BankAppColors(
+                    backgroundColor = Color.parseColor("#${paymentProvider.colors.backgroundColorRGBHex}"),
+                    textColor = Color.parseColor("#${paymentProvider.colors.textColoRGBHex}")
+                ),
                 paymentProvider = paymentProvider,
                 launchIntent = installedBankApp.launchIntent
             )

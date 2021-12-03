@@ -1,6 +1,6 @@
 package net.gini.android.health.sdk.review
 
-import android.content.pm.PackageManager
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -56,13 +56,13 @@ internal class ReviewViewModel(internal val giniHealth: GiniHealth) : ViewModel(
         }
     }
 
-    suspend fun getBankApps(packageManager: PackageManager) {
+    suspend fun getBankApps(context: Context) {
         _bankApps.value = BankAppsState.Loading
         withContext(viewModelScope.coroutineContext) {
             _bankApps.value = try {
                 val paymentProviders = giniHealth.giniHealthAPI.documentManager.getPaymentProviders()
                 // TODO: handle the rare case when there are no valid bank apps
-                BankAppsState.Success(packageManager.getInstalledPaymentProviderBankApps(paymentProviders))
+                BankAppsState.Success(context.packageManager.getInstalledPaymentProviderBankApps(paymentProviders, context))
             } catch (e: Exception) {
                 BankAppsState.Error(e)
             }

@@ -1,7 +1,13 @@
 package net.gini.android.health.sdk.util
 
+import android.R
+import android.content.res.ColorStateList
 import android.text.Editable
 import android.text.TextWatcher
+import android.widget.Button
+import androidx.annotation.ColorInt
+import androidx.annotation.IntRange
+import androidx.core.graphics.ColorUtils
 import com.google.android.material.textfield.TextInputEditText
 import java.math.BigDecimal
 import java.text.DecimalFormat
@@ -82,3 +88,29 @@ internal fun currencyFormatterWithoutSymbol(): NumberFormat =
             }
         }
     }
+
+internal fun Button.setBackgroundTint(@ColorInt color: Int, @IntRange(from = 0x0, to = 0xFF) nonEnabledAlpha: Int = 100) {
+    backgroundTintList = ColorStateList(
+        arrayOf(
+            intArrayOf(R.attr.state_enabled),
+            intArrayOf()
+        ),
+        intArrayOf(
+            color,
+            ColorUtils.setAlphaComponent(color, nonEnabledAlpha)
+        )
+    )
+}
+
+internal fun Button.setTextColorTint(@ColorInt color: Int, @IntRange(from = 0x0, to = 0xFF) nonEnabledAlpha: Int = 200) {
+    setTextColor(ColorStateList(
+        arrayOf(
+            intArrayOf(R.attr.state_enabled),
+            intArrayOf()
+        ),
+        intArrayOf(
+            color,
+            ColorUtils.setAlphaComponent(color, nonEnabledAlpha)
+        )
+    ))
+}
