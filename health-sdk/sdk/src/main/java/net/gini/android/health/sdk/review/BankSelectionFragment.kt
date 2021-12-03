@@ -91,7 +91,7 @@ class BankAppsAdapter(bankApps: List<BankApp>, context: Context) : RecyclerView.
     var bankApps: List<BankApp> = bankApps
         @SuppressLint("NotifyDataSetChanged")
         set(value) {
-            field = value
+            field = value.map { it.copy(icon = it.icon?.constantState?.newDrawable()) }
             notifyDataSetChanged()
         }
 
@@ -108,7 +108,7 @@ class BankAppsAdapter(bankApps: List<BankApp>, context: Context) : RecyclerView.
     val userSelectedBankApp: SharedFlow<BankApp> = _userSelectedBankApp
 
     fun setSelectedBank(selectedBank: BankApp) {
-        selectedBankAppPosition = max(0, bankApps.indexOf(selectedBank))
+        selectedBankAppPosition = max(0, bankApps.indexOfFirst { it.packageName == selectedBank.packageName })
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
