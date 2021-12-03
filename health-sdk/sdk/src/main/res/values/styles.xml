@@ -77,13 +77,15 @@
     <style name="GiniHealth.PaymentDetailsCard" parent="Root.GiniHealth.PaymentDetailsCard" />
 
     <style name="Root.GiniHealth.BankButtonStyle" parent="Widget.MaterialComponents.Button.OutlinedButton">
-        <item name="android:drawableLeft">@drawable/ghs_bank_icon</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="icon">@drawable/ghs_bank_icon</item>
+        <item name="iconPadding">8dp</item>
+        <item name="iconSize">@dimen/ghs_bank_icon_size</item>
+        <item name="iconTint">@null</item>
+        <item name="android:layout_height">0dp</item>
         <item name="android:layout_width">0dp</item>
         <item name="android:gravity">start|center_vertical</item>
         <item name="android:textColor">?attr/colorOnSurface</item>
         <item name="android:textAllCaps">false</item>
-        <item name="textAllCaps">false</item>
         <item name="layout_constraintHorizontal_weight">.4</item>
     </style>
 
@@ -158,6 +160,7 @@
         <item name="android:layout_marginStart">8dp</item>
         <item name="android:layout_marginTop">14dp</item>
         <item name="android:layout_marginBottom">14dp</item>
+        <item name="android:scaleType">centerInside</item>
     </style>
     <style name="GiniHealth.BankSelection.ItemIconStyle" parent="Root.GiniHealth.BankSelection.ItemIconStyle"/>
 
