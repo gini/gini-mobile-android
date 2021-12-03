@@ -15,28 +15,28 @@ import com.squareup.moshi.Types;
 
 import net.gini.android.core.api.authorization.Session;
 import net.gini.android.core.api.authorization.SessionManager;
-import net.gini.android.core.api.models.PaymentKt;
-import net.gini.android.core.api.models.PaymentProviderKt;
-import net.gini.android.core.api.models.PaymentRequestKt;
-import net.gini.android.core.api.models.ResolvedPaymentKt;
-import net.gini.android.core.api.requests.PaymentRequestBodyKt;
-import net.gini.android.core.api.requests.ResolvePaymentBodyKt;
 import net.gini.android.core.api.models.Box;
 import net.gini.android.core.api.models.CompoundExtraction;
 import net.gini.android.core.api.models.Document;
 import net.gini.android.core.api.models.Extraction;
 import net.gini.android.core.api.models.ExtractionsContainer;
 import net.gini.android.core.api.models.Payment;
+import net.gini.android.core.api.models.PaymentKt;
 import net.gini.android.core.api.models.PaymentProvider;
+import net.gini.android.core.api.models.PaymentProviderKt;
 import net.gini.android.core.api.models.PaymentRequest;
 import net.gini.android.core.api.models.PaymentRequestInput;
+import net.gini.android.core.api.models.PaymentRequestKt;
 import net.gini.android.core.api.models.ResolvePaymentInput;
 import net.gini.android.core.api.models.ResolvedPayment;
+import net.gini.android.core.api.models.ResolvedPaymentKt;
 import net.gini.android.core.api.models.ReturnReason;
 import net.gini.android.core.api.models.SpecificExtraction;
 import net.gini.android.core.api.requests.ErrorEvent;
 import net.gini.android.core.api.requests.PaymentRequestBody;
+import net.gini.android.core.api.requests.PaymentRequestBodyKt;
 import net.gini.android.core.api.requests.ResolvePaymentBody;
+import net.gini.android.core.api.requests.ResolvePaymentBodyKt;
 import net.gini.android.core.api.response.LocationResponse;
 import net.gini.android.core.api.response.PaymentProviderResponse;
 import net.gini.android.core.api.response.PaymentRequestResponse;
@@ -57,6 +57,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import bolts.Continuation;
 import bolts.Task;
@@ -788,26 +789,25 @@ public class DocumentTaskManager {
      * @return A list of {@link PaymentProvider}
      */
     public Task<List<PaymentProvider>> getPaymentProviders() {
-        return mSessionManager.getSession().onSuccessTask(new Continuation<Session, Task<JSONArray>>() {
-            @Override
-            public Task<JSONArray> then(Task<Session> task) {
-                final Session session = task.getResult();
-                return mApiCommunicator.getPaymentProviders(session);
-            }
-        }, Task.BACKGROUND_EXECUTOR)
-                .onSuccess(new Continuation<JSONArray, List<PaymentProvider>>() {
-                    @Override
-                    public List<PaymentProvider> then(Task<JSONArray> task) throws Exception {
-                        Type type = Types.newParameterizedType(List.class, PaymentProviderResponse.class);
-                        JsonAdapter<List<PaymentProviderResponse>> adapter = mMoshi.adapter(type);
-                        List<PaymentProviderResponse> paymentProviderResponse = adapter.fromJson(task.getResult().toString());
+        return mSessionManager.getSession()
+                .onSuccessTask(task -> {
+                    final Session session = task.getResult();
+                    return mApiCommunicator.getPaymentProviders(session);
+                }, Task.BACKGROUND_EXECUTOR)
+                .onSuccessTask(task -> {
+                    Type type = Types.newParameterizedType(List.class, PaymentProviderResponse.class);
+                    JsonAdapter<List<PaymentProviderResponse>> adapter = mMoshi.adapter(type);
+                    List<PaymentProviderResponse> paymentProviderResponses = adapter.fromJson(task.getResult().toString());
 
-                        List<PaymentProvider> paymentProviders = new ArrayList<>();
-                        for (PaymentProviderResponse paymentProvider : paymentProviderResponse != null ? paymentProviderResponse : Collections.<PaymentProviderResponse>emptyList()) {
-                            paymentProviders.add(PaymentProviderKt.toPaymentProvider(paymentProvider));
-                        }
-                        return paymentProviders;
-                    }
+                    List<Task<PaymentProvider>> tasks = Objects.requireNonNull(paymentProviderResponses).stream()
+                            .map(paymentProviderResponse -> getFile(paymentProviderResponse.getIconLocation())
+                                    .onSuccess(fileTask -> {
+                                        byte[] icon = fileTask.getResult();
+                                        return PaymentProviderKt.toPaymentProvider(paymentProviderResponse, icon);
+                                    }))
+                            .collect(Collectors.toList());
+
+                    return Task.whenAllResult(tasks);
                 });
     }
 
@@ -815,22 +815,33 @@ public class DocumentTaskManager {
      * @return {@link PaymentProvider] for the given id.
      */
     public Task<PaymentProvider> getPaymentProvider(final String id) {
-        return mSessionManager.getSession().onSuccessTask(new Continuation<Session, Task<JSONObject>>() {
-            @Override
-            public Task<JSONObject> then(Task<Session> task) {
-                final Session session = task.getResult();
-                return mApiCommunicator.getPaymentProvider(id, session);
-            }
-        }, Task.BACKGROUND_EXECUTOR)
-                .onSuccess(new Continuation<JSONObject, PaymentProvider>() {
-                    @Override
-                    public PaymentProvider then(Task<JSONObject> task) throws Exception {
-                        JsonAdapter<PaymentProviderResponse> adapter = mMoshi.adapter(PaymentProviderResponse.class);
-                        PaymentProviderResponse paymentProviderResponse = adapter.fromJson(task.getResult().toString());
+        return mSessionManager.getSession()
+                .onSuccessTask(task -> {
+                    final Session session = task.getResult();
+                    return mApiCommunicator.getPaymentProvider(id, session);
+                }, Task.BACKGROUND_EXECUTOR)
+                .onSuccessTask(task -> {
+                    JsonAdapter<PaymentProviderResponse> adapter = mMoshi.adapter(PaymentProviderResponse.class);
+                    final PaymentProviderResponse paymentProviderResponse = adapter.fromJson(task.getResult().toString());
 
-                        return PaymentProviderKt.toPaymentProvider(Objects.requireNonNull(paymentProviderResponse));
-                    }
+                    return getFile(Objects.requireNonNull(paymentProviderResponse).getIconLocation())
+                            .onSuccess(fileTask -> {
+                                byte[] icon = fileTask.getResult();
+                                return PaymentProviderKt.toPaymentProvider(paymentProviderResponse, icon);
+                            });
                 });
+    }
+
+    /**
+     * Download a file.
+     *
+     * @return byte array of file contents
+     */
+    private Task<byte[]> getFile(@NonNull final String location) {
+        return mSessionManager.getSession().onSuccessTask(task -> {
+            final Session session = task.getResult();
+            return mApiCommunicator.getFile(location, session);
+        }, Task.BACKGROUND_EXECUTOR);
     }
 
     /**
