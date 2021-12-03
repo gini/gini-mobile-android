@@ -86,7 +86,11 @@
         <item name="android:gravity">start|center_vertical</item>
         <item name="android:textColor">?attr/colorOnSurface</item>
         <item name="android:textAllCaps">false</item>
-        <item name="layout_constraintHorizontal_weight">.4</item>
+        <item name="autoSizeMinTextSize">10sp</item>
+        <item name="autoSizeMaxTextSize">16sp</item>
+        <item name="autoSizeTextType">uniform</item>
+        <item name="autoSizeStepGranularity">1sp</item>
+        <item name="layout_constraintHorizontal_weight">.45</item>
     </style>
 
     <!-- Style for the bank button in ReviewFragment -->
@@ -97,7 +101,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginStart">@dimen/ghs_payment_button_spacing</item>
         <item name="backgroundTint">@color/ghs_payment_button_background</item>
-        <item name="layout_constraintHorizontal_weight">.6</item>
+        <item name="layout_constraintHorizontal_weight">.55</item>
         <item name="android:textAllCaps">false</item>
     </style>
 
