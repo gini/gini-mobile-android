@@ -39,7 +39,7 @@ internal class UserPreferences(context: Context) {
     }
 }
 
-sealed class UserPreference<T>(val id: String, internal var value: T) {
+internal sealed class UserPreference<T>(val id: String, var value: T) {
 
     class PreferredBankApp(value: String = "") : UserPreference<String>("PreferredBankApp", value)
 }

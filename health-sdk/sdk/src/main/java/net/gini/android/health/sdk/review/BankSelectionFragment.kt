@@ -28,7 +28,7 @@ import kotlin.math.max
  *
  * Copyright (c) 2021 Gini GmbH.
  */
-class BankSelectionFragment : BottomSheetDialogFragment() {
+internal class BankSelectionFragment : BottomSheetDialogFragment() {
 
     private val viewModel: ReviewViewModel by activityViewModels()
     private var binding: GhsFragmentBankSelectionBinding by autoCleared()
@@ -84,7 +84,7 @@ class BankSelectionFragment : BottomSheetDialogFragment() {
     }
 }
 
-class BankAppsAdapter(bankApps: List<BankApp>, context: Context) : RecyclerView.Adapter<BankAppsAdapter.ViewHolder>() {
+internal class BankAppsAdapter(bankApps: List<BankApp>, context: Context) : RecyclerView.Adapter<BankAppsAdapter.ViewHolder>() {
 
     private val checkmarkIcon = ResourcesCompat.getDrawable(context.resources, R.drawable.ghs_checkmark, context.theme)
 
