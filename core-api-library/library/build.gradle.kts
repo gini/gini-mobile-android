@@ -32,6 +32,8 @@ android {
         }
     }
     compileOptions {
+        // Flag to enable support for the new language APIs
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility(JavaVersion.VERSION_1_8)
         targetCompatibility(JavaVersion.VERSION_1_8)
     }
@@ -50,6 +52,8 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     kapt(libs.moshi.codegen)
     implementation(libs.moshi.core)
+
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
 
     androidTestImplementation(libs.mockito.core)
     androidTestImplementation(libs.mockito.android)
