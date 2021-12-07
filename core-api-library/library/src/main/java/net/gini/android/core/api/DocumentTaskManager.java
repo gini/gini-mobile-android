@@ -799,13 +799,14 @@ public class DocumentTaskManager {
                     JsonAdapter<List<PaymentProviderResponse>> adapter = mMoshi.adapter(type);
                     List<PaymentProviderResponse> paymentProviderResponses = adapter.fromJson(task.getResult().toString());
 
-                    List<Task<PaymentProvider>> tasks = Objects.requireNonNull(paymentProviderResponses).stream()
-                            .map(paymentProviderResponse -> getFile(paymentProviderResponse.getIconLocation())
-                                    .onSuccess(fileTask -> {
-                                        byte[] icon = fileTask.getResult();
-                                        return PaymentProviderKt.toPaymentProvider(paymentProviderResponse, icon);
-                                    }))
-                            .collect(Collectors.toList());
+                    List<Task<PaymentProvider>> tasks = new ArrayList<>();
+                    for (PaymentProviderResponse paymentProviderResponse : Objects.requireNonNull(paymentProviderResponses)) {
+                        tasks.add(getFile(paymentProviderResponse.getIconLocation())
+                                .onSuccess(fileTask -> {
+                                    byte[] icon = fileTask.getResult();
+                                    return PaymentProviderKt.toPaymentProvider(paymentProviderResponse, icon);
+                                }));
+                    }
 
                     return Task.whenAllResult(tasks);
                 });
