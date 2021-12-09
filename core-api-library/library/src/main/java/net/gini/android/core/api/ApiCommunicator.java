@@ -320,12 +320,16 @@ public class ApiCommunicator {
     public Task<byte[]> getPageImage(@NonNull String documentId, int pageCount, final Session session) {
         String url = mBaseUri.buildUpon().appendPath("documents").appendPath(documentId).appendPath("pages").appendPath(Integer.toString(pageCount)).appendPath("large")
                 .toString();
-        return doRequestWithByteArrayResponse(url, GET, session);
+        return getFile(url, session);
     }
 
     public Task<JSONObject> logErrorEvent(@NonNull final JSONObject errorEvent, @NonNull final Session session) {
         final String url = mBaseUri.buildUpon().appendPath("events").appendPath("error").toString();
         return doRequestWithBodyAndJsonResponse(url, POST, errorEvent, session);
+    }
+
+    public Task<byte[]> getFile(@NonNull final String location, final Session session) {
+        return doRequestWithByteArrayResponse(checkNotNull(location), GET, checkNotNull(session));
     }
 
     /**

@@ -862,6 +862,7 @@ public class DocumentTaskManagerTest {
     @Test
     public void testGetPaymentProviders() throws Exception {
         when(mApiCommunicator.getPaymentProviders(any(Session.class))).thenReturn(createPaymentProvidersJSONTask());
+        when(mApiCommunicator.getFile(any(String.class), any(Session.class))).thenReturn(Task.forResult(new byte[0]));
 
         Task<List<PaymentProvider>> paymentProvidersTask = mDocumentTaskManager.getPaymentProviders();
         paymentProvidersTask.waitForCompletion();
@@ -875,6 +876,7 @@ public class DocumentTaskManagerTest {
     @Test
     public void testGetPaymentProvider() throws Exception {
         when(mApiCommunicator.getPaymentProvider(any(String.class), any(Session.class))).thenReturn(createPaymentProviderJSONTask());
+        when(mApiCommunicator.getFile(any(String.class), any(Session.class))).thenReturn(Task.forResult(new byte[0]));
 
         Task<PaymentProvider> paymentProvidersTask = mDocumentTaskManager.getPaymentProvider("");
         paymentProvidersTask.waitForCompletion();
@@ -887,8 +889,10 @@ public class DocumentTaskManagerTest {
 
     private List<PaymentProvider> getPaymentProviders() {
         final List<PaymentProvider> paymentProviders = new ArrayList<>();
-        paymentProviders.add(new PaymentProvider("7e72441c-32f8-11eb-b611-c3190574373c", "ING-DiBa", "com.example.bank", "3.5.1"));
-        paymentProviders.add(new PaymentProvider("9a9b41f2-32f8-11eb-9fb5-e378350b0392", "Deutsche Bank", "com.example.bank", "6.9.1"));
+        paymentProviders.add(new PaymentProvider("7e72441c-32f8-11eb-b611-c3190574373c", "ING-DiBa", "com.example.bank", "3.5.1",
+                new PaymentProvider.Colors("112233", "44AAFF"), new byte[0]));
+        paymentProviders.add(new PaymentProvider("9a9b41f2-32f8-11eb-9fb5-e378350b0392", "Deutsche Bank", "com.example.bank", "6.9.1",
+                new PaymentProvider.Colors("557788", "00DDEE"), new byte[0]));
         return paymentProviders;
     }
 

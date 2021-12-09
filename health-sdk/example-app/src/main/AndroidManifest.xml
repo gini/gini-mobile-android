@@ -36,12 +36,12 @@
         <activity
             android:name=".review.ReviewActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.GiniPayBussiness.Review"
+            android:theme="@style/Theme.GiniHealthExample.Review"
             android:windowSoftInputMode="adjustResize" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="net.gini.pay.app.fileprovider"
+            android:authorities="net.gini.android.health.sdk.exampleapp.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

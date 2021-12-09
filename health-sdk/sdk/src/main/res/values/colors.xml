@@ -10,4 +10,5 @@
     <color name="ghs_input_background_active">#fff</color>
     <color name="ghs_payment_button_background_enabled">#FF6800</color>
     <color name="ghs_page_error">#FFF</color>
+    <color name="ghs_list_item_separator">#E6E7ED</color>
 </resources>

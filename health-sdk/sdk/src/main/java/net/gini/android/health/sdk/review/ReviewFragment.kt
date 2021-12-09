@@ -1,17 +1,21 @@
 package net.gini.android.health.sdk.review
 
 import android.content.ActivityNotFoundException
+import android.content.res.ColorStateList
+import android.graphics.drawable.StateListDrawable
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.ColorUtils
 import androidx.core.view.*
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.transition.TransitionManager
 import com.google.android.material.math.MathUtils.lerp
@@ -24,10 +28,12 @@ import net.gini.android.core.api.models.Document
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.R
 import net.gini.android.health.sdk.databinding.GhsFragmentReviewBinding
-import net.gini.android.health.sdk.review.bank.getBanks
+import net.gini.android.health.sdk.preferences.UserPreferences
+import net.gini.android.health.sdk.review.bank.BankApp
 import net.gini.android.health.sdk.review.model.PaymentDetails
 import net.gini.android.health.sdk.review.model.ResultWrapper
 import net.gini.android.health.sdk.review.pager.DocumentPageAdapter
+import net.gini.android.health.sdk.util.*
 import net.gini.android.health.sdk.util.amountWatcher
 import net.gini.android.health.sdk.util.autoCleared
 import net.gini.android.health.sdk.util.setTextIfDifferent
@@ -85,7 +91,7 @@ class ReviewFragment(
     private val listener: ReviewFragmentListener? = null
 ) : Fragment() {
 
-    private val viewModel: ReviewViewModel by viewModels { getReviewViewModelFactory(giniHealth) }
+    private val viewModel: ReviewViewModel by activityViewModels { getReviewViewModelFactory(giniHealth, UserPreferences(requireContext())) }
     private var binding: GhsFragmentReviewBinding by autoCleared()
     private var documentPageAdapter: DocumentPageAdapter by autoCleared()
 
@@ -103,23 +109,15 @@ class ReviewFragment(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(binding) {
-            setBank()
             setStateListeners()
             setInputListeners()
             setActionListeners()
             setKeyboardAnimation()
             removePagerConstraint()
         }
-    }
-
-    private fun GhsFragmentReviewBinding.setBank() {
-        requireActivity().packageManager.getBanks().firstOrNull()?.let { bankInfo ->
-            viewModel.selectedBank = bankInfo
-            val icon = bankInfo.getIconDrawable(requireActivity().packageManager).apply {
-                resources.getDimension(R.dimen.ghs_bank_icon_size).toInt().let { this.setBounds(0, 0, it, it) }
-            }
-            bank.setCompoundDrawables(icon, null, null, null)
-            bank.text = bankInfo.name
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            viewModel.getBankApps(requireActivity())
+            viewModel.initSelectedBank()
         }
     }
 
@@ -141,6 +139,40 @@ class ReviewFragment(
         }
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.isPaymentButtonEnabled.collect { payment.isEnabled = it }
+        }
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            viewModel.selectedBank.collect { showSelectedBank(it) }
+        }
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            viewModel.bankApps.collect { handleBankApps(it) }
+        }
+    }
+
+    private fun GhsFragmentReviewBinding.showSelectedBank(bankApp: BankApp?) {
+        bankApp?.let {
+            bank.icon = bankApp.icon ?: ResourcesCompat.getDrawable(resources, R.drawable.ghs_bank_icon, requireContext().theme)
+            bank.text = bankApp.name
+            payment.setBackgroundTint(bankApp.colors.backgroundColor)
+            payment.setTextColorTint(bankApp.colors.textColor)
+        }
+    }
+
+    private fun GhsFragmentReviewBinding.handleBankApps(bankAppsState: ReviewViewModel.BankAppsState) {
+        when(bankAppsState) {
+            ReviewViewModel.BankAppsState.Loading -> {
+                bank.isEnabled = false
+                bank.showEditIcon = false
+            }
+            is ReviewViewModel.BankAppsState.Error -> {
+                // TODO: show error?
+                bank.isEnabled = false
+                bank.showEditIcon = false
+            }
+            is ReviewViewModel.BankAppsState.Success -> {
+                bank.isEnabled = bankAppsState.bankApps.isNotEmpty()
+                bank.isClickable = bankAppsState.bankApps.size > 1
+                bank.showEditIcon = bankAppsState.bankApps.size > 1
+            }
         }
     }
 
@@ -193,7 +225,6 @@ class ReviewFragment(
         iban.setOnFocusChangeListener { _, hasFocus -> if (hasFocus) ibanLayout.isErrorEnabled = false }
         amount.setOnFocusChangeListener { _, hasFocus -> if (hasFocus) amountLayout.isErrorEnabled = false }
         purpose.setOnFocusChangeListener { _, hasFocus -> if (hasFocus) purposeLayout.isErrorEnabled = false }
-        close.setOnClickListener { listener?.onCloseReview() }
     }
 
     private fun GhsFragmentReviewBinding.handleValidationResult(messages: List<ValidationMessage>) {
@@ -248,9 +279,11 @@ class ReviewFragment(
                     startActivity(paymentState.paymentRequest.bankApp.getIntent(paymentState.paymentRequest.id))
                     viewModel.onBankOpened()
                 } catch (exception: ActivityNotFoundException) {
+                    // TODO: use more informative error messages (include selected bank app name)
                     handleError(getString(R.string.ghs_error_bank_not_found)) { viewModel.onPayment() }
                 }
             }
+            // TODO: use more informative error messages (include error details)
             is GiniHealth.PaymentState.Error -> handleError(getString(R.string.ghs_error_open_bank)) { viewModel.onPayment() }
             else -> { // Loading is already handled
             }
@@ -273,6 +306,12 @@ class ReviewFragment(
     private fun GhsFragmentReviewBinding.setActionListeners() {
         payment.setOnClickListener {
             viewModel.onPayment()
+        }
+        close.setOnClickListener { listener?.onCloseReview() }
+        bank.setOnClickListener {
+            if (childFragmentManager.findFragmentByTag(BankSelectionFragment.TAG) == null) {
+                BankSelectionFragment().show(childFragmentManager, BankSelectionFragment.TAG)
+            }
         }
     }
 

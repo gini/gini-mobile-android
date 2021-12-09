@@ -9,11 +9,13 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.tabs.TabLayoutMediator
 import java.util.*
 import kotlinx.coroutines.flow.collect
+import net.gini.android.health.sdk.databinding.GhsFragmentReviewBinding
 import net.gini.android.health.sdk.exampleapp.databinding.ActivityMainBinding
 import net.gini.android.health.sdk.exampleapp.pager.PagerAdapter
 import net.gini.android.health.sdk.exampleapp.upload.UploadActivity
 import net.gini.android.health.sdk.requirement.Requirement
 import net.gini.android.health.sdk.exampleapp.R
+import net.gini.android.health.sdk.exampleapp.review.ReviewActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
@@ -21,10 +23,14 @@ class MainActivity : AppCompatActivity() {
     private val viewModel: MainViewModel by viewModel()
     private val takePictureLauncher = registerForActivityResult(ActivityResultContracts.TakePicture(), ::photoResult)
     private val importLauncher = registerForActivityResult(ActivityResultContracts.OpenDocument(), ::importResult)
+    private lateinit var binding: ActivityMainBinding
+
+    private val useTestDocument = false
+    private val testDocumentId = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val binding = ActivityMainBinding.inflate(layoutInflater)
+        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         binding.takePhoto.setOnClickListener {
@@ -32,7 +38,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.importFile.setOnClickListener {
-            importFile()
+            if (useTestDocument) {
+                viewModel.setDocumentForReview(testDocumentId)
+                startActivity(ReviewActivity.getStartIntent(this))
+            } else {
+                importFile()
+            }
         }
 
         binding.pager.adapter = PagerAdapter().apply {
@@ -71,6 +82,7 @@ class MainActivity : AppCompatActivity() {
     private fun photoResult(saved: Boolean) {
         if (saved) {
             viewModel.onPhotoSaved()
+            binding.upload.isEnabled = true
         }
     }
 
