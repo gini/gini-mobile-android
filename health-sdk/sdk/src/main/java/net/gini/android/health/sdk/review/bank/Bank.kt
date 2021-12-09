@@ -59,6 +59,36 @@ data class BankApp(
         data = Uri.parse(getBankUri(paymentRequestId))
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as BankApp
+
+        if (name != other.name) return false
+        if (packageName != other.packageName) return false
+        if (version != other.version) return false
+        if (icon != other.icon) return false
+        if (colors != other.colors) return false
+        if (paymentProvider != other.paymentProvider) return false
+        if (launchIntent.action != other.launchIntent.action) return false
+        if (launchIntent.component != other.launchIntent.component) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = name.hashCode()
+        result = 31 * result + packageName.hashCode()
+        result = 31 * result + version.hashCode()
+        result = 31 * result + (icon?.hashCode() ?: 0)
+        result = 31 * result + colors.hashCode()
+        result = 31 * result + paymentProvider.hashCode()
+        result = 31 * result + launchIntent.hashCode()
+        return result
+    }
+
+
     companion object {
         internal fun fromPaymentProvider(
             paymentProvider: PaymentProvider,
@@ -103,6 +133,27 @@ data class InstalledBankApp(
     val version: String,
     val launchIntent: Intent
 ) {
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as InstalledBankApp
+
+        if (packageName != other.packageName) return false
+        if (version != other.version) return false
+        if (launchIntent.action != other.launchIntent.action) return false
+        if (launchIntent.component != other.launchIntent.component) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = packageName.hashCode()
+        result = 31 * result + version.hashCode()
+        result = 31 * result + launchIntent.hashCode()
+        return result
+    }
 
     companion object {
         internal fun fromResolveInfo(resolveInfo: ResolveInfo, packageManager: PackageManager): InstalledBankApp {
