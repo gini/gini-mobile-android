@@ -18,21 +18,27 @@ private const val PaymentPath = "payment"
 internal const val QueryUri = "$Scheme://$PaymentPath/id"
 internal fun getBankUri(requestId: String) = "$Scheme://$PaymentPath/$requestId"
 
-fun PackageManager.getInstalledBankApps(): List<InstalledBankApp> = queryIntentActivities(getBankQueryIntent(), 0)
+internal fun PackageManager.getInstalledBankApps(): List<InstalledBankApp> = queryIntentActivities(getBankQueryIntent(), 0)
     .map { InstalledBankApp.fromResolveInfo(it, this) }
 
 
-fun PackageManager.getInstalledPaymentProviderBankApps(paymentProviders: List<PaymentProvider>, context: Context): List<BankApp> =
-    queryIntentActivities(getBankQueryIntent(), 0)
-        .map { InstalledBankApp.fromResolveInfo(it, this) }
+internal fun PackageManager.getValidBankApps(paymentProviders: List<PaymentProvider>, context: Context): List<BankApp> =
+    getInstalledBankAppsWhichHavePaymentProviders(paymentProviders)
+        .map { (installedApp, paymentProvider) ->
+            BankApp.fromPaymentProvider(paymentProvider, installedApp, context)
+        }
+
+internal fun PackageManager.getInstalledBankAppsWhichHavePaymentProviders(paymentProviders: List<PaymentProvider>): List<Pair<InstalledBankApp, PaymentProvider>> {
+    return getInstalledBankApps()
         .mapNotNull { installedApp ->
             // Keep only those installed bank apps which have a corresponding payment provider
             paymentProviders
                 .find { provider -> provider.packageName == installedApp.packageName }
                 ?.let { paymentProvider ->
-                    BankApp.fromPaymentProvider(paymentProvider, installedApp, context)
+                    installedApp to paymentProvider
                 }
         }
+}
 
 private fun getBankQueryIntent() = Intent().apply {
     action = Intent.ACTION_VIEW
