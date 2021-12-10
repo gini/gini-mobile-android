@@ -15,7 +15,7 @@ import org.gradle.kotlin.dsl.getByName
  * Copyright (c) 2021 Gini GmbH.
  */
 
-class VersionsPlugin : Plugin<Project> {
+class DependencyUpdatesPlugin : Plugin<Project> {
 
     private val outdatedDependenciesMap: MutableMap<String, Pair<DependencyOutdated, MutableSet<Project>>> =
         mutableMapOf()
