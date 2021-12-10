@@ -12,7 +12,7 @@ import java.io.File
  *
  * Copyright (c) 2021 Gini GmbH.
  */
-class ProjectDependenciesPlugin : Plugin<Project> {
+class ReleaseOrderPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
         target.tasks.create("listReleaseOrder") {
