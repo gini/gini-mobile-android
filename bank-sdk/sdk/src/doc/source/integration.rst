@@ -332,7 +332,7 @@ Before launching the first fragment you need to:
 #. Configure the capture feature using the ``CaptureConfiguration``.
 
 The Component API is exposed as-is from the Gini Capture SDK and you can follow `it's guide
-<https://developer.gini.net/gini-capture-sdk-android/html/integration.html#component-api>`_ to learn how to integrate
+<https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/html/integration.html#component-api>`_ to learn how to integrate
 it.
 
 Handling Payment Requests
