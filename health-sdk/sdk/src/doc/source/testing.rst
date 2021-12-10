@@ -28,7 +28,7 @@ End to end testing
 ------------------
 
 After you've set the client credentials in the example banking app and installed it on your device you can run your app
-and verify that ``GiniHealth.checkRequirements()`` returns an empty list.
+and verify that ``GiniHealth.checkRequirementsAsync()`` returns an empty list.
 
 Following the `flow guide <flow.html>`_ show the ``ReviewFragment`` after analyzing a document.
 
