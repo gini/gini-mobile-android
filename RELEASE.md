@@ -12,8 +12,10 @@ To publish releases follow these steps:
 6. Update the `RELEASE-ORDER.md` file by running: `./gradlew updateReleaseOrderFile`.
 7. Commit and push the changes to `main`.
 8. Create and push release tags by running: `bundle exec fastlane create_release_tags`.
-9. After all builds have finished log into [Sonatype's Nexus Repository Manager](https://oss.sonatype.org/#welcome)
+9. Draft a release with release notes for each to-be-released module on the GitHub [releases page](https://github.com/gini/gini-mobile-android/releases).
+10. After all builds have finished log into [Sonatype's Nexus Repository Manager](https://oss.sonatype.org/#welcome)
    (for Maven Central) and view the `Staging Repositories`. Credentials are in 1Password: "Maven Central Sonatype account for net.gini".
-10. Run pre-release checks: select all staging repositories and click `Close`.
-11. Finalise release: after the automated checks are done select all staging repositories and click `Release`.
+11. Run pre-release checks: select all staging repositories and click `Close`.
+12. Finalise release: after the automated checks are done select all staging repositories and click `Release`.
+13. Publish the release drafts from the GitHub [releases page](https://github.com/gini/gini-mobile-android/releases).
    
