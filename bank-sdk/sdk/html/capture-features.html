@@ -185,14 +185,14 @@
 <div class="section" id="features-from-the-gini-capture-sdk">
 <h2>Features from the Gini Capture SDK<a class="headerlink" href="#features-from-the-gini-capture-sdk" title="Permalink to this headline">¶</a></h2>
 <p>The capture feature uses our <a class="reference external" href="https://github.com/gini/gini-mobile-android/tree/main/capture-sdk">Gini Capture SDK</a>. All features
-listed in its <a class="reference external" href="https://developer.gini.net/gini-capture-sdk-android/html/features.html">documentation</a> can be used here
+listed in its <a class="reference external" href="https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/html/features.html">documentation</a> can be used here
 as well.</p>
 <p>An important difference is in how you configure the capture features. In the Gini Bank SDK you need to use the
 <code class="docutils literal notranslate"><span class="pre">CaptureConfiguration</span></code> instead of the Gini Capture SDK’s <code class="docutils literal notranslate"><span class="pre">GiniCapture.Builder</span></code>. The configuration names are the same
 so you can easily map them to the <code class="docutils literal notranslate"><span class="pre">CaptureConfiguration</span></code>.</p>
 <div class="section" id="file-import-open-with">
 <h3>File Import (Open With)<a class="headerlink" href="#file-import-open-with" title="Permalink to this headline">¶</a></h3>
-<p>Another difference is related to the <a class="reference external" href="https://developer.gini.net/gini-capture-sdk-android/html/features.html#file-import-open-with">file import</a> (or “open with”)
+<p>Another difference is related to the <a class="reference external" href="https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/html/features.html#file-import-open-with">file import</a> (or “open with”)
 feature which allows importing of files from other apps via Android’s “open with” or “share” functionality.</p>
 <div class="section" id="screen-api">
 <h4>Screen API<a class="headerlink" href="#screen-api" title="Permalink to this headline">¶</a></h4>
@@ -318,7 +318,7 @@ extractions.</p>
 <p class="last">See the Component API example app’s <a class="reference external" href="https://github.com/gini/gini-mobile-android/tree/main/bank-sdk/component-api-example-app/src/main/java/net/gini/pay/appcomponentapi/digitalinvoice">digitalinvoice package</a>
 for a sample integration.</p>
 </div>
-<p>The following diagram extends the one found in the Gini Capture SDK’s <a class="reference external" href="https://developer.gini.net/gini-capture-sdk-android/html/integration.html#component-api">Component API guide</a>. It shows the possible flows
+<p>The following diagram extends the one found in the Gini Capture SDK’s <a class="reference external" href="https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/html/integration.html#component-api">Component API guide</a>. It shows the possible flows
 through the SDK based on the listener method invocations. For brevity each fragment’s listener is shown next to it. In
 your integration you will provide the listener implementations and handle the listener method calls. You should navigate
 to the appropriate fragment based on this diagram.</p>

@@ -5,7 +5,7 @@ Features from the Gini Capture SDK
 ----------------------------------
 
 The capture feature uses our `Gini Capture SDK <https://github.com/gini/gini-mobile-android/tree/main/capture-sdk>`_. All features
-listed in its `documentation <https://developer.gini.net/gini-capture-sdk-android/html/features.html>`_ can be used here
+listed in its `documentation <https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/html/features.html>`_ can be used here
 as well.
 
 An important difference is in how you configure the capture features. In the Gini Bank SDK you need to use the
@@ -16,7 +16,7 @@ File Import (Open With)
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 Another difference is related to the `file import
-<https://developer.gini.net/gini-capture-sdk-android/html/features.html#file-import-open-with>`_ (or "open with")
+<https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/html/features.html#file-import-open-with>`_ (or "open with")
 feature which allows importing of files from other apps via Android's "open with" or "share" functionality.
 
 Screen API
@@ -158,7 +158,7 @@ Using the Component API is more challenging. You need to manage three additional
    for a sample integration.
 
 The following diagram extends the one found in the Gini Capture SDK's `Component API guide
-<https://developer.gini.net/gini-capture-sdk-android/html/integration.html#component-api>`_. It shows the possible flows
+<https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/html/integration.html#component-api>`_. It shows the possible flows
 through the SDK based on the listener method invocations. For brevity each fragment's listener is shown next to it. In
 your integration you will provide the listener implementations and handle the listener method calls. You should navigate
 to the appropriate fragment based on this diagram.
