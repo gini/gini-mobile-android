@@ -2,21 +2,22 @@ package net.gini.android.health.sdk.exampleapp
 
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.tabs.TabLayoutMediator
-import java.util.*
 import kotlinx.coroutines.flow.collect
-import net.gini.android.health.sdk.databinding.GhsFragmentReviewBinding
+import kotlinx.coroutines.launch
 import net.gini.android.health.sdk.exampleapp.databinding.ActivityMainBinding
 import net.gini.android.health.sdk.exampleapp.pager.PagerAdapter
+import net.gini.android.health.sdk.exampleapp.review.ReviewActivity
 import net.gini.android.health.sdk.exampleapp.upload.UploadActivity
 import net.gini.android.health.sdk.requirement.Requirement
-import net.gini.android.health.sdk.exampleapp.R
-import net.gini.android.health.sdk.exampleapp.review.ReviewActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -57,22 +58,59 @@ class MainActivity : AppCompatActivity() {
         TabLayoutMediator(binding.indicator, binding.pager) { _, _ -> }.attach()
 
         binding.upload.setOnClickListener {
-            val requirements = viewModel.checkRequirements(packageManager)
-            if (requirements.isEmpty()) {
-                startActivity(UploadActivity.getStartIntent(this, viewModel.pages.value.map { it.uri }))
-            } else {
-                showMissingRequirements(requirements)
-            }
+            checkRequirements(
+                before = {
+                    binding.upload.isEnabled = false
+                },
+                action = {
+                    startActivity(
+                        UploadActivity.getStartIntent(
+                            this@MainActivity,
+                            viewModel.pages.value.map { it.uri })
+                    )
+                },
+                after = {
+                    binding.upload.isEnabled = true
+                })
         }
     }
 
     private fun importFile() {
-        val requirements = viewModel.checkRequirements(packageManager)
-        if (requirements.isNotEmpty()) {
-            showMissingRequirements(requirements)
+        checkRequirements(
+            before = {
+                binding.importFile.isEnabled = false
+            },
+            action = {
+                importLauncher.launch(arrayOf("image/*", "application/pdf"))
+            },
+            after = {
+                binding.importFile.isEnabled = true
+            })
+    }
+
+    private fun checkRequirements(before: () -> Unit = {}, action: suspend () -> Unit, after: suspend () -> Unit = {}) {
+        binding.loadingIndicator.isVisible = true
+        before()
+        lifecycleScope.launch {
+            try {
+                val requirements = viewModel.checkRequirements(packageManager)
+                if (requirements.isEmpty()) {
+                    action()
+                } else {
+                    showMissingRequirements(requirements)
+                }
+            } catch (e: Exception) {
+                Log.e("RequirementsCheck", "Failed to check requirements: $e")
+                Toast.makeText(
+                    this@MainActivity,
+                    "Failed to check requirements. See Logcat for details.",
+                    Toast.LENGTH_LONG
+                ).show()
+            } finally {
+                binding.loadingIndicator.isVisible = false
+                after()
+            }
         }
-        // Let's ignore it for import to see what happens
-        importLauncher.launch(arrayOf("image/*", "application/pdf"))
     }
 
     private fun takePhoto() {

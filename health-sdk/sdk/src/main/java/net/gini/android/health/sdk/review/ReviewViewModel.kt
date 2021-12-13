@@ -11,11 +11,10 @@ import kotlinx.coroutines.withContext
 import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.models.PaymentRequestInput
 import net.gini.android.health.sdk.GiniHealth
-import net.gini.android.health.sdk.preferences.UserPreference
 import net.gini.android.health.sdk.preferences.UserPreference.PreferredBankApp
 import net.gini.android.health.sdk.preferences.UserPreferences
 import net.gini.android.health.sdk.review.bank.BankApp
-import net.gini.android.health.sdk.review.bank.getInstalledPaymentProviderBankApps
+import net.gini.android.health.sdk.review.bank.getValidBankApps
 import net.gini.android.health.sdk.review.error.NoBankSelected
 import net.gini.android.health.sdk.review.model.PaymentDetails
 import net.gini.android.health.sdk.review.model.PaymentRequest
@@ -64,8 +63,7 @@ internal class ReviewViewModel(internal val giniHealth: GiniHealth, private val 
         withContext(viewModelScope.coroutineContext) {
             _bankApps.value = try {
                 val paymentProviders = giniHealth.giniHealthAPI.documentManager.getPaymentProviders()
-                // TODO: handle the rare case when there are no valid bank apps
-                BankAppsState.Success(context.packageManager.getInstalledPaymentProviderBankApps(paymentProviders, context))
+                BankAppsState.Success(context.packageManager.getValidBankApps(paymentProviders, context))
             } catch (e: Exception) {
                 BankAppsState.Error(e)
             }

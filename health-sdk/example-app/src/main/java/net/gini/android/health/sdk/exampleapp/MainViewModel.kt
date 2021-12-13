@@ -40,13 +40,18 @@ class MainViewModel(
         ++currentIndex
     }
 
-    fun checkRequirements(packageManager: PackageManager): List<Requirement> {
-        return giniHealth.checkRequirements(packageManager)
-    }
+    suspend fun checkRequirements(packageManager: PackageManager) = giniHealth.checkRequirementsAsync(packageManager)
 
     fun setDocumentForReview(documentId: String) {
         viewModelScope.launch {
             giniHealth.setDocumentForReview(documentId)
         }
     }
+}
+
+sealed class RequirementsCheckState {
+    object Unknown: RequirementsCheckState()
+    object Loading: RequirementsCheckState()
+    class Success(val requirements: List<Requirement>): RequirementsCheckState()
+    class Failure(val error: Exception): RequirementsCheckState()
 }

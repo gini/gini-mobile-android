@@ -7,18 +7,19 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.savedstate.SavedStateRegistry
 import androidx.savedstate.SavedStateRegistryOwner
-import java.lang.ref.WeakReference
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
-import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.core.api.models.Document
+import net.gini.android.health.api.GiniHealthAPI
+import net.gini.android.health.sdk.requirement.AtLeastOneInstalledBankAppRequirement
 import net.gini.android.health.sdk.requirement.Requirement
-import net.gini.android.health.sdk.requirement.internalCheckRequirements
+import net.gini.android.health.sdk.requirement.RequirementsChecker
 import net.gini.android.health.sdk.review.ReviewFragment
 import net.gini.android.health.sdk.review.model.*
+import java.lang.ref.WeakReference
 
 /**
  * [GiniHealth] is the main class for interacting with the Gini Health SDK.
@@ -129,7 +130,22 @@ class GiniHealth(
      *
      * @return List of missing requirements. Empty list means all requirements are met.
      */
-    fun checkRequirements(packageManager: PackageManager): List<Requirement> = internalCheckRequirements(packageManager)
+    @Deprecated(
+        "Please us the coroutine alternative which does a more comprehensive check.",
+        ReplaceWith("checkRequirementsAsync(packageManager)")
+    )
+    fun checkRequirements(packageManager: PackageManager): List<Requirement> = mutableListOf<Requirement>().apply {
+        AtLeastOneInstalledBankAppRequirement(packageManager).check()?.let { add(it) }
+    }
+
+    /**
+     * Checks the required conditions needed to finish the payment flow to avoid unnecessary document upload.
+     * See [Requirement] for possible requirements.
+     *
+     * @return List of missing requirements. Empty list means all requirements are met.
+     */
+    suspend fun checkRequirementsAsync(packageManager: PackageManager): List<Requirement> =
+        RequirementsChecker.withDefaultRequirements(this, packageManager).checkRequirements()
 
     /**
      * Checks whether the document is payable by fetching the document and its extractions from the

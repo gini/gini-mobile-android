@@ -18,21 +18,27 @@ private const val PaymentPath = "payment"
 internal const val QueryUri = "$Scheme://$PaymentPath/id"
 internal fun getBankUri(requestId: String) = "$Scheme://$PaymentPath/$requestId"
 
-fun PackageManager.getInstalledBankApps(): List<InstalledBankApp> = queryIntentActivities(getBankQueryIntent(), 0)
+internal fun PackageManager.getInstalledBankApps(): List<InstalledBankApp> = queryIntentActivities(getBankQueryIntent(), 0)
     .map { InstalledBankApp.fromResolveInfo(it, this) }
 
 
-fun PackageManager.getInstalledPaymentProviderBankApps(paymentProviders: List<PaymentProvider>, context: Context): List<BankApp> =
-    queryIntentActivities(getBankQueryIntent(), 0)
-        .map { InstalledBankApp.fromResolveInfo(it, this) }
+internal fun PackageManager.getValidBankApps(paymentProviders: List<PaymentProvider>, context: Context): List<BankApp> =
+    getInstalledBankAppsWhichHavePaymentProviders(paymentProviders)
+        .map { (installedApp, paymentProvider) ->
+            BankApp.fromPaymentProvider(paymentProvider, installedApp, context)
+        }
+
+internal fun PackageManager.getInstalledBankAppsWhichHavePaymentProviders(paymentProviders: List<PaymentProvider>): List<Pair<InstalledBankApp, PaymentProvider>> {
+    return getInstalledBankApps()
         .mapNotNull { installedApp ->
             // Keep only those installed bank apps which have a corresponding payment provider
             paymentProviders
                 .find { provider -> provider.packageName == installedApp.packageName }
                 ?.let { paymentProvider ->
-                    BankApp.fromPaymentProvider(paymentProvider, installedApp, context)
+                    installedApp to paymentProvider
                 }
         }
+}
 
 private fun getBankQueryIntent() = Intent().apply {
     action = Intent.ACTION_VIEW
@@ -52,6 +58,36 @@ data class BankApp(
     fun getIntent(paymentRequestId: String) = Intent(launchIntent).apply {
         data = Uri.parse(getBankUri(paymentRequestId))
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as BankApp
+
+        if (name != other.name) return false
+        if (packageName != other.packageName) return false
+        if (version != other.version) return false
+        if (icon != other.icon) return false
+        if (colors != other.colors) return false
+        if (paymentProvider != other.paymentProvider) return false
+        if (launchIntent.action != other.launchIntent.action) return false
+        if (launchIntent.component != other.launchIntent.component) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = name.hashCode()
+        result = 31 * result + packageName.hashCode()
+        result = 31 * result + version.hashCode()
+        result = 31 * result + (icon?.hashCode() ?: 0)
+        result = 31 * result + colors.hashCode()
+        result = 31 * result + paymentProvider.hashCode()
+        result = 31 * result + launchIntent.hashCode()
+        return result
+    }
+
 
     companion object {
         internal fun fromPaymentProvider(
@@ -97,6 +133,27 @@ data class InstalledBankApp(
     val version: String,
     val launchIntent: Intent
 ) {
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as InstalledBankApp
+
+        if (packageName != other.packageName) return false
+        if (version != other.version) return false
+        if (launchIntent.action != other.launchIntent.action) return false
+        if (launchIntent.component != other.launchIntent.component) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = packageName.hashCode()
+        result = 31 * result + version.hashCode()
+        result = 31 * result + launchIntent.hashCode()
+        return result
+    }
 
     companion object {
         internal fun fromResolveInfo(resolveInfo: ResolveInfo, packageManager: PackageManager): InstalledBankApp {
