@@ -1,23 +1,21 @@
 package net.gini.android.health.sdk.review
 
 import android.content.ActivityNotFoundException
-import android.content.res.ColorStateList
-import android.graphics.drawable.StateListDrawable
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.graphics.ColorUtils
 import androidx.core.view.*
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.transition.TransitionManager
+import androidx.transition.*
 import com.google.android.material.math.MathUtils.lerp
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
@@ -34,9 +32,6 @@ import net.gini.android.health.sdk.review.model.PaymentDetails
 import net.gini.android.health.sdk.review.model.ResultWrapper
 import net.gini.android.health.sdk.review.pager.DocumentPageAdapter
 import net.gini.android.health.sdk.util.*
-import net.gini.android.health.sdk.util.amountWatcher
-import net.gini.android.health.sdk.util.autoCleared
-import net.gini.android.health.sdk.util.setTextIfDifferent
 
 
 /**
@@ -119,6 +114,11 @@ class ReviewFragment(
             viewModel.getBankApps(requireActivity())
             viewModel.initSelectedBank()
         }
+
+        // Set info bar bottom margin programmatically to reuse radius dimension with negative sign
+        binding.paymentDetailsInfoBar.updateLayoutParams<ConstraintLayout.LayoutParams> {
+            bottomMargin = -resources.getDimensionPixelSize(R.dimen.ghs_payment_details_radius)
+        }
     }
 
     private fun GhsFragmentReviewBinding.setStateListeners() {
@@ -145,6 +145,11 @@ class ReviewFragment(
         }
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.bankApps.collect { handleBankApps(it) }
+        }
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            viewModel.isInfoBarVisible.collect { visible ->
+                if (visible) showInfoBar() else hideInfoBarAnimated()
+            }
         }
     }
 
@@ -355,6 +360,7 @@ class ReviewFragment(
                 if (Build.VERSION.SDK_INT >= 30) {
                     endBottom = paymentDetails.paddingBottom
                     paymentDetails.translationY = (endBottom - startBottom).toFloat()
+                    paymentDetailsInfoBar.translationY = paymentDetails.translationY
                 }
                 if (startBottom < endBottom) {
                     indicator.isVisible = false
@@ -365,7 +371,9 @@ class ReviewFragment(
             override fun onProgress(insets: WindowInsetsCompat, runningAnimations: MutableList<WindowInsetsAnimationCompat>): WindowInsetsCompat {
                 if (Build.VERSION.SDK_INT >= 30) {
                     runningAnimations.find { it.typeMask == windowInsetTypesOf(ime = true) }?.let { animation ->
-                        paymentDetails.translationY = lerp((endBottom - startBottom).toFloat(), 0f, animation.interpolatedFraction)
+                        paymentDetails.translationY =
+                            lerp((endBottom - startBottom).toFloat(), 0f, animation.interpolatedFraction)
+                        paymentDetailsInfoBar.translationY = paymentDetails.translationY
                     }
                 }
                 return insets
@@ -375,11 +383,53 @@ class ReviewFragment(
                 super.onEnd(animation)
                 if (Build.VERSION.SDK_INT >= 30) {
                     paymentDetails.translationY = 0f
+                    paymentDetailsInfoBar.translationY = paymentDetails.translationY
                 }
                 if (startBottom > endBottom && pager.isUserInputEnabled) {
                     indicator.isVisible = true
                 }
             }
         })
+    }
+
+    private fun GhsFragmentReviewBinding.showInfoBar() {
+        root.doOnLayout {
+            // paymentDetailsInfoBar visibility should never be GONE, otherwise the animation won't work
+            if (paymentDetailsInfoBar.isInvisible) {
+                TransitionManager.beginDelayedTransition(root, TransitionSet().apply {
+                    addTransition(ChangeBounds())
+                    addListener(object : TransitionListenerAdapter() {
+                        override fun onTransitionStart(transition: Transition) {
+                            super.onTransitionStart(transition)
+                            paymentDetailsInfoBar.isVisible = true
+                        }
+                    })
+                })
+                paymentDetailsInfoBar.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                    bottomToTop = paymentDetails.id
+                    topToTop = ConstraintLayout.LayoutParams.UNSET
+                }
+            }
+        }
+    }
+
+    private fun GhsFragmentReviewBinding.hideInfoBarAnimated() {
+        root.doOnLayout {
+            if (paymentDetailsInfoBar.isVisible) {
+                TransitionManager.beginDelayedTransition(root, TransitionSet().apply {
+                    addTransition(ChangeBounds())
+                    addListener(object : TransitionListenerAdapter() {
+                        override fun onTransitionEnd(transition: Transition) {
+                            super.onTransitionEnd(transition)
+                            paymentDetailsInfoBar.isInvisible = true
+                        }
+                    })
+                })
+                paymentDetailsInfoBar.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                    topToTop = paymentDetails.id
+                    bottomToTop = ConstraintLayout.LayoutParams.UNSET
+                }
+            }
+        }
     }
 }

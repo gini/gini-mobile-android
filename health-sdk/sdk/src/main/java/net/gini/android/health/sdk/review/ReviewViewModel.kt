@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -29,7 +30,8 @@ internal class ReviewViewModel(internal val giniHealth: GiniHealth, private val 
     private val _paymentDetails = MutableStateFlow(PaymentDetails("", "", "", ""))
     val paymentDetails: StateFlow<PaymentDetails> = _paymentDetails
 
-    private val _paymentValidation = MutableSharedFlow<List<ValidationMessage>>(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+    private val _paymentValidation =
+        MutableSharedFlow<List<ValidationMessage>>(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
     val paymentValidation: SharedFlow<List<ValidationMessage>> = _paymentValidation
 
     private val _bankApps = MutableStateFlow<BankAppsState>(BankAppsState.Loading)
@@ -37,6 +39,9 @@ internal class ReviewViewModel(internal val giniHealth: GiniHealth, private val 
 
     private var _selectedBank = MutableStateFlow<BankApp?>(null)
     var selectedBank: StateFlow<BankApp?> = _selectedBank
+
+    private var _isInfoBarVisible = MutableStateFlow(true)
+    var isInfoBarVisible: StateFlow<Boolean> = _isInfoBarVisible
 
     val isPaymentButtonEnabled: Flow<Boolean> =
         combine(giniHealth.openBankState, paymentDetails, selectedBank) { paymentState, paymentDetails, selectedBank ->
@@ -50,11 +55,17 @@ internal class ReviewViewModel(internal val giniHealth: GiniHealth, private val 
         viewModelScope.launch {
             giniHealth.paymentFlow.collect { extractedPaymentDetails ->
                 if (extractedPaymentDetails is ResultWrapper.Success) {
-                    _paymentDetails.value = paymentDetails.value.overwriteEmptyFields(extractedPaymentDetails.value.copy(
-                        amount = extractedPaymentDetails.value.amount.adjustToLocalDecimalSeparation()
-                    ))
+                    _paymentDetails.value = paymentDetails.value.overwriteEmptyFields(
+                        extractedPaymentDetails.value.copy(
+                            amount = extractedPaymentDetails.value.amount.adjustToLocalDecimalSeparation()
+                        )
+                    )
                 }
             }
+        }
+        viewModelScope.launch {
+            delay(SHOW_INFO_BAR_MS)
+            _isInfoBarVisible.value = false
         }
     }
 
@@ -180,6 +191,10 @@ internal class ReviewViewModel(internal val giniHealth: GiniHealth, private val 
         object Loading : BankAppsState()
         class Success(val bankApps: List<BankApp>) : BankAppsState()
         class Error(val throwable: Throwable) : BankAppsState()
+    }
+
+    companion object {
+        const val SHOW_INFO_BAR_MS = 3000L
     }
 }
 

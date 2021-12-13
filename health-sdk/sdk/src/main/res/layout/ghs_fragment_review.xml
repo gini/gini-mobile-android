@@ -45,6 +45,23 @@
         app:layout_constraintTop_toTopOf="@id/indicator"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/payment_details_info_bar"
+        style="@style/GiniHealth.PaymentDetails.InfoBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/payment_details">
+
+        <TextView
+            style="@style/GiniHealth.PaymentDetails.InfoBar.TextView"
+            android:text="@string/ghs_payment_details_info_bar_text"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/payment_details"
         style="@style/GiniHealth.PaymentDetailsCard"
         android:clipToPadding="false"
