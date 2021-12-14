@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
@@ -160,7 +161,11 @@ internal class ReviewViewModel(internal val giniHealth: GiniHealth, private val 
     }
 
     fun onBankOpened() {
-        giniHealth.setOpenBankState(GiniHealth.PaymentState.NoAction)
+        // Schedule on the main dispatcher to allow all collectors to receive the current state before
+        // the state is overridden
+        viewModelScope.launch(Dispatchers.Main) {
+            giniHealth.setOpenBankState(GiniHealth.PaymentState.NoAction)
+        }
     }
 
     private fun sendFeedback() {
