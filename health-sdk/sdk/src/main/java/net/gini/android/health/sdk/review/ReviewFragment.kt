@@ -8,12 +8,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.*
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.transition.*
 import com.google.android.material.math.MathUtils.lerp
@@ -87,10 +89,11 @@ interface ReviewFragmentListener {
 class ReviewFragment(
     private val giniHealth: GiniHealth,
     private val configuration: ReviewConfiguration = ReviewConfiguration(),
-    private val listener: ReviewFragmentListener? = null
+    private val listener: ReviewFragmentListener? = null,
+    private val viewModelFactory: ViewModelProvider.Factory = getReviewViewModelFactory(giniHealth)
 ) : Fragment() {
 
-    private val viewModel: ReviewViewModel by activityViewModels { getReviewViewModelFactory(giniHealth, UserPreferences(requireContext())) }
+    private val viewModel: ReviewViewModel by activityViewModels { viewModelFactory }
     private var binding: GhsFragmentReviewBinding by autoCleared()
     private var documentPageAdapter: DocumentPageAdapter by autoCleared()
 
@@ -107,6 +110,9 @@ class ReviewFragment(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewModel.userPreferences = UserPreferences(requireContext())
+
         with(binding) {
             setStateListeners()
             setInputListeners()
@@ -114,6 +120,7 @@ class ReviewFragment(
             setKeyboardAnimation()
             removePagerConstraint()
         }
+
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.getBankApps(requireActivity())
             viewModel.initSelectedBank()

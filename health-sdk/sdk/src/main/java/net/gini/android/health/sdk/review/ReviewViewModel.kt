@@ -26,7 +26,9 @@ import net.gini.android.health.sdk.review.pager.DocumentPageAdapter
 import net.gini.android.health.sdk.util.adjustToLocalDecimalSeparation
 import net.gini.android.health.sdk.util.toBackendFormat
 
-internal class ReviewViewModel(internal val giniHealth: GiniHealth, private val userPreferences: UserPreferences) : ViewModel() {
+internal class ReviewViewModel(internal val giniHealth: GiniHealth) : ViewModel() {
+
+    internal var userPreferences: UserPreferences? = null
 
     private val _paymentDetails = MutableStateFlow(PaymentDetails("", "", "", ""))
     val paymentDetails: StateFlow<PaymentDetails> = _paymentDetails
@@ -85,7 +87,7 @@ internal class ReviewViewModel(internal val giniHealth: GiniHealth, private val 
     fun initSelectedBank() {
         if (_selectedBank.value == null) {
             _selectedBank.value = (_bankApps.value as? BankAppsState.Success)?.bankApps?.let { bankApps ->
-                userPreferences.get(PreferredBankApp())?.let { preferredBank ->
+                userPreferences?.get(PreferredBankApp())?.let { preferredBank ->
                     bankApps.firstOrNull { it.packageName == preferredBank.value } ?: bankApps.firstOrNull()
                 } ?: bankApps.firstOrNull()
             }
@@ -94,7 +96,7 @@ internal class ReviewViewModel(internal val giniHealth: GiniHealth, private val 
 
     fun setSelectedBank(selectedBank: BankApp) {
         _selectedBank.value = selectedBank
-        userPreferences.set(PreferredBankApp(selectedBank.packageName))
+        userPreferences?.set(PreferredBankApp(selectedBank.packageName))
     }
 
     fun getPages(document: Document): List<DocumentPageAdapter.Page> {
@@ -210,9 +212,9 @@ private fun PaymentDetails.overwriteEmptyFields(value: PaymentDetails): PaymentD
     extractions = extractions ?: value.extractions,
 )
 
-internal fun getReviewViewModelFactory(giniHealth: GiniHealth, userPreferences: UserPreferences) = object : ViewModelProvider.Factory {
+internal fun getReviewViewModelFactory(giniHealth: GiniHealth) = object : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         @Suppress("UNCHECKED_CAST")
-        return ReviewViewModel(giniHealth, userPreferences) as T
+        return ReviewViewModel(giniHealth) as T
     }
 }
