@@ -21,7 +21,9 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
 import dev.chrisbanes.insetter.applyInsetter
 import dev.chrisbanes.insetter.windowInsetTypesOf
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import net.gini.android.core.api.models.Document
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.R
@@ -60,11 +62,13 @@ interface ReviewFragmentListener {
      */
     fun onCloseReview()
 
-    companion object {
-        internal fun noOpInstance() = object : ReviewFragmentListener {
-            override fun onCloseReview() {}
-        }
-    }
+    /**
+     * Called when the pay button was clicked.
+     *
+     * Collect the [GiniHealth.openBankState] flow to get details about the payment request creation and about the
+     * selected bank app.
+     */
+    fun onPayClicked()
 }
 
 /**
@@ -310,6 +314,7 @@ class ReviewFragment(
 
     private fun GhsFragmentReviewBinding.setActionListeners() {
         payment.setOnClickListener {
+            listener?.onPayClicked()
             viewModel.onPayment()
         }
         close.setOnClickListener { listener?.onCloseReview() }
