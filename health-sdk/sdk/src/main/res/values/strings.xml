@@ -17,4 +17,5 @@
     <string name="ghs_error_bank_not_found">Failed to start Bank app</string>
     <string name="ghs_error_open_bank">Failed to make payment request</string>
     <string name="ghs_snackbar_retry">Retry</string>
+    <string name="ghs_payment_details_info_bar_text">Please check the prefilled values</string>
 </resources>

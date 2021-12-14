@@ -152,12 +152,6 @@
     </style>
     <style name="GiniHealth.BankSelection.BottomSheetDialog" parent="Root.GiniHealth.BankSelection.BottomSheetDialog" />
 
-    <style name="Root.GiniHealth.BankSelection.BottomSheetDialog.ShapeAppearance" parent="ShapeAppearance.MaterialComponents.LargeComponent">
-        <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">@dimen/ghs_payment_details_radius</item>
-    </style>
-    <style name="GiniHealth.BankSelection.BottomSheetDialog.ShapeAppearance" parent="Root.GiniHealth.BankSelection.BottomSheetDialog.ShapeAppearance"/>
-
     <style name="Root.GiniHealth.BankSelection.ItemIconStyle" parent="">
         <item name="android:layout_width">28dp</item>
         <item name="android:layout_height">28dp</item>
@@ -207,5 +201,27 @@
         <item name="android:paddingTop">48sp</item>
     </style>
     <style name="GiniHealth.BankSelection.ListStyle" parent="Root.GiniHealth.BankSelection.ListStyle" />
+
+    <style name="Root.GiniHealth.PaymentDetails.InfoBar" parent="">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/ghs_payment_details_info_bar_background</item>
+        <item name="android:paddingBottom">@dimen/ghs_payment_details_radius</item>
+    </style>
+    <style name="GiniHealth.PaymentDetails.InfoBar" parent="Root.GiniHealth.PaymentDetails.InfoBar" />
+
+    <style name="Root.GiniHealth.PaymentDetails.InfoBar.TextView" parent="Widget.MaterialComponents.TextView">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingVertical">16dp</item>
+        <item name="android:textAppearance">@style/GiniHealth.PaymentDetails.InfoBar.TextAppearance</item>
+    </style>
+    <style name="GiniHealth.PaymentDetails.InfoBar.TextView" parent="Root.GiniHealth.PaymentDetails.InfoBar.TextView" />
+
+    <style name="Root.GiniHealth.PaymentDetails.InfoBar.TextAppearance" parent="TextAppearance.MaterialComponents.Body2">
+        <item name="android:textColor">@color/ghs_payment_details_info_bar_text_color</item>
+    </style>
+    <style name="GiniHealth.PaymentDetails.InfoBar.TextAppearance" parent="Root.GiniHealth.PaymentDetails.InfoBar.TextAppearance" />
 
 </resources>

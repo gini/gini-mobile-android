@@ -4,6 +4,8 @@
     <color name="ghs_unselected_dot">#90ffffff</color>
     <color name="ghs_document_background">#000</color>
     <color name="ghs_payment_details_background_color">#FFFFFF</color>
+    <color name="ghs_payment_details_info_bar_background_color">#7263D0</color>
+    <color name="ghs_payment_details_info_bar_text_color">#FFFFFF</color>
     <color name="ghs_input_stroke_default">#F2F3F6</color>
     <color name="ghs_input_stroke_active">#555555</color>
     <color name="ghs_input_background_default">#fff</color>
