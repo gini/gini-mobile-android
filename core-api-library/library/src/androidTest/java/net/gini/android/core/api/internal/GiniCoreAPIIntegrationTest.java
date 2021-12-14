@@ -753,7 +753,6 @@ public class GiniCoreAPIIntegrationTest {
     }
 
     @Test
-    @Ignore("Getting the page image is not working (10.12.2021)")
     public void testGetImage() throws Exception {
         final AssetManager assetManager = getApplicationContext().getResources().getAssets();
         final InputStream testDocumentAsStream = assetManager.open("test.jpg");
