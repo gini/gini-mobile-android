@@ -144,7 +144,6 @@ internal class ReviewViewModel(internal val giniHealth: GiniHealth, private val 
     fun onPayment() {
         viewModelScope.launch {
             val valid = validatePaymentDetails()
-            // TODO: emit error if not valid
             if (valid) {
                 giniHealth.setOpenBankState(GiniHealth.PaymentState.Loading)
                 // TODO: first get the payment request and handle error before proceeding
