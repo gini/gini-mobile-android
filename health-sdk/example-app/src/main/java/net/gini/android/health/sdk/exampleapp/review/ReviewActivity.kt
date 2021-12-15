@@ -4,20 +4,26 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
 import androidx.fragment.app.commit
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import dev.chrisbanes.insetter.applyInsetter
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import net.gini.android.health.sdk.exampleapp.R
 import net.gini.android.health.sdk.exampleapp.databinding.ActivityReviewBinding
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.review.ReviewConfiguration
 import net.gini.android.health.sdk.review.ReviewFragment
 import net.gini.android.health.sdk.review.ReviewFragmentListener
+import org.koin.androidx.scope.activityScope
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ReviewActivity : AppCompatActivity() {
@@ -26,7 +32,30 @@ class ReviewActivity : AppCompatActivity() {
 
     private val reviewFragmentListener = object: ReviewFragmentListener {
         override fun onCloseReview() {
+            Log.i("review_events", "on close clicked")
             finish()
+        }
+
+        override fun onPayClicked() {
+            Log.i("review_events", "pay button clicked")
+            lifecycleScope.launch {
+                viewModel.giniHealth.openBankState.collect { paymentState ->
+                    when (paymentState) {
+                        GiniHealth.PaymentState.Loading -> {
+                            Log.i("open_bank_state", "opening bank app")
+                        }
+                        is GiniHealth.PaymentState.Success -> {
+                            Log.i("open_bank_state", "launching bank app: ${paymentState.paymentRequest.bankApp.name}")
+                            cancel()
+                        }
+                        is GiniHealth.PaymentState.Error -> {
+                            Log.e("open_bank_state", "failed to open bank app: ${paymentState.throwable}")
+                            cancel()
+                        }
+                        GiniHealth.PaymentState.NoAction -> {}
+                    }
+                }
+            }
         }
     }
 

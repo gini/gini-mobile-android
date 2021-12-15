@@ -8,12 +8,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.*
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.transition.*
 import com.google.android.material.math.MathUtils.lerp
@@ -21,7 +23,9 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
 import dev.chrisbanes.insetter.applyInsetter
 import dev.chrisbanes.insetter.windowInsetTypesOf
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import net.gini.android.core.api.models.Document
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.R
@@ -60,11 +64,13 @@ interface ReviewFragmentListener {
      */
     fun onCloseReview()
 
-    companion object {
-        internal fun noOpInstance() = object : ReviewFragmentListener {
-            override fun onCloseReview() {}
-        }
-    }
+    /**
+     * Called when the pay button was clicked.
+     *
+     * Collect the [GiniHealth.openBankState] flow to get details about the payment request creation and about the
+     * selected bank app.
+     */
+    fun onPayClicked()
 }
 
 /**
@@ -83,10 +89,11 @@ interface ReviewFragmentListener {
 class ReviewFragment(
     private val giniHealth: GiniHealth,
     private val configuration: ReviewConfiguration = ReviewConfiguration(),
-    private val listener: ReviewFragmentListener? = null
+    private val listener: ReviewFragmentListener? = null,
+    private val viewModelFactory: ViewModelProvider.Factory = getReviewViewModelFactory(giniHealth)
 ) : Fragment() {
 
-    private val viewModel: ReviewViewModel by activityViewModels { getReviewViewModelFactory(giniHealth, UserPreferences(requireContext())) }
+    private val viewModel: ReviewViewModel by activityViewModels { viewModelFactory }
     private var binding: GhsFragmentReviewBinding by autoCleared()
     private var documentPageAdapter: DocumentPageAdapter by autoCleared()
 
@@ -103,6 +110,9 @@ class ReviewFragment(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewModel.userPreferences = UserPreferences(requireContext())
+
         with(binding) {
             setStateListeners()
             setInputListeners()
@@ -110,6 +120,7 @@ class ReviewFragment(
             setKeyboardAnimation()
             removePagerConstraint()
         }
+
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.getBankApps(requireActivity())
             viewModel.initSelectedBank()
@@ -310,6 +321,7 @@ class ReviewFragment(
 
     private fun GhsFragmentReviewBinding.setActionListeners() {
         payment.setOnClickListener {
+            listener?.onPayClicked()
             viewModel.onPayment()
         }
         close.setOnClickListener { listener?.onCloseReview() }

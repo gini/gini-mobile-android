@@ -615,7 +615,8 @@ public class GiniCoreAPIIntegrationTest {
                         || amountToPay.equals("77.00:EUR")
                         || amountToPay.equals("588.60:EUR")
                         || amountToPay.equals("700.43:EUR")
-                        || amountToPay.equals("26.42:EUR"));
+                        || amountToPay.equals("26.42:EUR")
+                        || amountToPay.equals("50.43:EUR"));
         assertEquals("BIC should be found", "WELADED1MIN", extractions.get("bic").getValue());
         assertTrue("Payement recipient should be found", extractions.get("paymentRecipient").getValue().startsWith("Mindener Stadtwerke"));
         assertTrue("Payment reference should be found", extractions.get("paymentPurpose").getValue().contains(

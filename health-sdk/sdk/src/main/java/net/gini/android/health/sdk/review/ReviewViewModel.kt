@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
@@ -25,7 +26,9 @@ import net.gini.android.health.sdk.review.pager.DocumentPageAdapter
 import net.gini.android.health.sdk.util.adjustToLocalDecimalSeparation
 import net.gini.android.health.sdk.util.toBackendFormat
 
-internal class ReviewViewModel(internal val giniHealth: GiniHealth, private val userPreferences: UserPreferences) : ViewModel() {
+internal class ReviewViewModel(internal val giniHealth: GiniHealth) : ViewModel() {
+
+    internal var userPreferences: UserPreferences? = null
 
     private val _paymentDetails = MutableStateFlow(PaymentDetails("", "", "", ""))
     val paymentDetails: StateFlow<PaymentDetails> = _paymentDetails
@@ -84,7 +87,7 @@ internal class ReviewViewModel(internal val giniHealth: GiniHealth, private val 
     fun initSelectedBank() {
         if (_selectedBank.value == null) {
             _selectedBank.value = (_bankApps.value as? BankAppsState.Success)?.bankApps?.let { bankApps ->
-                userPreferences.get(PreferredBankApp())?.let { preferredBank ->
+                userPreferences?.get(PreferredBankApp())?.let { preferredBank ->
                     bankApps.firstOrNull { it.packageName == preferredBank.value } ?: bankApps.firstOrNull()
                 } ?: bankApps.firstOrNull()
             }
@@ -93,7 +96,7 @@ internal class ReviewViewModel(internal val giniHealth: GiniHealth, private val 
 
     fun setSelectedBank(selectedBank: BankApp) {
         _selectedBank.value = selectedBank
-        userPreferences.set(PreferredBankApp(selectedBank.packageName))
+        userPreferences?.set(PreferredBankApp(selectedBank.packageName))
     }
 
     fun getPages(document: Document): List<DocumentPageAdapter.Page> {
@@ -143,7 +146,6 @@ internal class ReviewViewModel(internal val giniHealth: GiniHealth, private val 
     fun onPayment() {
         viewModelScope.launch {
             val valid = validatePaymentDetails()
-            // TODO: emit error if not valid
             if (valid) {
                 giniHealth.setOpenBankState(GiniHealth.PaymentState.Loading)
                 // TODO: first get the payment request and handle error before proceeding
@@ -160,7 +162,11 @@ internal class ReviewViewModel(internal val giniHealth: GiniHealth, private val 
     }
 
     fun onBankOpened() {
-        giniHealth.setOpenBankState(GiniHealth.PaymentState.NoAction)
+        // Schedule on the main dispatcher to allow all collectors to receive the current state before
+        // the state is overridden
+        viewModelScope.launch(Dispatchers.Main) {
+            giniHealth.setOpenBankState(GiniHealth.PaymentState.NoAction)
+        }
     }
 
     private fun sendFeedback() {
@@ -206,9 +212,9 @@ private fun PaymentDetails.overwriteEmptyFields(value: PaymentDetails): PaymentD
     extractions = extractions ?: value.extractions,
 )
 
-internal fun getReviewViewModelFactory(giniHealth: GiniHealth, userPreferences: UserPreferences) = object : ViewModelProvider.Factory {
+internal fun getReviewViewModelFactory(giniHealth: GiniHealth) = object : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         @Suppress("UNCHECKED_CAST")
-        return ReviewViewModel(giniHealth, userPreferences) as T
+        return ReviewViewModel(giniHealth) as T
     }
 }

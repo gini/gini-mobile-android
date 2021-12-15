@@ -36,12 +36,24 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
         }
     }
+
     compileOptions {
         sourceCompatibility(JavaVersion.VERSION_1_8)
         targetCompatibility(JavaVersion.VERSION_1_8)
     }
+
     kotlinOptions {
         jvmTarget = "1.8"
+    }
+
+    testOptions {
+        execution = "ANDROIDX_TEST_ORCHESTRATOR"
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+        kotlinOptions {
+            jvmTarget = "1.8"
+        }
     }
 }
 
@@ -61,6 +73,9 @@ dependencies {
     implementation(libs.photoview)
     implementation(libs.insetter)
 
+    debugImplementation(libs.androidx.test.core.ktx)
+    debugImplementation(libs.androidx.fragment.testing)
+
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
     testImplementation(libs.kotlinx.coroutines.test)
@@ -68,6 +83,7 @@ dependencies {
     testImplementation(libs.androidx.test.junit)
     testImplementation(libs.robolectric)
     testImplementation(libs.truth)
+    testImplementation(libs.androidx.test.espresso.core)
 
     androidTestImplementation(libs.androidx.test.junit)
     androidTestImplementation(libs.androidx.test.espresso.core)
