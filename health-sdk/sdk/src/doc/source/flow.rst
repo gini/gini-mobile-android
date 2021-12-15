@@ -30,7 +30,7 @@ So it is preferred to use the ``Document`` instance if you already have it.
 The same applies to the optional ``PaymentDetails``, if they are present they will be displayed
 and network calls to get extractions will be skipped.
 
-The exposed flows of ``GiniBussines`` are used by the ``ReviewFragment`` to observe the state of the document and extractions, but they are public
+The exposed flows of ``GiniHealth`` are used by the ``ReviewFragment`` to observe the state of the document and extractions, but they are public
 so that they can be observed anywhere, the main purpose for this is to observe errors.
 
 Note: If you observe payment details flow, you can check PaymentDetails.isPayable as an extra condition before displaying the ``ReviewFragment``.
@@ -44,16 +44,19 @@ To instantiate it you need to create a ``FragmentFactory`` and set it to fragmen
 
 .. code-block:: kotlin
 
-    class ReviewFragmentFactory(private val giniHealth: GiniHealth) : FragmentFactory() {
+    class ReviewFragmentFactory(private val giniHealth: GiniHealth,
+                                private val configuration: ReviewConfiguration,
+                                private val listener: ReviewFragmentListener
+    ) : FragmentFactory() {
         override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
-            return ReviewFragment(giniHealth)
+            return ReviewFragment(giniHealth, configuration, listener)
         }
     }
 
     supportFragmentManager.fragmentFactory = ReviewFragmentFactory(giniHealth)
 
 
-ReviewFragment handles errors by default, displaying snackbars for errors, but it
+``ReviewFragment`` handles errors by default, displaying snackbars for errors, but it
 can be configured to ignore them, in which case all flows of ``GiniHealth`` should
 be observed for errors.
 
