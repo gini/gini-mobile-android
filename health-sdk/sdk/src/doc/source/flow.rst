@@ -60,5 +60,8 @@ To instantiate it you need to create a ``FragmentFactory`` and set it to fragmen
 can be configured to ignore them, in which case all flows of ``GiniHealth`` should
 be observed for errors.
 
+Event Tracking
+~~~~~~~~~~~~~~
 
-
+To get informed of ``ReviewFragment`` events (like the user clicking the "close" or "pay" button) you can implement
+the ``ReviewFragmentListener`` and pass it to the fragment constructor.
