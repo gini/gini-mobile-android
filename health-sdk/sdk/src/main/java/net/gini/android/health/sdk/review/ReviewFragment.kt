@@ -244,35 +244,38 @@ class ReviewFragment(
     }
 
     private fun GhsFragmentReviewBinding.handleValidationResult(messages: List<ValidationMessage>) {
-        recipientLayout.error = ""
-        ibanLayout.error = ""
-        amountLayout.error = ""
-        purposeLayout.error = ""
+        val (fieldsWithError, fieldsWithoutError) = PaymentField.values()
+            .map { field -> field to messages.firstOrNull { it.field == field } }
+            .partition { (_, message) -> message != null }
 
-        TransitionManager.beginDelayedTransition(root)
-        messages.forEach { message ->
-            with(getField(message.field)) {
-                if (error.isNullOrEmpty()) {
-                    isErrorEnabled = true
-                    error = getString(
-                        when (message) {
-                            is ValidationMessage.Empty -> R.string.ghs_error_input_empty
-                            ValidationMessage.InvalidIban -> R.string.ghs_error_input_invalid_iban
-                            ValidationMessage.InvalidCurrency -> R.string.ghs_error_input_invalid_Currency
-                            ValidationMessage.NoCurrency -> R.string.ghs_error_input_no_currency
-                            ValidationMessage.AmountFormat -> R.string.ghs_error_input_amount_format
-                        }
-                    )
+        fieldsWithError.forEach { (field, validationMessage) ->
+            validationMessage?.let { message ->
+                getTextInputLayout(field).apply {
+                    if (error.isNullOrEmpty()) {
+                        isErrorEnabled = true
+                        error = getString(
+                            when (message) {
+                                is ValidationMessage.Empty -> R.string.ghs_error_input_empty
+                                ValidationMessage.InvalidIban -> R.string.ghs_error_input_invalid_iban
+                                ValidationMessage.InvalidCurrency -> R.string.ghs_error_input_invalid_Currency
+                                ValidationMessage.NoCurrency -> R.string.ghs_error_input_no_currency
+                                ValidationMessage.AmountFormat -> R.string.ghs_error_input_amount_format
+                            }
+                        )
+                    }
                 }
             }
         }
-        if (recipientLayout.error.isNullOrEmpty()) recipientLayout.isErrorEnabled = false
-        if (ibanLayout.error.isNullOrEmpty()) ibanLayout.isErrorEnabled = false
-        if (amountLayout.error.isNullOrEmpty()) amountLayout.isErrorEnabled = false
-        if (purposeLayout.error.isNullOrEmpty()) purposeLayout.isErrorEnabled = false
+
+        fieldsWithoutError.forEach { (field, _) ->
+            getTextInputLayout(field).apply {
+                error = ""
+                isErrorEnabled = false
+            }
+        }
     }
 
-    private fun GhsFragmentReviewBinding.getField(field: PaymentField) = when (field) {
+    private fun GhsFragmentReviewBinding.getTextInputLayout(field: PaymentField) = when (field) {
         PaymentField.Recipient -> recipientLayout
         PaymentField.Iban -> ibanLayout
         PaymentField.Amount -> amountLayout

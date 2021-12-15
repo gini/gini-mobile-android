@@ -66,6 +66,17 @@ internal class ReviewViewModel(internal val giniHealth: GiniHealth) : ViewModel(
                 }
             }
         }
+        // Validate payment details on every change after the extractions have been loaded and
+        // show only "input field empty" errors
+        viewModelScope.launch {
+            combine(giniHealth.paymentFlow, paymentDetails) { extractedPaymentDetails, paymentDetails ->
+                if (extractedPaymentDetails is ResultWrapper.Success) {
+                    paymentDetails.validate().filterIsInstance<ValidationMessage.Empty>()
+                } else {
+                    null
+                }
+            }.collect { it?.let(_paymentValidation::tryEmit) }
+        }
         viewModelScope.launch {
             delay(SHOW_INFO_BAR_MS)
             _isInfoBarVisible.value = false
@@ -121,8 +132,8 @@ internal class ReviewViewModel(internal val giniHealth: GiniHealth) : ViewModel(
         _paymentDetails.value = paymentDetails.value.copy(purpose = purpose)
     }
 
-    private fun validatePaymentDetails(): Boolean {
-        val items = paymentDetails.value.validate()
+    private fun validatePaymentDetails(paymentDetails: PaymentDetails): Boolean {
+        val items = paymentDetails.validate()
         _paymentValidation.tryEmit(items)
         return items.isEmpty()
     }
@@ -145,7 +156,7 @@ internal class ReviewViewModel(internal val giniHealth: GiniHealth) : ViewModel(
 
     fun onPayment() {
         viewModelScope.launch {
-            val valid = validatePaymentDetails()
+            val valid = validatePaymentDetails(paymentDetails.value)
             if (valid) {
                 giniHealth.setOpenBankState(GiniHealth.PaymentState.Loading)
                 // TODO: first get the payment request and handle error before proceeding
