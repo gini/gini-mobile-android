@@ -15,3 +15,19 @@ of overridden styles in the
 Material components are used in the ReviewFragment and those components will pick attributes of the hosting activity
 if it uses a material theme.
 
+Dark Mode
+---------
+
+To enable and customise dark mode you will need to do the following:
+
+#. Set the parent of the ``Root.GiniHealth`` style to a DayNight theme as described
+   `here <https://developer.android.com/guide/topics/ui/look-and-feel/darktheme#support-dark-theme>`_:
+
+   .. code-block:: xml
+
+       <style name="Root.GiniHealth" parent="Theme.MaterialComponents.DayNight"/>
+
+#. Override the Gini Health SDK’s
+   `styles <https://github.com/gini/gini-mobile-android/blob/main/health-sdk/sdk/src/main/res/values/styles.xml>`_,
+   `colors <https://github.com/gini/gini-mobile-android/blob/main/health-sdk/sdk/src/main/res/values/colors.xml>`_
+   and icons for dark mode in night-qualified resource directories (i.e., ``values-night``).

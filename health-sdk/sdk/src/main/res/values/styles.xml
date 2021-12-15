@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Root styles shouldn't be overridden, instead override their descendant styles -->
+    <!-- Override this to change the theme for the Health SDK -->
     <style name="Root.GiniHealth" parent="Theme.MaterialComponents.Light"/>
 
+    <!-- Root styles shouldn't be overridden, instead override their descendant styles -->
     <style name="Root.GiniHealth.PaymentInputLayoutStyle" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
         <item name="boxStrokeColor">@color/ghs_input_box_stroke_color</item>
         <item name="boxBackgroundColor">@color/ghs_input_box_background_color</item>
