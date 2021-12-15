@@ -44,7 +44,7 @@ class ReviewViewModelTest {
     fun `shows info bar on launch`() = testCoroutineRule.scope.runBlockingTest {
         // Given
         val viewModel = ReviewViewModel(giniHealth!!).apply {
-            userPreferences = userPreferences!!
+            userPreferences = this@ReviewViewModelTest.userPreferences!!
         }
 
         // When
@@ -58,7 +58,7 @@ class ReviewViewModelTest {
     fun `hides info bar after a delay`() = testCoroutineRule.scope.runBlockingTest {
         // Given
         val viewModel = ReviewViewModel(giniHealth!!).apply {
-            userPreferences = userPreferences!!
+            userPreferences = this@ReviewViewModelTest.userPreferences!!
         }
 
         // When
