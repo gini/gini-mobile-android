@@ -255,7 +255,12 @@ class ReviewFragment(
                 getTextInputLayout(field).apply {
                     if (error.isNullOrEmpty()) {
                         setErrorMessage(when (message) {
-                            is ValidationMessage.Empty -> R.string.ghs_error_input_empty
+                            is ValidationMessage.Empty -> when(field) {
+                                PaymentField.Recipient -> R.string.ghs_error_input_recipient_empty
+                                PaymentField.Iban -> R.string.ghs_error_input_iban_empty
+                                PaymentField.Amount -> R.string.ghs_error_input_amount_empty
+                                PaymentField.Purpose -> R.string.ghs_error_input_purpose_empty
+                            }
                             ValidationMessage.InvalidIban -> R.string.ghs_error_input_invalid_iban
                             ValidationMessage.InvalidCurrency -> R.string.ghs_error_input_invalid_Currency
                             ValidationMessage.NoCurrency -> R.string.ghs_error_input_no_currency
