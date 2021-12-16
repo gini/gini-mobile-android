@@ -1,14 +1,16 @@
 package net.gini.android.health.sdk.util
 
-import android.R
 import android.content.res.ColorStateList
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.Button
 import androidx.annotation.ColorInt
 import androidx.annotation.IntRange
+import androidx.annotation.StringRes
 import androidx.core.graphics.ColorUtils
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
+import net.gini.android.health.sdk.R
 import java.math.BigDecimal
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
@@ -92,7 +94,7 @@ internal fun currencyFormatterWithoutSymbol(): NumberFormat =
 internal fun Button.setBackgroundTint(@ColorInt color: Int, @IntRange(from = 0x0, to = 0xFF) nonEnabledAlpha: Int = 100) {
     backgroundTintList = ColorStateList(
         arrayOf(
-            intArrayOf(R.attr.state_enabled),
+            intArrayOf(android.R.attr.state_enabled),
             intArrayOf()
         ),
         intArrayOf(
@@ -105,7 +107,7 @@ internal fun Button.setBackgroundTint(@ColorInt color: Int, @IntRange(from = 0x0
 internal fun Button.setTextColorTint(@ColorInt color: Int, @IntRange(from = 0x0, to = 0xFF) nonEnabledAlpha: Int = 200) {
     setTextColor(ColorStateList(
         arrayOf(
-            intArrayOf(R.attr.state_enabled),
+            intArrayOf(android.R.attr.state_enabled),
             intArrayOf()
         ),
         intArrayOf(
@@ -114,3 +116,30 @@ internal fun Button.setTextColorTint(@ColorInt color: Int, @IntRange(from = 0x0,
         )
     ))
 }
+
+internal fun TextInputLayout.setErrorMessage(@StringRes errorStringId: Int) {
+    isErrorEnabled = true
+    setTag(R.id.text_input_layout_tag_is_error_enabled, true)
+    error = resources.getString(errorStringId).nonEmpty()
+    setTag(R.id.text_input_layout_tag_error_string_id, errorStringId)
+}
+
+internal fun TextInputLayout.clearErrorMessage() {
+    isErrorEnabled = false
+    setTag(R.id.text_input_layout_tag_is_error_enabled, false)
+    error = ""
+    setTag(R.id.text_input_layout_tag_error_string_id, null)
+}
+
+internal fun TextInputLayout.hideErrorMessage() {
+    isErrorEnabled = false
+    error = ""
+}
+
+internal fun TextInputLayout.showErrorMessage() {
+    isErrorEnabled = getTag(R.id.text_input_layout_tag_is_error_enabled) as? Boolean ?: false
+    error =
+        (getTag(R.id.text_input_layout_tag_error_string_id) as? Int)?.let { resources.getString(it).nonEmpty() } ?: ""
+}
+
+private fun String.nonEmpty() = if (isEmpty()) " " else this

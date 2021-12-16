@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.*
 import androidx.core.widget.addTextChangedListener
@@ -21,11 +20,10 @@ import androidx.transition.*
 import com.google.android.material.math.MathUtils.lerp
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.android.material.textfield.TextInputLayout
 import dev.chrisbanes.insetter.applyInsetter
 import dev.chrisbanes.insetter.windowInsetTypesOf
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import net.gini.android.core.api.models.Document
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.R
@@ -237,10 +235,14 @@ class ReviewFragment(
         amount.addTextChangedListener(onTextChanged = { text, _, _, _ -> viewModel.setAmount(text.toString()) })
         amount.addTextChangedListener(amountWatcher)
         purpose.addTextChangedListener(onTextChanged = { text, _, _, _ -> viewModel.setPurpose(text.toString()) })
-        recipient.setOnFocusChangeListener { _, hasFocus -> if (hasFocus) recipientLayout.isErrorEnabled = false }
-        iban.setOnFocusChangeListener { _, hasFocus -> if (hasFocus) ibanLayout.isErrorEnabled = false }
-        amount.setOnFocusChangeListener { _, hasFocus -> if (hasFocus) amountLayout.isErrorEnabled = false }
-        purpose.setOnFocusChangeListener { _, hasFocus -> if (hasFocus) purposeLayout.isErrorEnabled = false }
+        recipient.setOnFocusChangeListener { _, hasFocus -> handleInputFocusChange(hasFocus, recipientLayout) }
+        iban.setOnFocusChangeListener { _, hasFocus -> handleInputFocusChange(hasFocus, ibanLayout) }
+        amount.setOnFocusChangeListener { _, hasFocus -> handleInputFocusChange(hasFocus, amountLayout) }
+        purpose.setOnFocusChangeListener { _, hasFocus -> handleInputFocusChange(hasFocus, purposeLayout) }
+    }
+
+    private fun handleInputFocusChange(hasFocus: Boolean, textInputLayout: TextInputLayout) {
+        if (hasFocus) textInputLayout.hideErrorMessage() else textInputLayout.showErrorMessage()
     }
 
     private fun GhsFragmentReviewBinding.handleValidationResult(messages: List<ValidationMessage>) {
@@ -252,16 +254,13 @@ class ReviewFragment(
             validationMessage?.let { message ->
                 getTextInputLayout(field).apply {
                     if (error.isNullOrEmpty()) {
-                        isErrorEnabled = true
-                        error = getString(
-                            when (message) {
-                                is ValidationMessage.Empty -> R.string.ghs_error_input_empty
-                                ValidationMessage.InvalidIban -> R.string.ghs_error_input_invalid_iban
-                                ValidationMessage.InvalidCurrency -> R.string.ghs_error_input_invalid_Currency
-                                ValidationMessage.NoCurrency -> R.string.ghs_error_input_no_currency
-                                ValidationMessage.AmountFormat -> R.string.ghs_error_input_amount_format
-                            }
-                        )
+                        setErrorMessage(when (message) {
+                            is ValidationMessage.Empty -> R.string.ghs_error_input_empty
+                            ValidationMessage.InvalidIban -> R.string.ghs_error_input_invalid_iban
+                            ValidationMessage.InvalidCurrency -> R.string.ghs_error_input_invalid_Currency
+                            ValidationMessage.NoCurrency -> R.string.ghs_error_input_no_currency
+                            ValidationMessage.AmountFormat -> R.string.ghs_error_input_amount_format
+                        })
                     }
                 }
             }
@@ -269,8 +268,7 @@ class ReviewFragment(
 
         fieldsWithoutError.forEach { (field, _) ->
             getTextInputLayout(field).apply {
-                error = ""
-                isErrorEnabled = false
+                clearErrorMessage()
             }
         }
     }
