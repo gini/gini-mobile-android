@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="ghs_amount_hint">Amount</string>
-    <string name="ghs_purpose_hint">Purpose</string>
-    <string name="ghs_recipient_hint">Recipient</string>
+    <string name="ghs_amount_hint">Betrag</string>
+    <string name="ghs_purpose_hint">Verwendungszweck</string>
+    <string name="ghs_recipient_hint">Empfänger</string>
     <string name="ghs_iban_hint">IBAN</string>
-    <string name="ghs_pay_button">Pay</string>
-    <string name="ghs_bank_placeholder">Loading...</string>
-    <string name="ghs_error_failed_to_load_image">Failed to load image</string>
-    <string name="ghs_error_input_empty">Required</string>
-    <string name="ghs_error_input_invalid_iban">Invalid IBAN</string>
-    <string name="ghs_error_input_invalid_Currency">Invalid currency</string>
-    <string name="ghs_error_input_no_currency">Missing currency</string>
-    <string name="ghs_error_input_amount_format">Invalid format</string>
-    <string name="ghs_error_document">Failed to load document</string>
-    <string name="ghs_error_payment_details">Failed to get payment details</string>
-    <string name="ghs_error_bank_not_found">Failed to start Bank app</string>
-    <string name="ghs_error_open_bank">Failed to make payment request</string>
-    <string name="ghs_snackbar_retry">Retry</string>
-    <string name="ghs_payment_details_info_bar_text">Please check the prefilled values</string>
+    <string name="ghs_pay_button">Weiter</string>
+    <string name="ghs_bank_placeholder">Wird geladen...</string>
+    <string name="ghs_error_failed_to_load_image">Bild konnte nicht geladen werden</string>
+    <string name="ghs_error_input_invalid_iban">Bitte gib eine gültige IBAN an</string>
+    <string name="ghs_error_input_amount_format">Ungültiges Format für Bezahlbetrag</string>
+    <string name="ghs_error_input_recipient_empty">Bitte gib einen Empfänger an</string>
+    <string name="ghs_error_input_iban_empty">Bitte gib eine IBAN an</string>
+    <string name="ghs_error_input_amount_empty"/>
+    <string name="ghs_error_input_purpose_empty">Bitte gib einen Verwendungszweck an</string>
+    <string name="ghs_error_document">Dokument konnte nicht geladen werden</string>
+    <string name="ghs_error_payment_details">Bezahlinformationen konnten nicht geladen werden</string>
+    <string name="ghs_error_bank_not_found">Banking App konnte nicht gestartet werden</string>
+    <string name="ghs_error_open_bank">Bezahlvorgang konnte nicht durchgeführt werden”</string>
+    <string name="ghs_snackbar_retry">Wiederholen</string>
+    <string name="ghs_payment_details_info_bar_text">Bitte überprüfe die vorausgefüllten Felder</string>
 </resources>
