@@ -1,9 +1,9 @@
 package net.gini.android.health.sdk.review
 
+import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import io.mockk.every
 import io.mockk.mockk
-import junit.framework.Assert.fail
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.test.runBlockingTest
@@ -75,13 +75,16 @@ class ReviewViewModelTest {
     fun `validates payment details when the extractions have loaded`() = testCoroutineRule.scope.runBlockingTest {
         // When
         every { giniHealth!!.paymentFlow } returns MutableStateFlow(
-            ResultWrapper.Success(PaymentDetails(
-                recipient = "",
-                iban = "iban",
-                amount = "amount",
-                purpose = "purpose",
-                extractions = null
-            )))
+            ResultWrapper.Success(
+                PaymentDetails(
+                    recipient = "",
+                    iban = "iban",
+                    amount = "amount",
+                    purpose = "purpose",
+                    extractions = null
+                )
+            )
+        )
 
         val viewModel = ReviewViewModel(giniHealth!!)
 
@@ -91,27 +94,28 @@ class ReviewViewModelTest {
         val validations = validationsAsync.await()
 
         assertThat(validations).hasSize(1)
-        assertThat(validations[0]).contains(
-            ValidationMessage.Empty(PaymentField.Recipient)
-        )
+        assertThat(validations[0]).isNotEmpty()
     }
 
-    // validates payment details on every change after the extractions have been loaded and emits only "input field empty" errors
     @Test
-    fun `validates payment details on every change after the extractions have been loaded`() = testCoroutineRule.scope.runBlockingTest {
+    fun `does not validate payment details on every change`() = testCoroutineRule.scope.runBlockingTest {
         // Given
         every { giniHealth!!.paymentFlow } returns MutableStateFlow(
-            ResultWrapper.Success(PaymentDetails(
-            recipient = "recipient",
-            iban = "iban",
-            amount = "amount",
-            purpose = "purpose",
-            extractions = null
-        )))
+            ResultWrapper.Success(
+                PaymentDetails(
+                    recipient = "recipient",
+                    iban = "iban",
+                    amount = "amount",
+                    purpose = "purpose",
+                    extractions = null
+                )
+            )
+        )
 
         val viewModel = ReviewViewModel(giniHealth!!)
 
-        val validationsAsync = async { viewModel.paymentValidation.take(7).toList() }
+        val validations = mutableListOf<List<ValidationMessage>>()
+        val collectJob = launch { viewModel.paymentValidation.collect { validations.add(it) } }
 
         // When
         viewModel.setRecipient("")
@@ -121,87 +125,206 @@ class ReviewViewModelTest {
         viewModel.setAmount("1.00")
         viewModel.setIban("DE1234")
 
-        // Then
-        val validations = validationsAsync.await()
+        collectJob.cancel()
 
-        assertThat(validations).hasSize(7)
+        // Then
+        assertThat(validations).hasSize(1)
         assertThat(validations[0]).isEmpty()
-        assertThat(validations[1]).contains(
-            ValidationMessage.Empty(PaymentField.Recipient)
-        )
-        assertThat(validations[2]).containsExactly(
-            ValidationMessage.Empty(PaymentField.Recipient),
-            ValidationMessage.Empty(PaymentField.Iban)
-        )
-        assertThat(validations[3]).containsExactly(
-            ValidationMessage.Empty(PaymentField.Recipient),
-            ValidationMessage.Empty(PaymentField.Iban),
-            ValidationMessage.Empty(PaymentField.Amount)
-        )
-        assertThat(validations[4]).containsExactly(
-            ValidationMessage.Empty(PaymentField.Iban),
-            ValidationMessage.Empty(PaymentField.Amount)
-        )
-        assertThat(validations[5]).containsExactly(
-            ValidationMessage.Empty(PaymentField.Iban)
-        )
-        assertThat(validations[6]).isEmpty()
     }
 
     @Test
-    fun `does not validate payment details on every change if the extractions have not been loaded`() = testCoroutineRule.scope.runBlockingTest {
-        // Given
-        every { giniHealth!!.paymentFlow } returns MutableStateFlow(ResultWrapper.Loading())
+    fun `emits only 'input field empty' errors when validating payment details after the extractions have loaded`() =
+        testCoroutineRule.scope.runBlockingTest {
+            // When
+            every { giniHealth!!.paymentFlow } returns MutableStateFlow(
+                ResultWrapper.Success(
+                    PaymentDetails(
+                        recipient = "",
+                        iban = "iban",
+                        amount = "amount",
+                        purpose = "purpose",
+                        extractions = null
+                    )
+                )
+            )
 
-        val viewModel = ReviewViewModel(giniHealth!!)
+            val viewModel = ReviewViewModel(giniHealth!!)
 
-        val validationsAsync = async { viewModel.paymentValidation.take(1).toList() }
+            val validationsAsync = async { viewModel.paymentValidation.take(1).toList() }
 
-        // When
-        viewModel.setRecipient("")
-        viewModel.setIban("")
-        viewModel.setAmount("")
-        viewModel.setRecipient("foo")
+            // Then
+            val validations = validationsAsync.await()
 
-        // Then
-        try {
-            withTimeout(1) { validationsAsync.await() }
-            fail("there was an unexpected emission in the paymentValidation flow")
-        } catch (e: Exception) {
-            validationsAsync.cancel()
-            assertThat(e).isInstanceOf(TimeoutCancellationException::class.java)
+            assertThat(validations).hasSize(1)
+            assertThat(validations[0]).contains(
+                ValidationMessage.Empty(PaymentField.Recipient)
+            )
         }
-    }
 
     @Test
-    fun `emits only 'input field empty' errors when validating payment details on every change`() = testCoroutineRule.scope.runBlockingTest {
-        // Given
-        every { giniHealth!!.paymentFlow } returns MutableStateFlow(
-            ResultWrapper.Success(PaymentDetails(
-                recipient = "recipient",
-                iban = "iban",
-                amount = "amount",
-                purpose = "purpose",
-                extractions = null
-            )))
+    fun `clears 'input field empty' error if the recipient field is not empty after input`() =
+        testCoroutineRule.scope.runBlockingTest {
+            // Given
+            every { giniHealth!!.paymentFlow } returns MutableStateFlow(
+                ResultWrapper.Success(
+                    PaymentDetails(
+                        recipient = "",
+                        iban = "iban",
+                        amount = "1",
+                        purpose = "purpose",
+                        extractions = null
+                    )
+                )
+            )
 
-        val viewModel = ReviewViewModel(giniHealth!!)
+            val viewModel = ReviewViewModel(giniHealth!!)
 
-        val validationsAsync = async { viewModel.paymentValidation.take(3).toList() }
+            viewModel.paymentValidation.test {
+                // When
+                viewModel.setRecipient("recipient")
 
-        // When
-        viewModel.setIban("")
-        viewModel.setIban("DE1234")
+                // Then
+                assertThat(awaitItem()).containsExactly(
+                    ValidationMessage.Empty(PaymentField.Recipient),
+                )
+                assertThat(awaitItem()).isEmpty()
 
-        // Then
-        val validations = validationsAsync.await()
+                cancelAndConsumeRemainingEvents()
+            }
+        }
 
-        assertThat(validations).hasSize(3)
-        assertThat(validations[0]).isEmpty()
-        assertThat(validations[1]).contains(
-            ValidationMessage.Empty(PaymentField.Iban)
-        )
-        assertThat(validations[2]).isEmpty()
-    }
+    @Test
+    fun `clears 'input field empty' error if the iban field is not empty after input`() =
+        testCoroutineRule.scope.runBlockingTest {
+            // Given
+            every { giniHealth!!.paymentFlow } returns MutableStateFlow(
+                ResultWrapper.Success(
+                    PaymentDetails(
+                        recipient = "recipient",
+                        iban = "",
+                        amount = "1",
+                        purpose = "purpose",
+                        extractions = null
+                    )
+                )
+            )
+
+            val viewModel = ReviewViewModel(giniHealth!!)
+
+            viewModel.paymentValidation.test {
+                // When
+                viewModel.setIban("iban")
+
+                // Then
+                assertThat(awaitItem()).containsExactly(
+                    ValidationMessage.Empty(PaymentField.Iban),
+                )
+                assertThat(awaitItem()).isEmpty()
+
+                cancelAndConsumeRemainingEvents()
+            }
+        }
+
+    @Test
+    fun `clears 'input field empty' error if the amount field is not empty after input`() =
+        testCoroutineRule.scope.runBlockingTest {
+            // Given
+            every { giniHealth!!.paymentFlow } returns MutableStateFlow(
+                ResultWrapper.Success(
+                    PaymentDetails(
+                        recipient = "recipient",
+                        iban = "iban",
+                        amount = "",
+                        purpose = "purpose",
+                        extractions = null
+                    )
+                )
+            )
+
+            val viewModel = ReviewViewModel(giniHealth!!)
+
+            viewModel.paymentValidation.test {
+                // When
+                viewModel.setAmount("1")
+
+                // Then
+                assertThat(awaitItem()).containsExactly(
+                    ValidationMessage.Empty(PaymentField.Amount),
+                )
+                assertThat(awaitItem()).isEmpty()
+
+                cancelAndConsumeRemainingEvents()
+            }
+        }
+
+    @Test
+    fun `clears 'input field empty' error if the purpose field is not empty after input`() =
+        testCoroutineRule.scope.runBlockingTest {
+            // Given
+            every { giniHealth!!.paymentFlow } returns MutableStateFlow(
+                ResultWrapper.Success(
+                    PaymentDetails(
+                        recipient = "recipient",
+                        iban = "iban",
+                        amount = "1",
+                        purpose = "",
+                        extractions = null
+                    )
+                )
+            )
+
+            val viewModel = ReviewViewModel(giniHealth!!)
+
+            viewModel.paymentValidation.test {
+                // When
+                viewModel.setPurpose("purpose")
+
+                // Then
+                assertThat(awaitItem()).containsExactly(
+                    ValidationMessage.Empty(PaymentField.Purpose),
+                )
+                assertThat(awaitItem()).isEmpty()
+
+                cancelAndConsumeRemainingEvents()
+            }
+        }
+
+    @Test
+    fun `clears only 'input field empty' errors if the field is not empty after input`() =
+        testCoroutineRule.scope.runBlockingTest {
+            // Given
+            every { giniHealth!!.paymentFlow } returns MutableStateFlow(
+                ResultWrapper.Success(
+                    PaymentDetails(
+                        recipient = "recipient",
+                        iban = "",
+                        amount = "1",
+                        purpose = "purpose",
+                        extractions = null
+                    )
+                )
+            )
+
+            val viewModel = ReviewViewModel(giniHealth!!)
+
+            // Validate all fields to also get an invalid iban validation message
+            viewModel.onPayment()
+
+            viewModel.paymentValidation.test {
+                // When
+                viewModel.setIban("iban")
+
+                // Then
+                assertThat(awaitItem()).containsExactly(
+                    ValidationMessage.Empty(PaymentField.Iban),
+                    ValidationMessage.InvalidIban,
+                )
+                assertThat(awaitItem()).containsExactly(
+                    ValidationMessage.InvalidIban,
+                )
+
+                cancelAndConsumeRemainingEvents()
+            }
+        }
 
 }

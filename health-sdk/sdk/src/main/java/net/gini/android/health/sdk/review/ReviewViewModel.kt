@@ -4,12 +4,9 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.models.PaymentRequestInput
 import net.gini.android.health.sdk.GiniHealth
@@ -58,24 +55,18 @@ internal class ReviewViewModel(internal val giniHealth: GiniHealth) : ViewModel(
         viewModelScope.launch {
             giniHealth.paymentFlow.collect { extractedPaymentDetails ->
                 if (extractedPaymentDetails is ResultWrapper.Success) {
-                    _paymentDetails.value = paymentDetails.value.overwriteEmptyFields(
+                    val paymentDetails = paymentDetails.value.overwriteEmptyFields(
                         extractedPaymentDetails.value.copy(
                             amount = extractedPaymentDetails.value.amount.adjustToLocalDecimalSeparation()
                         )
                     )
+                    _paymentDetails.value = paymentDetails
+
+                    // Emit "input field empty" errors for empty extracted payment details
+                    val validationMessages = paymentDetails.validate().filterIsInstance<ValidationMessage.Empty>()
+                    _paymentValidation.tryEmit(validationMessages)
                 }
             }
-        }
-        // Validate payment details on every change after the extractions have been loaded and
-        // show only "input field empty" errors
-        viewModelScope.launch {
-            combine(giniHealth.paymentFlow, paymentDetails) { extractedPaymentDetails, paymentDetails ->
-                if (extractedPaymentDetails is ResultWrapper.Success) {
-                    paymentDetails.validate().filterIsInstance<ValidationMessage.Empty>()
-                } else {
-                    null
-                }
-            }.collect { it?.let(_paymentValidation::tryEmit) }
         }
         viewModelScope.launch {
             delay(SHOW_INFO_BAR_MS)
@@ -118,18 +109,38 @@ internal class ReviewViewModel(internal val giniHealth: GiniHealth) : ViewModel(
 
     fun setRecipient(recipient: String) {
         _paymentDetails.value = paymentDetails.value.copy(recipient = recipient)
+        if (recipient.isNotEmpty()) {
+            viewModelScope.launch {
+                _paymentValidation.removeEmptyValidationMessageForField(PaymentField.Recipient)
+            }
+        }
     }
 
     fun setIban(iban: String) {
         _paymentDetails.value = paymentDetails.value.copy(iban = iban)
+        if (iban.isNotEmpty()) {
+            viewModelScope.launch {
+                _paymentValidation.removeEmptyValidationMessageForField(PaymentField.Iban)
+            }
+        }
     }
 
     fun setAmount(amount: String) {
         _paymentDetails.value = paymentDetails.value.copy(amount = amount)
+        if (amount.isNotEmpty()) {
+            viewModelScope.launch {
+                _paymentValidation.removeEmptyValidationMessageForField(PaymentField.Amount)
+            }
+        }
     }
 
     fun setPurpose(purpose: String) {
         _paymentDetails.value = paymentDetails.value.copy(purpose = purpose)
+        if (purpose.isNotEmpty()) {
+            viewModelScope.launch {
+                _paymentValidation.removeEmptyValidationMessageForField(PaymentField.Purpose)
+            }
+        }
     }
 
     private fun validatePaymentDetails(paymentDetails: PaymentDetails): Boolean {
@@ -227,5 +238,15 @@ internal fun getReviewViewModelFactory(giniHealth: GiniHealth) = object : ViewMo
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         @Suppress("UNCHECKED_CAST")
         return ReviewViewModel(giniHealth) as T
+    }
+}
+
+private suspend fun MutableSharedFlow<List<ValidationMessage>>.removeEmptyValidationMessageForField(field: PaymentField) {
+    collect { validationMessages ->
+        val filteredMessages = validationMessages.filterNot { it.field == field && it is ValidationMessage.Empty }
+        if (filteredMessages != validationMessages) {
+            tryEmit(filteredMessages)
+        }
+        currentCoroutineContext().cancel()
     }
 }
