@@ -262,8 +262,6 @@ class ReviewFragment(
                                 PaymentField.Purpose -> R.string.ghs_error_input_purpose_empty
                             }
                             ValidationMessage.InvalidIban -> R.string.ghs_error_input_invalid_iban
-                            ValidationMessage.InvalidCurrency -> R.string.ghs_error_input_invalid_Currency
-                            ValidationMessage.NoCurrency -> R.string.ghs_error_input_no_currency
                             ValidationMessage.AmountFormat -> R.string.ghs_error_input_amount_format
                         })
                     }

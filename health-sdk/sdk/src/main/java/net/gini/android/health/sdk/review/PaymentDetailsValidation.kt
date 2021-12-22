@@ -9,8 +9,6 @@ internal enum class PaymentField { Recipient, Iban, Amount, Purpose }
 internal sealed class ValidationMessage(val field: PaymentField) {
     data class Empty(val paymentField: PaymentField): ValidationMessage(paymentField)
     object InvalidIban: ValidationMessage(PaymentField.Iban)
-    object InvalidCurrency: ValidationMessage(PaymentField.Amount)
-    object NoCurrency: ValidationMessage(PaymentField.Amount)
     object AmountFormat: ValidationMessage(PaymentField.Amount)
 }
 

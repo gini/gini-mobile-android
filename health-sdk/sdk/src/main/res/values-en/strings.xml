@@ -8,8 +8,6 @@
     <string name="ghs_bank_placeholder">Loading...</string>
     <string name="ghs_error_failed_to_load_image">Failed to load image</string>
     <string name="ghs_error_input_invalid_iban">Invalid IBAN</string>
-    <string name="ghs_error_input_invalid_Currency">Invalid currency</string>
-    <string name="ghs_error_input_no_currency">Missing currency</string>
     <string name="ghs_error_input_amount_format">Invalid format</string>
     <string name="ghs_error_input_recipient_empty">Please enter the recipient</string>
     <string name="ghs_error_input_iban_empty">Please enter the IBAN</string>
