@@ -1,6 +1,7 @@
 package net.gini.android.health.sdk.review.pager
 
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +14,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.github.chrisbanes.photoview.PhotoView
 import dev.chrisbanes.insetter.applyInsetter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -71,10 +73,13 @@ internal class DocumentPageAdapter(private val giniHealth: GiniHealth) :
         giniHealth: GiniHealth,
         private val binding: GhsItemPageHorizontalBinding,
         override val loadingView: ProgressBar = binding.loading,
-        override val imageView: ImageView = binding.image,
+        override val imageView: PhotoView = binding.image,
         override val errorView: FrameLayout = binding.error.root,
         override val retry: Button = binding.error.pageErrorRetry,
     ) : PageViewHolder(giniHealth, binding.root) {
+
+        private val photoViewMatrix = Matrix()
+
         init {
             imageView.applyInsetter {
                 type(statusBars = true) {
@@ -84,13 +89,18 @@ internal class DocumentPageAdapter(private val giniHealth: GiniHealth) :
                     padding(bottom = true)
                 }
             }
-            binding.image.setOnScaleChangeListener { _, _, _ ->
+
+            imageView.setOnScaleChangeListener { _, _, _ ->
                 binding.root.parent.requestDisallowInterceptTouchEvent(true)
             }
             ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
-                with(binding.image) {
+                with(imageView) {
                     post {
-                        scale = scale.coerceIn(minimumScale, maximumScale)
+                        // Calling setSuppMatrix() translates the image to the edge of the visible area
+                        // if the new visible area size results in a gap between the edges of the image and
+                        // the visible area. Scale is always preserved.
+                        getSuppMatrix(photoViewMatrix)
+                        setSuppMatrix(photoViewMatrix)
                     }
                 }
                 insets

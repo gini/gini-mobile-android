@@ -131,7 +131,8 @@
     <style name="Root.GiniHealth.BankSelection.TitleStyle" parent="Widget.MaterialComponents.TextView">
         <item name="android:textAppearance">@style/GiniHealth.BankSelection.TextAppearance.Title</item>
         <item name="android:gravity">center</item>
-        <item name="android:paddingVertical">16dp</item>
+        <item name="android:paddingTop">16dp</item>
+        <item name="android:paddingBottom">16dp</item>
         <item name="android:background">@drawable/ghs_payment_details_background</item>
     </style>
     <style name="GiniHealth.BankSelection.TitleStyle" parent="Root.GiniHealth.BankSelection.TitleStyle"/>
@@ -167,8 +168,10 @@
         <item name="android:textAppearance">@style/GiniHealth.BankSelection.TextAppearance.Name</item>
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginHorizontal">16dp</item>
-        <item name="android:layout_marginVertical">16dp</item>
+        <item name="android:layout_marginStart">16dp</item>
+        <item name="android:layout_marginEnd">16dp</item>
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:layout_marginBottom">16dp</item>
     </style>
     <style name="GiniHealth.BankSelection.ItemTextStyle" parent="Root.GiniHealth.BankSelection.ItemTextStyle"/>
 
@@ -215,7 +218,8 @@
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:gravity">center</item>
-        <item name="android:paddingVertical">16dp</item>
+        <item name="android:paddingTop">16dp</item>
+        <item name="android:paddingBottom">16dp</item>
         <item name="android:textAppearance">@style/GiniHealth.PaymentDetails.InfoBar.TextAppearance</item>
     </style>
     <style name="GiniHealth.PaymentDetails.InfoBar.TextView" parent="Root.GiniHealth.PaymentDetails.InfoBar.TextView" />
