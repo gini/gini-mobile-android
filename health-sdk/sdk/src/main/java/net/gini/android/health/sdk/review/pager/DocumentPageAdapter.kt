@@ -24,6 +24,7 @@ import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.databinding.GhsItemPageHorizontalBinding
 import net.gini.android.health.sdk.review.model.ResultWrapper
 import net.gini.android.health.sdk.review.model.wrapToResult
+import net.gini.android.health.sdk.util.hideKeyboard
 
 internal class DocumentPageAdapter(private val giniHealth: GiniHealth) :
     ListAdapter<DocumentPageAdapter.Page, DocumentPageAdapter.PageViewHolder>(DiffUtilCallback) {
@@ -88,6 +89,10 @@ internal class DocumentPageAdapter(private val giniHealth: GiniHealth) :
                 type(ime = true) {
                     padding(bottom = true)
                 }
+            }
+
+            imageView.setOnViewTapListener { view, _, _ ->
+                view.hideKeyboard()
             }
 
             imageView.setOnScaleChangeListener { _, _, _ ->
