@@ -63,5 +63,5 @@ be observed for errors.
 Event Tracking
 ~~~~~~~~~~~~~~
 
-To get informed of ``ReviewFragment`` events (like the user clicking the "close" or "pay" button) you can implement
+To get informed of ``ReviewFragment`` events (like the user clicking the "close" or "next" button) you can implement
 the ``ReviewFragmentListener`` and pass it to the fragment constructor.

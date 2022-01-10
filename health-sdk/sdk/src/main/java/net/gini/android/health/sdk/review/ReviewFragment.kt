@@ -63,12 +63,12 @@ interface ReviewFragmentListener {
     fun onCloseReview()
 
     /**
-     * Called when the pay button was clicked.
+     * Called when the next (pay) button was clicked.
      *
      * Collect the [GiniHealth.openBankState] flow to get details about the payment request creation and about the
      * selected bank app.
      */
-    fun onPayClicked()
+    fun onNextClicked()
 }
 
 /**
@@ -325,7 +325,7 @@ class ReviewFragment(
 
     private fun GhsFragmentReviewBinding.setActionListeners() {
         payment.setOnClickListener {
-            listener?.onPayClicked()
+            listener?.onNextClicked()
             viewModel.onPayment()
         }
         close.setOnClickListener { listener?.onCloseReview() }
