@@ -94,6 +94,7 @@ class ReviewFragment(
     private val viewModel: ReviewViewModel by activityViewModels { viewModelFactory }
     private var binding: GhsFragmentReviewBinding by autoCleared()
     private var documentPageAdapter: DocumentPageAdapter by autoCleared()
+    private var isKeyboardShown = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         super.onCreateView(inflater, container, savedInstanceState)
@@ -329,7 +330,13 @@ class ReviewFragment(
             listener?.onPayClicked()
             viewModel.onPayment()
         }
-        close.setOnClickListener { listener?.onCloseReview() }
+        close.setOnClickListener { view ->
+            if (isKeyboardShown) {
+                view.hideKeyboard()
+            } else {
+                listener?.onCloseReview()
+            }
+        }
         bank.setOnClickListener {
             if (childFragmentManager.findFragmentByTag(BankSelectionFragment.TAG) == null) {
                 BankSelectionFragment().show(childFragmentManager, BankSelectionFragment.TAG)
@@ -408,6 +415,9 @@ class ReviewFragment(
                         indicator.isVisible = true
                     }
                     binding.clearFocus()
+                    isKeyboardShown = false
+                } else {
+                    isKeyboardShown = true
                 }
             }
         })
