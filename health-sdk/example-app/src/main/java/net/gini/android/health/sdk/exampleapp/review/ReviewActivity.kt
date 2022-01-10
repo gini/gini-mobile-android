@@ -36,7 +36,7 @@ class ReviewActivity : AppCompatActivity() {
             finish()
         }
 
-        override fun onPayClicked() {
+        override fun onNextClicked() {
             Log.i("review_events", "pay button clicked")
             lifecycleScope.launch {
                 viewModel.giniHealth.openBankState.collect { paymentState ->

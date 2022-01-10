@@ -1,6 +1,5 @@
 package net.gini.android.health.sdk.review
 
-import android.content.pm.PackageManager
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -8,27 +7,14 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.runBlockingTest
-import net.gini.android.core.api.DocumentManager
-import net.gini.android.health.api.GiniHealthAPI
-import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.R
-import net.gini.android.health.sdk.review.bank.packageInfosFixture
-import net.gini.android.health.sdk.review.bank.paymentProvidersFixture
-import net.gini.android.health.sdk.review.bank.resolveInfosFixture
-import net.gini.android.health.sdk.review.model.PaymentDetails
-import net.gini.android.health.sdk.review.model.ResultWrapper
-import net.gini.android.health.sdk.test.TestCoroutineRule
 import org.junit.After
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -63,7 +49,7 @@ class ReviewFragmentTest {
     }
 
     @Test
-    fun `calls onPayClicked() listener when 'Pay' button is clicked`() {
+    fun `calls onNextClicked() listener when 'Next' ('Pay') button is clicked`() {
         // Given
         every { viewModel!!.isPaymentButtonEnabled } returns flowOf(true)
 
@@ -79,7 +65,7 @@ class ReviewFragmentTest {
 
         // Then
         verify {
-           listener.onPayClicked()
+           listener.onNextClicked()
         }
     }
 
