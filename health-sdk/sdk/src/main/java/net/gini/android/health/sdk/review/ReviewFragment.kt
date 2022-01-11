@@ -324,6 +324,7 @@ class ReviewFragment(
     }
 
     private fun GhsFragmentReviewBinding.setActionListeners() {
+        paymentDetails.setOnClickListener { it.hideKeyboard() }
         payment.setOnClickListener {
             listener?.onNextClicked()
             viewModel.onPayment()
@@ -401,11 +402,22 @@ class ReviewFragment(
                     paymentDetails.translationY = 0f
                     paymentDetailsInfoBar.translationY = paymentDetails.translationY
                 }
-                if (startBottom > endBottom && pager.isUserInputEnabled) {
-                    indicator.isVisible = true
+                // Was it a closing animation?
+                if (startBottom > endBottom) {
+                    if (pager.isUserInputEnabled) {
+                        indicator.isVisible = true
+                    }
+                    binding.clearFocus()
                 }
             }
         })
+    }
+
+    private fun GhsFragmentReviewBinding.clearFocus() {
+        recipient.clearFocus()
+        iban.clearFocus()
+        amount.clearFocus()
+        purpose.clearFocus()
     }
 
     private fun GhsFragmentReviewBinding.showInfoBar() {

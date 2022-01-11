@@ -3,10 +3,13 @@ package net.gini.android.health.sdk.util
 import android.content.res.ColorStateList
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import androidx.annotation.ColorInt
 import androidx.annotation.IntRange
 import androidx.annotation.StringRes
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.graphics.ColorUtils
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -143,3 +146,11 @@ internal fun TextInputLayout.showErrorMessage() {
 }
 
 private fun String.nonEmpty() = if (isEmpty()) " " else this
+
+internal fun View.hideKeyboard() {
+    getSystemService(context, InputMethodManager::class.java)?.let { imm ->
+        if (imm.isAcceptingText) {
+            imm.hideSoftInputFromWindow(windowToken, 0)
+        }
+    }
+}
