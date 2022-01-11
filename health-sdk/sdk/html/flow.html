@@ -95,7 +95,10 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Flow</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#checking-requirements">Checking requirements</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#setting-a-document-for-review">Setting a document for review</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#display-reviewfragment">Display ReviewFragment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#display-reviewfragment">Display ReviewFragment</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#event-tracking">Event Tracking</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a><ul>
@@ -108,7 +111,10 @@
 <li class="toctree-l2"><a class="reference internal" href="testing.html#testing-in-production">Testing in production</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="customization.html">Customization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="customization.html">Customization</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="customization.html#dark-mode">Dark Mode</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="reference.html">Reference Docs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="license.html#licenses-and-acknowledgements-for-incorporated-software">Licenses and Acknowledgements for Incorporated Software</a><ul>
@@ -158,7 +164,7 @@ let’s the user make the payment with one of the payment providers.</p>
 <dl class="docutils">
 <dt>The recommended flow is to:</dt>
 <dd><ol class="first last arabic simple">
-<li>Call <code class="docutils literal notranslate"><span class="pre">GiniHealth.checkRequirements()</span></code> to make sure that the flow can be completed.</li>
+<li>Call <code class="docutils literal notranslate"><span class="pre">GiniHealth.checkRequirementsAsync()</span></code> to make sure that the flow can be completed.</li>
 <li>Call one of the overloads of <code class="docutils literal notranslate"><span class="pre">setDocumentForReview</span></code>, to submit a document.</li>
 <li>Display <code class="docutils literal notranslate"><span class="pre">ReviewFragment</span></code>.</li>
 </ol>
@@ -168,7 +174,7 @@ let’s the user make the payment with one of the payment providers.</p>
 <h2>Checking requirements<a class="headerlink" href="#checking-requirements" title="Permalink to this headline">¶</a></h2>
 <p>Requirements are not enforced, but recommended. Review Fragment will still start, but
 the flow cannot be completed if not all requirements are met.</p>
-<p><code class="docutils literal notranslate"><span class="pre">checkRequirements()</span></code> returns a list of missing requirements. Empty list means all requirements are met.</p>
+<p><code class="docutils literal notranslate"><span class="pre">checkRequirementsAsync()</span></code> returns a list of missing requirements. Empty list means all requirements are met.</p>
 </div>
 <div class="section" id="setting-a-document-for-review">
 <h2>Setting a document for review<a class="headerlink" href="#setting-a-document-for-review" title="Permalink to this headline">¶</a></h2>
@@ -184,7 +190,7 @@ the flow cannot be completed if not all requirements are met.</p>
 So it is preferred to use the <code class="docutils literal notranslate"><span class="pre">Document</span></code> instance if you already have it.
 The same applies to the optional <code class="docutils literal notranslate"><span class="pre">PaymentDetails</span></code>, if they are present they will be displayed
 and network calls to get extractions will be skipped.</p>
-<p>The exposed flows of <code class="docutils literal notranslate"><span class="pre">GiniBussines</span></code> are used by the <code class="docutils literal notranslate"><span class="pre">ReviewFragment</span></code> to observe the state of the document and extractions, but they are public
+<p>The exposed flows of <code class="docutils literal notranslate"><span class="pre">GiniHealth</span></code> are used by the <code class="docutils literal notranslate"><span class="pre">ReviewFragment</span></code> to observe the state of the document and extractions, but they are public
 so that they can be observed anywhere, the main purpose for this is to observe errors.</p>
 <p>Note: If you observe payment details flow, you can check PaymentDetails.isPayable as an extra condition before displaying the <code class="docutils literal notranslate"><span class="pre">ReviewFragment</span></code>.</p>
 </div>
@@ -192,18 +198,26 @@ so that they can be observed anywhere, the main purpose for this is to observe e
 <h2>Display ReviewFragment<a class="headerlink" href="#display-reviewfragment" title="Permalink to this headline">¶</a></h2>
 <p>ReviewFragment displays document pages and extractions and it lets the user pay using a payment provider</p>
 <p>To instantiate it you need to create a <code class="docutils literal notranslate"><span class="pre">FragmentFactory</span></code> and set it to fragment manager:</p>
-<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ReviewFragmentFactory</span><span class="p">(</span><span class="k">private</span> <span class="k">val</span> <span class="py">giniHealth</span><span class="p">:</span> <span class="n">GiniHealth</span><span class="p">)</span> <span class="p">:</span> <span class="n">FragmentFactory</span><span class="p">()</span> <span class="p">{</span>
+<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ReviewFragmentFactory</span><span class="p">(</span><span class="k">private</span> <span class="k">val</span> <span class="py">giniHealth</span><span class="p">:</span> <span class="n">GiniHealth</span><span class="p">,</span>
+                            <span class="k">private</span> <span class="k">val</span> <span class="py">configuration</span><span class="p">:</span> <span class="n">ReviewConfiguration</span><span class="p">,</span>
+                            <span class="k">private</span> <span class="k">val</span> <span class="py">listener</span><span class="p">:</span> <span class="n">ReviewFragmentListener</span>
+<span class="p">)</span> <span class="p">:</span> <span class="n">FragmentFactory</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">override</span> <span class="k">fun</span> <span class="nf">instantiate</span><span class="p">(</span><span class="n">classLoader</span><span class="p">:</span> <span class="n">ClassLoader</span><span class="p">,</span> <span class="n">className</span><span class="p">:</span> <span class="n">String</span><span class="p">):</span> <span class="n">Fragment</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="n">ReviewFragment</span><span class="p">(</span><span class="n">giniHealth</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ReviewFragment</span><span class="p">(</span><span class="n">giniHealth</span><span class="p">,</span> <span class="n">configuration</span><span class="p">,</span> <span class="n">listener</span><span class="p">)</span>
     <span class="p">}</span>
 <span class="p">}</span>
 
 <span class="n">supportFragmentManager</span><span class="p">.</span><span class="n">fragmentFactory</span> <span class="p">=</span> <span class="n">ReviewFragmentFactory</span><span class="p">(</span><span class="n">giniHealth</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>ReviewFragment handles errors by default, displaying snackbars for errors, but it
+<p><code class="docutils literal notranslate"><span class="pre">ReviewFragment</span></code> handles errors by default, displaying snackbars for errors, but it
 can be configured to ignore them, in which case all flows of <code class="docutils literal notranslate"><span class="pre">GiniHealth</span></code> should
 be observed for errors.</p>
+<div class="section" id="event-tracking">
+<h3>Event Tracking<a class="headerlink" href="#event-tracking" title="Permalink to this headline">¶</a></h3>
+<p>To get informed of <code class="docutils literal notranslate"><span class="pre">ReviewFragment</span></code> events (like the user clicking the “close” or “next” button) you can implement
+the <code class="docutils literal notranslate"><span class="pre">ReviewFragmentListener</span></code> and pass it to the fragment constructor.</p>
+</div>
 </div>
 </div>
 

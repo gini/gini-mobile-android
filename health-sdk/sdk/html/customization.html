@@ -95,7 +95,10 @@
 <li class="toctree-l1"><a class="reference internal" href="flow.html">Flow</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="flow.html#checking-requirements">Checking requirements</a></li>
 <li class="toctree-l2"><a class="reference internal" href="flow.html#setting-a-document-for-review">Setting a document for review</a></li>
-<li class="toctree-l2"><a class="reference internal" href="flow.html#display-reviewfragment">Display ReviewFragment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#display-reviewfragment">Display ReviewFragment</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="flow.html#event-tracking">Event Tracking</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a><ul>
@@ -108,7 +111,10 @@
 <li class="toctree-l2"><a class="reference internal" href="testing.html#testing-in-production">Testing in production</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Customization</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Customization</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#dark-mode">Dark Mode</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="reference.html">Reference Docs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="license.html#licenses-and-acknowledgements-for-incorporated-software">Licenses and Acknowledgements for Incorporated Software</a><ul>
@@ -152,17 +158,34 @@
             
   <div class="section" id="customization">
 <h1>Customization<a class="headerlink" href="#customization" title="Permalink to this headline">¶</a></h1>
-<p>Customization of is achieved through Android’s resourcing system.
+<p>Customization is achieved through Android’s resourcing system.
 This means that all <a class="reference external" href="https://github.com/gini/gini-mobile-android/tree/main/health-sdk/sdk/src/main/res">resources of the library</a>
 can be overridden by providing resources with the same name in the
 application.</p>
-<p>Material components are used so for in the ReviewFragment, so those
-components will pick attributes of the hosting activity if it uses
-a Material Theme.</p>
-<p>Some attributes are set inside the library (styles that start with
-<code class="docutils literal notranslate"><span class="pre">Root.</span></code>) to provide the basic UI, but you can hook into the other
-styles to customize the screen further.</p>
-<p><a class="reference external" href="https://github.com/gini/gini-mobile-android/blob/main/health-sdk/sdk/src/main/res/values/styles.xml">See styles file</a></p>
+<p>When overriding the Health SDK’s
+<a class="reference external" href="https://github.com/gini/gini-mobile-android/blob/main/health-sdk/sdk/src/main/res/values/styles.xml">styles</a>
+make sure to keep their name and parent style the same. You can see examples
+of overridden styles in the
+<a class="reference external" href="https://github.com/gini/gini-mobile-android/blob/main/health-sdk/example-app/src/main/res/values/styles.xml">example app</a>.</p>
+<p>Material components are used in the ReviewFragment and those components will pick attributes of the hosting activity
+if it uses a material theme.</p>
+<div class="section" id="dark-mode">
+<h2>Dark Mode<a class="headerlink" href="#dark-mode" title="Permalink to this headline">¶</a></h2>
+<p>To enable and customise dark mode you will need to do the following:</p>
+<ol class="arabic">
+<li><p class="first">Set the parent of the <code class="docutils literal notranslate"><span class="pre">Root.GiniHealth</span></code> style to a DayNight theme as described
+<a class="reference external" href="https://developer.android.com/guide/topics/ui/look-and-feel/darktheme#support-dark-theme">here</a>:</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;style</span> <span class="na">name=</span><span class="s">&quot;Root.GiniHealth&quot;</span> <span class="na">parent=</span><span class="s">&quot;Theme.MaterialComponents.DayNight&quot;</span><span class="nt">/&gt;</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Override the Gini Health SDK’s
+<a class="reference external" href="https://github.com/gini/gini-mobile-android/blob/main/health-sdk/sdk/src/main/res/values/styles.xml">styles</a>,
+<a class="reference external" href="https://github.com/gini/gini-mobile-android/blob/main/health-sdk/sdk/src/main/res/values/colors.xml">colors</a>
+and icons for dark mode in night-qualified resource directories (i.e., <code class="docutils literal notranslate"><span class="pre">values-night</span></code>).</p>
+</li>
+</ol>
+</div>
 </div>
 
 

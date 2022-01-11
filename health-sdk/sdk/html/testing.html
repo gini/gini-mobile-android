@@ -95,7 +95,10 @@
 <li class="toctree-l1"><a class="reference internal" href="flow.html">Flow</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="flow.html#checking-requirements">Checking requirements</a></li>
 <li class="toctree-l2"><a class="reference internal" href="flow.html#setting-a-document-for-review">Setting a document for review</a></li>
-<li class="toctree-l2"><a class="reference internal" href="flow.html#display-reviewfragment">Display ReviewFragment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#display-reviewfragment">Display ReviewFragment</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="flow.html#event-tracking">Event Tracking</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Testing</a><ul>
@@ -108,7 +111,10 @@
 <li class="toctree-l2"><a class="reference internal" href="#testing-in-production">Testing in production</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="customization.html">Customization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="customization.html">Customization</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="customization.html#dark-mode">Dark Mode</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="reference.html">Reference Docs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="license.html#licenses-and-acknowledgements-for-incorporated-software">Licenses and Acknowledgements for Incorporated Software</a><ul>
@@ -173,7 +179,7 @@ the Gini Health SDK uses a test payment provider which will open our example ban
 <div class="section" id="end-to-end-testing">
 <h2>End to end testing<a class="headerlink" href="#end-to-end-testing" title="Permalink to this headline">¶</a></h2>
 <p>After you’ve set the client credentials in the example banking app and installed it on your device you can run your app
-and verify that <code class="docutils literal notranslate"><span class="pre">GiniHealth.checkRequirements()</span></code> returns an empty list.</p>
+and verify that <code class="docutils literal notranslate"><span class="pre">GiniHealth.checkRequirementsAsync()</span></code> returns an empty list.</p>
 <p>Following the <a class="reference external" href="flow.html">flow guide</a> show the <code class="docutils literal notranslate"><span class="pre">ReviewFragment</span></code> after analyzing a document.</p>
 <p>Check that the extractions and the document preview are shown and then press the <code class="docutils literal notranslate"><span class="pre">Pay</span></code> button:</p>
 <a class="reference internal image-reference" href="_images/business_review_fragment.png"><img alt="Review Fragment" class="align-center" src="_images/business_review_fragment.png" style="width: 150px;" /></a>
