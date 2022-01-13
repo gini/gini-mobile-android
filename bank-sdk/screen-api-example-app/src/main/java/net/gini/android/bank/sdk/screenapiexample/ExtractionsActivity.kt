@@ -142,7 +142,7 @@ class ExtractionsActivity : AppCompatActivity() {
     }
 }
 
-private class ExtractionsAdapter(var extractions: List<GiniCaptureSpecificExtraction>) : RecyclerView.Adapter<ExtractionsAdapter.ExtractionsViewHolder>() {
+private class ExtractionsAdapter(var extractions: List<GiniCaptureSpecificExtraction>) : RecyclerView.Adapter<ExtractionsViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ExtractionsViewHolder =
         ExtractionsViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_extraction, parent, false))
@@ -155,9 +155,9 @@ private class ExtractionsAdapter(var extractions: List<GiniCaptureSpecificExtrac
     }
 
     override fun getItemCount(): Int = extractions.size
+}
 
-    private class ExtractionsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var mTextName: TextView = itemView.findViewById<View>(R.id.text_name) as TextView
-        var mTextValue: TextView = itemView.findViewById<View>(R.id.text_value) as TextView
-    }
+private class ExtractionsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    var mTextName: TextView = itemView.findViewById<View>(R.id.text_name) as TextView
+    var mTextValue: TextView = itemView.findViewById<View>(R.id.text_value) as TextView
 }
