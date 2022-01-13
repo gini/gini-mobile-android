@@ -7,7 +7,7 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import net.gini.android.core.api.DocumentManager
 import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.sdk.GiniHealth
@@ -60,7 +60,7 @@ class RequirementsTest {
     }
 
     @Test
-    fun `runs both async and sync checks`() = runBlockingTest {
+    fun `runs both async and sync checks`() = runTest {
         // Given
         var asyncChecks = false
         var syncChecks = false
@@ -92,7 +92,7 @@ class RequirementsTest {
     }
 
     @Test
-    fun `returns empty list if requirements are met`() = runBlockingTest {
+    fun `returns empty list if requirements are met`() = runTest {
         // Given
         val requirementsChecker = RequirementsChecker(
             checks = listOf(
@@ -119,7 +119,7 @@ class RequirementsTest {
     }
 
     @Test
-    fun `each requirement may appear only once in the result list`() = runBlockingTest {
+    fun `each requirement may appear only once in the result list`() = runTest {
         // Given
         val requirementsChecker = RequirementsChecker(
             checks = listOf(
@@ -146,7 +146,7 @@ class RequirementsTest {
     }
 
     @Test
-    fun `checks that at least one bank app is installed`() = runBlockingTest {
+    fun `checks that at least one bank app is installed`() = runTest {
         // When
         val requirements =
             RequirementsChecker.withDefaultRequirements(giniHealth!!, packageManager!!).checkRequirements()
@@ -156,7 +156,7 @@ class RequirementsTest {
     }
 
     @Test
-    fun `check fails if no bank app is installed`() = runBlockingTest {
+    fun `check fails if no bank app is installed`() = runTest {
         // Given
         every { packageManager!!.queryIntentActivities(any(), 0) } returns emptyList()
 
@@ -169,7 +169,7 @@ class RequirementsTest {
     }
 
     @Test
-    fun `checks that at least one bank app is installed and has a corresponding payment provider`() = runBlockingTest {
+    fun `checks that at least one bank app is installed and has a corresponding payment provider`() = runTest {
         // When
         val requirements =
             RequirementsChecker.withDefaultRequirements(giniHealth!!, packageManager!!).checkRequirements()
@@ -179,7 +179,7 @@ class RequirementsTest {
     }
 
     @Test
-    fun `check fails if no installed bank app has a corresponding payment provider`() = runBlockingTest {
+    fun `check fails if no installed bank app has a corresponding payment provider`() = runTest {
         // Given
         every { packageManager!!.queryIntentActivities(any(), 0) } returns emptyList()
 
