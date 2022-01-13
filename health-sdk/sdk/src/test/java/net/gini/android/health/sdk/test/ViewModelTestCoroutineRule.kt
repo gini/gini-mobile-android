@@ -2,7 +2,10 @@ package net.gini.android.health.sdk.test
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.*
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
 import org.junit.rules.TestRule
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
@@ -15,23 +18,21 @@ import org.junit.runners.model.Statement
 
 /**
  * Source: https://blog.mindorks.com/unit-testing-viewmodel-with-kotlin-coroutines-and-livedata
+ *
+ * Updated according to the migration guide for 1.6.0:
+ * https://github.com/Kotlin/kotlinx.coroutines/blob/1.6.0/kotlinx-coroutines-test/MIGRATION.md#simplify-code-by-removing-unneeded-entities
  */
 @ExperimentalCoroutinesApi
-class TestCoroutineRule : TestRule {
-
-    private val dispatcher = TestCoroutineDispatcher()
-
-    val scope = TestCoroutineScope(dispatcher)
+class ViewModelTestCoroutineRule : TestRule {
 
     override fun apply(base: Statement, description: Description?) = object : Statement() {
         @Throws(Throwable::class)
         override fun evaluate() {
-            Dispatchers.setMain(dispatcher)
+            Dispatchers.setMain(UnconfinedTestDispatcher())
 
             base.evaluate()
 
             Dispatchers.resetMain()
-            scope.cleanupTestCoroutines()
         }
     }
 
