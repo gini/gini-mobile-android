@@ -2,27 +2,31 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
     <title>GiniHealthAPIBuilder</title>
-<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../../";</script><script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script><link href="../../../styles/style.css" rel="Stylesheet"><link href="../../../styles/logo-styles.css" rel="Stylesheet"><link href="../../../styles/jetbrains-mono.css" rel="Stylesheet"><link href="../../../styles/main.css" rel="Stylesheet"><script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script><script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script><script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script><script type="text/javascript" src="../../../scripts/main.js" async="async"></script>  </head>
+<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../../";</script>    <script>const storage = localStorage.getItem("dokka-dark-mode")
+const savedDarkMode = storage ? JSON.parse(storage) : false
+if(savedDarkMode === true){
+    document.getElementsByTagName("html")[0].classList.add("theme-dark")
+}</script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script><link href="../../../styles/style.css" rel="Stylesheet"><link href="../../../styles/jetbrains-mono.css" rel="Stylesheet"><link href="../../../styles/main.css" rel="Stylesheet"><link href="../../../styles/prism.css" rel="Stylesheet"><link href="../../../styles/logo-styles.css" rel="Stylesheet"><script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script><script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script><script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script><script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script><script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>  </head>
   <body>
+    <div class="navigation-wrapper" id="navigation-wrapper">
+      <div id="leftToggler"><span class="icon-toggler"></span></div>
+      <div class="library-name"><a href="../../../index.html">library</a></div>
+      <div></div>
+      <div class="pull-right d-flex"><button id="theme-toggle-button"><span id="theme-toggle"></span></button>
+        <div id="searchBar"></div>
+      </div>
+    </div>
     <div id="container">
-      <div id="leftColumn"><a href="../../../index.html">
-          <div id="logo"></div>
-        </a>
-        <div id="paneSearch"></div>
+      <div id="leftColumn">
         <div id="sideMenu"></div>
       </div>
       <div id="main">
-        <div id="leftToggler"><span class="icon-toggler"></span></div>
-<script type="text/javascript" src="../../../scripts/main.js"></script>        <div class="main-content" id="content" pageIds="library::net.gini.android.health.api/GiniHealthAPIBuilder///PointingToDeclaration//1426029261">
-          <div class="navigation-wrapper" id="navigation-wrapper">
-            <div class="breadcrumbs"><a href="../../../index.html">library</a>/<a href="../index.html">net.gini.android.health.api</a>/<a href="index.html">GiniHealthAPIBuilder</a></div>
-            <div class="pull-right d-flex">
-              <div id="searchBar"></div>
-            </div>
-          </div>
+        <div class="main-content" id="content" pageIds="library::net.gini.android.health.api/GiniHealthAPIBuilder///PointingToDeclaration//1426029261">
+          <div class="breadcrumbs"><a href="../../../index.html">library</a>/<a href="../index.html">net.gini.android.health.api</a>/<a href="index.html">GiniHealthAPIBuilder</a></div>
           <div class="cover ">
             <h1 class="cover"><span>Gini</span><wbr></wbr><span>Health</span><wbr></wbr><span><span>APIBuilder</span></span></h1>
-            <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace">public class <a href="index.html">GiniHealthAPIBuilder</a> extends <a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/index.html">GiniCoreAPIBuilder</a>&lt;<a href="../-gini-health-a-p-i/index.html">GiniHealthAPI</a>&gt;<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+            <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">public </span><span class="token keyword">class </span><a href="index.html">GiniHealthAPIBuilder</a><span class="token keyword"> extends </span><a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/index.html">GiniCoreAPIBuilder</a><span class="token operator">&lt;</span><a href="../-gini-health-a-p-i/index.html">GiniHealthAPI</a><span class="token operator">&gt;</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
           </div>
           <div class="tabbedcontent">
             <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="Constructors">Constructors</button><button class="section-tab" data-togglable="Functions">Functions</button></div>
@@ -31,12 +35,14 @@
               <div class="table" data-togglable="Constructors"><a data-name="365956937%2FConstructors%2F1426029261" anchor-label="GiniHealthAPIBuilder" id="365956937%2FConstructors%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
                 <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
                   <div class="main-subrow keyValue TabbedContent">
-                    <div class=""><span class="inline-flex"><a href="-gini-health-a-p-i-builder.html">GiniHealthAPIBuilder</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="365956937%2FConstructors%2F1426029261"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="-gini-health-a-p-i-builder.html"><span>Gini</span><wbr></wbr><span>Health</span><wbr></wbr><span><span>APIBuilder</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="365956937%2FConstructors%2F1426029261"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
                       <div class="title">
-                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block">void <a href="-gini-health-a-p-i-builder.html">GiniHealthAPIBuilder</a>(<span>@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html">NonNull</a>() </span><a href="https://developer.android.com/reference/kotlin/android/content/Context.html">Context</a> context, <span>@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html">NonNull</a>() </span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> clientId, <span>@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html">NonNull</a>() </span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> clientSecret, <span>@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html">NonNull</a>() </span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> emailDomain)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief ">Constructor to initialize a new builder instance where anonymous Gini users are used.</div></div></div>
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword"></span>void <a href="-gini-health-a-p-i-builder.html"><span class="token function">GiniHealthAPIBuilder</span></a><span class="token punctuation">(</span><span><span class="token annotation">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation">NonNull</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span> </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/android/content/Context.html">Context</a> context<span class="token punctuation">, </span><span><span class="token annotation">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation">NonNull</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span> </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> clientId<span class="token punctuation">, </span><span><span class="token annotation">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation">NonNull</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span> </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> clientSecret<span class="token punctuation">, </span><span><span class="token annotation">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation">NonNull</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span> </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> emailDomain<span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief ">Constructor to initialize a new builder instance where anonymous Gini users are used.</div></div></div>
                       </div>
                     </div>
                   </div>
@@ -44,12 +50,14 @@
 <a data-name="1819474622%2FConstructors%2F1426029261" anchor-label="GiniHealthAPIBuilder" id="1819474622%2FConstructors%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
                 <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
                   <div class="main-subrow keyValue TabbedContent">
-                    <div class=""><span class="inline-flex"><a href="-gini-health-a-p-i-builder.html">GiniHealthAPIBuilder</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1819474622%2FConstructors%2F1426029261"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="-gini-health-a-p-i-builder.html"><span>Gini</span><wbr></wbr><span>Health</span><wbr></wbr><span><span>APIBuilder</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1819474622%2FConstructors%2F1426029261"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
                       <div class="title">
-                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block">void <a href="-gini-health-a-p-i-builder.html">GiniHealthAPIBuilder</a>(<span>@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html">NonNull</a>() </span><a href="https://developer.android.com/reference/kotlin/android/content/Context.html">Context</a> context, <span>@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html">NonNull</a>() </span><a href="../../net.gini.android.core.api.authorization/-session-manager/index.html">SessionManager</a> sessionManager)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief ">Constructor to initialize a new builder instance.</div></div></div>
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword"></span>void <a href="-gini-health-a-p-i-builder.html"><span class="token function">GiniHealthAPIBuilder</span></a><span class="token punctuation">(</span><span><span class="token annotation">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation">NonNull</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span> </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/android/content/Context.html">Context</a> context<span class="token punctuation">, </span><span><span class="token annotation">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation">NonNull</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span> </span><span class="token keyword"></span><a href="../../net.gini.android.core.api.authorization/-session-manager/index.html">SessionManager</a> sessionManager<span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief ">Constructor to initialize a new builder instance.</div></div></div>
                       </div>
                     </div>
                   </div>
@@ -59,204 +67,180 @@
               <div class="table" data-togglable="Functions"><a data-name="-1561068996%2FFunctions%2F1426029261" anchor-label="build" id="-1561068996%2FFunctions%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
                 <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="build.html"><span><span>build</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1561068996%2FFunctions%2F1426029261"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="build.html"><span><span>build</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1561068996%2FFunctions%2F1426029261"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block"><a href="../-gini-health-a-p-i/index.html">GiniHealthAPI</a> <a href="build.html">build</a>()<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-<div class="brief ">Builds the GiniHealthAPI instance with the configuration settings of the builder instance.</div></div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword"></span><a href="../-gini-health-a-p-i/index.html">GiniHealthAPI</a> <a href="build.html"><span class="token function">build</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief ">Builds the GiniHealthAPI instance with the configuration settings of the builder instance.</div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="143402133%2FFunctions%2F1426029261" anchor-label="getGiniApiType" id="143402133%2FFunctions%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
                 <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="index.html#143402133%2FFunctions%2F1426029261"><span>get</span><wbr></wbr><span>Gini</span><wbr></wbr><span>Api</span><wbr></wbr><span><span>Type</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="143402133%2FFunctions%2F1426029261"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="index.html#143402133%2FFunctions%2F1426029261"><span>get</span><wbr></wbr><span>Gini</span><wbr></wbr><span>Api</span><wbr></wbr><span><span>Type</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="143402133%2FFunctions%2F1426029261"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block"><a href="../../net.gini.android.core.api/-gini-api-type/index.html">GiniApiType</a> <a href="index.html#143402133%2FFunctions%2F1426029261">getGiniApiType</a>()<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-</div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword"></span><a href="../../net.gini.android.core.api/-gini-api-type/index.html">GiniApiType</a> <a href="index.html#143402133%2FFunctions%2F1426029261"><span class="token function">getGiniApiType</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="617206903%2FFunctions%2F1426029261" anchor-label="getSessionManager" id="617206903%2FFunctions%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
                 <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="index.html#617206903%2FFunctions%2F1426029261"><span>get</span><wbr></wbr><span>Session</span><wbr></wbr><span><span>Manager</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="617206903%2FFunctions%2F1426029261"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="index.html#617206903%2FFunctions%2F1426029261"><span>get</span><wbr></wbr><span>Session</span><wbr></wbr><span><span>Manager</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="617206903%2FFunctions%2F1426029261"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block">synchronized <a href="../../net.gini.android.core.api.authorization/-session-manager/index.html">SessionManager</a> <a href="index.html#617206903%2FFunctions%2F1426029261">getSessionManager</a>()<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-</div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">synchronized </span><a href="../../net.gini.android.core.api.authorization/-session-manager/index.html">SessionManager</a> <a href="index.html#617206903%2FFunctions%2F1426029261"><span class="token function">getSessionManager</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="1047855577%2FFunctions%2F1426029261" anchor-label="setApiBaseUrl" id="1047855577%2FFunctions%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
                 <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="index.html#1047855577%2FFunctions%2F1426029261"><span>set</span><wbr></wbr><span>Api</span><wbr></wbr><span>Base</span><wbr></wbr><span><span>Url</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1047855577%2FFunctions%2F1426029261"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="index.html#1047855577%2FFunctions%2F1426029261"><span>set</span><wbr></wbr><span>Api</span><wbr></wbr><span>Base</span><wbr></wbr><span><span>Url</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1047855577%2FFunctions%2F1426029261"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block"><a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/index.html">GiniCoreAPIBuilder</a>&lt;<a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/index.html">T</a>&gt; <a href="index.html#1047855577%2FFunctions%2F1426029261">setApiBaseUrl</a>(<a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> newUrl)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-</div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword"></span><a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/index.html">GiniCoreAPIBuilder</a><span class="token operator">&lt;</span><a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/index.html">T</a><span class="token operator">&gt;</span> <a href="index.html#1047855577%2FFunctions%2F1426029261"><span class="token function">setApiBaseUrl</span></a><span class="token punctuation">(</span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> newUrl<span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="-1489641815%2FFunctions%2F1426029261" anchor-label="setCache" id="-1489641815%2FFunctions%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
                 <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="index.html#-1489641815%2FFunctions%2F1426029261"><span>set</span><wbr></wbr><span><span>Cache</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1489641815%2FFunctions%2F1426029261"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="index.html#-1489641815%2FFunctions%2F1426029261"><span>set</span><wbr></wbr><span><span>Cache</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1489641815%2FFunctions%2F1426029261"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block"><a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/index.html">GiniCoreAPIBuilder</a>&lt;<a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/index.html">T</a>&gt; <a href="index.html#-1489641815%2FFunctions%2F1426029261">setCache</a>(<span data-unresolved-link="com.android.volley/Cache///PointingToDeclaration/">Cache</span> cache)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-</div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword"></span><a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/index.html">GiniCoreAPIBuilder</a><span class="token operator">&lt;</span><a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/index.html">T</a><span class="token operator">&gt;</span> <a href="index.html#-1489641815%2FFunctions%2F1426029261"><span class="token function">setCache</span></a><span class="token punctuation">(</span><span class="token keyword"></span><span data-unresolved-link="com.android.volley/Cache///PointingToDeclaration/">Cache</span> cache<span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="-1098647623%2FFunctions%2F1426029261" anchor-label="setConnectionBackOffMultiplier" id="-1098647623%2FFunctions%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
                 <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="index.html#-1098647623%2FFunctions%2F1426029261"><span>set</span><wbr></wbr><span>Connection</span><wbr></wbr><span>Back</span><wbr></wbr><span>Off</span><wbr></wbr><span><span>Multiplier</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1098647623%2FFunctions%2F1426029261"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="index.html#-1098647623%2FFunctions%2F1426029261"><span>set</span><wbr></wbr><span>Connection</span><wbr></wbr><span>Back</span><wbr></wbr><span>Off</span><wbr></wbr><span><span>Multiplier</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1098647623%2FFunctions%2F1426029261"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block"><a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/index.html">GiniCoreAPIBuilder</a>&lt;<a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/index.html">T</a>&gt; <a href="index.html#-1098647623%2FFunctions%2F1426029261">setConnectionBackOffMultiplier</a>(float backOffMultiplier)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-</div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword"></span><a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/index.html">GiniCoreAPIBuilder</a><span class="token operator">&lt;</span><a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/index.html">T</a><span class="token operator">&gt;</span> <a href="index.html#-1098647623%2FFunctions%2F1426029261"><span class="token function">setConnectionBackOffMultiplier</span></a><span class="token punctuation">(</span><span class="token keyword"></span>float backOffMultiplier<span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="-51137463%2FFunctions%2F1426029261" anchor-label="setConnectionTimeoutInMs" id="-51137463%2FFunctions%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
                 <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="index.html#-51137463%2FFunctions%2F1426029261"><span>set</span><wbr></wbr><span>Connection</span><wbr></wbr><span>Timeout</span><wbr></wbr><span>In</span><wbr></wbr><span><span>Ms</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-51137463%2FFunctions%2F1426029261"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="index.html#-51137463%2FFunctions%2F1426029261"><span>set</span><wbr></wbr><span>Connection</span><wbr></wbr><span>Timeout</span><wbr></wbr><span>In</span><wbr></wbr><span><span>Ms</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-51137463%2FFunctions%2F1426029261"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block"><a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/index.html">GiniCoreAPIBuilder</a>&lt;<a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/index.html">T</a>&gt; <a href="index.html#-51137463%2FFunctions%2F1426029261">setConnectionTimeoutInMs</a>(int connectionTimeoutInMs)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-</div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword"></span><a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/index.html">GiniCoreAPIBuilder</a><span class="token operator">&lt;</span><a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/index.html">T</a><span class="token operator">&gt;</span> <a href="index.html#-51137463%2FFunctions%2F1426029261"><span class="token function">setConnectionTimeoutInMs</span></a><span class="token punctuation">(</span><span class="token keyword"></span>int connectionTimeoutInMs<span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="43027199%2FFunctions%2F1426029261" anchor-label="setCredentialsStore" id="43027199%2FFunctions%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
                 <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="index.html#43027199%2FFunctions%2F1426029261"><span>set</span><wbr></wbr><span>Credentials</span><wbr></wbr><span><span>Store</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="43027199%2FFunctions%2F1426029261"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="index.html#43027199%2FFunctions%2F1426029261"><span>set</span><wbr></wbr><span>Credentials</span><wbr></wbr><span><span>Store</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="43027199%2FFunctions%2F1426029261"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block"><a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/index.html">GiniCoreAPIBuilder</a>&lt;<a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/index.html">T</a>&gt; <a href="index.html#43027199%2FFunctions%2F1426029261">setCredentialsStore</a>(<a href="../../net.gini.android.core.api.authorization/-credentials-store/index.html">CredentialsStore</a> credentialsStore)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-</div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword"></span><a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/index.html">GiniCoreAPIBuilder</a><span class="token operator">&lt;</span><a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/index.html">T</a><span class="token operator">&gt;</span> <a href="index.html#43027199%2FFunctions%2F1426029261"><span class="token function">setCredentialsStore</span></a><span class="token punctuation">(</span><span class="token keyword"></span><a href="../../net.gini.android.core.api.authorization/-credentials-store/index.html">CredentialsStore</a> credentialsStore<span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="1592433550%2FFunctions%2F1426029261" anchor-label="setGiniApiType" id="1592433550%2FFunctions%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
                 <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="index.html#1592433550%2FFunctions%2F1426029261"><span>set</span><wbr></wbr><span>Gini</span><wbr></wbr><span>Api</span><wbr></wbr><span><span>Type</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1592433550%2FFunctions%2F1426029261"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="index.html#1592433550%2FFunctions%2F1426029261"><span>set</span><wbr></wbr><span>Gini</span><wbr></wbr><span>Api</span><wbr></wbr><span><span>Type</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1592433550%2FFunctions%2F1426029261"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block"><a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/index.html">GiniCoreAPIBuilder</a>&lt;<a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/index.html">T</a>&gt; <a href="index.html#1592433550%2FFunctions%2F1426029261">setGiniApiType</a>(<a href="../../net.gini.android.core.api/-gini-api-type/index.html">GiniApiType</a> giniApiType)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-</div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword"></span><a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/index.html">GiniCoreAPIBuilder</a><span class="token operator">&lt;</span><a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/index.html">T</a><span class="token operator">&gt;</span> <a href="index.html#1592433550%2FFunctions%2F1426029261"><span class="token function">setGiniApiType</span></a><span class="token punctuation">(</span><span class="token keyword"></span><a href="../../net.gini.android.core.api/-gini-api-type/index.html">GiniApiType</a> giniApiType<span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="1734702867%2FFunctions%2F1426029261" anchor-label="setMaxNumberOfRetries" id="1734702867%2FFunctions%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
                 <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="index.html#1734702867%2FFunctions%2F1426029261"><span>set</span><wbr></wbr><span>Max</span><wbr></wbr><span>Number</span><wbr></wbr><span>Of</span><wbr></wbr><span><span>Retries</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1734702867%2FFunctions%2F1426029261"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="index.html#1734702867%2FFunctions%2F1426029261"><span>set</span><wbr></wbr><span>Max</span><wbr></wbr><span>Number</span><wbr></wbr><span>Of</span><wbr></wbr><span><span>Retries</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1734702867%2FFunctions%2F1426029261"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block"><a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/index.html">GiniCoreAPIBuilder</a>&lt;<a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/index.html">T</a>&gt; <a href="index.html#1734702867%2FFunctions%2F1426029261">setMaxNumberOfRetries</a>(int maxNumberOfRetries)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-</div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword"></span><a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/index.html">GiniCoreAPIBuilder</a><span class="token operator">&lt;</span><a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/index.html">T</a><span class="token operator">&gt;</span> <a href="index.html#1734702867%2FFunctions%2F1426029261"><span class="token function">setMaxNumberOfRetries</span></a><span class="token punctuation">(</span><span class="token keyword"></span>int maxNumberOfRetries<span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="2049193916%2FFunctions%2F1426029261" anchor-label="setNetworkSecurityConfigResId" id="2049193916%2FFunctions%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
                 <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="index.html#2049193916%2FFunctions%2F1426029261"><span>set</span><wbr></wbr><span>Network</span><wbr></wbr><span>Security</span><wbr></wbr><span>Config</span><wbr></wbr><span>Res</span><wbr></wbr><span><span>Id</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2049193916%2FFunctions%2F1426029261"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="index.html#2049193916%2FFunctions%2F1426029261"><span>set</span><wbr></wbr><span>Network</span><wbr></wbr><span>Security</span><wbr></wbr><span>Config</span><wbr></wbr><span>Res</span><wbr></wbr><span><span>Id</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2049193916%2FFunctions%2F1426029261"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block"><a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/index.html">GiniCoreAPIBuilder</a>&lt;<a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/index.html">T</a>&gt; <a href="index.html#2049193916%2FFunctions%2F1426029261">setNetworkSecurityConfigResId</a>(int networkSecurityConfigResId)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-</div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword"></span><a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/index.html">GiniCoreAPIBuilder</a><span class="token operator">&lt;</span><a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/index.html">T</a><span class="token operator">&gt;</span> <a href="index.html#2049193916%2FFunctions%2F1426029261"><span class="token function">setNetworkSecurityConfigResId</span></a><span class="token punctuation">(</span><span class="token keyword"></span>int networkSecurityConfigResId<span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="1810474873%2FFunctions%2F1426029261" anchor-label="setUserCenterApiBaseUrl" id="1810474873%2FFunctions%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
                 <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="index.html#1810474873%2FFunctions%2F1426029261"><span>set</span><wbr></wbr><span>User</span><wbr></wbr><span>Center</span><wbr></wbr><span>Api</span><wbr></wbr><span>Base</span><wbr></wbr><span><span>Url</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1810474873%2FFunctions%2F1426029261"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="index.html#1810474873%2FFunctions%2F1426029261"><span>set</span><wbr></wbr><span>User</span><wbr></wbr><span>Center</span><wbr></wbr><span>Api</span><wbr></wbr><span>Base</span><wbr></wbr><span><span>Url</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1810474873%2FFunctions%2F1426029261"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block"><a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/index.html">GiniCoreAPIBuilder</a>&lt;<a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/index.html">T</a>&gt; <a href="index.html#1810474873%2FFunctions%2F1426029261">setUserCenterApiBaseUrl</a>(<a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> newUrl)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-</div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword"></span><a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/index.html">GiniCoreAPIBuilder</a><span class="token operator">&lt;</span><a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/index.html">T</a><span class="token operator">&gt;</span> <a href="index.html#1810474873%2FFunctions%2F1426029261"><span class="token function">setUserCenterApiBaseUrl</span></a><span class="token punctuation">(</span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> newUrl<span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -264,7 +248,7 @@
             </div>
           </div>
         </div>
-        <div class="footer"><span class="go-to-top-icon"><a href="#content"></a></span><span>© 2022 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span></div>
+        <div class="footer"><span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2022 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span></div>
       </div>
     </div>
   </body>
