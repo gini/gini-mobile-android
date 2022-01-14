@@ -2,27 +2,31 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
     <title>ApiCommunicator</title>
-<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../../";</script><script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script><link href="../../../styles/style.css" rel="Stylesheet"><link href="../../../styles/logo-styles.css" rel="Stylesheet"><link href="../../../styles/jetbrains-mono.css" rel="Stylesheet"><link href="../../../styles/main.css" rel="Stylesheet"><script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script><script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script><script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script><script type="text/javascript" src="../../../scripts/main.js" async="async"></script>  </head>
+<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../../";</script>    <script>const storage = localStorage.getItem("dokka-dark-mode")
+const savedDarkMode = storage ? JSON.parse(storage) : false
+if(savedDarkMode === true){
+    document.getElementsByTagName("html")[0].classList.add("theme-dark")
+}</script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script><link href="../../../styles/style.css" rel="Stylesheet"><link href="../../../styles/jetbrains-mono.css" rel="Stylesheet"><link href="../../../styles/main.css" rel="Stylesheet"><link href="../../../styles/prism.css" rel="Stylesheet"><link href="../../../styles/logo-styles.css" rel="Stylesheet"><script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script><script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script><script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script><script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script><script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>  </head>
   <body>
+    <div class="navigation-wrapper" id="navigation-wrapper">
+      <div id="leftToggler"><span class="icon-toggler"></span></div>
+      <div class="library-name"><a href="../../../index.html">sdk</a></div>
+      <div></div>
+      <div class="pull-right d-flex"><button id="theme-toggle-button"><span id="theme-toggle"></span></button>
+        <div id="searchBar"></div>
+      </div>
+    </div>
     <div id="container">
-      <div id="leftColumn"><a href="../../../index.html">
-          <div id="logo"></div>
-        </a>
-        <div id="paneSearch"></div>
+      <div id="leftColumn">
         <div id="sideMenu"></div>
       </div>
       <div id="main">
-        <div id="leftToggler"><span class="icon-toggler"></span></div>
-<script type="text/javascript" src="../../../scripts/main.js"></script>        <div class="main-content" id="content" pageIds="sdk::net.gini.android.core.api/ApiCommunicator///PointingToDeclaration//-1647097541">
-          <div class="navigation-wrapper" id="navigation-wrapper">
-            <div class="breadcrumbs"><a href="../../../index.html">sdk</a>/<a href="../index.html">net.gini.android.core.api</a>/<a href="index.html">ApiCommunicator</a></div>
-            <div class="pull-right d-flex">
-              <div id="searchBar"></div>
-            </div>
-          </div>
+        <div class="main-content" id="content" pageIds="sdk::net.gini.android.core.api/ApiCommunicator///PointingToDeclaration//-1647097541">
+          <div class="breadcrumbs"><a href="../../../index.html">sdk</a>/<a href="../index.html">net.gini.android.core.api</a>/<a href="index.html">ApiCommunicator</a></div>
           <div class="cover ">
             <h1 class="cover"><span>Api</span><wbr></wbr><span><span>Communicator</span></span></h1>
-            <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace">public class <a href="index.html">ApiCommunicator</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><p class="paragraph">The ApiCommunicator is responsible for communication with the Gini API. It only converts the server's responses to more convenient objects (e.g. a JSON response to a JSONObject) but does not interpret the results in any way. Therefore it is not recommended to use the ApiCommunicator directly, but to use the DocumentTaskManager instead which provides much more convenient methods to work with the Gini API and uses defined models.</p></div></div>
+            <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">public </span><span class="token keyword">class </span><a href="index.html">ApiCommunicator</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><p class="paragraph">The ApiCommunicator is responsible for communication with the Gini API. It only converts the server's responses to more convenient objects (e.g. a JSON response to a JSONObject) but does not interpret the results in any way. Therefore it is not recommended to use the ApiCommunicator directly, but to use the DocumentTaskManager instead which provides much more convenient methods to work with the Gini API and uses defined models.</p></div></div>
           </div>
           <div class="tabbedcontent">
             <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="Types">Types</button><button class="section-tab" data-togglable="Constructors">Constructors</button><button class="section-tab" data-togglable="Functions">Functions</button><button class="section-tab" data-togglable="Properties">Properties</button></div>
@@ -31,12 +35,14 @@
               <div class="table" data-togglable="Constructors"><a data-name="1780958743%2FConstructors%2F-1647097541" anchor-label="ApiCommunicator" id="1780958743%2FConstructors%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
                 <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
                   <div class="main-subrow keyValue TabbedContent">
-                    <div class=""><span class="inline-flex"><a href="-api-communicator.html">ApiCommunicator</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1780958743%2FConstructors%2F-1647097541"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="-api-communicator.html"><span>Api</span><wbr></wbr><span><span>Communicator</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1780958743%2FConstructors%2F-1647097541"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
                       <div class="title">
-                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block">void <a href="-api-communicator.html">ApiCommunicator</a>(<a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> baseUriString, <a href="../-gini-api-type/index.html">GiniApiType</a> giniApiType, <span data-unresolved-link="com.android.volley/RequestQueue///PointingToDeclaration/">RequestQueue</span> mRequestQueue, <a href="../../net.gini.android.core.api.requests/-retry-policy-factory/index.html">RetryPolicyFactory</a> retryPolicyFactory)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword"></span>void <a href="-api-communicator.html"><span class="token function">ApiCommunicator</span></a><span class="token punctuation">(</span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> baseUriString<span class="token punctuation">, </span><span class="token keyword"></span><a href="../-gini-api-type/index.html">GiniApiType</a> giniApiType<span class="token punctuation">, </span><span class="token keyword"></span><span data-unresolved-link="com.android.volley/RequestQueue///PointingToDeclaration/">RequestQueue</span> mRequestQueue<span class="token punctuation">, </span><span class="token keyword"></span><a href="../../net.gini.android.core.api.requests/-retry-policy-factory/index.html">RetryPolicyFactory</a> retryPolicyFactory<span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
                       </div>
                     </div>
                   </div>
@@ -46,17 +52,15 @@
               <div class="table" data-togglable="Types"><a data-name="674858124%2FClasslikes%2F-1647097541" anchor-label="PreviewSize" id="674858124%2FClasslikes%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
                 <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="-preview-size/index.html"><span>Preview</span><wbr></wbr><span><span>Size</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="674858124%2FClasslikes%2F-1647097541"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="-preview-size/index.html"><span>Preview</span><wbr></wbr><span><span>Size</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="674858124%2FClasslikes%2F-1647097541"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace">public enum <a href="-preview-size/index.html">PreviewSize</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-</div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">public </span><span class="token keyword">enum </span><a href="-preview-size/index.html">PreviewSize</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -65,357 +69,315 @@
               <div class="table" data-togglable="Functions"><a data-name="1970322213%2FFunctions%2F-1647097541" anchor-label="deleteDocument" id="1970322213%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
                 <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="delete-document.html"><span>delete</span><wbr></wbr><span><span>Document</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1970322213%2FFunctions%2F-1647097541"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="delete-document.html"><span>delete</span><wbr></wbr><span><span>Document</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1970322213%2FFunctions%2F-1647097541"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span data-unresolved-link="bolts/Task///PointingToDeclaration/">Task</span>&lt;<a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a>&gt; <a href="delete-document.html">deleteDocument</a>(<a href="https://developer.android.com/reference/kotlin/android/net/Uri.html">Uri</a> documentUri, <a href="../../net.gini.android.core.api.authorization/-session/index.html">Session</a> session)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="symbol monospace block"><span data-unresolved-link="bolts/Task///PointingToDeclaration/">Task</span>&lt;<a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a>&gt; <a href="delete-document.html">deleteDocument</a>(<a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> documentId, <a href="../../net.gini.android.core.api.authorization/-session/index.html">Session</a> session)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-</div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword"></span><span data-unresolved-link="bolts/Task///PointingToDeclaration/">Task</span><span class="token operator">&lt;</span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a><span class="token operator">&gt;</span> <a href="delete-document.html"><span class="token function">deleteDocument</span></a><span class="token punctuation">(</span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/android/net/Uri.html">Uri</a> documentUri<span class="token punctuation">, </span><span class="token keyword"></span><a href="../../net.gini.android.core.api.authorization/-session/index.html">Session</a> session<span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="symbol monospace block"><span class="token keyword"></span><span data-unresolved-link="bolts/Task///PointingToDeclaration/">Task</span><span class="token operator">&lt;</span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a><span class="token operator">&gt;</span> <a href="delete-document.html"><span class="token function">deleteDocument</span></a><span class="token punctuation">(</span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> documentId<span class="token punctuation">, </span><span class="token keyword"></span><a href="../../net.gini.android.core.api.authorization/-session/index.html">Session</a> session<span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="929135281%2FFunctions%2F-1647097541" anchor-label="errorReportForDocument" id="929135281%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
                 <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="error-report-for-document.html"><span>error</span><wbr></wbr><span>Report</span><wbr></wbr><span>For</span><wbr></wbr><span><span>Document</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="929135281%2FFunctions%2F-1647097541"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="error-report-for-document.html"><span>error</span><wbr></wbr><span>Report</span><wbr></wbr><span>For</span><wbr></wbr><span><span>Document</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="929135281%2FFunctions%2F-1647097541"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span data-unresolved-link="bolts/Task///PointingToDeclaration/">Task</span>&lt;<a href="https://developer.android.com/reference/kotlin/org/json/JSONObject.html">JSONObject</a>&gt; <a href="error-report-for-document.html">errorReportForDocument</a>(<a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> documentId, <span>@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html">Nullable</a>() </span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> summary, <span>@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html">Nullable</a>() </span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> description, <a href="../../net.gini.android.core.api.authorization/-session/index.html">Session</a> session)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-</div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword"></span><span data-unresolved-link="bolts/Task///PointingToDeclaration/">Task</span><span class="token operator">&lt;</span><a href="https://developer.android.com/reference/kotlin/org/json/JSONObject.html">JSONObject</a><span class="token operator">&gt;</span> <a href="error-report-for-document.html"><span class="token function">errorReportForDocument</span></a><span class="token punctuation">(</span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> documentId<span class="token punctuation">, </span><span><span class="token annotation">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html"><span class="token annotation">Nullable</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span> </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> summary<span class="token punctuation">, </span><span><span class="token annotation">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html"><span class="token annotation">Nullable</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span> </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> description<span class="token punctuation">, </span><span class="token keyword"></span><a href="../../net.gini.android.core.api.authorization/-session/index.html">Session</a> session<span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="1158741601%2FFunctions%2F-1647097541" anchor-label="getDocument" id="1158741601%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
                 <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="get-document.html"><span>get</span><wbr></wbr><span><span>Document</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1158741601%2FFunctions%2F-1647097541"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="get-document.html"><span>get</span><wbr></wbr><span><span>Document</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1158741601%2FFunctions%2F-1647097541"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span data-unresolved-link="bolts/Task///PointingToDeclaration/">Task</span>&lt;<a href="https://developer.android.com/reference/kotlin/org/json/JSONObject.html">JSONObject</a>&gt; <a href="get-document.html">getDocument</a>(<a href="https://developer.android.com/reference/kotlin/android/net/Uri.html">Uri</a> documentUri, <a href="../../net.gini.android.core.api.authorization/-session/index.html">Session</a> session)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="symbol monospace block"><span data-unresolved-link="bolts/Task///PointingToDeclaration/">Task</span>&lt;<a href="https://developer.android.com/reference/kotlin/org/json/JSONObject.html">JSONObject</a>&gt; <a href="get-document.html">getDocument</a>(<a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> documentId, <a href="../../net.gini.android.core.api.authorization/-session/index.html">Session</a> session)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-</div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword"></span><span data-unresolved-link="bolts/Task///PointingToDeclaration/">Task</span><span class="token operator">&lt;</span><a href="https://developer.android.com/reference/kotlin/org/json/JSONObject.html">JSONObject</a><span class="token operator">&gt;</span> <a href="get-document.html"><span class="token function">getDocument</span></a><span class="token punctuation">(</span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/android/net/Uri.html">Uri</a> documentUri<span class="token punctuation">, </span><span class="token keyword"></span><a href="../../net.gini.android.core.api.authorization/-session/index.html">Session</a> session<span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="symbol monospace block"><span class="token keyword"></span><span data-unresolved-link="bolts/Task///PointingToDeclaration/">Task</span><span class="token operator">&lt;</span><a href="https://developer.android.com/reference/kotlin/org/json/JSONObject.html">JSONObject</a><span class="token operator">&gt;</span> <a href="get-document.html"><span class="token function">getDocument</span></a><span class="token punctuation">(</span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> documentId<span class="token punctuation">, </span><span class="token keyword"></span><a href="../../net.gini.android.core.api.authorization/-session/index.html">Session</a> session<span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="2015545722%2FFunctions%2F-1647097541" anchor-label="getDocumentList" id="2015545722%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
                 <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="get-document-list.html"><span>get</span><wbr></wbr><span>Document</span><wbr></wbr><span><span>List</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2015545722%2FFunctions%2F-1647097541"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="get-document-list.html"><span>get</span><wbr></wbr><span>Document</span><wbr></wbr><span><span>List</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2015545722%2FFunctions%2F-1647097541"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span data-unresolved-link="bolts/Task///PointingToDeclaration/">Task</span>&lt;<a href="https://developer.android.com/reference/kotlin/org/json/JSONObject.html">JSONObject</a>&gt; <a href="get-document-list.html">getDocumentList</a>(int offset, int limit, <a href="../../net.gini.android.core.api.authorization/-session/index.html">Session</a> session)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-</div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword"></span><span data-unresolved-link="bolts/Task///PointingToDeclaration/">Task</span><span class="token operator">&lt;</span><a href="https://developer.android.com/reference/kotlin/org/json/JSONObject.html">JSONObject</a><span class="token operator">&gt;</span> <a href="get-document-list.html"><span class="token function">getDocumentList</span></a><span class="token punctuation">(</span><span class="token keyword"></span>int offset<span class="token punctuation">, </span><span class="token keyword"></span>int limit<span class="token punctuation">, </span><span class="token keyword"></span><a href="../../net.gini.android.core.api.authorization/-session/index.html">Session</a> session<span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="1630139075%2FFunctions%2F-1647097541" anchor-label="getExtractions" id="1630139075%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
                 <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="get-extractions.html"><span>get</span><wbr></wbr><span><span>Extractions</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1630139075%2FFunctions%2F-1647097541"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="get-extractions.html"><span>get</span><wbr></wbr><span><span>Extractions</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1630139075%2FFunctions%2F-1647097541"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span data-unresolved-link="bolts/Task///PointingToDeclaration/">Task</span>&lt;<a href="https://developer.android.com/reference/kotlin/org/json/JSONObject.html">JSONObject</a>&gt; <a href="get-extractions.html">getExtractions</a>(<a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> documentId, <a href="../../net.gini.android.core.api.authorization/-session/index.html">Session</a> session)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-</div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword"></span><span data-unresolved-link="bolts/Task///PointingToDeclaration/">Task</span><span class="token operator">&lt;</span><a href="https://developer.android.com/reference/kotlin/org/json/JSONObject.html">JSONObject</a><span class="token operator">&gt;</span> <a href="get-extractions.html"><span class="token function">getExtractions</span></a><span class="token punctuation">(</span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> documentId<span class="token punctuation">, </span><span class="token keyword"></span><a href="../../net.gini.android.core.api.authorization/-session/index.html">Session</a> session<span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="766614577%2FFunctions%2F-1647097541" anchor-label="getFile" id="766614577%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
                 <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="get-file.html"><span>get</span><wbr></wbr><span><span>File</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="766614577%2FFunctions%2F-1647097541"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="get-file.html"><span>get</span><wbr></wbr><span><span>File</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="766614577%2FFunctions%2F-1647097541"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span data-unresolved-link="bolts/Task///PointingToDeclaration/">Task</span>&lt;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html">Array</a>&lt;byte&gt;&gt; <a href="get-file.html">getFile</a>(<span>@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html">NonNull</a>() </span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> location, <a href="../../net.gini.android.core.api.authorization/-session/index.html">Session</a> session)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-</div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword"></span><span data-unresolved-link="bolts/Task///PointingToDeclaration/">Task</span><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html">Array</a><span class="token operator">&lt;</span>byte<span class="token operator">&gt;</span><span class="token operator">&gt;</span> <a href="get-file.html"><span class="token function">getFile</span></a><span class="token punctuation">(</span><span><span class="token annotation">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation">NonNull</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span> </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> location<span class="token punctuation">, </span><span class="token keyword"></span><a href="../../net.gini.android.core.api.authorization/-session/index.html">Session</a> session<span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="1354020514%2FFunctions%2F-1647097541" anchor-label="getIncubatorExtractions" id="1354020514%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
                 <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="get-incubator-extractions.html"><span>get</span><wbr></wbr><span>Incubator</span><wbr></wbr><span><span>Extractions</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1354020514%2FFunctions%2F-1647097541"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="get-incubator-extractions.html"><span>get</span><wbr></wbr><span>Incubator</span><wbr></wbr><span><span>Extractions</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1354020514%2FFunctions%2F-1647097541"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span data-unresolved-link="bolts/Task///PointingToDeclaration/">Task</span>&lt;<a href="https://developer.android.com/reference/kotlin/org/json/JSONObject.html">JSONObject</a>&gt; <a href="get-incubator-extractions.html">getIncubatorExtractions</a>(<a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> documentId, <a href="../../net.gini.android.core.api.authorization/-session/index.html">Session</a> session)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-</div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword"></span><span data-unresolved-link="bolts/Task///PointingToDeclaration/">Task</span><span class="token operator">&lt;</span><a href="https://developer.android.com/reference/kotlin/org/json/JSONObject.html">JSONObject</a><span class="token operator">&gt;</span> <a href="get-incubator-extractions.html"><span class="token function">getIncubatorExtractions</span></a><span class="token punctuation">(</span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> documentId<span class="token punctuation">, </span><span class="token keyword"></span><a href="../../net.gini.android.core.api.authorization/-session/index.html">Session</a> session<span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="1695404981%2FFunctions%2F-1647097541" anchor-label="getLayoutForDocument" id="1695404981%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
                 <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="get-layout-for-document.html"><span>get</span><wbr></wbr><span>Layout</span><wbr></wbr><span>For</span><wbr></wbr><span><span>Document</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1695404981%2FFunctions%2F-1647097541"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="get-layout-for-document.html"><span>get</span><wbr></wbr><span>Layout</span><wbr></wbr><span>For</span><wbr></wbr><span><span>Document</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1695404981%2FFunctions%2F-1647097541"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span data-unresolved-link="bolts/Task///PointingToDeclaration/">Task</span>&lt;<a href="https://developer.android.com/reference/kotlin/org/json/JSONObject.html">JSONObject</a>&gt; <a href="get-layout-for-document.html">getLayoutForDocument</a>(<a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> documentId, <a href="../../net.gini.android.core.api.authorization/-session/index.html">Session</a> session)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-</div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword"></span><span data-unresolved-link="bolts/Task///PointingToDeclaration/">Task</span><span class="token operator">&lt;</span><a href="https://developer.android.com/reference/kotlin/org/json/JSONObject.html">JSONObject</a><span class="token operator">&gt;</span> <a href="get-layout-for-document.html"><span class="token function">getLayoutForDocument</span></a><span class="token punctuation">(</span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> documentId<span class="token punctuation">, </span><span class="token keyword"></span><a href="../../net.gini.android.core.api.authorization/-session/index.html">Session</a> session<span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="-34671625%2FFunctions%2F-1647097541" anchor-label="getPageImage" id="-34671625%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
                 <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="get-page-image.html"><span>get</span><wbr></wbr><span>Page</span><wbr></wbr><span><span>Image</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-34671625%2FFunctions%2F-1647097541"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="get-page-image.html"><span>get</span><wbr></wbr><span>Page</span><wbr></wbr><span><span>Image</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-34671625%2FFunctions%2F-1647097541"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span data-unresolved-link="bolts/Task///PointingToDeclaration/">Task</span>&lt;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html">Array</a>&lt;byte&gt;&gt; <a href="get-page-image.html">getPageImage</a>(<span>@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html">NonNull</a>() </span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> documentId, int pageCount, <a href="../../net.gini.android.core.api.authorization/-session/index.html">Session</a> session)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-</div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword"></span><span data-unresolved-link="bolts/Task///PointingToDeclaration/">Task</span><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html">Array</a><span class="token operator">&lt;</span>byte<span class="token operator">&gt;</span><span class="token operator">&gt;</span> <a href="get-page-image.html"><span class="token function">getPageImage</span></a><span class="token punctuation">(</span><span><span class="token annotation">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation">NonNull</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span> </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> documentId<span class="token punctuation">, </span><span class="token keyword"></span>int pageCount<span class="token punctuation">, </span><span class="token keyword"></span><a href="../../net.gini.android.core.api.authorization/-session/index.html">Session</a> session<span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="-1539489815%2FFunctions%2F-1647097541" anchor-label="getPayment" id="-1539489815%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
                 <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="get-payment.html"><span>get</span><wbr></wbr><span><span>Payment</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1539489815%2FFunctions%2F-1647097541"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="get-payment.html"><span>get</span><wbr></wbr><span><span>Payment</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1539489815%2FFunctions%2F-1647097541"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span data-unresolved-link="bolts/Task///PointingToDeclaration/">Task</span>&lt;<a href="https://developer.android.com/reference/kotlin/org/json/JSONObject.html">JSONObject</a>&gt; <a href="get-payment.html">getPayment</a>(<a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> id, <a href="../../net.gini.android.core.api.authorization/-session/index.html">Session</a> session)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-</div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword"></span><span data-unresolved-link="bolts/Task///PointingToDeclaration/">Task</span><span class="token operator">&lt;</span><a href="https://developer.android.com/reference/kotlin/org/json/JSONObject.html">JSONObject</a><span class="token operator">&gt;</span> <a href="get-payment.html"><span class="token function">getPayment</span></a><span class="token punctuation">(</span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> id<span class="token punctuation">, </span><span class="token keyword"></span><a href="../../net.gini.android.core.api.authorization/-session/index.html">Session</a> session<span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="-2109511688%2FFunctions%2F-1647097541" anchor-label="getPaymentProvider" id="-2109511688%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
                 <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="get-payment-provider.html"><span>get</span><wbr></wbr><span>Payment</span><wbr></wbr><span><span>Provider</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2109511688%2FFunctions%2F-1647097541"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="get-payment-provider.html"><span>get</span><wbr></wbr><span>Payment</span><wbr></wbr><span><span>Provider</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2109511688%2FFunctions%2F-1647097541"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span data-unresolved-link="bolts/Task///PointingToDeclaration/">Task</span>&lt;<a href="https://developer.android.com/reference/kotlin/org/json/JSONObject.html">JSONObject</a>&gt; <a href="get-payment-provider.html">getPaymentProvider</a>(<a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> id, <a href="../../net.gini.android.core.api.authorization/-session/index.html">Session</a> session)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-</div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword"></span><span data-unresolved-link="bolts/Task///PointingToDeclaration/">Task</span><span class="token operator">&lt;</span><a href="https://developer.android.com/reference/kotlin/org/json/JSONObject.html">JSONObject</a><span class="token operator">&gt;</span> <a href="get-payment-provider.html"><span class="token function">getPaymentProvider</span></a><span class="token punctuation">(</span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> id<span class="token punctuation">, </span><span class="token keyword"></span><a href="../../net.gini.android.core.api.authorization/-session/index.html">Session</a> session<span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="722674869%2FFunctions%2F-1647097541" anchor-label="getPaymentProviders" id="722674869%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
                 <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="get-payment-providers.html"><span>get</span><wbr></wbr><span>Payment</span><wbr></wbr><span><span>Providers</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="722674869%2FFunctions%2F-1647097541"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="get-payment-providers.html"><span>get</span><wbr></wbr><span>Payment</span><wbr></wbr><span><span>Providers</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="722674869%2FFunctions%2F-1647097541"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span data-unresolved-link="bolts/Task///PointingToDeclaration/">Task</span>&lt;<a href="https://developer.android.com/reference/kotlin/org/json/JSONArray.html">JSONArray</a>&gt; <a href="get-payment-providers.html">getPaymentProviders</a>(<a href="../../net.gini.android.core.api.authorization/-session/index.html">Session</a> session)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-</div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword"></span><span data-unresolved-link="bolts/Task///PointingToDeclaration/">Task</span><span class="token operator">&lt;</span><a href="https://developer.android.com/reference/kotlin/org/json/JSONArray.html">JSONArray</a><span class="token operator">&gt;</span> <a href="get-payment-providers.html"><span class="token function">getPaymentProviders</span></a><span class="token punctuation">(</span><span class="token keyword"></span><a href="../../net.gini.android.core.api.authorization/-session/index.html">Session</a> session<span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="1954683364%2FFunctions%2F-1647097541" anchor-label="getPaymentRequest" id="1954683364%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
                 <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="get-payment-request.html"><span>get</span><wbr></wbr><span>Payment</span><wbr></wbr><span><span>Request</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1954683364%2FFunctions%2F-1647097541"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="get-payment-request.html"><span>get</span><wbr></wbr><span>Payment</span><wbr></wbr><span><span>Request</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1954683364%2FFunctions%2F-1647097541"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span data-unresolved-link="bolts/Task///PointingToDeclaration/">Task</span>&lt;<a href="https://developer.android.com/reference/kotlin/org/json/JSONObject.html">JSONObject</a>&gt; <a href="get-payment-request.html">getPaymentRequest</a>(<a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> id, <a href="../../net.gini.android.core.api.authorization/-session/index.html">Session</a> session)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-</div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword"></span><span data-unresolved-link="bolts/Task///PointingToDeclaration/">Task</span><span class="token operator">&lt;</span><a href="https://developer.android.com/reference/kotlin/org/json/JSONObject.html">JSONObject</a><span class="token operator">&gt;</span> <a href="get-payment-request.html"><span class="token function">getPaymentRequest</span></a><span class="token punctuation">(</span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> id<span class="token punctuation">, </span><span class="token keyword"></span><a href="../../net.gini.android.core.api.authorization/-session/index.html">Session</a> session<span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="2011901601%2FFunctions%2F-1647097541" anchor-label="getPaymentRequests" id="2011901601%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
                 <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="get-payment-requests.html"><span>get</span><wbr></wbr><span>Payment</span><wbr></wbr><span><span>Requests</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2011901601%2FFunctions%2F-1647097541"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="get-payment-requests.html"><span>get</span><wbr></wbr><span>Payment</span><wbr></wbr><span><span>Requests</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2011901601%2FFunctions%2F-1647097541"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span data-unresolved-link="bolts/Task///PointingToDeclaration/">Task</span>&lt;<a href="https://developer.android.com/reference/kotlin/org/json/JSONArray.html">JSONArray</a>&gt; <a href="get-payment-requests.html">getPaymentRequests</a>(<a href="../../net.gini.android.core.api.authorization/-session/index.html">Session</a> session)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-</div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword"></span><span data-unresolved-link="bolts/Task///PointingToDeclaration/">Task</span><span class="token operator">&lt;</span><a href="https://developer.android.com/reference/kotlin/org/json/JSONArray.html">JSONArray</a><span class="token operator">&gt;</span> <a href="get-payment-requests.html"><span class="token function">getPaymentRequests</span></a><span class="token punctuation">(</span><span class="token keyword"></span><a href="../../net.gini.android.core.api.authorization/-session/index.html">Session</a> session<span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="-544583688%2FFunctions%2F-1647097541" anchor-label="getPreview" id="-544583688%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
                 <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="get-preview.html"><span>get</span><wbr></wbr><span><span>Preview</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-544583688%2FFunctions%2F-1647097541"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="get-preview.html"><span>get</span><wbr></wbr><span><span>Preview</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-544583688%2FFunctions%2F-1647097541"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span data-unresolved-link="bolts/Task///PointingToDeclaration/">Task</span>&lt;<a href="https://developer.android.com/reference/kotlin/android/graphics/Bitmap.html">Bitmap</a>&gt; <a href="get-preview.html">getPreview</a>(<a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> documentId, int pageNumber, <a href="-preview-size/index.html">ApiCommunicator.PreviewSize</a> previewSize, <a href="../../net.gini.android.core.api.authorization/-session/index.html">Session</a> session)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-</div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword"></span><span data-unresolved-link="bolts/Task///PointingToDeclaration/">Task</span><span class="token operator">&lt;</span><a href="https://developer.android.com/reference/kotlin/android/graphics/Bitmap.html">Bitmap</a><span class="token operator">&gt;</span> <a href="get-preview.html"><span class="token function">getPreview</span></a><span class="token punctuation">(</span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> documentId<span class="token punctuation">, </span><span class="token keyword"></span>int pageNumber<span class="token punctuation">, </span><span class="token keyword"></span><a href="-preview-size/index.html">ApiCommunicator.PreviewSize</a> previewSize<span class="token punctuation">, </span><span class="token keyword"></span><a href="../../net.gini.android.core.api.authorization/-session/index.html">Session</a> session<span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="1184214041%2FFunctions%2F-1647097541" anchor-label="logErrorEvent" id="1184214041%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
                 <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="log-error-event.html"><span>log</span><wbr></wbr><span>Error</span><wbr></wbr><span><span>Event</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1184214041%2FFunctions%2F-1647097541"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="log-error-event.html"><span>log</span><wbr></wbr><span>Error</span><wbr></wbr><span><span>Event</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1184214041%2FFunctions%2F-1647097541"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span data-unresolved-link="bolts/Task///PointingToDeclaration/">Task</span>&lt;<a href="https://developer.android.com/reference/kotlin/org/json/JSONObject.html">JSONObject</a>&gt; <a href="log-error-event.html">logErrorEvent</a>(<span>@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html">NonNull</a>() </span><a href="https://developer.android.com/reference/kotlin/org/json/JSONObject.html">JSONObject</a> errorEvent, <span>@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html">NonNull</a>() </span><a href="../../net.gini.android.core.api.authorization/-session/index.html">Session</a> session)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-</div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword"></span><span data-unresolved-link="bolts/Task///PointingToDeclaration/">Task</span><span class="token operator">&lt;</span><a href="https://developer.android.com/reference/kotlin/org/json/JSONObject.html">JSONObject</a><span class="token operator">&gt;</span> <a href="log-error-event.html"><span class="token function">logErrorEvent</span></a><span class="token punctuation">(</span><span><span class="token annotation">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation">NonNull</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span> </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/org/json/JSONObject.html">JSONObject</a> errorEvent<span class="token punctuation">, </span><span><span class="token annotation">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation">NonNull</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span> </span><span class="token keyword"></span><a href="../../net.gini.android.core.api.authorization/-session/index.html">Session</a> session<span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="-1299640019%2FFunctions%2F-1647097541" anchor-label="postPaymentRequests" id="-1299640019%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
                 <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="post-payment-requests.html"><span>post</span><wbr></wbr><span>Payment</span><wbr></wbr><span><span>Requests</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1299640019%2FFunctions%2F-1647097541"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="post-payment-requests.html"><span>post</span><wbr></wbr><span>Payment</span><wbr></wbr><span><span>Requests</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1299640019%2FFunctions%2F-1647097541"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span data-unresolved-link="bolts/Task///PointingToDeclaration/">Task</span>&lt;<a href="https://developer.android.com/reference/kotlin/org/json/JSONObject.html">JSONObject</a>&gt; <a href="post-payment-requests.html">postPaymentRequests</a>(<a href="https://developer.android.com/reference/kotlin/org/json/JSONObject.html">JSONObject</a> body, <a href="../../net.gini.android.core.api.authorization/-session/index.html">Session</a> session)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-</div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword"></span><span data-unresolved-link="bolts/Task///PointingToDeclaration/">Task</span><span class="token operator">&lt;</span><a href="https://developer.android.com/reference/kotlin/org/json/JSONObject.html">JSONObject</a><span class="token operator">&gt;</span> <a href="post-payment-requests.html"><span class="token function">postPaymentRequests</span></a><span class="token punctuation">(</span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/org/json/JSONObject.html">JSONObject</a> body<span class="token punctuation">, </span><span class="token keyword"></span><a href="../../net.gini.android.core.api.authorization/-session/index.html">Session</a> session<span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="-1916496997%2FFunctions%2F-1647097541" anchor-label="resolvePaymentRequests" id="-1916496997%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
                 <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="resolve-payment-requests.html"><span>resolve</span><wbr></wbr><span>Payment</span><wbr></wbr><span><span>Requests</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1916496997%2FFunctions%2F-1647097541"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="resolve-payment-requests.html"><span>resolve</span><wbr></wbr><span>Payment</span><wbr></wbr><span><span>Requests</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1916496997%2FFunctions%2F-1647097541"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span data-unresolved-link="bolts/Task///PointingToDeclaration/">Task</span>&lt;<a href="https://developer.android.com/reference/kotlin/org/json/JSONObject.html">JSONObject</a>&gt; <a href="resolve-payment-requests.html">resolvePaymentRequests</a>(<a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> id, <a href="https://developer.android.com/reference/kotlin/org/json/JSONObject.html">JSONObject</a> body, <a href="../../net.gini.android.core.api.authorization/-session/index.html">Session</a> session)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-</div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword"></span><span data-unresolved-link="bolts/Task///PointingToDeclaration/">Task</span><span class="token operator">&lt;</span><a href="https://developer.android.com/reference/kotlin/org/json/JSONObject.html">JSONObject</a><span class="token operator">&gt;</span> <a href="resolve-payment-requests.html"><span class="token function">resolvePaymentRequests</span></a><span class="token punctuation">(</span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> id<span class="token punctuation">, </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/org/json/JSONObject.html">JSONObject</a> body<span class="token punctuation">, </span><span class="token keyword"></span><a href="../../net.gini.android.core.api.authorization/-session/index.html">Session</a> session<span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="714847899%2FFunctions%2F-1647097541" anchor-label="searchDocuments" id="714847899%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
                 <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="search-documents.html"><span>search</span><wbr></wbr><span><span>Documents</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="714847899%2FFunctions%2F-1647097541"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="search-documents.html"><span>search</span><wbr></wbr><span><span>Documents</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="714847899%2FFunctions%2F-1647097541"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span data-unresolved-link="bolts/Task///PointingToDeclaration/">Task</span>&lt;<a href="https://developer.android.com/reference/kotlin/org/json/JSONObject.html">JSONObject</a>&gt; <a href="search-documents.html">searchDocuments</a>(<a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> searchTerm, <span>@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html">Nullable</a>() </span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> docType, int offset, int limit, <a href="../../net.gini.android.core.api.authorization/-session/index.html">Session</a> session)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-</div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword"></span><span data-unresolved-link="bolts/Task///PointingToDeclaration/">Task</span><span class="token operator">&lt;</span><a href="https://developer.android.com/reference/kotlin/org/json/JSONObject.html">JSONObject</a><span class="token operator">&gt;</span> <a href="search-documents.html"><span class="token function">searchDocuments</span></a><span class="token punctuation">(</span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> searchTerm<span class="token punctuation">, </span><span><span class="token annotation">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html"><span class="token annotation">Nullable</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span> </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> docType<span class="token punctuation">, </span><span class="token keyword"></span>int offset<span class="token punctuation">, </span><span class="token keyword"></span>int limit<span class="token punctuation">, </span><span class="token keyword"></span><a href="../../net.gini.android.core.api.authorization/-session/index.html">Session</a> session<span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="-931798516%2FFunctions%2F-1647097541" anchor-label="sendFeedback" id="-931798516%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
                 <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="send-feedback.html"><span>send</span><wbr></wbr><span><span>Feedback</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-931798516%2FFunctions%2F-1647097541"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="send-feedback.html"><span>send</span><wbr></wbr><span><span>Feedback</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-931798516%2FFunctions%2F-1647097541"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span data-unresolved-link="bolts/Task///PointingToDeclaration/">Task</span>&lt;<a href="https://developer.android.com/reference/kotlin/org/json/JSONObject.html">JSONObject</a>&gt; <a href="send-feedback.html">sendFeedback</a>(<a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> documentId, <a href="https://developer.android.com/reference/kotlin/org/json/JSONObject.html">JSONObject</a> extractions, <a href="../../net.gini.android.core.api.authorization/-session/index.html">Session</a> session)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="symbol monospace block"><span data-unresolved-link="bolts/Task///PointingToDeclaration/">Task</span>&lt;<a href="https://developer.android.com/reference/kotlin/org/json/JSONObject.html">JSONObject</a>&gt; <a href="send-feedback.html">sendFeedback</a>(<a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> documentId, <a href="https://developer.android.com/reference/kotlin/org/json/JSONObject.html">JSONObject</a> extractions, <a href="https://developer.android.com/reference/kotlin/org/json/JSONObject.html">JSONObject</a> compoundExtractions, <a href="../../net.gini.android.core.api.authorization/-session/index.html">Session</a> session)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-</div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword"></span><span data-unresolved-link="bolts/Task///PointingToDeclaration/">Task</span><span class="token operator">&lt;</span><a href="https://developer.android.com/reference/kotlin/org/json/JSONObject.html">JSONObject</a><span class="token operator">&gt;</span> <a href="send-feedback.html"><span class="token function">sendFeedback</span></a><span class="token punctuation">(</span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> documentId<span class="token punctuation">, </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/org/json/JSONObject.html">JSONObject</a> extractions<span class="token punctuation">, </span><span class="token keyword"></span><a href="../../net.gini.android.core.api.authorization/-session/index.html">Session</a> session<span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="symbol monospace block"><span class="token keyword"></span><span data-unresolved-link="bolts/Task///PointingToDeclaration/">Task</span><span class="token operator">&lt;</span><a href="https://developer.android.com/reference/kotlin/org/json/JSONObject.html">JSONObject</a><span class="token operator">&gt;</span> <a href="send-feedback.html"><span class="token function">sendFeedback</span></a><span class="token punctuation">(</span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> documentId<span class="token punctuation">, </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/org/json/JSONObject.html">JSONObject</a> extractions<span class="token punctuation">, </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/org/json/JSONObject.html">JSONObject</a> compoundExtractions<span class="token punctuation">, </span><span class="token keyword"></span><a href="../../net.gini.android.core.api.authorization/-session/index.html">Session</a> session<span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
 <a data-name="82530019%2FFunctions%2F-1647097541" anchor-label="uploadDocument" id="82530019%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
                 <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="upload-document.html"><span>upload</span><wbr></wbr><span><span>Document</span></span></a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="82530019%2FFunctions%2F-1647097541"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="upload-document.html"><span>upload</span><wbr></wbr><span><span>Document</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="82530019%2FFunctions%2F-1647097541"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
-                      <div class="title"><div class="divergent-group" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
-
-  <div>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span data-unresolved-link="bolts/Task///PointingToDeclaration/">Task</span>&lt;<a href="https://developer.android.com/reference/kotlin/android/net/Uri.html">Uri</a>&gt; <a href="upload-document.html">uploadDocument</a>(<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html">Array</a>&lt;byte&gt; documentData, <a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> contentType, <span>@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html">Nullable</a>() </span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> documentName, <span>@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html">Nullable</a>() </span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> docTypeHint, <a href="../../net.gini.android.core.api.authorization/-session/index.html">Session</a> session, <span>@<a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html">Nullable</a>() </span><a href="../-document-metadata/index.html">DocumentMetadata</a> documentMetadata)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-  </div>
-</div>
-</div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword"></span><span data-unresolved-link="bolts/Task///PointingToDeclaration/">Task</span><span class="token operator">&lt;</span><a href="https://developer.android.com/reference/kotlin/android/net/Uri.html">Uri</a><span class="token operator">&gt;</span> <a href="upload-document.html"><span class="token function">uploadDocument</span></a><span class="token punctuation">(</span><span class="token keyword"></span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html">Array</a><span class="token operator">&lt;</span>byte<span class="token operator">&gt;</span> documentData<span class="token punctuation">, </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> contentType<span class="token punctuation">, </span><span><span class="token annotation">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html"><span class="token annotation">Nullable</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span> </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> documentName<span class="token punctuation">, </span><span><span class="token annotation">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html"><span class="token annotation">Nullable</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span> </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> docTypeHint<span class="token punctuation">, </span><span class="token keyword"></span><a href="../../net.gini.android.core.api.authorization/-session/index.html">Session</a> session<span class="token punctuation">, </span><span><span class="token annotation">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html"><span class="token annotation">Nullable</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span> </span><span class="token keyword"></span><a href="../-document-metadata/index.html">DocumentMetadata</a> documentMetadata<span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -424,12 +386,14 @@
               <div class="table" data-togglable="Properties"><a data-name="-704375277%2FProperties%2F-1647097541" anchor-label="mRequestQueue" id="-704375277%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
                 <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="index.html#-704375277%2FProperties%2F-1647097541">mRequestQueue</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-704375277%2FProperties%2F-1647097541"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="index.html#-704375277%2FProperties%2F-1647097541">mRequestQueue</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-704375277%2FProperties%2F-1647097541"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
                       <div class="title">
-                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="-704375277%2FProperties%2F-1647097541" anchor-label="mRequestQueue" id="-704375277%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block">public final <span data-unresolved-link="com.android.volley/RequestQueue///PointingToDeclaration/">RequestQueue</span> <a href="index.html#-704375277%2FProperties%2F-1647097541">mRequestQueue</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="-704375277%2FProperties%2F-1647097541" anchor-label="mRequestQueue" id="-704375277%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><span data-unresolved-link="com.android.volley/RequestQueue///PointingToDeclaration/">RequestQueue</span> <a href="index.html#-704375277%2FProperties%2F-1647097541">mRequestQueue</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
                       </div>
                     </div>
                   </div>
@@ -437,12 +401,14 @@
 <a data-name="472993253%2FProperties%2F-1647097541" anchor-label="mRetryPolicyFactory" id="472993253%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
                 <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
                   <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex"><a href="index.html#472993253%2FProperties%2F-1647097541">mRetryPolicyFactory</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="472993253%2FProperties%2F-1647097541"></span>
+                    <div class=""><span class="inline-flex">
+                        <div><a href="index.html#472993253%2FProperties%2F-1647097541">mRetryPolicyFactory</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="472993253%2FProperties%2F-1647097541"></span>
                           <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                         </span></span></div>
                     <div>
                       <div class="title">
-                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="472993253%2FProperties%2F-1647097541" anchor-label="mRetryPolicyFactory" id="472993253%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block">public final <a href="../../net.gini.android.core.api.requests/-retry-policy-factory/index.html">RetryPolicyFactory</a> <a href="index.html#472993253%2FProperties%2F-1647097541">mRetryPolicyFactory</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="472993253%2FProperties%2F-1647097541" anchor-label="mRetryPolicyFactory" id="472993253%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="../../net.gini.android.core.api.requests/-retry-policy-factory/index.html">RetryPolicyFactory</a> <a href="index.html#472993253%2FProperties%2F-1647097541">mRetryPolicyFactory</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
                       </div>
                     </div>
                   </div>
@@ -451,7 +417,7 @@
             </div>
           </div>
         </div>
-        <div class="footer"><span class="go-to-top-icon"><a href="#content"></a></span><span>© 2021 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span></div>
+        <div class="footer"><span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2022 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span></div>
       </div>
     </div>
   </body>
