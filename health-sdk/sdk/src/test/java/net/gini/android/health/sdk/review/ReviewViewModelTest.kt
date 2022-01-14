@@ -4,15 +4,23 @@ import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.test.advanceTimeBy
+import kotlinx.coroutines.test.runTest
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.preferences.UserPreferences
 import net.gini.android.health.sdk.review.model.PaymentDetails
 import net.gini.android.health.sdk.review.model.ResultWrapper
-import net.gini.android.health.sdk.test.TestCoroutineRule
-import org.junit.*
+import net.gini.android.health.sdk.test.ViewModelTestCoroutineRule
+import org.junit.After
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
 
 /**
  * Created by Alpár Szotyori on 13.12.21.
@@ -24,7 +32,7 @@ import org.junit.*
 class ReviewViewModelTest {
 
     @get:Rule
-    val testCoroutineRule = TestCoroutineRule()
+    val testCoroutineRule = ViewModelTestCoroutineRule()
 
     private var giniHealth: GiniHealth? = null
     private var userPreferences: UserPreferences? = null
@@ -42,7 +50,7 @@ class ReviewViewModelTest {
     }
 
     @Test
-    fun `shows info bar on launch`() = testCoroutineRule.scope.runBlockingTest {
+    fun `shows info bar on launch`() = runTest {
         // Given
         val viewModel = ReviewViewModel(giniHealth!!).apply {
             userPreferences = this@ReviewViewModelTest.userPreferences!!
@@ -56,14 +64,14 @@ class ReviewViewModelTest {
     }
 
     @Test
-    fun `hides info bar after a delay`() = testCoroutineRule.scope.runBlockingTest {
+    fun `hides info bar after a delay`() = runTest {
         // Given
         val viewModel = ReviewViewModel(giniHealth!!).apply {
             userPreferences = this@ReviewViewModelTest.userPreferences!!
         }
 
         // When
-        testCoroutineRule.scope.advanceTimeBy(ReviewViewModel.SHOW_INFO_BAR_MS)
+        advanceTimeBy(ReviewViewModel.SHOW_INFO_BAR_MS + 100)
 
         val isVisible = viewModel.isInfoBarVisible.first()
 
@@ -72,7 +80,7 @@ class ReviewViewModelTest {
     }
 
     @Test
-    fun `validates payment details when the extractions have loaded`() = testCoroutineRule.scope.runBlockingTest {
+    fun `validates payment details when the extractions have loaded`() = runTest {
         // When
         every { giniHealth!!.paymentFlow } returns MutableStateFlow(
             ResultWrapper.Success(
@@ -98,7 +106,7 @@ class ReviewViewModelTest {
     }
 
     @Test
-    fun `does not validate payment details on every change`() = testCoroutineRule.scope.runBlockingTest {
+    fun `does not validate payment details on every change`() = runTest {
         // Given
         every { giniHealth!!.paymentFlow } returns MutableStateFlow(
             ResultWrapper.Success(
@@ -114,27 +122,36 @@ class ReviewViewModelTest {
 
         val viewModel = ReviewViewModel(giniHealth!!)
 
-        val validations = mutableListOf<List<ValidationMessage>>()
-        val collectJob = launch { viewModel.paymentValidation.collect { validations.add(it) } }
+        viewModel.paymentValidation.test {
+            // Precondition
+            assertThat(awaitItem()).isEmpty()
 
-        // When
-        viewModel.setRecipient("")
-        viewModel.setIban("")
-        viewModel.setAmount("")
-        viewModel.setRecipient("foo")
-        viewModel.setAmount("1.00")
-        viewModel.setIban("DE1234")
+            // When - Then
+            viewModel.setRecipient("")
+            expectNoEvents()
 
-        collectJob.cancel()
+            viewModel.setIban("")
+            expectNoEvents()
 
-        // Then
-        assertThat(validations).hasSize(1)
-        assertThat(validations[0]).isEmpty()
+            viewModel.setAmount("")
+            expectNoEvents()
+
+            viewModel.setRecipient("foo")
+            expectNoEvents()
+
+            viewModel.setAmount("1.00")
+            expectNoEvents()
+
+            viewModel.setIban("DE1234")
+            expectNoEvents()
+
+            cancelAndConsumeRemainingEvents()
+        }
     }
 
     @Test
     fun `emits only 'input field empty' errors when validating payment details after the extractions have loaded`() =
-        testCoroutineRule.scope.runBlockingTest {
+        runTest {
             // When
             every { giniHealth!!.paymentFlow } returns MutableStateFlow(
                 ResultWrapper.Success(
@@ -163,7 +180,7 @@ class ReviewViewModelTest {
 
     @Test
     fun `clears 'input field empty' error if the recipient field is not empty after input`() =
-        testCoroutineRule.scope.runBlockingTest {
+        runTest {
             // Given
             every { giniHealth!!.paymentFlow } returns MutableStateFlow(
                 ResultWrapper.Success(
@@ -180,13 +197,15 @@ class ReviewViewModelTest {
             val viewModel = ReviewViewModel(giniHealth!!)
 
             viewModel.paymentValidation.test {
+                // Precondition
+                assertThat(awaitItem()).containsExactly(
+                    ValidationMessage.Empty(PaymentField.Recipient),
+                )
+
                 // When
                 viewModel.setRecipient("recipient")
 
                 // Then
-                assertThat(awaitItem()).containsExactly(
-                    ValidationMessage.Empty(PaymentField.Recipient),
-                )
                 assertThat(awaitItem()).isEmpty()
 
                 cancelAndConsumeRemainingEvents()
@@ -195,7 +214,7 @@ class ReviewViewModelTest {
 
     @Test
     fun `clears 'input field empty' error if the iban field is not empty after input`() =
-        testCoroutineRule.scope.runBlockingTest {
+        runTest {
             // Given
             every { giniHealth!!.paymentFlow } returns MutableStateFlow(
                 ResultWrapper.Success(
@@ -212,13 +231,15 @@ class ReviewViewModelTest {
             val viewModel = ReviewViewModel(giniHealth!!)
 
             viewModel.paymentValidation.test {
+                // Precondition
+                assertThat(awaitItem()).containsExactly(
+                    ValidationMessage.Empty(PaymentField.Iban),
+                )
+
                 // When
                 viewModel.setIban("iban")
 
                 // Then
-                assertThat(awaitItem()).containsExactly(
-                    ValidationMessage.Empty(PaymentField.Iban),
-                )
                 assertThat(awaitItem()).isEmpty()
 
                 cancelAndConsumeRemainingEvents()
@@ -227,7 +248,7 @@ class ReviewViewModelTest {
 
     @Test
     fun `clears 'input field empty' error if the amount field is not empty after input`() =
-        testCoroutineRule.scope.runBlockingTest {
+        runTest {
             // Given
             every { giniHealth!!.paymentFlow } returns MutableStateFlow(
                 ResultWrapper.Success(
@@ -259,7 +280,7 @@ class ReviewViewModelTest {
 
     @Test
     fun `clears 'input field empty' error if the purpose field is not empty after input`() =
-        testCoroutineRule.scope.runBlockingTest {
+        runTest {
             // Given
             every { giniHealth!!.paymentFlow } returns MutableStateFlow(
                 ResultWrapper.Success(
@@ -291,7 +312,7 @@ class ReviewViewModelTest {
 
     @Test
     fun `clears only 'input field empty' errors if the field is not empty after input`() =
-        testCoroutineRule.scope.runBlockingTest {
+        runTest {
             // Given
             every { giniHealth!!.paymentFlow } returns MutableStateFlow(
                 ResultWrapper.Success(

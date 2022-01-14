@@ -6,7 +6,7 @@ import io.mockk.every
 import io.mockk.mockk
 import java.util.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import net.gini.android.core.api.DocumentManager
 import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.core.api.models.Document
@@ -51,7 +51,7 @@ class GiniHealthTest {
     }
 
     @Test
-    fun `When setting document for review then document and payment flow emit success`() = runBlockingTest {
+    fun `When setting document for review then document and payment flow emit success`() = runTest {
         coEvery { documentManager.getExtractions(document) } returns extractions
         val paymentDetails = PaymentDetails("recipient", "iban", "123.56", "purpose", extractions)
 
@@ -66,7 +66,7 @@ class GiniHealthTest {
     }
 
     @Test
-    fun `When setting document id for review with payment details then document flow emits document`() = runBlockingTest {
+    fun `When setting document id for review with payment details then document flow emits document`() = runTest {
         coEvery { documentManager.getDocument(any<String>()) } returns document
         val paymentDetails = PaymentDetails("recipient", "iban", "123.56", "purpose")
 
@@ -77,7 +77,7 @@ class GiniHealthTest {
     }
 
     @Test
-    fun `When setting document id for review with payment details then payment flow emits those details`() = runBlockingTest {
+    fun `When setting document id for review with payment details then payment flow emits those details`() = runTest {
         val paymentDetails = PaymentDetails("recipient", "iban", "123.56", "purpose")
 
         assert(giniHealth.paymentFlow.value is ResultWrapper.Loading<PaymentDetails>) { "Expected Loading" }
@@ -87,7 +87,7 @@ class GiniHealthTest {
     }
 
     @Test
-    fun `When setting document id for review without payment details then payment flow emits details`() = runBlockingTest {
+    fun `When setting document id for review without payment details then payment flow emits details`() = runTest {
         coEvery { documentManager.getExtractions(any()) } returns extractions
         coEvery { documentManager.getDocument(any<String>()) } returns document
         val paymentDetails = PaymentDetails("recipient", "iban", "123.56", "purpose", extractions)
@@ -99,7 +99,7 @@ class GiniHealthTest {
     }
 
     @Test
-    fun `Document is payable if it has an IBAN extraction`() = runBlockingTest {
+    fun `Document is payable if it has an IBAN extraction`() = runTest {
         coEvery { documentManager.getExtractions(any()) } returns extractions
         coEvery { documentManager.getDocument(any<String>()) } returns document
 
@@ -107,7 +107,7 @@ class GiniHealthTest {
     }
 
     @Test
-    fun `Document is not payable if it has no IBAN extraction`() = runBlockingTest {
+    fun `Document is not payable if it has no IBAN extraction`() = runTest {
         val extractionsWithoutIBAN = copyExtractions(extractions).apply {
             specificExtractions.remove("iban")
         }
@@ -118,7 +118,7 @@ class GiniHealthTest {
     }
 
     @Test
-    fun `Document is not payable if it has an empty IBAN extraction`() = runBlockingTest {
+    fun `Document is not payable if it has an empty IBAN extraction`() = runTest {
         val extractionsWithoutIBAN = copyExtractions(extractions).apply {
             specificExtractions.set("iban", SpecificExtraction("iban", "", "", null, listOf()))
         }
