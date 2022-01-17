@@ -176,6 +176,16 @@ Default Implementation
 
 The example below shows how to correct extractions and send feedback using the default networking implementation:
 
+.. note::
+
+    We also provide a sample test case `here
+    <https://github.com/gini/gini-mobile-android/blob/main/capture-sdk/default-network/src/androidTest/java/net/gini/android/capture/network/ExtractionFeedbackIntegrationTest.kt>`_
+    to verify that extraction feedback sending works. You may use it along with the example pdf and json files as a
+    starting point to write your own test case.
+
+    The sample test case is based on the Bank API documentation's `recommended steps
+    <https://pay-api.gini.net/documentation/#test-example>`_ for testing extraction feedback sending.
+
 .. code-block:: java
 
    GiniCaptureDefaultNetworkApi networkApi; // Provided
@@ -223,6 +233,12 @@ feedback.
 In case you use the Gini Bank API Library then see `this section
 <https://developer.gini.net/gini-mobile-android/bank-api-library/library/html/guides/common-tasks.html#sending-feedback>`_ in its documentation
 for details.
+
+.. note::
+
+    The Bank API documentation provides `recommended steps <https://pay-api.gini.net/documentation/#test-example>`_ for
+    testing extraction feedback sending. You may use it along with the example pdf and json files as a starting point to
+    write a test case for verifying that feedback sending works. 
 
 Capturing documents
 -------------------
