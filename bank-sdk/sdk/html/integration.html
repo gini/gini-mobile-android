@@ -101,8 +101,8 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#handling-payment-requests">Handling Payment Requests</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id5">Networking</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id7">Android Manifest</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">Networking</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">Android Manifest</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#package-name">Package Name</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#receive-payment-requests">Receive Payment Requests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#testing">Testing</a></li>
@@ -328,6 +328,13 @@ extractions the user has seen and accepted (or corrected).</p>
 <div class="section" id="id2">
 <h5>Default Implementation<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h5>
 <p>The example below shows how to correct extractions and send feedback using the default networking implementation:</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>We also provide a sample test case <a class="reference external" href="https://github.com/gini/gini-mobile-android/blob/main/bank-sdk/sdk/src/androidTest/java/net/gini/android/bank/sdk/ExtractionFeedbackIntegrationTest.kt">here</a>
+to verify that extraction feedback sending works. You may use it along with the example pdf and json files as a
+starting point to write your own test case.</p>
+<p class="last">The sample test case is based on the Bank API documentation’s <a class="reference external" href="https://pay-api.gini.net/documentation/#test-example">recommended steps</a> for testing extraction feedback sending.</p>
+</div>
 <div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">val</span> <span class="n">networkApi</span><span class="p">:</span> <span class="n">GiniCaptureDefaultNetworkApi</span> <span class="c1">// Provided</span>
 
 <span class="n">val</span> <span class="n">extractions</span><span class="p">:</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span> <span class="n">GiniCaptureSpecificExtraction</span><span class="o">&gt;</span> <span class="c1">// Provided</span>
@@ -368,6 +375,12 @@ extractions the user has seen and accepted (or corrected).</p>
 feedback.</p>
 <p>In case you use the Gini Bank API Library then see <a class="reference external" href="https://developer.gini.net/gini-mobile-android/bank-api-library/library/html/guides/common-tasks.html#sending-feedback">this section</a>
 in its documentation for details.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The Bank API documentation provides <a class="reference external" href="https://pay-api.gini.net/documentation/#test-example">recommended steps</a> for
+testing extraction feedback sending. You may use it along with the example pdf and json files as a starting point to
+write a test case for verifying that feedback sending works.</p>
+</div>
 </div>
 </div>
 </div>
@@ -480,8 +493,8 @@ it.</p>
 <p>The Gini Bank SDK enables your app to handle payment requests started by other Gini SDKs (e.g., Gini Health SDK) in another app.
 You can retrieve the payment requests’s content, mark the payment request as payed and also return your user to the app
 that created the payment request.</p>
-<div class="section" id="id5">
-<h3>Networking<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id6">
+<h3>Networking<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
 <p>The pay feature depends on the <a class="reference external" href="https://github.com/gini/gini-mobile-android/tree/main/bank-api-library">Gini Bank API Library</a>, which
 provides an entry point through the <code class="docutils literal notranslate"><span class="pre">GiniBankAPI</span></code> class.</p>
 <div class="admonition note">
@@ -507,8 +520,8 @@ authorization token. We provide helper methods for each case:</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="id7">
-<h3>Android Manifest<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id8">
+<h3>Android Manifest<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
 <p>To be able to receive payment requests you need to add an intent filter for the ginipay URI to your manifest. This also
 allows other Gini SDKs (e.g., Gini Health SDK) to detect if your app is installed:</p>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;intent-filter&gt;</span>
