@@ -137,6 +137,16 @@ the extractions the *user has seen and accepted*. Feedback should be sent for co
 **and** for *correct extractions*. The code example below shows how to correct extractions and send
 feedback.
 
+.. note::
+
+    We also provide a sample test case `here
+    <https://github.com/gini/gini-mobile-android/blob/main/bank-api-library/library/src/androidTest/java/net/gini/android/bank/api/ExtractionFeedbackIntegrationTest.kt>`_
+    to verify that extraction feedback sending works. You may use it along with the example pdf and json files as a
+    starting point to write your own test case.
+
+    The sample test case is based on the Bank API documentation's `recommended steps
+    <https://pay-api.gini.net/documentation/#test-example>`_ for testing extraction feedback sending.
+
 .. code-block:: java
 
         final Task<Map<String, SpecificExtraction>> retrievedExtractions // provided
