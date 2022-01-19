@@ -16,6 +16,12 @@ import net.gini.android.core.api.RequestQueueBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
 @SmallTest
 @RunWith(AndroidJUnit4.class)
 public class RequestQueueBuilderTest {
@@ -37,6 +43,35 @@ public class RequestQueueBuilderTest {
                 .build();
 
         assertSame(cache, requestQueue.getCache());
+    }
+
+    @Test
+    public void allowSettingCustomTrustManager() {
+        RequestQueueBuilder requestQueueBuilder = new RequestQueueBuilder(getApplicationContext());
+
+        final TrustManager trustManager = new X509TrustManager() {
+
+            @Override
+            public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+
+            }
+
+            @Override
+            public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+
+            }
+
+            @Override
+            public X509Certificate[] getAcceptedIssuers() {
+                return new X509Certificate[0];
+            }
+        };
+
+        RequestQueue requestQueue = requestQueueBuilder
+                .setTrustManager(trustManager)
+                .build();
+
+        assertNotNull(requestQueue);
     }
 
 }

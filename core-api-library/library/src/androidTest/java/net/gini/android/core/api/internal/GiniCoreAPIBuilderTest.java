@@ -23,6 +23,12 @@ import net.gini.android.core.api.authorization.SessionManager;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
 import bolts.Task;
 
 @SmallTest
@@ -113,6 +119,37 @@ public class GiniCoreAPIBuilderTest {
 
         assertSame(giniHealthAPI.getDocumentTaskManager().mApiCommunicator.mRequestQueue.getCache(), nullCache);
     }
+
+    @Test
+    public void allowsSettingCustomTrustManager() {
+        CoreAPIBuilder builder = new CoreAPIBuilder(getApplicationContext(), "clientId", "clientSecret", "@example.com");
+        builder.setGiniApiType(GiniApiType.DEFAULT);
+
+        final TrustManager trustManager = new X509TrustManager() {
+
+            @Override
+            public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+
+            }
+
+            @Override
+            public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+
+            }
+
+            @Override
+            public X509Certificate[] getAcceptedIssuers() {
+                return new X509Certificate[0];
+            }
+        };
+
+        GiniCoreAPI sdkInstance = builder
+                .setTrustManager(trustManager)
+                .build();
+
+        assertNotNull(sdkInstance);
+    }
+
 
     private static class CoreAPIBuilder extends GiniCoreAPIBuilder<GiniCoreAPI> {
 
