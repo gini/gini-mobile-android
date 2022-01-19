@@ -63,11 +63,15 @@ Public key pinning is provided using the `Android Network Security Configuration
 <https://developer.android.com/training/articles/security-config.html>`_ and `TrustKit
 <https://github.com/datatheorem/TrustKit-Android>`_.
 
-To use public key pinning you need to create an `Android network security configuration
-<https://developer.android.com/training/articles/security-config.html>`_ xml file. This
-configuration is supported natively on Android Nougat (API Level 24) and newer. For versions between
-API Level 21 and 23 the Gini Bank API Library relies on `TrustKit
-<https://github.com/datatheorem/TrustKit-Android>`_.
+To use public key pinning you can either create an `Android network security configuration
+<https://developer.android.com/training/articles/security-config.html>`_ xml file or set a custom `TrustManager
+<https://developer.android.com/reference/javax/net/ssl/TrustManager>`_ implementation.
+
+The network security configuration is supported
+natively on Android Nougat (API Level 24) and newer. For versions between API Level 21 and 23 the Gini SDK relies on
+`TrustKit <https://github.com/datatheorem/TrustKit-Android>`_.
+
+The custom ``TrustManager`` is supported on all Android versions.
 
 We recommend reading the `Android Network Security Configuration
 <https://developer.android.com/training/articles/security-config.html>`_ guide and the `TrustKit
@@ -140,8 +144,8 @@ the ``<application>`` tag to point to the xml:
         ...
     </manifest>
 
-Enable Pinning
---------------
+Enable Pinning with a Network Security Configuration
+----------------------------------------------------
 
 For the library to know about the xml you need to set the xml resource id using the
 ``GiniBankAPIBuilder#setNetworkSecurityConfigResId()`` method:
@@ -151,6 +155,22 @@ For the library to know about the xml you need to set the xml resource id using 
     GiniBankAPI giniBankApi = new GiniBankAPIBuilder(getContext(), "gini-client-id", "GiniClientSecret", "example.com")
             .setNetworkSecurityConfigResId(R.xml.network_security_config)
             .build();
+
+Enable Pinning with a custom TrustManager implementation
+--------------------------------------------------------
+
+You can also take full control over which certificates to trust by passing your own ``TrustManager`` implementation
+to the ``GiniBankAPIBuilder#setTrustManager()`` method:
+
+.. code-block:: java
+
+    GiniBankAPI giniBankApi = new GiniBankAPIBuilder(getContext(), "gini-client-id", "GiniClientSecret", "example.com")
+            .setTrustManager(yourTrustManager)
+            .build();
+
+.. warning::
+
+    Setting a custom ``TrustManager`` will override the network security configuration.
 
 Extract Hash From gini.net
 --------------------------
