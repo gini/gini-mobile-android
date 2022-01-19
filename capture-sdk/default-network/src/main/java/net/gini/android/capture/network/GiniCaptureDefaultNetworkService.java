@@ -46,6 +46,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
+import javax.net.ssl.TrustManager;
+
 import bolts.Continuation;
 import bolts.Task;
 
@@ -374,6 +376,7 @@ public class GiniCaptureDefaultNetworkService implements GiniCaptureNetworkServi
         private int mMaxNumberOfRetries;
         private float mBackoffMultiplier;
         private DocumentMetadata mDocumentMetadata;
+        private TrustManager mTrustManager;
 
         Builder(@NonNull final Context context) {
             mContext = context;
@@ -417,6 +420,9 @@ public class GiniCaptureDefaultNetworkService implements GiniCaptureNetworkServi
             }
             if (mBackoffMultiplier >= 0) {
                 giniApiBuilder.setConnectionBackOffMultiplier(mBackoffMultiplier);
+            }
+            if (mTrustManager != null) {
+                giniApiBuilder.setTrustManager(mTrustManager);
             }
             final GiniBankAPI giniApi = giniApiBuilder.build();
             return new GiniCaptureDefaultNetworkService(giniApi, mDocumentMetadata);
@@ -587,6 +593,21 @@ public class GiniCaptureDefaultNetworkService implements GiniCaptureNetworkServi
          */
         public Builder setDocumentMetadata(@NonNull final DocumentMetadata documentMetadata) {
             mDocumentMetadata = documentMetadata;
+            return this;
+        }
+
+        /**
+         * Set a custom {@link TrustManager} implementation to have full control over which certificates to trust.
+         * <p>
+         * Please be aware that if you set a custom TrustManager implementation here than it will override any
+         * <a href="https://developer.android.com/training/articles/security-config">network security configuration</a>
+         * you may have set.
+         *
+         * @param trustManager A {@link TrustManager} implementation.
+         * @return the {@link Builder} instance
+         */
+        public Builder setTrustManager(@NonNull final TrustManager trustManager) {
+            mTrustManager = trustManager;
             return this;
         }
     }
