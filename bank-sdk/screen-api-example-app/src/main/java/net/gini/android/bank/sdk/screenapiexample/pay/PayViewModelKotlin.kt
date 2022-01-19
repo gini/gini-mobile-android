@@ -13,19 +13,19 @@ import net.gini.android.bank.sdk.screenapiexample.util.ResultWrapper
 import net.gini.android.bank.sdk.screenapiexample.util.wrapToResult
 import net.gini.android.bank.sdk.GiniBank
 
-class PayViewModel(
+class PayViewModelKotlin(
     private val giniBank: GiniBank
-) : ViewModel() {
+) : ViewModel(), PayViewModelInterface {
 
     private val _paymentRequest = MutableStateFlow<ResultWrapper<PaymentRequest>>(ResultWrapper.Loading())
-    val paymentRequest: StateFlow<ResultWrapper<PaymentRequest>> = _paymentRequest
+    override val paymentRequest: StateFlow<ResultWrapper<PaymentRequest>> = _paymentRequest
 
     private val _paymentState = MutableStateFlow<ResultWrapper<ResolvedPayment>>(ResultWrapper.Loading())
-    val paymentState: StateFlow<ResultWrapper<ResolvedPayment>> = _paymentState
+    override val paymentState: StateFlow<ResultWrapper<ResolvedPayment>> = _paymentState
 
     private var requestId: String? = null
 
-    fun fetchPaymentRequest(requestId: String) {
+    override fun fetchPaymentRequest(requestId: String) {
         this.requestId = requestId
         _paymentRequest.value = ResultWrapper.Loading()
         viewModelScope.launch {
@@ -33,7 +33,7 @@ class PayViewModel(
         }
     }
 
-    fun onPay(paymentDetails: ResolvePaymentInput) {
+    override fun onPay(paymentDetails: ResolvePaymentInput) {
         _paymentState.value = ResultWrapper.Loading()
         requestId?.let { id ->
             viewModelScope.launch {
@@ -42,9 +42,9 @@ class PayViewModel(
         }
     }
 
-    fun returnToPaymentInitiatorApp(context: Context) {
-        val payment = paymentState.value
+    override fun returnToPaymentInitiatorApp(context: Context) {
+        val payment = _paymentState.value
         if (payment is ResultWrapper.Success)
-        giniBank.returnToPaymentInitiatorApp(context, payment.value)
+            giniBank.returnToPaymentInitiatorApp(context, payment.value)
     }
 }
