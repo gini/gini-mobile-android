@@ -5,7 +5,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.flow.collect
 import net.gini.android.core.api.models.PaymentRequest
 import net.gini.android.core.api.models.ResolvePaymentInput
 import net.gini.android.bank.sdk.screenapiexample.databinding.ActivityPayBinding
@@ -15,7 +14,9 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PayActivity : AppCompatActivity() {
 
-    private val viewModel: PayViewModel by viewModel()
+    // Replace PayViewModelKotlin with PayViewModelJava to try out
+    // using the GiniBank suspending functions from Java
+    private val viewModel: PayViewModelJava by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
