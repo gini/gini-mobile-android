@@ -112,7 +112,7 @@ Default Implementation
 ~~~~~~~~~~~~~~~~~~~~~~
 
 The quickest way to add networking is to use the `Gini Capture Network
-Library <https://github.com/gini/gini-capture-sdk-android/tree/master/ginicapture-network>`_.
+Library <https://github.com/gini/gini-mobile-android/tree/main/capture-sdk/default-network>`_.
 
 To use it add the ``gini-capture-network-lib`` dependency to your app's ``build.gradle``:
 
@@ -265,7 +265,7 @@ This is the easiest way to use the SDK. You only need to:
 .. note::
 
    Check out the `Screen API example app
-   <https://github.com/gini/gini-capture-sdk-android/tree/main/screenapiexample>`_ to see how an integration could look
+   <https://github.com/gini/gini-mobile-android/tree/main/capture-sdk/screen-api-example-app>`_ to see how an integration could look
    like.
 
 The ``CameraActivity`` can return with the following result codes:
@@ -364,7 +364,7 @@ control over how these are shown in your UI.
 .. note::
 
    Check out the `Component API example app
-   <https://github.com/gini/gini-capture-sdk-android/tree/main/componentapiexample>`_ to see how an integration could
+   <https://github.com/gini/gini-mobile-android/tree/main/capture-sdk/component-api-example-app>`_ to see how an integration could
    look like.
 
 There is also one activity for showing the help screen. This is not a fragment in order to avoid overcomplicating
