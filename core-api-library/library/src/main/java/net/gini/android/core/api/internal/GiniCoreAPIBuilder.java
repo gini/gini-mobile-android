@@ -31,6 +31,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.net.ssl.TrustManager;
+
 public abstract class GiniCoreAPIBuilder<T extends GiniCoreAPI> {
 
     private final Context mContext;
@@ -58,6 +60,7 @@ public abstract class GiniCoreAPIBuilder<T extends GiniCoreAPI> {
     private RetryPolicyFactory mRetryPolicyFactory;
     private Cache mCache;
     private GiniApiType mGiniApiType;
+    private TrustManager mTrustManager;
 
     /**
      * Constructor to initialize a new builder instance where anonymous Gini users are used. <b>This requires access to
@@ -213,6 +216,21 @@ public abstract class GiniCoreAPIBuilder<T extends GiniCoreAPI> {
     }
 
     /**
+     * Set a custom {@link TrustManager} implementation to have full control over which certificates to trust.
+     * <p>
+     * Please be aware that if you set a custom TrustManager implementation here than it will override any
+     * <a href="https://developer.android.com/training/articles/security-config">network security configuration</a>
+     * you may have set.
+     *
+     * @param trustManager A {@link TrustManager} implementation.
+     * @return The builder instance to enable chaining.
+     */
+    public GiniCoreAPIBuilder<T> setTrustManager(@NonNull final TrustManager trustManager) {
+        mTrustManager = trustManager;
+        return this;
+    }
+
+    /**
      * Builds an instance with the configuration settings of the builder instance.
      *
      * @return The fully configured instance.
@@ -235,6 +253,8 @@ public abstract class GiniCoreAPIBuilder<T extends GiniCoreAPI> {
             }
             if (mNetworkSecurityConfigResId != 0) {
                 requestQueueBuilder.setNetworkSecurityConfigResId(mNetworkSecurityConfigResId);
+            } else if (mTrustManager != null) {
+                requestQueueBuilder.setTrustManager(mTrustManager);
             }
             mRequestQueue = requestQueueBuilder.build();
         }

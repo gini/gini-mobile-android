@@ -51,6 +51,8 @@ import org.junit.runner.RunWith;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -59,7 +61,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import bolts.Continuation;
 import bolts.Task;
@@ -810,6 +816,69 @@ public class GiniCoreAPIIntegrationTest {
         );
         return giniCoreAPI.getDocumentTaskManager().createPaymentRequest(paymentRequest);
     }
+
+    @Test
+    public void allowsUsingCustomTrustManager() throws IOException, InterruptedException {
+        final AtomicBoolean customTrustManagerWasCalled = new AtomicBoolean(false);
+
+        // Don't trust any certificates: blocks all network calls
+        final TrustManager blockingTrustManager = new X509TrustManager() {
+            @Override
+            public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+                customTrustManagerWasCalled.set(true);
+                throw new CertificateException();
+            }
+
+            @Override
+            public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+                customTrustManagerWasCalled.set(true);
+                throw new CertificateException();
+            }
+
+            @Override
+            public X509Certificate[] getAcceptedIssuers() {
+                customTrustManagerWasCalled.set(true);
+                return new X509Certificate[0];
+            }
+        };
+
+        giniCoreAPI = new CoreAPIBuilder(getApplicationContext(), clientId, clientSecret, "example.com").
+                setGiniApiType(apiType).
+                setApiBaseUrl(apiUri).
+                setUserCenterApiBaseUrl(userCenterUri).
+                setConnectionTimeoutInMs(60000).
+                setTrustManager(blockingTrustManager).
+                build();
+
+        final AssetManager assetManager = getApplicationContext().getResources().getAssets();
+        final InputStream testDocumentAsStream = assetManager.open("test.jpg");
+        assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream);
+
+        final byte[] testDocument = TestUtils.createByteArray(testDocumentAsStream);
+
+        final DocumentTaskManager documentTaskManager = giniCoreAPI.getDocumentTaskManager();
+
+        final Task<Document> uploadPartial = documentTaskManager.createPartialDocument(testDocument, "image/jpeg", null, null);
+        final Task<Document> createComposite = uploadPartial.onSuccessTask(task -> {
+            Document document = task.getResult();
+            return documentTaskManager.createCompositeDocument(Collections.singletonList(document), null);
+        });
+        final Task<Document> processDocument = createComposite.onSuccessTask(task -> {
+            Document document = task.getResult();
+            return documentTaskManager.pollDocument(document);
+        });
+
+        final Task<ExtractionsContainer> retrieveExtractions = processDocument.onSuccessTask(
+                task -> documentTaskManager.getAllExtractions(task.getResult())
+        );
+
+        retrieveExtractions.waitForCompletion();
+
+        // Custom TrustManager should have been called and all requests should have failed
+        assertTrue(customTrustManagerWasCalled.get());
+        assertTrue(retrieveExtractions.isFaulted());
+    }
+
 
     private String extractEmailDomain(String email) {
         String[] components = email.split("@");

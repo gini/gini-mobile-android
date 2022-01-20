@@ -24,6 +24,8 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.XmlRes;
 
 /**
@@ -54,6 +56,7 @@ public final class RequestQueueBuilder {
     private List<String> mHostnames;
     @XmlRes
     private int mNetworkSecurityConfigResId;
+    private TrustManager mTrustManager;
 
     public RequestQueueBuilder(final Context context) {
         mContext = context;
@@ -71,6 +74,11 @@ public final class RequestQueueBuilder {
 
     public RequestQueueBuilder setCache(final Cache cache) {
         mCache = cache;
+        return this;
+    }
+
+    public RequestQueueBuilder setTrustManager(@NonNull final TrustManager trustManager) {
+        mTrustManager = trustManager;
         return this;
     }
 
@@ -123,7 +131,8 @@ public final class RequestQueueBuilder {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     // Since Android 10 (Q) TLSv1.3 is default
                     // https://developer.android.com/reference/javax/net/ssl/SSLSocket#default-configuration-for-different-android-versions
-                    sslContext = SSLContext.getDefault();
+                    // We still need to set it explicitly to be able to call init() on the SSLContext instance
+                    sslContext = SSLContext.getInstance("TLSv1.3");
                 } else {
                     // Force TLSv1.2 on older versions
                     sslContext = SSLContext.getInstance("TLSv1.2");
@@ -137,6 +146,20 @@ public final class RequestQueueBuilder {
     }
 
     private TrustManager[] getTrustManagers() {
+        if (mTrustManager != null) {
+            return new TrustManager[]{mTrustManager};
+        }
+
+        final PubKeyManager pubKeyManager = createPubKeyManager();
+        if (pubKeyManager != null) {
+            return new TrustManager[]{pubKeyManager};
+        }
+
+        return null;
+    }
+
+    @Nullable
+    private PubKeyManager createPubKeyManager() {
         final PubKeyManager.Builder builder = PubKeyManager.builder(mContext);
         if (mHostnames != null && !mHostnames.isEmpty()) {
             builder.setHostnames(mHostnames);
@@ -146,7 +169,7 @@ public final class RequestQueueBuilder {
         }
         if (builder.canBuild()) {
             final PubKeyManager pubKeyManager = builder.build();
-            return new TrustManager[]{pubKeyManager};
+            return pubKeyManager;
         }
         return null;
     }
