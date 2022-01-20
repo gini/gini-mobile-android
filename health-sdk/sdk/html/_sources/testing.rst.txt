@@ -10,10 +10,8 @@ Example banking app
 To pass the requirements for the Gini Health SDK a supported banking app has to be installed on the device running
 your app.
 
-TODO: use Gini Bank SDK urls after it's released
-
-An example banking app is available in the `Gini Pay Bank SDK's <https://github.com/gini/gini-pay-bank-sdk-android>`_
-repository called ``appscreenapi``.
+An example banking app is available in the `Gini Bank SDK <https://github.com/gini/gini-mobile-android/tree/main/bank-sdk>`_
+repository called ``screen-api-example-app``.
 
 You can use the same Gini Pay API client credentials in the example banking app as in your app, if not otherwise
 specified.
