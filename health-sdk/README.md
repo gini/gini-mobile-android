@@ -34,11 +34,8 @@ clientSecret=*******
 
 In order to pass the Requirements a bank app needs to be installed on the device.
 
-TODO: use Gini Bank SDK urls after it's released
-
-An example bank app is available in the Gini Pay Bank SDK's
-[repository](https://github.com/gini/gini-pay-bank-sdk-android) called
-[`appcreenapi`](https://github.com/gini/gini-pay-bank-sdk-android/tree/main/appscreenapi).
+An example bank app is available in the [Gini Bank SDK](https://github.com/gini/gini-mobile-android/tree/main/bank-sdk) called
+[`screen-api-example-app`](https://github.com/gini/gini-mobile-android/tree/main/bank-sdk/screen-api-example-app).
 
 License
 -------
