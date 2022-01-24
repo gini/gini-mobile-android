@@ -1,9 +1,6 @@
-import net.gini.gradle.*
-
 plugins {
     id("com.android.library")
     kotlin("android")
-    kotlin("kapt")
 }
 
 android {
@@ -41,24 +38,17 @@ android {
 }
 
 dependencies {
-    api("com.android.volley:volley:1.2.1")
-    api("com.parse.bolts:bolts-tasks:1.4.0")
+    implementation(project(":core-api-library:library"))
     implementation(libs.trustkit)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
-    kapt(libs.moshi.codegen)
-    implementation(libs.moshi.core)
 
-    androidTestImplementation(libs.mockito.core)
-    androidTestImplementation(libs.mockito.android)
-    androidTestImplementation(libs.androidx.test.runner)
-    androidTestImplementation(libs.androidx.test.rules)
-    androidTestImplementation(libs.androidx.test.junit)
-    androidTestImplementation(libs.androidx.multidex)
+    implementation(libs.mockito.core)
+    implementation(libs.mockito.android)
+    implementation(libs.androidx.test.runner)
+    implementation(libs.androidx.test.rules)
+    implementation(libs.androidx.test.junit)
+    implementation(libs.androidx.multidex)
 }
-
-apply<PublishToMavenPlugin>()
-apply<DokkaPlugin>()
-apply<CodeAnalysisPlugin>()

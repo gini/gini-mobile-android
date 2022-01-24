@@ -19,6 +19,7 @@ import net.gini.android.core.api.DocumentTaskManager;
 import net.gini.android.core.api.GiniApiType;
 import net.gini.android.core.api.authorization.Session;
 import net.gini.android.core.api.authorization.SessionManager;
+import net.gini.android.core.api.test.TestGiniApiType;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,14 +38,12 @@ public class GiniCoreAPIBuilderTest {
     @Test
     public void testBuilderReturnsGiniInstance() {
         CoreAPIBuilder builder = new CoreAPIBuilder(getApplicationContext(), "clientId", "clientSecret", "@example.com");
-        builder.setGiniApiType(GiniApiType.DEFAULT);
         assertNotNull(builder.build());
     }
 
     @Test
     public void testBuilderReturnsCorrectConfiguredGiniInstance() {
         CoreAPIBuilder builder = new CoreAPIBuilder(getApplicationContext(), "clientId", "clientSecret", "@example.com");
-        builder.setGiniApiType(GiniApiType.DEFAULT);
         GiniCoreAPI giniHealthAPI = builder.build();
 
         assertNotNull(giniHealthAPI.getDocumentTaskManager());
@@ -56,7 +55,6 @@ public class GiniCoreAPIBuilderTest {
         final SessionManager sessionManager = new NullSessionManager();
 
         final CoreAPIBuilder builder = new CoreAPIBuilder(getApplicationContext(), sessionManager);
-        builder.setGiniApiType(GiniApiType.DEFAULT);
         final GiniCoreAPI giniHealthAPI = builder.build();
 
         assertNotNull(giniHealthAPI);
@@ -97,7 +95,6 @@ public class GiniCoreAPIBuilderTest {
     @Test
     public void testRetryPolicyWiring() {
         CoreAPIBuilder builder = new CoreAPIBuilder(getApplicationContext(), "clientId", "clientSecret", "@example.com");
-        builder.setGiniApiType(GiniApiType.DEFAULT);
         builder.setConnectionTimeoutInMs(3333);
         builder.setMaxNumberOfRetries(66);
         builder.setConnectionBackOffMultiplier(1.3636f);
@@ -112,7 +109,6 @@ public class GiniCoreAPIBuilderTest {
     @Test
     public void testVolleyCacheConfiguration() {
         CoreAPIBuilder builder = new CoreAPIBuilder(getApplicationContext(), "clientId", "clientSecret", "@example.com");
-        builder.setGiniApiType(GiniApiType.DEFAULT);
         NullCache nullCache = new NullCache();
         builder.setCache(nullCache);
         GiniCoreAPI giniHealthAPI = builder.build();
@@ -123,7 +119,6 @@ public class GiniCoreAPIBuilderTest {
     @Test
     public void allowsSettingCustomTrustManager() {
         CoreAPIBuilder builder = new CoreAPIBuilder(getApplicationContext(), "clientId", "clientSecret", "@example.com");
-        builder.setGiniApiType(GiniApiType.DEFAULT);
 
         final TrustManager trustManager = new X509TrustManager() {
 
@@ -159,6 +154,12 @@ public class GiniCoreAPIBuilderTest {
 
         protected CoreAPIBuilder(@NonNull Context context, @NonNull SessionManager sessionManager) {
             super(context, sessionManager);
+        }
+
+        @NonNull
+        @Override
+        public GiniApiType getGiniApiType() {
+            return new TestGiniApiType();
         }
 
         @Override

@@ -1,53 +1,43 @@
-package net.gini.android.core.api.internal;
+package net.gini.android.core.api.test.shared;
 
 import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
-import static net.gini.android.core.api.helpers.TrustKitHelper.resetTrustKit;
+import static net.gini.android.core.api.test.shared.helpers.TrustKitHelper.resetTrustKit;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
 import android.content.res.AssetManager;
-import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.annotation.Nullable;
+import androidx.annotation.XmlRes;
 import androidx.test.filters.LargeTest;
 import androidx.test.filters.SdkSuppress;
 
 import com.android.volley.toolbox.NoCache;
 
 import net.gini.android.core.api.DocumentTaskManager;
-import net.gini.android.core.api.GiniApiType;
 import net.gini.android.core.api.authorization.EncryptedCredentialsStore;
-import net.gini.android.core.api.authorization.SessionManager;
 import net.gini.android.core.api.authorization.UserCredentials;
+import net.gini.android.core.api.internal.GiniCoreAPI;
+import net.gini.android.core.api.internal.GiniCoreAPIBuilder;
+import net.gini.android.core.api.test.shared.helpers.TestUtils;
 import net.gini.android.core.api.models.Box;
 import net.gini.android.core.api.models.CompoundExtraction;
 import net.gini.android.core.api.models.Document;
 import net.gini.android.core.api.models.Extraction;
 import net.gini.android.core.api.models.ExtractionsContainer;
-import net.gini.android.core.api.models.Payment;
-import net.gini.android.core.api.models.PaymentProvider;
-import net.gini.android.core.api.models.PaymentRequest;
-import net.gini.android.core.api.models.PaymentRequestInput;
-import net.gini.android.core.api.models.ResolvePaymentInput;
-import net.gini.android.core.api.models.ResolvedPayment;
 import net.gini.android.core.api.models.SpecificExtraction;
-import net.gini.android.core.api.requests.ErrorEvent;
-import net.gini.android.core.api.BuildConfig;
-import net.gini.android.core.api.helpers.TestUtils;
 
 import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -59,7 +49,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -71,15 +60,13 @@ import bolts.Continuation;
 import bolts.Task;
 
 @LargeTest
-@RunWith(AndroidJUnit4.class)
-public class GiniCoreAPIIntegrationTest {
+public abstract class GiniCoreAPIIntegrationTest<T extends GiniCoreAPI> {
 
-    private GiniCoreAPI giniCoreAPI;
+    protected T giniCoreAPI;
     private String clientId;
     private String clientSecret;
     private String apiUri;
     private String userCenterUri;
-    private GiniApiType apiType;
 
     @Before
     public void setUp() throws Exception {
@@ -90,20 +77,21 @@ public class GiniCoreAPIIntegrationTest {
         testProperties.load(testPropertiesInput);
         clientId = getProperty(testProperties, "testClientId");
         clientSecret = getProperty(testProperties, "testClientSecret");
-        apiType = GiniApiType.valueOf(getProperty(testProperties, "testApiType"));
         apiUri = getProperty(testProperties, "testApiUri");
         userCenterUri = getProperty(testProperties, "testUserCenterUri");
 
-
         resetTrustKit();
 
-        giniCoreAPI = new CoreAPIBuilder(getApplicationContext(), clientId, clientSecret, "example.com").
-                setGiniApiType(apiType).
+        giniCoreAPI = createGiniCoreAPIBuilder(clientId, clientSecret, "example.com").
                 setApiBaseUrl(apiUri).
                 setUserCenterApiBaseUrl(userCenterUri).
                 setConnectionTimeoutInMs(60000).
                 build();
     }
+
+    protected abstract GiniCoreAPIBuilder<T> createGiniCoreAPIBuilder(@NonNull final String clientId,
+                                                                      @NonNull final String clientSecret,
+                                                                      @NonNull final String emailDomain);
 
     private static String getProperty(Properties properties, String propertyName) {
         Object value = properties.get(propertyName);
@@ -123,8 +111,7 @@ public class GiniCoreAPIIntegrationTest {
 
     @Test
     public void processDocumentWithCustomCache() throws IOException, JSONException, InterruptedException {
-        giniCoreAPI = new CoreAPIBuilder(getApplicationContext(), clientId, clientSecret, "example.com").
-                setGiniApiType(apiType).
+        giniCoreAPI = createGiniCoreAPIBuilder(clientId, clientSecret, "example.com").
                 setApiBaseUrl(apiUri).
                 setUserCenterApiBaseUrl(userCenterUri).
                 setConnectionTimeoutInMs(60000).
@@ -146,18 +133,18 @@ public class GiniCoreAPIIntegrationTest {
         assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream);
 
         final byte[] testDocument = TestUtils.createByteArray(testDocumentAsStream);
-        final Map<Document, Map<String, SpecificExtraction>> documentExtractions = processDocument(testDocument, "image/jpeg", "test.jpg",
+        final Map<Document, ExtractionsContainer> documentExtractions = processDocument(testDocument, "image/jpeg", "test.jpg",
                 DocumentTaskManager.DocumentType.INVOICE);
         final Document document = documentExtractions.keySet().iterator().next();
-        final Map<String, SpecificExtraction> extractions = documentExtractions.values().iterator().next();
+        final ExtractionsContainer extractionsContainer = documentExtractions.get(document);
 
         // All extractions are correct, that means we have nothing to correct and will only send positive feedback
         // we should only send feedback for extractions we have seen and accepted
         final Map<String, SpecificExtraction> feedback = new HashMap<>();
-        feedback.put("iban", extractions.get("iban"));
-        feedback.put("amountToPay", extractions.get("amountToPay"));
-        feedback.put("bic", extractions.get("bic"));
-        feedback.put("paymentRecipient", extractions.get("paymentRecipient"));
+        feedback.put("iban", getIban(extractionsContainer));
+        feedback.put("amountToPay", getAmountToPay(extractionsContainer));
+        feedback.put("bic", getBic(extractionsContainer));
+        feedback.put("paymentRecipient", getPaymentRecipient(extractionsContainer));
 
         // The document had no compound extractions but we create some and send them back as feedback
         final Box box = new Box(1, 2, 3, 4, 5);
@@ -198,18 +185,18 @@ public class GiniCoreAPIIntegrationTest {
         assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream);
 
         final byte[] testDocument = TestUtils.createByteArray(testDocumentAsStream);
-        final Map<Document, Map<String, SpecificExtraction>> documentExtractions = processDocument(testDocument, "image/jpeg", "test.jpg",
+        final Map<Document, ExtractionsContainer> documentExtractions = processDocument(testDocument, "image/jpeg", "test.jpg",
                 DocumentTaskManager.DocumentType.INVOICE);
         final Document document = documentExtractions.keySet().iterator().next();
-        final Map<String, SpecificExtraction> extractions = documentExtractions.values().iterator().next();
+        final ExtractionsContainer extractionsContainer = documentExtractions.get(document);
 
         // All extractions are correct, that means we have nothing to correct and will only send positive feedback
         // we should only send feedback for extractions we have seen and accepted
         final Map<String, SpecificExtraction> feedback = new HashMap<>();
-        feedback.put("iban", extractions.get("iban"));
-        feedback.put("amountToPay", extractions.get("amountToPay"));
-        feedback.put("bic", extractions.get("bic"));
-        feedback.put("paymentRecipient", extractions.get("paymentRecipient"));
+        feedback.put("iban", getIban(extractionsContainer));
+        feedback.put("amountToPay", getAmountToPay(extractionsContainer));
+        feedback.put("bic", getBic(extractionsContainer));
+        feedback.put("paymentRecipient", getPaymentRecipient(extractionsContainer));
 
         final Task<Document> sendFeedback = giniCoreAPI.getDocumentTaskManager().sendFeedbackForExtractions(document, feedback);
         sendFeedback.waitForCompletion();
@@ -230,15 +217,15 @@ public class GiniCoreAPIIntegrationTest {
         final Map<Document, ExtractionsContainer> documentExtractions = processDocument(testDocument, "application/pdf", "line-items.pdf",
                 DocumentTaskManager.DocumentType.INVOICE, extractionsContainer -> {});
         final Document document = documentExtractions.keySet().iterator().next();
-        final Map<String, SpecificExtraction> extractions = documentExtractions.values().iterator().next().getSpecificExtractions();
+        final ExtractionsContainer extractionsContainer = documentExtractions.get(document);
 
         // All extractions are correct, that means we have nothing to correct and will only send positive feedback
         // we should only send feedback for extractions we have seen and accepted
         final Map<String, SpecificExtraction> feedback = new HashMap<>();
-        feedback.put("iban", extractions.get("iban"));
-        feedback.put("amountToPay", extractions.get("amountToPay"));
-        feedback.put("bic", extractions.get("bic"));
-        feedback.put("paymentRecipient", extractions.get("paymentRecipient"));
+        feedback.put("iban", getIban(extractionsContainer));
+        feedback.put("amountToPay", getAmountToPay(extractionsContainer));
+        feedback.put("bic", getBic(extractionsContainer));
+        feedback.put("paymentRecipient", getPaymentRecipient(extractionsContainer));
 
         final Task<Document> sendFeedback = giniCoreAPI.getDocumentTaskManager().sendFeedbackForExtractions(document, feedback);
         sendFeedback.waitForCompletion();
@@ -260,17 +247,16 @@ public class GiniCoreAPIIntegrationTest {
         final Map<Document, ExtractionsContainer> documentExtractions = processDocument(testDocument, "application/pdf", "line-items.pdf",
                 DocumentTaskManager.DocumentType.INVOICE, extractionsContainer -> {});
         final Document document = documentExtractions.keySet().iterator().next();
-        final ExtractionsContainer extractionsContainer = documentExtractions.values().iterator().next();
-        final Map<String, SpecificExtraction> specificExtractions = extractionsContainer.getSpecificExtractions();
+        final ExtractionsContainer extractionsContainer = documentExtractions.get(document);
         final Map<String, CompoundExtraction> compoundExtractions = extractionsContainer.getCompoundExtractions();
 
         // All specific extractions are correct, that means we have nothing to correct and will only send positive feedback
         // we should only send feedback for extractions we have seen and accepted
         final Map<String, SpecificExtraction> feedback = new HashMap<>();
-        feedback.put("iban", specificExtractions.get("iban"));
-        feedback.put("amountToPay", specificExtractions.get("amountToPay"));
-        feedback.put("bic", specificExtractions.get("bic"));
-        feedback.put("paymentRecipient", specificExtractions.get("paymentRecipient"));
+        feedback.put("iban", getIban(extractionsContainer));
+        feedback.put("amountToPay", getAmountToPay(extractionsContainer));
+        feedback.put("bic", getBic(extractionsContainer));
+        feedback.put("paymentRecipient", getPaymentRecipient(extractionsContainer));
 
         // All compound extractions are correct, that means we have nothing to correct and will only send positive feedback
         // we should only send feedback for extractions we have seen and accepted
@@ -290,8 +276,7 @@ public class GiniCoreAPIIntegrationTest {
     public void documentUploadWorksAfterNewUserWasCreatedIfUserWasInvalid() throws IOException, JSONException, InterruptedException {
         EncryptedCredentialsStore credentialsStore = new EncryptedCredentialsStore(
                 getApplicationContext().getSharedPreferences("GiniTests", Context.MODE_PRIVATE), getApplicationContext());
-        giniCoreAPI = new CoreAPIBuilder(getApplicationContext(), clientId, clientSecret, "example.com").
-                setGiniApiType(apiType).
+        giniCoreAPI = createGiniCoreAPIBuilder(clientId, clientSecret, "example.com").
                 setApiBaseUrl(apiUri).
                 setUserCenterApiBaseUrl(userCenterUri).
                 setConnectionTimeoutInMs(60000).
@@ -318,8 +303,7 @@ public class GiniCoreAPIIntegrationTest {
         // Upload a document to make sure we have a valid user
         EncryptedCredentialsStore credentialsStore = new EncryptedCredentialsStore(
                 getApplicationContext().getSharedPreferences("GiniTests", Context.MODE_PRIVATE), getApplicationContext());
-        giniCoreAPI = new CoreAPIBuilder(getApplicationContext(), clientId, clientSecret, "example.com").
-                setGiniApiType(apiType).
+        giniCoreAPI = createGiniCoreAPIBuilder(clientId, clientSecret, "example.com").
                 setApiBaseUrl(apiUri).
                 setUserCenterApiBaseUrl(userCenterUri).
                 setConnectionTimeoutInMs(60000).
@@ -336,8 +320,7 @@ public class GiniCoreAPIIntegrationTest {
         // Create another Gini instance with a new email domain (to simulate an app update)
         // and verify that the new email domain is used
         String newEmailDomain = "beispiel.com";
-        giniCoreAPI = new CoreAPIBuilder(getApplicationContext(), clientId, clientSecret, newEmailDomain).
-                setGiniApiType(apiType).
+        giniCoreAPI = createGiniCoreAPIBuilder(clientId, clientSecret, newEmailDomain).
                 setApiBaseUrl(apiUri).
                 setUserCenterApiBaseUrl(userCenterUri).
                 setConnectionTimeoutInMs(60000).
@@ -350,12 +333,14 @@ public class GiniCoreAPIIntegrationTest {
         assertEquals(newEmailDomain, extractEmailDomain(newUserCredentials.getUsername()));
     }
 
+    @XmlRes
+    protected abstract int getNetworkSecurityConfigResId();
+
     @Test
     public void publicKeyPinningWithMatchingPublicKey() throws Exception {
         resetTrustKit();
-        giniCoreAPI = new CoreAPIBuilder(getApplicationContext(), clientId, clientSecret, "example.com").
-                setNetworkSecurityConfigResId(net.gini.android.core.api.test.R.xml.network_security_config).
-                setGiniApiType(apiType).
+        giniCoreAPI = createGiniCoreAPIBuilder(clientId, clientSecret, "example.com").
+                setNetworkSecurityConfigResId(getNetworkSecurityConfigResId()).
                 setApiBaseUrl(apiUri).
                 setUserCenterApiBaseUrl(userCenterUri).
                 setConnectionTimeoutInMs(60000).
@@ -371,9 +356,8 @@ public class GiniCoreAPIIntegrationTest {
     @Test
     public void publicKeyPinningWithCustomCache() throws Exception {
         resetTrustKit();
-        giniCoreAPI = new CoreAPIBuilder(getApplicationContext(), clientId, clientSecret, "example.com").
-                setNetworkSecurityConfigResId(net.gini.android.core.api.test.R.xml.network_security_config).
-                setGiniApiType(apiType).
+        giniCoreAPI = createGiniCoreAPIBuilder(clientId, clientSecret, "example.com").
+                setNetworkSecurityConfigResId(getNetworkSecurityConfigResId()).
                 setApiBaseUrl(apiUri).
                 setUserCenterApiBaseUrl(userCenterUri).
                 setConnectionTimeoutInMs(60000).
@@ -392,9 +376,8 @@ public class GiniCoreAPIIntegrationTest {
     @SdkSuppress(maxSdkVersion = Build.VERSION_CODES.JELLY_BEAN_MR1)
     public void publicKeyPinningWithWrongPublicKey() throws Exception {
         resetTrustKit();
-        giniCoreAPI = new CoreAPIBuilder(getApplicationContext(), clientId, clientSecret, "example.com").
-                setNetworkSecurityConfigResId(net.gini.android.core.api.test.R.xml.wrong_network_security_config).
-                setGiniApiType(apiType).
+        giniCoreAPI = createGiniCoreAPIBuilder(clientId, clientSecret, "example.com").
+                setNetworkSecurityConfigResId(getNetworkSecurityConfigResId()).
                 setApiBaseUrl(apiUri).
                 setUserCenterApiBaseUrl(userCenterUri).
                 setConnectionTimeoutInMs(60000).
@@ -436,9 +419,8 @@ public class GiniCoreAPIIntegrationTest {
     @SdkSuppress(maxSdkVersion = Build.VERSION_CODES.JELLY_BEAN_MR1)
     public void publicKeyPinningWithMultiplePublicKeys() throws Exception {
         resetTrustKit();
-        giniCoreAPI = new CoreAPIBuilder(getApplicationContext(), clientId, clientSecret, "example.com").
-                setNetworkSecurityConfigResId(net.gini.android.core.api.test.R.xml.multiple_keys_network_security_config).
-                setGiniApiType(apiType).
+        giniCoreAPI = createGiniCoreAPIBuilder(clientId, clientSecret, "example.com").
+                setNetworkSecurityConfigResId(getNetworkSecurityConfigResId()).
                 setApiBaseUrl(apiUri).
                 setUserCenterApiBaseUrl(userCenterUri).
                 setConnectionTimeoutInMs(60000).
@@ -609,11 +591,11 @@ public class GiniCoreAPIIntegrationTest {
         task.waitForCompletion();
 
         assertEquals(3, partialDocuments.size());
-        final Map<String, SpecificExtraction> extractions = task.getResult().getSpecificExtractions();
-        assertNotNull(extractions);
+        final ExtractionsContainer extractionsContainer = task.getResult();
+        assertNotNull(extractionsContainer);
 
-        assertEquals("IBAN should be found", "DE96490501010082009697", extractions.get("iban").getValue());
-        final String amountToPay = extractions.get("amountToPay").getValue();
+        assertEquals("IBAN should be found", "DE96490501010082009697", getIban(extractionsContainer).getValue());
+        final String amountToPay = getAmountToPay(extractionsContainer).getValue();
         assertTrue("Amount to pay should be found: "
                         + "expected one of <[145.00:EUR, 77.00:EUR, 588.60:EUR, 700.43:EUR]> but was:<["
                         + amountToPay + "]>",
@@ -623,19 +605,19 @@ public class GiniCoreAPIIntegrationTest {
                         || amountToPay.equals("700.43:EUR")
                         || amountToPay.equals("26.42:EUR")
                         || amountToPay.equals("50.43:EUR"));
-        assertEquals("BIC should be found", "WELADED1MIN", extractions.get("bic").getValue());
-        assertTrue("Payement recipient should be found", extractions.get("paymentRecipient").getValue().startsWith("Mindener Stadtwerke"));
-        assertTrue("Payment reference should be found", extractions.get("paymentPurpose").getValue().contains(
+        assertEquals("BIC should be found", "WELADED1MIN", getBic(extractionsContainer).getValue());
+        assertTrue("Payement recipient should be found", getPaymentRecipient(extractionsContainer).getValue().startsWith("Mindener Stadtwerke"));
+        assertTrue("Payment reference should be found", getPaymentPurpose(extractionsContainer).getValue().contains(
                 "ReNr TST-00019, KdNr 765432"));
 
         // all extractions are correct, that means we have nothing to correct and will only send positive feedback
         // we should only send feedback for extractions we have seen and accepted
         Map<String, SpecificExtraction> feedback = new HashMap<String, SpecificExtraction>();
-        feedback.put("iban", extractions.get("iban"));
-        feedback.put("amountToPay", extractions.get("amountToPay"));
-        feedback.put("bic", extractions.get("bic"));
-        feedback.put("paymentRecipient", extractions.get("paymentRecipient"));
-        feedback.put("paymentPurpose", extractions.get("paymentPurpose"));
+        feedback.put("iban", getIban(extractionsContainer));
+        feedback.put("amountToPay", getAmountToPay(extractionsContainer));
+        feedback.put("bic", getBic(extractionsContainer));
+        feedback.put("paymentRecipient", getPaymentRecipient(extractionsContainer));
+        feedback.put("paymentPurpose", getPaymentPurpose(extractionsContainer));
 
         Map<String, CompoundExtraction> feedbackCompound = new HashMap<>();
 
@@ -679,143 +661,62 @@ public class GiniCoreAPIIntegrationTest {
         assertNotNull(task.getResult());
     }
 
-    @Test
-    public void testGetPaymentProviders() throws Exception {
-        Task<List<PaymentProvider>> task = giniCoreAPI.getDocumentTaskManager().getPaymentProviders();
-        task.waitForCompletion();
-        assertNotNull(task.getResult());
-    }
+    // TODO: move to Bank API Library
+//    @Test
+//    public void testResolvePayment() throws Exception {
+//        Task<String> createPaymentTask = createPaymentRequest();
+//        createPaymentTask.waitForCompletion();
+//        String id = createPaymentTask.getResult();
+//
+//        Task<PaymentRequest> paymentRequestTask = giniCoreAPI.getDocumentTaskManager().getPaymentRequest(id);
+//        paymentRequestTask.waitForCompletion();
+//
+//        PaymentRequest paymentRequest = paymentRequestTask.getResult();
+//        final ResolvePaymentInput resolvePaymentInput = new ResolvePaymentInput(paymentRequest.getRecipient(), paymentRequest.getIban(), paymentRequest.getAmount(), paymentRequest.getPurpose(), null);
+//
+//        Task<ResolvedPayment> resolvePaymentRequestTask = giniCoreAPI.getDocumentTaskManager().resolvePaymentRequest(id, resolvePaymentInput);
+//        resolvePaymentRequestTask.waitForCompletion();
+//        assertNotNull(resolvePaymentRequestTask.getResult());
+//    }
+//
+//    @Test
+//    public void testGetPayment() throws Exception {
+//        Task<String> createPaymentTask = createPaymentRequest();
+//        createPaymentTask.waitForCompletion();
+//        String id = createPaymentTask.getResult();
+//
+//        Task<PaymentRequest> paymentRequestTask = giniCoreAPI.getDocumentTaskManager().getPaymentRequest(id);
+//        paymentRequestTask.waitForCompletion();
+//
+//        PaymentRequest paymentRequest = paymentRequestTask.getResult();
+//        final ResolvePaymentInput resolvePaymentInput = new ResolvePaymentInput(paymentRequest.getRecipient(), paymentRequest.getIban(), paymentRequest.getAmount(), paymentRequest.getPurpose(), null);
+//
+//        Task<ResolvedPayment> resolvePaymentRequestTask = giniCoreAPI.getDocumentTaskManager().resolvePaymentRequest(id, resolvePaymentInput);
+//        resolvePaymentRequestTask.waitForCompletion();
+//
+//        Task<Payment> getPaymentRequestTask = giniCoreAPI.getDocumentTaskManager().getPayment(id);
+//        getPaymentRequestTask.waitForCompletion();
+//        assertNotNull(getPaymentRequestTask.getResult());
+//        assertEquals(paymentRequest.getRecipient(), getPaymentRequestTask.getResult().getRecipient());
+//        assertEquals(paymentRequest.getIban(), getPaymentRequestTask.getResult().getIban());
+//        assertEquals(paymentRequest.getBic(), getPaymentRequestTask.getResult().getBic());
+//        assertEquals(paymentRequest.getAmount(), getPaymentRequestTask.getResult().getAmount());
+//        assertEquals(paymentRequest.getPurpose(), getPaymentRequestTask.getResult().getPurpose());
+//    }
 
-    @Test
-    public void testGetPaymentProvider() throws Exception {
-        Task<List<PaymentProvider>> listTask = giniCoreAPI.getDocumentTaskManager().getPaymentProviders();
-        listTask.waitForCompletion();
-        assertNotNull(listTask.getResult());
-
-        final List<PaymentProvider> providers = listTask.getResult();
-
-        Task<PaymentProvider> task = giniCoreAPI.getDocumentTaskManager().getPaymentProvider(providers.get(0).getId());
-        task.waitForCompletion();
-        assertEquals(providers.get(0), task.getResult());
-    }
-
-    @Test
-    public void testCreatePaymentRequest() throws Exception {
-        Task<String> task = createPaymentRequest();
-        task.waitForCompletion();
-        assertNotNull(task.getResult());
-    }
-
-    @Test
-    public void testGetPaymentRequest() throws Exception {
-        Task<String> createPaymentTask = createPaymentRequest();
-        createPaymentTask.waitForCompletion();
-        String id = createPaymentTask.getResult();
-
-        Task<PaymentRequest> paymentRequestTask = giniCoreAPI.getDocumentTaskManager().getPaymentRequest(id);
-        paymentRequestTask.waitForCompletion();
-        assertNotNull(paymentRequestTask.getResult());
-    }
-
-    @Test
-    public void testResolvePayment() throws Exception {
-        Task<String> createPaymentTask = createPaymentRequest();
-        createPaymentTask.waitForCompletion();
-        String id = createPaymentTask.getResult();
-
-        Task<PaymentRequest> paymentRequestTask = giniCoreAPI.getDocumentTaskManager().getPaymentRequest(id);
-        paymentRequestTask.waitForCompletion();
-
-        PaymentRequest paymentRequest = paymentRequestTask.getResult();
-        final ResolvePaymentInput resolvePaymentInput = new ResolvePaymentInput(paymentRequest.getRecipient(), paymentRequest.getIban(), paymentRequest.getAmount(), paymentRequest.getPurpose(), null);
-
-        Task<ResolvedPayment> resolvePaymentRequestTask = giniCoreAPI.getDocumentTaskManager().resolvePaymentRequest(id, resolvePaymentInput);
-        resolvePaymentRequestTask.waitForCompletion();
-        assertNotNull(resolvePaymentRequestTask.getResult());
-    }
-
-    @Test
-    public void testGetPayment() throws Exception {
-        Task<String> createPaymentTask = createPaymentRequest();
-        createPaymentTask.waitForCompletion();
-        String id = createPaymentTask.getResult();
-
-        Task<PaymentRequest> paymentRequestTask = giniCoreAPI.getDocumentTaskManager().getPaymentRequest(id);
-        paymentRequestTask.waitForCompletion();
-
-        PaymentRequest paymentRequest = paymentRequestTask.getResult();
-        final ResolvePaymentInput resolvePaymentInput = new ResolvePaymentInput(paymentRequest.getRecipient(), paymentRequest.getIban(), paymentRequest.getAmount(), paymentRequest.getPurpose(), null);
-
-        Task<ResolvedPayment> resolvePaymentRequestTask = giniCoreAPI.getDocumentTaskManager().resolvePaymentRequest(id, resolvePaymentInput);
-        resolvePaymentRequestTask.waitForCompletion();
-
-        Task<Payment> getPaymentRequestTask = giniCoreAPI.getDocumentTaskManager().getPayment(id);
-        getPaymentRequestTask.waitForCompletion();
-        assertNotNull(getPaymentRequestTask.getResult());
-        assertEquals(paymentRequest.getRecipient(), getPaymentRequestTask.getResult().getRecipient());
-        assertEquals(paymentRequest.getIban(), getPaymentRequestTask.getResult().getIban());
-        assertEquals(paymentRequest.getBic(), getPaymentRequestTask.getResult().getBic());
-        assertEquals(paymentRequest.getAmount(), getPaymentRequestTask.getResult().getAmount());
-        assertEquals(paymentRequest.getPurpose(), getPaymentRequestTask.getResult().getPurpose());
-    }
-
-    @Test
-    public void testGetImage() throws Exception {
-        final AssetManager assetManager = getApplicationContext().getResources().getAssets();
-        final InputStream testDocumentAsStream = assetManager.open("test.jpg");
-        assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream);
-
-        final byte[] testDocument = TestUtils.createByteArray(testDocumentAsStream);
-        Map<Document, Map<String, SpecificExtraction>> documentWithExtractions = processDocument(testDocument, "image/jpeg", "test.jpg", DocumentTaskManager.DocumentType.INVOICE);
-        Document document = documentWithExtractions.keySet().iterator().next();
-
-        Task<byte[]> task = giniCoreAPI.getDocumentTaskManager().getPageImage(document.getId(), 1);
-        task.waitForCompletion();
-        assertNotNull(task.getResult());
-        byte[] bytes = task.getResult();
-        assertNotNull(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
-    }
-
-    @Test
-    public void logErrorEvent() throws Exception {
-        final ErrorEvent errorEvent = new ErrorEvent(
-                Build.MODEL, "Android", Build.VERSION.RELEASE,
-                "not available", BuildConfig.VERSION_NAME, "Error logging integration test"
-        );
-
-        final Task<Void> requestTask = giniCoreAPI.getDocumentTaskManager().logErrorEvent(errorEvent);
-        requestTask.waitForCompletion();
-
-        assertNull(requestTask.getError());
-    }
-
-    private Task<String> createPaymentRequest() throws Exception {
-        final AssetManager assetManager = getApplicationContext().getResources().getAssets();
-        final InputStream testDocumentAsStream = assetManager.open("test.jpg");
-        assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream);
-
-        final byte[] testDocument = TestUtils.createByteArray(testDocumentAsStream);
-        Map<Document, Map<String, SpecificExtraction>> documentWithExtractions = processDocument(testDocument, "image/jpeg", "test.jpg", DocumentTaskManager.DocumentType.INVOICE);
-        Document document = documentWithExtractions.keySet().iterator().next();
-        Map<String, SpecificExtraction> extractions = documentWithExtractions.get(document);
-
-        Task<List<PaymentProvider>> listTask = giniCoreAPI.getDocumentTaskManager().getPaymentProviders();
-        listTask.waitForCompletion();
-        assertNotNull(listTask.getResult());
-        final List<PaymentProvider> providers = listTask.getResult();
-
-        final PaymentRequestInput paymentRequest = new PaymentRequestInput(
-                providers.get(0).getId(),
-                Objects.requireNonNull(Objects.requireNonNull(extractions).get("paymentRecipient")).getValue(),
-                Objects.requireNonNull(extractions.get("iban")).getValue(),
-                Objects.requireNonNull(extractions.get("amountToPay")).getValue(),
-                Objects.requireNonNull(extractions.get("paymentPurpose")).getValue(),
-                null, // We make bic optional for now
-//                Objects.requireNonNull(extractions.get("bic")).getValue(),
-                document.getUri().toString()
-        );
-        return giniCoreAPI.getDocumentTaskManager().createPaymentRequest(paymentRequest);
-    }
+    // TODO: move to Bank API Library
+//    @Test
+//    public void logErrorEvent() throws Exception {
+//        final ErrorEvent errorEvent = new ErrorEvent(
+//                Build.MODEL, "Android", Build.VERSION.RELEASE,
+//                "not available", BuildConfig.VERSION_NAME, "Error logging integration test"
+//        );
+//
+//        final Task<Void> requestTask = giniCoreAPI.getDocumentTaskManager().logErrorEvent(errorEvent);
+//        requestTask.waitForCompletion();
+//
+//        assertNull(requestTask.getError());
+//    }
 
     @Test
     public void allowsUsingCustomTrustManager() throws IOException, InterruptedException {
@@ -842,8 +743,7 @@ public class GiniCoreAPIIntegrationTest {
             }
         };
 
-        giniCoreAPI = new CoreAPIBuilder(getApplicationContext(), clientId, clientSecret, "example.com").
-                setGiniApiType(apiType).
+        giniCoreAPI = createGiniCoreAPIBuilder(clientId, clientSecret, "example.com").
                 setApiBaseUrl(apiUri).
                 setUserCenterApiBaseUrl(userCenterUri).
                 setConnectionTimeoutInMs(60000).
@@ -879,7 +779,6 @@ public class GiniCoreAPIIntegrationTest {
         assertTrue(retrieveExtractions.isFaulted());
     }
 
-
     private String extractEmailDomain(String email) {
         String[] components = email.split("@");
         if (components.length > 1) {
@@ -888,19 +787,31 @@ public class GiniCoreAPIIntegrationTest {
         return "";
     }
 
-    private Map<Document, Map<String, SpecificExtraction>> processDocument(byte[] documentBytes, String contentType, String filename, DocumentTaskManager.DocumentType documentType)
+    protected Map<Document, ExtractionsContainer> processDocument(byte[] documentBytes, String contentType, String filename, DocumentTaskManager.DocumentType documentType)
             throws InterruptedException {
         final Map<Document, ExtractionsContainer> result = processDocument(documentBytes, contentType, filename, documentType, extractionsContainer -> {
-            final Map<String, SpecificExtraction> extractions = extractionsContainer.getSpecificExtractions();
-            assertEquals("IBAN should be found", "DE78370501980020008850", extractions.get("iban").getValue());
-            assertEquals("Amount to pay should be found", "1.00:EUR", extractions.get("amountToPay").getValue());
-            assertEquals("BIC should be found", "COLSDE33", extractions.get("bic").getValue());
-            assertEquals("Payee should be found", "Uno Flüchtlingshilfe", extractions.get("paymentRecipient").getValue());
+            assertEquals("IBAN should be found", "DE78370501980020008850", getIban(extractionsContainer).getValue());
+            assertEquals("Amount to pay should be found", "1.00:EUR", getAmountToPay(extractionsContainer).getValue());
+            assertEquals("BIC should be found", "COLSDE33", getBic(extractionsContainer).getValue());
+            assertEquals("Payee should be found", "Uno Flüchtlingshilfe", getPaymentRecipient(extractionsContainer).getValue());
         });
-        final Document document = result.keySet().iterator().next();
-        final Map<String, SpecificExtraction> specificExtractions = result.values().iterator().next().getSpecificExtractions();
-        return Collections.singletonMap(document, specificExtractions);
+        return result;
     }
+
+    @Nullable
+    protected abstract SpecificExtraction getIban(@NonNull final ExtractionsContainer extractionsContainer);
+
+    @Nullable
+    protected abstract SpecificExtraction getBic(@NonNull final ExtractionsContainer extractionsContainer);
+
+    @Nullable
+    protected abstract SpecificExtraction getAmountToPay(@NonNull final ExtractionsContainer extractionsContainer);
+
+    @Nullable
+    protected abstract SpecificExtraction getPaymentRecipient(@NonNull final ExtractionsContainer extractionsContainer);
+
+    @Nullable
+    protected abstract SpecificExtraction getPaymentPurpose(@NonNull final ExtractionsContainer extractionsContainer);
 
     private Map<Document, ExtractionsContainer> processDocument(byte[] documentBytes, String contentType, String filename, DocumentTaskManager.DocumentType documentType,
                                                                 ExtractionsCallback extractionsCallback)
@@ -933,23 +844,8 @@ public class GiniCoreAPIIntegrationTest {
         return Collections.singletonMap(createComposite.getResult(), retrieveExtractions.getResult());
     }
 
-    private interface ExtractionsCallback {
+    protected interface ExtractionsCallback {
         void onExtractionsAvailable(@NonNull final ExtractionsContainer extractionsContainer);
     }
 
-    private static class CoreAPIBuilder extends GiniCoreAPIBuilder<GiniCoreAPI> {
-
-        protected CoreAPIBuilder(@NonNull Context context, @NonNull String clientId, @NonNull String clientSecret, @NonNull String emailDomain) {
-            super(context, clientId, clientSecret, emailDomain);
-        }
-
-        protected CoreAPIBuilder(@NonNull Context context, @NonNull SessionManager sessionManager) {
-            super(context, sessionManager);
-        }
-
-        @Override
-        public GiniCoreAPI build() {
-            return new GiniCoreAPI(getDocumentTaskManager(), getCredentialsStore());
-        }
-    }
 }

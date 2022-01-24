@@ -27,6 +27,7 @@ import net.gini.android.core.api.models.ResolvedPayment;
 import net.gini.android.core.api.models.ReturnReason;
 import net.gini.android.core.api.models.SpecificExtraction;
 import net.gini.android.core.api.requests.ErrorEvent;
+import net.gini.android.core.api.test.TestGiniApiType;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -86,7 +87,7 @@ public class DocumentTaskManagerTest {
         mApiCommunicator = Mockito.mock(ApiCommunicator.class);
         mSessionManager = Mockito.mock(SessionManager.class);
         moshi = new Moshi.Builder().build();
-        mDocumentTaskManager = new DocumentTaskManager(mApiCommunicator, mSessionManager, GiniApiType.DEFAULT, moshi);
+        mDocumentTaskManager = new DocumentTaskManager(mApiCommunicator, mSessionManager, new TestGiniApiType(), moshi);
 
         // Always mock the session away since it is not what is tested here.
         mSession = new Session("1234-5678-9012", new Date(new Date().getTime() + 10000));
@@ -274,7 +275,7 @@ public class DocumentTaskManagerTest {
                 .waitForCompletion();
 
         verify(mApiCommunicator)
-                .uploadDocument(any(byte[].class), eq("application/vnd.gini.v1.partial+jpeg"), eq("foobar.jpg"), eq("Invoice"),
+                .uploadDocument(any(byte[].class), eq("application/vnd.gini.vTest.partial+jpeg"), eq("foobar.jpg"), eq("Invoice"),
                         eq(mSession), nullable(DocumentMetadata.class));
     }
 
@@ -294,7 +295,7 @@ public class DocumentTaskManagerTest {
 
         verify(mApiCommunicator)
                 .uploadDocument(eq(document),
-                        eq("application/vnd.gini.v1.partial+jpeg"), eq("foobar.jpg"),
+                        eq("application/vnd.gini.vTest.partial+jpeg"), eq("foobar.jpg"),
                         eq("Invoice"),
                         eq(mSession), nullable(DocumentMetadata.class));
     }
@@ -317,7 +318,7 @@ public class DocumentTaskManagerTest {
 
         verify(mApiCommunicator)
                 .uploadDocument(any(byte[].class),
-                        eq("application/vnd.gini.v1.composite+json"), eq((String) null),
+                        eq("application/vnd.gini.vTest.composite+json"), eq((String) null),
                         eq("Invoice"),
                         eq(mSession), nullable(DocumentMetadata.class));
     }
@@ -347,7 +348,7 @@ public class DocumentTaskManagerTest {
 
         verify(mApiCommunicator)
                 .uploadDocument(eq(jsonBytes),
-                        eq("application/vnd.gini.v1.composite+json"), eq((String) null),
+                        eq("application/vnd.gini.vTest.composite+json"), eq((String) null),
                         eq("Invoice"),
                         eq(mSession), nullable(DocumentMetadata.class));
     }
@@ -377,7 +378,7 @@ public class DocumentTaskManagerTest {
 
         verify(mApiCommunicator)
                 .uploadDocument(eq(jsonBytes),
-                        eq("application/vnd.gini.v1.composite+json"), eq((String) null),
+                        eq("application/vnd.gini.vTest.composite+json"), eq((String) null),
                         eq("Invoice"),
                         eq(mSession), nullable(DocumentMetadata.class));
     }
@@ -407,7 +408,7 @@ public class DocumentTaskManagerTest {
 
         verify(mApiCommunicator)
                 .uploadDocument(eq(jsonBytes),
-                        eq("application/vnd.gini.v1.composite+json"), eq((String) null),
+                        eq("application/vnd.gini.vTest.composite+json"), eq((String) null),
                         eq("Invoice"),
                         eq(mSession), nullable(DocumentMetadata.class));
     }

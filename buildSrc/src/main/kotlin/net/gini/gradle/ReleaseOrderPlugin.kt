@@ -44,7 +44,8 @@ class ReleaseOrderPlugin : Plugin<Project> {
         val releaseOrders = mutableMapOf<String, MutableList<String>>()
 
         project.forEachAndroidProject { androidProject ->
-            if (androidProject.path.contains("example")) {
+            if (androidProject.path.contains("example") ||
+                androidProject.path.contains("shared-tests")) {
                 return@forEachAndroidProject
             }
 

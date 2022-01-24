@@ -16,6 +16,8 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.verify;
 
 import android.net.Uri;
+
+import androidx.annotation.NonNull;
 import androidx.test.filters.MediumTest;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
@@ -26,6 +28,7 @@ import com.android.volley.RequestQueue;
 import net.gini.android.core.api.authorization.Session;
 import net.gini.android.core.api.requests.DefaultRetryPolicyFactory;
 import net.gini.android.core.api.requests.RetryPolicyFactory;
+import net.gini.android.core.api.test.TestGiniApiType;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -54,7 +57,7 @@ public class ApiCommunicatorTest {
         System.setProperty("dexmaker.dexcache", getApplicationContext().getCacheDir().getPath());
         retryPolicyFactory = new DefaultRetryPolicyFactory();
         mRequestQueue = Mockito.mock(RequestQueue.class);
-        mApiCommunicator = new ApiCommunicator("https://pay-api.gini.net/", GiniApiType.DEFAULT, mRequestQueue, retryPolicyFactory);
+        mApiCommunicator = new ApiCommunicator("https://pay-api.gini.net/", new TestGiniApiType(), mRequestQueue, retryPolicyFactory);
     }
 
     public byte[] createUploadData() {
@@ -78,7 +81,7 @@ public class ApiCommunicatorTest {
         }
 
         try {
-            new ApiCommunicator("https://pay-api.gini.net", GiniApiType.DEFAULT, null, retryPolicyFactory);
+            new ApiCommunicator("https://pay-api.gini.net", new TestGiniApiType(), null, retryPolicyFactory);
             fail("NullPointerException not thrown");
         } catch (NullPointerException ignored) {
         }
@@ -163,7 +166,7 @@ public class ApiCommunicatorTest {
         verify(mRequestQueue).add(requestCaptor.capture());
         Map headers = requestCaptor.getValue().getHeaders();
         final String acceptHeader = (String) headers.get("Accept");
-        assertTrue(acceptHeader.contains(MediaTypes.GINI_JSON_V1));
+        assertTrue(acceptHeader.contains("application/vnd.gini.v"));
     }
 
     @Test
@@ -368,7 +371,7 @@ public class ApiCommunicatorTest {
         ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
         verify(mRequestQueue).add(requestCaptor.capture());
         final Request request = requestCaptor.getValue();
-        assertTrue(((String) request.getHeaders().get("Accept")).contains(MediaTypes.GINI_JSON_V1));
+        assertTrue(((String) request.getHeaders().get("Accept")).contains("application/vnd.gini.v"));
     }
 
     @Test
@@ -426,7 +429,7 @@ public class ApiCommunicatorTest {
         ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
         verify(mRequestQueue).add(requestCaptor.capture());
         final Request request = requestCaptor.getValue();
-        assertTrue(((String) request.getHeaders().get("Accept")).contains(MediaTypes.GINI_JSON_V1));
+        assertTrue(((String) request.getHeaders().get("Accept")).contains("application/vnd.gini.v"));
     }
 
     @Test
@@ -548,7 +551,7 @@ public class ApiCommunicatorTest {
         ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
         verify(mRequestQueue).add(requestCaptor.capture());
         final Request request = requestCaptor.getValue();
-        assertTrue(((String) request.getHeaders().get("Accept")).contains(MediaTypes.GINI_JSON_V1));
+        assertTrue(((String) request.getHeaders().get("Accept")).contains("application/vnd.gini.v"));
     }
 
     @Test
@@ -636,7 +639,7 @@ public class ApiCommunicatorTest {
         verify(mRequestQueue).add(requestCaptor.capture());
         final Request request = requestCaptor.getValue();
         final String acceptHeader = (String) request.getHeaders().get("Accept");
-        assertTrue(acceptHeader.contains(MediaTypes.GINI_JSON_V1));
+        assertTrue(acceptHeader.contains("application/vnd.gini.v"));
     }
 
     @Test
@@ -731,7 +734,7 @@ public class ApiCommunicatorTest {
         verify(mRequestQueue).add(requestCaptor.capture());
         final Request request = requestCaptor.getValue();
         final String acceptHeader = (String) request.getHeaders().get("Accept");
-        assertTrue(acceptHeader.contains(MediaTypes.GINI_JSON_V1));
+        assertTrue(acceptHeader.contains("application/vnd.gini.v"));
     }
 
     @Test
@@ -769,7 +772,7 @@ public class ApiCommunicatorTest {
         verify(mRequestQueue).add(requestCaptor.capture());
         final Request request = requestCaptor.getValue();
         final String acceptHeader = (String) request.getHeaders().get("Accept");
-        assertTrue(acceptHeader.contains(MediaTypes.GINI_JSON_V1));
+        assertTrue(acceptHeader.contains("application/vnd.gini.v"));
     }
 
     @Test
@@ -820,7 +823,7 @@ public class ApiCommunicatorTest {
         verify(mRequestQueue).add(requestCaptor.capture());
         final Request request = requestCaptor.getValue();
         final String acceptHeader = (String) request.getHeaders().get("Accept");
-        assertTrue(acceptHeader.contains(MediaTypes.GINI_JSON_V1));
+        assertTrue(acceptHeader.contains("application/vnd.gini.v"));
     }
 
     @Test

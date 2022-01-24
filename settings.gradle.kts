@@ -15,6 +15,7 @@ dependencyResolutionManagement {
 rootProject.name = "Gini Mobile Android"
 
 include("core-api-library:library")
+include(":core-api-library:shared-tests")
 
 include("health-api-library:library")
 
