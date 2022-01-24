@@ -1,0 +1,32 @@
+[
+  {
+    "id": "7e72441c-32f8-11eb-b611-c3190574373c",
+    "name": "ING-DiBa",
+    "linkTemplate": "ingdiba://example/payments/",
+    "packageNameAndroid": "com.example.bank",
+    "minAppVersion": {
+      "ios": "4.3.2",
+      "android": "3.5.1"
+    },
+    "colors": {
+      "background": "112233",
+      "text": "44AAFF"
+    },
+    "iconLocation": "https://pay-api.pia.stage.gini.net/paymentProviders/icon"
+  },
+  {
+    "id": "9a9b41f2-32f8-11eb-9fb5-e378350b0392",
+    "name": "Deutsche Bank",
+    "linkTemplate": "db://example/payments/",
+    "packageNameAndroid": "com.example.bank",
+    "minAppVersion": {
+      "ios": "7.7.2",
+      "android": "6.9.1"
+    },
+    "colors": {
+      "background": "557788",
+      "text": "00DDEE"
+    },
+    "iconLocation": "https://pay-api.pia.stage.gini.net/paymentProviders/icon"
+  }
+]

@@ -1,0 +1,32 @@
+[
+  {
+    "paymentProvider": "7e72441c-32f8-11eb-b611-c3190574373c",
+    "recipient": "Dr. med. Hackler",
+    "iban": "DE02300209000106531065",
+    "bic": "CMCIDEDDXXX",
+    "amount": "335.50:EUR",
+    "purpose": "ReNr AZ356789Z",
+    "status": "paid",
+    "_links": {
+      "paymentProvider": "https://pay-api.gini.net/paymentProviders/7e72441c-32f8-11eb-b611-c3190574373c",
+      "payment": "https://pay-api.gini.net/paymentRequests/b4bd3e80-7bd1-11e4-95ab-000000000000/payment",
+      "sourceDocumentLocation": "https://pay-api.gini.net/documents/88090c5a-32ed-11eb-9e1a-9f2bc4656a7d",
+      "self": "https://pay-api.gini.net/paymentRequests/b4bd3e80-7bd1-11e4-95ab-000000000000"
+    }
+  },
+  {
+    "paymentProvider": "7e72441c-32f8-11eb-b611-c3190574373c",
+    "recipient": "Dr. med. dent. Wagner",
+    "iban": "DE09900209000106531065",
+    "bic": "CMCIDEDDXXX",
+    "amount": "135.50:EUR",
+    "purpose": "ReNr BZ056789",
+    "status": "paid",
+    "_links": {
+      "paymentProvider": "https://pay-api.gini.net/paymentProviders/7e72441c-32f8-11eb-b611-c3190574373c",
+      "payment": "https://pay-api.gini.net/paymentRequests/d4bd3e80-7bd1-11e4-95ab-000000000000/payment",
+      "sourceDocumentLocation": "https://pay-api.gini.net/documents/48090c5a-32ed-11eb-9e1a-9f2bc4656a7d",
+      "self": "https://pay-api.gini.net/paymentRequests/d4bd3e80-7bd1-11e4-95ab-000000000000"
+    }
+  }
+]

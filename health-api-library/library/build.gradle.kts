@@ -40,6 +40,8 @@ android {
     }
 }
 
+
+
 dependencies {
     api(project(":core-api-library:library"))
 
@@ -56,8 +58,31 @@ dependencies {
     androidTestImplementation(libs.androidx.test.rules)
     androidTestImplementation(libs.androidx.test.junit)
     androidTestImplementation(libs.androidx.multidex)
+    androidTestImplementation(project(":core-api-library:shared-tests"))
 }
 
 apply<PublishToMavenPlugin>()
 apply<DokkaPlugin>()
 apply<CodeAnalysisPlugin>()
+apply<PropertiesPlugin>()
+
+tasks.register<CreatePropertiesTask>("injectTestProperties") {
+    val propertiesMap = mutableMapOf<String, String>()
+
+    doFirst {
+        propertiesMap.clear()
+        propertiesMap.putAll(readLocalPropertiesToMap(project,
+            listOf("testClientId", "testClientSecret", "testApiUri", "testUserCenterUri")))
+    }
+
+    destinations.put(
+        file("src/androidTest/assets/test.properties"),
+        propertiesMap
+    )
+}
+
+afterEvaluate {
+    tasks.filter { it.name.endsWith("test", ignoreCase = true) }.forEach {
+        it.dependsOn(tasks.getByName("injectTestProperties"))
+    }
+}
