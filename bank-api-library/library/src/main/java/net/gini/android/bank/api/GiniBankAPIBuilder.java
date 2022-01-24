@@ -10,6 +10,8 @@ import net.gini.android.core.api.internal.GiniCoreAPIBuilder;
 
 public class GiniBankAPIBuilder extends GiniCoreAPIBuilder<GiniBankAPI> {
 
+    private final GiniApiType bankApiType = new GiniBankApiType(1);
+
     /**
      * Constructor to initialize a new builder instance where anonymous Gini users are used. <b>This requires access to
      * the Gini User Center API. Access to the User Center API is restricted to selected clients only.</b>
@@ -22,7 +24,6 @@ public class GiniBankAPIBuilder extends GiniCoreAPIBuilder<GiniBankAPI> {
     public GiniBankAPIBuilder(@NonNull final Context context, @NonNull final String clientId,
                                 @NonNull final String clientSecret, @NonNull final String emailDomain) {
         super(context, clientId, clientSecret, emailDomain);
-        setGiniApiType(GiniApiType.BANK);
     }
 
     /**
@@ -34,7 +35,12 @@ public class GiniBankAPIBuilder extends GiniCoreAPIBuilder<GiniBankAPI> {
      */
     public GiniBankAPIBuilder(@NonNull final Context context, @NonNull final SessionManager sessionManager) {
         super(context, sessionManager);
-        setGiniApiType(GiniApiType.BANK);
+    }
+
+    @NonNull
+    @Override
+    public GiniApiType getGiniApiType() {
+        return bankApiType;
     }
 
     /**
