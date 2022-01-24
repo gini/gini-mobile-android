@@ -346,7 +346,7 @@ public class ApiCommunicator {
                 RequestTaskCompletionSource.newCompletionSource();
         final BearerHeadersRequest documentsRequest =
                 new BearerHeadersRequest(method, url, body, checkNotNull(session),
-                        mGiniApiType, completionSource, completionSource, mRetryPolicyFactory.newRetryPolicy(), MediaTypes.GINI_JSON_V1);
+                        mGiniApiType, completionSource, completionSource, mRetryPolicyFactory.newRetryPolicy(), mGiniApiType.getGiniJsonMediaType());
         mRequestQueue.add(documentsRequest);
         return completionSource.getTask();
     }
@@ -365,7 +365,7 @@ public class ApiCommunicator {
                 RequestTaskCompletionSource.newCompletionSource();
         final BearerJsonObjectRequest documentsRequest =
                 new BearerJsonObjectRequest(method, url, body, checkNotNull(session),
-                        mGiniApiType, completionSource, completionSource, mRetryPolicyFactory.newRetryPolicy(), MediaTypes.GINI_JSON_V1);
+                        mGiniApiType, completionSource, completionSource, mRetryPolicyFactory.newRetryPolicy(), mGiniApiType.getGiniJsonMediaType());
         mRequestQueue.add(documentsRequest);
         return completionSource.getTask();
     }
