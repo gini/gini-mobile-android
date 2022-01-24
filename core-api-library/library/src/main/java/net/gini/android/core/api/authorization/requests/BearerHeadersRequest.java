@@ -49,7 +49,7 @@ public class BearerHeadersRequest extends JsonObjectRequest {
     @Override
     public Map<String, String> getHeaders() {
         HashMap<String, String> headers = new HashMap<>();
-        headers.put("Accept", String.format("%s, %s", MediaTypes.APPLICATION_JSON, mGiniApiType.getGiniJsonMediaType()));
+        headers.put("Accept", mGiniApiType.getGiniJsonMediaType());
         headers.put("Authorization", "BEARER " + mSession.getAccessToken());
         return headers;
     }
