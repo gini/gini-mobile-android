@@ -10,6 +10,8 @@ import androidx.annotation.NonNull;
 
 public class GiniHealthAPIBuilder extends GiniCoreAPIBuilder<GiniHealthAPI> {
 
+    private final GiniApiType healthApiType = new GiniHealthApiType(3);
+
     /**
      * Constructor to initialize a new builder instance where anonymous Gini users are used. <b>This requires access to
      * the Gini User Center API. Access to the User Center API is restricted to selected clients only.</b>
@@ -22,7 +24,6 @@ public class GiniHealthAPIBuilder extends GiniCoreAPIBuilder<GiniHealthAPI> {
     public GiniHealthAPIBuilder(@NonNull final Context context, @NonNull final String clientId,
                                 @NonNull final String clientSecret, @NonNull final String emailDomain) {
         super(context, clientId, clientSecret, emailDomain);
-        setGiniApiType(GiniApiType.HEALTH);
     }
 
     /**
@@ -34,7 +35,12 @@ public class GiniHealthAPIBuilder extends GiniCoreAPIBuilder<GiniHealthAPI> {
      */
     public GiniHealthAPIBuilder(@NonNull final Context context, @NonNull final SessionManager sessionManager) {
         super(context, sessionManager);
-        setGiniApiType(GiniApiType.HEALTH);
+    }
+
+    @NonNull
+    @Override
+    public GiniApiType getGiniApiType() {
+        return healthApiType;
     }
 
     /**
