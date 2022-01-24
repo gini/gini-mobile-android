@@ -59,7 +59,6 @@ public abstract class GiniCoreAPIBuilder<T extends GiniCoreAPI> {
     private float mBackOffMultiplier = DefaultRetryPolicy.DEFAULT_BACKOFF_MULT;
     private RetryPolicyFactory mRetryPolicyFactory;
     private Cache mCache;
-    private GiniApiType mGiniApiType;
     private TrustManager mTrustManager;
 
     /**
@@ -130,22 +129,8 @@ public abstract class GiniCoreAPIBuilder<T extends GiniCoreAPI> {
         return this;
     }
 
-    /**
-     * Set which Gini API to use. See {@link GiniApiType} for options.
-     *
-     * @param giniApiType the {@link GiniApiType} to be used
-     *
-     * @return The builder instance to enable chaining.
-     */
-    public GiniCoreAPIBuilder<T> setGiniApiType(@NonNull final GiniApiType giniApiType) {
-        mGiniApiType = giniApiType;
-        return this;
-    }
-
     @NonNull
-    public GiniApiType getGiniApiType() {
-        return mGiniApiType;
-    }
+    public abstract GiniApiType getGiniApiType();
 
     /**
      * Sets the (initial) timeout for each request. A timeout error will occur if nothing is received from the underlying socket in the given time span.
@@ -262,7 +247,7 @@ public abstract class GiniCoreAPIBuilder<T extends GiniCoreAPI> {
     }
 
     private String getApiBaseUrl() {
-        return mApiBaseUrl != null ? mApiBaseUrl : mGiniApiType.getBaseUrl();
+        return mApiBaseUrl != null ? mApiBaseUrl : getGiniApiType().getBaseUrl();
     }
 
     @NonNull
@@ -289,7 +274,7 @@ public abstract class GiniCoreAPIBuilder<T extends GiniCoreAPI> {
     @NonNull
     private synchronized ApiCommunicator getApiCommunicator() {
         if (mApiCommunicator == null) {
-            mApiCommunicator = new ApiCommunicator(getApiBaseUrl(), mGiniApiType, getRequestQueue(),
+            mApiCommunicator = new ApiCommunicator(getApiBaseUrl(), getGiniApiType(), getRequestQueue(),
                     getRetryPolicyFactory());
         }
         return mApiCommunicator;
@@ -340,7 +325,7 @@ public abstract class GiniCoreAPIBuilder<T extends GiniCoreAPI> {
         if (mUserCenterApiCommunicator == null) {
             mUserCenterApiCommunicator =
                     new UserCenterAPICommunicator(getRequestQueue(), mUserCenterApiBaseUrl,
-                            mGiniApiType, mClientId, mClientSecret,
+                            getGiniApiType(), mClientId, mClientSecret,
                             getRetryPolicyFactory());
         }
         return mUserCenterApiCommunicator;
@@ -383,7 +368,7 @@ public abstract class GiniCoreAPIBuilder<T extends GiniCoreAPI> {
     protected synchronized DocumentTaskManager getDocumentTaskManager() {
         if (mDocumentTaskManager == null) {
             mDocumentTaskManager = new DocumentTaskManager(getApiCommunicator(),
-                    getSessionManager(), mGiniApiType, getMoshi());
+                    getSessionManager(), getGiniApiType(), getMoshi());
         }
         return mDocumentTaskManager;
     }
