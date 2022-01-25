@@ -65,6 +65,26 @@ public class ApiCommunicator {
         this.mRequestQueue = checkNotNull(mRequestQueue);
     }
 
+    @NonNull
+    public Uri getBaseUri() {
+        return mBaseUri;
+    }
+
+    @NonNull
+    public GiniApiType getGiniApiType() {
+        return mGiniApiType;
+    }
+
+    @NonNull
+    public RetryPolicyFactory getRetryPolicyFactory() {
+        return mRetryPolicyFactory;
+    }
+
+    @NonNull
+    public RequestQueue getRequestQueue() {
+        return mRequestQueue;
+    }
+
     private Uri getBaseUri(final String baseUriString, final GiniApiType giniApiType) {
         if (baseUriString != null) {
             return Uri.parse(checkNotNull(baseUriString));
@@ -189,64 +209,64 @@ public class ApiCommunicator {
                 .encodedQuery(mapToUrlEncodedString(requestParams)).toString();
         return doRequestWithJsonResponse(url, POST, session);
     }
-
-    public Task<JSONObject> sendFeedback(final String documentId, final JSONObject extractions, final Session session)
-            throws JSONException {
-        final String url = mBaseUri.buildUpon().path(String.format("documents/%s/extractions/feedback",
-                checkNotNull(documentId))).toString();
-        final RequestTaskCompletionSource<JSONObject> completionSource =
-                RequestTaskCompletionSource.newCompletionSource();
-        final JSONObject requestData = new JSONObject();
-        requestData.put("feedback", checkNotNull(extractions));
-        final BearerJsonObjectRequest request =
-                new BearerJsonObjectRequest(POST, url, requestData, checkNotNull(session),
-                        mGiniApiType, completionSource, completionSource,
-                        mRetryPolicyFactory.newRetryPolicy(), mGiniApiType.getGiniJsonMediaType());
-        mRequestQueue.add(request);
-
-        return completionSource.getTask();
-    }
-
-    public Task<JSONObject> sendFeedback(final String documentId, final JSONObject extractions,
-            final JSONObject compoundExtractions, final Session session)
-            throws JSONException {
-        final String url = mBaseUri.buildUpon().path(String.format("documents/%s/extractions/feedback",
-                checkNotNull(documentId))).toString();
-        final RequestTaskCompletionSource<JSONObject> completionSource =
-                RequestTaskCompletionSource.newCompletionSource();
-        final JSONObject requestData = new JSONObject();
-        requestData.put("extractions", checkNotNull(extractions));
-        requestData.put("compoundExtractions", checkNotNull(compoundExtractions));
-        final BearerJsonObjectRequest request =
-                new BearerJsonObjectRequest(POST, url, requestData, checkNotNull(session),
-                        mGiniApiType, completionSource, completionSource,
-                        mRetryPolicyFactory.newRetryPolicy(), mGiniApiType.getGiniJsonMediaType());
-        mRequestQueue.add(request);
-
-        return completionSource.getTask();
-    }
-
-    public Task<Bitmap> getPreview(final String documentId, final int pageNumber,
-                                   PreviewSize previewSize, final Session session) {
-        final String url = mBaseUri.buildUpon().path(String.format("documents/%s/pages/%s/%s",
-                checkNotNull(documentId), pageNumber,
-                previewSize.getDimensions())).toString();
-        final String accessToken = checkNotNull(session).getAccessToken();
-        RequestTaskCompletionSource<Bitmap> completionSource = RequestTaskCompletionSource.newCompletionSource();
-        final ImageRequest imageRequest = new ImageRequest(url, completionSource, 0, 0, ARGB_8888, completionSource) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<String, String>();
-                headers.put("Authorization", "BEARER " + accessToken);
-                headers.put("Accept", MediaTypes.IMAGE_JPEG);
-                return headers;
-            }
-        };
-        imageRequest.setRetryPolicy(mRetryPolicyFactory.newRetryPolicy());
-        mRequestQueue.add(imageRequest);
-
-        return completionSource.getTask();
-    }
+//
+//    public Task<JSONObject> sendFeedback(final String documentId, final JSONObject extractions, final Session session)
+//            throws JSONException {
+//        final String url = mBaseUri.buildUpon().path(String.format("documents/%s/extractions/feedback",
+//                checkNotNull(documentId))).toString();
+//        final RequestTaskCompletionSource<JSONObject> completionSource =
+//                RequestTaskCompletionSource.newCompletionSource();
+//        final JSONObject requestData = new JSONObject();
+//        requestData.put("feedback", checkNotNull(extractions));
+//        final BearerJsonObjectRequest request =
+//                new BearerJsonObjectRequest(POST, url, requestData, checkNotNull(session),
+//                        mGiniApiType, completionSource, completionSource,
+//                        mRetryPolicyFactory.newRetryPolicy(), mGiniApiType.getGiniJsonMediaType());
+//        mRequestQueue.add(request);
+//
+//        return completionSource.getTask();
+//    }
+//
+//    public Task<JSONObject> sendFeedback(final String documentId, final JSONObject extractions,
+//            final JSONObject compoundExtractions, final Session session)
+//            throws JSONException {
+//        final String url = mBaseUri.buildUpon().path(String.format("documents/%s/extractions/feedback",
+//                checkNotNull(documentId))).toString();
+//        final RequestTaskCompletionSource<JSONObject> completionSource =
+//                RequestTaskCompletionSource.newCompletionSource();
+//        final JSONObject requestData = new JSONObject();
+//        requestData.put("extractions", checkNotNull(extractions));
+//        requestData.put("compoundExtractions", checkNotNull(compoundExtractions));
+//        final BearerJsonObjectRequest request =
+//                new BearerJsonObjectRequest(POST, url, requestData, checkNotNull(session),
+//                        mGiniApiType, completionSource, completionSource,
+//                        mRetryPolicyFactory.newRetryPolicy(), mGiniApiType.getGiniJsonMediaType());
+//        mRequestQueue.add(request);
+//
+//        return completionSource.getTask();
+//    }
+//
+//    public Task<Bitmap> getPreview(final String documentId, final int pageNumber,
+//                                   PreviewSize previewSize, final Session session) {
+//        final String url = mBaseUri.buildUpon().path(String.format("documents/%s/pages/%s/%s",
+//                checkNotNull(documentId), pageNumber,
+//                previewSize.getDimensions())).toString();
+//        final String accessToken = checkNotNull(session).getAccessToken();
+//        RequestTaskCompletionSource<Bitmap> completionSource = RequestTaskCompletionSource.newCompletionSource();
+//        final ImageRequest imageRequest = new ImageRequest(url, completionSource, 0, 0, ARGB_8888, completionSource) {
+//            @Override
+//            public Map<String, String> getHeaders() throws AuthFailureError {
+//                HashMap<String, String> headers = new HashMap<String, String>();
+//                headers.put("Authorization", "BEARER " + accessToken);
+//                headers.put("Accept", MediaTypes.IMAGE_JPEG);
+//                return headers;
+//            }
+//        };
+//        imageRequest.setRetryPolicy(mRetryPolicyFactory.newRetryPolicy());
+//        mRequestQueue.add(imageRequest);
+//
+//        return completionSource.getTask();
+//    }
 
     public Task<JSONObject> getLayoutForDocument(final String documentId, final Session session) {
         final String url =
@@ -270,25 +290,6 @@ public class ApiCommunicator {
             url.appendQueryParameter("docType", docType);
         }
         return doRequestWithJsonResponse(url.toString(), GET, checkNotNull(session));
-    }
-
-    public Task<JSONArray> getPaymentProviders(final Session session) {
-        final String url = mBaseUri.buildUpon().path("/paymentProviders").toString();
-
-        return doRequestWithJsonArrayResponse(url, GET, checkNotNull(session));
-    }
-
-    public Task<JSONObject> getPaymentProvider(final String id, final Session session) {
-        final String url = mBaseUri.buildUpon().path("/paymentProviders/").appendPath(id).toString();
-
-        return doRequestWithJsonResponse(url, GET, checkNotNull(session));
-    }
-
-    public Task<JSONObject> postPaymentRequests(final JSONObject body, final Session session) {
-        final String url = mBaseUri.buildUpon().path("/paymentRequests")
-                .toString();
-
-        return doRequestWithHeadersResponse(url, POST, body, checkNotNull(session));
     }
 
     public Task<JSONObject> getPaymentRequest(final String id, final Session session) {
@@ -317,11 +318,11 @@ public class ApiCommunicator {
         return doRequestWithJsonResponse(url, GET, checkNotNull(session));
     }
 
-    public Task<byte[]> getPageImage(@NonNull String documentId, int pageCount, final Session session) {
-        String url = mBaseUri.buildUpon().appendPath("documents").appendPath(documentId).appendPath("pages").appendPath(Integer.toString(pageCount)).appendPath("large")
-                .toString();
-        return getFile(url, session);
-    }
+//    public Task<byte[]> getPageImage(@NonNull String documentId, int pageCount, final Session session) {
+//        String url = mBaseUri.buildUpon().appendPath("documents").appendPath(documentId).appendPath("pages").appendPath(Integer.toString(pageCount)).appendPath("large")
+//                .toString();
+//        return getFile(url, session);
+//    }
 
     public Task<JSONObject> logErrorEvent(@NonNull final JSONObject errorEvent, @NonNull final Session session) {
         final String url = mBaseUri.buildUpon().appendPath("events").appendPath("error").toString();
@@ -341,7 +342,7 @@ public class ApiCommunicator {
      * @param session   A valid session for the Gini API.
      * @return          A Task which will resolve to a JSONObject representing the response of the Gini API.
      */
-    private Task<JSONObject> doRequestWithHeadersResponse(final String url, int method, final JSONObject body, final Session session) {
+    protected Task<JSONObject> doRequestWithHeadersResponse(final String url, int method, final JSONObject body, final Session session) {
         final RequestTaskCompletionSource<JSONObject> completionSource =
                 RequestTaskCompletionSource.newCompletionSource();
         final BearerHeadersRequest documentsRequest =
@@ -379,7 +380,7 @@ public class ApiCommunicator {
      * @param session   A valid session for the Gini API.
      * @return          A Task which will resolve to a JSONObject representing the response of the Gini API.
      */
-    private Task<JSONObject> doRequestWithJsonResponse(final String url, int method, final Session session) {
+    protected Task<JSONObject> doRequestWithJsonResponse(final String url, int method, final Session session) {
         final RequestTaskCompletionSource<JSONObject> completionSource =
                 RequestTaskCompletionSource.newCompletionSource();
         final BearerJsonObjectRequest documentsRequest =
@@ -416,7 +417,7 @@ public class ApiCommunicator {
      * @param session   A valid session for the Gini API.
      * @return          A Task which will resolve to a JSONObject representing the response of the Gini API.
      */
-    private Task<JSONArray> doRequestWithJsonArrayResponse(final String url, int method, final Session session) {
+    protected Task<JSONArray> doRequestWithJsonArrayResponse(final String url, int method, final Session session) {
         final RequestTaskCompletionSource<JSONArray> completionSource =
                 RequestTaskCompletionSource.newCompletionSource();
         final BearerJsonArrayRequest documentsRequest =

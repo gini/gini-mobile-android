@@ -22,10 +22,7 @@ import net.gini.android.core.api.models.Extraction;
 import net.gini.android.core.api.models.ExtractionsContainer;
 import net.gini.android.core.api.models.Payment;
 import net.gini.android.core.api.models.PaymentKt;
-import net.gini.android.core.api.models.PaymentProvider;
-import net.gini.android.core.api.models.PaymentProviderKt;
 import net.gini.android.core.api.models.PaymentRequest;
-import net.gini.android.core.api.models.PaymentRequestInput;
 import net.gini.android.core.api.models.PaymentRequestKt;
 import net.gini.android.core.api.models.ResolvePaymentInput;
 import net.gini.android.core.api.models.ResolvedPayment;
@@ -33,12 +30,8 @@ import net.gini.android.core.api.models.ResolvedPaymentKt;
 import net.gini.android.core.api.models.ReturnReason;
 import net.gini.android.core.api.models.SpecificExtraction;
 import net.gini.android.core.api.requests.ErrorEvent;
-import net.gini.android.core.api.requests.PaymentRequestBody;
-import net.gini.android.core.api.requests.PaymentRequestBodyKt;
 import net.gini.android.core.api.requests.ResolvePaymentBody;
 import net.gini.android.core.api.requests.ResolvePaymentBodyKt;
-import net.gini.android.core.api.response.LocationResponse;
-import net.gini.android.core.api.response.PaymentProviderResponse;
 import net.gini.android.core.api.response.PaymentRequestResponse;
 import net.gini.android.core.api.response.PaymentResponse;
 import net.gini.android.core.api.response.ResolvePaymentResponse;
@@ -57,7 +50,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 import bolts.Continuation;
 import bolts.Task;
@@ -66,7 +58,7 @@ import bolts.Task;
  * The DocumentTaskManager is a high level API on top of the Gini API, which is used via the ApiCommunicator. It
  * provides high level methods to handle document related tasks easily.
  */
-public class DocumentTaskManager {
+public class DocumentTaskManager<T extends ApiCommunicator> {
 
     private final GiniApiType mGiniApiType;
     private Map<Document, Boolean> mDocumentPollingsInProgress = new ConcurrentHashMap<>();
@@ -109,7 +101,7 @@ public class DocumentTaskManager {
      * The ApiCommunicator instance which is used to communicate with the Gini API.
      */
     @VisibleForTesting
-    public final ApiCommunicator mApiCommunicator;
+    public final T mApiCommunicator;
 
     /**
      * The ApiCommunicator instance which is used to communicate with the Gini API.
@@ -120,12 +112,27 @@ public class DocumentTaskManager {
      */
     private final SessionManager mSessionManager;
 
-    public DocumentTaskManager(final ApiCommunicator apiCommunicator, final SessionManager sessionManager,
+    public DocumentTaskManager(final T apiCommunicator, final SessionManager sessionManager,
                                final GiniApiType giniApiType, Moshi moshi) {
         mApiCommunicator = checkNotNull(apiCommunicator);
         mSessionManager = checkNotNull(sessionManager);
         mGiniApiType = checkNotNull(giniApiType);
         mMoshi = moshi;
+    }
+
+    @NonNull
+    protected SessionManager getSessionManager() {
+        return mSessionManager;
+    }
+
+    @NonNull
+    public Moshi getMoshi() {
+        return mMoshi;
+    }
+
+    @NonNull
+    protected T getApiCommunicator() {
+        return mApiCommunicator;
     }
 
     /**
@@ -611,116 +618,116 @@ public class DocumentTaskManager {
         }
     }
 
-    /**
-     * Sends approved and conceivably corrected extractions for the given document. This is called "submitting feedback
-     * on extractions" in
-     * the Gini API documentation.
-     *
-     * @param document    The document for which the extractions should be updated.
-     * @param extractions A Map where the key is the name of the specific extraction and the value is the
-     *                    SpecificExtraction object. This is the same structure as returned by the getExtractions
-     *                    method of this manager.
-     *
-     * @return A Task which will resolve to the same document instance when storing the updated
-     * extractions was successful.
-     *
-     * @throws JSONException When a value of an extraction is not JSON serializable.
-     */
-    public Task<Document> sendFeedbackForExtractions(@NonNull final Document document,
-                                                     @NonNull final Map<String, SpecificExtraction> extractions)
-            throws JSONException {
-        final String documentId = document.getId();
-        final JSONObject feedbackForExtractions = new JSONObject();
-        for (Map.Entry<String, SpecificExtraction> entry : extractions.entrySet()) {
-            final Extraction extraction = entry.getValue();
-            final JSONObject extractionData = new JSONObject();
-            extractionData.put("value", extraction.getValue());
-            extractionData.put("entity", extraction.getEntity());
-            feedbackForExtractions.put(entry.getKey(), extractionData);
-        }
+//    /**
+//     * Sends approved and conceivably corrected extractions for the given document. This is called "submitting feedback
+//     * on extractions" in
+//     * the Gini API documentation.
+//     *
+//     * @param document    The document for which the extractions should be updated.
+//     * @param extractions A Map where the key is the name of the specific extraction and the value is the
+//     *                    SpecificExtraction object. This is the same structure as returned by the getExtractions
+//     *                    method of this manager.
+//     *
+//     * @return A Task which will resolve to the same document instance when storing the updated
+//     * extractions was successful.
+//     *
+//     * @throws JSONException When a value of an extraction is not JSON serializable.
+//     */
+//    public Task<Document> sendFeedbackForExtractions(@NonNull final Document document,
+//                                                     @NonNull final Map<String, SpecificExtraction> extractions)
+//            throws JSONException {
+//        final String documentId = document.getId();
+//        final JSONObject feedbackForExtractions = new JSONObject();
+//        for (Map.Entry<String, SpecificExtraction> entry : extractions.entrySet()) {
+//            final Extraction extraction = entry.getValue();
+//            final JSONObject extractionData = new JSONObject();
+//            extractionData.put("value", extraction.getValue());
+//            extractionData.put("entity", extraction.getEntity());
+//            feedbackForExtractions.put(entry.getKey(), extractionData);
+//        }
+//
+//        return mSessionManager.getSession().onSuccessTask(new Continuation<Session, Task<JSONObject>>() {
+//            @Override
+//            public Task<JSONObject> then(Task<Session> task) throws Exception {
+//                final Session session = task.getResult();
+//                return mApiCommunicator.sendFeedback(documentId, feedbackForExtractions, session);
+//            }
+//        }, Task.BACKGROUND_EXECUTOR).onSuccess(new Continuation<JSONObject, Document>() {
+//            @Override
+//            public Document then(Task<JSONObject> task) throws Exception {
+//                for (Map.Entry<String, SpecificExtraction> entry : extractions.entrySet()) {
+//                    entry.getValue().setIsDirty(false);
+//                }
+//                return document;
+//            }
+//        }, Task.BACKGROUND_EXECUTOR);
+//    }
 
-        return mSessionManager.getSession().onSuccessTask(new Continuation<Session, Task<JSONObject>>() {
-            @Override
-            public Task<JSONObject> then(Task<Session> task) throws Exception {
-                final Session session = task.getResult();
-                return mApiCommunicator.sendFeedback(documentId, feedbackForExtractions, session);
-            }
-        }, Task.BACKGROUND_EXECUTOR).onSuccess(new Continuation<JSONObject, Document>() {
-            @Override
-            public Document then(Task<JSONObject> task) throws Exception {
-                for (Map.Entry<String, SpecificExtraction> entry : extractions.entrySet()) {
-                    entry.getValue().setIsDirty(false);
-                }
-                return document;
-            }
-        }, Task.BACKGROUND_EXECUTOR);
-    }
-
-    /**
-     * Sends approved and conceivably corrected extractions for the given document. This is called "submitting feedback
-     * on extractions" in
-     * the Gini API documentation.
-     *
-     * @param document            The document for which the extractions should be updated.
-     * @param extractions         A Map where the key is the name of the specific extraction and the value is the
-     *                            SpecificExtraction object. This is the same structure as returned by the getExtractions
-     *                            method of this manager.
-     * @param compoundExtractions A Map where the key is the name of the compound extraction and the value is the
-     *                            CompoundExtraction object. This is the same structure as returned by the getExtractions
-     *                            method of this manager.
-     * @return A Task which will resolve to the same document instance when storing the updated
-     * extractions was successful.
-     * @throws JSONException When a value of an extraction is not JSON serializable.
-     */
-    public Task<Document> sendFeedbackForExtractions(@NonNull final Document document,
-                                                     @NonNull final Map<String, SpecificExtraction> extractions,
-                                                     @NonNull final Map<String, CompoundExtraction> compoundExtractions)
-            throws JSONException {
-        final String documentId = document.getId();
-
-        final JSONObject feedbackForExtractions = new JSONObject();
-        for (Map.Entry<String, SpecificExtraction> entry : extractions.entrySet()) {
-            final Extraction extraction = entry.getValue();
-            final JSONObject extractionData = new JSONObject();
-            extractionData.put("value", extraction.getValue());
-            extractionData.put("entity", extraction.getEntity());
-            feedbackForExtractions.put(entry.getKey(), extractionData);
-        }
-
-        final JSONObject feedbackForCompoundExtractions = new JSONObject();
-        for (Map.Entry<String, CompoundExtraction> compoundExtractionEntry : compoundExtractions.entrySet()) {
-            final CompoundExtraction compoundExtraction = compoundExtractionEntry.getValue();
-            final JSONArray specificExtractionsFeedbackObjects = new JSONArray();
-            for (final Map<String, SpecificExtraction> specificExtractionMap : compoundExtraction.getSpecificExtractionMaps()) {
-                final JSONObject specificExtractionsFeedback = new JSONObject();
-                for (Map.Entry<String, SpecificExtraction> specificExtractionEntry : specificExtractionMap.entrySet()) {
-                    final Extraction extraction = specificExtractionEntry.getValue();
-                    final JSONObject extractionData = new JSONObject();
-                    extractionData.put("value", extraction.getValue());
-                    extractionData.put("entity", extraction.getEntity());
-                    specificExtractionsFeedback.put(specificExtractionEntry.getKey(), extractionData);
-                }
-                specificExtractionsFeedbackObjects.put(specificExtractionsFeedback);
-            }
-            feedbackForCompoundExtractions.put(compoundExtractionEntry.getKey(), specificExtractionsFeedbackObjects);
-        }
-
-        return mSessionManager.getSession().onSuccessTask(new Continuation<Session, Task<JSONObject>>() {
-            @Override
-            public Task<JSONObject> then(Task<Session> task) throws Exception {
-                final Session session = task.getResult();
-                return mApiCommunicator.sendFeedback(documentId, feedbackForExtractions, feedbackForCompoundExtractions, session);
-            }
-        }, Task.BACKGROUND_EXECUTOR).onSuccess(new Continuation<JSONObject, Document>() {
-            @Override
-            public Document then(Task<JSONObject> task) throws Exception {
-                for (Map.Entry<String, SpecificExtraction> entry : extractions.entrySet()) {
-                    entry.getValue().setIsDirty(false);
-                }
-                return document;
-            }
-        }, Task.BACKGROUND_EXECUTOR);
-    }
+//    /**
+//     * Sends approved and conceivably corrected extractions for the given document. This is called "submitting feedback
+//     * on extractions" in
+//     * the Gini API documentation.
+//     *
+//     * @param document            The document for which the extractions should be updated.
+//     * @param extractions         A Map where the key is the name of the specific extraction and the value is the
+//     *                            SpecificExtraction object. This is the same structure as returned by the getExtractions
+//     *                            method of this manager.
+//     * @param compoundExtractions A Map where the key is the name of the compound extraction and the value is the
+//     *                            CompoundExtraction object. This is the same structure as returned by the getExtractions
+//     *                            method of this manager.
+//     * @return A Task which will resolve to the same document instance when storing the updated
+//     * extractions was successful.
+//     * @throws JSONException When a value of an extraction is not JSON serializable.
+//     */
+//    public Task<Document> sendFeedbackForExtractions(@NonNull final Document document,
+//                                                     @NonNull final Map<String, SpecificExtraction> extractions,
+//                                                     @NonNull final Map<String, CompoundExtraction> compoundExtractions)
+//            throws JSONException {
+//        final String documentId = document.getId();
+//
+//        final JSONObject feedbackForExtractions = new JSONObject();
+//        for (Map.Entry<String, SpecificExtraction> entry : extractions.entrySet()) {
+//            final Extraction extraction = entry.getValue();
+//            final JSONObject extractionData = new JSONObject();
+//            extractionData.put("value", extraction.getValue());
+//            extractionData.put("entity", extraction.getEntity());
+//            feedbackForExtractions.put(entry.getKey(), extractionData);
+//        }
+//
+//        final JSONObject feedbackForCompoundExtractions = new JSONObject();
+//        for (Map.Entry<String, CompoundExtraction> compoundExtractionEntry : compoundExtractions.entrySet()) {
+//            final CompoundExtraction compoundExtraction = compoundExtractionEntry.getValue();
+//            final JSONArray specificExtractionsFeedbackObjects = new JSONArray();
+//            for (final Map<String, SpecificExtraction> specificExtractionMap : compoundExtraction.getSpecificExtractionMaps()) {
+//                final JSONObject specificExtractionsFeedback = new JSONObject();
+//                for (Map.Entry<String, SpecificExtraction> specificExtractionEntry : specificExtractionMap.entrySet()) {
+//                    final Extraction extraction = specificExtractionEntry.getValue();
+//                    final JSONObject extractionData = new JSONObject();
+//                    extractionData.put("value", extraction.getValue());
+//                    extractionData.put("entity", extraction.getEntity());
+//                    specificExtractionsFeedback.put(specificExtractionEntry.getKey(), extractionData);
+//                }
+//                specificExtractionsFeedbackObjects.put(specificExtractionsFeedback);
+//            }
+//            feedbackForCompoundExtractions.put(compoundExtractionEntry.getKey(), specificExtractionsFeedbackObjects);
+//        }
+//
+//        return mSessionManager.getSession().onSuccessTask(new Continuation<Session, Task<JSONObject>>() {
+//            @Override
+//            public Task<JSONObject> then(Task<Session> task) throws Exception {
+//                final Session session = task.getResult();
+//                return mApiCommunicator.sendFeedback(documentId, feedbackForExtractions, feedbackForCompoundExtractions, session);
+//            }
+//        }, Task.BACKGROUND_EXECUTOR).onSuccess(new Continuation<JSONObject, Document>() {
+//            @Override
+//            public Document then(Task<JSONObject> task) throws Exception {
+//                for (Map.Entry<String, SpecificExtraction> entry : extractions.entrySet()) {
+//                    entry.getValue().setIsDirty(false);
+//                }
+//                return document;
+//            }
+//        }, Task.BACKGROUND_EXECUTOR);
+//    }
 
     /**
      * Sends an error report for the given document to Gini. If the processing result for a document was not
@@ -772,61 +779,11 @@ public class DocumentTaskManager {
     }
 
     /**
-     * A payment provider is a Gini partner which integrated the GiniPay for Banks SDK into their mobile apps.
-     *
-     * @return A list of {@link PaymentProvider}
-     */
-    public Task<List<PaymentProvider>> getPaymentProviders() {
-        return mSessionManager.getSession()
-                .onSuccessTask(task -> {
-                    final Session session = task.getResult();
-                    return mApiCommunicator.getPaymentProviders(session);
-                }, Task.BACKGROUND_EXECUTOR)
-                .onSuccessTask(task -> {
-                    Type type = Types.newParameterizedType(List.class, PaymentProviderResponse.class);
-                    JsonAdapter<List<PaymentProviderResponse>> adapter = mMoshi.adapter(type);
-                    List<PaymentProviderResponse> paymentProviderResponses = adapter.fromJson(task.getResult().toString());
-
-                    List<Task<PaymentProvider>> tasks = new ArrayList<>();
-                    for (PaymentProviderResponse paymentProviderResponse : Objects.requireNonNull(paymentProviderResponses)) {
-                        tasks.add(getFile(paymentProviderResponse.getIconLocation())
-                                .onSuccess(fileTask -> {
-                                    byte[] icon = fileTask.getResult();
-                                    return PaymentProviderKt.toPaymentProvider(paymentProviderResponse, icon);
-                                }));
-                    }
-
-                    return Task.whenAllResult(tasks);
-                });
-    }
-
-    /**
-     * @return {@link PaymentProvider] for the given id.
-     */
-    public Task<PaymentProvider> getPaymentProvider(final String id) {
-        return mSessionManager.getSession()
-                .onSuccessTask(task -> {
-                    final Session session = task.getResult();
-                    return mApiCommunicator.getPaymentProvider(id, session);
-                }, Task.BACKGROUND_EXECUTOR)
-                .onSuccessTask(task -> {
-                    JsonAdapter<PaymentProviderResponse> adapter = mMoshi.adapter(PaymentProviderResponse.class);
-                    final PaymentProviderResponse paymentProviderResponse = adapter.fromJson(task.getResult().toString());
-
-                    return getFile(Objects.requireNonNull(paymentProviderResponse).getIconLocation())
-                            .onSuccess(fileTask -> {
-                                byte[] icon = fileTask.getResult();
-                                return PaymentProviderKt.toPaymentProvider(paymentProviderResponse, icon);
-                            });
-                });
-    }
-
-    /**
      * Download a file.
      *
      * @return byte array of file contents
      */
-    private Task<byte[]> getFile(@NonNull final String location) {
+    protected Task<byte[]> getFile(@NonNull final String location) {
         return mSessionManager.getSession().onSuccessTask(task -> {
             final Session session = task.getResult();
             return mApiCommunicator.getFile(location, session);
@@ -834,50 +791,20 @@ public class DocumentTaskManager {
     }
 
     /**
-     *  A {@link PaymentRequest} is used to have on the backend the intent of making a payment
-     *  for a document with its (modified) extractions and specific payment provider.
-     *
-     *  @return Id of the {@link PaymentRequest}
-     */
-    public Task<String> createPaymentRequest(final PaymentRequestInput paymentRequestInput) {
-        return mSessionManager.getSession().onSuccessTask(new Continuation<Session, Task<JSONObject>>() {
-            @Override
-            public Task<JSONObject> then(Task<Session> task) throws JSONException {
-                final Session session = task.getResult();
-                JsonAdapter<PaymentRequestBody> adapter = mMoshi.adapter(PaymentRequestBody.class);
-                String body = adapter.toJson(PaymentRequestBodyKt.toPaymentRequestBody(paymentRequestInput));
-
-                return mApiCommunicator.postPaymentRequests(new JSONObject(body), session);
-            }
-        }, Task.BACKGROUND_EXECUTOR)
-                .onSuccess(new Continuation<JSONObject, String>() {
-                    @Override
-                    public String then(Task<JSONObject> task) throws Exception {
-                        JsonAdapter<LocationResponse> adapter = mMoshi.adapter(LocationResponse.class);
-                        LocationResponse locationResponse = adapter.fromJson(task.getResult().toString());
-
-                        String location = Objects.requireNonNull(locationResponse).getLocation();
-
-                        return location.substring(location.lastIndexOf("/") + 1);
-                    }
-                });
-    }
-
-    /**
      * @return {PaymentRequest} for the given id
      */
     public Task<PaymentRequest> getPaymentRequest(final String id) {
-        return mSessionManager.getSession().onSuccessTask(new Continuation<Session, Task<JSONObject>>() {
+        return getSessionManager().getSession().onSuccessTask(new Continuation<Session, Task<JSONObject>>() {
             @Override
             public Task<JSONObject> then(Task<Session> task) {
                 final Session session = task.getResult();
-                return mApiCommunicator.getPaymentRequest(id, session);
+                return getApiCommunicator().getPaymentRequest(id, session);
             }
         }, Task.BACKGROUND_EXECUTOR)
                 .onSuccess(new Continuation<JSONObject, PaymentRequest>() {
                     @Override
                     public PaymentRequest then(Task<JSONObject> task) throws Exception {
-                        JsonAdapter<PaymentRequestResponse> adapter = mMoshi.adapter(PaymentRequestResponse.class);
+                        JsonAdapter<PaymentRequestResponse> adapter = getMoshi().adapter(PaymentRequestResponse.class);
                         PaymentRequestResponse requestResponse = adapter.fromJson(task.getResult().toString());
 
                         return PaymentRequestKt.toPaymentRequest(Objects.requireNonNull(requestResponse));
@@ -889,18 +816,18 @@ public class DocumentTaskManager {
      * @return List of payment {@link PaymentRequest}
      */
     public Task<List<PaymentRequest>> getPaymentRequests() {
-        return mSessionManager.getSession().onSuccessTask(new Continuation<Session, Task<JSONArray>>() {
+        return getSessionManager().getSession().onSuccessTask(new Continuation<Session, Task<JSONArray>>() {
             @Override
             public Task<JSONArray> then(Task<Session> task) {
                 final Session session = task.getResult();
-                return mApiCommunicator.getPaymentRequests(session);
+                return getApiCommunicator().getPaymentRequests(session);
             }
         }, Task.BACKGROUND_EXECUTOR)
                 .onSuccess(new Continuation<JSONArray, List<PaymentRequest>>() {
                     @Override
                     public List<PaymentRequest> then(Task<JSONArray> task) throws Exception {
                         Type type = Types.newParameterizedType(List.class, PaymentRequestResponse.class);
-                        JsonAdapter<List<PaymentRequestResponse>> adapter = mMoshi.adapter(type);
+                        JsonAdapter<List<PaymentRequestResponse>> adapter = getMoshi().adapter(type);
                         List<PaymentRequestResponse> paymentRequestResponses = adapter.fromJson(task.getResult().toString());
 
                         List<PaymentRequest> paymentProviders = new ArrayList<>();
@@ -964,21 +891,21 @@ public class DocumentTaskManager {
                 });
     }
 
-    /**
-     * Get the rendered image of a page as byte[]
-     *
-     * @param documentId id of document
-     * @param page page of document
-     */
-    public Task<byte[]> getPageImage(final String documentId, final int page) {
-        return mSessionManager.getSession().onSuccessTask(new Continuation<Session, Task<byte[]>>() {
-            @Override
-            public Task<byte[]> then(Task<Session> task) {
-                final Session session = task.getResult();
-                return mApiCommunicator.getPageImage(documentId, page, session);
-            }
-        }, Task.BACKGROUND_EXECUTOR);
-    }
+//    /**
+//     * Get the rendered image of a page as byte[]
+//     *
+//     * @param documentId id of document
+//     * @param page page of document
+//     */
+//    public Task<byte[]> getPageImage(final String documentId, final int page) {
+//        return mSessionManager.getSession().onSuccessTask(new Continuation<Session, Task<byte[]>>() {
+//            @Override
+//            public Task<byte[]> then(Task<Session> task) {
+//                final Session session = task.getResult();
+//                return mApiCommunicator.getPageImage(documentId, page, session);
+//            }
+//        }, Task.BACKGROUND_EXECUTOR);
+//    }
 
     public Task<Void> logErrorEvent(final ErrorEvent errorEvent) {
         return mSessionManager.getSession()

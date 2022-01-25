@@ -8,26 +8,21 @@ import kotlin.coroutines.resumeWithException
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
-import net.gini.android.core.api.models.CompoundExtraction
 import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.models.ExtractionsContainer
 import net.gini.android.core.api.models.Payment
-import net.gini.android.core.api.models.PaymentProvider
 import net.gini.android.core.api.models.PaymentRequest
-import net.gini.android.core.api.models.PaymentRequestInput
 import net.gini.android.core.api.models.ResolvePaymentInput
 import net.gini.android.core.api.models.ResolvedPayment
-import net.gini.android.core.api.models.SpecificExtraction
-import org.json.JSONException
 import org.json.JSONObject
 
 /**
  * The [DocumentManager] is a high level API on top of the Gini API, which is used via the ApiCommunicator. It
  * provides high level methods to handle document related tasks easily.
  */
-class DocumentManager(private val documentTaskManager: DocumentTaskManager) {
+open class DocumentManager<A: ApiCommunicator, DTM: DocumentTaskManager<A>>(protected val documentTaskManager: DTM) {
 
-    private val taskDispatcher = Task.BACKGROUND_EXECUTOR.asCoroutineDispatcher()
+    protected val taskDispatcher = Task.BACKGROUND_EXECUTOR.asCoroutineDispatcher()
 
     /**
      * Uploads raw data and creates a new Gini partial document.
@@ -184,31 +179,31 @@ class DocumentManager(private val documentTaskManager: DocumentTaskManager) {
         }
     }
 
-    /**
-     * Sends approved and conceivably corrected extractions for the given document. This is called "submitting feedback
-     * on extractions" in the Gini API documentation.
-     *
-     * @param document            The document for which the extractions should be updated.
-     * @param specificExtractions A Map where the key is the name of the specific extraction and the value is the
-     *                            SpecificExtraction object. This is the same structure as returned by the getExtractions
-     *                            method of this manager.
-     * @param compoundExtractions A Map where the key is the name of the compound extraction and the value is the
-     *                            CompoundExtraction object. This is the same structure as returned by the getExtractions
-     *                            method of this manager.
-     * @return The same document instance when storing the updated
-     * extractions was successful.
-     * @throws JSONException When a value of an extraction is not JSON serializable.
-     */
-    suspend fun sendFeedback(
-        document: Document,
-        specificExtractions: Map<String, SpecificExtraction>,
-        compoundExtractions: Map<String, CompoundExtraction>,
-    ): Document = withContext(taskDispatcher) {
-        suspendCancellableCoroutine { continuation ->
-            val task = documentTaskManager.sendFeedbackForExtractions(document, specificExtractions, compoundExtractions)
-            continuation.resumeTask(task)
-        }
-    }
+//    /**
+//     * Sends approved and conceivably corrected extractions for the given document. This is called "submitting feedback
+//     * on extractions" in the Gini API documentation.
+//     *
+//     * @param document            The document for which the extractions should be updated.
+//     * @param specificExtractions A Map where the key is the name of the specific extraction and the value is the
+//     *                            SpecificExtraction object. This is the same structure as returned by the getExtractions
+//     *                            method of this manager.
+//     * @param compoundExtractions A Map where the key is the name of the compound extraction and the value is the
+//     *                            CompoundExtraction object. This is the same structure as returned by the getExtractions
+//     *                            method of this manager.
+//     * @return The same document instance when storing the updated
+//     * extractions was successful.
+//     * @throws JSONException When a value of an extraction is not JSON serializable.
+//     */
+//    suspend fun sendFeedback(
+//        document: Document,
+//        specificExtractions: Map<String, SpecificExtraction>,
+//        compoundExtractions: Map<String, CompoundExtraction>,
+//    ): Document = withContext(taskDispatcher) {
+//        suspendCancellableCoroutine { continuation ->
+//            val task = documentTaskManager.sendFeedbackForExtractions(document, specificExtractions, compoundExtractions)
+//            continuation.resumeTask(task)
+//        }
+//    }
 
     /**
      * Sends an error report for the given document to Gini. If the processing result for a document was not
@@ -281,46 +276,6 @@ class DocumentManager(private val documentTaskManager: DocumentTaskManager) {
     }
 
     /**
-     * A payment provider is a Gini partner which integrated the GiniPay for Banks SDK into their mobile apps.
-     *
-     * @return A list of [PaymentProvider]
-     */
-    suspend fun getPaymentProviders(): List<PaymentProvider> =
-        withContext(taskDispatcher) {
-            suspendCancellableCoroutine { continuation ->
-                val task = documentTaskManager.paymentProviders
-                continuation.resumeTask(task)
-            }
-        }
-
-    /**
-     * @return [PaymentProvider] for the given id.
-     */
-    suspend fun getPaymentProvider(
-        id: String,
-    ): PaymentProvider = withContext(taskDispatcher) {
-        suspendCancellableCoroutine { continuation ->
-            val task = documentTaskManager.getPaymentProvider(id)
-            continuation.resumeTask(task)
-        }
-    }
-
-    /**
-     *  A [PaymentRequest] is used to have on the backend the intent of making a payment
-     *  for a document with its (modified) extractions and specific payment provider.
-     *
-     *  @return Id of the [PaymentRequest]
-     */
-    suspend fun createPaymentRequest(
-        paymentRequestInput: PaymentRequestInput,
-    ): String = withContext(taskDispatcher) {
-        suspendCancellableCoroutine { continuation ->
-            val task = documentTaskManager.createPaymentRequest(paymentRequestInput)
-            continuation.resumeTask(task)
-        }
-    }
-
-    /**
      * @return [PaymentRequest] for the given id
      */
     suspend fun getPaymentRequest(
@@ -372,23 +327,23 @@ class DocumentManager(private val documentTaskManager: DocumentTaskManager) {
         }
     }
 
-    /**
-     * Get the rendered image of a page as byte[]
-     *
-     * @param documentId id of document
-     * @param page page of document
-     */
-    suspend fun getPageImage(
-        documentId: String,
-        page: Int
-    ): ByteArray = withContext(taskDispatcher) {
-        suspendCancellableCoroutine { continuation ->
-            val task = documentTaskManager.getPageImage(documentId, page)
-            continuation.resumeTask(task)
-        }
-    }
+//    /**
+//     * Get the rendered image of a page as byte[]
+//     *
+//     * @param documentId id of document
+//     * @param page page of document
+//     */
+//    suspend fun getPageImage(
+//        documentId: String,
+//        page: Int
+//    ): ByteArray = withContext(taskDispatcher) {
+//        suspendCancellableCoroutine { continuation ->
+//            val task = documentTaskManager.getPageImage(documentId, page)
+//            continuation.resumeTask(task)
+//        }
+//    }
 
-    private fun <T> Continuation<T>.resumeTask(task: Task<T>) {
+    protected fun <T> Continuation<T>.resumeTask(task: Task<T>) {
         task.waitForCompletion()
         if (!task.isFaulted) {
             this.resume(task.result)

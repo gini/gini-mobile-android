@@ -18,7 +18,7 @@ data class PaymentRequest(
     }
 }
 
-internal fun PaymentRequestResponse.toPaymentRequest() = PaymentRequest(
+fun PaymentRequestResponse.toPaymentRequest() = PaymentRequest(
     paymentProviderId = paymentProvider,
     requesterUri = requesterUri,
     recipient = recipient,
