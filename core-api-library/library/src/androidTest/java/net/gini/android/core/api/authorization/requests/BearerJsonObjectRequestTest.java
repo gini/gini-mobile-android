@@ -62,8 +62,8 @@ public class BearerJsonObjectRequestTest {
         JSONObject payload = new JSONObject();
         payload.put("foo", "bar");
         BearerJsonObjectRequest request = new BearerJsonObjectRequest(Request.Method.GET, "https://example.com", payload, session,
-                new TestGiniApiType(), null, null, retryPolicy, MediaTypes.GINI_JSON_V1);
+                new TestGiniApiType(), null, null, retryPolicy, "application/test.vnd.v42");
 
-        assertEquals(MediaTypes.GINI_JSON_V1, request.getBodyContentType());
+        assertEquals("application/test.vnd.v42", request.getBodyContentType());
     }
 }
