@@ -4,11 +4,10 @@ import android.content.Context;
 
 import net.gini.android.core.api.GiniApiType;
 import net.gini.android.core.api.authorization.SessionManager;
-import net.gini.android.core.api.internal.GiniCoreAPI;
 import net.gini.android.core.api.internal.GiniCoreAPIBuilder;
 import androidx.annotation.NonNull;
 
-public class GiniHealthAPIBuilder extends GiniCoreAPIBuilder<GiniHealthAPI> {
+public class GiniHealthAPIBuilder extends GiniCoreAPIBuilder<HealthApiDocumentTaskManager, HealthApiDocumentManager, GiniHealthAPI, HealthApiCommunicator> {
 
     private final GiniApiType healthApiType = new GiniHealthApiType(3);
 
@@ -51,6 +50,18 @@ public class GiniHealthAPIBuilder extends GiniCoreAPIBuilder<GiniHealthAPI> {
     @Override
     public GiniHealthAPI build() {
         return new GiniHealthAPI(getDocumentTaskManager(), getCredentialsStore());
+    }
+
+    @NonNull
+    @Override
+    protected HealthApiCommunicator createApiCommunicator() {
+        return new HealthApiCommunicator(getApiBaseUrl(), getGiniApiType(), getRequestQueue(), getRetryPolicyFactory());
+    }
+
+    @NonNull
+    @Override
+    protected HealthApiDocumentTaskManager createDocumentTaskManager() {
+        return new HealthApiDocumentTaskManager(getApiCommunicator(), getSessionManager(), getGiniApiType(), getMoshi());
     }
 
 }
