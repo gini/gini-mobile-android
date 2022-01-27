@@ -14,6 +14,9 @@ on:
       - 'core-api-library/**'
       - 'gradle/**'
   workflow_call:
+    secrets:
+      GINI_MOBILE_TEST_CLIENT_SECRET:
+        required: true
 
 jobs:
   test:
@@ -96,6 +99,10 @@ jobs:
           disable-animations: true
           script: >
             ./gradlew health-api-library:library:connectedCheck
+            -PtestClientId="gini-mobile-test"
+            -PtestClientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
+            -PtestApiUri="https://health-api.gini.net"
+            -PtestUserCenterUri="https://user.gini.net"
 
       - name: archive instrumented test results
         if: always()
