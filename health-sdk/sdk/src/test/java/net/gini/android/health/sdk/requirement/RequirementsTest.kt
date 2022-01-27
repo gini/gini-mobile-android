@@ -10,6 +10,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import net.gini.android.core.api.DocumentManager
 import net.gini.android.health.api.GiniHealthAPI
+import net.gini.android.health.api.HealthApiDocumentManager
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.review.bank.packageInfosFixture
 import net.gini.android.health.sdk.review.bank.paymentProvidersFixture
@@ -32,7 +33,7 @@ class RequirementsTest {
     private var packageManager: PackageManager? = null
     private var giniHealth: GiniHealth? = null
     private var giniHealthAPI: GiniHealthAPI? = null
-    private var documentManager: DocumentManager? = null
+    private var documentManager: HealthApiDocumentManager? = null
 
     @Before
     fun setup() {
