@@ -450,7 +450,8 @@ public abstract class GiniCoreAPIIntegrationTest<DTM extends DocumentTaskManager
         final ExtractionsContainer extractionsContainer = task.getResult();
         assertNotNull(extractionsContainer);
 
-        assertEquals("IBAN should be found", "DE96490501010082009697", getIban(extractionsContainer).getValue());
+        final String iban = getIban(extractionsContainer).getValue();
+        assertEquals("IBAN should be found, but was: " + iban, "DE96490501010082009697", iban);
         final String amountToPay = getAmountToPay(extractionsContainer).getValue();
         assertTrue("Amount to pay should be found: "
                         + "expected one of <[145.00:EUR, 77.00:EUR, 588.60:EUR, 700.43:EUR, 26.42:EUR, 50.43:EUR, 23.15:EUR]> but was:<["
@@ -462,10 +463,12 @@ public abstract class GiniCoreAPIIntegrationTest<DTM extends DocumentTaskManager
                         || amountToPay.equals("26.42:EUR")
                         || amountToPay.equals("50.43:EUR")
                         || amountToPay.equals("23.15:EUR"));
-        assertEquals("BIC should be found", "WELADED1MIN", getBic(extractionsContainer).getValue());
-        assertTrue("Payement recipient should be found", getPaymentRecipient(extractionsContainer).getValue().startsWith("Mindener Stadtwerke"));
-        assertTrue("Payment reference should be found", getPaymentPurpose(extractionsContainer).getValue().contains(
-                "ReNr TST-00019, KdNr 765432"));
+        final String bic = getBic(extractionsContainer).getValue();
+        assertEquals("BIC should be found, but was: " + bic, "WELADED1MIN", bic);
+        final String paymentRecipient = getPaymentRecipient(extractionsContainer).getValue();
+        assertTrue("Payement recipient should be found", paymentRecipient.startsWith("Mindener Stadtwerke"));
+        final String paymentPurpose = getPaymentPurpose(extractionsContainer).getValue();
+        assertTrue("Payment reference should be found, but was: " + paymentPurpose, paymentPurpose.contains("765432"));
     }
 
     @Test
