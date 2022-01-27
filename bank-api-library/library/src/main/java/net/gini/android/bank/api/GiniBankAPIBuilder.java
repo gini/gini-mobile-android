@@ -8,7 +8,7 @@ import net.gini.android.core.api.GiniApiType;
 import net.gini.android.core.api.authorization.SessionManager;
 import net.gini.android.core.api.internal.GiniCoreAPIBuilder;
 
-public class GiniBankAPIBuilder extends GiniCoreAPIBuilder<GiniBankAPI> {
+public class GiniBankAPIBuilder extends GiniCoreAPIBuilder<BankApiDocumentTaskManager, BankApiDocumentManager,GiniBankAPI, BankApiCommunicator> {
 
     private final GiniApiType bankApiType = new GiniBankApiType(1);
 
@@ -51,6 +51,16 @@ public class GiniBankAPIBuilder extends GiniCoreAPIBuilder<GiniBankAPI> {
     @Override
     public GiniBankAPI build() {
         return new GiniBankAPI(getDocumentTaskManager(), getCredentialsStore());
+    }
+
+    @Override
+    protected BankApiCommunicator createApiCommunicator() {
+        return new BankApiCommunicator(getApiBaseUrl(), getGiniApiType(), getRequestQueue(), getRetryPolicyFactory());
+    }
+
+    @Override
+    protected BankApiDocumentTaskManager createDocumentTaskManager() {
+        return new BankApiDocumentTaskManager(getApiCommunicator(), getSessionManager(), getGiniApiType(), getMoshi());
     }
 
 }
