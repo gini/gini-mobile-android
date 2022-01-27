@@ -4,6 +4,11 @@ plugins {
     id("com.android.library")
     kotlin("android")
     kotlin("kapt")
+    id("com.hiya.jacoco-android")
+}
+
+jacoco {
+    toolVersion = libs.versions.jacoco.get()
 }
 
 android {
