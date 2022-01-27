@@ -12,9 +12,6 @@ on:
       - 'core-api-library/**'
       - 'gradle/**'
   workflow_call:
-    secrets:
-      GINI_MOBILE_TEST_CLIENT_SECRET:
-        required: true
 
 jobs:
   test:
@@ -63,13 +60,7 @@ jobs:
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           script: >
-            ./gradlew
-            core-api-library:library:connectedCheck
-            -PtestClientId="gini-mobile-test"
-            -PtestClientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
-            -PtestApiType="DEFAULT"
-            -PtestApiUri="https://pay-api.gini.net"
-            -PtestUserCenterUri="https://user.gini.net"
+            ./gradlew core-api-library:library:connectedCheck
 
       - name: archive instrumented test results
         if: always()
