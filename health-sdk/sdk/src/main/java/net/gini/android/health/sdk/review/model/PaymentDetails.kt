@@ -15,10 +15,10 @@ data class PaymentDetails(
 ): Parcelable
 
 internal fun ExtractionsContainer.toPaymentDetails() = PaymentDetails(
-    recipient = specificExtractions["paymentRecipient"]?.value ?: "",
-    iban = specificExtractions["iban"]?.value ?: "",
-    amount = specificExtractions["amountToPay"]?.value?.toAmount() ?: "",
-    purpose = specificExtractions["paymentPurpose"]?.value ?: "",
+    recipient = compoundExtractions["payment"]?.specificExtractionMaps?.get(0)?.get("payment_recipient")?.value ?: "",
+    iban = compoundExtractions["payment"]?.specificExtractionMaps?.get(0)?.get("iban")?.value ?: "",
+    amount = compoundExtractions["payment"]?.specificExtractionMaps?.get(0)?.get("amount_to_pay")?.value?.toAmount() ?: "",
+    purpose = compoundExtractions["payment"]?.specificExtractionMaps?.get(0)?.get("payment_purpose")?.value ?: "",
     extractions = this
 )
 

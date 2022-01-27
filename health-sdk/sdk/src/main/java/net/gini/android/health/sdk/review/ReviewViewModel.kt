@@ -8,7 +8,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 import net.gini.android.core.api.models.Document
-import net.gini.android.core.api.models.PaymentRequestInput
+import net.gini.android.health.api.models.PaymentRequestInput
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.preferences.UserPreference.PreferredBankApp
 import net.gini.android.health.sdk.preferences.UserPreferences
