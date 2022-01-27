@@ -209,64 +209,6 @@ public class ApiCommunicator {
                 .encodedQuery(mapToUrlEncodedString(requestParams)).toString();
         return doRequestWithJsonResponse(url, POST, session);
     }
-//
-//    public Task<JSONObject> sendFeedback(final String documentId, final JSONObject extractions, final Session session)
-//            throws JSONException {
-//        final String url = mBaseUri.buildUpon().path(String.format("documents/%s/extractions/feedback",
-//                checkNotNull(documentId))).toString();
-//        final RequestTaskCompletionSource<JSONObject> completionSource =
-//                RequestTaskCompletionSource.newCompletionSource();
-//        final JSONObject requestData = new JSONObject();
-//        requestData.put("feedback", checkNotNull(extractions));
-//        final BearerJsonObjectRequest request =
-//                new BearerJsonObjectRequest(POST, url, requestData, checkNotNull(session),
-//                        mGiniApiType, completionSource, completionSource,
-//                        mRetryPolicyFactory.newRetryPolicy(), mGiniApiType.getGiniJsonMediaType());
-//        mRequestQueue.add(request);
-//
-//        return completionSource.getTask();
-//    }
-//
-//    public Task<JSONObject> sendFeedback(final String documentId, final JSONObject extractions,
-//            final JSONObject compoundExtractions, final Session session)
-//            throws JSONException {
-//        final String url = mBaseUri.buildUpon().path(String.format("documents/%s/extractions/feedback",
-//                checkNotNull(documentId))).toString();
-//        final RequestTaskCompletionSource<JSONObject> completionSource =
-//                RequestTaskCompletionSource.newCompletionSource();
-//        final JSONObject requestData = new JSONObject();
-//        requestData.put("extractions", checkNotNull(extractions));
-//        requestData.put("compoundExtractions", checkNotNull(compoundExtractions));
-//        final BearerJsonObjectRequest request =
-//                new BearerJsonObjectRequest(POST, url, requestData, checkNotNull(session),
-//                        mGiniApiType, completionSource, completionSource,
-//                        mRetryPolicyFactory.newRetryPolicy(), mGiniApiType.getGiniJsonMediaType());
-//        mRequestQueue.add(request);
-//
-//        return completionSource.getTask();
-//    }
-//
-//    public Task<Bitmap> getPreview(final String documentId, final int pageNumber,
-//                                   PreviewSize previewSize, final Session session) {
-//        final String url = mBaseUri.buildUpon().path(String.format("documents/%s/pages/%s/%s",
-//                checkNotNull(documentId), pageNumber,
-//                previewSize.getDimensions())).toString();
-//        final String accessToken = checkNotNull(session).getAccessToken();
-//        RequestTaskCompletionSource<Bitmap> completionSource = RequestTaskCompletionSource.newCompletionSource();
-//        final ImageRequest imageRequest = new ImageRequest(url, completionSource, 0, 0, ARGB_8888, completionSource) {
-//            @Override
-//            public Map<String, String> getHeaders() throws AuthFailureError {
-//                HashMap<String, String> headers = new HashMap<String, String>();
-//                headers.put("Authorization", "BEARER " + accessToken);
-//                headers.put("Accept", MediaTypes.IMAGE_JPEG);
-//                return headers;
-//            }
-//        };
-//        imageRequest.setRetryPolicy(mRetryPolicyFactory.newRetryPolicy());
-//        mRequestQueue.add(imageRequest);
-//
-//        return completionSource.getTask();
-//    }
 
     public Task<JSONObject> getLayoutForDocument(final String documentId, final Session session) {
         final String url =
@@ -304,31 +246,6 @@ public class ApiCommunicator {
         return doRequestWithJsonArrayResponse(url, GET, checkNotNull(session));
     }
 
-    public Task<JSONObject> resolvePaymentRequests(final String id, final JSONObject body, final Session session) {
-        final String url = mBaseUri.buildUpon().path("/paymentRequests/").appendPath(id).appendPath("payment")
-                .toString();
-
-        return doRequestWithBodyAndJsonResponse(url, POST, body, checkNotNull(session));
-    }
-
-    public Task<JSONObject> getPayment(final String id, final Session session) {
-        final String url = mBaseUri.buildUpon().path("/paymentRequests/").appendPath(id).appendPath("payment")
-                .toString();
-
-        return doRequestWithJsonResponse(url, GET, checkNotNull(session));
-    }
-
-//    public Task<byte[]> getPageImage(@NonNull String documentId, int pageCount, final Session session) {
-//        String url = mBaseUri.buildUpon().appendPath("documents").appendPath(documentId).appendPath("pages").appendPath(Integer.toString(pageCount)).appendPath("large")
-//                .toString();
-//        return getFile(url, session);
-//    }
-
-    public Task<JSONObject> logErrorEvent(@NonNull final JSONObject errorEvent, @NonNull final Session session) {
-        final String url = mBaseUri.buildUpon().appendPath("events").appendPath("error").toString();
-        return doRequestWithBodyAndJsonResponse(url, POST, errorEvent, session);
-    }
-
     public Task<byte[]> getFile(@NonNull final String location, final Session session) {
         return doRequestWithByteArrayResponse(checkNotNull(location), GET, checkNotNull(session));
     }
@@ -361,7 +278,7 @@ public class ApiCommunicator {
      * @param session   A valid session for the Gini API.
      * @return          A Task which will resolve to a JSONObject representing the response of the Gini API.
      */
-    private Task<JSONObject> doRequestWithBodyAndJsonResponse(final String url, int method, final JSONObject body, final Session session) {
+    protected Task<JSONObject> doRequestWithBodyAndJsonResponse(final String url, int method, final JSONObject body, final Session session) {
         final RequestTaskCompletionSource<JSONObject> completionSource =
                 RequestTaskCompletionSource.newCompletionSource();
         final BearerJsonObjectRequest documentsRequest =

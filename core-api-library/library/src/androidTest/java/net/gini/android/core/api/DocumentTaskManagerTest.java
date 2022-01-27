@@ -7,7 +7,6 @@ import android.net.Uri;
 import androidx.test.filters.MediumTest;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
-import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 
 import net.gini.android.core.api.DocumentTaskManager.DocumentType;
@@ -16,15 +15,10 @@ import net.gini.android.core.api.authorization.SessionManager;
 import net.gini.android.core.api.helpers.TestUtils;
 import net.gini.android.core.api.models.CompoundExtraction;
 import net.gini.android.core.api.models.Document;
-import net.gini.android.core.api.models.Extraction;
 import net.gini.android.core.api.models.ExtractionsContainer;
-import net.gini.android.core.api.models.Payment;
 import net.gini.android.core.api.models.PaymentRequest;
-import net.gini.android.core.api.models.ResolvePaymentInput;
-import net.gini.android.core.api.models.ResolvedPayment;
 import net.gini.android.core.api.models.ReturnReason;
 import net.gini.android.core.api.models.SpecificExtraction;
-import net.gini.android.core.api.requests.ErrorEvent;
 import net.gini.android.core.api.test.TestGiniApiType;
 
 import org.json.JSONArray;
@@ -33,7 +27,6 @@ import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
 
@@ -43,9 +36,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,7 +46,6 @@ import bolts.Task;
 import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 import static net.gini.android.core.api.Utils.CHARSET_UTF8;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -781,57 +771,4 @@ public class DocumentTaskManagerTest {
         assertEquals(getPaymentRequests(), paymentProvidersResult);
     }
 
-    @Test
-    public void testResolvePaymentRequest() throws Exception {
-        when(mApiCommunicator.resolvePaymentRequests(any(String.class), any(JSONObject.class), any(Session.class)))
-                .thenReturn(createResolvePaymentJsonTask());
-
-        Task<ResolvedPayment> paymentRequestTask = mDocumentTaskManager.resolvePaymentRequest("", new ResolvePaymentInput("", "", "", "", null));
-        paymentRequestTask.waitForCompletion();
-        if (paymentRequestTask.isFaulted()) {
-            throw paymentRequestTask.getError();
-        }
-        ResolvedPayment resolvedPayment = new ResolvedPayment("ginipay-example://payment-requester", "Dr. med. Hackler", "DE02300209000106531065", "CMCIDEDDXXX", "335.50:EUR", "ReNr AZ356789Z", ResolvedPayment.Status.PAID);
-        assertEquals(resolvedPayment, paymentRequestTask.getResult());
-    }
-
-
-    @Test
-    public void testGetPayment() throws Exception {
-        when(mApiCommunicator.getPayment(any(String.class), any(Session.class))).thenReturn(createPaymentJSONTask());
-
-        Task<Payment> paymentRequestTask = mDocumentTaskManager.getPayment("");
-        paymentRequestTask.waitForCompletion();
-        if (paymentRequestTask.isFaulted()) {
-            throw paymentRequestTask.getError();
-        }
-        Payment payment = new Payment("2020-12-07T15:53:26", "Dr. med. Hackler", "DE02300209000106531065", "335.50:EUR", "ReNr AZ356789Z", "CMCIDEDDXXX");
-        assertEquals(payment, paymentRequestTask.getResult());
-    }
-
-    @Test
-    public void logErrorEvent() throws Exception {
-        when(mApiCommunicator.logErrorEvent(any(JSONObject.class), any(Session.class)))
-                .thenReturn(Task.forResult(new JSONObject()));
-
-        final ErrorEvent errorEvent = new ErrorEvent(
-                "sm-g950f", "Android", "12",
-                "1.2.0", "1.0.0", "Bad things happen"
-        );
-
-        final Task<Void> requestTask = mDocumentTaskManager.logErrorEvent(errorEvent);
-        requestTask.waitForCompletion();
-        if (requestTask.isFaulted()) {
-            throw requestTask.getError();
-        }
-
-        final ArgumentCaptor<JSONObject> requestBodyCaptor = ArgumentCaptor.forClass(JSONObject.class);
-        verify(mApiCommunicator).logErrorEvent(requestBodyCaptor.capture(), any(Session.class));
-        final JSONObject requestBody = requestBodyCaptor.getValue();
-
-        final JsonAdapter<ErrorEvent> adapter = moshi.adapter(ErrorEvent.class);
-        final ErrorEvent sentErrorEvent = adapter.fromJson(requestBody.toString());
-
-        assertEquals(errorEvent, sentErrorEvent);
-    }
 }
