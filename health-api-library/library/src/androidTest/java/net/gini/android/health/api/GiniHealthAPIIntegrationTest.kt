@@ -25,6 +25,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import java.lang.Exception
 import java.util.*
+import java.util.Collections.singletonList
 
 /**
  * Created by Alpár Szotyori on 24.01.22.
@@ -37,84 +38,6 @@ class GiniHealthAPIIntegrationTest: GiniCoreAPIIntegrationTest<HealthApiDocument
 
     @Test
     @Throws(Exception::class)
-    fun sendFeedback_withCompoundExtractions_forDocument_withoutLineItems() {
-        val assetManager = getApplicationContext<Context>().resources.assets
-        val testDocumentAsStream = assetManager.open("test.jpg")
-        Assert.assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream)
-        val testDocument = TestUtils.createByteArray(testDocumentAsStream)
-        val documentExtractions = processDocument(
-            testDocument, "image/jpeg", "test.jpg",
-            DocumentTaskManager.DocumentType.INVOICE
-        )
-        val document = documentExtractions.keys.iterator().next()
-        val extractionsContainer = documentExtractions[document]
-
-        // All extractions are correct, that means we have nothing to correct and will only send positive feedback
-        // we should only send feedback for extractions we have seen and accepted
-        val feedback: MutableMap<String, SpecificExtraction?> = HashMap()
-        feedback["iban"] = getIban(extractionsContainer!!)
-        feedback["amountToPay"] = getAmountToPay(extractionsContainer)
-        feedback["bic"] = getBic(extractionsContainer)
-        feedback["paymentRecipient"] = getPaymentRecipient(extractionsContainer)
-
-        // The document had no compound extractions but we create some and send them back as feedback
-        val box = Box(1, 2.0, 3.0, 4.0, 5.0)
-        val rows: MutableList<Map<String, SpecificExtraction>> = ArrayList()
-        val firstRowColumns: MutableMap<String, SpecificExtraction> = HashMap()
-        firstRowColumns["description"] =
-            SpecificExtraction("description", "CORE ICON - Sweatjacke - emerald", "text", box, emptyList())
-        firstRowColumns["grossPrice"] = SpecificExtraction("grossPrice", "39.99:EUR", "amount", box, emptyList())
-        rows.add(firstRowColumns)
-        val secondRowColumns: MutableMap<String, SpecificExtraction> = HashMap()
-        secondRowColumns["description"] =
-            SpecificExtraction("description", "Strickpullover - yellow", "text", box, emptyList())
-        secondRowColumns["grossPrice"] = SpecificExtraction("grossPrice", "59.99:EUR", "amount", box, emptyList())
-        rows.add(secondRowColumns)
-        val compoundExtraction = CompoundExtraction("lineItems", rows)
-        val feedbackCompound: MutableMap<String, CompoundExtraction> = HashMap()
-        feedbackCompound["lineItems"] = compoundExtraction
-        val sendFeedback =
-            giniCoreAPI.documentTaskManager.sendFeedbackForExtractions(document, feedback, feedbackCompound)
-        sendFeedback.waitForCompletion()
-        if (sendFeedback.isFaulted) {
-            Log.e("TEST", Log.getStackTraceString(sendFeedback.error))
-        }
-        Assert.assertTrue("Sending feedback should be completed", sendFeedback.isCompleted)
-        Assert.assertFalse("Sending feedback should be successful", sendFeedback.isFaulted)
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun sendFeedback_withoutCompoundExtractions_forDocument_withoutLineItems() {
-        val assetManager = getApplicationContext<Context>().resources.assets
-        val testDocumentAsStream = assetManager.open("test.jpg")
-        Assert.assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream)
-        val testDocument = TestUtils.createByteArray(testDocumentAsStream)
-        val documentExtractions = processDocument(
-            testDocument, "image/jpeg", "test.jpg",
-            DocumentTaskManager.DocumentType.INVOICE
-        )
-        val document = documentExtractions.keys.iterator().next()
-        val extractionsContainer = documentExtractions[document]
-
-        // All extractions are correct, that means we have nothing to correct and will only send positive feedback
-        // we should only send feedback for extractions we have seen and accepted
-        val feedback: MutableMap<String, SpecificExtraction?> = HashMap()
-        feedback["iban"] = getIban(extractionsContainer!!)
-        feedback["amountToPay"] = getAmountToPay(extractionsContainer)
-        feedback["bic"] = getBic(extractionsContainer)
-        feedback["paymentRecipient"] = getPaymentRecipient(extractionsContainer)
-        val sendFeedback = giniCoreAPI.documentTaskManager.sendFeedbackForExtractions(document, feedback)
-        sendFeedback.waitForCompletion()
-        if (sendFeedback.isFaulted) {
-            Log.e("TEST", Log.getStackTraceString(sendFeedback.error))
-        }
-        Assert.assertTrue("Sending feedback should be completed", sendFeedback.isCompleted)
-        Assert.assertFalse("Sending feedback should be successful", sendFeedback.isFaulted)
-    }
-
-    @Test
-    @Throws(Exception::class)
     fun sendFeedback_withoutCompoundExtractions_forDocument_withLineItems() {
         val assetManager = getApplicationContext<Context>().resources.assets
         val testDocumentAsStream = assetManager.open("line-items.pdf")
@@ -124,16 +47,14 @@ class GiniHealthAPIIntegrationTest: GiniCoreAPIIntegrationTest<HealthApiDocument
             DocumentTaskManager.DocumentType.INVOICE
         ) { extractionsContainer: ExtractionsContainer? -> }
         val document = documentExtractions.keys.iterator().next()
-        val extractionsContainer = documentExtractions[document]
+        val extractionsContainer = documentExtractions[document]!!
 
         // All extractions are correct, that means we have nothing to correct and will only send positive feedback
         // we should only send feedback for extractions we have seen and accepted
-        val feedback: MutableMap<String, SpecificExtraction?> = HashMap()
-        feedback["iban"] = getIban(extractionsContainer!!)
-        feedback["amountToPay"] = getAmountToPay(extractionsContainer)
-        feedback["bic"] = getBic(extractionsContainer)
-        feedback["paymentRecipient"] = getPaymentRecipient(extractionsContainer)
-        val sendFeedback = giniCoreAPI.documentTaskManager.sendFeedbackForExtractions(document, feedback)
+        val feedbackSpecific: MutableMap<String, SpecificExtraction?> = HashMap()
+        feedbackSpecific["amount_to_pay"] = extractionsContainer.specificExtractions["amount_to_pay"]
+
+        val sendFeedback = giniCoreAPI.documentTaskManager.sendFeedbackForExtractions(document, feedbackSpecific)
         sendFeedback.waitForCompletion()
         if (sendFeedback.isFaulted) {
             Log.e("TEST", Log.getStackTraceString(sendFeedback.error))
@@ -143,7 +64,6 @@ class GiniHealthAPIIntegrationTest: GiniCoreAPIIntegrationTest<HealthApiDocument
     }
 
     @Test
-    @Ignore("compound extractions are not working (07.10.2021)")
     @Throws(Exception::class)
     fun sendFeedback_withCompoundExtractions_forDocument_withLineItems() {
         val assetManager = getApplicationContext<Context>().resources.assets
@@ -155,22 +75,28 @@ class GiniHealthAPIIntegrationTest: GiniCoreAPIIntegrationTest<HealthApiDocument
         ) { extractionsContainer: ExtractionsContainer? -> }
         val document = documentExtractions.keys.iterator().next()
         val extractionsContainer = documentExtractions[document]
-        val compoundExtractions = extractionsContainer!!.compoundExtractions
+        val compoundExtractions: Map<String, CompoundExtraction> = extractionsContainer!!.compoundExtractions
 
-        // All specific extractions are correct, that means we have nothing to correct and will only send positive feedback
+        val feedbackCompound: MutableMap<String, CompoundExtraction> = HashMap()
+
+        // All extractions are correct, that means we have nothing to correct and will only send positive feedback
         // we should only send feedback for extractions we have seen and accepted
-        val feedback: MutableMap<String, SpecificExtraction?> = HashMap()
-        feedback["iban"] = getIban(extractionsContainer)
-        feedback["amountToPay"] = getAmountToPay(extractionsContainer)
-        feedback["bic"] = getBic(extractionsContainer)
-        feedback["paymentRecipient"] = getPaymentRecipient(extractionsContainer)
+        val feedbackSpecific: MutableMap<String, SpecificExtraction?> = HashMap()
+        feedbackSpecific["amount_to_pay"] = extractionsContainer.specificExtractions["amount_to_pay"]
+
+        val feedbackPayment: MutableMap<String, SpecificExtraction?> = HashMap()
+        feedbackPayment["iban"] = getIban(extractionsContainer)
+        feedbackPayment["amount_to_pay"] = getAmountToPay(extractionsContainer)
+        feedbackPayment["bic"] = getBic(extractionsContainer)
+        feedbackPayment["payment_recipient"] = getPaymentRecipient(extractionsContainer)
+
+        feedbackCompound["payment"] = CompoundExtraction("payment", singletonList(feedbackPayment))
 
         // All compound extractions are correct, that means we have nothing to correct and will only send positive feedback
         // we should only send feedback for extractions we have seen and accepted
-        val feedbackCompound: MutableMap<String, CompoundExtraction?> = HashMap()
-        feedbackCompound["lineItems"] = compoundExtractions["lineItems"]
+        feedbackCompound["line_items"] = compoundExtractions["line_items"]!!
         val sendFeedback =
-            giniCoreAPI.documentTaskManager.sendFeedbackForExtractions(document, feedback, feedbackCompound)
+            giniCoreAPI.documentTaskManager.sendFeedbackForExtractions(document, feedbackSpecific, feedbackCompound)
         sendFeedback.waitForCompletion()
         if (sendFeedback.isFaulted) {
             Log.e("TEST", Log.getStackTraceString(sendFeedback.error))

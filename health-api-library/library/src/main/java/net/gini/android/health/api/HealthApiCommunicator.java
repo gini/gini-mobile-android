@@ -42,7 +42,7 @@ public class HealthApiCommunicator extends net.gini.android.core.api.ApiCommunic
 
     public Task<JSONObject> sendFeedback(final String documentId, final JSONObject extractions, final Session session)
             throws JSONException {
-        final String url = getBaseUri().buildUpon().path(String.format("documents/%s/extractions/feedback",
+        final String url = getBaseUri().buildUpon().path(String.format("documents/%s/extractions",
                 checkNotNull(documentId))).toString();
         final RequestTaskCompletionSource<JSONObject> completionSource =
                 RequestTaskCompletionSource.newCompletionSource();
@@ -60,7 +60,7 @@ public class HealthApiCommunicator extends net.gini.android.core.api.ApiCommunic
     public Task<JSONObject> sendFeedback(final String documentId, final JSONObject extractions,
                                          final JSONObject compoundExtractions, final Session session)
             throws JSONException {
-        final String url = getBaseUri().buildUpon().path(String.format("documents/%s/extractions/feedback",
+        final String url = getBaseUri().buildUpon().path(String.format("documents/%s/extractions",
                 checkNotNull(documentId))).toString();
         final RequestTaskCompletionSource<JSONObject> completionSource =
                 RequestTaskCompletionSource.newCompletionSource();
