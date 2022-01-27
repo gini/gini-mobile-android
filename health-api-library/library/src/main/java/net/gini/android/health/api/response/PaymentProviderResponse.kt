@@ -4,7 +4,7 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-data class PaymentProviderResponse(
+internal data class PaymentProviderResponse(
     @Json(name = "id") val id: String,
     @Json(name = "name") val name: String,
     @Json(name = "packageNameAndroid") val packageNameAndroid: String,
@@ -14,12 +14,12 @@ data class PaymentProviderResponse(
 )
 
 @JsonClass(generateAdapter = true)
-data class AppVersionResponse(
+internal data class AppVersionResponse(
     @Json(name = "android") val android: String,
 )
 
 @JsonClass(generateAdapter = true)
-data class Colors(
+internal data class Colors(
     @Json(name = "background") val background: String,
     @Json(name = "text") val text: String,
 )

@@ -61,7 +61,7 @@ data class PaymentProvider(
     )
 }
 
-fun PaymentProviderResponse.toPaymentProvider(icon: ByteArray) = PaymentProvider(
+internal fun PaymentProviderResponse.toPaymentProvider(icon: ByteArray) = PaymentProvider(
     id = id,
     name = name,
     packageName = packageNameAndroid,
