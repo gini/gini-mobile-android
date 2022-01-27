@@ -107,7 +107,7 @@ public class HealthApiCommunicatorTest {
         ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
         verify(mRequestQueue).add(requestCaptor.capture());
         final Request request = requestCaptor.getValue();
-        assertEquals("https://pay-api.gini.net/documents/1234-1234/extractions/feedback", request.getUrl());
+        assertEquals("https://pay-api.gini.net/documents/1234-1234/extractions", request.getUrl());
         assertEquals(POST, request.getMethod());
     }
 
