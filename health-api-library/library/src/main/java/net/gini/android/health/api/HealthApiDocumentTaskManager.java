@@ -1,5 +1,8 @@
 package net.gini.android.health.api;
 
+import android.net.Uri;
+import android.util.Size;
+
 import androidx.annotation.NonNull;
 
 import com.squareup.moshi.JsonAdapter;
@@ -16,11 +19,14 @@ import net.gini.android.core.api.models.Extraction;
 import net.gini.android.core.api.models.PaymentRequest;
 import net.gini.android.core.api.models.SpecificExtraction;
 import net.gini.android.core.api.requests.PaymentRequestBody;
+import net.gini.android.health.api.models.Page;
+import net.gini.android.health.api.models.PageKt;
 import net.gini.android.health.api.models.PaymentProvider;
 import net.gini.android.health.api.models.PaymentProviderKt;
 import net.gini.android.health.api.models.PaymentRequestInput;
 import net.gini.android.health.api.models.PaymentRequestInputKt;
 import net.gini.android.health.api.response.LocationResponse;
+import net.gini.android.health.api.response.PageResponse;
 import net.gini.android.health.api.response.PaymentProviderResponse;
 
 import org.json.JSONArray;
@@ -31,6 +37,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 import bolts.Continuation;
@@ -158,6 +165,21 @@ public class HealthApiDocumentTaskManager extends DocumentTaskManager<HealthApiC
         }, Task.BACKGROUND_EXECUTOR);
     }
 
+    @NonNull
+    private Task<List<Page>> getPages(@NonNull final String documentId) {
+        return getSessionManager().getSession().onSuccessTask(task -> {
+            final Session session = task.getResult();
+            return getApiCommunicator().getPages(documentId, session);
+        }, Task.BACKGROUND_EXECUTOR)
+                .onSuccess(task -> {
+                    final Type type = Types.newParameterizedType(List.class, PageResponse.class);
+                    final JsonAdapter<List<PageResponse>> adapter = getMoshi().adapter(type);
+                    final List<PageResponse> requestResponse = adapter.fromJson(task.getResult().toString());
+
+                    return PageKt.toPageList(Objects.requireNonNull(requestResponse), getApiCommunicator().getBaseUri());
+                });
+    }
+
     /**
      * Get the rendered image of a page as byte[]
      *
@@ -165,13 +187,19 @@ public class HealthApiDocumentTaskManager extends DocumentTaskManager<HealthApiC
      * @param page page of document
      */
     public Task<byte[]> getPageImage(final String documentId, final int page) {
-        return getSessionManager().getSession().onSuccessTask(new Continuation<Session, Task<byte[]>>() {
-            @Override
-            public Task<byte[]> then(Task<Session> task) {
-                final Session session = task.getResult();
-                return getApiCommunicator().getPageImage(documentId, page, session);
-            }
-        }, Task.BACKGROUND_EXECUTOR);
+        return getPages(documentId)
+                .onSuccessTask(task -> {
+                    final List<Page> pages = task.getResult();
+
+                    final Uri imageUri = PageKt.getPageByPageNumber(pages, page)
+                            .getLargestImageUriSmallerThan(new Size(2000, 2000));
+
+                    if (imageUri != null) {
+                        return getFile(imageUri.toString());
+                    } else {
+                        throw new NoSuchElementException("No page image found for page number " + page + "in document " + documentId);
+                    }
+                });
     }
 
     /**

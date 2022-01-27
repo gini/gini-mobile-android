@@ -1,26 +1,20 @@
 package net.gini.android.health.api
 
 import android.content.Context
-import android.content.res.AssetManager
 import android.graphics.BitmapFactory
 import android.util.Log
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import bolts.Task
 import net.gini.android.core.api.DocumentTaskManager
 import net.gini.android.core.api.test.shared.helpers.TestUtils
 import net.gini.android.core.api.internal.GiniCoreAPIBuilder
-import net.gini.android.core.api.models.Box
 import net.gini.android.core.api.models.CompoundExtraction
-import net.gini.android.core.api.models.Extraction
 import net.gini.android.core.api.test.shared.GiniCoreAPIIntegrationTest
 import net.gini.android.core.api.models.ExtractionsContainer
 import net.gini.android.core.api.models.SpecificExtraction
-import net.gini.android.core.api.test.shared.GiniCoreAPIIntegrationTest.ExtractionsCallback
 import net.gini.android.health.api.models.PaymentRequestInput
 import org.junit.Assert
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.lang.Exception

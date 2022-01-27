@@ -160,83 +160,14 @@ public class HealthApiCommunicatorTest {
     }
 
     @Test
-    public void testGetPreviewThrowsWithNullArguments() {
-        try {
-            mApiCommunicator.getPreview(null, 0, null, null);
-            fail("Exception not thrown");
-        } catch (NullPointerException ignored) {
-        }
-
-        try {
-            mApiCommunicator.getPreview("1234", 1, null, null);
-            fail("Exception not thrown");
-        } catch (NullPointerException ignored) {
-        }
-
-        try {
-            mApiCommunicator.getPreview("1234", 1, ApiCommunicator.PreviewSize.MEDIUM, null);
-            fail("Exception not thrown");
-        } catch (NullPointerException ignored) {
-        }
-    }
-
-    @Test
-    public void testGetPreviewHasCorrectUrlWithBigPreview() {
-        Session session = createSession();
-
-        mApiCommunicator.getPreview("1234", 1, ApiCommunicator.PreviewSize.BIG, session);
-
-        ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
-        verify(mRequestQueue).add(requestCaptor.capture());
-        final Request request = requestCaptor.getValue();
-        assertEquals("https://pay-api.gini.net/documents/1234/pages/1/1280x1810", request.getUrl());
-    }
-
-    @Test
-    public void testGetPreviewHasCorrectUrlWithMediumPreview() {
-        Session session = createSession();
-
-        mApiCommunicator.getPreview("1234", 1, ApiCommunicator.PreviewSize.MEDIUM, session);
-
-        ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
-        verify(mRequestQueue).add(requestCaptor.capture());
-        final Request request = requestCaptor.getValue();
-        assertEquals("https://pay-api.gini.net/documents/1234/pages/1/750x900", request.getUrl());
-    }
-
-    @Test
-    public void testGetPreviewHasCorrectAuthorizationHeader() throws AuthFailureError {
-        Session session = createSession("9876-5432");
-
-        mApiCommunicator.getPreview("1234", 1, ApiCommunicator.PreviewSize.BIG, session);
-
-        ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
-        verify(mRequestQueue).add(requestCaptor.capture());
-        final Request request = requestCaptor.getValue();
-        assertEquals("BEARER 9876-5432", request.getHeaders().get("Authorization"));
-    }
-
-    @Test
-    public void testGetPreviewHasCorrectAcceptHeader() throws AuthFailureError {
-        Session session = createSession();
-
-        mApiCommunicator.getPreview("1234", 1, ApiCommunicator.PreviewSize.MEDIUM, session);
-
-        ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
-        verify(mRequestQueue).add(requestCaptor.capture());
-        final Request request = requestCaptor.getValue();
-        assertEquals(MediaTypes.IMAGE_JPEG, request.getHeaders().get("Accept"));
-    }
-
-    @Test
-    public void testGetPageImage() {
-        mApiCommunicator.getPageImage("aa9a4630-8e05-11eb-ad19-3bfb1a96d239", 2, createSession());
+    public void testGetPages() {
+        mApiCommunicator.getPages("aa9a4630-8e05-11eb-ad19-3bfb1a96d239", createSession());
 
         ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
         verify(mRequestQueue).add(requestCaptor.capture());
         final Request request = requestCaptor.getValue();
 
-        assertEquals("https://pay-api.gini.net/documents/aa9a4630-8e05-11eb-ad19-3bfb1a96d239/pages/2/large", request.getUrl());
+        assertEquals("https://pay-api.gini.net/documents/aa9a4630-8e05-11eb-ad19-3bfb1a96d239/pages", request.getUrl());
     }
 
     @Test

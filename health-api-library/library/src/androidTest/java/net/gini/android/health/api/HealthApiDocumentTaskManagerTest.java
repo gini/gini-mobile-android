@@ -12,6 +12,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import android.net.Uri;
+import android.util.Size;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.MediumTest;
@@ -27,6 +28,7 @@ import net.gini.android.core.api.models.Payment;
 import net.gini.android.core.api.models.ResolvePaymentInput;
 import net.gini.android.core.api.models.ResolvedPayment;
 import net.gini.android.core.api.models.SpecificExtraction;
+import net.gini.android.health.api.models.Page;
 import net.gini.android.health.api.models.PaymentProvider;
 import net.gini.android.health.api.models.PaymentRequestInput;
 
@@ -46,6 +48,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import bolts.Task;
 
@@ -92,6 +95,10 @@ public class HealthApiDocumentTaskManagerTest {
         int read = inputStream.read(buffer);
         inputStream.close();
         return new JSONArray(new String(buffer));
+    }
+
+    private Task<JSONArray> createPagesJSONTask() throws IOException, JSONException {
+        return Task.forResult(readJSONArrayFile("pages.json"));
     }
 
     private Task<JSONArray> createPaymentProvidersJSONTask() throws IOException, JSONException {
@@ -210,6 +217,40 @@ public class HealthApiDocumentTaskManagerTest {
 
         updateTask.waitForCompletion();
         assertFalse(extractions.get("amountToPay").isDirty());
+    }
+
+    @Test
+    public void testGetPageImage() throws Exception {
+        final byte[] expectedBytes = new byte[] {1, 2};
+        when(mApiCommunicator.getPages(eq("documentId"), any())).thenReturn(createPagesJSONTask());
+        when(mApiCommunicator.getFile(eq("https://api.gini.net/documents/ba626ad0-7ec2-11ec-854d-b5b2580e2dc4/pages/1/1280x1810"), any(Session.class)))
+                .thenReturn(Task.forResult(expectedBytes));
+        when(mApiCommunicator.getBaseUri()).thenReturn(Uri.parse("https://api.gini.net"));
+
+        Task<byte[]> pageImage = mDocumentTaskManager.getPageImage("documentId", 1);
+        pageImage.waitForCompletion();
+        if (pageImage.isFaulted()) {
+            throw pageImage.getError();
+        }
+
+        assertEquals(expectedBytes, pageImage.getResult());
+    }
+
+    @Test
+    public void testGetPageImageReturnsLargestImageSmallerThanMaxImageSize() throws Exception {
+        final byte[] expectedBytes = new byte[] {1, 2};
+        when(mApiCommunicator.getPages(eq("documentId"), any())).thenReturn(createPagesJSONTask());
+        when(mApiCommunicator.getFile(eq("https://api.gini.net/documents/ba626ad0-7ec2-11ec-854d-b5b2580e2dc4/pages/2/1280x1810"), any(Session.class)))
+                .thenReturn(Task.forResult(expectedBytes));
+        when(mApiCommunicator.getBaseUri()).thenReturn(Uri.parse("https://api.gini.net"));
+
+        Task<byte[]> pageImage = mDocumentTaskManager.getPageImage("documentId", 2);
+        pageImage.waitForCompletion();
+        if (pageImage.isFaulted()) {
+            throw pageImage.getError();
+        }
+
+        assertEquals(expectedBytes, pageImage.getResult());
     }
 
     @Test
