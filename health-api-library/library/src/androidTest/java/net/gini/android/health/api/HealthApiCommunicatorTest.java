@@ -170,30 +170,4 @@ public class HealthApiCommunicatorTest {
         assertEquals("https://pay-api.gini.net/documents/aa9a4630-8e05-11eb-ad19-3bfb1a96d239/pages", request.getUrl());
     }
 
-    @Test
-    public void logErrorEventHasCorrectAuthorizationHeader() throws Exception {
-        final Session session = createSession("9999-8888-7777");
-
-        mApiCommunicator.logErrorEvent(new JSONObject(), session);
-
-        final ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
-        verify(mRequestQueue).add(requestCaptor.capture());
-        final Request request = requestCaptor.getValue();
-
-        assertEquals("BEARER 9999-8888-7777", request.getHeaders().get("Authorization"));
-    }
-
-    @Test
-    public void logErrorEventHasCorrectUrl() throws Exception {
-        final Session session = createSession("9999-8888-7777");
-
-        mApiCommunicator.logErrorEvent(new JSONObject(), session);
-
-        final ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
-        verify(mRequestQueue).add(requestCaptor.capture());
-        final Request request = requestCaptor.getValue();
-
-        assertEquals("https://pay-api.gini.net/events/error", request.getUrl());
-    }
-
 }

@@ -12,7 +12,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import android.net.Uri;
-import android.util.Size;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.MediumTest;
@@ -24,11 +23,7 @@ import net.gini.android.core.api.authorization.SessionManager;
 import net.gini.android.core.api.models.CompoundExtraction;
 import net.gini.android.core.api.models.Document;
 import net.gini.android.core.api.models.Extraction;
-import net.gini.android.core.api.models.Payment;
-import net.gini.android.core.api.models.ResolvePaymentInput;
-import net.gini.android.core.api.models.ResolvedPayment;
 import net.gini.android.core.api.models.SpecificExtraction;
-import net.gini.android.health.api.models.Page;
 import net.gini.android.health.api.models.PaymentProvider;
 import net.gini.android.health.api.models.PaymentRequestInput;
 
@@ -109,16 +104,8 @@ public class HealthApiDocumentTaskManagerTest {
         return Task.forResult(readJSONFile("payment-provider.json"));
     }
 
-    private Task<JSONObject> createResolvePaymentJsonTask() throws IOException, JSONException {
-        return Task.forResult(readJSONFile("resolved-payment.json"));
-    }
-
     private Task<JSONObject> createLocationHeaderJSONTask(String url) {
         return Task.forResult(new JSONObject(Collections.singletonMap("location", url)));
-    }
-
-    private Task<JSONObject> createPaymentJSONTask() throws IOException, JSONException {
-        return Task.forResult(readJSONFile("payment.json"));
     }
 
     @Test
@@ -301,34 +288,6 @@ public class HealthApiDocumentTaskManagerTest {
             throw paymentRequestTask.getError();
         }
         assertEquals("7b5a7f79-ae7c-4040-b6cf-25cde58ad937", paymentRequestTask.getResult());
-    }
-
-    @Test
-    public void testResolvePaymentRequest() throws Exception {
-        when(mApiCommunicator.resolvePaymentRequests(any(String.class), any(JSONObject.class), any(Session.class)))
-                .thenReturn(createResolvePaymentJsonTask());
-
-        Task<ResolvedPayment> paymentRequestTask = mDocumentTaskManager.resolvePaymentRequest("", new ResolvePaymentInput("", "", "", "", null));
-        paymentRequestTask.waitForCompletion();
-        if (paymentRequestTask.isFaulted()) {
-            throw paymentRequestTask.getError();
-        }
-        ResolvedPayment resolvedPayment = new ResolvedPayment("ginipay-example://payment-requester", "Dr. med. Hackler", "DE02300209000106531065", "CMCIDEDDXXX", "335.50:EUR", "ReNr AZ356789Z", ResolvedPayment.Status.PAID);
-        assertEquals(resolvedPayment, paymentRequestTask.getResult());
-    }
-
-
-    @Test
-    public void testGetPayment() throws Exception {
-        when(mApiCommunicator.getPayment(any(String.class), any(Session.class))).thenReturn(createPaymentJSONTask());
-
-        Task<Payment> paymentRequestTask = mDocumentTaskManager.getPayment("");
-        paymentRequestTask.waitForCompletion();
-        if (paymentRequestTask.isFaulted()) {
-            throw paymentRequestTask.getError();
-        }
-        Payment payment = new Payment("2020-12-07T15:53:26", "Dr. med. Hackler", "DE02300209000106531065", "335.50:EUR", "ReNr AZ356789Z", "CMCIDEDDXXX");
-        assertEquals(payment, paymentRequestTask.getResult());
     }
 
 }
