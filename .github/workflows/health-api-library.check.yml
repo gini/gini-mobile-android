@@ -17,6 +17,39 @@ on:
 
 jobs:
   test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: setup java
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+          cache: 'gradle'
+
+      - name: run unit tests
+        run: ./gradlew health-api-library:library:testDebugUnitTest
+
+      - name: archive unit test results
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: health-api-library-unit-test-results
+          path: health-api-library/library/build/reports/tests
+
+      - name: create unit test coverage report
+        run: ./gradlew health-api-library:library:jacocoTestDebugUnitTestReport
+
+      - name: archive unit test coverage report
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: health-api-library-unit-test-coverage
+          path: health-api-library/library/build/jacoco/jacocoHtml
+
+  instrumented-test:
     runs-on: macos-latest
     strategy:
       matrix:
