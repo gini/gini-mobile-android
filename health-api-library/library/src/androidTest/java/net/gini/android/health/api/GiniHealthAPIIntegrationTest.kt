@@ -28,7 +28,7 @@ import java.util.Collections.singletonList
  */
 
 @RunWith(AndroidJUnit4::class)
-class GiniHealthAPIIntegrationTest: GiniCoreAPIIntegrationTest<HealthApiDocumentTaskManager, HealthApiDocumentManager, GiniHealthAPI, HealthApiCommunicator>() {
+class GiniHealthAPIIntegrationTest: GiniCoreAPIIntegrationTest<HealthApiDocumentTaskManager, HealthApiDocumentManager, GiniHealthAPI, HealthApiCommunicator, ExtractionsContainer>() {
 
     @Test
     @Throws(Exception::class)
@@ -186,7 +186,7 @@ class GiniHealthAPIIntegrationTest: GiniCoreAPIIntegrationTest<HealthApiDocument
         clientId: String,
         clientSecret: String,
         emailDomain: String
-    ): GiniCoreAPIBuilder<HealthApiDocumentTaskManager, HealthApiDocumentManager, GiniHealthAPI, HealthApiCommunicator> =
+    ): GiniCoreAPIBuilder<HealthApiDocumentTaskManager, HealthApiDocumentManager, GiniHealthAPI, HealthApiCommunicator, ExtractionsContainer> =
         GiniHealthAPIBuilder(getApplicationContext(), clientId, clientSecret, emailDomain)
 
     override fun getNetworkSecurityConfigResId(): Int = net.gini.android.health.api.test.R.xml.network_security_config

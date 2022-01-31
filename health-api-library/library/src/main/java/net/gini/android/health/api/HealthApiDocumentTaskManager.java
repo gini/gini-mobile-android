@@ -16,6 +16,7 @@ import net.gini.android.core.api.authorization.SessionManager;
 import net.gini.android.core.api.models.CompoundExtraction;
 import net.gini.android.core.api.models.Document;
 import net.gini.android.core.api.models.Extraction;
+import net.gini.android.core.api.models.ExtractionsContainer;
 import net.gini.android.core.api.models.PaymentRequest;
 import net.gini.android.core.api.models.SpecificExtraction;
 import net.gini.android.core.api.requests.PaymentRequestBody;
@@ -48,10 +49,18 @@ import bolts.Task;
  * <p>
  * Copyright (c) 2022 Gini GmbH.
  */
-public class HealthApiDocumentTaskManager extends DocumentTaskManager<HealthApiCommunicator> {
+public class HealthApiDocumentTaskManager extends DocumentTaskManager<HealthApiCommunicator, ExtractionsContainer> {
 
     public HealthApiDocumentTaskManager(HealthApiCommunicator apiCommunicator, SessionManager sessionManager, GiniApiType giniApiType, Moshi moshi) {
         super(apiCommunicator, sessionManager, giniApiType, moshi);
+    }
+
+    @NonNull
+    @Override
+    protected ExtractionsContainer createExtractionsContainer(@NonNull final Map<String, SpecificExtraction> specificExtractions,
+                                                              @NonNull final Map<String, CompoundExtraction> compoundExtractions,
+                                                              @NonNull final JSONObject responseJSON) throws Exception {
+        return new ExtractionsContainer(specificExtractions, compoundExtractions);
     }
 
     /**
@@ -197,7 +206,7 @@ public class HealthApiDocumentTaskManager extends DocumentTaskManager<HealthApiC
                     if (imageUri != null) {
                         return getFile(imageUri.toString());
                     } else {
-                        throw new NoSuchElementException("No page image found for page number " + page + "in document " + documentId);
+                        throw new NoSuchElementException("No page image found for page number " + page + " in document " + documentId);
                     }
                 });
     }

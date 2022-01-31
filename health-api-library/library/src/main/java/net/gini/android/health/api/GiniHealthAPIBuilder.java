@@ -5,9 +5,11 @@ import android.content.Context;
 import net.gini.android.core.api.GiniApiType;
 import net.gini.android.core.api.authorization.SessionManager;
 import net.gini.android.core.api.internal.GiniCoreAPIBuilder;
+import net.gini.android.core.api.models.ExtractionsContainer;
+
 import androidx.annotation.NonNull;
 
-public class GiniHealthAPIBuilder extends GiniCoreAPIBuilder<HealthApiDocumentTaskManager, HealthApiDocumentManager, GiniHealthAPI, HealthApiCommunicator> {
+public class GiniHealthAPIBuilder extends GiniCoreAPIBuilder<HealthApiDocumentTaskManager, HealthApiDocumentManager, GiniHealthAPI, HealthApiCommunicator, ExtractionsContainer> {
 
     private final GiniApiType healthApiType = new GiniHealthApiType(3);
 

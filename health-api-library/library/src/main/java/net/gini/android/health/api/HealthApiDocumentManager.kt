@@ -6,6 +6,7 @@ import kotlinx.coroutines.withContext
 import net.gini.android.core.api.DocumentManager;
 import net.gini.android.core.api.models.CompoundExtraction
 import net.gini.android.core.api.models.Document
+import net.gini.android.core.api.models.ExtractionsContainer
 import net.gini.android.core.api.models.PaymentRequest
 import net.gini.android.core.api.models.SpecificExtraction
 import net.gini.android.health.api.models.PaymentProvider
@@ -17,7 +18,7 @@ import org.json.JSONException
  * <p>
  * Copyright (c) 2022 Gini GmbH.
  */
-class HealthApiDocumentManager(documentTaskManager: HealthApiDocumentTaskManager) : DocumentManager<HealthApiCommunicator, HealthApiDocumentTaskManager>(
+class HealthApiDocumentManager(documentTaskManager: HealthApiDocumentTaskManager) : DocumentManager<HealthApiCommunicator, HealthApiDocumentTaskManager, ExtractionsContainer>(
     documentTaskManager
 ) {
 
