@@ -1,10 +1,12 @@
 package net.gini.android.bank.api;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 
+import net.gini.android.bank.api.models.ReturnReason;
 import net.gini.android.bank.api.response.PaymentResponse;
 import net.gini.android.bank.api.response.ResolvePaymentResponse;
 import net.gini.android.core.api.DocumentTaskManager;
@@ -16,6 +18,7 @@ import net.gini.android.core.api.models.Document;
 import net.gini.android.core.api.models.Extraction;
 import net.gini.android.bank.api.models.Payment;
 import net.gini.android.bank.api.models.PaymentKt;
+import net.gini.android.bank.api.models.ExtractionsContainer;
 import net.gini.android.core.api.models.PaymentRequest;
 import net.gini.android.bank.api.models.ResolvePaymentInput;
 import net.gini.android.bank.api.models.ResolvedPayment;
@@ -29,6 +32,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -40,10 +48,42 @@ import bolts.Task;
  * <p>
  * Copyright (c) 2022 Gini GmbH.
  */
-public class BankApiDocumentTaskManager extends DocumentTaskManager<BankApiCommunicator> {
+public class BankApiDocumentTaskManager extends DocumentTaskManager<BankApiCommunicator, ExtractionsContainer> {
 
     public BankApiDocumentTaskManager(BankApiCommunicator apiCommunicator, SessionManager sessionManager, GiniApiType giniApiType, Moshi moshi) {
         super(apiCommunicator, sessionManager, giniApiType, moshi);
+    }
+
+    @NonNull
+    @Override
+    protected ExtractionsContainer createExtractionsContainer(@NonNull final Map<String, SpecificExtraction> specificExtractions,
+                                                              @NonNull final Map<String, CompoundExtraction> compoundExtractions,
+                                                              @NonNull final JSONObject responseJSON) throws Exception {
+        final List<ReturnReason> returnReasons = parseReturnReason(responseJSON.optJSONArray("returnReasons"));
+        return new ExtractionsContainer(specificExtractions, compoundExtractions, returnReasons);
+    }
+
+    private List<ReturnReason> parseReturnReason(@Nullable final JSONArray returnReasonsJson) throws JSONException {
+        if (returnReasonsJson == null) {
+            return Collections.emptyList();
+        }
+        final List<ReturnReason> returnReasons = new ArrayList<>();
+        for (int i = 0; i < returnReasonsJson.length(); i++) {
+            final JSONObject returnReasonJson = returnReasonsJson.getJSONObject(i);
+
+            Map<String, String> localizedLabels = new HashMap<>();
+
+            final Iterator<String> keys = returnReasonJson.keys();
+            while (keys.hasNext()) {
+                final String key = keys.next();
+                if (key.equals("id")) {
+                    continue;
+                }
+                localizedLabels.put(key, returnReasonJson.getString(key));
+            }
+            returnReasons.add(new ReturnReason(returnReasonJson.getString("id"), localizedLabels));
+        }
+        return returnReasons;
     }
 
     /**

@@ -1,20 +1,24 @@
 package net.gini.android.bank.api
 
 import android.content.Context
+import android.os.Build
 import android.util.Log
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import bolts.Task
+import junit.framework.Assert.assertNull
+import net.gini.android.bank.api.models.ExtractionsContainer
 import net.gini.android.core.api.DocumentTaskManager
 import net.gini.android.core.api.test.shared.helpers.TestUtils
 import net.gini.android.core.api.internal.GiniCoreAPIBuilder
 import net.gini.android.core.api.test.shared.GiniCoreAPIIntegrationTest
-import net.gini.android.core.api.models.ExtractionsContainer
 import net.gini.android.health.api.models.PaymentRequestInput
 import net.gini.android.bank.api.models.ResolvePaymentInput
+import net.gini.android.bank.api.requests.ErrorEvent
 import net.gini.android.core.api.models.Box
 import net.gini.android.core.api.models.CompoundExtraction
 import net.gini.android.core.api.models.SpecificExtraction
+import net.gini.android.core.api.test.shared.BuildConfig
 import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.api.GiniHealthAPIBuilder
 import org.junit.Assert
@@ -31,7 +35,7 @@ import java.util.*
  */
 
 @RunWith(AndroidJUnit4::class)
-class GiniBankAPIIntegrationTest: GiniCoreAPIIntegrationTest<BankApiDocumentTaskManager, BankApiDocumentManager, GiniBankAPI, BankApiCommunicator>() {
+class GiniBankAPIIntegrationTest: GiniCoreAPIIntegrationTest<BankApiDocumentTaskManager, BankApiDocumentManager, GiniBankAPI, BankApiCommunicator, ExtractionsContainer>() {
 
     private lateinit var giniHealthAPI: GiniHealthAPI
 
@@ -224,6 +228,18 @@ class GiniBankAPIIntegrationTest: GiniCoreAPIIntegrationTest<BankApiDocumentTask
         Assert.assertEquals(purpose, getPaymentRequestTask.result.purpose)
     }
 
+    @Test
+    @Throws(Exception::class)
+    fun logErrorEvent() {
+        val errorEvent = ErrorEvent(
+            Build.MODEL, "Android", Build.VERSION.RELEASE,
+            "not available", BuildConfig.VERSION_NAME, "Error logging integration test"
+        )
+        val requestTask = giniCoreAPI.documentTaskManager.logErrorEvent(errorEvent)
+        requestTask.waitForCompletion()
+        assertNull(requestTask.error)
+    }
+
     @Throws(Exception::class)
     private fun createPaymentRequest(): Task<String?> {
         val assetManager = getApplicationContext<Context>().resources.assets
@@ -255,7 +271,7 @@ class GiniBankAPIIntegrationTest: GiniCoreAPIIntegrationTest<BankApiDocumentTask
         clientId: String,
         clientSecret: String,
         emailDomain: String
-    ): GiniCoreAPIBuilder<BankApiDocumentTaskManager, BankApiDocumentManager, GiniBankAPI, BankApiCommunicator> {
+    ): GiniCoreAPIBuilder<BankApiDocumentTaskManager, BankApiDocumentManager, GiniBankAPI, BankApiCommunicator, ExtractionsContainer> {
         giniHealthAPI = GiniHealthAPIBuilder(getApplicationContext(), clientId, clientSecret, emailDomain).build()
         return GiniBankAPIBuilder(getApplicationContext(), clientId, clientSecret, emailDomain)
     }

@@ -19,6 +19,7 @@ import androidx.test.filters.MediumTest;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 
+import net.gini.android.bank.api.models.ReturnReason;
 import net.gini.android.core.api.authorization.Session;
 import net.gini.android.core.api.authorization.SessionManager;
 import net.gini.android.core.api.models.CompoundExtraction;
@@ -27,6 +28,7 @@ import net.gini.android.core.api.models.Extraction;
 import net.gini.android.bank.api.models.Payment;
 import net.gini.android.bank.api.models.ResolvePaymentInput;
 import net.gini.android.bank.api.models.ResolvedPayment;
+import net.gini.android.bank.api.models.ExtractionsContainer;
 import net.gini.android.core.api.models.SpecificExtraction;
 import net.gini.android.bank.api.requests.ErrorEvent;
 import net.gini.android.health.api.GiniHealthApiType;
@@ -43,10 +45,12 @@ import org.mockito.Mockito;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import bolts.Task;
 
@@ -101,6 +105,33 @@ public class BankApiDocumentTaskManagerTest {
 
     private Task<JSONObject> createPaymentJSONTask() throws IOException, JSONException {
         return Task.forResult(readJSONFile("payment.json"));
+    }
+
+    private Task<JSONObject> createExtractionsJSONTask() throws IOException, JSONException {
+        return Task.forResult(readJSONFile("extractions.json"));
+    }
+
+    @Test
+    public void testGetExtractionsParsesReturnReasons() throws Exception {
+        when(mApiCommunicator.getExtractions(eq("1234"), any(Session.class))).thenReturn(createExtractionsJSONTask());
+        Document document = new Document("1234", Document.ProcessingState.COMPLETED, "foobar", 1, new Date(),
+                Document.SourceClassification.NATIVE, Uri.parse(""), new ArrayList<Uri>(),
+                new ArrayList<Uri>());
+
+        Task<ExtractionsContainer> extractionsTask = mDocumentTaskManager.getAllExtractions(document);
+        extractionsTask.waitForCompletion();
+        if (extractionsTask.isFaulted()) {
+            throw extractionsTask.getError();
+        }
+        final ExtractionsContainer extractions = extractionsTask.getResult();
+        assertNotNull(extractions);
+
+        assertEquals(4, extractions.getReturnReasons().size());
+
+        final ReturnReason returnReason = extractions.getReturnReasons().get(0);
+
+        assertEquals("r1", returnReason.getId());
+        assertEquals("Anderes Aussehen als angeboten", returnReason.getLocalizedLabels().get("de"));
     }
 
     @Test

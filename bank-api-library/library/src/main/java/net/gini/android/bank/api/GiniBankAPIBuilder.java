@@ -4,11 +4,12 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
+import net.gini.android.bank.api.models.ExtractionsContainer;
 import net.gini.android.core.api.GiniApiType;
 import net.gini.android.core.api.authorization.SessionManager;
 import net.gini.android.core.api.internal.GiniCoreAPIBuilder;
 
-public class GiniBankAPIBuilder extends GiniCoreAPIBuilder<BankApiDocumentTaskManager, BankApiDocumentManager,GiniBankAPI, BankApiCommunicator> {
+public class GiniBankAPIBuilder extends GiniCoreAPIBuilder<BankApiDocumentTaskManager, BankApiDocumentManager,GiniBankAPI, BankApiCommunicator, ExtractionsContainer> {
 
     private final GiniApiType bankApiType = new GiniBankApiType(1);
 

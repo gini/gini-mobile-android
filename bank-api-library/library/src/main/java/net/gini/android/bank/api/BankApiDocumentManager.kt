@@ -2,6 +2,7 @@ package net.gini.android.bank.api;
 
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
+import net.gini.android.bank.api.models.ExtractionsContainer
 import net.gini.android.bank.api.models.Payment
 import net.gini.android.bank.api.models.ResolvePaymentInput
 import net.gini.android.bank.api.models.ResolvedPayment
@@ -18,7 +19,7 @@ import org.json.JSONException
  * <p>
  * Copyright (c) 2022 Gini GmbH.
  */
-class BankApiDocumentManager(documentTaskManager: BankApiDocumentTaskManager) : DocumentManager<BankApiCommunicator, BankApiDocumentTaskManager>(
+class BankApiDocumentManager(documentTaskManager: BankApiDocumentTaskManager) : DocumentManager<BankApiCommunicator, BankApiDocumentTaskManager, ExtractionsContainer>(
     documentTaskManager
 ) {
 
