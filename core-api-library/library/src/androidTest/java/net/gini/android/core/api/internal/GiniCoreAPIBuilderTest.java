@@ -14,21 +14,28 @@ import androidx.test.filters.SmallTest;
 
 import com.android.volley.Cache;
 import com.android.volley.RetryPolicy;
+import com.squareup.moshi.Moshi;
 
 import net.gini.android.core.api.ApiCommunicator;
 import net.gini.android.core.api.DocumentManager;
 import net.gini.android.core.api.DocumentTaskManager;
 import net.gini.android.core.api.GiniApiType;
+import net.gini.android.core.api.authorization.CredentialsStore;
 import net.gini.android.core.api.authorization.Session;
 import net.gini.android.core.api.authorization.SessionManager;
+import net.gini.android.core.api.models.CompoundExtraction;
+import net.gini.android.core.api.models.ExtractionsContainer;
+import net.gini.android.core.api.models.SpecificExtraction;
 import net.gini.android.core.api.test.TestGiniApiType;
 
+import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.Map;
 
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
@@ -148,8 +155,39 @@ public class GiniCoreAPIBuilderTest {
         assertNotNull(sdkInstance);
     }
 
+    private static class TestDocumentTaskManager extends DocumentTaskManager<ApiCommunicator, ExtractionsContainer> {
 
-    private static class CoreAPIBuilder extends GiniCoreAPIBuilder<DocumentTaskManager<ApiCommunicator>, DocumentManager<ApiCommunicator, DocumentTaskManager<ApiCommunicator>>, GiniCoreAPI<DocumentTaskManager<ApiCommunicator>, DocumentManager<ApiCommunicator, DocumentTaskManager<ApiCommunicator>>>, ApiCommunicator> {
+        public TestDocumentTaskManager(ApiCommunicator apiCommunicator, SessionManager sessionManager, GiniApiType giniApiType, Moshi moshi) {
+            super(apiCommunicator, sessionManager, giniApiType, moshi);
+        }
+
+        @NonNull
+        @Override
+        protected ExtractionsContainer createExtractionsContainer(@NonNull Map<String, SpecificExtraction> specificExtractions, @NonNull Map<String, CompoundExtraction> compoundExtractions, @NonNull JSONObject responseJSON) throws Exception {
+            return new ExtractionsContainer(specificExtractions, compoundExtractions);
+        }
+    }
+
+    private static class TestDocumentManager extends DocumentManager<ApiCommunicator, TestDocumentTaskManager, ExtractionsContainer> {
+
+        public TestDocumentManager(@NonNull TestDocumentTaskManager documentTaskManager) {
+            super(documentTaskManager);
+        }
+    }
+
+    private static class TestGiniCoreAPI extends GiniCoreAPI<TestDocumentTaskManager, TestDocumentManager, ApiCommunicator, ExtractionsContainer> {
+
+        protected TestGiniCoreAPI(TestDocumentTaskManager documentTaskManager, CredentialsStore credentialsStore) {
+            super(documentTaskManager, credentialsStore);
+        }
+
+        @Override
+        public TestDocumentManager getDocumentManager() {
+            return Mockito.mock(TestDocumentManager.class);
+        }
+    }
+
+    private static class CoreAPIBuilder extends GiniCoreAPIBuilder<TestDocumentTaskManager, TestDocumentManager, TestGiniCoreAPI, ApiCommunicator, ExtractionsContainer> {
 
         protected CoreAPIBuilder(@NonNull Context context, @NonNull String clientId, @NonNull String clientSecret, @NonNull String emailDomain) {
             super(context, clientId, clientSecret, emailDomain);
@@ -166,13 +204,8 @@ public class GiniCoreAPIBuilderTest {
         }
 
         @Override
-        public GiniCoreAPI<DocumentTaskManager<ApiCommunicator>, DocumentManager<ApiCommunicator, DocumentTaskManager<ApiCommunicator>>> build() {
-            return new GiniCoreAPI<DocumentTaskManager<ApiCommunicator>, DocumentManager<ApiCommunicator, DocumentTaskManager<ApiCommunicator>>>(getDocumentTaskManager(), getCredentialsStore()) {
-                @Override
-                public DocumentManager<ApiCommunicator, DocumentTaskManager<ApiCommunicator>> getDocumentManager() {
-                    return Mockito.mock(DocumentManager.class);
-                }
-            };
+        public TestGiniCoreAPI build() {
+            return new TestGiniCoreAPI(getDocumentTaskManager(), getCredentialsStore());
         }
 
         @NonNull
@@ -183,8 +216,8 @@ public class GiniCoreAPIBuilderTest {
 
         @NonNull
         @Override
-        protected DocumentTaskManager createDocumentTaskManager() {
-            return new DocumentTaskManager(getApiCommunicator(), getSessionManager(), getGiniApiType(), getMoshi());
+        protected TestDocumentTaskManager createDocumentTaskManager() {
+            return new TestDocumentTaskManager(getApiCommunicator(), getSessionManager(), getGiniApiType(), getMoshi());
         }
 
     }

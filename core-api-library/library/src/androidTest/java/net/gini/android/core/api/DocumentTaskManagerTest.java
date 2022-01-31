@@ -4,6 +4,8 @@ import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+
+import androidx.annotation.NonNull;
 import androidx.test.filters.MediumTest;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
@@ -17,7 +19,6 @@ import net.gini.android.core.api.models.CompoundExtraction;
 import net.gini.android.core.api.models.Document;
 import net.gini.android.core.api.models.ExtractionsContainer;
 import net.gini.android.core.api.models.PaymentRequest;
-import net.gini.android.core.api.models.ReturnReason;
 import net.gini.android.core.api.models.SpecificExtraction;
 import net.gini.android.core.api.test.TestGiniApiType;
 
@@ -61,7 +62,7 @@ import static org.mockito.Mockito.when;
 @RunWith(AndroidJUnit4.class)
 public class DocumentTaskManagerTest {
 
-    private DocumentTaskManager<ApiCommunicator> mDocumentTaskManager;
+    private DocumentTaskManager<ApiCommunicator, ExtractionsContainer> mDocumentTaskManager;
     private SessionManager mSessionManager;
     private ApiCommunicator mApiCommunicator;
     private Session mSession;
@@ -75,7 +76,7 @@ public class DocumentTaskManagerTest {
         mApiCommunicator = Mockito.mock(ApiCommunicator.class);
         mSessionManager = Mockito.mock(SessionManager.class);
         moshi = new Moshi.Builder().build();
-        mDocumentTaskManager = new DocumentTaskManager<>(mApiCommunicator, mSessionManager, new TestGiniApiType(), moshi);
+        mDocumentTaskManager = new TestDocumentTaskManager(mApiCommunicator, mSessionManager, new TestGiniApiType(), moshi);
 
         // Always mock the session away since it is not what is tested here.
         mSession = new Session("1234-5678-9012", new Date(new Date().getTime() + 10000));
@@ -205,13 +206,13 @@ public class DocumentTaskManagerTest {
     @Test
     public void testThatConstructorChecksForNull() {
         try {
-            new DocumentTaskManager(null, null, null, moshi);
+            new TestDocumentTaskManager(null, null, null, moshi);
             fail("Exception not thrown");
         } catch (NullPointerException ignored) {
         }
 
         try {
-            new DocumentTaskManager(mApiCommunicator, null, null, moshi);
+            new TestDocumentTaskManager(mApiCommunicator, null, null, moshi);
             fail("Exception not thrown");
         } catch (NullPointerException ignored) {
         }
@@ -715,29 +716,6 @@ public class DocumentTaskManagerTest {
         assertEquals(2, amountToPay.getCandidate().size());
     }
 
-    @Test
-    public void testGetExtractionsParsesReturnReasons() throws Exception {
-        when(mApiCommunicator.getExtractions(eq("1234"), any(Session.class))).thenReturn(createExtractionsJSONTask());
-        Document document = new Document("1234", Document.ProcessingState.COMPLETED, "foobar", 1, new Date(),
-                Document.SourceClassification.NATIVE, Uri.parse(""), new ArrayList<Uri>(),
-                new ArrayList<Uri>());
-
-        Task<ExtractionsContainer> extractionsTask = mDocumentTaskManager.getAllExtractions(document);
-        extractionsTask.waitForCompletion();
-        if (extractionsTask.isFaulted()) {
-            throw extractionsTask.getError();
-        }
-        final ExtractionsContainer extractions = extractionsTask.getResult();
-        assertNotNull(extractions);
-
-        assertEquals(4, extractions.getReturnReasons().size());
-
-        final ReturnReason returnReason = extractions.getReturnReasons().get(0);
-
-        assertEquals("r1", returnReason.getId());
-        assertEquals("Anderes Aussehen als angeboten", returnReason.getLocalizedLabels().get("de"));
-    }
-
     private List<PaymentRequest> getPaymentRequests() {
         final List<PaymentRequest> paymentRequests = new ArrayList<>();
         paymentRequests.add(new PaymentRequest("7e72441c-32f8-11eb-b611-c3190574373c", null, "Dr. med. Hackler", "DE02300209000106531065", "CMCIDEDDXXX", "335.50:EUR", "ReNr AZ356789Z", PaymentRequest.Status.PAID));
@@ -769,6 +747,19 @@ public class DocumentTaskManagerTest {
         }
         final List<PaymentRequest> paymentProvidersResult = paymentProvidersTask.getResult();
         assertEquals(getPaymentRequests(), paymentProvidersResult);
+    }
+
+    private static class TestDocumentTaskManager extends DocumentTaskManager<ApiCommunicator, ExtractionsContainer> {
+
+        public TestDocumentTaskManager(ApiCommunicator apiCommunicator, SessionManager sessionManager, GiniApiType giniApiType, Moshi moshi) {
+            super(apiCommunicator, sessionManager, giniApiType, moshi);
+        }
+
+        @NonNull
+        @Override
+        protected ExtractionsContainer createExtractionsContainer(@NonNull Map<String, SpecificExtraction> specificExtractions, @NonNull Map<String, CompoundExtraction> compoundExtractions, @NonNull JSONObject responseJSON) throws Exception {
+            return new ExtractionsContainer(specificExtractions, compoundExtractions);
+        }
     }
 
 }

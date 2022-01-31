@@ -24,6 +24,7 @@ import net.gini.android.core.api.authorization.EncryptedCredentialsStore;
 import net.gini.android.core.api.authorization.SessionManager;
 import net.gini.android.core.api.authorization.UserCenterAPICommunicator;
 import net.gini.android.core.api.authorization.UserCenterManager;
+import net.gini.android.core.api.models.ExtractionsContainer;
 import net.gini.android.core.api.requests.DefaultRetryPolicyFactory;
 import net.gini.android.core.api.requests.RetryPolicyFactory;
 
@@ -34,7 +35,7 @@ import java.util.List;
 
 import javax.net.ssl.TrustManager;
 
-public abstract class GiniCoreAPIBuilder<DTM extends DocumentTaskManager<A>, DM extends DocumentManager, G extends GiniCoreAPI<DTM, DM>, A extends ApiCommunicator> {
+public abstract class GiniCoreAPIBuilder<DTM extends DocumentTaskManager<A, E>, DM extends DocumentManager<A, DTM, E>, G extends GiniCoreAPI<DTM, DM, A, E>, A extends ApiCommunicator, E extends ExtractionsContainer> {
 
     private final Context mContext;
 
@@ -97,7 +98,7 @@ public abstract class GiniCoreAPIBuilder<DTM extends DocumentTaskManager<A>, DM 
      * @param networkSecurityConfigResId xml resource id
      * @return The builder instance to enable chaining.
      */
-    public GiniCoreAPIBuilder<DTM, DM, G, A> setNetworkSecurityConfigResId(@XmlRes final int networkSecurityConfigResId) {
+    public GiniCoreAPIBuilder<DTM, DM, G, A, E> setNetworkSecurityConfigResId(@XmlRes final int networkSecurityConfigResId) {
         mNetworkSecurityConfigResId = networkSecurityConfigResId;
         return this;
     }
@@ -108,7 +109,7 @@ public abstract class GiniCoreAPIBuilder<DTM extends DocumentTaskManager<A>, DM 
      * @param newUrl The URL of the Gini API which is used by the requests of the library.
      * @return The builder instance to enable chaining.
      */
-    public GiniCoreAPIBuilder<DTM, DM, G, A> setApiBaseUrl(@NonNull String newUrl) {
+    public GiniCoreAPIBuilder<DTM, DM, G, A, E> setApiBaseUrl(@NonNull String newUrl) {
         if (!newUrl.endsWith("/")) {
             newUrl += "/";
         }
@@ -122,7 +123,7 @@ public abstract class GiniCoreAPIBuilder<DTM extends DocumentTaskManager<A>, DM 
      * @param newUrl The URL of the Gini User Center API which is used by the requests of the library.
      * @return The builder instance to enable chaining.
      */
-    public GiniCoreAPIBuilder<DTM, DM, G, A> setUserCenterApiBaseUrl(@NonNull String newUrl) {
+    public GiniCoreAPIBuilder<DTM, DM, G, A, E> setUserCenterApiBaseUrl(@NonNull String newUrl) {
         if (!newUrl.endsWith("/")) {
             newUrl += "/";
         }
@@ -140,7 +141,7 @@ public abstract class GiniCoreAPIBuilder<DTM extends DocumentTaskManager<A>, DM 
      * @param connectionTimeoutInMs initial timeout
      * @return The builder instance to enable chaining.
      */
-    public GiniCoreAPIBuilder<DTM, DM, G, A> setConnectionTimeoutInMs(final int connectionTimeoutInMs) {
+    public GiniCoreAPIBuilder<DTM, DM, G, A, E> setConnectionTimeoutInMs(final int connectionTimeoutInMs) {
         if (connectionTimeoutInMs < 0) {
             throw new IllegalArgumentException("connectionTimeoutInMs can't be less than 0");
         }
@@ -154,7 +155,7 @@ public abstract class GiniCoreAPIBuilder<DTM extends DocumentTaskManager<A>, DM 
      * @param maxNumberOfRetries maximal number of retries.
      * @return The builder instance to enable chaining.
      */
-    public GiniCoreAPIBuilder<DTM, DM, G, A> setMaxNumberOfRetries(final int maxNumberOfRetries) {
+    public GiniCoreAPIBuilder<DTM, DM, G, A, E> setMaxNumberOfRetries(final int maxNumberOfRetries) {
         if (maxNumberOfRetries < 0) {
             throw new IllegalArgumentException("maxNumberOfRetries can't be less than 0");
         }
@@ -169,7 +170,7 @@ public abstract class GiniCoreAPIBuilder<DTM extends DocumentTaskManager<A>, DM 
      * @param backOffMultiplier the backoff multiplication factor
      * @return The builder instance to enable chaining.
      */
-    public GiniCoreAPIBuilder<DTM, DM, G, A> setConnectionBackOffMultiplier(final float backOffMultiplier) {
+    public GiniCoreAPIBuilder<DTM, DM, G, A, E> setConnectionBackOffMultiplier(final float backOffMultiplier) {
         if (backOffMultiplier < 0.0) {
             throw new IllegalArgumentException("backOffMultiplier can't be less than 0");
         }
@@ -184,7 +185,7 @@ public abstract class GiniCoreAPIBuilder<DTM extends DocumentTaskManager<A>, DM 
      * @param credentialsStore A credentials store instance (specified by the CredentialsStore interface).
      * @return The builder instance to enable chaining.
      */
-    public GiniCoreAPIBuilder<DTM, DM, G, A> setCredentialsStore(@NonNull CredentialsStore credentialsStore) {
+    public GiniCoreAPIBuilder<DTM, DM, G, A, E> setCredentialsStore(@NonNull CredentialsStore credentialsStore) {
         mCredentialsStore = checkNotNull(credentialsStore);
         return this;
     }
@@ -196,7 +197,7 @@ public abstract class GiniCoreAPIBuilder<DTM extends DocumentTaskManager<A>, DM 
      * @param cache A cache instance (specified by the com.android.volley.Cache interface).
      * @return The builder instance to enable chaining.
      */
-    public GiniCoreAPIBuilder<DTM, DM, G, A> setCache(@NonNull Cache cache) {
+    public GiniCoreAPIBuilder<DTM, DM, G, A, E> setCache(@NonNull Cache cache) {
         mCache = cache;
         return this;
     }
@@ -211,7 +212,7 @@ public abstract class GiniCoreAPIBuilder<DTM extends DocumentTaskManager<A>, DM 
      * @param trustManager A {@link TrustManager} implementation.
      * @return The builder instance to enable chaining.
      */
-    public GiniCoreAPIBuilder<DTM, DM, G, A> setTrustManager(@NonNull final TrustManager trustManager) {
+    public GiniCoreAPIBuilder<DTM, DM, G, A, E> setTrustManager(@NonNull final TrustManager trustManager) {
         mTrustManager = trustManager;
         return this;
     }

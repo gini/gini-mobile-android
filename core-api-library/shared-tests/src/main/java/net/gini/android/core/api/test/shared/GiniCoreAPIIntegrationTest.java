@@ -28,17 +28,13 @@ import net.gini.android.core.api.authorization.EncryptedCredentialsStore;
 import net.gini.android.core.api.authorization.UserCredentials;
 import net.gini.android.core.api.internal.GiniCoreAPI;
 import net.gini.android.core.api.internal.GiniCoreAPIBuilder;
-import net.gini.android.core.api.test.shared.helpers.TestUtils;
-import net.gini.android.core.api.models.Box;
-import net.gini.android.core.api.models.CompoundExtraction;
-import net.gini.android.core.api.models.Document;
-import net.gini.android.core.api.models.Extraction;
 import net.gini.android.core.api.models.ExtractionsContainer;
+import net.gini.android.core.api.test.shared.helpers.TestUtils;
+import net.gini.android.core.api.models.Document;
 import net.gini.android.core.api.models.SpecificExtraction;
 
 import org.json.JSONException;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -47,7 +43,6 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,7 +57,7 @@ import bolts.Continuation;
 import bolts.Task;
 
 @LargeTest
-public abstract class GiniCoreAPIIntegrationTest<DTM extends DocumentTaskManager<A>, DM extends DocumentManager<A, DTM>, G extends GiniCoreAPI<DTM,DM>, A extends ApiCommunicator> {
+public abstract class GiniCoreAPIIntegrationTest<DTM extends DocumentTaskManager<A, E>, DM extends DocumentManager<A, DTM, E>, G extends GiniCoreAPI<DTM,DM, A, E>, A extends ApiCommunicator, E extends ExtractionsContainer> {
 
     protected G giniCoreAPI;
     private String clientId;
@@ -91,7 +86,7 @@ public abstract class GiniCoreAPIIntegrationTest<DTM extends DocumentTaskManager
                 build();
     }
 
-    protected abstract GiniCoreAPIBuilder<DTM, DM, G, A> createGiniCoreAPIBuilder(@NonNull final String clientId,
+    protected abstract GiniCoreAPIBuilder<DTM, DM, G, A, E> createGiniCoreAPIBuilder(@NonNull final String clientId,
                                                                       @NonNull final String clientSecret,
                                                                       @NonNull final String emailDomain);
 
@@ -244,7 +239,7 @@ public abstract class GiniCoreAPIIntegrationTest<DTM extends DocumentTaskManager
         assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream);
 
         final byte[] testDocument = TestUtils.createByteArray(testDocumentAsStream);
-        final DocumentTaskManager documentTaskManager = giniCoreAPI.getDocumentTaskManager();
+        final DocumentTaskManager<A, E> documentTaskManager = giniCoreAPI.getDocumentTaskManager();
 
         final Task<Document> upload = documentTaskManager.createPartialDocument(testDocument, "image/jpeg", "test.jpeg", DocumentTaskManager.DocumentType.INVOICE);
         final Task<Document> processDocument = upload.onSuccessTask(new Continuation<Document, Task<Document>>() {
@@ -255,10 +250,10 @@ public abstract class GiniCoreAPIIntegrationTest<DTM extends DocumentTaskManager
             }
         });
 
-        final Task<ExtractionsContainer> retrieveExtractions = processDocument.onSuccessTask(
-                new Continuation<Document, Task<ExtractionsContainer>>() {
+        final Task<E> retrieveExtractions = processDocument.onSuccessTask(
+                new Continuation<Document, Task<E>>() {
                     @Override
-                    public Task<ExtractionsContainer> then(Task<Document> task) throws Exception {
+                    public Task<E> then(Task<Document> task) throws Exception {
                         return documentTaskManager.getAllExtractions(task.getResult());
                     }
                 });
@@ -405,8 +400,8 @@ public abstract class GiniCoreAPIIntegrationTest<DTM extends DocumentTaskManager
 
         final List<Document> partialDocuments = new ArrayList<>();
         final AtomicReference<Document> compositeDocument = new AtomicReference<>();
-        final DocumentTaskManager documentTaskManager = giniCoreAPI.getDocumentTaskManager();
-        final Task<ExtractionsContainer> task = documentTaskManager
+        final DocumentTaskManager<A, E> documentTaskManager = giniCoreAPI.getDocumentTaskManager();
+        final Task<E> task = documentTaskManager
                 .createPartialDocument(page1, "image/png", null, null)
                 .onSuccessTask(new Continuation<Document, Task<Document>>() {
                     @Override
@@ -438,16 +433,16 @@ public abstract class GiniCoreAPIIntegrationTest<DTM extends DocumentTaskManager
                         compositeDocument.set(task.getResult());
                         return documentTaskManager.pollDocument(task.getResult());
                     }
-                }).onSuccessTask(new Continuation<Document, Task<ExtractionsContainer>>() {
+                }).onSuccessTask(new Continuation<Document, Task<E>>() {
                     @Override
-                    public Task<ExtractionsContainer> then(final Task<Document> task) throws Exception {
+                    public Task<E> then(final Task<Document> task) throws Exception {
                         return documentTaskManager.getAllExtractions(task.getResult());
                     }
                 });
         task.waitForCompletion();
 
         assertEquals(3, partialDocuments.size());
-        final ExtractionsContainer extractionsContainer = task.getResult();
+        final E extractionsContainer = task.getResult();
         assertNotNull(extractionsContainer);
 
         final String iban = getIban(extractionsContainer).getValue();
@@ -502,63 +497,6 @@ public abstract class GiniCoreAPIIntegrationTest<DTM extends DocumentTaskManager
         assertNotNull(task.getResult());
     }
 
-    // TODO: move to Bank API Library
-//    @Test
-//    public void testResolvePayment() throws Exception {
-//        Task<String> createPaymentTask = createPaymentRequest();
-//        createPaymentTask.waitForCompletion();
-//        String id = createPaymentTask.getResult();
-//
-//        Task<PaymentRequest> paymentRequestTask = giniCoreAPI.getDocumentTaskManager().getPaymentRequest(id);
-//        paymentRequestTask.waitForCompletion();
-//
-//        PaymentRequest paymentRequest = paymentRequestTask.getResult();
-//        final ResolvePaymentInput resolvePaymentInput = new ResolvePaymentInput(paymentRequest.getRecipient(), paymentRequest.getIban(), paymentRequest.getAmount(), paymentRequest.getPurpose(), null);
-//
-//        Task<ResolvedPayment> resolvePaymentRequestTask = giniCoreAPI.getDocumentTaskManager().resolvePaymentRequest(id, resolvePaymentInput);
-//        resolvePaymentRequestTask.waitForCompletion();
-//        assertNotNull(resolvePaymentRequestTask.getResult());
-//    }
-//
-//    @Test
-//    public void testGetPayment() throws Exception {
-//        Task<String> createPaymentTask = createPaymentRequest();
-//        createPaymentTask.waitForCompletion();
-//        String id = createPaymentTask.getResult();
-//
-//        Task<PaymentRequest> paymentRequestTask = giniCoreAPI.getDocumentTaskManager().getPaymentRequest(id);
-//        paymentRequestTask.waitForCompletion();
-//
-//        PaymentRequest paymentRequest = paymentRequestTask.getResult();
-//        final ResolvePaymentInput resolvePaymentInput = new ResolvePaymentInput(paymentRequest.getRecipient(), paymentRequest.getIban(), paymentRequest.getAmount(), paymentRequest.getPurpose(), null);
-//
-//        Task<ResolvedPayment> resolvePaymentRequestTask = giniCoreAPI.getDocumentTaskManager().resolvePaymentRequest(id, resolvePaymentInput);
-//        resolvePaymentRequestTask.waitForCompletion();
-//
-//        Task<Payment> getPaymentRequestTask = giniCoreAPI.getDocumentTaskManager().getPayment(id);
-//        getPaymentRequestTask.waitForCompletion();
-//        assertNotNull(getPaymentRequestTask.getResult());
-//        assertEquals(paymentRequest.getRecipient(), getPaymentRequestTask.getResult().getRecipient());
-//        assertEquals(paymentRequest.getIban(), getPaymentRequestTask.getResult().getIban());
-//        assertEquals(paymentRequest.getBic(), getPaymentRequestTask.getResult().getBic());
-//        assertEquals(paymentRequest.getAmount(), getPaymentRequestTask.getResult().getAmount());
-//        assertEquals(paymentRequest.getPurpose(), getPaymentRequestTask.getResult().getPurpose());
-//    }
-
-    // TODO: move to Bank API Library
-//    @Test
-//    public void logErrorEvent() throws Exception {
-//        final ErrorEvent errorEvent = new ErrorEvent(
-//                Build.MODEL, "Android", Build.VERSION.RELEASE,
-//                "not available", BuildConfig.VERSION_NAME, "Error logging integration test"
-//        );
-//
-//        final Task<Void> requestTask = giniCoreAPI.getDocumentTaskManager().logErrorEvent(errorEvent);
-//        requestTask.waitForCompletion();
-//
-//        assertNull(requestTask.getError());
-//    }
-
     @Test
     public void allowsUsingCustomTrustManager() throws IOException, InterruptedException {
         final AtomicBoolean customTrustManagerWasCalled = new AtomicBoolean(false);
@@ -597,7 +535,7 @@ public abstract class GiniCoreAPIIntegrationTest<DTM extends DocumentTaskManager
 
         final byte[] testDocument = TestUtils.createByteArray(testDocumentAsStream);
 
-        final DocumentTaskManager documentTaskManager = giniCoreAPI.getDocumentTaskManager();
+        final DocumentTaskManager<A, E> documentTaskManager = giniCoreAPI.getDocumentTaskManager();
 
         final Task<Document> uploadPartial = documentTaskManager.createPartialDocument(testDocument, "image/jpeg", null, null);
         final Task<Document> createComposite = uploadPartial.onSuccessTask(task -> {
@@ -609,7 +547,7 @@ public abstract class GiniCoreAPIIntegrationTest<DTM extends DocumentTaskManager
             return documentTaskManager.pollDocument(document);
         });
 
-        final Task<ExtractionsContainer> retrieveExtractions = processDocument.onSuccessTask(
+        final Task<E> retrieveExtractions = processDocument.onSuccessTask(
                 task -> documentTaskManager.getAllExtractions(task.getResult())
         );
 
@@ -628,9 +566,9 @@ public abstract class GiniCoreAPIIntegrationTest<DTM extends DocumentTaskManager
         return "";
     }
 
-    protected Map<Document, ExtractionsContainer> processDocument(byte[] documentBytes, String contentType, String filename, DocumentTaskManager.DocumentType documentType)
+    protected Map<Document, E> processDocument(byte[] documentBytes, String contentType, String filename, DocumentTaskManager.DocumentType documentType)
             throws InterruptedException {
-        final Map<Document, ExtractionsContainer> result = processDocument(documentBytes, contentType, filename, documentType, extractionsContainer -> {
+        final Map<Document, E> result = processDocument(documentBytes, contentType, filename, documentType, extractionsContainer -> {
             assertEquals("IBAN should be found", "DE78370501980020008850", getIban(extractionsContainer).getValue());
             assertEquals("Amount to pay should be found", "1.00:EUR", getAmountToPay(extractionsContainer).getValue());
             assertEquals("BIC should be found", "COLSDE33", getBic(extractionsContainer).getValue());
@@ -640,24 +578,24 @@ public abstract class GiniCoreAPIIntegrationTest<DTM extends DocumentTaskManager
     }
 
     @Nullable
-    protected abstract SpecificExtraction getIban(@NonNull final ExtractionsContainer extractionsContainer);
+    protected abstract SpecificExtraction getIban(@NonNull final E extractionsContainer);
 
     @Nullable
-    protected abstract SpecificExtraction getBic(@NonNull final ExtractionsContainer extractionsContainer);
+    protected abstract SpecificExtraction getBic(@NonNull final E extractionsContainer);
 
     @Nullable
-    protected abstract SpecificExtraction getAmountToPay(@NonNull final ExtractionsContainer extractionsContainer);
+    protected abstract SpecificExtraction getAmountToPay(@NonNull final E extractionsContainer);
 
     @Nullable
-    protected abstract SpecificExtraction getPaymentRecipient(@NonNull final ExtractionsContainer extractionsContainer);
+    protected abstract SpecificExtraction getPaymentRecipient(@NonNull final E extractionsContainer);
 
     @Nullable
-    protected abstract SpecificExtraction getPaymentPurpose(@NonNull final ExtractionsContainer extractionsContainer);
+    protected abstract SpecificExtraction getPaymentPurpose(@NonNull final E extractionsContainer);
 
-    protected Map<Document, ExtractionsContainer> processDocument(byte[] documentBytes, String contentType, String filename, DocumentTaskManager.DocumentType documentType,
-                                                                ExtractionsCallback extractionsCallback)
+    protected Map<Document, E> processDocument(byte[] documentBytes, String contentType, String filename, DocumentTaskManager.DocumentType documentType,
+                                                                ExtractionsCallback<E> extractionsCallback)
             throws InterruptedException {
-        final DocumentTaskManager documentTaskManager = giniCoreAPI.getDocumentTaskManager();
+        final DocumentTaskManager<A, E> documentTaskManager = giniCoreAPI.getDocumentTaskManager();
 
         final Task<Document> uploadPartial = documentTaskManager.createPartialDocument(documentBytes, contentType, filename, documentType);
         final Task<Document> createComposite = uploadPartial.onSuccessTask(task -> {
@@ -669,7 +607,7 @@ public abstract class GiniCoreAPIIntegrationTest<DTM extends DocumentTaskManager
             return documentTaskManager.pollDocument(document);
         });
 
-        final Task<ExtractionsContainer> retrieveExtractions = processDocument.onSuccessTask(
+        final Task<E> retrieveExtractions = processDocument.onSuccessTask(
                 task -> documentTaskManager.getAllExtractions(task.getResult())
         );
 
@@ -685,8 +623,8 @@ public abstract class GiniCoreAPIIntegrationTest<DTM extends DocumentTaskManager
         return Collections.singletonMap(createComposite.getResult(), retrieveExtractions.getResult());
     }
 
-    protected interface ExtractionsCallback {
-        void onExtractionsAvailable(@NonNull final ExtractionsContainer extractionsContainer);
+    protected interface ExtractionsCallback<E extends ExtractionsContainer> {
+        void onExtractionsAvailable(@NonNull final E extractionsContainer);
     }
 
 }

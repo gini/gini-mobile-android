@@ -1,10 +1,12 @@
 package net.gini.android.core.api.internal;
 
+import net.gini.android.core.api.ApiCommunicator;
 import net.gini.android.core.api.DocumentManager;
 import net.gini.android.core.api.DocumentTaskManager;
 import net.gini.android.core.api.authorization.CredentialsStore;
+import net.gini.android.core.api.models.ExtractionsContainer;
 
-public abstract class GiniCoreAPI<DTM extends DocumentTaskManager, DM extends DocumentManager> {
+public abstract class GiniCoreAPI<DTM extends DocumentTaskManager<A, E>, DM extends DocumentManager<A, DTM, E>, A extends ApiCommunicator, E extends ExtractionsContainer> {
     private final DTM mDocumentTaskManager;
     private final CredentialsStore mCredentialsStore;
 

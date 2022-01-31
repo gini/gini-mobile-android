@@ -17,7 +17,7 @@ import org.json.JSONObject
  * The [DocumentManager] is a high level API on top of the Gini API, which is used via the ApiCommunicator. It
  * provides high level methods to handle document related tasks easily.
  */
-open class DocumentManager<A: ApiCommunicator, DTM: DocumentTaskManager<A>>(protected val documentTaskManager: DTM) {
+open class DocumentManager<A: ApiCommunicator, DTM: DocumentTaskManager<A, E>, E: ExtractionsContainer>(protected val documentTaskManager: DTM) {
 
     protected val taskDispatcher = Task.BACKGROUND_EXECUTOR.asCoroutineDispatcher()
 

@@ -7,8 +7,6 @@ import static net.gini.android.core.api.internal.BundleHelper.mapToBundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import androidx.annotation.NonNull;
@@ -31,21 +29,17 @@ public class ExtractionsContainer implements Parcelable {
 
     private final Map<String, SpecificExtraction> mSpecificExtractions;
     private final Map<String, CompoundExtraction> mCompoundExtractions;
-    private final List<ReturnReason> mReturnReasons;
 
     /**
      * Contains a document's extractions from the Gini API.
      *
      * @param specificExtractions
      * @param compoundExtractions
-     * @param returnReasons
      */
     public ExtractionsContainer(@NonNull final Map<String, SpecificExtraction> specificExtractions,
-            @NonNull final Map<String, CompoundExtraction> compoundExtractions,
-            @NonNull final List<ReturnReason> returnReasons) {
+            @NonNull final Map<String, CompoundExtraction> compoundExtractions) {
         mSpecificExtractions = checkNotNull(specificExtractions);
         mCompoundExtractions = checkNotNull(compoundExtractions);
-        mReturnReasons = checkNotNull(returnReasons);
     }
 
     @NonNull
@@ -58,16 +52,9 @@ public class ExtractionsContainer implements Parcelable {
         return mCompoundExtractions;
     }
 
-    @NonNull
-    public List<ReturnReason> getReturnReasons() {
-        return mReturnReasons;
-    }
-
     protected ExtractionsContainer(Parcel in) {
         mSpecificExtractions = bundleToMap(in.readBundle(getClass().getClassLoader()));
         mCompoundExtractions = bundleToMap(in.readBundle(getClass().getClassLoader()));
-        mReturnReasons = new ArrayList<>();
-        in.readTypedList(mReturnReasons, ReturnReason.CREATOR);
     }
 
     @Override
@@ -79,7 +66,6 @@ public class ExtractionsContainer implements Parcelable {
     public void writeToParcel(@NonNull Parcel dest, int flags) {
         dest.writeBundle(mapToBundle(mSpecificExtractions));
         dest.writeBundle(mapToBundle(mCompoundExtractions));
-        dest.writeTypedList(mReturnReasons);
     }
 
     public static final Creator<ExtractionsContainer> CREATOR = new Creator<ExtractionsContainer>() {

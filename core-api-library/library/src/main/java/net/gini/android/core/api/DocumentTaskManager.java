@@ -22,7 +22,6 @@ import net.gini.android.core.api.models.Extraction;
 import net.gini.android.core.api.models.ExtractionsContainer;
 import net.gini.android.core.api.models.PaymentRequest;
 import net.gini.android.core.api.models.PaymentRequestKt;
-import net.gini.android.core.api.models.ReturnReason;
 import net.gini.android.core.api.models.SpecificExtraction;
 import net.gini.android.core.api.response.PaymentRequestResponse;
 
@@ -48,7 +47,7 @@ import bolts.Task;
  * The DocumentTaskManager is a high level API on top of the Gini API, which is used via the ApiCommunicator. It
  * provides high level methods to handle document related tasks easily.
  */
-public class DocumentTaskManager<T extends ApiCommunicator> {
+public abstract class DocumentTaskManager<T extends ApiCommunicator, E extends ExtractionsContainer> {
 
     private final GiniApiType mGiniApiType;
     private Map<Document, Boolean> mDocumentPollingsInProgress = new ConcurrentHashMap<>();
@@ -411,9 +410,15 @@ public class DocumentTaskManager<T extends ApiCommunicator> {
      * @param document The Document instance for whose document the extractions are returned.
      * @return A Task which will resolve to an {@link ExtractionsContainer} object.
      */
-    public Task<ExtractionsContainer> getAllExtractions(@NonNull final Document document) {
+    /**
+     * Get the extractions for the given document.
+     *
+     * @param document The Document instance for whose document the extractions are returned.
+     * @return A Task which will resolve to an {@link ExtractionsContainer} object.
+     */
+    public Task<E> getAllExtractions(@NonNull final Document document) {
         final String documentId = document.getId();
-        return mSessionManager.getSession()
+        return getSessionManager().getSession()
                 .onSuccessTask(new Continuation<Session, Task<JSONObject>>() {
                     @Override
                     public Task<JSONObject> then(Task<Session> sessionTask) {
@@ -421,9 +426,9 @@ public class DocumentTaskManager<T extends ApiCommunicator> {
                         return mApiCommunicator.getExtractions(documentId, session);
                     }
                 }, Task.BACKGROUND_EXECUTOR)
-                .onSuccess(new Continuation<JSONObject, ExtractionsContainer>() {
+                .onSuccess(new Continuation<JSONObject, E>() {
                     @Override
-                    public ExtractionsContainer then(Task<JSONObject> task) throws Exception {
+                    public E then(Task<JSONObject> task) throws Exception {
                         final JSONObject responseData = task.getResult();
                         final JSONObject candidatesData = responseData.getJSONObject("candidates");
                         Map<String, List<Extraction>> candidates =
@@ -435,16 +440,18 @@ public class DocumentTaskManager<T extends ApiCommunicator> {
                         final Map<String, CompoundExtraction> compoundExtractions =
                                 parseCompoundExtractions(responseData.optJSONObject("compoundExtractions"), candidates);
 
-                        final List<ReturnReason> returnReasons = parseReturnReason(responseData.optJSONArray("returnReasons"));
-
-                        return new ExtractionsContainer(specificExtractions, compoundExtractions, returnReasons);
+                        return createExtractionsContainer(specificExtractions, compoundExtractions, responseData);
                     }
                 }, Task.BACKGROUND_EXECUTOR);
-
     }
 
     @NonNull
-    private Map<String, SpecificExtraction> parseSpecificExtractions(@NonNull final JSONObject specificExtractionsJson,
+    protected abstract E createExtractionsContainer(@NonNull final Map<String, SpecificExtraction> specificExtractions,
+                                                    @NonNull final Map<String, CompoundExtraction> compoundExtractions,
+                                                    @NonNull final JSONObject responseJSON) throws Exception;
+
+    @NonNull
+    protected Map<String, SpecificExtraction> parseSpecificExtractions(@NonNull final JSONObject specificExtractionsJson,
                                                                      @NonNull final Map<String, List<Extraction>> candidates)
             throws JSONException {
         final Map<String, SpecificExtraction> specificExtractions = new HashMap<>();
@@ -471,7 +478,7 @@ public class DocumentTaskManager<T extends ApiCommunicator> {
         return specificExtractions;
     }
 
-    private Map<String, CompoundExtraction> parseCompoundExtractions(@Nullable final JSONObject compoundExtractionsJson,
+    protected Map<String, CompoundExtraction> parseCompoundExtractions(@Nullable final JSONObject compoundExtractionsJson,
                                                                      @NonNull final Map<String, List<Extraction>> candidates)
             throws JSONException {
         if (compoundExtractionsJson == null) {
@@ -490,29 +497,6 @@ public class DocumentTaskManager<T extends ApiCommunicator> {
             compoundExtractions.put(extractionName, new CompoundExtraction(extractionName, specificExtractionMaps));
         }
         return compoundExtractions;
-    }
-
-    private List<ReturnReason> parseReturnReason(@Nullable final JSONArray returnReasonsJson) throws JSONException {
-        if (returnReasonsJson == null) {
-            return Collections.emptyList();
-        }
-        final List<ReturnReason> returnReasons = new ArrayList<>();
-        for (int i = 0; i < returnReasonsJson.length(); i++) {
-            final JSONObject returnReasonJson = returnReasonsJson.getJSONObject(i);
-
-            Map<String, String> localizedLabels = new HashMap<>();
-
-            final Iterator<String> keys = returnReasonJson.keys();
-            while (keys.hasNext()) {
-                final String key = keys.next();
-                if (key.equals("id")) {
-                    continue;
-                }
-                localizedLabels.put(key, returnReasonJson.getString(key));
-            }
-            returnReasons.add(new ReturnReason(returnReasonJson.getString("id"), localizedLabels));
-        }
-        return returnReasons;
     }
 
     /**
