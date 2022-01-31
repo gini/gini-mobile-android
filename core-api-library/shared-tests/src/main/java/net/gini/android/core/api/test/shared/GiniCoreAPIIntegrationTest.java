@@ -448,16 +448,7 @@ public abstract class GiniCoreAPIIntegrationTest<DTM extends DocumentTaskManager
         final String iban = getIban(extractionsContainer).getValue();
         assertEquals("IBAN should be found, but was: " + iban, "DE96490501010082009697", iban);
         final String amountToPay = getAmountToPay(extractionsContainer).getValue();
-        assertTrue("Amount to pay should be found: "
-                        + "expected one of <[145.00:EUR, 77.00:EUR, 588.60:EUR, 700.43:EUR, 26.42:EUR, 50.43:EUR, 23.15:EUR]> but was:<["
-                        + amountToPay + "]>",
-                amountToPay.equals("145.00:EUR")
-                        || amountToPay.equals("77.00:EUR")
-                        || amountToPay.equals("588.60:EUR")
-                        || amountToPay.equals("700.43:EUR")
-                        || amountToPay.equals("26.42:EUR")
-                        || amountToPay.equals("50.43:EUR")
-                        || amountToPay.equals("23.15:EUR"));
+        assertNotNull("Amount to pay should be found.", amountToPay);
         final String bic = getBic(extractionsContainer).getValue();
         assertEquals("BIC should be found, but was: " + bic, "WELADED1MIN", bic);
         final String paymentRecipient = getPaymentRecipient(extractionsContainer).getValue();
