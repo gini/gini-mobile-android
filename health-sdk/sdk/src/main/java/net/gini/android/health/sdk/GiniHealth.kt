@@ -21,6 +21,7 @@ import net.gini.android.health.sdk.review.ReviewFragment
 import net.gini.android.health.sdk.review.model.PaymentDetails
 import net.gini.android.health.sdk.review.model.PaymentRequest
 import net.gini.android.health.sdk.review.model.ResultWrapper
+import net.gini.android.health.sdk.review.model.getPaymentExtraction
 import net.gini.android.health.sdk.review.model.toPaymentDetails
 import net.gini.android.health.sdk.review.model.wrapToResult
 import java.lang.ref.WeakReference
@@ -161,7 +162,7 @@ class GiniHealth(
     suspend fun checkIfDocumentIsPayable(documentId: String): Boolean =
         with(documentManager) {
             getExtractions(getDocument(documentId))
-                .compoundExtractions["payment"]?.specificExtractionMaps?.get(0)?.get("iban")?.value?.isNotEmpty()
+                .compoundExtractions.getPaymentExtraction("iban")?.value?.isNotEmpty()
                 ?: false
         }
 

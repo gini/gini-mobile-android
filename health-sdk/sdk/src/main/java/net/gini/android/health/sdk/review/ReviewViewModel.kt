@@ -198,8 +198,8 @@ internal class ReviewViewModel(internal val giniHealth: GiniHealth) : ViewModel(
                     is ResultWrapper.Success -> paymentDetails.value.extractions?.let { extractionsContainer ->
                         giniHealth.giniHealthAPI.documentManager.sendFeedback(
                             documentResult.value,
-                            extractionsContainer.specificExtractions.withFeedback(paymentDetails.value),
-                            extractionsContainer.compoundExtractions
+                            extractionsContainer.specificExtractions,
+                            extractionsContainer.compoundExtractions.withFeedback(paymentDetails.value)
                         )
                     }
                 }
