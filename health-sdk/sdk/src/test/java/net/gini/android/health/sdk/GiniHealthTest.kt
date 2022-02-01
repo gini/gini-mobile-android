@@ -32,15 +32,14 @@ val extractions = ExtractionsContainer(
             "amount_to_pay" to SpecificExtraction("amount_tp_pay", "123.56", "", null, listOf()),
             "payment_purpose" to SpecificExtraction("payment_purpose", "purpose", "", null, listOf()),
         )))
-    ), emptyList()
+    )
 )
 
 fun copyExtractions(extractions: ExtractionsContainer) = ExtractionsContainer(
     extractions.specificExtractions.toMap(),
     extractions.compoundExtractions.map { (name, compoundExtraction) ->
         name to CompoundExtraction(name, compoundExtraction.specificExtractionMaps.map { it.toMap() })
-    }.toMap(),
-    extractions.returnReasons.toList()
+    }.toMap()
 )
 
 @ExperimentalCoroutinesApi
