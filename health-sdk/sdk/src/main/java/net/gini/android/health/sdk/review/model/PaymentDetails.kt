@@ -4,6 +4,7 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 import net.gini.android.core.api.models.ExtractionsContainer
 import net.gini.android.core.api.models.SpecificExtraction
+import net.gini.android.health.sdk.review.error.NoPaymentDataExtracted
 
 @Parcelize
 data class PaymentDetails(
@@ -14,13 +15,20 @@ data class PaymentDetails(
     internal val extractions: ExtractionsContainer? = null
 ): Parcelable
 
-internal fun ExtractionsContainer.toPaymentDetails() = PaymentDetails(
-    recipient = compoundExtractions["payment"]?.specificExtractionMaps?.get(0)?.get("payment_recipient")?.value ?: "",
-    iban = compoundExtractions["payment"]?.specificExtractionMaps?.get(0)?.get("iban")?.value ?: "",
-    amount = compoundExtractions["payment"]?.specificExtractionMaps?.get(0)?.get("amount_to_pay")?.value?.toAmount() ?: "",
-    purpose = compoundExtractions["payment"]?.specificExtractionMaps?.get(0)?.get("payment_purpose")?.value ?: "",
-    extractions = this
-)
+internal fun ExtractionsContainer.toPaymentDetails(): PaymentDetails {
+    if (!compoundExtractions.containsKey("payment")) {
+        throw NoPaymentDataExtracted()
+    }
+    return PaymentDetails(
+        recipient = compoundExtractions["payment"]?.specificExtractionMaps?.get(0)?.get("payment_recipient")?.value
+            ?: "",
+        iban = compoundExtractions["payment"]?.specificExtractionMaps?.get(0)?.get("iban")?.value ?: "",
+        amount = compoundExtractions["payment"]?.specificExtractionMaps?.get(0)?.get("amount_to_pay")?.value?.toAmount()
+            ?: "",
+        purpose = compoundExtractions["payment"]?.specificExtractionMaps?.get(0)?.get("payment_purpose")?.value ?: "",
+        extractions = this
+    )
+}
 
 internal fun String.toAmount(): String {
     val delimiterIndex = this.indexOf(":")

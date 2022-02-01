@@ -14,6 +14,7 @@ import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.models.ExtractionsContainer
 import net.gini.android.core.api.models.SpecificExtraction
 import net.gini.android.health.api.HealthApiDocumentManager
+import net.gini.android.health.sdk.review.error.NoPaymentDataExtracted
 import net.gini.android.health.sdk.review.model.PaymentDetails
 import net.gini.android.health.sdk.review.model.ResultWrapper
 import org.junit.Assert.*
@@ -71,6 +72,19 @@ class GiniHealthTest {
     }
 
     @Test
+    fun `When setting document for review then payment flow emits failure if extractions have no payment details`() = runTest {
+        coEvery { documentManager.getExtractions(document) } returns ExtractionsContainer(
+            emptyMap(),
+            emptyMap()
+        )
+
+        assert(giniHealth.paymentFlow.value is ResultWrapper.Loading<PaymentDetails>) { "Expected Loading but was ${giniHealth.paymentFlow.value}" }
+        giniHealth.setDocumentForReview(document)
+        assert(giniHealth.paymentFlow.value is ResultWrapper.Error<PaymentDetails>) { "Expected Success but was ${giniHealth.paymentFlow.value}" }
+        assertTrue((giniHealth.paymentFlow.value as ResultWrapper.Error<PaymentDetails>).error is NoPaymentDataExtracted)
+    }
+
+    @Test
     fun `When setting document id for review with payment details then document flow emits document`() = runTest {
         coEvery { documentManager.getDocument(any<String>()) } returns document
         val paymentDetails = PaymentDetails("recipient", "iban", "123.56", "purpose")
@@ -101,6 +115,20 @@ class GiniHealthTest {
         giniHealth.setDocumentForReview("")
         assert(giniHealth.paymentFlow.value is ResultWrapper.Success<PaymentDetails>) { "Expected Success" }
         assertEquals(paymentDetails, (giniHealth.paymentFlow.value as ResultWrapper.Success<PaymentDetails>).value)
+    }
+
+    @Test
+    fun `When setting document id for review without payment details then payment flow emits failure if extractions have no payment details`() = runTest {
+        coEvery { documentManager.getDocument(any<String>()) } returns document
+        coEvery { documentManager.getExtractions(document) } returns ExtractionsContainer(
+            emptyMap(),
+            emptyMap()
+        )
+
+        assert(giniHealth.paymentFlow.value is ResultWrapper.Loading<PaymentDetails>) { "Expected Loading but was ${giniHealth.paymentFlow.value}" }
+        giniHealth.setDocumentForReview("")
+        assert(giniHealth.paymentFlow.value is ResultWrapper.Error<PaymentDetails>) { "Expected Success but was ${giniHealth.paymentFlow.value}" }
+        assertTrue((giniHealth.paymentFlow.value as ResultWrapper.Error<PaymentDetails>).error is NoPaymentDataExtracted)
     }
 
     @Test
