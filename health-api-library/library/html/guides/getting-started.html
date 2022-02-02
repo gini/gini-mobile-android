@@ -160,7 +160,7 @@
 <h2>First of all: Add the library to your build<a class="headerlink" href="#first-of-all-add-the-library-to-your-build" title="Permalink to this headline">¶</a></h2>
 <p>build.gradle:</p>
 <div class="highlight-groovy notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span> <span class="o">{</span>
-    <span class="n">implementation</span> <span class="s1">&#39;net.gini.android:gini-health-api-lib:1.1.1&#39;</span>
+    <span class="n">implementation</span> <span class="s1">&#39;net.gini.android:gini-health-api-lib:1.2.0&#39;</span>
 <span class="o">}</span>
 </pre></div>
 </div>
@@ -210,7 +210,7 @@ limitations for API Levels 21 to 23</a>.</p>
 <div class="section" id="configure-pinning">
 <h3>Configure Pinning<a class="headerlink" href="#configure-pinning" title="Permalink to this headline">¶</a></h3>
 <p>The following sample configuration shows how to set the public key pin for the two domains. The Gini
-Health API Library uses by default (<code class="docutils literal notranslate"><span class="pre">pay-api.gini.net</span></code> and <code class="docutils literal notranslate"><span class="pre">user.gini.net</span></code>). It should be saved under
+Health API Library uses by default (<code class="docutils literal notranslate"><span class="pre">health-api.gini.net</span></code> and <code class="docutils literal notranslate"><span class="pre">user.gini.net</span></code>). It should be saved under
 <code class="docutils literal notranslate"><span class="pre">res/xml/network_security_config.xml</span></code>:</p>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
 <span class="nt">&lt;network-security-config&gt;</span>
@@ -218,7 +218,7 @@ Health API Library uses by default (<code class="docutils literal notranslate"><
         <span class="nt">&lt;trustkit-config</span>
             <span class="na">disableDefaultReportUri=</span><span class="s">&quot;true&quot;</span>
             <span class="na">enforcePinning=</span><span class="s">&quot;true&quot;</span> <span class="nt">/&gt;</span>
-        <span class="nt">&lt;domain</span> <span class="na">includeSubdomains=</span><span class="s">&quot;false&quot;</span><span class="nt">&gt;</span>pay-api.gini.net<span class="nt">&lt;/domain&gt;</span>
+        <span class="nt">&lt;domain</span> <span class="na">includeSubdomains=</span><span class="s">&quot;false&quot;</span><span class="nt">&gt;</span>health-api.gini.net<span class="nt">&lt;/domain&gt;</span>
         <span class="nt">&lt;pin-set&gt;</span>
             <span class="c">&lt;!-- old *.gini.net public key--&gt;</span>
             <span class="nt">&lt;pin</span> <span class="na">digest=</span><span class="s">&quot;SHA-256&quot;</span><span class="nt">&gt;</span>yGLLyvZLo2NNXeBNKJwx1PlCtm+YEVU6h2hxVpRa4l4=<span class="nt">&lt;/pin&gt;</span>
