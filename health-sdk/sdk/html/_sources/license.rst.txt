@@ -10,7 +10,7 @@ also integrates several third party libraries.
 
 ::
 
-   Copyright (c) 2014-2021, Gini GmbH
+   Copyright (c) 2014-2022, Gini GmbH
    All rights reserved.
    
    The Gini Health SDK is licensed through Gini GmbH ("Gini") and may not be
