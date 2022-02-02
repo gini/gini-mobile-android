@@ -7,9 +7,9 @@
   "purpose": "ReNr AZ356789Z",
   "status": "paid",
   "_links": {
-    "paymentProvider": "https://pay-api.gini.net/paymentProviders/7e72441c-32f8-11eb-b611-c3190574373c",
-    "payment": "https://pay-api.gini.net/paymentRequests/b4bd3e80-7bd1-11e4-95ab-000000000000/payment",
-    "sourceDocumentLocation": "https://pay-api.gini.net/documents/88090c5a-32ed-11eb-9e1a-9f2bc4656a7d",
-    "_self": "https://pay-api.gini.net/paymentRequests/b4bd3e80-7bd1-11e4-95ab-000000000000"
+    "paymentProvider": "https://health-api.gini.net/paymentProviders/7e72441c-32f8-11eb-b611-c3190574373c",
+    "payment": "https://health-api.gini.net/paymentRequests/b4bd3e80-7bd1-11e4-95ab-000000000000/payment",
+    "sourceDocumentLocation": "https://health-api.gini.net/documents/88090c5a-32ed-11eb-9e1a-9f2bc4656a7d",
+    "_self": "https://health-api.gini.net/paymentRequests/b4bd3e80-7bd1-11e4-95ab-000000000000"
   }
 }
