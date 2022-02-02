@@ -15,11 +15,6 @@ import org.junit.runner.RunWith;
 public class MediaTypesTest {
 
     @Test
-    public void testGINI_JSON_V1() {
-        assertEquals("application/vnd.gini.v1+json", MediaTypes.GINI_JSON_V1);
-    }
-
-    @Test
     public void testGINI_JSON_INCUBATOR() {
         assertEquals("application/vnd.gini.incubator+json", MediaTypes.GINI_JSON_INCUBATOR);
     }

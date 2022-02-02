@@ -14,6 +14,7 @@ import com.android.volley.RequestQueue;
 import com.squareup.moshi.Moshi;
 
 import net.gini.android.core.api.ApiCommunicator;
+import net.gini.android.core.api.DocumentManager;
 import net.gini.android.core.api.DocumentTaskManager;
 import net.gini.android.core.api.GiniApiType;
 import net.gini.android.core.api.RequestQueueBuilder;
@@ -23,6 +24,7 @@ import net.gini.android.core.api.authorization.EncryptedCredentialsStore;
 import net.gini.android.core.api.authorization.SessionManager;
 import net.gini.android.core.api.authorization.UserCenterAPICommunicator;
 import net.gini.android.core.api.authorization.UserCenterManager;
+import net.gini.android.core.api.models.ExtractionsContainer;
 import net.gini.android.core.api.requests.DefaultRetryPolicyFactory;
 import net.gini.android.core.api.requests.RetryPolicyFactory;
 
@@ -33,7 +35,7 @@ import java.util.List;
 
 import javax.net.ssl.TrustManager;
 
-public abstract class GiniCoreAPIBuilder<T extends GiniCoreAPI> {
+public abstract class GiniCoreAPIBuilder<DTM extends DocumentTaskManager<A, E>, DM extends DocumentManager<A, DTM, E>, G extends GiniCoreAPI<DTM, DM, A, E>, A extends ApiCommunicator, E extends ExtractionsContainer> {
 
     private final Context mContext;
 
@@ -46,10 +48,10 @@ public abstract class GiniCoreAPIBuilder<T extends GiniCoreAPI> {
     @XmlRes
     private int mNetworkSecurityConfigResId;
 
-    private ApiCommunicator mApiCommunicator;
+    private A mApiCommunicator;
     private Moshi mMoshi;
     private RequestQueue mRequestQueue;
-    private DocumentTaskManager mDocumentTaskManager;
+    private DTM mDocumentTaskManager;
     private SessionManager mSessionManager;
     private CredentialsStore mCredentialsStore;
     private UserCenterManager mUserCenterManager;
@@ -59,7 +61,6 @@ public abstract class GiniCoreAPIBuilder<T extends GiniCoreAPI> {
     private float mBackOffMultiplier = DefaultRetryPolicy.DEFAULT_BACKOFF_MULT;
     private RetryPolicyFactory mRetryPolicyFactory;
     private Cache mCache;
-    private GiniApiType mGiniApiType;
     private TrustManager mTrustManager;
 
     /**
@@ -97,7 +98,7 @@ public abstract class GiniCoreAPIBuilder<T extends GiniCoreAPI> {
      * @param networkSecurityConfigResId xml resource id
      * @return The builder instance to enable chaining.
      */
-    public GiniCoreAPIBuilder<T> setNetworkSecurityConfigResId(@XmlRes final int networkSecurityConfigResId) {
+    public GiniCoreAPIBuilder<DTM, DM, G, A, E> setNetworkSecurityConfigResId(@XmlRes final int networkSecurityConfigResId) {
         mNetworkSecurityConfigResId = networkSecurityConfigResId;
         return this;
     }
@@ -108,7 +109,7 @@ public abstract class GiniCoreAPIBuilder<T extends GiniCoreAPI> {
      * @param newUrl The URL of the Gini API which is used by the requests of the library.
      * @return The builder instance to enable chaining.
      */
-    public GiniCoreAPIBuilder<T> setApiBaseUrl(@NonNull String newUrl) {
+    public GiniCoreAPIBuilder<DTM, DM, G, A, E> setApiBaseUrl(@NonNull String newUrl) {
         if (!newUrl.endsWith("/")) {
             newUrl += "/";
         }
@@ -122,7 +123,7 @@ public abstract class GiniCoreAPIBuilder<T extends GiniCoreAPI> {
      * @param newUrl The URL of the Gini User Center API which is used by the requests of the library.
      * @return The builder instance to enable chaining.
      */
-    public GiniCoreAPIBuilder<T> setUserCenterApiBaseUrl(@NonNull String newUrl) {
+    public GiniCoreAPIBuilder<DTM, DM, G, A, E> setUserCenterApiBaseUrl(@NonNull String newUrl) {
         if (!newUrl.endsWith("/")) {
             newUrl += "/";
         }
@@ -130,22 +131,8 @@ public abstract class GiniCoreAPIBuilder<T extends GiniCoreAPI> {
         return this;
     }
 
-    /**
-     * Set which Gini API to use. See {@link GiniApiType} for options.
-     *
-     * @param giniApiType the {@link GiniApiType} to be used
-     *
-     * @return The builder instance to enable chaining.
-     */
-    public GiniCoreAPIBuilder<T> setGiniApiType(@NonNull final GiniApiType giniApiType) {
-        mGiniApiType = giniApiType;
-        return this;
-    }
-
     @NonNull
-    public GiniApiType getGiniApiType() {
-        return mGiniApiType;
-    }
+    public abstract GiniApiType getGiniApiType();
 
     /**
      * Sets the (initial) timeout for each request. A timeout error will occur if nothing is received from the underlying socket in the given time span.
@@ -154,7 +141,7 @@ public abstract class GiniCoreAPIBuilder<T extends GiniCoreAPI> {
      * @param connectionTimeoutInMs initial timeout
      * @return The builder instance to enable chaining.
      */
-    public GiniCoreAPIBuilder<T> setConnectionTimeoutInMs(final int connectionTimeoutInMs) {
+    public GiniCoreAPIBuilder<DTM, DM, G, A, E> setConnectionTimeoutInMs(final int connectionTimeoutInMs) {
         if (connectionTimeoutInMs < 0) {
             throw new IllegalArgumentException("connectionTimeoutInMs can't be less than 0");
         }
@@ -168,7 +155,7 @@ public abstract class GiniCoreAPIBuilder<T extends GiniCoreAPI> {
      * @param maxNumberOfRetries maximal number of retries.
      * @return The builder instance to enable chaining.
      */
-    public GiniCoreAPIBuilder<T> setMaxNumberOfRetries(final int maxNumberOfRetries) {
+    public GiniCoreAPIBuilder<DTM, DM, G, A, E> setMaxNumberOfRetries(final int maxNumberOfRetries) {
         if (maxNumberOfRetries < 0) {
             throw new IllegalArgumentException("maxNumberOfRetries can't be less than 0");
         }
@@ -183,7 +170,7 @@ public abstract class GiniCoreAPIBuilder<T extends GiniCoreAPI> {
      * @param backOffMultiplier the backoff multiplication factor
      * @return The builder instance to enable chaining.
      */
-    public GiniCoreAPIBuilder<T> setConnectionBackOffMultiplier(final float backOffMultiplier) {
+    public GiniCoreAPIBuilder<DTM, DM, G, A, E> setConnectionBackOffMultiplier(final float backOffMultiplier) {
         if (backOffMultiplier < 0.0) {
             throw new IllegalArgumentException("backOffMultiplier can't be less than 0");
         }
@@ -198,7 +185,7 @@ public abstract class GiniCoreAPIBuilder<T extends GiniCoreAPI> {
      * @param credentialsStore A credentials store instance (specified by the CredentialsStore interface).
      * @return The builder instance to enable chaining.
      */
-    public GiniCoreAPIBuilder<T> setCredentialsStore(@NonNull CredentialsStore credentialsStore) {
+    public GiniCoreAPIBuilder<DTM, DM, G, A, E> setCredentialsStore(@NonNull CredentialsStore credentialsStore) {
         mCredentialsStore = checkNotNull(credentialsStore);
         return this;
     }
@@ -210,7 +197,7 @@ public abstract class GiniCoreAPIBuilder<T extends GiniCoreAPI> {
      * @param cache A cache instance (specified by the com.android.volley.Cache interface).
      * @return The builder instance to enable chaining.
      */
-    public GiniCoreAPIBuilder<T> setCache(@NonNull Cache cache) {
+    public GiniCoreAPIBuilder<DTM, DM, G, A, E> setCache(@NonNull Cache cache) {
         mCache = cache;
         return this;
     }
@@ -225,7 +212,7 @@ public abstract class GiniCoreAPIBuilder<T extends GiniCoreAPI> {
      * @param trustManager A {@link TrustManager} implementation.
      * @return The builder instance to enable chaining.
      */
-    public GiniCoreAPIBuilder<T> setTrustManager(@NonNull final TrustManager trustManager) {
+    public GiniCoreAPIBuilder<DTM, DM, G, A, E> setTrustManager(@NonNull final TrustManager trustManager) {
         mTrustManager = trustManager;
         return this;
     }
@@ -235,7 +222,7 @@ public abstract class GiniCoreAPIBuilder<T extends GiniCoreAPI> {
      *
      * @return The fully configured instance.
      */
-    public abstract T build();
+    public abstract G build();
 
     /**
      * Helper method to create (and store) the RequestQueue which is used for both the requests to the Gini API and the
@@ -244,7 +231,7 @@ public abstract class GiniCoreAPIBuilder<T extends GiniCoreAPI> {
      * @return The RequestQueue instance.
      */
     @NonNull
-    private synchronized RequestQueue getRequestQueue() {
+    protected synchronized RequestQueue getRequestQueue() {
         if (mRequestQueue == null) {
             RequestQueueBuilder requestQueueBuilder = new RequestQueueBuilder(mContext);
             requestQueueBuilder.setHostnames(getHostnames());
@@ -261,8 +248,8 @@ public abstract class GiniCoreAPIBuilder<T extends GiniCoreAPI> {
         return mRequestQueue;
     }
 
-    private String getApiBaseUrl() {
-        return mApiBaseUrl != null ? mApiBaseUrl : mGiniApiType.getBaseUrl();
+    protected String getApiBaseUrl() {
+        return mApiBaseUrl != null ? mApiBaseUrl : getGiniApiType().getBaseUrl();
     }
 
     @NonNull
@@ -287,13 +274,14 @@ public abstract class GiniCoreAPIBuilder<T extends GiniCoreAPI> {
      * @return The ApiCommunicator instance.
      */
     @NonNull
-    private synchronized ApiCommunicator getApiCommunicator() {
+    protected synchronized A getApiCommunicator() {
         if (mApiCommunicator == null) {
-            mApiCommunicator = new ApiCommunicator(getApiBaseUrl(), mGiniApiType, getRequestQueue(),
-                    getRetryPolicyFactory());
+            mApiCommunicator = createApiCommunicator();
         }
         return mApiCommunicator;
     }
+
+    protected abstract A createApiCommunicator();
 
     /**
      * Helper method to create (and store) the ApiCommunicator instance which is used to do the requests to the Gini API.
@@ -301,7 +289,7 @@ public abstract class GiniCoreAPIBuilder<T extends GiniCoreAPI> {
      * @return The ApiCommunicator instance.
      */
     @NonNull
-    private synchronized Moshi getMoshi() {
+    protected synchronized Moshi getMoshi() {
         if (mMoshi == null) {
             mMoshi = new Moshi.Builder().build();
         }
@@ -340,7 +328,7 @@ public abstract class GiniCoreAPIBuilder<T extends GiniCoreAPI> {
         if (mUserCenterApiCommunicator == null) {
             mUserCenterApiCommunicator =
                     new UserCenterAPICommunicator(getRequestQueue(), mUserCenterApiBaseUrl,
-                            mGiniApiType, mClientId, mClientSecret,
+                            getGiniApiType(), mClientId, mClientSecret,
                             getRetryPolicyFactory());
         }
         return mUserCenterApiCommunicator;
@@ -353,7 +341,7 @@ public abstract class GiniCoreAPIBuilder<T extends GiniCoreAPI> {
      * @return The RetryPolicyFactory instance.
      */
     @NonNull
-    private synchronized RetryPolicyFactory getRetryPolicyFactory() {
+    protected synchronized RetryPolicyFactory getRetryPolicyFactory() {
         if (mRetryPolicyFactory == null) {
             mRetryPolicyFactory = new DefaultRetryPolicyFactory(mTimeoutInMs, mMaxRetries,
                     mBackOffMultiplier);
@@ -380,13 +368,14 @@ public abstract class GiniCoreAPIBuilder<T extends GiniCoreAPI> {
      * @return The DocumentTaskManager instance.
      */
     @NonNull
-    protected synchronized DocumentTaskManager getDocumentTaskManager() {
+    protected synchronized DTM getDocumentTaskManager() {
         if (mDocumentTaskManager == null) {
-            mDocumentTaskManager = new DocumentTaskManager(getApiCommunicator(),
-                    getSessionManager(), mGiniApiType, getMoshi());
+            mDocumentTaskManager = createDocumentTaskManager();
         }
         return mDocumentTaskManager;
     }
+
+    protected abstract DTM createDocumentTaskManager();
 
     /**
      * Return the {@link SessionManager} set via #setSessionManager. If no SessionManager has been set, default to

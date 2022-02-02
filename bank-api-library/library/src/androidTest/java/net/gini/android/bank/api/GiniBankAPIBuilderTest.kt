@@ -21,10 +21,10 @@ class GiniBankAPIBuilderTest {
         val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
 
         var bankAPIBuilder = GiniBankAPIBuilder(targetContext, "", "", "")
-        assertEquals(bankAPIBuilder.giniApiType, GiniApiType.BANK)
+        assertEquals(bankAPIBuilder.giniApiType, GiniBankApiType(apiVersion = 1))
 
         bankAPIBuilder = GiniBankAPIBuilder(targetContext, mock())
-        assertEquals(bankAPIBuilder.giniApiType, GiniApiType.BANK)
+        assertEquals(bankAPIBuilder.giniApiType, GiniBankApiType(apiVersion = 1))
     }
 
 }

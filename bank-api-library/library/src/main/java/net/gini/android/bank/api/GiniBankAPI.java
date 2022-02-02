@@ -1,12 +1,18 @@
 package net.gini.android.bank.api;
 
+import net.gini.android.bank.api.models.ExtractionsContainer;
 import net.gini.android.core.api.DocumentTaskManager;
 import net.gini.android.core.api.authorization.CredentialsStore;
 import net.gini.android.core.api.internal.GiniCoreAPI;
 
-public class GiniBankAPI extends GiniCoreAPI {
+public class GiniBankAPI extends GiniCoreAPI<BankApiDocumentTaskManager, BankApiDocumentManager, BankApiCommunicator, ExtractionsContainer> {
 
-    protected GiniBankAPI(final DocumentTaskManager documentTaskManager, final CredentialsStore credentialsStore) {
+    protected GiniBankAPI(final BankApiDocumentTaskManager documentTaskManager, final CredentialsStore credentialsStore) {
         super(documentTaskManager, credentialsStore);
+    }
+
+    @Override
+    public BankApiDocumentManager getDocumentManager() {
+        return new BankApiDocumentManager(getDocumentTaskManager());
     }
 }

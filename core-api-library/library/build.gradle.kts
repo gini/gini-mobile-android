@@ -43,7 +43,7 @@ android {
 dependencies {
     api("com.android.volley:volley:1.2.1")
     api("com.parse.bolts:bolts-tasks:1.4.0")
-    implementation("com.datatheorem.android.trustkit:trustkit:1.1.5")
+    implementation(libs.trustkit)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.kotlinx.coroutines.core)
@@ -61,26 +61,4 @@ dependencies {
 
 apply<PublishToMavenPlugin>()
 apply<DokkaPlugin>()
-apply<PropertiesPlugin>()
 apply<CodeAnalysisPlugin>()
-
-tasks.register<CreatePropertiesTask>("injectTestProperties") {
-    val propertiesMap = mutableMapOf<String, String>()
-
-    doFirst {
-        propertiesMap.clear()
-        propertiesMap.putAll(readLocalPropertiesToMap(project,
-            listOf("testClientId", "testClientSecret", "testApiType", "testApiUri", "testUserCenterUri")))
-    }
-
-    destinations.put(
-        file("src/androidTest/assets/test.properties"),
-        propertiesMap
-    )
-}
-
-afterEvaluate {
-    tasks.filter { it.name.endsWith("test", ignoreCase = true) }.forEach {
-        it.dependsOn(tasks.getByName("injectTestProperties"))
-    }
-}

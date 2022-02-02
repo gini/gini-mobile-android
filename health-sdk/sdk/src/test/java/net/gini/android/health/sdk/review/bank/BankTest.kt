@@ -10,7 +10,7 @@ import io.mockk.CapturingSlot
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
-import net.gini.android.core.api.models.PaymentProvider
+import net.gini.android.health.api.models.PaymentProvider
 import org.junit.After
 import org.junit.Before
 import org.junit.Test

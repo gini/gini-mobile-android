@@ -4,10 +4,11 @@ import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+
+import androidx.annotation.NonNull;
 import androidx.test.filters.MediumTest;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
-import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 
 import net.gini.android.core.api.DocumentTaskManager.DocumentType;
@@ -16,17 +17,10 @@ import net.gini.android.core.api.authorization.SessionManager;
 import net.gini.android.core.api.helpers.TestUtils;
 import net.gini.android.core.api.models.CompoundExtraction;
 import net.gini.android.core.api.models.Document;
-import net.gini.android.core.api.models.Extraction;
 import net.gini.android.core.api.models.ExtractionsContainer;
-import net.gini.android.core.api.models.Payment;
-import net.gini.android.core.api.models.PaymentProvider;
 import net.gini.android.core.api.models.PaymentRequest;
-import net.gini.android.core.api.models.PaymentRequestInput;
-import net.gini.android.core.api.models.ResolvePaymentInput;
-import net.gini.android.core.api.models.ResolvedPayment;
-import net.gini.android.core.api.models.ReturnReason;
 import net.gini.android.core.api.models.SpecificExtraction;
-import net.gini.android.core.api.requests.ErrorEvent;
+import net.gini.android.core.api.test.TestGiniApiType;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,7 +28,6 @@ import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
 
@@ -44,9 +37,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +47,6 @@ import bolts.Task;
 import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 import static net.gini.android.core.api.Utils.CHARSET_UTF8;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -72,7 +62,7 @@ import static org.mockito.Mockito.when;
 @RunWith(AndroidJUnit4.class)
 public class DocumentTaskManagerTest {
 
-    private DocumentTaskManager mDocumentTaskManager;
+    private DocumentTaskManager<ApiCommunicator, ExtractionsContainer> mDocumentTaskManager;
     private SessionManager mSessionManager;
     private ApiCommunicator mApiCommunicator;
     private Session mSession;
@@ -86,7 +76,7 @@ public class DocumentTaskManagerTest {
         mApiCommunicator = Mockito.mock(ApiCommunicator.class);
         mSessionManager = Mockito.mock(SessionManager.class);
         moshi = new Moshi.Builder().build();
-        mDocumentTaskManager = new DocumentTaskManager(mApiCommunicator, mSessionManager, GiniApiType.DEFAULT, moshi);
+        mDocumentTaskManager = new TestDocumentTaskManager(mApiCommunicator, mSessionManager, new TestGiniApiType(), moshi);
 
         // Always mock the session away since it is not what is tested here.
         mSession = new Session("1234-5678-9012", new Date(new Date().getTime() + 10000));
@@ -176,14 +166,6 @@ public class DocumentTaskManagerTest {
         return Task.forResult(readJSONFile("extractions.json"));
     }
 
-    private Task<JSONArray> createPaymentProvidersJSONTask() throws IOException, JSONException {
-        return Task.forResult(readJSONArrayFile("payment-providers.json"));
-    }
-
-    private Task<JSONObject> createPaymentProviderJSONTask() throws IOException, JSONException {
-        return Task.forResult(readJSONFile("payment-provider.json"));
-    }
-
     private Task<JSONObject> createPaymentRequestJSONTask() throws IOException, JSONException {
         return Task.forResult(readJSONFile("payment-request.json"));
     }
@@ -194,10 +176,6 @@ public class DocumentTaskManagerTest {
 
     private Task<JSONObject> createResolvePaymentJsonTask() throws IOException, JSONException {
         return Task.forResult(readJSONFile("resolved-payment.json"));
-    }
-
-    private Task<JSONObject> createLocationHeaderJSONTask(String url) {
-        return Task.forResult(new JSONObject(Collections.singletonMap("location", url)));
     }
 
     private Task<JSONObject> createPaymentJSONTask() throws IOException, JSONException {
@@ -228,13 +206,13 @@ public class DocumentTaskManagerTest {
     @Test
     public void testThatConstructorChecksForNull() {
         try {
-            new DocumentTaskManager(null, null, null, moshi);
+            new TestDocumentTaskManager(null, null, null, moshi);
             fail("Exception not thrown");
         } catch (NullPointerException ignored) {
         }
 
         try {
-            new DocumentTaskManager(mApiCommunicator, null, null, moshi);
+            new TestDocumentTaskManager(mApiCommunicator, null, null, moshi);
             fail("Exception not thrown");
         } catch (NullPointerException ignored) {
         }
@@ -274,7 +252,7 @@ public class DocumentTaskManagerTest {
                 .waitForCompletion();
 
         verify(mApiCommunicator)
-                .uploadDocument(any(byte[].class), eq("application/vnd.gini.v1.partial+jpeg"), eq("foobar.jpg"), eq("Invoice"),
+                .uploadDocument(any(byte[].class), eq("application/vnd.gini.vTest.partial+jpeg"), eq("foobar.jpg"), eq("Invoice"),
                         eq(mSession), nullable(DocumentMetadata.class));
     }
 
@@ -294,7 +272,7 @@ public class DocumentTaskManagerTest {
 
         verify(mApiCommunicator)
                 .uploadDocument(eq(document),
-                        eq("application/vnd.gini.v1.partial+jpeg"), eq("foobar.jpg"),
+                        eq("application/vnd.gini.vTest.partial+jpeg"), eq("foobar.jpg"),
                         eq("Invoice"),
                         eq(mSession), nullable(DocumentMetadata.class));
     }
@@ -317,7 +295,7 @@ public class DocumentTaskManagerTest {
 
         verify(mApiCommunicator)
                 .uploadDocument(any(byte[].class),
-                        eq("application/vnd.gini.v1.composite+json"), eq((String) null),
+                        eq("application/vnd.gini.vTest.composite+json"), eq((String) null),
                         eq("Invoice"),
                         eq(mSession), nullable(DocumentMetadata.class));
     }
@@ -347,7 +325,7 @@ public class DocumentTaskManagerTest {
 
         verify(mApiCommunicator)
                 .uploadDocument(eq(jsonBytes),
-                        eq("application/vnd.gini.v1.composite+json"), eq((String) null),
+                        eq("application/vnd.gini.vTest.composite+json"), eq((String) null),
                         eq("Invoice"),
                         eq(mSession), nullable(DocumentMetadata.class));
     }
@@ -377,7 +355,7 @@ public class DocumentTaskManagerTest {
 
         verify(mApiCommunicator)
                 .uploadDocument(eq(jsonBytes),
-                        eq("application/vnd.gini.v1.composite+json"), eq((String) null),
+                        eq("application/vnd.gini.vTest.composite+json"), eq((String) null),
                         eq("Invoice"),
                         eq(mSession), nullable(DocumentMetadata.class));
     }
@@ -407,7 +385,7 @@ public class DocumentTaskManagerTest {
 
         verify(mApiCommunicator)
                 .uploadDocument(eq(jsonBytes),
-                        eq("application/vnd.gini.v1.composite+json"), eq((String) null),
+                        eq("application/vnd.gini.vTest.composite+json"), eq((String) null),
                         eq("Invoice"),
                         eq(mSession), nullable(DocumentMetadata.class));
     }
@@ -616,104 +594,6 @@ public class DocumentTaskManagerTest {
     }
 
     @Test
-    public void testSendFeedbackThrowsWithNullArguments() throws JSONException {
-        final Document document = new Document("1234", Document.ProcessingState.PENDING, "foobar.jpg", 1, new Date(),
-                Document.SourceClassification.NATIVE, Uri.parse(""), new ArrayList<Uri>(),
-                new ArrayList<Uri>());
-
-        try {
-            mDocumentTaskManager.sendFeedbackForExtractions(null, null, null);
-            fail("Exception not thrown");
-        } catch (NullPointerException ignored) {
-        }
-
-        try {
-            mDocumentTaskManager.sendFeedbackForExtractions(document, null, null);
-            fail("Exception not thrown");
-        } catch (NullPointerException ignored) {
-        }
-
-        try {
-            mDocumentTaskManager.sendFeedbackForExtractions(null, new HashMap<String, SpecificExtraction>(), new HashMap<String, CompoundExtraction>());
-            fail("Exception not thrown");
-        } catch (NullPointerException ignored) {
-        }
-    }
-
-    @Test
-    public void testSendFeedbackReturnsTask() throws JSONException {
-        final Document document = new Document("1234", Document.ProcessingState.PENDING, "foobar.jpg", 1, new Date(),
-                Document.SourceClassification.NATIVE, Uri.parse(""), new ArrayList<Uri>(),
-                new ArrayList<Uri>());
-        final HashMap<String, SpecificExtraction> extractions = new HashMap<String, SpecificExtraction>();
-        final HashMap<String, CompoundExtraction> compoundExtractions = new HashMap<>();
-
-        assertNotNull(mDocumentTaskManager.sendFeedbackForExtractions(document, extractions, compoundExtractions));
-    }
-
-    @Test
-    public void testSendFeedbackResolvesToDocumentInstance() throws JSONException, InterruptedException {
-        final Document document = new Document("1234", Document.ProcessingState.PENDING, "foobar.jpg", 1, new Date(),
-                Document.SourceClassification.NATIVE, Uri.parse(""), new ArrayList<Uri>(),
-                new ArrayList<Uri>());
-        final HashMap<String, SpecificExtraction> extractions = new HashMap<String, SpecificExtraction>();
-        final HashMap<String, CompoundExtraction> compoundExtractions = new HashMap<>();
-
-        when(mApiCommunicator.sendFeedback(eq("1234"), any(JSONObject.class), any(JSONObject.class), any(Session.class))).thenReturn(
-                Task.forResult(new JSONObject()));
-
-        Task<Document> updateTask = mDocumentTaskManager.sendFeedbackForExtractions(document, extractions, compoundExtractions);
-        updateTask.waitForCompletion();
-        assertNotNull(updateTask.getResult());
-    }
-
-    @Test
-    public void testSendFeedbackSavesExtractions() throws JSONException, InterruptedException {
-        final Document document = new Document("1234", Document.ProcessingState.PENDING, "foobar.jpg", 1, new Date(),
-                Document.SourceClassification.NATIVE, Uri.parse(""), new ArrayList<Uri>(),
-                new ArrayList<Uri>());
-        final HashMap<String, SpecificExtraction> extractions = new HashMap<String, SpecificExtraction>();
-        extractions.put("amountToPay",
-                new SpecificExtraction("amountToPay", "42:EUR", "amount", null, new ArrayList<Extraction>()));
-        extractions.put("senderName",
-                new SpecificExtraction("senderName", "blah", "senderName", null, new ArrayList<Extraction>()));
-
-        extractions.get("amountToPay").setValue("23:EUR");
-        mDocumentTaskManager.sendFeedbackForExtractions(document, extractions, new HashMap<String, CompoundExtraction>()).waitForCompletion();
-
-        ArgumentCaptor<JSONObject> dataCaptor = ArgumentCaptor.forClass(JSONObject.class);
-        verify(mApiCommunicator).sendFeedback(eq("1234"), dataCaptor.capture(), any(JSONObject.class), any(Session.class));
-        final JSONObject updateData = dataCaptor.getValue();
-        // Should update the amountToPay
-        assertTrue(updateData.has("amountToPay"));
-        final JSONObject amountToPay = updateData.getJSONObject("amountToPay");
-        assertEquals("23:EUR", amountToPay.getString("value"));
-        assertTrue(updateData.has("senderName"));
-    }
-
-    @Test
-    public void testSendFeedbackMarksExtractionsAsNotDirty() throws JSONException, InterruptedException {
-        when(mApiCommunicator.sendFeedback(eq("1234"), any(JSONObject.class), any(JSONObject.class), any(Session.class))).thenReturn(
-                Task.forResult(new JSONObject()));
-        final Document document = new Document("1234", Document.ProcessingState.PENDING, "foobar.jpg", 1, new Date(),
-                Document.SourceClassification.NATIVE, Uri.parse(""), new ArrayList<Uri>(),
-                new ArrayList<Uri>());
-        final HashMap<String, SpecificExtraction> extractions = new HashMap<String, SpecificExtraction>();
-        extractions.put("amountToPay",
-                new SpecificExtraction("amountToPay", "42:EUR", "amount", null, new ArrayList<Extraction>()));
-        extractions.put("senderName",
-                new SpecificExtraction("senderName", "blah", "senderName", null, new ArrayList<Extraction>()));
-
-        extractions.get("amountToPay").setValue("23:EUR");
-
-        final HashMap<String, CompoundExtraction> compoundExtractions = new HashMap<>();
-        Task<Document> updateTask = mDocumentTaskManager.sendFeedbackForExtractions(document, extractions, compoundExtractions);
-
-        updateTask.waitForCompletion();
-        assertFalse(extractions.get("amountToPay").isDirty());
-    }
-
-    @Test
     public void testReportDocumentThrowsWithNullArgument() {
         try {
             mDocumentTaskManager.reportDocument(null, null, null);
@@ -836,79 +716,6 @@ public class DocumentTaskManagerTest {
         assertEquals(2, amountToPay.getCandidate().size());
     }
 
-    @Test
-    public void testGetExtractionsParsesReturnReasons() throws Exception {
-        when(mApiCommunicator.getExtractions(eq("1234"), any(Session.class))).thenReturn(createExtractionsJSONTask());
-        Document document = new Document("1234", Document.ProcessingState.COMPLETED, "foobar", 1, new Date(),
-                Document.SourceClassification.NATIVE, Uri.parse(""), new ArrayList<Uri>(),
-                new ArrayList<Uri>());
-
-        Task<ExtractionsContainer> extractionsTask = mDocumentTaskManager.getAllExtractions(document);
-        extractionsTask.waitForCompletion();
-        if (extractionsTask.isFaulted()) {
-            throw extractionsTask.getError();
-        }
-        final ExtractionsContainer extractions = extractionsTask.getResult();
-        assertNotNull(extractions);
-
-        assertEquals(4, extractions.getReturnReasons().size());
-
-        final ReturnReason returnReason = extractions.getReturnReasons().get(0);
-
-        assertEquals("r1", returnReason.getId());
-        assertEquals("Anderes Aussehen als angeboten", returnReason.getLocalizedLabels().get("de"));
-    }
-
-    @Test
-    public void testGetPaymentProviders() throws Exception {
-        when(mApiCommunicator.getPaymentProviders(any(Session.class))).thenReturn(createPaymentProvidersJSONTask());
-        when(mApiCommunicator.getFile(any(String.class), any(Session.class))).thenReturn(Task.forResult(new byte[0]));
-
-        Task<List<PaymentProvider>> paymentProvidersTask = mDocumentTaskManager.getPaymentProviders();
-        paymentProvidersTask.waitForCompletion();
-        if (paymentProvidersTask.isFaulted()) {
-            throw paymentProvidersTask.getError();
-        }
-        final List<PaymentProvider> paymentProvidersResult = paymentProvidersTask.getResult();
-        assertEquals(getPaymentProviders(), paymentProvidersResult);
-    }
-
-    @Test
-    public void testGetPaymentProvider() throws Exception {
-        when(mApiCommunicator.getPaymentProvider(any(String.class), any(Session.class))).thenReturn(createPaymentProviderJSONTask());
-        when(mApiCommunicator.getFile(any(String.class), any(Session.class))).thenReturn(Task.forResult(new byte[0]));
-
-        Task<PaymentProvider> paymentProvidersTask = mDocumentTaskManager.getPaymentProvider("");
-        paymentProvidersTask.waitForCompletion();
-        if (paymentProvidersTask.isFaulted()) {
-            throw paymentProvidersTask.getError();
-        }
-        final PaymentProvider paymentProviderResult = paymentProvidersTask.getResult();
-        assertEquals(getPaymentProviders().get(0), paymentProviderResult);
-    }
-
-    private List<PaymentProvider> getPaymentProviders() {
-        final List<PaymentProvider> paymentProviders = new ArrayList<>();
-        paymentProviders.add(new PaymentProvider("7e72441c-32f8-11eb-b611-c3190574373c", "ING-DiBa", "com.example.bank", "3.5.1",
-                new PaymentProvider.Colors("112233", "44AAFF"), new byte[0]));
-        paymentProviders.add(new PaymentProvider("9a9b41f2-32f8-11eb-9fb5-e378350b0392", "Deutsche Bank", "com.example.bank", "6.9.1",
-                new PaymentProvider.Colors("557788", "00DDEE"), new byte[0]));
-        return paymentProviders;
-    }
-
-    @Test
-    public void testCreatePaymentRequest() throws Exception {
-        when(mApiCommunicator.postPaymentRequests(any(JSONObject.class), any(Session.class)))
-                .thenReturn(createLocationHeaderJSONTask("https://pay-api.gini.net/paymentRequests/7b5a7f79-ae7c-4040-b6cf-25cde58ad937"));
-
-        Task<String> paymentRequestTask = mDocumentTaskManager.createPaymentRequest(new PaymentRequestInput("", "", "", "", "", null, ""));
-        paymentRequestTask.waitForCompletion();
-        if (paymentRequestTask.isFaulted()) {
-            throw paymentRequestTask.getError();
-        }
-        assertEquals("7b5a7f79-ae7c-4040-b6cf-25cde58ad937", paymentRequestTask.getResult());
-    }
-
     private List<PaymentRequest> getPaymentRequests() {
         final List<PaymentRequest> paymentRequests = new ArrayList<>();
         paymentRequests.add(new PaymentRequest("7e72441c-32f8-11eb-b611-c3190574373c", null, "Dr. med. Hackler", "DE02300209000106531065", "CMCIDEDDXXX", "335.50:EUR", "ReNr AZ356789Z", PaymentRequest.Status.PAID));
@@ -942,57 +749,17 @@ public class DocumentTaskManagerTest {
         assertEquals(getPaymentRequests(), paymentProvidersResult);
     }
 
-    @Test
-    public void testResolvePaymentRequest() throws Exception {
-        when(mApiCommunicator.resolvePaymentRequests(any(String.class), any(JSONObject.class), any(Session.class)))
-                .thenReturn(createResolvePaymentJsonTask());
+    private static class TestDocumentTaskManager extends DocumentTaskManager<ApiCommunicator, ExtractionsContainer> {
 
-        Task<ResolvedPayment> paymentRequestTask = mDocumentTaskManager.resolvePaymentRequest("", new ResolvePaymentInput("", "", "", "", null));
-        paymentRequestTask.waitForCompletion();
-        if (paymentRequestTask.isFaulted()) {
-            throw paymentRequestTask.getError();
-        }
-        ResolvedPayment resolvedPayment = new ResolvedPayment("ginipay-example://payment-requester", "Dr. med. Hackler", "DE02300209000106531065", "CMCIDEDDXXX", "335.50:EUR", "ReNr AZ356789Z", ResolvedPayment.Status.PAID);
-        assertEquals(resolvedPayment, paymentRequestTask.getResult());
-    }
-
-
-    @Test
-    public void testGetPayment() throws Exception {
-        when(mApiCommunicator.getPayment(any(String.class), any(Session.class))).thenReturn(createPaymentJSONTask());
-
-        Task<Payment> paymentRequestTask = mDocumentTaskManager.getPayment("");
-        paymentRequestTask.waitForCompletion();
-        if (paymentRequestTask.isFaulted()) {
-            throw paymentRequestTask.getError();
-        }
-        Payment payment = new Payment("2020-12-07T15:53:26", "Dr. med. Hackler", "DE02300209000106531065", "335.50:EUR", "ReNr AZ356789Z", "CMCIDEDDXXX");
-        assertEquals(payment, paymentRequestTask.getResult());
-    }
-
-    @Test
-    public void logErrorEvent() throws Exception {
-        when(mApiCommunicator.logErrorEvent(any(JSONObject.class), any(Session.class)))
-                .thenReturn(Task.forResult(new JSONObject()));
-
-        final ErrorEvent errorEvent = new ErrorEvent(
-                "sm-g950f", "Android", "12",
-                "1.2.0", "1.0.0", "Bad things happen"
-        );
-
-        final Task<Void> requestTask = mDocumentTaskManager.logErrorEvent(errorEvent);
-        requestTask.waitForCompletion();
-        if (requestTask.isFaulted()) {
-            throw requestTask.getError();
+        public TestDocumentTaskManager(ApiCommunicator apiCommunicator, SessionManager sessionManager, GiniApiType giniApiType, Moshi moshi) {
+            super(apiCommunicator, sessionManager, giniApiType, moshi);
         }
 
-        final ArgumentCaptor<JSONObject> requestBodyCaptor = ArgumentCaptor.forClass(JSONObject.class);
-        verify(mApiCommunicator).logErrorEvent(requestBodyCaptor.capture(), any(Session.class));
-        final JSONObject requestBody = requestBodyCaptor.getValue();
-
-        final JsonAdapter<ErrorEvent> adapter = moshi.adapter(ErrorEvent.class);
-        final ErrorEvent sentErrorEvent = adapter.fromJson(requestBody.toString());
-
-        assertEquals(errorEvent, sentErrorEvent);
+        @NonNull
+        @Override
+        protected ExtractionsContainer createExtractionsContainer(@NonNull Map<String, SpecificExtraction> specificExtractions, @NonNull Map<String, CompoundExtraction> compoundExtractions, @NonNull JSONObject responseJSON) throws Exception {
+            return new ExtractionsContainer(specificExtractions, compoundExtractions);
+        }
     }
+
 }

@@ -4,6 +4,11 @@ plugins {
     id("com.android.library")
     kotlin("android")
     kotlin("kapt")
+    id("com.hiya.jacoco-android")
+}
+
+jacoco {
+    toolVersion = libs.versions.jacoco.get()
 }
 
 android {
@@ -38,7 +43,14 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
 }
+
+
 
 dependencies {
     api(project(":core-api-library:library"))
@@ -56,8 +68,38 @@ dependencies {
     androidTestImplementation(libs.androidx.test.rules)
     androidTestImplementation(libs.androidx.test.junit)
     androidTestImplementation(libs.androidx.multidex)
+    androidTestImplementation(project(":core-api-library:shared-tests"))
+
+    testImplementation(libs.junit)
+    testImplementation(libs.truth)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.test.runner)
+    testImplementation(libs.androidx.test.core.ktx)
+    testImplementation(libs.androidx.test.junit.ktx)
 }
 
 apply<PublishToMavenPlugin>()
 apply<DokkaPlugin>()
 apply<CodeAnalysisPlugin>()
+apply<PropertiesPlugin>()
+
+tasks.register<CreatePropertiesTask>("injectTestProperties") {
+    val propertiesMap = mutableMapOf<String, String>()
+
+    doFirst {
+        propertiesMap.clear()
+        propertiesMap.putAll(readLocalPropertiesToMap(project,
+            listOf("testClientId", "testClientSecret", "testApiUri", "testUserCenterUri")))
+    }
+
+    destinations.put(
+        file("src/androidTest/assets/test.properties"),
+        propertiesMap
+    )
+}
+
+afterEvaluate {
+    tasks.filter { it.name.endsWith("androidTest", ignoreCase = true) }.forEach {
+        it.dependsOn(tasks.getByName("injectTestProperties"))
+    }
+}

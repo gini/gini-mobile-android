@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <domain-config>
+        <trustkit-config
+            disableDefaultReportUri="true"
+            enforcePinning="true" />
+        <domain>health-api.gini.net</domain>
+        <pin-set>
+            <!-- *.gini.net -->
+            <pin digest="SHA-256">cNzbGowA+LNeQ681yMm8ulHxXiGojHE8qAjI+M7bIxU=</pin>
+            <!-- fotoueberweisung.net -->
+            <pin digest="SHA-256">5MrKlfPJKoIKf+SzQcuOisMuosa5SIo/nh/qFTYTJGs=</pin>
+        </pin-set>
+        <domain-config>
+            <trustkit-config
+                disableDefaultReportUri="true"
+                enforcePinning="true" />
+            <domain>user.gini.net</domain>
+        </domain-config>
+    </domain-config>
+</network-security-config>

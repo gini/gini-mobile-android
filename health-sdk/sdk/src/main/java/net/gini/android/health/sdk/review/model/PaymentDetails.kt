@@ -2,8 +2,11 @@ package net.gini.android.health.sdk.review.model
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import net.gini.android.core.api.models.CompoundExtraction
 import net.gini.android.core.api.models.ExtractionsContainer
 import net.gini.android.core.api.models.SpecificExtraction
+import net.gini.android.health.sdk.review.error.NoPaymentDataExtracted
+import net.gini.android.health.sdk.util.toBackendFormat
 
 @Parcelize
 data class PaymentDetails(
@@ -14,13 +17,20 @@ data class PaymentDetails(
     internal val extractions: ExtractionsContainer? = null
 ): Parcelable
 
-internal fun ExtractionsContainer.toPaymentDetails() = PaymentDetails(
-    recipient = specificExtractions["paymentRecipient"]?.value ?: "",
-    iban = specificExtractions["iban"]?.value ?: "",
-    amount = specificExtractions["amountToPay"]?.value?.toAmount() ?: "",
-    purpose = specificExtractions["paymentPurpose"]?.value ?: "",
-    extractions = this
-)
+internal fun ExtractionsContainer.toPaymentDetails(): PaymentDetails {
+    if (!compoundExtractions.containsKey("payment")) {
+        throw NoPaymentDataExtracted()
+    }
+    return PaymentDetails(
+        recipient = compoundExtractions.getPaymentExtraction("payment_recipient")?.value
+            ?: "",
+        iban = compoundExtractions.getPaymentExtraction("iban")?.value ?: "",
+        amount = compoundExtractions.getPaymentExtraction("amount_to_pay")?.value?.toAmount()
+            ?: "",
+        purpose = compoundExtractions.getPaymentExtraction("payment_purpose")?.value ?: "",
+        extractions = this
+    )
+}
 
 internal fun String.toAmount(): String {
     val delimiterIndex = this.indexOf(":")
@@ -36,42 +46,56 @@ internal fun String.toAmount(): String {
  */
 val PaymentDetails.isPayable get() = iban.isNotEmpty()
 
-internal fun MutableMap<String, SpecificExtraction>.withFeedback(paymentDetails: PaymentDetails): Map<String, SpecificExtraction> {
-    this["paymentRecipient"] = this["paymentRecipient"].let { extraction ->
-        SpecificExtraction(
-            extraction?.name ?: "paymentRecipient",
-            paymentDetails.recipient,
-            extraction?.entity,
-            extraction?.box,
-            extraction?.candidate
-        )
-    }
-    this["iban"] = this["iban"].let { extraction ->
-        SpecificExtraction(
-            extraction?.name ?: "iban",
-            paymentDetails.iban,
-            extraction?.entity,
-            extraction?.box,
-            extraction?.candidate
-        )
-    }
-    this["amountToPay"] = this["amountToPay"].let { extraction ->
-        SpecificExtraction(
-            extraction?.name ?: "amountToPay",
-            paymentDetails.amount,
-            extraction?.entity,
-            extraction?.box,
-            extraction?.candidate
-        )
-    }
-    this["paymentPurpose"] = this["paymentPurpose"].let { extraction ->
-        SpecificExtraction(
-            extraction?.name ?: "paymentPurpose",
-            paymentDetails.purpose,
-            extraction?.entity,
-            extraction?.box,
-            extraction?.candidate
+internal fun MutableMap<String, CompoundExtraction>.withFeedback(paymentDetails: PaymentDetails): Map<String, CompoundExtraction> {
+    this["payment"] = this["payment"].let { payment ->
+        CompoundExtraction(
+            payment?.name ?: "payment",
+            payment?.specificExtractionMaps?.mapIndexed { index, specificExtractions ->
+                if (index > 0) return@mapIndexed specificExtractions
+
+                mutableMapOf<String, SpecificExtraction>().also { extractions ->
+                    extractions.putAll(specificExtractions)
+                    extractions["payment_recipient"] = extractions["payment_recipient"].let { extraction ->
+                        SpecificExtraction(
+                            extraction?.name ?: "payment_recipient",
+                            paymentDetails.recipient,
+                            extraction?.entity ?: "",
+                            extraction?.box,
+                            extraction?.candidate ?: emptyList()
+                        )
+                    }
+                    extractions["iban"] = extractions["iban"].let { extraction ->
+                        SpecificExtraction(
+                            extraction?.name ?: "iban",
+                            paymentDetails.iban,
+                            extraction?.entity ?: "",
+                            extraction?.box,
+                            extraction?.candidate ?: emptyList()
+                        )
+                    }
+                    extractions["amount_to_pay"] = extractions["amount_to_pay"].let { extraction ->
+                        SpecificExtraction(
+                            extraction?.name ?: "amount_to_pay",
+                            "${paymentDetails.amount.toBackendFormat()}:EUR",
+                            extraction?.entity ?: "",
+                            extraction?.box,
+                            extraction?.candidate ?: emptyList()
+                        )
+                    }
+                    extractions["payment_purpose"] = extractions["payment_purpose"].let { extraction ->
+                        SpecificExtraction(
+                            extraction?.name ?: "payment_purpose",
+                            paymentDetails.purpose,
+                            extraction?.entity ?: "",
+                            extraction?.box,
+                            extraction?.candidate ?: emptyList()
+                        )
+                    }
+                }
+            } ?: listOf()
         )
     }
     return this
 }
+
+internal fun MutableMap<String, CompoundExtraction>.getPaymentExtraction(name: String) = this["payment"]?.specificExtractionMaps?.get(0)?.get(name)

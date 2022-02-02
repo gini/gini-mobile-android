@@ -8,10 +8,13 @@ import java.util.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import net.gini.android.core.api.DocumentManager
+import net.gini.android.core.api.models.CompoundExtraction
 import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.models.ExtractionsContainer
 import net.gini.android.core.api.models.SpecificExtraction
+import net.gini.android.health.api.HealthApiDocumentManager
+import net.gini.android.health.sdk.review.error.NoPaymentDataExtracted
 import net.gini.android.health.sdk.review.model.PaymentDetails
 import net.gini.android.health.sdk.review.model.ResultWrapper
 import org.junit.Assert.*
@@ -22,19 +25,22 @@ val document =
     Document("1234", Document.ProcessingState.COMPLETED, "", 1, Date(124), Document.SourceClassification.COMPOSITE, Uri.EMPTY, emptyList(), emptyList())
 
 val extractions = ExtractionsContainer(
+    emptyMap(),
     mapOf(
-        "paymentRecipient" to SpecificExtraction("paymentRecipient", "recipient", "", null, listOf()),
-        "iban" to SpecificExtraction("iban", "iban", "", null, listOf()),
-        "amountToPay" to SpecificExtraction("amountToPay", "123.56", "", null, listOf()),
-        "paymentPurpose" to SpecificExtraction("paymentPurpose", "purpose", "", null, listOf()),
-    ),
-    mapOf(), emptyList()
+        "payment" to CompoundExtraction("payment", listOf(mutableMapOf(
+            "payment_recipient" to SpecificExtraction("payment_recipient", "recipient", "", null, listOf()),
+            "iban" to SpecificExtraction("iban", "iban", "", null, listOf()),
+            "amount_to_pay" to SpecificExtraction("amount_tp_pay", "123.56", "", null, listOf()),
+            "payment_purpose" to SpecificExtraction("payment_purpose", "purpose", "", null, listOf()),
+        )))
+    )
 )
 
 fun copyExtractions(extractions: ExtractionsContainer) = ExtractionsContainer(
     extractions.specificExtractions.toMap(),
-    extractions.compoundExtractions.toMap(),
-    extractions.returnReasons.toList()
+    extractions.compoundExtractions.map { (name, compoundExtraction) ->
+        name to CompoundExtraction(name, compoundExtraction.specificExtractionMaps.map { it.toMap() })
+    }.toMap()
 )
 
 @ExperimentalCoroutinesApi
@@ -42,7 +48,7 @@ class GiniHealthTest {
 
     private lateinit var giniHealth: GiniHealth
     private val giniHealthAPI: GiniHealthAPI = mockk(relaxed = true) { GiniHealthAPI::class.java }
-    private val documentManager: DocumentManager = mockk { DocumentManager::class.java }
+    private val documentManager: HealthApiDocumentManager = mockk { HealthApiDocumentManager::class.java }
 
     @Before
     fun setUp() {
@@ -63,6 +69,19 @@ class GiniHealthTest {
         assert(giniHealth.paymentFlow.value is ResultWrapper.Success<PaymentDetails>) { "Expected Success but was ${giniHealth.paymentFlow.value}" }
         assertEquals(document, (giniHealth.documentFlow.value as ResultWrapper.Success<Document>).value)
         assertEquals(paymentDetails, (giniHealth.paymentFlow.value as ResultWrapper.Success<PaymentDetails>).value)
+    }
+
+    @Test
+    fun `When setting document for review then payment flow emits failure if extractions have no payment details`() = runTest {
+        coEvery { documentManager.getExtractions(document) } returns ExtractionsContainer(
+            emptyMap(),
+            emptyMap()
+        )
+
+        assert(giniHealth.paymentFlow.value is ResultWrapper.Loading<PaymentDetails>) { "Expected Loading but was ${giniHealth.paymentFlow.value}" }
+        giniHealth.setDocumentForReview(document)
+        assert(giniHealth.paymentFlow.value is ResultWrapper.Error<PaymentDetails>) { "Expected Success but was ${giniHealth.paymentFlow.value}" }
+        assertTrue((giniHealth.paymentFlow.value as ResultWrapper.Error<PaymentDetails>).error is NoPaymentDataExtracted)
     }
 
     @Test
@@ -99,6 +118,20 @@ class GiniHealthTest {
     }
 
     @Test
+    fun `When setting document id for review without payment details then payment flow emits failure if extractions have no payment details`() = runTest {
+        coEvery { documentManager.getDocument(any<String>()) } returns document
+        coEvery { documentManager.getExtractions(document) } returns ExtractionsContainer(
+            emptyMap(),
+            emptyMap()
+        )
+
+        assert(giniHealth.paymentFlow.value is ResultWrapper.Loading<PaymentDetails>) { "Expected Loading but was ${giniHealth.paymentFlow.value}" }
+        giniHealth.setDocumentForReview("")
+        assert(giniHealth.paymentFlow.value is ResultWrapper.Error<PaymentDetails>) { "Expected Success but was ${giniHealth.paymentFlow.value}" }
+        assertTrue((giniHealth.paymentFlow.value as ResultWrapper.Error<PaymentDetails>).error is NoPaymentDataExtracted)
+    }
+
+    @Test
     fun `Document is payable if it has an IBAN extraction`() = runTest {
         coEvery { documentManager.getExtractions(any()) } returns extractions
         coEvery { documentManager.getDocument(any<String>()) } returns document
@@ -109,7 +142,7 @@ class GiniHealthTest {
     @Test
     fun `Document is not payable if it has no IBAN extraction`() = runTest {
         val extractionsWithoutIBAN = copyExtractions(extractions).apply {
-            specificExtractions.remove("iban")
+            compoundExtractions["payment"]?.specificExtractionMaps?.get(0)?.remove("iban")
         }
         coEvery { documentManager.getExtractions(any()) } returns extractionsWithoutIBAN
         coEvery { documentManager.getDocument(any<String>()) } returns document
@@ -120,7 +153,8 @@ class GiniHealthTest {
     @Test
     fun `Document is not payable if it has an empty IBAN extraction`() = runTest {
         val extractionsWithoutIBAN = copyExtractions(extractions).apply {
-            specificExtractions.set("iban", SpecificExtraction("iban", "", "", null, listOf()))
+            compoundExtractions["payment"]?.specificExtractionMaps?.get(0)
+                ?.set("iban", SpecificExtraction("iban", "", "", null, listOf()))
         }
         coEvery { documentManager.getExtractions(any()) } returns extractionsWithoutIBAN
         coEvery { documentManager.getDocument(any<String>()) } returns document

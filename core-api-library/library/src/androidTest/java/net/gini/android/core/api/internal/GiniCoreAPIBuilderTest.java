@@ -14,17 +14,28 @@ import androidx.test.filters.SmallTest;
 
 import com.android.volley.Cache;
 import com.android.volley.RetryPolicy;
+import com.squareup.moshi.Moshi;
 
+import net.gini.android.core.api.ApiCommunicator;
+import net.gini.android.core.api.DocumentManager;
 import net.gini.android.core.api.DocumentTaskManager;
 import net.gini.android.core.api.GiniApiType;
+import net.gini.android.core.api.authorization.CredentialsStore;
 import net.gini.android.core.api.authorization.Session;
 import net.gini.android.core.api.authorization.SessionManager;
+import net.gini.android.core.api.models.CompoundExtraction;
+import net.gini.android.core.api.models.ExtractionsContainer;
+import net.gini.android.core.api.models.SpecificExtraction;
+import net.gini.android.core.api.test.TestGiniApiType;
 
+import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.Map;
 
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
@@ -37,18 +48,16 @@ public class GiniCoreAPIBuilderTest {
     @Test
     public void testBuilderReturnsGiniInstance() {
         CoreAPIBuilder builder = new CoreAPIBuilder(getApplicationContext(), "clientId", "clientSecret", "@example.com");
-        builder.setGiniApiType(GiniApiType.DEFAULT);
         assertNotNull(builder.build());
     }
 
     @Test
     public void testBuilderReturnsCorrectConfiguredGiniInstance() {
         CoreAPIBuilder builder = new CoreAPIBuilder(getApplicationContext(), "clientId", "clientSecret", "@example.com");
-        builder.setGiniApiType(GiniApiType.DEFAULT);
-        GiniCoreAPI giniHealthAPI = builder.build();
+        GiniCoreAPI giniCoreAPI = builder.build();
 
-        assertNotNull(giniHealthAPI.getDocumentTaskManager());
-        assertNotNull(giniHealthAPI.getCredentialsStore());
+        assertNotNull(giniCoreAPI.getDocumentTaskManager());
+        assertNotNull(giniCoreAPI.getCredentialsStore());
     }
 
     @Test
@@ -56,12 +65,11 @@ public class GiniCoreAPIBuilderTest {
         final SessionManager sessionManager = new NullSessionManager();
 
         final CoreAPIBuilder builder = new CoreAPIBuilder(getApplicationContext(), sessionManager);
-        builder.setGiniApiType(GiniApiType.DEFAULT);
-        final GiniCoreAPI giniHealthAPI = builder.build();
+        final GiniCoreAPI giniCoreAPI = builder.build();
 
-        assertNotNull(giniHealthAPI);
-        assertNotNull(giniHealthAPI.getDocumentTaskManager());
-        assertNotNull(giniHealthAPI.getCredentialsStore());
+        assertNotNull(giniCoreAPI);
+        assertNotNull(giniCoreAPI.getDocumentTaskManager());
+        assertNotNull(giniCoreAPI.getCredentialsStore());
     }
 
     @Test
@@ -97,13 +105,12 @@ public class GiniCoreAPIBuilderTest {
     @Test
     public void testRetryPolicyWiring() {
         CoreAPIBuilder builder = new CoreAPIBuilder(getApplicationContext(), "clientId", "clientSecret", "@example.com");
-        builder.setGiniApiType(GiniApiType.DEFAULT);
         builder.setConnectionTimeoutInMs(3333);
         builder.setMaxNumberOfRetries(66);
         builder.setConnectionBackOffMultiplier(1.3636f);
-        GiniCoreAPI giniHealthAPI = builder.build();
+        GiniCoreAPI giniCoreAPI = builder.build();
 
-        final DocumentTaskManager documentTaskManager = giniHealthAPI.getDocumentTaskManager();
+        final DocumentTaskManager documentTaskManager = giniCoreAPI.getDocumentTaskManager();
         final RetryPolicy retryPolicy = documentTaskManager.mApiCommunicator.mRetryPolicyFactory.newRetryPolicy();
         assertEquals(3333, retryPolicy.getCurrentTimeout());
         assertEquals(0, retryPolicy.getCurrentRetryCount());
@@ -112,7 +119,6 @@ public class GiniCoreAPIBuilderTest {
     @Test
     public void testVolleyCacheConfiguration() {
         CoreAPIBuilder builder = new CoreAPIBuilder(getApplicationContext(), "clientId", "clientSecret", "@example.com");
-        builder.setGiniApiType(GiniApiType.DEFAULT);
         NullCache nullCache = new NullCache();
         builder.setCache(nullCache);
         GiniCoreAPI giniHealthAPI = builder.build();
@@ -123,7 +129,6 @@ public class GiniCoreAPIBuilderTest {
     @Test
     public void allowsSettingCustomTrustManager() {
         CoreAPIBuilder builder = new CoreAPIBuilder(getApplicationContext(), "clientId", "clientSecret", "@example.com");
-        builder.setGiniApiType(GiniApiType.DEFAULT);
 
         final TrustManager trustManager = new X509TrustManager() {
 
@@ -150,8 +155,39 @@ public class GiniCoreAPIBuilderTest {
         assertNotNull(sdkInstance);
     }
 
+    private static class TestDocumentTaskManager extends DocumentTaskManager<ApiCommunicator, ExtractionsContainer> {
 
-    private static class CoreAPIBuilder extends GiniCoreAPIBuilder<GiniCoreAPI> {
+        public TestDocumentTaskManager(ApiCommunicator apiCommunicator, SessionManager sessionManager, GiniApiType giniApiType, Moshi moshi) {
+            super(apiCommunicator, sessionManager, giniApiType, moshi);
+        }
+
+        @NonNull
+        @Override
+        protected ExtractionsContainer createExtractionsContainer(@NonNull Map<String, SpecificExtraction> specificExtractions, @NonNull Map<String, CompoundExtraction> compoundExtractions, @NonNull JSONObject responseJSON) throws Exception {
+            return new ExtractionsContainer(specificExtractions, compoundExtractions);
+        }
+    }
+
+    private static class TestDocumentManager extends DocumentManager<ApiCommunicator, TestDocumentTaskManager, ExtractionsContainer> {
+
+        public TestDocumentManager(@NonNull TestDocumentTaskManager documentTaskManager) {
+            super(documentTaskManager);
+        }
+    }
+
+    private static class TestGiniCoreAPI extends GiniCoreAPI<TestDocumentTaskManager, TestDocumentManager, ApiCommunicator, ExtractionsContainer> {
+
+        protected TestGiniCoreAPI(TestDocumentTaskManager documentTaskManager, CredentialsStore credentialsStore) {
+            super(documentTaskManager, credentialsStore);
+        }
+
+        @Override
+        public TestDocumentManager getDocumentManager() {
+            return Mockito.mock(TestDocumentManager.class);
+        }
+    }
+
+    private static class CoreAPIBuilder extends GiniCoreAPIBuilder<TestDocumentTaskManager, TestDocumentManager, TestGiniCoreAPI, ApiCommunicator, ExtractionsContainer> {
 
         protected CoreAPIBuilder(@NonNull Context context, @NonNull String clientId, @NonNull String clientSecret, @NonNull String emailDomain) {
             super(context, clientId, clientSecret, emailDomain);
@@ -161,10 +197,29 @@ public class GiniCoreAPIBuilderTest {
             super(context, sessionManager);
         }
 
+        @NonNull
         @Override
-        public GiniCoreAPI build() {
-            return new GiniCoreAPI(getDocumentTaskManager(), getCredentialsStore());
+        public GiniApiType getGiniApiType() {
+            return new TestGiniApiType();
         }
+
+        @Override
+        public TestGiniCoreAPI build() {
+            return new TestGiniCoreAPI(getDocumentTaskManager(), getCredentialsStore());
+        }
+
+        @NonNull
+        @Override
+        protected ApiCommunicator createApiCommunicator() {
+            return new ApiCommunicator(getApiBaseUrl(), getGiniApiType(), getRequestQueue(), getRetryPolicyFactory());
+        }
+
+        @NonNull
+        @Override
+        protected TestDocumentTaskManager createDocumentTaskManager() {
+            return new TestDocumentTaskManager(getApiCommunicator(), getSessionManager(), getGiniApiType(), getMoshi());
+        }
+
     }
 
     private static final class NullCache implements Cache {

@@ -4,11 +4,14 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
+import net.gini.android.bank.api.models.ExtractionsContainer;
 import net.gini.android.core.api.GiniApiType;
 import net.gini.android.core.api.authorization.SessionManager;
 import net.gini.android.core.api.internal.GiniCoreAPIBuilder;
 
-public class GiniBankAPIBuilder extends GiniCoreAPIBuilder<GiniBankAPI> {
+public class GiniBankAPIBuilder extends GiniCoreAPIBuilder<BankApiDocumentTaskManager, BankApiDocumentManager,GiniBankAPI, BankApiCommunicator, ExtractionsContainer> {
+
+    private final GiniApiType bankApiType = new GiniBankApiType(1);
 
     /**
      * Constructor to initialize a new builder instance where anonymous Gini users are used. <b>This requires access to
@@ -22,7 +25,6 @@ public class GiniBankAPIBuilder extends GiniCoreAPIBuilder<GiniBankAPI> {
     public GiniBankAPIBuilder(@NonNull final Context context, @NonNull final String clientId,
                                 @NonNull final String clientSecret, @NonNull final String emailDomain) {
         super(context, clientId, clientSecret, emailDomain);
-        setGiniApiType(GiniApiType.BANK);
     }
 
     /**
@@ -34,7 +36,12 @@ public class GiniBankAPIBuilder extends GiniCoreAPIBuilder<GiniBankAPI> {
      */
     public GiniBankAPIBuilder(@NonNull final Context context, @NonNull final SessionManager sessionManager) {
         super(context, sessionManager);
-        setGiniApiType(GiniApiType.BANK);
+    }
+
+    @NonNull
+    @Override
+    public GiniApiType getGiniApiType() {
+        return bankApiType;
     }
 
     /**
@@ -45,6 +52,16 @@ public class GiniBankAPIBuilder extends GiniCoreAPIBuilder<GiniBankAPI> {
     @Override
     public GiniBankAPI build() {
         return new GiniBankAPI(getDocumentTaskManager(), getCredentialsStore());
+    }
+
+    @Override
+    protected BankApiCommunicator createApiCommunicator() {
+        return new BankApiCommunicator(getApiBaseUrl(), getGiniApiType(), getRequestQueue(), getRetryPolicyFactory());
+    }
+
+    @Override
+    protected BankApiDocumentTaskManager createDocumentTaskManager() {
+        return new BankApiDocumentTaskManager(getApiCommunicator(), getSessionManager(), getGiniApiType(), getMoshi());
     }
 
 }

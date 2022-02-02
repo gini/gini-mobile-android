@@ -1,8 +1,11 @@
 package net.gini.android.health.sdk.review.error
 
+/**
+ * Thrown when a bank was needed but none had been selected.
+ */
 class NoBankSelected : Throwable("No Bank Selected")
 
 /**
- * Thrown when there's no Payment Provider for the package name of the selected bank app.
+ * Thrown when there was no payment data in the document extractions.
  */
-class NoProviderForPackageName(packageName: String) : Throwable("No Provide for package $packageName")
+class NoPaymentDataExtracted : Throwable("No payment data extracted.")

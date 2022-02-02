@@ -14,9 +14,45 @@ on:
       - 'core-api-library/**'
       - 'gradle/**'
   workflow_call:
+    secrets:
+      GINI_MOBILE_TEST_CLIENT_SECRET:
+        required: true
 
 jobs:
   test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: setup java
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+          cache: 'gradle'
+
+      - name: run unit tests
+        run: ./gradlew health-api-library:library:testDebugUnitTest
+
+      - name: archive unit test results
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: health-api-library-unit-test-results
+          path: health-api-library/library/build/reports/tests
+
+      - name: create unit test coverage report
+        run: ./gradlew health-api-library:library:jacocoTestDebugUnitTestReport
+
+      - name: archive unit test coverage report
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: health-api-library-unit-test-coverage
+          path: health-api-library/library/build/jacoco/jacocoHtml
+
+  instrumented-test:
     runs-on: macos-latest
     strategy:
       matrix:
@@ -63,6 +99,10 @@ jobs:
           disable-animations: true
           script: >
             ./gradlew health-api-library:library:connectedCheck
+            -PtestClientId="gini-mobile-test"
+            -PtestClientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
+            -PtestApiUri="https://health-api.gini.net"
+            -PtestUserCenterUri="https://user.gini.net"
 
       - name: archive instrumented test results
         if: always()

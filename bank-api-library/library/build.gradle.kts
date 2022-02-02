@@ -58,11 +58,14 @@ dependencies {
     androidTestImplementation(libs.androidx.test.rules)
     androidTestImplementation(libs.androidx.test.junit)
     androidTestImplementation(libs.androidx.multidex)
+    androidTestImplementation(project(":core-api-library:shared-tests"))
+    androidTestImplementation(project(":health-api-library:library"))
 }
 
 apply<PublishToMavenPlugin>()
 apply<DokkaPlugin>()
 apply<CodeAnalysisPlugin>()
+apply<PropertiesPlugin>()
 
 tasks.register<CreatePropertiesTask>("injectTestProperties") {
     val propertiesMap = mutableMapOf<String, String>()
