@@ -62,7 +62,7 @@ Setting the document type hint
 To easily set the document type hint we introduced the ``DocumentType`` enum. It is safer and easier
 to use than a ``String``. For more details about the document type hints see the `Document Type
 Hints in the Gini API documentation
-<https://pay-api.gini.net/documentation/#document-types>`_.
+<https://health-api.gini.net/documentation/v3/#document-types>`_.
 
 .. _getting-extractions:
 

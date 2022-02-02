@@ -11,5 +11,5 @@
     "background": "112233",
     "text": "44AAFF"
   },
-  "iconLocation": "https://pay-api.pia.stage.gini.net/paymentProviders/icon"
+  "iconLocation": "https://health-api.pia.stage.gini.net/paymentProviders/icon"
 }

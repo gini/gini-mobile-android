@@ -56,7 +56,7 @@ public class HealthApiCommunicatorTest {
         System.setProperty("dexmaker.dexcache", getApplicationContext().getCacheDir().getPath());
         retryPolicyFactory = new DefaultRetryPolicyFactory();
         mRequestQueue = Mockito.mock(RequestQueue.class);
-        mApiCommunicator = new HealthApiCommunicator("https://pay-api.gini.net/", new GiniHealthApiType(3), mRequestQueue, retryPolicyFactory);
+        mApiCommunicator = new HealthApiCommunicator("https://health-api.gini.net/", new GiniHealthApiType(3), mRequestQueue, retryPolicyFactory);
     }
 
     public byte[] createUploadData() {
@@ -107,7 +107,7 @@ public class HealthApiCommunicatorTest {
         ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
         verify(mRequestQueue).add(requestCaptor.capture());
         final Request request = requestCaptor.getValue();
-        assertEquals("https://pay-api.gini.net/documents/1234-1234/extractions", request.getUrl());
+        assertEquals("https://health-api.gini.net/documents/1234-1234/extractions", request.getUrl());
         assertEquals(POST, request.getMethod());
     }
 
@@ -167,7 +167,7 @@ public class HealthApiCommunicatorTest {
         verify(mRequestQueue).add(requestCaptor.capture());
         final Request request = requestCaptor.getValue();
 
-        assertEquals("https://pay-api.gini.net/documents/aa9a4630-8e05-11eb-ad19-3bfb1a96d239/pages", request.getUrl());
+        assertEquals("https://health-api.gini.net/documents/aa9a4630-8e05-11eb-ad19-3bfb1a96d239/pages", request.getUrl());
     }
 
 }
