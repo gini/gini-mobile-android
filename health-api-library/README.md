@@ -3,11 +3,9 @@
 Gini Health API Library for Android
 ===================================
 
-TODO: replace https://pay-api.gini.net links with the one for the Health API once it's available
-
-A library for communicating with the [Gini Health API](https://pay-api.gini.net/documentation/). It allows you to easily add
-[payment information extraction](https://pay-api.gini.net/documentation/#document-extractions-for-payment) capabilities
-to your app. It also enables your app to create or resolve [payment requests](https://pay-api.gini.net/documentation/#payments).
+A library for communicating with the [Gini Health API](https://health-api.gini.net/documentation/v3/#gini-health-api-documentation-v3-0).
+It allows you to easily add payment information extraction ([see "payment" compound extraction](https://health-api.gini.net/documentation/v3/#available-compound-extractions))
+capabilities to your app. It also enables your app to create payment requests and retrieve payment providers.
 
 The Gini Health API provides an information extraction service for analyzing invoices. Specifically it extracts information
 such as the document sender or the payment relevant information (amount to pay, IBAN, BIC, payment reference, etc.).

@@ -8,7 +8,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 import net.gini.android.core.api.models.Document
-import net.gini.android.core.api.models.PaymentRequestInput
+import net.gini.android.health.api.models.PaymentRequestInput
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.preferences.UserPreference.PreferredBankApp
 import net.gini.android.health.sdk.preferences.UserPreferences
@@ -198,8 +198,8 @@ internal class ReviewViewModel(internal val giniHealth: GiniHealth) : ViewModel(
                     is ResultWrapper.Success -> paymentDetails.value.extractions?.let { extractionsContainer ->
                         giniHealth.giniHealthAPI.documentManager.sendFeedback(
                             documentResult.value,
-                            extractionsContainer.specificExtractions.withFeedback(paymentDetails.value),
-                            extractionsContainer.compoundExtractions
+                            extractionsContainer.specificExtractions,
+                            extractionsContainer.compoundExtractions.withFeedback(paymentDetails.value)
                         )
                     }
                 }

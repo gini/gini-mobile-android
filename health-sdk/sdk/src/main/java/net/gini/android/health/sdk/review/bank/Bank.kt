@@ -11,7 +11,7 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import androidx.annotation.ColorInt
-import net.gini.android.core.api.models.PaymentProvider
+import net.gini.android.health.api.models.PaymentProvider
 
 internal const val Scheme = "ginipay" // It has to match the scheme in query tag in manifest
 private const val PaymentPath = "payment"

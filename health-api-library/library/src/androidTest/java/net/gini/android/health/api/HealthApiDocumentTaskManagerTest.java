@@ -280,7 +280,7 @@ public class HealthApiDocumentTaskManagerTest {
     @Test
     public void testCreatePaymentRequest() throws Exception {
         when(mApiCommunicator.postPaymentRequests(any(JSONObject.class), any(Session.class)))
-                .thenReturn(createLocationHeaderJSONTask("https://pay-api.gini.net/paymentRequests/7b5a7f79-ae7c-4040-b6cf-25cde58ad937"));
+                .thenReturn(createLocationHeaderJSONTask("https://health-api.gini.net/paymentRequests/7b5a7f79-ae7c-4040-b6cf-25cde58ad937"));
 
         Task<String> paymentRequestTask = mDocumentTaskManager.createPaymentRequest(new PaymentRequestInput("", "", "", "", "", null, ""));
         paymentRequestTask.waitForCompletion();
