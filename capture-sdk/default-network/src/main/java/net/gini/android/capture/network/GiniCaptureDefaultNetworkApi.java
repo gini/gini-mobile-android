@@ -75,7 +75,7 @@ public class GiniCaptureDefaultNetworkApi implements GiniCaptureNetworkApi {
                 .getDocumentTaskManager();
         final net.gini.android.core.api.models.Document document =
                 mDefaultNetworkService.getAnalyzedGiniApiDocument();
-        // We require the Gini Bank API lib's net.gini.android.models.Document for sending the feedback
+        // We require the Gini Bank API lib's net.gini.android.core.api.models.Document for sending the feedback
         if (document != null) {
             LOG.debug("Send feedback for api document {} using extractions {}", document.getId(),
                     extractions);
