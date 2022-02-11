@@ -73,9 +73,7 @@ public class MainActivity extends AppCompatActivity {
     private RuntimePermissionHandler mRuntimePermissionHandler;
     private TextView mTextGiniCaptureSdkVersion;
     private TextView mTextAppVersion;
-    private Spinner mGiniApiTypeSpinner;
     private CancellationToken mFileImportCancellationToken;
-    private GiniApiType mGiniApiType = GiniApiType.BANK;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -232,18 +230,6 @@ public class MainActivity extends AppCompatActivity {
                 startGiniCaptureSdk();
             }
         });
-        mGiniApiTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(final AdapterView<?> parent, final View view,
-                    final int position, final long id) {
-                mGiniApiType = GiniApiType.valueOf(mGiniApiTypeSpinner.getSelectedItem().toString());
-            }
-
-            @Override
-            public void onNothingSelected(final AdapterView<?> parent) {
-
-            }
-        });
     }
 
     private void startGiniCaptureSdk() {
@@ -317,15 +303,12 @@ public class MainActivity extends AppCompatActivity {
         app.clearGiniCaptureNetworkInstances();
         final GiniCapture.Builder builder = GiniCapture.newInstance()
                 .setGiniCaptureNetworkService(
-                        app.getGiniCaptureNetworkService("ScreenAPI",
-                                mGiniApiType)
+                        app.getGiniCaptureNetworkService("ScreenAPI")
                 ).setGiniCaptureNetworkApi(app.getGiniCaptureNetworkApi());
-        if (mGiniApiType == GiniApiType.BANK) {
-            builder.setDocumentImportEnabledFileTypes(DocumentImportEnabledFileTypes.PDF_AND_IMAGES)
-                    .setFileImportEnabled(true)
-                    .setQRCodeScanningEnabled(true)
-                    .setMultiPageEnabled(true);
-        }
+        builder.setDocumentImportEnabledFileTypes(DocumentImportEnabledFileTypes.PDF_AND_IMAGES)
+                .setFileImportEnabled(true)
+                .setQRCodeScanningEnabled(true)
+                .setMultiPageEnabled(true);
         builder.setFlashButtonEnabled(true);
         builder.setEventTracker(new GiniCaptureEventTracker());
         builder.setCustomErrorLoggerListener(new CustomErrorLoggerListener());
@@ -378,7 +361,6 @@ public class MainActivity extends AppCompatActivity {
         mButtonStartScanner = (Button) findViewById(R.id.button_start_scanner);
         mTextGiniCaptureSdkVersion = (TextView) findViewById(R.id.text_gini_capture_version);
         mTextAppVersion = (TextView) findViewById(R.id.text_app_version);
-        mGiniApiTypeSpinner = findViewById(R.id.gini_api_type_spinner);
     }
 
     private ArrayList<OnboardingPage> getOnboardingPages() {

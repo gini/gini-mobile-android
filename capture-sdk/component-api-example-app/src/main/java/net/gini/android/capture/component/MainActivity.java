@@ -44,8 +44,6 @@ public class MainActivity extends AppCompatActivity {
     private RuntimePermissionHandler mRuntimePermissionHandler;
     private TextView mTextAppVersion;
     private TextView mTextGiniCaptureSdkVersion;
-    private Spinner mGiniApiTypeSpinner;
-    private GiniApiType mGiniApiType = GiniApiType.BANK;
 
     public static final int RESULT_ERROR = RESULT_FIRST_USER + 1;
     public static final String EXTRA_OUT_ERROR = "EXTRA_OUT_ERROR";
@@ -101,15 +99,12 @@ public class MainActivity extends AppCompatActivity {
         app.clearGiniCaptureNetworkInstances();
         final GiniCapture.Builder builder = GiniCapture.newInstance()
                 .setGiniCaptureNetworkService(
-                        app.getGiniCaptureNetworkService("ComponentAPI",
-                                mGiniApiType)
+                        app.getGiniCaptureNetworkService("ComponentAPI")
                 ).setGiniCaptureNetworkApi(app.getGiniCaptureNetworkApi());
-        if (mGiniApiType == GiniApiType.BANK) {
-            builder.setDocumentImportEnabledFileTypes(DocumentImportEnabledFileTypes.PDF_AND_IMAGES)
-                    .setFileImportEnabled(true)
-                    .setQRCodeScanningEnabled(true)
-                    .setMultiPageEnabled(true);
-        }
+        builder.setDocumentImportEnabledFileTypes(DocumentImportEnabledFileTypes.PDF_AND_IMAGES)
+                .setFileImportEnabled(true)
+                .setQRCodeScanningEnabled(true)
+                .setMultiPageEnabled(true);
         builder.setFlashButtonEnabled(true);
         // Uncomment to turn off the camera flash by default
 //        builder.setFlashOnByDefault(false);
@@ -156,18 +151,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(final View v) {
                 startGiniCapture();
-            }
-        });
-        mGiniApiTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(final AdapterView<?> parent, final View view,
-                    final int position, final long id) {
-                mGiniApiType = GiniApiType.valueOf(mGiniApiTypeSpinner.getSelectedItem().toString());
-            }
-
-            @Override
-            public void onNothingSelected(final AdapterView<?> parent) {
-
             }
         });
     }
@@ -220,7 +203,6 @@ public class MainActivity extends AppCompatActivity {
         mButtonStartGiniCapture = findViewById(R.id.button_start_gini_capture);
         mTextGiniCaptureSdkVersion = findViewById(R.id.text_gini_capture_version);
         mTextAppVersion = findViewById(R.id.text_app_version);
-        mGiniApiTypeSpinner = findViewById(R.id.gini_api_type_spinner);
     }
 
     private void createRuntimePermissionsHandler() {

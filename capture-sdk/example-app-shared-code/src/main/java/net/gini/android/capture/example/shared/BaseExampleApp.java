@@ -73,8 +73,7 @@ public abstract class BaseExampleApp extends MultiDexApplication {
     }
 
     @NonNull
-    public GiniCaptureNetworkService getGiniCaptureNetworkService(@NonNull final String appFlowApiType,
-                                                                  @NonNull final GiniApiType giniApiType) {
+    public GiniCaptureNetworkService getGiniCaptureNetworkService(@NonNull final String appFlowApiType) {
         final String clientId = getClientId();
         final String clientSecret = getClientSecret();
         if (TextUtils.isEmpty(clientId) || TextUtils.isEmpty(clientSecret)) {
@@ -87,14 +86,10 @@ public abstract class BaseExampleApp extends MultiDexApplication {
             final DocumentMetadata documentMetadata = new DocumentMetadata();
             documentMetadata.setBranchId("GCSExampleAndroid");
             documentMetadata.add("AppFlow", appFlowApiType);
-            if (giniApiType == GiniApiType.BANK) {
-                mGiniCaptureNetworkService = GiniCaptureDefaultNetworkService.builder(this)
-                        .setClientCredentials(clientId, clientSecret, "example.com")
-                        .setDocumentMetadata(documentMetadata)
+            mGiniCaptureNetworkService = GiniCaptureDefaultNetworkService.builder(this)
+                    .setClientCredentials(clientId, clientSecret, "example.com")
+                    .setDocumentMetadata(documentMetadata)
                         .build();
-            } else {
-                throw new UnsupportedOperationException("Unknown Gini API type: " + giniApiType);
-            }
         }
         return mGiniCaptureNetworkService;
     }
