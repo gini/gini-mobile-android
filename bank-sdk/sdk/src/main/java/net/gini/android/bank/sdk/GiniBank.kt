@@ -12,8 +12,8 @@ import net.gini.android.capture.requirements.GiniCaptureRequirements
 import net.gini.android.capture.requirements.RequirementsReport
 import net.gini.android.capture.util.CancellationToken
 import net.gini.android.core.api.models.PaymentRequest
-import net.gini.android.core.api.models.ResolvePaymentInput
-import net.gini.android.core.api.models.ResolvedPayment
+import net.gini.android.bank.api.models.ResolvePaymentInput
+import net.gini.android.bank.api.models.ResolvedPayment
 import net.gini.android.bank.sdk.GiniBank.releaseCapture
 import net.gini.android.bank.sdk.GiniBank.setCaptureConfiguration
 import net.gini.android.bank.sdk.GiniBank.startCaptureFlow

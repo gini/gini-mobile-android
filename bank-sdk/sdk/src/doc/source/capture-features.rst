@@ -138,8 +138,6 @@ to your app according to the user's changes.
 The ``amountToPay`` extraction is updated to be the sum of items the user decided to pay. It includes discounts and
 additional charges that might be present on the invoice.
 
-// TODO: update links after Bank API is available
-
 The extractions related to the return assistant are stored in the ``compoundExtractions`` field of the
 ``CaptureResult``. See the Gini Bank API's `documentation
 <https://pay-api.gini.net/documentation/#return-assistant-extractions>`_ to learn about the return assistant's compound
@@ -261,8 +259,6 @@ data extractions as described in the `Sending Feedback <integration.html#sending
 
 Custom Networking Implementation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-// TODO: update links after Bank API is available
 
 If you use your own networking implementation and directly communicate with the Gini Bank API then see `this section
 <https://pay-api.gini.net/documentation/#submitting-feedback-on-extractions>`_ in its documentation on how to send

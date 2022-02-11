@@ -166,8 +166,6 @@ Sending Feedback
 Your app should send feedback for the extractions the Gini Bank API delivered. Feedback should be sent *only* for the
 extractions the user has seen and accepted (or corrected).
 
-// TODO: update links after Bank API is available
-
 For additional information about feedback see the `Gini Bank API documentation
 <https://pay-api.gini.net/documentation/#send-feedback-and-get-even-better-extractions-next-time>`_.
 
@@ -223,8 +221,6 @@ The example below shows how to correct extractions and send feedback using the d
 
 Custom Implementation
 ^^^^^^^^^^^^^^^^^^^^^
-
-// TODO: update links after Bank API is available
 
 If you use your own networking implementation and directly communicate with the Gini Bank API then see `this section
 <https://pay-api.gini.net/documentation/#submitting-feedback-on-extractions>`_ in its documentation on how to send

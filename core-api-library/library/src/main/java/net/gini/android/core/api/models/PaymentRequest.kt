@@ -4,7 +4,7 @@ import java.util.*
 import net.gini.android.core.api.response.PaymentRequestResponse
 
 data class PaymentRequest(
-    val paymentProviderId: String,
+    val paymentProviderId: String?,
     val requesterUri: String?,
     val recipient: String,
     val iban: String,

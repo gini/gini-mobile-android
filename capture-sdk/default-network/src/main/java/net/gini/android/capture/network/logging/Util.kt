@@ -3,7 +3,7 @@ package net.gini.android.capture.network.logging
 import com.android.volley.VolleyError
 import net.gini.android.bank.api.BuildConfig
 import net.gini.android.capture.logging.ErrorLog
-import net.gini.android.core.api.requests.ErrorEvent
+import net.gini.android.bank.api.requests.ErrorEvent
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.nio.charset.Charset

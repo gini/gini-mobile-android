@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import net.gini.android.core.api.models.PaymentRequest
-import net.gini.android.core.api.models.ResolvePaymentInput
+import net.gini.android.bank.api.models.ResolvePaymentInput
 import net.gini.android.bank.sdk.screenapiexample.databinding.ActivityPayBinding
 import net.gini.android.bank.sdk.screenapiexample.util.ResultWrapper
 import net.gini.android.bank.sdk.pay.getRequestId

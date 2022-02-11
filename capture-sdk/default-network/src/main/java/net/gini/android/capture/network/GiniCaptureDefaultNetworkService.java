@@ -33,7 +33,7 @@ import net.gini.android.capture.network.model.ReturnReasonsMapper;
 import net.gini.android.capture.network.model.SpecificExtractionMapper;
 import net.gini.android.capture.util.CancellationToken;
 import net.gini.android.capture.util.NoOpCancellationToken;
-import net.gini.android.core.api.models.ExtractionsContainer;
+import net.gini.android.bank.api.models.ExtractionsContainer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

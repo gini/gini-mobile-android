@@ -9,8 +9,8 @@ import net.gini.android.bank.sdk.GiniBank;
 import net.gini.android.bank.sdk.screenapiexample.util.ResultWrapper;
 import net.gini.android.bank.sdk.util.CoroutineContinuationHelper;
 import net.gini.android.core.api.models.PaymentRequest;
-import net.gini.android.core.api.models.ResolvePaymentInput;
-import net.gini.android.core.api.models.ResolvedPayment;
+import net.gini.android.bank.api.models.ResolvePaymentInput;
+import net.gini.android.bank.api.models.ResolvedPayment;
 
 import kotlinx.coroutines.flow.MutableStateFlow;
 import kotlinx.coroutines.flow.StateFlow;

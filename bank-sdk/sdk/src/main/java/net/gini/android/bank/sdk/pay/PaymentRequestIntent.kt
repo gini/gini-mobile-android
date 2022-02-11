@@ -2,7 +2,7 @@ package net.gini.android.bank.sdk.pay
 
 import android.content.Intent
 import android.net.Uri
-import net.gini.android.core.api.models.ResolvedPayment
+import net.gini.android.bank.api.models.ResolvedPayment
 
 internal const val Scheme = "ginipay" // It has to match the scheme in query tag in manifest
 private const val PaymentPath = "payment"
