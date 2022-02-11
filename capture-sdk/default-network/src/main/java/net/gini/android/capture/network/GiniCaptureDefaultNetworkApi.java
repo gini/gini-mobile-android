@@ -7,7 +7,7 @@ import androidx.annotation.NonNull;
 
 import com.android.volley.VolleyError;
 
-import net.gini.android.core.api.DocumentTaskManager;
+import net.gini.android.bank.api.BankApiDocumentTaskManager;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.internal.camera.api.UIExecutor;
 import net.gini.android.capture.logging.ErrorLog;
@@ -71,7 +71,7 @@ public class GiniCaptureDefaultNetworkApi implements GiniCaptureNetworkApi {
     @Override
     public void sendFeedback(@NonNull final Map<String, GiniCaptureSpecificExtraction> extractions,
                              @NonNull final GiniCaptureNetworkCallback<Void, Error> callback) {
-        final DocumentTaskManager documentTaskManager = mDefaultNetworkService.getGiniApi()
+        final BankApiDocumentTaskManager documentTaskManager = mDefaultNetworkService.getGiniApi()
                 .getDocumentTaskManager();
         final net.gini.android.core.api.models.Document document =
                 mDefaultNetworkService.getAnalyzedGiniApiDocument();
