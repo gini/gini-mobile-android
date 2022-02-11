@@ -22,8 +22,6 @@ the Gini Vision Library did.
 Gini Bank API Library
 --------------------
 
-// TODO: update links after Bank API is available
-
 The `Gini Bank API Library <https://github.com/gini/gini-mobile-android/tree/main/bank-api-library>`_ supersedes the Gini API SDK and is used
 to communicate with the `Gini Bank API <https://pay-api.gini.net/documentation/#gini-pay-api-documentation-v1-0>`_.
 
