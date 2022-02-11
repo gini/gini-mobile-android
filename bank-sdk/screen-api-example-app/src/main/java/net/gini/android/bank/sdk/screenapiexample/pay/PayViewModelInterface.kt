@@ -4,8 +4,8 @@ import android.content.Context
 import kotlinx.coroutines.flow.StateFlow
 import net.gini.android.bank.sdk.screenapiexample.util.ResultWrapper
 import net.gini.android.core.api.models.PaymentRequest
-import net.gini.android.core.api.models.ResolvePaymentInput
-import net.gini.android.core.api.models.ResolvedPayment
+import net.gini.android.bank.api.models.ResolvePaymentInput
+import net.gini.android.bank.api.models.ResolvedPayment
 
 /**
  * Created by Alpár Szotyori on 19.01.22.

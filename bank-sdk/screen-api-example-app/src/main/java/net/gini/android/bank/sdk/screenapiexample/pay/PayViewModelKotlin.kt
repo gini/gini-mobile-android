@@ -7,8 +7,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import net.gini.android.core.api.models.PaymentRequest
-import net.gini.android.core.api.models.ResolvePaymentInput
-import net.gini.android.core.api.models.ResolvedPayment
+import net.gini.android.bank.api.models.ResolvePaymentInput
+import net.gini.android.bank.api.models.ResolvedPayment
 import net.gini.android.bank.sdk.screenapiexample.util.ResultWrapper
 import net.gini.android.bank.sdk.screenapiexample.util.wrapToResult
 import net.gini.android.bank.sdk.GiniBank
