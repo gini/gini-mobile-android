@@ -16,7 +16,7 @@ class PayActivity : AppCompatActivity() {
 
     // Replace PayViewModelKotlin with PayViewModelJava to try out
     // using the GiniBank suspending functions from Java
-    private val viewModel: PayViewModelJava by viewModel()
+    private val viewModel: PayViewModelKotlin by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,6 +57,7 @@ class PayActivity : AppCompatActivity() {
                     }
                     is ResultWrapper.Error -> {
                         Toast.makeText(this@PayActivity, result.error.message, Toast.LENGTH_LONG).show()
+                        binding.enablePaymentDetails()
                     }
                     is ResultWrapper.Loading -> {
                     }
@@ -82,7 +83,7 @@ class PayActivity : AppCompatActivity() {
     private fun ActivityPayBinding.setPaymentDetails(paymentRequest: PaymentRequest) {
         recipient.setText(paymentRequest.recipient)
         iban.setText(paymentRequest.iban)
-        amount.setText(paymentRequest.amount)
+        amount.setText(paymentRequest.amount.filter { it.isDigit() || it == '.' || it == ',' })
         purpose.setText(paymentRequest.purpose)
     }
 
@@ -91,6 +92,13 @@ class PayActivity : AppCompatActivity() {
         iban.isEnabled = false
         amount.isEnabled = false
         purpose.isEnabled = false
+    }
+
+    private fun ActivityPayBinding.enablePaymentDetails() {
+        recipient.isEnabled = true
+        iban.isEnabled = true
+        amount.isEnabled = true
+        purpose.isEnabled = true
     }
 
     private fun ActivityPayBinding.getPaymentDetails(): ResolvePaymentInput = ResolvePaymentInput(
