@@ -1,5 +1,7 @@
 $dokka.format:html-v1
 $dokka.linkExtension:html
+$dokka.location:kotlin/AmountParsingException/getCause/#/PointingToDeclaration/sdk/net.gini.android.bank.sdk.error/-amount-parsing-exception/get-cause.html
+$dokka.location:kotlin/AmountParsingException/getMessage/#/PointingToDeclaration/sdk/net.gini.android.bank.sdk.error/-amount-parsing-exception/get-message.html
 $dokka.location:kotlin/DigitalInvoiceException/getCause/#/PointingToDeclaration/sdk/net.gini.android.bank.sdk.capture.digitalinvoice/-digital-invoice-exception/get-cause.html
 $dokka.location:kotlin/DigitalInvoiceException/getMessage/#/PointingToDeclaration/sdk/net.gini.android.bank.sdk.capture.digitalinvoice/-digital-invoice-exception/get-message.html
 $dokka.location:kotlin/PaymentRequest.Status/getName/#/PointingToDeclaration/sdk/net.gini.android.core.api.models/-payment-request/-status/get-name.html
@@ -264,6 +266,9 @@ $dokka.location:net.gini.android.bank.sdk.capture/ResultError.FileImport/ResultE
 $dokka.location:net.gini.android.bank.sdk.capture/ResultError.FileImport/getCode/#/PointingToDeclaration/sdk/net.gini.android.bank.sdk.capture/-result-error/-file-import/get-code.html
 $dokka.location:net.gini.android.bank.sdk.capture/ResultError.FileImport/getMessage/#/PointingToDeclaration/sdk/net.gini.android.bank.sdk.capture/-result-error/-file-import/get-message.html
 $dokka.location:net.gini.android.bank.sdk.capture/ResultError///PointingToDeclaration/sdk/net.gini.android.bank.sdk.capture/-result-error/index.html
+$dokka.location:net.gini.android.bank.sdk.error////PointingToDeclaration/sdk/net.gini.android.bank.sdk.error/index.html
+$dokka.location:net.gini.android.bank.sdk.error/AmountParsingException///PointingToDeclaration/sdk/net.gini.android.bank.sdk.error/-amount-parsing-exception/index.html
+$dokka.location:net.gini.android.bank.sdk.error/AmountParsingException/AmountParsingException/#kotlin.String/PointingToDeclaration/sdk/net.gini.android.bank.sdk.error/-amount-parsing-exception/-amount-parsing-exception.html
 $dokka.location:net.gini.android.bank.sdk.network////PointingToDeclaration/sdk/net.gini.android.bank.sdk.network/index.html
 $dokka.location:net.gini.android.bank.sdk.network/DefaultNetworkKt///PointingToDeclaration/sdk/net.gini.android.bank.sdk.network/-default-network-kt/index.html
 $dokka.location:net.gini.android.bank.sdk.network/DefaultNetworkKt/getDefaultNetworkApi/#net.gini.android.capture.network.GiniCaptureDefaultNetworkService/PointingToDeclaration/sdk/net.gini.android.bank.sdk.network/-default-network-kt/get-default-network-api.html
@@ -1394,6 +1399,7 @@ net.gini.android.bank.sdk.capture.digitalinvoice
 net.gini.android.bank.sdk.capture.digitalinvoice.details
 net.gini.android.bank.sdk.capture.digitalinvoice.onboarding
 net.gini.android.bank.sdk.capture.util
+net.gini.android.bank.sdk.error
 net.gini.android.bank.sdk.network
 net.gini.android.bank.sdk.pay
 net.gini.android.bank.sdk.util
