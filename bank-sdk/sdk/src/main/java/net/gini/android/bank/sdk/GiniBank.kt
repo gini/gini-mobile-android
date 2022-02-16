@@ -22,8 +22,10 @@ import net.gini.android.bank.sdk.capture.CaptureConfiguration
 import net.gini.android.bank.sdk.capture.CaptureImportInput
 import net.gini.android.bank.sdk.capture.applyConfiguration
 import net.gini.android.bank.sdk.capture.util.getImportFileCallback
+import net.gini.android.bank.sdk.error.AmountParsingException
 import net.gini.android.bank.sdk.pay.getBusinessIntent
 import net.gini.android.bank.sdk.pay.getRequestId
+import net.gini.android.bank.sdk.util.parseAmountToBackendFormat
 
 /**
  * Api for interacting with Capture and Payment features.
@@ -158,15 +160,19 @@ object GiniBank {
     /**
      * Marks the a [PaymentRequest] as paid.
      *
+     * **Important**: The amount string in the [ResolvePaymentInput] must be convertible to a [Double].
+     * For ex. "12.39" is valid, but "12.39 €" or "12,39" are not valid.
+     *
      * @param requestId id of [PaymentRequest] to be resolved.
      * @param resolvePaymentInput the details used for the actual payment.
      * @return [ResolvedPayment] containing the payment details and the Uri used for returning to the Business app.
      * @throws Throwable This method makes a network call which may fail, the resulting throwable is not caught and a type is not guaranteed.
+     * @throws AmountParsingException If the amount string could not be parsed
      */
     suspend fun resolvePaymentRequest(requestId: String, resolvePaymentInput: ResolvePaymentInput): ResolvedPayment {
         val api = giniApi
         check(api != null) { "Gini Api is not set" }
-        return api.documentManager.resolvePaymentRequest(requestId, resolvePaymentInput)
+        return api.documentManager.resolvePaymentRequest(requestId, resolvePaymentInput.copy(amount = resolvePaymentInput.parseAmountToBackendFormat()))
     }
 
     /**
