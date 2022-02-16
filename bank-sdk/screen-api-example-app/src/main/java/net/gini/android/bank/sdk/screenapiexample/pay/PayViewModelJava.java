@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 
 import net.gini.android.bank.sdk.GiniBank;
+import net.gini.android.bank.sdk.error.AmountParsingException;
 import net.gini.android.bank.sdk.screenapiexample.util.ResultWrapper;
 import net.gini.android.bank.sdk.util.CoroutineContinuationHelper;
 import net.gini.android.core.api.models.PaymentRequest;
@@ -72,22 +73,26 @@ public class PayViewModelJava extends ViewModel implements PayViewModelInterface
 
     public void onPay(@NonNull final ResolvePaymentInput paymentDetails) {
         if (requestId != null) {
-            giniBank.resolvePaymentRequest(requestId, paymentDetails, CoroutineContinuationHelper.callbackContinuation(new CoroutineContinuationHelper.ContinuationCallback<ResolvedPayment>() {
-                @Override
-                public void onFinished(ResolvedPayment result) {
-                    _paymentState.setValue(new ResultWrapper.Success<>(result));
-                }
+            try {
+                giniBank.resolvePaymentRequest(requestId, paymentDetails, CoroutineContinuationHelper.callbackContinuation(new CoroutineContinuationHelper.ContinuationCallback<ResolvedPayment>() {
+                    @Override
+                    public void onFinished(ResolvedPayment result) {
+                        _paymentState.setValue(new ResultWrapper.Success<>(result));
+                    }
 
-                @Override
-                public void onFailed(@NonNull Throwable error) {
-                    _paymentState.setValue(new ResultWrapper.Error<>(error));
-                }
+                    @Override
+                    public void onFailed(@NonNull Throwable error) {
+                        _paymentState.setValue(new ResultWrapper.Error<>(error));
+                    }
 
-                @Override
-                public void onCancelled() {
+                    @Override
+                    public void onCancelled() {
 
-                }
-            }));
+                    }
+                }));
+            } catch (final Exception exception) {
+                _paymentState.setValue(new ResultWrapper.Error<>(exception));
+            }
         }
     }
 
