@@ -37,6 +37,9 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
+        // required to prevent .kotlin_module file name collisions
+        // https://stackoverflow.com/a/56329676/276129
+        moduleName = "${properties["groupId"]}.${properties["artifactId"]}"
     }
 }
 
