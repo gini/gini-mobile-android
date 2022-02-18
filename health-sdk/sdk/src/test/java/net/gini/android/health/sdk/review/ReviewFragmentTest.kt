@@ -11,9 +11,10 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import net.gini.android.health.sdk.R
-import org.junit.After
+import net.gini.android.health.sdk.review.bank.BankApp
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -28,8 +29,8 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class ReviewFragmentTest {
 
-    private var viewModel: ReviewViewModel? = null
-    private var viewModelFactory: ViewModelProvider.Factory? = null
+    private lateinit var viewModel: ReviewViewModel
+    private lateinit var viewModelFactory: ViewModelProvider.Factory
 
     @Before
     fun setup() {
@@ -38,26 +39,30 @@ class ReviewFragmentTest {
         viewModelFactory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 @Suppress("UNCHECKED_CAST")
-                return viewModel!! as T
+                return viewModel as T
             }
         }
-    }
-
-    @After
-    fun tearDown() {
-        viewModel = null
     }
 
     @Test
     fun `calls onNextClicked() listener when 'Next' ('Pay') button is clicked`() {
         // Given
-        every { viewModel!!.isPaymentButtonEnabled } returns flowOf(true)
+        every { viewModel.isPaymentButtonEnabled } returns flowOf(true)
+        every { viewModel.selectedBank } returns MutableStateFlow(BankApp(
+            name = "",
+            packageName = "",
+            version = "",
+            colors = mockk(relaxed = true),
+            paymentProvider = mockk(relaxed = true),
+            launchIntent = mockk(relaxed = true),
+            icon = null
+        ))
 
         val listener = mockk<ReviewFragmentListener>(relaxed = true)
         launchFragmentInContainer(themeResId = R.style.Root_GiniHealth) {
             ReviewFragment(giniHealth = mockk(relaxed = true),
                 listener = listener,
-                viewModelFactory = viewModelFactory!!)
+                viewModelFactory = viewModelFactory)
         }
 
         // When
@@ -65,7 +70,42 @@ class ReviewFragmentTest {
 
         // Then
         verify {
-           listener.onNextClicked()
+           listener.onNextClicked(any())
+        }
+    }
+
+    @Test
+    fun `passes selected payment provider name to onNextClicked() listener`() {
+        // Given
+        every { viewModel.isPaymentButtonEnabled } returns flowOf(true)
+
+        val paymentProviderName = "Test Bank App"
+
+        every { viewModel.selectedBank } returns MutableStateFlow(BankApp(
+            name = paymentProviderName,
+            packageName = "",
+            version = "",
+            colors = mockk(relaxed = true),
+            paymentProvider = mockk(relaxed = true),
+            launchIntent = mockk(relaxed = true),
+            icon = null
+        ))
+
+        val listener = mockk<ReviewFragmentListener>(relaxed = true)
+        launchFragmentInContainer(themeResId = R.style.Root_GiniHealth) {
+            ReviewFragment(
+                giniHealth = mockk(relaxed = true),
+                listener = listener,
+                viewModelFactory = viewModelFactory
+            )
+        }
+
+        // When
+        onView(withId(R.id.payment)).perform(click())
+
+        // Then
+        verify {
+            listener.onNextClicked(cmpEq(paymentProviderName))
         }
     }
 

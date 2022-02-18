@@ -67,8 +67,10 @@ interface ReviewFragmentListener {
      *
      * Collect the [GiniHealth.openBankState] flow to get details about the payment request creation and about the
      * selected bank app.
+     *
+     * @param paymentProviderName the name of the selected payment provider
      */
-    fun onNextClicked()
+    fun onNextClicked(paymentProviderName: String)
 }
 
 /**
@@ -327,7 +329,7 @@ class ReviewFragment(
     private fun GhsFragmentReviewBinding.setActionListeners() {
         paymentDetails.setOnClickListener { it.hideKeyboard() }
         payment.setOnClickListener {
-            listener?.onNextClicked()
+            listener?.onNextClicked(viewModel.selectedBank.value?.name ?: "")
             viewModel.onPayment()
         }
         close.setOnClickListener { view ->
