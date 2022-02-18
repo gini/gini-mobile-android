@@ -189,7 +189,7 @@ $dokka.location:net.gini.android.core.api.models/PaymentRequest.Status.OPEN///Po
 $dokka.location:net.gini.android.core.api.models/PaymentRequest.Status.PAID///PointingToDeclaration/sdk/net.gini.android.core.api.models/-payment-request/-status/-p-a-i-d/index.html
 $dokka.location:net.gini.android.core.api.models/PaymentRequest.Status///PointingToDeclaration/sdk/net.gini.android.core.api.models/-payment-request/-status/index.html
 $dokka.location:net.gini.android.core.api.models/PaymentRequest///PointingToDeclaration/sdk/net.gini.android.core.api.models/-payment-request/index.html
-$dokka.location:net.gini.android.core.api.models/PaymentRequest/PaymentRequest/#kotlin.String#kotlin.String?#kotlin.String#kotlin.String#kotlin.String?#kotlin.String#kotlin.String#net.gini.android.core.api.models.PaymentRequest.Status/PointingToDeclaration/sdk/net.gini.android.core.api.models/-payment-request/-payment-request.html
+$dokka.location:net.gini.android.core.api.models/PaymentRequest/PaymentRequest/#kotlin.String?#kotlin.String?#kotlin.String#kotlin.String#kotlin.String?#kotlin.String#kotlin.String#net.gini.android.core.api.models.PaymentRequest.Status/PointingToDeclaration/sdk/net.gini.android.core.api.models/-payment-request/-payment-request.html
 $dokka.location:net.gini.android.core.api.models/PaymentRequest/getAmount/#/PointingToDeclaration/sdk/net.gini.android.core.api.models/-payment-request/get-amount.html
 $dokka.location:net.gini.android.core.api.models/PaymentRequest/getBic/#/PointingToDeclaration/sdk/net.gini.android.core.api.models/-payment-request/get-bic.html
 $dokka.location:net.gini.android.core.api.models/PaymentRequest/getIban/#/PointingToDeclaration/sdk/net.gini.android.core.api.models/-payment-request/get-iban.html
@@ -232,7 +232,7 @@ $dokka.location:net.gini.android.core.api.requests/RetryPolicyFactory///Pointing
 $dokka.location:net.gini.android.core.api.requests/RetryPolicyFactory/newRetryPolicy/#/PointingToDeclaration/sdk/net.gini.android.core.api.requests/-retry-policy-factory/new-retry-policy.html
 $dokka.location:net.gini.android.core.api.response////PointingToDeclaration/sdk/net.gini.android.core.api.response/index.html
 $dokka.location:net.gini.android.core.api.response/PaymentRequestResponse///PointingToDeclaration/sdk/net.gini.android.core.api.response/-payment-request-response/index.html
-$dokka.location:net.gini.android.core.api.response/PaymentRequestResponse/PaymentRequestResponse/#kotlin.String#kotlin.String?#kotlin.String#kotlin.String#kotlin.String?#kotlin.String#kotlin.String#kotlin.String/PointingToDeclaration/sdk/net.gini.android.core.api.response/-payment-request-response/-payment-request-response.html
+$dokka.location:net.gini.android.core.api.response/PaymentRequestResponse/PaymentRequestResponse/#kotlin.String?#kotlin.String?#kotlin.String#kotlin.String#kotlin.String?#kotlin.String#kotlin.String#kotlin.String/PointingToDeclaration/sdk/net.gini.android.core.api.response/-payment-request-response/-payment-request-response.html
 $dokka.location:net.gini.android.core.api.response/PaymentRequestResponse/getAmount/#/PointingToDeclaration/sdk/net.gini.android.core.api.response/-payment-request-response/get-amount.html
 $dokka.location:net.gini.android.core.api.response/PaymentRequestResponse/getBic/#/PointingToDeclaration/sdk/net.gini.android.core.api.response/-payment-request-response/get-bic.html
 $dokka.location:net.gini.android.core.api.response/PaymentRequestResponse/getIban/#/PointingToDeclaration/sdk/net.gini.android.core.api.response/-payment-request-response/get-iban.html
@@ -481,7 +481,7 @@ $dokka.location:net.gini.android.health.sdk.review/ReviewFragment/onCreateView/#
 $dokka.location:net.gini.android.health.sdk.review/ReviewFragment/onViewCreated/#android.view.View#android.os.Bundle?/PointingToDeclaration/sdk/net.gini.android.health.sdk.review/-review-fragment/on-view-created.html
 $dokka.location:net.gini.android.health.sdk.review/ReviewFragmentListener///PointingToDeclaration/sdk/net.gini.android.health.sdk.review/-review-fragment-listener/index.html
 $dokka.location:net.gini.android.health.sdk.review/ReviewFragmentListener/onCloseReview/#/PointingToDeclaration/sdk/net.gini.android.health.sdk.review/-review-fragment-listener/on-close-review.html
-$dokka.location:net.gini.android.health.sdk.review/ReviewFragmentListener/onNextClicked/#/PointingToDeclaration/sdk/net.gini.android.health.sdk.review/-review-fragment-listener/on-next-clicked.html
+$dokka.location:net.gini.android.health.sdk.review/ReviewFragmentListener/onNextClicked/#kotlin.String/PointingToDeclaration/sdk/net.gini.android.health.sdk.review/-review-fragment-listener/on-next-clicked.html
 $dokka.location:net.gini.android.health.sdk.util////PointingToDeclaration/sdk/net.gini.android.health.sdk.util/index.html
 $dokka.location:net.gini.android.health.sdk.util/GiniHealthAPIKt///PointingToDeclaration/sdk/net.gini.android.health.sdk.util/-gini-health-a-p-i-kt/index.html
 $dokka.location:net.gini.android.health.sdk.util/GiniHealthAPIKt/getGiniApi/#android.content.Context#kotlin.String#kotlin.String#kotlin.String/PointingToDeclaration/sdk/net.gini.android.health.sdk.util/-gini-health-a-p-i-kt/get-gini-api.html
