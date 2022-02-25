@@ -346,8 +346,17 @@ public class GiniCaptureDefaultNetworkService implements GiniCaptureNetworkServi
         return true;
     }
 
+    /**
+     * Call this method to retrieve the document which was created when the user uploaded an image or a pdf for
+     * analysis.
+     * <p>
+     * You should call this method only after the Gini Capture SDK returned the extraction results and before
+     * you call {@link GiniCaptureDefaultNetworkService#cleanup()} or {@link GiniCapture#cleanup(Context)}.
+     *
+     * @return the last analyzed Gini Bank API {@link net.gini.android.core.api.models.Document}
+     */
     @Nullable
-    net.gini.android.core.api.models.Document getAnalyzedGiniApiDocument() {
+    public net.gini.android.core.api.models.Document getAnalyzedGiniApiDocument() {
         return mAnalyzedGiniApiDocument;
     }
 

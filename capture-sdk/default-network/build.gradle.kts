@@ -48,8 +48,12 @@ dependencies {
     implementation(libs.androidx.annotation)
 
     testImplementation(libs.junit)
+    testImplementation(libs.mockk)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.turbine)
+    testImplementation(libs.androidx.test.junit)
+    testImplementation(libs.robolectric)
     testImplementation(libs.truth)
-    testImplementation(libs.mockito.core)
 
     androidTestImplementation(libs.moshi.core)
     kaptAndroidTest(libs.moshi.codegen)
