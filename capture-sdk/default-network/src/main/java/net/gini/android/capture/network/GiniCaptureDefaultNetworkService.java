@@ -60,8 +60,8 @@ import bolts.Task;
 /**
  * Default implementation of the network related tasks required by the Gini Capture SDK.
  *
- * <p> Relies on the <a href="http://developer.gini.net/gini-pay-api-lib-android/">Gini Bank API lib</a> for
- * executing the requests, which implements communication with the Gini API using generated
+ * <p> Relies on the <a href="https://developer.gini.net/gini-mobile-android/bank-api-library/library/html/">Gini Bank API Library</a> for
+ * executing the requests, which implements communication with the Gini Bank API using generated
  * anonymous Gini users.
  *
  * <p><b>Important:</b> Access to the Gini User Center API is required which is restricted to
