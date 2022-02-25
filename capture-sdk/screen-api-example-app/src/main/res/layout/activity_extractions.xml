@@ -5,12 +5,25 @@
     android:layout_height="match_parent"
     tools:context="net.gini.android.capture.screen.ExtractionsActivity">
 
+    <TextView
+        android:id="@+id/text_document_id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:paddingTop="10dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        tools:text="Analyzed Gini Bank API Document ID: asdadsasd-asdadsasd-asdadsasd-asdadsasd-asdadsasd"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerview_extractions"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="vertical"
-        tools:listitem="@layout/item_extraction" />
+        tools:listitem="@layout/item_extraction"
+        android:layout_below="@id/text_document_id"/>
 
     <LinearLayout
         android:id="@+id/layout_progress"
