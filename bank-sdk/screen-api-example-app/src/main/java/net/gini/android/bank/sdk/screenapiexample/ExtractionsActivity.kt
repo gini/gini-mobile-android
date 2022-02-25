@@ -16,6 +16,10 @@ import net.gini.android.capture.network.GiniCaptureNetworkCallback
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.bank.sdk.screenapiexample.R
 import net.gini.android.bank.sdk.screenapiexample.databinding.ActivityExtractionsBinding
+import net.gini.android.capture.network.GiniCaptureDefaultNetworkApi
+import net.gini.android.capture.network.GiniCaptureDefaultNetworkService
+import net.gini.android.capture.network.GiniCaptureNetworkService
+import org.koin.android.ext.android.inject
 
 /**
  * Displays the Pay5 extractions: paymentRecipient, iban, bic, amount and paymentReference.
@@ -28,13 +32,20 @@ class ExtractionsActivity : AppCompatActivity() {
 
     private var mExtractions: MutableMap<String, GiniCaptureSpecificExtraction> = hashMapOf()
     private lateinit var mExtractionsAdapter: ExtractionsAdapter
+    private val defaultNetworkService: GiniCaptureDefaultNetworkService by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityExtractionsBinding.inflate(layoutInflater)
         setContentView(binding.root)
         readExtras()
+        showAnalyzedDocumentId()
         setUpRecyclerView(binding)
+    }
+
+    private fun showAnalyzedDocumentId() {
+        val documentId = defaultNetworkService.analyzedGiniApiDocument?.id ?: ""
+        binding.textDocumentId.text = getString(R.string.analyzed_document_id, documentId)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
