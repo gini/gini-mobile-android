@@ -87,7 +87,7 @@ tasks.register<CreatePropertiesTask>("injectTestProperties") {
 }
 
 afterEvaluate {
-    tasks.filter { it.name.endsWith("test", ignoreCase = true) }.forEach {
+    tasks.filter { it.name.endsWith("androidTest", ignoreCase = true) }.forEach {
         it.dependsOn(tasks.getByName("injectTestProperties"))
     }
 }
