@@ -14,8 +14,8 @@ import androidx.annotation.XmlRes;
 import com.android.volley.Cache;
 import com.android.volley.VolleyError;
 
+import net.gini.android.bank.api.BankApiDocumentTaskManager;
 import net.gini.android.core.api.DocumentMetadata;
-import net.gini.android.core.api.DocumentTaskManager;
 import net.gini.android.bank.api.GiniBankAPI;
 import net.gini.android.bank.api.GiniBankAPIBuilder;
 import net.gini.android.core.api.authorization.CredentialsStore;
@@ -119,7 +119,7 @@ public class GiniCaptureDefaultNetworkService implements GiniCaptureNetworkServi
             callback.failure(error);
             return new NoOpCancellationToken();
         }
-        final DocumentTaskManager documentTaskManager = mGiniApi.getDocumentTaskManager();
+        final BankApiDocumentTaskManager documentTaskManager = mGiniApi.getDocumentTaskManager();
         final Task<net.gini.android.core.api.models.Document> createDocumentTask;
         if (mDocumentMetadata != null) {
             createDocumentTask = documentTaskManager.createPartialDocument(document.getData(),
