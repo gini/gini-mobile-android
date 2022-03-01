@@ -149,6 +149,9 @@ You can call ``GiniCaptureDefaultNetworkService.getAnalyzedGiniApiDocument()`` a
 extractions to your application. It returns the Gini Bank API document which was created when the user uploaded an
 image or pdf for analysis.
 
+When extractions were retrieved without using the Gini Bank API, then it will return ``null``. For example when the
+extractions came from an EPS QR Code.
+
 .. note::
 
     Make sure to call it before calling ``GiniCaptureDefaultNetworkService.cleanup()`` or ``GiniBank.releaseCapture()``.
