@@ -350,6 +350,9 @@ public class GiniCaptureDefaultNetworkService implements GiniCaptureNetworkServi
      * Call this method to retrieve the document which was created when the user uploaded an image or a pdf for
      * analysis.
      * <p>
+     * It returns `null` when extractions were retrieved without using the Gini Bank API.
+     * For example when the extractions came from an EPS QR code.
+     * <p>
      * You should call this method only after the Gini Capture SDK returned the extraction results and before
      * you call {@link GiniCaptureDefaultNetworkService#cleanup()} or {@link GiniCapture#cleanup(Context)}.
      *
