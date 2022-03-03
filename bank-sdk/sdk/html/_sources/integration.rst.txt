@@ -142,6 +142,21 @@ For all configuration options of the default networking implementation see the d
 and `GiniCaptureDefaultNetworkApi.Builder
 <https://developer.gini.net/gini-mobile-android/capture-sdk/default-network/dokka/default-network/net.gini.android.capture.network/-gini-capture-default-network-api/-builder/index.html>`_.
 
+Retrieve the Analyzed Document
+++++++++++++++++++++++++++++++
+
+You can call ``GiniCaptureDefaultNetworkService.getAnalyzedGiniApiDocument()`` after the Gini Bank SDK has returned
+extractions to your application. It returns the Gini Bank API document which was created when the user uploaded an
+image or pdf for analysis.
+
+When extractions were retrieved without using the Gini Bank API, then it will return ``null``. For example when the
+extractions came from an EPS QR Code.
+
+.. note::
+
+    Make sure to call it before calling ``GiniCaptureDefaultNetworkService.cleanup()`` or ``GiniBank.releaseCapture()``.
+    Otherwise the analyzed document won't be available anymore.
+
 Custom Implementation
 ^^^^^^^^^^^^^^^^^^^^^
 

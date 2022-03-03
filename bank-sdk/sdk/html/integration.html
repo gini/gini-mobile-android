@@ -296,6 +296,19 @@ them. Without credentials you won’t be able to use the Gini Bank API.</p>
 <p>For all configuration options of the default networking implementation see the documentation of
 <a class="reference external" href="https://developer.gini.net/gini-mobile-android/capture-sdk/default-network/dokka/default-network/net.gini.android.capture.network/-gini-capture-default-network-service/-builder/index.html">GiniCaptureDefaultNetworkService.Builder</a>
 and <a class="reference external" href="https://developer.gini.net/gini-mobile-android/capture-sdk/default-network/dokka/default-network/net.gini.android.capture.network/-gini-capture-default-network-api/-builder/index.html">GiniCaptureDefaultNetworkApi.Builder</a>.</p>
+<div class="section" id="retrieve-the-analyzed-document">
+<h5>Retrieve the Analyzed Document<a class="headerlink" href="#retrieve-the-analyzed-document" title="Permalink to this headline">¶</a></h5>
+<p>You can call <code class="docutils literal notranslate"><span class="pre">GiniCaptureDefaultNetworkService.getAnalyzedGiniApiDocument()</span></code> after the Gini Bank SDK has returned
+extractions to your application. It returns the Gini Bank API document which was created when the user uploaded an
+image or pdf for analysis.</p>
+<p>When extractions were retrieved without using the Gini Bank API, then it will return <code class="docutils literal notranslate"><span class="pre">null</span></code>. For example when the
+extractions came from an EPS QR Code.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Make sure to call it before calling <code class="docutils literal notranslate"><span class="pre">GiniCaptureDefaultNetworkService.cleanup()</span></code> or <code class="docutils literal notranslate"><span class="pre">GiniBank.releaseCapture()</span></code>.
+Otherwise the analyzed document won’t be available anymore.</p>
+</div>
+</div>
 </div>
 <div class="section" id="custom-implementation">
 <h4>Custom Implementation<a class="headerlink" href="#custom-implementation" title="Permalink to this headline">¶</a></h4>
