@@ -369,7 +369,7 @@ Library</a>.</p>
 <p>To use it add the <code class="docutils literal notranslate"><span class="pre">gini-capture-network-lib</span></code> dependency to your app’s <code class="docutils literal notranslate"><span class="pre">build.gradle</span></code>:</p>
 <div class="highlight-groovy notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span> <span class="o">{</span>
     <span class="o">...</span>
-    <span class="n">implementation</span> <span class="s1">&#39;net.gini.android:gini-capture-sdk-default-network:1.7.0&#39;</span>
+    <span class="n">implementation</span> <span class="s1">&#39;net.gini.android:gini-capture-sdk-default-network:1.8.0&#39;</span>
 <span class="o">}</span>
 </pre></div>
 </div>
@@ -395,6 +395,19 @@ them to the builder of <code class="docutils literal notranslate"><span class="p
 <a class="reference external" href="https://developer.gini.net/gini-mobile-android/capture-sdk/default-network/dokka/default-network/net.gini.android.capture.network/-gini-capture-default-network-service/-builder/index.html">GiniCaptureDefaultNetworkService.Builder</a>
 and <a class="reference external" href="https://developer.gini.net/gini-mobile-android/capture-sdk/default-network/dokka/default-network/net.gini.android.capture.network/-gini-capture-default-network-api/-builder/index.html">GiniCaptureDefaultNetworkApi.Builder</a>
 for configuration options.</p>
+<div class="section" id="retrieve-the-analyzed-document">
+<h4>Retrieve the Analyzed Document<a class="headerlink" href="#retrieve-the-analyzed-document" title="Permalink to this headline">¶</a></h4>
+<p>You can call <code class="docutils literal notranslate"><span class="pre">GiniCaptureDefaultNetworkService.getAnalyzedGiniApiDocument()</span></code> after the Gini Capture SDK has returned
+extractions to your application. It returns the Gini Bank API document which was created when the user uploaded an
+image or pdf for analysis.</p>
+<p>When extractions were retrieved without using the Gini Bank API, then it will return <code class="docutils literal notranslate"><span class="pre">null</span></code>. For example when the
+extractions came from an EPS QR Code.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Make sure to call it before calling <code class="docutils literal notranslate"><span class="pre">GiniCaptureDefaultNetworkService.cleanup()</span></code> or <code class="docutils literal notranslate"><span class="pre">GiniCapture.cleanup()</span></code>.
+Otherwise the analyzed document won’t be available anymore.</p>
+</div>
+</div>
 </div>
 <div class="section" id="custom-implementation">
 <h3>Custom Implementation<a class="headerlink" href="#custom-implementation" title="Permalink to this headline">¶</a></h3>
