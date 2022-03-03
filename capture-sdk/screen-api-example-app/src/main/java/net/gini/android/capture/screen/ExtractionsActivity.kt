@@ -1,8 +1,13 @@
 package net.gini.android.capture.screen
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -12,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.example.shared.BaseExampleApp
 import net.gini.android.capture.network.Error
+import net.gini.android.capture.network.GiniCaptureDefaultNetworkService
 import net.gini.android.capture.network.GiniCaptureNetworkCallback
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
@@ -37,6 +43,7 @@ class ExtractionsActivity : AppCompatActivity() {
     private var mCompoundExtractions: Map<String, GiniCaptureCompoundExtraction> = HashMap()
     private val mLegacyExtractions: MutableMap<String, SpecificExtraction> = HashMap()
     private var mExtractionsAdapter: ExtractionsAdapter<Any>? = null
+    private lateinit var defaultNetworkService: GiniCaptureDefaultNetworkService
 
     companion object {
         private val LOG = LoggerFactory.getLogger(ExtractionsActivity::class.java)
@@ -47,9 +54,16 @@ class ExtractionsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityExtractionsBinding.inflate(layoutInflater)
+        defaultNetworkService = ((application as BaseExampleApp).getGiniCaptureNetworkService("ScreenAPI") as GiniCaptureDefaultNetworkService)
         setContentView(binding.root)
         readExtras()
+        showAnalyzedDocumentId()
         setUpRecyclerView(binding)
+    }
+
+    private fun showAnalyzedDocumentId() {
+        val documentId = defaultNetworkService.analyzedGiniApiDocument?.id ?: ""
+        binding.textDocumentId.text = getString(R.string.analyzed_document_id, documentId)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

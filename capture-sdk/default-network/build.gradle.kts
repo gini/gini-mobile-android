@@ -4,6 +4,11 @@ plugins {
     id("com.android.library")
     kotlin("android")
     kotlin("kapt")
+    id("com.hiya.jacoco-android")
+}
+
+jacoco {
+    toolVersion = libs.versions.jacoco.get()
 }
 
 android {
@@ -48,8 +53,12 @@ dependencies {
     implementation(libs.androidx.annotation)
 
     testImplementation(libs.junit)
+    testImplementation(libs.mockk)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.turbine)
+    testImplementation(libs.androidx.test.junit)
+    testImplementation(libs.robolectric)
     testImplementation(libs.truth)
-    testImplementation(libs.mockito.core)
 
     androidTestImplementation(libs.moshi.core)
     kaptAndroidTest(libs.moshi.codegen)
@@ -83,7 +92,7 @@ tasks.register<CreatePropertiesTask>("injectTestProperties") {
 }
 
 afterEvaluate {
-    tasks.filter { it.name.endsWith("test", ignoreCase = true) }.forEach {
+    tasks.filter { it.name.endsWith("androidTest", ignoreCase = true) }.forEach {
         it.dependsOn(tasks.getByName("injectTestProperties"))
     }
 }

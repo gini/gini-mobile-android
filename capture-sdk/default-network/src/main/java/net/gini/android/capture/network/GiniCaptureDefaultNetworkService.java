@@ -14,8 +14,8 @@ import androidx.annotation.XmlRes;
 import com.android.volley.Cache;
 import com.android.volley.VolleyError;
 
+import net.gini.android.bank.api.BankApiDocumentTaskManager;
 import net.gini.android.core.api.DocumentMetadata;
-import net.gini.android.core.api.DocumentTaskManager;
 import net.gini.android.bank.api.GiniBankAPI;
 import net.gini.android.bank.api.GiniBankAPIBuilder;
 import net.gini.android.core.api.authorization.CredentialsStore;
@@ -60,8 +60,8 @@ import bolts.Task;
 /**
  * Default implementation of the network related tasks required by the Gini Capture SDK.
  *
- * <p> Relies on the <a href="http://developer.gini.net/gini-pay-api-lib-android/">Gini Bank API lib</a> for
- * executing the requests, which implements communication with the Gini API using generated
+ * <p> Relies on the <a href="https://developer.gini.net/gini-mobile-android/bank-api-library/library/html/">Gini Bank API Library</a> for
+ * executing the requests, which implements communication with the Gini Bank API using generated
  * anonymous Gini users.
  *
  * <p><b>Important:</b> Access to the Gini User Center API is required which is restricted to
@@ -119,7 +119,7 @@ public class GiniCaptureDefaultNetworkService implements GiniCaptureNetworkServi
             callback.failure(error);
             return new NoOpCancellationToken();
         }
-        final DocumentTaskManager documentTaskManager = mGiniApi.getDocumentTaskManager();
+        final BankApiDocumentTaskManager documentTaskManager = mGiniApi.getDocumentTaskManager();
         final Task<net.gini.android.core.api.models.Document> createDocumentTask;
         if (mDocumentMetadata != null) {
             createDocumentTask = documentTaskManager.createPartialDocument(document.getData(),
@@ -346,8 +346,20 @@ public class GiniCaptureDefaultNetworkService implements GiniCaptureNetworkServi
         return true;
     }
 
+    /**
+     * Call this method to retrieve the document which was created when the user uploaded an image or a pdf for
+     * analysis.
+     * <p>
+     * It returns `null` when extractions were retrieved without using the Gini Bank API.
+     * For example when the extractions came from an EPS QR code.
+     * <p>
+     * You should call this method only after the Gini Capture SDK returned the extraction results and before
+     * you call {@link GiniCaptureDefaultNetworkService#cleanup()} or {@link GiniCapture#cleanup(Context)}.
+     *
+     * @return the last analyzed Gini Bank API {@link net.gini.android.core.api.models.Document}
+     */
     @Nullable
-    net.gini.android.core.api.models.Document getAnalyzedGiniApiDocument() {
+    public net.gini.android.core.api.models.Document getAnalyzedGiniApiDocument() {
         return mAnalyzedGiniApiDocument;
     }
 
