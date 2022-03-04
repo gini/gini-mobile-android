@@ -1,7 +1,7 @@
 <resources>
-    <string name="app_name">Component API Example</string>
+    <string name="app_name">Gini Bank SDK (Component API)</string>
     <string name="gini_api_type_label">Gini API Type</string>
-    <string name="start_gini_capture_sdk">Start Gini Bank SDK</string>
+    <string name="start_gini_capture_sdk">Start Gini Bank SDK (Component API)</string>
     <string-array name="gini_api_types">
         <item>DEFAULT</item>
         <item>ACCOUNTING</item>
