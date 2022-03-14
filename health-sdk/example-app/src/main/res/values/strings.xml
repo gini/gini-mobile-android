@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Gini Health SDK Example</string>
+    <string name="app_name">Gini Health SDK</string>
     <string name="take_photo">Take Photo</string>
     <string name="import_file">Import</string>
     <string name="payment">Pay</string>
