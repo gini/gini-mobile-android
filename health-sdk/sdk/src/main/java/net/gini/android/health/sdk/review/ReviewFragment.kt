@@ -267,6 +267,9 @@ class ReviewFragment(
                             ValidationMessage.InvalidIban -> R.string.ghs_error_input_invalid_iban
                             ValidationMessage.AmountFormat -> R.string.ghs_error_input_amount_format
                         })
+                        if (editText?.isFocused == true) {
+                            hideErrorMessage()
+                        }
                     }
                 }
             }
@@ -329,6 +332,7 @@ class ReviewFragment(
     private fun GhsFragmentReviewBinding.setActionListeners() {
         paymentDetails.setOnClickListener { it.hideKeyboard() }
         payment.setOnClickListener {
+            it.hideKeyboard()
             listener?.onNextClicked(viewModel.selectedBank.value?.name ?: "")
             viewModel.onPayment()
         }
