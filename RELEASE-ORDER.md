@@ -15,10 +15,10 @@ Release order for :health-api-library:library 1.2.1:
  1. :core-api-library:library 1.4.2
  2. :health-api-library:library 1.2.1
 
-Release order for :health-sdk:sdk 1.3.0:
+Release order for :health-sdk:sdk 1.3.1:
  1. :core-api-library:library 1.4.2
  2. :health-api-library:library 1.2.1
- 3. :health-sdk:sdk 1.3.0
+ 3. :health-sdk:sdk 1.3.1
 
 Release order for :capture-sdk:default-network 1.8.0:
  1. :core-api-library:library 1.4.2
