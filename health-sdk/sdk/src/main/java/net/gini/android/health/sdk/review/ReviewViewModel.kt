@@ -44,6 +44,8 @@ internal class ReviewViewModel(internal val giniHealth: GiniHealth) : ViewModel(
     private val _paymentValidation = MutableStateFlow<List<ValidationMessage>>(emptyList())
     val paymentValidation: StateFlow<List<ValidationMessage>> = _paymentValidation
 
+    private val _lastFullyValidatedPaymentDetails = MutableStateFlow<PaymentDetails?>(null)
+
     private val _bankApps = MutableStateFlow<BankAppsState>(BankAppsState.Loading)
     val bankApps: StateFlow<BankAppsState> = _bankApps
 
@@ -95,6 +97,12 @@ internal class ReviewViewModel(internal val giniHealth: GiniHealth) : ViewModel(
                     // Clear IBAN error, if IBAN changed
                     if (prevPaymentDetails != null && prevPaymentDetails.iban != paymentDetails.iban) {
                         nonEmptyValidationMessages.remove(ValidationMessage.InvalidIban)
+                    }
+
+                    // If the IBAN is the same as the last validated one, then revalidate it to restore the validation
+                    // message if needed
+                    if (_lastFullyValidatedPaymentDetails.value?.iban == paymentDetails.iban) {
+                        nonEmptyValidationMessages.addAll(validateIban(paymentDetails.iban).filterIsInstance<ValidationMessage.InvalidIban>())
                     }
 
                     // Emit all new empty validation messages along with other existing validation messages
@@ -155,6 +163,7 @@ internal class ReviewViewModel(internal val giniHealth: GiniHealth) : ViewModel(
     private fun validatePaymentDetails(paymentDetails: PaymentDetails): Boolean {
         val items = paymentDetails.validate()
         _paymentValidation.tryEmit(items)
+        _lastFullyValidatedPaymentDetails.tryEmit(paymentDetails)
         return items.isEmpty()
     }
 
