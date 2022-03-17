@@ -106,7 +106,7 @@ class ReviewViewModelTest {
     }
 
     @Test
-    fun `does not validate payment details on every change`() = runTest {
+    fun `validates payment details on every change`() = runTest {
         // Given
         every { giniHealth!!.paymentFlow } returns MutableStateFlow(
             ResultWrapper.Success(
@@ -128,22 +128,22 @@ class ReviewViewModelTest {
 
             // When - Then
             viewModel.setRecipient("")
-            expectNoEvents()
+            assertThat(awaitItem()).contains(ValidationMessage.Empty(PaymentField.Recipient))
 
             viewModel.setIban("")
-            expectNoEvents()
+            assertThat(awaitItem()).contains(ValidationMessage.Empty(PaymentField.Iban))
 
             viewModel.setAmount("")
-            expectNoEvents()
+            assertThat(awaitItem()).contains(ValidationMessage.Empty(PaymentField.Amount))
 
             viewModel.setRecipient("foo")
-            expectNoEvents()
+            assertThat(awaitItem()).doesNotContain(ValidationMessage.Empty(PaymentField.Recipient))
 
             viewModel.setAmount("1.00")
-            expectNoEvents()
+            assertThat(awaitItem()).doesNotContain(ValidationMessage.Empty(PaymentField.Amount))
 
             viewModel.setIban("DE1234")
-            expectNoEvents()
+            assertThat(awaitItem()).doesNotContain(ValidationMessage.Empty(PaymentField.Iban))
 
             cancelAndConsumeRemainingEvents()
         }
@@ -311,14 +311,14 @@ class ReviewViewModelTest {
         }
 
     @Test
-    fun `clears only 'input field empty' errors if the field is not empty after input`() =
+    fun `clears 'invalid IBAN' error after modifying the IBAN`() =
         runTest {
             // Given
             every { giniHealth!!.paymentFlow } returns MutableStateFlow(
                 ResultWrapper.Success(
                     PaymentDetails(
                         recipient = "recipient",
-                        iban = "",
+                        iban = "iban",
                         amount = "1",
                         purpose = "purpose",
                         extractions = null
@@ -333,16 +333,13 @@ class ReviewViewModelTest {
 
             viewModel.paymentValidation.test {
                 // When
-                viewModel.setIban("iban")
+                viewModel.setIban("iban2")
 
                 // Then
                 assertThat(awaitItem()).containsExactly(
-                    ValidationMessage.Empty(PaymentField.Iban),
                     ValidationMessage.InvalidIban,
                 )
-                assertThat(awaitItem()).containsExactly(
-                    ValidationMessage.InvalidIban,
-                )
+                assertThat(awaitItem()).isEmpty()
 
                 cancelAndConsumeRemainingEvents()
             }

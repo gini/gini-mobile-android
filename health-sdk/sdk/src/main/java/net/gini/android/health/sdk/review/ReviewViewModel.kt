@@ -4,9 +4,19 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import net.gini.android.core.api.models.Document
 import net.gini.android.health.api.models.PaymentRequestInput
 import net.gini.android.health.sdk.GiniHealth
@@ -22,6 +32,7 @@ import net.gini.android.health.sdk.review.model.withFeedback
 import net.gini.android.health.sdk.review.pager.DocumentPageAdapter
 import net.gini.android.health.sdk.util.adjustToLocalDecimalSeparation
 import net.gini.android.health.sdk.util.toBackendFormat
+import net.gini.android.health.sdk.util.withPrev
 
 internal class ReviewViewModel(internal val giniHealth: GiniHealth) : ViewModel() {
 
@@ -30,9 +41,10 @@ internal class ReviewViewModel(internal val giniHealth: GiniHealth) : ViewModel(
     private val _paymentDetails = MutableStateFlow(PaymentDetails("", "", "", ""))
     val paymentDetails: StateFlow<PaymentDetails> = _paymentDetails
 
-    private val _paymentValidation =
-        MutableSharedFlow<List<ValidationMessage>>(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
-    val paymentValidation: SharedFlow<List<ValidationMessage>> = _paymentValidation
+    private val _paymentValidation = MutableStateFlow<List<ValidationMessage>>(emptyList())
+    val paymentValidation: StateFlow<List<ValidationMessage>> = _paymentValidation
+
+    private val _lastFullyValidatedPaymentDetails = MutableStateFlow<PaymentDetails?>(null)
 
     private val _bankApps = MutableStateFlow<BankAppsState>(BankAppsState.Loading)
     val bankApps: StateFlow<BankAppsState> = _bankApps
@@ -61,16 +73,41 @@ internal class ReviewViewModel(internal val giniHealth: GiniHealth) : ViewModel(
                         )
                     )
                     _paymentDetails.value = paymentDetails
-
-                    // Emit "input field empty" errors for empty extracted payment details
-                    val validationMessages = paymentDetails.validate().filterIsInstance<ValidationMessage.Empty>()
-                    _paymentValidation.tryEmit(validationMessages)
                 }
             }
         }
         viewModelScope.launch {
             delay(SHOW_INFO_BAR_MS)
             _isInfoBarVisible.value = false
+        }
+        viewModelScope.launch {
+            // Validate payment details only if extracted payment details are not being loaded
+            _paymentDetails
+                .combine(giniHealth.paymentFlow.filter { it !is ResultWrapper.Loading }) { paymentDetails, _ -> paymentDetails }
+                .withPrev()
+                .collect { (prevPaymentDetails, paymentDetails) ->
+                    // Get all validation messages except emptiness validations
+                    val nonEmptyValidationMessages = _paymentValidation.value
+                        .filter { it !is ValidationMessage.Empty }
+                        .toMutableList()
+
+                    // Check payment details for emptiness
+                    val newEmptyValidationMessages = paymentDetails.validate().filterIsInstance<ValidationMessage.Empty>()
+
+                    // Clear IBAN error, if IBAN changed
+                    if (prevPaymentDetails != null && prevPaymentDetails.iban != paymentDetails.iban) {
+                        nonEmptyValidationMessages.remove(ValidationMessage.InvalidIban)
+                    }
+
+                    // If the IBAN is the same as the last validated one, then revalidate it to restore the validation
+                    // message if needed
+                    if (_lastFullyValidatedPaymentDetails.value?.iban == paymentDetails.iban) {
+                        nonEmptyValidationMessages.addAll(validateIban(paymentDetails.iban).filterIsInstance<ValidationMessage.InvalidIban>())
+                    }
+
+                    // Emit all new empty validation messages along with other existing validation messages
+                    _paymentValidation.tryEmit(newEmptyValidationMessages + nonEmptyValidationMessages)
+                }
         }
     }
 
@@ -109,43 +146,24 @@ internal class ReviewViewModel(internal val giniHealth: GiniHealth) : ViewModel(
 
     fun setRecipient(recipient: String) {
         _paymentDetails.value = paymentDetails.value.copy(recipient = recipient)
-        if (recipient.isNotEmpty()) {
-            viewModelScope.launch {
-                _paymentValidation.removeEmptyValidationMessageForField(PaymentField.Recipient)
-            }
-        }
     }
 
     fun setIban(iban: String) {
         _paymentDetails.value = paymentDetails.value.copy(iban = iban)
-        if (iban.isNotEmpty()) {
-            viewModelScope.launch {
-                _paymentValidation.removeEmptyValidationMessageForField(PaymentField.Iban)
-            }
-        }
     }
 
     fun setAmount(amount: String) {
         _paymentDetails.value = paymentDetails.value.copy(amount = amount)
-        if (amount.isNotEmpty()) {
-            viewModelScope.launch {
-                _paymentValidation.removeEmptyValidationMessageForField(PaymentField.Amount)
-            }
-        }
     }
 
     fun setPurpose(purpose: String) {
         _paymentDetails.value = paymentDetails.value.copy(purpose = purpose)
-        if (purpose.isNotEmpty()) {
-            viewModelScope.launch {
-                _paymentValidation.removeEmptyValidationMessageForField(PaymentField.Purpose)
-            }
-        }
     }
 
     private fun validatePaymentDetails(paymentDetails: PaymentDetails): Boolean {
         val items = paymentDetails.validate()
         _paymentValidation.tryEmit(items)
+        _lastFullyValidatedPaymentDetails.tryEmit(paymentDetails)
         return items.isEmpty()
     }
 
@@ -238,15 +256,5 @@ internal fun getReviewViewModelFactory(giniHealth: GiniHealth) = object : ViewMo
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         @Suppress("UNCHECKED_CAST")
         return ReviewViewModel(giniHealth) as T
-    }
-}
-
-private suspend fun MutableSharedFlow<List<ValidationMessage>>.removeEmptyValidationMessageForField(field: PaymentField) {
-    collect { validationMessages ->
-        val filteredMessages = validationMessages.filterNot { it.field == field && it is ValidationMessage.Empty }
-        if (filteredMessages != validationMessages) {
-            tryEmit(filteredMessages)
-        }
-        currentCoroutineContext().cancel()
     }
 }

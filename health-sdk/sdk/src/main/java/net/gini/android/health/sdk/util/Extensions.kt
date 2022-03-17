@@ -13,6 +13,8 @@ import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.graphics.ColorUtils
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import net.gini.android.health.sdk.R
 import java.math.BigDecimal
 import java.text.DecimalFormat
@@ -152,5 +154,13 @@ internal fun View.hideKeyboard() {
         if (imm.isAcceptingText) {
             imm.hideSoftInputFromWindow(windowToken, 0)
         }
+    }
+}
+
+internal suspend fun <T> Flow<T>.withPrev() = flow {
+    var prev: T? = null
+    collect {
+        emit(prev to it)
+        prev = it
     }
 }

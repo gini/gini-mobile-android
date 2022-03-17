@@ -124,8 +124,10 @@ internal class BankAppsAdapter(bankApps: List<BankApp>, context: Context) : Recy
             )
             separator.isVisible = position != bankApps.lastIndex
             root.setOnClickListener {
-                selectedBankAppPosition = holder.adapterPosition
-                _userSelectedBankApp.tryEmit(bankApps[holder.adapterPosition])
+                if (holder.adapterPosition >= 0 && holder.adapterPosition < bankApps.size) {
+                    selectedBankAppPosition = holder.adapterPosition
+                    _userSelectedBankApp.tryEmit(bankApps[holder.adapterPosition])
+                }
             }
         }
     }
