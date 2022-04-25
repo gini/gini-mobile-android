@@ -120,7 +120,7 @@ To enable it simply pass a ``DocumentImportEnabledFileTypes`` enum value to
 Android Manifest
 ~~~~~~~~~~~~~~~~
 
-You will also need to declare the ``READ_EXTERNAL_STORAGE`` permission in your app's ``AndroidManifest.xml``:
+You need to declare the ``READ_EXTERNAL_STORAGE`` permission in your app's ``AndroidManifest.xml``:
 
 .. code-block:: xml
 
@@ -133,6 +133,27 @@ You will also need to declare the ``READ_EXTERNAL_STORAGE`` permission in your a
 
 If the permission has not been granted the Gini Capture SDK will prompt the user to grant the permission when they use
 the document import feature.
+
+You will also need to declare that your app queries for apps that can handle intents to pick or open image and pdf
+documents (you can read more about package visibility filtering introduced in Android 11
+`here <https://developer.android.com/training/package-visibility>`_) :
+
+.. code-block:: xml
+
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.PICK" />
+            <data android:mimeType="image/*" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.OPEN_DOCUMENT" />
+            <data android:mimeType="image/*" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.OPEN_DOCUMENT" />
+            <data android:mimeType="application/pdf" />
+        </intent>
+    </queries>
 
 Intercepting the imported document
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

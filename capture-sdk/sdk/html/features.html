@@ -379,7 +379,7 @@ images, only pdfs or both images and pdfs.</p>
 <code class="docutils literal notranslate"><span class="pre">GiniCapture.Builder.setDocumentImportEnabledFileTypes()</span></code>.</p>
 <div class="section" id="android-manifest">
 <h3>Android Manifest<a class="headerlink" href="#android-manifest" title="Permalink to this headline">¶</a></h3>
-<p>You will also need to declare the <code class="docutils literal notranslate"><span class="pre">READ_EXTERNAL_STORAGE</span></code> permission in your app’s <code class="docutils literal notranslate"><span class="pre">AndroidManifest.xml</span></code>:</p>
+<p>You need to declare the <code class="docutils literal notranslate"><span class="pre">READ_EXTERNAL_STORAGE</span></code> permission in your app’s <code class="docutils literal notranslate"><span class="pre">AndroidManifest.xml</span></code>:</p>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;manifest</span> <span class="na">xmlns:android=</span><span class="s">&quot;http://schemas.android.com/apk/res/android&quot;</span>
     <span class="na">package=</span><span class="s">&quot;...&quot;</span><span class="nt">&gt;</span>
 
@@ -390,6 +390,25 @@ images, only pdfs or both images and pdfs.</p>
 </div>
 <p>If the permission has not been granted the Gini Capture SDK will prompt the user to grant the permission when they use
 the document import feature.</p>
+<p>You will also need to declare that your app queries for apps that can handle intents to pick or open image and pdf
+documents (you can read more about package visibility filtering introduced in Android 11
+<a class="reference external" href="https://developer.android.com/training/package-visibility">here</a>) :</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;queries&gt;</span>
+    <span class="nt">&lt;intent&gt;</span>
+        <span class="nt">&lt;action</span> <span class="na">android:name=</span><span class="s">&quot;android.intent.action.PICK&quot;</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;data</span> <span class="na">android:mimeType=</span><span class="s">&quot;image/*&quot;</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/intent&gt;</span>
+    <span class="nt">&lt;intent&gt;</span>
+        <span class="nt">&lt;action</span> <span class="na">android:name=</span><span class="s">&quot;android.intent.action.OPEN_DOCUMENT&quot;</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;data</span> <span class="na">android:mimeType=</span><span class="s">&quot;image/*&quot;</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/intent&gt;</span>
+    <span class="nt">&lt;intent&gt;</span>
+        <span class="nt">&lt;action</span> <span class="na">android:name=</span><span class="s">&quot;android.intent.action.OPEN_DOCUMENT&quot;</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;data</span> <span class="na">android:mimeType=</span><span class="s">&quot;application/pdf&quot;</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/intent&gt;</span>
+<span class="nt">&lt;/queries&gt;</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="intercepting-the-imported-document">
 <h3>Intercepting the imported document<a class="headerlink" href="#intercepting-the-imported-document" title="Permalink to this headline">¶</a></h3>
