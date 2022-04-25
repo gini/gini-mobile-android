@@ -55,6 +55,9 @@ All Action Bar customizations except the title are global to all Activities.
 
   Via the color resource named ``gc_status_bar``.
 
+  If you use a light background color, then you should set the ``gc_light_status_bar`` boolean
+  resource to ``true``. This will cause the status bar contents to be drawn with a dark color.
+
 :ref:`Back to screenshot. <onboarding>`
 
 .. _onboarding-2:
@@ -347,6 +350,9 @@ All Action Bar customizations except the title are global to all Activities.
 - **Status Bar Background Color**
 
   Via the color resource named ``gc_status_bar``.
+
+  If you use a light background color, then you should set the ``gc_light_status_bar`` boolean
+  resource to ``true``. This will cause the status bar contents to be drawn with a dark color.
 
 :ref:`Back to screenshots. <camera>`
 
@@ -797,6 +803,9 @@ All Action Bar customizations except the title are global to all Activities.
 
   Via the color resource named ``gc_status_bar``.
 
+  If you use a light background color, then you should set the ``gc_light_status_bar`` boolean
+  resource to ``true``. This will cause the status bar contents to be drawn with a dark color.
+
 :ref:`Back to screenshot. <review>`
 
 .. _review-2:
@@ -914,6 +923,9 @@ All Action Bar customizations except the title are global to all Activities.
 - **Status Bar Background Color**
 
   Via the color resource named ``gc_status_bar``.
+
+  If you use a light background color, then you should set the ``gc_light_status_bar`` boolean
+  resource to ``true``. This will cause the status bar contents to be drawn with a dark color.
 
 :ref:`Back to screenshots. <analysis>`
 
@@ -1106,6 +1118,9 @@ All Action Bar customizations except the title are global to all Activities.
 - **Status Bar Background Color**
 
   Via the color resource named ``gc_status_bar``.
+
+  If you use a light background color, then you should set the ``gc_light_status_bar`` boolean
+  resource to ``true``. This will cause the status bar contents to be drawn with a dark color.
 
 :ref:`Back to screenshots. <multi-page-review>`
 
@@ -1435,6 +1450,9 @@ All Action Bar customizations except the title are global to all Activities.
 
   Via the color resource named ``gc_status_bar``.
 
+  If you use a light background color, then you should set the ``gc_light_status_bar`` boolean
+  resource to ``true``. This will cause the status bar contents to be drawn with a dark color.
+
 :ref:`Back to screenshot. <help-screen>`
 
 .. _help-screen-2:
@@ -1525,6 +1543,9 @@ All Action Bar customizations except the title are global to all Activities.
 - **Status Bar Background Color**
 
   Via the color resource named ``gc_status_bar``.
+
+  If you use a light background color, then you should set the ``gc_light_status_bar`` boolean
+  resource to ``true``. This will cause the status bar contents to be drawn with a dark color.
 
 :ref:`Back to screenshot. <photo-tips>`
 
@@ -1697,6 +1718,9 @@ All Action Bar customizations except the title are global to all Activities.
 
   Via the color resource named ``gc_status_bar``.
 
+  If you use a light background color, then you should set the ``gc_light_status_bar`` boolean
+  resource to ``true``. This will cause the status bar contents to be drawn with a dark color.
+
 :ref:`Back to screenshot. <supported-formats>`
 
 .. _supported-formats-2:
@@ -1830,6 +1854,9 @@ All Action Bar customizations except the title are global to all Activities.
 - **Status Bar Background Color**
 
   Via the color resource named ``gc_status_bar``.
+
+  If you use a light background color, then you should set the ``gc_light_status_bar`` boolean
+  resource to ``true``. This will cause the status bar contents to be drawn with a dark color.
 
 :ref:`Back to screenshot. <file-import>`
 
