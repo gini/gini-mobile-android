@@ -45,6 +45,7 @@ All Action Bar customizations except the title are global to all Activities.
 - **Back Button Icon**
 
   Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named ``gc_action_bar_back``.
+  Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
 
 - **Background Color**
 
@@ -64,10 +65,12 @@ All Action Bar customizations except the title are global to all Activities.
 - **Icon**
 
   Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named ``gc_onboarding_fab_next.png``.
+  Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
 
 - **Color**
 
   Via the color resources named ``gc_onboarding_fab`` and ``gc_onboarding_fab_pressed``.
+  Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
 
 :ref:`Back to screenshot. <onboarding>`
 
@@ -79,10 +82,12 @@ All Action Bar customizations except the title are global to all Activities.
 - **Active**
 
   Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named ``gc_onboarding_indicator_active.png``.
+  Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
 
 - **Inactive**
 
   Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named ``gc_onboarding_indicator_inactive.png``.
+  Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
 
 :ref:`Back to screenshot. <onboarding>`
 
@@ -122,6 +127,7 @@ All Action Bar customizations except the title are global to all Activities.
       - **Image**
 
         Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named ``gc_onboarding_flat.png``.
+        Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
 
       - **Text**
 
@@ -132,6 +138,7 @@ All Action Bar customizations except the title are global to all Activities.
       - **Image**
 
         Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named ``gc_onboarding_parallel.png``.
+        Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
 
       - **Text**
 
@@ -142,6 +149,7 @@ All Action Bar customizations except the title are global to all Activities.
       - **Image**
 
         Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named ``gc_onboarding_align.png``.
+        Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
 
       - **Text**
 
@@ -154,6 +162,7 @@ All Action Bar customizations except the title are global to all Activities.
       - **Image**
 
         Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named ``gc_onboarding_multipage.png``.
+        Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
 
       - **Text**
 
@@ -169,6 +178,7 @@ All Action Bar customizations except the title are global to all Activities.
 
         Via images for sw600dp-mdpi, sw600dp-hdpi, sw600dp-xhdpi, sw600dp-xxhdpi, sw600dp-xxxhdpi
         named ``gc_onboarding_lighting.png``.
+        Or via a vector drawable added to the ``drawable-sw600dp-anydpi`` resource folder.
 
       - **Text**
 
@@ -180,6 +190,7 @@ All Action Bar customizations except the title are global to all Activities.
 
         Via images for sw600dp-mdpi, sw600dp-hdpi, sw600dp-xhdpi, sw600dp-xxhdpi, sw600dp-xxxhdpi
         named ``gc_onboarding_flat.png``.
+        Or via a vector drawable added to the ``drawable-sw600dp-anydpi`` resource folder.
 
       - **Text**
 
@@ -191,6 +202,7 @@ All Action Bar customizations except the title are global to all Activities.
 
         Via images for sw600dp-mdpi, sw600dp-hdpi, sw600dp-xhdpi, sw600dp-xxhdpi, sw600dp-xxxhdpi
         named ``gc_onboarding_parallel.png``.
+        Or via a vector drawable added to the ``drawable-sw600dp-anydpi`` resource folder.
 
       - **Text**
 
@@ -202,6 +214,7 @@ All Action Bar customizations except the title are global to all Activities.
 
         Via images for sw600dp-mdpi, sw600dp-hdpi, sw600dp-xhdpi, sw600dp-xxhdpi, sw600dp-xxxhdpi
         named ``gc_onboarding_align.png``.
+        Or via a vector drawable added to the ``drawable-sw600dp-anydpi`` resource folder.
 
       - **Text**
 
@@ -214,6 +227,7 @@ All Action Bar customizations except the title are global to all Activities.
       - **Image**
 
         Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named ``gc_onboarding_multipage.png``.
+        Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
 
       - **Text**
 
@@ -324,6 +338,7 @@ All Action Bar customizations except the title are global to all Activities.
 - **Back Button Icon**
 
   Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named ``gc_action_bar_back``.
+  Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
 
 - **Background Color**
 
@@ -354,10 +369,12 @@ All Action Bar customizations except the title are global to all Activities.
 - **Normal**
 
   Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named ``gc_camera_trigger_default.png``.
+  Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
 
 - **Pressed**
 
   Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named ``gc_camera_trigger_pressed.png``.
+  Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
 
 :ref:`Back to screenshots. <camera>`
 
@@ -369,6 +386,7 @@ All Action Bar customizations except the title are global to all Activities.
 - **Icon**
 
   Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named ``gc_camera_focus_indicator.png``.
+  Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
 
 :ref:`Back to screenshots. <camera>`
 
@@ -380,6 +398,7 @@ All Action Bar customizations except the title are global to all Activities.
 - **Icon**
 
   Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named ``gc_help_icon.png``.
+  Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
 
 - **Title**
 
@@ -407,6 +426,7 @@ All Action Bar customizations except the title are global to all Activities.
 - **Icon**
 
   Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named ``gc_document_import_icon.png``.
+  Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
 
 - **Subtitle**
 
@@ -658,6 +678,7 @@ All Action Bar customizations except the title are global to all Activities.
 - **Icon**
 
   Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named ``gc_no_camera.png``.
+  Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
 
 - **Message**
 
@@ -726,6 +747,7 @@ All Action Bar customizations except the title are global to all Activities.
 - **Icon**
 
   Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named ``gc_camera_flash_on.png`` and ``gc_camera_flash_off.png``.
+  Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
 
 :ref:`Back to screenshots. <camera>`
 
@@ -765,6 +787,7 @@ All Action Bar customizations except the title are global to all Activities.
 - **Back Button Icon**
 
   Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named ``gc_action_bar_back``.
+  Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
 
 - **Background Color**
 
@@ -784,6 +807,7 @@ All Action Bar customizations except the title are global to all Activities.
 - **Icon**
 
   Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named ``gc_review_fab_next.png``.
+  Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
 
 - **Color**
 
@@ -799,6 +823,7 @@ All Action Bar customizations except the title are global to all Activities.
 - **Icon**
 
   Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named ``gc_review_button_rotate.png``.
+  Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
 
 - **Color**
 
@@ -880,6 +905,7 @@ All Action Bar customizations except the title are global to all Activities.
 - **Back Button Icon**
 
   Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named ``gc_action_bar_back``.
+  Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
 
 - **Background Color**
 
@@ -1071,6 +1097,7 @@ All Action Bar customizations except the title are global to all Activities.
 - **Back Button Icon**
 
   Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named ``gc_action_bar_back``.
+  Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
 
 - **Background Color**
 
@@ -1112,6 +1139,7 @@ All Action Bar customizations except the title are global to all Activities.
 - **Icon**
 
   Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named ``gc_review_fab_checkmark.png``.
+  Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
 
 - **Color**
 
@@ -1171,6 +1199,7 @@ All Action Bar customizations except the title are global to all Activities.
 - **Icon**
 
  Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named ``gc_bumps_icon.png``.
+ Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
 
 :ref:`Back to screenshots. <multi-page-review>`
 
@@ -1234,6 +1263,7 @@ All Action Bar customizations except the title are global to all Activities.
 - **Icon**
 
   Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named ``gc_multi_page_add_page_icon.png``.
+  Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
 
 - **Subtitle**
 
@@ -1284,10 +1314,12 @@ All Action Bar customizations except the title are global to all Activities.
 - **Rotate Icon**
 
   Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named ``gc_rotate_icon.png``.
+  Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
 
 - **Delete Icon**
 
   Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named ``gc_delete_icon.png``.
+  Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
 
 :ref:`Back to screenshots. <multi-page-review>`
 
@@ -1393,6 +1425,7 @@ All Action Bar customizations except the title are global to all Activities.
 - **Back Button Icon**
 
   Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named ``gc_action_bar_back``.
+  Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
 
 - **Background Color**
 
@@ -1483,6 +1516,7 @@ All Action Bar customizations except the title are global to all Activities.
 - **Back Button Icon**
 
   Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named ``gc_action_bar_back``.
+  Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
 
 - **Background Color**
 
@@ -1549,6 +1583,7 @@ All Action Bar customizations except the title are global to all Activities.
 - **Icon**
 
   Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named ``gc_photo_tip_lighting.png``.
+  Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
 
 :ref:`Back to screenshot. <photo-tips>`
 
@@ -1560,6 +1595,7 @@ All Action Bar customizations except the title are global to all Activities.
 - **Icon**
 
   Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named ``gc_photo_tip_flat.png``.
+  Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
 
 :ref:`Back to screenshot. <photo-tips>`
 
@@ -1571,6 +1607,7 @@ All Action Bar customizations except the title are global to all Activities.
 - **Icon**
 
   Via images for mdpi, hdpi, xhdpi,xxhdpi, xxxhdpi named ``gc_photo_tip_parallel.png``.
+  Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
 
 :ref:`Back to screenshot. <photo-tips>`
 
@@ -1582,6 +1619,7 @@ All Action Bar customizations except the title are global to all Activities.
 - **Icon**
 
   Via images for mdpi, hdpi, xhdpi,xxhdpi, xxxhdpi named ``gc_photo_tip_align.png``.
+  Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
 
 :ref:`Back to screenshot. <photo-tips>`
 
@@ -1593,6 +1631,7 @@ All Action Bar customizations except the title are global to all Activities.
 - **Icon**
 
   Via images for mdpi, hdpi, xhdpi,xxhdpi, xxxhdpi named ``gc_photo_tip_multipage.png``.
+  Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
 
 :ref:`Back to screenshot. <photo-tips>`
 
@@ -1648,6 +1687,7 @@ All Action Bar customizations except the title are global to all Activities.
 - **Back Button Icon**
 
   Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named ``gc_action_bar_back``.
+  Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
 
 - **Background Color**
 
@@ -1781,6 +1821,7 @@ All Action Bar customizations except the title are global to all Activities.
 - **Back Button Icon**
 
   Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named ``gc_action_bar_back``.
+  Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
 
 - **Background Color**
 
@@ -1921,7 +1962,8 @@ All Action Bar customizations except the title are global to all Activities.
   - **Illustration**
 
     Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named
-    ``gc_file_import_section_1_illustration.png``.
+    ``gc_file_import_section_1_illustration``.
+    Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
     
     **Note**: For creating your custom illustration you may use `this template
     <https://github.com/gini/gini-vision-lib-assets/blob/master/Gini-Vision-Lib-Design-Elements/Illustrations/PDF/android_pdf_open_with_illustration_1.pdf>`_
@@ -1941,7 +1983,8 @@ All Action Bar customizations except the title are global to all Activities.
   - **Illustration**
 
     Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named
-    ``gc_file_import_section_2_illustration.png``.
+    ``gc_file_import_section_2_illustration``.
+    Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
     
     **Note**: For creating your custom illustration you may use `this template
     <https://github.com/gini/gini-vision-lib-assets/blob/master/Gini-Vision-Lib-Design-Elements/Illustrations/PDF/android_pdf_open_with_illustration_2.pdf>`_
@@ -1963,7 +2006,9 @@ All Action Bar customizations except the title are global to all Activities.
   - **Illustration**
 
     Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named
-    ``gc_file_import_section_3_illustration.png``.
+    ``gc_file_import_section_3_illustration``.
+    Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
+
     **Note**: For creating your custom illustration you may use `this template
     <https://github.com/gini/gini-vision-lib-assets/blob/master/Gini-Vision-Lib-Design-Elements/Illustrations/PDF/android_pdf_open_with_illustration_3.pdf>`_
     from the `Gini Vision Library UI Assets
