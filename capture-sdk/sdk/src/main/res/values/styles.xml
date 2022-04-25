@@ -3,6 +3,7 @@
     <style name="GiniCaptureTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
         <item name="colorPrimary">@color/gc_action_bar</item>
         <item name="colorPrimaryDark">@color/gc_status_bar</item>
+        <item name="android:windowLightStatusBar">@bool/gc_light_status_bar</item>
         <item name="colorAccent">@color/gc_accent</item>
         <item name="actionBarTheme">@style/GiniCaptureTheme.ThemeOverlay.ActionBar</item>
         <item name="alertDialogTheme">@style/GiniCaptureTheme.ThemeOverlay.Dialog.Alert</item>
