@@ -5,6 +5,7 @@
         <item name="colorPrimaryDark">@color/gc_status_bar</item>
         <item name="colorAccent">@color/gc_accent</item>
         <item name="actionBarTheme">@style/GiniCaptureTheme.ThemeOverlay.ActionBar</item>
+        <item name="alertDialogTheme">@style/GiniCaptureTheme.ThemeOverlay.Dialog.Alert</item>
     </style>
 
     <style name="GiniCaptureTheme.Transparent">
@@ -18,6 +19,10 @@
         <item name="android:textColorPrimary">@color/gc_action_bar_title</item>
         <item name="colorOnPrimary">@color/gc_action_bar_title</item>
         <item name="homeAsUpIndicator">@drawable/gc_action_bar_back</item>
+    </style>
+
+    <style name="GiniCaptureTheme.ThemeOverlay.Dialog.Alert" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
+        <item name="colorPrimary">@color/gc_accent</item>
     </style>
 
     <style name="GiniCaptureTheme.Chooser">
