@@ -31,7 +31,7 @@
         <item quantity="other">%1$d Artikel %2$s</item>
     </plurals>
     <string name="gbs_digital_invoice_line_item_details_selected">ausgewählt</string>
-    <string name="gbs_digital_invoice_line_item_total_label">Inkl. MwSt</string>
+    <string name="gbs_digital_invoice_line_item_total_info_label">Inkl. MwSt</string>
     <string name="gbs_digital_invoice_line_item_description_additional">Sonstiges</string>
 
     <string name="gbs_digital_header_title">Info</string>

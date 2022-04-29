@@ -52,6 +52,7 @@
     <color name="gbs_digital_invoice_line_item_details_input_line">#F1F2F4</color>
     <color name="gbs_digital_invoice_line_item_details_multiplication_symbol">#9B9B9B</color>
     <color name="gbs_digital_invoice_line_item_details_total_label">#000</color>
+    <color name="gbs_digital_invoice_line_item_details_total_info">#9B9B9B</color>
     <color name="gbs_digital_invoice_line_item_details_save_button">#009edc</color>
     <color name="gbs_digital_invoice_line_item_details_save_button_text">#fff</color>
     <color name="gbs_digital_invoice_line_item_details_disabled">#9B9B9B</color>

@@ -162,6 +162,17 @@
         <item name="android:textSize">32sp</item>
     </style>
 
+    <style name="Root.GiniCaptureTheme.DigitalInvoice.LineItemDetails.Total.Info.TextStyle" parent="TextAppearance.AppCompat">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/gbs_digital_invoice_line_item_details_total_info</item>
+    </style>
+
+    <style name="Root.GiniCaptureTheme.DigitalInvoice.LineItemDetails.Save.Button" parent="Widget.MaterialComponents.Button">
+        <item name="android:textColor">@color/gbs_digital_invoice_line_item_details_save_button_text</item>
+        <item name="backgroundTint">@color/gbs_digital_invoice_line_item_details_save_button</item>
+    </style>
+
     <style name="Root.GiniCaptureTheme.DigitalInvoice.ReturnReasonDialog.Title.TextStyle" parent="TextAppearance.AppCompat">
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:textSize">14sp</item>
@@ -382,6 +393,10 @@
     <style name="GiniCaptureTheme.DigitalInvoice.LineItemDetails.InputField.Hint.TextStyle" parent="Root.GiniCaptureTheme.DigitalInvoice.LineItemDetails.InputField.Hint.TextStyle" />
 
     <style name="GiniCaptureTheme.DigitalInvoice.LineItemDetails.Total.TextStyle" parent="Root.GiniCaptureTheme.DigitalInvoice.LineItemDetails.Total.TextStyle" />
+
+    <style name="GiniCaptureTheme.DigitalInvoice.LineItemDetails.Total.Info.TextStyle" parent="Root.GiniCaptureTheme.DigitalInvoice.LineItemDetails.Total.Info.TextStyle" />
+
+    <style name="GiniCaptureTheme.DigitalInvoice.LineItemDetails.Save.Button" parent="Root.GiniCaptureTheme.DigitalInvoice.LineItemDetails.Save.Button" />
 
     <style name="GiniCaptureTheme.DigitalInvoice.ReturnReasonDialog.Title.TextStyle" parent="Root.GiniCaptureTheme.DigitalInvoice.ReturnReasonDialog.Title.TextStyle" />
 
