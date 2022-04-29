@@ -51,6 +51,21 @@ All Action Bar customizations except the title are global to all Activities.
   Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named ``gc_action_bar_back``.
   Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
 
+- **Help Button**
+
+  - **Icon**
+
+    Via the vector drawable named ``gbs_menu_question_circle_info``.
+    Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
+
+  - *Icon Tint Color*
+
+    Via the color resource named ``gbs_digital_invoice_help_icon_tint``.
+
+  - **Title**
+
+    Via the string resource named ``gbs_digital_invoice_help_info``.
+
 - **Background Color**
 
   Via the color resource named ``gc_action_bar``.
