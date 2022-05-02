@@ -349,6 +349,17 @@ Digital Invoice Screen
   Via overriding the style named ``GiniCaptureTheme.DigitalInvoice.LineItem.GrossPrice.Fractional.TextStyle`` (with
   parent style ``Root.GiniCaptureTheme.DigitalInvoice.LineItem.GrossPrice.Fractional.TextStyle``).
 
+- **Delete Button (shown only for manually added line items)**
+
+  - **Icon**
+
+    Via a vector drawable named ``gbs_digital_invoice_remove``.
+
+  - **Style** 
+
+    Via overriding the style named ``GiniCaptureTheme.DigitalInvoice.Remove.Button`` (with
+    parent style ``Root.GiniCaptureTheme.DigitalInvoice.Remove.Button``).
+
 - **Disabled State Color**
 
   Via the color resource named ``gbs_digital_invoice_line_item_disabled``.
