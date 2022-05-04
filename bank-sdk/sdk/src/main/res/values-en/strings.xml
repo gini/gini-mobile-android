@@ -67,7 +67,7 @@
     <string name="gbs_digital_invoice_info_close_button_title">Close</string>
     <string name="gbs_digital_invoice_info_text_1">What is it?</string>
     <string name="gbs_digital_invoice_info_text_2">We extracted the articles from your invoice. Simply deselect articles if you want to return them. The new total will be calculated for you.</string>
-    <string name="gbs_digital_invoice_line_item_total_label">Incl. tax</string>
+    <string name="gbs_digital_invoice_line_item_total_info_label">Incl. tax</string>
     <string name="gbs_digital_invoice_header_button_1">OK</string>
     <string name="gbs_digital_invoice_header_button_2">Skip</string>
     <string name="gbs_digital_invoice_footer_skip">Skip feature</string>
