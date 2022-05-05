@@ -58,7 +58,7 @@ All Action Bar customizations except the title are global to all Activities.
     Via the vector drawable named ``gbs_menu_question_circle_info``.
     Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
 
-  - *Icon Tint Color*
+  - **Icon Tint Color**
 
     Via the color resource named ``gbs_digital_invoice_help_icon_tint``.
 
