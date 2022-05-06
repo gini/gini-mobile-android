@@ -1661,6 +1661,10 @@ All Action Bar customizations except the title are global to all Activities.
 5. Back To Camera Button
 ^^^^
 
+- **Button Style**
+
+  Via overriding the style named ``GiniCaptureTheme.Button`` (with parent style ``Root.GiniCaptureTheme.Button``).
+
 - **Background Color**
 
   Via the color resource named ``gc_photo_tips_button``.
