@@ -20,7 +20,7 @@ Table of contents
     getting-started
     integration
     capture-features
-    customization
+    customization-guide
     migrating-from-gvl
     reference
     license

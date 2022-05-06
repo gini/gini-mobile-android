@@ -1,0 +1,908 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Customization Guide &mdash; Gini Bank SDK for Android 2.0 documentation</title>
+  
+
+  
+  
+
+  
+  <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,400italic,600italic|Source+Code+Pro|Roboto+Slab:400,700" rel="stylesheet" type="text/css" />
+
+  
+  
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:'./',
+        VERSION:'2.0',
+        COLLAPSE_INDEX:false,
+        FILE_SUFFIX:'.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/language_data.js"></script>
+
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+    <script type="text/javascript">
+        jQuery(function () {
+            SphinxRtdTheme.StickyNav.enable();
+        });
+    </script>
+  
+
+  
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Gini Bank SDK for Android 2.0 documentation" href="index.html"/>
+        <link rel="next" title="Migrating from the Gini Vision Library" href="migrating-from-gvl.html"/>
+        <link rel="prev" title="Invoice Capture Features" href="capture-features.html"/> 
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="index.html" id="gini-logo">
+          <img src="_static/logo_flat.png" />
+        </a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="getting-started.html#requirements">Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting-started.html#installation">Installation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="integration.html">Integration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="integration.html#capturing-invoices">Capturing Invoices</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#android-manifest">Android Manifest</a></li>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#requirements-check">Requirements Check</a></li>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#configuration">Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#tablet-support">Tablet Support</a></li>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#networking">Networking</a></li>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#capture-flow">Capture Flow</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="integration.html#handling-payment-requests">Handling Payment Requests</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#id6">Networking</a></li>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#id8">Android Manifest</a></li>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#package-name">Package Name</a></li>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#receive-payment-requests">Receive Payment Requests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#testing">Testing</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="capture-features.html">Invoice Capture Features</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="capture-features.html#features-from-the-gini-capture-sdk">Features from the Gini Capture SDK</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="capture-features.html#file-import-open-with">File Import (Open With)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="capture-features.html#return-assistant">Return Assistant</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="capture-features.html#id1">Screen API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="capture-features.html#id3">Component API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="capture-features.html#sending-feedback">Sending Feedback</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Customization Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#return-assistant">Return Assistant</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#onboarding-screen">Onboarding Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#info-box">Info Box</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#digital-invoice-screen">Digital Invoice Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#return-reason-picker">Return Reason Picker</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#info-screen">Info Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#edit-line-item-screen">Edit Line Item Screen</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="migrating-from-gvl.html">Migrating from the Gini Vision Library</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#kotlin">Kotlin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#gini-capture-sdk">Gini Capture SDK</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#gini-bank-api-library">Gini Bank API Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#requirements">Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#screen-api">Screen API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#component-api">Component API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#open-with">Open With</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="migrating-from-gvl.html#id3">Screen API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrating-from-gvl.html#id4">Component API</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#networking">Networking</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="migrating-from-gvl.html#default">Default</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrating-from-gvl.html#custom">Custom</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#event-tracking">Event Tracking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#customization">Customization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">Reference Doc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Gini Bank SDK for Android</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Customization Guide</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="customization-guide">
+<h1>Customization Guide<a class="headerlink" href="#customization-guide" title="Permalink to this headline">¶</a></h1>
+<p>Customization of the Views is provided via overriding of app resources: dimensions, strings, colors, texts, etc.
+Although all <a class="reference external" href="https://github.com/gini/gini-mobile-android/tree/main/bank-sdk/sdk/src/main/res">resources of the Gini Bank SDK</a> can be overridden we recommend only
+changing the resources listed in this customization guide.</p>
+<p>The capture related screens are provided by the <a class="reference external" href="https://github.com/gini/gini-mobile-android/tree/main/capture-sdk">Gini Capture SDK</a>. Please consult the <a class="reference external" href="https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/html/customization-guide.html">customization guide</a> for the Gini Capture
+SDK to view a screen based overview of the customizable resources.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">When you override styles please make sure that you use the parent style with the <code class="docutils literal notranslate"><span class="pre">Root.</span></code> prefix. This ensures
+that your custom style items are merged with the default ones.</p>
+</div>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><a class="reference internal" href="#return-assistant" id="id16">Return Assistant</a><ul>
+<li><a class="reference internal" href="#onboarding-screen" id="id17">Onboarding Screen</a></li>
+<li><a class="reference internal" href="#info-box" id="id18">Info Box</a></li>
+<li><a class="reference internal" href="#digital-invoice-screen" id="id19">Digital Invoice Screen</a></li>
+<li><a class="reference internal" href="#return-reason-picker" id="id20">Return Reason Picker</a></li>
+<li><a class="reference internal" href="#info-screen" id="id21">Info Screen</a></li>
+<li><a class="reference internal" href="#edit-line-item-screen" id="id22">Edit Line Item Screen</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="return-assistant">
+<h2><a class="toc-backref" href="#id16">Return Assistant</a><a class="headerlink" href="#return-assistant" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="onboarding-screen">
+<span id="onboarding"></span><h3><a class="toc-backref" href="#id17">Onboarding Screen</a><a class="headerlink" href="#onboarding-screen" title="Permalink to this headline">¶</a></h3>
+<div class="figure" style="width: 324px">
+<img alt="_images/Return-Assistant-Onboarding.png" src="_images/Return-Assistant-Onboarding.png" />
+</div>
+<div class="section" id="action-bar">
+<h4>1. Action Bar<a class="headerlink" href="#action-bar" title="Permalink to this headline">¶</a></h4>
+<p>All Action Bar customizations except the title are global to all Activities.</p>
+<ul>
+<li><p class="first"><strong>Title</strong></p>
+<p>Via the string resource named <code class="docutils literal notranslate"><span class="pre">gbs_title_digital_invoice</span></code>.</p>
+</li>
+<li><p class="first"><strong>Title Color</strong></p>
+<p>Via the color resource named <code class="docutils literal notranslate"><span class="pre">gc_action_bar_title</span></code>.</p>
+</li>
+<li><p class="first"><strong>Back Button Icon</strong></p>
+<p>Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named <code class="docutils literal notranslate"><span class="pre">gc_action_bar_back</span></code>.
+Or via a vector drawable added to the <code class="docutils literal notranslate"><span class="pre">drawable-anydpi</span></code> resource folder.</p>
+</li>
+<li><p class="first"><strong>Help Button</strong></p>
+<ul>
+<li><p class="first"><strong>Icon</strong></p>
+<p>Via the vector drawable named <code class="docutils literal notranslate"><span class="pre">gbs_menu_question_circle_info</span></code>.
+Or via a vector drawable added to the <code class="docutils literal notranslate"><span class="pre">drawable-anydpi</span></code> resource folder.</p>
+</li>
+<li><p class="first"><strong>Icon Tint Color</strong></p>
+<p>Via the color resource named <code class="docutils literal notranslate"><span class="pre">gbs_digital_invoice_help_icon_tint</span></code>.</p>
+</li>
+<li><p class="first"><strong>Title</strong></p>
+<p>Via the string resource named <code class="docutils literal notranslate"><span class="pre">gbs_digital_invoice_help_info</span></code>.</p>
+</li>
+</ul>
+</li>
+<li><p class="first"><strong>Background Color</strong></p>
+<p>Via the color resource named <code class="docutils literal notranslate"><span class="pre">gc_action_bar</span></code>.</p>
+</li>
+<li><p class="first"><strong>Status Bar Background Color</strong></p>
+<p>Via the color resource named <code class="docutils literal notranslate"><span class="pre">gc_status_bar</span></code>.</p>
+<p>If you use a light background color, then you should set the <code class="docutils literal notranslate"><span class="pre">gc_light_status_bar</span></code> boolean
+resource to <code class="docutils literal notranslate"><span class="pre">true</span></code>. This will cause the status bar contents to be drawn with a dark color.</p>
+</li>
+</ul>
+<p><a class="reference internal" href="#onboarding"><span class="std std-ref">Back to screenshot.</span></a></p>
+</div>
+<div class="section" id="background-color">
+<h4>2. Background Color<a class="headerlink" href="#background-color" title="Permalink to this headline">¶</a></h4>
+<ul>
+<li><p class="first"><strong>Color</strong></p>
+<p>Via the color resource named <code class="docutils literal notranslate"><span class="pre">gbs_digital_invoice_onboarding_fragment_background</span></code>.</p>
+</li>
+</ul>
+<p><a class="reference internal" href="#onboarding"><span class="std std-ref">Back to screenshot.</span></a></p>
+</div>
+<div class="section" id="title">
+<h4>3. Title<a class="headerlink" href="#title" title="Permalink to this headline">¶</a></h4>
+<ul>
+<li><p class="first"><strong>Text</strong></p>
+<p>Via the string resource named <code class="docutils literal notranslate"><span class="pre">gbs_digital_invoice_onboarding_text_1</span></code>.</p>
+</li>
+<li><p class="first"><strong>Text Style</strong></p>
+<p>Via overriding the style named <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme.DigitalInvoice.Onboarding.Title.TextStyle</span></code> (with
+parent style <code class="docutils literal notranslate"><span class="pre">Root.GiniCaptureTheme.DigitalInvoice.Onboarding.Title.TextStyle</span></code>).</p>
+</li>
+</ul>
+<p><a class="reference internal" href="#onboarding"><span class="std std-ref">Back to screenshot.</span></a></p>
+</div>
+<div class="section" id="illustration">
+<h4>4. Illustration<a class="headerlink" href="#illustration" title="Permalink to this headline">¶</a></h4>
+<ul>
+<li><p class="first"><strong>Image</strong></p>
+<p>Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named <code class="docutils literal notranslate"><span class="pre">gbs_digital_invoice_list_image.png</span></code>.
+Or via a vector drawable added to the <code class="docutils literal notranslate"><span class="pre">drawable-anydpi</span></code> resource folder.</p>
+</li>
+</ul>
+<p><a class="reference internal" href="#onboarding"><span class="std std-ref">Back to screenshot.</span></a></p>
+</div>
+<div class="section" id="message">
+<h4>5. Message<a class="headerlink" href="#message" title="Permalink to this headline">¶</a></h4>
+<ul>
+<li><p class="first"><strong>Text</strong></p>
+<p>Via the string resource named <code class="docutils literal notranslate"><span class="pre">gbs_digital_invoice_onboarding_text_2</span></code>.</p>
+</li>
+<li><p class="first"><strong>Text Style</strong></p>
+<p>Via overriding the style named <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme.DigitalInvoice.Onboarding.TextStyle</span></code> (with
+parent style <code class="docutils literal notranslate"><span class="pre">Root.GiniCaptureTheme.DigitalInvoice.Onboarding.TextStyle</span></code>).</p>
+</li>
+</ul>
+<p><a class="reference internal" href="#onboarding"><span class="std std-ref">Back to screenshot.</span></a></p>
+</div>
+<div class="section" id="done-button">
+<h4>6. “Done” Button<a class="headerlink" href="#done-button" title="Permalink to this headline">¶</a></h4>
+<ul>
+<li><p class="first"><strong>Title</strong></p>
+<p>Via the string resource named <code class="docutils literal notranslate"><span class="pre">gbs_digital_invoice_onboarding_done_button_title</span></code>.</p>
+</li>
+<li><p class="first"><strong>Button Style</strong></p>
+<p>Via overriding the style named <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme.DigitalInvoice.Onboarding.Done.Button</span></code> (with
+parent style <code class="docutils literal notranslate"><span class="pre">Root.GiniCaptureTheme.DigitalInvoice.Onboarding.Done.Button</span></code>).</p>
+</li>
+</ul>
+<p><a class="reference internal" href="#onboarding"><span class="std std-ref">Back to screenshot.</span></a></p>
+</div>
+<div class="section" id="don-t-show-again-button">
+<h4>7. “Don’t Show Again” Button<a class="headerlink" href="#don-t-show-again-button" title="Permalink to this headline">¶</a></h4>
+<ul>
+<li><p class="first"><strong>Title</strong></p>
+<p>Via the string resource named <code class="docutils literal notranslate"><span class="pre">gbs_digital_invoice_onboarding_do_not_show_button_title</span></code>.</p>
+</li>
+<li><p class="first"><strong>Button Style</strong></p>
+<p>Via overriding the style named <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme.DigitalInvoice.Onboarding.Dismiss.Button</span></code> (with
+parent style <code class="docutils literal notranslate"><span class="pre">Root.GiniCaptureTheme.DigitalInvoice.Onboarding.Dismiss.Button</span></code>).</p>
+</li>
+</ul>
+<p><a class="reference internal" href="#onboarding"><span class="std std-ref">Back to screenshot.</span></a></p>
+</div>
+</div>
+<div class="section" id="info-box">
+<span id="id2"></span><h3><a class="toc-backref" href="#id18">Info Box</a><a class="headerlink" href="#info-box" title="Permalink to this headline">¶</a></h3>
+<div class="figure" style="width: 324px">
+<img alt="_images/Digital-Invoice-Check-Items-Info-Box.png" src="_images/Digital-Invoice-Check-Items-Info-Box.png" />
+</div>
+<div class="section" id="background">
+<h4>1. Background<a class="headerlink" href="#background" title="Permalink to this headline">¶</a></h4>
+<ul>
+<li><p class="first"><strong>Color</strong></p>
+<p>Via the color resource named <code class="docutils literal notranslate"><span class="pre">gbs_digital_invoice_header_background</span></code>.</p>
+</li>
+</ul>
+<p><a class="reference internal" href="#info-box"><span class="std std-ref">Back to screenshot.</span></a></p>
+</div>
+<div class="section" id="title-and-message">
+<h4>2. Title and Message<a class="headerlink" href="#title-and-message" title="Permalink to this headline">¶</a></h4>
+<ul>
+<li><p class="first"><strong>Title</strong></p>
+<p>Via the string resource named <code class="docutils literal notranslate"><span class="pre">gbs_digital_header_title</span></code>.</p>
+</li>
+<li><p class="first"><strong>Title Text Style</strong></p>
+<p>Via overriding the style named <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme.DigitalInvoice.Header.TextStyle</span></code> (with
+parent style <code class="docutils literal notranslate"><span class="pre">Root.GiniCaptureTheme.DigitalInvoice.Header.TextStyle</span></code>).</p>
+</li>
+<li><p class="first"><strong>Message</strong></p>
+<p>Via the string resource named <code class="docutils literal notranslate"><span class="pre">gbs_digital_header_text_1</span></code>.</p>
+</li>
+<li><p class="first"><strong>Message Text Style</strong></p>
+<p>Via overriding the style named <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme.DigitalInvoice.Header.TextStyle</span></code> (with
+parent style <code class="docutils literal notranslate"><span class="pre">Root.GiniCaptureTheme.DigitalInvoice.Header.TextStyle</span></code>).</p>
+</li>
+</ul>
+<p><a class="reference internal" href="#info-box"><span class="std std-ref">Back to screenshot.</span></a></p>
+</div>
+<div class="section" id="expand-collapse-button">
+<h4>3. Expand/Collapse Button<a class="headerlink" href="#expand-collapse-button" title="Permalink to this headline">¶</a></h4>
+<ul>
+<li><p class="first"><strong>Icon</strong></p>
+<p>Via a vector drawable named <code class="docutils literal notranslate"><span class="pre">gbs_digital_header_arrow_up</span></code>.</p>
+</li>
+<li><p class="first"><strong>Icon Tint Color</strong></p>
+<p>Via the color resource named <code class="docutils literal notranslate"><span class="pre">gbs_digital_invoice_header_collapse_tint</span></code>.</p>
+</li>
+</ul>
+<p><a class="reference internal" href="#info-box"><span class="std std-ref">Back to screenshot.</span></a></p>
+</div>
+<div class="section" id="id3">
+<h4>4. Illustration<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h4>
+<ul>
+<li><p class="first"><strong>Image</strong></p>
+<p>Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named <code class="docutils literal notranslate"><span class="pre">gbs_digital_header_image.png</span></code>.
+Or via a vector drawable added to the <code class="docutils literal notranslate"><span class="pre">drawable-anydpi</span></code> resource folder.</p>
+</li>
+</ul>
+<p><a class="reference internal" href="#info-box"><span class="std std-ref">Back to screenshot.</span></a></p>
+</div>
+<div class="section" id="bottom-message">
+<h4>5. Bottom Message<a class="headerlink" href="#bottom-message" title="Permalink to this headline">¶</a></h4>
+<ul>
+<li><p class="first"><strong>Text</strong></p>
+<p>Via the string resource named <code class="docutils literal notranslate"><span class="pre">gbs_digital_header_text_2</span></code>.</p>
+</li>
+<li><p class="first"><strong>Text Style</strong></p>
+<p>Via overriding the style named <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme.DigitalInvoice.Header.TextStyle</span></code> (with
+parent style <code class="docutils literal notranslate"><span class="pre">Root.GiniCaptureTheme.DigitalInvoice.Header.TextStyle</span></code>).</p>
+</li>
+</ul>
+<p><a class="reference internal" href="#info-box"><span class="std std-ref">Back to screenshot.</span></a></p>
+</div>
+<div class="section" id="ok-button">
+<h4>6. “OK” Button<a class="headerlink" href="#ok-button" title="Permalink to this headline">¶</a></h4>
+<ul>
+<li><p class="first"><strong>Title</strong></p>
+<p>Via the string resource named <code class="docutils literal notranslate"><span class="pre">gbs_digital_invoice_header_button_1</span></code>.</p>
+</li>
+<li><p class="first"><strong>Button Style</strong></p>
+<p>Via overriding the style named <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme.DigitalInvoice.Header.Button1</span></code> (with
+parent style <code class="docutils literal notranslate"><span class="pre">Root.GiniCaptureTheme.DigitalInvoice.Header.Button1</span></code>).</p>
+</li>
+</ul>
+<p><a class="reference internal" href="#info-box"><span class="std std-ref">Back to screenshot.</span></a></p>
+</div>
+<div class="section" id="skip-button">
+<h4>7. “Skip” Button<a class="headerlink" href="#skip-button" title="Permalink to this headline">¶</a></h4>
+<ul>
+<li><p class="first"><strong>Title</strong></p>
+<p>Via the string resource named <code class="docutils literal notranslate"><span class="pre">gbs_digital_invoice_header_button_2</span></code>.</p>
+</li>
+<li><p class="first"><strong>Button Style</strong></p>
+<p>Via overriding the style named <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme.DigitalInvoice.Header.Button2</span></code> (with
+parent style <code class="docutils literal notranslate"><span class="pre">Root.GiniCaptureTheme.DigitalInvoice.Header.Button2</span></code>).</p>
+</li>
+</ul>
+<p><a class="reference internal" href="#info-box"><span class="std std-ref">Back to screenshot.</span></a></p>
+</div>
+</div>
+<div class="section" id="digital-invoice-screen">
+<span id="digital-invoice"></span><h3><a class="toc-backref" href="#id19">Digital Invoice Screen</a><a class="headerlink" href="#digital-invoice-screen" title="Permalink to this headline">¶</a></h3>
+<div class="figure" style="width: 324px">
+<img alt="_images/Digital-Invoice-Screen.png" src="_images/Digital-Invoice-Screen.png" />
+</div>
+<div class="section" id="id4">
+<h4>1. Background<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h4>
+<ul>
+<li><p class="first"><strong>Color</strong></p>
+<p>Via the color resource named <code class="docutils literal notranslate"><span class="pre">gbs_digital_invoice_fragment_background</span></code>.</p>
+</li>
+</ul>
+<p><a class="reference internal" href="#digital-invoice"><span class="std std-ref">Back to screenshot.</span></a></p>
+</div>
+<div class="section" id="line-item-index">
+<h4>2. Line Item Index<a class="headerlink" href="#line-item-index" title="Permalink to this headline">¶</a></h4>
+<ul>
+<li><p class="first"><strong>Text</strong></p>
+<p>Via the string resource named <code class="docutils literal notranslate"><span class="pre">gbs_digital_invoice_line_item_index</span></code>.</p>
+<p>Please include two decimal format arguments:</p>
+<ul class="simple">
+<li>Current Index: <code class="docutils literal notranslate"><span class="pre">%1$d</span></code></li>
+<li>Total Count: <code class="docutils literal notranslate"><span class="pre">%2$d</span></code></li>
+</ul>
+</li>
+<li><p class="first"><strong>Text Style</strong></p>
+<p>Via overriding the style named <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme.DigitalInvoice.LineItem.Index.TextStyle</span></code> (with
+parent style <code class="docutils literal notranslate"><span class="pre">Root.GiniCaptureTheme.DigitalInvoice.LineItem.Index.TextStyle</span></code>).</p>
+</li>
+</ul>
+<p><a class="reference internal" href="#digital-invoice"><span class="std std-ref">Back to screenshot.</span></a></p>
+</div>
+<div class="section" id="line-item-edit-button">
+<h4>3. Line Item Edit Button<a class="headerlink" href="#line-item-edit-button" title="Permalink to this headline">¶</a></h4>
+<ul>
+<li><p class="first"><strong>Title</strong></p>
+<p>Via the string resource named <code class="docutils literal notranslate"><span class="pre">gbs_digital_invoice_header_button_2</span></code>.</p>
+</li>
+<li><p class="first"><strong>Icon</strong></p>
+<p>Via a vector drawable named <code class="docutils literal notranslate"><span class="pre">gbs_edit_icon</span></code>.</p>
+</li>
+<li><p class="first"><strong>Icon Tint Color</strong></p>
+<p>Via the color resource named <code class="docutils literal notranslate"><span class="pre">gbs_digital_invoice_edit_button</span></code>.</p>
+</li>
+<li><p class="first"><strong>Button Style</strong></p>
+<p>Via overriding the style named <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme.DigitalInvoice.LineItem.Edit.TextStyle</span></code> (with
+parent style <code class="docutils literal notranslate"><span class="pre">Root.GiniCaptureTheme.DigitalInvoice.LineItem.Edit.TextStyle</span></code>).</p>
+</li>
+</ul>
+<p><a class="reference internal" href="#digital-invoice"><span class="std std-ref">Back to screenshot.</span></a></p>
+</div>
+<div class="section" id="line-item-card">
+<h4>4. Line Item Card<a class="headerlink" href="#line-item-card" title="Permalink to this headline">¶</a></h4>
+<ul>
+<li><p class="first"><strong>Border Stroke Color</strong></p>
+<p>Via the color resource named <code class="docutils literal notranslate"><span class="pre">gbs_digital_invoice_line_item_stroke</span></code>.</p>
+</li>
+<li><p class="first"><strong>Toggle Switch Style</strong></p>
+<p>Via overriding the style named <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme.DigitalInvoice.Switch</span></code> (with
+parent style <code class="docutils literal notranslate"><span class="pre">Root.GiniCaptureTheme.DigitalInvoice.Switch</span></code>).</p>
+</li>
+<li><p class="first"><strong>Description Text Style</strong></p>
+<p>Via overriding the style named <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme.DigitalInvoice.LineItem.Description.TextStyle</span></code> (with
+parent style <code class="docutils literal notranslate"><span class="pre">Root.GiniCaptureTheme.DigitalInvoice.LineItem.Description.TextStyle</span></code>).</p>
+</li>
+<li><p class="first"><strong>Quantity Text Style</strong></p>
+<p>Via overriding the style named <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme.DigitalInvoice.LineItem.Quantity.TextStyle</span></code> (with
+parent style <code class="docutils literal notranslate"><span class="pre">Root.GiniCaptureTheme.DigitalInvoice.LineItem.Quantity.TextStyle</span></code>).</p>
+</li>
+<li><p class="first"><strong>Price Text Style - Integral Part</strong></p>
+<p>Via overriding the style named <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme.DigitalInvoice.LineItem.GrossPrice.Integral.TextStyle</span></code> (with
+parent style <code class="docutils literal notranslate"><span class="pre">Root.GiniCaptureTheme.DigitalInvoice.LineItem.GrossPrice.Integral.TextStyle</span></code>).</p>
+</li>
+<li><p class="first"><strong>Price Text Style - Fractional Part</strong></p>
+<p>Via overriding the style named <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme.DigitalInvoice.LineItem.GrossPrice.Fractional.TextStyle</span></code> (with
+parent style <code class="docutils literal notranslate"><span class="pre">Root.GiniCaptureTheme.DigitalInvoice.LineItem.GrossPrice.Fractional.TextStyle</span></code>).</p>
+</li>
+<li><p class="first"><strong>Delete Button (shown only for manually added line items)</strong></p>
+<ul>
+<li><p class="first"><strong>Icon</strong></p>
+<p>Via a vector drawable named <code class="docutils literal notranslate"><span class="pre">gbs_digital_invoice_remove</span></code>.</p>
+</li>
+<li><p class="first"><strong>Style</strong></p>
+<p>Via overriding the style named <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme.DigitalInvoice.Remove.Button</span></code> (with
+parent style <code class="docutils literal notranslate"><span class="pre">Root.GiniCaptureTheme.DigitalInvoice.Remove.Button</span></code>).</p>
+</li>
+</ul>
+</li>
+<li><p class="first"><strong>Disabled State Color</strong></p>
+<p>Via the color resource named <code class="docutils literal notranslate"><span class="pre">gbs_digital_invoice_line_item_disabled</span></code>.</p>
+</li>
+</ul>
+<p><a class="reference internal" href="#digital-invoice"><span class="std std-ref">Back to screenshot.</span></a></p>
+</div>
+<div class="section" id="additional-costs">
+<h4>5. Additional Costs<a class="headerlink" href="#additional-costs" title="Permalink to this headline">¶</a></h4>
+<ul>
+<li><p class="first"><strong>Name Text Style</strong></p>
+<p>Via overriding the style named <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme.DigitalInvoice.Addon.Name.TextStyle</span></code> (with
+parent style <code class="docutils literal notranslate"><span class="pre">Root.GiniCaptureTheme.DigitalInvoice.Addon.Name.TextStyle</span></code>).</p>
+</li>
+<li><p class="first"><strong>Price Text Style - Integral Part</strong></p>
+<p>Via overriding the style named <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme.DigitalInvoice.Addon.Price.Integral.TextStyle</span></code> (with
+parent style <code class="docutils literal notranslate"><span class="pre">Root.GiniCaptureTheme.DigitalInvoice.Addon.Price.Integral.TextStyle</span></code>).</p>
+</li>
+<li><p class="first"><strong>Price Text Style - Fractional Part</strong></p>
+<p>Via overriding the style named <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme.DigitalInvoice.Addon.Price.Fractional.TextStyle</span></code> (with
+parent style <code class="docutils literal notranslate"><span class="pre">Root.GiniCaptureTheme.DigitalInvoice.Addon.Price.Fractional.TextStyle</span></code>).</p>
+</li>
+</ul>
+<p><a class="reference internal" href="#digital-invoice"><span class="std std-ref">Back to screenshot.</span></a></p>
+</div>
+<div class="section" id="add-article-button">
+<h4>6. “Add Article” Button<a class="headerlink" href="#add-article-button" title="Permalink to this headline">¶</a></h4>
+<ul>
+<li><p class="first"><strong>Title</strong></p>
+<p>Via the string resource named <code class="docutils literal notranslate"><span class="pre">gbs_digital_invoice_footer_add</span></code>.</p>
+</li>
+<li><p class="first"><strong>Button Style</strong></p>
+<p>Via overriding the style named <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme.DigitalInvoice.Add.Button</span></code> (with
+parent style <code class="docutils literal notranslate"><span class="pre">Root.GiniCaptureTheme.DigitalInvoice.Add.Button</span></code>).</p>
+</li>
+</ul>
+<p><a class="reference internal" href="#digital-invoice"><span class="std std-ref">Back to screenshot.</span></a></p>
+</div>
+<div class="section" id="total-price">
+<h4>7. Total Price<a class="headerlink" href="#total-price" title="Permalink to this headline">¶</a></h4>
+<ul>
+<li><p class="first"><strong>Total Price Label Text</strong></p>
+<p>Via the string resource named <code class="docutils literal notranslate"><span class="pre">gbs_digital_invoice_footer_total_label</span></code>.</p>
+</li>
+<li><p class="first"><strong>Total Price Label Text Style</strong></p>
+<p>Via overriding the style named <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme.DigitalInvoice.TotalGrossPrice.Label.TextStyle</span></code> (with
+parent style <code class="docutils literal notranslate"><span class="pre">Root.GiniCaptureTheme.DigitalInvoice.TotalGrossPrice.Label.TextStyle</span></code>).</p>
+</li>
+<li><p class="first"><strong>Explanation Text</strong></p>
+<p>Via the string resource named <code class="docutils literal notranslate"><span class="pre">gbs_digital_invoice_footer_total_expl</span></code>.</p>
+</li>
+<li><p class="first"><strong>Explanation Text Style</strong></p>
+<p>Via overriding the style named <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme.DigitalInvoice.TotalGrossPrice.Expl.TextStyle</span></code> (with
+parent style <code class="docutils literal notranslate"><span class="pre">Root.GiniCaptureTheme.DigitalInvoice.TotalGrossPrice.Expl.TextStyle</span></code>).</p>
+</li>
+<li><p class="first"><strong>Total Price Text Style - Integral Part</strong></p>
+<p>Via overriding the style named <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme.DigitalInvoice.TotalGrossPrice.Integral.TextStyle</span></code> (with
+parent style <code class="docutils literal notranslate"><span class="pre">Root.GiniCaptureTheme.DigitalInvoice.TotalGrossPrice.Integral.TextStyle</span></code>).</p>
+</li>
+<li><p class="first"><strong>Total Price Text Style - Fractional Part</strong></p>
+<p>Via overriding the style named <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme.DigitalInvoice.TotalGrossPrice.Fractional.TextStyle</span></code> (with
+parent style <code class="docutils literal notranslate"><span class="pre">Root.GiniCaptureTheme.DigitalInvoice.TotalGrossPrice.Fractional.TextStyle</span></code>).</p>
+</li>
+</ul>
+<p><a class="reference internal" href="#digital-invoice"><span class="std std-ref">Back to screenshot.</span></a></p>
+</div>
+<div class="section" id="bottom-notice">
+<h4>8. Bottom Notice<a class="headerlink" href="#bottom-notice" title="Permalink to this headline">¶</a></h4>
+<ul>
+<li><p class="first"><strong>Text</strong></p>
+<p>Via the string resource named <code class="docutils literal notranslate"><span class="pre">gbs_digital_invoice_footer_notice</span></code>.</p>
+</li>
+<li><p class="first"><strong>Text Style</strong></p>
+<p>Via overriding the style named <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme.DigitalInvoice.Footer.Notice.TextStyle</span></code> (with
+parent style <code class="docutils literal notranslate"><span class="pre">Root.GiniCaptureTheme.DigitalInvoice.Footer.Notice.TextStyle</span></code>).</p>
+</li>
+</ul>
+<p><a class="reference internal" href="#digital-invoice"><span class="std std-ref">Back to screenshot.</span></a></p>
+</div>
+<div class="section" id="pay-button">
+<h4>9. “Pay” Button<a class="headerlink" href="#pay-button" title="Permalink to this headline">¶</a></h4>
+<ul>
+<li><p class="first"><strong>Title</strong></p>
+<p>Via the string resource named <code class="docutils literal notranslate"><span class="pre">gbs_digital_invoice_pay</span></code>.</p>
+<p>Please include two decimal format arguments:</p>
+<ul class="simple">
+<li>Selected Items Count: <code class="docutils literal notranslate"><span class="pre">%1$d</span></code></li>
+<li>Total Count: <code class="docutils literal notranslate"><span class="pre">%2$d</span></code></li>
+</ul>
+</li>
+<li><p class="first"><strong>Button Style</strong></p>
+<p>Via overriding the style named <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme.DigitalInvoice.Pay.Button</span></code> (with
+parent style <code class="docutils literal notranslate"><span class="pre">Root.GiniCaptureTheme.DigitalInvoice.Pay.Button</span></code>).</p>
+</li>
+</ul>
+<p><a class="reference internal" href="#digital-invoice"><span class="std std-ref">Back to screenshot.</span></a></p>
+</div>
+<div class="section" id="id5">
+<h4>10. “Skip” Button<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h4>
+<ul>
+<li><p class="first"><strong>Title</strong></p>
+<p>Via the string resource named <code class="docutils literal notranslate"><span class="pre">gbs_digital_invoice_footer_skip</span></code>.</p>
+</li>
+<li><p class="first"><strong>Button Style</strong></p>
+<p>Via overriding the style named <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme.DigitalInvoice.Skip.Button</span></code> (with
+parent style <code class="docutils literal notranslate"><span class="pre">Root.GiniCaptureTheme.DigitalInvoice.Skip.Button</span></code>).</p>
+</li>
+</ul>
+<p><a class="reference internal" href="#digital-invoice"><span class="std std-ref">Back to screenshot.</span></a></p>
+</div>
+</div>
+<div class="section" id="return-reason-picker">
+<span id="id6"></span><h3><a class="toc-backref" href="#id20">Return Reason Picker</a><a class="headerlink" href="#return-reason-picker" title="Permalink to this headline">¶</a></h3>
+<div class="figure" style="width: 324px">
+<img alt="_images/Digital-Invoice-Return-Reason-Picker.png" src="_images/Digital-Invoice-Return-Reason-Picker.png" />
+</div>
+<div class="section" id="id7">
+<h4>1. Title<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h4>
+<ul>
+<li><p class="first"><strong>Text</strong></p>
+<p>Via the string resource named <code class="docutils literal notranslate"><span class="pre">gbs_digital_invoice_return_reason_dialog_title</span></code>.</p>
+</li>
+<li><p class="first"><strong>Text Style</strong></p>
+<p>Via overriding the style named <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme.DigitalInvoice.ReturnReasonDialog.Title.TextStyle</span></code> (with
+parent style <code class="docutils literal notranslate"><span class="pre">Root.GiniCaptureTheme.DigitalInvoice.ReturnReasonDialog.Title.TextStyle</span></code>).</p>
+</li>
+<li><p class="first"><strong>Divider Color</strong></p>
+<p>Via the color resource named <code class="docutils literal notranslate"><span class="pre">gbs_digital_invoice_return_reason_dialog_divider</span></code>.</p>
+</li>
+</ul>
+<p><a class="reference internal" href="#return-reason-picker"><span class="std std-ref">Back to screenshot.</span></a></p>
+</div>
+<div class="section" id="return-reason-item">
+<h4>2. Return Reason Item<a class="headerlink" href="#return-reason-item" title="Permalink to this headline">¶</a></h4>
+<ul>
+<li><p class="first"><strong>Text Style</strong></p>
+<p>Via overriding the style named <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme.DigitalInvoice.ReturnReasonDialog.Item.TextStyle</span></code> (with
+parent style <code class="docutils literal notranslate"><span class="pre">Root.GiniCaptureTheme.DigitalInvoice.ReturnReasonDialog.Item.TextStyle</span></code>).</p>
+</li>
+</ul>
+<p><span class="xref std std-ref">Back to screenshot.</span></p>
+</div>
+</div>
+<div class="section" id="info-screen">
+<span id="id8"></span><h3><a class="toc-backref" href="#id21">Info Screen</a><a class="headerlink" href="#info-screen" title="Permalink to this headline">¶</a></h3>
+<div class="figure" style="width: 324px">
+<img alt="_images/Digital-Invoice-Info-Screen.png" src="_images/Digital-Invoice-Info-Screen.png" />
+</div>
+<div class="section" id="id9">
+<h4>1. Background<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h4>
+<ul>
+<li><p class="first"><strong>Color</strong></p>
+<p>Via the color resource named <code class="docutils literal notranslate"><span class="pre">gbs_digital_invoice_onboarding_fragment_background</span></code>.</p>
+</li>
+</ul>
+<p><a class="reference internal" href="#info-screen"><span class="std std-ref">Back to screenshot.</span></a></p>
+</div>
+<div class="section" id="id10">
+<h4>2. Title<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h4>
+<ul>
+<li><p class="first"><strong>Text</strong></p>
+<p>Via the string resource named <code class="docutils literal notranslate"><span class="pre">gbs_digital_invoice_info_text_1</span></code>.</p>
+</li>
+<li><p class="first"><strong>Text Style</strong></p>
+<p>Via overriding the style named <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme.DigitalInvoice.Info.Title.TextStyle</span></code> (with
+parent style <code class="docutils literal notranslate"><span class="pre">Root.GiniCaptureTheme.DigitalInvoice.Info.Title.TextStyle</span></code>).</p>
+</li>
+</ul>
+<p><a class="reference internal" href="#info-screen"><span class="std std-ref">Back to screenshot.</span></a></p>
+</div>
+<div class="section" id="id11">
+<h4>3. Illustration<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h4>
+<ul>
+<li><p class="first"><strong>Image</strong></p>
+<p>Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named <code class="docutils literal notranslate"><span class="pre">gbs_digital_invoice_list_image.png</span></code>.
+Or via a vector drawable added to the <code class="docutils literal notranslate"><span class="pre">drawable-anydpi</span></code> resource folder.</p>
+</li>
+</ul>
+<p><a class="reference internal" href="#info-screen"><span class="std std-ref">Back to screenshot.</span></a></p>
+</div>
+<div class="section" id="id12">
+<h4>4. Message<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h4>
+<ul>
+<li><p class="first"><strong>Text</strong></p>
+<p>Via the string resource named <code class="docutils literal notranslate"><span class="pre">gbs_digital_invoice_info_text_2</span></code>.</p>
+</li>
+<li><p class="first"><strong>Text Style</strong></p>
+<p>Via overriding the style named <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme.DigitalInvoice.Info.TextStyle</span></code> (with
+parent style <code class="docutils literal notranslate"><span class="pre">Root.GiniCaptureTheme.DigitalInvoice.Info.TextStyle</span></code>).</p>
+</li>
+</ul>
+<p><a class="reference internal" href="#info-screen"><span class="std std-ref">Back to screenshot.</span></a></p>
+</div>
+<div class="section" id="close-button">
+<h4>5. “Close” Button<a class="headerlink" href="#close-button" title="Permalink to this headline">¶</a></h4>
+<ul>
+<li><p class="first"><strong>Title</strong></p>
+<p>Via the string resource named <code class="docutils literal notranslate"><span class="pre">gbs_digital_invoice_info_close_button_title</span></code>.</p>
+</li>
+<li><p class="first"><strong>Button Style</strong></p>
+<p>Via overriding the style named <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme.DigitalInvoice.Info.Button</span></code> (with
+parent style <code class="docutils literal notranslate"><span class="pre">Root.GiniCaptureTheme.DigitalInvoice.Info.Button</span></code>).</p>
+</li>
+</ul>
+<p><a class="reference internal" href="#info-screen"><span class="std std-ref">Back to screenshot.</span></a></p>
+</div>
+</div>
+<div class="section" id="edit-line-item-screen">
+<span id="edit-line-item"></span><h3><a class="toc-backref" href="#id22">Edit Line Item Screen</a><a class="headerlink" href="#edit-line-item-screen" title="Permalink to this headline">¶</a></h3>
+<div class="figure" style="width: 324px">
+<img alt="_images/Digital-Invoice-Edit-Line-Item.png" src="_images/Digital-Invoice-Edit-Line-Item.png" />
+</div>
+<div class="section" id="id13">
+<h4>1. Action Bar<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h4>
+<p>All Action Bar customizations except the title are global to all Activities.</p>
+<ul>
+<li><p class="first"><strong>Title</strong></p>
+<p>Via the string resource named <code class="docutils literal notranslate"><span class="pre">gbs_title_line_item_details</span></code>.</p>
+</li>
+<li><p class="first"><strong>Title Color</strong></p>
+<p>Via the color resource named <code class="docutils literal notranslate"><span class="pre">gc_action_bar_title</span></code>.</p>
+</li>
+<li><p class="first"><strong>Back Button Icon</strong></p>
+<p>Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named <code class="docutils literal notranslate"><span class="pre">gc_action_bar_back</span></code>.
+Or via a vector drawable added to the <code class="docutils literal notranslate"><span class="pre">drawable-anydpi</span></code> resource folder.</p>
+</li>
+<li><p class="first"><strong>Background Color</strong></p>
+<p>Via the color resource named <code class="docutils literal notranslate"><span class="pre">gc_action_bar</span></code>.</p>
+</li>
+<li><p class="first"><strong>Status Bar Background Color</strong></p>
+<p>Via the color resource named <code class="docutils literal notranslate"><span class="pre">gc_status_bar</span></code>.</p>
+<p>If you use a light background color, then you should set the <code class="docutils literal notranslate"><span class="pre">gc_light_status_bar</span></code> boolean
+resource to <code class="docutils literal notranslate"><span class="pre">true</span></code>. This will cause the status bar contents to be drawn with a dark color.</p>
+</li>
+</ul>
+<p><a class="reference internal" href="#edit-line-item"><span class="std std-ref">Back to screenshot.</span></a></p>
+</div>
+<div class="section" id="id14">
+<h4>2. Background<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h4>
+<ul>
+<li><p class="first"><strong>Color</strong></p>
+<p>Via the color resource named <code class="docutils literal notranslate"><span class="pre">gbs_digital_invoice_line_item_details_background</span></code>.</p>
+</li>
+</ul>
+<p><a class="reference internal" href="#edit-line-item"><span class="std std-ref">Back to screenshot.</span></a></p>
+</div>
+<div class="section" id="toggle-switch">
+<h4>3. Toggle Switch<a class="headerlink" href="#toggle-switch" title="Permalink to this headline">¶</a></h4>
+<ul>
+<li><p class="first"><strong>Label Text</strong></p>
+<p>Via the plural string resource named <code class="docutils literal notranslate"><span class="pre">gbs_digital_invoice_line_item_details_selected_line_items</span></code> and the additional string resource for selected
+state named <code class="docutils literal notranslate"><span class="pre">gbs_digital_invoice_line_item_details_selected</span></code>.</p>
+<p>Please include two format arguments in the plural strings:</p>
+<ul class="simple">
+<li>Quantity decimal: <code class="docutils literal notranslate"><span class="pre">%1$d</span></code></li>
+<li>Suffix string: <code class="docutils literal notranslate"><span class="pre">%2$s</span></code></li>
+</ul>
+<p>Example:</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;plurals</span> <span class="na">name=</span><span class="s">&quot;gbs_digital_invoice_line_item_details_selected_line_items&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;item</span> <span class="na">quantity=</span><span class="s">&quot;other&quot;</span><span class="nt">&gt;</span>%1$d Artikel %2$s<span class="nt">&lt;/item&gt;</span>
+<span class="nt">&lt;/plurals&gt;</span>
+<span class="nt">&lt;string</span> <span class="na">name=</span><span class="s">&quot;gbs_digital_invoice_line_item_details_selected&quot;</span><span class="nt">&gt;</span>ausgewählt<span class="nt">&lt;/string&gt;</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first"><strong>Label Text Style</strong></p>
+<p>Via overriding the style named <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme.DigitalInvoice.LineItemDetails.Checkbox.TextStyle</span></code> (with
+parent style <code class="docutils literal notranslate"><span class="pre">Root.GiniCaptureTheme.DigitalInvoice.LineItemDetails.Checkbox.TextStyle</span></code>).</p>
+</li>
+<li><p class="first"><strong>Toggle Switch Style</strong></p>
+<p>Via overriding the style named <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme.DigitalInvoice.Switch</span></code> (with
+parent style <code class="docutils literal notranslate"><span class="pre">Root.GiniCaptureTheme.DigitalInvoice.Switch</span></code>).</p>
+</li>
+</ul>
+<p><a class="reference internal" href="#edit-line-item"><span class="std std-ref">Back to screenshot.</span></a></p>
+</div>
+<div class="section" id="input-fields-description-quantity-price">
+<h4>4. 5. 6. Input Fields: Description, Quantity, Price<a class="headerlink" href="#input-fields-description-quantity-price" title="Permalink to this headline">¶</a></h4>
+<ul>
+<li><p class="first"><strong>Description Label Text</strong></p>
+<p>Via the string resource named <code class="docutils literal notranslate"><span class="pre">gbs_digital_invoice_line_item_details_description_label</span></code>.</p>
+</li>
+<li><p class="first"><strong>Quantity Label Text</strong></p>
+<p>Via the string resource named <code class="docutils literal notranslate"><span class="pre">gbs_digital_invoice_line_item_details_quantity_label</span></code>.</p>
+</li>
+<li><p class="first"><strong>Price Label Text</strong></p>
+<p>Via the string resource named <code class="docutils literal notranslate"><span class="pre">gbs_digital_invoice_line_item_details_gross_price_label</span></code>.</p>
+</li>
+<li><p class="first"><strong>Label Text Style</strong></p>
+<p>Via overriding the style named <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme.DigitalInvoice.LineItemDetails.InputField.Hint.TextStyle</span></code> (with
+parent style <code class="docutils literal notranslate"><span class="pre">Root.GiniCaptureTheme.DigitalInvoice.LineItemDetails.InputField.Hint.TextStyle</span></code>).</p>
+</li>
+<li><p class="first"><strong>Input Field Style</strong></p>
+<p>Via overriding the style named <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme.DigitalInvoice.LineItemDetails.InputField.Style</span></code> (with
+parent style <code class="docutils literal notranslate"><span class="pre">Root.GiniCaptureTheme.DigitalInvoice.LineItemDetails.InputField.Style</span></code>).</p>
+</li>
+<li><p class="first"><strong>Input Field Text Style</strong></p>
+<p>Via overriding the style named <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme.DigitalInvoice.LineItemDetails.InputField.TextStyle</span></code> (with
+parent style <code class="docutils literal notranslate"><span class="pre">Root.GiniCaptureTheme.DigitalInvoice.LineItemDetails.InputField.TextStyle</span></code>).</p>
+</li>
+</ul>
+<p><a class="reference internal" href="#edit-line-item"><span class="std std-ref">Back to screenshot.</span></a></p>
+</div>
+<div class="section" id="multiplication-symbol">
+<h4>7. Multiplication Symbol<a class="headerlink" href="#multiplication-symbol" title="Permalink to this headline">¶</a></h4>
+<ul>
+<li><p class="first"><strong>Color</strong></p>
+<p>Via the color resource named <code class="docutils literal notranslate"><span class="pre">gbs_digital_invoice_line_item_details_multiplication_symbol</span></code>.</p>
+</li>
+</ul>
+<p><a class="reference internal" href="#edit-line-item"><span class="std std-ref">Back to screenshot.</span></a></p>
+</div>
+<div class="section" id="id15">
+<h4>8. Total Price<a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h4>
+<ul>
+<li><p class="first"><strong>Total Price Label Text</strong></p>
+<p>Via the string resource named <code class="docutils literal notranslate"><span class="pre">gbs_digital_invoice_line_item_details_total_label</span></code>.</p>
+</li>
+<li><p class="first"><strong>Total Price Label Text Style</strong></p>
+<p>Via overriding the style named <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme.DigitalInvoice.LineItemDetails.Total.TextStyle</span></code> (with
+parent style <code class="docutils literal notranslate"><span class="pre">Root.GiniCaptureTheme.DigitalInvoice.LineItemDetails.Total.TextStyle</span></code>).</p>
+</li>
+<li><p class="first"><strong>Total Price Info Text</strong></p>
+<p>Via the string resource named <code class="docutils literal notranslate"><span class="pre">gbs_digital_invoice_line_item_total_info_label</span></code>.</p>
+</li>
+<li><p class="first"><strong>Total Price Info Text Style</strong></p>
+<p>Via overriding the style named <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme.DigitalInvoice.LineItemDetails.Total.Info.TextStyle</span></code> (with
+parent style <code class="docutils literal notranslate"><span class="pre">Root.GiniCaptureTheme.DigitalInvoice.LineItemDetails.Total.Info.TextStyle</span></code>).</p>
+</li>
+<li><p class="first"><strong>Total Price Text Style - Integral Part</strong></p>
+<p>Via overriding the style named <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme.DigitalInvoice.TotalGrossPrice.Integral.TextStyle</span></code> (with
+parent style <code class="docutils literal notranslate"><span class="pre">Root.GiniCaptureTheme.DigitalInvoice.TotalGrossPrice.Integral.TextStyle</span></code>).</p>
+</li>
+<li><p class="first"><strong>Total Price Text Style - Fractional Part</strong></p>
+<p>Via overriding the style named <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme.DigitalInvoice.TotalGrossPrice.Fractional.TextStyle</span></code> (with
+parent style <code class="docutils literal notranslate"><span class="pre">Root.GiniCaptureTheme.DigitalInvoice.TotalGrossPrice.Fractional.TextStyle</span></code>).</p>
+</li>
+</ul>
+<p><a class="reference internal" href="#edit-line-item"><span class="std std-ref">Back to screenshot.</span></a></p>
+</div>
+<div class="section" id="save-button">
+<h4>9. “Save” Button<a class="headerlink" href="#save-button" title="Permalink to this headline">¶</a></h4>
+<ul>
+<li><p class="first"><strong>Title</strong></p>
+<p>Via the string resource named <code class="docutils literal notranslate"><span class="pre">gbs_digital_invoice_line_item_details_save</span></code>.</p>
+</li>
+<li><p class="first"><strong>Button Style</strong></p>
+<p>Via overriding the style named <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme.DigitalInvoice.LineItemDetails.Save.Button</span></code> (with
+parent style <code class="docutils literal notranslate"><span class="pre">Root.GiniCaptureTheme.DigitalInvoice.LineItemDetails.Save.Button</span></code>).</p>
+</li>
+</ul>
+<p><a class="reference internal" href="#edit-line-item"><span class="std std-ref">Back to screenshot.</span></a></p>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="migrating-from-gvl.html" class="btn btn-neutral float-right" title="Migrating from the Gini Vision Library">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="capture-features.html" class="btn btn-neutral" title="Invoice Capture Features"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+    </p>
+  </div>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  
+</body>
+</html>
