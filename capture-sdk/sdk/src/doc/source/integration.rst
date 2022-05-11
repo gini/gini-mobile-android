@@ -274,6 +274,12 @@ This is the easiest way to use the SDK. You only need to:
 #. Launch the ``CameraActivity``,
 #. Handle the result.
 
+The following diagram shows the interaction between your app and the SDK:
+
+.. figure:: _static/integration/Screen-API.png
+   :alt: Diagram of interaction between your app and the SDK with the Screen API
+   :width: 100%
+
 .. note::
 
    Check out the `Screen API example app
