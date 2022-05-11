@@ -331,7 +331,7 @@ The following example shows how to launch the Gini Capture SDK using the *Screen
                 .build();
                 
         // Launch the CameraActivity and wait for the result.
-        Intent intent = new Intent(this, CameraScreenApiActivity.class);
+        Intent intent = new Intent(this, CameraActivity.class);
         startActivityForResult(intent, GINI_CAPTURE_REQUEST);
     }
 
