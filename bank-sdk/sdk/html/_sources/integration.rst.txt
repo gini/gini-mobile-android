@@ -273,6 +273,12 @@ This is the easiest way to use the capture flow. You only need to:
 #. Register an activity result handler with the ``CaptureFlowContract()``,
 #. Start the capture flow.
 
+The following diagram shows the interaction between your app and the SDK:
+
+.. figure:: _static/capture-features/Screen-API.png
+   :alt: Diagram of interaction between your app and the SDK with the Screen API
+   :width: 100%
+
 .. note::
 
    Check out the `Screen API example app

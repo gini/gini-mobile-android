@@ -163,7 +163,7 @@ to the appropriate fragment based on this diagram.
 
 The part related to the return assistant is in the lower right corner:
 
-.. image:: _static/capture-features/Return-Assistant-Component-API.jpg
+.. image:: _static/capture-features/Return-Assistant-Component-API.png
    :alt: Diagram of possible flows through the SDK with the Component API fragments and their listeners including the return assistant.
    :width: 100%
 
