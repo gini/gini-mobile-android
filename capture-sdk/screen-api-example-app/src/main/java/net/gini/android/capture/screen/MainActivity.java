@@ -16,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import net.gini.android.capture.onboarding.DefaultPages;
 import net.gini.android.core.api.GiniApiType;
 import net.gini.android.capture.AsyncCallback;
 import net.gini.android.capture.DocumentImportEnabledFileTypes;
@@ -31,7 +32,6 @@ import net.gini.android.capture.help.HelpItem;
 import net.gini.android.capture.help.PhotoTipsActivity;
 import net.gini.android.capture.logging.ErrorLog;
 import net.gini.android.capture.logging.ErrorLoggerListener;
-import net.gini.android.capture.onboarding.DefaultPagesPhone;
 import net.gini.android.capture.onboarding.OnboardingPage;
 import net.gini.android.capture.requirements.GiniCaptureRequirements;
 import net.gini.android.capture.requirements.RequirementReport;
@@ -337,6 +337,8 @@ public class MainActivity extends AppCompatActivity {
 //                builder.setSupportedFormatsHelpScreenEnabled(false);
 
         builder.setBottomNavigationBarEnabled(true);
+        builder.setOnboardingAlignCornersIconProvider(new CustomOnboardingAlignCornersIconProvider());
+        builder.setOnboardingQRCodeIconProvider(new CustomOnboardingAlignCornersIconProvider());
 
         builder.build();
     }
@@ -369,9 +371,8 @@ public class MainActivity extends AppCompatActivity {
 
     private ArrayList<OnboardingPage> getOnboardingPages() {
         // Adding a custom page to the default pages
-        final ArrayList<OnboardingPage> pages = DefaultPagesPhone.asArrayList();
-        pages.add(new OnboardingPage(R.string.additional_onboarding_page,
-                R.drawable.additional_onboarding_illustration));
+        final ArrayList<OnboardingPage> pages = DefaultPages.asArrayList();
+        pages.add(new OnboardingPage(R.string.additional_onboarding_page));
         return pages;
     }
 
