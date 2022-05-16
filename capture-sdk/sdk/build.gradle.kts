@@ -26,6 +26,10 @@ android {
         buildConfigField("String", "VERSION_CODE", "\"${properties["versionCode"]}\"")
     }
 
+    buildFeatures {
+        viewBinding = true
+    }
+
     buildTypes {
         debug {
             isTestCoverageEnabled = true

@@ -12,6 +12,11 @@ import net.gini.android.capture.internal.network.NetworkRequestsManager;
 import net.gini.android.capture.internal.storage.ImageDiskStore;
 import net.gini.android.capture.logging.ErrorLogger;
 import net.gini.android.capture.logging.ErrorLoggerListener;
+import net.gini.android.capture.onboarding.view.OnboardingIconProvider;
+import net.gini.android.capture.view.NavigationBarBottomProvider;
+import net.gini.android.capture.view.NavigationBarTopProvider;
+import net.gini.android.capture.view.DefaultNavigationBarBottomProvider;
+import net.gini.android.capture.view.DefaultNavigationBarTopProvider;
 import net.gini.android.capture.network.GiniCaptureNetworkApi;
 import net.gini.android.capture.network.GiniCaptureNetworkService;
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction;
@@ -85,6 +90,9 @@ public class GiniCapture {
     private final EventTracker mEventTracker;
     private final List<HelpItem.Custom> mCustomHelpItems;
     private final ErrorLogger mErrorLogger;
+    private final NavigationBarTopProvider navigationBarTopProvider;
+    private final NavigationBarBottomProvider navigationBarBottomProvider;
+    private final boolean isBottomNavigationBarEnabled;
 
     /**
      * Retrieve the current instance.
@@ -185,6 +193,9 @@ public class GiniCapture {
         mErrorLogger = new ErrorLogger(builder.getGiniErrorLoggerIsOn(),
                 builder.getGiniCaptureNetworkService(),
                 builder.getCustomErrorLoggerListener());
+        navigationBarTopProvider = builder.getNavigationBarTopProvider();
+        navigationBarBottomProvider = builder.getNavigationBarBottomProvider();
+        isBottomNavigationBarEnabled = builder.isBottomNavigationBarEnabled();
     }
 
     /**
@@ -514,6 +525,19 @@ public class GiniCapture {
     @NonNull
     ErrorLogger getErrorLogger() { return mErrorLogger; }
 
+    @NonNull
+    public NavigationBarTopProvider getNavigationBarTopProvider() {
+        return navigationBarTopProvider;
+    }
+
+    @NonNull
+    public NavigationBarBottomProvider getNavigationBarBottomProvider() {
+        return navigationBarBottomProvider;
+    }
+
+    public boolean isBottomNavigationBarEnabled() {
+        return isBottomNavigationBarEnabled;
+    }
     /**
      * Builder for {@link GiniCapture}. To get an instance call {@link #newInstance()}.
      */
@@ -553,6 +577,9 @@ public class GiniCapture {
         private List<HelpItem.Custom> mCustomHelpItems = new ArrayList<>();
         private boolean mGiniErrorLoggerIsOn = true;
         private ErrorLoggerListener mCustomErrorLoggerListener;
+        private NavigationBarTopProvider navigationBarTopProvider = new DefaultNavigationBarTopProvider();
+        private NavigationBarBottomProvider navigationBarBottomProvider = new DefaultNavigationBarBottomProvider();
+        private boolean isBottomNavigationBarEnabled = false;
 
         /**
          * Create a new {@link GiniCapture} instance.
@@ -900,6 +927,34 @@ public class GiniCapture {
         @Nullable
         private ErrorLoggerListener getCustomErrorLoggerListener() {
             return mCustomErrorLoggerListener;
+        }
+        public Builder setNavigationBarTopProvider(@NonNull final NavigationBarTopProvider provider ) {
+            navigationBarTopProvider = provider;
+            return this;
+        }
+
+        @NonNull
+        private NavigationBarTopProvider getNavigationBarTopProvider() {
+            return navigationBarTopProvider;
+        }
+
+        public Builder setNavigationBarBottomProvider(@NonNull final NavigationBarBottomProvider provider ) {
+            navigationBarBottomProvider = provider;
+            return this;
+        }
+
+        @NonNull
+        private NavigationBarBottomProvider getNavigationBarBottomProvider() {
+            return navigationBarBottomProvider;
+        }
+
+        public Builder setBottomNavigationBarEnabled(final Boolean enabled) {
+            isBottomNavigationBarEnabled = enabled;
+            return this;
+        }
+
+        private boolean isBottomNavigationBarEnabled() {
+            return isBottomNavigationBarEnabled;
         }
     }
 

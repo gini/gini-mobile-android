@@ -99,4 +99,6 @@
     <string name="gc_file_import_default_app_dialog_pdf_file_type">PDF</string>
     <string name="gc_file_import_default_app_dialog_image_file_type">image</string>
     <string name="gc_file_import_default_app_dialog_document_file_type">document</string>
+
+    <string name="gc_close">Close</string>
 </resources>

@@ -3,6 +3,7 @@ package net.gini.android.capture.onboarding;
 import android.animation.Animator;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,8 +13,18 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Space;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
+import androidx.core.content.ContextCompat;
+import androidx.viewpager.widget.ViewPager;
+
+import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.R;
 import net.gini.android.capture.internal.ui.AnimatorListenerNoOp;
+import net.gini.android.capture.view.InjectedViewContainer;
+import net.gini.android.capture.view.NavigationBarBottomProvider;
+import net.gini.android.capture.view.NavigationBarTopProvider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,10 +32,6 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.VisibleForTesting;
-import androidx.viewpager.widget.ViewPager;
 import jersey.repackaged.jsr166e.CompletableFuture;
 
 class OnboardingFragmentImpl extends OnboardingScreenContract.View {
@@ -38,6 +45,8 @@ class OnboardingFragmentImpl extends OnboardingScreenContract.View {
     private ViewPager mViewPager;
     private LinearLayout mLayoutPageIndicators;
     private PageIndicators mPageIndicators;
+    private InjectedViewContainer injectedNavigationBarTopContainer;
+    private InjectedViewContainer injectedNavigationBarBottomContainer;
 
     public OnboardingFragmentImpl(final OnboardingFragmentImplCallback fragment,
             final boolean showEmptyLastPage) {
@@ -135,6 +144,55 @@ class OnboardingFragmentImpl extends OnboardingScreenContract.View {
         final View view = inflater.inflate(R.layout.gc_fragment_onboarding, container, false);
         bindViews(view);
         setInputHandlers();
+        //<editor-fold desc="Navigation bar injection experiments">
+
+        final Activity activity = mFragment.getActivity();
+
+        if (GiniCapture.hasInstance()) {
+            NavigationBarTopProvider navigationBarTopProvider = GiniCapture.getInstance().getNavigationBarTopProvider();
+            injectedNavigationBarTopContainer.setInjectedViewProvider(navigationBarTopProvider);
+
+            navigationBarTopProvider.setOnCloseButtonClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final Activity activity = mFragment.getActivity();
+                    if (activity != null) {
+                        activity.onBackPressed();
+                    }
+                }
+            });
+
+            if (activity != null) {
+                navigationBarTopProvider.setTitle(activity.getTitle().toString());
+                final Drawable icon = ContextCompat.getDrawable(activity, R.drawable.gc_hint_close);
+                if (icon != null) {
+                    navigationBarTopProvider.setCloseButtonIcon(icon);
+                }
+            }
+
+            if (GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
+                NavigationBarBottomProvider navigationBarBottomProvider = GiniCapture.getInstance().getNavigationBarBottomProvider();
+                injectedNavigationBarBottomContainer.setInjectedViewProvider(navigationBarBottomProvider);
+
+                navigationBarBottomProvider.setOnBackButtonClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        final Activity activity = mFragment.getActivity();
+                        if (activity != null) {
+                            activity.onBackPressed();
+                        }
+                    }
+                });
+
+                if (activity != null) {
+                    final Drawable icon = ContextCompat.getDrawable(activity, R.drawable.gc_action_bar_back);
+                    if (icon != null) {
+                        navigationBarBottomProvider.setBackButtonIcon(icon);
+                    }
+                }
+            }
+        }
+        //</editor-fold>
         getPresenter().start();
         return view;
     }
@@ -143,6 +201,8 @@ class OnboardingFragmentImpl extends OnboardingScreenContract.View {
         mViewPager = (ViewPager) view.findViewById(R.id.gc_onboarding_viewpager);
         mLayoutPageIndicators = (LinearLayout) view.findViewById(R.id.gc_layout_page_indicators);
         mButtonNext = (ImageButton) view.findViewById(R.id.gc_button_next);
+        injectedNavigationBarTopContainer = view.findViewById(R.id.gc_injected_navigation_bar_container_top);
+        injectedNavigationBarBottomContainer = view.findViewById(R.id.gc_injected_navigation_bar_container_bottom);
     }
 
     private void setInputHandlers() {

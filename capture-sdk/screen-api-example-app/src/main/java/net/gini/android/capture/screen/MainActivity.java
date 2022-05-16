@@ -312,6 +312,7 @@ public class MainActivity extends AppCompatActivity {
         builder.setFlashButtonEnabled(true);
         builder.setEventTracker(new GiniCaptureEventTracker());
         builder.setCustomErrorLoggerListener(new CustomErrorLoggerListener());
+        builder.setShouldShowOnboarding(true);
         // Uncomment to disable sending errors to Gini
 //        builder.setGiniErrorLoggerIsOn(false);
 
@@ -334,6 +335,9 @@ public class MainActivity extends AppCompatActivity {
 //                builder.setShouldShowOnboarding(true);
         // Uncomment to remove the Supported Formats help screen
 //                builder.setSupportedFormatsHelpScreenEnabled(false);
+
+        builder.setBottomNavigationBarEnabled(true);
+
         builder.build();
     }
 

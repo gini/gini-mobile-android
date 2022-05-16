@@ -7,10 +7,18 @@
     android:orientation="vertical"
     tools:background="#000">
 
+    <net.gini.android.capture.view.InjectedViewContainer
+        android:id="@+id/gc_injected_navigation_bar_container_top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"/>
+
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/gc_onboarding_viewpager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_below="@id/gc_injected_navigation_bar_container_top"
+        android:layout_above="@id/gc_injected_navigation_bar_container_bottom">
 
     </androidx.viewpager.widget.ViewPager>
 
@@ -18,7 +26,7 @@
         android:id="@+id/gc_layout_page_indicators"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_above="@id/gc_injected_navigation_bar_container_bottom"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="@dimen/gc_onboarding_indicators_vertical_margin"
         android:orientation="horizontal">
@@ -40,11 +48,17 @@
         android:id="@+id/gc_button_next"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_above="@id/gc_injected_navigation_bar_container_bottom"
         android:layout_alignParentEnd="true"
         android:layout_marginBottom="@dimen/gc_fab_vertical_margin"
         android:layout_marginEnd="@dimen/gc_fab_horizontal_margin"
         android:background="@drawable/gc_onboarding_fab_background"
         android:src="@drawable/gc_onboarding_fab_next" />
+
+    <net.gini.android.capture.view.InjectedViewContainer
+        android:id="@+id/gc_injected_navigation_bar_container_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true" />
 
 </RelativeLayout>

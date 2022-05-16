@@ -120,4 +120,5 @@
     <string name="gc_file_import_default_app_dialog_image_file_type">Bilder</string>
     <string name="gc_file_import_default_app_dialog_document_file_type">Dokumente</string>
 
+    <string name="gc_close">Schließen</string>
 </resources>
