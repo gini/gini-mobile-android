@@ -18,13 +18,19 @@
         android:orientation="vertical"
         android:paddingBottom="@dimen/gc_onboarding_vertical_margin">
 
-        <ImageView
-            android:id="@+id/gc_image_onboarding"
+        <net.gini.android.capture.view.InjectedViewContainer
+            android:id="@+id/gc_injected_icon_container"
             android:layout_width="@dimen/gc_onboarding_illustration_size"
             android:layout_height="@dimen/gc_onboarding_illustration_size"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="@dimen/gc_onboarding_illustration_vertical_margin"
-            tools:src="@drawable/gc_onboarding_flat" />
+            android:layout_marginBottom="@dimen/gc_onboarding_illustration_vertical_margin"/>
+<!--        <ImageView-->
+<!--            android:id="@+id/gc_image_onboarding"-->
+<!--            android:layout_width="@dimen/gc_onboarding_illustration_size"-->
+<!--            android:layout_height="@dimen/gc_onboarding_illustration_size"-->
+<!--            android:layout_gravity="center_horizontal"-->
+<!--            android:layout_marginBottom="@dimen/gc_onboarding_illustration_vertical_margin"-->
+<!--            tools:src="@drawable/gc_onboarding_flat" />-->
 
         <!--suppress AndroidDomInspection -->
         <net.gini.android.capture.internal.ui.CustomFontTextView

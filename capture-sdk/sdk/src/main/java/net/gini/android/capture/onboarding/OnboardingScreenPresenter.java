@@ -44,11 +44,7 @@ class OnboardingScreenPresenter extends OnboardingScreenContract.Presenter {
     }
 
     private List<OnboardingPage> getDefaultPages() {
-        if (isTablet(getActivity())) {
-            return DefaultPagesTablet.asArrayList();
-        } else {
-            return DefaultPagesPhone.asArrayList();
-        }
+        return DefaultPages.asArrayList();
     }
 
     @Override
@@ -107,7 +103,7 @@ class OnboardingScreenPresenter extends OnboardingScreenContract.Presenter {
     }
 
     private void addTransparentPage() {
-        mPages.add(new OnboardingPage(0, 0, true));
+        mPages.add(new OnboardingPage(0, null, true));
     }
 
     @Override

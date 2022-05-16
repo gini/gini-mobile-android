@@ -4,11 +4,12 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import net.gini.android.capture.camera.CameraActivity;
+import net.gini.android.capture.onboarding.view.OnboardingIconProvider;
 
 import java.util.ArrayList;
 
-import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 
 /**
@@ -28,9 +29,14 @@ import androidx.annotation.StringRes;
 public class OnboardingPage implements Parcelable {
 
     private final int mTextResId;
-    private final int mImageResId;
+    private OnboardingIconProvider iconProvider;
     private final boolean mTransparent;
     private final boolean mRotateImageForLandscape;
+
+
+    public OnboardingPage(@StringRes final int textResId) {
+        this(textResId, null, false);
+    }
 
     /**
      * <p>
@@ -40,10 +46,10 @@ public class OnboardingPage implements Parcelable {
      *     <b>Note:</b> the string should be a short sentence.
      * </p>
      * @param textResId a string resource id which will be shown in the onboarding page
-     * @param imageResId a drawable resource id which will be shown in the onboarding page
+     * @param iconProvider
      */
-    public OnboardingPage(@StringRes final int textResId, @DrawableRes final int imageResId) {
-        this(textResId, imageResId, false);
+    public OnboardingPage(@StringRes final int textResId, @Nullable final OnboardingIconProvider iconProvider) {
+        this(textResId, iconProvider, false);
     }
 
     /**
@@ -51,8 +57,8 @@ public class OnboardingPage implements Parcelable {
      *
      * @suppress
      */
-    OnboardingPage(@StringRes final int textResId, @DrawableRes final int imageResId, final boolean transparent) {
-        this(textResId, imageResId, transparent, false);
+    OnboardingPage(@StringRes final int textResId, @Nullable final OnboardingIconProvider iconProvider, final boolean transparent) {
+        this(textResId, iconProvider, transparent, false);
     }
 
     /**
@@ -60,10 +66,10 @@ public class OnboardingPage implements Parcelable {
      *
      * @suppress
      */
-    OnboardingPage(@StringRes final int textResId, @DrawableRes final int imageResId, final boolean transparent,
+    OnboardingPage(@StringRes final int textResId, @Nullable final OnboardingIconProvider iconProvider, final boolean transparent,
             final boolean rotateImageForLandscape) {
         mTextResId = textResId;
-        mImageResId = imageResId;
+        this.iconProvider = iconProvider;
         mTransparent = transparent;
         mRotateImageForLandscape = rotateImageForLandscape;
     }
@@ -79,9 +85,18 @@ public class OnboardingPage implements Parcelable {
     /**
      * @return the drawable resource id of the text shown on the onboarding page
      */
-    @DrawableRes
-    public int getImageResId() {
-        return mImageResId;
+//    @DrawableRes
+//    public int getImageResId() {
+//        return mImageResId;
+//    }
+
+    @Nullable
+    public OnboardingIconProvider getIconProvider() {
+        return iconProvider;
+    }
+
+    public void setIconProvider(OnboardingIconProvider iconProvider) {
+        this.iconProvider = iconProvider;
     }
 
     /**
@@ -120,7 +135,7 @@ public class OnboardingPage implements Parcelable {
     @Override
     public void writeToParcel(final Parcel dest, final int flags) {
         dest.writeInt(mTextResId);
-        dest.writeInt(mImageResId);
+        dest.writeParcelable(iconProvider, 0);
         dest.writeInt(mTransparent ? 1 : 0);
         dest.writeInt(mRotateImageForLandscape ? 1 : 0);
     }
@@ -144,7 +159,7 @@ public class OnboardingPage implements Parcelable {
 
     private OnboardingPage(@NonNull final Parcel in) {
         mTextResId = in.readInt();
-        mImageResId = in.readInt();
+        iconProvider = in.readParcelable(OnboardingIconProvider.class.getClassLoader());
         mTransparent = in.readInt() == 1;
         mRotateImageForLandscape = in.readInt() == 1;
     }

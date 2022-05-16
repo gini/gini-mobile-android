@@ -17,6 +17,8 @@ import android.widget.TextView;
 import net.gini.android.capture.R;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.util.ContextHelper;
+import net.gini.android.capture.onboarding.view.OnboardingIconProvider;
+import net.gini.android.capture.view.InjectedViewContainer;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
@@ -28,8 +30,8 @@ class OnboardingPageFragmentImpl extends OnboardingPageContract.View {
     private final FragmentImplCallback mFragment;
 
     private View mBackground;
-    private ImageView mImageOnboarding;
     private TextView mTextMessage;
+    private InjectedViewContainer injectedIconContainer;
 
     public OnboardingPageFragmentImpl(@NonNull final FragmentImplCallback fragment,
             @NonNull final OnboardingPage page) {
@@ -51,8 +53,8 @@ class OnboardingPageFragmentImpl extends OnboardingPageContract.View {
     }
 
     @Override
-    void showImage(final int imageResId, final boolean rotated) {
-        mImageOnboarding.setImageDrawable(getImageDrawable(imageResId, rotated));
+    void showImage(@NonNull OnboardingIconProvider iconProvider, boolean rotated) {
+        injectedIconContainer.setInjectedViewProvider(iconProvider);
     }
 
     @Nullable
@@ -110,6 +112,16 @@ class OnboardingPageFragmentImpl extends OnboardingPageContract.View {
         mBackground.setBackgroundColor(Color.TRANSPARENT);
     }
 
+    @Override
+    void onPause() {
+        getPresenter().onPageIsHidden();
+    }
+
+    @Override
+    void onResume() {
+        getPresenter().onPageIsVisible();
+    }
+
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
             final Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.gc_fragment_onboarding_page, container, false);
@@ -119,9 +131,9 @@ class OnboardingPageFragmentImpl extends OnboardingPageContract.View {
     }
 
     private void bindViews(@NonNull final View view) {
-        mImageOnboarding = (ImageView) view.findViewById(R.id.gc_image_onboarding);
         mTextMessage = (TextView) view.findViewById(R.id.gc_text_message);
         mBackground = view.findViewById(R.id.gc_background);
+        injectedIconContainer = view.findViewById(R.id.gc_injected_icon_container);
     }
 
 

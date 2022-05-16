@@ -3,6 +3,7 @@ package net.gini.android.capture.onboarding;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,5 +57,17 @@ public class OnboardingPageFragmentCompat extends Fragment implements FragmentIm
         AlertDialogHelperCompat.showAlertDialog(activity, message, positiveButtonTitle,
                 positiveButtonClickListener, negativeButtonTitle, negativeButtonClickListener,
                 cancelListener);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mFragmentImpl.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mFragmentImpl.onPause();
     }
 }

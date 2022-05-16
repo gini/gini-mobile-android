@@ -28,6 +28,22 @@ class OnboardingPagePresenter extends OnboardingPageContract.Presenter {
     }
 
     @Override
+    void onPageIsVisible() {
+        if (mPage.getIconProvider() == null) {
+            return;
+        }
+        mPage.getIconProvider().onVisible();
+    }
+
+    @Override
+    void onPageIsHidden() {
+        if (mPage.getIconProvider() == null) {
+            return;
+        }
+        mPage.getIconProvider().onHidden();
+    }
+
+    @Override
     public void start() {
         showImage();
         showText();
@@ -42,12 +58,12 @@ class OnboardingPagePresenter extends OnboardingPageContract.Presenter {
     }
 
     private void showImage() {
-        if (mPage.getImageResId() == 0) {
+        if (mPage.getIconProvider() == null) {
             return;
         }
         final boolean rotated = !ContextHelper.isPortraitOrientation(getActivity())
                 && mPage.shouldRotateImageForLandscape();
-        getView().showImage(mPage.getImageResId(), rotated);
+        getView().showImage(mPage.getIconProvider(), rotated);
     }
 
     private void showText() {

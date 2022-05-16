@@ -93,6 +93,10 @@ public class GiniCapture {
     private final NavigationBarTopProvider navigationBarTopProvider;
     private final NavigationBarBottomProvider navigationBarBottomProvider;
     private final boolean isBottomNavigationBarEnabled;
+    private final OnboardingIconProvider onboardingAlignCornersIconProvider;
+    private final OnboardingIconProvider onboardingLightingIconProvider;
+    private final OnboardingIconProvider onboardingMultiPageIconProvider;
+    private final OnboardingIconProvider onboardingQRCodeIconProvider;
 
     /**
      * Retrieve the current instance.
@@ -196,6 +200,10 @@ public class GiniCapture {
         navigationBarTopProvider = builder.getNavigationBarTopProvider();
         navigationBarBottomProvider = builder.getNavigationBarBottomProvider();
         isBottomNavigationBarEnabled = builder.isBottomNavigationBarEnabled();
+        onboardingAlignCornersIconProvider = builder.getOnboardingAlignCornersIconProvider();
+        onboardingLightingIconProvider = builder.getOnboardingLightingIconProvider();
+        onboardingMultiPageIconProvider = builder.getOnboardingMultiPageIconProvider();
+        onboardingQRCodeIconProvider = builder.getOnboardingQRCodeIconProvider();
     }
 
     /**
@@ -525,6 +533,8 @@ public class GiniCapture {
     @NonNull
     ErrorLogger getErrorLogger() { return mErrorLogger; }
 
+    //<editor-fold desc="Navigation bar injection experiments">
+
     @NonNull
     public NavigationBarTopProvider getNavigationBarTopProvider() {
         return navigationBarTopProvider;
@@ -538,6 +548,29 @@ public class GiniCapture {
     public boolean isBottomNavigationBarEnabled() {
         return isBottomNavigationBarEnabled;
     }
+
+    @Nullable
+    public OnboardingIconProvider getOnboardingAlignCornersIconProvider() {
+        return onboardingAlignCornersIconProvider;
+    }
+
+    @Nullable
+    public OnboardingIconProvider getOnboardingLightingIconProvider() {
+        return onboardingLightingIconProvider;
+    }
+
+    @Nullable
+    public OnboardingIconProvider getOnboardingMultiPageIconProvider() {
+        return onboardingMultiPageIconProvider;
+    }
+
+    @Nullable
+    public OnboardingIconProvider getOnboardingQRCodeIconProvider() {
+        return onboardingQRCodeIconProvider;
+    }
+
+    //</editor-fold>
+
     /**
      * Builder for {@link GiniCapture}. To get an instance call {@link #newInstance()}.
      */
@@ -580,6 +613,10 @@ public class GiniCapture {
         private NavigationBarTopProvider navigationBarTopProvider = new DefaultNavigationBarTopProvider();
         private NavigationBarBottomProvider navigationBarBottomProvider = new DefaultNavigationBarBottomProvider();
         private boolean isBottomNavigationBarEnabled = false;
+        private OnboardingIconProvider onboardingAlignCornersIconProvider;
+        private OnboardingIconProvider onboardingLightingIconProvider;
+        private OnboardingIconProvider onboardingMultiPageIconProvider;
+        private OnboardingIconProvider onboardingQRCodeIconProvider;
 
         /**
          * Create a new {@link GiniCapture} instance.
@@ -928,6 +965,8 @@ public class GiniCapture {
         private ErrorLoggerListener getCustomErrorLoggerListener() {
             return mCustomErrorLoggerListener;
         }
+
+        //<editor-fold desc="Injected navigation bar experiment">
         public Builder setNavigationBarTopProvider(@NonNull final NavigationBarTopProvider provider ) {
             navigationBarTopProvider = provider;
             return this;
@@ -956,6 +995,48 @@ public class GiniCapture {
         private boolean isBottomNavigationBarEnabled() {
             return isBottomNavigationBarEnabled;
         }
+
+        @NonNull
+        private OnboardingIconProvider getOnboardingAlignCornersIconProvider() {
+            return onboardingAlignCornersIconProvider;
+        }
+
+        public Builder setOnboardingAlignCornersIconProvider(@NonNull final OnboardingIconProvider provider) {
+            onboardingAlignCornersIconProvider = provider;
+            return this;
+        }
+
+        @NonNull
+        private OnboardingIconProvider getOnboardingLightingIconProvider() {
+            return onboardingLightingIconProvider;
+        }
+
+        public Builder setOnboardingLightingIconProvider(@NonNull final OnboardingIconProvider provider) {
+            onboardingLightingIconProvider = provider;
+            return this;
+        }
+
+        @NonNull
+        private OnboardingIconProvider getOnboardingMultiPageIconProvider() {
+            return onboardingMultiPageIconProvider;
+        }
+
+        public Builder setOnboardingMultiPageIconProvider(@NonNull final OnboardingIconProvider provider) {
+            onboardingMultiPageIconProvider = provider;
+            return this;
+        }
+
+        @NonNull
+        private OnboardingIconProvider getOnboardingQRCodeIconProvider() {
+            return onboardingQRCodeIconProvider;
+        }
+
+        public Builder setOnboardingQRCodeIconProvider(@NonNull final OnboardingIconProvider provider) {
+            onboardingQRCodeIconProvider = provider;
+            return this;
+        }
+
+        //</editor-fold>
     }
 
     /**
