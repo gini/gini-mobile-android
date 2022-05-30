@@ -17,27 +17,17 @@ import androidx.annotation.StringRes;
  */
 interface OnboardingPageContract {
 
-    abstract class View implements GiniCaptureBaseView<Presenter> {
-
-        private Presenter mPresenter;
+    interface View extends GiniCaptureBaseView<Presenter> {
 
         @Override
-        public void setPresenter(@NonNull final Presenter presenter) {
-            mPresenter = presenter;
-        }
+        void setPresenter(@NonNull final Presenter presenter);
 
-        public Presenter getPresenter() {
-            return mPresenter;
-        }
+        void showImage(@NonNull final OnboardingIconProvider iconProvider, final boolean rotated);
 
-        abstract void showImage(@NonNull final OnboardingIconProvider iconProvider, final boolean rotated);
+        void showText(@StringRes final int textResId);
 
-        abstract void showText(@StringRes final int textResId);
-
-        abstract void showTransparentBackground();
-
-        abstract void onPause();
-        abstract void onResume();
+        void onPause();
+        void onResume();
     }
 
     abstract class Presenter extends GiniCaptureBasePresenter<View> {

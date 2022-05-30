@@ -47,9 +47,6 @@ class OnboardingPagePresenter extends OnboardingPageContract.Presenter {
     public void start() {
         showImage();
         showText();
-        if (mPage.isTransparent()) {
-            getView().showTransparentBackground();
-        }
     }
 
     @Override

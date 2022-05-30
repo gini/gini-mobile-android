@@ -33,6 +33,6 @@ class ViewPagerAdapterCompat extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(final int position) {
         final boolean isLastPage = position == getCount() - 1;
-        return OnboardingPageFragmentCompat.createInstance(getPages().get(position), isLastPage);
+        return OnboardingPageFragment.createInstance(getPages().get(position), isLastPage);
     }
 }
