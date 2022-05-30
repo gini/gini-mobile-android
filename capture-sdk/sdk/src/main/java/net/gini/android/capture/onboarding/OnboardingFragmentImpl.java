@@ -237,8 +237,10 @@ class OnboardingFragmentImpl extends OnboardingScreenContract.View {
                             R.dimen.gc_onboarding_indicator_height));
             pageIndicator.setLayoutParams(layoutParams);
             pageIndicator.setScaleType(ImageView.ScaleType.CENTER);
-            pageIndicator.setImageDrawable(mContext.getResources().getDrawable(
-                    R.drawable.gc_onboarding_indicator_inactive));
+            pageIndicator.setImageDrawable(
+                    ResourcesCompat.getDrawable(mContext.getResources(),
+                            R.drawable.gc_onboarding_page_indicator, mContext.getTheme()));
+            pageIndicator.setImageAlpha(77);
             pageIndicator.setTag("pageIndicator");
             pageIndicator.setContentDescription("inactive");
             return pageIndicator;
@@ -261,15 +263,13 @@ class OnboardingFragmentImpl extends OnboardingScreenContract.View {
             }
             deactivatePageIndicators();
             final ImageView pageIndicator = mPageIndicators.get(page);
-            pageIndicator.setImageDrawable(
-                    mContext.getResources().getDrawable(R.drawable.gc_onboarding_indicator_active));
+            pageIndicator.setImageAlpha(255);
             pageIndicator.setContentDescription("active");
         }
 
         private void deactivatePageIndicators() {
             for (final ImageView pageIndicator : mPageIndicators) {
-                pageIndicator.setImageDrawable(mContext.getResources().getDrawable(
-                        R.drawable.gc_onboarding_indicator_inactive));
+                pageIndicator.setImageAlpha(77);
                 pageIndicator.setContentDescription("inactive");
             }
         }
