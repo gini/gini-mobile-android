@@ -119,13 +119,6 @@
         <item name="gcCustomFont" />
     </style>
 
-    <style name="Root.GiniCaptureTheme.Onboarding.Message.TextStyle" parent="TextAppearance.AppCompat">
-        <item name="android:textStyle">normal</item>
-        <item name="android:textSize">33sp</item>
-        <item name="android:textColor">@color/gc_onboarding_message</item>
-        <item name="gcCustomFont">sans-serif-thin</item>
-    </style>
-
     <style name="Root.GiniCaptureTheme.Snackbar.Error.TextStyle" parent="TextAppearance.AppCompat">
         <item name="android:textStyle">normal</item>
         <item name="android:textSize">14sp</item>
@@ -288,8 +281,6 @@
     <style name="GiniCaptureTheme.Camera.ImageStackSubtitle.TextStyle" parent="Root.GiniCaptureTheme.Camera.ImageStackSubtitle.TextStyle" />
 
     <style name="GiniCaptureTheme.Review.BottomPanel.TextStyle" parent="Root.GiniCaptureTheme.Review.BottomPanel.TextStyle" />
-
-    <style name="GiniCaptureTheme.Onboarding.Message.TextStyle" parent="Root.GiniCaptureTheme.Onboarding.Message.TextStyle" />
 
     <style name="GiniCaptureTheme.Snackbar.Error.TextStyle" parent="Root.GiniCaptureTheme.Snackbar.Error.TextStyle" />
 
