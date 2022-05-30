@@ -7,6 +7,8 @@
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/gc_navigation_bar"
+        app:navigationIconTint="?attr/colorOnBackground"
+        tools:navigationIcon="@drawable/gc_hint_close"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -4,6 +4,7 @@
     <item
         android:id="@+id/gc_action_close"
         android:icon="@drawable/gc_hint_close"
+        app:iconTint="?attr/colorOnBackground"
         android:title="@string/gc_close"
         app:showAsAction="always" />
 </menu>
