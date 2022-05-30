@@ -12,7 +12,7 @@ import java.util.ArrayList;
  */
 
 public class OnboardingFragmentHostActivityNotListener extends
-        FragmentHostActivity<OnboardingFragmentCompat> {
+        FragmentHostActivity<OnboardingFragment> {
 
     static OnboardingFragmentListener sListener;
 
@@ -24,11 +24,11 @@ public class OnboardingFragmentHostActivityNotListener extends
     }
 
     @Override
-    protected OnboardingFragmentCompat createFragment() {
+    protected OnboardingFragment createFragment() {
         final ArrayList<OnboardingPage> pages = new ArrayList<>();
         pages.add(new OnboardingPage(R.string.gc_onboarding_flat,
                 R.drawable.gc_onboarding_flat));
-        return OnboardingFragmentCompat.createInstance(pages);
+        return OnboardingFragment.createInstance(pages);
     }
 
 }

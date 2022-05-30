@@ -1,16 +1,10 @@
 package net.gini.android.capture.onboarding
 
-import android.app.Application
-import android.content.res.Resources
-import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.testing.launchFragment
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import net.gini.android.capture.R
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mockito
-import org.robolectric.annotation.Implements
-import org.robolectric.shadows.ShadowApplication
 import java.util.*
 
 /**
@@ -33,7 +27,7 @@ class OnboardingFragmentCompatTest {
         )
 
         launchFragment {
-            OnboardingFragmentCompat.createInstance(pages)
+            OnboardingFragment.createInstance(pages)
         }
     }
 }

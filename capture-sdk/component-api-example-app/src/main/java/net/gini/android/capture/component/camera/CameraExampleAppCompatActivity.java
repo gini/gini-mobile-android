@@ -23,7 +23,7 @@ import net.gini.android.capture.component.review.ReviewExampleAppCompatActivity;
 import net.gini.android.capture.document.GiniCaptureMultiPageDocument;
 import net.gini.android.capture.help.HelpActivity;
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
-import net.gini.android.capture.onboarding.OnboardingFragmentCompat;
+import net.gini.android.capture.onboarding.OnboardingFragment;
 import net.gini.android.capture.onboarding.OnboardingFragmentListener;
 
 import java.util.Map;
@@ -36,7 +36,7 @@ import java.util.Map;
 
 /**
  * AppCompatActivity using the {@link CameraScreenHandler} to host the
- * {@link CameraFragmentCompat} and the {@link OnboardingFragmentCompat} and to start the
+ * {@link CameraFragmentCompat} and the {@link OnboardingFragment} and to start the
  * {@link ReviewExampleAppCompatActivity}, the {@link AnalysisExampleAppCompatActivity} or the {@link HelpActivity}.
  */
 public class CameraExampleAppCompatActivity extends AppCompatActivity implements

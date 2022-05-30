@@ -78,11 +78,11 @@ public class OnboardingFragmentImplTest {
             final boolean showEmptyLastPage,
             @Nullable final ArrayList<OnboardingPage> pages) {
         OnboardingFragmentCompatFake.sFragmentImplFactory =
-                new FragmentImplFactory<OnboardingFragmentImpl, OnboardingFragmentCompat>() {
+                new FragmentImplFactory<OnboardingFragmentImpl, OnboardingFragment>() {
                     @NonNull
                     @Override
                     public OnboardingFragmentImpl createFragmentImpl(
-                            @NonNull final OnboardingFragmentCompat fragment) {
+                            @NonNull final OnboardingFragment fragment) {
                         final OnboardingFragmentImpl onboardingFragmentImpl =
                                 new OnboardingFragmentImpl(fragment, showEmptyLastPage, pages) {
 

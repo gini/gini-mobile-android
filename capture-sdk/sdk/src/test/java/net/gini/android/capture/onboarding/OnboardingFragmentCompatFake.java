@@ -7,9 +7,9 @@ import net.gini.android.capture.test.FragmentImplFactory;
  *
  * Copyright (c) 2019 Gini GmbH.
  */
-public class OnboardingFragmentCompatFake extends OnboardingFragmentCompat {
+public class OnboardingFragmentCompatFake extends OnboardingFragment {
 
-    public static FragmentImplFactory<OnboardingFragmentImpl, OnboardingFragmentCompat>
+    public static FragmentImplFactory<OnboardingFragmentImpl, OnboardingFragment>
             sFragmentImplFactory;
 
     public OnboardingFragmentCompatFake() {

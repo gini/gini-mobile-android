@@ -17,26 +17,18 @@ import jersey.repackaged.jsr166e.CompletableFuture;
  */
 interface OnboardingScreenContract {
 
-    abstract class View implements GiniCaptureBaseView<Presenter>, OnboardingFragmentInterface {
-
-        private Presenter mPresenter;
+    interface View extends GiniCaptureBaseView<Presenter>, OnboardingFragmentInterface {
 
         @Override
-        public void setPresenter(@NonNull final Presenter presenter) {
-            mPresenter = presenter;
-        }
+        void setPresenter(@NonNull final Presenter presenter);
 
-        public Presenter getPresenter() {
-            return mPresenter;
-        }
+        void showPages(@NonNull final List<OnboardingPage> pages);
 
-        abstract void showPages(@NonNull final List<OnboardingPage> pages);
+        void scrollToPage(final int pageIndex);
 
-        abstract void scrollToPage(final int pageIndex);
+        void activatePageIndicatorForPage(final int pageIndex);
 
-        abstract void activatePageIndicatorForPage(final int pageIndex);
-
-        abstract CompletableFuture<Void> slideOutViews();
+        CompletableFuture<Void> slideOutViews();
     }
 
     abstract class Presenter extends GiniCaptureBasePresenter<View> implements

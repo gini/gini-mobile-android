@@ -22,7 +22,7 @@ import net.gini.android.capture.camera.CameraFragmentListener
 import net.gini.android.capture.document.GiniCaptureMultiPageDocument
 import net.gini.android.capture.help.HelpActivity
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
-import net.gini.android.capture.onboarding.OnboardingFragmentCompat
+import net.gini.android.capture.onboarding.OnboardingFragment
 import net.gini.android.capture.onboarding.OnboardingFragmentListener
 import net.gini.android.capture.util.IntentHelper
 import net.gini.android.bank.sdk.componentapiexample.R
@@ -200,7 +200,7 @@ class CameraExampleActivity : AppCompatActivity(), CameraFragmentListener, Onboa
     private fun showOnboardingFragment() {
         supportFragmentManager.commit {
             setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
-            replace(R.id.onboarding_container, OnboardingFragmentCompat())
+            replace(R.id.onboarding_container, OnboardingFragment())
         }
     }
 

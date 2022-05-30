@@ -23,7 +23,7 @@ import androidx.annotation.StringRes;
  *     When using the Screen API set an {@link java.util.ArrayList} containing {@code OnboardingPage} objects as the {@link CameraActivity#EXTRA_IN_ONBOARDING_PAGES} when starting the {@link CameraActivity}.
  * </p>
  * <p>
- *     When using the Componenent API provide an {@link java.util.ArrayList} containing {@code OnboardingPage} objects as the argument for the Onboarding Fragment factory method {@link OnboardingFragmentCompat#createInstance(ArrayList)}.
+ *     When using the Componenent API provide an {@link java.util.ArrayList} containing {@code OnboardingPage} objects as the argument for the Onboarding Fragment factory method {@link OnboardingFragment#createInstance(ArrayList)}.
  * </p>
  */
 public class OnboardingPage implements Parcelable {
