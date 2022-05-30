@@ -28,7 +28,7 @@ public class OnboardingFragmentHostActivityNotListener extends
         final ArrayList<OnboardingPage> pages = new ArrayList<>();
         pages.add(new OnboardingPage(R.string.gc_onboarding_flat,
                 R.drawable.gc_onboarding_flat));
-        return OnboardingFragmentCompat.createInstanceWithoutEmptyLastPage(pages);
+        return OnboardingFragmentCompat.createInstance(pages);
     }
 
 }

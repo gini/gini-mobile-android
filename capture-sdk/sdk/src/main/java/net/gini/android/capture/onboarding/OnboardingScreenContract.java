@@ -30,8 +30,7 @@ interface OnboardingScreenContract {
             return mPresenter;
         }
 
-        abstract void showPages(@NonNull final List<OnboardingPage> pages,
-                final boolean showEmptyLastPage);
+        abstract void showPages(@NonNull final List<OnboardingPage> pages);
 
         abstract void scrollToPage(final int pageIndex);
 
@@ -50,8 +49,6 @@ interface OnboardingScreenContract {
         }
 
         abstract void setCustomPages(@NonNull final List<OnboardingPage> pages);
-
-        abstract void addEmptyLastPage();
 
         abstract void showNextPage();
 

@@ -11,19 +11,10 @@ import androidx.annotation.Nullable;
 final class OnboardingFragmentHelper {
 
     private static final String ARGS_PAGES = "GC_PAGES";
-    private static final String ARGS_SHOW_EMPTY_LAST_PAGE = "GC_SHOW_EMPTY_LAST_PAGE";
 
-    static Bundle createArguments(@NonNull final ArrayList<OnboardingPage> pages, // NOPMD - Bundle
-            final boolean showEmptyLastPage) {
+    static Bundle createArguments(@NonNull final ArrayList<OnboardingPage> pages) { // NOPMD - Bundle
         final Bundle arguments = new Bundle();
         arguments.putParcelableArrayList(ARGS_PAGES, pages);
-        arguments.putBoolean(ARGS_SHOW_EMPTY_LAST_PAGE, showEmptyLastPage);
-        return arguments;
-    }
-
-    static Bundle createArguments(final boolean showEmptyLastPage) {
-        final Bundle arguments = new Bundle();
-        arguments.putBoolean(ARGS_SHOW_EMPTY_LAST_PAGE, showEmptyLastPage);
         return arguments;
     }
 
@@ -32,14 +23,13 @@ final class OnboardingFragmentHelper {
             @Nullable final Bundle arguments) {
         if (arguments != null) {
             final ArrayList<OnboardingPage> pages = arguments.getParcelableArrayList(ARGS_PAGES);
-            final boolean showEmptyLastPage = arguments.getBoolean(ARGS_SHOW_EMPTY_LAST_PAGE, true);
             if (pages != null) {
-                return new OnboardingFragmentImpl(fragment, showEmptyLastPage, pages);
+                return new OnboardingFragmentImpl(fragment, pages);
             } else {
-                return new OnboardingFragmentImpl(fragment, showEmptyLastPage);
+                return new OnboardingFragmentImpl(fragment);
             }
         }
-        return new OnboardingFragmentImpl(fragment, true);
+        return new OnboardingFragmentImpl(fragment);
     }
 
     public static void setListener(@NonNull final OnboardingFragmentImpl fragmentImpl,

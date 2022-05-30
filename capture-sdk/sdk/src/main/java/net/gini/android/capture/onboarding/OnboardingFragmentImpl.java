@@ -48,27 +48,22 @@ class OnboardingFragmentImpl extends OnboardingScreenContract.View {
     private InjectedViewContainer injectedNavigationBarTopContainer;
     private InjectedViewContainer injectedNavigationBarBottomContainer;
 
-    public OnboardingFragmentImpl(final OnboardingFragmentImplCallback fragment,
-            final boolean showEmptyLastPage) {
-        this(fragment, showEmptyLastPage, null);
+    public OnboardingFragmentImpl(final OnboardingFragmentImplCallback fragment) {
+        this(fragment, null);
     }
 
     public OnboardingFragmentImpl(final OnboardingFragmentImplCallback fragment,
-            final boolean showEmptyLastPage, final ArrayList<OnboardingPage> pages) { // NOPMD
+            final ArrayList<OnboardingPage> pages) { // NOPMD
         mFragment = fragment;
         if (mFragment.getActivity() == null) {
             throw new IllegalStateException("Missing activity for fragment.");
         }
-        initPresenter(mFragment.getActivity(), pages, showEmptyLastPage);
+        initPresenter(mFragment.getActivity(), pages);
     }
 
     private void initPresenter(@NonNull final Activity activity,
-            @Nullable final ArrayList<OnboardingPage> pages, // NOPMD - Bundle
-            final boolean showEmptyLastPage) {
+            @Nullable final ArrayList<OnboardingPage> pages) { // NOPMD - Bundle
         createPresenter(activity);
-        if (showEmptyLastPage) {
-            getPresenter().addEmptyLastPage();
-        }
         if (pages != null) {
             getPresenter().setCustomPages(pages);
         }
@@ -80,9 +75,8 @@ class OnboardingFragmentImpl extends OnboardingScreenContract.View {
     }
 
     @Override
-    void showPages(@NonNull final List<OnboardingPage> pages,
-            final boolean showEmptyLastPage) {
-        setUpViewPager(pages, showEmptyLastPage);
+    void showPages(@NonNull final List<OnboardingPage> pages) {
+        setUpViewPager(pages);
     }
 
     @Override
@@ -122,11 +116,10 @@ class OnboardingFragmentImpl extends OnboardingScreenContract.View {
     }
 
     private void setUpViewPager(
-            @NonNull final List<OnboardingPage> pages,
-            final boolean showEmptyLastPage) {
+            @NonNull final List<OnboardingPage> pages) {
         mViewPager.setAdapter(mFragment.getViewPagerAdapter(pages));
 
-        final int numberOfPageIndicators = showEmptyLastPage ? pages.size() - 1 : pages.size();
+        final int numberOfPageIndicators = pages.size();
         mPageIndicators = new PageIndicators(mFragment.getActivity(),
                 numberOfPageIndicators, mLayoutPageIndicators);
         mPageIndicators.create();

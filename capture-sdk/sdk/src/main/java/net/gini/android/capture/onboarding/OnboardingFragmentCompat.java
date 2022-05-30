@@ -81,34 +81,6 @@ public class OnboardingFragmentCompat extends Fragment implements OnboardingFrag
      * onboarding pages.
      * </p>
      * <p>
-     * This method prevents the appending of an empty page to your pages.
-     * </p>
-     * <p>
-     * If you don't need a custom number of pages and wish to use the default behaviour, you can use
-     * the default constructor of {@link OnboardingFragmentCompat}.
-     * </p>
-     *
-     * @param pages the pages to be shown
-     *
-     * @return a new instance of the Fragment
-     */
-    public static OnboardingFragmentCompat createInstanceWithoutEmptyLastPage(
-            @NonNull final ArrayList<OnboardingPage> pages) { // NOPMD - ArrayList required (Bundle)
-        final OnboardingFragmentCompat fragment = new OnboardingFragmentCompat();
-        fragment.setArguments(OnboardingFragmentHelper.createArguments(pages, false));
-        return fragment;
-    }
-
-    /**
-     * <p>
-     * Factory method for creating a new instance of the Fragment using the provided list of
-     * onboarding pages.
-     * </p>
-     * <p>
-     * If you would like to prevent the appending of an empty page, you can use the {@link
-     * OnboardingFragmentCompat#createInstanceWithoutEmptyLastPage(ArrayList)} factory method.
-     * </p>
-     * <p>
      * If you don't need a custom number of pages and wish to use the default behaviour, you can use
      * the default constructor of {@link OnboardingFragmentCompat}.
      * </p>
@@ -120,25 +92,7 @@ public class OnboardingFragmentCompat extends Fragment implements OnboardingFrag
     public static OnboardingFragmentCompat createInstance(
             @NonNull final ArrayList<OnboardingPage> pages) { // NOPMD - ArrayList required (Bundle)
         final OnboardingFragmentCompat fragment = new OnboardingFragmentCompat();
-        fragment.setArguments(OnboardingFragmentHelper.createArguments(pages, true));
-        return fragment;
-    }
-
-    /**
-     * <p>
-     * Factory method for creating a new instance of the Fragment without appending an empty page to
-     * the default pages.
-     * </p>
-     * <p>
-     * If you wish to use the default behaviour, you can use the default constructor of {@link
-     * OnboardingFragmentCompat}.
-     * </p>
-     *
-     * @return a new instance of the Fragment
-     */
-    public static OnboardingFragmentCompat createInstanceWithoutEmptyLastPage() {
-        final OnboardingFragmentCompat fragment = new OnboardingFragmentCompat();
-        fragment.setArguments(OnboardingFragmentHelper.createArguments(false));
+        fragment.setArguments(OnboardingFragmentHelper.createArguments(pages));
         return fragment;
     }
 

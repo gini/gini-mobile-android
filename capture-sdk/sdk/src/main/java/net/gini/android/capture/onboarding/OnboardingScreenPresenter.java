@@ -33,7 +33,6 @@ class OnboardingScreenPresenter extends OnboardingScreenContract.Presenter {
 
     private OnboardingFragmentListener mListener = NO_OP_LISTENER;
     private List<OnboardingPage> mPages;
-    private boolean mShowEmptyLastPage;
     private int mCurrentPageIndex;
 
     OnboardingScreenPresenter(@NonNull final Activity activity,
@@ -50,17 +49,6 @@ class OnboardingScreenPresenter extends OnboardingScreenContract.Presenter {
     @Override
     void setCustomPages(@NonNull final List<OnboardingPage> pages) {
         mPages = pages;
-        if (mShowEmptyLastPage) {
-            addTransparentPage();
-        }
-    }
-
-    @Override
-    void addEmptyLastPage() {
-        mShowEmptyLastPage = true;
-        if (mPages != null) {
-            addTransparentPage();
-        }
     }
 
     @Override
@@ -88,27 +76,11 @@ class OnboardingScreenPresenter extends OnboardingScreenContract.Presenter {
     void onScrolledToPage(final int pageIndex) {
         mCurrentPageIndex = pageIndex;
         getView().activatePageIndicatorForPage(mCurrentPageIndex);
-        // Only when an empty last page is shown slide out the page indicator and next button
-        // and notify the listener that the onboarding should be closed
-        if (isOnLastPage() && mShowEmptyLastPage) {
-            getView().slideOutViews()
-                    .thenRun(new Runnable() {
-                        @Override
-                        public void run() {
-                            mListener.onCloseOnboarding();
-                            trackOnboardingScreenEvent(OnboardingScreenEvent.FINISH);
-                        }
-                    });
-        }
-    }
-
-    private void addTransparentPage() {
-        mPages.add(new OnboardingPage(0, null, true));
     }
 
     @Override
     public void start() {
-        getView().showPages(mPages, mShowEmptyLastPage);
+        getView().showPages(mPages);
         mCurrentPageIndex = 0;
         getView().scrollToPage(mCurrentPageIndex);
         getView().activatePageIndicatorForPage(mCurrentPageIndex);
