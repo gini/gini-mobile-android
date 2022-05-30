@@ -1,11 +1,15 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <style name="GiniCaptureTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <item name="colorPrimary">@color/gc_action_bar</item>
-        <item name="colorPrimaryDark">@color/gc_status_bar</item>
+        <item name="colorPrimary">@color/Accent_01</item>
+        <item name="colorPrimaryDark">@color/Accent_03</item>
+        <item name="colorOnPrimary">@color/Light_01</item>
+        <item name="backgroundColor">@color/Light_01</item>
+        <item name="colorOnBackground">@color/Dark_02</item>
+        <item name="colorSurface">?attr/backgroundColor</item>
+        <item name="colorOnSurface">?attr/colorOnBackground</item>
         <item name="android:windowLightStatusBar">@bool/gc_light_status_bar</item>
-        <item name="colorAccent">@color/gc_accent</item>
-<!--        <item name="actionBarTheme">@style/GiniCaptureTheme.ThemeOverlay.ActionBar</item>-->
+        <item name="colorAccent">?attr/colorPrimary</item>
         <item name="alertDialogTheme">@style/GiniCaptureTheme.ThemeOverlay.Dialog.Alert</item>
         <item name="toolbarStyle">@style/GiniCaptureTheme.Toolbar</item>
     </style>
@@ -15,7 +19,8 @@
     </style>
 
     <style name="GiniCaptureTheme.ThemeOverlay.Toolbar" parent="">
-        <item name="colorOnPrimary">@color/gc_action_bar_title</item>
+        <item name="colorPrimary">?attr/backgroundColor</item>
+        <item name="colorOnPrimary">?attr/colorOnBackground</item>
     </style>
 
     <style name="GiniCaptureTheme.Transparent">
@@ -26,7 +31,7 @@
     </style>
 
     <style name="GiniCaptureTheme.ThemeOverlay.Dialog.Alert" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
-        <item name="colorPrimary">@color/gc_accent</item>
+        <item name="colorPrimary">?attr/colorPrimary</item>
     </style>
 
     <style name="GiniCaptureTheme.Chooser">

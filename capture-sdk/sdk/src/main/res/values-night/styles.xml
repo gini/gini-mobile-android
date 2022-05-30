@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="GiniCaptureTheme" parent="Theme.MaterialComponents.NoActionBar">
+        <item name="colorPrimary">@color/Accent_01</item>
+        <item name="colorPrimaryDark">@color/Accent_03</item>
+        <item name="colorOnPrimary">@color/Light_01</item>
+        <item name="backgroundColor">@color/Dark_01</item>
+        <item name="colorOnBackground">@color/Light_01</item>
+        <item name="colorSurface">?attr/backgroundColor</item>
+        <item name="colorOnSurface">?attr/colorOnBackground</item>
+        <item name="android:windowLightStatusBar">@bool/gc_light_status_bar</item>
+        <item name="colorAccent">?attr/colorPrimary</item>
+        <item name="alertDialogTheme">@style/GiniCaptureTheme.ThemeOverlay.Dialog.Alert</item>
+        <item name="toolbarStyle">@style/GiniCaptureTheme.Toolbar</item>
+    </style>
+
+</resources>
