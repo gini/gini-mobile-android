@@ -50,8 +50,6 @@ interface OnboardingScreenContract {
 
         abstract void setCustomPages(@NonNull final List<OnboardingPage> pages);
 
-        abstract void showNextPage();
-
         abstract void onScrolledToPage(final int pageIndex);
 
     }

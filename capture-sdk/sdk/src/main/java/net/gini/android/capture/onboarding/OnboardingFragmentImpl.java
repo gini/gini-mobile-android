@@ -1,6 +1,5 @@
 package net.gini.android.capture.onboarding;
 
-import android.animation.Animator;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -8,7 +7,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Space;
@@ -17,11 +15,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.viewpager.widget.ViewPager;
 
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.R;
-import net.gini.android.capture.internal.ui.AnimatorListenerNoOp;
 import net.gini.android.capture.view.InjectedViewContainer;
 import net.gini.android.capture.view.NavigationBarBottomProvider;
 import net.gini.android.capture.view.NavigationBarTopProvider;
@@ -40,8 +38,6 @@ class OnboardingFragmentImpl extends OnboardingScreenContract.View {
 
 
     private final OnboardingFragmentImplCallback mFragment;
-    @VisibleForTesting
-    ImageButton mButtonNext;
     private ViewPager mViewPager;
     private LinearLayout mLayoutPageIndicators;
     private PageIndicators mPageIndicators;
@@ -97,21 +93,10 @@ class OnboardingFragmentImpl extends OnboardingScreenContract.View {
         int layoutPageIndicatorsWidth = mLayoutPageIndicators.getWidth();
         layoutPageIndicatorsWidth =
                 layoutPageIndicatorsWidth != 0 ? layoutPageIndicatorsWidth : 10000;
-        int buttonNextWidth = mButtonNext.getWidth();
-        buttonNextWidth = buttonNextWidth != 0 ? buttonNextWidth : 10000;
 
         mLayoutPageIndicators.animate()
                 .setDuration(150)
                 .translationX(-10 * layoutPageIndicatorsWidth);
-        mButtonNext.animate()
-                .setDuration(150)
-                .translationX(2 * buttonNextWidth)
-                .setListener(new AnimatorListenerNoOp() {
-                    @Override
-                    public void onAnimationEnd(final Animator animation) {
-                        future.complete(null);
-                    }
-                });
         return future;
     }
 
@@ -132,11 +117,20 @@ class OnboardingFragmentImpl extends OnboardingScreenContract.View {
         getPresenter().setListener(listener);
     }
 
+    @Override
+    public void showNextPage() {
+        getPresenter().showNextPage();
+    }
+
+    @Override
+    public void skip() {
+        getPresenter().skip();
+    }
+
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
             final Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.gc_fragment_onboarding, container, false);
         bindViews(view);
-        setInputHandlers();
         //<editor-fold desc="Navigation bar injection experiments">
 
         final Activity activity = mFragment.getActivity();
@@ -193,18 +187,8 @@ class OnboardingFragmentImpl extends OnboardingScreenContract.View {
     private void bindViews(final View view) {
         mViewPager = (ViewPager) view.findViewById(R.id.gc_onboarding_viewpager);
         mLayoutPageIndicators = (LinearLayout) view.findViewById(R.id.gc_layout_page_indicators);
-        mButtonNext = (ImageButton) view.findViewById(R.id.gc_button_next);
         injectedNavigationBarTopContainer = view.findViewById(R.id.gc_injected_navigation_bar_container_top);
         injectedNavigationBarBottomContainer = view.findViewById(R.id.gc_injected_navigation_bar_container_bottom);
-    }
-
-    private void setInputHandlers() {
-        mButtonNext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                getPresenter().showNextPage();
-            }
-        });
     }
 
     @VisibleForTesting

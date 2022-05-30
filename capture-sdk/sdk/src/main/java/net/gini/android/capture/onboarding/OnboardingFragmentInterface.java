@@ -32,4 +32,8 @@ public interface OnboardingFragmentInterface {
      */
     void setListener(@NonNull final OnboardingFragmentListener listener);
 
+    void showNextPage();
+
+    void skip();
+
 }

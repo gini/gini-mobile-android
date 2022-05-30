@@ -1,44 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_view"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="?attr/backgroundColor">
 
-    <View
-        android:id="@+id/gc_background"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:alpha="@string/gc_onboarding_page_fragment_background_alpha"
-        android:background="@color/gc_onboarding_page_fragment_background" />
+    <net.gini.android.capture.view.InjectedViewContainer
+        android:id="@+id/gc_injected_icon_container"
+        android:layout_width="@dimen/gc_onboarding_illustration_size"
+        android:layout_height="@dimen/gc_onboarding_illustration_size"
+        android:layout_gravity="center_horizontal"
+        app:layout_constraintBottom_toTopOf="@id/gc_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/gc_title"
+        style="@style/GiniCaptureTheme.Typography.Headline6"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:orientation="vertical"
-        android:paddingBottom="@dimen/gc_onboarding_vertical_margin">
+        android:layout_marginTop="@dimen/xxxlarge"
+        android:layout_marginBottom="@dimen/medium"
+        app:layout_constraintBottom_toTopOf="@id/gc_message"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/gc_injected_icon_container"
+        tools:text="Within the frame" />
 
-        <net.gini.android.capture.view.InjectedViewContainer
-            android:id="@+id/gc_injected_icon_container"
-            android:layout_width="@dimen/gc_onboarding_illustration_size"
-            android:layout_height="@dimen/gc_onboarding_illustration_size"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="@dimen/gc_onboarding_illustration_vertical_margin"/>
+    <TextView
+        android:id="@+id/gc_message"
+        style="@style/GiniCaptureTheme.Typography.Body1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/xxxlarge"
+        android:layout_marginEnd="@dimen/xxxlarge"
+        android:gravity="center"
+        app:layout_constraintBottom_toTopOf="@id/gc_skip"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/gc_title"
+        tools:text="Ensure that the document is flat, and positioned within the frame" />
 
-        <!--suppress AndroidDomInspection -->
-        <net.gini.android.capture.internal.ui.CustomFontTextView
-            android:id="@+id/gc_text_message"
-            style="@style/GiniCaptureTheme.Onboarding.Message.TextStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginEnd="@dimen/gc_onboarding_message_horizontal_margin"
-            android:layout_marginLeft="@dimen/gc_onboarding_message_horizontal_margin"
-            android:layout_marginRight="@dimen/gc_onboarding_message_horizontal_margin"
-            android:layout_marginStart="@dimen/gc_onboarding_message_horizontal_margin"
-            android:gravity="center"
-            android:maxWidth="@dimen/gc_onboarding_message_max_width"
-            tools:text="Dokument flach\nauf eine einfarbige\nFläche legen" />
-    </LinearLayout>
+    <Button
+        android:id="@+id/gc_skip"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/xxxlarge"
+        android:layout_marginEnd="@dimen/medium"
+        android:layout_marginBottom="@dimen/xxxxxlarge"
+        android:text="Skip"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/gc_next"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_max="160dp"
+        app:layout_constraintWidth_min="120dp" />
 
-</RelativeLayout>
+    <Button
+        android:id="@+id/gc_next"
+        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/xxxlarge"
+        android:text="Next"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toBottomOf="@id/gc_skip"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/gc_skip"
+        app:layout_constraintTop_toTopOf="@id/gc_skip"
+        app:layout_constraintWidth_max="160dp"
+        app:layout_constraintWidth_min="120dp" />
+
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/gc_next_skip_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:constraint_referenced_ids="gc_skip,gc_next" />
+
+    <Button
+        android:id="@+id/gc_get_started"
+        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Get Started"
+        android:textAllCaps="false"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/gc_skip"
+        app:layout_constraintWidth_max="160dp"
+        app:layout_constraintWidth_min="120dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

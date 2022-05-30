@@ -24,9 +24,9 @@ public class OnboardingPageFragmentCompat extends Fragment implements FragmentIm
 
     private OnboardingPageFragmentImpl mFragmentImpl;
 
-    public static OnboardingPageFragmentCompat createInstance(@NonNull final OnboardingPage page) {
+    public static OnboardingPageFragmentCompat createInstance(@NonNull final OnboardingPage page, final boolean isLastPage) {
         final OnboardingPageFragmentCompat fragment = new OnboardingPageFragmentCompat();
-        fragment.setArguments(OnboardingPageFragmentHelper.createArguments(page));
+        fragment.setArguments(OnboardingPageFragmentHelper.createArguments(page, isLastPage));
         return fragment;
     }
 

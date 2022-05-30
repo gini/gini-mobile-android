@@ -52,13 +52,19 @@ class OnboardingScreenPresenter extends OnboardingScreenContract.Presenter {
     }
 
     @Override
-    void showNextPage() {
+    public void showNextPage() {
         if (isOnLastPage()) {
             mListener.onCloseOnboarding();
             trackOnboardingScreenEvent(OnboardingScreenEvent.FINISH);
         } else {
             scrollToNextPage();
         }
+    }
+
+    @Override
+    public void skip() {
+        mListener.onCloseOnboarding();
+        trackOnboardingScreenEvent(OnboardingScreenEvent.FINISH);
     }
 
     private boolean isOnLastPage() {

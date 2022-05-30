@@ -145,6 +145,16 @@ public class OnboardingFragmentCompat extends Fragment implements OnboardingFrag
     }
 
     @Override
+    public void showNextPage() {
+        mFragmentImpl.showNextPage();
+    }
+
+    @Override
+    public void skip() {
+        mFragmentImpl.skip();
+    }
+
+    @Override
     public void showAlertDialog(@NonNull final String message,
             @NonNull final String positiveButtonTitle,
             @NonNull final DialogInterface.OnClickListener positiveButtonClickListener,

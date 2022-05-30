@@ -8,9 +8,12 @@ import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -28,14 +31,19 @@ import androidx.core.content.ContextCompat;
 class OnboardingPageFragmentImpl extends OnboardingPageContract.View {
 
     private final FragmentImplCallback mFragment;
+    private final boolean isLastPage;
 
     private View mBackground;
     private TextView mTextMessage;
     private InjectedViewContainer injectedIconContainer;
+    private Button mButtonNext;
+    private Button mButtonSkip;
+    private Button mButtonGetStarted;
 
     public OnboardingPageFragmentImpl(@NonNull final FragmentImplCallback fragment,
-            @NonNull final OnboardingPage page) {
+            @NonNull final OnboardingPage page, final boolean isLastPage) {
         mFragment = fragment;
+        this.isLastPage = isLastPage;
         if (mFragment.getActivity() == null) {
             throw new IllegalStateException("Missing activity for fragment.");
         }
@@ -126,15 +134,51 @@ class OnboardingPageFragmentImpl extends OnboardingPageContract.View {
             final Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.gc_fragment_onboarding_page, container, false);
         bindViews(view);
+        setupViews(view);
+        addInputHandlers();
         getPresenter().start();
         return view;
     }
 
-    private void bindViews(@NonNull final View view) {
-        mTextMessage = (TextView) view.findViewById(R.id.gc_text_message);
-        mBackground = view.findViewById(R.id.gc_background);
-        injectedIconContainer = view.findViewById(R.id.gc_injected_icon_container);
+    private void setupViews(View view) {
+        final View group = view.findViewById(R.id.gc_next_skip_group);
+        group.setVisibility(isLastPage ? View.INVISIBLE : View.VISIBLE);
+        mButtonGetStarted.setVisibility(isLastPage ? View.VISIBLE : View.INVISIBLE);
     }
 
+    private void bindViews(@NonNull final View view) {
+        mTextMessage = (TextView) view.findViewById(R.id.gc_message);
+        mBackground = view.findViewById(R.id.root_view);
+        injectedIconContainer = view.findViewById(R.id.gc_injected_icon_container);
+        mButtonNext = view.findViewById(R.id.gc_next);
+        mButtonSkip = view.findViewById(R.id.gc_skip);
+        mButtonGetStarted = view.findViewById(R.id.gc_get_started);
+    }
 
+    private void addInputHandlers() {
+        mButtonNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mFragment.getParentFragment() instanceof OnboardingFragmentInterface) {
+                    ((OnboardingFragmentInterface) mFragment.getParentFragment()).showNextPage();
+                }
+            }
+        });
+        mButtonSkip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mFragment.getParentFragment() instanceof OnboardingFragmentInterface) {
+                    ((OnboardingFragmentInterface) mFragment.getParentFragment()).skip();
+                }
+            }
+        });
+        mButtonGetStarted.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mFragment.getParentFragment() instanceof OnboardingFragmentInterface) {
+                    ((OnboardingFragmentInterface) mFragment.getParentFragment()).showNextPage();
+                }
+            }
+        });
+    }
 }
