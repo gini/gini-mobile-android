@@ -208,7 +208,7 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
 
             if (activity != null) {
                 navigationBarTopProvider.setTitle(activity.getTitle().toString());
-                final Drawable icon = ContextCompat.getDrawable(activity, R.drawable.gc_hint_close);
+                final Drawable icon = ContextCompat.getDrawable(activity, R.drawable.gc_close);
                 if (icon != null) {
                     navigationBarTopProvider.setCloseButtonIcon(icon);
                 }
