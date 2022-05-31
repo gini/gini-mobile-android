@@ -9,9 +9,8 @@
 
     <net.gini.android.capture.view.InjectedViewContainer
         android:id="@+id/gc_injected_icon_container"
-        android:layout_width="@dimen/gc_onboarding_illustration_size"
-        android:layout_height="@dimen/gc_onboarding_illustration_size"
-        android:layout_gravity="center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toTopOf="@id/gc_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
