@@ -40,6 +40,14 @@
         <item name="android:colorBackgroundCacheHint">@null</item>
     </style>
 
+    <!-- Widgets -->
+
+    <style name="Root.GiniCaptureTheme.Widget.Button.OutlinedButton" parent="Widget.MaterialComponents.Button.OutlinedButton"/>
+    <style name="GiniCaptureTheme.Widget.Button.OutlinedButton" parent="Root.GiniCaptureTheme.Widget.Button.OutlinedButton"/>
+
+    <style name="Root.GiniCaptureTheme.Widget.Button.UnelevatedButton" parent="Widget.MaterialComponents.Button.UnelevatedButton"/>
+    <style name="GiniCaptureTheme.Widget.Button.UnelevatedButton" parent="Root.GiniCaptureTheme.Widget.Button.UnelevatedButton"/>
+
     <!-- Root text styles -->
 
     <style name="Root.GiniCaptureTheme.Camera.Error.NoPermission.TextStyle" parent="TextAppearance.AppCompat">
