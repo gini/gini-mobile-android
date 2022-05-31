@@ -11,7 +11,7 @@
         <item name="android:windowLightStatusBar">@bool/gc_light_status_bar</item>
         <item name="colorAccent">?attr/colorPrimary</item>
         <item name="alertDialogTheme">@style/GiniCaptureTheme.ThemeOverlay.Dialog.Alert</item>
-        <item name="toolbarStyle">@style/GiniCaptureTheme.Toolbar</item>
+        <item name="toolbarStyle">@style/Widget.MaterialComponents.Toolbar.Surface</item>
     </style>
 
     <style name="GiniCaptureTheme.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary">
