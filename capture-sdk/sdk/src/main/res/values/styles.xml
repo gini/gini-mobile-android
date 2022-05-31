@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="GiniCaptureTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="Root.GiniCaptureTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="colorPrimary">@color/Accent_01</item>
         <item name="colorPrimaryDark">@color/Accent_03</item>
         <item name="colorOnPrimary">@color/Light_01</item>
@@ -14,14 +14,7 @@
         <item name="toolbarStyle">@style/Widget.MaterialComponents.Toolbar.Surface</item>
     </style>
 
-    <style name="GiniCaptureTheme.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary">
-        <item name="materialThemeOverlay">@style/GiniCaptureTheme.ThemeOverlay.Toolbar</item>
-    </style>
-
-    <style name="GiniCaptureTheme.ThemeOverlay.Toolbar" parent="">
-        <item name="colorPrimary">?attr/backgroundColor</item>
-        <item name="colorOnPrimary">?attr/colorOnBackground</item>
-    </style>
+    <style name="GiniCaptureTheme" parent="Root.GiniCaptureTheme"/>
 
     <style name="GiniCaptureTheme.Transparent">
         <item name="android:windowIsTranslucent">true</item>
