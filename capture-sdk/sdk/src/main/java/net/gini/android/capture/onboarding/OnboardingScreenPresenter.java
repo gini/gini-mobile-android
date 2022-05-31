@@ -6,6 +6,7 @@ import static net.gini.android.capture.tracking.EventTrackingHelper.trackOnboard
 import android.app.Activity;
 
 import net.gini.android.capture.GiniCaptureError;
+import net.gini.android.capture.internal.util.FeatureConfiguration;
 import net.gini.android.capture.tracking.OnboardingScreenEvent;
 
 import java.util.List;
@@ -43,7 +44,7 @@ class OnboardingScreenPresenter extends OnboardingScreenContract.Presenter {
     }
 
     private List<OnboardingPage> getDefaultPages() {
-        return DefaultPages.asArrayList();
+        return DefaultPages.asArrayList(FeatureConfiguration.isMultiPageEnabled());
     }
 
     @Override

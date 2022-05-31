@@ -58,15 +58,15 @@ class OnboardingPagePresenter extends OnboardingPageContract.Presenter {
         if (mPage.getIconProvider() == null) {
             return;
         }
-        final boolean rotated = !ContextHelper.isPortraitOrientation(getActivity())
-                && mPage.shouldRotateImageForLandscape();
-        getView().showImage(mPage.getIconProvider(), rotated);
+        getView().showImage(mPage.getIconProvider());
     }
 
     private void showText() {
-        if (mPage.getTextResId() == 0) {
-            return;
+        if (mPage.getTitleResId() != 0) {
+            getView().showTitle(mPage.getTitleResId());
         }
-        getView().showText(mPage.getTextResId());
+        if (mPage.getMessageResId() != 0) {
+            getView().showMessage(mPage.getMessageResId());
+        }
     }
 }

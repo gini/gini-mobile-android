@@ -31,6 +31,7 @@ public class OnboardingPageFragment extends Fragment implements OnboardingPageCo
 
     private boolean isLastPage;
 
+    private TextView mTextTitle;
     private TextView mTextMessage;
     private InjectedViewContainer injectedIconContainer;
     private Button mButtonNext;
@@ -112,7 +113,8 @@ public class OnboardingPageFragment extends Fragment implements OnboardingPageCo
     }
 
     private void bindViews(@NonNull final View view) {
-        mTextMessage = (TextView) view.findViewById(R.id.gc_message);
+        mTextTitle = view.findViewById(R.id.gc_title);
+        mTextMessage = view.findViewById(R.id.gc_message);
         injectedIconContainer = view.findViewById(R.id.gc_injected_icon_container);
         mButtonNext = view.findViewById(R.id.gc_next);
         mButtonSkip = view.findViewById(R.id.gc_skip);
@@ -158,18 +160,18 @@ public class OnboardingPageFragment extends Fragment implements OnboardingPageCo
     }
 
     @Override
-    public void showImage(@NonNull OnboardingIconProvider iconProvider, boolean rotated) {
+    public void showImage(@NonNull OnboardingIconProvider iconProvider) {
         injectedIconContainer.setInjectedViewProvider(iconProvider);
     }
 
     @Override
-    public void showText(int textResId) {
-        final Activity activity = getActivity();
-        if (activity == null) {
-            return;
-        }
+    public void showTitle(int titleResId) {
+        mTextTitle.setText(titleResId);
+    }
 
-        mTextMessage.setText(activity.getText(textResId).toString());
+    @Override
+    public void showMessage(int messageResId) {
+        mTextMessage.setText(messageResId);
     }
 
     @Override

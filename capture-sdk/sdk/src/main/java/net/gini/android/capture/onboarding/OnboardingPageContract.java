@@ -22,9 +22,10 @@ interface OnboardingPageContract {
         @Override
         void setPresenter(@NonNull final Presenter presenter);
 
-        void showImage(@NonNull final OnboardingIconProvider iconProvider, final boolean rotated);
+        void showImage(@NonNull final OnboardingIconProvider iconProvider);
 
-        void showText(@StringRes final int textResId);
+        void showTitle(@StringRes final int titleResId);
+        void showMessage(@StringRes final int messageResId);
 
         void onPause();
         void onResume();

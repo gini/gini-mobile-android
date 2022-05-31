@@ -369,10 +369,10 @@ public class MainActivity extends AppCompatActivity {
         mTextAppVersion = (TextView) findViewById(R.id.text_app_version);
     }
 
-    private ArrayList<OnboardingPage> getOnboardingPages() {
+    private ArrayList<OnboardingPage> getOnboardingPages(final boolean isMultiPageEnabled) {
         // Adding a custom page to the default pages
-        final ArrayList<OnboardingPage> pages = DefaultPages.asArrayList();
-        pages.add(new OnboardingPage(R.string.additional_onboarding_page));
+        final ArrayList<OnboardingPage> pages = DefaultPages.asArrayList(isMultiPageEnabled);
+        pages.add(new OnboardingPage(R.string.additional_onboarding_page_title, R.string.additional_onboarding_page_message, null));
         return pages;
     }
 

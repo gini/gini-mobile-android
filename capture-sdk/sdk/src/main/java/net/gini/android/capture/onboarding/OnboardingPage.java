@@ -28,93 +28,52 @@ import androidx.annotation.StringRes;
  */
 public class OnboardingPage implements Parcelable {
 
-    private final int mTextResId;
+    private final int titleResId;
+    private final int messageResId;
     private OnboardingIconProvider iconProvider;
-    private final boolean mTransparent;
-    private final boolean mRotateImageForLandscape;
-
-
-    public OnboardingPage(@StringRes final int textResId) {
-        this(textResId, null, false);
-    }
 
     /**
-     * <p>
-     *     Create a new onboarding page with the desired string resource and drawable resource.
-     * </p>
-     * <p>
-     *     <b>Note:</b> the string should be a short sentence.
-     * </p>
-     * @param textResId a string resource id which will be shown in the onboarding page
-     * @param iconProvider
-     */
-    public OnboardingPage(@StringRes final int textResId, @Nullable final OnboardingIconProvider iconProvider) {
-        this(textResId, iconProvider, false);
-    }
-
-    /**
-     * Internal use only.
+     * Create a new onboarding page with the desired string resources and icon provider.
      *
-     * @suppress
+     * @param titleResId a string resource id which will be shown in the onboarding page
+     * @param messageResId a string resource id which will be shown in the onboarding page
+     * @param iconProvider an icon provider for the onboarding page
      */
-    OnboardingPage(@StringRes final int textResId, @Nullable final OnboardingIconProvider iconProvider, final boolean transparent) {
-        this(textResId, iconProvider, transparent, false);
-    }
-
-    /**
-     * Internal use only.
-     *
-     * @suppress
-     */
-    OnboardingPage(@StringRes final int textResId, @Nullable final OnboardingIconProvider iconProvider, final boolean transparent,
-            final boolean rotateImageForLandscape) {
-        mTextResId = textResId;
+    public OnboardingPage(@StringRes final int titleResId, @StringRes final int messageResId, @Nullable final OnboardingIconProvider iconProvider) {
+        this.titleResId = titleResId;
+        this.messageResId = messageResId;
         this.iconProvider = iconProvider;
-        mTransparent = transparent;
-        mRotateImageForLandscape = rotateImageForLandscape;
     }
 
     /**
-     * @return the string resource id of the text shown on the onboarding page
+     * @return the string resource id of the title shown on the onboarding page
      */
     @StringRes
-    public int getTextResId() {
-        return mTextResId;
+    public int getTitleResId() {
+        return titleResId;
     }
 
     /**
-     * @return the drawable resource id of the text shown on the onboarding page
+     * @return the string resource id of the message shown on the onboarding page
      */
-//    @DrawableRes
-//    public int getImageResId() {
-//        return mImageResId;
-//    }
+    @StringRes
+    public int getMessageResId() {
+        return messageResId;
+    }
 
+    /**
+     * @return the icon provider for the onboarding page
+     */
     @Nullable
     public OnboardingIconProvider getIconProvider() {
         return iconProvider;
     }
 
+    /**
+     * @param iconProvider an icon provider for the onboarding page
+     */
     public void setIconProvider(OnboardingIconProvider iconProvider) {
         this.iconProvider = iconProvider;
-    }
-
-    /**
-     * Internal use only.
-     *
-     * @suppress
-     */
-    public boolean isTransparent() {
-        return mTransparent;
-    }
-
-    /**
-     * Internal use only.
-     *
-     * @suppress
-     */
-    public boolean shouldRotateImageForLandscape() {
-        return mRotateImageForLandscape;
     }
 
     /**
@@ -134,10 +93,9 @@ public class OnboardingPage implements Parcelable {
      */
     @Override
     public void writeToParcel(final Parcel dest, final int flags) {
-        dest.writeInt(mTextResId);
+        dest.writeInt(titleResId);
+        dest.writeInt(messageResId);
         dest.writeParcelable(iconProvider, 0);
-        dest.writeInt(mTransparent ? 1 : 0);
-        dest.writeInt(mRotateImageForLandscape ? 1 : 0);
     }
 
     /**
@@ -158,9 +116,8 @@ public class OnboardingPage implements Parcelable {
     };
 
     private OnboardingPage(@NonNull final Parcel in) {
-        mTextResId = in.readInt();
+        titleResId = in.readInt();
+        messageResId = in.readInt();
         iconProvider = in.readParcelable(OnboardingIconProvider.class.getClassLoader());
-        mTransparent = in.readInt() == 1;
-        mRotateImageForLandscape = in.readInt() == 1;
     }
 }
