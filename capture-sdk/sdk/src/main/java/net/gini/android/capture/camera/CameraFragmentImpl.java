@@ -1826,11 +1826,11 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             mCameraController = createCameraController(activity);
         }
         if (isQRCodeScanningEnabled()) {
-            mCameraController.setPreviewCallback((image, imageSize, rotation) -> {
+            mCameraController.setPreviewCallback((image, imageSize, rotation, previewFrameCallback) -> {
                 if (mPaymentQRCodeReader == null) {
                     return;
                 }
-                mPaymentQRCodeReader.readFromImage(image, imageSize, rotation);
+                mPaymentQRCodeReader.readFromImage(image, imageSize, rotation, previewFrameCallback::onReleaseFrame);
             });
         }
     }

@@ -2,6 +2,7 @@ package net.gini.android.capture.internal.camera.api;
 
 import android.content.Context;
 import android.graphics.Point;
+import android.media.Image;
 import android.view.View;
 
 import net.gini.android.capture.internal.camera.photo.Photo;
@@ -137,7 +138,15 @@ public interface CameraInterface {
      */
     interface PreviewCallback {
 
-        void onPreviewFrame(@NonNull final byte[] image, @NonNull final Size imageSize,
-                            final int rotation);
+        void onPreviewFrame(@NonNull final Image image, @NonNull final Size imageSize,
+                            final int rotation, @NonNull final PreviewFrameCallback previewFrameCallback);
+    }
+
+    /**
+     * Callback to receive preview frame related state changes.
+     */
+    interface PreviewFrameCallback {
+
+        void onReleaseFrame();
     }
 }

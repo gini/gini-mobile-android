@@ -1,5 +1,7 @@
 package net.gini.android.capture.internal.qrcode;
 
+import android.media.Image;
+
 import net.gini.android.capture.internal.util.Size;
 
 import java.util.List;
@@ -85,9 +87,9 @@ public class PaymentQRCodeReader {
      * @param imageSize size of the image
      * @param rotation rotation to be applied to the image for correct orientation
      */
-    public void readFromImage(@NonNull final byte[] image, @NonNull final Size imageSize,
-            final int rotation) {
-        mDetector.detect(image, imageSize, rotation);
+    public void readFromImage(@NonNull final Image image, @NonNull final Size imageSize,
+                              final int rotation, @NonNull final Callback callback) {
+        mDetector.detect(image, imageSize, rotation, callback::onReadingFinished);
     }
 
     /**
@@ -121,5 +123,18 @@ public class PaymentQRCodeReader {
          * @param qrCodeContent the content of the QRCode
          */
         void onNonPaymentQRCodeDetected(@NonNull final String qrCodeContent);
+    }
+
+    /**
+     * Internal use only.
+     *
+     * @suppress
+     */
+    public interface Callback {
+
+        /**
+         * Called when reading finished.
+         */
+        void onReadingFinished();
     }
 }

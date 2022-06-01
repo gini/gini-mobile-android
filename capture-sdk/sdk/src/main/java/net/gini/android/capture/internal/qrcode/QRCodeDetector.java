@@ -1,5 +1,7 @@
 package net.gini.android.capture.internal.qrcode;
 
+import android.media.Image;
+
 import net.gini.android.capture.internal.util.Size;
 
 import java.util.List;
@@ -18,7 +20,7 @@ import androidx.annotation.Nullable;
  */
 interface QRCodeDetector {
 
-    void detect(@NonNull byte[] image, @NonNull Size imageSize, int rotation);
+    void detect(@NonNull Image image, @NonNull Size imageSize, int rotation, @NonNull final Callback callback);
 
     void release();
 
@@ -33,4 +35,14 @@ interface QRCodeDetector {
          */
         void onQRCodesDetected(@NonNull final List<String> qrCodes);
     }
+
+    interface Callback {
+
+        /**
+         * Called when QR code detection has finished.
+         */
+        void onDetectionFinished();
+    }
 }
+
+

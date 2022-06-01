@@ -1,6 +1,7 @@
 package net.gini.android.capture.internal.qrcode;
 
 import android.content.Context;
+import android.media.Image;
 
 import androidx.annotation.NonNull;
 
@@ -51,16 +52,20 @@ public class QRCodeDetectorTaskMLKit implements QRCodeDetectorTask {
 
     @NonNull
     @Override
-    public List<String> detect(@NonNull final byte[] image, @NonNull final Size imageSize,
+    public List<String> detect(@NonNull final Image image, @NonNull final Size imageSize,
                                final int rotation) {
-        // Reduce width and height by 1 to pass this check in the InputImage constructor: byteBuffer.limit() > width * height
-        final InputImage inputImage = InputImage.fromByteArray(image,
-                imageSize.width - 1, imageSize.height - 1, rotation, InputImage.IMAGE_FORMAT_NV21);
+        final InputImage inputImage = InputImage.fromMediaImage(image, rotation);
 
         final Task<List<Barcode>> processingTask = mBarcodeScanner.process(inputImage);
 
         try {
+            if (DEBUG) {
+                LOG.debug("Processing started");
+            }
             final List<Barcode> barcodes = Tasks.await(processingTask);
+            if (DEBUG) {
+                LOG.debug("Processing finished");
+            }
             if (barcodes.size() > 0 && DEBUG) {
                 LOG.debug("Detected QRCodes:\n{}", barcodesToString(barcodes));
             }
@@ -69,6 +74,8 @@ public class QRCodeDetectorTaskMLKit implements QRCodeDetectorTask {
             LOG.error("QRCode detection failed", e);
         } catch (CancellationException e) {
             LOG.error("QRCode detection cancelled");
+        } catch (Exception e) {
+            LOG.error("QRCode detection failed with unknown exception" ,e);
         }
         return Collections.emptyList();
     }
