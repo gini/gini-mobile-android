@@ -84,7 +84,6 @@ dependencies {
     implementation(libs.androidx.recyclerview)
     implementation(libs.material)
     implementation(libs.androidx.cardview)
-    implementation(libs.playservices.vision)
     implementation(libs.mlkit.barcodescanning)
     implementation(libs.apachecommons.imaging)
     implementation(libs.completableFuture)
