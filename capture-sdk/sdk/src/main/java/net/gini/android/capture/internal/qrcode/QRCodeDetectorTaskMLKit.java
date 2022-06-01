@@ -43,7 +43,7 @@ public class QRCodeDetectorTaskMLKit implements QRCodeDetectorTask {
     private static final Logger LOG = LoggerFactory.getLogger(QRCodeDetectorTaskMLKit.class);
     private final BarcodeScanner mBarcodeScanner;
 
-    public QRCodeDetectorTaskMLKit(@NonNull final Context context) {
+    public QRCodeDetectorTaskMLKit() {
         BarcodeScannerOptions options = new BarcodeScannerOptions.Builder()
                 .setBarcodeFormats(Barcode.FORMAT_QR_CODE)
                 .build();

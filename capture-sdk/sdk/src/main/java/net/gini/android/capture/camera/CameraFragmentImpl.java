@@ -365,7 +365,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         initCameraController(activity);
         addCameraPreviewView();
         if (isQRCodeScanningEnabled()) {
-            initQRCodeReader(activity);
+            initQRCodeReader();
         }
 
         if (isCameraPermissionGranted()) {
@@ -430,12 +430,12 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         }
     }
 
-    private void initQRCodeReader(final Activity activity) {
+    private void initQRCodeReader() {
         if (mPaymentQRCodeReader != null) {
             return;
         }
         final QRCodeDetectorTask qrCodeDetectorTask =
-                new QRCodeDetectorTaskMLKit(activity);
+                new QRCodeDetectorTaskMLKit();
         qrCodeDetectorTask.checkAvailability(new QRCodeDetectorTask.Callback() {
             @Override
             public void onResult(final boolean isAvailable) {
