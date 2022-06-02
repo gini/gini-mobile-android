@@ -1,5 +1,6 @@
 package net.gini.android.capture.internal.qrcode;
 
+import android.media.Image;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -9,6 +10,7 @@ import net.gini.android.capture.internal.util.Size;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 /**
@@ -41,7 +43,7 @@ class QRCodeDetectorHandler extends Handler {
             if (mListener == null) {
                 return;
             }
-            final ImageData imageData = (ImageData) msg.obj;
+            final MessageData imageData = (MessageData) msg.obj;
             final List<String> qrCodes = mQRCodeDetectorTask.detect(imageData.image,
                     imageData.imageSize, imageData.rotation);
             if (!qrCodes.isEmpty()) {
@@ -52,6 +54,12 @@ class QRCodeDetectorHandler extends Handler {
                     }
                 });
             }
+            mUIExecutor.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    imageData.callback.onDetectionFinished();
+                }
+            });
         } else {
             super.handleMessage(msg);
         }
@@ -65,17 +73,19 @@ class QRCodeDetectorHandler extends Handler {
         mListener = listener;
     }
 
-    static class ImageData {
+    static class MessageData {
 
-        final byte[] image;
+        final Image image;
         final Size imageSize;
         final int rotation;
+        final QRCodeDetector.Callback callback;
 
-        ImageData(final byte[] image,
-                final Size imageSize, final int rotation) {
+        MessageData(final Image image,
+                    final Size imageSize, final int rotation, @NonNull final QRCodeDetector.Callback callback) {
             this.image = image;
             this.imageSize = imageSize;
             this.rotation = rotation;
+            this.callback = callback;
         }
     }
 }
