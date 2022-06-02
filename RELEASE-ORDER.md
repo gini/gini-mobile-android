@@ -1,8 +1,8 @@
 DO NOT EDIT MANUALLY!
 Automatically created by the updateReleaseOrderFile task.
 
-Release order for :capture-sdk:sdk 1.9.1-mlkit:
- 1. :capture-sdk:sdk 1.9.1-mlkit
+Release order for :capture-sdk:sdk 1.9.2:
+ 1. :capture-sdk:sdk 1.9.2
 
 Release order for :core-api-library:library 1.4.2:
  1. :core-api-library:library 1.4.2
@@ -20,16 +20,16 @@ Release order for :health-sdk:sdk 1.3.1:
  2. :health-api-library:library 1.2.1
  3. :health-sdk:sdk 1.3.1
 
-Release order for :capture-sdk:default-network 1.9.1:
+Release order for :capture-sdk:default-network 1.9.2:
  1. :core-api-library:library 1.4.2
  2. :bank-api-library:library 1.2.0
- 3. :capture-sdk:sdk 1.9.1-mlkit
- 4. :capture-sdk:default-network 1.9.1
+ 3. :capture-sdk:sdk 1.9.2
+ 4. :capture-sdk:default-network 1.9.2
 
-Release order for :bank-sdk:sdk 1.8.1:
+Release order for :bank-sdk:sdk 1.8.2:
  1. :core-api-library:library 1.4.2
  2. :bank-api-library:library 1.2.0
- 3. :capture-sdk:sdk 1.9.1-mlkit
- 4. :capture-sdk:default-network 1.9.1
- 5. :bank-sdk:sdk 1.8.1
+ 3. :capture-sdk:sdk 1.9.2
+ 4. :capture-sdk:default-network 1.9.2
+ 5. :bank-sdk:sdk 1.8.2
 
