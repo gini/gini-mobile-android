@@ -45,7 +45,6 @@ import net.gini.android.capture.document.GiniCaptureMultiPageDocument;
 import net.gini.android.capture.document.ImageDocument;
 import net.gini.android.capture.document.ImageMultiPageDocument;
 import net.gini.android.capture.document.QRCodeDocument;
-import net.gini.android.capture.internal.camera.api.CameraController;
 import net.gini.android.capture.internal.camera.api.CameraException;
 import net.gini.android.capture.internal.camera.api.CameraInterface;
 import net.gini.android.capture.internal.camera.api.camerax.CameraXController;
@@ -62,7 +61,7 @@ import net.gini.android.capture.internal.network.NetworkRequestsManager;
 import net.gini.android.capture.internal.qrcode.PaymentQRCodeData;
 import net.gini.android.capture.internal.qrcode.PaymentQRCodeReader;
 import net.gini.android.capture.internal.qrcode.QRCodeDetectorTask;
-import net.gini.android.capture.internal.qrcode.QRCodeDetectorTaskGoogleVision;
+import net.gini.android.capture.internal.qrcode.QRCodeDetectorTaskMLKit;
 import net.gini.android.capture.internal.storage.ImageDiskStore;
 import net.gini.android.capture.internal.ui.ErrorSnackbar;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
@@ -366,7 +365,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         initCameraController(activity);
         addCameraPreviewView();
         if (isQRCodeScanningEnabled()) {
-            initQRCodeReader(activity);
+            initQRCodeReader();
         }
 
         if (isCameraPermissionGranted()) {
@@ -431,12 +430,12 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         }
     }
 
-    private void initQRCodeReader(final Activity activity) {
+    private void initQRCodeReader() {
         if (mPaymentQRCodeReader != null) {
             return;
         }
-        final QRCodeDetectorTaskGoogleVision qrCodeDetectorTask =
-                new QRCodeDetectorTaskGoogleVision(activity);
+        final QRCodeDetectorTask qrCodeDetectorTask =
+                new QRCodeDetectorTaskMLKit();
         qrCodeDetectorTask.checkAvailability(new QRCodeDetectorTask.Callback() {
             @Override
             public void onResult(final boolean isAvailable) {
@@ -1827,11 +1826,11 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             mCameraController = createCameraController(activity);
         }
         if (isQRCodeScanningEnabled()) {
-            mCameraController.setPreviewCallback((image, imageSize, rotation) -> {
+            mCameraController.setPreviewCallback((image, imageSize, rotation, previewFrameCallback) -> {
                 if (mPaymentQRCodeReader == null) {
                     return;
                 }
-                mPaymentQRCodeReader.readFromImage(image, imageSize, rotation);
+                mPaymentQRCodeReader.readFromImage(image, imageSize, rotation, previewFrameCallback::onReleaseFrame);
             });
         }
     }

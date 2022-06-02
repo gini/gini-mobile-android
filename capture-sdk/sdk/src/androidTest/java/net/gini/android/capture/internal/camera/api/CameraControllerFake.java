@@ -128,7 +128,8 @@ public class CameraControllerFake implements CameraInterface {
         mPreviewSize = new Size(options.outWidth, options.outHeight);
 
         if (mPreviewCallback != null && imageNV21 != null) {
-            mPreviewCallback.onPreviewFrame(imageNV21, mPreviewSize, 0);
+            // TODO: fix instrumented camera tests
+//            mPreviewCallback.onPreviewFrame(imageNV21, mPreviewSize, 0, () -> {});
         }
     }
 }

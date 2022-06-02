@@ -343,6 +343,7 @@ internal class CameraXController(val activity: Activity) : CameraInterface {
         return pictureFuture
     }
 
+    @ExperimentalGetImage
     override fun setPreviewCallback(previewCallback: CameraInterface.PreviewCallback?) {
         if (previewCallback == null) {
             imageAnalyzer = null
@@ -351,12 +352,16 @@ internal class CameraXController(val activity: Activity) : CameraInterface {
         }
 
         imageAnalyzer = ImageAnalysis.Analyzer { imageProxy ->
-            previewCallback.onPreviewFrame(
-                imageProxy.toByteArray(),
-                Size(imageProxy.width, imageProxy.height),
-                imageProxy.imageInfo.rotationDegrees
-            )
-            imageProxy.close()
+            imageProxy.image?.let { image ->
+                previewCallback.onPreviewFrame(
+                    image,
+                    Size(imageProxy.width, imageProxy.height),
+                    imageProxy.imageInfo.rotationDegrees
+                ) {
+                    // Close after processing the preview frame has finished
+                    imageProxy.close()
+                }
+            }
         }.also {
             imageAnalysisUseCase?.setAnalyzer(ContextCompat.getMainExecutor(activity), it)
         }

@@ -1,5 +1,7 @@
 package net.gini.android.capture.internal.qrcode;
 
+import android.media.Image;
+
 import net.gini.android.capture.internal.util.Size;
 
 import java.util.List;
@@ -22,8 +24,8 @@ import androidx.annotation.NonNull;
 public interface QRCodeDetectorTask {
 
     @NonNull
-    List<String> detect(@NonNull final byte[] image, @NonNull final Size imageSize,
-            final int rotation);
+    List<String> detect(@NonNull final Image image, @NonNull final Size imageSize,
+                        final int rotation);
 
     void checkAvailability(@NonNull final Callback callback);
 

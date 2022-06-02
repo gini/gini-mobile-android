@@ -2,6 +2,7 @@ package net.gini.android.capture.internal.qrcode;
 
 import static net.gini.android.capture.internal.qrcode.QRCodeDetectorHandler.DETECT_QRCODE;
 
+import android.media.Image;
 import android.os.HandlerThread;
 import android.os.Message;
 import android.os.Process;
@@ -36,15 +37,15 @@ class QRCodeDetectorImpl implements QRCodeDetector {
     }
 
     @Override
-    public void detect(@NonNull final byte[] image, @NonNull final Size imageSize,
-            final int rotation) {
+    public void detect(@NonNull final Image image, @NonNull final Size imageSize,
+                       final int rotation, @NonNull final QRCodeDetector.Callback callback) {
         // If there is no listener, we don't process the image to avoid unnecessary computation
         if (mListener == null) {
             return;
         }
         mHandler.removeMessages(DETECT_QRCODE);
         final Message message = mHandler.obtainMessage(DETECT_QRCODE,
-                new QRCodeDetectorHandler.ImageData(image, imageSize, rotation));
+                new QRCodeDetectorHandler.MessageData(image, imageSize, rotation, callback));
         mHandler.sendMessageAtFrontOfQueue(message);
     }
 
