@@ -20,6 +20,7 @@ import androidx.viewpager.widget.ViewPager;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.R;
 import net.gini.android.capture.view.InjectedViewContainer;
+import net.gini.android.capture.view.NavButtonType;
 import net.gini.android.capture.view.NavigationBarBottomAdapter;
 import net.gini.android.capture.view.NavigationBarTopAdapter;
 
@@ -203,6 +204,8 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
                     }
                 }
             });
+
+            navigationBarTopAdapter.setNavButtonType(NavButtonType.CLOSE);
 
             if (activity != null) {
                 navigationBarTopAdapter.setTitle(activity.getTitle().toString());
