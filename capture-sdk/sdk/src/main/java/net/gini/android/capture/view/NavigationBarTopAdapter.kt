@@ -15,7 +15,7 @@ import net.gini.android.capture.databinding.GcNavigationBarTopBinding
  */
 
 interface NavigationBarTopAdapter : InjectedViewAdapter {
-    fun setOnCloseButtonClickListener(listener: View.OnClickListener?)
+    fun setOnNavButtonClickListener(listener: View.OnClickListener?)
     fun setTitle(title: String)
 }
 
@@ -28,7 +28,7 @@ internal class DefaultNavigationBarTopAdapter : NavigationBarTopAdapter {
 
     var viewBinding: GcNavigationBarTopBinding? = null
 
-    override fun setOnCloseButtonClickListener(listener: View.OnClickListener?) {
+    override fun setOnNavButtonClickListener(listener: View.OnClickListener?) {
         if (GiniCapture.hasInstance()
             && GiniCapture.getInstance().isBottomNavigationBarEnabled
         ) {
