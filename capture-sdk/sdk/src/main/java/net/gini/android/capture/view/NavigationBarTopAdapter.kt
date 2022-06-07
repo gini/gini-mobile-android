@@ -17,7 +17,6 @@ import net.gini.android.capture.databinding.GcNavigationBarTopBinding
 interface NavigationBarTopAdapter : InjectedViewAdapter {
     fun setOnCloseButtonClickListener(listener: View.OnClickListener?)
     fun setTitle(title: String)
-    fun setCloseButtonIcon(icon: Drawable)
 }
 
 /**
@@ -44,16 +43,6 @@ internal class DefaultNavigationBarTopAdapter : NavigationBarTopAdapter {
 
     override fun setTitle(title: String) {
         viewBinding?.gcNavigationBar?.title = title
-    }
-
-    override fun setCloseButtonIcon(icon: Drawable) {
-        if (GiniCapture.hasInstance()
-            && GiniCapture.getInstance().isBottomNavigationBarEnabled
-        ) {
-            viewBinding?.gcNavigationBar?.inflateMenu(R.menu.gc_navigation_bar_top_close)
-        } else {
-            viewBinding?.gcNavigationBar?.navigationIcon = icon
-        }
     }
 
     override fun getView(container: ViewGroup): View {

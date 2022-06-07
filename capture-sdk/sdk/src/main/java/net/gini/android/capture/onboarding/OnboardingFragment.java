@@ -208,10 +208,6 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
 
             if (activity != null) {
                 navigationBarTopAdapter.setTitle(activity.getTitle().toString());
-                final Drawable icon = ContextCompat.getDrawable(activity, R.drawable.gc_close);
-                if (icon != null) {
-                    navigationBarTopAdapter.setCloseButtonIcon(icon);
-                }
             }
 
             if (GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
@@ -227,13 +223,6 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
                         }
                     }
                 });
-
-                if (activity != null) {
-                    final Drawable icon = ContextCompat.getDrawable(activity, R.drawable.gc_action_bar_back);
-                    if (icon != null) {
-                        navigationBarBottomAdapter.setBackButtonIcon(icon);
-                    }
-                }
             }
         }
         //</editor-fold>

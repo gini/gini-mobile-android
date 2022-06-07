@@ -14,7 +14,6 @@ import net.gini.android.capture.databinding.GcNavigationBarBottomBinding
 
 interface NavigationBarBottomAdapter : InjectedViewAdapter {
     fun setOnBackButtonClickListener(listener: View.OnClickListener?)
-    fun setBackButtonIcon(icon: Drawable)
 }
 
 /**
@@ -28,10 +27,6 @@ internal class DefaultNavigationBarBottomAdapter : NavigationBarBottomAdapter {
 
     override fun setOnBackButtonClickListener(listener: View.OnClickListener?) {
         viewBinding?.gcNavigationBar?.setNavigationOnClickListener(listener)
-    }
-
-    override fun setBackButtonIcon(icon: Drawable) {
-        viewBinding?.gcNavigationBar?.navigationIcon = icon
     }
 
     override fun getView(container: ViewGroup): View {
