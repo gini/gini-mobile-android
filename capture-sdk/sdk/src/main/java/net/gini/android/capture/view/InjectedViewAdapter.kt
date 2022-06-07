@@ -9,7 +9,7 @@ import android.view.ViewGroup
  * Copyright (c) 2022 Gini GmbH.
  */
 
-interface InjectedViewProvider {
+interface InjectedViewAdapter {
     fun getView(container: ViewGroup): View
     fun onDestroy()
 }

@@ -14,7 +14,7 @@ import net.gini.android.capture.databinding.GcNavigationBarTopBinding
  * Copyright (c) 2022 Gini GmbH.
  */
 
-interface NavigationBarTopProvider : InjectedViewProvider {
+interface NavigationBarTopAdapter : InjectedViewAdapter {
     fun setOnCloseButtonClickListener(listener: View.OnClickListener?)
     fun setTitle(title: String)
     fun setCloseButtonIcon(icon: Drawable)
@@ -25,7 +25,7 @@ interface NavigationBarTopProvider : InjectedViewProvider {
  *
  * Copyright (c) 2022 Gini GmbH.
  */
-internal class DefaultNavigationBarTopProvider : NavigationBarTopProvider {
+internal class DefaultNavigationBarTopAdapter : NavigationBarTopAdapter {
 
     var viewBinding: GcNavigationBarTopBinding? = null
 

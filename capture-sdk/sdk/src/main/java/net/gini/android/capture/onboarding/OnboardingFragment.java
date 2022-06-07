@@ -22,8 +22,8 @@ import androidx.viewpager.widget.ViewPager;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.R;
 import net.gini.android.capture.view.InjectedViewContainer;
-import net.gini.android.capture.view.NavigationBarBottomProvider;
-import net.gini.android.capture.view.NavigationBarTopProvider;
+import net.gini.android.capture.view.NavigationBarBottomAdapter;
+import net.gini.android.capture.view.NavigationBarTopAdapter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -193,10 +193,10 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
         final Activity activity = getActivity();
 
         if (GiniCapture.hasInstance()) {
-            NavigationBarTopProvider navigationBarTopProvider = GiniCapture.getInstance().getNavigationBarTopProvider();
-            injectedNavigationBarTopContainer.setInjectedViewProvider(navigationBarTopProvider);
+            NavigationBarTopAdapter navigationBarTopAdapter = GiniCapture.getInstance().getNavigationBarTopAdapter();
+            injectedNavigationBarTopContainer.setInjectedViewAdapter(navigationBarTopAdapter);
 
-            navigationBarTopProvider.setOnCloseButtonClickListener(new View.OnClickListener() {
+            navigationBarTopAdapter.setOnCloseButtonClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     final Activity activity = getActivity();
@@ -207,18 +207,18 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
             });
 
             if (activity != null) {
-                navigationBarTopProvider.setTitle(activity.getTitle().toString());
+                navigationBarTopAdapter.setTitle(activity.getTitle().toString());
                 final Drawable icon = ContextCompat.getDrawable(activity, R.drawable.gc_close);
                 if (icon != null) {
-                    navigationBarTopProvider.setCloseButtonIcon(icon);
+                    navigationBarTopAdapter.setCloseButtonIcon(icon);
                 }
             }
 
             if (GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
-                NavigationBarBottomProvider navigationBarBottomProvider = GiniCapture.getInstance().getNavigationBarBottomProvider();
-                injectedNavigationBarBottomContainer.setInjectedViewProvider(navigationBarBottomProvider);
+                NavigationBarBottomAdapter navigationBarBottomAdapter = GiniCapture.getInstance().getNavigationBarBottomAdapter();
+                injectedNavigationBarBottomContainer.setInjectedViewAdapter(navigationBarBottomAdapter);
 
-                navigationBarBottomProvider.setOnBackButtonClickListener(new View.OnClickListener() {
+                navigationBarBottomAdapter.setOnBackButtonClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         final Activity activity = getActivity();
@@ -231,7 +231,7 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
                 if (activity != null) {
                     final Drawable icon = ContextCompat.getDrawable(activity, R.drawable.gc_action_bar_back);
                     if (icon != null) {
-                        navigationBarBottomProvider.setBackButtonIcon(icon);
+                        navigationBarBottomAdapter.setBackButtonIcon(icon);
                     }
                 }
             }

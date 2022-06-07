@@ -9,7 +9,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import net.gini.android.capture.R;
-import net.gini.android.capture.onboarding.view.OnboardingIconProvider;
+import net.gini.android.capture.onboarding.view.OnboardingIconAdapter;
 import net.gini.android.capture.view.InjectedViewContainer;
 
 import androidx.annotation.NonNull;
@@ -160,8 +160,8 @@ public class OnboardingPageFragment extends Fragment implements OnboardingPageCo
     }
 
     @Override
-    public void showImage(@NonNull OnboardingIconProvider iconProvider) {
-        injectedIconContainer.setInjectedViewProvider(iconProvider);
+    public void showImage(@NonNull OnboardingIconAdapter iconAdapter) {
+        injectedIconContainer.setInjectedViewAdapter(iconAdapter);
     }
 
     @Override

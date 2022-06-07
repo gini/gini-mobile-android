@@ -12,7 +12,7 @@ import net.gini.android.capture.databinding.GcNavigationBarBottomBinding
  * Copyright (c) 2022 Gini GmbH.
  */
 
-interface NavigationBarBottomProvider : InjectedViewProvider {
+interface NavigationBarBottomAdapter : InjectedViewAdapter {
     fun setOnBackButtonClickListener(listener: View.OnClickListener?)
     fun setBackButtonIcon(icon: Drawable)
 }
@@ -22,7 +22,7 @@ interface NavigationBarBottomProvider : InjectedViewProvider {
  *
  * Copyright (c) 2022 Gini GmbH.
  */
-internal class DefaultNavigationBarBottomProvider : NavigationBarBottomProvider {
+internal class DefaultNavigationBarBottomAdapter : NavigationBarBottomAdapter {
 
     var viewBinding: GcNavigationBarBottomBinding? = null
 

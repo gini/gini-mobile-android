@@ -5,9 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,7 +15,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import net.gini.android.capture.onboarding.DefaultPages;
-import net.gini.android.core.api.GiniApiType;
 import net.gini.android.capture.AsyncCallback;
 import net.gini.android.capture.DocumentImportEnabledFileTypes;
 import net.gini.android.capture.GiniCapture;
@@ -27,9 +24,7 @@ import net.gini.android.capture.ImportedFileValidationException;
 import net.gini.android.capture.camera.CameraActivity;
 import net.gini.android.capture.example.shared.BaseExampleApp;
 import net.gini.android.capture.example.shared.RuntimePermissionHandler;
-import net.gini.android.capture.help.FileImportActivity;
 import net.gini.android.capture.help.HelpItem;
-import net.gini.android.capture.help.PhotoTipsActivity;
 import net.gini.android.capture.logging.ErrorLog;
 import net.gini.android.capture.logging.ErrorLoggerListener;
 import net.gini.android.capture.onboarding.OnboardingPage;
@@ -337,8 +332,8 @@ public class MainActivity extends AppCompatActivity {
 //                builder.setSupportedFormatsHelpScreenEnabled(false);
 
         builder.setBottomNavigationBarEnabled(true);
-        builder.setOnboardingAlignCornersIconProvider(new CustomOnboardingAlignCornersIconProvider());
-        builder.setOnboardingQRCodeIconProvider(new CustomOnboardingAlignCornersIconProvider());
+        builder.setOnboardingAlignCornersIconAdapter(new CustomOnboardingAlignCornersIconAdapter());
+        builder.setOnboardingQRCodeIconAdapter(new CustomOnboardingAlignCornersIconAdapter());
 
         builder.build();
     }

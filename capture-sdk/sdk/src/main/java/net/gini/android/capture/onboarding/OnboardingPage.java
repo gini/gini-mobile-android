@@ -4,7 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import net.gini.android.capture.camera.CameraActivity;
-import net.gini.android.capture.onboarding.view.OnboardingIconProvider;
+import net.gini.android.capture.onboarding.view.OnboardingIconAdapter;
 
 import java.util.ArrayList;
 
@@ -30,19 +30,19 @@ public class OnboardingPage implements Parcelable {
 
     private final int titleResId;
     private final int messageResId;
-    private OnboardingIconProvider iconProvider;
+    private OnboardingIconAdapter iconAdapter;
 
     /**
-     * Create a new onboarding page with the desired string resources and icon provider.
+     * Create a new onboarding page with the desired string resources and icon adapter.
      *
      * @param titleResId a string resource id which will be shown in the onboarding page
      * @param messageResId a string resource id which will be shown in the onboarding page
-     * @param iconProvider an icon provider for the onboarding page
+     * @param iconAdapter an icon adapter for the onboarding page
      */
-    public OnboardingPage(@StringRes final int titleResId, @StringRes final int messageResId, @Nullable final OnboardingIconProvider iconProvider) {
+    public OnboardingPage(@StringRes final int titleResId, @StringRes final int messageResId, @Nullable final OnboardingIconAdapter iconAdapter) {
         this.titleResId = titleResId;
         this.messageResId = messageResId;
-        this.iconProvider = iconProvider;
+        this.iconAdapter = iconAdapter;
     }
 
     /**
@@ -62,18 +62,18 @@ public class OnboardingPage implements Parcelable {
     }
 
     /**
-     * @return the icon provider for the onboarding page
+     * @return the icon adapter for the onboarding page
      */
     @Nullable
-    public OnboardingIconProvider getIconProvider() {
-        return iconProvider;
+    public OnboardingIconAdapter getIconAdapter() {
+        return iconAdapter;
     }
 
     /**
-     * @param iconProvider an icon provider for the onboarding page
+     * @param iconAdapter an icon adapter for the onboarding page
      */
-    public void setIconProvider(OnboardingIconProvider iconProvider) {
-        this.iconProvider = iconProvider;
+    public void setIconAdapter(OnboardingIconAdapter iconAdapter) {
+        this.iconAdapter = iconAdapter;
     }
 
     /**
@@ -95,7 +95,7 @@ public class OnboardingPage implements Parcelable {
     public void writeToParcel(final Parcel dest, final int flags) {
         dest.writeInt(titleResId);
         dest.writeInt(messageResId);
-        dest.writeParcelable(iconProvider, 0);
+        dest.writeParcelable(iconAdapter, 0);
     }
 
     /**
@@ -118,6 +118,6 @@ public class OnboardingPage implements Parcelable {
     private OnboardingPage(@NonNull final Parcel in) {
         titleResId = in.readInt();
         messageResId = in.readInt();
-        iconProvider = in.readParcelable(OnboardingIconProvider.class.getClassLoader());
+        iconAdapter = in.readParcelable(OnboardingIconAdapter.class.getClassLoader());
     }
 }

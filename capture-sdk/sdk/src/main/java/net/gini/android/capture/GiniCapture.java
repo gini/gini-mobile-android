@@ -12,11 +12,11 @@ import net.gini.android.capture.internal.network.NetworkRequestsManager;
 import net.gini.android.capture.internal.storage.ImageDiskStore;
 import net.gini.android.capture.logging.ErrorLogger;
 import net.gini.android.capture.logging.ErrorLoggerListener;
-import net.gini.android.capture.onboarding.view.OnboardingIconProvider;
-import net.gini.android.capture.view.NavigationBarBottomProvider;
-import net.gini.android.capture.view.NavigationBarTopProvider;
-import net.gini.android.capture.view.DefaultNavigationBarBottomProvider;
-import net.gini.android.capture.view.DefaultNavigationBarTopProvider;
+import net.gini.android.capture.onboarding.view.OnboardingIconAdapter;
+import net.gini.android.capture.view.NavigationBarBottomAdapter;
+import net.gini.android.capture.view.NavigationBarTopAdapter;
+import net.gini.android.capture.view.DefaultNavigationBarBottomAdapter;
+import net.gini.android.capture.view.DefaultNavigationBarTopAdapter;
 import net.gini.android.capture.network.GiniCaptureNetworkApi;
 import net.gini.android.capture.network.GiniCaptureNetworkService;
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction;
@@ -90,13 +90,13 @@ public class GiniCapture {
     private final EventTracker mEventTracker;
     private final List<HelpItem.Custom> mCustomHelpItems;
     private final ErrorLogger mErrorLogger;
-    private final NavigationBarTopProvider navigationBarTopProvider;
-    private final NavigationBarBottomProvider navigationBarBottomProvider;
+    private final NavigationBarTopAdapter navigationBarTopAdapter;
+    private final NavigationBarBottomAdapter navigationBarBottomAdapter;
     private final boolean isBottomNavigationBarEnabled;
-    private final OnboardingIconProvider onboardingAlignCornersIconProvider;
-    private final OnboardingIconProvider onboardingLightingIconProvider;
-    private final OnboardingIconProvider onboardingMultiPageIconProvider;
-    private final OnboardingIconProvider onboardingQRCodeIconProvider;
+    private final OnboardingIconAdapter onboardingAlignCornersIconAdapter;
+    private final OnboardingIconAdapter onboardingLightingIconAdapter;
+    private final OnboardingIconAdapter onboardingMultiPageIconAdapter;
+    private final OnboardingIconAdapter onboardingQRCodeIconAdapter;
 
     /**
      * Retrieve the current instance.
@@ -197,13 +197,13 @@ public class GiniCapture {
         mErrorLogger = new ErrorLogger(builder.getGiniErrorLoggerIsOn(),
                 builder.getGiniCaptureNetworkService(),
                 builder.getCustomErrorLoggerListener());
-        navigationBarTopProvider = builder.getNavigationBarTopProvider();
-        navigationBarBottomProvider = builder.getNavigationBarBottomProvider();
+        navigationBarTopAdapter = builder.getNavigationBarTopAdapter();
+        navigationBarBottomAdapter = builder.getNavigationBarBottomAdapter();
         isBottomNavigationBarEnabled = builder.isBottomNavigationBarEnabled();
-        onboardingAlignCornersIconProvider = builder.getOnboardingAlignCornersIconProvider();
-        onboardingLightingIconProvider = builder.getOnboardingLightingIconProvider();
-        onboardingMultiPageIconProvider = builder.getOnboardingMultiPageIconProvider();
-        onboardingQRCodeIconProvider = builder.getOnboardingQRCodeIconProvider();
+        onboardingAlignCornersIconAdapter = builder.getOnboardingAlignCornersIconAdapter();
+        onboardingLightingIconAdapter = builder.getOnboardingLightingIconAdapter();
+        onboardingMultiPageIconAdapter = builder.getOnboardingMultiPageIconAdapter();
+        onboardingQRCodeIconAdapter = builder.getOnboardingQRCodeIconAdapter();
     }
 
     /**
@@ -536,13 +536,13 @@ public class GiniCapture {
     //<editor-fold desc="Navigation bar injection experiments">
 
     @NonNull
-    public NavigationBarTopProvider getNavigationBarTopProvider() {
-        return navigationBarTopProvider;
+    public NavigationBarTopAdapter getNavigationBarTopAdapter() {
+        return navigationBarTopAdapter;
     }
 
     @NonNull
-    public NavigationBarBottomProvider getNavigationBarBottomProvider() {
-        return navigationBarBottomProvider;
+    public NavigationBarBottomAdapter getNavigationBarBottomAdapter() {
+        return navigationBarBottomAdapter;
     }
 
     public boolean isBottomNavigationBarEnabled() {
@@ -550,23 +550,23 @@ public class GiniCapture {
     }
 
     @Nullable
-    public OnboardingIconProvider getOnboardingAlignCornersIconProvider() {
-        return onboardingAlignCornersIconProvider;
+    public OnboardingIconAdapter getOnboardingAlignCornersIconAdapter() {
+        return onboardingAlignCornersIconAdapter;
     }
 
     @Nullable
-    public OnboardingIconProvider getOnboardingLightingIconProvider() {
-        return onboardingLightingIconProvider;
+    public OnboardingIconAdapter getOnboardingLightingIconAdapter() {
+        return onboardingLightingIconAdapter;
     }
 
     @Nullable
-    public OnboardingIconProvider getOnboardingMultiPageIconProvider() {
-        return onboardingMultiPageIconProvider;
+    public OnboardingIconAdapter getOnboardingMultiPageIconAdapter() {
+        return onboardingMultiPageIconAdapter;
     }
 
     @Nullable
-    public OnboardingIconProvider getOnboardingQRCodeIconProvider() {
-        return onboardingQRCodeIconProvider;
+    public OnboardingIconAdapter getOnboardingQRCodeIconAdapter() {
+        return onboardingQRCodeIconAdapter;
     }
 
     //</editor-fold>
@@ -610,13 +610,13 @@ public class GiniCapture {
         private List<HelpItem.Custom> mCustomHelpItems = new ArrayList<>();
         private boolean mGiniErrorLoggerIsOn = true;
         private ErrorLoggerListener mCustomErrorLoggerListener;
-        private NavigationBarTopProvider navigationBarTopProvider = new DefaultNavigationBarTopProvider();
-        private NavigationBarBottomProvider navigationBarBottomProvider = new DefaultNavigationBarBottomProvider();
+        private NavigationBarTopAdapter navigationBarTopAdapter = new DefaultNavigationBarTopAdapter();
+        private NavigationBarBottomAdapter navigationBarBottomAdapter = new DefaultNavigationBarBottomAdapter();
         private boolean isBottomNavigationBarEnabled = false;
-        private OnboardingIconProvider onboardingAlignCornersIconProvider;
-        private OnboardingIconProvider onboardingLightingIconProvider;
-        private OnboardingIconProvider onboardingMultiPageIconProvider;
-        private OnboardingIconProvider onboardingQRCodeIconProvider;
+        private OnboardingIconAdapter onboardingAlignCornersIconAdapter;
+        private OnboardingIconAdapter onboardingLightingIconAdapter;
+        private OnboardingIconAdapter onboardingMultiPageIconAdapter;
+        private OnboardingIconAdapter onboardingQRCodeIconAdapter;
 
         /**
          * Create a new {@link GiniCapture} instance.
@@ -967,24 +967,24 @@ public class GiniCapture {
         }
 
         //<editor-fold desc="Injected navigation bar experiment">
-        public Builder setNavigationBarTopProvider(@NonNull final NavigationBarTopProvider provider ) {
-            navigationBarTopProvider = provider;
+        public Builder setNavigationBarTopAdapter(@NonNull final NavigationBarTopAdapter Adapter ) {
+            navigationBarTopAdapter = Adapter;
             return this;
         }
 
         @NonNull
-        private NavigationBarTopProvider getNavigationBarTopProvider() {
-            return navigationBarTopProvider;
+        private NavigationBarTopAdapter getNavigationBarTopAdapter() {
+            return navigationBarTopAdapter;
         }
 
-        public Builder setNavigationBarBottomProvider(@NonNull final NavigationBarBottomProvider provider ) {
-            navigationBarBottomProvider = provider;
+        public Builder setNavigationBarBottomAdapter(@NonNull final NavigationBarBottomAdapter Adapter ) {
+            navigationBarBottomAdapter = Adapter;
             return this;
         }
 
         @NonNull
-        private NavigationBarBottomProvider getNavigationBarBottomProvider() {
-            return navigationBarBottomProvider;
+        private NavigationBarBottomAdapter getNavigationBarBottomAdapter() {
+            return navigationBarBottomAdapter;
         }
 
         public Builder setBottomNavigationBarEnabled(final Boolean enabled) {
@@ -997,42 +997,42 @@ public class GiniCapture {
         }
 
         @NonNull
-        private OnboardingIconProvider getOnboardingAlignCornersIconProvider() {
-            return onboardingAlignCornersIconProvider;
+        private OnboardingIconAdapter getOnboardingAlignCornersIconAdapter() {
+            return onboardingAlignCornersIconAdapter;
         }
 
-        public Builder setOnboardingAlignCornersIconProvider(@NonNull final OnboardingIconProvider provider) {
-            onboardingAlignCornersIconProvider = provider;
+        public Builder setOnboardingAlignCornersIconAdapter(@NonNull final OnboardingIconAdapter adapter) {
+            onboardingAlignCornersIconAdapter = adapter;
             return this;
         }
 
         @NonNull
-        private OnboardingIconProvider getOnboardingLightingIconProvider() {
-            return onboardingLightingIconProvider;
+        private OnboardingIconAdapter getOnboardingLightingIconAdapter() {
+            return onboardingLightingIconAdapter;
         }
 
-        public Builder setOnboardingLightingIconProvider(@NonNull final OnboardingIconProvider provider) {
-            onboardingLightingIconProvider = provider;
+        public Builder setOnboardingLightingIconAdapter(@NonNull final OnboardingIconAdapter adapter) {
+            onboardingLightingIconAdapter = adapter;
             return this;
         }
 
         @NonNull
-        private OnboardingIconProvider getOnboardingMultiPageIconProvider() {
-            return onboardingMultiPageIconProvider;
+        private OnboardingIconAdapter getOnboardingMultiPageIconAdapter() {
+            return onboardingMultiPageIconAdapter;
         }
 
-        public Builder setOnboardingMultiPageIconProvider(@NonNull final OnboardingIconProvider provider) {
-            onboardingMultiPageIconProvider = provider;
+        public Builder setOnboardingMultiPageIconAdapter(@NonNull final OnboardingIconAdapter adapter) {
+            onboardingMultiPageIconAdapter = adapter;
             return this;
         }
 
         @NonNull
-        private OnboardingIconProvider getOnboardingQRCodeIconProvider() {
-            return onboardingQRCodeIconProvider;
+        private OnboardingIconAdapter getOnboardingQRCodeIconAdapter() {
+            return onboardingQRCodeIconAdapter;
         }
 
-        public Builder setOnboardingQRCodeIconProvider(@NonNull final OnboardingIconProvider provider) {
-            onboardingQRCodeIconProvider = provider;
+        public Builder setOnboardingQRCodeIconAdapter(@NonNull final OnboardingIconAdapter adapter) {
+            onboardingQRCodeIconAdapter = adapter;
             return this;
         }
 

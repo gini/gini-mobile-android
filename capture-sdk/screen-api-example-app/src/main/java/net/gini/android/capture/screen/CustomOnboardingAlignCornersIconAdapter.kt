@@ -5,7 +5,7 @@ import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import net.gini.android.capture.onboarding.view.OnboardingIconProvider
+import net.gini.android.capture.onboarding.view.OnboardingIconAdapter
 import net.gini.android.capture.screen.databinding.AnimationOnboardingLottieBinding
 
 /**
@@ -13,7 +13,7 @@ import net.gini.android.capture.screen.databinding.AnimationOnboardingLottieBind
  *
  * Copyright (c) 2022 Gini GmbH.
  */
-class CustomOnboardingAlignCornersIconProvider() : OnboardingIconProvider {
+class CustomOnboardingAlignCornersIconAdapter() : OnboardingIconAdapter {
 
     private var viewBinding: AnimationOnboardingLottieBinding? = null
 
@@ -49,12 +49,12 @@ class CustomOnboardingAlignCornersIconProvider() : OnboardingIconProvider {
         return 0
     }
 
-    companion object CREATOR : Parcelable.Creator<CustomOnboardingAlignCornersIconProvider> {
-        override fun createFromParcel(parcel: Parcel): CustomOnboardingAlignCornersIconProvider {
-            return CustomOnboardingAlignCornersIconProvider(parcel)
+    companion object CREATOR : Parcelable.Creator<CustomOnboardingAlignCornersIconAdapter> {
+        override fun createFromParcel(parcel: Parcel): CustomOnboardingAlignCornersIconAdapter {
+            return CustomOnboardingAlignCornersIconAdapter(parcel)
         }
 
-        override fun newArray(size: Int): Array<CustomOnboardingAlignCornersIconProvider?> {
+        override fun newArray(size: Int): Array<CustomOnboardingAlignCornersIconAdapter?> {
             return arrayOfNulls(size)
         }
     }

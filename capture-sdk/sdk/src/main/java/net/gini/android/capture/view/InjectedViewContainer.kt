@@ -23,7 +23,7 @@ class InjectedViewContainer @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
-    var injectedViewProvider: InjectedViewProvider? = null
+    var injectedViewAdapter: InjectedViewAdapter? = null
         set(value) {
             if (value == null) {
                 field = value
@@ -46,7 +46,7 @@ class InjectedViewContainer @JvmOverloads constructor(
             lifecycle.addObserver(object : DefaultLifecycleObserver {
                 override fun onDestroy(owner: LifecycleOwner) {
                     LOG?.debug("Destroy injected view provider")
-                    injectedViewProvider?.onDestroy()
+                    injectedViewAdapter?.onDestroy()
                 }
             })
         }
@@ -64,7 +64,7 @@ class InjectedViewContainer @JvmOverloads constructor(
     private fun injectView() {
         LOG?.debug("Inject view")
         removeInjectedView()
-        injectedViewProvider?.getView(container = this)?.let { view ->
+        injectedViewAdapter?.getView(container = this)?.let { view ->
             view.layoutParams =
                 LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
                     .apply {

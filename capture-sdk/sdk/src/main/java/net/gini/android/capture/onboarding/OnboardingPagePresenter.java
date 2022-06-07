@@ -2,8 +2,6 @@ package net.gini.android.capture.onboarding;
 
 import android.app.Activity;
 
-import net.gini.android.capture.internal.util.ContextHelper;
-
 import androidx.annotation.NonNull;
 
 /**
@@ -29,18 +27,18 @@ class OnboardingPagePresenter extends OnboardingPageContract.Presenter {
 
     @Override
     void onPageIsVisible() {
-        if (mPage.getIconProvider() == null) {
+        if (mPage.getIconAdapter() == null) {
             return;
         }
-        mPage.getIconProvider().onVisible();
+        mPage.getIconAdapter().onVisible();
     }
 
     @Override
     void onPageIsHidden() {
-        if (mPage.getIconProvider() == null) {
+        if (mPage.getIconAdapter() == null) {
             return;
         }
-        mPage.getIconProvider().onHidden();
+        mPage.getIconAdapter().onHidden();
     }
 
     @Override
@@ -55,10 +53,10 @@ class OnboardingPagePresenter extends OnboardingPageContract.Presenter {
     }
 
     private void showImage() {
-        if (mPage.getIconProvider() == null) {
+        if (mPage.getIconAdapter() == null) {
             return;
         }
-        getView().showImage(mPage.getIconProvider());
+        getView().showImage(mPage.getIconAdapter());
     }
 
     private void showText() {

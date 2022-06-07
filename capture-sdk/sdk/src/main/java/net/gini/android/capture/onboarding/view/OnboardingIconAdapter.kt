@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
-import net.gini.android.capture.view.InjectedViewProvider
+import net.gini.android.capture.view.InjectedViewAdapter
 
 /**
  * Created by Alpár Szotyori on 13.05.22.
@@ -15,12 +15,12 @@ import net.gini.android.capture.view.InjectedViewProvider
  * Copyright (c) 2022 Gini GmbH.
  */
 
-interface OnboardingIconProvider : InjectedViewProvider, Parcelable {
+interface OnboardingIconAdapter : InjectedViewAdapter, Parcelable {
     fun onVisible()
     fun onHidden()
 }
 
-internal open class DefaultOnboardingIconProvider(@DrawableRes private val icon: Int) : OnboardingIconProvider {
+internal open class DefaultOnboardingIconAdapter(@DrawableRes private val icon: Int) : OnboardingIconAdapter {
 
     constructor(parcel: Parcel) : this(parcel.readInt())
 
@@ -51,12 +51,12 @@ internal open class DefaultOnboardingIconProvider(@DrawableRes private val icon:
         return 0
     }
 
-    companion object CREATOR : Parcelable.Creator<DefaultOnboardingIconProvider> {
-        override fun createFromParcel(parcel: Parcel): DefaultOnboardingIconProvider {
-            return DefaultOnboardingIconProvider(parcel)
+    companion object CREATOR : Parcelable.Creator<DefaultOnboardingIconAdapter> {
+        override fun createFromParcel(parcel: Parcel): DefaultOnboardingIconAdapter {
+            return DefaultOnboardingIconAdapter(parcel)
         }
 
-        override fun newArray(size: Int): Array<DefaultOnboardingIconProvider?> {
+        override fun newArray(size: Int): Array<DefaultOnboardingIconAdapter?> {
             return arrayOfNulls(size)
         }
     }
