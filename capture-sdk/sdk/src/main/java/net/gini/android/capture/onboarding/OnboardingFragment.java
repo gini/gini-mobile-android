@@ -22,6 +22,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager.widget.ViewPager;
 
+import com.google.android.material.color.MaterialColors;
+
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.R;
 import net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomAdapter;
@@ -220,6 +222,11 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
 
             if (activity != null) {
                 navigationBarTopAdapter.setTitle(activity.getTitle().toString());
+            }
+
+            if (navigationBarTopAdapter instanceof DefaultNavigationBarTopAdapter) {
+                final DefaultNavigationBarTopAdapter defaultNavigationBarTopAdapter = (DefaultNavigationBarTopAdapter) navigationBarTopAdapter;
+                defaultNavigationBarTopAdapter.setBackgroundColor(MaterialColors.getColor(view, R.attr.backgroundColor));
             }
 
             if (GiniCapture.getInstance().isBottomNavigationBarEnabled()) {

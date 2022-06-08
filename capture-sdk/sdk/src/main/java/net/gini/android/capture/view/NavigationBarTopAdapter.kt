@@ -1,8 +1,10 @@
 package net.gini.android.capture.view
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.R
@@ -95,6 +97,10 @@ internal class DefaultNavigationBarTopAdapter : NavigationBarTopAdapter {
 
     override fun onDestroy() {
         viewBinding = null
+    }
+
+    fun setBackgroundColor(@ColorInt colorInt: Int) {
+        viewBinding?.gcNavigationBar?.setBackgroundColor(colorInt)
     }
 
 }
