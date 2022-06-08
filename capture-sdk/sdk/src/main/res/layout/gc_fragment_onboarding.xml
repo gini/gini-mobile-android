@@ -35,7 +35,8 @@
         android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@id/gc_skip"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_goneMarginBottom="@dimen/xxxxlarge">
 
         <!--         These views are created during runtime. Kept here only for visualization during development. -->
         <!--        <ImageView-->

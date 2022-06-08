@@ -12,10 +12,10 @@ import net.gini.android.capture.internal.network.NetworkRequestsManager;
 import net.gini.android.capture.internal.storage.ImageDiskStore;
 import net.gini.android.capture.logging.ErrorLogger;
 import net.gini.android.capture.logging.ErrorLoggerListener;
+import net.gini.android.capture.onboarding.view.DefaultOnboardingNavigationBarBottomAdapter;
 import net.gini.android.capture.onboarding.view.OnboardingIconAdapter;
-import net.gini.android.capture.view.NavigationBarBottomAdapter;
+import net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomAdapter;
 import net.gini.android.capture.view.NavigationBarTopAdapter;
-import net.gini.android.capture.view.DefaultNavigationBarBottomAdapter;
 import net.gini.android.capture.view.DefaultNavigationBarTopAdapter;
 import net.gini.android.capture.network.GiniCaptureNetworkApi;
 import net.gini.android.capture.network.GiniCaptureNetworkService;
@@ -91,7 +91,7 @@ public class GiniCapture {
     private final List<HelpItem.Custom> mCustomHelpItems;
     private final ErrorLogger mErrorLogger;
     private final NavigationBarTopAdapter navigationBarTopAdapter;
-    private final NavigationBarBottomAdapter navigationBarBottomAdapter;
+    private final OnboardingNavigationBarBottomAdapter onboardingNavigationBarBottomAdapter;
     private final boolean isBottomNavigationBarEnabled;
     private final OnboardingIconAdapter onboardingAlignCornersIconAdapter;
     private final OnboardingIconAdapter onboardingLightingIconAdapter;
@@ -198,7 +198,7 @@ public class GiniCapture {
                 builder.getGiniCaptureNetworkService(),
                 builder.getCustomErrorLoggerListener());
         navigationBarTopAdapter = builder.getNavigationBarTopAdapter();
-        navigationBarBottomAdapter = builder.getNavigationBarBottomAdapter();
+        onboardingNavigationBarBottomAdapter = builder.getOnboardingNavigationBarBottomAdapter();
         isBottomNavigationBarEnabled = builder.isBottomNavigationBarEnabled();
         onboardingAlignCornersIconAdapter = builder.getOnboardingAlignCornersIconAdapter();
         onboardingLightingIconAdapter = builder.getOnboardingLightingIconAdapter();
@@ -541,8 +541,8 @@ public class GiniCapture {
     }
 
     @NonNull
-    public NavigationBarBottomAdapter getNavigationBarBottomAdapter() {
-        return navigationBarBottomAdapter;
+    public OnboardingNavigationBarBottomAdapter getOnboardingNavigationBarBottomAdapter() {
+        return onboardingNavigationBarBottomAdapter;
     }
 
     public boolean isBottomNavigationBarEnabled() {
@@ -611,7 +611,7 @@ public class GiniCapture {
         private boolean mGiniErrorLoggerIsOn = true;
         private ErrorLoggerListener mCustomErrorLoggerListener;
         private NavigationBarTopAdapter navigationBarTopAdapter = new DefaultNavigationBarTopAdapter();
-        private NavigationBarBottomAdapter navigationBarBottomAdapter = new DefaultNavigationBarBottomAdapter();
+        private OnboardingNavigationBarBottomAdapter navigationBarBottomAdapter = new DefaultOnboardingNavigationBarBottomAdapter();
         private boolean isBottomNavigationBarEnabled = false;
         private OnboardingIconAdapter onboardingAlignCornersIconAdapter;
         private OnboardingIconAdapter onboardingLightingIconAdapter;
@@ -977,13 +977,13 @@ public class GiniCapture {
             return navigationBarTopAdapter;
         }
 
-        public Builder setNavigationBarBottomAdapter(@NonNull final NavigationBarBottomAdapter Adapter ) {
+        public Builder setOnboardingNavigationBarBottomAdapter(@NonNull final OnboardingNavigationBarBottomAdapter Adapter ) {
             navigationBarBottomAdapter = Adapter;
             return this;
         }
 
         @NonNull
-        private NavigationBarBottomAdapter getNavigationBarBottomAdapter() {
+        private OnboardingNavigationBarBottomAdapter getOnboardingNavigationBarBottomAdapter() {
             return navigationBarBottomAdapter;
         }
 

@@ -1,5 +1,8 @@
 package net.gini.android.capture.onboarding;
 
+import static net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomButton.*;
+import static net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomButton.NEXT;
+
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
@@ -21,9 +24,10 @@ import androidx.viewpager.widget.ViewPager;
 
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.R;
+import net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomAdapter;
+import net.gini.android.capture.view.DefaultNavigationBarTopAdapter;
 import net.gini.android.capture.view.InjectedViewContainer;
 import net.gini.android.capture.view.NavButtonType;
-import net.gini.android.capture.view.NavigationBarBottomAdapter;
 import net.gini.android.capture.view.NavigationBarTopAdapter;
 
 import org.slf4j.Logger;
@@ -219,23 +223,24 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
             }
 
             if (GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
-                NavigationBarBottomAdapter navigationBarBottomAdapter = GiniCapture.getInstance().getNavigationBarBottomAdapter();
+                hideButtons();
+
+                OnboardingNavigationBarBottomAdapter navigationBarBottomAdapter = GiniCapture.getInstance().getOnboardingNavigationBarBottomAdapter();
                 injectedNavigationBarBottomContainer.setInjectedViewAdapter(navigationBarBottomAdapter);
 
-                navigationBarBottomAdapter.setOnBackButtonClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        final Activity activity = getActivity();
-                        if (activity != null) {
-                            activity.onBackPressed();
-                        }
-                    }
-                });
+                navigationBarBottomAdapter.setOnNextButtonClickListener(v -> mPresenter.showNextPage());
+                navigationBarBottomAdapter.setOnSkipButtonClickListener(v -> mPresenter.skip());
+                navigationBarBottomAdapter.setOnGetStartedButtonClickListener(v -> mPresenter.showNextPage());
             }
         }
         //</editor-fold>
         mPresenter.start();
         return view;
+    }
+
+    private void hideButtons() {
+        groupNextAndSkipButtons.setVisibility(View.GONE);
+        buttonGetStarted.setVisibility(View.GONE);
     }
 
     private void bindViews(final View view) {
@@ -296,14 +301,28 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
 
     @Override
     public void showGetStartedButton() {
-        groupNextAndSkipButtons.setVisibility(View.INVISIBLE);
-        buttonGetStarted.setVisibility(View.VISIBLE);
+        if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
+            final OnboardingNavigationBarBottomAdapter injectedViewAdapter = injectedNavigationBarBottomContainer.getInjectedViewAdapter();
+            if (injectedViewAdapter != null) {
+                injectedViewAdapter.showButtons(GET_STARTED);
+            }
+        } else {
+            groupNextAndSkipButtons.setVisibility(View.INVISIBLE);
+            buttonGetStarted.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
     public void showSkipAndNextButtons() {
-        groupNextAndSkipButtons.setVisibility(View.VISIBLE);
-        buttonGetStarted.setVisibility(View.INVISIBLE);
+        if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
+            final OnboardingNavigationBarBottomAdapter injectedViewAdapter = injectedNavigationBarBottomContainer.getInjectedViewAdapter();
+            if (injectedViewAdapter != null) {
+                injectedViewAdapter.showButtons(SKIP, NEXT);
+            }
+        } else {
+            groupNextAndSkipButtons.setVisibility(View.VISIBLE);
+            buttonGetStarted.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
