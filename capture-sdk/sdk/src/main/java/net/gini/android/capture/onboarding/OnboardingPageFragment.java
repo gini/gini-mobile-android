@@ -33,7 +33,7 @@ public class OnboardingPageFragment extends Fragment implements OnboardingPageCo
 
     private TextView mTextTitle;
     private TextView mTextMessage;
-    private InjectedViewContainer injectedIconContainer;
+    private InjectedViewContainer<OnboardingIconAdapter> injectedIconContainer;
 
     public static OnboardingPageFragment createInstance(@NonNull final OnboardingPage page, final boolean isLastPage) {
         final OnboardingPageFragment fragment = new OnboardingPageFragment();

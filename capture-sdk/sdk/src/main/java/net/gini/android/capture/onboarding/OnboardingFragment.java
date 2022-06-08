@@ -97,8 +97,8 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
     private ViewPager mViewPager;
     private LinearLayout mLayoutPageIndicators;
     private PageIndicators mPageIndicators;
-    private InjectedViewContainer injectedNavigationBarTopContainer;
-    private InjectedViewContainer injectedNavigationBarBottomContainer;
+    private InjectedViewContainer<NavigationBarTopAdapter> injectedNavigationBarTopContainer;
+    private InjectedViewContainer<OnboardingNavigationBarBottomAdapter> injectedNavigationBarBottomContainer;
     private Button buttonNext;
     private Button buttonSkip;
     private Button buttonGetStarted;

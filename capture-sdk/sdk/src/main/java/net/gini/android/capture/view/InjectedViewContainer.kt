@@ -17,13 +17,13 @@ import org.slf4j.LoggerFactory
  * Copyright (c) 2022 Gini GmbH.
  */
 
-class InjectedViewContainer @JvmOverloads constructor(
+class InjectedViewContainer<T: InjectedViewAdapter> @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
-    var injectedViewAdapter: InjectedViewAdapter? = null
+    var injectedViewAdapter: T? = null
         set(value) {
             if (value == null) {
                 field = value
