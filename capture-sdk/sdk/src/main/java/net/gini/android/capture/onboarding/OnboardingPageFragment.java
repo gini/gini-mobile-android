@@ -34,9 +34,6 @@ public class OnboardingPageFragment extends Fragment implements OnboardingPageCo
     private TextView mTextTitle;
     private TextView mTextMessage;
     private InjectedViewContainer injectedIconContainer;
-    private Button mButtonNext;
-    private Button mButtonSkip;
-    private Button mButtonGetStarted;
 
     public static OnboardingPageFragment createInstance(@NonNull final OnboardingPage page, final boolean isLastPage) {
         final OnboardingPageFragment fragment = new OnboardingPageFragment();
@@ -100,52 +97,14 @@ public class OnboardingPageFragment extends Fragment implements OnboardingPageCo
             final Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.gc_fragment_onboarding_page, container, false);
         bindViews(view);
-        setupViews(view);
-        addInputHandlers();
         mPresenter.start();
         return view;
-    }
-
-    private void setupViews(View view) {
-        final View group = view.findViewById(R.id.gc_next_skip_group);
-        group.setVisibility(isLastPage ? View.INVISIBLE : View.VISIBLE);
-        mButtonGetStarted.setVisibility(isLastPage ? View.VISIBLE : View.INVISIBLE);
     }
 
     private void bindViews(@NonNull final View view) {
         mTextTitle = view.findViewById(R.id.gc_title);
         mTextMessage = view.findViewById(R.id.gc_message);
         injectedIconContainer = view.findViewById(R.id.gc_injected_icon_container);
-        mButtonNext = view.findViewById(R.id.gc_next);
-        mButtonSkip = view.findViewById(R.id.gc_skip);
-        mButtonGetStarted = view.findViewById(R.id.gc_get_started);
-    }
-
-    private void addInputHandlers() {
-        mButtonNext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (getParentFragment() instanceof OnboardingFragmentInterface) {
-                    ((OnboardingFragmentInterface) getParentFragment()).showNextPage();
-                }
-            }
-        });
-        mButtonSkip.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (getParentFragment() instanceof OnboardingFragmentInterface) {
-                    ((OnboardingFragmentInterface) getParentFragment()).skip();
-                }
-            }
-        });
-        mButtonGetStarted.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (getParentFragment() instanceof OnboardingFragmentInterface) {
-                    ((OnboardingFragmentInterface) getParentFragment()).showNextPage();
-                }
-            }
-        });
     }
 
     @Override

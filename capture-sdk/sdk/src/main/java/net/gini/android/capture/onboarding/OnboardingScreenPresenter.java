@@ -83,6 +83,15 @@ class OnboardingScreenPresenter extends OnboardingScreenContract.Presenter {
     void onScrolledToPage(final int pageIndex) {
         mCurrentPageIndex = pageIndex;
         getView().activatePageIndicatorForPage(mCurrentPageIndex);
+        updateButtons();
+    }
+
+    private void updateButtons() {
+        if (isOnLastPage()) {
+            getView().showGetStartedButton();
+        } else {
+            getView().showSkipAndNextButtons();
+        }
     }
 
     @Override

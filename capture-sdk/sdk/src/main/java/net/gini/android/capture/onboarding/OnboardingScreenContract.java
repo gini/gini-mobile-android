@@ -28,6 +28,10 @@ interface OnboardingScreenContract {
 
         void activatePageIndicatorForPage(final int pageIndex);
 
+        void showGetStartedButton();
+
+        void showSkipAndNextButtons();
+
         CompletableFuture<Void> slideOutViews();
     }
 
@@ -43,6 +47,10 @@ interface OnboardingScreenContract {
         abstract void setCustomPages(@NonNull final List<OnboardingPage> pages);
 
         abstract void onScrolledToPage(final int pageIndex);
+
+        abstract void showNextPage();
+
+        abstract void skip();
 
     }
 }

@@ -6,12 +6,14 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Space;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.Group;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -97,6 +99,10 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
     private PageIndicators mPageIndicators;
     private InjectedViewContainer injectedNavigationBarTopContainer;
     private InjectedViewContainer injectedNavigationBarBottomContainer;
+    private Button buttonNext;
+    private Button buttonSkip;
+    private Button buttonGetStarted;
+    private Group groupNextAndSkipButtons;
 
     /**
      * <p>
@@ -187,6 +193,7 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
             final Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.gc_fragment_onboarding, container, false);
         bindViews(view);
+        addInputHandlers();
         //<editor-fold desc="Navigation bar injection experiments">
 
         final Activity activity = getActivity();
@@ -236,6 +243,16 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
         mLayoutPageIndicators = (LinearLayout) view.findViewById(R.id.gc_layout_page_indicators);
         injectedNavigationBarTopContainer = view.findViewById(R.id.gc_injected_navigation_bar_container_top);
         injectedNavigationBarBottomContainer = view.findViewById(R.id.gc_injected_navigation_bar_container_bottom);
+        buttonNext = view.findViewById(R.id.gc_next);
+        buttonSkip = view.findViewById(R.id.gc_skip);
+        buttonGetStarted = view.findViewById(R.id.gc_get_started);
+        groupNextAndSkipButtons = view.findViewById(R.id.gc_next_skip_group);
+    }
+
+    private void addInputHandlers() {
+        buttonNext.setOnClickListener(v -> mPresenter.showNextPage());
+        buttonSkip.setOnClickListener(v -> mPresenter.skip());
+        buttonGetStarted.setOnClickListener(v -> mPresenter.showNextPage());
     }
 
     @Override
@@ -244,16 +261,6 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
         if (mPresenter != null) {
             mPresenter.setListener(listener);
         }
-    }
-
-    @Override
-    public void showNextPage() {
-        mPresenter.showNextPage();
-    }
-
-    @Override
-    public void skip() {
-        mPresenter.skip();
     }
 
     @Override
@@ -285,6 +292,18 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
     @Override
     public void activatePageIndicatorForPage(int pageIndex) {
         mPageIndicators.setActive(pageIndex);
+    }
+
+    @Override
+    public void showGetStartedButton() {
+        groupNextAndSkipButtons.setVisibility(View.INVISIBLE);
+        buttonGetStarted.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void showSkipAndNextButtons() {
+        groupNextAndSkipButtons.setVisibility(View.VISIBLE);
+        buttonGetStarted.setVisibility(View.INVISIBLE);
     }
 
     @Override
