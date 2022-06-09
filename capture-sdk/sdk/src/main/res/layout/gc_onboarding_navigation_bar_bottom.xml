@@ -17,6 +17,8 @@
         android:layout_marginBottom="@dimen/xxlarge"
         android:text="Skip"
         android:textAllCaps="false"
+        android:visibility="invisible"
+        tools:visibility="visible"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toStartOf="@id/gc_next"
         app:layout_constraintHorizontal_chainStyle="packed"
@@ -32,19 +34,14 @@
         android:layout_marginEnd="@dimen/xxxlarge"
         android:text="Next"
         android:textAllCaps="false"
+        android:visibility="invisible"
+        tools:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@id/gc_skip"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/gc_skip"
         app:layout_constraintTop_toTopOf="@id/gc_skip"
         app:layout_constraintWidth_max="160dp"
         app:layout_constraintWidth_min="120dp" />
-
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/gc_next_skip_group"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="visible"
-        app:constraint_referenced_ids="gc_skip,gc_next" />
 
     <Button
         android:id="@+id/gc_get_started"

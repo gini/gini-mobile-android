@@ -101,6 +101,7 @@ class OnboardingScreenPresenter extends OnboardingScreenContract.Presenter {
         getView().scrollToPage(mCurrentPageIndex);
         getView().activatePageIndicatorForPage(mCurrentPageIndex);
         trackOnboardingScreenEvent(OnboardingScreenEvent.START);
+        updateButtons();
     }
 
     @Override
