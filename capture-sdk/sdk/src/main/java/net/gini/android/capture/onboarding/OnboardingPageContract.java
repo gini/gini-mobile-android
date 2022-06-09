@@ -4,7 +4,7 @@ import android.app.Activity;
 
 import net.gini.android.capture.GiniCaptureBasePresenter;
 import net.gini.android.capture.GiniCaptureBaseView;
-import net.gini.android.capture.onboarding.view.OnboardingIconAdapter;
+import net.gini.android.capture.onboarding.view.OnboardingIllustrationAdapter;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
@@ -21,7 +21,7 @@ interface OnboardingPageContract {
         @Override
         void setPresenter(@NonNull final Presenter presenter);
 
-        void showImage(@NonNull final OnboardingIconAdapter iconAdapter);
+        void showImage(@NonNull final OnboardingIllustrationAdapter illustrationAdapter);
 
         void showTitle(@StringRes final int titleResId);
         void showMessage(@StringRes final int messageResId);

@@ -4,7 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import net.gini.android.capture.camera.CameraActivity;
-import net.gini.android.capture.onboarding.view.OnboardingIconAdapter;
+import net.gini.android.capture.onboarding.view.OnboardingIllustrationAdapter;
 
 import java.util.ArrayList;
 
@@ -30,19 +30,19 @@ public class OnboardingPage implements Parcelable {
 
     private final int titleResId;
     private final int messageResId;
-    private OnboardingIconAdapter iconAdapter;
+    private OnboardingIllustrationAdapter illustrationAdapter;
 
     /**
      * Create a new onboarding page with the desired string resources and icon adapter.
      *
      * @param titleResId a string resource id which will be shown in the onboarding page
      * @param messageResId a string resource id which will be shown in the onboarding page
-     * @param iconAdapter an icon adapter for the onboarding page
+     * @param illustrationAdapter an icon adapter for the onboarding page
      */
-    public OnboardingPage(@StringRes final int titleResId, @StringRes final int messageResId, @Nullable final OnboardingIconAdapter iconAdapter) {
+    public OnboardingPage(@StringRes final int titleResId, @StringRes final int messageResId, @Nullable final OnboardingIllustrationAdapter illustrationAdapter) {
         this.titleResId = titleResId;
         this.messageResId = messageResId;
-        this.iconAdapter = iconAdapter;
+        this.illustrationAdapter = illustrationAdapter;
     }
 
     /**
@@ -65,15 +65,15 @@ public class OnboardingPage implements Parcelable {
      * @return the icon adapter for the onboarding page
      */
     @Nullable
-    public OnboardingIconAdapter getIconAdapter() {
-        return iconAdapter;
+    public OnboardingIllustrationAdapter getIllustrationAdapter() {
+        return illustrationAdapter;
     }
 
     /**
-     * @param iconAdapter an icon adapter for the onboarding page
+     * @param illustrationAdapter an icon adapter for the onboarding page
      */
-    public void setIconAdapter(OnboardingIconAdapter iconAdapter) {
-        this.iconAdapter = iconAdapter;
+    public void setIllustrationAdapter(OnboardingIllustrationAdapter illustrationAdapter) {
+        this.illustrationAdapter = illustrationAdapter;
     }
 
     /**
@@ -95,7 +95,7 @@ public class OnboardingPage implements Parcelable {
     public void writeToParcel(final Parcel dest, final int flags) {
         dest.writeInt(titleResId);
         dest.writeInt(messageResId);
-        dest.writeParcelable(iconAdapter, 0);
+        dest.writeParcelable(illustrationAdapter, 0);
     }
 
     /**
@@ -118,6 +118,6 @@ public class OnboardingPage implements Parcelable {
     private OnboardingPage(@NonNull final Parcel in) {
         titleResId = in.readInt();
         messageResId = in.readInt();
-        iconAdapter = in.readParcelable(OnboardingIconAdapter.class.getClassLoader());
+        illustrationAdapter = in.readParcelable(OnboardingIllustrationAdapter.class.getClassLoader());
     }
 }

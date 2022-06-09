@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RawRes
-import net.gini.android.capture.onboarding.view.OnboardingIconAdapter
+import net.gini.android.capture.onboarding.view.OnboardingIllustrationAdapter
 import net.gini.android.capture.screen.databinding.AnimationOnboardingLottieBinding
 
 /**
@@ -14,7 +14,7 @@ import net.gini.android.capture.screen.databinding.AnimationOnboardingLottieBind
  *
  * Copyright (c) 2022 Gini GmbH.
  */
-class CustomOnboardingIconAdapter(@RawRes val animationRes: Int) : OnboardingIconAdapter {
+class CustomOnboardingIllustrationAdapter(@RawRes val animationRes: Int) : OnboardingIllustrationAdapter {
 
     private var viewBinding: AnimationOnboardingLottieBinding? = null
 
@@ -52,12 +52,12 @@ class CustomOnboardingIconAdapter(@RawRes val animationRes: Int) : OnboardingIco
         return 0
     }
 
-    companion object CREATOR : Parcelable.Creator<CustomOnboardingIconAdapter> {
-        override fun createFromParcel(parcel: Parcel): CustomOnboardingIconAdapter {
-            return CustomOnboardingIconAdapter(parcel)
+    companion object CREATOR : Parcelable.Creator<CustomOnboardingIllustrationAdapter> {
+        override fun createFromParcel(parcel: Parcel): CustomOnboardingIllustrationAdapter {
+            return CustomOnboardingIllustrationAdapter(parcel)
         }
 
-        override fun newArray(size: Int): Array<CustomOnboardingIconAdapter?> {
+        override fun newArray(size: Int): Array<CustomOnboardingIllustrationAdapter?> {
             return arrayOfNulls(size)
         }
     }

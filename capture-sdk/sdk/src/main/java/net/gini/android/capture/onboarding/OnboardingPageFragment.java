@@ -5,11 +5,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import net.gini.android.capture.R;
-import net.gini.android.capture.onboarding.view.OnboardingIconAdapter;
+import net.gini.android.capture.onboarding.view.OnboardingIllustrationAdapter;
 import net.gini.android.capture.view.InjectedViewContainer;
 
 import androidx.annotation.NonNull;
@@ -33,7 +32,7 @@ public class OnboardingPageFragment extends Fragment implements OnboardingPageCo
 
     private TextView mTextTitle;
     private TextView mTextMessage;
-    private InjectedViewContainer<OnboardingIconAdapter> injectedIconContainer;
+    private InjectedViewContainer<OnboardingIllustrationAdapter> injectedIconContainer;
 
     public static OnboardingPageFragment createInstance(@NonNull final OnboardingPage page, final boolean isLastPage) {
         final OnboardingPageFragment fragment = new OnboardingPageFragment();
@@ -119,8 +118,8 @@ public class OnboardingPageFragment extends Fragment implements OnboardingPageCo
     }
 
     @Override
-    public void showImage(@NonNull OnboardingIconAdapter iconAdapter) {
-        injectedIconContainer.setInjectedViewAdapter(iconAdapter);
+    public void showImage(@NonNull OnboardingIllustrationAdapter illustrationAdapter) {
+        injectedIconContainer.setInjectedViewAdapter(illustrationAdapter);
     }
 
     @Override

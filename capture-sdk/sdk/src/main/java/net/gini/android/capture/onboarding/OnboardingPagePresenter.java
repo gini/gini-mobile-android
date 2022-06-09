@@ -27,18 +27,18 @@ class OnboardingPagePresenter extends OnboardingPageContract.Presenter {
 
     @Override
     void onPageIsVisible() {
-        if (mPage.getIconAdapter() == null) {
+        if (mPage.getIllustrationAdapter() == null) {
             return;
         }
-        mPage.getIconAdapter().onVisible();
+        mPage.getIllustrationAdapter().onVisible();
     }
 
     @Override
     void onPageIsHidden() {
-        if (mPage.getIconAdapter() == null) {
+        if (mPage.getIllustrationAdapter() == null) {
             return;
         }
-        mPage.getIconAdapter().onHidden();
+        mPage.getIllustrationAdapter().onHidden();
     }
 
     @Override
@@ -53,10 +53,10 @@ class OnboardingPagePresenter extends OnboardingPageContract.Presenter {
     }
 
     private void showImage() {
-        if (mPage.getIconAdapter() == null) {
+        if (mPage.getIllustrationAdapter() == null) {
             return;
         }
-        getView().showImage(mPage.getIconAdapter());
+        getView().showImage(mPage.getIllustrationAdapter());
     }
 
     private void showText() {

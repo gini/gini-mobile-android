@@ -15,12 +15,12 @@ import net.gini.android.capture.view.InjectedViewAdapter
  * Copyright (c) 2022 Gini GmbH.
  */
 
-interface OnboardingIconAdapter : InjectedViewAdapter, Parcelable {
+interface OnboardingIllustrationAdapter : InjectedViewAdapter, Parcelable {
     fun onVisible()
     fun onHidden()
 }
 
-internal open class DefaultOnboardingIconAdapter(@DrawableRes private val icon: Int) : OnboardingIconAdapter {
+internal open class DefaultOnboardingIllustrationAdapter(@DrawableRes private val icon: Int) : OnboardingIllustrationAdapter {
 
     constructor(parcel: Parcel) : this(parcel.readInt())
 
@@ -51,12 +51,12 @@ internal open class DefaultOnboardingIconAdapter(@DrawableRes private val icon: 
         return 0
     }
 
-    companion object CREATOR : Parcelable.Creator<DefaultOnboardingIconAdapter> {
-        override fun createFromParcel(parcel: Parcel): DefaultOnboardingIconAdapter {
-            return DefaultOnboardingIconAdapter(parcel)
+    companion object CREATOR : Parcelable.Creator<DefaultOnboardingIllustrationAdapter> {
+        override fun createFromParcel(parcel: Parcel): DefaultOnboardingIllustrationAdapter {
+            return DefaultOnboardingIllustrationAdapter(parcel)
         }
 
-        override fun newArray(size: Int): Array<DefaultOnboardingIconAdapter?> {
+        override fun newArray(size: Int): Array<DefaultOnboardingIllustrationAdapter?> {
             return arrayOfNulls(size)
         }
     }

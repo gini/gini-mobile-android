@@ -337,8 +337,8 @@ public class MainActivity extends AppCompatActivity {
 
         builder.setBottomNavigationBarEnabled(bottomNavBarSwitch.isChecked());
         if (animatedOnboardingIllustrationsSwitch.isChecked()) {
-            builder.setOnboardingAlignCornersIconAdapter(new CustomOnboardingIconAdapter(getResources().getIdentifier("floating_document", "raw", this.getPackageName())));
-            builder.setOnboardingQRCodeIconAdapter(new CustomOnboardingIconAdapter(getResources().getIdentifier("scan_qr_code", "raw", this.getPackageName())));
+            builder.setOnboardingAlignCornersIllustrationAdapter(new CustomOnboardingIllustrationAdapter(getResources().getIdentifier("floating_document", "raw", this.getPackageName())));
+            builder.setOnboardingQRCodeIllustrationAdapter(new CustomOnboardingIllustrationAdapter(getResources().getIdentifier("scan_qr_code", "raw", this.getPackageName())));
         }
 
         builder.build();
