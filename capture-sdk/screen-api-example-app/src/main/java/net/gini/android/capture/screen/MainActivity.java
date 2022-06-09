@@ -338,6 +338,8 @@ public class MainActivity extends AppCompatActivity {
         builder.setBottomNavigationBarEnabled(bottomNavBarSwitch.isChecked());
         if (animatedOnboardingIllustrationsSwitch.isChecked()) {
             builder.setOnboardingAlignCornersIllustrationAdapter(new CustomOnboardingIllustrationAdapter(getResources().getIdentifier("floating_document", "raw", this.getPackageName())));
+            builder.setOnboardingLightingIllustrationAdapter(new CustomOnboardingIllustrationAdapter(getResources().getIdentifier("lighting", "raw", this.getPackageName())));
+            builder.setOnboardingMultiPageIllustrationAdapter(new CustomOnboardingIllustrationAdapter(getResources().getIdentifier("multipage", "raw", this.getPackageName())));
             builder.setOnboardingQRCodeIllustrationAdapter(new CustomOnboardingIllustrationAdapter(getResources().getIdentifier("scan_qr_code", "raw", this.getPackageName())));
         }
 
