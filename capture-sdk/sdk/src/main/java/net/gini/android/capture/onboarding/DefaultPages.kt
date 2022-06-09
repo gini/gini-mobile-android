@@ -14,7 +14,7 @@ sealed class DefaultPages(val onboardingPage: OnboardingPage) {
     companion object {
 
         @JvmStatic
-        fun asArrayList(isMultiPageEnabled: Boolean): ArrayList<OnboardingPage> {
+        fun asArrayList(isMultiPageEnabled: Boolean, isQRCodeScanningEnabled: Boolean): ArrayList<OnboardingPage> {
             val list = mutableListOf(
                 Page1().apply {
                     if (GiniCapture.hasInstance() && GiniCapture.getInstance().onboardingAlignCornersIllustrationAdapter != null) {
@@ -36,11 +36,14 @@ sealed class DefaultPages(val onboardingPage: OnboardingPage) {
                     }.onboardingPage
                 )
             }
-            list.add(Page4().apply {
-                if (GiniCapture.hasInstance() && GiniCapture.getInstance().onboardingQRCodeIllustrationAdapter != null) {
-                    onboardingPage.illustrationAdapter = GiniCapture.getInstance().onboardingQRCodeIllustrationAdapter
-                }
-            }.onboardingPage)
+            if (isQRCodeScanningEnabled) {
+                list.add(Page4().apply {
+                    if (GiniCapture.hasInstance() && GiniCapture.getInstance().onboardingQRCodeIllustrationAdapter != null) {
+                        onboardingPage.illustrationAdapter =
+                            GiniCapture.getInstance().onboardingQRCodeIllustrationAdapter
+                    }
+                }.onboardingPage)
+            }
             return ArrayList(list)
         }
     }

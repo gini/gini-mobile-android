@@ -374,9 +374,9 @@ public class MainActivity extends AppCompatActivity {
         animatedOnboardingIllustrationsSwitch = findViewById(R.id.animated_onboarding_illustrations_switch);
     }
 
-    private ArrayList<OnboardingPage> getOnboardingPages(final boolean isMultiPageEnabled) {
+    private ArrayList<OnboardingPage> getOnboardingPages(final boolean isMultiPageEnabled, final boolean isQRCodeScanningEnabled) {
         // Adding a custom page to the default pages
-        final ArrayList<OnboardingPage> pages = DefaultPages.asArrayList(isMultiPageEnabled);
+        final ArrayList<OnboardingPage> pages = DefaultPages.asArrayList(isMultiPageEnabled, isQRCodeScanningEnabled);
         pages.add(new OnboardingPage(R.string.additional_onboarding_page_title, R.string.additional_onboarding_page_message, null));
         return pages;
     }

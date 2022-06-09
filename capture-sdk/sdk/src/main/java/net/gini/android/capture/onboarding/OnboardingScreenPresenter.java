@@ -44,7 +44,7 @@ class OnboardingScreenPresenter extends OnboardingScreenContract.Presenter {
     }
 
     private List<OnboardingPage> getDefaultPages() {
-        return DefaultPages.asArrayList(FeatureConfiguration.isMultiPageEnabled());
+        return DefaultPages.asArrayList(FeatureConfiguration.isMultiPageEnabled(), FeatureConfiguration.isQRCodeScanningEnabled());
     }
 
     @Override
