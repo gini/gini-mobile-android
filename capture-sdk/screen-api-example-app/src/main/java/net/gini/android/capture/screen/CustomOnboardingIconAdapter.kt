@@ -5,6 +5,7 @@ import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RawRes
 import net.gini.android.capture.onboarding.view.OnboardingIconAdapter
 import net.gini.android.capture.screen.databinding.AnimationOnboardingLottieBinding
 
@@ -13,11 +14,11 @@ import net.gini.android.capture.screen.databinding.AnimationOnboardingLottieBind
  *
  * Copyright (c) 2022 Gini GmbH.
  */
-class CustomOnboardingAlignCornersIconAdapter() : OnboardingIconAdapter {
+class CustomOnboardingIconAdapter(@RawRes val animationRes: Int) : OnboardingIconAdapter {
 
     private var viewBinding: AnimationOnboardingLottieBinding? = null
 
-    constructor(parcel: Parcel) : this()
+    constructor(parcel: Parcel) : this(parcel.readInt())
 
     override fun onVisible() {
         viewBinding?.animationView?.playAnimation()
@@ -34,6 +35,8 @@ class CustomOnboardingAlignCornersIconAdapter() : OnboardingIconAdapter {
         val binding = AnimationOnboardingLottieBinding.inflate(LayoutInflater.from(container.context), container, false)
         viewBinding = binding
 
+        viewBinding?.animationView?.setAnimation(animationRes)
+
         return binding.root
     }
 
@@ -42,19 +45,19 @@ class CustomOnboardingAlignCornersIconAdapter() : OnboardingIconAdapter {
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-
+        parcel.writeInt(animationRes)
     }
 
     override fun describeContents(): Int {
         return 0
     }
 
-    companion object CREATOR : Parcelable.Creator<CustomOnboardingAlignCornersIconAdapter> {
-        override fun createFromParcel(parcel: Parcel): CustomOnboardingAlignCornersIconAdapter {
-            return CustomOnboardingAlignCornersIconAdapter(parcel)
+    companion object CREATOR : Parcelable.Creator<CustomOnboardingIconAdapter> {
+        override fun createFromParcel(parcel: Parcel): CustomOnboardingIconAdapter {
+            return CustomOnboardingIconAdapter(parcel)
         }
 
-        override fun newArray(size: Int): Array<CustomOnboardingAlignCornersIconAdapter?> {
+        override fun newArray(size: Int): Array<CustomOnboardingIconAdapter?> {
             return arrayOfNulls(size)
         }
     }

@@ -30,6 +30,9 @@
     <string name="custom_help_screen_greeting">This is a custom help screen.</string>
 
     <string name="analyzed_document_id">Analyzed Gini Bank API Document ID: %s</string>
+    <string name="configuration_options_header">Configuration options</string>
+    <string name="bottom_navbar_switch_label">Bottom navigation bar</string>
+    <string name="animated_onboarding_illustrations_switch_label">Animated onboarding illustrations</string>
 
     <!-- String customization examples -->
 

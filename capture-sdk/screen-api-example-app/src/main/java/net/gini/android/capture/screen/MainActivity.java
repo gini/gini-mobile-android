@@ -51,6 +51,8 @@ import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 
 import static net.gini.android.capture.example.shared.ExampleUtil.isPay5Extraction;
 
+import com.google.android.material.switchmaterial.SwitchMaterial;
+
 /**
  * Entry point for the screen api example app.
  */
@@ -68,6 +70,8 @@ public class MainActivity extends AppCompatActivity {
     private RuntimePermissionHandler mRuntimePermissionHandler;
     private TextView mTextGiniCaptureSdkVersion;
     private TextView mTextAppVersion;
+    private SwitchMaterial bottomNavBarSwitch;
+    private SwitchMaterial animatedOnboardingIllustrationsSwitch;
     private CancellationToken mFileImportCancellationToken;
 
     @Override
@@ -208,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
     private void showVersions() {
         mTextGiniCaptureSdkVersion.setText(
                 "Gini Capture SDK v" + net.gini.android.capture.BuildConfig.VERSION_NAME);
-        mTextAppVersion.setText("v" + BuildConfig.VERSION_NAME);
+        mTextAppVersion.setText("Screen API Example App v" + BuildConfig.VERSION_NAME);
     }
 
     private void setGiniCaptureSdkDebugging() {
@@ -331,9 +335,11 @@ public class MainActivity extends AppCompatActivity {
         // Uncomment to remove the Supported Formats help screen
 //                builder.setSupportedFormatsHelpScreenEnabled(false);
 
-        builder.setBottomNavigationBarEnabled(true);
-        builder.setOnboardingAlignCornersIconAdapter(new CustomOnboardingAlignCornersIconAdapter());
-        builder.setOnboardingQRCodeIconAdapter(new CustomOnboardingAlignCornersIconAdapter());
+        builder.setBottomNavigationBarEnabled(bottomNavBarSwitch.isChecked());
+        if (animatedOnboardingIllustrationsSwitch.isChecked()) {
+            builder.setOnboardingAlignCornersIconAdapter(new CustomOnboardingIconAdapter(getResources().getIdentifier("floating_document", "raw", this.getPackageName())));
+            builder.setOnboardingQRCodeIconAdapter(new CustomOnboardingIconAdapter(getResources().getIdentifier("scan_qr_code", "raw", this.getPackageName())));
+        }
 
         builder.build();
     }
@@ -362,6 +368,8 @@ public class MainActivity extends AppCompatActivity {
         mButtonStartScanner = (Button) findViewById(R.id.button_start_scanner);
         mTextGiniCaptureSdkVersion = (TextView) findViewById(R.id.text_gini_capture_version);
         mTextAppVersion = (TextView) findViewById(R.id.text_app_version);
+        bottomNavBarSwitch = findViewById(R.id.bottom_navbar_switch);
+        animatedOnboardingIllustrationsSwitch = findViewById(R.id.animated_onboarding_illustrations_switch);
     }
 
     private ArrayList<OnboardingPage> getOnboardingPages(final boolean isMultiPageEnabled) {
