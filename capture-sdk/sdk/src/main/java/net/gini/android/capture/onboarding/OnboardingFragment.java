@@ -1,5 +1,6 @@
 package net.gini.android.capture.onboarding;
 
+import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
 import static net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomButton.*;
 import static net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomButton.NEXT;
 
@@ -146,6 +147,8 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
         if (activity == null) {
             throw new IllegalStateException("Missing activity for fragment.");
         }
+
+        forcePortraitOrientationOnPhones(activity);
 
         initListener(activity);
         initPresenter(activity, getOnboardingPages());
