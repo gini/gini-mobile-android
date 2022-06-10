@@ -183,7 +183,7 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
         mPresenter.setListener(mListener);
     }
 
-    private void createPresenter(@NonNull final Activity activity) {
+    protected void createPresenter(@NonNull final Activity activity) {
         new OnboardingScreenPresenter(activity, this);
     }
 
@@ -327,7 +327,7 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
         adapter.setOnGetStartedButtonClickListener(v -> mPresenter.showNextPage());
     }
 
-    private static class PageIndicators {
+    static class PageIndicators {
 
         private final Context mContext;
         private final int mNrOfPages;
@@ -404,7 +404,7 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
             }
         }
 
-        private List<ImageView> getPageIndicatorImageViews() {
+        List<ImageView> getPageIndicatorImageViews() {
             return mPageIndicators;
         }
     }

@@ -19,14 +19,14 @@ public class PageIndicatorsTest {
 
     @Test
     public void should_createPageIndicatorImageViews() {
-        final OnboardingFragmentImpl.PageIndicators pageIndicators = createPageIndicatorsInstance(2);
+        final OnboardingFragment.PageIndicators pageIndicators = createPageIndicatorsInstance(2);
 
         assertThat(pageIndicators.getPageIndicatorImageViews().size()).isEqualTo(2);
     }
 
     @Test
     public void should_setActiveRequiredPageIndicator() {
-        final OnboardingFragmentImpl.PageIndicators pageIndicators = createPageIndicatorsInstance(2);
+        final OnboardingFragment.PageIndicators pageIndicators = createPageIndicatorsInstance(2);
         pageIndicators.setActive(0);
 
         isPageActive(pageIndicators, 0);
@@ -39,10 +39,10 @@ public class PageIndicatorsTest {
     }
 
     @NonNull
-    private OnboardingFragmentImpl.PageIndicators createPageIndicatorsInstance(final int nrOfPages) {
+    private OnboardingFragment.PageIndicators createPageIndicatorsInstance(final int nrOfPages) {
         final LinearLayout linearLayout = new LinearLayout(ApplicationProvider.getApplicationContext());
-        final OnboardingFragmentImpl.PageIndicators pageIndicators =
-                new OnboardingFragmentImpl.PageIndicators(
+        final OnboardingFragment.PageIndicators pageIndicators =
+                new OnboardingFragment.PageIndicators(
                         ApplicationProvider.getApplicationContext(), nrOfPages, linearLayout);
         pageIndicators.create();
         return pageIndicators;

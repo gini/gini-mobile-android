@@ -1,9 +1,12 @@
 package net.gini.android.capture.test;
 
-import static androidx.test.InstrumentationRegistry.getTargetContext;
+import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 
+import android.app.Instrumentation;
 import android.content.res.AssetManager;
 import android.net.Uri;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -13,6 +16,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import androidx.annotation.NonNull;
+import androidx.test.platform.app.InstrumentationRegistry;
+
+import net.gini.android.capture.internal.util.ContextHelper;
 
 /**
  * Created by Alpar Szotyori on 15.05.2019.
@@ -29,7 +35,7 @@ public final class Helpers {
     }
 
     public static byte[] loadAsset(final String filename) throws IOException {
-        final AssetManager assetManager = getTargetContext().getAssets();
+        final AssetManager assetManager = getApplicationContext().getAssets();
         InputStream inputStream = null;
         try {
             inputStream = assetManager.open(filename);
@@ -59,7 +65,7 @@ public final class Helpers {
 
     public static void copyAssetToStorage(@NonNull final String assetFilePath,
             @NonNull final String storageDirPath) throws IOException {
-        final AssetManager assetManager = getTargetContext().getAssets();
+        final AssetManager assetManager = getApplicationContext().getAssets();
         InputStream inputStream = null;
         OutputStream outputStream = null;
         try {
@@ -89,5 +95,18 @@ public final class Helpers {
         while ((read = inputStream.read(buffer)) != -1) {
             outputStream.write(buffer, 0, read);
         }
+    }
+
+    public static <T extends Parcelable, C extends Parcelable.Creator<T>> T doParcelingRoundTrip(
+            final T payload, final C creator) {
+        final Parcel parcel = Parcel.obtain();
+        payload.writeToParcel(parcel, 0);
+        parcel.setDataPosition(0);
+        return creator.createFromParcel(parcel);
+    }
+
+    public static boolean isTablet() {
+        final Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
+        return ContextHelper.isTablet(instrumentation.getTargetContext());
     }
 }
