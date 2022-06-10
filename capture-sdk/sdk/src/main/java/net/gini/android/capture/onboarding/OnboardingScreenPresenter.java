@@ -1,13 +1,17 @@
 package net.gini.android.capture.onboarding;
 
-import static net.gini.android.capture.internal.util.ContextHelper.isTablet;
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackOnboardingScreenEvent;
 
 import android.app.Activity;
 
+import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.GiniCaptureError;
 import net.gini.android.capture.internal.util.FeatureConfiguration;
+import net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomAdapter;
 import net.gini.android.capture.tracking.OnboardingScreenEvent;
+import net.gini.android.capture.view.DefaultNavigationBarTopAdapter;
+import net.gini.android.capture.view.NavButtonType;
+import net.gini.android.capture.view.NavigationBarTopAdapter;
 
 import java.util.List;
 
@@ -68,6 +72,11 @@ class OnboardingScreenPresenter extends OnboardingScreenContract.Presenter {
         trackOnboardingScreenEvent(OnboardingScreenEvent.FINISH);
     }
 
+    @Override
+    void onBackPressed() {
+        skip();
+    }
+
     private boolean isOnLastPage() {
         return mCurrentPageIndex == mPages.size() - 1;
     }
@@ -88,20 +97,58 @@ class OnboardingScreenPresenter extends OnboardingScreenContract.Presenter {
 
     private void updateButtons() {
         if (isOnLastPage()) {
-            getView().showGetStartedButton();
+            if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
+                getView().showGetStartedButtonInNavigationBarBottom();
+            } else {
+                getView().showGetStartedButton();
+            }
         } else {
-            getView().showSkipAndNextButtons();
+            if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
+                getView().showSkipAndNextButtonsInNavigationBarBottom();
+            } else {
+                getView().showSkipAndNextButtons();
+            }
         }
     }
 
     @Override
     public void start() {
         getView().showPages(mPages);
+
         mCurrentPageIndex = 0;
         getView().scrollToPage(mCurrentPageIndex);
         getView().activatePageIndicatorForPage(mCurrentPageIndex);
-        trackOnboardingScreenEvent(OnboardingScreenEvent.START);
+
+        setupNavigationBarTop();
+
+        if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
+            setupNavigationBarBottom();
+        }
+
         updateButtons();
+
+        trackOnboardingScreenEvent(OnboardingScreenEvent.START);
+    }
+
+    private void setupNavigationBarTop() {
+        if (GiniCapture.hasInstance()) {
+            final NavigationBarTopAdapter navigationBarTopAdapter = GiniCapture.getInstance().getNavigationBarTopAdapter();
+            getView().setNavigationBarTopAdapter(navigationBarTopAdapter);
+
+            navigationBarTopAdapter.setNavButtonType(NavButtonType.CLOSE);
+
+            if (navigationBarTopAdapter instanceof DefaultNavigationBarTopAdapter) {
+                getView().setupDefaultNavigationBarTopAdapter((DefaultNavigationBarTopAdapter) navigationBarTopAdapter);
+            }
+        }
+    }
+
+    private void setupNavigationBarBottom() {
+        if (GiniCapture.hasInstance()) {
+            final OnboardingNavigationBarBottomAdapter navigationBarBottomAdapter = GiniCapture.getInstance().getOnboardingNavigationBarBottomAdapter();
+            getView().setNavigationBarBottomAdapter(navigationBarBottomAdapter);
+            getView().hideButtons();
+        }
     }
 
     @Override

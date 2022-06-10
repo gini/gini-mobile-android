@@ -200,52 +200,12 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
         final View view = inflater.inflate(R.layout.gc_fragment_onboarding, container, false);
         bindViews(view);
         addInputHandlers();
-        //<editor-fold desc="Navigation bar injection experiments">
-
-        final Activity activity = getActivity();
-
-        if (GiniCapture.hasInstance()) {
-            NavigationBarTopAdapter navigationBarTopAdapter = GiniCapture.getInstance().getNavigationBarTopAdapter();
-            injectedNavigationBarTopContainer.setInjectedViewAdapter(navigationBarTopAdapter);
-
-            navigationBarTopAdapter.setOnNavButtonClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    final Activity activity = getActivity();
-                    if (activity != null) {
-                        activity.onBackPressed();
-                    }
-                }
-            });
-
-            navigationBarTopAdapter.setNavButtonType(NavButtonType.CLOSE);
-
-            if (activity != null) {
-                navigationBarTopAdapter.setTitle(activity.getTitle().toString());
-            }
-
-            if (navigationBarTopAdapter instanceof DefaultNavigationBarTopAdapter) {
-                final DefaultNavigationBarTopAdapter defaultNavigationBarTopAdapter = (DefaultNavigationBarTopAdapter) navigationBarTopAdapter;
-                defaultNavigationBarTopAdapter.setBackgroundColor(MaterialColors.getColor(view, R.attr.backgroundColor));
-            }
-
-            if (GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
-                hideButtons();
-
-                OnboardingNavigationBarBottomAdapter navigationBarBottomAdapter = GiniCapture.getInstance().getOnboardingNavigationBarBottomAdapter();
-                injectedNavigationBarBottomContainer.setInjectedViewAdapter(navigationBarBottomAdapter);
-
-                navigationBarBottomAdapter.setOnNextButtonClickListener(v -> mPresenter.showNextPage());
-                navigationBarBottomAdapter.setOnSkipButtonClickListener(v -> mPresenter.skip());
-                navigationBarBottomAdapter.setOnGetStartedButtonClickListener(v -> mPresenter.showNextPage());
-            }
-        }
-        //</editor-fold>
         mPresenter.start();
         return view;
     }
 
-    private void hideButtons() {
+    @Override
+    public void hideButtons() {
         groupNextAndSkipButtons.setVisibility(View.GONE);
         buttonGetStarted.setVisibility(View.GONE);
     }
@@ -308,43 +268,60 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
 
     @Override
     public void showGetStartedButton() {
-        if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
-            final OnboardingNavigationBarBottomAdapter injectedViewAdapter = injectedNavigationBarBottomContainer.getInjectedViewAdapter();
-            if (injectedViewAdapter != null) {
-                injectedViewAdapter.showButtons(GET_STARTED);
-            }
-        } else {
-            groupNextAndSkipButtons.setVisibility(View.INVISIBLE);
-            buttonGetStarted.setVisibility(View.VISIBLE);
+        groupNextAndSkipButtons.setVisibility(View.INVISIBLE);
+        buttonGetStarted.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void showGetStartedButtonInNavigationBarBottom() {
+        final OnboardingNavigationBarBottomAdapter injectedViewAdapter = injectedNavigationBarBottomContainer.getInjectedViewAdapter();
+        if (injectedViewAdapter != null) {
+            injectedViewAdapter.showButtons(GET_STARTED);
         }
     }
 
     @Override
     public void showSkipAndNextButtons() {
-        if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
-            final OnboardingNavigationBarBottomAdapter injectedViewAdapter = injectedNavigationBarBottomContainer.getInjectedViewAdapter();
-            if (injectedViewAdapter != null) {
-                injectedViewAdapter.showButtons(SKIP, NEXT);
-            }
-        } else {
-            groupNextAndSkipButtons.setVisibility(View.VISIBLE);
-            buttonGetStarted.setVisibility(View.INVISIBLE);
+        groupNextAndSkipButtons.setVisibility(View.VISIBLE);
+        buttonGetStarted.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void showSkipAndNextButtonsInNavigationBarBottom() {
+        final OnboardingNavigationBarBottomAdapter injectedViewAdapter = injectedNavigationBarBottomContainer.getInjectedViewAdapter();
+        if (injectedViewAdapter != null) {
+            injectedViewAdapter.showButtons(SKIP, NEXT);
         }
     }
 
     @Override
-    public CompletableFuture<Void> slideOutViews() {
-        final CompletableFuture<Void> future = new CompletableFuture<>();
-        // If width is still 0  set it to a big value to make sure the view
-        // will slide out completely
-        int layoutPageIndicatorsWidth = mLayoutPageIndicators.getWidth();
-        layoutPageIndicatorsWidth =
-                layoutPageIndicatorsWidth != 0 ? layoutPageIndicatorsWidth : 10000;
+    public void setNavigationBarTopAdapter(@NonNull NavigationBarTopAdapter adapter) {
+        injectedNavigationBarTopContainer.setInjectedViewAdapter(adapter);
+        final Activity activity = getActivity();
+        if (activity != null) {
+            final CharSequence title = activity.getTitle();
+            if (title != null) {
+                adapter.setTitle(title.toString());
+            }
+        }
+        adapter.setOnNavButtonClickListener(v -> mPresenter.onBackPressed());
+    }
 
-        mLayoutPageIndicators.animate()
-                .setDuration(150)
-                .translationX(-10 * layoutPageIndicatorsWidth);
-        return future;
+    @Override
+    public void setupDefaultNavigationBarTopAdapter(@NonNull DefaultNavigationBarTopAdapter adapter) {
+        final Activity activity = getActivity();
+        if (activity != null) {
+            adapter.setBackgroundColor(MaterialColors.getColor(activity, R.attr.backgroundColor, "backgroundColor attribute is missing from the theme"));
+        }
+    }
+
+    @Override
+    public void setNavigationBarBottomAdapter(@NonNull OnboardingNavigationBarBottomAdapter adapter) {
+        injectedNavigationBarBottomContainer.setInjectedViewAdapter(adapter); // view.setNavigationBarBottomAdapter()
+
+        adapter.setOnNextButtonClickListener(v -> mPresenter.showNextPage());
+        adapter.setOnSkipButtonClickListener(v -> mPresenter.skip());
+        adapter.setOnGetStartedButtonClickListener(v -> mPresenter.showNextPage());
     }
 
     private static class PageIndicators {

@@ -4,11 +4,13 @@ import android.app.Activity;
 
 import net.gini.android.capture.GiniCaptureBasePresenter;
 import net.gini.android.capture.GiniCaptureBaseView;
+import net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomAdapter;
+import net.gini.android.capture.view.DefaultNavigationBarTopAdapter;
+import net.gini.android.capture.view.NavigationBarTopAdapter;
 
 import java.util.List;
 
 import androidx.annotation.NonNull;
-import jersey.repackaged.jsr166e.CompletableFuture;
 
 /**
  * Created by Alpar Szotyori on 20.05.2019.
@@ -29,10 +31,18 @@ interface OnboardingScreenContract {
         void activatePageIndicatorForPage(final int pageIndex);
 
         void showGetStartedButton();
+        void showGetStartedButtonInNavigationBarBottom();
 
         void showSkipAndNextButtons();
+        void showSkipAndNextButtonsInNavigationBarBottom();
 
-        CompletableFuture<Void> slideOutViews();
+        void setNavigationBarTopAdapter(@NonNull final NavigationBarTopAdapter adapter);
+
+        void setupDefaultNavigationBarTopAdapter(@NonNull final DefaultNavigationBarTopAdapter adapter);
+
+        void setNavigationBarBottomAdapter(@NonNull final OnboardingNavigationBarBottomAdapter adapter);
+
+        void hideButtons();
     }
 
     abstract class Presenter extends GiniCaptureBasePresenter<View> implements
@@ -52,5 +62,6 @@ interface OnboardingScreenContract {
 
         abstract void skip();
 
+        abstract void onBackPressed();
     }
 }
