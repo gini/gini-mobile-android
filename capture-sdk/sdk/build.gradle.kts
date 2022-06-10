@@ -5,6 +5,7 @@ plugins {
     id("com.android.library")
     kotlin("android")
     id("com.hiya.jacoco-android")
+    id("kotlin-parcelize")
 }
 
 jacoco {

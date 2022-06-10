@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
+import kotlinx.parcelize.Parcelize
 import net.gini.android.capture.view.InjectedViewAdapter
 
 /**
@@ -20,16 +21,12 @@ interface OnboardingIllustrationAdapter : InjectedViewAdapter, Parcelable {
     fun onHidden()
 }
 
+@Parcelize
 internal open class DefaultOnboardingIllustrationAdapter(@DrawableRes private val icon: Int) : OnboardingIllustrationAdapter {
 
-    constructor(parcel: Parcel) : this(parcel.readInt())
+    override fun onVisible() {}
 
-    override fun onVisible() {
-    }
-
-    override fun onHidden() {
-
-    }
+    override fun onHidden() {}
 
     override fun getView(container: ViewGroup): View {
         return ImageView(container.context).apply {
@@ -39,26 +36,5 @@ internal open class DefaultOnboardingIllustrationAdapter(@DrawableRes private va
         }
     }
 
-    override fun onDestroy() {
-
-    }
-
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeInt(icon)
-    }
-
-    override fun describeContents(): Int {
-        return 0
-    }
-
-    companion object CREATOR : Parcelable.Creator<DefaultOnboardingIllustrationAdapter> {
-        override fun createFromParcel(parcel: Parcel): DefaultOnboardingIllustrationAdapter {
-            return DefaultOnboardingIllustrationAdapter(parcel)
-        }
-
-        override fun newArray(size: Int): Array<DefaultOnboardingIllustrationAdapter?> {
-            return arrayOfNulls(size)
-        }
-    }
-
+    override fun onDestroy() {}
 }
