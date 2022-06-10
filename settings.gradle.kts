@@ -28,7 +28,7 @@ include("capture-sdk:sdk")
 include("capture-sdk:default-network")
 include("capture-sdk:example-app-shared-code")
 include("capture-sdk:screen-api-example-app")
-include("capture-sdk:component-api-example-app")
+//include("capture-sdk:component-api-example-app")
 
 include("bank-sdk:sdk")
 include("bank-sdk:screen-api-example-app")
