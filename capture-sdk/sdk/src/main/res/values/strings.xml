@@ -28,7 +28,7 @@
     <string name="gc_unsupported_qrcode_detected_popup_message_1">Dieser QR-Code enthält keine Bezahlinformationen.</string>
     <string name="gc_unsupported_qrcode_detected_popup_message_2">X</string>
 
-    <string name="gc_onboarding_page_1_title">Within the frame</string>
+    <string name="gc_onboarding_page_1_title">Flat paper within the frame</string>
     <string name="gc_onboarding_page_1_message">Ensure that the document is flat, and positioned within the frame</string>
     <string name="gc_onboarding_page_2_title">Good lighting</string>
     <string name="gc_onboarding_page_2_message">Proper lighting leads to better results than flash</string>
