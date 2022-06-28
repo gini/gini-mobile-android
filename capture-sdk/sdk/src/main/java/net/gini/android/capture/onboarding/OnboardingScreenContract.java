@@ -36,10 +36,6 @@ interface OnboardingScreenContract {
         void showSkipAndNextButtons();
         void showSkipAndNextButtonsInNavigationBarBottom();
 
-        void setNavigationBarTopAdapter(@NonNull final NavigationBarTopAdapter adapter);
-
-        void setupDefaultNavigationBarTopAdapter(@NonNull final DefaultNavigationBarTopAdapter adapter);
-
         void setNavigationBarBottomAdapter(@NonNull final OnboardingNavigationBarBottomAdapter adapter);
 
         void hideButtons();
@@ -61,7 +57,5 @@ interface OnboardingScreenContract {
         abstract void showNextPage();
 
         abstract void skip();
-
-        abstract void onBackPressed();
     }
 }

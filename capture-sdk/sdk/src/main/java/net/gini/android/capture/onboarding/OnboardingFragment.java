@@ -104,7 +104,6 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
     private ViewPager mViewPager;
     private LinearLayout mLayoutPageIndicators;
     private PageIndicators mPageIndicators;
-    private InjectedViewContainer<NavigationBarTopAdapter> injectedNavigationBarTopContainer;
     private InjectedViewContainer<OnboardingNavigationBarBottomAdapter> injectedNavigationBarBottomContainer;
     private Button buttonNext;
     private Button buttonSkip;
@@ -216,7 +215,6 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
     private void bindViews(final View view) {
         mViewPager = (ViewPager) view.findViewById(R.id.gc_onboarding_viewpager);
         mLayoutPageIndicators = (LinearLayout) view.findViewById(R.id.gc_layout_page_indicators);
-        injectedNavigationBarTopContainer = view.findViewById(R.id.gc_injected_navigation_bar_container_top);
         injectedNavigationBarBottomContainer = view.findViewById(R.id.gc_injected_navigation_bar_container_bottom);
         buttonNext = view.findViewById(R.id.gc_next);
         buttonSkip = view.findViewById(R.id.gc_skip);
@@ -294,27 +292,6 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
         final OnboardingNavigationBarBottomAdapter injectedViewAdapter = injectedNavigationBarBottomContainer.getInjectedViewAdapter();
         if (injectedViewAdapter != null) {
             injectedViewAdapter.showButtons(SKIP, NEXT);
-        }
-    }
-
-    @Override
-    public void setNavigationBarTopAdapter(@NonNull NavigationBarTopAdapter adapter) {
-        injectedNavigationBarTopContainer.setInjectedViewAdapter(adapter);
-        final Activity activity = getActivity();
-        if (activity != null) {
-            final CharSequence title = activity.getTitle();
-            if (title != null) {
-                adapter.setTitle(title.toString());
-            }
-        }
-        adapter.setOnNavButtonClickListener(v -> mPresenter.onBackPressed());
-    }
-
-    @Override
-    public void setupDefaultNavigationBarTopAdapter(@NonNull DefaultNavigationBarTopAdapter adapter) {
-        final Activity activity = getActivity();
-        if (activity != null) {
-            adapter.setBackgroundColor(MaterialColors.getColor(activity, R.attr.backgroundColor, "backgroundColor attribute is missing from the theme"));
         }
     }
 

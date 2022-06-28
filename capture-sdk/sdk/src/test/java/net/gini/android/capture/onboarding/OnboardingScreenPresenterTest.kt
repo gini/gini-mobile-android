@@ -185,22 +185,6 @@ class OnboardingScreenPresenterTest {
 
     @Test
     @Throws(Exception::class)
-    fun `trigger finish event when clicking the nav back (close) button`() {
-        // Given
-        val presenter = createPresenter()
-        val eventTracker = spy<EventTracker>()
-        GiniCapture.Builder().setEventTracker(eventTracker).build()
-
-        // When
-        presenter.onBackPressed()
-
-        // Then
-        Mockito.verify(eventTracker).onOnboardingScreenEvent(Event(OnboardingScreenEvent.FINISH))
-    }
-
-
-    @Test
-    @Throws(Exception::class)
     fun `trigger start event`() {
         // Given
         val presenter = createPresenter()
@@ -268,51 +252,6 @@ class OnboardingScreenPresenterTest {
 
         // Then
         verify(listener).onCloseOnboarding()
-    }
-
-    @Test
-    fun `nav back (close) button notifies the listener to close the onboarding`() {
-        // Given
-        val presenter = createPresenter()
-
-        val listener = mock<OnboardingFragmentListener>()
-        presenter.setListener(listener)
-
-        // When
-        presenter.onBackPressed()
-
-        // Then
-        verify(listener).onCloseOnboarding()
-    }
-
-    @Test
-    fun `use default top navigation bar adapter`() {
-        // Given
-        GiniCapture.Builder().build()
-        val presenter = createPresenter()
-
-        // When
-        presenter.start()
-
-        // Then
-        verify(mView).setNavigationBarTopAdapter(eq(GiniCapture.getInstance().navigationBarTopAdapter))
-        verify(mView).setupDefaultNavigationBarTopAdapter(eq(GiniCapture.getInstance().navigationBarTopAdapter as DefaultNavigationBarTopAdapter))
-    }
-
-    @Test
-    fun `use custom top navigation bar adapter`() {
-        // Given
-        val customNavigationBarTopAdapter = mock<NavigationBarTopAdapter>()
-        GiniCapture.Builder()
-            .setNavigationBarTopAdapter(customNavigationBarTopAdapter)
-            .build()
-        val presenter = createPresenter()
-
-        // When
-        presenter.start()
-
-        // Then
-        verify(mView).setNavigationBarTopAdapter(eq(customNavigationBarTopAdapter))
     }
 
     @Test

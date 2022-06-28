@@ -72,11 +72,6 @@ class OnboardingScreenPresenter extends OnboardingScreenContract.Presenter {
         trackOnboardingScreenEvent(OnboardingScreenEvent.FINISH);
     }
 
-    @Override
-    void onBackPressed() {
-        skip();
-    }
-
     private boolean isOnLastPage() {
         return mCurrentPageIndex == mPages.size() - 1;
     }
@@ -119,8 +114,6 @@ class OnboardingScreenPresenter extends OnboardingScreenContract.Presenter {
         getView().scrollToPage(mCurrentPageIndex);
         getView().activatePageIndicatorForPage(mCurrentPageIndex);
 
-        setupNavigationBarTop();
-
         if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
             setupNavigationBarBottom();
         }
@@ -128,19 +121,6 @@ class OnboardingScreenPresenter extends OnboardingScreenContract.Presenter {
         updateButtons();
 
         trackOnboardingScreenEvent(OnboardingScreenEvent.START);
-    }
-
-    private void setupNavigationBarTop() {
-        if (GiniCapture.hasInstance()) {
-            final NavigationBarTopAdapter navigationBarTopAdapter = GiniCapture.getInstance().getNavigationBarTopAdapter();
-            getView().setNavigationBarTopAdapter(navigationBarTopAdapter);
-
-            navigationBarTopAdapter.setNavButtonType(NavButtonType.CLOSE);
-
-            if (navigationBarTopAdapter instanceof DefaultNavigationBarTopAdapter) {
-                getView().setupDefaultNavigationBarTopAdapter((DefaultNavigationBarTopAdapter) navigationBarTopAdapter);
-            }
-        }
     }
 
     private void setupNavigationBarBottom() {
