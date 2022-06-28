@@ -383,6 +383,23 @@ using native activities and fragments, then please first switch to using the Jet
 <span class="n">fun</span> <span class="nf">launchCaptureForIntent</span><span class="p">(</span><span class="n">intent</span><span class="p">:</span> <span class="n">Intent</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">fileImportCancellationToken</span> <span class="o">=</span> <span class="n">GiniBank</span><span class="p">.</span><span class="na">startCaptureFlowForIntent</span><span class="p">(</span><span class="n">captureImportLauncher</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="n">intent</span><span class="p">)</span>
 <span class="p">}</span>
+
+<span class="n">fun</span> <span class="nf">onCaptureResult</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n">CaptureResult</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">when</span> <span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">is</span> <span class="n">CaptureResult</span><span class="p">.</span><span class="na">Success</span> <span class="o">-&gt;</span> <span class="p">{</span>
+            <span class="p">(...)</span>
+        <span class="p">}</span>
+        <span class="n">is</span> <span class="n">CaptureResult</span><span class="p">.</span><span class="na">Error</span> <span class="o">-&gt;</span> <span class="p">{</span>
+            <span class="p">(...)</span>
+        <span class="p">}</span>
+        <span class="n">CaptureResult</span><span class="p">.</span><span class="na">Empty</span> <span class="o">-&gt;</span> <span class="p">{</span>
+            <span class="p">(...)</span>
+        <span class="p">}</span>
+        <span class="n">CaptureResult</span><span class="p">.</span><span class="na">Cancel</span> <span class="o">-&gt;</span> <span class="p">{</span>
+            <span class="p">(...)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </div>
