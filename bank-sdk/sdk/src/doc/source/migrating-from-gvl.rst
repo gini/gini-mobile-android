@@ -225,6 +225,23 @@ This is how you need to use it with the Gini Bank SDK:
         fileImportCancellationToken = GiniBank.startCaptureFlowForIntent(captureImportLauncher, this, intent)
     }
 
+    fun onCaptureResult(result: CaptureResult) {
+        when (result) {
+            is CaptureResult.Success -> {
+                (...)
+            }
+            is CaptureResult.Error -> {
+                (...)
+            }
+            CaptureResult.Empty -> {
+                (...)
+            }
+            CaptureResult.Cancel -> {
+                (...)
+            }
+        }
+    }
+
 Component API
 ~~~~~~~~~~~~~
 
