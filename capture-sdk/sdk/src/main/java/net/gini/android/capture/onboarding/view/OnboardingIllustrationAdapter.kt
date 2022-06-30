@@ -1,6 +1,5 @@
 package net.gini.android.capture.onboarding.view
 
-import android.os.Parcel
 import android.os.Parcelable
 import android.view.View
 import android.view.ViewGroup
@@ -16,13 +15,19 @@ import net.gini.android.capture.view.InjectedViewAdapter
  * Copyright (c) 2022 Gini GmbH.
  */
 
+/**
+ * TODO: add doc
+ */
 interface OnboardingIllustrationAdapter : InjectedViewAdapter, Parcelable {
     fun onVisible()
     fun onHidden()
 }
 
+/**
+ * TODO: add doc
+ */
 @Parcelize
-internal open class DefaultOnboardingIllustrationAdapter(@DrawableRes private val icon: Int) : OnboardingIllustrationAdapter {
+class ImageOnboardingIllustrationAdapter(@DrawableRes private val drawableRes: Int) : OnboardingIllustrationAdapter {
 
     override fun onVisible() {}
 
@@ -30,7 +35,7 @@ internal open class DefaultOnboardingIllustrationAdapter(@DrawableRes private va
 
     override fun getView(container: ViewGroup): View {
         return ImageView(container.context).apply {
-            setImageDrawable(ContextCompat.getDrawable(container.context, icon))
+            setImageDrawable(ContextCompat.getDrawable(container.context, drawableRes))
             layoutParams =
                 ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
         }
