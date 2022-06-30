@@ -4,7 +4,7 @@
         <item quantity="other">%d Seiten</item>
     </plurals>
     <string name="gc_title_camera">Dokument fotografieren</string>
-    <string name="gc_title_onboarding">Anleitung</string>
+    <string name="gc_title_onboarding"/>
     <string name="gc_title_review">Foto überprüfen</string>
     <string name="gc_title_help">Hilfe</string>
     <string name="gc_title_photo_tips">Tipps für Fotos</string>
@@ -28,12 +28,14 @@
     <string name="gc_unsupported_qrcode_detected_popup_message_1">Dieser QR-Code enthält keine Bezahlinformationen.</string>
     <string name="gc_unsupported_qrcode_detected_popup_message_2">X</string>
 
-    <string name="gc_onboarding_lighting">Beim Abfotografieren der Rechnung oder des Überweisungsträgers auf gute Beleuchtung achten</string>
-    <string name="gc_onboarding_flat">Seite glatt streichen</string>
-    <string name="gc_onboarding_parallel">Gerät parallel über die Seite halten</string>
-    <string name="gc_onboarding_align">Seite vollständig in den angezeigten Rahmen einpassen</string>
-
-    <string name="gc_onboarding_multi_page">Jetzt ist es möglich, eine Rechnung mit mehreren Seiten zu analysieren!</string>
+    <string name="gc_onboarding_page_1_title">Flat paper within the frame</string>
+    <string name="gc_onboarding_page_1_message">Ensure that the document is flat, and positioned within the frame</string>
+    <string name="gc_onboarding_page_2_title">Good lighting</string>
+    <string name="gc_onboarding_page_2_message">Proper lighting leads to better results than flash</string>
+    <string name="gc_onboarding_page_3_title">Add multiple pages</string>
+    <string name="gc_onboarding_page_3_message">It’s now possible to analyse an invoice with multiple pages</string>
+    <string name="gc_onboarding_page_4_title">QR codes supported</string>
+    <string name="gc_onboarding_page_4_message">Besides invoices, QR codes are also supported</string>
 
     <string name="gc_review_bottom_panel_text">Dokument vollständig, scharf und in Leserichtung fotografiert?\n\nDoppeltippen um Schärfe zu prüfen.</string>
     <string name="gc_multi_page_review_page_indicator" tools:ignore="PluralsCandidate">%1$d von %2$d</string>
@@ -120,4 +122,5 @@
     <string name="gc_file_import_default_app_dialog_image_file_type">Bilder</string>
     <string name="gc_file_import_default_app_dialog_document_file_type">Dokumente</string>
 
+    <string name="gc_close">Schließen</string>
 </resources>

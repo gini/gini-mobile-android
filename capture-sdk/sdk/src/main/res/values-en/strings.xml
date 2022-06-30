@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="gc_title_camera">Photograph document</string>
-    <string name="gc_title_onboarding">Instructions</string>
+    <string name="gc_title_onboarding"/>
     <string name="gc_title_review">Check photo quality</string>
     <string name="gc_title_help">Help</string>
     <string name="gc_title_photo_tips">Tips for photos</string>
@@ -19,11 +19,14 @@
     <string name="gc_qrcode_detected_popup_message_2">Continue</string>
     <string name="gc_unsupported_qrcode_detected_popup_message_1">This QR Code does not contain any payment information.</string>
     <string name="gc_unsupported_qrcode_detected_popup_message_2">X</string>
-    <string name="gc_onboarding_lighting">Ensure good lighting when photographing the invoice or remittance slip</string>
-    <string name="gc_onboarding_flat">Flatten the page</string>
-    <string name="gc_onboarding_parallel">Hold device parallel over the page</string>
-    <string name="gc_onboarding_align">Capture the entire page within the frame shown on the camera screen</string>
-    <string name="gc_onboarding_multi_page">It\'s now possible to analyse an invoice with multiple pages!</string>
+    <string name="gc_onboarding_page_1_title">Flat paper within the frame</string>
+    <string name="gc_onboarding_page_1_message">Ensure that the document is flat, and positioned within the frame</string>
+    <string name="gc_onboarding_page_2_title">Good lighting</string>
+    <string name="gc_onboarding_page_2_message">Proper lighting leads to better results than flash</string>
+    <string name="gc_onboarding_page_3_title">Add multiple pages</string>
+    <string name="gc_onboarding_page_3_message">It’s now possible to analyse an invoice with multiple pages</string>
+    <string name="gc_onboarding_page_4_title">QR codes supported</string>
+    <string name="gc_onboarding_page_4_message">Besides invoices, QR codes are also supported</string>
     <string name="gc_review_bottom_panel_text">Is the document complete, in focus and in the correct orientation?\n\nDouble-tap to check the focus.</string>
     <string name="gc_multi_page_review_page_indicator">%1$d of %2$d</string>
     <string name="gc_multi_page_review_reorder_pages_tip"><![CDATA[Is the page order correct? Reorder by drag & drop.]]></string>
@@ -99,4 +102,6 @@
     <string name="gc_file_import_default_app_dialog_pdf_file_type">PDF</string>
     <string name="gc_file_import_default_app_dialog_image_file_type">image</string>
     <string name="gc_file_import_default_app_dialog_document_file_type">document</string>
+
+    <string name="gc_close">Close</string>
 </resources>

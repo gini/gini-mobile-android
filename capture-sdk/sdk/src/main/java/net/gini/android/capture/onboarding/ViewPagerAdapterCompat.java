@@ -1,5 +1,7 @@
 package net.gini.android.capture.onboarding;
 
+import android.annotation.SuppressLint;
+
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -11,9 +13,10 @@ class ViewPagerAdapterCompat extends FragmentPagerAdapter {
 
     private final List<OnboardingPage> mPages;
 
+    @SuppressLint("WrongConstant")
     public ViewPagerAdapterCompat(@NonNull final FragmentManager fm,
-            @NonNull final List<OnboardingPage> pages) {
-        super(fm);
+                                  @NonNull final List<OnboardingPage> pages) {
+        super(fm, FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         mPages = pages;
     }
 
@@ -29,6 +32,7 @@ class ViewPagerAdapterCompat extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(final int position) {
-        return OnboardingPageFragmentCompat.createInstance(getPages().get(position));
+        final boolean isLastPage = position == getCount() - 1;
+        return OnboardingPageFragment.createInstance(getPages().get(position), isLastPage);
     }
 }

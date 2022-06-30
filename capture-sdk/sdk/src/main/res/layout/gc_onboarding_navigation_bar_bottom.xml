@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/colorSurface"
+    android:padding="@dimen/large">
+
+    <Button
+        android:id="@+id/gc_skip"
+        style="@style/GiniCaptureTheme.Widget.Button.OutlinedButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/xxxlarge"
+        android:layout_marginEnd="@dimen/medium"
+        android:layout_marginBottom="@dimen/xxlarge"
+        android:text="Skip"
+        android:textAllCaps="false"
+        android:visibility="invisible"
+        tools:visibility="visible"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/gc_next"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_max="160dp"
+        app:layout_constraintWidth_min="120dp" />
+
+    <Button
+        android:id="@+id/gc_next"
+        style="@style/GiniCaptureTheme.Widget.Button.UnelevatedButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/xxxlarge"
+        android:text="Next"
+        android:textAllCaps="false"
+        android:visibility="invisible"
+        tools:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@id/gc_skip"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/gc_skip"
+        app:layout_constraintTop_toTopOf="@id/gc_skip"
+        app:layout_constraintWidth_max="160dp"
+        app:layout_constraintWidth_min="120dp" />
+
+    <Button
+        android:id="@+id/gc_get_started"
+        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Get Started"
+        android:textAllCaps="false"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/gc_skip"
+        app:layout_constraintWidth_max="160dp"
+        app:layout_constraintWidth_min="120dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

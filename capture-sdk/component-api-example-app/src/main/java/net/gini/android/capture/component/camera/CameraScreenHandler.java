@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
@@ -38,7 +37,7 @@ import net.gini.android.capture.example.shared.BaseExampleApp;
 import net.gini.android.capture.example.shared.SingleDocumentAnalyzer;
 import net.gini.android.capture.help.HelpActivity;
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
-import net.gini.android.capture.onboarding.OnboardingFragmentCompat;
+import net.gini.android.capture.onboarding.OnboardingFragment;
 import net.gini.android.capture.onboarding.OnboardingFragmentListener;
 import net.gini.android.capture.util.CancellationToken;
 import net.gini.android.capture.util.IntentHelper;
@@ -53,7 +52,6 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.android.LogcatAppender;
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 
-import static android.app.Activity.RESULT_OK;
 import static net.gini.android.capture.example.shared.ExampleUtil.getExtractionsBundle;
 import static net.gini.android.capture.example.shared.ExampleUtil.isIntentActionViewOrSend;
 
@@ -337,7 +335,7 @@ public class CameraScreenHandler implements CameraFragmentListener,
     private void showOnboardingFragment() {
         mActivity.getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
-                .replace(R.id.onboarding_container, new OnboardingFragmentCompat())
+                .replace(R.id.onboarding_container, new OnboardingFragment())
                 .commit();
     }
 

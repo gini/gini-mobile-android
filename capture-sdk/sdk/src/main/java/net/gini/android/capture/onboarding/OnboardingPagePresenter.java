@@ -2,8 +2,6 @@ package net.gini.android.capture.onboarding;
 
 import android.app.Activity;
 
-import net.gini.android.capture.internal.util.ContextHelper;
-
 import androidx.annotation.NonNull;
 
 /**
@@ -28,12 +26,25 @@ class OnboardingPagePresenter extends OnboardingPageContract.Presenter {
     }
 
     @Override
+    void onPageIsVisible() {
+        if (mPage.getIllustrationAdapter() == null) {
+            return;
+        }
+        mPage.getIllustrationAdapter().onVisible();
+    }
+
+    @Override
+    void onPageIsHidden() {
+        if (mPage.getIllustrationAdapter() == null) {
+            return;
+        }
+        mPage.getIllustrationAdapter().onHidden();
+    }
+
+    @Override
     public void start() {
         showImage();
         showText();
-        if (mPage.isTransparent()) {
-            getView().showTransparentBackground();
-        }
     }
 
     @Override
@@ -42,18 +53,18 @@ class OnboardingPagePresenter extends OnboardingPageContract.Presenter {
     }
 
     private void showImage() {
-        if (mPage.getImageResId() == 0) {
+        if (mPage.getIllustrationAdapter() == null) {
             return;
         }
-        final boolean rotated = !ContextHelper.isPortraitOrientation(getActivity())
-                && mPage.shouldRotateImageForLandscape();
-        getView().showImage(mPage.getImageResId(), rotated);
+        getView().showImage(mPage.getIllustrationAdapter());
     }
 
     private void showText() {
-        if (mPage.getTextResId() == 0) {
-            return;
+        if (mPage.getTitleResId() != 0) {
+            getView().showTitle(mPage.getTitleResId());
         }
-        getView().showText(mPage.getTextResId());
+        if (mPage.getMessageResId() != 0) {
+            getView().showMessage(mPage.getMessageResId());
+        }
     }
 }

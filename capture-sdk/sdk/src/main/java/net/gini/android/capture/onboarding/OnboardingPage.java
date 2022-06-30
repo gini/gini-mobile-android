@@ -4,11 +4,12 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import net.gini.android.capture.camera.CameraActivity;
+import net.gini.android.capture.onboarding.view.OnboardingIllustrationAdapter;
 
 import java.util.ArrayList;
 
-import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 
 /**
@@ -22,84 +23,57 @@ import androidx.annotation.StringRes;
  *     When using the Screen API set an {@link java.util.ArrayList} containing {@code OnboardingPage} objects as the {@link CameraActivity#EXTRA_IN_ONBOARDING_PAGES} when starting the {@link CameraActivity}.
  * </p>
  * <p>
- *     When using the Componenent API provide an {@link java.util.ArrayList} containing {@code OnboardingPage} objects as the argument for the Onboarding Fragment factory method {@link OnboardingFragmentCompat#createInstance(ArrayList)}.
+ *     When using the Componenent API provide an {@link java.util.ArrayList} containing {@code OnboardingPage} objects as the argument for the Onboarding Fragment factory method {@link OnboardingFragment#createInstance(ArrayList)}.
  * </p>
  */
 public class OnboardingPage implements Parcelable {
 
-    private final int mTextResId;
-    private final int mImageResId;
-    private final boolean mTransparent;
-    private final boolean mRotateImageForLandscape;
+    private final int titleResId;
+    private final int messageResId;
+    private OnboardingIllustrationAdapter illustrationAdapter;
 
     /**
-     * <p>
-     *     Create a new onboarding page with the desired string resource and drawable resource.
-     * </p>
-     * <p>
-     *     <b>Note:</b> the string should be a short sentence.
-     * </p>
-     * @param textResId a string resource id which will be shown in the onboarding page
-     * @param imageResId a drawable resource id which will be shown in the onboarding page
-     */
-    public OnboardingPage(@StringRes final int textResId, @DrawableRes final int imageResId) {
-        this(textResId, imageResId, false);
-    }
-
-    /**
-     * Internal use only.
+     * Create a new onboarding page with the desired string resources and icon adapter.
      *
-     * @suppress
+     * @param titleResId a string resource id which will be shown in the onboarding page
+     * @param messageResId a string resource id which will be shown in the onboarding page
+     * @param illustrationAdapter an icon adapter for the onboarding page
      */
-    OnboardingPage(@StringRes final int textResId, @DrawableRes final int imageResId, final boolean transparent) {
-        this(textResId, imageResId, transparent, false);
+    public OnboardingPage(@StringRes final int titleResId, @StringRes final int messageResId, @Nullable final OnboardingIllustrationAdapter illustrationAdapter) {
+        this.titleResId = titleResId;
+        this.messageResId = messageResId;
+        this.illustrationAdapter = illustrationAdapter;
     }
 
     /**
-     * Internal use only.
-     *
-     * @suppress
-     */
-    OnboardingPage(@StringRes final int textResId, @DrawableRes final int imageResId, final boolean transparent,
-            final boolean rotateImageForLandscape) {
-        mTextResId = textResId;
-        mImageResId = imageResId;
-        mTransparent = transparent;
-        mRotateImageForLandscape = rotateImageForLandscape;
-    }
-
-    /**
-     * @return the string resource id of the text shown on the onboarding page
+     * @return the string resource id of the title shown on the onboarding page
      */
     @StringRes
-    public int getTextResId() {
-        return mTextResId;
+    public int getTitleResId() {
+        return titleResId;
     }
 
     /**
-     * @return the drawable resource id of the text shown on the onboarding page
+     * @return the string resource id of the message shown on the onboarding page
      */
-    @DrawableRes
-    public int getImageResId() {
-        return mImageResId;
+    @StringRes
+    public int getMessageResId() {
+        return messageResId;
     }
 
     /**
-     * Internal use only.
-     *
-     * @suppress
+     * @return the icon adapter for the onboarding page
      */
-    public boolean isTransparent() {
-        return mTransparent;
+    @Nullable
+    public OnboardingIllustrationAdapter getIllustrationAdapter() {
+        return illustrationAdapter;
     }
 
     /**
-     * Internal use only.
-     *
-     * @suppress
+     * @param illustrationAdapter an icon adapter for the onboarding page
      */
-    public boolean shouldRotateImageForLandscape() {
-        return mRotateImageForLandscape;
+    public void setIllustrationAdapter(OnboardingIllustrationAdapter illustrationAdapter) {
+        this.illustrationAdapter = illustrationAdapter;
     }
 
     /**
@@ -119,10 +93,9 @@ public class OnboardingPage implements Parcelable {
      */
     @Override
     public void writeToParcel(final Parcel dest, final int flags) {
-        dest.writeInt(mTextResId);
-        dest.writeInt(mImageResId);
-        dest.writeInt(mTransparent ? 1 : 0);
-        dest.writeInt(mRotateImageForLandscape ? 1 : 0);
+        dest.writeInt(titleResId);
+        dest.writeInt(messageResId);
+        dest.writeParcelable(illustrationAdapter, 0);
     }
 
     /**
@@ -143,9 +116,8 @@ public class OnboardingPage implements Parcelable {
     };
 
     private OnboardingPage(@NonNull final Parcel in) {
-        mTextResId = in.readInt();
-        mImageResId = in.readInt();
-        mTransparent = in.readInt() == 1;
-        mRotateImageForLandscape = in.readInt() == 1;
+        titleResId = in.readInt();
+        messageResId = in.readInt();
+        illustrationAdapter = in.readParcelable(OnboardingIllustrationAdapter.class.getClassLoader());
     }
 }

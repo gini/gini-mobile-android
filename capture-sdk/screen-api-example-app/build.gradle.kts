@@ -82,6 +82,8 @@ dependencies {
         exclude(group = "com.google.android", module = "android")
     }
 
+    implementation(libs.lottie)
+
     testImplementation(libs.junit)
 
     androidTestImplementation(libs.androidx.test.runner)

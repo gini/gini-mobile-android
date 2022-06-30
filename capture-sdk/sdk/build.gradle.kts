@@ -5,6 +5,7 @@ plugins {
     id("com.android.library")
     kotlin("android")
     id("com.hiya.jacoco-android")
+    id("kotlin-parcelize")
 }
 
 jacoco {
@@ -24,6 +25,10 @@ android {
 
         buildConfigField("String", "VERSION_NAME", "\"$version\"")
         buildConfigField("String", "VERSION_CODE", "\"${properties["versionCode"]}\"")
+    }
+
+    buildFeatures {
+        viewBinding = true
     }
 
     buildTypes {
@@ -103,6 +108,7 @@ dependencies {
     testImplementation(libs.androidx.test.runner)
     testImplementation(libs.androidx.test.espresso.core)
     testImplementation(libs.androidx.test.espresso.intents)
+    testImplementation(libs.jUnitParams)
 
     debugImplementation(libs.androidx.test.core.ktx)
     debugImplementation(libs.androidx.fragment.testing)

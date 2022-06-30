@@ -1,45 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_view"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="?attr/backgroundColor">
 
-    <View
-        android:id="@+id/gc_background"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:alpha="@string/gc_onboarding_page_fragment_background_alpha"
-        android:background="@color/gc_onboarding_page_fragment_background" />
+    <net.gini.android.capture.view.InjectedViewContainer
+        android:id="@+id/gc_injected_icon_container"
+        android:layout_width="wrap_content"
+        android:layout_height="260dp"
+        app:layout_constraintBottom_toTopOf="@id/gc_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.6" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/gc_title"
+        style="@style/GiniCaptureTheme.Typography.Headline6"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:orientation="vertical"
-        android:paddingBottom="@dimen/gc_onboarding_vertical_margin">
+        android:layout_marginTop="@dimen/xxxlarge"
+        android:layout_marginBottom="@dimen/medium"
+        app:layout_constraintBottom_toTopOf="@id/gc_message"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="Within the frame" />
 
-        <ImageView
-            android:id="@+id/gc_image_onboarding"
-            android:layout_width="@dimen/gc_onboarding_illustration_size"
-            android:layout_height="@dimen/gc_onboarding_illustration_size"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="@dimen/gc_onboarding_illustration_vertical_margin"
-            tools:src="@drawable/gc_onboarding_flat" />
+    <TextView
+        android:id="@+id/gc_message"
+        style="@style/GiniCaptureTheme.Typography.Body1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/xxxlarge"
+        android:layout_marginEnd="@dimen/xxxlarge"
 
-        <!--suppress AndroidDomInspection -->
-        <net.gini.android.capture.internal.ui.CustomFontTextView
-            android:id="@+id/gc_text_message"
-            style="@style/GiniCaptureTheme.Onboarding.Message.TextStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginEnd="@dimen/gc_onboarding_message_horizontal_margin"
-            android:layout_marginLeft="@dimen/gc_onboarding_message_horizontal_margin"
-            android:layout_marginRight="@dimen/gc_onboarding_message_horizontal_margin"
-            android:layout_marginStart="@dimen/gc_onboarding_message_horizontal_margin"
-            android:gravity="center"
-            android:maxWidth="@dimen/gc_onboarding_message_max_width"
-            tools:text="Dokument flach\nauf eine einfarbige\nFläche legen" />
-    </LinearLayout>
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="@id/gc_bottom_guide"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="Ensure that the document is flat, and positioned within the frame" />
 
-</RelativeLayout>
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/gc_bottom_guide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.72" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

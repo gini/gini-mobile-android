@@ -1,12 +1,17 @@
 package net.gini.android.capture.onboarding;
 
-import static net.gini.android.capture.internal.util.ContextHelper.isTablet;
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackOnboardingScreenEvent;
 
 import android.app.Activity;
 
+import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.GiniCaptureError;
+import net.gini.android.capture.internal.util.FeatureConfiguration;
+import net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomAdapter;
 import net.gini.android.capture.tracking.OnboardingScreenEvent;
+import net.gini.android.capture.view.DefaultNavigationBarTopAdapter;
+import net.gini.android.capture.view.NavButtonType;
+import net.gini.android.capture.view.NavigationBarTopAdapter;
 
 import java.util.List;
 
@@ -33,7 +38,6 @@ class OnboardingScreenPresenter extends OnboardingScreenContract.Presenter {
 
     private OnboardingFragmentListener mListener = NO_OP_LISTENER;
     private List<OnboardingPage> mPages;
-    private boolean mShowEmptyLastPage;
     private int mCurrentPageIndex;
 
     OnboardingScreenPresenter(@NonNull final Activity activity,
@@ -44,37 +48,28 @@ class OnboardingScreenPresenter extends OnboardingScreenContract.Presenter {
     }
 
     private List<OnboardingPage> getDefaultPages() {
-        if (isTablet(getActivity())) {
-            return DefaultPagesTablet.asArrayList();
-        } else {
-            return DefaultPagesPhone.asArrayList();
-        }
+        return DefaultPages.asArrayList(FeatureConfiguration.isMultiPageEnabled(), FeatureConfiguration.isQRCodeScanningEnabled());
     }
 
     @Override
     void setCustomPages(@NonNull final List<OnboardingPage> pages) {
         mPages = pages;
-        if (mShowEmptyLastPage) {
-            addTransparentPage();
-        }
     }
 
     @Override
-    void addEmptyLastPage() {
-        mShowEmptyLastPage = true;
-        if (mPages != null) {
-            addTransparentPage();
-        }
-    }
-
-    @Override
-    void showNextPage() {
+    public void showNextPage() {
         if (isOnLastPage()) {
             mListener.onCloseOnboarding();
             trackOnboardingScreenEvent(OnboardingScreenEvent.FINISH);
         } else {
             scrollToNextPage();
         }
+    }
+
+    @Override
+    public void skip() {
+        mListener.onCloseOnboarding();
+        trackOnboardingScreenEvent(OnboardingScreenEvent.FINISH);
     }
 
     private boolean isOnLastPage() {
@@ -92,31 +87,48 @@ class OnboardingScreenPresenter extends OnboardingScreenContract.Presenter {
     void onScrolledToPage(final int pageIndex) {
         mCurrentPageIndex = pageIndex;
         getView().activatePageIndicatorForPage(mCurrentPageIndex);
-        // Only when an empty last page is shown slide out the page indicator and next button
-        // and notify the listener that the onboarding should be closed
-        if (isOnLastPage() && mShowEmptyLastPage) {
-            getView().slideOutViews()
-                    .thenRun(new Runnable() {
-                        @Override
-                        public void run() {
-                            mListener.onCloseOnboarding();
-                            trackOnboardingScreenEvent(OnboardingScreenEvent.FINISH);
-                        }
-                    });
-        }
+        updateButtons();
     }
 
-    private void addTransparentPage() {
-        mPages.add(new OnboardingPage(0, 0, true));
+    private void updateButtons() {
+        if (isOnLastPage()) {
+            if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
+                getView().showGetStartedButtonInNavigationBarBottom();
+            } else {
+                getView().showGetStartedButton();
+            }
+        } else {
+            if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
+                getView().showSkipAndNextButtonsInNavigationBarBottom();
+            } else {
+                getView().showSkipAndNextButtons();
+            }
+        }
     }
 
     @Override
     public void start() {
-        getView().showPages(mPages, mShowEmptyLastPage);
+        getView().showPages(mPages);
+
         mCurrentPageIndex = 0;
         getView().scrollToPage(mCurrentPageIndex);
         getView().activatePageIndicatorForPage(mCurrentPageIndex);
+
+        if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
+            setupNavigationBarBottom();
+        }
+
+        updateButtons();
+
         trackOnboardingScreenEvent(OnboardingScreenEvent.START);
+    }
+
+    private void setupNavigationBarBottom() {
+        if (GiniCapture.hasInstance()) {
+            final OnboardingNavigationBarBottomAdapter navigationBarBottomAdapter = GiniCapture.getInstance().getOnboardingNavigationBarBottomAdapter();
+            getView().setNavigationBarBottomAdapter(navigationBarBottomAdapter);
+            getView().hideButtons();
+        }
     }
 
     @Override

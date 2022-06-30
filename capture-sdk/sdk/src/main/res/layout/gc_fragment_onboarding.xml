@@ -1,16 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/gc_onboarding_fragment_background"
+    android:background="?attr/backgroundColor"
     android:orientation="vertical"
     tools:background="#000">
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/gc_onboarding_viewpager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/gc_injected_navigation_bar_container_bottom"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
     </androidx.viewpager.widget.ViewPager>
 
@@ -18,33 +23,88 @@
         android:id="@+id/gc_layout_page_indicators"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="@dimen/gc_onboarding_indicators_vertical_margin"
-        android:orientation="horizontal">
+        android:layout_marginBottom="@dimen/xxlarge"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@id/gc_skip"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_goneMarginBottom="@dimen/xxxxlarge">
 
-        <!-- These views are created during runtime. Kept here only for visualization during development. -->
-        <!--<ImageView-->
-        <!--android:id="@+id/gc_page_indicator_1"-->
-        <!--android:layout_width="@dimen/gc_onboarding_indicator_width"-->
-        <!--android:layout_height="@dimen/gc_onboarding_indicator_height"-->
-        <!--android:scaleType="center"-->
-        <!--android:src="@drawable/gc_onboarding_indicator_active" />-->
-        <!---->
-        <!--<Space-->
-        <!--android:layout_width="@dimen/gc_onboarding_indicator_width"-->
-        <!--android:layout_height="@dimen/gc_onboarding_indicator_height" />-->
+        <!--         These views are created during runtime. Kept here only for visualization during development. -->
+        <!--        <ImageView-->
+        <!--        android:id="@+id/gc_page_indicator_1"-->
+        <!--        android:layout_width="@dimen/gc_onboarding_indicator_width"-->
+        <!--        android:layout_height="@dimen/gc_onboarding_indicator_height"-->
+        <!--        android:scaleType="center"-->
+        <!--        app:tint="@color/Accent_01"-->
+        <!--        android:src="@drawable/gc_onboarding_page_indicator" />-->
+
+        <!--        <Space-->
+        <!--        android:layout_width="@dimen/gc_onboarding_indicator_width"-->
+        <!--        android:layout_height="@dimen/gc_onboarding_indicator_height" />-->
     </LinearLayout>
 
-    <ImageButton
-        android:id="@+id/gc_button_next"
+
+    <Button
+        android:id="@+id/gc_skip"
+        style="@style/GiniCaptureTheme.Widget.Button.OutlinedButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/xxxlarge"
+        android:layout_marginEnd="@dimen/medium"
+        android:layout_marginBottom="@dimen/xxlarge"
+        android:text="Skip"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toTopOf="@id/gc_injected_navigation_bar_container_bottom"
+        app:layout_constraintEnd_toStartOf="@id/gc_next"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_max="160dp"
+        app:layout_constraintWidth_min="120dp" />
+
+    <Button
+        android:id="@+id/gc_next"
+        style="@style/GiniCaptureTheme.Widget.Button.UnelevatedButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/xxxlarge"
+        android:text="Next"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toBottomOf="@id/gc_skip"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/gc_skip"
+        app:layout_constraintTop_toTopOf="@id/gc_skip"
+        app:layout_constraintWidth_max="160dp"
+        app:layout_constraintWidth_min="120dp" />
+
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/gc_next_skip_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginBottom="@dimen/gc_fab_vertical_margin"
-        android:layout_marginEnd="@dimen/gc_fab_horizontal_margin"
-        android:background="@drawable/gc_onboarding_fab_background"
-        android:src="@drawable/gc_onboarding_fab_next" />
+        android:visibility="visible"
+        app:constraint_referenced_ids="gc_skip,gc_next" />
 
-</RelativeLayout>
+    <Button
+        android:id="@+id/gc_get_started"
+        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Get Started"
+        android:textAllCaps="false"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/gc_skip"
+        app:layout_constraintWidth_max="160dp"
+        app:layout_constraintWidth_min="120dp" />
+
+    <net.gini.android.capture.view.InjectedViewContainer
+        android:id="@+id/gc_injected_navigation_bar_container_bottom"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

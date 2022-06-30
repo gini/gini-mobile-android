@@ -153,7 +153,7 @@ public class OnboardingActivity extends AppCompatActivity implements OnboardingF
 
     private static final String ONBOARDING_FRAGMENT = "ONBOARDING_FRAGMENT";
 
-    private OnboardingFragmentCompat mOnboardingFragment;
+    private OnboardingFragment mOnboardingFragment;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -198,12 +198,12 @@ public class OnboardingActivity extends AppCompatActivity implements OnboardingF
             final ArrayList<OnboardingPage> onboardingPages =
                     GiniCapture.getInstance().getCustomOnboardingPages();
             if (onboardingPages != null) {
-                mOnboardingFragment = OnboardingFragmentCompat.createInstance(
+                mOnboardingFragment = OnboardingFragment.createInstance(
                         onboardingPages);
                 return;
             }
         }
-        mOnboardingFragment = new OnboardingFragmentCompat();
+        mOnboardingFragment = new OnboardingFragment();
     }
 
     private void showFragment() {
@@ -224,7 +224,7 @@ public class OnboardingActivity extends AppCompatActivity implements OnboardingF
     }
 
     @VisibleForTesting
-    void showFragment(@NonNull final OnboardingFragmentCompat onboardingFragment) {
+    void showFragment(@NonNull final OnboardingFragment onboardingFragment) {
         if (mOnboardingFragment != null) {
             getSupportFragmentManager()
                     .beginTransaction()

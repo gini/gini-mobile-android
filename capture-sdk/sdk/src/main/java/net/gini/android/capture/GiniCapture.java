@@ -12,6 +12,11 @@ import net.gini.android.capture.internal.network.NetworkRequestsManager;
 import net.gini.android.capture.internal.storage.ImageDiskStore;
 import net.gini.android.capture.logging.ErrorLogger;
 import net.gini.android.capture.logging.ErrorLoggerListener;
+import net.gini.android.capture.onboarding.view.DefaultOnboardingNavigationBarBottomAdapter;
+import net.gini.android.capture.onboarding.view.OnboardingIllustrationAdapter;
+import net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomAdapter;
+import net.gini.android.capture.view.NavigationBarTopAdapter;
+import net.gini.android.capture.view.DefaultNavigationBarTopAdapter;
 import net.gini.android.capture.network.GiniCaptureNetworkApi;
 import net.gini.android.capture.network.GiniCaptureNetworkService;
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction;
@@ -85,6 +90,13 @@ public class GiniCapture {
     private final EventTracker mEventTracker;
     private final List<HelpItem.Custom> mCustomHelpItems;
     private final ErrorLogger mErrorLogger;
+    private final NavigationBarTopAdapter navigationBarTopAdapter;
+    private final OnboardingNavigationBarBottomAdapter onboardingNavigationBarBottomAdapter;
+    private final boolean isBottomNavigationBarEnabled;
+    private final OnboardingIllustrationAdapter onboardingAlignCornersIllustrationAdapter;
+    private final OnboardingIllustrationAdapter onboardingLightingIllustrationAdapter;
+    private final OnboardingIllustrationAdapter onboardingMultiPageIllustrationAdapter;
+    private final OnboardingIllustrationAdapter onboardingQRCodeIllustrationAdapter;
 
     /**
      * Retrieve the current instance.
@@ -185,6 +197,13 @@ public class GiniCapture {
         mErrorLogger = new ErrorLogger(builder.getGiniErrorLoggerIsOn(),
                 builder.getGiniCaptureNetworkService(),
                 builder.getCustomErrorLoggerListener());
+        navigationBarTopAdapter = builder.getNavigationBarTopAdapter();
+        onboardingNavigationBarBottomAdapter = builder.getOnboardingNavigationBarBottomAdapter();
+        isBottomNavigationBarEnabled = builder.isBottomNavigationBarEnabled();
+        onboardingAlignCornersIllustrationAdapter = builder.getOnboardingAlignCornersIllustrationAdapter();
+        onboardingLightingIllustrationAdapter = builder.getOnboardingLightingIllustrationAdapter();
+        onboardingMultiPageIllustrationAdapter = builder.getOnboardingMultiPageIllustrationAdapter();
+        onboardingQRCodeIllustrationAdapter = builder.getOnboardingQRCodeIllustrationAdapter();
     }
 
     /**
@@ -514,6 +533,44 @@ public class GiniCapture {
     @NonNull
     ErrorLogger getErrorLogger() { return mErrorLogger; }
 
+    //<editor-fold desc="Navigation bar injection experiments">
+
+    @NonNull
+    public NavigationBarTopAdapter getNavigationBarTopAdapter() {
+        return navigationBarTopAdapter;
+    }
+
+    @NonNull
+    public OnboardingNavigationBarBottomAdapter getOnboardingNavigationBarBottomAdapter() {
+        return onboardingNavigationBarBottomAdapter;
+    }
+
+    public boolean isBottomNavigationBarEnabled() {
+        return isBottomNavigationBarEnabled;
+    }
+
+    @Nullable
+    public OnboardingIllustrationAdapter getOnboardingAlignCornersIllustrationAdapter() {
+        return onboardingAlignCornersIllustrationAdapter;
+    }
+
+    @Nullable
+    public OnboardingIllustrationAdapter getOnboardingLightingIllustrationAdapter() {
+        return onboardingLightingIllustrationAdapter;
+    }
+
+    @Nullable
+    public OnboardingIllustrationAdapter getOnboardingMultiPageIllustrationAdapter() {
+        return onboardingMultiPageIllustrationAdapter;
+    }
+
+    @Nullable
+    public OnboardingIllustrationAdapter getOnboardingQRCodeIllustrationAdapter() {
+        return onboardingQRCodeIllustrationAdapter;
+    }
+
+    //</editor-fold>
+
     /**
      * Builder for {@link GiniCapture}. To get an instance call {@link #newInstance()}.
      */
@@ -553,6 +610,13 @@ public class GiniCapture {
         private List<HelpItem.Custom> mCustomHelpItems = new ArrayList<>();
         private boolean mGiniErrorLoggerIsOn = true;
         private ErrorLoggerListener mCustomErrorLoggerListener;
+        private NavigationBarTopAdapter navigationBarTopAdapter = new DefaultNavigationBarTopAdapter();
+        private OnboardingNavigationBarBottomAdapter navigationBarBottomAdapter = new DefaultOnboardingNavigationBarBottomAdapter();
+        private boolean isBottomNavigationBarEnabled = false;
+        private OnboardingIllustrationAdapter onboardingAlignCornersIllustrationAdapter;
+        private OnboardingIllustrationAdapter onboardingLightingIllustrationAdapter;
+        private OnboardingIllustrationAdapter onboardingMultiPageIllustrationAdapter;
+        private OnboardingIllustrationAdapter onboardingQRCodeIllustrationAdapter;
 
         /**
          * Create a new {@link GiniCapture} instance.
@@ -901,6 +965,78 @@ public class GiniCapture {
         private ErrorLoggerListener getCustomErrorLoggerListener() {
             return mCustomErrorLoggerListener;
         }
+
+        //<editor-fold desc="Injected navigation bar experiment">
+        public Builder setNavigationBarTopAdapter(@NonNull final NavigationBarTopAdapter Adapter ) {
+            navigationBarTopAdapter = Adapter;
+            return this;
+        }
+
+        @NonNull
+        private NavigationBarTopAdapter getNavigationBarTopAdapter() {
+            return navigationBarTopAdapter;
+        }
+
+        public Builder setOnboardingNavigationBarBottomAdapter(@NonNull final OnboardingNavigationBarBottomAdapter Adapter ) {
+            navigationBarBottomAdapter = Adapter;
+            return this;
+        }
+
+        @NonNull
+        private OnboardingNavigationBarBottomAdapter getOnboardingNavigationBarBottomAdapter() {
+            return navigationBarBottomAdapter;
+        }
+
+        public Builder setBottomNavigationBarEnabled(final Boolean enabled) {
+            isBottomNavigationBarEnabled = enabled;
+            return this;
+        }
+
+        private boolean isBottomNavigationBarEnabled() {
+            return isBottomNavigationBarEnabled;
+        }
+
+        @NonNull
+        private OnboardingIllustrationAdapter getOnboardingAlignCornersIllustrationAdapter() {
+            return onboardingAlignCornersIllustrationAdapter;
+        }
+
+        public Builder setOnboardingAlignCornersIllustrationAdapter(@NonNull final OnboardingIllustrationAdapter adapter) {
+            onboardingAlignCornersIllustrationAdapter = adapter;
+            return this;
+        }
+
+        @NonNull
+        private OnboardingIllustrationAdapter getOnboardingLightingIllustrationAdapter() {
+            return onboardingLightingIllustrationAdapter;
+        }
+
+        public Builder setOnboardingLightingIllustrationAdapter(@NonNull final OnboardingIllustrationAdapter adapter) {
+            onboardingLightingIllustrationAdapter = adapter;
+            return this;
+        }
+
+        @NonNull
+        private OnboardingIllustrationAdapter getOnboardingMultiPageIllustrationAdapter() {
+            return onboardingMultiPageIllustrationAdapter;
+        }
+
+        public Builder setOnboardingMultiPageIllustrationAdapter(@NonNull final OnboardingIllustrationAdapter adapter) {
+            onboardingMultiPageIllustrationAdapter = adapter;
+            return this;
+        }
+
+        @NonNull
+        private OnboardingIllustrationAdapter getOnboardingQRCodeIllustrationAdapter() {
+            return onboardingQRCodeIllustrationAdapter;
+        }
+
+        public Builder setOnboardingQRCodeIllustrationAdapter(@NonNull final OnboardingIllustrationAdapter adapter) {
+            onboardingQRCodeIllustrationAdapter = adapter;
+            return this;
+        }
+
+        //</editor-fold>
     }
 
     /**

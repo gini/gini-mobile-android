@@ -167,17 +167,17 @@ jobs:
           name: capture-sdk-screen-api-example-app
           path: capture-sdk/screen-api-example-app/build/outputs/apk
 
-      - name: build component api example app
-        run: >
-          ./gradlew capture-sdk:component-api-example-app:assembleDebug
-          -PclientId="gini-mobile-test"
-          -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
-
-      - name: archive component api example app
-        uses: actions/upload-artifact@v2
-        with:
-          name: capture-sdk-component-api-example-app
-          path: capture-sdk/component-api-example-app/build/outputs/apk
+#      - name: build component api example app
+#        run: >
+#          ./gradlew capture-sdk:component-api-example-app:assembleDebug
+#          -PclientId="gini-mobile-test"
+#          -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
+#
+#      - name: archive component api example app
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: capture-sdk-component-api-example-app
+#          path: capture-sdk/component-api-example-app/build/outputs/apk
 
   checkstyle:
     runs-on: ubuntu-latest

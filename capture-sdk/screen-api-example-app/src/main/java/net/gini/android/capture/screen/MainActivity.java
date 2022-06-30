@@ -5,9 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,7 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import net.gini.android.core.api.GiniApiType;
+import net.gini.android.capture.onboarding.DefaultPages;
 import net.gini.android.capture.AsyncCallback;
 import net.gini.android.capture.DocumentImportEnabledFileTypes;
 import net.gini.android.capture.GiniCapture;
@@ -26,12 +24,9 @@ import net.gini.android.capture.ImportedFileValidationException;
 import net.gini.android.capture.camera.CameraActivity;
 import net.gini.android.capture.example.shared.BaseExampleApp;
 import net.gini.android.capture.example.shared.RuntimePermissionHandler;
-import net.gini.android.capture.help.FileImportActivity;
 import net.gini.android.capture.help.HelpItem;
-import net.gini.android.capture.help.PhotoTipsActivity;
 import net.gini.android.capture.logging.ErrorLog;
 import net.gini.android.capture.logging.ErrorLoggerListener;
-import net.gini.android.capture.onboarding.DefaultPagesPhone;
 import net.gini.android.capture.onboarding.OnboardingPage;
 import net.gini.android.capture.requirements.GiniCaptureRequirements;
 import net.gini.android.capture.requirements.RequirementReport;
@@ -56,6 +51,8 @@ import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 
 import static net.gini.android.capture.example.shared.ExampleUtil.isPay5Extraction;
 
+import com.google.android.material.switchmaterial.SwitchMaterial;
+
 /**
  * Entry point for the screen api example app.
  */
@@ -73,6 +70,8 @@ public class MainActivity extends AppCompatActivity {
     private RuntimePermissionHandler mRuntimePermissionHandler;
     private TextView mTextGiniCaptureSdkVersion;
     private TextView mTextAppVersion;
+    private SwitchMaterial bottomNavBarSwitch;
+    private SwitchMaterial animatedOnboardingIllustrationsSwitch;
     private CancellationToken mFileImportCancellationToken;
 
     @Override
@@ -213,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
     private void showVersions() {
         mTextGiniCaptureSdkVersion.setText(
                 "Gini Capture SDK v" + net.gini.android.capture.BuildConfig.VERSION_NAME);
-        mTextAppVersion.setText("v" + BuildConfig.VERSION_NAME);
+        mTextAppVersion.setText("Screen API Example App v" + BuildConfig.VERSION_NAME);
     }
 
     private void setGiniCaptureSdkDebugging() {
@@ -312,6 +311,7 @@ public class MainActivity extends AppCompatActivity {
         builder.setFlashButtonEnabled(true);
         builder.setEventTracker(new GiniCaptureEventTracker());
         builder.setCustomErrorLoggerListener(new CustomErrorLoggerListener());
+        builder.setShouldShowOnboarding(true);
         // Uncomment to disable sending errors to Gini
 //        builder.setGiniErrorLoggerIsOn(false);
 
@@ -334,6 +334,15 @@ public class MainActivity extends AppCompatActivity {
 //                builder.setShouldShowOnboarding(true);
         // Uncomment to remove the Supported Formats help screen
 //                builder.setSupportedFormatsHelpScreenEnabled(false);
+
+        builder.setBottomNavigationBarEnabled(bottomNavBarSwitch.isChecked());
+        if (animatedOnboardingIllustrationsSwitch.isChecked()) {
+            builder.setOnboardingAlignCornersIllustrationAdapter(new CustomOnboardingIllustrationAdapter(getResources().getIdentifier("floating_document", "raw", this.getPackageName())));
+            builder.setOnboardingLightingIllustrationAdapter(new CustomOnboardingIllustrationAdapter(getResources().getIdentifier("lighting", "raw", this.getPackageName())));
+            builder.setOnboardingMultiPageIllustrationAdapter(new CustomOnboardingIllustrationAdapter(getResources().getIdentifier("multipage", "raw", this.getPackageName())));
+            builder.setOnboardingQRCodeIllustrationAdapter(new CustomOnboardingIllustrationAdapter(getResources().getIdentifier("scan_qr_code", "raw", this.getPackageName())));
+        }
+
         builder.build();
     }
 
@@ -361,13 +370,14 @@ public class MainActivity extends AppCompatActivity {
         mButtonStartScanner = (Button) findViewById(R.id.button_start_scanner);
         mTextGiniCaptureSdkVersion = (TextView) findViewById(R.id.text_gini_capture_version);
         mTextAppVersion = (TextView) findViewById(R.id.text_app_version);
+        bottomNavBarSwitch = findViewById(R.id.bottom_navbar_switch);
+        animatedOnboardingIllustrationsSwitch = findViewById(R.id.animated_onboarding_illustrations_switch);
     }
 
-    private ArrayList<OnboardingPage> getOnboardingPages() {
+    private ArrayList<OnboardingPage> getOnboardingPages(final boolean isMultiPageEnabled, final boolean isQRCodeScanningEnabled) {
         // Adding a custom page to the default pages
-        final ArrayList<OnboardingPage> pages = DefaultPagesPhone.asArrayList();
-        pages.add(new OnboardingPage(R.string.additional_onboarding_page,
-                R.drawable.additional_onboarding_illustration));
+        final ArrayList<OnboardingPage> pages = DefaultPages.asArrayList(isMultiPageEnabled, isQRCodeScanningEnabled);
+        pages.add(new OnboardingPage(R.string.additional_onboarding_page_title, R.string.additional_onboarding_page_message, null));
         return pages;
     }
 
