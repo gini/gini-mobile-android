@@ -149,30 +149,8 @@ UI injection utilizes view adapter interfaces which you can implement and pass t
 SDK. These interfaces declare the contract the injected view has to fulfill and allow the SDK to ask for your view
 instance when needed.
 
-Top Navigation Bar
-++++++++++++++++++
-
-The most important injectable UI element is the top navigation bar. To inject your own view implement the
-``NavigationBarTopAdapter`` and pass it to ``GiniCapture.newInstance().setNavigationBarTopAdapter()``. Your view will
-then be displayed on all screens as the top navigation bar.
-
-Bottom Navigation Bar
-+++++++++++++++++++++
-
-The new UI allows showing the navigation bar on the bottom. To enable it pass ``true`` to
-``GiniCapture.newInstance().setBottomNavigationBarEnabled()``.
-
-.. note::
-
-    The top navigation bar will still be used, but its functionality will be limited to showing the screen's title and
-    an optional close button. Please inject a custom top navigation bar if your design requires it even if you have
-    enabled the bottom navigation bar.
-
-Each screen has a slightly different bottom navigation bar because they contain screen specific call-to-action buttons.
-
-To inject your own views implement each screen's view adapter interface (e.g., ``OnboardingNavigationBarBottomAdapter``)
-and pass it to ``GiniCapture`` (e.g., ``GiniCapture.newInstance().setOnboardingNavigationBarBottomAdapter()``). Your
-view will then be displayed on the relevant screen.
+The most important injectable UI element is the top navigation bar. You may also show the navigation bar on the bottom
+using your own custom view. You can find more details `here <features.html#custom-ui-elements>`_.
 
 Dark mode
 ~~~~~~~~~

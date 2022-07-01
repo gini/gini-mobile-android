@@ -1,6 +1,14 @@
 Features
 ========
 
+..
+  Headers:
+  h1 =====
+  h2 -----
+  h3 ~~~~~
+  h4 +++++
+  h5 ^^^^^
+
 The Gini Capture SDK provides various features you can enable and configure. All of the features are configured during
 creation of a new ``GiniCapture`` instance. Specifically the ``GiniCapture.Builder`` is used to configure the Gini
 Capture SDK. It's `reference documentation
@@ -20,6 +28,38 @@ Document Capture
 This is the core feature of the Gini Capture SDK. It enables your app to capture documents with the camera and prepares
 them to be analysed by the Gini Bank API.
 
+Custom UI Elements
+~~~~~~~~~~~~~~~~~~
+
+Certain elements of the UI can now be fully customised via UI injection. It utilises view adapter interfaces which you
+can implement and pass to ``GiniCapture`` when configuring the SDK. These interfaces declare the contract the injected
+view has to fulfill and allow the SDK to ask for your view instance when needed.
+
+Top Navigation Bar
+++++++++++++++++++
+
+To inject your own navigation bar view implement the ``NavigationBarTopAdapter`` and pass it to
+``GiniCapture.newInstance().setNavigationBarTopAdapter()``. Your view will then be displayed on all screens as the top
+navigation bar.
+
+Bottom Navigation Bar
++++++++++++++++++++++
+
+You can opt to show a bottom navigation bar. To enable it pass ``true`` to
+``GiniCapture.newInstance().setBottomNavigationBarEnabled()``.
+
+.. note::
+
+    The top navigation bar will still be used, but its functionality will be limited to showing the screen's title and
+    an optional close button. Please inject a custom top navigation bar if your design requires it even if you have
+    enabled the bottom navigation bar.
+
+Each screen has a slightly different bottom navigation bar because they contain screen specific call-to-action buttons.
+
+To inject your own views implement each screen's view adapter interface (e.g., ``OnboardingNavigationBarBottomAdapter``)
+and pass it to ``GiniCapture`` (e.g., ``GiniCapture.newInstance().setOnboardingNavigationBarBottomAdapter()``). Your
+view will then be displayed on the relevant screen.
+
 Onboarding
 ~~~~~~~~~~
 
@@ -38,6 +78,15 @@ You can customize the onboarding in the following ways:
 * Force show the onboarding:
    If you wish to show the onboarding after the first run then pass ``true`` to
    ``GiniCapture.Builder.setShouldShowOnboarding()``.
+
+* Animate illustrations by injecting custom views:
+   If you need to animate the illustrations on the onboarding pages implement the ``OnboardingIllustrationAdapter``
+   interface to inject a view that can animate images (e.g., `Lottie <https://github.com/airbnb/lottie-android>`_) and
+   pass it to the relevant onboarding illustration adapter setters (e.g.,
+   ``setOnboardingAlignCornersIllustrationAdapter()``) when building the ``GiniCapture`` instance. The `reference
+   documentation
+   <https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/dokka/sdk/net.gini.android.capture/-gini-capture/-builder/index.html>`_
+   of ``GiniCapture.Builder`` lists all the setters.
 
 Single Page
 ~~~~~~~~~~~

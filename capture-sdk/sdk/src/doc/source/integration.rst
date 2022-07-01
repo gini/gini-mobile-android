@@ -265,12 +265,12 @@ To launch the Gini Capture SDK you only need to:
 The following diagram shows the interaction between your app and the SDK:
 
 .. figure:: _static/integration/Screen-API.png
-   :alt: Diagram of interaction between your app and the SDK with the Screen API
+   :alt: Diagram of interaction between your app and the SDK
    :width: 100%
 
 .. note::
 
-   Check out the `Screen API example app
+   Check out the `example app
    <https://github.com/gini/gini-mobile-android/tree/main/capture-sdk/screen-api-example-app>`_ to see how an integration could look
    like.
 
