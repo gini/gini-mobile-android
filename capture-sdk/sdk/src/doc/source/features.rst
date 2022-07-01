@@ -45,24 +45,12 @@ Single Page
 By default the Gini Capture SDK is configured to capture single page documents. No further configuration is required for
 this.
 
-.. important::
-
-    If you integrate using the *Component API* you will need to launch the ``ReviewFragmentCompat`` when the
-    ``CameraFragmentListener.onDocumentAvailable()`` is invoked. See the `Component API
-    <integration.html#component-api>`_ section for further details.
-
 Multi-Page
 ~~~~~~~~~~
 
 The multi-page feature allows the SDK to capture documents with multiple pages.
 
 To enable this simply pass ``true`` to ``GiniCapture.Builder.setMultiPageEnabled()``.
-
-.. important::
-
-    If you integrate using the *Component API* you will need to launch the ``MultiPageReviewFragment`` when the
-    ``CameraFragmentListener.onProceedToMultiPageReviewScreen()`` is invoked. See the `Component API
-    <integration.html#component-api>`_ section for further details.
 
 Camera
 ~~~~~~
@@ -88,9 +76,8 @@ popup to use the payment data directly without the need to analyse the document.
 If the QR code does not have a supported payment format then a popup informs the user that a QR code was detected but it
 cannot be used.
 
-After the user tapped on the QR code detected popup the payment information is extracted form the QR code. The result is
-returned either in the result of the ``CameraActivity`` (*Screen API*) or in the
-``CameraFragmentListener.onExtractionsAvailable()`` method (*Component API*).
+After the user tapped on the QR code detected popup the payment information is extracted form the QR code. The extractions are
+returned in the result of the ``CameraActivity``.
 
 QR Code Scanning is available on devices running Android with Google Play Services installed.
 
@@ -160,13 +147,10 @@ Intercepting the imported document
 
 You can intercept the imported document and deny the Gini Capture SDK from using it.
 
-If you use the *Screen API* then you need to subclass the ``CameraActivity`` and override the
+You need to subclass the ``CameraActivity`` and override the
 ``onCheckImportedDocument`` method. See it's `reference documentation
 <https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/dokka/sdk/net.gini.android.capture.camera/-camera-activity/on-check-imported-document.html>`_
 for details.
-
-With the *Component API* you can intercept the document in the ``CameraFragmentListener.onCheckImportedDocument()``
-method. The method signature and usage is the same as above.
 
 File Import (Open With)
 -----------------------
@@ -237,10 +221,7 @@ We recommend checking whether the Intent has the required action before proceedi
         ...
     }
 
-Screen API
-++++++++++
-
-Using the Screen API, create an Intent for launching the Gini Capture SDK with
+You need to create an Intent for launching the Gini Capture SDK with
 ``GiniCapture.getInstance().createIntentForImportedFile()`` or if you enabled scanning of multi-page documents
 ``GiniCapture.getInstance().createIntentForImportedFiles()``. The first method will throw an
 ``ImportedFileValidationException``, if the file was invalid and the latter will return the same exception in the
@@ -322,66 +303,6 @@ expect the review screen to be launched every time.
 
 When multi-page is disabled then the difference is only that the single-page review screen will be used instead.
 
-Component API
-+++++++++++++
-
-For the Component API, create a ``Document`` with with
-``GiniCapture.getInstance().createDocumentForImportedFile()`` or if you enabled scanning of multi-page documents
-``GiniCapture.getInstance().createDocumentForImportedFiles()``. The first method will throw an
-``ImportedFileValidationException``, if the file was invalid and the latter will return the same exception in the
-callback. 
-
-The ``ReviewFragment`` or ``MultiPageReviewFragment`` may only be used with reviewable documents. Therefore, it is important to
-check whether the document is reviewable or not:
-
-.. code-block:: java
-
-    void startGiniCaptureSDKForImportedFile(final Intent importedFileIntent) {
-        // Configure the Gini Capture SDK first
-        configureGiniCapture();
-        if (GiniCapture.hasInstance() && GiniCapture.getInstance().isMultiPageEnabled()) {
-            mFileImportCancellationToken = GiniCapture.getInstance().createDocumentForImportedFiles(
-                    importedFileIntent, (Context) this,
-                    new AsyncCallback<Document, ImportedFileValidationException>() {
-                        @Override
-                        public void onSuccess(@NonNull final Document result) {
-                            if (result.isReviewable()) {
-                                launchMultiPageReviewScreen();
-                            } else {
-                                launchAnalysisScreen(result);
-                            }
-                            finish();
-                        }
-
-                        @Override
-                        public void onError(
-                                @NonNull final ImportedFileValidationException exception) {
-                            handleFileImportError(exception); // same method as in the Screen API example
-                        }
-
-                        @Override
-                        public void onCancelled() {
-
-                        }
-                    });
-        } else {
-            try {
-                final Document document = GiniCapture.createDocumentForImportedFile(
-                        importedFileIntent, (Context) this);
-                if (document.isReviewable()) {
-                    launchReviewScreen(document);
-                } else {
-                    launchAnalysisScreen(document);
-                }
-                finish();
-
-            } catch (final ImportedFileValidationException e) {
-                e.printStackTrace();
-                handleFileImportError(e); // same method as in the Screen API example
-            }
-        }
-    }
-
 Help Screen Customization
 -------------------------
 
@@ -454,42 +375,31 @@ In ``MyEventTracker`` you can handle the events you are interested in.
 
     }
 
-.. note::
-
-     If you use the Screen API all events will be triggered automatically.
-
-     If you use the Component API some events will not be triggered (for ex. events which rely on
-     ``Activity#onBackPressed()``). You can check in the table below whether all the events you are interested in are
-     triggered.
-
-     To manually trigger events just call the relevant method of your ``EventTracker`` implementation with the required
-     event.
-
 Events
 ~~~~~~
 
 Event types are partitioned into different domains according to the screens that they appear on. Each domain has a
 number of event types. Some events may supply additional details in a map.
 
-========================  ========================  ===================================================================  =====================================================  ==========================
-API                       Domain                    Event enum value and details map keys                                Comment                                                Introduced in (updated in)
-========================  ========================  ===================================================================  =====================================================  ==========================
-Screen + Component        Onboarding                ``OnboardingScreenEvent.START``                                      Onboarding started                                     1.0.0
-Screen + Component        Onboarding                ``OnboardingScreenEvent.FINISH``                                     User completes onboarding                              1.0.0
-Screen                    Camera Screen             ``CameraScreenEvent.EXIT``                                           User closes the camera screen                          1.0.0
-Screen                    Camera Screen             ``CameraScreenEvent.HELP``                                           User taps "Help" on the camera screen                  1.0.0
-Screen + Component        Camera Screen             ``CameraScreenEvent.TAKE_PICTURE``                                   User takes a picture                                   1.0.0
-Screen                    Review Screen             ``ReviewScreenEvent.BACK``                                           User goes back from the review screen                  1.0.0
-Screen + Component        Review Screen             ``ReviewScreenEvent.NEXT``                                           User advances from the review screen                   1.0.0
-Screen + Component        Review Screen             ``ReviewScreenEvent.UPLOAD_ERROR``                                   Upload error in the review screen                      1.0.0
-                                                    ``ReviewScreenEvent.UPLOAD_ERROR_DETAILS_MAP_KEY.MESSAGE``
-                                                    ``ReviewScreenEvent.UPLOAD_ERROR_DETAILS_MAP_KEY.ERROR_OBJECT``
-Screen                    Analysis Screen           ``AnalysisScreenEvent.CANCEL``                                       User cancels the process during analysis               1.0.0
-Screen + Component        Analysis Screen           ``AnalysisScreenEvent.ERROR``                                        The analysis ended with an error.                      1.0.0
-                                                    ``AnalysisScreenEvent.ERROR_DETAILS_MAP_KEY.MESSAGE``
-                                                    ``AnalysisScreenEvent.ERROR_DETAILS_MAP_KEY.ERROR_OBJECT``
-Screen + Component        Analysis Screen           ``AnalysisScreenEvent.RETRY``                                        The user decides to retry after an analysis error.     1.0.0
-========================  ========================  ===================================================================  =====================================================  ==========================
+========================  ===================================================================  =====================================================  ==========================
+Domain                    Event enum value and details map keys                                Comment                                                Introduced in (updated in)
+========================  ===================================================================  =====================================================  ==========================
+Onboarding                ``OnboardingScreenEvent.START``                                      Onboarding started                                     1.0.0
+Onboarding                ``OnboardingScreenEvent.FINISH``                                     User completes onboarding                              1.0.0
+Camera Screen             ``CameraScreenEvent.EXIT``                                           User closes the camera screen                          1.0.0
+Camera Screen             ``CameraScreenEvent.HELP``                                           User taps "Help" on the camera screen                  1.0.0
+Camera Screen             ``CameraScreenEvent.TAKE_PICTURE``                                   User takes a picture                                   1.0.0
+Review Screen             ``ReviewScreenEvent.BACK``                                           User goes back from the review screen                  1.0.0
+Review Screen             ``ReviewScreenEvent.NEXT``                                           User advances from the review screen                   1.0.0
+Review Screen             ``ReviewScreenEvent.UPLOAD_ERROR``                                   Upload error in the review screen                      1.0.0
+                          ``ReviewScreenEvent.UPLOAD_ERROR_DETAILS_MAP_KEY.MESSAGE``
+                          ``ReviewScreenEvent.UPLOAD_ERROR_DETAILS_MAP_KEY.ERROR_OBJECT``
+Analysis Screen           ``AnalysisScreenEvent.CANCEL``                                       User cancels the process during analysis               1.0.0
+Analysis Screen           ``AnalysisScreenEvent.ERROR``                                        The analysis ended with an error.                      1.0.0
+                          ``AnalysisScreenEvent.ERROR_DETAILS_MAP_KEY.MESSAGE``
+                          ``AnalysisScreenEvent.ERROR_DETAILS_MAP_KEY.ERROR_OBJECT``
+Analysis Screen           ``AnalysisScreenEvent.RETRY``                                        The user decides to retry after an analysis error.     1.0.0
+========================  ===================================================================  =====================================================  ==========================
 
 The supported events are listed for each screen in a dedicated enum. You can view these enums in our `reference documentation
 <https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/dokka/sdk/net.gini.android.capture.tracking/index.html>`_.
