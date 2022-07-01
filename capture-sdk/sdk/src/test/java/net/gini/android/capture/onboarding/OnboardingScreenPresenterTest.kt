@@ -12,7 +12,6 @@ import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
 import junitparams.JUnitParamsRunner
 import junitparams.Parameters
-import junitparams.converters.Param
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.GiniCaptureHelper
 import net.gini.android.capture.R
@@ -20,8 +19,6 @@ import net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomAda
 import net.gini.android.capture.tracking.Event
 import net.gini.android.capture.tracking.EventTracker
 import net.gini.android.capture.tracking.OnboardingScreenEvent
-import net.gini.android.capture.view.DefaultNavigationBarTopAdapter
-import net.gini.android.capture.view.NavigationBarTopAdapter
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -71,8 +68,8 @@ class OnboardingScreenPresenterTest {
 
         // When
         val customPages: List<OnboardingPage> = Lists.newArrayList(
-            OnboardingPage(R.string.gc_onboarding_page_1_title, R.string.gc_onboarding_page_1_message, null),
-            OnboardingPage(R.string.gc_onboarding_page_2_title, R.string.gc_onboarding_page_2_message, null)
+            OnboardingPage(R.string.gc_onboarding_align_corners_title, R.string.gc_onboarding_align_corners_message, null),
+            OnboardingPage(R.string.gc_onboarding_lighting_title, R.string.gc_onboarding_lighting_message, null)
         )
         presenter.setCustomPages(customPages)
         presenter.showNextPage()
@@ -91,8 +88,8 @@ class OnboardingScreenPresenterTest {
 
         // When
         val customPages: List<OnboardingPage> = Lists.newArrayList(
-            OnboardingPage(R.string.gc_onboarding_page_1_title, R.string.gc_onboarding_page_1_message, null),
-            OnboardingPage(R.string.gc_onboarding_page_2_title, R.string.gc_onboarding_page_2_message, null)
+            OnboardingPage(R.string.gc_onboarding_align_corners_title, R.string.gc_onboarding_align_corners_message, null),
+            OnboardingPage(R.string.gc_onboarding_lighting_title, R.string.gc_onboarding_lighting_message, null)
         )
         presenter.setCustomPages(customPages)
         presenter.onScrolledToPage(1)
@@ -110,8 +107,8 @@ class OnboardingScreenPresenterTest {
 
         // When
         val customPages: List<OnboardingPage> = Lists.newArrayList(
-            OnboardingPage(R.string.gc_onboarding_page_1_title, R.string.gc_onboarding_page_1_message, null),
-            OnboardingPage(R.string.gc_onboarding_page_2_title, R.string.gc_onboarding_page_2_message, null)
+            OnboardingPage(R.string.gc_onboarding_align_corners_title, R.string.gc_onboarding_align_corners_message, null),
+            OnboardingPage(R.string.gc_onboarding_lighting_title, R.string.gc_onboarding_lighting_message, null)
         )
         presenter.setCustomPages(customPages)
         presenter.onScrolledToPage(1)
@@ -155,8 +152,8 @@ class OnboardingScreenPresenterTest {
         GiniCapture.Builder().setEventTracker(eventTracker).build()
 
         val customPages: List<OnboardingPage> = Lists.newArrayList(
-            OnboardingPage(R.string.gc_onboarding_page_1_title, R.string.gc_onboarding_page_1_message, null),
-            OnboardingPage(R.string.gc_onboarding_page_2_title, R.string.gc_onboarding_page_2_message, null)
+            OnboardingPage(R.string.gc_onboarding_align_corners_title, R.string.gc_onboarding_align_corners_message, null),
+            OnboardingPage(R.string.gc_onboarding_lighting_title, R.string.gc_onboarding_lighting_message, null)
         )
         presenter.setCustomPages(customPages)
         presenter.onScrolledToPage(1)
@@ -227,8 +224,8 @@ class OnboardingScreenPresenterTest {
         val presenter = createPresenter()
 
         val customPages: List<OnboardingPage> = Lists.newArrayList(
-            OnboardingPage(R.string.gc_onboarding_page_1_title, R.string.gc_onboarding_page_1_message, null),
-            OnboardingPage(R.string.gc_onboarding_page_2_title, R.string.gc_onboarding_page_2_message, null)
+            OnboardingPage(R.string.gc_onboarding_align_corners_title, R.string.gc_onboarding_align_corners_message, null),
+            OnboardingPage(R.string.gc_onboarding_lighting_title, R.string.gc_onboarding_lighting_message, null)
         )
         presenter.setCustomPages(customPages)
 
@@ -318,8 +315,8 @@ class OnboardingScreenPresenterTest {
         val presenter = createPresenter()
 
         val customPages: List<OnboardingPage> = Lists.newArrayList(
-            OnboardingPage(R.string.gc_onboarding_page_1_title, R.string.gc_onboarding_page_1_message, null),
-            OnboardingPage(R.string.gc_onboarding_page_2_title, R.string.gc_onboarding_page_2_message, null)
+            OnboardingPage(R.string.gc_onboarding_align_corners_title, R.string.gc_onboarding_align_corners_message, null),
+            OnboardingPage(R.string.gc_onboarding_lighting_title, R.string.gc_onboarding_lighting_message, null)
         )
         presenter.setCustomPages(customPages)
 
@@ -348,8 +345,8 @@ class OnboardingScreenPresenterTest {
         val presenter = createPresenter()
 
         val customPages: List<OnboardingPage> = Lists.newArrayList(
-            OnboardingPage(R.string.gc_onboarding_page_1_title, R.string.gc_onboarding_page_1_message, null),
-            OnboardingPage(R.string.gc_onboarding_page_2_title, R.string.gc_onboarding_page_2_message, null)
+            OnboardingPage(R.string.gc_onboarding_align_corners_title, R.string.gc_onboarding_align_corners_message, null),
+            OnboardingPage(R.string.gc_onboarding_lighting_title, R.string.gc_onboarding_lighting_message, null)
         )
         presenter.setCustomPages(customPages)
 

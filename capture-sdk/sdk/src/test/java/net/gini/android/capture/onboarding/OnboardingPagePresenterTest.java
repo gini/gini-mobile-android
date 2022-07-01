@@ -69,7 +69,7 @@ public class OnboardingPagePresenterTest {
     @Test
     public void should_notShowImage_whenNotAvailable() throws Exception {
         // Given
-        final OnboardingPage page = new OnboardingPage(R.string.gc_onboarding_page_1_title, R.string.gc_onboarding_page_1_message, null);
+        final OnboardingPage page = new OnboardingPage(R.string.gc_onboarding_align_corners_title, R.string.gc_onboarding_align_corners_message, null);
 
         final OnboardingPagePresenter presenter = createPresenter(page);
 

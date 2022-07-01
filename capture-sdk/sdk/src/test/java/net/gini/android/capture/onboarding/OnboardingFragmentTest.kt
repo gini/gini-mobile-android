@@ -1,13 +1,10 @@
 package net.gini.android.capture.onboarding
 
-import android.app.Activity
 import android.content.pm.ActivityInfo
 import androidx.fragment.app.testing.launchFragment
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.mock
-import junitparams.JUnitParamsRunner
-import junitparams.Parameters
 import net.gini.android.capture.R
 import net.gini.android.capture.test.Helpers
 import org.junit.Assume
@@ -29,8 +26,8 @@ class OnboardingFragmentTest {
         val pages = ArrayList<OnboardingPage>()
         pages.add(
             OnboardingPage(
-                R.string.gc_onboarding_page_1_title,
-                R.string.gc_onboarding_page_1_message,
+                R.string.gc_onboarding_align_corners_title,
+                R.string.gc_onboarding_align_corners_message,
                 null
             )
         )
