@@ -47,10 +47,16 @@
 
     <!-- Widgets -->
 
-    <style name="Root.GiniCaptureTheme.Widget.Button.OutlinedButton" parent="Widget.MaterialComponents.Button.OutlinedButton"/>
+    <style name="Root.GiniCaptureTheme.Widget.Button.OutlinedButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:autoSizeTextType">uniform</item>
+        <item name="android:autoSizeMaxTextSize">14sp</item>
+    </style>
     <style name="GiniCaptureTheme.Widget.Button.OutlinedButton" parent="Root.GiniCaptureTheme.Widget.Button.OutlinedButton"/>
 
-    <style name="Root.GiniCaptureTheme.Widget.Button.UnelevatedButton" parent="Widget.MaterialComponents.Button.UnelevatedButton"/>
+    <style name="Root.GiniCaptureTheme.Widget.Button.UnelevatedButton" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+        <item name="android:autoSizeTextType">uniform</item>
+        <item name="android:autoSizeMaxTextSize">14sp</item>
+    </style>
     <style name="GiniCaptureTheme.Widget.Button.UnelevatedButton" parent="Root.GiniCaptureTheme.Widget.Button.UnelevatedButton"/>
 
     <!-- Root text styles -->
