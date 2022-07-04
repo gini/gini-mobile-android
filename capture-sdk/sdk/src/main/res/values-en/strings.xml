@@ -104,4 +104,7 @@
     <string name="gc_file_import_default_app_dialog_document_file_type">document</string>
 
     <string name="gc_close">Close</string>
+    <string name="gc_skip">Skip</string>
+    <string name="gc_next">Next</string>
+    <string name="gc_get_started">Get Started</string>
 </resources>

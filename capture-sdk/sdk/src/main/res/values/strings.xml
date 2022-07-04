@@ -123,4 +123,7 @@
     <string name="gc_file_import_default_app_dialog_document_file_type">Dokumente</string>
 
     <string name="gc_close">Schließen</string>
+    <string name="gc_skip">Überspringen</string>
+    <string name="gc_next">Weiter</string>
+    <string name="gc_get_started">Los geht`s</string>
 </resources>
