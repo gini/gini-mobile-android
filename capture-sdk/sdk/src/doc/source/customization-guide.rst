@@ -146,7 +146,7 @@ Onboarding Screen
 .. raw:: html
 
     <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
-    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FvrXbRphncnduEHM5eoFLDm%2FAndroid-Gini-Capture-SDK-2.0.0-UI-Customisation%3Fnode-id%3D0%253A1"
+    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FvrXbRphncnduEHM5eoFLDm%2FAndroid-Gini-Capture-SDK-2.0.0-UI-Customisation%3Fnode-id%3D40%253A584"
     allowfullscreen></iframe>
 
 .. _camera:
