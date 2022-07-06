@@ -13,13 +13,13 @@ Customization Guide
    :depth: 1
    :local:
 
-UI customisation is provided mostly via overriding of app resources: theme, styles, dimensions, strings,
+UI customization is provided mostly via overriding of app resources: theme, styles, dimensions, strings,
 colors, texts, etc.
 
-We provide global customisation options which are applied on all screens consistently. Screen specific customisations
+We provide global customization options which are applied on all screens consistently. Screen specific customizations
 are only needed for images and texts.
 
-Overview of UI Customisation Options
+Overview of UI Customization Options
 ------------------------------------
 
 Styles
@@ -28,7 +28,7 @@ Styles
 We leverage the power of Material Design to configure a theme for the SDK with a global color palette and typography
 that is applied on all the screens. 
 
-Using global styles for the various widgets we enable you to customise them in a single place. They are then
+Using global styles for the various widgets we enable you to customize them in a single place. They are then
 consistently applied on all screens.
 
 Theme
@@ -66,8 +66,8 @@ You can find the names of the colors `here <https://github.com/gini/gini-mobile-
 
 .. note::
 
-    If you have overriden the ``GiniCaptureTheme`` then the theme colors you have set there will override the color
-    palette customisation.
+    If you have overridden the ``GiniCaptureTheme`` then the theme colors you have set there will override the color
+    palette customization.
 
 You can view our color palette here:
 
@@ -80,8 +80,8 @@ You can view our color palette here:
 Images
 ~~~~~~
 
-Customising of images is done ia overriding of drawable resources. You can find the drawable
-resource names in the :ref:`screen-by-screen UI customisation section<Migrate to the new UI>`.
+Customizing of images is done via overriding of drawable resources. You can find the drawable
+resource names in the :ref:`screen-by-screen UI customization section<Migrate to the new UI>`.
 
 We are using mostly vector drawables. Unfortunately due to the limitations of vector drawables some images had to be
 added as PNGs.
@@ -104,7 +104,7 @@ application use the root style as the parent, for example:
 .. note::
 
   If you have overriden the ``GiniCaptureTheme`` then the text appearances you have set there will override the
-  typography customisation. Same applies to overriden widget styles where you have set a custom text appearance.
+  typography customization. Same applies to overriden widget styles where you have set a custom text appearance.
 
 You can find all the typography styles `here <https://github.com/gini/gini-mobile-android/blob/main/capture-sdk/sdk/src/main/res/values/typography.xml>`_.
 
@@ -119,16 +119,16 @@ You can preview our typography here:
 Text
 ~~~~
 
-Text customisation is done via overriding of string resources.
+Text customization is done via overriding of string resources.
 
 You can find all the string resources `here <https://github.com/gini/gini-mobile-android/blob/main/capture-sdk/sdk/src/main/res/values/strings.xml>`_.
 
 UI Elements
 ~~~~~~~~~~~
 
-Certain elements of the UI can be fully customised via UI injection.
+Certain elements of the UI can be fully customized via UI injection.
 
-UI injection utilises view adapter interfaces which you can implement and pass to ``GiniCapture`` when configuring the
+UI injection utilizes view adapter interfaces which you can implement and pass to ``GiniCapture`` when configuring the
 SDK. These interfaces declare the contract the injected view has to fulfill and allow the SDK to ask for your view
 instance when needed.
 
@@ -138,7 +138,7 @@ using your own custom view. You can find more details `here <features.html#custo
 Dark mode
 ~~~~~~~~~
 
-To customise resources for dark mode add them to resource folders containing the ``-night`` resource qualifier.
+To customize resources for dark mode add them to resource folders containing the ``-night`` resource qualifier.
 
 Onboarding Screen
 ----
