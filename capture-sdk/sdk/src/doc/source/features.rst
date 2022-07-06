@@ -9,7 +9,7 @@ Features
   h4 +++++
   h5 ^^^^^
 
-The Gini Capture SDK provides various features you can enable and configure. All of the features are configured during
+The Gini Capture SDK provides various features you can enable and configure. All the features are configured during
 creation of a new ``GiniCapture`` instance. Specifically the ``GiniCapture.Builder`` is used to configure the Gini
 Capture SDK. It's `reference documentation
 <https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/dokka/sdk/net.gini.android.capture/-gini-capture/-builder/index.html>`_
@@ -17,7 +17,7 @@ lists all the options.
 
 .. note::
 
-    Some features require additional contractual aggreements and may not be used without prior confirmation. Please get
+    Some features require additional contractual agreements and may not be used without prior confirmation. Please get
     in touch with us in case you are not sure which features your contract includes.
 
 The following sections list all the features along with the related configuration options.
@@ -26,12 +26,12 @@ Document Capture
 ----------------
 
 This is the core feature of the Gini Capture SDK. It enables your app to capture documents with the camera and prepares
-them to be analysed by the Gini Bank API.
+them to be analyzed by the Gini Bank API.
 
 Custom UI Elements
 ~~~~~~~~~~~~~~~~~~
 
-Certain elements of the UI can now be fully customised via UI injection. It utilises view adapter interfaces which you
+Certain elements of the UI can now be fully customized via UI injection. It utilizes view adapter interfaces which you
 can implement and pass to ``GiniCapture`` when configuring the SDK. These interfaces declare the contract the injected
 view has to fulfill and allow the SDK to ask for your view instance when needed.
 
@@ -91,7 +91,7 @@ You can customize the onboarding in the following ways:
 Single Page
 ~~~~~~~~~~~
 
-By default the Gini Capture SDK is configured to capture single page documents. No further configuration is required for
+By default, the Gini Capture SDK is configured to capture single page documents. No further configuration is required for
 this.
 
 Multi-Page
@@ -108,7 +108,7 @@ Camera
    To allow users toggle the camera flash pass ``true`` to ``GiniCapture.Builder.setFlashButtonEnabled()``.
 
 * Turn off flash by default:
-   Flash is on by default and you can turn it off by passing ``false`` to ``GiniCapture.Builder.setFlashOnByDefault()``.
+   Flash is on by default, and you can turn it off by passing ``false`` to ``GiniCapture.Builder.setFlashOnByDefault()``.
 
 QR Code Scanning
 ----------------
@@ -120,9 +120,9 @@ By using the Google Mobile Vision API the SDK can read payment data from QR Code
 <https://www.girocode.de/rechnungsempfaenger/>`_) and `EPS <https://eservice.stuzza.at/de/eps-ueberweisung-dokumentation/category/5-dokumentation.html>`_ formats.
 
 When a supported QR code is detected with valid payment data a popup is shown in the camera screen. The user may tap the
-popup to use the payment data directly without the need to analyse the document.
+popup to use the payment data directly without the need to analyze the document.
 
-If the QR code does not have a supported payment format then a popup informs the user that a QR code was detected but it
+If the QR code does not have a supported payment format then a popup informs the user that a QR code was detected, but it
 cannot be used.
 
 After the user tapped on the QR code detected popup the payment information is extracted form the QR code. The extractions are
@@ -148,7 +148,7 @@ button is shown next to the camera trigger. Using this button allows the user to
 device.
 
 You can specify the document types the user will be able to select when enabling this feature. You can enable only
-images, only pdfs or both images and pdfs.
+images, only PDFs or both images and PDFs.
 
 To enable it simply pass a ``DocumentImportEnabledFileTypes`` enum value to
 ``GiniCapture.Builder.setDocumentImportEnabledFileTypes()``.
@@ -216,13 +216,13 @@ functionality.
 
 To enable it pass ``true`` to ``GiniCapture.Builder.setFileImportEnabled()``.
 
-In addition to enabling it your app needs to declare intent filters for receiving pdfs and/or images from other apps and
+In addition to enabling it your app needs to declare intent filters for receiving PDFs and/or images from other apps and
 then forward the incoming intent to the Gini Capture SDK.
 
 Registering pdf and image file types
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Add the following intent filter to the activity in your ``AndroidManifest.xml`` you wish to receive incoming pdfs and
+Add the following intent filter to the activity in your ``AndroidManifest.xml`` you wish to receive incoming PDFs and
 images:
 
 .. code-block:: xml
