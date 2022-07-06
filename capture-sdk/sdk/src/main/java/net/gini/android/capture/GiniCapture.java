@@ -533,8 +533,6 @@ public class GiniCapture {
     @NonNull
     ErrorLogger getErrorLogger() { return mErrorLogger; }
 
-    //<editor-fold desc="Navigation bar injection experiments">
-
     @NonNull
     public NavigationBarTopAdapter getNavigationBarTopAdapter() {
         return navigationBarTopAdapter;
@@ -568,8 +566,6 @@ public class GiniCapture {
     public OnboardingIllustrationAdapter getOnboardingQRCodeIllustrationAdapter() {
         return onboardingQRCodeIllustrationAdapter;
     }
-
-    //</editor-fold>
 
     /**
      * Builder for {@link GiniCapture}. To get an instance call {@link #newInstance()}.
@@ -966,7 +962,6 @@ public class GiniCapture {
             return mCustomErrorLoggerListener;
         }
 
-        //<editor-fold desc="Injected navigation bar experiment">
         public Builder setNavigationBarTopAdapter(@NonNull final NavigationBarTopAdapter Adapter ) {
             navigationBarTopAdapter = Adapter;
             return this;
@@ -1035,8 +1030,6 @@ public class GiniCapture {
             onboardingQRCodeIllustrationAdapter = adapter;
             return this;
         }
-
-        //</editor-fold>
     }
 
     /**
