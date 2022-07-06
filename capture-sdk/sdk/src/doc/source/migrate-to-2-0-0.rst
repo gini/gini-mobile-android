@@ -13,21 +13,21 @@ Migrate to 2.0.0
   h4 +++++
   h5 ^^^^^
 
-In version 2.0.0 we modernised our UI and added support for light and dark modes. In addition we simplified how the UI
-is customised. We also unified the public API of the SDK and introduced an easier way to customise certain parts of the
+In version 2.0.0 we modernized our UI and added support for light and dark modes. In addition, we simplified how the UI
+is customized. We also unified the public API of the SDK and introduced an easier way to customize certain parts of the
 UI.
 
 Migrate from Component API
 --------------------------
 
-The Component API allowed more UI customisation options for the cost of a more difficult integration and maintenance. It
-was based on fragments and you had to manage navigation between them and also update the navigation whenever we introduced
+The Component API allowed more UI customization options at the cost of a more difficult integration and maintenance. It
+was based on fragments, and you had to manage navigation between them and also update the navigation whenever we introduced
 breaking changes.
 
-Maintaining the Component API along the simpler Screen API required an increasing amount of effort as we added new
+Maintaining the Component API along with the simpler Screen API required an increasing amount of effort as we added new
 features. We decided therefore to unify both APIs and introduce the ability to inject fully custom UI elements.
 
-The major benefit of the Component API was the ability to use a custom navigation bar (or toolbar, or action bar). Via
+The major benefit of the Component API was the ability to use a custom navigation bar (toolbar or action bar). Via
 UI injection that is still possible with the new public API.
 
 The following steps will help you migrate to the new public API:
@@ -36,25 +36,25 @@ The following steps will help you migrate to the new public API:
 * If you used a custom navigation bar, then you can use the new ability to inject fully custom UI elements. For this you
   need to implement the ``NavigationBarTopAdapter`` interface and pass it to
   ``GiniCapture.newInstance().setNavigationBarTopAdapter()``. The ``NavigationBarTopAdapter`` interface declares the
-  contract your view has to fulfill and allows the SDK to ask for your view instance when needed.
+  contract your view has to fulfil and allows the SDK to ask for your view instance when needed.
 * Use the ``CameraActivity`` to launch the SDK instead of the ``CameraFragmentCompat``.
-* Handle the result of the ``CameraActivity`` to receive the extracted information (or error, or cancellation).
+* Handle the result of the ``CameraActivity`` to receive the extracted information (error or cancellation).
 * Remove all code related to interacting with the SDK's fragments. From now on the entry point is the ``CameraActivity``
-  and customisation happens through ``GiniCapture`` and via overriding of resources.
-* Use the new UI customsiation options and follow the :ref:`screen-by-screen UI customisation section<Migrate to the new
+  and customization happens through ``GiniCapture`` and via overriding of resources.
+* Use the new UI customization options and follow the :ref:`screen-by-screen UI customization section<Migrate to the new
   UI>` to adapt the look of the new UI.
 
 
 Migrate from Screen API
 -----------------------
 
-The new public API is based on the Screen API so you only need to use the new UI customisation options and follow the
-:ref:`screen-by-screen UI customisation section<Migrate to the new UI>` to adapt the look of the new UI.
+The new public API is based on the Screen API, so you only need to use the new UI customization options and follow the
+:ref:`screen-by-screen UI customization section<Migrate to the new UI>` to adapt the look of the new UI.
 
-Overview of New UI Customisation Options
+Overview of New UI Customization Options
 ----------------------------------------
 
-To simplify UI customisation we introduced global customisation options. There is no need to customise each screen
+To simplify UI customization we introduced global customization options. There is no need to customize each screen
 separately anymore.
 
 Styles
@@ -63,7 +63,7 @@ Styles
 We leverage the power of Material Design to configure a theme for the SDK with a global color palette and typography
 that is applied on all the screens. 
 
-Using global styles for the various widgets we enable you to customise them in a single place. They are then
+Using global styles for the various widgets, we enable you to customize them in a single place. They are then
 consistently applied on all screens.
 
 Theme
@@ -93,20 +93,20 @@ root style as the parent, for example:
 Colors
 ~~~~~~
 
-We introduced a global color palette which you are free to override. The custom colors will be then applied on all screens.
+We introduced a global color palette which you are free to override. The custom colors will then be applied on all screens.
 
 You can find the names of the colors `here <https://github.com/gini/gini-mobile-android/blob/main/capture-sdk/sdk/src/main/res/values/colors.xml>`_.
 
 .. note::
 
-    If you have overriden the ``GiniCaptureTheme`` then the theme colors you have set there will override the color
-    palette customisation.
+    If you have overridden the ``GiniCaptureTheme`` then the theme colors you have set there will override the color
+    palette customization.
 
 Images
 ~~~~~~
 
-Customising of images is done the same way as before via overriding of drawable resources. You can find the drawable
-resource names in the :ref:`screen-by-screen UI customisation section<Migrate to the new UI>`.
+Customizing images is done the same way as before via overriding of drawable resources. You can find the drawable
+resource names in the :ref:`screen-by-screen UI customization section<Migrate to the new UI>`.
 
 We replaced most drawables with vector drawables. Unfortunately due to the limitations of vector drawables some images
 had to be added as PNGs.
@@ -127,25 +127,25 @@ root style as the parent, for example:
 
 .. note::
 
-  If you have overriden the ``GiniCaptureTheme`` then the text appearances you have set there will override the
-  typography customisation. Same applies to overriden widget styles where you have set a custom text appearance.
+  If you have overridden the ``GiniCaptureTheme`` then the text appearances you have set there will override the
+  typography customization. The same applies to overridden widget styles where you have set a custom text appearance.
 
 You can find all the typography styles `here <https://github.com/gini/gini-mobile-android/blob/main/capture-sdk/sdk/src/main/res/values/typography.xml>`_.
 
 Text
 ~~~~
 
-Text customisation is done the same way as before via string resources.
+Text customization is done the same way as before via string resources.
 
 You can find all the string resources `here <https://github.com/gini/gini-mobile-android/blob/main/capture-sdk/sdk/src/main/res/values/strings.xml>`_.
 
 UI Elements
 ~~~~~~~~~~~
 
-Certain elements of the UI can now be fully customised via UI injection. This allowed us to drop the Component API while
-still allowing in-depth customisation for certain parts of the UI.
+Certain elements of the UI can now be fully customized via UI injection. This allowed us to drop the Component API while
+still allowing in-depth customization for certain parts of the UI.
 
-UI injection utilises view adapter interfaces which you can implement and pass to ``GiniCapture`` when configuring the
+UI injection utilizes view adapter interfaces which you can implement and pass to ``GiniCapture`` when configuring the
 SDK. These interfaces declare the contract the injected view has to fulfill and allow the SDK to ask for your view
 instance when needed.
 
@@ -177,7 +177,7 @@ view will then be displayed on the relevant screen.
 Dark mode
 ~~~~~~~~~
 
-To customise resource for dark mode add them to resource folders containing the ``-night`` resource qualifier.
+To customize resource for dark mode add them to resource folders containing the ``-night`` resource qualifier.
 
 Migrate to the new UI
 ---------------------
@@ -194,12 +194,12 @@ Old and new UI:
    :alt: Screenshot of the new onboarding UI
    :width: 48%
 |
-The new onboarding screen uses the global UI customisation options. You can discard the old screen specific
-customisations.
+The new onboarding screen uses the global UI customization options. You can discard the old screen specific
+customizations.
 
-Images and text are onboarding page specific and need to be customised for each page.
+Images and text are onboarding page specific and need to be customized for each page.
 
-Here you can find the detailed description on how to customise this screen. **TODO: add link to the customisation
+Here you can find the detailed description on how to customize this screen. **TODO: add link to the customisation
 guide**
 
 Breaking Changes
