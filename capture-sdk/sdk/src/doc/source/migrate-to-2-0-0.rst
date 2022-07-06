@@ -36,14 +36,13 @@ The following steps will help you migrate to the new public API:
 * If you used a custom navigation bar, then you can use the new ability to inject fully custom UI elements. For this you
   need to implement the ``NavigationBarTopAdapter`` interface and pass it to
   ``GiniCapture.newInstance().setNavigationBarTopAdapter()``. The ``NavigationBarTopAdapter`` interface declares the
-  contract your view has to fulfil and allows the SDK to ask for your view instance when needed.
+  contract your view has to fulfill and allows the SDK to ask for your view instance when needed.
 * Use the ``CameraActivity`` to launch the SDK instead of the ``CameraFragmentCompat``.
 * Handle the result of the ``CameraActivity`` to receive the extracted information (error or cancellation).
 * Remove all code related to interacting with the SDK's fragments. From now on the entry point is the ``CameraActivity``
   and customization happens through ``GiniCapture`` and via overriding of resources.
 * Use the new UI customization options and follow the :ref:`screen-by-screen UI customization section<Migrate to the new
   UI>` to adapt the look of the new UI.
-
 
 Migrate from Screen API
 -----------------------

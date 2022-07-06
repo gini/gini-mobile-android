@@ -9,7 +9,7 @@ Kotlin
 ------
 
 We switched to Kotlin as our primary development language. The Gini Bank SDK is still usable from Java, but we
-recommend to upgrade to Kotlin to avoid the overhead incurred by the non-Java idiomatic style when using it with Java.
+recommend upgrading to Kotlin to avoid the overhead incurred by the non-Java idiomatic style when using it with Java.
 
 Gini Capture SDK
 ----------------
@@ -159,11 +159,11 @@ This is how you need to use it with the Gini Bank SDK:
 Component API
 -------------
 
-The Component API allowed more UI customisation options for the cost of a more difficult integration and maintenance. It
-was based on fragments and you had to manage navigation between them and also update the navigation whenever we introduced
+The Component API allowed more UI customization options for the cost of a more difficult integration and maintenance. It
+was based on fragments, and you had to manage navigation between them and also update the navigation whenever we introduced
 breaking changes.
 
-Maintaining the Component API along the simpler Screen API required an increasing amount of effort as we added new
+Maintaining the Component API along with the simpler Screen API required an increasing amount of effort as we added new
 features. We decided therefore to unify both APIs and introduce the ability to inject fully custom UI elements.
 
 The following steps will help you migrate to the new public API:
@@ -350,5 +350,5 @@ You need to rename the assets first:
 * replace ``GiniVision`` in theme and style names with ``GiniCapture``.
 
 After that you need to follow the Gini Capture SDK's `migration guide
-<https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/html/migrate-to-2-0-0.html#overview-of-new-ui-customisation-options>`_
-to migrate to the new customisation options.
+<https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/html/migrate-to-2-0-0.html#overview-of-new-ui-customization-options>`_
+to migrate to the new customization options.
