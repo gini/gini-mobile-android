@@ -1,268 +1,153 @@
 Customization Guide
 ====
 
-Customization of the Views is provided mostly via overriding of app resources: dimensions, strings,
-colors, texts, etc. Onboarding can also be customized to show your own pages, each consisting of an
-image and a short text.
+..
+  Headers:
+  h1 =====
+  h2 -----
+  h3 ~~~~~
+  h4 +++++
+  h5 ^^^^^
 
 .. contents::
    :depth: 1
    :local:
 
-.. _onboarding:
+UI customization is provided mostly via overriding of app resources: theme, styles, dimensions, strings,
+colors, texts, etc.
+
+We provide global customization options which are applied on all screens consistently. Screen specific customizations
+are only needed for images and texts.
+
+Overview of UI Customization Options
+------------------------------------
+
+Styles
+~~~~~
+
+We leverage the power of Material Design to configure a theme for the SDK with a global color palette and typography
+that is applied on all the screens. 
+
+Using global styles for the various widgets we enable you to customize them in a single place. They are then
+consistently applied on all screens.
+
+Theme
++++++
+
+The theme style is based on Material Design v2 and is named ``GiniCaptureTheme``. To override the theme in your
+application use ``Root.GiniCaptureTheme`` as the parent:
+
+.. code-block:: xml
+
+    <style name="GiniCaptureTheme" parent="Root.GiniCaptureTheme">
+      (...)
+    </style>
+
+You can view the theme `here <https://github.com/gini/gini-mobile-android/blob/main/capture-sdk/sdk/src/main/res/values/styles.xml>`_
+
+Widgets
++++++++
+
+The style of buttons and other widgets is based on Material Design v2. To override them in your application use the
+root style as the parent, for example:
+
+.. code-block:: xml
+
+    <style name="GiniCaptureTheme.Widget.Button.OutlinedButton" parent="Root.GiniCaptureTheme.Widget.Button.OutlinedButton">
+      (...)
+    </style>
+
+Colors
+~~~~~~
+
+We are providing a global color palette which you are free to override. The custom colors will be then applied on all screens.
+
+You can find the names of the colors `here <https://github.com/gini/gini-mobile-android/blob/main/capture-sdk/sdk/src/main/res/values/colors.xml>`_.
+
+.. note::
+
+    If you have overridden the ``GiniCaptureTheme`` then the theme colors you have set there will override the color
+    palette customization.
+
+You can view our color palette here:
+
+.. raw:: html
+
+    <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
+    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FvrXbRphncnduEHM5eoFLDm%2FAndroid-Gini-Capture-SDK-2.0.0-UI-Customisation%3Fnode-id%3D40%253A491"
+    allowfullscreen></iframe>
+
+Images
+~~~~~~
+
+Customizing of images is done via overriding of drawable resources. You can find the drawable
+resource names in the :ref:`screen-by-screen UI customization section<Migrate to the new UI>`.
+
+We are using mostly vector drawables. Unfortunately due to the limitations of vector drawables some images had to be
+added as PNGs.
+
+If you use vector drawables please add them to the `drawable-anydpi` folder so that they also override any density
+specific PNGs.
+
+Typography
+~~~~~~~~~~
+
+We provide a global typography based on text appearance styles from Material Design v2. To override them in your
+application use the root style as the parent, for example:
+
+.. code-block:: xml
+
+    <style name="GiniCaptureTheme.Typography.Body1" parent="Root.GiniCaptureTheme.Typography.Body1">
+        (...)
+    </style>
+
+.. note::
+
+  If you have overriden the ``GiniCaptureTheme`` then the text appearances you have set there will override the
+  typography customization. Same applies to overriden widget styles where you have set a custom text appearance.
+
+You can find all the typography styles `here <https://github.com/gini/gini-mobile-android/blob/main/capture-sdk/sdk/src/main/res/values/typography.xml>`_.
+
+You can preview our typography here:
+
+.. raw:: html
+
+    <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
+    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FvrXbRphncnduEHM5eoFLDm%2FAndroid-Gini-Capture-SDK-2.0.0-UI-Customisation%3Fnode-id%3D40%253A492"
+    allowfullscreen></iframe>
+
+Text
+~~~~
+
+Text customization is done via overriding of string resources.
+
+You can find all the string resources `here <https://github.com/gini/gini-mobile-android/blob/main/capture-sdk/sdk/src/main/res/values/strings.xml>`_.
+
+UI Elements
+~~~~~~~~~~~
+
+Certain elements of the UI can be fully customized via UI injection.
+
+UI injection utilizes view adapter interfaces which you can implement and pass to ``GiniCapture`` when configuring the
+SDK. These interfaces declare the contract the injected view has to fulfill and allow the SDK to ask for your view
+instance when needed.
+
+The most important injectable UI element is the top navigation bar. You may also show the navigation bar on the bottom
+using your own custom view. You can find more details `here <features.html#custom-ui-elements>`_.
+
+Dark mode
+~~~~~~~~~
+
+To customize resources for dark mode add them to resource folders containing the ``-night`` resource qualifier.
 
 Onboarding Screen
 ----
 
 .. raw:: html
 
-    <img src="_static/customization/Onboarding.png" usemap="#onboarding-map" width="324" height="576">
-
-    <map id="onboarding-map" name="onboarding-map">
-        <area shape="rect" alt="" title="Action Bar" coords="132,24,164,57" href="customization-guide.html#onboarding-1" target="" />
-        <area shape="rect" alt="" title="Next Button" coords="282,462,311,494" href="customization-guide.html#onboarding-2" target="" />
-        <area shape="rect" alt="" title="Page Indicators" coords="105,485,134,515" href="customization-guide.html#onboarding-3" target="" />
-        <area shape="rect" alt="" title="Onboarding Message" coords="15,326,44,356" href="customization-guide.html#onboarding-4" target="" />
-        <area shape="rect" alt="" title="Onboarding Pages" coords="141,130,173,162" href="customization-guide.html#onboarding-5" target="" />
-        <!-- Created by Online Image Map Editor (http://www.maschek.hu/imagemap/index) -->
-    </map>
-
-.. _onboarding-1:
-
-1. Action Bar
-^^^^
-
-All Action Bar customizations except the title are global to all Activities.
-
-- **Title**
-
-  Via the string resource named ``gc_title_onboarding``.
-
-- **Title Color**
-
-  Via the color resource named ``gc_action_bar_title``.
-
-- **Back Button Icon**
-
-  Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named ``gc_action_bar_back``.
-  Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
-
-- **Background Color**
-
-  Via the color resource named ``gc_action_bar``.
-
-- **Status Bar Background Color**
-
-  Via the color resource named ``gc_status_bar``.
-
-  If you use a light background color, then you should set the ``gc_light_status_bar`` boolean
-  resource to ``true``. This will cause the status bar contents to be drawn with a dark color.
-
-:ref:`Back to screenshot. <onboarding>`
-
-.. _onboarding-2:
-
-2. Next Button
-^^^^
-
-- **Icon**
-
-  Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named ``gc_onboarding_fab_next.png``.
-  Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
-
-- **Color**
-
-  Via the color resources named ``gc_onboarding_fab`` and ``gc_onboarding_fab_pressed``.
-  Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
-
-:ref:`Back to screenshot. <onboarding>`
-
-.. _onboarding-3:
-
-3. Page Indicators
-^^^^
-
-- **Active**
-
-  Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named ``gc_onboarding_indicator_active.png``.
-  Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
-
-- **Inactive**
-
-  Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named ``gc_onboarding_indicator_inactive.png``.
-  Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
-
-:ref:`Back to screenshot. <onboarding>`
-
-.. _onboarding-4:
-
-4. Onboarding Message
-^^^^
-
-- **Color**
-
-  Via the color resource named ``gc_onboarding_message``.
-
-- **Text Style**
-
-  Via overriding the style named ``GiniCaptureTheme.Onboarding.Message.TextStyle`` (with parent style
-  ``Root.GiniCaptureTheme.Onboarding.Message.TextStyle``).
-
-- **Font**
-
-  Via overriding the style named ``GiniCaptureTheme.Onboarding.Message.TextStyle`` (with parent style
-  ``Root.GiniCaptureTheme.Onboarding.Message.TextStyle``) and setting an item named ``gcCustomFont``
-  with the path to the font file in your assets folder.
-
-:ref:`Back to screenshot. <onboarding>`
-
-.. _onboarding-5:
-
-5. Onboarding Pages
-^^^^
-
-- **Default Pages**
-
-  - **Phone**
-
-    - **First Page**
-
-      - **Image**
-
-        Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named ``gc_onboarding_flat.png``.
-        Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
-
-      - **Text**
-
-        Via the string resource named ``gc_onboarding_flat``.
-
-    - **Second Page**
-
-      - **Image**
-
-        Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named ``gc_onboarding_parallel.png``.
-        Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
-
-      - **Text**
-
-        Via the string resource named ``gc_onboarding_parallel``.
-
-    - **Third Page**
-
-      - **Image**
-
-        Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named ``gc_onboarding_align.png``.
-        Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
-
-      - **Text**
-
-        Via the string resource named ``gc_onboarding_align``.
-
-    - **Fourth Page**
-
-      Visible only if the multi-page feature has been enabled.
-
-      - **Image**
-
-        Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named ``gc_onboarding_multipage.png``.
-        Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
-
-      - **Text**
-
-        Via the string resource named ``gc_onboarding_multipage``.
-
-    :ref:`Back to screenshot. <onboarding>`
-
-  - **Tablet**
-  
-    - **First Page**
-
-      - **Image**
-
-        Via images for sw600dp-mdpi, sw600dp-hdpi, sw600dp-xhdpi, sw600dp-xxhdpi, sw600dp-xxxhdpi
-        named ``gc_onboarding_lighting.png``.
-        Or via a vector drawable added to the ``drawable-sw600dp-anydpi`` resource folder.
-
-      - **Text**
-
-        Via the string resource named ``gc_onboarding_ligthing``.
-
-    - **Second Page**
-
-      - **Image**
-
-        Via images for sw600dp-mdpi, sw600dp-hdpi, sw600dp-xhdpi, sw600dp-xxhdpi, sw600dp-xxxhdpi
-        named ``gc_onboarding_flat.png``.
-        Or via a vector drawable added to the ``drawable-sw600dp-anydpi`` resource folder.
-
-      - **Text**
-
-        Via the string resource named ``gc_onboarding_flat``.
-
-    - **Third Page**
-
-      - **Image**
-
-        Via images for sw600dp-mdpi, sw600dp-hdpi, sw600dp-xhdpi, sw600dp-xxhdpi, sw600dp-xxxhdpi
-        named ``gc_onboarding_parallel.png``.
-        Or via a vector drawable added to the ``drawable-sw600dp-anydpi`` resource folder.
-
-      - **Text**
-
-        Via the string resource named ``gc_onboarding_parallel``.
-
-    - **Fourth Page**
-
-      - **Image**
-
-        Via images for sw600dp-mdpi, sw600dp-hdpi, sw600dp-xhdpi, sw600dp-xxhdpi, sw600dp-xxxhdpi
-        named ``gc_onboarding_align.png``.
-        Or via a vector drawable added to the ``drawable-sw600dp-anydpi`` resource folder.
-
-      - **Text**
-
-        Via the string resource named ``gc_onboarding_align``.
-
-    - **Fifth Page**
-
-      Visible only if the multi-page feature has been enabled.
-
-      - **Image**
-
-        Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named ``gc_onboarding_multipage.png``.
-        Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
-
-      - **Text**
-
-        Via the string resource named ``gc_onboarding_multipage``.
-
-    :ref:`Back to screenshot. <onboarding>`
-
-- **Custom Pages**
-
-  You can change the number of displayed pages and their content (image and short text) by setting
-  an ``ArrayList`` containing ``OnboardingPage`` objects when building a ``GiniCapture`` instance
-  with ``setCustomOnboardingPages()``. 
-  
-  If you don't use ``GiniCapture`` yet you can also provide the list using the extra
-  ``CameraActivity.EXTRA_IN_ONBOARDING_PAGES`` for the Screen API and
-  ``OnboardingFragmentCompat.createInstance(ArrayList<OnboardingPage>)`` for the Component API.
-
-  :ref:`Back to screenshot. <onboarding>`
-
-- **Background**
-
-  - **Color**
-
-    Via the color resource named ``gc_background``. **Note**: this color resource is global to all
-    Activities.
-
-  - **Transparency**
-
-    Via the string resource named ``gc_onboarding_page_fragment_background_alpha`` which must
-    contain a real number between ``[0,1]``.
-    
-  :ref:`Back to screenshot. <onboarding>`
+    <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
+    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FvrXbRphncnduEHM5eoFLDm%2FAndroid-Gini-Capture-SDK-2.0.0-UI-Customisation%3Fnode-id%3D40%253A584"
+    allowfullscreen></iframe>
 
 .. _camera:
 

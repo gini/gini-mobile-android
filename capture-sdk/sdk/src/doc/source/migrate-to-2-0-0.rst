@@ -176,8 +176,7 @@ customizations.
 
 Images and text are onboarding page specific and need to be customized for each page.
 
-Here you can find the detailed description on how to customize this screen. **TODO: add link to the customisation
-guide**
+`Here <customization-guide.html#onboarding-screen>`_ you can find the detailed description on how to customize this screen.
 
 Breaking Changes
 ++++++++++++++++
@@ -223,4 +222,4 @@ By implementing the ``OnboardingIllustrationAdapter`` interface and passing it t
 For example if you need to show animated illustrations you can use a `Lottie
 <https://github.com/airbnb/lottie-android>`_ view in your ``OnboardingIllustrationAdapter`` implementation.
 
-You can find more details here. **TODO: add link to the customisation guide**
+You can find more details `here <customization-guide.html>`_.
