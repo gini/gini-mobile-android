@@ -254,19 +254,7 @@ in its documentation for details.
 Capture Flow
 ~~~~~~~~~~~~
 
-The capture flow can be used in two ways, either by using the `Screen API`_ or the `Component API`_:
-
-* The *Screen API* provides activities for easy integration that can be customized in a
-  limited way. The screen and configuration design is based on our long-lasting experience with
-  integration in customer apps.
-
-* In the *Component API* we provide fragments for advanced integration
-  with more freedom for customization.
-
-Screen API
-^^^^^^^^^^
-
-This is the easiest way to use the capture flow. You only need to:
+To use the capture flow you only need to:
 
 #. Request camera access,
 #. Configure the capture feature using the ``CaptureConfiguration``,
@@ -276,16 +264,16 @@ This is the easiest way to use the capture flow. You only need to:
 The following diagram shows the interaction between your app and the SDK:
 
 .. figure:: _static/capture-features/Screen-API.png
-   :alt: Diagram of interaction between your app and the SDK with the Screen API
+   :alt: Diagram of interaction between your app and the SDK
    :width: 100%
 
 .. note::
 
-   Check out the `Screen API example app
+   Check out the `example app
    <https://github.com/gini/gini-mobile-android/tree/main/bank-sdk/screen-api-example-app>`_ to see how an integration could look
    like.
 
-The following example shows how to launch the capture flow using the *Screen API* and how to handle the results:
+The following example shows how to launch the capture flow and how to handle the results:
 
 .. code-block:: java
 
@@ -346,27 +334,6 @@ The following example shows how to launch the capture flow using the *Screen API
         // Launch and wait for the result.
         GiniBank.startCaptureFlow(captureLauncher)
     }
-
-Component API
-^^^^^^^^^^^^^
-
-This is the more complicated way of using the capture flow. The advantage is that it is based on fragments and you
-have full control over how these are shown in your UI.
-
-.. note::
-
-   Check out the `Component API example app
-   <https://github.com/gini/gini-mobile-android/tree/main/bank-sdk/component-api-example-app>`_ to see how an integration could look
-   like.
-
-Before launching the first fragment you need to:
-
-#. Request camera access,
-#. Configure the capture feature using the ``CaptureConfiguration``.
-
-The Component API is exposed as-is from the Gini Capture SDK and you can follow `it's guide
-<https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/html/integration.html#component-api>`_ to learn how to integrate
-it.
 
 Handling Payment Requests
 -------------------------
@@ -446,7 +413,7 @@ Receive Payment Requests
 
 .. note::
 
-    You can see an example implementation in the Screen API example app's `pay
+    You can see an example implementation in the example app's `pay
     <https://github.com/gini/gini-mobile-android/tree/main/bank-sdk/screen-api-example-app/src/main/java/net/gini/pay/appscreenapi/pay>`_
     package.
 

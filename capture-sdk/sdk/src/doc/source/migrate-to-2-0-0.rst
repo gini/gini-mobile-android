@@ -36,14 +36,13 @@ The following steps will help you migrate to the new public API:
 * If you used a custom navigation bar, then you can use the new ability to inject fully custom UI elements. For this you
   need to implement the ``NavigationBarTopAdapter`` interface and pass it to
   ``GiniCapture.newInstance().setNavigationBarTopAdapter()``. The ``NavigationBarTopAdapter`` interface declares the
-  contract your view has to fulfil and allows the SDK to ask for your view instance when needed.
+  contract your view has to fulfill and allows the SDK to ask for your view instance when needed.
 * Use the ``CameraActivity`` to launch the SDK instead of the ``CameraFragmentCompat``.
 * Handle the result of the ``CameraActivity`` to receive the extracted information (error or cancellation).
 * Remove all code related to interacting with the SDK's fragments. From now on the entry point is the ``CameraActivity``
   and customization happens through ``GiniCapture`` and via overriding of resources.
 * Use the new UI customization options and follow the :ref:`screen-by-screen UI customization section<Migrate to the new
   UI>` to adapt the look of the new UI.
-
 
 Migrate from Screen API
 -----------------------
@@ -149,30 +148,8 @@ UI injection utilizes view adapter interfaces which you can implement and pass t
 SDK. These interfaces declare the contract the injected view has to fulfill and allow the SDK to ask for your view
 instance when needed.
 
-Top Navigation Bar
-++++++++++++++++++
-
-The most important injectable UI element is the top navigation bar. To inject your own view implement the
-``NavigationBarTopAdapter`` and pass it to ``GiniCapture.newInstance().setNavigationBarTopAdapter()``. Your view will
-then be displayed on all screens as the top navigation bar.
-
-Bottom Navigation Bar
-+++++++++++++++++++++
-
-The new UI allows showing the navigation bar on the bottom. To enable it pass ``true`` to
-``GiniCapture.newInstance().setBottomNavigationBarEnabled()``.
-
-.. note::
-
-    The top navigation bar will still be used, but its functionality will be limited to showing the screen's title and
-    an optional close button. Please inject a custom top navigation bar if your design requires it even if you have
-    enabled the bottom navigation bar.
-
-Each screen has a slightly different bottom navigation bar because they contain screen specific call-to-action buttons.
-
-To inject your own views implement each screen's view adapter interface (e.g., ``OnboardingNavigationBarBottomAdapter``)
-and pass it to ``GiniCapture`` (e.g., ``GiniCapture.newInstance().setOnboardingNavigationBarBottomAdapter()``). Your
-view will then be displayed on the relevant screen.
+The most important injectable UI element is the top navigation bar. You may also show the navigation bar on the bottom
+using your own custom view. You can find more details `here <features.html#custom-ui-elements>`_.
 
 Dark mode
 ~~~~~~~~~
