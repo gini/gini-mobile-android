@@ -67,6 +67,10 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
+    private fun configureGiniBank() {
+        GiniBank.enableReturnReasons = true
+    }
+
     private fun startGiniCaptureSdk(intent: Intent? = null) {
         lifecycleScope.launch {
             if (permissionHandler.grantPermission(Manifest.permission.CAMERA)) {
@@ -74,6 +78,7 @@ class MainActivity : AppCompatActivity() {
                 if (!report.isFulfilled) {
                     showUnfulfilledRequirementsToast(report)
                 }
+                configureGiniBank()
                 configureGiniCapture()
 
                 if (intent != null) {

@@ -54,6 +54,11 @@ object GiniBank {
     internal fun getCaptureConfiguration() = captureConfiguration
 
     /**
+     * Shows the return reasons dialog in the return assistant, if enabled.
+     */
+    var enableReturnReasons = true
+
+    /**
      * Sets configuration for Capture feature.
      * Note that configuration is immutable. [releaseCapture] needs to be called before passing a new configuration.
      *

@@ -73,6 +73,11 @@ dependencies {
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.turbine)
     testImplementation(libs.truth)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.test.core.ktx)
+    testImplementation(libs.androidx.test.junit.ktx)
+    testImplementation(libs.androidx.test.runner)
+    testImplementation(libs.jUnitParams)
 
     androidTestImplementation(libs.moshi.core)
     kaptAndroidTest(libs.moshi.codegen)

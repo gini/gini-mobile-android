@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.annotation.VisibleForTesting
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
@@ -73,10 +74,7 @@ internal class DigitalInvoiceScreenPresenter(
     }
 
     override fun deselectLineItem(lineItem: SelectableLineItem) {
-        if (returnReasons.isEmpty()) {
-            digitalInvoice.deselectLineItem(lineItem, null)
-            updateView()
-        } else {
+        if (canShowReturnReasonsDialog()) {
             view.showReturnReasonDialog(returnReasons) { selectedReason ->
                 if (selectedReason != null) {
                     digitalInvoice.deselectLineItem(lineItem, selectedReason)
@@ -85,8 +83,13 @@ internal class DigitalInvoiceScreenPresenter(
                 }
                 updateView()
             }
+        } else {
+            digitalInvoice.deselectLineItem(lineItem, null)
+            updateView()
         }
     }
+
+    private fun canShowReturnReasonsDialog() = GiniBank.enableReturnReasons && returnReasons.isNotEmpty()
 
     override fun editLineItem(lineItem: SelectableLineItem) {
         listener?.onEditLineItem(lineItem)

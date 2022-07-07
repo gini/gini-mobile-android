@@ -75,4 +75,9 @@ class GiniBankTest {
         // Then
         assertThat(resolvePaymentInputSlot.captured.amount).isEqualTo("12.46:EUR")
     }
+
+    @Test
+    fun `return reasons dialog is enabled by default`() {
+        assertThat(GiniBank.enableReturnReasons).isTrue()
+    }
 }
