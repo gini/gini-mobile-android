@@ -557,13 +557,15 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
             binding.skipButton.isEnabled = data.buttonEnabled
             binding.skipButton.isVisible = data.inaccurateExtraction
             binding.payButton.isEnabled = data.buttonEnabled
-            binding.payButton.text =
+            binding.payButton.text = if (data.count > 0) {
                 binding.payButton.resources.getString(
                     R.string.gbs_digital_invoice_pay,
                     data.count,
                     data.total
                 )
-
+            } else {
+                binding.payButton.resources.getString(R.string.gbs_digital_invoice_pay_other_charges)
+            }
             val (integral, fractional) = data.totalGrossPriceIntegralAndFractionalParts
             binding.grossPriceTotalIntegralPart.text = integral
             binding.grossPriceTotalFractionalPart.text = fractional

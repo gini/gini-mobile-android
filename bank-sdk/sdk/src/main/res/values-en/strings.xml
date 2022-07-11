@@ -15,6 +15,7 @@
     <string name="gbs_digital_invoice_line_item_index">Article %1$d/%2$d</string>
     <string name="gbs_digital_invoice_footer_notice">Please double check if the amount is correct and add further articles if necessary.</string>
     <string name="gbs_digital_invoice_pay">Pay %1$d/%2$d</string>
+    <string name="gbs_digital_invoice_pay_other_charges">Pay</string>
     <string name="gbs_digital_invoice_line_item_details_description_label">Item Name</string>
     <string name="gbs_digital_invoice_line_item_details_quantity_label">Quantity</string>
     <string name="gbs_digital_invoice_line_item_details_gross_price_label">Item price</string>
