@@ -599,13 +599,16 @@ parent style <code class="docutils literal notranslate"><span class="pre">Root.G
 <div class="section" id="pay-button">
 <h4>9. “Pay” Button<a class="headerlink" href="#pay-button" title="Permalink to this headline">¶</a></h4>
 <ul>
-<li><p class="first"><strong>Title</strong></p>
+<li><p class="first"><strong>Title (pay at least one line item)</strong></p>
 <p>Via the string resource named <code class="docutils literal notranslate"><span class="pre">gbs_digital_invoice_pay</span></code>.</p>
 <p>Please include two decimal format arguments:</p>
 <ul class="simple">
 <li>Selected Items Count: <code class="docutils literal notranslate"><span class="pre">%1$d</span></code></li>
 <li>Total Count: <code class="docutils literal notranslate"><span class="pre">%2$d</span></code></li>
 </ul>
+</li>
+<li><p class="first"><strong>Title (pay only for other charges)</strong></p>
+<p>Via the string resource named <code class="docutils literal notranslate"><span class="pre">gbs_digital_invoice_pay_other_charges</span></code>.</p>
 </li>
 <li><p class="first"><strong>Button Style</strong></p>
 <p>Via overriding the style named <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme.DigitalInvoice.Pay.Button</span></code> (with
