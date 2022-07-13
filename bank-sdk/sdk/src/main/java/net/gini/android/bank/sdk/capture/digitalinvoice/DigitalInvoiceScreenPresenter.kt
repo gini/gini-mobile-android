@@ -6,14 +6,14 @@ import androidx.annotation.VisibleForTesting
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import net.gini.android.bank.sdk.GiniBank
+import net.gini.android.bank.sdk.capture.util.BusEvent
+import net.gini.android.bank.sdk.capture.util.OncePerInstallEvent
+import net.gini.android.bank.sdk.capture.util.OncePerInstallEventStore
+import net.gini.android.bank.sdk.capture.util.SimpleBusEventStore
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
-import net.gini.android.bank.sdk.capture.util.SimpleBusEventStore
-import net.gini.android.bank.sdk.capture.util.OncePerInstallEvent
-import net.gini.android.bank.sdk.capture.util.OncePerInstallEventStore
-import net.gini.android.bank.sdk.capture.util.BusEvent
 import java.math.BigDecimal
 
 /**
@@ -49,8 +49,7 @@ internal class DigitalInvoiceScreenPresenter(
     private fun shouldDisplayOnboarding(): Boolean = !onboardingDisplayed &&
             !oncePerInstallEventStore.containsEvent(OncePerInstallEvent.SHOW_DIGITAL_INVOICE_ONBOARDING)
 
-    @VisibleForTesting
-    val digitalInvoice: DigitalInvoice
+    private val digitalInvoice: DigitalInvoice
 
     init {
         view.setPresenter(this)
@@ -87,6 +86,16 @@ internal class DigitalInvoiceScreenPresenter(
             digitalInvoice.deselectLineItem(lineItem, null)
             updateView()
         }
+    }
+
+    internal fun deselectLineItem(index: Int) {
+        digitalInvoice.selectableLineItems.getOrNull(index)?.let { selectableLineItem ->
+            deselectLineItem(selectableLineItem)
+        }
+    }
+
+    internal fun deselectAllLineItems() {
+        digitalInvoice.selectableLineItems.forEach { deselectLineItem(it) }
     }
 
     private fun canShowReturnReasonsDialog() = GiniBank.enableReturnReasons && returnReasons.isNotEmpty()
@@ -168,7 +177,7 @@ internal class DigitalInvoiceScreenPresenter(
                 footerDetails = footerDetails
                     .copy(
                         totalGrossPriceIntegralAndFractionalParts = digitalInvoice.totalPriceIntegralAndFractionalParts(),
-                        buttonEnabled = selected > 0 && digitalInvoice.totalPrice() > BigDecimal.ZERO,
+                        buttonEnabled = selected > 0 || digitalInvoice.totalPrice() > BigDecimal.ZERO,
                         count = selected,
                         total = total
                     )

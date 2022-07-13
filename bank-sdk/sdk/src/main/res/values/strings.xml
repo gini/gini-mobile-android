@@ -16,6 +16,7 @@
 
     <string name="gbs_digital_invoice_footer_notice">Bitte überprüfe vor der Zahlung, ob alles in Ordnung ist und füge eventuell fehlende Artikel hinzu.</string>
     <string name="gbs_digital_invoice_pay">Bezahlen %1$d/%2$d</string>
+    <string name="gbs_digital_invoice_pay_other_charges">Bezahlen</string>
     <string name="gbs_digital_invoice_return_reason_dialog_title">Der Grund der Rücksendung</string>
     <string name="gbs_digital_invoice_what_is_this_dialog_title">Was ist das?</string>
     <string name="gbs_digital_invoice_what_is_this_dialog_message">Wir haben die Artikel aus deiner Rechnung extrahiert. Wenn du einige Artikel zurückschicken oder du deine Rechnung nur teilweise bezahlen möchtest, kannst du einzelne Artikel abwählen und der zu bezahlende Betrag wird automatisch neu berechnet.</string>
