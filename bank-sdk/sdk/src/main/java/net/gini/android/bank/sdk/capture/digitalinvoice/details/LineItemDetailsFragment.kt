@@ -13,8 +13,6 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.google.android.material.textfield.TextInputLayout
-import net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones
-import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.capture.digitalinvoice.LineItem
 import net.gini.android.bank.sdk.capture.digitalinvoice.ReturnReasonDialog
@@ -23,10 +21,11 @@ import net.gini.android.bank.sdk.capture.digitalinvoice.SelectableLineItem
 import net.gini.android.bank.sdk.capture.util.autoCleared
 import net.gini.android.bank.sdk.capture.util.parentFragmentManagerOrNull
 import net.gini.android.bank.sdk.databinding.GbsFragmentLineItemDetailsBinding
+import net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones
+import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.*
-import kotlin.collections.ArrayList
 
 /**
  * Created by Alpar Szotyori on 17.12.2019.
@@ -118,6 +117,27 @@ class LineItemDetailsFragment : Fragment(), LineItemDetailsScreenContract.View,
 
         }
 
+    }
+
+    internal class QuantityInputFilter(private val min: Int = MIN_QUANTITY, private val max: Int = MAX_QUANTITY) :
+        InputFilter {
+
+        override fun filter(
+            source: CharSequence,
+            start: Int,
+            end: Int,
+            dest: Spanned,
+            dstart: Int,
+            dend: Int
+        ): CharSequence? {
+            val input = "${dest.subSequence(0, dstart)}${source.subSequence(start, end)}${
+                dest.subSequence(
+                    dend,
+                    dest.length
+                )
+            }".toIntOrNull()
+            return if ((min..max).contains(input)) null else ""
+        }
     }
 
     private var binding by autoCleared<GbsFragmentLineItemDetailsBinding>()
@@ -225,7 +245,18 @@ class LineItemDetailsFragment : Fragment(), LineItemDetailsScreenContract.View,
      */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        addGlobalFocusChangeListener()
         setInputHandlers()
+    }
+
+    private fun addGlobalFocusChangeListener() {
+        // Workaround for the bug in TextInputEditText where the focus change listener is not called
+        // when using end icons: https://github.com/material-components/material-components-android/issues/1015
+        binding.root.viewTreeObserver.addOnGlobalFocusChangeListener { oldFocus, _ ->
+            if (oldFocus == binding.quantity) {
+                presenter?.onQuantityInputFieldFocusLoss(binding.quantity.text.toString())
+            }
+        }
     }
 
     private fun setInputHandlers() {
@@ -242,12 +273,13 @@ class LineItemDetailsFragment : Fragment(), LineItemDetailsScreenContract.View,
         binding.description.doAfterTextChanged {
             presenter?.setDescription(it)
         }
+        binding.quantity.filters = arrayOf(QuantityInputFilter())
         binding.quantity.doAfterTextChanged {
             presenter?.setQuantity(
                 try {
                     it.toInt()
                 } catch (_: NumberFormatException) {
-                    0
+                    MIN_QUANTITY
                 }
             )
         }
