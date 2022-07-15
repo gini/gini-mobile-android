@@ -21,7 +21,9 @@ internal class CaptureFlowActivity : AppCompatActivity(), CaptureFlowImportContr
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        handleInput()
+        if (savedInstanceState == null) {
+            handleInput()
+        }
     }
 
     private fun handleInput() {
