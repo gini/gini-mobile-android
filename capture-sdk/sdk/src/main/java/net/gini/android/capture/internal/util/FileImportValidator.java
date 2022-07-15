@@ -31,7 +31,7 @@ public class FileImportValidator {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileImportValidator.class);
 
-    private static final int FILE_SIZE_LIMIT = 10485760; // 10MB
+    public static final int FILE_SIZE_LIMIT = 10485760; // 10MB
     private static final int PDF_PAGE_LIMIT = 10;
     /**
      * Internal use only.
@@ -63,10 +63,12 @@ public class FileImportValidator {
     }
 
     private final Context mContext;
+    private final int fileSizeBytesLimit;
     private Error mError;
 
-    public FileImportValidator(final Context context) {
+    public FileImportValidator(final Context context, final int fileSizeBytesLimit) {
         mContext = context;
+        this.fileSizeBytesLimit = fileSizeBytesLimit;
     }
 
     @Nullable
@@ -153,7 +155,7 @@ public class FileImportValidator {
     private boolean matchesSizeCriteria(final Uri fileUri) {
         try {
             final int fileSize = UriHelper.getFileSizeFromUri(fileUri, mContext);
-            return fileSize < FILE_SIZE_LIMIT;
+            return fileSize < fileSizeBytesLimit;
         } catch (final IllegalStateException e) {
             LOG.error("Could not retrieve file size for uri: ", fileUri, e);
         }
