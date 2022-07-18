@@ -568,7 +568,7 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
                     binding.payButton.resources.getString(R.string.gbs_digital_invoice_pay_other_charges)
                 }
             } else {
-                binding.payButton.resources.getString(R.string.gbs_digital_invoice_pay_other_charges)
+                binding.payButton.resources.getString(R.string.gbs_digital_invoice_pay_disabled)
             }
             val (integral, fractional) = data.totalGrossPriceIntegralAndFractionalParts
             binding.grossPriceTotalIntegralPart.text = integral
