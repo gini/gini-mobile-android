@@ -177,7 +177,7 @@ internal class DigitalInvoiceScreenPresenter(
                 footerDetails = footerDetails
                     .copy(
                         totalGrossPriceIntegralAndFractionalParts = digitalInvoice.totalPriceIntegralAndFractionalParts(),
-                        buttonEnabled = selected > 0 || digitalInvoice.totalPrice() > BigDecimal.ZERO,
+                        buttonEnabled = digitalInvoice.totalPrice() > BigDecimal.ZERO,
                         count = selected,
                         total = total
                     )

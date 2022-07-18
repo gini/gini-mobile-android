@@ -272,7 +272,7 @@ class DigitalInvoiceScreenPresenterTest {
     }
 
     @Test
-    fun `disables pay button if all items are deselected and total price is zero`() {
+    fun `disables pay button if total price is zero without selected line items`() {
         // Given
         GiniBank.enableReturnReasons = false
 
@@ -293,6 +293,59 @@ class DigitalInvoiceScreenPresenterTest {
         // When
         presenter.start()
         presenter.deselectAllLineItems()
+
+        // Then
+        excludeRecords {
+            view.setPresenter(any())
+            view.showLineItems(any(), any())
+            view.showAddons(any())
+            view.animateListScroll()
+        }
+        verify { view.updateFooterDetails(any()) }
+        confirmVerified(view)
+
+        assertThat(footerDetailsSlot.captured.buttonEnabled).isFalse()
+    }
+
+    @Test
+    fun `disables pay button if total price is zero with selected line items`() {
+        // Given
+        GiniBank.enableReturnReasons = false
+
+        val view: DigitalInvoiceScreenContract.View = mockk(relaxed = true)
+
+        val footerDetailsSlot = slot<DigitalInvoiceScreenContract.FooterDetails>()
+        every { view.updateFooterDetails(capture(footerDetailsSlot)) } just Runs
+
+        val lineItemsSlot = slot<List<SelectableLineItem>>()
+        every { view.showLineItems(capture(lineItemsSlot), any()) } just Runs
+
+        val presenter = DigitalInvoiceScreenPresenter(
+            activity = mockk(),
+            view = view,
+            extractions = extractionsWithoutOtherChargesFixture,
+            compoundExtractions = compoundExtractionsFixture,
+            savedInstanceBundle = null,
+            oncePerInstallEventStore = mockk(relaxed = true),
+            simpleBusEventStore = mockk(relaxed = true)
+        )
+
+        // When
+        presenter.start()
+        // Leave only first item selected
+        lineItemsSlot.captured.forEachIndexed { index, selectableLineItem ->
+            if (index != 0) {
+                presenter.deselectLineItem(selectableLineItem)
+            }
+        }
+        // Set first item's price to 0
+        presenter.updateLineItem(
+            lineItemsSlot.captured[0].copy(
+                lineItem = lineItemsSlot.captured[0].lineItem.copy(
+                    rawGrossPrice = "0.00:EUR"
+                )
+            )
+        )
 
         // Then
         excludeRecords {
