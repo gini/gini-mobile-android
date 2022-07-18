@@ -463,6 +463,10 @@ Digital Invoice Screen
 
   Via the string resource named ``gbs_digital_invoice_pay_other_charges``.
 
+- **Title (disabled)**
+
+  Via the string resource named ``gbs_digital_invoice_pay_disabled``.
+
 - **Button Style**
 
   Via overriding the style named ``GiniCaptureTheme.DigitalInvoice.Pay.Button`` (with
