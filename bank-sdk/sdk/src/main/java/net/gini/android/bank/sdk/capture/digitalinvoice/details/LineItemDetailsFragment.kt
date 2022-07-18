@@ -130,13 +130,20 @@ class LineItemDetailsFragment : Fragment(), LineItemDetailsScreenContract.View,
             dstart: Int,
             dend: Int
         ): CharSequence? {
-            val input = "${dest.subSequence(0, dstart)}${source.subSequence(start, end)}${
+            val prevQuantity = dest.toString().toIntOrNull()
+            val newQuantity = "${dest.subSequence(0, dstart)}${source.subSequence(start, end)}${
                 dest.subSequence(
                     dend,
                     dest.length
                 )
             }".toIntOrNull()
-            return if ((min..max).contains(input)) null else ""
+            // null -> accept input
+            // "" -> discard input
+            return if (newQuantity == prevQuantity || newQuantity !in min..max) {
+                ""
+            } else {
+                null
+            }
         }
     }
 
