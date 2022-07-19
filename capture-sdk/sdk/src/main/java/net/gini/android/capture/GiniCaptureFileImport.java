@@ -1,5 +1,7 @@
 package net.gini.android.capture;
 
+import static net.gini.android.capture.internal.util.FileImportValidator.FILE_SIZE_LIMIT;
+
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -145,7 +147,13 @@ public final class GiniCaptureFileImport {
             throw new ImportedFileValidationException(
                     "InputStream not available for Intent's data Uri");
         }
-        final FileImportValidator fileImportValidator = new FileImportValidator(context);
+        final int fileSizeLimit;
+        if (GiniCapture.hasInstance()) {
+            fileSizeLimit = GiniCapture.getInstance().getImportedFileSizeBytesLimit();
+        } else {
+            fileSizeLimit = FILE_SIZE_LIMIT;
+        }
+        final FileImportValidator fileImportValidator = new FileImportValidator(context, fileSizeLimit);
         if (fileImportValidator.matchesCriteria(intent, uri)) {
             return DocumentFactory.newDocumentFromIntent(intent, context,
                     DeviceHelper.getDeviceOrientation(context), DeviceHelper.getDeviceType(context),

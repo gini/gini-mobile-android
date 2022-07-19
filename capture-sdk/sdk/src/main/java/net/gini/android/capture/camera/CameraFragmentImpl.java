@@ -106,6 +106,7 @@ import static net.gini.android.capture.internal.util.ContextHelper.isTablet;
 import static net.gini.android.capture.internal.util.FeatureConfiguration.getDocumentImportEnabledFileTypes;
 import static net.gini.android.capture.internal.util.FeatureConfiguration.isMultiPageEnabled;
 import static net.gini.android.capture.internal.util.FeatureConfiguration.isQRCodeScanningEnabled;
+import static net.gini.android.capture.internal.util.FileImportValidator.FILE_SIZE_LIMIT;
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackCameraScreenEvent;
 
 class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader.Listener {
@@ -1164,7 +1165,13 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                 handleMultiPageDocumentAndCallListener(activity, data,
                         Collections.singletonList(uri));
             } else {
-                final FileImportValidator fileImportValidator = new FileImportValidator(activity);
+                final int fileSizeLimit;
+                if (GiniCapture.hasInstance()) {
+                    fileSizeLimit = GiniCapture.getInstance().getImportedFileSizeBytesLimit();
+                } else {
+                    fileSizeLimit = FILE_SIZE_LIMIT;
+                }
+                final FileImportValidator fileImportValidator = new FileImportValidator(activity, fileSizeLimit);
                 if (fileImportValidator.matchesCriteria(data, uri)) {
                     createSinglePageDocumentAndCallListener(data, activity);
                 } else {
