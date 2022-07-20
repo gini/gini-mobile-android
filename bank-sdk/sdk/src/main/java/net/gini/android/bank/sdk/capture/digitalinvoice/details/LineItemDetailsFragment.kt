@@ -68,7 +68,7 @@ class LineItemDetailsFragment : Fragment(), LineItemDetailsScreenContract.View,
 
     internal class DecimalDigitsInputFilter(private val priceFormat: DecimalFormat = GROSS_PRICE_FORMAT) :
         InputFilter {
-        private val decimalFormatSymbols = DecimalFormatSymbols(Locale.ROOT)
+        private val decimalFormatSymbols = DecimalFormatSymbols.getInstance()
 
         override fun filter(
             source: CharSequence,
@@ -105,8 +105,8 @@ class LineItemDetailsFragment : Fragment(), LineItemDetailsScreenContract.View,
             }
 
             try {
-                val finalPrice = priceFormat.parse(finalPriceString).toDouble()
-                if (finalPrice !in 0.0..25000.0) {
+                val finalPrice = priceFormat.parse(finalPriceString)?.toDouble()
+                if (finalPrice == null || finalPrice !in 0.0..25000.0) {
                     return ""
                 }
                 return null
