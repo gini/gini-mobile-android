@@ -170,7 +170,7 @@
 
     <TextView
         android:id="@+id/total_label"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_alignTop="@id/gross_price_total_integral_part"
         android:layout_alignBottom="@id/gross_price_total_integral_part"
@@ -178,9 +178,17 @@
         android:layout_marginEnd="@dimen/gbs_digital_invoice_line_item_details_total_label_margin_end"
         android:layout_toStartOf="@id/gross_price_total_integral_part"
         android:text="@string/gbs_digital_invoice_line_item_details_total_label"
+        android:lines="1"
+        android:autoSizeMaxTextSize="32sp"
+        android:autoSizeMinTextSize="16sp"
+        android:autoSizeTextType="uniform"
+        android:gravity="center_vertical"
+        android:ellipsize="end"
+        app:layout_constraintEnd_toStartOf="@id/gross_price_total_integral_part"
         android:textAppearance="@style/GiniCaptureTheme.DigitalInvoice.LineItemDetails.Total.TextStyle"
         app:layout_constraintBottom_toBottomOf="@id/gross_price_total_integral_part"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_chainStyle="spread_inside" />
 
     <TextView
         android:id="@+id/gross_price_label"
@@ -201,6 +209,7 @@
         android:textAppearance="@style/GiniCaptureTheme.DigitalInvoice.TotalGrossPrice.Integral.TextStyle"
         app:layout_constraintEnd_toStartOf="@id/gross_price_total_fractional_part"
         app:layout_constraintTop_toTopOf="@id/gross_price_total_fractional_part"
+        app:layout_constraintStart_toEndOf="@id/total_label"
         tools:text="€0" />
 
     <TextView

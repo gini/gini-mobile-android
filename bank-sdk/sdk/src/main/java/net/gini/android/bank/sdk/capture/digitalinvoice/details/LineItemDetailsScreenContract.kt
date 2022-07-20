@@ -54,5 +54,6 @@ interface LineItemDetailsScreenContract {
         abstract fun setQuantity(quantity: Int)
         abstract fun setGrossPrice(displayedGrossPrice: String)
         abstract fun save(isBack: Boolean)
+        abstract fun onQuantityInputFieldFocusLoss(inputFieldText: String)
     }
 }

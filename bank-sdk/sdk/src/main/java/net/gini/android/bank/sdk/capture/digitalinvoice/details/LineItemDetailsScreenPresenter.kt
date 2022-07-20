@@ -23,6 +23,9 @@ import java.util.*
 @JvmSynthetic
 internal val GROSS_PRICE_FORMAT = DecimalFormat("#,##0.00").apply { isParseBigDecimal = true }
 
+internal const val MIN_QUANTITY = 1
+internal const val MAX_QUANTITY = 99_999
+
 /**
  * Internal use only.
  *
@@ -105,11 +108,18 @@ internal class LineItemDetailsScreenPresenter(
         if (selectableLineItem.lineItem.quantity == quantity) {
             return
         }
+
+        val validQuantity = quantity.coerceAtLeast(MIN_QUANTITY).coerceAtMost(MAX_QUANTITY)
+
         selectableLineItem = selectableLineItem.copy(
-            lineItem = selectableLineItem.lineItem.copy(quantity = quantity)
+            lineItem = selectableLineItem.lineItem.copy(quantity = validQuantity)
         )
         view.showTotalGrossPrice(selectableLineItem)
         updateCheckboxAndSaveButton()
+
+        if (validQuantity != quantity) {
+            view.showQuantity(validQuantity)
+        }
     }
 
     override fun setGrossPrice(displayedGrossPrice: String) {
@@ -155,6 +165,13 @@ internal class LineItemDetailsScreenPresenter(
             else -> {
                 listener?.onSave(selectableLineItem)
             }
+        }
+    }
+
+    override fun onQuantityInputFieldFocusLoss(inputFieldText: String) {
+        val quantity = inputFieldText.toIntOrNull()
+        if (quantity == null || (selectableLineItem.lineItem.quantity != quantity)) {
+            view.showQuantity(selectableLineItem.lineItem.quantity)
         }
     }
 

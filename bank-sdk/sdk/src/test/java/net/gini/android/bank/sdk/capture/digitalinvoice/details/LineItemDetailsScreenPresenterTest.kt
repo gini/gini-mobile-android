@@ -1,5 +1,6 @@
 package net.gini.android.bank.sdk.capture.digitalinvoice.details
 
+import com.google.common.truth.Truth.assertThat
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.excludeRecords
@@ -8,6 +9,7 @@ import io.mockk.verify
 import junitparams.JUnitParamsRunner
 import junitparams.Parameters
 import net.gini.android.bank.sdk.GiniBank
+import net.gini.android.bank.sdk.capture.digitalinvoice.LineItem
 import net.gini.android.bank.sdk.capture.digitalinvoice.SelectableLineItem
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import org.junit.Test
@@ -89,4 +91,86 @@ class LineItemDetailsScreenPresenterTest {
         arrayOf(false, returnReasonsFixture),
         arrayOf(false, emptyList<GiniCaptureReturnReason>())
     )
+
+    @Test
+    @Parameters(
+        "-1, 1",
+        "0, 1",
+        "1, 1",
+        "10, 10",
+        "99998, 99998",
+        "1000000, 99999"
+    )
+    fun `limits quantity to be between MIN_QUANTITY and MAX_QUANTITY - (quantity, validatedQuantity)`(quantity: Int, validatedQuantity: Int) {
+        // Given
+        val view: LineItemDetailsScreenContract.View = mockk(relaxed = true)
+
+        val selectableLineItem = SelectableLineItem(
+            selected = true,
+            reason = null,
+            addedByUser = false,
+            lineItem = LineItem(
+                id = "id1",
+                description = "Foo",
+                quantity = 1,
+                rawGrossPrice = "12.00:EUR",
+                origQuantity = 1,
+                origRawGrossPrice = "12.00:EUR"
+            )
+        )
+
+        val presenter = LineItemDetailsScreenPresenter(
+            activity = mockk(),
+            view = view,
+            selectableLineItem = selectableLineItem
+        )
+
+        // When
+        presenter.setQuantity(quantity)
+
+        // Then
+        assertThat(presenter.selectableLineItem.lineItem.quantity).isEqualTo(validatedQuantity)
+    }
+
+    @Test
+    @Parameters("0, 1", "100000, 99999")
+    fun `updates view if validated quantity is different from entered quantity - (quantity, validatedQuantity)`(quantity: Int, validatedQuantity: Int) {
+        // Given
+        val view: LineItemDetailsScreenContract.View = mockk(relaxed = true)
+
+        val selectableLineItem = SelectableLineItem(
+            selected = true,
+            reason = null,
+            addedByUser = false,
+            lineItem = LineItem(
+                id = "id1",
+                description = "Foo",
+                quantity = 1,
+                rawGrossPrice = "12.00:EUR",
+                origQuantity = 1,
+                origRawGrossPrice = "12.00:EUR"
+            )
+        )
+
+        val presenter = LineItemDetailsScreenPresenter(
+            activity = mockk(),
+            view = view,
+            selectableLineItem = selectableLineItem
+        )
+
+        // When
+        presenter.setQuantity(quantity)
+
+        // Then
+        excludeRecords {
+            view.setPresenter(any())
+            view.disableInput()
+            view.showCheckbox(any(), any(), any())
+            view.showTotalGrossPrice(any(), any())
+            view.disableSaveButton()
+            view.enableSaveButton()
+        }
+        verify(exactly = 1) { view.showQuantity(eq(validatedQuantity)) }
+        confirmVerified(view)
+    }
 }
