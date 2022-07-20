@@ -597,6 +597,7 @@ $dokka.location:net.gini.android.capture/DocumentImportEnabledFileTypes/valueOf/
 $dokka.location:net.gini.android.capture/DocumentImportEnabledFileTypes/values/#/PointingToDeclaration/sdk/net.gini.android.capture/-document-import-enabled-file-types/values.html
 $dokka.location:net.gini.android.capture/GiniCapture.Builder///PointingToDeclaration/sdk/net.gini.android.capture/-gini-capture/-builder/index.html
 $dokka.location:net.gini.android.capture/GiniCapture.Builder/build/#/PointingToDeclaration/sdk/net.gini.android.capture/-gini-capture/-builder/build.html
+$dokka.location:net.gini.android.capture/GiniCapture.Builder/getImportedFileSizeBytesLimit/#/PointingToDeclaration/sdk/net.gini.android.capture/-gini-capture/-builder/get-imported-file-size-bytes-limit.html
 $dokka.location:net.gini.android.capture/GiniCapture.Builder/setBackButtonsEnabled/#boolean/PointingToDeclaration/sdk/net.gini.android.capture/-gini-capture/-builder/set-back-buttons-enabled.html
 $dokka.location:net.gini.android.capture/GiniCapture.Builder/setCustomErrorLoggerListener/#net.gini.android.capture.logging.ErrorLoggerListener/PointingToDeclaration/sdk/net.gini.android.capture/-gini-capture/-builder/set-custom-error-logger-listener.html
 $dokka.location:net.gini.android.capture/GiniCapture.Builder/setCustomHelpItems/#java.util.List<net.gini.android.capture.help.HelpItem.Custom>/PointingToDeclaration/sdk/net.gini.android.capture/-gini-capture/-builder/set-custom-help-items.html
@@ -609,6 +610,7 @@ $dokka.location:net.gini.android.capture/GiniCapture.Builder/setFlashOnByDefault
 $dokka.location:net.gini.android.capture/GiniCapture.Builder/setGiniCaptureNetworkApi/#net.gini.android.capture.network.GiniCaptureNetworkApi/PointingToDeclaration/sdk/net.gini.android.capture/-gini-capture/-builder/set-gini-capture-network-api.html
 $dokka.location:net.gini.android.capture/GiniCapture.Builder/setGiniCaptureNetworkService/#net.gini.android.capture.network.GiniCaptureNetworkService/PointingToDeclaration/sdk/net.gini.android.capture/-gini-capture/-builder/set-gini-capture-network-service.html
 $dokka.location:net.gini.android.capture/GiniCapture.Builder/setGiniErrorLoggerIsOn/#boolean/PointingToDeclaration/sdk/net.gini.android.capture/-gini-capture/-builder/set-gini-error-logger-is-on.html
+$dokka.location:net.gini.android.capture/GiniCapture.Builder/setImportedFileSizeBytesLimit/#int/PointingToDeclaration/sdk/net.gini.android.capture/-gini-capture/-builder/set-imported-file-size-bytes-limit.html
 $dokka.location:net.gini.android.capture/GiniCapture.Builder/setMultiPageEnabled/#boolean/PointingToDeclaration/sdk/net.gini.android.capture/-gini-capture/-builder/set-multi-page-enabled.html
 $dokka.location:net.gini.android.capture/GiniCapture.Builder/setQRCodeScanningEnabled/#boolean/PointingToDeclaration/sdk/net.gini.android.capture/-gini-capture/-builder/set-q-r-code-scanning-enabled.html
 $dokka.location:net.gini.android.capture/GiniCapture.Builder/setShouldShowOnboarding/#boolean/PointingToDeclaration/sdk/net.gini.android.capture/-gini-capture/-builder/set-should-show-onboarding.html
@@ -637,6 +639,7 @@ $dokka.location:net.gini.android.capture/GiniCapture/getCustomHelpItems/#/Pointi
 $dokka.location:net.gini.android.capture/GiniCapture/getCustomOnboardingPages/#/PointingToDeclaration/sdk/net.gini.android.capture/-gini-capture/get-custom-onboarding-pages.html
 $dokka.location:net.gini.android.capture/GiniCapture/getDocumentImportEnabledFileTypes/#/PointingToDeclaration/sdk/net.gini.android.capture/-gini-capture/get-document-import-enabled-file-types.html
 $dokka.location:net.gini.android.capture/GiniCapture/getGiniCaptureNetworkApi/#/PointingToDeclaration/sdk/net.gini.android.capture/-gini-capture/get-gini-capture-network-api.html
+$dokka.location:net.gini.android.capture/GiniCapture/getImportedFileSizeBytesLimit/#/PointingToDeclaration/sdk/net.gini.android.capture/-gini-capture/get-imported-file-size-bytes-limit.html
 $dokka.location:net.gini.android.capture/GiniCapture/getInstance/#/PointingToDeclaration/sdk/net.gini.android.capture/-gini-capture/get-instance.html
 $dokka.location:net.gini.android.capture/GiniCapture/hasInstance/#/PointingToDeclaration/sdk/net.gini.android.capture/-gini-capture/has-instance.html
 $dokka.location:net.gini.android.capture/GiniCapture/internal/#/PointingToDeclaration/sdk/net.gini.android.capture/-gini-capture/internal.html
