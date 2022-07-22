@@ -146,22 +146,17 @@ internal class LineItemDetailsScreenPresenter(
         }
     }
 
-    override fun save(isBack: Boolean) {
+    override fun save() {
         if (selectableLineItem.addedByUser && selectableLineItem.lineItem.description.isBlank()) {
             selectableLineItem = selectableLineItem.copy(
                 lineItem = selectableLineItem.lineItem.copy(description = activity.getString(R.string.gbs_digital_invoice_line_item_description_additional))
             )
         }
         when {
-            isBack && selectableLineItem.lineItem.id.isBlank() -> {
-                view.dismiss()
-            }
-
             selectableLineItem.lineItem.id.isBlank() -> {
                 val lineItem = selectableLineItem.lineItem.copy(UUID.randomUUID().toString())
                 listener?.onSave(selectableLineItem.copy(lineItem = lineItem))
             }
-
             else -> {
                 listener?.onSave(selectableLineItem)
             }

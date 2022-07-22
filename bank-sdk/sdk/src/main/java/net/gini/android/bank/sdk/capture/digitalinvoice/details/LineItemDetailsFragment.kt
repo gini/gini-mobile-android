@@ -197,13 +197,6 @@ class LineItemDetailsFragment : Fragment(), LineItemDetailsScreenContract.View,
         readArguments()
         createPresenter(activity)
         initListener()
-        val callback = requireActivity().onBackPressedDispatcher.addCallback(
-            this,
-            object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    presenter?.save(true)
-                }
-            })
     }
 
     private fun readArguments() {
@@ -295,7 +288,7 @@ class LineItemDetailsFragment : Fragment(), LineItemDetailsScreenContract.View,
             presenter?.setGrossPrice(it)
         }
         binding.saveButton.setOnClickListener {
-            presenter?.save(false)
+            presenter?.save()
         }
     }
 
