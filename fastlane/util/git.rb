@@ -61,7 +61,7 @@ end
 # Retrieve the latest release tag for the project id.
 #
 def get_latest_release_tag(project_id)
-  sh("git tag --list '#{project_id};*'", log: false).split.last
+  sh("git tag --list '#{project_id};*' --sort=taggerdate", log: false).split.last
 end
 
 ##
