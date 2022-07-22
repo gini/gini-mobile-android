@@ -58,10 +58,10 @@
     <string name="gbs_digital_invoice_help_info">Hilfe</string>
     <string name="gbs_digital_invoice_info_close_button_title">Schließen</string>
     <string name="gbs_digital_invoice_info_text_1">Was ist das?</string>
-    <string name="gbs_digital_invoice_info_text_2">Wir haben die Artikel aus deiner Rechnung extrahiert. Wenn du einige Artikel zurückschicken oder du deine Rechnung nur teilweise bezahlen möchtest, kannst du einzelne Artikel abwählen und der zu bezahlende Betrag wird automatisch  neu berechnet.</string>
+    <string name="gbs_digital_invoice_info_text_2">Wir haben die Artikel aus deiner Rechnung extrahiert. Wenn du einige Artikel zurückschicken oder du deine Rechnung nur teilweise bezahlen möchtest, kannst du einzelne Artikel abwählen und der zu bezahlende Betrag wird automatisch neu berechnet.</string>
 
     <string name="gbs_digital_invoice_onboarding_text_1">Dein neuer\nRetouren Assistent!</string>
-    <string name="gbs_digital_invoice_onboarding_text_2">Du kannst jetzt Artikel abwählen, die du zurückschicken möchtest. Bezahle nur, was du behälst.</string>
+    <string name="gbs_digital_invoice_onboarding_text_2">Du kannst jetzt Artikel abwählen, die du zurückschicken möchtest. Bezahle nur, was du behältst.</string>
     <string name="gbs_digital_invoice_onboarding_done_button_title">Weiter</string>
     <string name="gbs_digital_invoice_onboarding_do_not_show_button_title">Bitte nicht mehr anzeigen</string>
 
