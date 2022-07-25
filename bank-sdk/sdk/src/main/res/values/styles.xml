@@ -140,7 +140,10 @@
 
     <style name="Root.GiniCaptureTheme.ThemeOverlay.App.TextInputLayout" parent="">
         <item name="colorPrimary">
-            @color/gbs_digital_invoice_line_item_details_input_field_hint_text
+            @color/gbs_digital_invoice_line_item_details_input_field_cursor
+        </item>
+        <item name="colorAccent">
+            @color/gbs_digital_invoice_line_item_details_input_field_selection_highlight
         </item>
         <item name="colorOnSurface">
             @color/gbs_digital_invoice_line_item_details_input_field_hint_text
