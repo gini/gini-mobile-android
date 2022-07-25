@@ -8,6 +8,13 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <!--Example of customizing the Onboarding Screen text style-->
+<!--    <style name="GiniCaptureTheme.Onboarding.Message.TextStyle" parent="Root.GiniCaptureTheme.Onboarding.Message.TextStyle">-->
+<!--        <item name="android:gravity">start</item>-->
+<!--        <item name="android:paddingStart">32dp</item>-->
+<!--        <item name="android:paddingEnd">32dp</item>-->
+<!--    </style>-->
+
     <!-- Example of customizing the Camera Screen no camera permission error's text style -->
     <!--<style name="GiniCaptureTheme.Camera.Error.NoPermission.TextStyle" parent="Root.GiniCaptureTheme.Camera.Error.NoPermission.TextStyle">-->
         <!--<item name="android:textStyle">bold</item>-->
