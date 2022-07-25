@@ -1,5 +1,7 @@
 package net.gini.android.capture.internal.fileimport;
 
+import static net.gini.android.capture.internal.util.FileImportValidator.FILE_SIZE_LIMIT;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -74,7 +76,7 @@ public abstract class AbstractImportImageUrisAsyncTask extends
                 mImportMethod);
         final ImageMultiPageDocument multiPageDocument = new ImageMultiPageDocument(mSource,
                 mImportMethod);
-        FileImportValidator fileImportValidator = new FileImportValidator(mContext);
+        FileImportValidator fileImportValidator = new FileImportValidator(mContext, mGiniCapture.getImportedFileSizeBytesLimit());
         if (!fileImportValidator.matchesCriteria(uris)) {
             onHaltingError(new ImportedFileValidationException(fileImportValidator.getError()));
             return null;
@@ -94,7 +96,7 @@ public abstract class AbstractImportImageUrisAsyncTask extends
                 }
                 continue;
             }
-            fileImportValidator = new FileImportValidator(mContext); // NOPMD
+            fileImportValidator = new FileImportValidator(mContext, mGiniCapture.getImportedFileSizeBytesLimit()); // NOPMD
             if (fileImportValidator.matchesCriteria(uri)) {
                 if (isCancelled()) {
                     LOG.debug("Import cancelled for uri {}", uri);

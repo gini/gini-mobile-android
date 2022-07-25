@@ -277,7 +277,7 @@
 
     <style name="Root.GiniCaptureTheme.DigitalInvoice.Pay.Button" parent="Widget.MaterialComponents.Button">
         <item name="android:textColor">@color/gbs_digital_invoice_pay_button_text</item>
-        <item name="backgroundTint">@color/gbs_digital_invoice_pay_button</item>
+        <item name="backgroundTint">@color/gbs_digital_invoice_pay_button_selector</item>
     </style>
 
     <style name="Root.GiniCaptureTheme.DigitalInvoice.Info.Button" parent="Widget.MaterialComponents.Button">
