@@ -115,6 +115,7 @@
         <item name="android:textStyle">normal</item>
         <item name="android:textSize">33sp</item>
         <item name="android:textColor">@color/gc_onboarding_message</item>
+        <item name="android:gravity">center</item>
         <item name="gcCustomFont">sans-serif-thin</item>
     </style>
 
