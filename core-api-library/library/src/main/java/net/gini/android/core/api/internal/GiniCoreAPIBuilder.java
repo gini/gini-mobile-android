@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.XmlRes;
+import kotlin.coroutines.EmptyCoroutineContext;
 
 import com.android.volley.Cache;
 import com.android.volley.DefaultRetryPolicy;
@@ -24,6 +25,7 @@ import net.gini.android.core.api.authorization.EncryptedCredentialsStore;
 import net.gini.android.core.api.authorization.SessionManager;
 import net.gini.android.core.api.authorization.UserCenterAPICommunicator;
 import net.gini.android.core.api.authorization.UserCenterManager;
+import net.gini.android.core.api.authorization.UserRepository;
 import net.gini.android.core.api.models.ExtractionsContainer;
 import net.gini.android.core.api.requests.DefaultRetryPolicyFactory;
 import net.gini.android.core.api.requests.RetryPolicyFactory;
@@ -62,6 +64,7 @@ public abstract class GiniCoreAPIBuilder<DTM extends DocumentTaskManager<A, E>, 
     private RetryPolicyFactory mRetryPolicyFactory;
     private Cache mCache;
     private TrustManager mTrustManager;
+    private UserRepository mUserRepository;
 
     /**
      * Constructor to initialize a new builder instance where anonymous Gini users are used. <b>This requires access to
@@ -362,6 +365,14 @@ public abstract class GiniCoreAPIBuilder<DTM extends DocumentTaskManager<A, E>, 
         return mUserCenterManager;
     }
 
+    @NonNull
+    private synchronized UserRepository getUserRepository() {
+        if (mUserRepository == null) {
+            mUserRepository = new UserRepository(EmptyCoroutineContext.INSTANCE);
+        }
+        return mUserRepository;
+    }
+
     /**
      * Helper method to create a DocumentTaskManager instance.
      *
@@ -387,10 +398,9 @@ public abstract class GiniCoreAPIBuilder<DTM extends DocumentTaskManager<A, E>, 
     public synchronized SessionManager getSessionManager() {
         if (mSessionManager == null) {
             mSessionManager = new AnonymousSessionManager(mEmailDomain, getUserCenterManager(),
-                    getCredentialsStore());
+                    getCredentialsStore(), getUserRepository());
         }
         return mSessionManager;
     }
-
 }
 
