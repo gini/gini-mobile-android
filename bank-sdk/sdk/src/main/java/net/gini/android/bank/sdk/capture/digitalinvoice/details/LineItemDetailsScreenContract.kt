@@ -53,7 +53,7 @@ interface LineItemDetailsScreenContract {
         abstract fun setDescription(description: String)
         abstract fun setQuantity(quantity: Int)
         abstract fun setGrossPrice(displayedGrossPrice: String)
-        abstract fun save(isBack: Boolean)
+        abstract fun save()
         abstract fun onQuantityInputFieldFocusLoss(inputFieldText: String)
     }
 }
