@@ -1,6 +1,7 @@
 package net.gini.android.bank.sdk.capture.digitalinvoice.details
 
 import android.app.Activity
+import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoice
 import net.gini.android.bank.sdk.capture.digitalinvoice.SelectableLineItem
 import net.gini.android.bank.sdk.capture.digitalinvoice.details.LineItemDetailsScreenContract.Presenter
@@ -21,6 +22,9 @@ import java.util.*
 
 @JvmSynthetic
 internal val GROSS_PRICE_FORMAT = DecimalFormat("#,##0.00").apply { isParseBigDecimal = true }
+
+internal const val MIN_QUANTITY = 1
+internal const val MAX_QUANTITY = 99_999
 
 /**
  * Internal use only.
@@ -59,12 +63,7 @@ internal class LineItemDetailsScreenPresenter(
         if (!selectableLineItem.selected) {
             return
         }
-        if (returnReasons.isEmpty()) {
-            selectableLineItem.selected = false
-            selectableLineItem.reason = null
-            view.disableInput()
-            updateCheckboxAndSaveButton()
-        } else {
+        if (canShowReturnReasonsDialog()) {
             view.showReturnReasonDialog(returnReasons) { selectedReason ->
                 if (selectedReason != null) {
                     selectableLineItem.selected = false
@@ -77,8 +76,15 @@ internal class LineItemDetailsScreenPresenter(
                 }
                 updateCheckboxAndSaveButton()
             }
+        } else {
+            selectableLineItem.selected = false
+            selectableLineItem.reason = null
+            view.disableInput()
+            updateCheckboxAndSaveButton()
         }
     }
+
+    private fun canShowReturnReasonsDialog() = GiniBank.enableReturnReasons && returnReasons.isNotEmpty()
 
     private fun updateCheckboxAndSaveButton() = selectableLineItem.let {
         view.apply {
@@ -102,11 +108,18 @@ internal class LineItemDetailsScreenPresenter(
         if (selectableLineItem.lineItem.quantity == quantity) {
             return
         }
+
+        val validQuantity = quantity.coerceAtLeast(MIN_QUANTITY).coerceAtMost(MAX_QUANTITY)
+
         selectableLineItem = selectableLineItem.copy(
-            lineItem = selectableLineItem.lineItem.copy(quantity = quantity)
+            lineItem = selectableLineItem.lineItem.copy(quantity = validQuantity)
         )
         view.showTotalGrossPrice(selectableLineItem)
         updateCheckboxAndSaveButton()
+
+        if (validQuantity != quantity) {
+            view.showQuantity(validQuantity)
+        }
     }
 
     override fun setGrossPrice(displayedGrossPrice: String) {
@@ -133,25 +146,27 @@ internal class LineItemDetailsScreenPresenter(
         }
     }
 
-    override fun save(isBack: Boolean) {
+    override fun save() {
         if (selectableLineItem.addedByUser && selectableLineItem.lineItem.description.isBlank()) {
             selectableLineItem = selectableLineItem.copy(
                 lineItem = selectableLineItem.lineItem.copy(description = activity.getString(R.string.gbs_digital_invoice_line_item_description_additional))
             )
         }
         when {
-            isBack && selectableLineItem.lineItem.id.isBlank() -> {
-                view.dismiss()
-            }
-
             selectableLineItem.lineItem.id.isBlank() -> {
                 val lineItem = selectableLineItem.lineItem.copy(UUID.randomUUID().toString())
                 listener?.onSave(selectableLineItem.copy(lineItem = lineItem))
             }
-
             else -> {
                 listener?.onSave(selectableLineItem)
             }
+        }
+    }
+
+    override fun onQuantityInputFieldFocusLoss(inputFieldText: String) {
+        val quantity = inputFieldText.toIntOrNull()
+        if (quantity == null || (selectableLineItem.lineItem.quantity != quantity)) {
+            view.showQuantity(selectableLineItem.lineItem.quantity)
         }
     }
 

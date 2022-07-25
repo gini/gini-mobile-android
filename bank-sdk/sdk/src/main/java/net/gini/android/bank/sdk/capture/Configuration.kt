@@ -5,6 +5,7 @@ import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.analysis.AnalysisActivity
 import net.gini.android.capture.camera.CameraActivity
 import net.gini.android.capture.help.HelpItem
+import net.gini.android.capture.internal.util.FileImportValidator.FILE_SIZE_LIMIT
 import net.gini.android.capture.logging.ErrorLoggerListener
 import net.gini.android.capture.network.GiniCaptureNetworkApi
 import net.gini.android.capture.network.GiniCaptureNetworkService
@@ -120,6 +121,11 @@ data class CaptureConfiguration(
      * Set an [ErrorLoggerListener] to be notified of errors.
      */
     val errorLoggerListener: ErrorLoggerListener? = null,
+
+    /**
+     * Set a custom imported file size limit in bytes.
+     */
+    val importedFileSizeBytesLimit: Int = FILE_SIZE_LIMIT,
 )
 
 internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfiguration): GiniCapture.Builder {
@@ -137,6 +143,7 @@ internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfig
         .setFlashOnByDefault(configuration.flashOnByDefault)
         .setCustomHelpItems(configuration.customHelpItems)
         .setGiniErrorLoggerIsOn(configuration.giniErrorLoggerIsOn)
+        .setImportedFileSizeBytesLimit(configuration.importedFileSizeBytesLimit)
         .apply {
             configuration.eventTracker?.let { setEventTracker(it) }
             configuration.errorLoggerListener?.let { setCustomErrorLoggerListener(it) }

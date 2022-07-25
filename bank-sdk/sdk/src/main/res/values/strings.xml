@@ -16,6 +16,8 @@
 
     <string name="gbs_digital_invoice_footer_notice">Bitte überprüfe vor der Zahlung, ob alles in Ordnung ist und füge eventuell fehlende Artikel hinzu.</string>
     <string name="gbs_digital_invoice_pay">Bezahlen %1$d/%2$d</string>
+    <string name="gbs_digital_invoice_pay_other_charges">Bezahlen</string>
+    <string name="gbs_digital_invoice_pay_disabled">Bezahlen</string>
     <string name="gbs_digital_invoice_return_reason_dialog_title">Der Grund der Rücksendung</string>
     <string name="gbs_digital_invoice_what_is_this_dialog_title">Was ist das?</string>
     <string name="gbs_digital_invoice_what_is_this_dialog_message">Wir haben die Artikel aus deiner Rechnung extrahiert. Wenn du einige Artikel zurückschicken oder du deine Rechnung nur teilweise bezahlen möchtest, kannst du einzelne Artikel abwählen und der zu bezahlende Betrag wird automatisch neu berechnet.</string>
@@ -56,10 +58,10 @@
     <string name="gbs_digital_invoice_help_info">Hilfe</string>
     <string name="gbs_digital_invoice_info_close_button_title">Schließen</string>
     <string name="gbs_digital_invoice_info_text_1">Was ist das?</string>
-    <string name="gbs_digital_invoice_info_text_2">Wir haben die Artikel aus deiner Rechnung extrahiert. Wenn du einige Artikel zurückschicken oder du deine Rechnung nur teilweise bezahlen möchtest, kannst du einzelne Artikel abwählen und der zu bezahlende Betrag wird automatisch  neu berechnet.</string>
+    <string name="gbs_digital_invoice_info_text_2">Wir haben die Artikel aus deiner Rechnung extrahiert. Wenn du einige Artikel zurückschicken oder du deine Rechnung nur teilweise bezahlen möchtest, kannst du einzelne Artikel abwählen und der zu bezahlende Betrag wird automatisch neu berechnet.</string>
 
     <string name="gbs_digital_invoice_onboarding_text_1">Dein neuer\nRetouren Assistent!</string>
-    <string name="gbs_digital_invoice_onboarding_text_2">Du kannst jetzt Artikel abwählen, die du zurückschicken möchtest. Bezahle nur, was du behälst.</string>
+    <string name="gbs_digital_invoice_onboarding_text_2">Du kannst jetzt Artikel abwählen, die du zurückschicken möchtest. Bezahle nur, was du behältst.</string>
     <string name="gbs_digital_invoice_onboarding_done_button_title">Weiter</string>
     <string name="gbs_digital_invoice_onboarding_do_not_show_button_title">Bitte nicht mehr anzeigen</string>
 

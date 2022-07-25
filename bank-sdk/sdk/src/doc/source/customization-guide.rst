@@ -450,7 +450,7 @@ Digital Invoice Screen
 9. "Pay" Button
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-- **Title**
+- **Title (pay at least one line item)**
 
   Via the string resource named ``gbs_digital_invoice_pay``.
   
@@ -458,6 +458,14 @@ Digital Invoice Screen
 
   - Selected Items Count: ``%1$d``
   - Total Count: ``%2$d``
+
+- **Title (pay only for other charges)**
+
+  Via the string resource named ``gbs_digital_invoice_pay_other_charges``.
+
+- **Title (disabled)**
+
+  Via the string resource named ``gbs_digital_invoice_pay_disabled``.
 
 - **Button Style**
 

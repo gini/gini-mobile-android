@@ -117,6 +117,7 @@
         app:layout_constraintEnd_toStartOf="@id/gross_price_fractional_part"
         app:layout_constraintTop_toBottomOf="@id/description"
         app:layout_constraintTop_toTopOf="@id/gross_price_fractional_part"
+        app:layout_constraintStart_toEndOf="@id/quantity"
         tools:text="€76" />
 
     <TextView
@@ -126,10 +127,18 @@
         android:layout_marginStart="@dimen/gbs_digital_invoice_line_item_quantity_margin_left"
         android:text="@string/gbs_digital_invoice_line_item_quantity"
         android:layout_marginEnd="8dp"
+        android:lines="1"
+        android:autoSizeMaxTextSize="32sp"
+        android:autoSizeMinTextSize="12sp"
+        android:autoSizeTextType="uniform"
+        android:gravity="center_vertical"
         app:layout_constraintEnd_toStartOf="@id/gross_price_integral_part"
         android:textAppearance="@style/GiniCaptureTheme.DigitalInvoice.LineItem.Quantity.TextStyle"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/gross_price_integral_part" />
+        app:layout_constraintTop_toTopOf="@id/gross_price_integral_part"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintBottom_toBottomOf="@id/gross_price_integral_part"
+        tools:text="99x" />
 
     <Space
         android:id="@+id/price_bottom_space"

@@ -62,9 +62,14 @@ class MainActivity : AppCompatActivity() {
                         R.string.custom_help_screen_title,
                         Intent(this, CustomHelpActivity::class.java)
                     )
-                )
+                ),
+                importedFileSizeBytesLimit = 5 * 1024 * 1024
             )
         )
+    }
+
+    private fun configureGiniBank() {
+        GiniBank.enableReturnReasons = true
     }
 
     private fun startGiniCaptureSdk(intent: Intent? = null) {
@@ -74,6 +79,7 @@ class MainActivity : AppCompatActivity() {
                 if (!report.isFulfilled) {
                     showUnfulfilledRequirementsToast(report)
                 }
+                configureGiniBank()
                 configureGiniCapture()
 
                 if (intent != null) {

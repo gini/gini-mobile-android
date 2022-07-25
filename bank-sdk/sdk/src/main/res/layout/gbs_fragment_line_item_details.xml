@@ -101,7 +101,8 @@
         android:layout_width="0dp"
         android:layout_height="@dimen/gbs_digital_invoice_line_item_details_input_height"
         android:layout_marginStart="@dimen/gbs_digital_invoice_line_item_details_padding"
-        app:layout_constraintEnd_toStartOf="@id/multiplier"
+        android:layout_marginEnd="@dimen/gbs_digital_invoice_line_item_details_padding"
+        app:layout_constraintEnd_toStartOf="@id/gross_price_container"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/quantity_hint">
 
@@ -121,23 +122,6 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
-        android:id="@+id/multiplier"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/gbs_digital_invoice_line_currency_margin_bottom"
-        android:gravity="center"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:text="X"
-        android:textColor="@color/gbs_digital_invoice_line_item_details_multiplication_symbol"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="@id/quantity_container"
-        app:layout_constraintEnd_toStartOf="@id/gross_price_container"
-        app:layout_constraintStart_toEndOf="@id/quantity_container"
-        app:layout_constraintTop_toTopOf="@id/quantity_container"
-        tools:ignore="HardcodedText" />
-
-    <TextView
         android:id="@+id/price_hint"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -153,7 +137,7 @@
         android:layout_width="0dp"
         android:layout_height="@dimen/gbs_digital_invoice_line_item_details_input_height"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/multiplier"
+        app:layout_constraintStart_toEndOf="@id/quantity_container"
         app:layout_constraintTop_toTopOf="@id/quantity_container">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -186,7 +170,7 @@
 
     <TextView
         android:id="@+id/total_label"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_alignTop="@id/gross_price_total_integral_part"
         android:layout_alignBottom="@id/gross_price_total_integral_part"
@@ -194,9 +178,17 @@
         android:layout_marginEnd="@dimen/gbs_digital_invoice_line_item_details_total_label_margin_end"
         android:layout_toStartOf="@id/gross_price_total_integral_part"
         android:text="@string/gbs_digital_invoice_line_item_details_total_label"
+        android:lines="1"
+        android:autoSizeMaxTextSize="32sp"
+        android:autoSizeMinTextSize="16sp"
+        android:autoSizeTextType="uniform"
+        android:gravity="center_vertical"
+        android:ellipsize="end"
+        app:layout_constraintEnd_toStartOf="@id/gross_price_total_integral_part"
         android:textAppearance="@style/GiniCaptureTheme.DigitalInvoice.LineItemDetails.Total.TextStyle"
         app:layout_constraintBottom_toBottomOf="@id/gross_price_total_integral_part"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_chainStyle="spread_inside" />
 
     <TextView
         android:id="@+id/gross_price_label"
@@ -217,6 +209,7 @@
         android:textAppearance="@style/GiniCaptureTheme.DigitalInvoice.TotalGrossPrice.Integral.TextStyle"
         app:layout_constraintEnd_toStartOf="@id/gross_price_total_fractional_part"
         app:layout_constraintTop_toTopOf="@id/gross_price_total_fractional_part"
+        app:layout_constraintStart_toEndOf="@id/total_label"
         tools:text="€0" />
 
     <TextView

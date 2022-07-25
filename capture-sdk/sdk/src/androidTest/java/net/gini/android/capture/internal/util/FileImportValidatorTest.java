@@ -2,6 +2,8 @@ package net.gini.android.capture.internal.util;
 
 import static com.google.common.truth.Truth.assertThat;
 
+import static net.gini.android.capture.internal.util.FileImportValidator.FILE_SIZE_LIMIT;
+
 import android.net.Uri;
 
 import net.gini.android.capture.test.Helpers;
@@ -43,7 +45,7 @@ public class FileImportValidatorTest {
     public void should_acceptPDF_withOnePage_andWithoutPassword() throws Exception {
         // Given
         final FileImportValidator fileImportValidator = new FileImportValidator(
-                ApplicationProvider.getApplicationContext());
+                ApplicationProvider.getApplicationContext(), FILE_SIZE_LIMIT);
         // When
         final boolean result = fileImportValidator.matchesCriteria(sPdfContentUri);
         // Then
@@ -55,7 +57,7 @@ public class FileImportValidatorTest {
     public void should_NotAcceptPDF_withOnePage_andWithPassword() throws Exception {
         // Given
         final FileImportValidator fileImportValidator = new FileImportValidator(
-                ApplicationProvider.getApplicationContext());
+                ApplicationProvider.getApplicationContext(), FILE_SIZE_LIMIT);
         // When
         final boolean result = fileImportValidator.matchesCriteria(sPdfWithPasswordContentUri);
         // Then

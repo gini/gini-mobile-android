@@ -1,5 +1,7 @@
 package net.gini.android.capture;
 
+import static net.gini.android.capture.internal.util.FileImportValidator.FILE_SIZE_LIMIT;
+
 import android.content.Context;
 import android.content.Intent;
 
@@ -90,6 +92,7 @@ public class GiniCapture {
     private final EventTracker mEventTracker;
     private final List<HelpItem.Custom> mCustomHelpItems;
     private final ErrorLogger mErrorLogger;
+    private final int mImportedFileSizeBytesLimit;
     private final NavigationBarTopAdapter navigationBarTopAdapter;
     private final OnboardingNavigationBarBottomAdapter onboardingNavigationBarBottomAdapter;
     private final boolean isBottomNavigationBarEnabled;
@@ -197,6 +200,7 @@ public class GiniCapture {
         mErrorLogger = new ErrorLogger(builder.getGiniErrorLoggerIsOn(),
                 builder.getGiniCaptureNetworkService(),
                 builder.getCustomErrorLoggerListener());
+        mImportedFileSizeBytesLimit = builder.getImportedFileSizeBytesLimit();
         navigationBarTopAdapter = builder.getNavigationBarTopAdapter();
         onboardingNavigationBarBottomAdapter = builder.getOnboardingNavigationBarBottomAdapter();
         isBottomNavigationBarEnabled = builder.isBottomNavigationBarEnabled();
@@ -568,6 +572,15 @@ public class GiniCapture {
     }
 
     /**
+     * The size limit in bytes for imported files.
+     *
+     * @return file size limit in bytes
+     */
+    public int getImportedFileSizeBytesLimit() {
+        return mImportedFileSizeBytesLimit;
+    }
+
+    /**
      * Builder for {@link GiniCapture}. To get an instance call {@link #newInstance()}.
      */
     public static class Builder {
@@ -606,6 +619,7 @@ public class GiniCapture {
         private List<HelpItem.Custom> mCustomHelpItems = new ArrayList<>();
         private boolean mGiniErrorLoggerIsOn = true;
         private ErrorLoggerListener mCustomErrorLoggerListener;
+        private int mImportedFileSizeBytesLimit = FILE_SIZE_LIMIT;
         private NavigationBarTopAdapter navigationBarTopAdapter = new DefaultNavigationBarTopAdapter();
         private OnboardingNavigationBarBottomAdapter navigationBarBottomAdapter = new DefaultOnboardingNavigationBarBottomAdapter();
         private boolean isBottomNavigationBarEnabled = false;
@@ -960,6 +974,21 @@ public class GiniCapture {
         @Nullable
         private ErrorLoggerListener getCustomErrorLoggerListener() {
             return mCustomErrorLoggerListener;
+        }
+
+        /**
+         * Set a custom imported file size limit in bytes.
+         *
+         * @param fileSizeBytesLimit file size limit in bytes
+         * @return the {@link Builder} instance
+         */
+        public Builder setImportedFileSizeBytesLimit(final int fileSizeBytesLimit) {
+            mImportedFileSizeBytesLimit = fileSizeBytesLimit;
+            return this;
+        }
+
+        public int getImportedFileSizeBytesLimit() {
+            return mImportedFileSizeBytesLimit;
         }
 
         public Builder setNavigationBarTopAdapter(@NonNull final NavigationBarTopAdapter Adapter ) {
