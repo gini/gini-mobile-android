@@ -8,18 +8,16 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
+import net.gini.android.bank.sdk.GiniBank
+import net.gini.android.bank.sdk.capture.*
+import net.gini.android.bank.sdk.screenapiexample.databinding.ActivityMainBinding
+import net.gini.android.bank.sdk.screenapiexample.util.PermissionHandler
 import net.gini.android.capture.DocumentImportEnabledFileTypes
 import net.gini.android.capture.help.HelpItem
 import net.gini.android.capture.network.GiniCaptureDefaultNetworkApi
 import net.gini.android.capture.network.GiniCaptureDefaultNetworkService
 import net.gini.android.capture.requirements.RequirementsReport
 import net.gini.android.capture.util.CancellationToken
-import net.gini.android.bank.sdk.screenapiexample.databinding.ActivityMainBinding
-import net.gini.android.bank.sdk.screenapiexample.util.PermissionHandler
-import net.gini.android.bank.sdk.GiniBank
-import net.gini.android.bank.sdk.capture.*
-import net.gini.android.bank.sdk.screenapiexample.BuildConfig
-import net.gini.android.bank.sdk.screenapiexample.R
 import org.koin.android.ext.android.inject
 
 class MainActivity : AppCompatActivity() {
@@ -47,6 +45,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun configureGiniCapture() {
         GiniBank.releaseCapture(this)
+        val enableBottomNavigationBar = false
+        val useCustomOnboardingPages = false
         GiniBank.setCaptureConfiguration(
             CaptureConfiguration(
                 networkService = networkService,
@@ -63,7 +63,53 @@ class MainActivity : AppCompatActivity() {
                         Intent(this, CustomHelpActivity::class.java)
                     )
                 ),
-                importedFileSizeBytesLimit = 5 * 1024 * 1024
+                importedFileSizeBytesLimit = 5 * 1024 * 1024,
+                bottomNavigationBarEnabled = enableBottomNavigationBar,
+                onboardingAlignCornersIllustrationAdapter = if (useCustomOnboardingPages) {
+                    CustomOnboardingIllustrationAdapter(
+                        resources.getIdentifier(
+                            "floating_document",
+                            "raw",
+                            this.packageName
+                        )
+                    )
+                } else {
+                    null
+                },
+                onboardingLightingIllustrationAdapter = if (useCustomOnboardingPages) {
+                    CustomOnboardingIllustrationAdapter(
+                        resources.getIdentifier(
+                            "lighting",
+                            "raw",
+                            this.packageName
+                        )
+                    )
+                } else {
+                    null
+                },
+                onboardingMultiPageIllustrationAdapter = if (useCustomOnboardingPages) {
+                    CustomOnboardingIllustrationAdapter(
+                        resources.getIdentifier(
+                            "multipage",
+                            "raw",
+                            this.packageName
+                        )
+                    )
+                } else {
+                    null
+                },
+                onboardingQRCodeIllustrationAdapter = if (useCustomOnboardingPages) {
+                    CustomOnboardingIllustrationAdapter(
+                        resources.getIdentifier(
+                            "scan_qr_code",
+                            "raw",
+                            this.packageName
+                        )
+                    )
+                } else {
+                    null
+                },
+                showOnboarding = true,
             )
         )
     }

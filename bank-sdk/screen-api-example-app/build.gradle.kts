@@ -73,6 +73,8 @@ dependencies {
     implementation(libs.koin.androidx.viewmodel)
     implementation(libs.koin.androidx.fragment)
 
+    implementation(libs.lottie)
+
     testImplementation(libs.junit)
 
     androidTestImplementation(libs.androidx.test.junit.ktx)
