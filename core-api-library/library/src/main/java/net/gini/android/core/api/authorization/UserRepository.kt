@@ -1,52 +1,60 @@
 package net.gini.android.core.api.authorization
 
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flow
 import net.gini.android.core.api.Resource
+import net.gini.android.core.api.authorization.apimodels.UserRequestModel
+import net.gini.android.core.api.authorization.apimodels.UserResponseModel
 import net.gini.android.core.api.requests.ApiException
 import net.gini.android.core.api.requests.NoInternetException
-import java.util.*
 import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
-class UserRepository(override val coroutineContext: CoroutineContext) : CoroutineScope, KSessionManager {
+class UserRepository(
+    override val coroutineContext: CoroutineContext,
+    private var session: Session?
+    ) : CoroutineScope {
     val userRemoteSource = UserRemoteSource()
 
     //region Public methods
-    suspend fun loginUser(userRequestModel: UserRequestModel): User? =
-        when (val response = signIn(userRequestModel)) {
-            is Resource.Success -> {
-                response.data!!
-            }
-
-            is Resource.Error -> {
-                null
-            }
-        }
-    //endregion
-
-    //region Private methods
-    private suspend fun signIn(userRequestModel: UserRequestModel): Resource<User> =
+    suspend fun loginUser(userRequestModel: UserRequestModel): Resource<UserResponseModel> =
         wrapResponseIntoResource {
             userRemoteSource.signIn(userRequestModel)
         }
 
-    private suspend fun loginClient(): Resource<Session> =
-        wrapResponseIntoResource {
-            userRemoteSource.loginClient()
+    suspend fun loginClient(): Flow<Resource<Session>> =
+        flow {
+            emit(wrapResponseIntoResource {
+                userRemoteSource.loginClient()
+            })
         }
 
-    private suspend fun createUser(userRequestModel: UserRequestModel): Resource<User> =
-        wrapResponseIntoResource {
-            userRemoteSource.createUser(userRequestModel)
+    suspend fun createUser(userRequestModel: UserRequestModel): Flow<Resource<UserResponseModel>> =
+        flow {
+            emit (wrapResponseIntoResource {
+                userRemoteSource.createUser(userRequestModel)
+            })
         }
-    //endregion
 
-    //region Overridden methods
-    override suspend fun getSession(): Session {
-        return Session("", Date())
-    }
+    suspend fun loginClientForSession(): Flow<Session?> =
+        flow {
+            val result = loginClient()
+            if (result.first() is Resource.Success) {
+                session = result.first().data!!
+                emit(session)
+            }
+        }
+
+    suspend fun getUserRepositorySession(): Flow<Session?> =
+        flow {
+            if (session?.hasExpired() == false || session != null) {
+                emit(session)
+            } else {
+                emit(loginClientForSession().firstOrNull())
+            }
+        }
     //endregion
 
     companion object {

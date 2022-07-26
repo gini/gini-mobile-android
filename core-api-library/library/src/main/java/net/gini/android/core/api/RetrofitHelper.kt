@@ -9,7 +9,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object RetrofitHelper {
-    val baseUrl = "https://user.gini.net/"
+    private var baseUrl = ""
     private const val DEFAULT_TIMEOUT = 60L
 
     val setAuthorizationHeaderUseCase = SetAuthorizationHeaderUseCase()
@@ -31,6 +31,10 @@ object RetrofitHelper {
 
     fun provideUserService(): UserService {
         return getInstance().create(UserService::class.java)
+    }
+
+    fun setBaseURL(baseURL: String) {
+        baseUrl = baseURL
     }
 
     class SetAuthorizationHeaderUseCase {
