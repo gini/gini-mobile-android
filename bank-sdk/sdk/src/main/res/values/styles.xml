@@ -120,7 +120,7 @@
 
     <style name="Root.GiniCaptureTheme.DigitalInvoice.LineItemDetails.InputField.Style" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
         <item name="materialThemeOverlay">
-            @style/Root.GiniCaptureTheme.ThemeOverlay.App.TextInputLayout
+            @style/GiniCaptureTheme.ThemeOverlay.App.TextInputLayout
         </item>
         <item name="shapeAppearance">@style/ShapeAppearance.MaterialComponents.SmallComponent</item>
         <item name="hintTextColor">
@@ -140,7 +140,10 @@
 
     <style name="Root.GiniCaptureTheme.ThemeOverlay.App.TextInputLayout" parent="">
         <item name="colorPrimary">
-            @color/gbs_digital_invoice_line_item_details_input_field_hint_text
+            @color/gbs_digital_invoice_line_item_details_input_field_cursor
+        </item>
+        <item name="colorAccent">
+            @color/gbs_digital_invoice_line_item_details_input_field_selection_highlight
         </item>
         <item name="colorOnSurface">
             @color/gbs_digital_invoice_line_item_details_input_field_hint_text
@@ -389,6 +392,8 @@
     <style name="GiniCaptureTheme.DigitalInvoice.LineItemDetails.InputField.TextStyle" parent="Root.GiniCaptureTheme.DigitalInvoice.LineItemDetails.InputField.TextStyle" />
 
     <style name="GiniCaptureTheme.DigitalInvoice.LineItemDetails.InputField.Style" parent="Root.GiniCaptureTheme.DigitalInvoice.LineItemDetails.InputField.Style" />
+
+    <style name="GiniCaptureTheme.ThemeOverlay.App.TextInputLayout" parent="Root.GiniCaptureTheme.ThemeOverlay.App.TextInputLayout" />
 
     <style name="GiniCaptureTheme.DigitalInvoice.LineItemDetails.InputField.Hint.TextStyle" parent="Root.GiniCaptureTheme.DigitalInvoice.LineItemDetails.InputField.Hint.TextStyle" />
 

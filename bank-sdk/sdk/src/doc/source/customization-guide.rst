@@ -705,6 +705,14 @@ All Action Bar customizations except the title are global to all Activities.
   Via overriding the style named ``GiniCaptureTheme.DigitalInvoice.LineItemDetails.InputField.TextStyle`` (with
   parent style ``Root.GiniCaptureTheme.DigitalInvoice.LineItemDetails.InputField.TextStyle``).
 
+- **Input Field Cursor Color**
+
+  Via the color resource named ``gbs_digital_invoice_line_item_details_input_field_cursor``.
+
+- **Input Field Text Selection Highlight Color**
+
+  Via the color resource named ``gbs_digital_invoice_line_item_details_input_field_selection_highlight``.
+
 :ref:`Back to screenshot. <edit-line-item>`
 
 7. Multiplication Symbol
