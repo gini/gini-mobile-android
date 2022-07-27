@@ -10,8 +10,11 @@ import net.gini.android.capture.logging.ErrorLoggerListener
 import net.gini.android.capture.network.GiniCaptureNetworkApi
 import net.gini.android.capture.network.GiniCaptureNetworkService
 import net.gini.android.capture.onboarding.OnboardingPage
+import net.gini.android.capture.onboarding.view.OnboardingIllustrationAdapter
+import net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomAdapter
 import net.gini.android.capture.review.ReviewActivity
 import net.gini.android.capture.tracking.EventTracker
+import net.gini.android.capture.view.NavigationBarTopAdapter
 
 /**
  * Configuration class for Capture feature.
@@ -126,6 +129,20 @@ data class CaptureConfiguration(
      * Set a custom imported file size limit in bytes.
      */
     val importedFileSizeBytesLimit: Int = FILE_SIZE_LIMIT,
+
+    val navigationBarTopAdapter: NavigationBarTopAdapter? = null,
+
+    val bottomNavigationBarEnabled: Boolean = false,
+
+    val onboardingNavigationBarBottomAdapter: OnboardingNavigationBarBottomAdapter? = null,
+
+    val onboardingAlignCornersIllustrationAdapter: OnboardingIllustrationAdapter? = null,
+
+    val onboardingLightingIllustrationAdapter: OnboardingIllustrationAdapter? = null,
+
+    val onboardingMultiPageIllustrationAdapter: OnboardingIllustrationAdapter? = null,
+
+    val onboardingQRCodeIllustrationAdapter: OnboardingIllustrationAdapter? = null,
 )
 
 internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfiguration): GiniCapture.Builder {
@@ -144,6 +161,7 @@ internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfig
         .setCustomHelpItems(configuration.customHelpItems)
         .setGiniErrorLoggerIsOn(configuration.giniErrorLoggerIsOn)
         .setImportedFileSizeBytesLimit(configuration.importedFileSizeBytesLimit)
+        .setBottomNavigationBarEnabled(configuration.bottomNavigationBarEnabled)
         .apply {
             configuration.eventTracker?.let { setEventTracker(it) }
             configuration.errorLoggerListener?.let { setCustomErrorLoggerListener(it) }
@@ -152,5 +170,11 @@ internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfig
                     configuration.onboardingPages.forEach { add(it) }
                 })
             }
+            configuration.navigationBarTopAdapter?.let { setNavigationBarTopAdapter(it) }
+            configuration.onboardingNavigationBarBottomAdapter?.let { setOnboardingNavigationBarBottomAdapter(it) }
+            configuration.onboardingAlignCornersIllustrationAdapter?.let { setOnboardingAlignCornersIllustrationAdapter(it) }
+            configuration.onboardingLightingIllustrationAdapter?.let { setOnboardingLightingIllustrationAdapter(it) }
+            configuration.onboardingMultiPageIllustrationAdapter?.let { setOnboardingMultiPageIllustrationAdapter(it) }
+            configuration.onboardingQRCodeIllustrationAdapter?.let { setOnboardingQRCodeIllustrationAdapter(it) }
         }
 }
