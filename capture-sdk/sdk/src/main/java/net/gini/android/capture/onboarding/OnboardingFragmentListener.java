@@ -5,9 +5,13 @@ import net.gini.android.capture.GiniCaptureError;
 import androidx.annotation.NonNull;
 
 /**
+ * Internal use only.
+ *
  * <p>
  * Interface used by {@link OnboardingFragment} to dispatch events to the hosting Activity.
  * </p>
+ *
+ * @suppress
  */
 public interface OnboardingFragmentListener {
     /**

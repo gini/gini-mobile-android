@@ -42,54 +42,9 @@ import java.util.List;
 import jersey.repackaged.jsr166e.CompletableFuture;
 
 /**
- * <h3>Component API</h3>
+ * Internal use only.
  *
- * <p>
- * When you use the Component API with the Android Support Library, the {@code
- * OnboardingFragmentCompat} displays important advice for correctly photographing a document.
- * </p>
- * <p>
- * <b>Note:</b> Your Activity hosting this Fragment must extend the {@link
- * androidx.appcompat.app.AppCompatActivity} and use an AppCompat Theme.
- * </p>
- * <p>
- * Include the {@code OnboardingFragmentCompat} into your layout either directly with {@code
- * <fragment>} in your Activity's layout or using the {@link androidx.fragment.app.FragmentManager}.
- * </p>
- * <p>
- * The default way of showing the Onboarding Screen is as an overlay above the camera preview with a
- * semi-transparent background.
- * </p>
- * <p>
- * By default an empty last page is added to enable the revealing of the camera preview before the
- * Onboarding Screen is dismissed.
- * </p>
- * <p>
- * If you would like to display a different number of pages, you can use the {@link
- * OnboardingFragment#createInstance(ArrayList)} or {@link OnboardingFragment#createInstanceWithoutEmptyLastPage(ArrayList)}
- * factory method and provide a list of {@link OnboardingPage} objects.
- * </p>
- * <p>
- * If you would like to disable the appending of the empty last page, you can use the {@link
- * OnboardingFragment#createInstanceWithoutEmptyLastPage(ArrayList)} or the {@link
- * OnboardingFragment#createInstanceWithoutEmptyLastPage()} factory method.
- * </p>
- * <p>
- * An {@link OnboardingFragmentListener} instance must be available until the {@code
- * OnboardingFragmentCompat} is attached to an activity. Failing to do so will throw an exception.
- * The listener instance can be provided either implicitly by making the hosting Activity implement
- * the {@link OnboardingFragmentListener} interface or explicitly by setting the listener using
- * {@link OnboardingFragment#setListener(OnboardingFragmentListener)}.
- * </p>
- * <p>
- * Your Activity is automatically set as the listener in {@link OnboardingFragment#onCreate(Bundle)}.
- * </p>
- *
- * <h3>Customizing the Onboarding Screen</h3>
- *
- * <p>
- * See the {@link OnboardingActivity} for details.
- * </p>
+ * @suppress
  */
 public class OnboardingFragment extends Fragment implements OnboardingScreenContract.View,
         OnboardingFragmentInterface {

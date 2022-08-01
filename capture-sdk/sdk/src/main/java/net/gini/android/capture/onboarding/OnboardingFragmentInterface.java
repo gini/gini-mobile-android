@@ -9,9 +9,13 @@ package net.gini.android.capture.onboarding;
 import androidx.annotation.NonNull;
 
 /**
+ * Internal use only.
+ *
  * <p>
  *     Methods which Onboarding Fragment must implement.
  * </p>
+ *
+ * @suppress
  */
 public interface OnboardingFragmentInterface {
 
