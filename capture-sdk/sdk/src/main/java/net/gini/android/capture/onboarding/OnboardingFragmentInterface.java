@@ -17,7 +17,7 @@ import androidx.annotation.NonNull;
  *
  * @suppress
  */
-public interface OnboardingFragmentInterface {
+interface OnboardingFragmentInterface {
 
     /**
      * <p>

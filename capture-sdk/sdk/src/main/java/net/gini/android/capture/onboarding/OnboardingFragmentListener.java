@@ -13,7 +13,7 @@ import androidx.annotation.NonNull;
  *
  * @suppress
  */
-public interface OnboardingFragmentListener {
+interface OnboardingFragmentListener {
     /**
      * <p>
      *     Called when the user has left the last page - either by swiping or tapping on the Next button - and you should
