@@ -365,14 +365,6 @@ public abstract class GiniCoreAPIBuilder<DTM extends DocumentTaskManager<A, E>, 
         return mUserCenterManager;
     }
 
-    @NonNull
-    private synchronized UserRepository getUserRepository() {
-        if (mUserRepository == null) {
-            mUserRepository = new UserRepository(EmptyCoroutineContext.INSTANCE);
-        }
-        return mUserRepository;
-    }
-
     /**
      * Helper method to create a DocumentTaskManager instance.
      *
@@ -398,7 +390,7 @@ public abstract class GiniCoreAPIBuilder<DTM extends DocumentTaskManager<A, E>, 
     public synchronized SessionManager getSessionManager() {
         if (mSessionManager == null) {
             mSessionManager = new AnonymousSessionManager(mEmailDomain, getUserCenterManager(),
-                    getCredentialsStore(), getUserRepository());
+                    getCredentialsStore());
         }
         return mSessionManager;
     }

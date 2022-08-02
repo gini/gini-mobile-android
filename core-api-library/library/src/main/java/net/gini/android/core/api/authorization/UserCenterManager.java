@@ -78,10 +78,6 @@ public class UserCenterManager {
      *                                  requests to the Gini API.
      */
     public Task<Session> loginUser(final UserCredentials userCredentials) {
-
-//        UserCenterKotlinAPICommunicator userCenterKotlinAPICommunicator = new UserCenterKotlinAPICommunicator(EmptyCoroutineContext.INSTANCE);
-//        userCenterKotlinAPICommunicator.callAPI(new UserRequestModel(userCredentials.getUsername(), userCredentials.getPassword()));
-
         Task<JSONObject> loginTask = mUserCenterAPICommunicator.loginUser(userCredentials);
         return loginTask.onSuccess(new Continuation<JSONObject, Session>() {
             @Override

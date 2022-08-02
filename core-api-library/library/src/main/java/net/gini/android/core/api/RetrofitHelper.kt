@@ -12,8 +12,6 @@ object RetrofitHelper {
     private var baseUrl = ""
     private const val DEFAULT_TIMEOUT = 60L
 
-    val setAuthorizationHeaderUseCase = SetAuthorizationHeaderUseCase()
-
     fun getInstance(): Retrofit {
         return Retrofit.Builder()
             .client(
@@ -22,7 +20,7 @@ object RetrofitHelper {
                 .readTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
                 .writeTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
                     .addInterceptor {
-                        it.proceed(setAuthorizationHeaderUseCase(it.request()))
+                        it.proceed(TokenRequestHeader()(it.request()))
                     }.build())
             .baseUrl(baseUrl)
             .addConverterFactory(GsonConverterFactory.create())
@@ -37,7 +35,7 @@ object RetrofitHelper {
         baseUrl = baseURL
     }
 
-    class SetAuthorizationHeaderUseCase {
+    class TokenRequestHeader {
 
         operator fun invoke(request: Request): Request {
             return request.newBuilder().addHeader(AUTHORIZATION, "Basic Z2luaS1tb2JpbGUtdGVzdDp3VDRvNGtYUEFZdERrbm5PWXdXZjR3NXM=")

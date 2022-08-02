@@ -4,7 +4,12 @@ import kotlinx.coroutines.flow.Flow
 import net.gini.android.core.api.authorization.apimodels.UserRequestModel
 import net.gini.android.core.api.authorization.apimodels.UserResponseModel
 
-class KAnonymousSessionManager(userRepository: UserRepository): KSessionManager {
+class KAnonymousSessionManager(
+    userRepository: UserRepository,
+    credentialsStore: CredentialsStore,
+    emailDomain: String,
+    currentSession: Session
+): KSessionManager {
     val userRepository: UserRepository
 
     init {
@@ -12,7 +17,7 @@ class KAnonymousSessionManager(userRepository: UserRepository): KSessionManager 
     }
 
     override suspend fun getSession(): Session {
-        TODO("Not yet implemented")
+        
     }
 
     suspend fun loginUser(userRequestModel: UserRequestModel): Flow<UserResponseModel?> {

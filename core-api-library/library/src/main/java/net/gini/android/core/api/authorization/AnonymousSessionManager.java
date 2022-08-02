@@ -48,14 +48,11 @@ public class AnonymousSessionManager implements SessionManager {
      */
     private Task<Session> mCurrentSessionTask;
 
-    private UserRepository mUserRepository;
-
     public AnonymousSessionManager(final String emailDomain, final UserCenterManager userCenterManager,
-                                   final CredentialsStore credentialsStore, final UserRepository userRepository) {
+                                   final CredentialsStore credentialsStore) {
         mEmailDomain = checkNotNull(emailDomain);
         mUserCenterManager = checkNotNull(userCenterManager);
         mCredentialsStore = checkNotNull(credentialsStore);
-        mUserRepository = userRepository;
     }
 
     private synchronized void setSession(Session session) {

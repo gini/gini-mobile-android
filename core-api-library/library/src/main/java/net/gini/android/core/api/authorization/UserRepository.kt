@@ -14,7 +14,7 @@ import kotlin.coroutines.CoroutineContext
 
 class UserRepository(
     override val coroutineContext: CoroutineContext,
-    private var session: Session?
+    private var session: Session? = null
     ) : CoroutineScope {
     val userRemoteSource = UserRemoteSource()
 
