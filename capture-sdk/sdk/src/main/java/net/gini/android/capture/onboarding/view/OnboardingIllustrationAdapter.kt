@@ -16,15 +16,23 @@ import net.gini.android.capture.view.InjectedViewAdapter
  */
 
 /**
- * TODO: add doc
+ * Adapter for injecting a custom onboarding illustration.
  */
 interface OnboardingIllustrationAdapter : InjectedViewAdapter, Parcelable {
+    /**
+     * Called when the illustration is visible. If you use animations, then you can start the animation here.
+     */
     fun onVisible()
+    /**
+     * Called when the illustration is hidden. If you use animations, then you can stop the animation here.
+     */
     fun onHidden()
 }
 
 /**
- * TODO: add doc
+ * Implements the [OnboardingIllustrationAdapter] to use a drawable resource for the illustration.
+ *
+ * @param drawableRes the id of a drawable resource
  */
 @Parcelize
 class ImageOnboardingIllustrationAdapter(@DrawableRes private val drawableRes: Int) : OnboardingIllustrationAdapter {

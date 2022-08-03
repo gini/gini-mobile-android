@@ -130,18 +130,41 @@ data class CaptureConfiguration(
      */
     val importedFileSizeBytesLimit: Int = FILE_SIZE_LIMIT,
 
+    /**
+     * Set an adapter implementation to show a custom top navigation bar.
+     */
     val navigationBarTopAdapter: NavigationBarTopAdapter? = null,
 
+    /**
+     * Enable/disable the bottom navigation bar.
+     *
+     * Disabled by default.
+     */
     val bottomNavigationBarEnabled: Boolean = false,
 
+    /**
+     * Set an adapter implementation to show a custom bottom navigation bar on the onboarding screen.
+     */
     val onboardingNavigationBarBottomAdapter: OnboardingNavigationBarBottomAdapter? = null,
 
+    /**
+     * Set an adapter implementation to show a custom illustration on the "align corners" onboarding page.
+     */
     val onboardingAlignCornersIllustrationAdapter: OnboardingIllustrationAdapter? = null,
 
+    /**
+     * Set an adapter implementation to show a custom illustration on the "lighting" onboarding page.
+     */
     val onboardingLightingIllustrationAdapter: OnboardingIllustrationAdapter? = null,
 
+    /**
+     * Set an adapter implementation to show a custom illustration on the "multi-page" onboarding page.
+     */
     val onboardingMultiPageIllustrationAdapter: OnboardingIllustrationAdapter? = null,
 
+    /**
+     * Set an adapter implementation to show a custom illustration on the "QR code" onboarding page.
+     */
     val onboardingQRCodeIllustrationAdapter: OnboardingIllustrationAdapter? = null,
 )
 

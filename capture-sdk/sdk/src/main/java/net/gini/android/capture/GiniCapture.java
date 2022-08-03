@@ -991,8 +991,14 @@ public class GiniCapture {
             return mImportedFileSizeBytesLimit;
         }
 
-        public Builder setNavigationBarTopAdapter(@NonNull final NavigationBarTopAdapter Adapter ) {
-            navigationBarTopAdapter = Adapter;
+        /**
+         * Set an adapter implementation to show a custom top navigation bar.
+         *
+         * @param adapter a {@link NavigationBarTopAdapter} interface implementation
+         * @return the {@link Builder} instance
+         */
+        public Builder setNavigationBarTopAdapter(@NonNull final NavigationBarTopAdapter adapter) {
+            navigationBarTopAdapter = adapter;
             return this;
         }
 
@@ -1001,8 +1007,14 @@ public class GiniCapture {
             return navigationBarTopAdapter;
         }
 
-        public Builder setOnboardingNavigationBarBottomAdapter(@NonNull final OnboardingNavigationBarBottomAdapter Adapter ) {
-            navigationBarBottomAdapter = Adapter;
+        /**
+         * Set an adapter implementation to show a custom bottom navigation bar on the onboarding screen.
+         *
+         * @param adapter an {@link OnboardingNavigationBarBottomAdapter} interface implementation
+         * @return the {@link Builder} instance
+         */
+        public Builder setOnboardingNavigationBarBottomAdapter(@NonNull final OnboardingNavigationBarBottomAdapter adapter) {
+            navigationBarBottomAdapter = adapter;
             return this;
         }
 
@@ -1011,6 +1023,13 @@ public class GiniCapture {
             return navigationBarBottomAdapter;
         }
 
+        /**
+         * Enable/disable the bottom navigation bar.
+         *
+         * Disabled by default.
+         *
+         * @return the {@link Builder} instance
+         */
         public Builder setBottomNavigationBarEnabled(final Boolean enabled) {
             isBottomNavigationBarEnabled = enabled;
             return this;
@@ -1025,6 +1044,12 @@ public class GiniCapture {
             return onboardingAlignCornersIllustrationAdapter;
         }
 
+        /**
+         * Set an adapter implementation to show a custom illustration on the "align corners" onboarding page.
+         *
+         * @param adapter an {@link OnboardingIllustrationAdapter} interface implementation
+         * @return the {@link Builder} instance
+         */
         public Builder setOnboardingAlignCornersIllustrationAdapter(@NonNull final OnboardingIllustrationAdapter adapter) {
             onboardingAlignCornersIllustrationAdapter = adapter;
             return this;
@@ -1035,6 +1060,12 @@ public class GiniCapture {
             return onboardingLightingIllustrationAdapter;
         }
 
+        /**
+         * Set an adapter implementation to show a custom illustration on the "lighting" onboarding page.
+         *
+         * @param adapter an {@link OnboardingIllustrationAdapter} interface implementation
+         * @return the {@link Builder} instance
+         */
         public Builder setOnboardingLightingIllustrationAdapter(@NonNull final OnboardingIllustrationAdapter adapter) {
             onboardingLightingIllustrationAdapter = adapter;
             return this;
@@ -1045,6 +1076,12 @@ public class GiniCapture {
             return onboardingMultiPageIllustrationAdapter;
         }
 
+        /**
+         * Set an adapter implementation to show a custom illustration on the "multi-page" onboarding page.
+         *
+         * @param adapter an {@link OnboardingIllustrationAdapter} interface implementation
+         * @return the {@link Builder} instance
+         */
         public Builder setOnboardingMultiPageIllustrationAdapter(@NonNull final OnboardingIllustrationAdapter adapter) {
             onboardingMultiPageIllustrationAdapter = adapter;
             return this;
@@ -1055,6 +1092,12 @@ public class GiniCapture {
             return onboardingQRCodeIllustrationAdapter;
         }
 
+        /**
+         * Set an adapter implementation to show a custom illustration on the "QR code" onboarding page.
+         *
+         * @param adapter an {@link OnboardingIllustrationAdapter} interface implementation
+         * @return the {@link Builder} instance
+         */
         public Builder setOnboardingQRCodeIllustrationAdapter(@NonNull final OnboardingIllustrationAdapter adapter) {
             onboardingQRCodeIllustrationAdapter = adapter;
             return this;

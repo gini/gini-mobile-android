@@ -12,13 +12,42 @@ import net.gini.android.capture.view.InjectedViewAdapter
  * Copyright (c) 2022 Gini GmbH.
  */
 
+/**
+ * Adapter for injecting a custom bottom navigation bar on the onboarding screen.
+ */
 interface OnboardingNavigationBarBottomAdapter : InjectedViewAdapter {
+    /**
+     * Set the click listener for the skip button.
+     *
+     * @param listener the click listener for the button
+     */
     fun setOnSkipButtonClickListener(listener: View.OnClickListener?)
+
+    /**
+     * Set the click listener for the next button.
+     *
+     * @param listener the click listener for the button
+     */
     fun setOnNextButtonClickListener(listener: View.OnClickListener?)
+
+    /**
+     * Set the click listener for the "get started" button.
+     *
+     * @param listener the click listener for the button
+     */
     fun setOnGetStartedButtonClickListener(listener: View.OnClickListener?)
+
+    /**
+     * Called when the displayed buttons have to change. Show only the buttons that are in the list.
+     *
+     * @param buttons list of the buttons that have to be shown
+     */
     fun showButtons(vararg buttons: OnboardingNavigationBarBottomButton)
 }
 
+/**
+ * Buttons that can be shown on the onboarding screen's bottom navigation bar.
+ */
 enum class OnboardingNavigationBarBottomButton {
     SKIP,
     NEXT,

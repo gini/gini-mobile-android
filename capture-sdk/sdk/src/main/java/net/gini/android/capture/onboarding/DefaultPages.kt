@@ -4,6 +4,9 @@ import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.R
 import net.gini.android.capture.onboarding.view.ImageOnboardingIllustrationAdapter
 
+/**
+ * Default onboarding pages.
+ */
 sealed class DefaultPages(val onboardingPage: OnboardingPage) {
 
     class Page1 : DefaultPages(OnboardingPage(R.string.gc_onboarding_align_corners_title, R.string.gc_onboarding_align_corners_message, ImageOnboardingIllustrationAdapter(R.drawable.gc_onboarding_align_corners)))
@@ -13,6 +16,13 @@ sealed class DefaultPages(val onboardingPage: OnboardingPage) {
 
     companion object {
 
+        /**
+         * Get the default onboarding pages based on the enabled features.
+         *
+         * @param isMultiPageEnabled pass in `true` if the multi-page feature was enabled
+         * @param isQRCodeScanningEnabled pass in `true` if the QR code scanning feature was enabled
+         * @return an [ArrayList] of the onboarding pages
+         */
         @JvmStatic
         fun asArrayList(isMultiPageEnabled: Boolean, isQRCodeScanningEnabled: Boolean): ArrayList<OnboardingPage> {
             val list = mutableListOf(

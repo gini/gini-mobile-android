@@ -18,14 +18,45 @@ import net.gini.android.capture.view.NavButtonType.CLOSE
  * Copyright (c) 2022 Gini GmbH.
  */
 
+/**
+ * Adapter for injecting a custom top navigation bar.
+ */
 interface NavigationBarTopAdapter : InjectedViewAdapter {
+    /**
+     * Set the click listener for the navigation bar's navigation button.
+     *
+     * @param listener the click listener for the button
+     */
     fun setOnNavButtonClickListener(listener: View.OnClickListener?)
+
+    /**
+     * Set the navigation bar title.
+     *
+     * @param title navigation bar title
+     */
     fun setTitle(title: String)
+
+    /**
+     * Called when the navigation button type has to change. You should update the look of the navigation button
+     * based on its type.
+     *
+     * @param navButtonType the type of the navigation button
+     */
     fun setNavButtonType(navButtonType: NavButtonType)
 }
 
+/**
+ * Navigation button types.
+ */
 enum class NavButtonType {
+    /**
+     * Navigation button is used as a back button.
+     */
     BACK,
+
+    /**
+     * Navigation button is used as a close button.
+     */
     CLOSE
 }
 
