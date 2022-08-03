@@ -205,7 +205,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toStartOf="@+id/gross_price_total_fractional_part"
-        android:includeFontPadding="false"
         android:textAppearance="@style/GiniCaptureTheme.DigitalInvoice.TotalGrossPrice.Integral.TextStyle"
         app:layout_constraintEnd_toStartOf="@id/gross_price_total_fractional_part"
         app:layout_constraintTop_toTopOf="@id/gross_price_total_fractional_part"

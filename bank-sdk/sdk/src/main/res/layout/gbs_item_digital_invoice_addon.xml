@@ -28,7 +28,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_toStartOf="@+id/gbs_addon_price_total_fractional_part"
-        android:includeFontPadding="false"
         android:textAppearance="@style/GiniCaptureTheme.DigitalInvoice.Addon.Price.Integral.TextStyle"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toStartOf="@id/gbs_addon_price_total_fractional_part"
