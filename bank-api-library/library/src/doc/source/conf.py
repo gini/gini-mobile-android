@@ -30,7 +30,7 @@ import gini_sphinx_theme
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx.ext.todo']
+extensions = ['sphinx.ext.todo', 'sphinx.ext.extlinks']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -265,3 +265,17 @@ htmlhelp_basename = 'GiniBankAPILibraryAndroidDoc'
 #texinfo_no_detailmenu = False
 
 todo_include_todos = os.environ.get("TODO", "1") == "1"
+
+# -- Inject versioned dokka link -------------------------------------------
+project_version = os.getenv("PROJECT_VERSION")
+
+if project_version != None:
+    version_path = "/%(project_version)s/" % {"project_version" : project_version}
+else:
+    version_path = "/"
+
+root_dokka_path = "https://developer.gini.net/gini-mobile-android/bank-api-library/library%(version_path)sdokka/" % {"version_path" : version_path}
+
+extlinks = {
+    "root_dokka_path": (root_dokka_path + "%s", "%s"),
+}
