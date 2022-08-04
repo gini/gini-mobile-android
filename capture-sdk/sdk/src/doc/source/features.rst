@@ -3,9 +3,8 @@ Features
 
 The Gini Capture SDK provides various features you can enable and configure. All of the features are configured during
 creation of a new ``GiniCapture`` instance. Specifically the ``GiniCapture.Builder`` is used to configure the Gini
-Capture SDK. It's `reference documentation
-<https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/dokka/sdk/net.gini.android.capture/-gini-capture/-builder/index.html>`_
-lists all the options.
+Capture SDK. It's :root_dokka_path:`reference documentation
+<sdk/net.gini.android.capture/-gini-capture/-builder/index.html>` lists all the options.
 
 .. note::
 
@@ -161,9 +160,8 @@ Intercepting the imported document
 You can intercept the imported document and deny the Gini Capture SDK from using it.
 
 If you use the *Screen API* then you need to subclass the ``CameraActivity`` and override the
-``onCheckImportedDocument`` method. See it's `reference documentation
-<https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/dokka/sdk/net.gini.android.capture.camera/-camera-activity/on-check-imported-document.html>`_
-for details.
+``onCheckImportedDocument`` method. See it's :root_dokka_path:`reference documentation
+<sdk/net.gini.android.capture.camera/-camera-activity/on-check-imported-document.html>` for details.
 
 With the *Component API* you can intercept the document in the ``CameraFragmentListener.onCheckImportedDocument()``
 method. The method signature and usage is the same as above.
@@ -491,8 +489,8 @@ Screen + Component        Analysis Screen           ``AnalysisScreenEvent.ERROR`
 Screen + Component        Analysis Screen           ``AnalysisScreenEvent.RETRY``                                        The user decides to retry after an analysis error.     1.0.0
 ========================  ========================  ===================================================================  =====================================================  ==========================
 
-The supported events are listed for each screen in a dedicated enum. You can view these enums in our `reference documentation
-<https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/dokka/sdk/net.gini.android.capture.tracking/index.html>`_.
+The supported events are listed for each screen in a dedicated enum. You can view these enums in our
+:root_dokka_path:`reference documentation <sdk/net.gini.android.capture.tracking/index.html>`.
 
 Error Logging
 -------------
