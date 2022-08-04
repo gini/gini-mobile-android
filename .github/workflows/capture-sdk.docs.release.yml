@@ -58,6 +58,7 @@ jobs:
             {
               "project_id": "capture-sdk",
               "module_id": "default-network",
+              "documentation_title": "Gini Capture SDK for Android",
               "git_tag": "${{ github.ref }}",
               "ci": "true",
               "git_user": "${{ secrets.RELEASE_GITHUB_USER }}",
