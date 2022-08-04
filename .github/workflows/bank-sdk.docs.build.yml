@@ -37,7 +37,7 @@ jobs:
             { 
               "project_id": "bank-sdk",
               "module_id": "sdk",
-              "links_to_projects": "[{\"project_id\": \"capture-sdk\", \"module_id\": \"sdk\"}]"
+              "links_to_projects": "[{\\\"project_id\\\": \\\"capture-sdk\\\", \\\"module_id\\\": \\\"sdk\\\"}]"
             }
 
       - name: archive documentation
