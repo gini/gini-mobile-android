@@ -25,7 +25,6 @@
         android:id="@+id/gross_price_total_integral_part"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:includeFontPadding="false"
         android:textAppearance="@style/GiniCaptureTheme.DigitalInvoice.TotalGrossPrice.Integral.TextStyle"
         app:layout_constraintStart_toEndOf="@id/total_label"
         app:layout_constraintEnd_toStartOf="@id/gross_price_total_fractional_part"
