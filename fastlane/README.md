@@ -80,7 +80,8 @@ Releases the documentation into a folder hierarchy constructed from the project_
 Example: <gh_pages_url>/capture-sdk/sdk/1.11.0
 
 On the 'main' branch it updates the project root index.html (at <gh_pages_url>/<project_id>/<module_id>/index.html) 
-and the old documentation root index.html (at <gh_pages_url>/<project_id>/<module_id>/html/index.html)
+and the old documentation root index.html (at <gh_pages_url>/<project_id>/<module_id>/html/index.html) 
+to automatically redirect to the released version.
 
 Parameters:
   project_id            - the id of the project to be released (e.g., health-sdk, health-api-lib)

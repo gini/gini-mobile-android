@@ -184,10 +184,6 @@ platform :android do
       end
 
       sh("cp -a ../#{project_id}/#{module_id}/src/doc/build/* ../#{project_id}/#{module_id}/build/docs")
-    else
-      UI.abort_with_message!  <<~MESSAGE
-        Sphinx documentation not found at #{sphinx_doc_dir}
-      MESSAGE
     end
 
     UI.success <<~MESSAGE
