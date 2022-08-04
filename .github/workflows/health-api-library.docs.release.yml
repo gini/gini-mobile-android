@@ -38,6 +38,7 @@ jobs:
             { 
               "project_id": "health-api-library", 
               "module_id": "library",
+              "documentation_title": "Gini Health API Library for Android",
               "git_tag": "${{ github.ref }}",
               "ci": "true",
               "git_user": "${{ secrets.RELEASE_GITHUB_USER }}",
