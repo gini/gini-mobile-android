@@ -38,6 +38,8 @@ jobs:
             { 
               "project_id": "bank-sdk",
               "module_id": "sdk",
+              "documentation_title": "Gini Bank SDK for Android",
+              "links_to_projects": '[{"project_id": "capture-sdk", "module_id": "sdk"}]'
               "git_tag": "${{ github.ref }}",
               "ci": "true",
               "git_user": "${{ secrets.RELEASE_GITHUB_USER }}",
