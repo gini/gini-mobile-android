@@ -38,6 +38,7 @@ jobs:
             { 
               "project_id": "health-sdk", 
               "module_id": "sdk",
+              "documentation_title": "Gini Health SDK for Android",
               "git_tag": "${{ github.ref }}",
               "ci": "true",
               "git_user": "${{ secrets.RELEASE_GITHUB_USER }}",
