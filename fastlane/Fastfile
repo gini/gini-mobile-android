@@ -199,21 +199,35 @@ platform :android do
   end
 
   desc <<~DOC
-    Release project documentation.
+    Release project documentation on the 'gh_pages' branch.
+
+    Releases the documentation into a folder hierarchy constructed from the project_id, module_id and project version:
+    <gh_pages_url>/<project_id>/<module_id>/<project_version>
+    Example: <gh_pages_url>/capture-sdk/sdk/1.11.0
+
+    On the 'main' branch it updates the project root index.html (at <gh_pages_url>/<project_id>/<module_id>/index.html) 
+    and the old documentation root index.html (at <gh_pages_url>/<project_id>/<module_id>/html/index.html) 
+    to automatically redirect to the released version.
     
     Parameters:
-      project_id    - the id of the project to be released (e.g., health-sdk, health-api-lib)
-      module_id     - the id of the project's module to be released (e.g., sdk, lib)
-      git_tag       - the git tag name used to release the documentation
-      ci            - set to "true" if running on a CI machine
-      git_user     - the username to use for git authentication
-      git_password - the password to use for git authentication
+      project_id            - the id of the project to be released (e.g., health-sdk, health-api-lib)
+      module_id             - the id of the project's module to be released (e.g., sdk, lib)
+      git_tag               - the git tag name used to release the documentation
+      ci                    - set to "true" if running on a CI machine
+      git_user              - the username to use for git authentication
+      git_password          - the password to use for git authentication
+      documentation_title   - the title used on the root index page
+      links_to_projects     - (optional) a json array of projects that are linked to in the documentation, for example: [{"project_id": "capture-sdk", "module_id": "sdk"}]
+      dry_run               - (optional) executes without permanent side effects
   DOC
   lane :release_documentation do |options|
-    (project_id, module_id, git_tag, ci, git_user, git_password) = 
-      check_and_get_options(options, [:project_id, :module_id, :git_tag, :ci, :git_user, :git_password], UI)
+    # Required options
+    (project_id, module_id, git_tag, ci, git_user, git_password, documentation_title) = 
+      check_and_get_options(options, [:project_id, :module_id, :git_tag, :ci, :git_user, :git_password, :documentation_title], UI)
+    # Optional options
+    dry_run = options[:dry_run]
 
-    build_documentation(project_id: project_id, module_id: module_id)
+    build_documentation(project_id: project_id, module_id: module_id, links_to_projects: options[:links_to_projects])
 
     tag_version = get_project_version_from_tag(project_id, git_tag, UI)
     project_version = get_project_version_from_gradle(project_id, module_id)
@@ -228,9 +242,13 @@ platform :android do
       MESSAGE
     end
 
+    git_branch = get_git_branch()
+
     UI.message <<~MESSAGE
       Releasing documentation:
         * gradle module       : #{project_id}:#{module_id}
+        * project version     : #{project_version}
+        * git branch          : #{git_branch}
         * git tag             : #{git_tag}
         * destination branch  : gh-pages
         * destination folder  : #{project_id}/#{module_id}
@@ -244,29 +262,68 @@ platform :android do
     sh("rm -rf gh-pages")
     sh("git clone -b gh-pages https://#{git_user}:#{git_password}@github.com/gini/gini-mobile-android.git gh-pages")
 
+    project_root_path = "#{project_id}/#{module_id}"
+    destination_path = "#{project_root_path}/#{project_version}"
+
     Dir.chdir("gh-pages") do
       UI.message "Clear out the existing documentation"
-      sh("git rm -rf #{project_id}/#{module_id} --ignore-unmatch && git clean -fd")
+      sh("git rm -rf #{destination_path} --ignore-unmatch && git clean -fd")
 
       UI.message "Copy over the current documentation"
-      sh("mkdir -p #{project_id}/#{module_id} && cp -R ../../#{project_id}/#{module_id}/build/docs/* #{project_id}/#{module_id}")
+      sh("mkdir -p #{destination_path} && cp -R ../../#{project_id}/#{module_id}/build/docs/* #{destination_path}")
 
       UI.message "Disable jekyll"
       sh("touch .nojekyll")
 
-      UI.message "Commit and push the new documentation"
-      sh("git add --all")
-      sh("git diff --quiet --exit-code --cached || git commit -m 'Release #{project_id} documentation for tag #{git_tag}' --author='Team Mobile <team-mobile@gini.net>'")
-      git_push_with_retry("gh-pages", UI)
+      if git_branch == "main"
+        UI.message <<~MESSAGE
+          Releasing from 'main' branch. Update the project root index.html and 
+          the old documentation root index.html to redirect to this documentation version.
+        MESSAGE
+
+        index_html = <<~INDEX_HTML
+        <!DOCTYPE html>
+        <html lang="en">
+          <head>
+            <meta charset="UTF-8">
+            <title>#{documentation_title}</title>
+            <meta http-equiv="refresh" content="0; URL=https://developer.gini.net/gini-mobile-android/#{destination_path}/html/index.html" />
+          </head>
+          <body>
+            Redirecting to the latest stable version...
+          </body>
+        </html>
+        INDEX_HTML
+
+        File.open("#{project_root_path}/index.html", "w") { |f| 
+          f.write index_html
+        }
+        File.open("#{project_root_path}/html/index.html", "w") { |f| 
+          f.write index_html
+        }
+      else
+        UI.message "Releasing from a different branch than 'main'. Not changing the project root index.html or the old documentation root index.html."
+      end
+
+      if !dry_run 
+        UI.message "Commit and push the new documentation"
+        sh("git add --all")
+        sh("git diff --quiet --exit-code --cached || git commit -m 'Release #{project_id} documentation for tag #{git_tag}' --author='Team Mobile <team-mobile@gini.net>'")
+        git_push_with_retry("gh-pages", UI)
+      else
+        UI.message "Skipping commit and push (dry run)"
+      end
     end
 
     UI.success <<~MESSAGE
       Documentation released:
         * gradle module       : #{project_id}:#{module_id}
+        * project version     : #{project_version}
+        * git branch          : #{git_branch}
         * git tag             : #{git_tag}
         * destination branch  : gh-pages
-        * destination folder  : #{project_id}/#{module_id}
-        * url                 : http://developer.gini.net/gini-mobile-android/#{project_id}/#{module_id}/html
+        * destination folder  : #{destination_path}
+        * url                 : http://developer.gini.net/gini-mobile-android/#{destination_path}/html
     MESSAGE
   end
 

@@ -73,15 +73,25 @@ Parameters:
 [bundle exec] fastlane android release_documentation
 ```
 
-Release project documentation.
+Release project documentation on the 'gh_pages' branch.
+
+Releases the documentation into a folder hierarchy constructed from the project_id, module_id and project version:
+<gh_pages_url>/<project_id>/<module_id>/<project_version>
+Example: <gh_pages_url>/capture-sdk/sdk/1.11.0
+
+On the 'main' branch it updates the project root index.html (at <gh_pages_url>/<project_id>/<module_id>/index.html) 
+and the old documentation root index.html (at <gh_pages_url>/<project_id>/<module_id>/html/index.html)
 
 Parameters:
-  project_id    - the id of the project to be released (e.g., health-sdk, health-api-lib)
-  module_id     - the id of the project's module to be released (e.g., sdk, lib)
-  git_tag       - the git tag name used to release the documentation
-  ci            - set to "true" if running on a CI machine
-  git_user     - the username to use for git authentication
-  git_password - the password to use for git authentication
+  project_id            - the id of the project to be released (e.g., health-sdk, health-api-lib)
+  module_id             - the id of the project's module to be released (e.g., sdk, lib)
+  git_tag               - the git tag name used to release the documentation
+  ci                    - set to "true" if running on a CI machine
+  git_user              - the username to use for git authentication
+  git_password          - the password to use for git authentication
+  documentation_title   - the title used on the root index page
+  links_to_projects     - (optional) a json array of projects that are linked to in the documentation, for example: [{"project_id": "capture-sdk", "module_id": "sdk"}]
+  dry_run               - (optional) executes without permanent side effects
 
 
 ### android create_release_tags
