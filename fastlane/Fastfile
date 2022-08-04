@@ -138,16 +138,27 @@ platform :android do
     Build project documentation.
     
     Parameters:
-      project_id    - the id of the project to be released (e.g., health-sdk, health-api-lib)"
-      module_id     - the id of the project's module to be released (e.g., sdk, lib)"
+      project_id        - the id of the project to be released (e.g., health-sdk, health-api-lib)"
+      module_id         - the id of the project's module to be released (e.g., sdk, lib)"
+      links_to_projects - (optional) a json array of projects that are linked to in the documentation, for example: [{"project_id": "capture-sdk", "module_id": "sdk"}]
   DOC
   lane :build_documentation do |options|
+    # Required options
     (project_id, module_id) = 
       check_and_get_options(options, [:project_id, :module_id], UI)
+    # Optional options
+    if options[:links_to_projects]
+      links_to_projects = JSON.parse options[:links_to_projects]
+    else
+      links_to_projects = {}
+    end
+
+    project_version = get_project_version_from_gradle(project_id, module_id)
 
     UI.message <<~MESSAGE
       Building documentation:
-        * gradle module   : #{project_id}:#{module_id}
+        * gradle module     : #{project_id}:#{module_id}
+        * project version   : #{project_version}
     MESSAGE
 
     UI.message "Building reference documentation (dokka)"
@@ -158,18 +169,32 @@ platform :android do
     if Dir.exists? sphinx_doc_dir
       UI.message "Building integration guide (Sphinx)"
 
+      # Get the version for each linked project and create a space separated string of
+      # env vars in the format: <project_id in snail case and uppercase>_VERSION=<project version>
+      # For example: "CAPTURE_SDK_VERSION=1.11.0 BANK_API_LIBRARY_VERSION=1.5.0"
+      env_vars = links_to_projects.reduce("") { |acc, project| 
+        version_env_var_name = "#{project["project_id"].gsub("-", "_").upcase}_VERSION"
+        version = get_project_version_from_gradle(project["project_id"], project["module_id"])
+        acc + " #{version_env_var_name}=#{version}" 
+      }
+
       Dir.chdir(sphinx_doc_dir) do
         sh("pip install -r requirements.txt")
-        sh("make html")
+        sh("PROJECT_VERSION=#{project_version} #{env_vars} make html")
       end
 
       sh("cp -a ../#{project_id}/#{module_id}/src/doc/build/* ../#{project_id}/#{module_id}/build/docs")
+    else
+      UI.abort_with_message!  <<~MESSAGE
+        Sphinx documentation not found at #{sphinx_doc_dir}
+      MESSAGE
     end
 
     UI.success <<~MESSAGE
       Documentation successfully built:
-        * gradle module   : #{project_id}:#{module_id}
-        * available at    : #{project_id}/#{module_id}/build/docs
+        * gradle module     : #{project_id}:#{module_id}
+        * project version   : #{project_version}
+        * available at      : #{project_id}/#{module_id}/build/docs
     MESSAGE
   end
 

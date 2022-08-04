@@ -62,8 +62,9 @@ Parameters:
 Build project documentation.
 
 Parameters:
-  project_id    - the id of the project to be released (e.g., health-sdk, health-api-lib)"
-  module_id     - the id of the project's module to be released (e.g., sdk, lib)"
+  project_id        - the id of the project to be released (e.g., health-sdk, health-api-lib)"
+  module_id         - the id of the project's module to be released (e.g., sdk, lib)"
+  links_to_projects - (optional) a json array of projects that are linked to in the documentation, for example: [{"project_id": "capture-sdk", "module_id": "sdk"}]
 
 
 ### android release_documentation
