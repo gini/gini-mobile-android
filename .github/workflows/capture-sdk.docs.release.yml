@@ -50,6 +50,8 @@ jobs:
             { 
               "project_id": "capture-sdk",
               "module_id": "sdk",
+              "documentation_title": "Gini Capture SDK for Android",
+              "is_stable_release": "${{ steps.branch.outputs.branch_name == 'main' }}",
               "git_tag": "${{ github.ref }}",
               "ci": "true",
               "git_user": "${{ secrets.RELEASE_GITHUB_USER }}",
