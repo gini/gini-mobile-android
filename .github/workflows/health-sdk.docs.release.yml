@@ -17,6 +17,8 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
       - name: get branch name
         id: branch
@@ -26,9 +28,10 @@ jobs:
           # (github.ref contains the tag because this workflow is triggered by tags: 
           # https://docs.github.com/en/actions/learn-github-actions/contexts#github-context)
           branch_ref=$(git branch -r --contains "${{ github.ref }}")
-          # Remove "origin/" prefix from branch_ref
-          branch_name=${branch_ref/origin\/}
+          # Remove "origin/" prefix from branch_ref and trim whitespace
+          branch_name=$(echo ${branch_ref/origin\/} | tr -d '[:space:]')
           echo "::set-output name=branch_name::$branch_name"
+          echo "branch_name: $branch_name"
 
       - name: setup java
         uses: actions/setup-java@v2
