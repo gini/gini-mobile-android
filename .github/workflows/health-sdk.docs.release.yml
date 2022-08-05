@@ -18,6 +18,18 @@ jobs:
       - name: checkout
         uses: actions/checkout@v2
 
+      - name: get branch name
+        id: branch
+        shell: bash
+        run: |
+          # Get the branch ref that contains the tag in github.ref
+          # (github.ref contains the tag because this workflow is triggered by tags: 
+          # https://docs.github.com/en/actions/learn-github-actions/contexts#github-context)
+          branch_ref=$(git branch -r --contains "${{ github.ref }}")
+          # Remove "origin/" prefix from branch_ref
+          branch_name=${branch_ref/origin\/}
+          echo "::set-output name=branch_name::$branch_name"
+
       - name: setup java
         uses: actions/setup-java@v2
         with:
@@ -38,6 +50,8 @@ jobs:
             { 
               "project_id": "health-sdk", 
               "module_id": "sdk",
+              "documentation_title": "Gini Health SDK for Android",
+              "is_stable_release": "${{ steps.branch.outputs.branch_name == 'main' }}",
               "git_tag": "${{ github.ref }}",
               "ci": "true",
               "git_user": "${{ secrets.RELEASE_GITHUB_USER }}",

@@ -60,8 +60,8 @@ This will also free up any used resources.
 You should call ``cleanup()`` after the SDK returned control to your application and your app has sent feedback to the
 Gini Bank API and is not using the SDK anymore.
 
-To view all the configuration options see the documentation of `GiniCapture.Builder
-<https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/dokka/sdk/net.gini.android.capture/-gini-capture/-builder/index.html?query=public%20class%20Builder>`_.
+To view all the configuration options see the documentation of :root_dokka_path:`GiniCapture.Builder
+<sdk/net.gini.android.capture/-gini-capture/-builder/index.html?query=public%20class%20Builder>`.
 
 Information about the configurable features are available on the `Features <features.html>`_ page.
 
@@ -98,15 +98,15 @@ networking implementation of your own choosing.
 We provide two interfaces which need to be implemented to enable the SDK to analyze documents and retrieve extractions:
 
 * ``GiniCaptureNetworkService``
-   This interface is used to upload, analyze and delete documents. See the `reference documentation
-   <https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/dokka/sdk/net.gini.android.capture.network/-gini-capture-network-service/index.html>`_
+   This interface is used to upload, analyze and delete documents. See the 
+   :root_dokka_path:`reference documentation <sdk/net.gini.android.capture.network/-gini-capture-network-service/index.html>`
    for details.
 
 * ``GiniCaptureNetworkApi``
    This interface is used to declare network tasks which should be called by you outside of the Gini Capture SDK (e.g.,
-   for sending feedback after the user saw and potentielly corrected the extractions).  See the `reference documentation
-   <https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/dokka/sdk/net.gini.android.capture.network/-gini-capture-network-api/index.html>`_
-   for details.
+   for sending feedback after the user saw and potentielly corrected the extractions).  See the
+   :root_dokka_path:`reference documentation
+   <sdk/net.gini.android.capture.network/-gini-capture-network-api/index.html>` for details.
 
 Default Implementation
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -144,10 +144,8 @@ them to the builder of ``GiniCapture``:
         .build();
 
 Both default implementations follow the builder pattern. See the documentation of
-`GiniCaptureDefaultNetworkService.Builder
-<https://developer.gini.net/gini-mobile-android/capture-sdk/default-network/dokka/default-network/net.gini.android.capture.network/-gini-capture-default-network-service/-builder/index.html>`_
-and `GiniCaptureDefaultNetworkApi.Builder
-<https://developer.gini.net/gini-mobile-android/capture-sdk/default-network/dokka/default-network/net.gini.android.capture.network/-gini-capture-default-network-api/-builder/index.html>`_
+:root_dokka_path_default_network_library:`GiniCaptureDefaultNetworkService.Builder <default-network/net.gini.android.capture.network/-gini-capture-default-network-service/-builder/index.html>`
+and :root_dokka_path_default_network_library:`GiniCaptureDefaultNetworkApi.Builder <default-network/net.gini.android.capture.network/-gini-capture-default-network-api/-builder/index.html>`
 for configuration options.
 
 Retrieve the Analyzed Document
@@ -426,11 +424,9 @@ A ``CameraFragmentListener`` instance must be available before it is attached to
 Failing to do so will throw an exception. The listener instance can be provided either implicitly by making the host
 activity implement the ``CameraFragmentListener`` interface or explicitly by setting the listener using ``setListener()``.
 
-See the reference documentation of this fragment's `public interface
-<https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/dokka/sdk/net.gini.android.capture.camera/-camera-fragment-interface/index.html>`_
-and it's `listener
-<https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/dokka/sdk/net.gini.android.capture.camera/-camera-fragment-listener/index.html>`_
-for more details.
+See the reference documentation of this fragment's :root_dokka_path:`public interface
+<sdk/net.gini.android.capture.camera/-camera-fragment-interface/index.html>` and it's :root_dokka_path:`listener
+<sdk/net.gini.android.capture.camera/-camera-fragment-listener/index.html>` for more details.
 
 GiniCaptureCoordinator
 ++++++++++++++++++++++
@@ -438,9 +434,9 @@ GiniCaptureCoordinator
 This coordinator helps to implement the default behavior of the SDK. For example it helps to show the onboarding screen
 at first launch.
 
-See the `reference documentation
-<https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/dokka/sdk/net.gini.android.capture/-gini-capture-coordinator/index.html?query=public%20class%20GiniCaptureCoordinator>`_
-for details.
+See the :root_dokka_path:`reference documentation
+<sdk/net.gini.android.capture/-gini-capture-coordinator/index.html?query=public%20class%20GiniCaptureCoordinator>` for
+details.
 
 OnboardingFragmentCompat
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -464,12 +460,9 @@ activity. Failing to do so will throw an exception. The listener instance can be
 the host activity implement the ``OnboardingFragmentListener`` interface or explicitly by setting the listener using
 ``setListener()``.
 
-See the `reference documentation
-<https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/dokka/sdk/net.gini.android.capture.onboarding/-onboarding-fragment-compat/index.html?query=public%20class%20OnboardingFragmentCompat%20extends%20Fragment%20implements%20OnboardingFragmentImplCallback,%20OnboardingFragmentInterface>`_,
-`public interface
-<https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/dokka/sdk/net.gini.android.capture.onboarding/-onboarding-fragment-interface/index.html>`_
-and `listener
-<https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/dokka/sdk/net.gini.android.capture.onboarding/-onboarding-fragment-listener/index.html>`_
+See the :root_dokka_path:`reference documentation <sdk/net.gini.android.capture.onboarding/-onboarding-fragment-compat/index.html?query=public%20class%20OnboardingFragmentCompat%20extends%20Fragment%20implements%20OnboardingFragmentImplCallback,%20OnboardingFragmentInterface>`,
+:root_dokka_path:`public interface <sdk/net.gini.android.capture.onboarding/-onboarding-fragment-interface/index.html>`
+and :root_dokka_path:`listener <sdk/net.gini.android.capture.onboarding/-onboarding-fragment-listener/index.html>`
 for details.
 
 HelpActivity
@@ -481,8 +474,7 @@ also add custom screens during configuration.
 You need to add a button to your UI to launch the ``HelpActivity``. It requires no extras and can be launched with a
 simple intent.
 
-See the `reference documentation
-<https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/dokka/sdk/net.gini.android.capture.help/-help-activity/index.html>`_
+See the :root_dokka_path:`reference documentation <sdk/net.gini.android.capture.help/-help-activity/index.html>`
 for details.
 
 ReviewFragmentCompat
@@ -498,12 +490,9 @@ A ``ReviewFragmentListener`` instance must be available before the `ReviewFragme
 Failing to do so will throw an exception. The listener instance can be provided either implicitly by making the host
 activity implement the ``ReviewFragmentListener`` interface or explicitly by setting the listener using ``setListener()``.
 
-See the `reference documentation
-<https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/dokka/sdk/net.gini.android.capture.review/-review-fragment-compat/index.html?query=public%20class%20ReviewFragmentCompat%20extends%20Fragment%20implements%20FragmentImplCallback,%20ReviewFragmentInterface>`_,
-`public interface
-<https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/dokka/sdk/net.gini.android.capture.review/-review-fragment-interface/index.html>`_
-and `listener
-<https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/dokka/sdk/net.gini.android.capture.review/-review-fragment-listener/index.html>`_
+See the :root_dokka_path:`reference documentation <sdk/net.gini.android.capture.review/-review-fragment-compat/index.html?query=public%20class%20ReviewFragmentCompat%20extends%20Fragment%20implements%20FragmentImplCallback,%20ReviewFragmentInterface>`,
+:root_dokka_path:`public interface <sdk/net.gini.android.capture.review/-review-fragment-interface/index.html>`
+and :root_dokka_path:`listener <sdk/net.gini.android.capture.review/-review-fragment-listener/index.html>`
 for details.
 
 MultiPageReviewFragment
@@ -521,12 +510,9 @@ an activity. Failing to do so will throw an exception. The listener instance can
 the host activity implement the ``MultiPageReviewFragmentListener`` interface or explicitly by setting the listener using
 ``setListener()``.
 
-See the `reference documentation
-<https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/dokka/sdk/net.gini.android.capture.review.multipage/-multi-page-review-fragment/index.html?query=public%20class%20MultiPageReviewFragment%20extends%20Fragment%20implements%20MultiPageReviewFragmentInterface,%20PreviewFragmentListener,%20FragmentImplCallback>`_,
-`public interface
-<https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/dokka/sdk/net.gini.android.capture.review.multipage/-multi-page-review-fragment-interface/index.html>`_
-and `listener
-<https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/dokka/sdk/net.gini.android.capture.review.multipage/-multi-page-review-fragment-listener/index.html>`_
+See the :root_dokka_path:`reference documentation <sdk/net.gini.android.capture.review.multipage/-multi-page-review-fragment/index.html?query=public%20class%20MultiPageReviewFragment%20extends%20Fragment%20implements%20MultiPageReviewFragmentInterface,%20PreviewFragmentListener,%20FragmentImplCallback>`,
+:root_dokka_path:`public interface <sdk/net.gini.android.capture.review.multipage/-multi-page-review-fragment-interface/index.html>`
+and :root_dokka_path:`listener <sdk/net.gini.android.capture.review.multipage/-multi-page-review-fragment-listener/index.html>`
 for details.
 
 AnalysisFragmentCompat
@@ -540,12 +526,9 @@ An ``AnalysisFragmentListener`` instance must be available before it is attached
 activity. Failing to do so will throw an exception. The listener instance can be provided either implicitly by making
 the host activity implement the ``AnalysisFragmentListener`` interface or explicitly by setting the listener using ``setListener()``.
 
-See the `reference documentation
-<https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/dokka/sdk/net.gini.android.capture.analysis/-analysis-fragment-compat/index.html?query=public%20class%20AnalysisFragmentCompat%20extends%20Fragment%20implements%20FragmentImplCallback,%20AnalysisFragmentInterface>`_,
-`public interface
-<https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/dokka/sdk/net.gini.android.capture.analysis/-analysis-fragment-interface/index.html>`_
-and `listener
-<https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/dokka/sdk/net.gini.android.capture.analysis/-analysis-fragment-listener/index.html>`_
+See the :root_dokka_path:`reference documentation <sdk/net.gini.android.capture.analysis/-analysis-fragment-compat/index.html?query=public%20class%20AnalysisFragmentCompat%20extends%20Fragment%20implements%20FragmentImplCallback,%20AnalysisFragmentInterface>`,
+:root_dokka_path:`public interface <sdk/net.gini.android.capture.analysis/-analysis-fragment-interface/index.html>`
+and :root_dokka_path:`listener <sdk/net.gini.android.capture.analysis/-analysis-fragment-listener/index.html>`
 for details.
 
 NoResultsFragmentCompat
@@ -558,7 +541,7 @@ Your Activity must implement the ``NoResultsFragmentListener`` interface to rece
 do so will throw an exception.
 
 See the `reference documentation
-<https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/dokka/sdk/net.gini.android.capture.noresults/-no-results-fragment-compat/index.html?query=public%20class%20NoResultsFragmentCompat%20extends%20Fragment%20implements%20FragmentImplCallback>`_
+<https://developer.gini.net/gini-mobile-android/capture-sdk/sdk|version_path|dokka/sdk/net.gini.android.capture.noresults/-no-results-fragment-compat/index.html?query=public%20class%20NoResultsFragmentCompat%20extends%20Fragment%20implements%20FragmentImplCallback>`_
 and `listener
-<https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/dokka/sdk/net.gini.android.capture.noresults/-no-results-fragment-listener/index.html>`_
+<https://developer.gini.net/gini-mobile-android/capture-sdk/sdk|version_path|dokka/sdk/net.gini.android.capture.noresults/-no-results-fragment-listener/index.html>`_
 for details.
