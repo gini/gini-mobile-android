@@ -91,6 +91,7 @@ Parameters:
   git_user              - the username to use for git authentication
   git_password          - the password to use for git authentication
   documentation_title   - the title used on the root index page
+  is_stable_release     - set to "true" if it's a stable release that should be shown by default 
   links_to_projects     - (optional) a json array of projects that are linked to in the documentation, for example: [{"project_id": "capture-sdk", "module_id": "sdk"}]
   dry_run               - (optional) executes without permanent side effects
 

@@ -80,7 +80,3 @@ def did_folder_change_since_last_release(project_id, folder, ui)
       end
     end
 end
-
-def get_git_branch()
-  sh("git branch --show-current", log: false).split.last
-end
