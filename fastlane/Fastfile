@@ -291,9 +291,11 @@ platform :android do
         File.open("#{project_root_path}/index.html", "w") { |f| 
           f.write index_html
         }
-        File.open("#{project_root_path}/html/index.html", "w") { |f| 
-          f.write index_html
-        }
+        if File.file?("#{project_root_path}/html/index.html")
+          File.open("#{project_root_path}/html/index.html", "w") { |f| 
+            f.write index_html
+          }
+        end
       else
         UI.message "Not changing the project root index.html or the old documentation root index.html."
       end
