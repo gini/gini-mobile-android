@@ -6,39 +6,39 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import net.gini.android.core.api.Resource
+import net.gini.android.core.api.authorization.apimodels.SessionToken
 import net.gini.android.core.api.authorization.apimodels.UserRequestModel
-import net.gini.android.core.api.authorization.apimodels.UserResponseModel
 import net.gini.android.core.api.requests.ApiException
-import net.gini.android.core.api.requests.NoInternetException
+import okhttp3.ResponseBody
+import java.util.concurrent.CancellationException
 import kotlin.coroutines.CoroutineContext
 
 class UserRepository(
     override val coroutineContext: CoroutineContext,
-    private var session: Session? = null
+    private var session: SessionToken? = null,
+    private val userRemoteSource: UserRemoteSource
     ) : CoroutineScope {
-    val userRemoteSource = UserRemoteSource()
-
     //region Public methods
-    suspend fun loginUser(userRequestModel: UserRequestModel): Resource<UserResponseModel> =
+    suspend fun loginUser(userRequestModel: UserRequestModel): Resource<SessionToken> =
         wrapResponseIntoResource {
             userRemoteSource.signIn(userRequestModel)
         }
 
-    suspend fun loginClient(): Flow<Resource<Session>> =
+    suspend fun loginClient(): Flow<Resource<SessionToken>> =
         flow {
             emit(wrapResponseIntoResource {
                 userRemoteSource.loginClient()
             })
         }
 
-    suspend fun createUser(userRequestModel: UserRequestModel): Flow<Resource<UserResponseModel>> =
+    suspend fun createUser(userRequestModel: UserRequestModel): Flow<Resource<ResponseBody>> =
         flow {
             emit (wrapResponseIntoResource {
                 userRemoteSource.createUser(userRequestModel)
             })
         }
 
-    suspend fun loginClientForSession(): Flow<Session?> =
+    suspend fun loginClientForSession(): Flow<SessionToken?> =
         flow {
             val result = loginClient()
             if (result.first() is Resource.Success) {
@@ -47,7 +47,7 @@ class UserRepository(
             }
         }
 
-    suspend fun getUserRepositorySession(): Flow<Session?> =
+    suspend fun getUserRepositorySession(): Flow<SessionToken?> =
         flow {
             if (session?.hasExpired() == false || session != null) {
                 emit(session)
@@ -63,8 +63,8 @@ class UserRepository(
                 Resource.Success(request())
             } catch (e: ApiException) {
                 Resource.Error(e.message ?: "")
-            } catch (e: NoInternetException) {
-                Resource.Error(e.message ?: "")
+            } catch (e: CancellationException) {
+                Resource.Cancelled()
             }
     }
 }

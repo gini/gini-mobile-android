@@ -1,6 +1,6 @@
 package net.gini.android.core.api.authorization
 
-import net.gini.android.core.api.authorization.apimodels.SessionResponseModel
+import net.gini.android.core.api.authorization.apimodels.SessionToken
 import net.gini.android.core.api.authorization.apimodels.UserRequestModel
 import net.gini.android.core.api.authorization.apimodels.UserResponseModel
 import okhttp3.ResponseBody
@@ -10,19 +10,19 @@ import retrofit2.http.*
 interface UserService {
     @FormUrlEncoded
     @POST("oauth/token?grant_type=password")
-    suspend fun signIn(@Field("username") userName:String, @Field("password") password:String): Response<UserResponseModel>
+    suspend fun signIn(@HeaderMap basicAuthHeaders: Map<String, String>, @Field("username") userName:String, @Field("password") password:String): Response<SessionToken>
 
     @POST("oauth/token?grant_type=client_credentials")
-    suspend fun loginClient(): Response<Session>
+    suspend fun loginClient(@HeaderMap basicAuthHeaders: Map<String, String>): Response<SessionToken>
 
     @POST("api/users")
-    suspend fun createUser(@Body userRequestModel: UserRequestModel): Response<UserResponseModel>
+    suspend fun createUser(@HeaderMap bearerHeaders: Map<String, String>, @Body userRequestModel: UserRequestModel): Response<ResponseBody>
 
     @GET("oauth/check_token?token={token}")
-    suspend fun getGiniApiSessionTokenInfo(@Path("token") token: String): Response<SessionResponseModel>
+    suspend fun getGiniApiSessionTokenInfo(@Path("token") token: String): Response<SessionToken>
 
     @GET("{uri}")
-    suspend fun getUserInfo(@Path("uri") uri: String): Response<UserResponseModel>
+    suspend fun getUserInfo(@HeaderMap bearerHeaders: Map<String, String>, @Path("uri") uri: String): Response<UserResponseModel>
 
     @PUT("api/users/{userId}")
     suspend fun updateEmail(@Path("userId") userId: String, @Body userRequestModel: UserRequestModel): Response<ResponseBody>

@@ -1,6 +1,6 @@
 package net.gini.android.core.api.authorization.apimodels
 
 data class UserResponseModel (
-    val username: String? = null,
-    val password: String? = null
+    val id: String? = null,
+    val email: String? = null
 )

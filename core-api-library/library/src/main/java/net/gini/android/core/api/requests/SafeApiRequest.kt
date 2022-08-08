@@ -6,10 +6,9 @@ import retrofit2.Response
 import java.util.concurrent.CancellationException
 
 private const val ERROR_MESSAGE_KEY = "message"
-private const val ERROR_CODE_KEY = "code"
 
 object SafeApiRequest {
-    @Throws(ApiException::class)
+    @Throws(ApiException::class, CancellationException::class)
     suspend fun <T : Any?> apiRequest(call: suspend () -> Response<T>): T {
         try {
             val response = call.invoke()
@@ -19,21 +18,16 @@ object SafeApiRequest {
 
             val error = response.errorBody()?.string()
             val message = StringBuilder()
-            var errorCode: Int = 0
             error?.let {
                 try {
                     message.append(JSONObject(it).getString(ERROR_MESSAGE_KEY))
-                    errorCode = JSONObject(it).getString(ERROR_CODE_KEY).toInt()
                 } catch (e: JSONException) {
                 }
             }
 
-            throw ApiException(message.toString())
+            throw ApiException(message.toString(), response.code(), response.body().toString(), response.headers().toMultimap())
         } catch (e: Exception) {
-            when (e) {
-                is CancellationException -> throw e
-                else -> throw ApiException(e.message ?: "")
-            }
+            throw e
         }
     }
 }

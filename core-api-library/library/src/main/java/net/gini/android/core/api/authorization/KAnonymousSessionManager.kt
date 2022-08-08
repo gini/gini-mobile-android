@@ -8,13 +8,9 @@ class KAnonymousSessionManager(
     userRepository: UserRepository,
     credentialsStore: CredentialsStore,
     emailDomain: String,
-    currentSession: Session
+    currentSession: Session,
 ): KSessionManager {
-    val userRepository: UserRepository
-
-    init {
-        this.userRepository = userRepository
-    }
+    val userRepository: UserRepository = userRepository
 
     override suspend fun getSession(): Session {
         

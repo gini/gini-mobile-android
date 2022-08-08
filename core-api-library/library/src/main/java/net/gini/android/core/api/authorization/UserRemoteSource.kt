@@ -1,59 +1,59 @@
 package net.gini.android.core.api.authorization
 
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import net.gini.android.core.api.RetrofitHelper
-import net.gini.android.core.api.authorization.apimodels.SessionResponseModel
+import net.gini.android.core.api.authorization.apimodels.SessionToken
 import net.gini.android.core.api.authorization.apimodels.UserRequestModel
 import net.gini.android.core.api.authorization.apimodels.UserResponseModel
 import net.gini.android.core.api.requests.SafeApiRequest
 import okhttp3.ResponseBody
-import retrofit2.Response
-import retrofit2.http.GET
-import retrofit2.http.PUT
-import retrofit2.http.Path
+import kotlin.coroutines.CoroutineContext
 
-class UserRemoteSource {
+class UserRemoteSource(
+    val coroutineContext: CoroutineContext,
+    private val userService: UserService
+) {
 
-    suspend fun signIn(userRequestModel: UserRequestModel): UserResponseModel = withContext(Dispatchers.IO) {
+    suspend fun signIn(userRequestModel: UserRequestModel): SessionToken = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
-            RetrofitHelper.provideUserService().signIn(userRequestModel.username ?: "", userRequestModel.password ?: "")
+            userService.signIn(mutableMapOf(), userRequestModel.username ?: "", userRequestModel.password ?: "")
         }
         response
     }
 
-    suspend fun loginClient(): Session = withContext(Dispatchers.IO) {
+    suspend fun loginClient(): SessionToken = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
-            RetrofitHelper.provideUserService().loginClient()
+            userService.loginClient(mutableMapOf())
         }
         response
     }
 
-    suspend fun createUser(userRequestModel: UserRequestModel): UserResponseModel = withContext(Dispatchers.IO) {
+    suspend fun createUser(userRequestModel: UserRequestModel): ResponseBody = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
-            RetrofitHelper.provideUserService().createUser(userRequestModel)
+            userService.createUser(mutableMapOf(), userRequestModel)
         }
         response
     }
 
-    suspend fun getGiniApiSessionTokenInfo(token: String): SessionResponseModel = withContext(Dispatchers.IO) {
+    suspend fun getGiniApiSessionTokenInfo(token: String): SessionToken = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
-            RetrofitHelper.provideUserService().getGiniApiSessionTokenInfo(token)
+           userService.getGiniApiSessionTokenInfo(token)
         }
         response
     }
 
-    suspend fun getUserInfo(uri: String): UserResponseModel = withContext(Dispatchers.IO) {
+    suspend fun getUserInfo(uri: String): UserResponseModel = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
-            RetrofitHelper.provideUserService().getUserInfo(uri)
+            userService.getUserInfo(mutableMapOf(), uri)
         }
         response
     }
 
-    suspend fun updateEmail(userId: String, userRequestModel: UserRequestModel): ResponseBody = withContext(Dispatchers.IO) {
+    suspend fun updateEmail(userId: String, userRequestModel: UserRequestModel): ResponseBody = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
-            RetrofitHelper.provideUserService().updateEmail(userId, userRequestModel)
+            userService.updateEmail(userId, userRequestModel)
         }
         response
     }
+
+
 }

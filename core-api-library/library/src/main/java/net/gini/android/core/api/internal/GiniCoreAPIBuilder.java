@@ -1,13 +1,7 @@
 package net.gini.android.core.api.internal;
 
-import static net.gini.android.core.api.Utils.checkNotNull;
-
 import android.content.Context;
 import android.content.SharedPreferences;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.XmlRes;
-import kotlin.coroutines.EmptyCoroutineContext;
 
 import com.android.volley.Cache;
 import com.android.volley.DefaultRetryPolicy;
@@ -22,10 +16,12 @@ import net.gini.android.core.api.RequestQueueBuilder;
 import net.gini.android.core.api.authorization.AnonymousSessionManager;
 import net.gini.android.core.api.authorization.CredentialsStore;
 import net.gini.android.core.api.authorization.EncryptedCredentialsStore;
+import net.gini.android.core.api.authorization.KAnonymousSessionManager;
 import net.gini.android.core.api.authorization.SessionManager;
 import net.gini.android.core.api.authorization.UserCenterAPICommunicator;
-import net.gini.android.core.api.authorization.UserCenterManager;
+import net.gini.android.core.api.authorization.UserRemoteSource;
 import net.gini.android.core.api.authorization.UserRepository;
+import net.gini.android.core.api.authorization.UserService;
 import net.gini.android.core.api.models.ExtractionsContainer;
 import net.gini.android.core.api.requests.DefaultRetryPolicyFactory;
 import net.gini.android.core.api.requests.RetryPolicyFactory;
@@ -34,8 +30,18 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.TrustManager;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.XmlRes;
+import kotlinx.coroutines.GlobalScope;
+import okhttp3.OkHttpClient;
+import retrofit2.Retrofit;
+import retrofit2.converter.moshi.MoshiConverterFactory;
+
+import static net.gini.android.core.api.Utils.checkNotNull;
 
 public abstract class GiniCoreAPIBuilder<DTM extends DocumentTaskManager<A, E>, DM extends DocumentManager<A, DTM, E>, G extends GiniCoreAPI<DTM, DM, A, E>, A extends ApiCommunicator, E extends ExtractionsContainer> {
 
@@ -56,7 +62,6 @@ public abstract class GiniCoreAPIBuilder<DTM extends DocumentTaskManager<A, E>, 
     private DTM mDocumentTaskManager;
     private SessionManager mSessionManager;
     private CredentialsStore mCredentialsStore;
-    private UserCenterManager mUserCenterManager;
     private UserCenterAPICommunicator mUserCenterApiCommunicator;
     private int mTimeoutInMs = DefaultRetryPolicy.DEFAULT_TIMEOUT_MS;
     private int mMaxRetries = DefaultRetryPolicy.DEFAULT_MAX_RETRIES;
@@ -64,7 +69,11 @@ public abstract class GiniCoreAPIBuilder<DTM extends DocumentTaskManager<A, E>, 
     private RetryPolicyFactory mRetryPolicyFactory;
     private Cache mCache;
     private TrustManager mTrustManager;
+    private Retrofit mUserApiRetrofit;
+    private Retrofit mPayApiRetrofit;
+    private UserService mUserService;
     private UserRepository mUserRepository;
+    private UserRemoteSource mUserRemoteSource;
 
     /**
      * Constructor to initialize a new builder instance where anonymous Gini users are used. <b>This requires access to
@@ -321,20 +330,20 @@ public abstract class GiniCoreAPIBuilder<DTM extends DocumentTaskManager<A, E>, 
     }
 
     /**
-     * Helper method to create (and store) the UserCenterApiCommunicator instance which is used to do the requests to
+     * Helper method to create (and store) the UserRepository instance which is used to do the requests to
      * the Gini User Center API.
      *
-     * @return The ApiCommunicator instance.
+     * @return The UserRepository instance.
      */
     @NonNull
-    private synchronized UserCenterAPICommunicator getUserCenterAPICommunicator() {
-        if (mUserCenterApiCommunicator == null) {
-            mUserCenterApiCommunicator =
-                    new UserCenterAPICommunicator(getRequestQueue(), mUserCenterApiBaseUrl,
-                            getGiniApiType(), mClientId, mClientSecret,
-                            getRetryPolicyFactory());
+    private synchronized UserRepository getUserRepository() {
+        if (mUserRepository == null) {
+            mUserRepository = new UserRepository(getmUserRemoteSource().getCoroutineContext(), null, getmUserRemoteSource());
+//                    new UserRepository(getRequestQueue(), mUserCenterApiBaseUrl,
+//                            getGiniApiType(), mClientId, mClientSecret,
+//                            getRetryPolicyFactory());
         }
-        return mUserCenterApiCommunicator;
+        return mUserRepository;
     }
 
     /**
@@ -350,19 +359,6 @@ public abstract class GiniCoreAPIBuilder<DTM extends DocumentTaskManager<A, E>, 
                     mBackOffMultiplier);
         }
         return mRetryPolicyFactory;
-    }
-
-    /**
-     * Helper method to create a UserCenterManager instance which is used to manage Gini user accounts.
-     *
-     * @return The UserCenterManager instance.
-     */
-    @NonNull
-    private synchronized UserCenterManager getUserCenterManager() {
-        if (mUserCenterManager == null) {
-            mUserCenterManager = new UserCenterManager(getUserCenterAPICommunicator());
-        }
-        return mUserCenterManager;
     }
 
     /**
@@ -389,10 +385,49 @@ public abstract class GiniCoreAPIBuilder<DTM extends DocumentTaskManager<A, E>, 
     @NonNull
     public synchronized SessionManager getSessionManager() {
         if (mSessionManager == null) {
-            mSessionManager = new AnonymousSessionManager(mEmailDomain, getUserCenterManager(),
+            mSessionManager = new KAnonymousSessionManager(mEmailDomain, getUserCenterManager(),
                     getCredentialsStore());
         }
         return mSessionManager;
+    }
+
+    private synchronized Retrofit getUserApiRetrofit() {
+        mUserApiRetrofit = new Retrofit.Builder()
+                .baseUrl(mUserCenterApiBaseUrl)
+                .addConverterFactory(MoshiConverterFactory.create())
+                .client(new OkHttpClient.Builder()
+                        .connectTimeout(mTimeoutInMs, TimeUnit.MILLISECONDS)
+                        .readTimeout(mTimeoutInMs, TimeUnit.MILLISECONDS)
+                        .writeTimeout(mTimeoutInMs, TimeUnit.MILLISECONDS).build())
+                .build();
+        return mUserApiRetrofit;
+    }
+
+    private synchronized Retrofit getPayApiRetrofit() {
+        mPayApiRetrofit = new Retrofit.Builder()
+                .baseUrl(getApiBaseUrl())
+                .addConverterFactory(MoshiConverterFactory.create())
+                .client(new OkHttpClient.Builder()
+                        .connectTimeout(mTimeoutInMs, TimeUnit.MILLISECONDS)
+                        .readTimeout(mTimeoutInMs, TimeUnit.MILLISECONDS)
+                        .writeTimeout(mTimeoutInMs, TimeUnit.MILLISECONDS).build())
+                .build();
+        return  mPayApiRetrofit;
+    }
+
+    protected synchronized UserService getmUserService() {
+        if (mUserService == null) {
+            mUserService = getUserApiRetrofit().create(UserService.class);
+        }
+        return mUserService;
+    }
+
+    protected synchronized UserRemoteSource getmUserRemoteSource() {
+        if (mUserRemoteSource == null) {
+            mUserRemoteSource = new UserRemoteSource(GlobalScope.INSTANCE.getCoroutineContext(), getmUserService());
+        }
+
+        return  mUserRemoteSource;
     }
 }
 
