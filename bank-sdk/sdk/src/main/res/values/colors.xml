@@ -49,6 +49,8 @@
     <color name="gbs_digital_invoice_line_item_details_checkbox_label">#9B9B9B</color>
     <color name="gbs_digital_invoice_line_item_details_input_field_text">#222222</color>
     <color name="gbs_digital_invoice_line_item_details_input_field_hint_text">#9B9B9B</color>
+    <color name="gbs_digital_invoice_line_item_details_input_field_cursor">#009EDC</color>
+    <color name="gbs_digital_invoice_line_item_details_input_field_selection_highlight">#009EDC</color>
     <color name="gbs_digital_invoice_line_item_details_input_line">#F1F2F4</color>
     <color name="gbs_digital_invoice_line_item_details_multiplication_symbol">#9B9B9B</color>
     <color name="gbs_digital_invoice_line_item_details_total_label">#000</color>

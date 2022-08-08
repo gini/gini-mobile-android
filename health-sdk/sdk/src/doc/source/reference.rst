@@ -3,4 +3,4 @@ Reference Docs
 
 You can view the reference documentation here:
 
-* `Gini Health SDK reference documentation <https://developer.gini.net/gini-mobile-android/health-sdk/sdk/dokka/index.html>`_
+* :root_dokka_path:`Gini Health SDK reference documentation <index.html>`
