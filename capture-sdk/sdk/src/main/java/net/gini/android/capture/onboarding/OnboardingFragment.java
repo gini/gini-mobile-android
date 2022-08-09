@@ -1,8 +1,9 @@
 package net.gini.android.capture.onboarding;
 
 import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
-import static net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomButton.*;
+import static net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomButton.GET_STARTED;
 import static net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomButton.NEXT;
+import static net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomButton.SKIP;
 
 import android.app.Activity;
 import android.content.Context;
@@ -23,23 +24,15 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager.widget.ViewPager;
 
-import com.google.android.material.color.MaterialColors;
-
-import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.R;
 import net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomAdapter;
-import net.gini.android.capture.view.DefaultNavigationBarTopAdapter;
 import net.gini.android.capture.view.InjectedViewContainer;
-import net.gini.android.capture.view.NavButtonType;
-import net.gini.android.capture.view.NavigationBarTopAdapter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import jersey.repackaged.jsr166e.CompletableFuture;
 
 /**
  * <h3>Component API</h3>
@@ -349,7 +342,6 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
                             R.drawable.gc_onboarding_page_indicator, mContext.getTheme()));
             pageIndicator.setImageAlpha(77);
             pageIndicator.setTag("pageIndicator");
-            pageIndicator.setContentDescription("inactive");
             return pageIndicator;
         }
 
@@ -371,13 +363,14 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
             deactivatePageIndicators();
             final ImageView pageIndicator = mPageIndicators.get(page);
             pageIndicator.setImageAlpha(255);
-            pageIndicator.setContentDescription("active");
+            pageIndicator.setContentDescription(mContext.getString(R.string.gc_onboarding_page_indicator_active_content_description, page + 1));
         }
 
         private void deactivatePageIndicators() {
-            for (final ImageView pageIndicator : mPageIndicators) {
+            for (int i = 0; i < mPageIndicators.size(); i++) {
+                final ImageView pageIndicator = mPageIndicators.get(i);
                 pageIndicator.setImageAlpha(77);
-                pageIndicator.setContentDescription("inactive");
+                pageIndicator.setContentDescription(mContext.getString(R.string.gc_onboarding_page_indicator_inactive_content_description, i + 1));
             }
         }
 
