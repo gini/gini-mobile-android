@@ -111,4 +111,5 @@
     <string name="gc_skip">Skip</string>
     <string name="gc_next">Next</string>
     <string name="gc_get_started">Get Started</string>
+    <string name="gc_onboarding_viewpager_content_description">Onboarding</string>
 </resources>
