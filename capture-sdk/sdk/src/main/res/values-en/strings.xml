@@ -19,12 +19,16 @@
     <string name="gc_qrcode_detected_popup_message_2">Continue</string>
     <string name="gc_unsupported_qrcode_detected_popup_message_1">This QR Code does not contain any payment information.</string>
     <string name="gc_unsupported_qrcode_detected_popup_message_2">X</string>
+    <string name="gc_onboarding_align_corners_illustration_content_description">Flat paper within the frame illustration</string>
     <string name="gc_onboarding_align_corners_title">Flat paper within the frame</string>
     <string name="gc_onboarding_align_corners_message">Ensure that the document is flat, and positioned within the frame</string>
+    <string name="gc_onboarding_lighting_title_illustration_content_description">Good lighting illustration</string>
     <string name="gc_onboarding_lighting_title">Good lighting</string>
     <string name="gc_onboarding_lighting_message">Proper lighting leads to better results than flash</string>
+    <string name="gc_onboarding_multipage_illustration_content_description">Add multiple pages illustration</string>
     <string name="gc_onboarding_multipage_title">Add multiple pages</string>
     <string name="gc_onboarding_multipage_message">It’s now possible to analyse an invoice with multiple pages</string>
+    <string name="gc_onboarding_qr_code_illustration_content_description">QR codes supported illustration</string>
     <string name="gc_onboarding_qr_code_title">QR codes supported</string>
     <string name="gc_onboarding_qr_code_message">Besides invoices, QR codes are also supported</string>
     <string name="gc_review_bottom_panel_text">Is the document complete, in focus and in the correct orientation?\n\nDouble-tap to check the focus.</string>

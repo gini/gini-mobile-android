@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import kotlinx.parcelize.Parcelize
 import net.gini.android.capture.view.InjectedViewAdapter
@@ -27,7 +28,10 @@ interface OnboardingIllustrationAdapter : InjectedViewAdapter, Parcelable {
  * TODO: add doc
  */
 @Parcelize
-class ImageOnboardingIllustrationAdapter(@DrawableRes private val drawableRes: Int) : OnboardingIllustrationAdapter {
+class ImageOnboardingIllustrationAdapter(
+    @DrawableRes private val drawableRes: Int,
+    @StringRes private val contentDescriptionRes: Int
+) : OnboardingIllustrationAdapter {
 
     override fun onVisible() {}
 
@@ -38,6 +42,7 @@ class ImageOnboardingIllustrationAdapter(@DrawableRes private val drawableRes: I
             setImageDrawable(ContextCompat.getDrawable(container.context, drawableRes))
             layoutParams =
                 ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+            contentDescription = container.context.getString(contentDescriptionRes)
         }
     }
 

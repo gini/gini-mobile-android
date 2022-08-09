@@ -6,10 +6,48 @@ import net.gini.android.capture.onboarding.view.ImageOnboardingIllustrationAdapt
 
 sealed class DefaultPages(val onboardingPage: OnboardingPage) {
 
-    class Page1 : DefaultPages(OnboardingPage(R.string.gc_onboarding_align_corners_title, R.string.gc_onboarding_align_corners_message, ImageOnboardingIllustrationAdapter(R.drawable.gc_onboarding_align_corners)))
-    class Page2 : DefaultPages(OnboardingPage(R.string.gc_onboarding_lighting_title, R.string.gc_onboarding_lighting_message, ImageOnboardingIllustrationAdapter(R.drawable.gc_onboarding_lighting)))
-    class Page3 : DefaultPages(OnboardingPage(R.string.gc_onboarding_multipage_title, R.string.gc_onboarding_multipage_message, ImageOnboardingIllustrationAdapter(R.drawable.gc_onboarding_multipage)))
-    class Page4 : DefaultPages(OnboardingPage(R.string.gc_onboarding_qr_code_title, R.string.gc_onboarding_qr_code_message, ImageOnboardingIllustrationAdapter(R.drawable.gc_onboarding_qr_code)))
+    class Page1 : DefaultPages(
+        OnboardingPage(
+            R.string.gc_onboarding_align_corners_title,
+            R.string.gc_onboarding_align_corners_message,
+            ImageOnboardingIllustrationAdapter(
+                R.drawable.gc_onboarding_align_corners,
+                R.string.gc_onboarding_align_corners_illustration_content_description
+            )
+        )
+    )
+
+    class Page2 : DefaultPages(
+        OnboardingPage(
+            R.string.gc_onboarding_lighting_title,
+            R.string.gc_onboarding_lighting_message,
+            ImageOnboardingIllustrationAdapter(
+                R.drawable.gc_onboarding_lighting,
+                R.string.gc_onboarding_lighting_title_illustration_content_description
+            )
+        )
+    )
+
+    class Page3 : DefaultPages(
+        OnboardingPage(
+            R.string.gc_onboarding_multipage_title,
+            R.string.gc_onboarding_multipage_message,
+            ImageOnboardingIllustrationAdapter(
+                R.drawable.gc_onboarding_multipage,
+                R.string.gc_onboarding_multipage_illustration_content_description
+            )
+        )
+    )
+
+    class Page4 : DefaultPages(
+        OnboardingPage(
+            R.string.gc_onboarding_qr_code_title,
+            R.string.gc_onboarding_qr_code_message,
+            ImageOnboardingIllustrationAdapter(
+                R.drawable.gc_onboarding_qr_code,
+                R.string.gc_onboarding_qr_code_illustration_content_description)
+        )
+    )
 
     companion object {
 
