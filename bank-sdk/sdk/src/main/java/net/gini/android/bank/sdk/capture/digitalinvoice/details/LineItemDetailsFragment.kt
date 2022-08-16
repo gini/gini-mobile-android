@@ -7,7 +7,6 @@ import android.text.Spanned
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
@@ -25,7 +24,6 @@ import net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrient
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
-import java.util.*
 
 /**
  * Created by Alpar Szotyori on 17.12.2019.
@@ -78,25 +76,46 @@ class LineItemDetailsFragment : Fragment(), LineItemDetailsScreenContract.View,
             dstart: Int,
             dend: Int
         ): CharSequence? {
+            // When returning:
+            // null -> accept input
+            // "" -> discard input
+            // some string -> replace input with string
+
+            val originalInput = source.subSequence(start, end).toString()
+            val newInput: String
+            val replacement: String?
+
+            // Fix for Samsung's buggy numpad that doesn't allow both comma and dot input:
+            // if a dot or comma was entered, then replace it with the locale specific decimal separator
+            if (originalInput == "." || originalInput == ",") {
+                newInput = decimalFormatSymbols.decimalSeparator.toString()
+                replacement = newInput
+            } else {
+                newInput = originalInput
+                replacement = null
+            }
 
             val finalPriceString =
-                "${dest.subSequence(0, dstart)}${source.subSequence(start, end)}${
+                "${dest.subSequence(0, dstart)}${newInput}${
                     dest.subSequence(
                         dend,
                         dest.length
                     )
                 }"
 
+            // Allow zero or one decimal separator
             val separatorsCount = finalPriceString.count { it == decimalFormatSymbols.decimalSeparator }
             if (separatorsCount > 1) {
                 return ""
             }
 
+            // Allow only two digits after the decimal separator
             val separatorIndex = finalPriceString.indexOf(decimalFormatSymbols.decimalSeparator)
             if (separatorIndex >= 0 && finalPriceString.length - separatorIndex > 3 ) {
                 return  ""
             }
 
+            // Don't allow grouping separators after the decimal separator
             val groupingIndex = finalPriceString.indexOfLast { it == decimalFormatSymbols.groupingSeparator }
             if (groupingIndex >= 0 && separatorsCount > 0) {
                 if (groupingIndex > separatorIndex) {
@@ -105,11 +124,12 @@ class LineItemDetailsFragment : Fragment(), LineItemDetailsScreenContract.View,
             }
 
             try {
+                // Price must be between 0 and 25000
                 val finalPrice = priceFormat.parse(finalPriceString)?.toDouble()
                 if (finalPrice == null || finalPrice !in 0.0..25000.0) {
                     return ""
                 }
-                return null
+                return replacement
             } catch (ignore: Throwable) {
             }
 
