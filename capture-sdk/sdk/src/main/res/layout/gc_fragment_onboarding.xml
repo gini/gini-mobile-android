@@ -12,6 +12,7 @@
         android:id="@+id/gc_onboarding_viewpager"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:contentDescription="@string/gc_onboarding_viewpager_content_description"
         app:layout_constraintBottom_toTopOf="@id/gc_injected_navigation_bar_container_bottom"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
