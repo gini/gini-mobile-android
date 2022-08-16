@@ -85,6 +85,11 @@ class LineItemDetailsFragment : Fragment(), LineItemDetailsScreenContract.View,
             val newInput: String
             val replacement: String?
 
+            // Discard non-valid characters
+            if (!(originalInput matches VALID_CHARS_REGEX)) {
+                return ""
+            }
+
             // Fix for Samsung's buggy numpad that doesn't allow both comma and dot input:
             // if a dot or comma was entered, then replace it with the locale specific decimal separator
             if (originalInput == "." || originalInput == ",") {
@@ -134,7 +139,10 @@ class LineItemDetailsFragment : Fragment(), LineItemDetailsScreenContract.View,
             }
 
             return ""
+        }
 
+        companion object {
+            private val VALID_CHARS_REGEX = "^[0-9.,]+\$".toRegex()
         }
 
     }
