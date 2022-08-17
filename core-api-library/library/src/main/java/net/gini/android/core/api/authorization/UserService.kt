@@ -25,5 +25,5 @@ interface UserService {
     suspend fun getUserInfo(@HeaderMap bearerHeaders: Map<String, String>, @Path("uri") uri: String): Response<UserResponseModel>
 
     @PUT("api/users/{userId}")
-    suspend fun updateEmail(@Path("userId") userId: String, @Body userRequestModel: UserRequestModel): Response<ResponseBody>
+    suspend fun updateEmail(@HeaderMap bearerHeaders: Map<String, String>, @Path("userId") userId: String, @Body userRequestModel: UserRequestModel): Response<ResponseBody>
 }

@@ -17,6 +17,7 @@ import net.gini.android.core.api.authorization.AnonymousSessionManager;
 import net.gini.android.core.api.authorization.CredentialsStore;
 import net.gini.android.core.api.authorization.EncryptedCredentialsStore;
 import net.gini.android.core.api.authorization.KAnonymousSessionManager;
+import net.gini.android.core.api.authorization.KSessionManager;
 import net.gini.android.core.api.authorization.SessionManager;
 import net.gini.android.core.api.authorization.UserCenterAPICommunicator;
 import net.gini.android.core.api.authorization.UserRemoteSource;
@@ -60,7 +61,7 @@ public abstract class GiniCoreAPIBuilder<DTM extends DocumentTaskManager<A, E>, 
     private Moshi mMoshi;
     private RequestQueue mRequestQueue;
     private DTM mDocumentTaskManager;
-    private SessionManager mSessionManager;
+    private KSessionManager mSessionManager;
     private CredentialsStore mCredentialsStore;
     private UserCenterAPICommunicator mUserCenterApiCommunicator;
     private int mTimeoutInMs = DefaultRetryPolicy.DEFAULT_TIMEOUT_MS;
@@ -99,7 +100,7 @@ public abstract class GiniCoreAPIBuilder<DTM extends DocumentTaskManager<A, E>, 
      * @param context        Your application's Context instance (Android).
      * @param sessionManager The SessionManager to use.
      */
-    protected GiniCoreAPIBuilder(@NonNull final Context context, @NonNull final SessionManager sessionManager) {
+    protected GiniCoreAPIBuilder(@NonNull final Context context, @NonNull final KSessionManager sessionManager) {
         mContext = context;
         mSessionManager = sessionManager;
     }
@@ -338,10 +339,7 @@ public abstract class GiniCoreAPIBuilder<DTM extends DocumentTaskManager<A, E>, 
     @NonNull
     private synchronized UserRepository getUserRepository() {
         if (mUserRepository == null) {
-            mUserRepository = new UserRepository(getmUserRemoteSource().getCoroutineContext(), null, getmUserRemoteSource());
-//                    new UserRepository(getRequestQueue(), mUserCenterApiBaseUrl,
-//                            getGiniApiType(), mClientId, mClientSecret,
-//                            getRetryPolicyFactory());
+            mUserRepository = new UserRepository(getmUserRemoteSource().getCoroutineContext(), getmUserRemoteSource());
         }
         return mUserRepository;
     }
@@ -383,10 +381,9 @@ public abstract class GiniCoreAPIBuilder<DTM extends DocumentTaskManager<A, E>, 
      * @return The SessionManager instance.
      */
     @NonNull
-    public synchronized SessionManager getSessionManager() {
+    public synchronized KSessionManager getSessionManager() {
         if (mSessionManager == null) {
-            mSessionManager = new KAnonymousSessionManager(mEmailDomain, getUserCenterManager(),
-                    getCredentialsStore());
+            mSessionManager = new KAnonymousSessionManager(getUserRepository(), getCredentialsStore(), mEmailDomain);
         }
         return mSessionManager;
     }
@@ -424,7 +421,7 @@ public abstract class GiniCoreAPIBuilder<DTM extends DocumentTaskManager<A, E>, 
 
     protected synchronized UserRemoteSource getmUserRemoteSource() {
         if (mUserRemoteSource == null) {
-            mUserRemoteSource = new UserRemoteSource(GlobalScope.INSTANCE.getCoroutineContext(), getmUserService());
+            mUserRemoteSource = new UserRemoteSource(GlobalScope.INSTANCE.getCoroutineContext(), getmUserService(), mClientId, mClientSecret);
         }
 
         return  mUserRemoteSource;

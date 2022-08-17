@@ -1,10 +1,7 @@
 package net.gini.android.core.api.authorization
 
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.*
 import net.gini.android.core.api.Resource
 import net.gini.android.core.api.authorization.apimodels.SessionToken
 import net.gini.android.core.api.authorization.apimodels.UserRequestModel
@@ -15,9 +12,11 @@ import kotlin.coroutines.CoroutineContext
 
 class UserRepository(
     override val coroutineContext: CoroutineContext,
-    private var session: SessionToken? = null,
     private val userRemoteSource: UserRemoteSource
     ) : CoroutineScope {
+
+    private var session: SessionToken? = null
+
     //region Public methods
     suspend fun loginUser(userRequestModel: UserRequestModel): Resource<SessionToken> =
         wrapResponseIntoResource {
@@ -31,11 +30,9 @@ class UserRepository(
             })
         }
 
-    suspend fun createUser(userRequestModel: UserRequestModel): Flow<Resource<ResponseBody>> =
-        flow {
-            emit (wrapResponseIntoResource {
+    suspend fun createUser(userRequestModel: UserRequestModel): Resource<ResponseBody> =
+        wrapResponseIntoResource {
                 userRemoteSource.createUser(userRequestModel)
-            })
         }
 
     suspend fun loginClientForSession(): Flow<SessionToken?> =
@@ -55,6 +52,15 @@ class UserRepository(
                 emit(loginClientForSession().firstOrNull())
             }
         }
+
+    suspend fun updateEmail(newEmail: String, oldEmail: String, session: SessionToken) {
+        getUserRepositorySession().collect {
+            it?.accessToken?.let { token ->
+                val userId = userRemoteSource.getGiniApiSessionTokenInfo(token).userName
+                userRemoteSource.updateEmail(userId ?: "", UserRequestModel(newEmail = newEmail, oldEmail = oldEmail), session)
+            }
+        }
+    }
     //endregion
 
     companion object {
