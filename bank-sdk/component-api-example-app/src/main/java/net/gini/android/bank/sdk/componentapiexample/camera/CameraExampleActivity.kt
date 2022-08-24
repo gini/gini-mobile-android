@@ -6,9 +6,11 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.os.BuildCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import net.gini.android.capture.AsyncCallback
@@ -67,6 +69,18 @@ class CameraExampleActivity : AppCompatActivity(), CameraFragmentListener, Onboa
         } else {
             mCameraFragmentInterface = retrieveCameraFragment()
         }
+
+        this.onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (isOnboardingVisible()) {
+                    removeOnboarding()
+                } else {
+                    isEnabled = false
+                    onBackPressed()
+                }
+            }
+
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -87,6 +101,7 @@ class CameraExampleActivity : AppCompatActivity(), CameraFragmentListener, Onboa
         else -> false
     }
 
+    // TODO: back pressed override
     override fun onBackPressed() {
         if (isOnboardingVisible()) {
             removeOnboarding()
