@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 import static net.gini.android.capture.internal.util.ActivityHelper.enableHomeAsUp;
+import static net.gini.android.capture.internal.util.ActivityHelper.interceptOnBackPressed;
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
 
 /**
@@ -231,6 +233,16 @@ public class AnalysisActivity extends AppCompatActivity implements
             retainFragment();
         }
         enableHomeAsUp(this);
+        handleOnBackPressed();
+    }
+
+    private void handleOnBackPressed() {
+        interceptOnBackPressed(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                trackAnalysisScreenEvent(AnalysisScreenEvent.CANCEL);
+            }
+        });
     }
 
     @Override
@@ -254,12 +266,6 @@ public class AnalysisActivity extends AppCompatActivity implements
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        trackAnalysisScreenEvent(AnalysisScreenEvent.CANCEL);
     }
 
     @Override

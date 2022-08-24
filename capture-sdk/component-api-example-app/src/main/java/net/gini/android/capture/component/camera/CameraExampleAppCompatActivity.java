@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
@@ -74,14 +75,6 @@ public class CameraExampleAppCompatActivity extends AppCompatActivity implements
             new CaptureComponentContract(), activityResultCallback);
 
     @Override
-    public void onBackPressed() {
-        if (mCameraScreenHandler.onBackPressed()) {
-            return;
-        }
-        super.onBackPressed();
-    }
-
-    @Override
     protected void onNewIntent(final Intent intent) {
         super.onNewIntent(intent);
         mCameraScreenHandler.onNewIntent(intent);
@@ -98,6 +91,16 @@ public class CameraExampleAppCompatActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_camera_compat);
         mCameraScreenHandler = new CameraScreenHandler(this, mStartReview, mStartMultiPageReview, mStartAnalysis);
         mCameraScreenHandler.onCreate(savedInstanceState);
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (mCameraScreenHandler.onBackPressed()) {
+                    return;
+                }
+                setEnabled(false);
+                onBackPressed();
+            }
+        });
     }
 
     @Override
