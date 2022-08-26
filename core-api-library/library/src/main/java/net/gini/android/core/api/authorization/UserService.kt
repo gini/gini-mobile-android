@@ -21,8 +21,8 @@ interface UserService {
     @GET("oauth/check_token?token={token}")
     suspend fun getGiniApiSessionTokenInfo(@Path("token") token: String): Response<SessionToken>
 
-    @GET("{uri}")
-    suspend fun getUserInfo(@HeaderMap bearerHeaders: Map<String, String>, @Path("uri") uri: String): Response<UserResponseModel>
+    @GET
+    suspend fun getUserInfo(@HeaderMap bearerHeaders: Map<String, String>, @Url uri: String): Response<UserResponseModel>
 
     @PUT("api/users/{userId}")
     suspend fun updateEmail(@HeaderMap bearerHeaders: Map<String, String>, @Path("userId") userId: String, @Body userRequestModel: UserRequestModel): Response<ResponseBody>

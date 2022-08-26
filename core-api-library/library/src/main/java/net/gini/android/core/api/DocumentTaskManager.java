@@ -231,19 +231,16 @@ public abstract class DocumentTaskManager<T extends ApiCommunicator, E extends E
 
     private Task<Document> createPartialDocumentInternal(@NonNull final byte[] document, @NonNull final String contentType,
                                                          @Nullable final String filename, @Nullable final DocumentType documentType, @Nullable final DocumentMetadata documentMetadata) {
-        return createDocumentInternal(new Continuation<Session, Task<Uri>>() {
-            @Override
-            public Task<Uri> then(Task<Session> sessionTask) throws Exception {
-                String apiDoctypeHint = null;
-                if (documentType != null) {
-                    apiDoctypeHint = documentType.getApiDoctypeHint();
-                }
-                final Session session = sessionTask.getResult();
-                final String partialDocumentMediaType = MediaTypes
-                        .forPartialDocument(mGiniApiType.getGiniPartialMediaType(), checkNotNull(contentType));
-                return mApiCommunicator
-                        .uploadDocument(document, partialDocumentMediaType, filename, apiDoctypeHint, session, documentMetadata);
+        return createDocumentInternal(sessionTask -> {
+            String apiDoctypeHint = null;
+            if (documentType != null) {
+                apiDoctypeHint = documentType.getApiDoctypeHint();
             }
+            final Session session = sessionTask.getResult();
+            final String partialDocumentMediaType = MediaTypes
+                    .forPartialDocument(mGiniApiType.getGiniPartialMediaType(), checkNotNull(contentType));
+            return mApiCommunicator
+                    .uploadDocument(document, partialDocumentMediaType, filename, apiDoctypeHint, session, documentMetadata);
         });
     }
 

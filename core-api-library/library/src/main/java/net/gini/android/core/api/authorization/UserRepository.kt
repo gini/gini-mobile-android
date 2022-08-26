@@ -32,7 +32,7 @@ class UserRepository(
 
     suspend fun createUser(userRequestModel: UserRequestModel): Resource<ResponseBody> =
         wrapResponseIntoResource {
-                userRemoteSource.createUser(userRequestModel)
+            userRemoteSource.createUser(userRequestModel)
         }
 
     suspend fun loginClientForSession(): Flow<SessionToken?> =
