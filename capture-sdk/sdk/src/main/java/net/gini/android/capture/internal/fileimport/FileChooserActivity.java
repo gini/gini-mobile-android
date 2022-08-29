@@ -35,12 +35,14 @@ import net.gini.android.capture.internal.permission.PermissionRequestListener;
 import net.gini.android.capture.internal.permission.RuntimePermissions;
 import net.gini.android.capture.internal.ui.AlertDialogFragment;
 import net.gini.android.capture.internal.ui.AlertDialogFragmentListener;
+import net.gini.android.capture.internal.util.AndroidHelper;
 import net.gini.android.capture.internal.util.ApplicationHelper;
 import net.gini.android.capture.internal.util.MimeType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -312,7 +314,11 @@ public class FileChooserActivity extends AppCompatActivity implements AlertDialo
     }
 
     private void requestStoragePermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        if (AndroidHelper.isTiramisuOrLater() && AndroidHelper.isPermissionAvailableOnCurrentAndroidVersion("READ_MEDIA_IMAGES")) {
+            LOG.info("Requesting read images permission");
+            mRuntimePermissions.requestPermission(this, AndroidHelper.getFullyQualifiedPermissionName("READ_MEDIA_IMAGES"),
+                    createPermissionRequestListener());
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             LOG.info("Requesting read storage permission");
             mRuntimePermissions.requestPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE,
                     createPermissionRequestListener());
@@ -322,7 +328,11 @@ public class FileChooserActivity extends AppCompatActivity implements AlertDialo
     }
 
     private void requestStoragePermissionWithoutRationale() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        if (AndroidHelper.isTiramisuOrLater() && AndroidHelper.isPermissionAvailableOnCurrentAndroidVersion("READ_MEDIA_IMAGES")) {
+            LOG.info("Requesting read images permission without rationale");
+            mRuntimePermissions.requestPermissionWithoutRationale(this,
+                    AndroidHelper.getFullyQualifiedPermissionName("READ_MEDIA_IMAGES"), createPermissionRequestListener());
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             LOG.info("Requesting read storage permission without rationale");
             mRuntimePermissions.requestPermissionWithoutRationale(this,
                     Manifest.permission.READ_EXTERNAL_STORAGE, createPermissionRequestListener());
@@ -415,10 +425,10 @@ public class FileChooserActivity extends AppCompatActivity implements AlertDialo
 
     @Override
     public void onRequestPermissionsResult(final int requestCode,
-            @NonNull final String[] permissions, @NonNull final int[] grantResults) {
+                                           @NonNull final String[] permissions, @NonNull final int[] grantResults) {
         final boolean handled = mRuntimePermissions.onRequestPermissionsResult(requestCode,
                 permissions, grantResults);
-        if (!handled && isReadExternalStoragePermission(permissions)) {
+        if (!handled && (isReadExternalStoragePermission(permissions) || isReadMediaImagesPermission(permissions))) {
             if (isPermissionGranted(grantResults)) {
                 storagePermissionGranted();
             } else {
@@ -432,6 +442,14 @@ public class FileChooserActivity extends AppCompatActivity implements AlertDialo
     private boolean isReadExternalStoragePermission(@NonNull final String[] permissions) {
         return permissions.length == 1
                 && permissions[0].equals(Manifest.permission.READ_EXTERNAL_STORAGE);
+    }
+
+    private boolean isReadMediaImagesPermission(@NonNull final String[] permissions) {
+        if (AndroidHelper.isPermissionAvailableOnCurrentAndroidVersion("READ_MEDIA_IMAGES")) {
+            return permissions.length == 1
+                    && permissions[0].equals(AndroidHelper.getFullyQualifiedPermissionName("READ_MEDIA_IMAGES"));
+        }
+        return false;
     }
 
     private boolean isPermissionGranted(@NonNull final int[] grantResults) {

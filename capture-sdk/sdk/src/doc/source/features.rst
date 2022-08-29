@@ -130,6 +130,17 @@ You need to declare the ``READ_EXTERNAL_STORAGE`` permission in your app's ``And
 
     </manifest>
 
+When targeting Android 13 and later you will also have to declare the ``READ_MEDIA_IMAGES`` permission:
+
+.. code-block:: xml
+
+    <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+        package="...">
+
+        <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+
+    </manifest>
+
 If the permission has not been granted the Gini Capture SDK will prompt the user to grant the permission when they use
 the document import feature.
 
