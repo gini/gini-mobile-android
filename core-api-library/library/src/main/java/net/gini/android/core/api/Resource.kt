@@ -1,6 +1,6 @@
 package net.gini.android.core.api
 
-sealed class Resource<T>(
+open class Resource<T>(
     val data: T? = null,
     val responseStatusCode: Int? = null,
     val responseHeaders: Map<String, List<String>>? = null,

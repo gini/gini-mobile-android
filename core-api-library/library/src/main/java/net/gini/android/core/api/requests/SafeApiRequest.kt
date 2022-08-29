@@ -9,11 +9,11 @@ private const val ERROR_MESSAGE_KEY = "message"
 
 object SafeApiRequest {
     @Throws(ApiException::class, CancellationException::class)
-    suspend fun <T : Any?> apiRequest(call: suspend () -> Response<T>): T {
+    suspend fun <T : Any?> apiRequest(call: suspend () -> Response<T>): Pair<T, MutableMap<String, MutableList<String>>> {
         try {
             val response = call.invoke()
             if (response.isSuccessful) {
-                return response.body()!!
+                return Pair(response.body()!!, response.headers().toMultimap())
             }
 
             val error = response.errorBody()?.string()

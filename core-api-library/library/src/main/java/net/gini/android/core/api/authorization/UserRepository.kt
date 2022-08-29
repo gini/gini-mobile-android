@@ -18,16 +18,14 @@ class UserRepository(
     private var session: SessionToken? = null
 
     //region Public methods
-    suspend fun loginUser(userRequestModel: UserRequestModel): Resource<SessionToken> =
+    suspend fun loginUser(userRequestModel: UserRequestModel): Resource<SessionToken?> =
         wrapResponseIntoResource {
             userRemoteSource.signIn(userRequestModel)
         }
 
-    suspend fun loginClient(): Flow<Resource<SessionToken>> =
-        flow {
-            emit(wrapResponseIntoResource {
-                userRemoteSource.loginClient()
-            })
+    suspend fun loginClient(): Resource<SessionToken> =
+        wrapResponseIntoResource {
+            userRemoteSource.loginClient()
         }
 
     suspend fun createUser(userRequestModel: UserRequestModel): Resource<ResponseBody> =
@@ -35,30 +33,17 @@ class UserRepository(
             userRemoteSource.createUser(userRequestModel)
         }
 
-    suspend fun loginClientForSession(): Flow<SessionToken?> =
-        flow {
-            val result = loginClient()
-            if (result.first() is Resource.Success) {
-                session = result.first().data!!
-                emit(session)
-            }
-        }
-
-    suspend fun getUserRepositorySession(): Flow<SessionToken?> =
-        flow {
+    suspend fun getUserRepositorySession(): SessionToken? =
             if (session?.hasExpired() == false || session != null) {
-                emit(session)
+                session
             } else {
-                emit(loginClientForSession().firstOrNull())
+                loginClient().data
             }
-        }
 
     suspend fun updateEmail(newEmail: String, oldEmail: String, session: SessionToken) {
-        getUserRepositorySession().collect {
-            it?.accessToken?.let { token ->
-                val userId = userRemoteSource.getGiniApiSessionTokenInfo(token).userName
-                userRemoteSource.updateEmail(userId ?: "", UserRequestModel(newEmail = newEmail, oldEmail = oldEmail), session)
-            }
+        getUserRepositorySession()?.accessToken?.let { token ->
+            val userId = userRemoteSource.getGiniApiSessionTokenInfo(token).userName
+            userRemoteSource.updateEmail(userId ?: "", UserRequestModel(newEmail = newEmail, oldEmail = oldEmail), session)
         }
     }
     //endregion

@@ -23,6 +23,7 @@ import com.android.volley.toolbox.NoCache;
 
 import net.gini.android.core.api.ApiCommunicator;
 import net.gini.android.core.api.DocumentManager;
+import net.gini.android.core.api.DocumentRepository;
 import net.gini.android.core.api.DocumentTaskManager;
 import net.gini.android.core.api.authorization.EncryptedCredentialsStore;
 import net.gini.android.core.api.authorization.UserCredentials;
@@ -53,11 +54,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-import bolts.Continuation;
-import bolts.Task;
-
 @LargeTest
-public abstract class GiniCoreAPIIntegrationTest<DTM extends DocumentTaskManager<A, E>, DM extends DocumentManager<A, DTM, E>, G extends GiniCoreAPI<DTM,DM, A, E>, A extends ApiCommunicator, E extends ExtractionsContainer> {
+public abstract class GiniCoreAPIIntegrationTest<DM extends DocumentManager<DR, E>, G extends GiniCoreAPI<DM, DR, E>, DR extends DocumentRepository, E extends ExtractionsContainer> {
 
     protected G giniCoreAPI;
     private String clientId;

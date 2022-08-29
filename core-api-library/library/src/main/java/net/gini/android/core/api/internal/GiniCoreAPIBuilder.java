@@ -10,6 +10,7 @@ import com.squareup.moshi.Moshi;
 
 import net.gini.android.core.api.ApiCommunicator;
 import net.gini.android.core.api.DocumentManager;
+import net.gini.android.core.api.DocumentRepository;
 import net.gini.android.core.api.DocumentTaskManager;
 import net.gini.android.core.api.GiniApiType;
 import net.gini.android.core.api.RequestQueueBuilder;
@@ -44,7 +45,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory;
 
 import static net.gini.android.core.api.Utils.checkNotNull;
 
-public abstract class GiniCoreAPIBuilder<DTM extends DocumentTaskManager<A, E>, DM extends DocumentManager<A, DTM, E>, G extends GiniCoreAPI<DTM, DM, A, E>, A extends ApiCommunicator, E extends ExtractionsContainer> {
+public abstract class GiniCoreAPIBuilder<DM extends DocumentManager<DR, E>, G extends GiniCoreAPI<DM,DR, E>, DR extends DocumentRepository, E extends ExtractionsContainer> {
 
     private final Context mContext;
 

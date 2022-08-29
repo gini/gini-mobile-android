@@ -5,6 +5,8 @@ import kotlinx.coroutines.withContext
 import net.gini.android.core.api.authorization.apimodels.SessionToken
 import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.requests.SafeApiRequest
+import retrofit2.http.HEAD
+import retrofit2.http.Header
 import kotlin.coroutines.CoroutineContext
 
 class DocumentRemoteSource(
@@ -25,48 +27,35 @@ class DocumentRemoteSource(
         val response = SafeApiRequest.apiRequest {
             documentService.uploadDocument(customBearerHeaderMap(metadata, contentType), data, filename, docType)
         }
-        response
+        Uri.parse(response.second[HEADER_LOCATION_KEY]?.first() ?: "")
     }
 
     suspend fun deleteDocument(documentUri: Uri): String = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             documentService.deleteDocumentFromUri(bearerHeaderMap(), documentUri)
         }
-        response
+        response.first
     }
 
     suspend fun deleteDocument(documentId: String): String = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             documentService.deleteDocument(bearerHeaderMap(), documentId)
         }
-        response
+        response.first
     }
 
     suspend fun getDocument(documentId: String): Document = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             documentService.getDocument(bearerHeaderMap(), documentId)
         }
-        response
+        response.first
     }
 
     suspend fun getDocumentFromUri(uri: Uri): Document = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
-            documentService.getDocumentFromUri(bearerHeaderMap(), uri.toString())
+            documentService.getDocumentFromUri(bearerHeaderMap(), uriRelativeToBaseUri(uri).toString())
         }
-        response
-    }
-
-    companion object {
-        enum class DocumentType(val apiDoctypeHint: String) {
-            BANK_STATEMENT("BankStatement"),
-            CONTRACT("Contract"),
-            INVOICE("Invoice"),
-            RECEIPT("Receipt"),
-            REMINDER("Reminder"),
-            REMITTANCE_SLIP("RemittanceSlip"),
-            TRAVEL_EXPENSE_REPORT("TravelExpenseReport"),
-            OTHER("Other");
-        }
+        response.first
     }
 
     private fun bearerHeaderMap(): Map<String, String> {
@@ -97,5 +86,19 @@ class DocumentRemoteSource(
         } else {
             Uri.parse(giniApiType.baseUrl)
         }
+    }
+
+    companion object {
+        enum class DocumentType(val apiDoctypeHint: String) {
+            BANK_STATEMENT("BankStatement"),
+            CONTRACT("Contract"),
+            INVOICE("Invoice"),
+            RECEIPT("Receipt"),
+            REMINDER("Reminder"),
+            REMITTANCE_SLIP("RemittanceSlip"),
+            TRAVEL_EXPENSE_REPORT("TravelExpenseReport"),
+            OTHER("Other");
+        }
+        const val HEADER_LOCATION_KEY = "location"
     }
 }

@@ -2,16 +2,17 @@ package net.gini.android.core.api.internal;
 
 import net.gini.android.core.api.ApiCommunicator;
 import net.gini.android.core.api.DocumentManager;
+import net.gini.android.core.api.DocumentRepository;
 import net.gini.android.core.api.DocumentTaskManager;
 import net.gini.android.core.api.authorization.CredentialsStore;
 import net.gini.android.core.api.models.ExtractionsContainer;
 
-public abstract class GiniCoreAPI<DTM extends DocumentTaskManager<A, E>, DM extends DocumentManager<A, DTM, E>, A extends ApiCommunicator, E extends ExtractionsContainer> {
-    private final DTM mDocumentTaskManager;
+public abstract class GiniCoreAPI<DM extends DocumentManager<DR, E>, DR extends DocumentRepository, E extends ExtractionsContainer> {
+    private final DM mDocumentManager;
     private final CredentialsStore mCredentialsStore;
 
-    protected GiniCoreAPI(final DTM documentTaskManager, final CredentialsStore credentialsStore) {
-        mDocumentTaskManager = documentTaskManager;
+    protected GiniCoreAPI(final DM documentManager, final CredentialsStore credentialsStore) {
+        mDocumentManager = documentManager;
         mCredentialsStore = credentialsStore;
     }
 
@@ -19,8 +20,8 @@ public abstract class GiniCoreAPI<DTM extends DocumentTaskManager<A, E>, DM exte
      * Get the instance of the DocumentTaskManager. The DocumentTaskManager provides high level methods to handle
      * document related tasks easily.
      */
-    public DTM getDocumentTaskManager() {
-        return mDocumentTaskManager;
+    public DM getDocumentkManager() {
+        return mDocumentManager;
     }
 
     /**

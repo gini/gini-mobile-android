@@ -20,42 +20,42 @@ class UserRemoteSource(
         val response = SafeApiRequest.apiRequest {
             userService.signIn(basicHeaderMap(), userRequestModel.username ?: "", userRequestModel.password ?: "")
         }
-        response
+        response.first
     }
 
     suspend fun loginClient(): SessionToken = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             userService.loginClient(basicHeaderMap())
         }
-        response
+        response.first
     }
 
     suspend fun createUser(userRequestModel: UserRequestModel): ResponseBody = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             userService.createUser(bearerHeaderMap(), userRequestModel)
         }
-        response
+        response.first
     }
 
     suspend fun getGiniApiSessionTokenInfo(token: String): SessionToken = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
            userService.getGiniApiSessionTokenInfo(token)
         }
-        response
+        response.first
     }
 
     suspend fun getUserInfo(uri: String): UserResponseModel = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             userService.getUserInfo(bearerHeaderMap(), uri)
         }
-        response
+        response.first
     }
 
     suspend fun updateEmail(userId: String, userRequestModel: UserRequestModel, sessionToken: SessionToken): ResponseBody = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             userService.updateEmail(bearerHeaderMap(), userId, userRequestModel)
         }
-        response
+        response.first
     }
 
     private fun basicHeaderMap(): Map<String, String> {

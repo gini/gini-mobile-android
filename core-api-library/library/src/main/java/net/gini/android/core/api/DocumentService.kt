@@ -10,7 +10,7 @@ import retrofit2.http.*
 interface DocumentService {
 
     @POST("documents/")
-    suspend fun uploadDocument(@HeaderMap bearer: Map<String, String>, @Body bytes: ByteArray,  @Query("filename") fileName: String?, @Query("doctype") docType: String?): Response<Uri>
+    suspend fun uploadDocument(@HeaderMap bearer: Map<String, String>, @Body bytes: ByteArray,  @Query("filename") fileName: String?, @Query("doctype") docType: String?): Response<ResponseBody>
 
     @GET("documents/{documentId}")
     suspend fun getDocument(@HeaderMap bearer: Map<String, String>, @Path("documentId") documentId: String): Response<Document>

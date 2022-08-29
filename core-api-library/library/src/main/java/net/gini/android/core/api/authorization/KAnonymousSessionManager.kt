@@ -1,5 +1,6 @@
 package net.gini.android.core.api.authorization
 
+import android.util.Log
 import net.gini.android.core.api.Resource
 import net.gini.android.core.api.Utils
 import net.gini.android.core.api.authorization.apimodels.SessionToken
@@ -7,6 +8,7 @@ import net.gini.android.core.api.authorization.apimodels.UserRequestModel
 import okhttp3.ResponseBody
 import org.json.JSONObject
 import java.util.*
+import kotlin.math.log
 
 class KAnonymousSessionManager(
     private val userRepository: UserRepository,
@@ -15,40 +17,54 @@ class KAnonymousSessionManager(
 ): KSessionManager {
     private var currentSession: SessionToken? = null
 
-    override suspend fun getSession(): SessionToken? {
+    override suspend fun getSession(): Resource<SessionToken?> {
         if (currentSession != null && !currentSession!!.hasExpired()) {
-            return currentSession
+            return Resource(currentSession)
         }
 
         val userCredentials = credentialsStore.userCredentials
         if (userCredentials == null) {
-            var createResponse = createUser()
+            val createResponse = createUser()
             if (createResponse is Resource.Success) {
-                when (val loginResponse = loginUser()) {
+                return when (val loginResponse = loginUser()) {
                     is Resource.Success -> {
                         currentSession = loginResponse.data
-                        return currentSession
+
+                        loginResponse
                     }
 
-                    is Resource.Error -> {
-                        if (isInvalidUserError(loginResponse)) {
-                            currentSession = null
-                            credentialsStore.deleteUserCredentials()
-                            createResponse = createUser()
-                            if (createResponse is Resource.Success) {
-                                currentSession = loginUser().data
-                            }
-                        }
-                    }
-
-                    is Resource.Cancelled -> {
+                    else -> {
                         currentSession = null
+
+                        loginResponse
                     }
                 }
             }
+        } else {
+            when (val loginResponse = loginUser()) {
+                is Resource.Success -> {
+                    currentSession = loginResponse.data
+                    return loginResponse
+                }
+
+                is Resource.Error -> {
+                    if (isInvalidUserError(loginResponse)) {
+                        currentSession = null
+                        credentialsStore.deleteUserCredentials()
+                        val createResponse = createUser()
+                        if (createResponse is Resource.Success) {
+                            currentSession = loginUser().data
+
+                            return loginResponse
+                        }
+                    }
+                }
+
+                is Resource.Cancelled -> return loginResponse
+            }
         }
 
-        return null
+        return Resource()
     }
 
     suspend fun createUser(): Resource<ResponseBody> {
@@ -60,7 +76,7 @@ class KAnonymousSessionManager(
         return response
     }
 
-    suspend fun loginUser(): Resource<SessionToken> {
+    suspend fun loginUser(): Resource<SessionToken?> {
         val userCredentials = credentialsStore.userCredentials
         if (userCredentials != null) {
             if (hasUserCredentialsEmailDomain(emailDomain, userCredentials)) {
@@ -98,7 +114,7 @@ class KAnonymousSessionManager(
         return UUID.randomUUID().toString()
     }
 
-    private fun isInvalidUserError(resource: Resource<SessionToken>): Boolean {
+    private fun isInvalidUserError(resource: Resource<SessionToken?>): Boolean {
         when (resource.responseStatusCode ?: 0) {
             400 -> {
                 resource.responseBody?.let {

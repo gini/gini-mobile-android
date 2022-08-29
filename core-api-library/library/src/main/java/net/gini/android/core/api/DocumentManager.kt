@@ -17,7 +17,7 @@ import org.json.JSONObject
  * The [DocumentManager] is a high level API on top of the Gini API, which is used via the DocumentRepository. It
  * provides high level methods to handle document related tasks easily.
  */
-open class DocumentManager<DR: DocumentRepository, E: ExtractionsContainer>(protected val documentRepository: DR) {
+open class DocumentManager<DR: DocumentRepository, E: ExtractionsContainer>(private val documentRepository: DR) {
 
     /**
      * Uploads raw data and creates a new Gini partial document.
@@ -27,7 +27,7 @@ open class DocumentManager<DR: DocumentRepository, E: ExtractionsContainer>(prot
      * @param filename     Optional the filename of the given document
      * @param documentType Optional a document type hint. See the documentation for the document type hints for
      *                     possible values
-     * @return the Document instance of the freshly created document.
+     * @return the Document instance of the freshly created document or null if the API had error.
      */
     suspend fun createPartialDocument(
         document: ByteArray,
@@ -50,62 +50,47 @@ open class DocumentManager<DR: DocumentRepository, E: ExtractionsContainer>(prot
      *
      * @param documentId The id of an existing partial document
      */
-    suspend fun deletePartialDocumentAndParents(documentId: String) =
-        documentRepository.deletePartialDocumentAndParents(documentId)
-//
-//    /**
-//     * Deletes a Gini document.
-//     *
-//     * For deleting partial documents use [deletePartialDocumentAndParents] instead.
-//     *
-//     * @param documentId The id of an existing document
-//     */
-//    suspend fun deleteDocument(
-//        documentId: String,
-//    ) = withContext(taskDispatcher) {
-//        suspendCancellableCoroutine<Unit> { continuation ->
-//            val task = documentTaskManager.deleteDocument(documentId)
-//            continuation.resumeUnitTask(task)
-//        }
-//    }
-//
-//    /**
-//     * Creates a new Gini composite document.
-//     *
-//     * @param documents    A list of partial documents which should be part of a multi-page document
-//     * @param documentType Optional a document type hint. See the documentation for the document type hints for
-//     *                     possible values
-//     * @return the Document instance of the freshly created document.
-//     */
-//    suspend fun createCompositeDocument(
-//        documents: List<Document>,
-//        documentType: DocumentTaskManager.DocumentType? = null,
-//    ): Document = withContext(taskDispatcher) {
-//        suspendCancellableCoroutine { continuation ->
-//            val task = documentTaskManager.createCompositeDocument(documents, documentType)
-//            continuation.resumeTask(task)
-//        }
-//    }
-//
-//    /**
-//     * Creates a new Gini composite document. The input Map must contain the partial documents as keys. These will be
-//     * part of the multi-page document. The value for each partial document key is the amount in degrees the document
-//     * has been rotated by the user.
-//     *
-//     * @param documentRotationMap A map of partial documents and their rotation in degrees
-//     * @param documentType        Optional a document type hint. See the documentation for the document type hints for
-//     *                            possible values
-//     * @return the Document instance of the freshly created document.
-//     */
-//    suspend fun createCompositeDocument(
-//        documentRotationMap: LinkedHashMap<Document, Int>,
-//        documentType: DocumentTaskManager.DocumentType,
-//    ): Document = withContext(taskDispatcher) {
-//        suspendCancellableCoroutine { continuation ->
-//            val task = documentTaskManager.createCompositeDocument(documentRotationMap, documentType)
-//            continuation.resumeTask(task)
-//        }
-//    }
+    suspend fun deletePartialDocumentAndParents(documentId: String): String? =
+        documentRepository.deletePartialDocumentAndParents(documentId).data
+
+    /**
+     * Deletes a Gini document.
+     *
+     * For deleting partial documents use [deletePartialDocumentAndParents] instead.
+     *
+     * @param documentId The id of an existing document
+     */
+    suspend fun deleteDocument(documentId: String): String? =
+        documentRepository.deleteDocument(documentId).data
+
+    /**
+     * Creates a new Gini composite document.
+     *
+     * @param documents    A list of partial documents which should be part of a multi-page document
+     * @param documentType Optional a document type hint. See the documentation for the document type hints for
+     *                     possible values
+     * @return the Document instance of the freshly created document or null if the API had error
+     */
+    suspend fun createCompositeDocument(documents: List<Document>,
+        documentType: DocumentRemoteSource.Companion.DocumentType? = null): Document? =
+        documentRepository.createCompositeDocument(documents, documentType).data
+
+    /**
+     * Creates a new Gini composite document. The input Map must contain the partial documents as keys. These will be
+     * part of the multi-page document. The value for each partial document key is the amount in degrees the document
+     * has been rotated by the user.
+     *
+     * @param documentRotationMap A map of partial documents and their rotation in degrees
+     * @param documentType        Optional a document type hint. See the documentation for the document type hints for
+     *                            possible values
+     * @return the Document instance of the freshly created document or null if the API had error.
+     */
+    suspend fun createCompositeDocument(
+        documentRotationMap: LinkedHashMap<Document, Int>,
+        documentType: DocumentRemoteSource.Companion.DocumentType,
+    ): Document? =
+        documentRepository.createCompositeDocument(documentRotationMap, documentType).data
+    }
 //
 //    /**
 //     * Get the document with the given unique identifier.
@@ -255,23 +240,3 @@ open class DocumentManager<DR: DocumentRepository, E: ExtractionsContainer>(prot
 //            continuation.resumeTask(task)
 //        }
 //    }
-//
-//    protected fun <T> Continuation<T>.resumeTask(task: Task<T>) {
-//        task.waitForCompletion()
-//        if (!task.isFaulted) {
-//            this.resume(task.result)
-//        } else {
-//            this.resumeWithException(task.error)
-//        }
-//    }
-//
-//    private fun <T> Continuation<Unit>.resumeUnitTask(task: Task<T>) {
-//        task.waitForCompletion()
-//        if (!task.isFaulted) {
-//            this.resume(Unit)
-//        } else {
-//            this.resumeWithException(task.error)
-//        }
-//    }
-
-}
