@@ -22,6 +22,8 @@ interface QRCodeDetector {
 
     void detect(@NonNull Image image, @NonNull Size imageSize, int rotation, @NonNull final Callback callback);
 
+    void detect(@NonNull byte[] image, @NonNull Size imageSize, int rotation);
+
     void release();
 
     void setListener(@Nullable Listener listener);

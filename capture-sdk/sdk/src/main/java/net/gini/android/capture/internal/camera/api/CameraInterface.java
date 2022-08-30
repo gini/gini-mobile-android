@@ -140,6 +140,9 @@ public interface CameraInterface {
 
         void onPreviewFrame(@NonNull final Image image, @NonNull final Size imageSize,
                             final int rotation, @NonNull final PreviewFrameCallback previewFrameCallback);
+
+        void onPreviewFrame(@NonNull final byte[] image, @NonNull final Size imageSize,
+                            final int rotation);
     }
 
     /**

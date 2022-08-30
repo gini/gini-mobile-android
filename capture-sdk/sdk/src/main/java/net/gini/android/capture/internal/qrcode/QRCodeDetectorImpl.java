@@ -45,7 +45,19 @@ class QRCodeDetectorImpl implements QRCodeDetector {
         }
         mHandler.removeMessages(DETECT_QRCODE);
         final Message message = mHandler.obtainMessage(DETECT_QRCODE,
-                new QRCodeDetectorHandler.MessageData(image, imageSize, rotation, callback));
+                new QRCodeDetectorHandler.MessageDataForImage(image, imageSize, rotation, callback));
+        mHandler.sendMessageAtFrontOfQueue(message);
+    }
+
+    @Override
+    public void detect(@NonNull byte[] image, @NonNull Size imageSize, int rotation) {
+        // If there is no listener, we don't process the image to avoid unnecessary computation
+        if (mListener == null) {
+            return;
+        }
+        mHandler.removeMessages(DETECT_QRCODE);
+        final Message message = mHandler.obtainMessage(DETECT_QRCODE,
+                new QRCodeDetectorHandler.MessageDataForByteArray(image, imageSize, rotation));
         mHandler.sendMessageAtFrontOfQueue(message);
     }
 

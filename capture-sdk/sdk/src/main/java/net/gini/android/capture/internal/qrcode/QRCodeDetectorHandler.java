@@ -5,13 +5,13 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import net.gini.android.capture.internal.camera.api.UIExecutor;
 import net.gini.android.capture.internal.util.Size;
 
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 /**
  * Created by Alpar Szotyori on 11.12.2017.
@@ -43,9 +43,18 @@ class QRCodeDetectorHandler extends Handler {
             if (mListener == null) {
                 return;
             }
-            final MessageData imageData = (MessageData) msg.obj;
-            final List<String> qrCodes = mQRCodeDetectorTask.detect(imageData.image,
-                    imageData.imageSize, imageData.rotation);
+            final List<String> qrCodes;
+            if (msg.obj instanceof MessageDataForImage) {
+                final MessageDataForImage imageData = (MessageDataForImage) msg.obj;
+                qrCodes = mQRCodeDetectorTask.detect(imageData.image,
+                        imageData.imageSize, imageData.rotation);
+            } else if (msg.obj instanceof MessageDataForByteArray) {
+                final MessageDataForByteArray imageData = (MessageDataForByteArray) msg.obj;
+                qrCodes = mQRCodeDetectorTask.detect(imageData.imageBytes,
+                        imageData.imageSize, imageData.rotation);
+            } else {
+                throw new IllegalStateException("Unknown message class: " + msg.getClass());
+            }
             if (!qrCodes.isEmpty()) {
                 mUIExecutor.runOnUiThread(new Runnable() {
                     @Override
@@ -57,7 +66,10 @@ class QRCodeDetectorHandler extends Handler {
             mUIExecutor.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    imageData.callback.onDetectionFinished();
+                    if (msg.obj instanceof MessageDataForImage) {
+                        final MessageDataForImage imageData = (MessageDataForImage) msg.obj;
+                        imageData.callback.onDetectionFinished();
+                    }
                 }
             });
         } else {
@@ -73,19 +85,33 @@ class QRCodeDetectorHandler extends Handler {
         mListener = listener;
     }
 
-    static class MessageData {
+    static class MessageDataForImage {
 
         final Image image;
         final Size imageSize;
         final int rotation;
         final QRCodeDetector.Callback callback;
 
-        MessageData(final Image image,
-                    final Size imageSize, final int rotation, @NonNull final QRCodeDetector.Callback callback) {
+        MessageDataForImage(final Image image,
+                            final Size imageSize, final int rotation, @NonNull final QRCodeDetector.Callback callback) {
             this.image = image;
             this.imageSize = imageSize;
             this.rotation = rotation;
             this.callback = callback;
+        }
+    }
+
+    static class MessageDataForByteArray {
+
+        final byte[] imageBytes;
+        final Size imageSize;
+        final int rotation;
+
+        MessageDataForByteArray(final byte[] imageBytes,
+                                final Size imageSize, final int rotation) {
+            this.imageBytes = imageBytes;
+            this.imageSize = imageSize;
+            this.rotation = rotation;
         }
     }
 }
