@@ -39,8 +39,40 @@ public final class GiniCaptureRequirements {
      */
     public static RequirementsReport checkRequirements(final Context context) {
         LOG.info("Checking requirements");
+        RequirementsReport requirementsReport = checkWithCameraX(context);
+
+        if (!requirementsReport.isFulfilled()) {
+            requirementsReport = checkWithOldCameraApi(context);
+        }
+
+        return requirementsReport;
+    }
+
+    private static RequirementsReport checkWithCameraX(@NonNull final Context context) {
+        LOG.info("Checking with CameraX");
         final CameraHolder cameraHolder = new CameraXHolder(context);
 
+        final RequirementsReport requirementsReport = checkRequirements(context, cameraHolder);
+
+        cameraHolder.closeCamera();
+
+        LOG.info("Requirements checked with results: {}", requirementsReport);
+        return requirementsReport;
+    }
+
+    private static RequirementsReport checkWithOldCameraApi(@NonNull final Context context) {
+        LOG.info("Checking with old camera api");
+        final CameraHolder cameraHolder = new OldCameraApiHolder();
+
+        final RequirementsReport requirementsReport = checkRequirements(context, cameraHolder);
+
+        cameraHolder.closeCamera();
+
+        LOG.info("Requirements checked with results: {}", requirementsReport);
+        return requirementsReport;
+    }
+
+    private static RequirementsReport checkRequirements(@NonNull Context context, CameraHolder cameraHolder) {
         final List<Requirement> requirements;
         if (isTablet(context)) {
             requirements = getTabletRequirements(context, cameraHolder);
@@ -48,13 +80,8 @@ public final class GiniCaptureRequirements {
             requirements = getPhoneRequirements(context, cameraHolder);
         }
 
-        final RequirementsReport requirementsReport = new RequirementsChecker(requirements)
+        return new RequirementsChecker(requirements)
                 .checkRequirements();
-
-        cameraHolder.closeCamera();
-
-        LOG.info("Requirements checked with results: {}", requirementsReport);
-        return requirementsReport;
     }
 
     @NonNull
