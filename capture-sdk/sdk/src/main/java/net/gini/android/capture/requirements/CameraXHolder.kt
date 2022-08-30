@@ -18,6 +18,9 @@ import java.util.concurrent.RejectedExecutionException
 
 private val LOG: Logger = LoggerFactory.getLogger(CameraXHolder::class.java)
 
+/**
+ * Internal use only.
+ */
 class CameraXHolder(context: Context) : CameraHolder {
 
     private val cameraLifecycle = CameraLifecycle()
