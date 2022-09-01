@@ -7,7 +7,7 @@ import net.gini.android.core.api.DocumentTaskManager;
 import net.gini.android.core.api.authorization.CredentialsStore;
 import net.gini.android.core.api.models.ExtractionsContainer;
 
-public abstract class GiniCoreAPI<DM extends DocumentManager<DR, E>, DR extends DocumentRepository, E extends ExtractionsContainer> {
+public abstract class GiniCoreAPI<DM extends DocumentManager<DR, E>, DR extends DocumentRepository<E>, E extends ExtractionsContainer> {
     private final DM mDocumentManager;
     private final CredentialsStore mCredentialsStore;
 

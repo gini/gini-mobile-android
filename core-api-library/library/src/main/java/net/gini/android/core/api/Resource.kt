@@ -1,6 +1,6 @@
 package net.gini.android.core.api
 
-open class Resource<T>(
+sealed class Resource<T>(
     val data: T? = null,
     val responseStatusCode: Int? = null,
     val responseHeaders: Map<String, List<String>>? = null,
@@ -12,7 +12,7 @@ open class Resource<T>(
                      responseBody: String? = null)
         : Resource<T>(data, responseStatusCode, responseHeaders, responseBody)
 
-    class Error<T>(var message: String,
+    class Error<T>(var message: String? = null,
                    var errorCode: Int? = null,
                    data: T? = null,
                    responseStatusCode: Int? = null,

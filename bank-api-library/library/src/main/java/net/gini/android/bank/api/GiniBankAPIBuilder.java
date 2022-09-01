@@ -63,6 +63,5 @@ public class GiniBankAPIBuilder extends GiniCoreAPIBuilder<BankApiDocumentTaskMa
     protected BankApiDocumentTaskManager createDocumentTaskManager() {
         return new BankApiDocumentTaskManager(getApiCommunicator(), getSessionManager(), getGiniApiType(), getMoshi());
     }
-
 }
 

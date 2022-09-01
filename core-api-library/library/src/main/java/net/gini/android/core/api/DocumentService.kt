@@ -1,6 +1,7 @@
 package net.gini.android.core.api
 
 import android.net.Uri
+import net.gini.android.core.api.authorization.UserService
 import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.response.PaymentRequestResponse
 import okhttp3.ResponseBody

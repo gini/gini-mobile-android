@@ -17,7 +17,7 @@ import org.json.JSONObject
  * The [DocumentManager] is a high level API on top of the Gini API, which is used via the DocumentRepository. It
  * provides high level methods to handle document related tasks easily.
  */
-open class DocumentManager<DR: DocumentRepository, E: ExtractionsContainer>(private val documentRepository: DR) {
+abstract class DocumentManager<DR: DocumentRepository<E>, E: ExtractionsContainer>(private val documentRepository: DR) {
 
     /**
      * Uploads raw data and creates a new Gini partial document.
@@ -27,7 +27,7 @@ open class DocumentManager<DR: DocumentRepository, E: ExtractionsContainer>(priv
      * @param filename     Optional the filename of the given document
      * @param documentType Optional a document type hint. See the documentation for the document type hints for
      *                     possible values
-     * @return the Document instance of the freshly created document or null if the API had error.
+     * @return Resource with the Document instance of the freshly created document or null data with informations about the error
      */
     suspend fun createPartialDocument(
         document: ByteArray,
@@ -35,11 +35,11 @@ open class DocumentManager<DR: DocumentRepository, E: ExtractionsContainer>(priv
         filename: String? = null,
         documentType: DocumentRemoteSource.Companion.DocumentType? = null,
         documentMetadata: DocumentMetadata? = null,
-    ): Document? =
+    ): Resource<Document> =
         if (documentMetadata != null) {
-                documentRepository.createPartialDocument(document, contentType, filename, documentType, documentMetadata).data
+                documentRepository.createPartialDocument(document, contentType, filename, documentType, documentMetadata)
             } else {
-                documentRepository.createPartialDocument(document, contentType, filename, documentType).data
+                documentRepository.createPartialDocument(document, contentType, filename, documentType)
             }
 
     /**
@@ -49,9 +49,11 @@ open class DocumentManager<DR: DocumentRepository, E: ExtractionsContainer>(priv
      * this method deletes the parents before deleting the partial document.
      *
      * @param documentId The id of an existing partial document
+     * @return Empty Resource or informations about the error
      */
-    suspend fun deletePartialDocumentAndParents(documentId: String): String? =
-        documentRepository.deletePartialDocumentAndParents(documentId).data
+
+    suspend fun deletePartialDocumentAndParents(documentId: String): Resource<String> =
+        documentRepository.deletePartialDocumentAndParents(documentId)
 
     /**
      * Deletes a Gini document.
@@ -59,9 +61,10 @@ open class DocumentManager<DR: DocumentRepository, E: ExtractionsContainer>(priv
      * For deleting partial documents use [deletePartialDocumentAndParents] instead.
      *
      * @param documentId The id of an existing document
+     * @return Empty Resource or informations about the error
      */
-    suspend fun deleteDocument(documentId: String): String? =
-        documentRepository.deleteDocument(documentId).data
+    suspend fun deleteDocument(documentId: String): Resource<String> =
+        documentRepository.deleteDocument(documentId)
 
     /**
      * Creates a new Gini composite document.

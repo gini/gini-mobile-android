@@ -51,6 +51,8 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     kapt(libs.moshi.codegen)
     implementation(libs.moshi.core)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.moshi.converter)
 
     kaptAndroidTest(libs.moshi.codegen)
     androidTestImplementation(libs.mockito.core)

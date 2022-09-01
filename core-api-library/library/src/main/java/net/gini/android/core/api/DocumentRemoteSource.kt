@@ -9,7 +9,7 @@ import retrofit2.http.HEAD
 import retrofit2.http.Header
 import kotlin.coroutines.CoroutineContext
 
-class DocumentRemoteSource(
+abstract class DocumentRemoteSource(
     val coroutineContext: CoroutineContext,
     private val documentService: DocumentService,
     private val giniApiType: GiniApiType,

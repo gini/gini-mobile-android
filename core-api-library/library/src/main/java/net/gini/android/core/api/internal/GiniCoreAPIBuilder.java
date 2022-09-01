@@ -10,6 +10,7 @@ import com.squareup.moshi.Moshi;
 
 import net.gini.android.core.api.ApiCommunicator;
 import net.gini.android.core.api.DocumentManager;
+import net.gini.android.core.api.DocumentRemoteSource;
 import net.gini.android.core.api.DocumentRepository;
 import net.gini.android.core.api.DocumentTaskManager;
 import net.gini.android.core.api.GiniApiType;
@@ -45,7 +46,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory;
 
 import static net.gini.android.core.api.Utils.checkNotNull;
 
-public abstract class GiniCoreAPIBuilder<DM extends DocumentManager<DR, E>, G extends GiniCoreAPI<DM,DR, E>, DR extends DocumentRepository, E extends ExtractionsContainer> {
+public abstract class GiniCoreAPIBuilder<DM extends DocumentManager<DR, E>, G extends GiniCoreAPI<DM,DR, E>, DR extends DocumentRepository<E>, E extends ExtractionsContainer> {
 
     private final Context mContext;
 
@@ -58,10 +59,8 @@ public abstract class GiniCoreAPIBuilder<DM extends DocumentManager<DR, E>, G ex
     @XmlRes
     private int mNetworkSecurityConfigResId;
 
-    private A mApiCommunicator;
     private Moshi mMoshi;
     private RequestQueue mRequestQueue;
-    private DTM mDocumentTaskManager;
     private KSessionManager mSessionManager;
     private CredentialsStore mCredentialsStore;
     private UserCenterAPICommunicator mUserCenterApiCommunicator;
@@ -76,6 +75,7 @@ public abstract class GiniCoreAPIBuilder<DM extends DocumentManager<DR, E>, G ex
     private UserService mUserService;
     private UserRepository mUserRepository;
     private UserRemoteSource mUserRemoteSource;
+    private DM mDocumentManager;
 
     /**
      * Constructor to initialize a new builder instance where anonymous Gini users are used. <b>This requires access to
@@ -112,7 +112,7 @@ public abstract class GiniCoreAPIBuilder<DM extends DocumentManager<DR, E>, G ex
      * @param networkSecurityConfigResId xml resource id
      * @return The builder instance to enable chaining.
      */
-    public GiniCoreAPIBuilder<DTM, DM, G, A, E> setNetworkSecurityConfigResId(@XmlRes final int networkSecurityConfigResId) {
+    public GiniCoreAPIBuilder<DM, G, DR, E> setNetworkSecurityConfigResId(@XmlRes final int networkSecurityConfigResId) {
         mNetworkSecurityConfigResId = networkSecurityConfigResId;
         return this;
     }
@@ -123,7 +123,7 @@ public abstract class GiniCoreAPIBuilder<DM extends DocumentManager<DR, E>, G ex
      * @param newUrl The URL of the Gini API which is used by the requests of the library.
      * @return The builder instance to enable chaining.
      */
-    public GiniCoreAPIBuilder<DTM, DM, G, A, E> setApiBaseUrl(@NonNull String newUrl) {
+    public GiniCoreAPIBuilder<DM, G, DR, E> setApiBaseUrl(@NonNull String newUrl) {
         if (!newUrl.endsWith("/")) {
             newUrl += "/";
         }
@@ -137,7 +137,7 @@ public abstract class GiniCoreAPIBuilder<DM extends DocumentManager<DR, E>, G ex
      * @param newUrl The URL of the Gini User Center API which is used by the requests of the library.
      * @return The builder instance to enable chaining.
      */
-    public GiniCoreAPIBuilder<DTM, DM, G, A, E> setUserCenterApiBaseUrl(@NonNull String newUrl) {
+    public GiniCoreAPIBuilder<DM, G, DR, E> setUserCenterApiBaseUrl(@NonNull String newUrl) {
         if (!newUrl.endsWith("/")) {
             newUrl += "/";
         }
@@ -155,7 +155,7 @@ public abstract class GiniCoreAPIBuilder<DM extends DocumentManager<DR, E>, G ex
      * @param connectionTimeoutInMs initial timeout
      * @return The builder instance to enable chaining.
      */
-    public GiniCoreAPIBuilder<DTM, DM, G, A, E> setConnectionTimeoutInMs(final int connectionTimeoutInMs) {
+    public GiniCoreAPIBuilder<DM, G, DR, E> setConnectionTimeoutInMs(final int connectionTimeoutInMs) {
         if (connectionTimeoutInMs < 0) {
             throw new IllegalArgumentException("connectionTimeoutInMs can't be less than 0");
         }
@@ -169,7 +169,7 @@ public abstract class GiniCoreAPIBuilder<DM extends DocumentManager<DR, E>, G ex
      * @param maxNumberOfRetries maximal number of retries.
      * @return The builder instance to enable chaining.
      */
-    public GiniCoreAPIBuilder<DTM, DM, G, A, E> setMaxNumberOfRetries(final int maxNumberOfRetries) {
+    public GiniCoreAPIBuilder<DM, G, DR, E> setMaxNumberOfRetries(final int maxNumberOfRetries) {
         if (maxNumberOfRetries < 0) {
             throw new IllegalArgumentException("maxNumberOfRetries can't be less than 0");
         }
@@ -184,7 +184,7 @@ public abstract class GiniCoreAPIBuilder<DM extends DocumentManager<DR, E>, G ex
      * @param backOffMultiplier the backoff multiplication factor
      * @return The builder instance to enable chaining.
      */
-    public GiniCoreAPIBuilder<DTM, DM, G, A, E> setConnectionBackOffMultiplier(final float backOffMultiplier) {
+    public GiniCoreAPIBuilder<DM, G, DR, E> setConnectionBackOffMultiplier(final float backOffMultiplier) {
         if (backOffMultiplier < 0.0) {
             throw new IllegalArgumentException("backOffMultiplier can't be less than 0");
         }
@@ -199,7 +199,7 @@ public abstract class GiniCoreAPIBuilder<DM extends DocumentManager<DR, E>, G ex
      * @param credentialsStore A credentials store instance (specified by the CredentialsStore interface).
      * @return The builder instance to enable chaining.
      */
-    public GiniCoreAPIBuilder<DTM, DM, G, A, E> setCredentialsStore(@NonNull CredentialsStore credentialsStore) {
+    public GiniCoreAPIBuilder<DM, G, DR, E> setCredentialsStore(@NonNull CredentialsStore credentialsStore) {
         mCredentialsStore = checkNotNull(credentialsStore);
         return this;
     }
@@ -211,7 +211,7 @@ public abstract class GiniCoreAPIBuilder<DM extends DocumentManager<DR, E>, G ex
      * @param cache A cache instance (specified by the com.android.volley.Cache interface).
      * @return The builder instance to enable chaining.
      */
-    public GiniCoreAPIBuilder<DTM, DM, G, A, E> setCache(@NonNull Cache cache) {
+    public GiniCoreAPIBuilder<DM, G, DR, E> setCache(@NonNull Cache cache) {
         mCache = cache;
         return this;
     }
@@ -226,7 +226,7 @@ public abstract class GiniCoreAPIBuilder<DM extends DocumentManager<DR, E>, G ex
      * @param trustManager A {@link TrustManager} implementation.
      * @return The builder instance to enable chaining.
      */
-    public GiniCoreAPIBuilder<DTM, DM, G, A, E> setTrustManager(@NonNull final TrustManager trustManager) {
+    public GiniCoreAPIBuilder<DM, G, DR, E> setTrustManager(@NonNull final TrustManager trustManager) {
         mTrustManager = trustManager;
         return this;
     }
@@ -282,20 +282,6 @@ public abstract class GiniCoreAPIBuilder<DM extends DocumentManager<DR, E>, G ex
         return hostnames;
     }
 
-    /**
-     * Helper method to create (and store) the ApiCommunicator instance which is used to do the requests to the Gini API.
-     *
-     * @return The ApiCommunicator instance.
-     */
-    @NonNull
-    protected synchronized A getApiCommunicator() {
-        if (mApiCommunicator == null) {
-            mApiCommunicator = createApiCommunicator();
-        }
-        return mApiCommunicator;
-    }
-
-    protected abstract A createApiCommunicator();
 
     /**
      * Helper method to create (and store) the ApiCommunicator instance which is used to do the requests to the Gini API.
@@ -366,14 +352,14 @@ public abstract class GiniCoreAPIBuilder<DM extends DocumentManager<DR, E>, G ex
      * @return The DocumentTaskManager instance.
      */
     @NonNull
-    protected synchronized DTM getDocumentTaskManager() {
-        if (mDocumentTaskManager == null) {
-            mDocumentTaskManager = createDocumentTaskManager();
+    protected synchronized DM getDocumentManager() {
+        if (mDocumentManager == null) {
+            mDocumentManager = createDocumentManager();
         }
-        return mDocumentTaskManager;
+        return mDocumentManager;
     }
 
-    protected abstract DTM createDocumentTaskManager();
+    protected abstract DM createDocumentManager();
 
     /**
      * Return the {@link SessionManager} set via #setSessionManager. If no SessionManager has been set, default to

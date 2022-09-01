@@ -84,7 +84,7 @@ public abstract class GiniCoreAPIIntegrationTest<DM extends DocumentManager<DR, 
                 build();
     }
 
-    protected abstract GiniCoreAPIBuilder<DTM, DM, G, A, E> createGiniCoreAPIBuilder(@NonNull final String clientId,
+    protected abstract GiniCoreAPIBuilder<DM, G, DR, E> createGiniCoreAPIBuilder(@NonNull final String clientId,
                                                                       @NonNull final String clientSecret,
                                                                       @NonNull final String emailDomain);
 

@@ -2,7 +2,7 @@ package net.gini.android.core.api
 
 import android.net.Uri
 import kotlinx.coroutines.*
-import net.gini.android.core.api.models.Document
+import net.gini.android.core.api.models.*
 import net.gini.android.core.api.requests.ApiException
 import org.json.JSONArray
 import org.json.JSONException
@@ -10,7 +10,7 @@ import org.json.JSONObject
 import java.util.concurrent.CancellationException
 import kotlin.coroutines.CoroutineContext
 
-class DocumentRepository(
+abstract class DocumentRepository<E: ExtractionsContainer>(
     override val coroutineContext: CoroutineContext,
     private val documentRemoteSource: DocumentRemoteSource,
     private val giniApiType: GiniApiType
@@ -104,6 +104,99 @@ class DocumentRepository(
         }
     }
 
+    /**
+     * Uploads raw data and creates a new Gini document.
+     *
+     * @param document     A byte array representing an image, a pdf or UTF-8 encoded text
+     * @param filename     Optional the filename of the given document.
+     * @param documentType Optional a document type hint. See the documentation for the document type hints for
+     *                     possible values.
+     * @return A Resource with the Document instance of the freshly created document or informations about error
+     *
+     * <b>Important:</b> If using the default Gini API, then use {@link #createPartialDocument(byte[], String, String, DocumentType)} to upload the
+     * document and then call {@link #createCompositeDocument(LinkedHashMap, DocumentType)}
+     * (or {@link #createCompositeDocument(List, DocumentType)}) to finish document creation. The
+     * returned composite document can be used to poll the processing state, to retrieve extractions
+     * and to send feedback.
+     */
+
+    suspend fun createDocument(document: ByteArray, filename: String?, documentType: DocumentRemoteSource.Companion.DocumentType?): Resource<Document> {
+        return createDocumentInternal(document, filename, documentType, null)
+    }
+
+    /**
+     * Uploads raw data and creates a new Gini document.
+     *
+     * @param document         A byte array representing an image, a pdf or UTF-8 encoded text
+     * @param filename         Optional the filename of the given document.
+     * @param documentType     Optional a document type hint. See the documentation for the document type hints for
+     *                         possible values.
+     * @param documentMetadata Additional information related to the document (e.g. the branch id
+     *                         to which the client app belongs)
+     * @return A Resource with the Document instance of the freshly created document or informations about error.
+     *
+     * <b>Important:</b> If using the default Gini API, then use {@link #createPartialDocument(byte[], String, String, DocumentType)} to upload the
+     * document and then call {@link #createCompositeDocument(LinkedHashMap, DocumentType)}
+     * (or {@link #createCompositeDocument(List, DocumentType)}) to finish document creation. The
+     * returned composite document can be used to poll the processing state, to retrieve extractions
+     * and to send feedback.
+     */
+
+    suspend fun createDocument(document: ByteArray, filename: String?, documentType: DocumentRemoteSource.Companion.DocumentType?, documentMetadata: DocumentMetadata): Resource<Document> {
+        return createDocumentInternal(document, filename, documentType, documentMetadata)
+    }
+
+    suspend fun createDocumentInternal(document: ByteArray, filename: String?, documentType: DocumentRemoteSource.Companion.DocumentType?, documentMetadata: DocumentMetadata?): Resource<Document> {
+        var apiDoctypeHint: String? = null
+        if (documentType != null) {
+            apiDoctypeHint = documentType.apiDoctypeHint
+        }
+
+        val documentUri = documentRemoteSource.uploadDocument(document, MediaTypes.IMAGE_JPEG, filename, apiDoctypeHint, documentMetadata?.metadata)
+        return createDocumentInternal(documentUri)
+    }
+
+    /**
+     * Get the document with the given unique identifier.
+     *
+     * @param documentId The unique identifier of the document.
+     * @return A Resource document instance representing all the document's metadata.
+     */
+    suspend fun getDocument(documentId: String): Resource<Document> {
+        return documentRemoteSource.getDocument(documentId)
+    }
+
+    @Throws(Exception::class)
+    abstract fun createExtractionsContainer(specificExtractions: Map<String, SpecificExtraction>,
+                                            compoundExtractions: Map<String, CompoundExtraction>,
+                                            responseJSON: JSONObject): E
+
+    @Throws(JSONException::class)
+    fun parseSpecificExtractions(specificExtractionsJson: JSONObject, candidates: Map<String, List<Extraction>>): Map<String, SpecificExtraction> {
+        val specificExtractions = mapOf<String, SpecificExtraction>()
+        val extractionsNameIterator = specificExtractionsJson.keys()
+        while (extractionsNameIterator.hasNext()) {
+            val extractionName = extractionsNameIterator.next()
+            val extractionData = specificExtractionsJson.getJSONObject(extractionName)
+            val extraction: Extraction = extractionFromApiResponse(extractionData)
+            var candidatesForExtraction = listOf<Extraction>()
+            if (extractionData.has("candidates")) {
+                val candidatesName = extractionData.getString("candidates")
+                if (candidates.containsKey(candidatesName)) {
+                    candidatesForExtraction = candidates[candidatesName]
+                }
+            }
+            val specificExtraction = SpecificExtraction(
+                extractionName, extraction.value,
+                extraction.entity, extraction.box,
+                candidatesForExtraction
+            )
+            specificExtractions.put(extractionName, specificExtraction)
+        }
+
+        return specificExtractions
+    }
+
     @Throws(JSONException::class)
     private fun createCompositeJson(documents: List<Document>): ByteArray {
         val documentRotationMap = linkedMapOf<Document, Int>()
@@ -143,7 +236,7 @@ class DocumentRepository(
             try {
                 Resource.Success(request())
             } catch (e: ApiException) {
-                Resource.Error(e.message ?: "")
+                Resource.Error()
             } catch (e: CancellationException) {
                 Resource.Cancelled()
             }
