@@ -3,6 +3,7 @@ package net.gini.android.bank.sdk.componentapiexample.camera
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -35,8 +36,11 @@ import net.gini.android.bank.sdk.componentapiexample.review.ReviewContract
 import net.gini.android.bank.sdk.componentapiexample.util.hasLessThan5MB
 import net.gini.android.bank.sdk.componentapiexample.util.isIntentActionViewOrSend
 import net.gini.android.bank.sdk.GiniBank
+import net.gini.android.capture.document.QRCodeDocument
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.nio.charset.Charset
+import java.nio.charset.StandardCharsets
 
 class CameraExampleActivity : AppCompatActivity(), CameraFragmentListener, OnboardingFragmentListener {
 
@@ -224,6 +228,12 @@ class CameraExampleActivity : AppCompatActivity(), CameraFragmentListener, Onboa
         } else {
             launchAnalysisScreen(document)
         }
+    }
+
+    override fun onQRCodeAvailable(qrCodeDocument: QRCodeDocument) {
+        qrCodeDocument.data?.let { qrCodeData ->
+            LOG.debug("Received a QRCodeDocument with content: {}", String(qrCodeData, StandardCharsets.UTF_8))
+        } ?: LOG.warn("Received a QRCodeDocument with empty data")
     }
 
     override fun onProceedToMultiPageReviewScreen(multiPageDocument: GiniCaptureMultiPageDocument<*, *>) {
