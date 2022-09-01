@@ -980,7 +980,11 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                                 return null;
                             }
                         });
+            } else {
+                mListener.onQRCodeAvailable(qrCodeDocument);
             }
+        } else {
+            mListener.onQRCodeAvailable(qrCodeDocument);
         }
     }
 

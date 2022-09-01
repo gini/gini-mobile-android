@@ -3,8 +3,11 @@ package net.gini.android.capture.camera;
 import androidx.annotation.NonNull;
 
 import net.gini.android.capture.Document;
+import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.GiniCaptureError;
 import net.gini.android.capture.document.GiniCaptureMultiPageDocument;
+import net.gini.android.capture.document.QRCodeDocument;
+import net.gini.android.capture.network.GiniCaptureNetworkService;
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
 
 import java.util.Map;
@@ -58,6 +61,27 @@ public interface CameraFragmentListener {
      */
     void onExtractionsAvailable(
             @NonNull final Map<String, GiniCaptureSpecificExtraction> extractions);
+
+    /**
+     * <p>
+     *     Called when the user clicked the QR Code detected popup.
+     *     You should upload the {@link QRCodeDocument}'s data to the Gini API to get the extractions,
+     *     close the Gini Capture SDK and continue to your app's transfer form.
+     * </p>
+     * <p>
+     *      See {@link QRCodeDocument} for supported formats.
+     * </p>
+     *
+     * @param qrCodeDocument contains payment data from a QR Code
+     *
+     * @Deprecated When a {@link GiniCapture} instance is available the QRCode
+     * is analyzed internally by using the configured {@link GiniCaptureNetworkService}
+     * implementation. The extractions will be returned in {@link CameraFragmentListener#onExtractionsAvailable(Map)}.
+     */
+    @Deprecated
+    default void onQRCodeAvailable(@NonNull QRCodeDocument qrCodeDocument) {
+
+    }
 
     /**
      * <p>

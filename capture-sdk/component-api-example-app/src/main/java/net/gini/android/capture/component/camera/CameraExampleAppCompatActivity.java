@@ -3,6 +3,7 @@ package net.gini.android.capture.component.camera;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -21,11 +22,13 @@ import net.gini.android.capture.component.R;
 import net.gini.android.capture.component.analysis.AnalysisExampleAppCompatActivity;
 import net.gini.android.capture.component.review.ReviewExampleAppCompatActivity;
 import net.gini.android.capture.document.GiniCaptureMultiPageDocument;
+import net.gini.android.capture.document.QRCodeDocument;
 import net.gini.android.capture.help.HelpActivity;
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
 import net.gini.android.capture.onboarding.OnboardingFragmentCompat;
 import net.gini.android.capture.onboarding.OnboardingFragmentListener;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 /**
@@ -116,6 +119,16 @@ public class CameraExampleAppCompatActivity extends AppCompatActivity implements
     @Override
     public void onDocumentAvailable(@NonNull final Document document) {
         mCameraScreenHandler.onDocumentAvailable(document);
+    }
+
+    @Override
+    public void onQRCodeAvailable(@NonNull QRCodeDocument qrCodeDocument) {
+        if (qrCodeDocument.getData() != null) {
+            final byte[] qrCodeData = qrCodeDocument.getData();
+            Log.d("QR code", "Received a QRCodeDocument with content: " + new String(qrCodeData, StandardCharsets.UTF_8));
+        } else {
+            Log.w("QR code", "Received a QRCodeDocument with empty data");
+        }
     }
 
     @Override
