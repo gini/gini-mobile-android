@@ -43,37 +43,47 @@ class QRCodeDetectorHandler extends Handler {
             if (mListener == null) {
                 return;
             }
-            final List<String> qrCodes;
             if (msg.obj instanceof MessageDataForImage) {
-                final MessageDataForImage imageData = (MessageDataForImage) msg.obj;
-                qrCodes = mQRCodeDetectorTask.detect(imageData.image,
-                        imageData.imageSize, imageData.rotation);
+                detectInImageObject((MessageDataForImage) msg.obj);
             } else if (msg.obj instanceof MessageDataForByteArray) {
-                final MessageDataForByteArray imageData = (MessageDataForByteArray) msg.obj;
-                qrCodes = mQRCodeDetectorTask.detect(imageData.imageBytes,
-                        imageData.imageSize, imageData.rotation);
+                detectInImageBytes((MessageDataForByteArray) msg.obj);
             } else {
                 throw new IllegalStateException("Unknown message class: " + msg.getClass());
             }
-            if (!qrCodes.isEmpty()) {
-                mUIExecutor.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mListener.onQRCodesDetected(qrCodes);
-                    }
-                });
-            }
+        } else {
+            super.handleMessage(msg);
+        }
+    }
+
+    private void detectInImageObject(@NonNull final MessageDataForImage imageData) {
+        final List<String> qrCodes = mQRCodeDetectorTask.detect(imageData.image,
+                imageData.imageSize, imageData.rotation);
+        if (!qrCodes.isEmpty()) {
             mUIExecutor.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if (msg.obj instanceof MessageDataForImage) {
-                        final MessageDataForImage imageData = (MessageDataForImage) msg.obj;
-                        imageData.callback.onDetectionFinished();
-                    }
+                    mListener.onQRCodesDetected(qrCodes);
                 }
             });
-        } else {
-            super.handleMessage(msg);
+        }
+        mUIExecutor.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                imageData.callback.onDetectionFinished();
+            }
+        });
+    }
+
+    private void detectInImageBytes(@NonNull final MessageDataForByteArray imageData) {
+        final List<String> qrCodes = mQRCodeDetectorTask.detect(imageData.imageBytes,
+                imageData.imageSize, imageData.rotation);
+        if (!qrCodes.isEmpty()) {
+            mUIExecutor.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mListener.onQRCodesDetected(qrCodes);
+                }
+            });
         }
     }
 
