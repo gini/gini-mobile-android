@@ -1,6 +1,7 @@
 package net.gini.android.capture.internal.util;
 
 import static net.gini.android.capture.internal.util.ContextHelper.isTablet;
+import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -8,9 +9,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+
+import net.gini.android.capture.tracking.AnalysisScreenEvent;
 
 /**
  * Internal use only.
@@ -47,6 +52,29 @@ public final class ActivityHelper {
         if (!isTablet(activity)) {
             lockToPortraitOrientation(activity);
         }
+    }
+
+    /**
+     * Intercepts the back button pressed event once and then disables the {@link OnBackPressedCallback}.
+     *
+     * Always calls {@link Activity#onBackPressed()} after disabling the {@link OnBackPressedCallback}.
+     *
+     * @param activity
+     * @param callback
+     */
+    public static void interceptOnBackPressed(@Nullable final AppCompatActivity activity, @NonNull final OnBackPressedCallback callback) {
+        if (activity == null) {
+            return;
+        }
+        activity.getOnBackPressedDispatcher().addCallback(activity, new OnBackPressedCallback(callback.isEnabled()) {
+            @Override
+            public void handleOnBackPressed() {
+                callback.handleOnBackPressed();
+                callback.setEnabled(false);
+                setEnabled(false);
+                activity.onBackPressed();
+            }
+        });
     }
 
     private ActivityHelper() {
