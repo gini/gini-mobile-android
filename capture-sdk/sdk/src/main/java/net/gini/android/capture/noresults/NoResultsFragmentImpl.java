@@ -67,8 +67,7 @@ class NoResultsFragmentImpl {
     }
 
     private boolean isDocumentFromCameraScreen() {
-        final Intent intent = mDocument.getIntent();
-        return intent == null || intent.getAction() == null;
+        return mDocument.getImportMethod() != Document.ImportMethod.OPEN_WITH;
     }
 
 }
