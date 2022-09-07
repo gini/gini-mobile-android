@@ -11,7 +11,6 @@ import com.squareup.moshi.Moshi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.suspendCancellableCoroutine
 import net.gini.android.bank.api.GiniBankAPI
-import net.gini.android.bank.api.GiniBankAPIBuilder
 import net.gini.android.capture.Document
 import net.gini.android.capture.internal.util.MimeType
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction

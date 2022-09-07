@@ -10,7 +10,6 @@ import com.squareup.moshi.Moshi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.suspendCancellableCoroutine
 import net.gini.android.bank.api.GiniBankAPI
-import net.gini.android.bank.api.GiniBankAPIBuilder
 import net.gini.android.bank.sdk.capture.CaptureResult
 import net.gini.android.bank.sdk.capture.ResultError
 import net.gini.android.bank.sdk.test.ExtractionsFixture

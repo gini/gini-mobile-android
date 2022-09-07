@@ -2,7 +2,6 @@ package net.gini.android.capture.example.shared;
 
 import android.util.Log;
 
-import net.gini.android.bank.api.GiniBankAPI;
 import net.gini.android.core.api.models.SpecificExtraction;
 import net.gini.android.capture.Document;
 

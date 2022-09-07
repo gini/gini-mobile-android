@@ -17,7 +17,7 @@ import org.json.JSONObject
  * The [DocumentManager] is a high level API on top of the Gini API, which is used via the DocumentRepository. It
  * provides high level methods to handle document related tasks easily.
  */
-abstract class DocumentManager<DR: DocumentRepository<E>, E: ExtractionsContainer>(private val documentRepository: DR) {
+abstract class DocumentManager<out DR: DocumentRepository<E>, E: ExtractionsContainer>(private val documentRepository: DR) {
 
     /**
      * Uploads raw data and creates a new Gini partial document.
@@ -54,6 +54,7 @@ abstract class DocumentManager<DR: DocumentRepository<E>, E: ExtractionsContaine
 
     suspend fun deletePartialDocumentAndParents(documentId: String): Resource<String> =
         documentRepository.deletePartialDocumentAndParents(documentId)
+
 
     /**
      * Deletes a Gini document.

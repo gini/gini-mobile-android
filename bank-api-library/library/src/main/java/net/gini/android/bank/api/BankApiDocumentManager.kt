@@ -6,8 +6,8 @@ import net.gini.android.bank.api.models.ExtractionsContainer
 import net.gini.android.bank.api.models.Payment
 import net.gini.android.bank.api.models.ResolvePaymentInput
 import net.gini.android.bank.api.models.ResolvedPayment
-
 import net.gini.android.core.api.DocumentManager;
+import net.gini.android.core.api.Resource
 import net.gini.android.core.api.models.CompoundExtraction
 import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.models.PaymentRequest
@@ -19,8 +19,8 @@ import org.json.JSONException
  * <p>
  * Copyright (c) 2022 Gini GmbH.
  */
-class BankApiDocumentManager(documentTaskManager: BankApiDocumentTaskManager) : DocumentManager<BankApiCommunicator, BankApiDocumentTaskManager, ExtractionsContainer>(
-    documentTaskManager
+class BankApiDocumentManager(private val documentRepository: BankApiDocumentRepository) : DocumentManager<BankApiDocumentRepository, ExtractionsContainer>(
+    documentRepository
 ) {
 
     /**
@@ -42,12 +42,14 @@ class BankApiDocumentManager(documentTaskManager: BankApiDocumentTaskManager) : 
         document: Document,
         specificExtractions: Map<String, SpecificExtraction>,
         compoundExtractions: Map<String, CompoundExtraction>,
-    ): Document = withContext(taskDispatcher) {
-        suspendCancellableCoroutine { continuation ->
-            val task = documentTaskManager.sendFeedbackForExtractions(document, specificExtractions, compoundExtractions)
-            continuation.resumeTask(task)
-        }
-    }
+    ): Resource<Document> =
+        documentRepository.
+//    withContext(taskDispatcher) {
+//        suspendCancellableCoroutine { continuation ->
+//            val task = documentTaskManager.sendFeedbackForExtractions(document, specificExtractions, compoundExtractions)
+//            continuation.resumeTask(task)
+//        }
+//    }
 
     /**
      * Mark a [PaymentRequest] as paid.

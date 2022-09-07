@@ -2,6 +2,7 @@ package net.gini.android.core.api
 
 import android.net.Uri
 import kotlinx.coroutines.withContext
+import net.gini.android.core.api.authorization.UserService
 import net.gini.android.core.api.authorization.apimodels.SessionToken
 import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.requests.SafeApiRequest
@@ -10,7 +11,7 @@ import retrofit2.http.Header
 import kotlin.coroutines.CoroutineContext
 
 abstract class DocumentRemoteSource(
-    val coroutineContext: CoroutineContext,
+    open val coroutineContext: CoroutineContext,
     private val documentService: DocumentService,
     private val giniApiType: GiniApiType,
     private val sessionToken: SessionToken,

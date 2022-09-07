@@ -16,8 +16,6 @@ import com.android.volley.VolleyError;
 
 import net.gini.android.bank.api.BankApiDocumentTaskManager;
 import net.gini.android.core.api.DocumentMetadata;
-import net.gini.android.bank.api.GiniBankAPI;
-import net.gini.android.bank.api.GiniBankAPIBuilder;
 import net.gini.android.core.api.authorization.CredentialsStore;
 import net.gini.android.core.api.authorization.SessionManager;
 import net.gini.android.core.api.authorization.SharedPreferencesCredentialsStore;

@@ -3,9 +3,6 @@ package net.gini.android.capture.example.shared;
 import android.text.TextUtils;
 
 import net.gini.android.core.api.DocumentMetadata;
-import net.gini.android.core.api.GiniApiType;
-import net.gini.android.bank.api.GiniBankAPI;
-import net.gini.android.bank.api.GiniBankAPIBuilder;
 import net.gini.android.capture.network.GiniCaptureDefaultNetworkApi;
 import net.gini.android.capture.network.GiniCaptureNetworkApi;
 import net.gini.android.capture.network.GiniCaptureDefaultNetworkService;

@@ -12,6 +12,7 @@ import net.gini.android.core.api.ApiCommunicator;
 import net.gini.android.core.api.DocumentManager;
 import net.gini.android.core.api.DocumentRemoteSource;
 import net.gini.android.core.api.DocumentRepository;
+import net.gini.android.core.api.DocumentService;
 import net.gini.android.core.api.DocumentTaskManager;
 import net.gini.android.core.api.GiniApiType;
 import net.gini.android.core.api.RequestQueueBuilder;
@@ -28,6 +29,9 @@ import net.gini.android.core.api.authorization.UserService;
 import net.gini.android.core.api.models.ExtractionsContainer;
 import net.gini.android.core.api.requests.DefaultRetryPolicyFactory;
 import net.gini.android.core.api.requests.RetryPolicyFactory;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -63,7 +67,6 @@ public abstract class GiniCoreAPIBuilder<DM extends DocumentManager<DR, E>, G ex
     private RequestQueue mRequestQueue;
     private KSessionManager mSessionManager;
     private CredentialsStore mCredentialsStore;
-    private UserCenterAPICommunicator mUserCenterApiCommunicator;
     private int mTimeoutInMs = DefaultRetryPolicy.DEFAULT_TIMEOUT_MS;
     private int mMaxRetries = DefaultRetryPolicy.DEFAULT_MAX_RETRIES;
     private float mBackOffMultiplier = DefaultRetryPolicy.DEFAULT_BACKOFF_MULT;
@@ -96,7 +99,7 @@ public abstract class GiniCoreAPIBuilder<DM extends DocumentManager<DR, E>, G ex
 
     /**
      * Constructor to initialize a new builder instance. The created Gini instance will use the given
-     * {@link SessionManager} for session management.
+     * {@link KSessionManager} for session management.
      *
      * @param context        Your application's Context instance (Android).
      * @param sessionManager The SessionManager to use.
