@@ -7,20 +7,24 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import ch.qos.logback.classic.LoggerContext
+import ch.qos.logback.classic.android.LogcatAppender
+import ch.qos.logback.classic.encoder.PatternLayoutEncoder
 import kotlinx.coroutines.launch
+import net.gini.android.bank.sdk.GiniBank
+import net.gini.android.bank.sdk.capture.*
+import net.gini.android.bank.sdk.screenapiexample.databinding.ActivityMainBinding
+import net.gini.android.bank.sdk.screenapiexample.util.PermissionHandler
 import net.gini.android.capture.DocumentImportEnabledFileTypes
+import net.gini.android.capture.GiniCaptureDebug
 import net.gini.android.capture.help.HelpItem
 import net.gini.android.capture.network.GiniCaptureDefaultNetworkApi
 import net.gini.android.capture.network.GiniCaptureDefaultNetworkService
 import net.gini.android.capture.requirements.RequirementsReport
 import net.gini.android.capture.util.CancellationToken
-import net.gini.android.bank.sdk.screenapiexample.databinding.ActivityMainBinding
-import net.gini.android.bank.sdk.screenapiexample.util.PermissionHandler
-import net.gini.android.bank.sdk.GiniBank
-import net.gini.android.bank.sdk.capture.*
-import net.gini.android.bank.sdk.screenapiexample.BuildConfig
-import net.gini.android.bank.sdk.screenapiexample.R
 import org.koin.android.ext.android.inject
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 class MainActivity : AppCompatActivity() {
 
@@ -38,6 +42,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         showVersions(binding)
         setViewListeners(binding)
+        setGiniCaptureSdkDebugging()
         if (savedInstanceState == null) {
             if (isIntentActionViewOrSend(intent)) {
                 startGiniCaptureSdk(intent)
@@ -70,6 +75,32 @@ class MainActivity : AppCompatActivity() {
 
     private fun configureGiniBank() {
         GiniBank.enableReturnReasons = true
+    }
+
+    private fun setGiniCaptureSdkDebugging() {
+        if (BuildConfig.DEBUG) {
+            GiniCaptureDebug.enable()
+            configureLogging()
+        }
+    }
+
+    private fun configureLogging() {
+        val lc: LoggerContext = LoggerFactory.getILoggerFactory() as LoggerContext
+        lc.reset()
+
+        val layoutEncoder = PatternLayoutEncoder()
+        layoutEncoder.context = lc
+        layoutEncoder.pattern = "%-5level %file:%line [%thread] - %msg%n"
+        layoutEncoder.start()
+
+        val logcatAppender = LogcatAppender()
+        logcatAppender.context = lc
+        logcatAppender.encoder = layoutEncoder
+        logcatAppender.start()
+
+        val root: ch.qos.logback.classic.Logger =
+            LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME) as ch.qos.logback.classic.Logger
+        root.addAppender(logcatAppender)
     }
 
     private fun startGiniCaptureSdk(intent: Intent? = null) {

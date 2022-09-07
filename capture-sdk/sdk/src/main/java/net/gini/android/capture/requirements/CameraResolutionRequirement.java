@@ -24,7 +24,12 @@ public class CameraResolutionRequirement implements Requirement {
 
     private final CameraHolder mCameraHolder;
 
-    CameraResolutionRequirement(final CameraHolder cameraHolder) {
+    /**
+     * Internal use only.
+     *
+     * @exclude
+     */
+    public CameraResolutionRequirement(final CameraHolder cameraHolder) {
         mCameraHolder = cameraHolder;
     }
 

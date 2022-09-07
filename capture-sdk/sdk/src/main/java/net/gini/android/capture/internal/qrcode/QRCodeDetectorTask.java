@@ -27,6 +27,10 @@ public interface QRCodeDetectorTask {
     List<String> detect(@NonNull final Image image, @NonNull final Size imageSize,
                         final int rotation);
 
+    @NonNull
+    List<String> detect(@NonNull final byte[] image, @NonNull final Size imageSize,
+                        final int rotation);
+
     void checkAvailability(@NonNull final Callback callback);
 
     void release();
