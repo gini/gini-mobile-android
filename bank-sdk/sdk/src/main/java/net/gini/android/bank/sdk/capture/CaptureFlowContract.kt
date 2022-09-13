@@ -79,7 +79,7 @@ class CaptureFlowImportContract : ActivityResultContract<CaptureImportInput, Cap
         }
 
         fun Intent.setImportResultError(error: FileImportValidator.Error?, message: String?) = Intent().apply {
-            putExtra(EXTRA_OUT_IMPORT_ERROR, error)
+            putExtra(EXTRA_OUT_IMPORT_ERROR, error?.name)
             putExtra(EXTRA_OUT_ERROR_MESSAGE, message)
         }
 
@@ -109,7 +109,7 @@ internal class CaptureImportContract : ActivityResultContract<Intent, CaptureRes
 internal fun internalParseResult(resultCode: Int, result: Intent?): CaptureResult {
     if (resultCode != Activity.RESULT_OK) {
         val captureError: GiniCaptureError? = result?.getParcelableExtra(CameraActivity.EXTRA_OUT_ERROR)
-        val importError: FileImportValidator.Error? = result?.getParcelableExtra(EXTRA_OUT_IMPORT_ERROR)
+        val importError: FileImportValidator.Error? = result?.getStringExtra(EXTRA_OUT_IMPORT_ERROR)?.let {FileImportValidator.Error.valueOf(it)}
         val importErrorMessage: String? = result?.getStringExtra(EXTRA_OUT_ERROR_MESSAGE)
         return if (captureError != null) {
             CaptureResult.Error(ResultError.Capture(captureError))
