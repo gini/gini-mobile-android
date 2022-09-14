@@ -3,12 +3,14 @@ package net.gini.android.capture;
 import android.app.Activity;
 import android.content.Context;
 
-import net.gini.android.capture.camera.CameraFragmentCompat;
+import net.gini.android.capture.camera.CameraFragment;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * TODO: delete when Component API can be fully removed
+ *
  * <p>
  *     The {@link GiniCaptureCoordinator} facilitates the default behavior for the Gini Capture Library.
  * </p>
@@ -103,7 +105,7 @@ public class GiniCaptureCoordinator {
 
     /**
      * <p>
-     *     Call this method when the {@link CameraFragmentCompat} has started.
+     *     Call this method when the {@link CameraFragment} has started.
      * </p>
      * <p>
      *     Can be called in your Acitivity's {@link Activity#onStart()} method, which hosts the Camera Fragment.

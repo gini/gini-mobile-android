@@ -115,6 +115,11 @@ import static net.gini.android.capture.internal.util.FeatureConfiguration.isQRCo
 import static net.gini.android.capture.internal.util.FileImportValidator.FILE_SIZE_LIMIT;
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackCameraScreenEvent;
 
+/**
+ * Legacy class which was used to share camera fragment logic between support library (androidx) fragments and
+ * native ones.
+ * TODO: refactor this to use a modern architecture for the camera fragment
+ */
 class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader.Listener {
 
     @VisibleForTesting

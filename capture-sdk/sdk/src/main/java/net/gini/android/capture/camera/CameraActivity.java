@@ -348,7 +348,7 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
     private GiniCaptureCoordinator mGiniCaptureCoordinator;
     private Document mDocument;
 
-    private CameraFragmentCompat mFragment;
+    private CameraFragment mFragment;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -395,11 +395,11 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
     }
 
     private void createFragment() {
-        mFragment = createCameraFragmentCompat();
+        mFragment = createCameraFragment();
     }
 
-    protected CameraFragmentCompat createCameraFragmentCompat() {
-        return CameraFragmentCompat.createInstance();
+    protected CameraFragment createCameraFragment() {
+        return CameraFragment.createInstance();
     }
 
     private void initFragment() {
@@ -414,7 +414,7 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
     }
 
     private void retainFragment() {
-        mFragment = (CameraFragmentCompat) getSupportFragmentManager().findFragmentByTag(
+        mFragment = (CameraFragment) getSupportFragmentManager().findFragmentByTag(
                 CAMERA_FRAGMENT);
     }
 
