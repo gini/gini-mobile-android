@@ -1,16 +1,12 @@
 package net.gini.android.capture.requirements
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.ImageFormat
 import android.hardware.camera2.CameraCharacteristics
 import android.view.SurfaceHolder
 import androidx.camera.camera2.interop.Camera2CameraInfo
-import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
-import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
-import net.gini.android.capture.internal.camera.api.camerax.CameraLifecycle
 import net.gini.android.capture.internal.util.Size
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -18,10 +14,12 @@ import java.util.concurrent.RejectedExecutionException
 
 private val LOG: Logger = LoggerFactory.getLogger(CameraXHolder::class.java)
 
+/**
+ * Internal use only.
+ */
 class CameraXHolder(context: Context) : CameraHolder {
 
-    private val cameraLifecycle = CameraLifecycle()
-    private var camera: Camera? = null
+    private var cameraProvider: ProcessCameraProvider? = null
     private var cameraCharacteristics: CameraCharacteristics? = null
 
     init {
@@ -33,47 +31,32 @@ class CameraXHolder(context: Context) : CameraHolder {
         }
 
         try {
-            val cameraProvider = try {
+            cameraProvider = try {
                 cameraProviderFuture?.get()
             } catch (e: Exception) {
                 LOG.error("Failed to get ProcessCameraProvider instance", e)
                 null
             }
-
-            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-
             try {
-                cameraProvider?.unbindAll()
-
-                camera = cameraProvider?.bindToLifecycle(
-                    cameraLifecycle,
-                    cameraSelector,
-                    Preview.Builder().build()
-                )
-
-                camera?.let {
-                    @SuppressLint("RestrictedApi", "UnsafeOptInUsageError")
-                    cameraCharacteristics =
-                        Camera2CameraInfo.extractCameraCharacteristics(it.cameraInfo)
+                cameraCharacteristics = cameraProvider?.availableCameraInfos?.let { cameraInfos ->
+                    CameraSelector.DEFAULT_BACK_CAMERA.filter(cameraInfos).firstOrNull()?.let { cameraInfo ->
+                        Camera2CameraInfo.extractCameraCharacteristics(cameraInfo)
+                    }
                 }
 
-                camera?.let {
-                    LOG.info("Camera is open")
-                } ?: run {
-                    LOG.error("Camera open failed")
+                if (cameraCharacteristics == null) {
+                    LOG.warn("Back facing camera characteristics not found")
                 }
             } catch (e: Exception) {
-                LOG.error("Opening camera failed", e)
+                LOG.error("Failed to get back facing camera characteristics", e)
             }
         } catch (e: RejectedExecutionException) {
             LOG.error("Failed to add ProcessCameraProvider listener", e)
         }
-
-        cameraLifecycle.start()
     }
 
     override fun hasCamera(): Boolean {
-        return camera != null
+        return cameraCharacteristics != null
     }
 
     override fun hasAutoFocus(): Pair<Boolean, String> {
@@ -109,8 +92,7 @@ class CameraXHolder(context: Context) : CameraHolder {
     }
 
     override fun closeCamera() {
-        cameraLifecycle.stop()
-        camera = null
+        cameraProvider = null
         cameraCharacteristics = null
     }
 

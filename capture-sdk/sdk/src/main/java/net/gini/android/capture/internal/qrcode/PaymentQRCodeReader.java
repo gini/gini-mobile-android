@@ -93,6 +93,18 @@ public class PaymentQRCodeReader {
     }
 
     /**
+     * Reads the first supported QRCode payment data from the image.
+     *
+     * @param image an image byte array
+     * @param imageSize size of the image
+     * @param rotation rotation to be applied to the image for correct orientation
+     */
+    public void readFromByteArray(@NonNull final byte[] image, @NonNull final Size imageSize,
+                              final int rotation) {
+        mDetector.detect(image, imageSize, rotation);
+    }
+
+    /**
      * Release all resources. Detection not possible after this has been called.
      */
     public void release() {

@@ -11,9 +11,8 @@ Features
 
 The Gini Capture SDK provides various features you can enable and configure. All the features are configured during
 creation of a new ``GiniCapture`` instance. Specifically the ``GiniCapture.Builder`` is used to configure the Gini
-Capture SDK. It's `reference documentation
-<https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/dokka/sdk/net.gini.android.capture/-gini-capture/-builder/index.html>`_
-lists all the options.
+Capture SDK. It's :root_dokka_path:`reference documentation
+<sdk/net.gini.android.capture/-gini-capture/-builder/index.html>` lists all the options.
 
 .. note::
 
@@ -167,6 +166,17 @@ You need to declare the ``READ_EXTERNAL_STORAGE`` permission in your app's ``And
 
     </manifest>
 
+When targeting Android 13 and later you will also have to declare the ``READ_MEDIA_IMAGES`` permission:
+
+.. code-block:: xml
+
+    <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+        package="...">
+
+        <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+
+    </manifest>
+
 If the permission has not been granted the Gini Capture SDK will prompt the user to grant the permission when they use
 the document import feature.
 
@@ -197,9 +207,8 @@ Intercepting the imported document
 You can intercept the imported document and deny the Gini Capture SDK from using it.
 
 You need to subclass the ``CameraActivity`` and override the
-``onCheckImportedDocument`` method. See it's `reference documentation
-<https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/dokka/sdk/net.gini.android.capture.camera/-camera-activity/on-check-imported-document.html>`_
-for details.
+``onCheckImportedDocument`` method. See it's :root_dokka_path:`reference documentation
+<sdk/net.gini.android.capture.camera/-camera-activity/on-check-imported-document.html>` for details.
 
 File Import (Open With)
 -----------------------
@@ -450,8 +459,8 @@ Analysis Screen           ``AnalysisScreenEvent.ERROR``                         
 Analysis Screen           ``AnalysisScreenEvent.RETRY``                                        The user decides to retry after an analysis error.     1.0.0
 ========================  ===================================================================  =====================================================  ==========================
 
-The supported events are listed for each screen in a dedicated enum. You can view these enums in our `reference documentation
-<https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/dokka/sdk/net.gini.android.capture.tracking/index.html>`_.
+The supported events are listed for each screen in a dedicated enum. You can view these enums in our
+:root_dokka_path:`reference documentation <sdk/net.gini.android.capture.tracking/index.html>`.
 
 Error Logging
 -------------

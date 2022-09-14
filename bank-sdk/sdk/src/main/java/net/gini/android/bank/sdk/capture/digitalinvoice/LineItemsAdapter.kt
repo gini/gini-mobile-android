@@ -288,7 +288,7 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
                 .setDuration(300)
 
             animator.addListener(object : Animator.AnimatorListener {
-                override fun onAnimationStart(animation: Animator?) {
+                override fun onAnimationStart(animation: Animator) {
                     if (!isExpandingAnimation) {
                         binding.headerText1.isVisible = false
                         binding.headerText2.isVisible = false
@@ -297,7 +297,7 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
                     }
                 }
 
-                override fun onAnimationEnd(animation: Animator?) {
+                override fun onAnimationEnd(animation: Animator) {
                     if (isExpandingAnimation) {
                         binding.headerText1.isVisible = true
                         binding.headerText2.isVisible = true
@@ -306,16 +306,16 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
                     }
                 }
 
-                override fun onAnimationCancel(animation: Animator?) {
+                override fun onAnimationCancel(animation: Animator) {
                 }
 
-                override fun onAnimationRepeat(animation: Animator?) {
+                override fun onAnimationRepeat(animation: Animator) {
                 }
 
             })
 
             animator.addUpdateListener(object : ValueAnimator.AnimatorUpdateListener {
-                override fun onAnimationUpdate(animation: ValueAnimator?) {
+                override fun onAnimationUpdate(animation: ValueAnimator) {
                     val updateVal = (animation?.animatedValue as? Float)?.let {
                         if (!isExpandingAnimation) 1 - it else it
                     } ?: return

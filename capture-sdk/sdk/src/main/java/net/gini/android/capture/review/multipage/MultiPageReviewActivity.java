@@ -2,6 +2,8 @@ package net.gini.android.capture.review.multipage;
 
 import static net.gini.android.capture.analysis.AnalysisActivity.RESULT_NO_EXTRACTIONS;
 import static net.gini.android.capture.internal.util.ActivityHelper.enableHomeAsUp;
+import static net.gini.android.capture.internal.util.ActivityHelper.interceptOnBackPressed;
+import static net.gini.android.capture.tracking.EventTrackingHelper.trackCameraScreenEvent;
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackReviewScreenEvent;
 
 import android.app.Activity;
@@ -22,10 +24,9 @@ import net.gini.android.capture.tracking.ReviewScreenEvent;
 
 import java.util.List;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Created by Alpar Szotyori on 16.02.2018.
@@ -243,6 +244,16 @@ public class MultiPageReviewActivity extends AppCompatActivity implements
             retainFragment();
         }
         enableHomeAsUp(this);
+        handleOnBackPressed();
+    }
+
+    private void handleOnBackPressed() {
+        interceptOnBackPressed(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                trackReviewScreenEvent(ReviewScreenEvent.BACK);
+            }
+        });
     }
 
     private void initFragment() {
@@ -279,12 +290,6 @@ public class MultiPageReviewActivity extends AppCompatActivity implements
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        trackReviewScreenEvent(ReviewScreenEvent.BACK);
     }
 
     @Override

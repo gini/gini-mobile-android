@@ -20,16 +20,16 @@ Release order for :health-sdk:sdk 1.3.1:
  2. :health-api-library:library 1.2.1
  3. :health-sdk:sdk 1.3.1
 
-Release order for :capture-sdk:default-network 1.10.0:
+Release order for :capture-sdk:default-network 1.11.2:
  1. :core-api-library:library 1.4.2
  2. :bank-api-library:library 1.2.0
  3. :capture-sdk:sdk 2.0.0-new-onboarding
- 4. :capture-sdk:default-network 1.10.0
+ 4. :capture-sdk:default-network 1.11.2
 
 Release order for :bank-sdk:sdk 2.0.0-new-onboarding:
  1. :core-api-library:library 1.4.2
  2. :bank-api-library:library 1.2.0
  3. :capture-sdk:sdk 2.0.0-new-onboarding
- 4. :capture-sdk:default-network 1.10.0
+ 4. :capture-sdk:default-network 1.11.2
  5. :bank-sdk:sdk 2.0.0-new-onboarding
 

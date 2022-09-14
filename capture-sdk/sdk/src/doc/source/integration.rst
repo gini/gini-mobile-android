@@ -60,8 +60,8 @@ This will also free up any used resources.
 You should call ``cleanup()`` after the SDK returned control to your application and your app has sent feedback to the
 Gini Bank API and is not using the SDK anymore.
 
-To view all the configuration options see the documentation of `GiniCapture.Builder
-<https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/dokka/sdk/net.gini.android.capture/-gini-capture/-builder/index.html?query=public%20class%20Builder>`_.
+To view all the configuration options see the documentation of :root_dokka_path:`GiniCapture.Builder
+<sdk/net.gini.android.capture/-gini-capture/-builder/index.html?query=public%20class%20Builder>`.
 
 Information about the configurable features are available on the `Features <features.html>`_ page.
 
@@ -98,15 +98,15 @@ networking implementation of your own choosing.
 We provide two interfaces which need to be implemented to enable the SDK to analyze documents and retrieve extractions:
 
 * ``GiniCaptureNetworkService``
-   This interface is used to upload, analyze and delete documents. See the `reference documentation
-   <https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/dokka/sdk/net.gini.android.capture.network/-gini-capture-network-service/index.html>`_
+   This interface is used to upload, analyze and delete documents. See the 
+   :root_dokka_path:`reference documentation <sdk/net.gini.android.capture.network/-gini-capture-network-service/index.html>`
    for details.
 
 * ``GiniCaptureNetworkApi``
    This interface is used to declare network tasks which should be called by you outside of the Gini Capture SDK (e.g.,
-   for sending feedback after the user saw and potentielly corrected the extractions).  See the `reference documentation
-   <https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/dokka/sdk/net.gini.android.capture.network/-gini-capture-network-api/index.html>`_
-   for details.
+   for sending feedback after the user saw and potentielly corrected the extractions).  See the
+   :root_dokka_path:`reference documentation
+   <sdk/net.gini.android.capture.network/-gini-capture-network-api/index.html>` for details.
 
 Default Implementation
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -120,7 +120,7 @@ To use it add the ``gini-capture-network-lib`` dependency to your app's ``build.
 
     dependencies {
         ...
-        implementation 'net.gini.android:gini-capture-sdk-default-network:1.10.0'
+        implementation 'net.gini.android:gini-capture-sdk-default-network:1.11.2'
     }
 
 For the Gini Capture SDK to be aware of the default implementations create the instances and pass
@@ -144,10 +144,8 @@ them to the builder of ``GiniCapture``:
         .build();
 
 Both default implementations follow the builder pattern. See the documentation of
-`GiniCaptureDefaultNetworkService.Builder
-<https://developer.gini.net/gini-mobile-android/capture-sdk/default-network/dokka/default-network/net.gini.android.capture.network/-gini-capture-default-network-service/-builder/index.html>`_
-and `GiniCaptureDefaultNetworkApi.Builder
-<https://developer.gini.net/gini-mobile-android/capture-sdk/default-network/dokka/default-network/net.gini.android.capture.network/-gini-capture-default-network-api/-builder/index.html>`_
+:root_dokka_path_default_network_library:`GiniCaptureDefaultNetworkService.Builder <default-network/net.gini.android.capture.network/-gini-capture-default-network-service/-builder/index.html>`
+and :root_dokka_path_default_network_library:`GiniCaptureDefaultNetworkApi.Builder <default-network/net.gini.android.capture.network/-gini-capture-default-network-api/-builder/index.html>`
 for configuration options.
 
 Retrieve the Analyzed Document

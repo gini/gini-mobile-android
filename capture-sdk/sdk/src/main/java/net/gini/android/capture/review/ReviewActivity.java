@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
@@ -24,6 +25,7 @@ import net.gini.android.capture.onboarding.OnboardingActivity;
 import net.gini.android.capture.tracking.ReviewScreenEvent;
 
 import static net.gini.android.capture.internal.util.ActivityHelper.enableHomeAsUp;
+import static net.gini.android.capture.internal.util.ActivityHelper.interceptOnBackPressed;
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackReviewScreenEvent;
 
 /**
@@ -193,6 +195,16 @@ public class ReviewActivity extends AppCompatActivity implements ReviewFragmentL
             retainFragment();
         }
         enableHomeAsUp(this);
+        handleOnBackPressed();
+    }
+
+    private void handleOnBackPressed() {
+        interceptOnBackPressed(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                trackReviewScreenEvent(ReviewScreenEvent.BACK);
+            }
+        });
     }
 
     private void restoreSavedState(@Nullable final Bundle savedInstanceState) {
@@ -209,12 +221,6 @@ public class ReviewActivity extends AppCompatActivity implements ReviewFragmentL
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        trackReviewScreenEvent(ReviewScreenEvent.BACK);
     }
 
     @Override

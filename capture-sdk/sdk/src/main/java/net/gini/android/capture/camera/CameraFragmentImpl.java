@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -47,6 +48,7 @@ import net.gini.android.capture.document.ImageMultiPageDocument;
 import net.gini.android.capture.document.QRCodeDocument;
 import net.gini.android.capture.internal.camera.api.CameraException;
 import net.gini.android.capture.internal.camera.api.CameraInterface;
+import net.gini.android.capture.internal.camera.api.OldCameraController;
 import net.gini.android.capture.internal.camera.api.camerax.CameraXController;
 import net.gini.android.capture.internal.camera.api.UIExecutor;
 import net.gini.android.capture.internal.camera.photo.Photo;
@@ -75,6 +77,10 @@ import net.gini.android.capture.logging.ErrorLog;
 import net.gini.android.capture.logging.ErrorLogger;
 import net.gini.android.capture.network.model.GiniCaptureExtraction;
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
+import net.gini.android.capture.requirements.CameraHolder;
+import net.gini.android.capture.requirements.CameraResolutionRequirement;
+import net.gini.android.capture.requirements.CameraXHolder;
+import net.gini.android.capture.requirements.RequirementReport;
 import net.gini.android.capture.tracking.CameraScreenEvent;
 import net.gini.android.capture.util.IntentHelper;
 import net.gini.android.capture.util.UriHelper;
@@ -980,7 +986,11 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                                 return null;
                             }
                         });
+            } else {
+                mListener.onQRCodeAvailable(qrCodeDocument);
             }
+        } else {
+            mListener.onQRCodeAvailable(qrCodeDocument);
         }
     }
 
@@ -1833,18 +1843,41 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             mCameraController = createCameraController(activity);
         }
         if (isQRCodeScanningEnabled()) {
-            mCameraController.setPreviewCallback((image, imageSize, rotation, previewFrameCallback) -> {
-                if (mPaymentQRCodeReader == null) {
-                    return;
+            mCameraController.setPreviewCallback(new CameraInterface.PreviewCallback() {
+                @Override
+                public void onPreviewFrame(@NonNull Image image, @NonNull Size imageSize, int rotation, @NonNull CameraInterface.PreviewFrameCallback previewFrameCallback) {
+                    if (mPaymentQRCodeReader == null) {
+                        return;
+                    }
+                    mPaymentQRCodeReader.readFromImage(image, imageSize, rotation, previewFrameCallback::onReleaseFrame);
                 }
-                mPaymentQRCodeReader.readFromImage(image, imageSize, rotation, previewFrameCallback::onReleaseFrame);
+
+                @Override
+                public void onPreviewFrame(@NonNull byte[] image, @NonNull Size imageSize, int rotation) {
+                    if (mPaymentQRCodeReader == null) {
+                        return;
+                    }
+                    mPaymentQRCodeReader.readFromByteArray(image, imageSize, rotation);
+                }
             });
         }
     }
 
     @NonNull
     protected CameraInterface createCameraController(final Activity activity) {
-        return new CameraXController(activity);
+        if (canUseCameraX(activity)) {
+            LOG.info("Using CameraX");
+            return new CameraXController(activity);
+        }
+        LOG.info("Using old camera api");
+        return new OldCameraController(activity);
+    }
+
+    private boolean canUseCameraX(@NonNull final Context context) {
+        final CameraHolder cameraHolder = new CameraXHolder(context);
+        final RequirementReport requirementReport = new CameraResolutionRequirement(cameraHolder).check();
+        cameraHolder.closeCamera();
+        return requirementReport.isFulfilled();
     }
 
     private void handleError(final GiniCaptureError.ErrorCode errorCode,

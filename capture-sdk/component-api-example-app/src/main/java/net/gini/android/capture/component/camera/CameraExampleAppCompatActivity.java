@@ -3,9 +3,11 @@ package net.gini.android.capture.component.camera;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
@@ -21,11 +23,13 @@ import net.gini.android.capture.component.R;
 import net.gini.android.capture.component.analysis.AnalysisExampleAppCompatActivity;
 import net.gini.android.capture.component.review.ReviewExampleAppCompatActivity;
 import net.gini.android.capture.document.GiniCaptureMultiPageDocument;
+import net.gini.android.capture.document.QRCodeDocument;
 import net.gini.android.capture.help.HelpActivity;
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
 import net.gini.android.capture.onboarding.OnboardingFragment;
 import net.gini.android.capture.onboarding.OnboardingFragmentListener;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 /**
@@ -74,14 +78,6 @@ public class CameraExampleAppCompatActivity extends AppCompatActivity implements
             new CaptureComponentContract(), activityResultCallback);
 
     @Override
-    public void onBackPressed() {
-        if (mCameraScreenHandler.onBackPressed()) {
-            return;
-        }
-        super.onBackPressed();
-    }
-
-    @Override
     protected void onNewIntent(final Intent intent) {
         super.onNewIntent(intent);
         mCameraScreenHandler.onNewIntent(intent);
@@ -98,6 +94,16 @@ public class CameraExampleAppCompatActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_camera_compat);
         mCameraScreenHandler = new CameraScreenHandler(this, mStartReview, mStartMultiPageReview, mStartAnalysis);
         mCameraScreenHandler.onCreate(savedInstanceState);
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (mCameraScreenHandler.onBackPressed()) {
+                    return;
+                }
+                setEnabled(false);
+                onBackPressed();
+            }
+        });
     }
 
     @Override
@@ -116,6 +122,16 @@ public class CameraExampleAppCompatActivity extends AppCompatActivity implements
     @Override
     public void onDocumentAvailable(@NonNull final Document document) {
         mCameraScreenHandler.onDocumentAvailable(document);
+    }
+
+    @Override
+    public void onQRCodeAvailable(@NonNull QRCodeDocument qrCodeDocument) {
+        if (qrCodeDocument.getData() != null) {
+            final byte[] qrCodeData = qrCodeDocument.getData();
+            Log.d("QR code", "Received a QRCodeDocument with content: " + new String(qrCodeData, StandardCharsets.UTF_8));
+        } else {
+            Log.w("QR code", "Received a QRCodeDocument with empty data");
+        }
     }
 
     @Override

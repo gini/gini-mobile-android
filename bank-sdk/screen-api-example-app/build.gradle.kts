@@ -72,6 +72,11 @@ dependencies {
     implementation(libs.koin.androidx.scope)
     implementation(libs.koin.androidx.viewmodel)
     implementation(libs.koin.androidx.fragment)
+    implementation(libs.logback.android.core)
+    implementation(libs.logback.android.classic) {
+        // workaround issue #73
+        exclude(group = "com.google.android", module = "android")
+    }
 
     implementation(libs.lottie)
 
