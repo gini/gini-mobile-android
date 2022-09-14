@@ -7,7 +7,6 @@ import androidx.annotation.NonNull;
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.analysis.AnalysisFragmentListener;
-import net.gini.android.capture.camera.CameraFragmentListener;
 import net.gini.android.capture.logging.ErrorLog;
 import net.gini.android.capture.logging.ErrorLoggerListener;
 import net.gini.android.capture.review.ReviewFragmentListener;
@@ -37,9 +36,8 @@ import java.util.LinkedHashMap;
  * {@link GiniCapture} instance.
  *
  * <p> When an instance of this interface is available document analysis related methods in the
- * {@link CameraFragmentListener}, {@link ReviewFragmentListener} and the {@link
- * AnalysisFragmentListener} won't be invoked. Otherwise the Gini Capture SDK falls back to
- * invoking those methods.
+ * {@link ReviewFragmentListener} and the {@link AnalysisFragmentListener} won't be invoked. Otherwise
+ * the Gini Capture SDK falls back to invoking those methods.
  */
 public interface GiniCaptureNetworkService extends ErrorLoggerListener {
 

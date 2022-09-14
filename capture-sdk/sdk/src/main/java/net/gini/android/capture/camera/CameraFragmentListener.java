@@ -13,11 +13,15 @@ import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
 import java.util.Map;
 
 /**
+ * Internal use only.
+ *
  * <p>
- * Interface used by {@link CameraFragmentCompat} to dispatch events to the hosting Activity.
+ * Interface used by {@link CameraFragment} to dispatch events to the hosting Activity.
  * </p>
+ *
+ * @suppress
  */
-public interface CameraFragmentListener {
+interface CameraFragmentListener {
     /**
      * <p>
      * Called when the user has taken an image with the camera or has imported a document that passed the Gini Capture SDK's validation and any custom checks that were implemented.

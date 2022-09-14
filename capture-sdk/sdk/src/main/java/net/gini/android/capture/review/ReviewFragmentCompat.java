@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import net.gini.android.capture.Document;
-import net.gini.android.capture.camera.CameraFragmentListener;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.util.AlertDialogHelperCompat;
 
@@ -57,7 +56,7 @@ public class ReviewFragmentCompat extends Fragment implements FragmentImplCallba
      * <p> <b>Note:</b> Always use this method to create new instances. Document is required and an
      * exception is thrown if it's missing.
      *
-     * @param document must be the {@link Document} from {@link CameraFragmentListener#onDocumentAvailable(Document)}
+     * @param document a {@link Document} from the camera screen
      *
      * @return a new instance of the Fragment
      */
