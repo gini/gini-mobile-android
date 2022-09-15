@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.media.Image;
@@ -27,8 +26,6 @@ import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 import androidx.annotation.VisibleForTesting;
 import androidx.core.content.ContextCompat;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.ViewPropertyAnimatorCompat;
 import androidx.core.view.ViewPropertyAnimatorListenerAdapter;
 import androidx.transition.Transition;
 import androidx.transition.TransitionListenerAdapter;
@@ -95,7 +92,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
 import kotlin.Unit;
-import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
 
 import static android.app.Activity.RESULT_CANCELED;
