@@ -14,20 +14,9 @@
         android:layout_centerInParent="true">
     </net.gini.android.capture.internal.camera.view.CameraPreviewContainer>
 
-    <View
-        android:id="@+id/gc_camera_preview_shade"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignBottom="@id/gc_camera_preview_container"
         android:layout_alignEnd="@id/gc_camera_preview_container"
         android:layout_alignStart="@id/gc_camera_preview_container"
         android:layout_alignTop="@id/gc_camera_preview_container"
-        android:alpha="0"
-        android:background="@color/gc_camera_preview_shade"
-        android:visibility="gone"
-        tools:alpha="1"
-        tools:visibility="visible" />
-
     <ImageView
         android:id="@+id/gc_camera_focus_indicator"
         android:layout_width="wrap_content"
@@ -95,113 +84,6 @@
         android:src="@drawable/gc_camera_flash_on"
         android:visibility="gone"
         tools:visibility="visible"/>
-
-    <ImageView
-        android:id="@+id/gc_document_import_hint_container_arrow"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/gc_document_import_button_container"
-        android:layout_alignEnd="@+id/gc_document_import_button_container"
-        android:layout_alignStart="@+id/gc_document_import_button_container"
-        android:alpha="0"
-        android:src="@drawable/gc_hint_arrow_down"
-        app:tint="@color/gc_document_import_hint_background"
-        android:visibility="gone"
-        tools:alpha="1"
-        tools:visibility="visible" />
-
-    <RelativeLayout
-        android:id="@+id/gc_document_import_hint_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/gc_document_import_hint_container_arrow"
-        android:layout_marginLeft="@dimen/gc_camera_upload_hint_container_horizontal_margin"
-        android:layout_marginRight="@dimen/gc_camera_upload_hint_container_horizontal_margin"
-        android:alpha="0"
-        android:background="@color/gc_document_import_hint_background"
-        android:paddingBottom="@dimen/gc_camera_upload_hint_container_padding"
-        android:paddingEnd="@dimen/gc_camera_upload_hint_container_padding_right"
-        android:paddingStart="@dimen/gc_camera_upload_hint_container_padding"
-        android:paddingTop="@dimen/gc_camera_upload_hint_container_padding"
-        android:visibility="gone"
-        tools:alpha="1"
-        tools:visibility="visible">
-
-        <net.gini.android.capture.internal.ui.CustomFontTextView
-            style="@style/GiniCaptureTheme.Camera.DocumentImportHint.TextStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="@dimen/gc_camera_upload_hint_text_right_margin"
-            android:layout_toStartOf="@+id/gc_document_import_hint_close_button"
-            android:text="@string/gc_document_import_hint_text" />
-
-        <ImageView
-            android:id="@+id/gc_document_import_hint_close_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:padding="@dimen/gc_camera_upload_hint_container_close_button_padding"
-            android:src="@drawable/gc_hint_close"
-            app:tint="@color/gc_hint_close" />
-
-    </RelativeLayout>
-
-    <ImageView
-        android:id="@+id/gc_qr_code_scanner_hint_container_arrow"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/gc_button_camera_trigger"
-        android:layout_alignEnd="@+id/gc_button_camera_trigger"
-        android:layout_alignStart="@+id/gc_button_camera_trigger"
-        android:layout_marginBottom="@dimen/gc_camera_qr_code_scanner_hint_arrow_margin"
-        android:alpha="0"
-        android:src="@drawable/gc_hint_arrow_down"
-        app:tint="@color/gc_document_import_hint_background"
-        android:visibility="gone"
-        tools:alpha="1"
-        tools:visibility="visible" />
-
-    <RelativeLayout
-        android:id="@+id/gc_qr_code_scanner_hint_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/gc_qr_code_scanner_hint_container_arrow"
-        android:layout_marginLeft="@dimen/gc_camera_upload_hint_container_horizontal_margin"
-        android:layout_marginRight="@dimen/gc_camera_upload_hint_container_horizontal_margin"
-        android:alpha="0"
-        android:background="@color/gc_document_import_hint_background"
-        android:paddingBottom="@dimen/gc_camera_upload_hint_container_padding"
-        android:paddingEnd="@dimen/gc_camera_upload_hint_container_padding_right"
-        android:paddingStart="@dimen/gc_camera_upload_hint_container_padding"
-        android:paddingTop="@dimen/gc_camera_upload_hint_container_padding"
-        android:visibility="gone"
-        tools:alpha="1"
-        tools:visibility="visible">
-
-        <net.gini.android.capture.internal.ui.CustomFontTextView
-            style="@style/GiniCaptureTheme.Camera.DocumentImportHint.TextStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="@dimen/gc_camera_upload_hint_text_right_margin"
-            android:layout_toStartOf="@+id/gc_qr_code_scanner_hint_close_button"
-            android:text="@string/gc_qr_code_scanner_hint_text" />
-
-        <ImageView
-            android:id="@+id/gc_qr_code_scanner_hint_close_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:padding="@dimen/gc_camera_upload_hint_container_close_button_padding"
-            android:src="@drawable/gc_hint_close"
-            app:tint="@color/gc_hint_close" />
-
-    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/gc_qrcode_detected_popup_container"
