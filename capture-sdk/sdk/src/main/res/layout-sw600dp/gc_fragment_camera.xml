@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/gc_camera_fragment_background"
-    tools:context=".camera.CameraFragmentCompat">
+    tools:context=".camera.CameraFragment">
 
     <net.gini.android.capture.internal.camera.view.CameraPreviewContainer
         android:id="@+id/gc_camera_preview_container"
@@ -14,9 +14,6 @@
         android:layout_centerInParent="true">
     </net.gini.android.capture.internal.camera.view.CameraPreviewContainer>
 
-        android:layout_alignEnd="@id/gc_camera_preview_container"
-        android:layout_alignStart="@id/gc_camera_preview_container"
-        android:layout_alignTop="@id/gc_camera_preview_container"
     <ImageView
         android:id="@+id/gc_camera_focus_indicator"
         android:layout_width="wrap_content"
@@ -29,16 +26,13 @@
         android:id="@+id/gc_image_corners"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignBottom="@+id/gc_camera_preview_container"
-        android:layout_alignEnd="@id/gc_camera_preview_container"
-        android:layout_alignStart="@id/gc_camera_preview_container"
-        android:layout_alignTop="@+id/gc_camera_preview_container" />
+        android:layout_centerInParent="true" />
 
     <ImageButton
         android:id="@+id/gc_button_camera_trigger"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/gc_camera_preview_container"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="@dimen/gc_camera_button_vertical_margin"
         android:background="@null"
