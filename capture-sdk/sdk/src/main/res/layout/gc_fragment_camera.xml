@@ -57,6 +57,7 @@
             android:background="@null"
             android:clickable="false"
             android:scaleType="centerInside"
+            android:layout_marginBottom="@dimen/small"
             android:src="@drawable/gc_camera_flash_on" />
 
         <net.gini.android.capture.internal.ui.CustomFontTextView
@@ -204,19 +205,20 @@
 
         <ImageButton
             android:id="@+id/gc_button_import_document"
-            android:layout_width="@dimen/gc_camera_upload_button_size"
-            android:layout_height="@dimen/gc_camera_upload_button_size"
+            android:layout_width="@dimen/xxlarge"
+            android:layout_height="wrap_content"
             android:background="@null"
             android:clickable="false"
             android:scaleType="centerInside"
+            android:layout_marginBottom="@dimen/small"
             android:src="@drawable/gc_document_import_icon" />
 
         <net.gini.android.capture.internal.ui.CustomFontTextView
-            style="@style/GiniCaptureTheme.Camera.DocumentImportSubtitle.TextStyle"
+            style="@style/GiniCaptureTheme.Typography.Subtitle2"
+            android:textColor="@color/Light_01"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:paddingBottom="@dimen/gc_camera_upload_button_subtitle_bottom_padding"
             android:text="@string/gc_camera_document_import_subtitle" />
 
     </LinearLayout>
