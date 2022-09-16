@@ -20,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -178,6 +179,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     ImageButton mButtonCameraTrigger;
     private ImageButton mButtonCameraFlash;
     private LinearLayout mCameraFlashButtonContainer;
+    private TextView mCameraFlashButtonSubtitle;
     private LinearLayout mLayoutNoPermission;
     private ImageButton mButtonImportDocument;
     private View mQRCodeDetectedPopupContainer;
@@ -612,6 +614,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         mButtonCameraTrigger = view.findViewById(R.id.gc_button_camera_trigger);
         mButtonCameraFlash = view.findViewById(R.id.gc_button_camera_flash);
         mCameraFlashButtonContainer = view.findViewById(R.id.gc_camera_flash_button_container);
+        mCameraFlashButtonSubtitle = view.findViewById(R.id.gc_camera_flash_button_subtitle);
         final ViewStub stubNoPermission = view.findViewById(R.id.gc_stub_camera_no_permission);
         mViewStubInflater = new ViewStubSafeInflater(stubNoPermission);
         mButtonImportDocument = view.findViewById(R.id.gc_button_import_document);
@@ -739,13 +742,16 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private void updateCameraFlashState() {
         mCameraController.setFlashEnabled(mIsFlashEnabled);
-        updateFlashButtonImage();
+        updateFlashButtonImageAndSubtitle();
     }
 
-    private void updateFlashButtonImage() {
+    private void updateFlashButtonImageAndSubtitle() {
         final int flashIconRes = mIsFlashEnabled ? R.drawable.gc_camera_flash_on
                 : R.drawable.gc_camera_flash_off;
         mButtonCameraFlash.setImageResource(flashIconRes);
+        final int flashSubtitleRes = mIsFlashEnabled ? R.string.gc_camera_flash_on_subtitle
+                : R.string.gc_camera_flash_off_subtitle;
+        mCameraFlashButtonSubtitle.setText(flashSubtitleRes);
     }
 
     @VisibleForTesting

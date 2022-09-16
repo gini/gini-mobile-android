@@ -133,4 +133,6 @@
     <string name="gc_onboarding_viewpager_content_description">Onboarding</string>
     <string name="gc_onboarding_page_indicator_active_content_description">Aktive Seitenanzeige für Seite %1$d.</string>
     <string name="gc_onboarding_page_indicator_inactive_content_description">Inaktive Seitenanzeige für Seite %1$d.</string>
+    <string name="gc_camera_flash_on_subtitle">An</string>
+    <string name="gc_camera_flash_off_subtitle">Aus</string>
 </resources>

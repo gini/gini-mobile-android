@@ -61,12 +61,13 @@
             android:src="@drawable/gc_camera_flash_on" />
 
         <net.gini.android.capture.internal.ui.CustomFontTextView
+            android:id="@+id/gc_camera_flash_button_subtitle"
             style="@style/GiniCaptureTheme.Typography.Subtitle2"
             android:textColor="@color/Light_01"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="On" />
+            android:text="@string/gc_camera_flash_on_subtitle" />
 
     </LinearLayout>
 

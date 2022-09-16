@@ -114,4 +114,6 @@
     <string name="gc_onboarding_viewpager_content_description">Onboarding</string>
     <string name="gc_onboarding_page_indicator_active_content_description">Active page indicator for page %1$d.</string>
     <string name="gc_onboarding_page_indicator_inactive_content_description">Inactive page indicator for page %1$d.</string>
+    <string name="gc_camera_flash_on_subtitle">On</string>
+    <string name="gc_camera_flash_off_subtitle">Off</string>
 </resources>
