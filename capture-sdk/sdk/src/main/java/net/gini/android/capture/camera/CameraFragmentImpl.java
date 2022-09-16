@@ -177,7 +177,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     @VisibleForTesting
     ImageButton mButtonCameraTrigger;
     private ImageButton mButtonCameraFlash;
-    private LinearLayout mButtonCameraFlashContainer;
+    private LinearLayout mCameraFlashButtonContainer;
     private LinearLayout mLayoutNoPermission;
     private ImageButton mButtonImportDocument;
     private View mQRCodeDetectedPopupContainer;
@@ -369,7 +369,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         }
         if (mCameraController.isFlashAvailable()) {
             if (GiniCapture.hasInstance() && GiniCapture.getInstance().isFlashButtonEnabled()) {
-                mButtonCameraFlash.setVisibility(View.VISIBLE);
+                mCameraFlashButtonContainer.setVisibility(View.VISIBLE);
             }
             updateCameraFlashState();
         }
@@ -611,6 +611,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         mCameraFocusIndicator = view.findViewById(R.id.gc_camera_focus_indicator);
         mButtonCameraTrigger = view.findViewById(R.id.gc_button_camera_trigger);
         mButtonCameraFlash = view.findViewById(R.id.gc_button_camera_flash);
+        mCameraFlashButtonContainer = view.findViewById(R.id.gc_camera_flash_button_container);
         final ViewStub stubNoPermission = view.findViewById(R.id.gc_stub_camera_no_permission);
         mViewStubInflater = new ViewStubSafeInflater(stubNoPermission);
         mButtonImportDocument = view.findViewById(R.id.gc_button_import_document);
@@ -1416,8 +1417,8 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     }
 
     private void showFlashButtonAnimated() {
-        mButtonCameraFlash.animate().alpha(1.0f);
-        mButtonCameraFlash.setEnabled(true);
+        mCameraFlashButtonContainer.animate().alpha(1.0f);
+        mCameraFlashButtonContainer.setEnabled(true);
     }
 
     @Override
@@ -1523,8 +1524,8 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     }
 
     private void hideFlashButtonAnimated() {
-        mButtonCameraFlash.animate().alpha(0.0f);
-        mButtonCameraFlash.setEnabled(false);
+        mCameraFlashButtonContainer.animate().alpha(0.0f);
+        mCameraFlashButtonContainer.setEnabled(false);
     }
 
     private void startApplicationDetailsSettings() {

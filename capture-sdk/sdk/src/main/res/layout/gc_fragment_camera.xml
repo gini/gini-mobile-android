@@ -37,19 +37,37 @@
         android:background="@null"
         android:src="@drawable/gc_camera_trigger" />
 
-    <ImageButton
-        android:id="@+id/gc_button_camera_flash"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_alignTop="@id/gc_button_camera_trigger"
-        android:layout_alignBottom="@id/gc_button_camera_trigger"
+    <LinearLayout
+        android:id="@+id/gc_camera_flash_button_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/gc_button_camera_trigger"
         android:layout_toStartOf="@id/gc_button_camera_trigger"
-        android:layout_toEndOf="@id/gc_document_import_button_container"
-        android:background="@null"
-        android:scaleType="centerInside"
-        android:src="@drawable/gc_camera_flash_on"
-        android:visibility="gone"
-        tools:visibility="visible"/>
+        android:layout_alignTop="@id/gc_button_camera_trigger"
+        android:layout_marginEnd="@dimen/large"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="invisible"
+        tools:visibility="visible">
+
+        <ImageButton
+            android:id="@+id/gc_button_camera_flash"
+            android:layout_width="@dimen/xxlarge"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:clickable="false"
+            android:scaleType="centerInside"
+            android:src="@drawable/gc_camera_flash_on" />
+
+        <net.gini.android.capture.internal.ui.CustomFontTextView
+            style="@style/GiniCaptureTheme.Typography.Subtitle2"
+            android:textColor="@color/Light_01"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="On" />
+
+    </LinearLayout>
 
     <RelativeLayout
         android:id="@+id/gc_qrcode_detected_popup_container"
@@ -176,12 +194,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/gc_button_camera_trigger"
-        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@id/gc_camera_flash_button_container"
         android:layout_alignTop="@id/gc_button_camera_trigger"
-        android:layout_marginStart="@dimen/gc_camera_upload_button_left_margin"
+        android:layout_marginEnd="@dimen/large"
         android:gravity="center"
         android:orientation="vertical"
-        android:visibility="gone"
+        android:visibility="invisible"
         tools:visibility="visible">
 
         <ImageButton
