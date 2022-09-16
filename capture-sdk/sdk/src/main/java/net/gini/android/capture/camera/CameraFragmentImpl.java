@@ -50,7 +50,6 @@ import net.gini.android.capture.internal.camera.api.camerax.CameraXController;
 import net.gini.android.capture.internal.camera.api.UIExecutor;
 import net.gini.android.capture.internal.camera.photo.Photo;
 import net.gini.android.capture.internal.camera.photo.PhotoEdit;
-import net.gini.android.capture.internal.camera.view.FlashButtonHelper.FlashButtonPosition;
 import net.gini.android.capture.internal.camera.view.QRCodePopup;
 import net.gini.android.capture.internal.fileimport.FileChooserActivity;
 import net.gini.android.capture.internal.network.AnalysisNetworkRequestResult;
@@ -98,12 +97,10 @@ import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 import static net.gini.android.capture.GiniCaptureError.ErrorCode.MISSING_GINI_CAPTURE_INSTANCE;
 import static net.gini.android.capture.document.ImageDocument.ImportMethod;
-import static net.gini.android.capture.internal.camera.view.FlashButtonHelper.getFlashButtonPosition;
 import static net.gini.android.capture.internal.network.NetworkRequestsManager.isCancellation;
 import static net.gini.android.capture.internal.qrcode.EPSPaymentParser.EXTRACTION_ENTITY_NAME;
 import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
 import static net.gini.android.capture.internal.util.AndroidHelper.isMarshmallowOrLater;
-import static net.gini.android.capture.internal.util.ContextHelper.isTablet;
 import static net.gini.android.capture.internal.util.FeatureConfiguration.getDocumentImportEnabledFileTypes;
 import static net.gini.android.capture.internal.util.FeatureConfiguration.isMultiPageEnabled;
 import static net.gini.android.capture.internal.util.FeatureConfiguration.isQRCodeScanningEnabled;
@@ -613,7 +610,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         mImageCorners = view.findViewById(R.id.gc_image_corners);
         mCameraFocusIndicator = view.findViewById(R.id.gc_camera_focus_indicator);
         mButtonCameraTrigger = view.findViewById(R.id.gc_button_camera_trigger);
-        bindFlashButtonView(view);
+        mButtonCameraFlash = view.findViewById(R.id.gc_button_camera_flash);
         final ViewStub stubNoPermission = view.findViewById(R.id.gc_stub_camera_no_permission);
         mViewStubInflater = new ViewStubSafeInflater(stubNoPermission);
         mButtonImportDocument = view.findViewById(R.id.gc_button_import_document);
@@ -626,35 +623,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         mUnsupportedQRCodeDetectedPopupContainer = view.findViewById(
                 R.id.gc_unsupported_qrcode_detected_popup_container);
         mImageStack = view.findViewById(R.id.gc_image_stack);
-    }
-
-    private void bindFlashButtonView(final View view) {
-        final Activity activity = mFragment.getActivity();
-        if (activity == null) {
-            return;
-        }
-        if (isTablet(activity)) {
-            mButtonCameraFlash = view.findViewById(R.id.gc_button_camera_flash);
-            if (mButtonCameraFlash != null) {
-                return;
-            }
-        }
-        final FlashButtonPosition flashButtonPosition = getFlashButtonPosition(
-                isDocumentImportEnabled(activity), isMultiPageEnabled());
-        switch (flashButtonPosition) {
-            case LEFT_OF_CAMERA_TRIGGER:
-                mButtonCameraFlash = view.findViewById(R.id.gc_button_camera_flash_left_of_trigger);
-                break;
-            case BOTTOM_LEFT:
-                mButtonCameraFlash = view.findViewById(R.id.gc_button_camera_flash_bottom_left);
-                break;
-            case BOTTOM_RIGHT:
-                mButtonCameraFlash = view.findViewById(R.id.gc_button_camera_flash_bottom_right);
-                break;
-            default:
-                throw new UnsupportedOperationException("Unknown flash button position: "
-                        + flashButtonPosition);
-        }
     }
 
     private void initViews() {

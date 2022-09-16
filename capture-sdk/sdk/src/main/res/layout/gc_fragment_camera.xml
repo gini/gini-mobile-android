@@ -38,41 +38,13 @@
         android:src="@drawable/gc_camera_trigger" />
 
     <ImageButton
-        android:id="@+id/gc_button_camera_flash_left_of_trigger"
+        android:id="@+id/gc_button_camera_flash"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_alignTop="@id/gc_button_camera_trigger"
         android:layout_alignBottom="@id/gc_button_camera_trigger"
         android:layout_toStartOf="@id/gc_button_camera_trigger"
         android:layout_toEndOf="@id/gc_document_import_button_container"
-        android:background="@null"
-        android:scaleType="centerInside"
-        android:src="@drawable/gc_camera_flash_on"
-        android:visibility="gone"
-        tools:visibility="visible"/>
-
-    <ImageButton
-        android:id="@+id/gc_button_camera_flash_bottom_left"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_alignTop="@+id/gc_button_camera_trigger"
-        android:layout_alignBottom="@+id/gc_button_camera_trigger"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="48dp"
-        android:background="@null"
-        android:scaleType="centerInside"
-        android:src="@drawable/gc_camera_flash_on"
-        android:visibility="gone"
-        tools:visibility="visible"/>
-
-    <ImageButton
-        android:id="@+id/gc_button_camera_flash_bottom_right"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_alignTop="@+id/gc_button_camera_trigger"
-        android:layout_alignBottom="@+id/gc_button_camera_trigger"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="48dp"
         android:background="@null"
         android:scaleType="centerInside"
         android:src="@drawable/gc_camera_flash_on"
