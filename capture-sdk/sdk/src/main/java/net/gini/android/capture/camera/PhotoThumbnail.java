@@ -3,9 +3,11 @@ package net.gini.android.capture.camera;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -100,33 +102,36 @@ public class PhotoThumbnail extends ConstraintLayout {
     private void resetImageView(@NonNull final ImageView imageView) {
         imageView.setImageDrawable(null);
         imageView.setBackgroundColor(Color.TRANSPARENT);
-        rotateImageView(imageView, 0);
-    }
-
-    private static void rotateImageView(final ImageView imageView, final int rotation) {
-        imageView.setRotation(rotation);
     }
 
     private static void setBitmapOrBlack(@NonNull final ImageView imageView,
             @Nullable final ThumbnailBitmap stackBitmap) {
         if (stackBitmap != null) {
-            imageView.setImageBitmap(stackBitmap.bitmap);
-            rotateImageView(imageView, stackBitmap.rotation);
+            imageView.setImageBitmap(stackBitmap.getRotatedBitmap());
         } else {
             imageView.setImageBitmap(null);
             imageView.setBackgroundColor(Color.BLACK);
-            rotateImageView(imageView, 0);
         }
     }
 
     static class ThumbnailBitmap {
 
         Bitmap bitmap;
+        private Bitmap rotatedBitmap;
         int rotation;
 
         ThumbnailBitmap(final Bitmap bitmap, final int rotation) {
             this.bitmap = bitmap;
             this.rotation = rotation;
+        }
+
+        final Bitmap getRotatedBitmap() {
+            if (rotatedBitmap == null) {
+                Matrix matrix = new Matrix();
+                matrix.postRotate(rotation);
+                rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+            }
+            return rotatedBitmap;
         }
     }
 
