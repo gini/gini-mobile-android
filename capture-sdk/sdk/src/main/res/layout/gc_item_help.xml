@@ -1,22 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/gc_help_item_background"
+    android:background="?attr/colorSurface"
     android:foreground="?attr/selectableItemBackground"
     android:orientation="vertical">
 
     <net.gini.android.capture.internal.ui.CustomFontTextView
         android:id="@+id/gc_help_item_title"
-        style="@style/GiniCaptureTheme.Help.Item.TextStyle"
-        android:layout_width="match_parent"
+        style="@style/GiniCaptureTheme.Typography.Subtitle1"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/gc_help_item_margin"
+        android:padding="@dimen/gc_help_item_margin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/gc_forward_icon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         tools:text="@string/gc_help_item_photo_tips_title" />
+
+    <ImageView
+        android:id="@+id/gc_forward_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/gc_help_item_forward_icon_margin"
+        android:src="@drawable/ic_gc_forward_icon"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/gc_help_activity_background" />
-</LinearLayout>
+        android:layout_height="@dimen/gc_help_item_divider_height"
+        android:background="?attr/colorSecondary"
+        android:layout_marginStart="@dimen/gc_help_item_margin"
+        android:id="@+id/gc_help_item_divider"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

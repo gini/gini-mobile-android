@@ -33,5 +33,6 @@
     <dimen name="gc_photo_tips_tip_text_right_margin">64dp</dimen>
 
     <dimen name="gc_file_import_content_width">600dp</dimen>
+    <dimen name="gc_photo_tip_text_margin">2dp</dimen>
 
 </resources>

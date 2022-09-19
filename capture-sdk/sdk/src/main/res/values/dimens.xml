@@ -92,7 +92,7 @@
     <dimen name="gc_analysis_hint_text_height">48dp</dimen>
     <dimen name="gc_analysis_hint_text_left_margin">16dp</dimen>
 
-    <dimen name="gc_noresults_header_padding">16dp</dimen>
+    <dimen name="gc_noresults_header_padding">8dp</dimen>
     <dimen name="gc_noresults_header_drawable_padding">16dp</dimen>
     <dimen name="gc_noresults_tip_icon_size">64dp</dimen>
     <dimen name="gc_noresults_tip_icon_margin">16dp</dimen>
@@ -106,7 +106,9 @@
     <dimen name="gc_noresults_bottom_button_margin">16dp</dimen>
     <dimen name="gc_noresults_bottom_button_max_width">300dp</dimen>
 
-    <dimen name="gc_help_item_margin">24dp</dimen>
+    <dimen name="gc_help_item_margin">16dp</dimen>
+    <dimen name="gc_help_item_forward_icon_margin">12dp</dimen>
+    <dimen name="gc_help_item_divider_height">1dp</dimen>
 
     <dimen name="gc_photo_tips_tip_icon_size">64dp</dimen>
     <dimen name="gc_photo_tips_tip_icon_margin">16dp</dimen>
@@ -122,13 +124,17 @@
 
     <dimen name="gc_supported_formats_item_margin">24dp</dimen>
     <dimen name="gc_supported_formats_item_header_margin">24dp</dimen>
+    <dimen name="gc_supported_formats_item_header_bottom_margin">5dp</dimen>
 
     <dimen name="gc_file_import_content_width">0dp</dimen>
-    <dimen name="gc_file_import_header_margin">16dp</dimen>
+    <dimen name="gc_file_import_header_margin">24dp</dimen>
+    <dimen name="gc_file_import_text_margin">8dp</dimen>
     <dimen name="gc_file_import_section_number_margin">16dp</dimen>
     <dimen name="gc_file_import_section_number_margin_top">32dp</dimen>
     <dimen name="gc_file_import_section_title_margin">16dp</dimen>
     <dimen name="gc_file_import_section_body_margin">16dp</dimen>
     <dimen name="gc_file_import_illustration_margin">32dp</dimen>
+    <dimen name="gc_photo_tip_text_margin">1dp</dimen>
+    <dimen name="gc_file_import_paragraphs_margin">50dp</dimen>
 
 </resources>
