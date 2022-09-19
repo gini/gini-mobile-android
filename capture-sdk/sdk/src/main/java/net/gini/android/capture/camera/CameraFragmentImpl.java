@@ -28,8 +28,6 @@ import androidx.annotation.UiThread;
 import androidx.annotation.VisibleForTesting;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewPropertyAnimatorListenerAdapter;
-import androidx.transition.Transition;
-import androidx.transition.TransitionListenerAdapter;
 
 import net.gini.android.capture.AsyncCallback;
 import net.gini.android.capture.Document;
@@ -84,11 +82,9 @@ import net.gini.android.capture.util.UriHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
 import kotlin.Unit;
@@ -161,7 +157,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private QRCodePopup<String> mUnsupportedQRCodePopup;
 
     private View mImageCorners;
-    private ImageStack mImageStack;
+    private PhotoThumbnail mPhotoThumbnail;
     private boolean mInterfaceHidden;
     private boolean mInMultiPageState;
     private boolean mIsFlashEnabled = true;
@@ -390,11 +386,11 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             if (multiPageDocument != null && multiPageDocument.getDocuments().size() > 0) {
                 mMultiPageDocument = multiPageDocument;
                 mInMultiPageState = true;
-                updateImageStack();
+                updatePhotoThumbnail();
             } else {
                 mInMultiPageState = false;
                 mMultiPageDocument = null;
-                mImageStack.removeImages();
+                mPhotoThumbnail.removeImage();
             }
         }
     }
@@ -626,7 +622,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                 R.id.gc_qrcode_detected_popup_container);
         mUnsupportedQRCodeDetectedPopupContainer = view.findViewById(
                 R.id.gc_unsupported_qrcode_detected_popup_container);
-        mImageStack = view.findViewById(R.id.gc_image_stack);
+        mPhotoThumbnail = view.findViewById(R.id.gc_photo_thumbnail);
     }
 
     private void initViews() {
@@ -667,7 +663,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                 showFileChooser();
             }
         });
-        mImageStack.setOnClickListener(new View.OnClickListener() {
+        mPhotoThumbnail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
                 mProceededToMultiPageReview = true;
@@ -1028,7 +1024,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                             return;
                         }
                         LOG.info("Document imported: {}", mMultiPageDocument);
-                        updateImageStack();
+                        updatePhotoThumbnail();
                         hideActivityIndicatorAndEnableInteraction();
                         requestClientDocumentCheck(mMultiPageDocument);
                     }
@@ -1091,85 +1087,42 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                 duration).show();
     }
 
-    private void updateImageStack() {
-        final List<ImageDocument> documents = mMultiPageDocument.getDocuments();
-        if (!documents.isEmpty()) {
-            mImageStack.removeImages();
-        }
-        final int size = documents.size();
-        if (size >= 3) {
-            showImageDocumentsInStack(
-                    Arrays.asList(
-                            documents.get(size - 1),
-                            documents.get(size - 2),
-                            documents.get(size - 3)),
-                    Arrays.asList(
-                            ImageStack.Position.TOP,
-                            ImageStack.Position.MIDDLE,
-                            ImageStack.Position.BOTTOM));
-        } else if (size == 2) {
-            showImageDocumentsInStack(
-                    Arrays.asList(
-                            documents.get(size - 1),
-                            documents.get(size - 2)),
-                    Arrays.asList(
-                            ImageStack.Position.TOP,
-                            ImageStack.Position.MIDDLE));
-        } else if (size == 1) {
-            showImageDocumentsInStack(
-                    Collections.singletonList(
-                            documents.get(size - 1)),
-                    Collections.singletonList(
-                            ImageStack.Position.TOP));
-        }
-    }
-
-    private void showImageDocumentsInStack(@NonNull final List<ImageDocument> documents,
-            @NonNull final List<ImageStack.Position> positions) {
+    private void updatePhotoThumbnail() {
         if (!GiniCapture.hasInstance()) {
             LOG.error(
-                    "Cannot show images in stack. GiniCapture instance not available. Create it with GiniCapture.newInstance().");
-        }
-        if (documents.size() != positions.size()) {
-            return;
+                    "Cannot show photo thumbnail. GiniCapture instance not available. Create it with GiniCapture.newInstance().");
         }
         final Activity activity = mFragment.getActivity();
         if (activity == null) {
             return;
         }
-        final int imagesToLoadCount = documents.size();
-        final AtomicInteger imagesLoadedCounter = new AtomicInteger();
-        for (int i = 0; i < documents.size(); i++) {
-            final ImageDocument document = documents.get(i);
-            final ImageStack.Position position = positions.get(i);
-            GiniCapture.getInstance().internal().getPhotoMemoryCache()
-                    .get(activity, document, new AsyncCallback<Photo, Exception>() { // NOPMD
-                        @Override
-                        public void onSuccess(final Photo result) {
-                            mImageStack.setImage(
-                                    new ImageStack.StackBitmap(result.getBitmapPreview(),
-                                            document.getRotationForDisplay()), position);
-                            imagesLoadedCounter.incrementAndGet();
-                            if (imagesToLoadCount == imagesLoadedCounter.get()) {
-                                mImageStack.setImageCount(mMultiPageDocument.getDocuments().size());
-                            }
-                        }
 
-                        @Override
-                        public void onError(final Exception exception) {
-                            mImageStack.setImage(null, position);
-                            imagesLoadedCounter.incrementAndGet();
-                            if (imagesToLoadCount == imagesLoadedCounter.get()) {
-                                mImageStack.setImageCount(mMultiPageDocument.getDocuments().size());
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled() {
-                            // Not used
-                        }
-                    });
+        final List<ImageDocument> documents = mMultiPageDocument.getDocuments();
+        if (!documents.isEmpty()) {
+            mPhotoThumbnail.removeImage();
         }
+        final ImageDocument lastDocument = documents.get(documents.size() - 1);
+        GiniCapture.getInstance().internal().getPhotoMemoryCache()
+                .get(activity, lastDocument, new AsyncCallback<Photo, Exception>() { // NOPMD
+                    @Override
+                    public void onSuccess(final Photo result) {
+                        mPhotoThumbnail.setImage(
+                                new PhotoThumbnail.ThumbnailBitmap(result.getBitmapPreview(),
+                                        lastDocument.getRotationForDisplay()));
+                        mPhotoThumbnail.setImageCount(documents.size());
+                    }
+
+                    @Override
+                    public void onError(final Exception exception) {
+                        mPhotoThumbnail.setImage(null);
+                        mPhotoThumbnail.setImageCount(documents.size());
+                    }
+
+                    @Override
+                    public void onCancelled() {
+                        // Not used
+                    }
+                });
     }
 
     private void enableInteraction() {
@@ -1260,16 +1213,10 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                                 return;
                             }
                             mMultiPageDocument.addDocument(document);
-                            mImageStack.addImage(
-                                    new ImageStack.StackBitmap(result.getBitmapPreview(),
-                                            document.getRotationForDisplay()),
-                                    new TransitionListenerAdapter() {
-                                        @Override
-                                        public void onTransitionEnd(
-                                                @NonNull final Transition transition) {
-                                            mIsTakingPicture = false;
-                                        }
-                                    });
+                            mPhotoThumbnail.setImage(new PhotoThumbnail.ThumbnailBitmap(result.getBitmapPreview(),
+                                    document.getRotationForDisplay()));
+                            mPhotoThumbnail.setImageCount(mMultiPageDocument.getDocuments().size());
+                            mIsTakingPicture = false;
                             mCameraController.startPreview();
                         } else {
                             if (isMultiPageEnabled()) {
@@ -1289,18 +1236,12 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                                         .getImageMultiPageDocumentMemoryStore()
                                         .setMultiPageDocument(mMultiPageDocument);
                                 mMultiPageDocument.addDocument(document);
-                                mImageStack.addImage(
-                                        new ImageStack.StackBitmap(result.getBitmapPreview(),
-                                                document.getRotationForDisplay()),
-                                        new TransitionListenerAdapter() {
-                                            @Override
-                                            public void onTransitionEnd(
-                                                    @NonNull final Transition transition) {
-                                                mListener.onProceedToMultiPageReviewScreen(
-                                                        mMultiPageDocument);
-                                                mIsTakingPicture = false;
-                                            }
-                                        });
+                                mPhotoThumbnail.setImage(
+                                        new PhotoThumbnail.ThumbnailBitmap(result.getBitmapPreview(),
+                                                document.getRotationForDisplay()));
+                                mPhotoThumbnail.setImageCount(mMultiPageDocument.getDocuments().size());
+                                mListener.onProceedToMultiPageReviewScreen(mMultiPageDocument);
+                                mIsTakingPicture = false;
                             } else {
                                 final ImageDocument document =
                                         DocumentFactory.newImageDocumentFromPhoto(
@@ -1405,15 +1346,15 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private void showInterfaceAnimated() {
         showCameraTriggerButtonAnimated();
         showDocumentCornerGuidesAnimated();
-        showImageStackAnimated();
+        showPhotoThumbnailAnimated();
         showFlashButtonAnimated();
         if (mImportDocumentButtonEnabled) {
             showImportDocumentButtonAnimated();
         }
     }
 
-    private void showImageStackAnimated() {
-        mImageStack.animate().alpha(1.0f).start();
+    private void showPhotoThumbnailAnimated() {
+        mPhotoThumbnail.animate().alpha(1.0f).start();
     }
 
     private void showImportDocumentButtonAnimated() {
@@ -1439,15 +1380,15 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private void hideInterfaceAnimated() {
         hideCameraTriggerButtonAnimated();
         hideDocumentCornerGuidesAnimated();
-        hideImageStackAnimated();
+        hidePhotoThumbnailAnimated();
         if (mImportDocumentButtonEnabled) {
             hideImportDocumentButtonAnimated();
         }
         hideFlashButtonAnimated();
     }
 
-    private void hideImageStackAnimated() {
-        mImageStack.animate().alpha(0.0f).start();
+    private void hidePhotoThumbnailAnimated() {
+        mPhotoThumbnail.animate().alpha(0.0f).start();
     }
 
     private void hideImportDocumentButtonAnimated() {

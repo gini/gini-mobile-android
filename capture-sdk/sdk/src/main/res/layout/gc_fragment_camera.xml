@@ -170,26 +170,14 @@
 
     </RelativeLayout>
 
-    <View
-        android:id="@+id/gc_image_stack_placeholder"
-        android:layout_width="60dp"
-        android:layout_height="96dp"
-        android:layout_alignBottom="@+id/gc_button_camera_trigger"
-        android:layout_alignParentEnd="true"
-        android:layout_alignTop="@id/gc_button_camera_trigger"
-        android:layout_marginEnd="@dimen/gc_camera_image_stack_right_margin"
-        android:visibility="invisible"
-        tools:visibility="visible"
-        tools:background="@android:color/holo_blue_dark"/>
-
-    <net.gini.android.capture.camera.ImageStack
-        android:id="@+id/gc_image_stack"
+    <net.gini.android.capture.camera.PhotoThumbnail
+        android:id="@+id/gc_photo_thumbnail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@id/gc_image_stack_placeholder"
-        android:layout_alignEnd="@id/gc_image_stack_placeholder"
-        android:layout_marginStart="@dimen/gc_camera_image_stack_left_margin"
-        android:layout_marginTop="@dimen/gc_camera_image_stack_top_margin" />
+        android:layout_alignBottom="@+id/gc_button_camera_trigger"
+        android:layout_toEndOf="@id/gc_button_camera_trigger"
+        android:layout_alignTop="@id/gc_button_camera_trigger"
+        android:layout_marginStart="@dimen/large" />
 
     <LinearLayout
         android:id="@+id/gc_document_import_button_container"
