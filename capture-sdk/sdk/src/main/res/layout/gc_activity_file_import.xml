@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:background="?attr/backgroundColor"
     android:fillViewport="true"
+    android:id="@+id/gc_file_import_scrollview"
     tools:context="net.gini.android.capture.help.FileImportActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -79,6 +80,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_margin="@dimen/gc_file_import_illustration_margin"
+            android:id="@+id/gc_section_2_illustration"
             android:src="@drawable/gc_file_import_section_2_illustration"
             app:layout_constraintEnd_toEndOf="@+id/customFontTextView6"
             app:layout_constraintStart_toStartOf="@+id/customFontTextView6"

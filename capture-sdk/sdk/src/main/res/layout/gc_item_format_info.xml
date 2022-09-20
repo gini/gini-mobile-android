@@ -14,8 +14,8 @@
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/gc_supported_formats_item_margin"
-            android:layout_marginStart="@dimen/gc_supported_formats_item_margin"
+            android:layout_marginEnd="@dimen/large"
+            android:layout_marginStart="@dimen/large_24"
             android:layout_gravity="center_vertical">
 
             <ImageView
@@ -34,9 +34,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginBottom="@dimen/gc_supported_formats_item_margin"
-            android:layout_marginEnd="@dimen/gc_supported_formats_item_margin"
-            android:layout_marginTop="@dimen/gc_supported_formats_item_margin"
+            android:layout_marginBottom="@dimen/large_24"
+            android:layout_marginEnd="@dimen/large_24"
+            android:layout_marginTop="@dimen/large_24"
             tools:text="Computer-erstellte Überweisungsträger und Rechnungen" />
     </LinearLayout>
 
@@ -44,6 +44,6 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/gc_help_item_divider_height"
         android:id="@+id/gc_item_format_divider"
-        android:layout_marginStart="@dimen/gc_supported_formats_item_margin"
+        android:layout_marginStart="@dimen/large_24"
         android:background="?attr/colorSecondary"/>
 </LinearLayout>

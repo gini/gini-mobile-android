@@ -280,7 +280,7 @@
 
     <Button
         android:id="@+id/gc_button_photo_tips_camera"
-        style="@style/GiniCaptureTheme.Button"
+        style="@style/GiniCaptureTheme.Widget.Button.UnelevatedButton"
         android:layout_width="0dp"
         android:layout_height="@dimen/gc_photo_tips_bottom_button_height"
         android:layout_margin="@dimen/gc_photo_tips_bottom_button_margin"

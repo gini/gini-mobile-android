@@ -2,6 +2,7 @@
     <dimen name="small">4dp</dimen>
     <dimen name="medium">8dp</dimen>
     <dimen name="large">16dp</dimen>
+    <dimen name="large_24">24dp</dimen> <!-- TODO improve this use xlarge and shift the others -->
     <dimen name="xlarge">32dp</dimen>
     <dimen name="xxlarge">48dp</dimen>
     <dimen name="xxxlarge">64dp</dimen>
@@ -136,5 +137,6 @@
     <dimen name="gc_file_import_illustration_margin">32dp</dimen>
     <dimen name="gc_photo_tip_text_margin">1dp</dimen>
     <dimen name="gc_file_import_paragraphs_margin">50dp</dimen>
+    <dimen name="gc_snackbar_card_corner_radius">5dp</dimen>
 
 </resources>

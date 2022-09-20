@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/gc_file_import_activity_background"
     android:fillViewport="true"
+    android:id="@+id/gc_file_import_scrollview"
     tools:context="net.gini.android.capture.help.FileImportActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
