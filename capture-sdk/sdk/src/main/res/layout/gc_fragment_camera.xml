@@ -82,13 +82,13 @@
         android:layout_marginLeft="24dp"
         android:layout_marginRight="24dp"
         android:alpha="0"
-        android:background="@color/gc_qrcode_detected_popup_background"
+        android:background="?attr/colorSurface"
         android:paddingBottom="@dimen/medium"
         android:paddingLeft="@dimen/medium"
         android:paddingRight="@dimen/medium"
         android:paddingTop="@dimen/medium"
         android:visibility="gone"
-        tools:visibility="visible"
+        tools:visibility="invisible"
         tools:alpha="1">
 
         <ImageView
@@ -101,7 +101,7 @@
             tools:ignore="ContentDescription" />
 
         <TextView
-            style="@style/GiniCaptureTheme.Camera.QRCodeDetectedPopup.Message1.TextStyle"
+            style="@style/GiniCaptureTheme.Typography.Body1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
@@ -113,7 +113,8 @@
 
         <TextView
             android:id="@+id/gc_camera_qrcode_detected_popup_message_2"
-            style="@style/GiniCaptureTheme.Camera.QRCodeDetectedPopup.Message2.TextStyle"
+            style="@style/GiniCaptureTheme.Typography.Body2"
+            android:textColor="?attr/colorAccent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
@@ -132,13 +133,13 @@
         android:layout_marginLeft="24dp"
         android:layout_marginRight="24dp"
         android:alpha="0"
-        android:background="@color/gc_unsupported_qrcode_detected_popup_background"
+        android:background="?attr/colorSurface"
         android:paddingBottom="@dimen/medium"
         android:paddingLeft="@dimen/medium"
         android:paddingRight="@dimen/medium"
         android:paddingTop="@dimen/medium"
         android:visibility="gone"
-        tools:visibility="visible"
+        tools:visibility="invisible"
         tools:alpha="1">
 
         <ImageView
@@ -152,7 +153,8 @@
 
         <TextView
             android:id="@+id/gc_camera_unsupported_qrcode_detected_popup_message_1"
-            style="@style/GiniCaptureTheme.Camera.QRCodeDetectedPopup.UnsupportedMessage1.TextStyle"
+            style="@style/GiniCaptureTheme.Typography.Body2"
+            android:textColor="@color/Error_01"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
@@ -164,7 +166,8 @@
 
         <TextView
             android:id="@+id/gc_camera_unsupported_qrcode_detected_popup_message_2"
-            style="@style/GiniCaptureTheme.Camera.QRCodeDetectedPopup.UnsupportedMessage2.TextStyle"
+            style="@style/GiniCaptureTheme.Typography.Body2"
+            android:textColor="@color/Error_01"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
