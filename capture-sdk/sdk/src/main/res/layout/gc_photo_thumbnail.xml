@@ -23,7 +23,7 @@
         style="@style/GiniCaptureTheme.Typography.Caption"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/gc_image_stack_badge_background"
+        android:background="@drawable/gc_photo_thumbnail_badge_background"
         android:gravity="center"
         android:textColor="?attr/colorOnPrimary"
         app:layout_constraintBottom_toTopOf="@id/gc_thumbnail"
