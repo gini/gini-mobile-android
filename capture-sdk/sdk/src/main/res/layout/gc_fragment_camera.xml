@@ -4,7 +4,7 @@
     android:id="@+id/gc_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/gc_camera_fragment_background"
+    android:background="?attr/backgroundColor"
     tools:context=".camera.CameraFragment">
 
     <net.gini.android.capture.internal.camera.view.CameraPreviewContainer
