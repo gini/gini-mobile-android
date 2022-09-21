@@ -115,6 +115,7 @@
         android:id="@+id/gc_photo_thumbnail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/gc_button_camera_trigger"
         app:layout_constraintBottom_toBottomOf="@id/gc_button_camera_trigger"
         app:layout_constraintStart_toEndOf="@id/gc_button_camera_trigger"
         android:layout_toEndOf="@id/gc_button_camera_trigger"
