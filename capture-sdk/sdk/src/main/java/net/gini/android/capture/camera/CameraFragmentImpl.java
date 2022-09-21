@@ -599,7 +599,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private void bindViews(final View view) {
         mLayoutRoot = view.findViewById(R.id.gc_root);
         mCameraPreviewContainer = view.findViewById(R.id.gc_camera_preview_container);
-        mImageCorners = view.findViewById(R.id.gc_image_corners);
+        mImageCorners = view.findViewById(R.id.gc_camera_frame);
         mCameraFocusIndicator = view.findViewById(R.id.gc_camera_focus_indicator);
         mButtonCameraTrigger = view.findViewById(R.id.gc_button_camera_trigger);
         mButtonCameraFlash = view.findViewById(R.id.gc_button_camera_flash);

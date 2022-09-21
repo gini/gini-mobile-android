@@ -135,4 +135,5 @@
     <string name="gc_onboarding_page_indicator_inactive_content_description">Inaktive Seitenanzeige für Seite %1$d.</string>
     <string name="gc_camera_flash_on_subtitle">An</string>
     <string name="gc_camera_flash_off_subtitle">Aus</string>
+    <string name="gc_camera_title">Rechnung oder QR Code scannen</string>
 </resources>
