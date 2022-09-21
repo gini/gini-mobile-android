@@ -49,8 +49,9 @@ internal class HelpItemsAdapter(val onItemSelected: (HelpItem) -> Unit) :
             }
 
             //Remove last divider from the screen
-            if (position == items.size - 1)
+            if (position == items.size - 1) {
                 divider.visibility = View.GONE
+            }
         }
     }
 

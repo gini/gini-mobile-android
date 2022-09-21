@@ -9,7 +9,7 @@
 
 
     <ScrollView
-        android:id="@+id/scrollView2"
+        android:id="@+id/gc_photo_tips_scrollview"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_below="@+id/gc_photo_tips_headline"
@@ -52,7 +52,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <net.gini.android.capture.internal.ui.CustomFontTextView
+                <TextView
                     android:id="@+id/gc_lightning_title_tip"
                     style="@style/GiniCaptureTheme.Typography.Subtitle1"
                     android:layout_width="0dp"
@@ -67,7 +67,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/imageView" />
 
-                <net.gini.android.capture.internal.ui.CustomFontTextView
+                <TextView
                     android:id="@+id/gc_lightning_desc_tip"
                     style="@style/GiniCaptureTheme.Typography.Body2"
                     android:layout_width="0dp"
@@ -116,7 +116,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <net.gini.android.capture.internal.ui.CustomFontTextView
+                <TextView
                     android:id="@+id/gc_flat_tip_title"
                     style="@style/GiniCaptureTheme.Typography.Subtitle1"
                     android:layout_width="0dp"
@@ -131,7 +131,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/gc_tip_flat_photo" />
 
-                <net.gini.android.capture.internal.ui.CustomFontTextView
+                <TextView
                     android:id="@+id/customFontTextView2"
                     style="@style/GiniCaptureTheme.Typography.Body2"
                     android:layout_width="0dp"
@@ -179,7 +179,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <net.gini.android.capture.internal.ui.CustomFontTextView
+                <TextView
                     android:id="@+id/gc_parallel_page_title"
                     style="@style/GiniCaptureTheme.Typography.Subtitle1"
                     android:layout_width="0dp"
@@ -194,7 +194,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/gc_parallel_photo" />
 
-                <net.gini.android.capture.internal.ui.CustomFontTextView
+                <TextView
                     style="@style/GiniCaptureTheme.Typography.Body2"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -239,7 +239,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <net.gini.android.capture.internal.ui.CustomFontTextView
+                <TextView
                     android:id="@+id/gc_align_tip_title"
                     style="@style/GiniCaptureTheme.Typography.Subtitle1"
                     android:layout_width="0dp"
@@ -254,7 +254,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/gc_align_photo" />
 
-                <net.gini.android.capture.internal.ui.CustomFontTextView
+                <TextView
                     android:id="@+id/customFontTextView3"
                     style="@style/GiniCaptureTheme.Typography.Body2"
                     android:layout_width="0dp"
@@ -300,7 +300,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <net.gini.android.capture.internal.ui.CustomFontTextView
+                <TextView
                     android:id="@+id/customFontTextView4"
                     style="@style/GiniCaptureTheme.Typography.Subtitle1"
                     android:layout_width="0dp"
@@ -315,7 +315,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/imageView2" />
 
-                <net.gini.android.capture.internal.ui.CustomFontTextView
+                <TextView
                     style="@style/GiniCaptureTheme.Help.PhotoTips.Tip.TextStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"

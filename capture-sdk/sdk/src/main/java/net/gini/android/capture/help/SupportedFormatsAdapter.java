@@ -101,12 +101,16 @@ class SupportedFormatsAdapter extends
             viewHolder.icon.setImageResource(formatInfo.getIcon());
 
             //Remove last dividers
-            if (formatInfo.getLabel() == SupportedFormat.QR_CODE.getLabel())
+            if (formatInfo.getLabel() == SupportedFormat.QR_CODE.getLabel()) {
                 viewHolder.dividerView.setVisibility(View.GONE);
-            else viewHolder.dividerView.setVisibility(View.VISIBLE);
+            }
+            else {
+                viewHolder.dividerView.setVisibility(View.VISIBLE);
+            }
 
-            if (position == mItems.size() - 1)
+            if (position == mItems.size() - 1) {
                 viewHolder.dividerView.setVisibility(View.GONE);
+            }
 
         }
     }

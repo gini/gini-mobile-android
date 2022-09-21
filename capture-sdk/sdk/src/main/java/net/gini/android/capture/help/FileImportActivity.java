@@ -1,6 +1,5 @@
 package net.gini.android.capture.help;
 
-import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -12,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
@@ -175,7 +173,7 @@ public class FileImportActivity extends AppCompatActivity {
     private void showCustomSnackBar() {
         ScrollView scrollView = findViewById(R.id.gc_file_import_scrollview);
 
-        Snackbar snackbar = Snackbar.make(scrollView, "", Snackbar.LENGTH_LONG);
+        Snackbar snackbar = Snackbar.make(scrollView, "", Snackbar.LENGTH_INDEFINITE);
         snackbar.getView().setBackgroundColor(Color.TRANSPARENT);
 
         Snackbar.SnackbarLayout snackBarLayout = (Snackbar.SnackbarLayout) snackbar.getView();
@@ -194,26 +192,6 @@ public class FileImportActivity extends AppCompatActivity {
 
         snackbar.show();
 
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        showDarkModeIllustrations(ContextExtKt.isDarkMode(this));
-
-    }
-
-    private void showDarkModeIllustrations(boolean isDarkMode) {
-        ImageView firstIllustration = findViewById(R.id.gc_section_1_illustration);
-
-        ImageView secondIllustration = findViewById(R.id.gc_section_2_illustration);
-
-        firstIllustration.setImageResource(isDarkMode ? R.drawable.gc_file_import_section_1_illustration_dark
-                : R.drawable.gc_file_import_section_1_illustration);
-
-        secondIllustration.setImageResource(isDarkMode ? R.drawable.gc_file_import_section_2_illustration_dark :
-                R.drawable.gc_file_import_section_2_illustration);
     }
 
     @Override

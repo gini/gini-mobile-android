@@ -45,7 +45,7 @@
                     android:layout_margin="@dimen/medium"
                     android:src="@drawable/gc_photo_tip_lighting" />
 
-                <net.gini.android.capture.internal.ui.CustomFontTextView
+                <TextView
                     android:id="@+id/gc_lightning_title_tip"
                     style="@style/GiniCaptureTheme.Typography.Subtitle1"
                     android:layout_width="wrap_content"
@@ -56,7 +56,7 @@
                     android:maxWidth="@dimen/gc_photo_tips_tip_text_max_width"
                     android:text="@string/gc_photo_tip_good_lightning_title"/>
 
-                <net.gini.android.capture.internal.ui.CustomFontTextView
+                <TextView
                     style="@style/GiniCaptureTheme.Typography.Body2"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
@@ -88,7 +88,7 @@
                     android:layout_margin="@dimen/medium"
                     android:src="@drawable/gc_photo_tip_flat" />
 
-                <net.gini.android.capture.internal.ui.CustomFontTextView
+                <TextView
                     android:id="@+id/gc_flat_tip_title"
                     style="@style/GiniCaptureTheme.Typography.Subtitle1"
                     android:layout_width="wrap_content"
@@ -99,7 +99,7 @@
                     android:text="@string/gc_photo_tip_flatten_the_page_title"
                     android:maxWidth="@dimen/gc_photo_tips_tip_text_max_width"/>
 
-                <net.gini.android.capture.internal.ui.CustomFontTextView
+                <TextView
                     style="@style/GiniCaptureTheme.Help.PhotoTips.Tip.TextStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
@@ -131,7 +131,7 @@
                     android:layout_margin="@dimen/medium"
                     android:src="@drawable/gc_photo_tip_parallel" />
 
-                <net.gini.android.capture.internal.ui.CustomFontTextView
+                <TextView
                     android:id="@+id/gc_parallel_page_title"
                     style="@style/GiniCaptureTheme.Typography.Subtitle1"
                     android:layout_width="wrap_content"
@@ -142,7 +142,7 @@
                     android:maxWidth="@dimen/gc_photo_tips_tip_text_max_width"
                     android:text="@string/gc_photo_tip_parallel_title"/>
 
-                <net.gini.android.capture.internal.ui.CustomFontTextView
+                <TextView
                     style="@style/GiniCaptureTheme.Help.PhotoTips.Tip.TextStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
@@ -174,7 +174,7 @@
                     android:layout_margin="@dimen/medium"
                     android:src="@drawable/gc_photo_tip_align" />
 
-                <net.gini.android.capture.internal.ui.CustomFontTextView
+                <TextView
                     android:id="@+id/gc_align_tip_title"
                     style="@style/GiniCaptureTheme.Typography.Subtitle1"
                     android:layout_width="wrap_content"
@@ -185,7 +185,7 @@
                     android:maxWidth="@dimen/gc_photo_tips_tip_text_max_width"
                     android:text="@string/gc_photo_tip_align_title"/>
 
-                <net.gini.android.capture.internal.ui.CustomFontTextView
+                <TextView
                     style="@style/GiniCaptureTheme.Help.PhotoTips.Tip.TextStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
@@ -217,7 +217,7 @@
                     android:layout_margin="@dimen/medium"
                     android:src="@drawable/gc_photo_tip_multipage" />
 
-                <net.gini.android.capture.internal.ui.CustomFontTextView
+                <TextView
                     android:id="@+id/customFontTextView4"
                     style="@style/GiniCaptureTheme.Typography.Subtitle1"
                     android:layout_width="wrap_content"
@@ -228,7 +228,7 @@
                     android:maxWidth="@dimen/gc_photo_tips_tip_text_max_width"
                     android:text="@string/gc_photo_tip_multiple_pages_title"/>
 
-                <net.gini.android.capture.internal.ui.CustomFontTextView
+                <TextView
                     style="@style/GiniCaptureTheme.Help.PhotoTips.Tip.TextStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"

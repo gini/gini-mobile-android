@@ -8,7 +8,7 @@
         <item name="colorSurface">@color/Dark_02</item>
         <item name="backgroundColor">@color/Dark_01</item>
         <item name="colorOnBackground">@color/Light_01</item>
-        <item name="colorSecondary">@color/Dark_03</item>
+        <item name="dividerColor">@color/Dark_03</item>
     </style>
 
 </resources>
