@@ -442,13 +442,8 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     }
 
     private void showFocusIndicator(@NonNull final Point point) {
-        final ConstraintLayout.LayoutParams layoutParams =
-                (ConstraintLayout.LayoutParams) mCameraFocusIndicator.getLayoutParams();
-        layoutParams.leftMargin = (int) Math.round(
-                point.x - (mCameraFocusIndicator.getWidth() / 2.0));
-        layoutParams.topMargin = (int) Math.round(
-                point.y - (mCameraFocusIndicator.getHeight() / 2.0));
-        mCameraFocusIndicator.setLayoutParams(layoutParams);
+        mCameraFocusIndicator.setX((float) (point.x - (mCameraFocusIndicator.getWidth() / 2.0)));
+        mCameraFocusIndicator.setY((float) (point.y - (mCameraFocusIndicator.getHeight() / 2.0)));
         mCameraFocusIndicator.animate().setDuration(DEFAULT_ANIMATION_DURATION).alpha(1.0f);
     }
 
