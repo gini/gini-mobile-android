@@ -41,7 +41,7 @@
                     app:layout_constraintGuide_percent="0.5" />
 
                 <ImageView
-                    android:id="@+id/imageView"
+                    android:id="@+id/gc_imageView"
                     android:layout_width="@dimen/gc_photo_tips_tip_icon_size"
                     android:layout_height="@dimen/gc_photo_tips_tip_icon_size"
                     android:layout_gravity="center_vertical"
@@ -65,7 +65,7 @@
                     android:text="@string/gc_photo_tip_good_lightning_title"
                     app:layout_constraintBottom_toTopOf="@+id/gc_light_guideline"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/imageView" />
+                    app:layout_constraintStart_toEndOf="@+id/gc_imageView" />
 
                 <TextView
                     android:id="@+id/gc_lightning_desc_tip"
@@ -79,7 +79,7 @@
                     android:maxWidth="@dimen/gc_photo_tips_tip_text_max_width"
                     android:text="@string/gc_photo_tip_lighting"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/imageView"
+                    app:layout_constraintStart_toEndOf="@+id/gc_imageView"
                     app:layout_constraintTop_toTopOf="@+id/gc_light_guideline" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -132,7 +132,6 @@
                     app:layout_constraintStart_toEndOf="@+id/gc_tip_flat_photo" />
 
                 <TextView
-                    android:id="@+id/customFontTextView2"
                     style="@style/GiniCaptureTheme.Typography.Body2"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -255,7 +254,6 @@
                     app:layout_constraintStart_toEndOf="@+id/gc_align_photo" />
 
                 <TextView
-                    android:id="@+id/customFontTextView3"
                     style="@style/GiniCaptureTheme.Typography.Body2"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -301,7 +299,6 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/customFontTextView4"
                     style="@style/GiniCaptureTheme.Typography.Subtitle1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
