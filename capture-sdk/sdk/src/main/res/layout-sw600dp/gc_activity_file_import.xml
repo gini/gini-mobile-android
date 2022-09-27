@@ -36,6 +36,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/small"
+            android:textColor="@color/Dark_06"
             android:text="@string/gc_file_import_section_1_body"
             app:layout_constraintEnd_toEndOf="@+id/customFontTextView"
             app:layout_constraintStart_toStartOf="@+id/customFontTextView"
@@ -47,6 +48,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/large_24"
             android:src="@drawable/gc_file_import_section_1_illustration"
+            android:contentDescription="@string/gc_first_illustration_description"
             app:layout_constraintEnd_toEndOf="@+id/customFontTextView7"
             app:layout_constraintStart_toStartOf="@+id/customFontTextView7"
             app:layout_constraintTop_toBottomOf="@+id/customFontTextView7" />
@@ -67,9 +69,10 @@
 
         <TextView
             android:id="@+id/customFontTextView6"
-            style="@style/GiniCaptureTheme.Help.FileImport.Section.Body.TextStyle"
+            style="@style/GiniCaptureTheme.Typography.Body2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:textColor="@color/Dark_06"
             android:layout_marginTop="@dimen/small"
             android:text="@string/gc_file_import_section_2_body"
             app:layout_constraintEnd_toEndOf="@+id/customFontTextView5"
@@ -82,6 +85,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_margin="@dimen/large"
             android:src="@drawable/gc_file_import_section_2_illustration"
+            android:contentDescription="@string/gc_second_illustration_description"
             app:layout_constraintEnd_toEndOf="@+id/customFontTextView6"
             app:layout_constraintStart_toStartOf="@+id/customFontTextView6"
             app:layout_constraintTop_toBottomOf="@+id/customFontTextView6" />

@@ -35,21 +35,24 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/gc_file_import_text_margin"
+            android:textColor="@color/Dark_06"
             android:text="@string/gc_file_import_section_1_body"
             app:layout_constraintEnd_toEndOf="@+id/customFontTextView"
             app:layout_constraintStart_toStartOf="@+id/customFontTextView"
             app:layout_constraintTop_toBottomOf="@+id/customFontTextView" />
 
+
         <ImageView
             android:id="@+id/gc_section_1_illustration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/gc_file_import_header_margin"
+            android:layout_marginTop="20dp"
             android:src="@drawable/gc_file_import_section_1_illustration"
+            android:contentDescription="@string/gc_first_illustration_description"
             app:layout_constraintEnd_toEndOf="@+id/customFontTextView7"
+            app:layout_constraintHorizontal_bias="0.466"
             app:layout_constraintStart_toStartOf="@+id/customFontTextView7"
             app:layout_constraintTop_toBottomOf="@+id/customFontTextView7" />
-
 
         <TextView
             android:id="@+id/customFontTextView5"
@@ -66,9 +69,10 @@
 
         <TextView
             android:id="@+id/customFontTextView6"
-            style="@style/GiniCaptureTheme.Help.FileImport.Section.Body.TextStyle"
+            style="@style/GiniCaptureTheme.Typography.Body2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:textColor="@color/Dark_06"
             android:layout_marginTop="@dimen/gc_file_import_text_margin"
             android:text="@string/gc_file_import_section_2_body"
             app:layout_constraintEnd_toEndOf="@+id/customFontTextView5"
@@ -76,11 +80,12 @@
             app:layout_constraintTop_toBottomOf="@+id/customFontTextView5" />
 
         <ImageView
+            android:id="@+id/gc_section_2_illustration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_margin="@dimen/gc_file_import_illustration_margin"
-            android:id="@+id/gc_section_2_illustration"
+            android:contentDescription="@string/gc_second_illustration_description"
             android:src="@drawable/gc_file_import_section_2_illustration"
             app:layout_constraintEnd_toEndOf="@+id/customFontTextView6"
             app:layout_constraintStart_toStartOf="@+id/customFontTextView6"

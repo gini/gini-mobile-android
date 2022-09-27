@@ -23,6 +23,8 @@
             android:layout_marginTop="@dimen/large"
             android:layout_marginEnd="@dimen/medium"
             android:layout_marginBottom="@dimen/large"
+            android:lineSpacingExtra="4sp"
+            android:translationY="-1.8sp"
             android:text="@string/gc_snackbar_illustrations"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/gc_snackbar_dismiss"
@@ -37,7 +39,7 @@
             android:layout_marginEnd="@dimen/large"
             android:gravity="center"
             android:text="@string/gc_snackbar_dismiss"
-            android:textColor="@color/Accent_03"
+            android:textColor="@color/Accent_01"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
