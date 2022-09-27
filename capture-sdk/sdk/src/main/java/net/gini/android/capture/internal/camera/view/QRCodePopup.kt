@@ -42,7 +42,7 @@ internal class QRCodePopup<T> @JvmOverloads constructor(
     fun show(qrCodeContent: T, startDelay: Long = 0) {
         if (this.qrCodeContent != null && qrCodeContent != this.qrCodeContent) {
             hide(object : ViewPropertyAnimatorListenerAdapter() {
-                override fun onAnimationEnd(view: View?) {
+                override fun onAnimationEnd(view: View) {
                     show(showAgainDelayMs)
                 }
             })
@@ -67,7 +67,7 @@ internal class QRCodePopup<T> @JvmOverloads constructor(
                 .setStartDelay(startDelay)
                 .setDuration(animationDuration)
                 .setListener(object : ViewPropertyAnimatorListenerAdapter() {
-                    override fun onAnimationEnd(view: View?) {
+                    override fun onAnimationEnd(view: View) {
                         isShown = true
                     }
                 })

@@ -79,7 +79,7 @@ class CodeAnalysisPlugin: Plugin<Project> {
 
     private fun configureAndroidLint(target: Project, lint: Lint?) {
         lint?.apply {
-            isAbortOnError = false
+            abortOnError = false
             lintConfig = target.file("${target.rootDir}/buildSrc/config/lint/lint.xml")
         }
     }
