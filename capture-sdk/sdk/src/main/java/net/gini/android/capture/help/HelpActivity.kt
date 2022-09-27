@@ -3,6 +3,7 @@ package net.gini.android.capture.help
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -10,7 +11,9 @@ import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.R
 import net.gini.android.capture.help.HelpItem.Custom
 import net.gini.android.capture.help.HelpItem.PhotoTips
+import net.gini.android.capture.help.view.HelpNavigationBarBottomAdapter
 import net.gini.android.capture.internal.util.ActivityHelper
+import net.gini.android.capture.view.InjectedViewContainer
 
 /**
  * <h3>Screen API and Component API</h3>
@@ -80,6 +83,8 @@ class HelpActivity : AppCompatActivity() {
 
     private lateinit var mRecyclerView: RecyclerView
 
+    private var injectedViewContainer: InjectedViewContainer<HelpNavigationBarBottomAdapter>? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.gc_activity_help)
@@ -93,12 +98,27 @@ class HelpActivity : AppCompatActivity() {
             launchHelpScreen((mRecyclerView.adapter as HelpItemsAdapter?)!!.items[0])
             finish()
         }
+
         setupHomeButton()
+        setupBottomBarNavigation()
     }
 
     private fun setupHomeButton() {
         if (GiniCapture.hasInstance() && GiniCapture.getInstance().areBackButtonsEnabled()) {
             ActivityHelper.enableHomeAsUp(this)
+        }
+    }
+
+    private fun setupBottomBarNavigation() {
+        injectedViewContainer = findViewById(R.id.gc_injected_navigation_bar_container_bottom)
+        if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled) {
+
+            injectedViewContainer?.injectedViewAdapter = GiniCapture.getInstance().helpNavigationBarBottomAdapter
+
+            val helpNavigationBarBottomAdapter = injectedViewContainer?.injectedViewAdapter
+            helpNavigationBarBottomAdapter?.setOnBackClickListener {
+                onBackPressed()
+            }
         }
     }
 

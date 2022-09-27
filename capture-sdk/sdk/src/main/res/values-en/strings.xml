@@ -121,5 +121,6 @@
     <string name="gc_photo_tip_multiple_pages_title">Multiple pages</string>
     <string name="gc_snackbar_illustrations">These are only illustrations, look for the in the corresponding apps.</string>
     <string name="gc_snackbar_dismiss">Dismiss</string>
+    <string name="gc_back_button_description">Back</string>
 
 </resources>
