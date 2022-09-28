@@ -37,7 +37,7 @@
 
     <style name="Root.GiniCaptureTheme.Typography.Subtitle2" parent="TextAppearance.MaterialComponents.Subtitle2">
         <item name="android:textSize">14sp</item>
-        <item name="android:textColor">@color/Dark_06</item>
+        <item name="android:textColor">?attr/colorOnBackground</item>
     </style>
 
     <style name="Root.GiniCaptureTheme.Typography.Body1" parent="TextAppearance.MaterialComponents.Body1">
