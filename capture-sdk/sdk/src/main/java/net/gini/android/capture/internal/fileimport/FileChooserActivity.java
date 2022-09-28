@@ -46,6 +46,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -124,6 +125,30 @@ public class FileChooserActivity extends AppCompatActivity implements AlertDialo
         readExtras();
         setupFileProvidersView();
         overridePendingTransition(0, 0);
+        handleOnBackPressed();
+    }
+
+    private void handleOnBackPressed() {
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (mFileProvidersView.getTag() == null) {
+                    return;
+                }
+                final boolean isShown = (boolean) mFileProvidersView.getTag();
+                if (!isShown) {
+                    return;
+                }
+                overridePendingTransition(0, 0);
+                hideFileProviders(new TransitionListenerAdapter() {
+                    @Override
+                    public void onTransitionEnd(@NonNull final Transition transition) {
+                        setEnabled(false);
+                        onBackPressed();
+                    }
+                });
+            }
+        });
     }
 
     @Override
@@ -230,21 +255,6 @@ public class FileChooserActivity extends AppCompatActivity implements AlertDialo
                 mFileProvidersView.setTag(true);
             }
         }, SHOW_ANIM_DELAY);
-    }
-
-    @Override
-    public void onBackPressed() {
-        final boolean isShown = (boolean) mFileProvidersView.getTag();
-        if (!isShown) {
-            return;
-        }
-        overridePendingTransition(0, 0);
-        hideFileProviders(new TransitionListenerAdapter() {
-            @Override
-            public void onTransitionEnd(@NonNull final Transition transition) {
-                FileChooserActivity.super.onBackPressed();
-            }
-        });
     }
 
     private void hideFileProviders(

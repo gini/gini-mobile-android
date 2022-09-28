@@ -41,7 +41,7 @@ internal class HintPopup(
                 .alpha(1f)
                 .setDuration(animationDuration)
                 .setListener(object: ViewPropertyAnimatorListenerAdapter() {
-                    override fun onAnimationEnd(view: View?) {
+                    override fun onAnimationEnd(view: View) {
                         isShown = true
                     }
                 })

@@ -63,24 +63,6 @@ public final class SizeSelectionHelper {
     }
 
     @Nullable
-    public static Size getLargestAllowedSize(@NonNull final List<Size> sizes, final int maxArea) {
-        Size largest = null;
-        for (final Size size : sizes) {
-            if ((largest == null || getArea(largest) < getArea(size)) && getArea(size) <= maxArea) {
-                largest = size;
-            }
-        }
-        return largest != null ? new Size(largest.width, largest.height) : null;
-    }
-
-    @Nullable
-    public static Size getLargestAllowedSizeWithSimilarAspectRatio(
-            @NonNull final List<Size> sizes, @NonNull final Size referenceSize, final int maxArea) {
-        final List<Size> sameAspectSizes = getSameAspectRatioSizes(sizes, referenceSize);
-        return getLargestAllowedSize(sameAspectSizes, maxArea);
-    }
-
-    @Nullable
     public static Size getClosestSizeWithSimilarAspectRatio(
             @NonNull final List<Size> sizes, @NonNull final Size referenceSize, final int maxArea) {
         final List<Size> sameAspectSizes = getSameAspectRatioSizes(sizes, referenceSize);

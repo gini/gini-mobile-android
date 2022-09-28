@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
@@ -31,9 +32,11 @@ import net.gini.android.capture.tracking.CameraScreenEvent;
 import java.util.Map;
 
 import static net.gini.android.capture.internal.util.ActivityHelper.enableHomeAsUp;
+import static net.gini.android.capture.internal.util.ActivityHelper.interceptOnBackPressed;
 import static net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboarding;
 import static net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboardingAtFirstRun;
 import static net.gini.android.capture.review.ReviewActivity.EXTRA_IN_ANALYSIS_ACTIVITY;
+import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackCameraScreenEvent;
 
 /**
@@ -360,6 +363,16 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
         }
         showOnboardingIfRequested();
         setupHomeButton();
+        handleOnBackPressed();
+    }
+
+    private void handleOnBackPressed() {
+        interceptOnBackPressed(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                trackCameraScreenEvent(CameraScreenEvent.EXIT);
+            }
+        });
     }
 
     private void setupHomeButton() {
@@ -471,12 +484,6 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        trackCameraScreenEvent(CameraScreenEvent.EXIT);
     }
 
     private void startHelpActivity() {
