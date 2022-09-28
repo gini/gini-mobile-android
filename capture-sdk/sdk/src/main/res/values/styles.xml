@@ -1,11 +1,12 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="Root.GiniCaptureTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="Root.GiniCaptureTheme" parent="Theme.Material3.DayNight">
         <item name="colorPrimary">@color/Accent_01</item>
         <item name="colorPrimaryDark">@color/Accent_03</item>
         <item name="colorOnPrimary">@color/Light_01</item>
         <item name="backgroundColor">@color/Light_01</item>
         <item name="colorOnBackground">@color/Dark_02</item>
+        <item name="dividerColor">@color/Light_02</item>
         <item name="colorSurface">?attr/backgroundColor</item>
         <item name="colorOnSurface">?attr/colorOnBackground</item>
         <item name="android:windowLightStatusBar">@bool/gc_light_status_bar</item>
@@ -202,7 +203,7 @@
     </style>
 
     <style name="Root.GiniCaptureTheme.Help.Item.TextStyle" parent="TextAppearance.AppCompat">
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">16sp</item>
         <item name="android:textColor">@color/gc_help_item_title</item>
         <item name="gcCustomFont" />
     </style>
@@ -216,6 +217,7 @@
     <style name="Root.GiniCaptureTheme.Help.PhotoTips.Tip.TextStyle" parent="TextAppearance.AppCompat">
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/gc_noresults_tip</item>
+        <item name="android:letterSpacing">0.02</item>
         <item name="gcCustomFont" />
     </style>
 

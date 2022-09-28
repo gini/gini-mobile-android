@@ -1,29 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/gc_photo_tips_activity_background"
+    android:background="?attr/backgroundColor"
     android:orientation="vertical">
-
-    <net.gini.android.capture.internal.ui.CustomFontTextView
-        android:id="@+id/gc_photo_tips_headline"
-        style="@style/GiniCaptureTheme.Help.PhotoTips.Header.TextStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignStart="@+id/gc_photo_tips_scrollview"
-        android:padding="16dp"
-        android:text="@string/gc_photo_tips_headline" />
 
     <ScrollView
         android:id="@+id/gc_photo_tips_scrollview"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"
         android:layout_below="@+id/gc_photo_tips_headline"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
+        android:background="?attr/colorSurface"
         android:overScrollMode="ifContentScrolls"
-        android:scrollbars="none">
+        android:scrollbars="none"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <GridLayout
             android:layout_width="wrap_content"
@@ -36,30 +32,42 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginEnd="32dp"
-                android:layout_marginLeft="32dp"
-                android:layout_marginRight="32dp"
-                android:layout_marginStart="32dp"
+                android:layout_marginStart="@dimen/large"
+                android:layout_marginLeft="@dimen/large"
+                android:layout_marginEnd="@dimen/large"
+                android:layout_marginRight="@dimen/large"
                 android:orientation="vertical">
 
                 <ImageView
                     android:layout_width="@dimen/gc_photo_tips_tip_icon_size"
                     android:layout_height="@dimen/gc_photo_tips_tip_icon_size"
                     android:layout_gravity="center_horizontal"
-                    android:layout_margin="@dimen/gc_photo_tips_tip_icon_margin"
+                    android:layout_margin="@dimen/medium"
                     android:src="@drawable/gc_photo_tip_lighting" />
 
-                <net.gini.android.capture.internal.ui.CustomFontTextView
-                    style="@style/GiniCaptureTheme.Help.PhotoTips.Tip.TextStyle"
+                <TextView
+                    android:id="@+id/gc_lightning_title_tip"
+                    style="@style/GiniCaptureTheme.Typography.Subtitle1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="@dimen/gc_photo_tip_text_margin"
+                    android:gravity="center_vertical"
+                    android:maxWidth="@dimen/gc_photo_tips_tip_text_max_width"
+                    android:text="@string/gc_photo_tip_good_lightning_title"/>
+
+                <TextView
+                    style="@style/GiniCaptureTheme.Typography.Body2"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginBottom="@dimen/gc_photo_tips_tip_text_bottom_margin"
-                    android:layout_marginEnd="@dimen/gc_photo_tips_tip_text_right_margin"
-                    android:layout_marginStart="@dimen/gc_photo_tips_tip_text_left_margin"
+                    android:layout_marginStart="@dimen/medium"
                     android:layout_marginTop="@dimen/gc_photo_tips_tip_text_top_margin"
+                    android:layout_marginEnd="@dimen/medium"
+                    android:layout_marginBottom="@dimen/large"
                     android:gravity="center_horizontal"
                     android:maxWidth="@dimen/gc_photo_tips_tip_text_max_width"
+                    android:textColor="@color/Dark_06"
                     android:text="@string/gc_photo_tip_lighting" />
 
             </LinearLayout>
@@ -68,30 +76,42 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginEnd="32dp"
-                android:layout_marginLeft="32dp"
-                android:layout_marginRight="32dp"
-                android:layout_marginStart="32dp"
+                android:layout_marginStart="@dimen/large"
+                android:layout_marginLeft="@dimen/large"
+                android:layout_marginEnd="@dimen/large"
+                android:layout_marginRight="@dimen/large"
                 android:orientation="vertical">
 
                 <ImageView
                     android:layout_width="@dimen/gc_photo_tips_tip_icon_size"
                     android:layout_height="@dimen/gc_photo_tips_tip_icon_size"
                     android:layout_gravity="center_horizontal"
-                    android:layout_margin="@dimen/gc_photo_tips_tip_icon_margin"
+                    android:layout_margin="@dimen/medium"
                     android:src="@drawable/gc_photo_tip_flat" />
 
-                <net.gini.android.capture.internal.ui.CustomFontTextView
+                <TextView
+                    android:id="@+id/gc_flat_tip_title"
+                    style="@style/GiniCaptureTheme.Typography.Subtitle1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="@dimen/gc_photo_tip_text_margin"
+                    android:gravity="center_vertical"
+                    android:text="@string/gc_photo_tip_flatten_the_page_title"
+                    android:maxWidth="@dimen/gc_photo_tips_tip_text_max_width"/>
+
+                <TextView
                     style="@style/GiniCaptureTheme.Help.PhotoTips.Tip.TextStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginBottom="@dimen/gc_photo_tips_tip_text_bottom_margin"
-                    android:layout_marginEnd="@dimen/gc_photo_tips_tip_text_right_margin"
-                    android:layout_marginStart="@dimen/gc_photo_tips_tip_text_left_margin"
+                    android:layout_marginStart="@dimen/medium"
                     android:layout_marginTop="@dimen/gc_photo_tips_tip_text_top_margin"
+                    android:layout_marginEnd="@dimen/medium"
+                    android:layout_marginBottom="@dimen/large"
                     android:gravity="center_horizontal"
                     android:maxWidth="@dimen/gc_photo_tips_tip_text_max_width"
+                    android:textColor="@color/Dark_06"
                     android:text="@string/gc_photo_tip_flat" />
 
             </LinearLayout>
@@ -100,30 +120,42 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginEnd="32dp"
-                android:layout_marginLeft="32dp"
-                android:layout_marginRight="32dp"
-                android:layout_marginStart="32dp"
+                android:layout_marginStart="@dimen/large"
+                android:layout_marginLeft="@dimen/large"
+                android:layout_marginEnd="@dimen/large"
+                android:layout_marginRight="@dimen/large"
                 android:orientation="vertical">
 
                 <ImageView
                     android:layout_width="@dimen/gc_photo_tips_tip_icon_size"
                     android:layout_height="@dimen/gc_photo_tips_tip_icon_size"
                     android:layout_gravity="center_horizontal"
-                    android:layout_margin="@dimen/gc_photo_tips_tip_icon_margin"
+                    android:layout_margin="@dimen/medium"
                     android:src="@drawable/gc_photo_tip_parallel" />
 
-                <net.gini.android.capture.internal.ui.CustomFontTextView
+                <TextView
+                    android:id="@+id/gc_parallel_page_title"
+                    style="@style/GiniCaptureTheme.Typography.Subtitle1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="@dimen/gc_photo_tip_text_margin"
+                    android:gravity="center_vertical"
+                    android:maxWidth="@dimen/gc_photo_tips_tip_text_max_width"
+                    android:text="@string/gc_photo_tip_parallel_title"/>
+
+                <TextView
                     style="@style/GiniCaptureTheme.Help.PhotoTips.Tip.TextStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginBottom="@dimen/gc_photo_tips_tip_text_bottom_margin"
-                    android:layout_marginEnd="@dimen/gc_photo_tips_tip_text_right_margin"
-                    android:layout_marginStart="@dimen/gc_photo_tips_tip_text_left_margin"
+                    android:layout_marginStart="@dimen/medium"
                     android:layout_marginTop="@dimen/gc_photo_tips_tip_text_top_margin"
+                    android:layout_marginEnd="@dimen/medium"
+                    android:layout_marginBottom="@dimen/large"
                     android:gravity="center_horizontal"
                     android:maxWidth="@dimen/gc_photo_tips_tip_text_max_width"
+                    android:textColor="@color/Dark_06"
                     android:text="@string/gc_photo_tip_parallel" />
 
             </LinearLayout>
@@ -132,34 +164,45 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginEnd="32dp"
-                android:layout_marginLeft="32dp"
-                android:layout_marginRight="32dp"
-                android:layout_marginStart="32dp"
+                android:layout_marginStart="@dimen/large"
+                android:layout_marginLeft="@dimen/large"
+                android:layout_marginEnd="@dimen/large"
+                android:layout_marginRight="@dimen/large"
                 android:orientation="vertical">
 
                 <ImageView
                     android:layout_width="@dimen/gc_photo_tips_tip_icon_size"
                     android:layout_height="@dimen/gc_photo_tips_tip_icon_size"
                     android:layout_gravity="center_horizontal"
-                    android:layout_margin="@dimen/gc_photo_tips_tip_icon_margin"
+                    android:layout_margin="@dimen/medium"
                     android:src="@drawable/gc_photo_tip_align" />
 
-                <net.gini.android.capture.internal.ui.CustomFontTextView
-                    style="@style/GiniCaptureTheme.Help.PhotoTips.Tip.TextStyle"
+                <TextView
+                    android:id="@+id/gc_align_tip_title"
+                    style="@style/GiniCaptureTheme.Typography.Subtitle1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="@dimen/gc_photo_tip_text_margin"
+                    android:gravity="center_vertical"
+                    android:maxWidth="@dimen/gc_photo_tips_tip_text_max_width"
+                    android:text="@string/gc_photo_tip_align_title"/>
+
+                <TextView
+                    style="@style/GiniCaptureTheme.Typography.Body2"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginBottom="@dimen/gc_photo_tips_tip_text_bottom_margin"
-                    android:layout_marginEnd="@dimen/gc_photo_tips_tip_text_right_margin"
-                    android:layout_marginStart="@dimen/gc_photo_tips_tip_text_left_margin"
+                    android:layout_marginStart="@dimen/medium"
                     android:layout_marginTop="@dimen/gc_photo_tips_tip_text_top_margin"
+                    android:layout_marginEnd="@dimen/medium"
+                    android:layout_marginBottom="@dimen/large"
                     android:gravity="center_horizontal"
                     android:maxWidth="@dimen/gc_photo_tips_tip_text_max_width"
+                    android:textColor="@color/Dark_06"
                     android:text="@string/gc_photo_tip_align" />
 
             </LinearLayout>
-
             <Space
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/gc_photo_tips_space_height_for_bottom_button"
@@ -169,15 +212,4 @@
 
     </ScrollView>
 
-    <Button
-        android:id="@+id/gc_button_photo_tips_camera"
-        style="@style/GiniCaptureTheme.Button"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/gc_photo_tips_bottom_button_height"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="@dimen/gc_photo_tips_bottom_button_margin"
-        android:text="@string/gc_photo_tips_camera_button"
-        android:width="@dimen/gc_photo_tips_bottom_button_max_width"/>
-
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

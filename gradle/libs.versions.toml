@@ -59,7 +59,7 @@ kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-t
 koin-androidx-scope = { module = "io.insert-koin:koin-androidx-scope", version.ref = "koin" }
 koin-androidx-viewmodel = { module = "io.insert-koin:koin-androidx-viewmodel", version.ref = "koin" }
 koin-androidx-fragment = { module = "io.insert-koin:koin-androidx-fragment", version.ref = "koin" }
-material = "com.google.android.material:material:1.4.0"
+material = "com.google.android.material:material:1.6.1"
 moshi-core = { module = "com.squareup.moshi:moshi", version.ref = "moshi" }
 moshi-codegen = { module = "com.squareup.moshi:moshi-kotlin-codegen", version.ref = "moshi" }
 insetter = "dev.chrisbanes.insetter:insetter:0.6.1"

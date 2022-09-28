@@ -56,6 +56,7 @@ class SupportedFormatsAdapter extends
         if (isQRCodeScanningEnabled()) {
             items.add(SupportedFormat.QR_CODE);
         }
+        items.add(SupportedFormat.PHOTOS_OF_MONITORS);
         items.add(SectionHeader.UNSUPPORTED_FORMATS);
         Collections.addAll(items, UnsupportedFormat.values());
         return items;
@@ -98,11 +99,20 @@ class SupportedFormatsAdapter extends
             final FormatInfoItemViewHolder viewHolder = (FormatInfoItemViewHolder) holder;
             final FormatInfo formatInfo = (FormatInfo) mItems.get(position);
             viewHolder.label.setText(formatInfo.getLabel());
-            viewHolder.backgroundIcon.setImageResource(formatInfo.getIconBackground());
-            viewHolder.foregroundIcon.setImageResource(formatInfo.getIconForeground());
-            final int tintColor = ContextCompat.getColor(
-                    viewHolder.itemView.getContext(), formatInfo.getIconForegroundTint());
-            viewHolder.foregroundIcon.setColorFilter(tintColor, PorterDuff.Mode.MULTIPLY);
+            viewHolder.icon.setImageResource(formatInfo.getIcon());
+
+            //Remove last dividers
+            if (formatInfo.getLabel() == SupportedFormat.PHOTOS_OF_MONITORS.getLabel()) {
+                viewHolder.dividerView.setVisibility(View.INVISIBLE);
+            }
+            else {
+                viewHolder.dividerView.setVisibility(View.VISIBLE);
+            }
+
+            if (position == mItems.size() - 1) {
+                viewHolder.dividerView.setVisibility(View.INVISIBLE);
+            }
+
         }
     }
 
@@ -147,40 +157,23 @@ class SupportedFormatsAdapter extends
         PRINTED_INVOICES(R.string.gc_supported_format_printed_invoices),
         SINGLE_PAGE_AS_JPEG_PNG_GIF(R.string.gc_supported_format_single_page_as_jpeg_png_gif),
         PDF(R.string.gc_supported_format_pdf),
-        QR_CODE(R.string.gc_supported_format_qr_code);
+        QR_CODE(R.string.gc_supported_format_qr_code),
+        PHOTOS_OF_MONITORS(R.string.gc_photos_of_monitors_or_screens);
 
         @DrawableRes
-        private final int mIconBackground;
-        @DrawableRes
-        private final int mIconForeground;
-        @ColorRes
-        private final int mIconForegroundTint;
+        private final int mSupportedIcon;
         @StringRes
         private final int mLabel;
 
         SupportedFormat(@StringRes final int label) {
             mLabel = label;
-            mIconBackground = R.drawable.gc_format_info_supported_icon_background;
-            mIconForeground = R.drawable.gc_format_info_supported_icon_foreground;
-            mIconForegroundTint =
-                    R.color.gc_supported_formats_item_supported_icon_foreground;
+            mSupportedIcon = R.drawable.gc_format_info_supported_icon;
         }
 
         @Override
         @DrawableRes
-        public int getIconBackground() {
-            return mIconBackground;
-        }
-
-        @Override
-        @DrawableRes
-        public int getIconForeground() {
-            return mIconForeground;
-        }
-
-        @Override
-        public int getIconForegroundTint() {
-            return mIconForegroundTint;
+        public int getIcon() {
+            return mSupportedIcon;
         }
 
         @Override
@@ -191,41 +184,23 @@ class SupportedFormatsAdapter extends
     }
 
     private enum UnsupportedFormat implements FormatInfo {
-        HANDWRITING(R.string.gc_unsupported_format_handwriting),
-        PHOTOS_OF_SCREENS(R.string.gc_unsupported_format_photos_of_screens);
+
+        HANDWRITING(R.string.gc_unsupported_format_handwriting);
 
         @DrawableRes
-        private final int mIconBackground;
-        @DrawableRes
-        private final int mIconForeground;
-        @ColorRes
-        private final int mIconForegroundTint;
+        private final int mIcon;
         @StringRes
         private final int mLabel;
 
         UnsupportedFormat(@StringRes final int label) {
             mLabel = label;
-            mIconBackground = R.drawable.gc_format_info_unsupported_icon_background;
-            mIconForeground = R.drawable.gc_format_info_unsupported_icon_foreground;
-            mIconForegroundTint =
-                    R.color.gc_supported_formats_item_unsupported_icon_foreground;
+            mIcon = R.drawable.gc_format_info_unsupported_icon;
         }
 
         @Override
         @DrawableRes
-        public int getIconBackground() {
-            return mIconBackground;
-        }
-
-        @Override
-        @DrawableRes
-        public int getIconForeground() {
-            return mIconForeground;
-        }
-
-        @Override
-        public int getIconForegroundTint() {
-            return mIconForegroundTint;
+        public int getIcon() {
+            return mIcon;
         }
 
 
@@ -238,15 +213,15 @@ class SupportedFormatsAdapter extends
 
     private class FormatInfoItemViewHolder extends FormatItemViewHolder {
 
-        final ImageView backgroundIcon;
-        final ImageView foregroundIcon;
+        final ImageView icon;
         final TextView label;
+        final View dividerView;
 
         FormatInfoItemViewHolder(final View itemView) {
             super(itemView);
             label = itemView.findViewById(R.id.gc_format_info_item_label);
-            backgroundIcon = itemView.findViewById(R.id.gc_format_info_item_icon_background);
-            foregroundIcon = itemView.findViewById(R.id.gc_format_info_item_icon_foreground);
+            icon = itemView.findViewById(R.id.gc_format_info_item_icon);
+            dividerView = itemView.findViewById(R.id.gc_item_format_divider);
         }
     }
 
@@ -269,17 +244,9 @@ class SupportedFormatsAdapter extends
 
     interface FormatInfo {
         @DrawableRes
-        int getIconBackground();
-
-        @DrawableRes
-        int getIconForeground();
-
-        @ColorRes
-        int getIconForegroundTint();
+        int getIcon();
 
         @StringRes
         int getLabel();
     }
-
-
 }

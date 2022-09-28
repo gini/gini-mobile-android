@@ -1,10 +1,15 @@
 package net.gini.android.capture.help;
 
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ScrollView;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -19,26 +24,28 @@ import net.gini.android.capture.review.ReviewActivity;
 import static net.gini.android.capture.internal.util.ActivityHelper.enableHomeAsUp;
 import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
 
+import com.google.android.material.snackbar.Snackbar;
+
 /**
  * <h3>Screen API and Component API</h3>
  *
  * <p>
- *     On the File Import Screen users can get information about how import files from other apps via "open with".
+ * On the File Import Screen users can get information about how import files from other apps via "open with".
  * </p>
  * <p>
- *     This Activity is launched by the {@link HelpActivity} for both Screen and Component APIs.
+ * This Activity is launched by the {@link HelpActivity} for both Screen and Component APIs.
  * </p>
  * <p>
- *     The contents of this screen need to be customized to insert your App's name or label for the "open with" functionality into the texts and illustrations.
+ * The contents of this screen need to be customized to insert your App's name or label for the "open with" functionality into the texts and illustrations.
  * </p>
  *
  * <h3>Customizing the File Import Screen</h3>
  *
  * <p>
- *     Customizing the look of the File Import Screen is done via overriding of app resources.
+ * Customizing the look of the File Import Screen is done via overriding of app resources.
  * </p>
  * <p>
- *     The following items are customizable:
+ * The following items are customizable:
  *     <ul>
  *         <li>
  *             <b>Background color:</b> via the color resource named {@code gc_file_import_activity_background}.
@@ -147,13 +154,44 @@ public class FileImportActivity extends AppCompatActivity {
             section1ImageView.setVisibility(View.VISIBLE);
             section1ImageView.setImageDrawable(section1Illustration);
         }
+
         setupHomeButton();
+        waitForHalfSecondAndShowSnackBar();
+
     }
 
     private void setupHomeButton() {
         if (GiniCapture.hasInstance() && GiniCapture.getInstance().areBackButtonsEnabled()) {
             enableHomeAsUp(this);
         }
+    }
+
+    private void waitForHalfSecondAndShowSnackBar() {
+        new Handler(Looper.getMainLooper()).postDelayed(this::showCustomSnackBar, 500);
+    }
+
+    private void showCustomSnackBar() {
+        ScrollView scrollView = findViewById(R.id.gc_file_import_scrollview);
+
+        Snackbar snackbar = Snackbar.make(scrollView, "", Snackbar.LENGTH_INDEFINITE);
+        snackbar.getView().setBackgroundColor(Color.TRANSPARENT);
+
+        Snackbar.SnackbarLayout snackBarLayout = (Snackbar.SnackbarLayout) snackbar.getView();
+        snackBarLayout.setPadding((int)getResources().getDimension(R.dimen.medium), 0, (int)getResources().getDimension(R.dimen.medium), 0);
+
+
+        View view = getLayoutInflater().inflate(R.layout.gc_snackbar_info, null);
+
+        TextView dismissTxt = view.findViewById(R.id.gc_snackbar_dismiss);
+        dismissTxt.setOnClickListener(v -> {
+            if (snackbar.isShown())
+                snackbar.dismiss();
+        });
+
+        snackBarLayout.addView(view, 0);
+
+        snackbar.show();
+
     }
 
     @Override
