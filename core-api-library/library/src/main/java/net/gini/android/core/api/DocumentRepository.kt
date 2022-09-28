@@ -162,40 +162,41 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
      * @param documentId The unique identifier of the document.
      * @return A Resource document instance representing all the document's metadata.
      */
-    suspend fun getDocument(documentId: String): Resource<Document> {
-        return documentRemoteSource.getDocument(documentId)
-    }
+    suspend fun getDocument(documentId: String): Resource<Document> =
+        wrapResponseIntoResource {
+            documentRemoteSource.getDocument(documentId)
+        }
 
     @Throws(Exception::class)
     abstract fun createExtractionsContainer(specificExtractions: Map<String, SpecificExtraction>,
                                             compoundExtractions: Map<String, CompoundExtraction>,
                                             responseJSON: JSONObject): E
 
-    @Throws(JSONException::class)
-    fun parseSpecificExtractions(specificExtractionsJson: JSONObject, candidates: Map<String, List<Extraction>>): Map<String, SpecificExtraction> {
-        val specificExtractions = mapOf<String, SpecificExtraction>()
-        val extractionsNameIterator = specificExtractionsJson.keys()
-        while (extractionsNameIterator.hasNext()) {
-            val extractionName = extractionsNameIterator.next()
-            val extractionData = specificExtractionsJson.getJSONObject(extractionName)
-            val extraction: Extraction = extractionFromApiResponse(extractionData)
-            var candidatesForExtraction = listOf<Extraction>()
-            if (extractionData.has("candidates")) {
-                val candidatesName = extractionData.getString("candidates")
-                if (candidates.containsKey(candidatesName)) {
-                    candidatesForExtraction = candidates[candidatesName]
-                }
-            }
-            val specificExtraction = SpecificExtraction(
-                extractionName, extraction.value,
-                extraction.entity, extraction.box,
-                candidatesForExtraction
-            )
-            specificExtractions.put(extractionName, specificExtraction)
-        }
-
-        return specificExtractions
-    }
+//    @Throws(JSONException::class)
+//    fun parseSpecificExtractions(specificExtractionsJson: JSONObject, candidates: Map<String, List<Extraction>>): Map<String, SpecificExtraction> {
+//        val specificExtractions = mapOf<String, SpecificExtraction>()
+//        val extractionsNameIterator = specificExtractionsJson.keys()
+//        while (extractionsNameIterator.hasNext()) {
+//            val extractionName = extractionsNameIterator.next()
+//            val extractionData = specificExtractionsJson.getJSONObject(extractionName)
+//            val extraction: Extraction = extractionFromApiResponse(extractionData)
+//            var candidatesForExtraction = listOf<Extraction>()
+//            if (extractionData.has("candidates")) {
+//                val candidatesName = extractionData.getString("candidates")
+//                if (candidates.containsKey(candidatesName)) {
+//                    candidatesForExtraction = candidates[candidatesName]
+//                }
+//            }
+//            val specificExtraction = SpecificExtraction(
+//                extractionName, extraction.value,
+//                extraction.entity, extraction.box,
+//                candidatesForExtraction
+//            )
+//            specificExtractions.put(extractionName, specificExtraction)
+//        }
+//
+//        return specificExtractions
+//    }
 
     @Throws(JSONException::class)
     private fun createCompositeJson(documents: List<Document>): ByteArray {

@@ -70,6 +70,7 @@ mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockito
 mockito-kotlin = "org.mockito.kotlin:mockito-kotlin:4.0.0"
 mockito-kotlin2 = "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
 mockk = "io.mockk:mockk:1.12.2"
+mockk-android = "io.mockk:mockk-android:1.12.2"
 turbine = "app.cash.turbine:turbine:0.7.0"
 junit = "junit:junit:4.13.2"
 detekt-gradle = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.18.1"

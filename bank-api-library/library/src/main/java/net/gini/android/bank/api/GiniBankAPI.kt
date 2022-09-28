@@ -7,9 +7,4 @@ import net.gini.android.core.api.internal.KGiniCoreAPI
 class GiniBankAPI(
     documentManager: BankApiDocumentManager,
     credentialsStore: CredentialsStore? = null
-): KGiniCoreAPI<BankApiDocumentManager, BankApiDocumentRepository, ExtractionsContainer>(documentManager, credentialsStore) {
-
-    override fun getDocumentManager(): BankApiDocumentManager {
-        return documentManager
-    }
-}
+): KGiniCoreAPI<BankApiDocumentManager, BankApiDocumentRepository, ExtractionsContainer>(documentManager, credentialsStore)

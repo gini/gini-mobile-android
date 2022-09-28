@@ -30,7 +30,6 @@ abstract class KGiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : KGiniCoreAPI
 ) {
     private var mApiBaseUrl: String? = null
     private var mUserCenterApiBaseUrl = "https://user.gini.net/"
-    private val mEmailDomain: String? = null
     @XmlRes
     private var mNetworkSecurityConfigResId = 0
     private var mMoshi: Moshi? = null
@@ -48,6 +47,7 @@ abstract class KGiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : KGiniCoreAPI
     private var mUserRepository: UserRepository? = null
     private var mUserRemoteSource: UserRemoteSource? = null
     private var mDocumentManager: DM? = null
+    private var mDocumentRepository: DR? = null
 
     /**
      * Set the resource id for the network security configuration xml to enable public key pinning.
@@ -201,7 +201,7 @@ abstract class KGiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : KGiniCoreAPI
         return mRequestQueue!!
     }
 
-    private fun getApiBaseUrl(): String? {
+    protected fun getApiBaseUrl(): String? {
         return if (mApiBaseUrl != null) mApiBaseUrl else getGiniApiType().baseUrl
     }
 
@@ -301,6 +301,8 @@ abstract class KGiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : KGiniCoreAPI
 
     protected abstract fun createDocumentManager(): DM
 
+    protected abstract fun createDocumentRepository(): DR
+
     /**
      * Return the [SessionManager] set via #setSessionManager. If no SessionManager has been set, default to
      * [AnonymousSessionManager].
@@ -310,7 +312,7 @@ abstract class KGiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : KGiniCoreAPI
     @Synchronized
     open fun getSessionManager(): KSessionManager {
         if (sessionManager == null) {
-            sessionManager = KAnonymousSessionManager(getUserRepository(), getCredentialsStore(), mEmailDomain!!)
+            sessionManager = KAnonymousSessionManager(getUserRepository(), getCredentialsStore(), emailDomain)
         }
         return sessionManager as KSessionManager
     }
@@ -331,7 +333,7 @@ abstract class KGiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : KGiniCoreAPI
     }
 
     @Synchronized
-    private fun getApiRetrofit(): Retrofit? {
+    protected fun getApiRetrofit(): Retrofit {
         mPayApiRetrofit = Retrofit.Builder()
             .baseUrl(getApiBaseUrl()!!)
             .addConverterFactory(MoshiConverterFactory.create())
@@ -342,7 +344,7 @@ abstract class KGiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : KGiniCoreAPI
                     .writeTimeout(mTimeoutInMs.toLong(), TimeUnit.MILLISECONDS).build()
             )
             .build()
-        return mPayApiRetrofit
+        return mPayApiRetrofit as Retrofit
     }
 
     @Synchronized
@@ -354,10 +356,17 @@ abstract class KGiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : KGiniCoreAPI
     }
 
     @Synchronized
-    protected  fun getmUserRemoteSource(): UserRemoteSource? {
+    protected fun getmUserRemoteSource(): UserRemoteSource? {
         if (mUserRemoteSource == null) {
             mUserRemoteSource = UserRemoteSource(Dispatchers.IO, getmUserService()!!, clientId, clientSecret)
         }
         return mUserRemoteSource
+    }
+
+    protected fun getDocumentRepository(): DR {
+        if (mDocumentRepository == null) {
+            mDocumentRepository = createDocumentRepository()
+        }
+        return mDocumentRepository as DR
     }
 }

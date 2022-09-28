@@ -38,12 +38,12 @@ class BankApiDocumentManager(private val documentRepository: BankApiDocumentRepo
      * extractions was successful.
      * @throws JSONException When a value of an extraction is not JSON serializable.
      */
-    suspend fun sendFeedback(
-        document: Document,
-        specificExtractions: Map<String, SpecificExtraction>,
-        compoundExtractions: Map<String, CompoundExtraction>,
-    ): Resource<Document> =
-        documentRepository.
+//    suspend fun sendFeedback(
+//        document: Document,
+//        specificExtractions: Map<String, SpecificExtraction>,
+//        compoundExtractions: Map<String, CompoundExtraction>,
+//    ): Resource<Document> =
+//        documentRepository.cre
 //    withContext(taskDispatcher) {
 //        suspendCancellableCoroutine { continuation ->
 //            val task = documentTaskManager.sendFeedbackForExtractions(document, specificExtractions, compoundExtractions)
@@ -57,28 +57,28 @@ class BankApiDocumentManager(private val documentRepository: BankApiDocumentRepo
      * @param requestId id of request
      * @param resolvePaymentInput information of the actual payment
      */
-    suspend fun resolvePaymentRequest(
-        requestId: String,
-        resolvePaymentInput: ResolvePaymentInput,
-    ): ResolvedPayment = withContext(taskDispatcher) {
-        suspendCancellableCoroutine { continuation ->
-            val task = documentTaskManager.resolvePaymentRequest(requestId, resolvePaymentInput)
-            continuation.resumeTask(task)
-        }
-    }
-
-    /**
-     * Get information about the payment of the [PaymentRequest]
-     *
-     * @param id of the paid [PaymentRequest]
-     */
-    suspend fun getPayment(
-        id: String,
-    ): Payment = withContext(taskDispatcher) {
-        suspendCancellableCoroutine { continuation ->
-            val task = documentTaskManager.getPayment(id)
-            continuation.resumeTask(task)
-        }
-    }
+//    suspend fun resolvePaymentRequest(
+//        requestId: String,
+//        resolvePaymentInput: ResolvePaymentInput,
+//    ): ResolvedPayment = withContext(taskDispatcher) {
+//        suspendCancellableCoroutine { continuation ->
+//            val task = documentTaskManager.resolvePaymentRequest(requestId, resolvePaymentInput)
+//            continuation.resumeTask(task)
+//        }
+//    }
+//
+//    /**
+//     * Get information about the payment of the [PaymentRequest]
+//     *
+//     * @param id of the paid [PaymentRequest]
+//     */
+//    suspend fun getPayment(
+//        id: String,
+//    ): Payment = withContext(taskDispatcher) {
+//        suspendCancellableCoroutine { continuation ->
+//            val task = documentTaskManager.getPayment(id)
+//            continuation.resumeTask(task)
+//        }
+//    }
 
 }

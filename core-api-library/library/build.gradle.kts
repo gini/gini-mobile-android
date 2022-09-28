@@ -56,8 +56,11 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.retrofit.moshi.converter)
 
+    androidTestImplementation(libs.kotlinx.coroutines.test)
+    androidTestImplementation(libs.mockk.android)
     androidTestImplementation(libs.mockito.core)
     androidTestImplementation(libs.mockito.android)
+    androidTestImplementation(libs.mockito.kotlin2)
     androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(libs.androidx.test.rules)
     androidTestImplementation(libs.androidx.test.junit)

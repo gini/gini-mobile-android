@@ -37,6 +37,7 @@ import java.util.*
 @RunWith(AndroidJUnit4::class)
 class GiniBankAPIIntegrationTest: GiniCoreAPIIntegrationTest<BankApiDocumentTaskManager, BankApiDocumentManager, GiniBankAPI, BankApiCommunicator, ExtractionsContainer>() {
 
+    // TODO: test health related things when Health API is updated
     private lateinit var giniHealthAPI: GiniHealthAPI
 
     @Test

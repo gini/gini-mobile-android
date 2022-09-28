@@ -44,7 +44,7 @@ class ExtractionFeedbackIntegrationTest {
     }
 
     @Test
-    fun sendExtractionFeedback() = runBlocking {
+    fun sendExtzractionFeedback() = runBlocking {
         val documentManager = giniBankAPI.documentManager
 
         // 1. Upload a test document

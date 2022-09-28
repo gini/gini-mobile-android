@@ -2,9 +2,11 @@ package net.gini.android.core.api
 
 import android.net.Uri
 import kotlinx.coroutines.withContext
+import net.gini.android.core.api.authorization.KSessionManager
 import net.gini.android.core.api.authorization.UserService
 import net.gini.android.core.api.authorization.apimodels.SessionToken
 import net.gini.android.core.api.models.Document
+import net.gini.android.core.api.requests.ApiException
 import net.gini.android.core.api.requests.SafeApiRequest
 import retrofit2.http.HEAD
 import retrofit2.http.Header
@@ -14,7 +16,7 @@ abstract class DocumentRemoteSource(
     open val coroutineContext: CoroutineContext,
     private val documentService: DocumentService,
     private val giniApiType: GiniApiType,
-    private val sessionToken: SessionToken,
+    private val sessionManager: KSessionManager,
     baseUriString: String
 ) {
 
@@ -26,49 +28,71 @@ abstract class DocumentRemoteSource(
 
     suspend fun uploadDocument(data: ByteArray, contentType: String ,filename: String?, docType: String?, metadata: Map<String, String>?): Uri = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
-            documentService.uploadDocument(customBearerHeaderMap(metadata, contentType), data, filename, docType)
+            val apiResult = sessionManager.getSession()
+            if (apiResult is Resource.Error) {
+                throw ApiException(apiResult.message, apiResult.responseStatusCode, apiResult.responseBody, apiResult.responseHeaders)
+            }
+            documentService.uploadDocument(customBearerHeaderMap(apiResult.data, metadata, contentType), data, filename, docType)
         }
         Uri.parse(response.second[HEADER_LOCATION_KEY]?.first() ?: "")
     }
 
     suspend fun deleteDocument(documentUri: Uri): String = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
-            documentService.deleteDocumentFromUri(bearerHeaderMap(), documentUri)
+            val apiResult = sessionManager.getSession()
+            if (apiResult is Resource.Error) {
+                throw ApiException(apiResult.message, apiResult.responseStatusCode, apiResult.responseBody, apiResult.responseHeaders)
+            }
+
+            documentService.deleteDocumentFromUri(bearerHeaderMap(apiResult.data), documentUri)
         }
         response.first
     }
 
     suspend fun deleteDocument(documentId: String): String = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
-            documentService.deleteDocument(bearerHeaderMap(), documentId)
+            val apiResult = sessionManager.getSession()
+            if (apiResult is Resource.Error) {
+                throw ApiException(apiResult.message, apiResult.responseStatusCode, apiResult.responseBody, apiResult.responseHeaders)
+            }
+
+            documentService.deleteDocument(bearerHeaderMap(apiResult.data), documentId)
         }
         response.first
     }
 
     suspend fun getDocument(documentId: String): Document = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
-            documentService.getDocument(bearerHeaderMap(), documentId)
+            val apiResult = sessionManager.getSession()
+            if (apiResult is Resource.Error) {
+                throw ApiException(apiResult.message, apiResult.responseStatusCode, apiResult.responseBody, apiResult.responseHeaders)
+            }
+            documentService.getDocument(bearerHeaderMap(apiResult.data), documentId)
         }
         response.first
     }
 
     suspend fun getDocumentFromUri(uri: Uri): Document = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
-            documentService.getDocumentFromUri(bearerHeaderMap(), uriRelativeToBaseUri(uri).toString())
+            val apiResult = sessionManager.getSession()
+            if (apiResult is Resource.Error) {
+                throw ApiException(apiResult.message, apiResult.responseStatusCode, apiResult.responseBody, apiResult.responseHeaders)
+            }
+            documentService.getDocumentFromUri(bearerHeaderMap(apiResult.data), uriRelativeToBaseUri(uri).toString())
         }
         response.first
     }
 
-    private fun bearerHeaderMap(): Map<String, String> {
+    private fun bearerHeaderMap(sessionToken: SessionToken?): Map<String, String> {
         return mapOf("Accept" to giniApiType.giniJsonMediaType,
-            "Authorization" to "BEARER $sessionToken")
+            "Authorization" to "BEARER ${sessionToken?.accessToken}")
     }
 
-    private fun customBearerHeaderMap(metadata: Map<String, String>?, contentType: String): Map<String, String> {
+    private fun customBearerHeaderMap(sessionToken: SessionToken?, metadata: Map<String, String>?, contentType: String): Map<String, String> {
         var customHeader = mapOf<String, String>()
         customHeader = customHeader +
                 mapOf("Accept" to giniApiType.giniJsonMediaType,
-                    "Authorization" to "BEARER $sessionToken",
+                    "Authorization" to "BEARER ${sessionToken?.accessToken}",
                     "Content-Type" to contentType) as MutableMap<String, String>
         metadata?.let {
             customHeader = customHeader + it

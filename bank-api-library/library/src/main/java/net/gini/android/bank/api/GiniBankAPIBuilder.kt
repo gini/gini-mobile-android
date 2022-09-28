@@ -1,6 +1,7 @@
 package net.gini.android.bank.api
 
 import android.content.Context
+import kotlinx.coroutines.Dispatchers
 import net.gini.android.bank.api.models.ExtractionsContainer
 import net.gini.android.core.api.GiniApiType
 import net.gini.android.core.api.authorization.KSessionManager
@@ -30,6 +31,14 @@ class GiniBankAPIBuilder(
     }
 
     override fun createDocumentManager(): BankApiDocumentManager {
-        return super.getDocumentManager()
+        return BankApiDocumentManager(getDocumentRepository())
+    }
+
+    private fun createDocumentRemoteSource(): BankApiDocumentRemoteSource {
+        return BankApiDocumentRemoteSource(Dispatchers.IO, getApiRetrofit().create(BankApiDocumentService::class.java), getGiniApiType(), getSessionManager(), getApiBaseUrl() ?: "")
+    }
+
+    override fun createDocumentRepository(): BankApiDocumentRepository {
+        return BankApiDocumentRepository(Dispatchers.IO, createDocumentRemoteSource(), getGiniApiType())
     }
 }

@@ -16,9 +16,10 @@ class SessionToken (
     var expirationDate: Date? = null
 ) {
 
-    init {
-        expirationDate = Date(Date().time + (expiresIn?.times(1000) ?: 0))
-    }
+    // TODO: check if this calculation is needed when new structure is connected to backend
+//    init {
+//        expirationDate = Date(Date().time + (expiresIn?.times(1000) ?: 0))
+//    }
 
     fun hasExpired(): Boolean {
         val now = Date()

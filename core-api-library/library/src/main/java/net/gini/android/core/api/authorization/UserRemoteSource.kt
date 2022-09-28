@@ -30,9 +30,9 @@ class UserRemoteSource(
         response.first
     }
 
-    suspend fun createUser(userRequestModel: UserRequestModel): ResponseBody = withContext(coroutineContext) {
+    suspend fun createUser(userRequestModel: UserRequestModel, sessionToken: SessionToken): ResponseBody = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
-            userService.createUser(bearerHeaderMap(), userRequestModel)
+            userService.createUser(bearerHeaderMap(sessionToken), userRequestModel)
         }
         response.first
     }
@@ -44,16 +44,16 @@ class UserRemoteSource(
         response.first
     }
 
-    suspend fun getUserInfo(uri: String): UserResponseModel = withContext(coroutineContext) {
+    suspend fun getUserInfo(uri: String, sessionToken: SessionToken): UserResponseModel = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
-            userService.getUserInfo(bearerHeaderMap(), uri)
+            userService.getUserInfo(bearerHeaderMap(sessionToken), uri)
         }
         response.first
     }
 
     suspend fun updateEmail(userId: String, userRequestModel: UserRequestModel, sessionToken: SessionToken): ResponseBody = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
-            userService.updateEmail(bearerHeaderMap(), userId, userRequestModel)
+            userService.updateEmail(bearerHeaderMap(sessionToken), userId, userRequestModel)
         }
         response.first
     }
@@ -64,10 +64,7 @@ class UserRemoteSource(
             "Authorization" to "Basic $encoded")
     }
 
-    private fun bearerHeaderMap(): Map<String, String> {
-
-        // TODO: pass session into class
-        val sessionToken = ""
+    private fun bearerHeaderMap(sessionToken: SessionToken): Map<String, String> {
         return mapOf("Accept" to "application/json",
             "Authorization" to "BEARER $sessionToken")
     }

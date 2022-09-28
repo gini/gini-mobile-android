@@ -10,7 +10,7 @@ import okhttp3.ResponseBody
 import java.util.concurrent.CancellationException
 import kotlin.coroutines.CoroutineContext
 
-class UserRepository(
+open class UserRepository(
     override val coroutineContext: CoroutineContext,
     private val userRemoteSource: UserRemoteSource
     ) : CoroutineScope {
@@ -30,7 +30,8 @@ class UserRepository(
 
     suspend fun createUser(userRequestModel: UserRequestModel): Resource<ResponseBody> =
         wrapResponseIntoResource {
-            userRemoteSource.createUser(userRequestModel)
+            val token = getUserRepositorySession() ?: throw ApiException()
+            userRemoteSource.createUser(userRequestModel, token)
         }
 
     suspend fun getUserRepositorySession(): SessionToken? =
@@ -40,11 +41,17 @@ class UserRepository(
                 loginClient().data
             }
 
-    suspend fun updateEmail(newEmail: String, oldEmail: String, session: SessionToken) {
+    suspend fun updateEmail(newEmail: String, oldEmail: String, session: SessionToken): Resource<ResponseBody>? =
         getUserRepositorySession()?.accessToken?.let { token ->
             val userId = userRemoteSource.getGiniApiSessionTokenInfo(token).userName
-            userRemoteSource.updateEmail(userId ?: "", UserRequestModel(newEmail = newEmail, oldEmail = oldEmail), session)
+            wrapResponseIntoResource {
+                userRemoteSource.updateEmail(userId ?: "", UserRequestModel(newEmail = newEmail, oldEmail = oldEmail), session)
+            }
+
         }
+
+    fun foo(): Int {
+        throw Exception("Foo exception")
     }
     //endregion
 

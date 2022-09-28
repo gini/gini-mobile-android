@@ -37,10 +37,16 @@ abstract class DocumentManager<out DR: DocumentRepository<E>, E: ExtractionsCont
         documentMetadata: DocumentMetadata? = null,
     ): Resource<Document> =
         if (documentMetadata != null) {
-                documentRepository.createPartialDocument(document, contentType, filename, documentType, documentMetadata)
-            } else {
-                documentRepository.createPartialDocument(document, contentType, filename, documentType)
-            }
+            documentRepository.createPartialDocument(
+                document,
+                contentType,
+                filename,
+                documentType,
+                documentMetadata
+            )
+        } else {
+            documentRepository.createPartialDocument(document, contentType, filename, documentType)
+        }
 
     /**
      * Deletes a Gini partial document and all its parent composite documents.
@@ -73,11 +79,13 @@ abstract class DocumentManager<out DR: DocumentRepository<E>, E: ExtractionsCont
      * @param documents    A list of partial documents which should be part of a multi-page document
      * @param documentType Optional a document type hint. See the documentation for the document type hints for
      *                     possible values
-     * @return the Document instance of the freshly created document or null if the API had error
+     * @return Resource with Document or informations about the error
      */
-    suspend fun createCompositeDocument(documents: List<Document>,
-        documentType: DocumentRemoteSource.Companion.DocumentType? = null): Document? =
-        documentRepository.createCompositeDocument(documents, documentType).data
+    suspend fun createCompositeDocument(
+        documents: List<Document>,
+        documentType: DocumentRemoteSource.Companion.DocumentType? = null
+    ): Resource<Document> =
+        documentRepository.createCompositeDocument(documents, documentType)
 
     /**
      * Creates a new Gini composite document. The input Map must contain the partial documents as keys. These will be
@@ -87,48 +95,39 @@ abstract class DocumentManager<out DR: DocumentRepository<E>, E: ExtractionsCont
      * @param documentRotationMap A map of partial documents and their rotation in degrees
      * @param documentType        Optional a document type hint. See the documentation for the document type hints for
      *                            possible values
-     * @return the Document instance of the freshly created document or null if the API had error.
+     * @return Resource with Document or informations about the error
      */
     suspend fun createCompositeDocument(
         documentRotationMap: LinkedHashMap<Document, Int>,
         documentType: DocumentRemoteSource.Companion.DocumentType,
-    ): Document? =
-        documentRepository.createCompositeDocument(documentRotationMap, documentType).data
-    }
-//
-//    /**
-//     * Get the document with the given unique identifier.
-//     *
-//     * @param id The unique identifier of the document.
-//     * @return A [Document] instance representing all the document's metadata.
-//     */
-//    suspend fun getDocument(
-//        id: String,
-//    ): Document = withContext(taskDispatcher) {
-//        suspendCancellableCoroutine { continuation ->
-//            val task = documentTaskManager.getDocument(id)
-//            continuation.resumeTask(task)
-//        }
-//    }
-//
-//    /**
-//     * Get the document with the given unique identifier.
-//     *
-//     * Please note that this method may use a slightly corrected URI from which it gets the document (e.g. if the
-//     * URI's host does not conform to the base URL of the Gini API). Therefore it is not possibly to use this method to
-//     * get a document from an arbitrary URI.
-//     *
-//     * @param uri The URI of the document.
-//     * @return A [Document] instance representing all the document's metadata.
-//     */
+    ): Resource<Document> =
+        documentRepository.createCompositeDocument(documentRotationMap, documentType)
+
+    /**
+     * Get the document with the given unique identifier.
+     *
+     * @param id The unique identifier of the document.
+     * @return Resource with [Document] instance representing all the document's metadata or informations about the error
+     */
+    suspend fun getDocument(
+        id: String,
+    ): Resource<Document> =
+        documentRepository.getDocument(id)
+
+    /**
+     * Get the document with the given unique identifier.
+     *
+     * Please note that this method may use a slightly corrected URI from which it gets the document (e.g. if the
+     * URI's host does not conform to the base URL of the Gini API). Therefore it is not possibly to use this method to
+     * get a document from an arbitrary URI.
+     *
+     * @param uri The URI of the document.
+     * @return A [Document] instance representing all the document's metadata.
+     */
 //    suspend fun getDocument(
 //        uri: Uri,
-//    ): Document = withContext(taskDispatcher) {
-//        suspendCancellableCoroutine { continuation ->
-//            val task = documentTaskManager.getDocument(uri)
-//            continuation.resumeTask(task)
-//        }
-//    }
+//    ): Resource<Document> =
+//        documentRepository.getDocument()
 //
 //    /**
 //     * Continually checks the document status (via the Gini API) until the document is fully processed. To avoid
@@ -244,3 +243,4 @@ abstract class DocumentManager<out DR: DocumentRepository<E>, E: ExtractionsCont
 //            continuation.resumeTask(task)
 //        }
 //    }
+}
