@@ -83,12 +83,12 @@ abstract class DocumentRemoteSource(
         response.first
     }
 
-    private fun bearerHeaderMap(sessionToken: SessionToken?): Map<String, String> {
+    protected  fun bearerHeaderMap(sessionToken: SessionToken?): Map<String, String> {
         return mapOf("Accept" to giniApiType.giniJsonMediaType,
             "Authorization" to "BEARER ${sessionToken?.accessToken}")
     }
 
-    private fun customBearerHeaderMap(sessionToken: SessionToken?, metadata: Map<String, String>?, contentType: String): Map<String, String> {
+    protected fun customBearerHeaderMap(sessionToken: SessionToken?, metadata: Map<String, String>?, contentType: String): Map<String, String> {
         var customHeader = mapOf<String, String>()
         customHeader = customHeader +
                 mapOf("Accept" to giniApiType.giniJsonMediaType,

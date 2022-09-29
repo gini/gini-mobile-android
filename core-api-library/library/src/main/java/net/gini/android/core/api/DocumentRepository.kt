@@ -233,7 +233,7 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
         const val POLLING_INTERVAL = 1000
         const val DEFAULT_COMPRESSION = 50
 
-        private suspend fun <T> wrapResponseIntoResource(request: suspend () -> T) =
+         private suspend fun <T> wrapResponseIntoResource(request: suspend () -> T) =
             try {
                 Resource.Success(request())
             } catch (e: ApiException) {
