@@ -109,6 +109,7 @@ class HelpActivity : AppCompatActivity() {
         }
     }
 
+
     private fun setupBottomBarNavigation() {
         injectedViewContainer = findViewById(R.id.gc_injected_navigation_bar_container_bottom)
         if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled) {

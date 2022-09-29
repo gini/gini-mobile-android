@@ -316,24 +316,6 @@ public class MainActivity extends AppCompatActivity {
         builder.setFlashButtonEnabled(true);
         builder.setEventTracker(new GiniCaptureEventTracker());
         builder.setCustomErrorLoggerListener(new CustomErrorLoggerListener());
-
-        builder.setHelpBottomNavigationBarAdapter(new HelpNavigationBarBottomAdapter() {
-
-            @Override
-            public void setOnBackClickListener(View.OnClickListener listener) {
-            }
-
-            @NonNull
-            @Override
-            public View getView(@NonNull ViewGroup container) {
-                return LayoutInflater.from(MainActivity.this).inflate(R.layout.gc_help_navigation_bar_bottom, container, false);
-            }
-
-            @Override
-            public void onDestroy() {
-
-            }
-        });
         builder.setShouldShowOnboarding(true);
         // Uncomment to disable sending errors to Gini
 //        builder.setGiniErrorLoggerIsOn(false);

@@ -18,24 +18,25 @@ import net.gini.android.capture.review.ReviewActivity;
 import net.gini.android.capture.view.InjectedViewContainer;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 /**
  * <h3>Screen API and Component API</h3>
  *
  * <p>
- *     On the Photo Tips Screen users can get information about how to take better pictures.
+ * On the Photo Tips Screen users can get information about how to take better pictures.
  * </p>
  * <p>
- *     This Activity is launched by the {@link HelpActivity} for both Screen and Component APIs.
+ * This Activity is launched by the {@link HelpActivity} for both Screen and Component APIs.
  * </p>
  *
  * <h3>Customizing the Photo Tips Screen</h3>
  *
  * <p>
- *     Customizing the look of the Photo Tips Screen is done via overriding of app resources.
+ * Customizing the look of the Photo Tips Screen is done via overriding of app resources.
  * </p>
  * <p>
- *     The following items are customizable:
+ * The following items are customizable:
  *     <ul>
  *         <li>
  *             <b>Background color:</b> via the color resource named {@code gc_photo_tips_activity_background}.
@@ -144,8 +145,7 @@ public class PhotoTipsActivity extends AppCompatActivity {
 
             injectedViewContainer.setInjectedViewAdapter(GiniCapture.getInstance().getHelpNavigationBarBottomAdapter());
 
-            HelpNavigationBarBottomAdapter helpNavigationBarBottomAdapter = injectedViewContainer.getInjectedViewAdapter();
-            assert helpNavigationBarBottomAdapter != null;
+            HelpNavigationBarBottomAdapter helpNavigationBarBottomAdapter = GiniCapture.getInstance().getHelpNavigationBarBottomAdapter();
             helpNavigationBarBottomAdapter.setOnBackClickListener(v -> {
                 onBackPressed();
             });
