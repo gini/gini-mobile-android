@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/backgroundColor"
-    android:layout_gravity="center_horizontal"
     android:orientation="vertical">
 
 
-    <ScrollView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/gc_photo_tips_scrollview"
         android:layout_width="@dimen/gc_tablet_width"
         android:layout_height="wrap_content"
@@ -17,6 +16,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginTop="@dimen/xxlarge"
         android:background="?attr/colorSurface"
+        android:layout_gravity="center_horizontal"
         android:overScrollMode="ifContentScrolls"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -25,7 +25,11 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -77,8 +81,8 @@
                     android:layout_marginEnd="@dimen/large"
                     android:gravity="center_vertical"
                     android:maxWidth="@dimen/gc_photo_tips_tip_text_max_width"
-                    android:textColor="@color/Dark_06"
                     android:text="@string/gc_photo_tip_lighting"
+                    android:textColor="@color/Dark_06"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/gc_imageView"
                     app:layout_constraintTop_toTopOf="@+id/gc_light_guideline" />
@@ -140,8 +144,8 @@
                     android:layout_marginTop="@dimen/gc_photo_tip_text_margin"
                     android:gravity="center_vertical"
                     android:maxWidth="@dimen/gc_photo_tips_tip_text_max_width"
-                    android:textColor="@color/Dark_06"
                     android:text="@string/gc_photo_tip_flat"
+                    android:textColor="@color/Dark_06"
                     app:layout_constraintEnd_toEndOf="@+id/gc_flat_tip_title"
                     app:layout_constraintStart_toStartOf="@+id/gc_flat_tip_title"
                     app:layout_constraintTop_toBottomOf="@+id/gc_flatten_page_guideline" />
@@ -203,8 +207,8 @@
                     android:layout_marginTop="@dimen/gc_photo_tip_text_margin"
                     android:gravity="center_vertical"
                     android:maxWidth="@dimen/gc_photo_tips_tip_text_max_width"
-                    android:textColor="@color/Dark_06"
                     android:text="@string/gc_photo_tip_parallel"
+                    android:textColor="@color/Dark_06"
                     app:layout_constraintEnd_toEndOf="@+id/gc_parallel_page_title"
                     app:layout_constraintStart_toEndOf="@+id/gc_parallel_photo"
                     app:layout_constraintTop_toTopOf="@+id/gc_parallel_guideline" />
@@ -264,8 +268,8 @@
                     android:layout_marginTop="@dimen/gc_photo_tip_text_margin"
                     android:gravity="center_vertical"
                     android:maxWidth="@dimen/gc_photo_tips_tip_text_max_width"
-                    android:textColor="@color/Dark_06"
                     android:text="@string/gc_photo_tip_align"
+                    android:textColor="@color/Dark_06"
                     app:layout_constraintEnd_toEndOf="@+id/gc_align_tip_title"
                     app:layout_constraintStart_toEndOf="@+id/gc_align_photo"
                     app:layout_constraintTop_toBottomOf="@+id/gc_align_guideline" />
@@ -324,8 +328,8 @@
                     android:layout_marginTop="@dimen/gc_photo_tip_text_margin"
                     android:gravity="center_vertical"
                     android:maxWidth="@dimen/gc_photo_tips_tip_text_max_width"
-                    android:textColor="@color/Dark_06"
                     android:text="@string/gc_photo_tip_multipage"
+                    android:textColor="@color/Dark_06"
                     app:layout_constraintEnd_toEndOf="@+id/customFontTextView4"
                     app:layout_constraintStart_toEndOf="@+id/imageView2"
                     app:layout_constraintTop_toBottomOf="@+id/gc_multiple_pages_guideline" />
@@ -334,10 +338,10 @@
 
             <Space
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/xxlarge" />
+                android:layout_height="@dimen/large" />
 
         </LinearLayout>
 
-    </ScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
