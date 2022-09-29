@@ -39,7 +39,7 @@
             android:layout_marginEnd="@dimen/large"
             android:gravity="center"
             android:text="@string/gc_snackbar_dismiss"
-            android:textColor="@color/Accent_01"
+            android:textColor="?attr/colorAccent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
