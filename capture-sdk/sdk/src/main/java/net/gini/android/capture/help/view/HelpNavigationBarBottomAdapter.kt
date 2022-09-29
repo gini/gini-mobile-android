@@ -29,6 +29,7 @@ internal class DefaultHelpNavigationBarBottomAdapter: HelpNavigationBarBottomAda
             return it.root
         }*/
 
+
         val viewBinding = GcHelpNavigationBarBottomBinding.inflate(LayoutInflater.from(container.context), container, false)
         binding = viewBinding
 
