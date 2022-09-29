@@ -83,16 +83,22 @@
             app:layout_constraintTop_toBottomOf="@+id/customFontTextView5" />
 
         <ImageView
+            android:id="@+id/imageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_margin="@dimen/large"
-            android:src="@drawable/gc_file_import_section_2_illustration"
             android:contentDescription="@string/gc_second_illustration_description"
+            android:src="@drawable/gc_file_import_section_2_illustration"
             app:layout_constraintEnd_toEndOf="@+id/customFontTextView6"
             app:layout_constraintStart_toStartOf="@+id/customFontTextView6"
             app:layout_constraintTop_toBottomOf="@+id/customFontTextView6" />
 
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/xxxlarge"
+            app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

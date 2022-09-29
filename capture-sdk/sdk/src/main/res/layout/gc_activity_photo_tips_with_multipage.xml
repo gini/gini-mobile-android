@@ -334,7 +334,7 @@
 
             <Space
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/gc_photo_tips_space_height_for_bottom_button" />
+                android:layout_height="@dimen/large" />
 
         </LinearLayout>
 

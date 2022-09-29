@@ -119,7 +119,7 @@
     <string name="gc_photo_tip_parallel_title">Parallel</string>
     <string name="gc_photo_tip_align_title">Position in the frame</string>
     <string name="gc_photo_tip_multiple_pages_title">Multiple pages</string>
-    <string name="gc_snackbar_illustrations">These are only illustrations, look for the original in the corresponding apps..</string>
+    <string name="gc_snackbar_illustrations">These are only illustrations, look for the original in the corresponding apps.</string>
     <string name="gc_snackbar_dismiss">Dismiss</string>
     <string name="gc_first_illustration_description">Activate share function. Therefore select file and press share button, represented as a square with the arrow pointing up.</string>
     <string name="gc_second_illustration_description">Select Banking App from the list to start the analysis process.</string>

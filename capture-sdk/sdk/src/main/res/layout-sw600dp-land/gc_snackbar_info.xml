@@ -18,7 +18,7 @@
             android:id="@+id/gc_snackbar_message"
             style="@style/GiniCaptureTheme.Typography.Body2"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/gc_snackbar_text_height"
             android:layout_marginStart="@dimen/large"
             android:layout_marginTop="@dimen/large"
             android:layout_marginEnd="@dimen/medium"

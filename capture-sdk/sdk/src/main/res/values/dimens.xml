@@ -138,5 +138,6 @@
     <dimen name="gc_photo_tip_text_margin">1dp</dimen>
     <dimen name="gc_file_import_paragraphs_margin">50dp</dimen>
     <dimen name="gc_snackbar_card_corner_radius">5dp</dimen>
+    <dimen name="gc_tablet_width">582dp</dimen>
 
 </resources>

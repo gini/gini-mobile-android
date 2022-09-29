@@ -36,7 +36,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/xxxlarge"
         android:layout_marginEnd="@dimen/xxxlarge"
-
+        android:textColor="@color/Dark_06"
         android:gravity="center"
         app:layout_constraintBottom_toBottomOf="@id/gc_bottom_guide"
         app:layout_constraintEnd_toEndOf="parent"
