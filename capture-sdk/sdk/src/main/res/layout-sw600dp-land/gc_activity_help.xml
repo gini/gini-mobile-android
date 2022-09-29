@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,12 +8,28 @@
     android:orientation="vertical"
     tools:context="net.gini.android.capture.help.HelpActivity">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/gc_help_items"
+    <LinearLayout
         android:layout_width="@dimen/gc_tablet_width"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="@dimen/xxlarge"
-        tools:listitem="@layout/gc_item_help" />
+        android:orientation="vertical">
 
-</LinearLayout>
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/xxlarge" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/gc_help_items"
+            android:layout_width="@dimen/gc_tablet_width"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:nestedScrollingEnabled="false"
+            tools:listitem="@layout/gc_item_help" />
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/large" />
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>
