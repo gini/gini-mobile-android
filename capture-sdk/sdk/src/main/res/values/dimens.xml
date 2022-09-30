@@ -118,7 +118,7 @@
     <dimen name="gc_photo_tips_tip_text_right_margin">16dp</dimen>
     <dimen name="gc_photo_tips_tip_text_left_margin">8dp</dimen>
     <dimen name="gc_photo_tips_tip_text_max_width">250dp</dimen>
-    <dimen name="gc_photo_tips_space_height_for_bottom_button">64dp</dimen>
+    <dimen name="gc_photo_tips_space_height_for_bottom_button">16dp</dimen>
     <dimen name="gc_photo_tips_bottom_button_height">48dp</dimen>
     <dimen name="gc_photo_tips_bottom_button_margin">16dp</dimen>
     <dimen name="gc_photo_tips_bottom_button_max_width">300dp</dimen>
@@ -138,5 +138,6 @@
     <dimen name="gc_photo_tip_text_margin">1dp</dimen>
     <dimen name="gc_file_import_paragraphs_margin">50dp</dimen>
     <dimen name="gc_snackbar_card_corner_radius">5dp</dimen>
+    <dimen name="gc_tablet_width">582dp</dimen>
 
 </resources>

@@ -120,14 +120,7 @@ public class PhotoTipsActivity extends AppCompatActivity {
         } else {
             setContentView(R.layout.gc_activity_photo_tips);
         }
-        findViewById(R.id.gc_button_photo_tips_camera).setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(final View view) {
-                        setResult(RESULT_SHOW_CAMERA_SCREEN);
-                        finish();
-                    }
-                });
+
         forcePortraitOrientationOnPhones(this);
         setupHomeButton();
         setupBottomBarNavigation();

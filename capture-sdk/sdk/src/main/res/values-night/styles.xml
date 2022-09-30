@@ -9,6 +9,7 @@
         <item name="backgroundColor">@color/Dark_01</item>
         <item name="colorOnBackground">@color/Light_01</item>
         <item name="dividerColor">@color/Dark_03</item>
+        <item name="colorOnSurface">@color/Light_04</item>
     </style>
 
 </resources>

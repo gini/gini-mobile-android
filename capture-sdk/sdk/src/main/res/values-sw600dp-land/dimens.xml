@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <dimen name="small">8dp</dimen>
-    <dimen name="medium">16dp</dimen>
-    <dimen name="large">32dp</dimen>
+    <dimen name="small">4dp</dimen>
+    <dimen name="medium">8dp</dimen>
+    <dimen name="large">16dp</dimen>
     <dimen name="large_24">24dp</dimen> <!-- TODO improve this use xlarge and shift the others -->
-    <dimen name="xlarge">48dp</dimen>
+    <dimen name="xlarge">32dp</dimen>
     <dimen name="xxlarge">64dp</dimen>
     <dimen name="xxxlarge">80dp</dimen>
     <dimen name="xxxxlarge">96dp</dimen>
@@ -40,4 +40,6 @@
     <dimen name="gc_photo_tips_tip_text_right_margin">16dp</dimen>
     <dimen name="gc_photo_tips_tip_text_left_margin">16dp</dimen>
     <dimen name="gc_photo_tip_text_margin">1dp</dimen>
+    <dimen name="gc_tablet_width">582dp</dimen>
+    <dimen name="gc_snackbar_text_height">60dp</dimen>
 </resources>
