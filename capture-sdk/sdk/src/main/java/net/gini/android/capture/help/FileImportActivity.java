@@ -193,9 +193,9 @@ public class FileImportActivity extends AppCompatActivity {
     }
 
     private void showCustomSnackBar() {
-        ScrollView scrollView = findViewById(R.id.gc_file_import_scrollview);
+        ConstraintLayout constraintLayout = findViewById(R.id.gc_file_import_constraint_layout);
 
-        Snackbar snackbar = Snackbar.make(scrollView, "", Snackbar.LENGTH_INDEFINITE);
+        Snackbar snackbar = Snackbar.make(constraintLayout, "", Snackbar.LENGTH_INDEFINITE);
         snackbar.getView().setBackgroundColor(Color.TRANSPARENT);
 
         Snackbar.SnackbarLayout snackBarLayout = (Snackbar.SnackbarLayout) snackbar.getView();
