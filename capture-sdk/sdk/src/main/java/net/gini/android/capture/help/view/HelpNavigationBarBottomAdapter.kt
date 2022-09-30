@@ -20,16 +20,7 @@ internal class DefaultHelpNavigationBarBottomAdapter: HelpNavigationBarBottomAda
        binding?.gcGoBack?.setOnClickListener(listener)
     }
 
-    override fun getView(container: ViewGroup): View {
-
-        //This will cause the crash if binding is not null
-        //Binding will return previous used view and throw a crash: child already has a parent
-
-        /*binding?.let {
-            return it.root
-        }*/
-
-
+    override fun onCreateView(container: ViewGroup): View {
         val viewBinding = GcHelpNavigationBarBottomBinding.inflate(LayoutInflater.from(container.context), container, false)
         binding = viewBinding
 
