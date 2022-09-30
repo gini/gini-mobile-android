@@ -37,7 +37,7 @@
             android:name="net.gini.android.capture.help.HelpActivity"
             android:exported="false"
             android:label="@string/gc_title_help"
-            android:theme="@style/GiniCaptureTheme" />
+            android:theme="@style/Root.GiniCaptureTheme.NoActionBar" /> <!-- TODO set correct theme after testing -->
         <activity
             android:name="net.gini.android.capture.help.PhotoTipsActivity"
             android:exported="false"
