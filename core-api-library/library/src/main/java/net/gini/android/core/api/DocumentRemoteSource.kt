@@ -8,8 +8,13 @@ import net.gini.android.core.api.authorization.apimodels.SessionToken
 import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.requests.ApiException
 import net.gini.android.core.api.requests.SafeApiRequest
+import net.gini.android.core.api.response.PaymentRequestResponse
+import okhttp3.ResponseBody
+import retrofit2.Response
 import retrofit2.http.HEAD
 import retrofit2.http.Header
+import retrofit2.http.HeaderMap
+import retrofit2.http.Query
 import kotlin.coroutines.CoroutineContext
 
 abstract class DocumentRemoteSource(
@@ -61,7 +66,7 @@ abstract class DocumentRemoteSource(
         response.first
     }
 
-    suspend fun getDocument(documentId: String): Document = withContext(coroutineContext) {
+    suspend fun getDocument(documentId: String): ResponseBody = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             val apiResult = sessionManager.getSession()
             if (apiResult is Resource.Error) {
@@ -72,13 +77,79 @@ abstract class DocumentRemoteSource(
         response.first
     }
 
-    suspend fun getDocumentFromUri(uri: Uri): Document = withContext(coroutineContext) {
+    suspend fun getDocumentFromUri(uri: Uri): ResponseBody = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             val apiResult = sessionManager.getSession()
             if (apiResult is Resource.Error) {
                 throw ApiException(apiResult.message, apiResult.responseStatusCode, apiResult.responseBody, apiResult.responseHeaders)
             }
             documentService.getDocumentFromUri(bearerHeaderMap(apiResult.data), uriRelativeToBaseUri(uri).toString())
+        }
+        response.first
+    }
+
+    suspend fun getExtractions(documentId: String): ResponseBody = withContext(coroutineContext) {
+        val response = SafeApiRequest.apiRequest {
+            val apiResult = sessionManager.getSession()
+            if (apiResult is Resource.Error) {
+                throw ApiException(apiResult.message, apiResult.responseStatusCode, apiResult.responseBody, apiResult.responseHeaders)
+            }
+            documentService.getExtractions(bearerHeaderMap(apiResult.data), documentId)
+        }
+        response.first
+    }
+
+    suspend fun errorReportForDocument(documentId: String, summary: String?, description: String?): ResponseBody = withContext(coroutineContext) {
+        val response = SafeApiRequest.apiRequest {
+            val apiResult = sessionManager.getSession()
+            if (apiResult is Resource.Error) {
+                throw ApiException(apiResult.message, apiResult.responseStatusCode, apiResult.responseBody, apiResult.responseHeaders)
+            }
+            documentService.errorReportForDocument(bearerHeaderMap(apiResult.data), documentId, summary, description)
+        }
+        response.first
+    }
+
+    suspend fun getLayout(documentId: String): ResponseBody = withContext(coroutineContext) {
+        val response = SafeApiRequest.apiRequest {
+            val apiResult = sessionManager.getSession()
+            if (apiResult is Resource.Error) {
+                throw ApiException(apiResult.message, apiResult.responseStatusCode, apiResult.responseBody, apiResult.responseHeaders)
+            }
+            documentService.getLayoutForDocument(bearerHeaderMap(apiResult.data), documentId)
+        }
+        response.first
+    }
+
+    suspend fun getFile(location: String): ByteArray = withContext(coroutineContext) {
+        val response = SafeApiRequest.apiRequest {
+            val apiResult = sessionManager.getSession()
+            if (apiResult is Resource.Error) {
+                throw ApiException(apiResult.message, apiResult.responseStatusCode, apiResult.responseBody, apiResult.responseHeaders)
+            }
+            documentService.getFile(bearerHeaderMap(apiResult.data), location)
+        }
+        response.first
+    }
+
+    suspend fun getPaymentRequest(id: String): ResponseBody = withContext(coroutineContext) {
+        val response = SafeApiRequest.apiRequest {
+            val apiResult = sessionManager.getSession()
+            if (apiResult is Resource.Error) {
+                throw ApiException(apiResult.message, apiResult.responseStatusCode, apiResult.responseBody, apiResult.responseHeaders)
+            }
+            documentService.getPaymentRequest(bearerHeaderMap(apiResult.data), id)
+        }
+        response.first
+    }
+
+    suspend fun getPaymentRequests(): ResponseBody = withContext(coroutineContext) {
+        val response = SafeApiRequest.apiRequest {
+            val apiResult = sessionManager.getSession()
+            if (apiResult is Resource.Error) {
+                throw ApiException(apiResult.message, apiResult.responseStatusCode, apiResult.responseBody, apiResult.responseHeaders)
+            }
+            documentService.getPaymentRequests(bearerHeaderMap(apiResult.data))
         }
         response.first
     }

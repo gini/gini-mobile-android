@@ -57,28 +57,19 @@ class BankApiDocumentManager(private val documentRepository: BankApiDocumentRepo
      * @param requestId id of request
      * @param resolvePaymentInput information of the actual payment
      */
-//    suspend fun resolvePaymentRequest(
-//        requestId: String,
-//        resolvePaymentInput: ResolvePaymentInput,
-//    ): ResolvedPayment = withContext(taskDispatcher) {
-//        suspendCancellableCoroutine { continuation ->
-//            val task = documentTaskManager.resolvePaymentRequest(requestId, resolvePaymentInput)
-//            continuation.resumeTask(task)
-//        }
-//    }
-//
-//    /**
-//     * Get information about the payment of the [PaymentRequest]
-//     *
-//     * @param id of the paid [PaymentRequest]
-//     */
-//    suspend fun getPayment(
-//        id: String,
-//    ): Payment = withContext(taskDispatcher) {
-//        suspendCancellableCoroutine { continuation ->
-//            val task = documentTaskManager.getPayment(id)
-//            continuation.resumeTask(task)
-//        }
-//    }
+    suspend fun resolvePaymentRequest(
+        requestId: String,
+        resolvePaymentInput: ResolvePaymentInput,
+    ): Resource<ResolvedPayment> =
+        documentRepository.resolvePaymentRequest(requestId, resolvePaymentInput)
 
+    /**
+     * Get information about the payment of the [PaymentRequest]
+     *
+     * @param id of the paid [PaymentRequest]
+     */
+    suspend fun getPayment(
+        id: String,
+    ): Resource<Payment> =
+        documentRepository.getPayment(id)
 }

@@ -5,6 +5,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import com.android.volley.Cache
+import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Dispatchers
 import net.gini.android.core.api.*
 import net.gini.android.core.api.authorization.CredentialsStore
@@ -98,7 +99,7 @@ class KGiniCoreAPIBuilderTest {
         }
 
         override fun createDocumentRepository(): TestDocumentRepository {
-            return TestDocumentRepository(Dispatchers.IO, createDocumentRemoteSource(), getGiniApiType())
+            return TestDocumentRepository(Dispatchers.IO, createDocumentRemoteSource(), getGiniApiType(), getMoshi())
         }
 
         private fun createDocumentRemoteSource(): TestDocumentRemoteSource {
@@ -112,8 +113,9 @@ class KGiniCoreAPIBuilderTest {
     class TestDocumentRepository(
         override val coroutineContext: CoroutineContext,
         documentRemoteSource: DocumentRemoteSource,
-        giniApiType: GiniApiType
-    ) : DocumentRepository<ExtractionsContainer>(coroutineContext, documentRemoteSource, giniApiType) {
+        giniApiType: GiniApiType,
+        moshi: Moshi
+    ) : DocumentRepository<ExtractionsContainer>(coroutineContext, documentRemoteSource, giniApiType, moshi) {
         override fun createExtractionsContainer(specificExtractions: Map<String, SpecificExtraction>, compoundExtractions: Map<String, CompoundExtraction>, responseJSON: JSONObject
         ): ExtractionsContainer {
             return ExtractionsContainer(specificExtractions, compoundExtractions)

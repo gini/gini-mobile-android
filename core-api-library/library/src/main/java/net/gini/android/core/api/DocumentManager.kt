@@ -122,12 +122,12 @@ abstract class DocumentManager<out DR: DocumentRepository<E>, E: ExtractionsCont
      * get a document from an arbitrary URI.
      *
      * @param uri The URI of the document.
-     * @return A [Document] instance representing all the document's metadata.
+     * @return Resource with [Document] instance representing all the document's metadata or informations about the error
      */
-//    suspend fun getDocument(
-//        uri: Uri,
-//    ): Resource<Document> =
-//        documentRepository.getDocument()
+    suspend fun getDocument(
+        uri: Uri,
+    ): Resource<Document> =
+        documentRepository.getDocument(uri)
 //
 //    /**
 //     * Continually checks the document status (via the Gini API) until the document is fully processed. To avoid
@@ -152,45 +152,37 @@ abstract class DocumentManager<out DR: DocumentRepository<E>, E: ExtractionsCont
 //        }
 //    }
 //
-//    /**
-//     * Sends an error report for the given document to Gini. If the processing result for a document was not
-//     * satisfactory (e.g. extractions where empty or incorrect), you can create an error report for a document. This
-//     * allows Gini to analyze and correct the problem that was found.
-//     *
-//     * The owner of this document must agree that Gini can use this document for debugging and error analysis.
-//     *
-//     * @param document    The erroneous document.
-//     * @param summary     Optional a short summary of the occurred error.
-//     * @param description Optional a more detailed description of the occurred error.
-//     * @return Error ID. This is a unique identifier for your error report
-//     * and can be used to refer to the reported error towards the Gini support.
-//     */
-//    suspend fun reportDocument(
-//        document: Document,
-//        summary: String? = null,
-//        description: String? = null,
-//    ): String = withContext(taskDispatcher) {
-//        suspendCancellableCoroutine { continuation ->
-//            val task = documentTaskManager.reportDocument(document, summary, description)
-//            continuation.resumeTask(task)
-//        }
-//    }
-//
-//    /**
-//     * Gets the layout of a document. The layout of the document describes the textual content of a document with
-//     * positional information, based on the processed document.
-//     *
-//     * @param document The document for which the layouts is requested.
-//     * @return A JSONObject containing the layout.
-//     */
-//    suspend fun getLayout(
-//        document: Document,
-//    ): JSONObject = withContext(taskDispatcher) {
-//        suspendCancellableCoroutine { continuation ->
-//            val task = documentTaskManager.getLayout(document)
-//            continuation.resumeTask(task)
-//        }
-//    }
+    /**
+     * Sends an error report for the given document to Gini. If the processing result for a document was not
+     * satisfactory (e.g. extractions where empty or incorrect), you can create an error report for a document. This
+     * allows Gini to analyze and correct the problem that was found.
+     *
+     * The owner of this document must agree that Gini can use this document for debugging and error analysis.
+     *
+     * @param document    The erroneous document.
+     * @param summary     Optional a short summary of the occurred error.
+     * @param description Optional a more detailed description of the occurred error.
+     * @return Resource with Error ID (This is a unique identifier for your error report
+     * and can be used to refer to the reported error towards the Gini support.) or infos about API error
+     */
+    suspend fun reportDocument(
+        document: Document,
+        summary: String? = null,
+        description: String? = null,
+    ): Resource<String> =
+        documentRepository.reportDocument(document, summary, description)
+
+    /**
+     * Gets the layout of a document. The layout of the document describes the textual content of a document with
+     * positional information, based on the processed document.
+     *
+     * @param document The document for which the layouts is requested.
+     * @return A JSONObject containing the layout.
+     */
+    suspend fun getLayout(
+        document: Document,
+    ): Resource<String?> =
+        documentRepository.getLayout(document)
 //
 //    /**
 //     * Get the extractions for the given document.
@@ -222,25 +214,18 @@ abstract class DocumentManager<out DR: DocumentRepository<E>, E: ExtractionsCont
 //        }
 //    }
 //
-//    /**
-//     * @return [PaymentRequest] for the given id
-//     */
-//    suspend fun getPaymentRequest(
-//        id: String,
-//    ): PaymentRequest = withContext(taskDispatcher) {
-//        suspendCancellableCoroutine { continuation ->
-//            val task = documentTaskManager.getPaymentRequest(id)
-//            continuation.resumeTask(task)
-//        }
-//    }
-//
-//    /**
-//     * @return List of payment [PaymentRequest]
-//     */
-//    suspend fun getPaymentRequests(): List<PaymentRequest> = withContext(taskDispatcher) {
-//        suspendCancellableCoroutine { continuation ->
-//            val task = documentTaskManager.paymentRequests
-//            continuation.resumeTask(task)
-//        }
-//    }
+    /**
+     * @return Resource with [PaymentRequest] for the given id or info about API error
+     */
+    suspend fun getPaymentRequest(
+        id: String,
+    ): Resource<PaymentRequest?> =
+        documentRepository.getPaymentRequest(id)
+
+
+    /**
+     * @return Resource with a list of payment [PaymentRequest] or info about API error
+     */
+    suspend fun getPaymentRequests(): Resource<List<PaymentRequest>> =
+        documentRepository.getPaymentRequests()
 }

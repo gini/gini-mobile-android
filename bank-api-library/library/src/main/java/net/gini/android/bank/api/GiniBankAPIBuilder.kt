@@ -15,9 +15,9 @@ class GiniBankAPIBuilder(
     sessionManager: KSessionManager? = null
 ) : KGiniCoreAPIBuilder<BankApiDocumentManager, GiniBankAPI, BankApiDocumentRepository, ExtractionsContainer>(context, clientId, clientSecret, emailDomain, sessionManager) {
 
-    private val bankApiType: GiniApiType = GiniBankApiType(1)
+    private val bankApiType: GiniBankApiType = GiniBankApiType(1)
 
-    override fun getGiniApiType(): GiniApiType {
+    override fun getGiniApiType(): GiniBankApiType {
         return bankApiType
     }
 

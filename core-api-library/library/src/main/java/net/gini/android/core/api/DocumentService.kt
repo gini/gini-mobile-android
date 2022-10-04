@@ -14,10 +14,10 @@ interface DocumentService {
     suspend fun uploadDocument(@HeaderMap bearer: Map<String, String>, @Body bytes: ByteArray,  @Query("filename") fileName: String?, @Query("doctype") docType: String?): Response<ResponseBody>
 
     @GET("documents/{documentId}")
-    suspend fun getDocument(@HeaderMap bearer: Map<String, String>, @Path("documentId") documentId: String): Response<Document>
+    suspend fun getDocument(@HeaderMap bearer: Map<String, String>, @Path("documentId") documentId: String): Response<ResponseBody>
 
     @GET
-    suspend fun getDocumentFromUri(@HeaderMap bearer: Map<String, String>, @Url uri:String): Response<Document>
+    suspend fun getDocumentFromUri(@HeaderMap bearer: Map<String, String>, @Url uri:String): Response<ResponseBody>
 
     @GET("documents/{documentId}/extractions")
     suspend fun getExtractions(@HeaderMap bearer: Map<String, String>, @Path("documentId") documentId: String): Response<ResponseBody>
@@ -32,22 +32,22 @@ interface DocumentService {
     suspend fun deleteDocumentFromUri(@HeaderMap bearer: Map<String, String>, @Url documentUri: Uri): Response<String>
 
     @POST("documents/{documentId}/errorreport")
-    suspend fun errorReportForDocument(@HeaderMap bearer: Map<String, String>, @Query("summary") summary: String, @Query("description") description: String): Response<ResponseBody>
+    suspend fun errorReportForDocument(@HeaderMap bearer: Map<String, String>, @Path("documentId") documentId: String, @Query("summary") summary: String?, @Query("description") description: String?): Response<ResponseBody>
 
     @GET("documents/{documentId}/layout")
-    suspend fun getLayoutForDocument(@HeaderMap bearer: Map<String, String>): Response<ResponseBody>
+    suspend fun getLayoutForDocument(@HeaderMap bearer: Map<String, String>, @Path("documentId") documentId: String): Response<ResponseBody>
 
     @GET("documents")
     suspend fun getDocumentList(@HeaderMap bearer: Map<String, String>, @Query("offset") offset: String, @Query("limit") limit: String): Response<ResponseBody>
 
     @GET("search")
-    suspend fun searchDocument(@HeaderMap bearer: Map<String, String>, @Query("q") searchTerm: String, @Query("offset") offset: String, @Query("limit") limit: String, @Query("docType") docType: String): Response<ResponseBody>
+    suspend fun searchDocuments(@HeaderMap bearer: Map<String, String>, @Query("q") searchTerm: String, @Query("offset") offset: String, @Query("limit") limit: String, @Query("docType") docType: String): Response<ResponseBody>
 
     @GET("paymentRequests/{id}")
-    suspend fun getPaymentRequest(@HeaderMap bearer: Map<String, String>): Response<PaymentRequestResponse>
+    suspend fun getPaymentRequest(@HeaderMap bearer: Map<String, String>, @Path("id") id: String): Response<ResponseBody>
 
     @GET("paymentRequests")
-    suspend fun getPaymentRequests(@HeaderMap bearer: Map<String, String>): Response<List<PaymentRequestResponse>>
+    suspend fun getPaymentRequests(@HeaderMap bearer: Map<String, String>): Response<ResponseBody>
 
     @GET
     @Streaming
