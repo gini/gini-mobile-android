@@ -15,9 +15,9 @@ class GiniBankAPIBuilder @JvmOverloads constructor(
     sessionManager: KSessionManager? = null
 ) : KGiniCoreAPIBuilder<BankApiDocumentManager, GiniBankAPI, BankApiDocumentRepository, ExtractionsContainer>(context, clientId, clientSecret, emailDomain, sessionManager) {
 
-    private val bankApiType: GiniBankApiType = GiniBankApiType(1)
+    private val bankApiType = GiniBankApiType(1)
 
-    override fun getGiniApiType(): GiniBankApiType {
+    override fun getGiniApiType(): GiniApiType {
         return bankApiType
     }
 
@@ -35,10 +35,10 @@ class GiniBankAPIBuilder @JvmOverloads constructor(
     }
 
     private fun createDocumentRemoteSource(): BankApiDocumentRemoteSource {
-        return BankApiDocumentRemoteSource(Dispatchers.IO, getApiRetrofit().create(BankApiDocumentService::class.java), getGiniApiType(), getSessionManager(), getApiBaseUrl() ?: "")
+        return BankApiDocumentRemoteSource(Dispatchers.IO, getApiRetrofit().create(BankApiDocumentService::class.java), bankApiType, getSessionManager(), getApiBaseUrl() ?: "")
     }
 
     override fun createDocumentRepository(): BankApiDocumentRepository {
-        return BankApiDocumentRepository(Dispatchers.IO, createDocumentRemoteSource(), getGiniApiType(), getMoshi())
+        return BankApiDocumentRepository(Dispatchers.IO, createDocumentRemoteSource(), bankApiType, getMoshi())
     }
 }
