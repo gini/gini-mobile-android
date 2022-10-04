@@ -8,10 +8,10 @@ import net.gini.android.core.api.authorization.KSessionManager
 import net.gini.android.core.api.internal.KGiniCoreAPIBuilder
 
 class GiniBankAPIBuilder @JvmOverloads constructor(
-    private val context: Context,
-    private val clientId: String,
-    private val clientSecret: String,
-    private val emailDomain: String,
+    context: Context,
+    clientId: String = "",
+    clientSecret: String = "",
+    emailDomain: String = "",
     sessionManager: KSessionManager? = null
 ) : KGiniCoreAPIBuilder<BankApiDocumentManager, GiniBankAPI, BankApiDocumentRepository, ExtractionsContainer>(context, clientId, clientSecret, emailDomain, sessionManager) {
 
