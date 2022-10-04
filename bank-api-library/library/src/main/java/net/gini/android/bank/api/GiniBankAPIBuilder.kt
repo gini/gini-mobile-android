@@ -7,7 +7,7 @@ import net.gini.android.core.api.GiniApiType
 import net.gini.android.core.api.authorization.KSessionManager
 import net.gini.android.core.api.internal.KGiniCoreAPIBuilder
 
-class GiniBankAPIBuilder(
+class GiniBankAPIBuilder @JvmOverloads constructor(
     private val context: Context,
     private val clientId: String,
     private val clientSecret: String,
