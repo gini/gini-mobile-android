@@ -116,8 +116,7 @@ internal class DefaultNavigationBarTopAdapter : NavigationBarTopAdapter {
         }
     }
 
-    override fun getView(container: ViewGroup): View {
-        viewBinding?.let { return it.root }
+    override fun onCreateView(container: ViewGroup): View {
 
         val binding = GcNavigationBarTopBinding
             .inflate(LayoutInflater.from(container.context), container, false)

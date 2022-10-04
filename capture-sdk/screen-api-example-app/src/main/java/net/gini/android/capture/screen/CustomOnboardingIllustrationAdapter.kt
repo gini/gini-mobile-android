@@ -29,8 +29,7 @@ class CustomOnboardingIllustrationAdapter(@RawRes val animationRes: Int) : Onboa
         viewBinding?.animationView?.progress = 0f
     }
 
-    override fun getView(container: ViewGroup): View {
-        viewBinding?.let { return it.root }
+    override fun onCreateView(container: ViewGroup): View {
 
         val binding = AnimationOnboardingLottieBinding.inflate(LayoutInflater.from(container.context), container, false)
         viewBinding = binding

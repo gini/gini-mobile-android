@@ -157,7 +157,7 @@ public class PhotoTipsActivity extends AppCompatActivity {
             NavigationBarTopAdapter topBarAdapter = topBarInjectedViewContainer.getInjectedViewAdapter();
             assert topBarAdapter != null;
             topBarAdapter.setNavButtonType(NavButtonType.BACK);
-            topBarAdapter.setTitle(getString(R.string.gc_title_help));
+            topBarAdapter.setTitle(getString(R.string.gc_title_photo_tips));
 
             topBarAdapter.setOnNavButtonClickListener(v -> onBackPressed());
         }
