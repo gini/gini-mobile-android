@@ -41,6 +41,8 @@
         <item name="dividerColor">@color/Light_02</item>
         <item name="colorSurface">?attr/backgroundColor</item>
         <item name="colorOnSurface">?attr/colorOnBackground</item>
+        <item name="colorSurfaceInverse">@color/Dark_03</item>
+        <item name="colorOnSurfaceInverse">@color/Light_02</item>
         <item name="android:windowLightStatusBar">@bool/gc_light_status_bar</item>
         <item name="colorAccent">?attr/colorPrimary</item>
         <item name="alertDialogTheme">@style/GiniCaptureTheme.ThemeOverlay.Dialog.Alert</item>
