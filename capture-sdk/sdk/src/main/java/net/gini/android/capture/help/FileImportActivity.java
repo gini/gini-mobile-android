@@ -217,7 +217,11 @@ public class FileImportActivity extends AppCompatActivity {
         snackbar.getView().setBackgroundColor(Color.TRANSPARENT);
 
         Snackbar.SnackbarLayout snackBarLayout = (Snackbar.SnackbarLayout) snackbar.getView();
-        snackBarLayout.setPadding((int)getResources().getDimension(R.dimen.medium), 0, (int)getResources().getDimension(R.dimen.medium), 0);
+
+        int bottomPadding = GiniCapture.getInstance().isBottomNavigationBarEnabled()
+                ? (int) getResources().getDimension(R.dimen.xxxlarge) : 0;
+
+        snackBarLayout.setPadding((int)getResources().getDimension(R.dimen.medium), 0, (int)getResources().getDimension(R.dimen.medium), bottomPadding);
 
         View view = getLayoutInflater().inflate(R.layout.gc_snackbar_info, null);
 
