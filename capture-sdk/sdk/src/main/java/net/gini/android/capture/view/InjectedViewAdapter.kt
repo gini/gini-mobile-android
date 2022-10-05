@@ -19,7 +19,7 @@ interface InjectedViewAdapter {
      * @param container the [ViewGroup] which will contain the returned view
      * @return your custom view
      */
-    fun getView(container: ViewGroup): View
+    fun onCreateView(container: ViewGroup): View
 
     /**
      * Called when the layout is destroyed.

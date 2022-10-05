@@ -1,11 +1,6 @@
 package net.gini.android.capture.onboarding
 
-import android.content.Context
 import net.gini.android.capture.onboarding.view.OnboardingIllustrationAdapter
-import android.os.Parcel
-import org.mockito.Mockito
-import net.gini.android.capture.onboarding.OnboardingPage
-import android.os.Parcelable
 import android.view.View
 import android.view.ViewGroup
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -29,15 +24,15 @@ class OnboardingPageTest {
         // Then
         Truth.assertThat(toParcel.titleResId).isEqualTo(fromParcel.titleResId)
         Truth.assertThat(toParcel.messageResId).isEqualTo(fromParcel.messageResId)
-        Truth.assertThat(toParcel.illustrationAdapter?.getView(mock())?.id)
-            .isEqualTo(fromParcel.illustrationAdapter?.getView(mock())?.id)
+        Truth.assertThat(toParcel.illustrationAdapter?.onCreateView(mock())?.id)
+            .isEqualTo(fromParcel.illustrationAdapter?.onCreateView(mock())?.id)
     }
 
     @Parcelize
     class OnboardingIllustrationAdapterFixture: OnboardingIllustrationAdapter {
         override fun onVisible() {}
         override fun onHidden() {}
-        override fun getView(container: ViewGroup): View = mock<View>().also { view ->
+        override fun onCreateView(container: ViewGroup): View = mock<View>().also { view ->
             whenever(view.id).thenReturn(42)
         }
         override fun onDestroy() {}

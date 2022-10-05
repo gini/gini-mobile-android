@@ -23,8 +23,10 @@ import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.R;
 import net.gini.android.capture.analysis.AnalysisActivity;
 import net.gini.android.capture.camera.CameraActivity;
+import net.gini.android.capture.help.view.HelpNavigationBarBottomAdapter;
 import net.gini.android.capture.noresults.NoResultsActivity;
 import net.gini.android.capture.review.ReviewActivity;
+import net.gini.android.capture.view.InjectedViewContainer;
 
 import static net.gini.android.capture.internal.util.ActivityHelper.enableHomeAsUp;
 import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
@@ -163,7 +165,7 @@ public class FileImportActivity extends AppCompatActivity {
 
         setupHomeButton();
         waitForHalfSecondAndShowSnackBar();
-
+        setupBottomBarNavigation();
     }
 
     private void setupHomeButton() {
@@ -176,14 +178,32 @@ public class FileImportActivity extends AppCompatActivity {
         new Handler(Looper.getMainLooper()).postDelayed(this::showCustomSnackBar, 500);
     }
 
-    private void showCustomSnackBar() {
-        ScrollView scrollView = findViewById(R.id.gc_file_import_scrollview);
+    private void setupBottomBarNavigation() {
+        InjectedViewContainer<HelpNavigationBarBottomAdapter> injectedViewContainer = findViewById(R.id.gc_injected_navigation_bar_container_bottom);
+        if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
 
-        Snackbar snackbar = Snackbar.make(scrollView, "", Snackbar.LENGTH_INDEFINITE);
+            injectedViewContainer.setInjectedViewAdapter(GiniCapture.getInstance().getHelpNavigationBarBottomAdapter());
+
+            HelpNavigationBarBottomAdapter helpNavigationBarBottomAdapter = injectedViewContainer.getInjectedViewAdapter();
+            assert helpNavigationBarBottomAdapter != null;
+            helpNavigationBarBottomAdapter.setOnBackClickListener(v -> {
+                onBackPressed();
+            });
+        }
+    }
+
+    private void showCustomSnackBar() {
+        ConstraintLayout constraintLayout = findViewById(R.id.gc_file_import_constraint_layout);
+
+        Snackbar snackbar = Snackbar.make(constraintLayout, "", Snackbar.LENGTH_INDEFINITE);
         snackbar.getView().setBackgroundColor(Color.TRANSPARENT);
 
         Snackbar.SnackbarLayout snackBarLayout = (Snackbar.SnackbarLayout) snackbar.getView();
-        snackBarLayout.setPadding((int)getResources().getDimension(R.dimen.medium), 0, (int)getResources().getDimension(R.dimen.medium), 0);
+
+        int bottomPadding = GiniCapture.getInstance().isBottomNavigationBarEnabled()
+                ? (int) getResources().getDimension(R.dimen.xxxlarge) : 0;
+
+        snackBarLayout.setPadding((int)getResources().getDimension(R.dimen.medium), 0, (int)getResources().getDimension(R.dimen.medium), bottomPadding);
 
         View view = getLayoutInflater().inflate(R.layout.gc_snackbar_info, null);
 

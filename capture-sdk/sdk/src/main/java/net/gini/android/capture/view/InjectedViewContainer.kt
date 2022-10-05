@@ -64,7 +64,7 @@ internal class InjectedViewContainer<T: InjectedViewAdapter> @JvmOverloads const
     private fun injectView() {
         LOG?.debug("Inject view")
         removeInjectedView()
-        injectedViewAdapter?.getView(container = this)?.let { view ->
+        injectedViewAdapter?.onCreateView(container = this)?.let { view ->
             view.layoutParams =
                 LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
                     .apply {

@@ -142,9 +142,13 @@
     <string name="gc_photo_tip_parallel_title">Parallel</string>
     <string name="gc_photo_tip_align_title">Im Rahmen positionieren</string>
     <string name="gc_photo_tip_multiple_pages_title">Mehrere Seiten</string>
+
+    <string name="gc_back_button_description">Zurück</string>
+
     <string name="gc_snackbar_illustrations">Dies sind nur Illustrationen, die vom Original abweichen können.</string>
     <string name="gc_snackbar_dismiss">Schließen</string>
     <string name="gc_first_illustration_description">Aktivieren Sie die Teilen-Funktion. Dazu wählen Sie eine Datei aus und verwenden anschließend die Teilen-Funktion, dargestellt als Viereck mit hoch-zeigendem Pfeil.</string>
     <string name="gc_second_illustration_description">Banking App auswählen. Wählen Sie nun die gewünschte App aus mit der das Dokument geteilt werden soll.</string>
     <string name="gc_photos_of_monitors_or_screens">Monitoraufnahmen und Screenshots</string>
+
 </resources>
