@@ -7,7 +7,7 @@
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/large"
     app:cardCornerRadius="@dimen/gc_snackbar_card_corner_radius"
-    app:cardBackgroundColor="?attr/colorOnSurface">
+    app:cardBackgroundColor="?attr/colorSurfaceInverse">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -17,6 +17,7 @@
         <TextView
             android:id="@+id/gc_snackbar_message"
             style="@style/GiniCaptureTheme.Typography.Body2"
+            android:textColor="?attr/colorOnSurfaceInverse"
             android:layout_width="0dp"
             android:layout_height="@dimen/gc_snackbar_text_height"
             android:layout_marginStart="@dimen/large"
