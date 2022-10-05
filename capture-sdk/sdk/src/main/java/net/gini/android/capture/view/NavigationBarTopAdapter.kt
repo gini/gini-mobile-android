@@ -1,11 +1,13 @@
 package net.gini.android.capture.view
 
 import android.graphics.Color
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.annotation.ColorInt
+import androidx.annotation.MenuRes
+import androidx.appcompat.view.menu.MenuBuilder
+import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import com.google.android.material.appbar.MaterialToolbar
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.R
 import net.gini.android.capture.databinding.GcNavigationBarTopBinding
@@ -43,6 +45,12 @@ interface NavigationBarTopAdapter : InjectedViewAdapter {
      * @param navButtonType the type of the navigation button
      */
     fun setNavButtonType(navButtonType: NavButtonType)
+
+
+    fun setMenuResource(@MenuRes menu: Int)
+
+
+    fun setOnMenuItemClickListener(menuItem: Toolbar.OnMenuItemClickListener)
 }
 
 /**
@@ -68,6 +76,8 @@ enum class NavButtonType {
 internal class DefaultNavigationBarTopAdapter : NavigationBarTopAdapter {
 
     var viewBinding: GcNavigationBarTopBinding? = null
+
+    constructor()
 
     override fun setOnNavButtonClickListener(listener: View.OnClickListener?) {
         if (GiniCapture.hasInstance()
@@ -114,6 +124,14 @@ internal class DefaultNavigationBarTopAdapter : NavigationBarTopAdapter {
                 }
             }
         }
+    }
+
+    override fun setMenuResource(menu: Int) {
+        viewBinding?.gcNavigationBar?.inflateMenu(menu)
+    }
+
+    override fun setOnMenuItemClickListener(menuItem: Toolbar.OnMenuItemClickListener) {
+        viewBinding?.gcNavigationBar?.setOnMenuItemClickListener(menuItem)
     }
 
     override fun onCreateView(container: ViewGroup): View {

@@ -12,6 +12,7 @@ import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
@@ -26,6 +27,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 import androidx.annotation.VisibleForTesting;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.ViewPropertyAnimatorCompat;
@@ -46,6 +48,7 @@ import net.gini.android.capture.document.GiniCaptureMultiPageDocument;
 import net.gini.android.capture.document.ImageDocument;
 import net.gini.android.capture.document.ImageMultiPageDocument;
 import net.gini.android.capture.document.QRCodeDocument;
+import net.gini.android.capture.help.HelpActivity;
 import net.gini.android.capture.internal.camera.api.CameraException;
 import net.gini.android.capture.internal.camera.api.CameraInterface;
 import net.gini.android.capture.internal.camera.api.OldCameraController;
@@ -84,6 +87,9 @@ import net.gini.android.capture.requirements.RequirementReport;
 import net.gini.android.capture.tracking.CameraScreenEvent;
 import net.gini.android.capture.util.IntentHelper;
 import net.gini.android.capture.util.UriHelper;
+import net.gini.android.capture.view.InjectedViewContainer;
+import net.gini.android.capture.view.NavButtonType;
+import net.gini.android.capture.view.NavigationBarTopAdapter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -178,6 +184,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private PaymentQRCodeReader mPaymentQRCodeReader;
 
     private RelativeLayout mLayoutRoot;
+    private InjectedViewContainer<NavigationBarTopAdapter> topAdapterInjectedViewContainer;
     private ViewGroup mCameraPreviewContainer;
     private View mCameraPreview;
     private ImageView mCameraFocusIndicator;
@@ -303,6 +310,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         bindViews(view);
         setInputHandlers();
         createPopups();
+        setTopBarInjectedViewContainer();
         return view;
     }
 
@@ -752,6 +760,38 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         mUnsupportedQRCodeDetectedPopupContainer = view.findViewById(
                 R.id.gc_unsupported_qrcode_detected_popup_container);
         mImageStack = view.findViewById(R.id.gc_image_stack);
+        topAdapterInjectedViewContainer = view.findViewById(R.id.gc_navigation_top_bar);
+
+    }
+
+    private void setTopBarInjectedViewContainer() {
+        if (GiniCapture.hasInstance()) {
+            topAdapterInjectedViewContainer.setInjectedViewAdapter(GiniCapture.getInstance().getNavigationBarTopAdapter());
+
+            if (topAdapterInjectedViewContainer.getInjectedViewAdapter() == null)
+                return;
+
+            if (mFragment.getActivity() == null)
+                return;
+
+            topAdapterInjectedViewContainer.getInjectedViewAdapter().setNavButtonType(NavButtonType.BACK);
+            topAdapterInjectedViewContainer.getInjectedViewAdapter().setTitle(mFragment.getActivity().getResources().getString(R.string.gc_title_camera));
+            topAdapterInjectedViewContainer.getInjectedViewAdapter().setMenuResource(R.menu.gc_camera);
+            topAdapterInjectedViewContainer.getInjectedViewAdapter().setOnMenuItemClickListener(item -> {
+                startHelpActivity();
+                return true;
+            });
+        }
+    }
+
+    private void startHelpActivity() {
+
+        if (mFragment.getActivity() == null)
+            return;
+
+        final Intent intent = new Intent(mFragment.getActivity(), HelpActivity.class);
+        mFragment.getActivity().startActivity(intent);
+        trackCameraScreenEvent(CameraScreenEvent.HELP);
     }
 
     private void bindFlashButtonView(final View view) {
