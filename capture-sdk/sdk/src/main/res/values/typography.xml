@@ -47,7 +47,7 @@
 
     <style name="Root.GiniCaptureTheme.Typography.Body2" parent="TextAppearance.MaterialComponents.Body2">
         <item name="android:textSize">14sp</item>
-        <item name="android:textColor">?attr/colorOnBackground</item>
+        <item name="android:textColor">?attr/backgroundColor</item>
     </style>
 
     <style name="Root.GiniCaptureTheme.Typography.Button" parent="TextAppearance.MaterialComponents.Button">
@@ -62,7 +62,7 @@
 
     <style name="Root.GiniCaptureTheme.Typography.Overline" parent="TextAppearance.MaterialComponents.Overline">
         <item name="android:textSize">10sp</item>
-        <item name="android:textColor">?attr/colorOnBackground</item>
+        <item name="android:textColor">@color/Dark_06</item>
     </style>
 
     <style name="GiniCaptureTheme.Typography.Headline1" parent="Root.GiniCaptureTheme.Typography.Headline1"/>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/large"
+    app:cardCornerRadius="@dimen/gc_snackbar_card_corner_radius"
+    app:cardBackgroundColor="?attr/colorOnSurface">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <TextView
+            android:id="@+id/gc_snackbar_message"
+            style="@style/GiniCaptureTheme.Typography.Body2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/large"
+            android:layout_marginTop="@dimen/large"
+            android:layout_marginEnd="@dimen/medium"
+            android:layout_marginBottom="@dimen/large"
+            android:lineSpacingExtra="4sp"
+            android:translationY="-1.8sp"
+            android:text="@string/gc_snackbar_illustrations"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/gc_snackbar_dismiss"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/gc_snackbar_dismiss"
+            style="@style/GiniCaptureTheme.Typography.Body2"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginEnd="@dimen/large"
+            android:gravity="center"
+            android:text="@string/gc_snackbar_dismiss"
+            android:textColor="?attr/colorAccent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

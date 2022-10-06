@@ -47,6 +47,11 @@ internal class HelpItemsAdapter(val onItemSelected: (HelpItem) -> Unit) :
             itemView.setOnClickListener {
                 onItemSelected(items[bindingAdapterPosition])
             }
+
+            //Remove last divider from the screen
+            if (position == items.size - 1) {
+                divider.visibility = View.GONE
+            }
         }
     }
 
@@ -56,5 +61,6 @@ internal class HelpItemsAdapter(val onItemSelected: (HelpItem) -> Unit) :
 
     internal class HelpItemsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val title: TextView = itemView.findViewById(R.id.gc_help_item_title)
+        val divider: View = itemView.findViewById(R.id.gc_help_item_divider)
     }
 }

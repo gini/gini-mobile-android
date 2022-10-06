@@ -45,7 +45,7 @@ class ImageOnboardingIllustrationAdapter(
 
     override fun onHidden() {}
 
-    override fun getView(container: ViewGroup): View {
+    override fun onCreateView(container: ViewGroup): View {
         return ImageView(container.context).apply {
             setImageDrawable(ContextCompat.getDrawable(container.context, drawableRes))
             layoutParams =

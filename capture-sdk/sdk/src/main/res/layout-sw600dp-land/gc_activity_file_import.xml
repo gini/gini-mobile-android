@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/backgroundColor"
+    android:fillViewport="true"
+    android:layout_gravity="center_horizontal"
+    android:id="@+id/gc_file_import_constraint_layout"
+    tools:context="net.gini.android.capture.help.FileImportActivity">
+
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/gc_injected_navigation_bar_container_bottom"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="@dimen/gc_tablet_width"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:background="?attr/backgroundColor"
+        android:layout_marginTop="@dimen/xxlarge"
+        android:orientation="vertical">
+
+
+        <TextView
+            android:id="@+id/customFontTextView"
+            style="@style/GiniCaptureTheme.Typography.Subtitle1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/large_24"
+            android:layout_marginTop="@dimen/large_24"
+            android:layout_marginEnd="@dimen/large_24"
+            android:text="@string/gc_file_import_section_1_title"
+            app:layout_constraintBottom_toBottomOf="@+id/textView2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/customFontTextView7"
+            style="@style/GiniCaptureTheme.Typography.Body2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/small"
+            android:textColor="@color/Dark_06"
+            android:text="@string/gc_file_import_section_1_body"
+            app:layout_constraintEnd_toEndOf="@+id/customFontTextView"
+            app:layout_constraintStart_toStartOf="@+id/customFontTextView"
+            app:layout_constraintTop_toBottomOf="@+id/customFontTextView" />
+
+        <ImageView
+            android:id="@+id/gc_section_1_illustration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/large_24"
+            android:src="@drawable/gc_file_import_section_1_illustration"
+            android:contentDescription="@string/gc_first_illustration_description"
+            app:layout_constraintEnd_toEndOf="@+id/customFontTextView7"
+            app:layout_constraintStart_toStartOf="@+id/customFontTextView7"
+            app:layout_constraintTop_toBottomOf="@+id/customFontTextView7" />
+
+
+        <TextView
+            android:id="@+id/customFontTextView5"
+            style="@style/GiniCaptureTheme.Typography.Subtitle1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/large_24"
+            android:layout_marginTop="@dimen/gc_file_import_paragraphs_margin"
+            android:layout_marginEnd="@dimen/large_24"
+            android:text="@string/gc_file_import_section_2_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/gc_section_1_illustration" />
+
+        <TextView
+            android:id="@+id/customFontTextView6"
+            style="@style/GiniCaptureTheme.Typography.Body2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/Dark_06"
+            android:layout_marginTop="@dimen/small"
+            android:text="@string/gc_file_import_section_2_body"
+            app:layout_constraintEnd_toEndOf="@+id/customFontTextView5"
+            app:layout_constraintStart_toStartOf="@+id/customFontTextView5"
+            app:layout_constraintTop_toBottomOf="@+id/customFontTextView5" />
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="@dimen/large"
+            android:contentDescription="@string/gc_second_illustration_description"
+            android:src="@drawable/gc_file_import_section_2_illustration"
+            app:layout_constraintEnd_toEndOf="@+id/customFontTextView6"
+            app:layout_constraintStart_toStartOf="@+id/customFontTextView6"
+            app:layout_constraintTop_toBottomOf="@+id/customFontTextView6" />
+
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/xxxlarge"
+            app:layout_constraintTop_toBottomOf="@+id/imageView" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+    <net.gini.android.capture.view.InjectedViewContainer
+        android:id="@+id/gc_injected_navigation_bar_container_bottom"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

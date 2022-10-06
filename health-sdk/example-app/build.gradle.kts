@@ -35,6 +35,9 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
+        // Fix for "Inheritance from an interface with '@JvmDefault' members is only allowed with -Xjvm-default option"
+        // https://issuetracker.google.com/issues/217593040#comment6
+        freeCompilerArgs = listOf("-Xjvm-default=all")
     }
 }
 
