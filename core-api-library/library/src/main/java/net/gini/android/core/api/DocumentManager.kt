@@ -37,13 +37,7 @@ abstract class DocumentManager<out DR: DocumentRepository<E>, E: ExtractionsCont
         documentMetadata: DocumentMetadata? = null,
     ): Resource<Document> =
         if (documentMetadata != null) {
-            documentRepository.createPartialDocument(
-                document,
-                contentType,
-                filename,
-                documentType,
-                documentMetadata
-            )
+            documentRepository.createPartialDocument(document, contentType, filename, documentType, documentMetadata)
         } else {
             documentRepository.createPartialDocument(document, contentType, filename, documentType)
         }
@@ -60,7 +54,6 @@ abstract class DocumentManager<out DR: DocumentRepository<E>, E: ExtractionsCont
 
     suspend fun deletePartialDocumentAndParents(documentId: String): Resource<String> =
         documentRepository.deletePartialDocumentAndParents(documentId)
-
 
     /**
      * Deletes a Gini document.
@@ -99,7 +92,7 @@ abstract class DocumentManager<out DR: DocumentRepository<E>, E: ExtractionsCont
      */
     suspend fun createCompositeDocument(
         documentRotationMap: LinkedHashMap<Document, Int>,
-        documentType: DocumentRemoteSource.Companion.DocumentType,
+        documentType: DocumentRemoteSource.Companion.DocumentType?,
     ): Resource<Document> =
         documentRepository.createCompositeDocument(documentRotationMap, documentType)
 
@@ -128,30 +121,22 @@ abstract class DocumentManager<out DR: DocumentRepository<E>, E: ExtractionsCont
         uri: Uri,
     ): Resource<Document> =
         documentRepository.getDocument(uri)
-//
-//    /**
-//     * Continually checks the document status (via the Gini API) until the document is fully processed. To avoid
-//     * flooding the network, there is a pause of at least the number of seconds that is set in the POLLING_INTERVAL
-//     * constant of [DocumentTaskManager].
-//     *
-//     * This method returns a Task which will resolve to a new document instance. It does not update the given
-//     * document instance.
-//     *
-//     * @param document The document which will be polled.
-//     */
-//    suspend fun pollDocument(
-//        document: Document,
-//    ): Document = withContext(taskDispatcher) {
-//        suspendCancellableCoroutine { continuation ->
-//            val task = documentTaskManager.pollDocument(document)
-//            continuation.resumeTask(task)
-//
-//            continuation.invokeOnCancellation {
-//                documentTaskManager.cancelDocumentPolling(document)
-//            }
-//        }
-//    }
-//
+
+    /**
+     * Continually checks the document status (via the Gini API) until the document is fully processed. To avoid
+     * flooding the network, there is a pause of at least the number of seconds that is set in the POLLING_INTERVAL
+     * constant of [DocumentTaskManager].
+     *
+     * This method returns a Task which will resolve to a new document instance. It does not update the given
+     * document instance.
+     *
+     * @param document The document which will be polled.
+     */
+    suspend fun pollDocument(
+        document: Document,
+    ): Resource<Document> =
+        documentRepository.pollDocument(document)
+
     /**
      * Sends an error report for the given document to Gini. If the processing result for a document was not
      * satisfactory (e.g. extractions where empty or incorrect), you can create an error report for a document. This
@@ -180,40 +165,33 @@ abstract class DocumentManager<out DR: DocumentRepository<E>, E: ExtractionsCont
      * @return A JSONObject containing the layout.
      */
     suspend fun getLayout(
-        document: Document,
+        document: Document
     ): Resource<String?> =
         documentRepository.getLayout(document)
-//
-//    /**
-//     * Get the extractions for the given document.
-//     *
-//     * @param document The Document instance for whose document the extractions are returned.
-//     * @return [ExtractionsContainer] object.
-//     */
-//    suspend fun getExtractions(
-//        document: Document,
-//    ) = withContext(taskDispatcher) {
-//        suspendCancellableCoroutine<ExtractionsContainer> { continuation ->
-//            val pollDocumentTask = documentTaskManager.pollDocument(document)
-//            pollDocumentTask.waitForCompletion()
-//
-//            if (!continuation.isActive) return@suspendCancellableCoroutine
-//
-//            if (!pollDocumentTask.isFaulted) {
-//                val extractionTask = documentTaskManager.getAllExtractions(pollDocumentTask.result)
-//                continuation.resumeTask(extractionTask)
-//            } else {
-//                continuation.resumeWithException(pollDocumentTask.error)
-//            }
-//
-//            continuation.invokeOnCancellation {
-//                if (!pollDocumentTask.isCompleted) {
-//                    documentTaskManager.cancelDocumentPolling(document)
-//                }
-//            }
-//        }
-//    }
-//
+
+    suspend fun getAllExtractions(
+        document: Document
+    ): Resource<E> =
+        documentRepository.getAllExtractions(document)
+
+    /**
+     * Get the extractions for the given document.
+     *
+     * @param document The Document instance for whose document the extractions are returned.
+     * @return [ExtractionsContainer] object.
+     */
+    suspend fun getExtractions(
+        document: Document
+    ) : Resource<E> {
+        val pollDocument = documentRepository.pollDocument(document)
+
+        if (pollDocument.data != null) {
+            return documentRepository.getAllExtractions(pollDocument.data)
+        }
+
+        return Resource.Error("Empty data from poll")
+    }
+
     /**
      * @return Resource with [PaymentRequest] for the given id or info about API error
      */

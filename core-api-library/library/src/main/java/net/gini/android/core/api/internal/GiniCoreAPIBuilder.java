@@ -350,9 +350,9 @@ public abstract class GiniCoreAPIBuilder<DM extends DocumentManager<DR, E>, G ex
     }
 
     /**
-     * Helper method to create a DocumentTaskManager instance.
+     * Helper method to create a DocumentManager instance.
      *
-     * @return The DocumentTaskManager instance.
+     * @return The DocumentManager instance.
      */
     @NonNull
     protected synchronized DM getDocumentManager() {

@@ -18,9 +18,6 @@ interface BankApiDocumentService: DocumentService {
     @POST("documents/{documentId}/extractions/feedback")
     suspend fun sendFeedback(@HeaderMap bearer: Map<String, String>, @Path("documentId") documentId: String, @Body params: RequestBody): Response<ResponseBody>
 
-    @GET("documents/{documentId}/pages/{pageNumber}/{dimension}")
-    suspend fun getPreview(@HeaderMap bearer: Map<String, String>, @Path("documentId") documentId: String, @Path("pageNumber") pageNumber: Int, @Path("dimension") dimension: String): Response<Bitmap>
-
     @POST("paymentRequests/{id}/payment")
     suspend fun resolvePaymentRequests(@HeaderMap bearer: Map<String, String>, @Path("id") id: String, @Body input: ResolvePaymentInput): Response<ResolvedPayment>
 

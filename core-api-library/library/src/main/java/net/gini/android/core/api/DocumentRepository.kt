@@ -214,24 +214,40 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
         return Resource.Success(createExtractionsContainer(specificExtractions, compoundExtractions, extractionsJSONObject))
     }
 
-//    suspend fun pollDocument(document: Document): Resource<Document> {
-//        if (document.state != Document.ProcessingState.PENDING) {
-//            return Resource.Success(document)
-//        }
-//
-//        mDocumentPollingsInProgress.put(document, false)
-//    }
-//
-//    /**
-//     * Cancels document polling.
-//     *
-//     * @param document The document which is being polled
-//     */
-//    open fun cancelDocumentPolling(document: Document) {
-//        if (mDocumentPollingsInProgress.containsKey(document)) {
-//            mDocumentPollingsInProgress.put(document, true)
-//        }
-//    }
+    /**
+     * Continually checks the document status (via the Gini API) until the document is fully processed. To avoid
+     * flooding the network, there is a pause of at least the number of seconds that is set in the POLLING_INTERVAL
+     * constant of this class.
+     *
+     * <b>This method returns a Resource with a new document instance. It does not update the given
+     * document instance.</b>
+     *
+     * @param document The document which will be polled.
+     */
+    suspend fun pollDocument(document: Document): Resource<Document> {
+        if (document.state != Document.ProcessingState.PENDING) {
+            return Resource.Success(document)
+        }
+
+        val startTimestamp = System.currentTimeMillis()
+        do {
+            when (val apiDocumentResource = getDocument(document.id)) {
+                is Resource.Success -> {
+                    if (apiDocumentResource.data?.state != Document.ProcessingState.PENDING) {
+                        return apiDocumentResource
+                    }
+                }
+
+                is Resource.Cancelled, is Resource.Error -> return apiDocumentResource
+            }
+
+            val endTimeStamp = System.currentTimeMillis()
+            if (endTimeStamp - startTimestamp > POLLING_TIMEOUT) {
+                return Resource.Error(message = "Polling timeout")
+            }
+            delay(POLLING_INTERVAL)
+        } while (true)
+    }
 
     /**
      * Sends an error report for the given document to Gini. If the processing result for a document was not
@@ -465,7 +481,15 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
     }
 
     companion object {
-        const val POLLING_INTERVAL = 1000
+        /**
+         * The time in milliseconds between HTTP requests when a document is polled.
+         */
+        const val POLLING_INTERVAL = 1000L
+        const val POLLING_TIMEOUT = 60000L
+
+        /**
+         * The default compression rate which is used for JPEG compression in per cent.
+         */
         const val DEFAULT_COMPRESSION = 50
 
         suspend fun <T> wrapResponseIntoResource(request: suspend () -> T) =

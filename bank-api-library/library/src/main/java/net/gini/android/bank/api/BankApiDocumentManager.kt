@@ -6,12 +6,14 @@ import net.gini.android.bank.api.models.ExtractionsContainer
 import net.gini.android.bank.api.models.Payment
 import net.gini.android.bank.api.models.ResolvePaymentInput
 import net.gini.android.bank.api.models.ResolvedPayment
+import net.gini.android.bank.api.requests.ErrorEvent
 import net.gini.android.core.api.DocumentManager;
 import net.gini.android.core.api.Resource
 import net.gini.android.core.api.models.CompoundExtraction
 import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.models.PaymentRequest
 import net.gini.android.core.api.models.SpecificExtraction
+import okhttp3.ResponseBody
 import org.json.JSONException
 
 /**
@@ -34,22 +36,21 @@ class BankApiDocumentManager(private val documentRepository: BankApiDocumentRepo
      * @param compoundExtractions A Map where the key is the name of the compound extraction and the value is the
      *                            CompoundExtraction object. This is the same structure as returned by the getExtractions
      *                            method of this manager.
-     * @return The same document instance when storing the updated
-     * extractions was successful.
+     * @return Resource with the success API response
      * @throws JSONException When a value of an extraction is not JSON serializable.
      */
-//    suspend fun sendFeedback(
-//        document: Document,
-//        specificExtractions: Map<String, SpecificExtraction>,
-//        compoundExtractions: Map<String, CompoundExtraction>,
-//    ): Resource<Document> =
-//        documentRepository.cre
-//    withContext(taskDispatcher) {
-//        suspendCancellableCoroutine { continuation ->
-//            val task = documentTaskManager.sendFeedbackForExtractions(document, specificExtractions, compoundExtractions)
-//            continuation.resumeTask(task)
-//        }
-//    }
+    suspend fun sendFeedback(
+        document: Document,
+        specificExtractions: Map<String, SpecificExtraction>,
+        compoundExtractions: Map<String, CompoundExtraction>,
+    ): Resource<ResponseBody> =
+        documentRepository.sendFeedbackForExtractions(document, specificExtractions, compoundExtractions)
+
+    suspend fun sendFeedback(
+        document: Document,
+        specificExtractions: Map<String, SpecificExtraction>,
+    ): Resource<ResponseBody> =
+        documentRepository.sendFeedbackForExtractions(document, specificExtractions)
 
     /**
      * Mark a [PaymentRequest] as paid.
@@ -72,4 +73,9 @@ class BankApiDocumentManager(private val documentRepository: BankApiDocumentRepo
         id: String,
     ): Resource<Payment> =
         documentRepository.getPayment(id)
+
+    suspend fun logErrorEvent(
+        errorEvent: ErrorEvent
+    ): Resource<ResponseBody> =
+        documentRepository.logErrorEvent(errorEvent)
 }

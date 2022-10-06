@@ -37,12 +37,6 @@ interface DocumentService {
     @GET("documents/{documentId}/layout")
     suspend fun getLayoutForDocument(@HeaderMap bearer: Map<String, String>, @Path("documentId") documentId: String): Response<ResponseBody>
 
-    @GET("documents")
-    suspend fun getDocumentList(@HeaderMap bearer: Map<String, String>, @Query("offset") offset: String, @Query("limit") limit: String): Response<ResponseBody>
-
-    @GET("search")
-    suspend fun searchDocuments(@HeaderMap bearer: Map<String, String>, @Query("q") searchTerm: String, @Query("offset") offset: String, @Query("limit") limit: String, @Query("docType") docType: String): Response<ResponseBody>
-
     @GET("paymentRequests/{id}")
     suspend fun getPaymentRequest(@HeaderMap bearer: Map<String, String>, @Path("id") id: String): Response<ResponseBody>
 

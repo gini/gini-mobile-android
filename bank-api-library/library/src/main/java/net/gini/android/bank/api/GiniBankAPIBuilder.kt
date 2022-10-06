@@ -39,6 +39,6 @@ class GiniBankAPIBuilder(
     }
 
     override fun createDocumentRepository(): BankApiDocumentRepository {
-        return BankApiDocumentRepository(Dispatchers.IO, createDocumentRemoteSource(), getGiniApiType())
+        return BankApiDocumentRepository(Dispatchers.IO, createDocumentRemoteSource(), getGiniApiType(), getMoshi())
     }
 }

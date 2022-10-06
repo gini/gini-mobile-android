@@ -15,7 +15,7 @@ public abstract class GiniCoreAPI<DM extends DocumentManager<DR, E>, DR extends 
     }
 
     /**
-     * Get the instance of the DocumentTaskManager. The DocumentTaskManager provides high level methods to handle
+     * Get the instance of the DocumentRepository. The DocumentRepository provides high level methods to handle
      * document related tasks easily.
      */
     public DM getDocumentManager() {

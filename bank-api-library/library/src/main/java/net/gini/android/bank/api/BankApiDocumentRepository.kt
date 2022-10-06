@@ -6,8 +6,12 @@ import net.gini.android.bank.api.requests.ErrorEvent
 import net.gini.android.core.api.DocumentRepository
 import net.gini.android.core.api.Resource
 import net.gini.android.core.api.models.CompoundExtraction
+import net.gini.android.core.api.models.Document
+import net.gini.android.core.api.models.Extraction
 import net.gini.android.core.api.models.SpecificExtraction
 import net.gini.android.core.api.requests.ApiException
+import okhttp3.MediaType
+import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import org.json.JSONArray
 import org.json.JSONException
@@ -48,21 +52,62 @@ class BankApiDocumentRepository(
      * @throws JSONException When a value of an extraction is not JSON serializable.
      */
 
-//    @Throws(JSONException::class)
-//    suspend fun sendFeedbackForExtractions(document: Document, extractions: Map<String, SpecificExtraction>): Resource<Document> {
-//        val feedbackForExtractions = JSONObject()
-//        for (entry in extractions.entries) {
-//            val extraction = entry.value
-//            val extractionData = JSONObject()
-//            extractionData.put("value", extraction.value)
-//            extractionData.put("entity", extraction.entity)
-//            feedbackForExtractions.put(entry.key, extractionData)
-//        }
-//
-//        val body: RequestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), feedbackForExtractions.toString())
-//        val feedbackCall = documentRemoteSource.sendFeedback(document.id, body)
-//
-//    }
+    @Throws(JSONException::class)
+    suspend fun sendFeedbackForExtractions(document: Document, extractions: Map<String, SpecificExtraction>): Resource<ResponseBody> {
+        val feedbackForExtractions = JSONObject()
+        for (entry in extractions.entries) {
+            val extraction = entry.value
+            val extractionData = JSONObject()
+            extractionData.put("value", extraction.value)
+            extractionData.put("entity", extraction.entity)
+            feedbackForExtractions.put(entry.key, extractionData)
+        }
+
+        val bodyJSON = JSONObject()
+        bodyJSON.put("feedback", feedbackForExtractions)
+        val body: RequestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), bodyJSON.toString())
+        return wrapResponseIntoResource {
+            documentRemoteSource.sendFeedback(document.id, body)
+        }
+    }
+
+    @Throws(JSONException::class)
+    suspend fun sendFeedbackForExtractions(document: Document, extractions: Map<String, SpecificExtraction>, compoundExtractions: Map<String, CompoundExtraction>): Resource<ResponseBody> {
+        val feedbackForExtractions = JSONObject()
+        for (entry in extractions.entries) {
+            val extraction = entry.value
+            val extractionData = JSONObject()
+            extractionData.put("value", extraction.value)
+            extractionData.put("entity", extraction.entity)
+            feedbackForExtractions.put(entry.key, extractionData)
+        }
+
+        val feedbackForCompoundExtractions = JSONObject()
+        for (compoundExtractionEntry in compoundExtractions.entries) {
+            val compoundExtraction: CompoundExtraction = compoundExtractionEntry.value
+            val specificExtractionsFeedbackObjects = JSONArray()
+            for (specificExtractionMap in compoundExtraction.specificExtractionMaps) {
+                val specificExtractionsFeedback = JSONObject()
+                for (specificExtractionEntry in specificExtractionMap.entries) {
+                    val extraction: Extraction = specificExtractionEntry.value
+                    val extractionData = JSONObject()
+                    extractionData.put("value", extraction.value)
+                    extractionData.put("entity", extraction.entity)
+                    specificExtractionsFeedback.put(specificExtractionEntry.key, extractionData)
+                }
+                specificExtractionsFeedbackObjects.put(specificExtractionsFeedback)
+            }
+            feedbackForCompoundExtractions.put(compoundExtractionEntry.key, specificExtractionsFeedbackObjects)
+        }
+
+        val bodyJSON = JSONObject()
+        bodyJSON.put("extractions", feedbackForExtractions)
+        bodyJSON.put("compoundExtractions", feedbackForCompoundExtractions)
+        val body: RequestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), bodyJSON.toString())
+        return wrapResponseIntoResource {
+            documentRemoteSource.sendFeedback(document.id, body)
+        }
+    }
 
     /**
      * Mark a {@link PaymentRequest} as paid.
@@ -113,9 +158,6 @@ class BankApiDocumentRepository(
     }
 
     companion object {
-        const val POLLING_INTERVAL = 1000
-        const val DEFAULT_COMPRESSION = 50
-
         private suspend fun <T> wrapResponseIntoResource(request: suspend () -> T) =
             try {
                 Resource.Success(request())
