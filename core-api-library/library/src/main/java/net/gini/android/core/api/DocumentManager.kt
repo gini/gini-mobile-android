@@ -33,7 +33,7 @@ abstract class DocumentManager<out DR: DocumentRepository<E>, E: ExtractionsCont
         document: ByteArray,
         contentType: String,
         filename: String? = null,
-        documentType: DocumentRemoteSource.Companion.DocumentType? = null,
+        documentType: DocumentRemoteSource.DocumentType? = null,
         documentMetadata: DocumentMetadata? = null,
     ): Resource<Document> =
         if (documentMetadata != null) {
@@ -76,7 +76,7 @@ abstract class DocumentManager<out DR: DocumentRepository<E>, E: ExtractionsCont
      */
     suspend fun createCompositeDocument(
         documents: List<Document>,
-        documentType: DocumentRemoteSource.Companion.DocumentType? = null
+        documentType: DocumentRemoteSource.DocumentType? = null
     ): Resource<Document> =
         documentRepository.createCompositeDocument(documents, documentType)
 
@@ -92,7 +92,7 @@ abstract class DocumentManager<out DR: DocumentRepository<E>, E: ExtractionsCont
      */
     suspend fun createCompositeDocument(
         documentRotationMap: LinkedHashMap<Document, Int>,
-        documentType: DocumentRemoteSource.Companion.DocumentType?,
+        documentType: DocumentRemoteSource.DocumentType? = null
     ): Resource<Document> =
         documentRepository.createCompositeDocument(documentRotationMap, documentType)
 

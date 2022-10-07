@@ -185,16 +185,17 @@ abstract class DocumentRemoteSource(
     }
 
     companion object {
-        enum class DocumentType(val apiDoctypeHint: String) {
-            BANK_STATEMENT("BankStatement"),
-            CONTRACT("Contract"),
-            INVOICE("Invoice"),
-            RECEIPT("Receipt"),
-            REMINDER("Reminder"),
-            REMITTANCE_SLIP("RemittanceSlip"),
-            TRAVEL_EXPENSE_REPORT("TravelExpenseReport"),
-            OTHER("Other");
-        }
         const val HEADER_LOCATION_KEY = "location"
+    }
+
+    enum class DocumentType(val apiDoctypeHint: String) {
+        BANK_STATEMENT("BankStatement"),
+        CONTRACT("Contract"),
+        INVOICE("Invoice"),
+        RECEIPT("Receipt"),
+        REMINDER("Reminder"),
+        REMITTANCE_SLIP("RemittanceSlip"),
+        TRAVEL_EXPENSE_REPORT("TravelExpenseReport"),
+        OTHER("Other");
     }
 }

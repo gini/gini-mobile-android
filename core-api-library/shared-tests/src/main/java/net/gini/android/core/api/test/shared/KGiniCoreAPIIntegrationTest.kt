@@ -69,7 +69,7 @@ abstract class KGiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docum
         val testDocumentAsStream = assetManager.open("test.jpg")
         Assert.assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream)
         val testDocument = TestUtils.createByteArray(testDocumentAsStream)
-        processDocument(testDocument, "image/jpeg", "test.jpg", DocumentRemoteSource.Companion.DocumentType.INVOICE)
+        processDocument(testDocument, "image/jpeg", "test.jpg", DocumentRemoteSource.DocumentType.INVOICE)
     }
 
     @Test
@@ -82,7 +82,7 @@ abstract class KGiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docum
         val testDocumentAsStream = assetManager.open("test.jpg")
         Assert.assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream)
         val testDocument = TestUtils.createByteArray(testDocumentAsStream)
-        processDocument(testDocument, "image/jpeg", "test.jpg", DocumentRemoteSource.Companion.DocumentType.INVOICE)
+        processDocument(testDocument, "image/jpeg", "test.jpg", DocumentRemoteSource.DocumentType.INVOICE)
     }
 
     @Test
@@ -102,7 +102,7 @@ abstract class KGiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docum
         Assert.assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream)
 
         val testDocument = TestUtils.createByteArray(testDocumentAsStream)
-        processDocument(testDocument, "image/jpeg", "test.jpg", DocumentRemoteSource.Companion.DocumentType.INVOICE)
+        processDocument(testDocument, "image/jpeg", "test.jpg", DocumentRemoteSource.DocumentType.INVOICE)
 
         // Verify that a new user was created
         Assert.assertNotSame(invalidUserCredentials.username, credentialsStore.userCredentials.username)
@@ -123,7 +123,7 @@ abstract class KGiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docum
         Assert.assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream)
 
         val testDocument = TestUtils.createByteArray(testDocumentAsStream)
-        processDocument(testDocument, "image/jpeg", "test.jpg", DocumentRemoteSource.Companion.DocumentType.INVOICE)
+        processDocument(testDocument, "image/jpeg", "test.jpg", DocumentRemoteSource.DocumentType.INVOICE)
 
 
         // Create another Gini instance with a new email domain (to simulate an app update)
@@ -131,7 +131,7 @@ abstract class KGiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docum
         val newEmailDomain = "beispiel.com"
         giniCoreApi = createGiniCoreAPIBuilder(clientId!!, clientSecret!!, newEmailDomain)!!.setApiBaseUrl(apiUri!!)!!
             .setUserCenterApiBaseUrl(userCenterUri!!)!!.setConnectionTimeoutInMs(60000)!!.setCredentialsStore(credentialsStore)!!.build()
-        processDocument(testDocument, "image/jpeg", "test.jpg", DocumentRemoteSource.Companion.DocumentType.INVOICE)
+        processDocument(testDocument, "image/jpeg", "test.jpg", DocumentRemoteSource.DocumentType.INVOICE)
 
         val newUserCredentials = credentialsStore.userCredentials
         Assert.assertEquals(newEmailDomain, extractEmailDomain(newUserCredentials.username))
@@ -153,7 +153,7 @@ abstract class KGiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docum
         Assert.assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream)
 
         val testDocument = TestUtils.createByteArray(testDocumentAsStream)
-        processDocument(testDocument, "image/jpeg", "test.jpg", DocumentRemoteSource.Companion.DocumentType.INVOICE)
+        processDocument(testDocument, "image/jpeg", "test.jpg", DocumentRemoteSource.DocumentType.INVOICE)
     }
 
     @Test
@@ -169,7 +169,7 @@ abstract class KGiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docum
         Assert.assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream)
 
         val testDocument = TestUtils.createByteArray(testDocumentAsStream)
-        processDocument(testDocument, "image/jpeg", "test.jpg", DocumentRemoteSource.Companion.DocumentType.INVOICE)
+        processDocument(testDocument, "image/jpeg", "test.jpg", DocumentRemoteSource.DocumentType.INVOICE)
     }
 
     @Test
@@ -186,7 +186,7 @@ abstract class KGiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docum
         Assert.assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream)
 
         val testDocument = TestUtils.createByteArray(testDocumentAsStream)
-        val upload = giniCoreApi?.documentManager?.createPartialDocument(testDocument, "image/jpeg", "test.jpeg", DocumentRemoteSource.Companion.DocumentType.INVOICE)?.data
+        val upload = giniCoreApi?.documentManager?.createPartialDocument(testDocument, "image/jpeg", "test.jpeg", DocumentRemoteSource.DocumentType.INVOICE)?.data
         val processDocument = giniCoreApi?.documentManager?.pollDocument(upload!!)
         val retrieveExtractions = giniCoreApi?.documentManager?.getAllExtractions(processDocument?.data!!)
 
@@ -211,7 +211,7 @@ abstract class KGiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docum
         Assert.assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream)
 
         val testDocument = TestUtils.createByteArray(testDocumentAsStream)
-        processDocument(testDocument, "image/jpeg", "test.jpg", DocumentRemoteSource.Companion.DocumentType.INVOICE)
+        processDocument(testDocument, "image/jpeg", "test.jpg", DocumentRemoteSource.DocumentType.INVOICE)
     }
 
     @Test
@@ -301,7 +301,7 @@ abstract class KGiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docum
     }
 
     @Throws(InterruptedException::class)
-    protected suspend fun processDocument(documentBytes: ByteArray, contentType: String, filename: String, documentType: DocumentRemoteSource.Companion.DocumentType
+    protected suspend fun processDocument(documentBytes: ByteArray, contentType: String, filename: String, documentType: DocumentRemoteSource.DocumentType
     ): Map<Document, E> {
         return processDocument(documentBytes, contentType, filename, documentType,
             object : ExtractionsCallback<E> {
@@ -325,7 +325,7 @@ abstract class KGiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docum
     protected abstract fun getPaymentPurpose(extractionsContainer: E): SpecificExtraction?
 
     @Throws(InterruptedException::class)
-    protected suspend fun processDocument(documentBytes: ByteArray, contentType: String, filename: String, documentType: DocumentRemoteSource.Companion.DocumentType, extractionsCallback: ExtractionsCallback<E>): Map<Document, E> {
+    protected suspend fun processDocument(documentBytes: ByteArray, contentType: String, filename: String, documentType: DocumentRemoteSource.DocumentType, extractionsCallback: ExtractionsCallback<E>): Map<Document, E> {
         val documentManager = giniCoreApi?.documentManager
         val uploadPartial = documentManager?.createPartialDocument(documentBytes, contentType, filename, documentType)
         val createComposite = documentManager?.createCompositeDocument(listOf(uploadPartial?.data!!), null)

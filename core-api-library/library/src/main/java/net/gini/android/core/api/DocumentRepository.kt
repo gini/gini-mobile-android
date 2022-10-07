@@ -57,19 +57,19 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
         }
 
     suspend fun createPartialDocument(documentData: ByteArray, contentType: String?,
-                                      filename: String?, documentType: DocumentRemoteSource.Companion.DocumentType?,
+                                      filename: String?, documentType: DocumentRemoteSource.DocumentType?,
                                       documentMetadata: DocumentMetadata?): Resource<Document> {
         return createPartialDocumentInternal(documentData, contentType, filename, documentType, documentMetadata)
     }
 
     suspend fun createPartialDocument(documentData: ByteArray, contentType: String?,
                                       filename: String?,
-                                      documentType: DocumentRemoteSource.Companion.DocumentType?): Resource<Document> {
+                                      documentType: DocumentRemoteSource.DocumentType?): Resource<Document> {
         return createPartialDocumentInternal(documentData, contentType, filename, documentType)
     }
 
     suspend fun createPartialDocumentInternal(documentData: ByteArray, contentType: String?,
-                                              filename: String?, documentType: DocumentRemoteSource.Companion.DocumentType?,
+                                              filename: String?, documentType: DocumentRemoteSource.DocumentType?,
                                               documentMetadata: DocumentMetadata? = null): Resource<Document> {
         var apiDoctypeHint: String? = null
         if (documentType != null) {
@@ -91,7 +91,7 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
      * @return A Resource which has in the "data" the freshly created document.
      */
 
-    suspend fun createCompositeDocument(documents: List<Document>, documentType: DocumentRemoteSource.Companion.DocumentType?): Resource<Document> {
+    suspend fun createCompositeDocument(documents: List<Document>, documentType: DocumentRemoteSource.DocumentType?): Resource<Document> {
         var apiDoctypeHint = documentType?.apiDoctypeHint
         val uriFromUpload = documentRemoteSource.uploadDocument(createCompositeJson(documents), giniApiType.giniCompositeJsonMediaType, null, apiDoctypeHint, null)
         return wrapResponseIntoResource {
@@ -110,7 +110,7 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
      * @return A Resource which has in the "data" the freshly created document.
      */
 
-    suspend fun createCompositeDocument(documentRotationMap: LinkedHashMap<Document, Int>, documentType: DocumentRemoteSource.Companion.DocumentType?): Resource<Document> {
+    suspend fun createCompositeDocument(documentRotationMap: LinkedHashMap<Document, Int>, documentType: DocumentRemoteSource.DocumentType?): Resource<Document> {
         val apiDoctypeHint = documentType?.apiDoctypeHint
         val uriFromUpload = documentRemoteSource.uploadDocument(createCompositeJson(documentRotationMap), giniApiType.giniCompositeJsonMediaType, null, apiDoctypeHint, null)
         return wrapResponseIntoResource {
@@ -134,7 +134,7 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
      * and to send feedback.
      */
 
-    suspend fun createDocument(document: ByteArray, filename: String?, documentType: DocumentRemoteSource.Companion.DocumentType?): Resource<Document> {
+    suspend fun createDocument(document: ByteArray, filename: String?, documentType: DocumentRemoteSource.DocumentType?): Resource<Document> {
         return createDocumentInternal(document, filename, documentType, null)
     }
 
@@ -156,11 +156,11 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
      * and to send feedback.
      */
 
-    suspend fun createDocument(document: ByteArray, filename: String?, documentType: DocumentRemoteSource.Companion.DocumentType?, documentMetadata: DocumentMetadata): Resource<Document> {
+    suspend fun createDocument(document: ByteArray, filename: String?, documentType: DocumentRemoteSource.DocumentType?, documentMetadata: DocumentMetadata): Resource<Document> {
         return createDocumentInternal(document, filename, documentType, documentMetadata)
     }
 
-    suspend fun createDocumentInternal(document: ByteArray, filename: String?, documentType: DocumentRemoteSource.Companion.DocumentType?, documentMetadata: DocumentMetadata?): Resource<Document> {
+    suspend fun createDocumentInternal(document: ByteArray, filename: String?, documentType: DocumentRemoteSource.DocumentType?, documentMetadata: DocumentMetadata?): Resource<Document> {
         var apiDoctypeHint: String? = null
         if (documentType != null) {
             apiDoctypeHint = documentType.apiDoctypeHint
