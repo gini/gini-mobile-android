@@ -55,7 +55,7 @@ abstract class KGiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : KGiniCoreAPI
      * @param networkSecurityConfigResId xml resource id
      * @return The builder instance to enable chaining.
      */
-    open fun setNetworkSecurityConfigResId(@XmlRes networkSecurityConfigResId: Int): KGiniCoreAPIBuilder<DM, G, DR, E>? {
+    open fun setNetworkSecurityConfigResId(@XmlRes networkSecurityConfigResId: Int): KGiniCoreAPIBuilder<DM, G, DR, E> {
         mNetworkSecurityConfigResId = networkSecurityConfigResId
         return this
     }
@@ -66,7 +66,7 @@ abstract class KGiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : KGiniCoreAPI
      * @param newUrl The URL of the Gini API which is used by the requests of the library.
      * @return The builder instance to enable chaining.
      */
-    open fun setApiBaseUrl(newUrl: String): KGiniCoreAPIBuilder<DM, G, DR, E>? {
+    open fun setApiBaseUrl(newUrl: String): KGiniCoreAPIBuilder<DM, G, DR, E> {
         var baseUrl = newUrl
         if (!newUrl.endsWith("/")) {
             baseUrl += "/"
@@ -81,7 +81,7 @@ abstract class KGiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : KGiniCoreAPI
      * @param newUrl The URL of the Gini User Center API which is used by the requests of the library.
      * @return The builder instance to enable chaining.
      */
-    open fun setUserCenterApiBaseUrl(newUrl: String): KGiniCoreAPIBuilder<DM, G, DR, E>? {
+    open fun setUserCenterApiBaseUrl(newUrl: String): KGiniCoreAPIBuilder<DM, G, DR, E> {
         var baseUrl = newUrl
         if (!newUrl.endsWith("/")) {
             baseUrl += "/"
@@ -99,7 +99,7 @@ abstract class KGiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : KGiniCoreAPI
      * @param connectionTimeoutInMs initial timeout
      * @return The builder instance to enable chaining.
      */
-    open fun setConnectionTimeoutInMs(connectionTimeoutInMs: Int): KGiniCoreAPIBuilder<DM, G, DR, E>? {
+    open fun setConnectionTimeoutInMs(connectionTimeoutInMs: Int): KGiniCoreAPIBuilder<DM, G, DR, E> {
         require(connectionTimeoutInMs >= 0) { "connectionTimeoutInMs can't be less than 0" }
         mTimeoutInMs = connectionTimeoutInMs
         return this
@@ -111,7 +111,7 @@ abstract class KGiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : KGiniCoreAPI
      * @param maxNumberOfRetries maximal number of retries.
      * @return The builder instance to enable chaining.
      */
-    open fun setMaxNumberOfRetries(maxNumberOfRetries: Int): KGiniCoreAPIBuilder<DM, G, DR, E>? {
+    open fun setMaxNumberOfRetries(maxNumberOfRetries: Int): KGiniCoreAPIBuilder<DM, G, DR, E> {
         require(maxNumberOfRetries >= 0) { "maxNumberOfRetries can't be less than 0" }
         mMaxRetries = maxNumberOfRetries
         return this
@@ -124,7 +124,7 @@ abstract class KGiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : KGiniCoreAPI
      * @param backOffMultiplier the backoff multiplication factor
      * @return The builder instance to enable chaining.
      */
-    open fun setConnectionBackOffMultiplier(backOffMultiplier: Float): KGiniCoreAPIBuilder<DM, G, DR, E>? {
+    open fun setConnectionBackOffMultiplier(backOffMultiplier: Float): KGiniCoreAPIBuilder<DM, G, DR, E> {
         require(backOffMultiplier >= 0.0) { "backOffMultiplier can't be less than 0" }
         mBackOffMultiplier = backOffMultiplier
         return this
@@ -137,7 +137,7 @@ abstract class KGiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : KGiniCoreAPI
      * @param credentialsStore A credentials store instance (specified by the CredentialsStore interface).
      * @return The builder instance to enable chaining.
      */
-    open fun setCredentialsStore(credentialsStore: CredentialsStore): KGiniCoreAPIBuilder<DM, G, DR, E>? {
+    open fun setCredentialsStore(credentialsStore: CredentialsStore): KGiniCoreAPIBuilder<DM, G, DR, E> {
         mCredentialsStore = Utils.checkNotNull(credentialsStore)
         return this
     }
@@ -149,7 +149,7 @@ abstract class KGiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : KGiniCoreAPI
      * @param cache A cache instance (specified by the com.android.volley.Cache interface).
      * @return The builder instance to enable chaining.
      */
-    open fun setCache(cache: Cache): KGiniCoreAPIBuilder<DM, G, DR, E>? {
+    open fun setCache(cache: Cache): KGiniCoreAPIBuilder<DM, G, DR, E> {
         mCache = cache
         return this
     }
@@ -165,7 +165,7 @@ abstract class KGiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : KGiniCoreAPI
      * @param trustManager A [TrustManager] implementation.
      * @return The builder instance to enable chaining.
      */
-    open fun setTrustManager(trustManager: TrustManager): KGiniCoreAPIBuilder<DM, G, DR, E>? {
+    open fun setTrustManager(trustManager: TrustManager): KGiniCoreAPIBuilder<DM, G, DR, E> {
         mTrustManager = trustManager
         return this
     }
