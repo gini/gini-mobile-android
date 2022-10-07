@@ -44,8 +44,8 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
-    implementation(libs.kotlinx.coroutines.test)
 
+    implementation(libs.kotlinx.coroutines.test)
     implementation(libs.mockito.core)
     implementation(libs.mockito.android)
     implementation(libs.androidx.test.runner)
