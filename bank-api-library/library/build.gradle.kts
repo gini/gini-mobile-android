@@ -63,8 +63,9 @@ dependencies {
     androidTestImplementation(libs.androidx.test.rules)
     androidTestImplementation(libs.androidx.test.junit)
     androidTestImplementation(libs.androidx.multidex)
+    androidTestImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(project(":core-api-library:shared-tests"))
-    androidTestImplementation(project(":health-api-library:library"))
+//    androidTestImplementation(project(":health-api-library:library"))
 }
 
 apply<PublishToMavenPlugin>()
