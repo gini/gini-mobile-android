@@ -15,6 +15,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.UUID;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -89,7 +90,7 @@ public class ImageDiskStore {
     @NonNull
     private Uri generateUri(@NonNull final Context context, @Nullable final String extension) {
         final String filename =
-                System.currentTimeMillis() + (extension != null ? "." + extension : "");
+                UUID.randomUUID() + (extension != null ? "." + extension : "");
         final String storePath = getStoreDir(context).getAbsolutePath();
         return new Uri.Builder().scheme("file").path(storePath).appendPath(filename).build();
     }

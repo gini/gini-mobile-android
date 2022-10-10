@@ -27,7 +27,7 @@ import org.robolectric.shadows.ShadowContentResolver;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Calendar;
+import java.util.UUID;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
@@ -146,7 +146,7 @@ public class ImageDiskStoreTest {
     }
 
     @Test
-    public void should_generateFilenames_basedOnTheCurrentTime_inMilliseconds() throws Exception {
+    public void should_generateFilenames_withUUID() throws Exception {
         // Given
         final ImageDiskStore imageDiskStore = new ImageDiskStore();
         final Application appContext = getApplicationContext();
@@ -158,22 +158,9 @@ public class ImageDiskStoreTest {
         final File storeDir = new File(appContext.getFilesDir(), ImageDiskStore.STORE_DIR);
         final String fileName = storeDir.listFiles()[0].getName();
 
-        final Calendar calendarFileNameDate = Calendar.getInstance();
-        calendarFileNameDate.setTimeInMillis(Long.parseLong(fileName));
+        final UUID uuid = UUID.fromString(fileName);
 
-        final Calendar calendarNow = Calendar.getInstance();
-        calendarNow.get(Calendar.YEAR);
-
-        assertThat(calendarFileNameDate.get(Calendar.YEAR)).isEqualTo(
-                calendarNow.get(Calendar.YEAR));
-        assertThat(calendarFileNameDate.get(Calendar.MONTH)).isEqualTo(
-                calendarNow.get(Calendar.MONTH));
-        assertThat(calendarFileNameDate.get(Calendar.DAY_OF_MONTH)).isEqualTo(
-                calendarNow.get(Calendar.DAY_OF_MONTH));
-        assertThat(calendarFileNameDate.get(Calendar.HOUR)).isEqualTo(
-                calendarNow.get(Calendar.HOUR));
-        assertThat(calendarFileNameDate.get(Calendar.MINUTE)).isEqualTo(
-                calendarNow.get(Calendar.MINUTE));
+        assertThat(uuid).isNotNull();
     }
 
     @Test
@@ -240,6 +227,26 @@ public class ImageDiskStoreTest {
         // Then
         final File storeDir = new File(appContext.getFilesDir(), ImageDiskStore.STORE_DIR);
         assertThat(storeDir.listFiles()).hasLength(1);
+    }
+
+    @Test
+    public void should_generateDifferentFileNames() throws Exception {
+        // Given
+        final ImageDiskStore imageDiskStore = new ImageDiskStore();
+        final Application appContext = getApplicationContext();
+        copyAssetToStorage("invoice.jpg", appContext.getFilesDir().getPath());
+
+        // When
+        int c = 1;
+        int times = 100;
+        while (c <= times) {
+            final Uri uri = imageDiskStore.save(appContext, getTestJpeg());
+            final Uri uri2 = imageDiskStore.save(appContext, getTestJpeg());
+
+            // Then
+            assertThat(uri).isNotEqualTo(uri2);
+            c++;
+        }
     }
 
     @Test
