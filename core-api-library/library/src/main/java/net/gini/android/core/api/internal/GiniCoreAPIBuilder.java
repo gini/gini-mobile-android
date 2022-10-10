@@ -321,7 +321,7 @@ public abstract class GiniCoreAPIBuilder<DM extends DocumentManager<DR, E>, G ex
     @NonNull
     private synchronized UserRepository getUserRepository() {
         if (mUserRepository == null) {
-            mUserRepository = new UserRepository(getmUserRemoteSource().getCoroutineContext(), getmUserRemoteSource());
+            mUserRepository = new UserRepository(getUserRemoteSource());
         }
         return mUserRepository;
     }
@@ -401,7 +401,7 @@ public abstract class GiniCoreAPIBuilder<DM extends DocumentManager<DR, E>, G ex
         return mUserService;
     }
 
-    protected synchronized UserRemoteSource getmUserRemoteSource() {
+    protected synchronized UserRemoteSource getUserRemoteSource() {
         if (mUserRemoteSource == null) {
             mUserRemoteSource = new UserRemoteSource(GlobalScope.INSTANCE.getCoroutineContext(), getmUserService(), mClientId, mClientSecret);
         }

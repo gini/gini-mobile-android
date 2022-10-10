@@ -8,9 +8,8 @@ import net.gini.android.core.api.authorization.apimodels.UserRequestModel
 import kotlin.coroutines.CoroutineContext
 
 open class UserRepository(
-    override val coroutineContext: CoroutineContext,
     private val userRemoteSource: UserRemoteSource
-    ) : CoroutineScope {
+    ) {
 
     private var session: SessionToken? = null
 

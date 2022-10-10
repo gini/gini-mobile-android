@@ -23,11 +23,10 @@ import java.util.concurrent.CancellationException
 import kotlin.coroutines.CoroutineContext
 
 class BankApiDocumentRepository(
-    override val coroutineContext: CoroutineContext,
     private val documentRemoteSource: BankApiDocumentRemoteSource,
     private val giniApiType: GiniBankApiType,
     private val moshi: Moshi
-) : DocumentRepository<ExtractionsContainer>(coroutineContext, documentRemoteSource, giniApiType, moshi) {
+) : DocumentRepository<ExtractionsContainer>(documentRemoteSource, giniApiType, moshi) {
 
     override fun createExtractionsContainer(
         specificExtractions: Map<String, SpecificExtraction>,

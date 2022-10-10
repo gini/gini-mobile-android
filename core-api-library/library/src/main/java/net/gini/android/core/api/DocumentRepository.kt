@@ -16,13 +16,11 @@ import java.lang.reflect.Type
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.CoroutineContext
 
-// TODO PIA-3154: Why is this a CoroutineScope?
 abstract class DocumentRepository<E: ExtractionsContainer>(
-    override val coroutineContext: CoroutineContext,
     private val documentRemoteSource: DocumentRemoteSource,
     private val giniApiType: GiniApiType,
     private val moshi: Moshi
-): CoroutineScope {
+) {
 
     private var mDocumentPollingsInProgress: Map<Document, Boolean> = ConcurrentHashMap()
 

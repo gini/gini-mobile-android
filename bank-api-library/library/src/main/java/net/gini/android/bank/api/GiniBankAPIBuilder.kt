@@ -39,6 +39,6 @@ class GiniBankAPIBuilder @JvmOverloads constructor(
     }
 
     override fun createDocumentRepository(): BankApiDocumentRepository {
-        return BankApiDocumentRepository(Dispatchers.IO, createDocumentRemoteSource(), bankApiType, getMoshi())
+        return BankApiDocumentRepository(createDocumentRemoteSource(), bankApiType, getMoshi())
     }
 }

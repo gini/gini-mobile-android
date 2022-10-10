@@ -10,7 +10,6 @@ import kotlinx.coroutines.Dispatchers
 import net.gini.android.core.api.*
 import net.gini.android.core.api.authorization.*
 import net.gini.android.core.api.models.ExtractionsContainer
-import net.gini.android.core.api.requests.DefaultRetryPolicyFactory
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -213,10 +212,7 @@ abstract class KGiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : KGiniCoreAPI
     @Synchronized
     private fun getUserRepository(): UserRepository {
         if (mUserRepository == null) {
-            mUserRepository =
-                getmUserRemoteSource()?.let {
-                    getmUserRemoteSource()?.coroutineContext?.let { it1 -> UserRepository(it1, it) }
-                }
+            mUserRepository = UserRepository(getUserRemoteSource())
         }
         return mUserRepository as UserRepository
     }
@@ -351,11 +347,11 @@ abstract class KGiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : KGiniCoreAPI
     }
 
     @Synchronized
-    protected fun getmUserRemoteSource(): UserRemoteSource? {
+    protected fun getUserRemoteSource(): UserRemoteSource {
         if (mUserRemoteSource == null) {
             mUserRemoteSource = UserRemoteSource(Dispatchers.IO, getmUserService()!!, clientId, clientSecret)
         }
-        return mUserRemoteSource
+        return mUserRemoteSource as UserRemoteSource
     }
 
     protected fun getDocumentRepository(): DR {
