@@ -17,9 +17,7 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 
-import net.gini.android.core.api.GiniApiType;
 import net.gini.android.core.api.requests.DefaultRetryPolicyFactory;
-import net.gini.android.core.api.requests.RetryPolicyFactory;
 import net.gini.android.core.api.test.TestGiniApiType;
 
 import org.json.JSONException;

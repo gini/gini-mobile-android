@@ -5,6 +5,7 @@ import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import kotlinx.coroutines.*
+import net.gini.android.core.api.Resource.Companion.wrapInResource
 import net.gini.android.core.api.models.*
 import net.gini.android.core.api.requests.ApiException
 import net.gini.android.core.api.response.PaymentRequestResponse
@@ -12,74 +13,55 @@ import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import java.lang.reflect.Type
-import java.util.concurrent.CancellationException
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.CoroutineContext
 
+// TODO PIA-3154: Why is this a CoroutineScope?
 abstract class DocumentRepository<E: ExtractionsContainer>(
     override val coroutineContext: CoroutineContext,
     private val documentRemoteSource: DocumentRemoteSource,
     private val giniApiType: GiniApiType,
     private val moshi: Moshi
-) : CoroutineScope {
+): CoroutineScope {
 
     private var mDocumentPollingsInProgress: Map<Document, Boolean> = ConcurrentHashMap()
-    suspend fun deletePartialDocumentAndParents(documentId: String): Resource<String> =
-        wrapResponseIntoResource {
-            val document = Document.fromApiResponse(JSONObject(documentRemoteSource.getDocument(documentId).string()))
-            deleteDocuments(document.compositeDocuments)
-                    documentRemoteSource.deleteDocument(document.id)
+
+    suspend fun deletePartialDocumentAndParents(documentId: String): Resource<Unit> =
+        wrapInResource {
+            val document = getDocumentInternal(documentId)
+            for (uri in document.compositeDocuments) {
+                documentRemoteSource.deleteDocument(uri)
+            }
+            documentRemoteSource.deleteDocument(document.id)
         }
 
-    suspend fun deleteDocuments(documents: List<Uri>) {
-        val tasks = mutableListOf<Job>()
-        for (uri in documents) {
-            tasks.add(coroutineScope {
-                launch {
-                    documentRemoteSource.deleteDocument(
-                        uri
-                    )
-                }
-            })
-        }
-
-        tasks.joinAll()
-    }
-
-    suspend fun deleteDocument(documentId: String): Resource<String> =
-        wrapResponseIntoResource {
+    suspend fun deleteDocument(documentId: String): Resource<Unit> =
+        wrapInResource {
             documentRemoteSource.deleteDocument(documentId)
         }
 
-    suspend fun createDocumentInternal(uri: Uri): Resource<Document> =
-        wrapResponseIntoResource {
-            Document.fromApiResponse(JSONObject(documentRemoteSource.getDocumentFromUri(uri).string()))
+    private suspend fun getDocumentInternal(uri: Uri): Document =
+        Document.fromApiResponse(JSONObject(documentRemoteSource.getDocumentFromUri(uri)))
+
+    private suspend fun getDocumentInternal(documentId: String): Document =
+        Document.fromApiResponse(JSONObject(documentRemoteSource.getDocument(documentId)))
+
+    suspend fun createPartialDocument(documentData: ByteArray, contentType: String,
+                                      filename: String? = null,
+                                      documentType: DocumentRemoteSource.DocumentType? = null,
+                                      documentMetadata: DocumentMetadata? = null): Resource<Document> {
+        val apiDoctypeHint = documentType?.apiDoctypeHint
+
+        return wrapInResource {
+            val uri = documentRemoteSource.uploadDocument(
+                documentData,
+                MediaTypes.forPartialDocument(giniApiType.giniPartialMediaType, contentType),
+                filename,
+                apiDoctypeHint,
+                documentMetadata?.metadata
+            )
+            getDocumentInternal(uri)
         }
-
-    suspend fun createPartialDocument(documentData: ByteArray, contentType: String?,
-                                      filename: String?, documentType: DocumentRemoteSource.DocumentType?,
-                                      documentMetadata: DocumentMetadata?): Resource<Document> {
-        return createPartialDocumentInternal(documentData, contentType, filename, documentType, documentMetadata)
-    }
-
-    suspend fun createPartialDocument(documentData: ByteArray, contentType: String?,
-                                      filename: String?,
-                                      documentType: DocumentRemoteSource.DocumentType?): Resource<Document> {
-        return createPartialDocumentInternal(documentData, contentType, filename, documentType)
-    }
-
-    suspend fun createPartialDocumentInternal(documentData: ByteArray, contentType: String?,
-                                              filename: String?, documentType: DocumentRemoteSource.DocumentType?,
-                                              documentMetadata: DocumentMetadata? = null): Resource<Document> {
-        var apiDoctypeHint: String? = null
-        if (documentType != null) {
-            apiDoctypeHint = documentType.apiDoctypeHint
-        }
-
-        val contentType = contentType?.let { MediaTypes.forPartialDocument(giniApiType.giniPartialMediaType, it) }
-        val documentUri = documentRemoteSource.uploadDocument(documentData, contentType!!, filename, apiDoctypeHint, documentMetadata?.metadata)
-
-        return createDocumentInternal(documentUri)
     }
 
     /**
@@ -92,10 +74,17 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
      */
 
     suspend fun createCompositeDocument(documents: List<Document>, documentType: DocumentRemoteSource.DocumentType?): Resource<Document> {
-        var apiDoctypeHint = documentType?.apiDoctypeHint
-        val uriFromUpload = documentRemoteSource.uploadDocument(createCompositeJson(documents), giniApiType.giniCompositeJsonMediaType, null, apiDoctypeHint, null)
-        return wrapResponseIntoResource {
-            Document.fromApiResponse(JSONObject(documentRemoteSource.getDocumentFromUri(uriFromUpload).string()))
+        val apiDoctypeHint = documentType?.apiDoctypeHint
+
+        return wrapInResource {
+            val uri = documentRemoteSource.uploadDocument(
+                createCompositeJson(documents),
+                giniApiType.giniCompositeJsonMediaType,
+                null,
+                apiDoctypeHint,
+                null
+            )
+            getDocumentInternal(uri)
         }
     }
 
@@ -112,9 +101,16 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
 
     suspend fun createCompositeDocument(documentRotationMap: LinkedHashMap<Document, Int>, documentType: DocumentRemoteSource.DocumentType?): Resource<Document> {
         val apiDoctypeHint = documentType?.apiDoctypeHint
-        val uriFromUpload = documentRemoteSource.uploadDocument(createCompositeJson(documentRotationMap), giniApiType.giniCompositeJsonMediaType, null, apiDoctypeHint, null)
-        return wrapResponseIntoResource {
-            Document.fromApiResponse(JSONObject(documentRemoteSource.getDocumentFromUri(uriFromUpload).string()))
+
+        return wrapInResource {
+            val uri = documentRemoteSource.uploadDocument(
+                createCompositeJson(documentRotationMap),
+                giniApiType.giniCompositeJsonMediaType,
+                null,
+                apiDoctypeHint,
+                null
+            )
+            getDocumentInternal(uri)
         }
     }
 
@@ -160,14 +156,12 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
         return createDocumentInternal(document, filename, documentType, documentMetadata)
     }
 
-    suspend fun createDocumentInternal(document: ByteArray, filename: String?, documentType: DocumentRemoteSource.DocumentType?, documentMetadata: DocumentMetadata?): Resource<Document> {
-        var apiDoctypeHint: String? = null
-        if (documentType != null) {
-            apiDoctypeHint = documentType.apiDoctypeHint
+    private suspend fun createDocumentInternal(document: ByteArray, filename: String?, documentType: DocumentRemoteSource.DocumentType?, documentMetadata: DocumentMetadata?): Resource<Document> {
+        val apiDoctypeHint: String? = documentType?.apiDoctypeHint
+        return wrapInResource {
+            val uri = documentRemoteSource.uploadDocument(document, MediaTypes.IMAGE_JPEG, filename, apiDoctypeHint, documentMetadata?.metadata)
+            getDocumentInternal(uri)
         }
-
-        val documentUri = documentRemoteSource.uploadDocument(document, MediaTypes.IMAGE_JPEG, filename, apiDoctypeHint, documentMetadata?.metadata)
-        return createDocumentInternal(documentUri)
     }
 
     /**
@@ -177,13 +171,13 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
      * @return A Resource document instance representing all the document's metadata.
      */
     suspend fun getDocument(documentId: String): Resource<Document> =
-        wrapResponseIntoResource {
-            Document.fromApiResponse(JSONObject(documentRemoteSource.getDocument(documentId).string()))
+        wrapInResource {
+            Document.fromApiResponse(JSONObject(documentRemoteSource.getDocument(documentId)))
         }
 
     suspend fun getDocument(uri: Uri): Resource<Document> =
-        wrapResponseIntoResource {
-            Document.fromApiResponse(JSONObject(documentRemoteSource.getDocumentFromUri(uri).string()))
+        wrapInResource {
+            getDocumentInternal(uri)
         }
 
     @Throws(Exception::class)
@@ -206,12 +200,14 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
      */
     @Throws(ApiException::class)
     suspend fun getAllExtractions(document: Document): Resource<E> {
-        val extractionsJSONObject = JSONObject(documentRemoteSource.getExtractions(document.id).string())
-        val candidates = extractionCandidatesFromApiResponse(extractionsJSONObject.getJSONObject("candidates"))
-        val specificExtractions = parseSpecificExtractions(extractionsJSONObject.getJSONObject("extractions"), candidates)
-        val compoundExtractions = parseCompoundExtractions(extractionsJSONObject.getJSONObject("compoundExtractions"), candidates)
+        return wrapInResource {
+            val extractionsJSONObject = JSONObject(documentRemoteSource.getExtractions(document.id))
+            val candidates = extractionCandidatesFromApiResponse(extractionsJSONObject.getJSONObject("candidates"))
+            val specificExtractions = parseSpecificExtractions(extractionsJSONObject.getJSONObject("extractions"), candidates)
+            val compoundExtractions = parseCompoundExtractions(extractionsJSONObject.optJSONObject("compoundExtractions"), candidates)
 
-        return Resource.Success(createExtractionsContainer(specificExtractions, compoundExtractions, extractionsJSONObject))
+            createExtractionsContainer(specificExtractions, compoundExtractions, extractionsJSONObject)
+        }
     }
 
     /**
@@ -264,17 +260,10 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
      */
     @Throws(ApiException::class)
     suspend fun reportDocument(document: Document, summary: String?, description: String?): Resource<String> {
-        val errorReportForDocumentCall = wrapResponseIntoResource {
-            documentRemoteSource.errorReportForDocument(document.id, summary, description)
-        }
-
-        return when (errorReportForDocumentCall) {
-            is Resource.Success -> {
-                val jsonObject = JSONObject(errorReportForDocumentCall.data?.string() ?: "")
-                Resource.Success(jsonObject.getString("errorId"))
-            }
-            is Resource.Error -> Resource.Error(message = errorReportForDocumentCall.message, responseHeaders = errorReportForDocumentCall.responseHeaders, responseBody = errorReportForDocumentCall.responseBody)
-            is Resource.Cancelled -> Resource.Cancelled()
+        return wrapInResource {
+            val response = documentRemoteSource.errorReportForDocument(document.id, summary, description)
+            val jsonObject = JSONObject(response)
+            jsonObject.getString("errorId")
         }
     }
 
@@ -287,14 +276,8 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
      */
     @Throws(ApiException::class)
     suspend fun getLayout(document: Document): Resource<String?> {
-        val getLayoutCall = wrapResponseIntoResource {
+        return wrapInResource {
             documentRemoteSource.getLayout(document.id)
-        }
-
-       return when (getLayoutCall) {
-            is Resource.Success -> Resource.Success(getLayoutCall.data?.string())
-            is Resource.Error -> Resource.Error(message = getLayoutCall.message, responseHeaders = getLayoutCall.responseHeaders, responseBody = getLayoutCall.responseBody)
-            is Resource.Cancelled -> Resource.Cancelled()
         }
     }
 
@@ -304,7 +287,7 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
      * @return byte array of file contents
      */
     suspend fun getFile(location: String): Resource<ByteArray> =
-        wrapResponseIntoResource {
+        wrapInResource {
             documentRemoteSource.getFile(location)
         }
 
@@ -313,19 +296,11 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
      */
     @Throws(ApiException::class)
     suspend fun getPaymentRequest(id: String): Resource<PaymentRequest?> {
-        val getPaymentRequestCall = wrapResponseIntoResource {
-            documentRemoteSource.getPaymentRequest(id)
-        }
-
-        return when (getPaymentRequestCall) {
-            is Resource.Success -> {
-                val adapter: JsonAdapter<PaymentRequestResponse> = moshi.adapter(PaymentRequestResponse::class.java)
-                val requestResponse = adapter.fromJson(JSONObject(getPaymentRequestCall.data?.string()).toString())
-
-                Resource.Success(requestResponse?.toPaymentRequest())
-            }
-            is Resource.Error -> Resource.Error(message = getPaymentRequestCall.message, responseHeaders = getPaymentRequestCall.responseHeaders, responseBody = getPaymentRequestCall.responseBody)
-            is Resource.Cancelled -> Resource.Cancelled()
+        return wrapInResource {
+            val response = documentRemoteSource.getPaymentRequest(id)
+            val adapter: JsonAdapter<PaymentRequestResponse> = moshi.adapter(PaymentRequestResponse::class.java)
+            val requestResponse = adapter.fromJson(JSONObject(response).toString())
+            requestResponse?.toPaymentRequest()
         }
     }
 
@@ -334,25 +309,17 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
      */
     @Throws(ApiException::class)
     suspend fun getPaymentRequests(): Resource<List<PaymentRequest>> {
-        val getPaymentRequestCall = wrapResponseIntoResource {
-            documentRemoteSource.getPaymentRequests()
-        }
+        return wrapInResource {
+            val response = documentRemoteSource.getPaymentRequests()
+            val type: Type = Types.newParameterizedType(MutableList::class.java, PaymentRequestResponse::class.java)
+            val adapter: JsonAdapter<List<PaymentRequestResponse>> = moshi.adapter(type)
+            val requestResponses = adapter.fromJson(JSONArray(response).toString())
 
-        return when (getPaymentRequestCall) {
-            is Resource.Success -> {
-                val type: Type = Types.newParameterizedType(MutableList::class.java, PaymentRequestResponse::class.java)
-                val adapter: JsonAdapter<List<PaymentRequestResponse>> = moshi.adapter(type)
-                val requestResponses = adapter.fromJson(JSONArray(getPaymentRequestCall.data?.string()).toString())
-
-                val paymentProviders = mutableListOf<PaymentRequest>()
-                for (paymentRequestResponse in requestResponses ?: emptyList()) {
-                    paymentProviders.add(paymentRequestResponse.toPaymentRequest())
-                }
-
-                Resource.Success(paymentProviders)
+            val paymentProviders = mutableListOf<PaymentRequest>()
+            for (paymentRequestResponse in requestResponses ?: emptyList()) {
+                paymentProviders.add(paymentRequestResponse.toPaymentRequest())
             }
-            is Resource.Error -> Resource.Error(message = getPaymentRequestCall.message, responseHeaders = getPaymentRequestCall.responseHeaders, responseBody = getPaymentRequestCall.responseBody)
-            is Resource.Cancelled -> Resource.Cancelled()
+            paymentProviders
         }
     }
 
@@ -492,13 +459,5 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
          */
         const val DEFAULT_COMPRESSION = 50
 
-        suspend fun <T> wrapResponseIntoResource(request: suspend () -> T) =
-            try {
-                Resource.Success(request())
-            } catch (e: ApiException) {
-                Resource.Error()
-            } catch (e: CancellationException) {
-                Resource.Cancelled()
-            }
     }
 }

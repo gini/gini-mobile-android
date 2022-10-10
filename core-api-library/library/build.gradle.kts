@@ -55,6 +55,7 @@ dependencies {
     implementation(libs.moshi.core)
     implementation(libs.retrofit)
     implementation(libs.retrofit.moshi.converter)
+    implementation(libs.okhttp3.logging.interceptor)
 
     androidTestImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.mockk.android)

@@ -2,23 +2,28 @@ package net.gini.android.core.api.internal
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.os.Build
+import android.util.Log
 import androidx.annotation.XmlRes
-import com.android.volley.Cache
-import com.android.volley.DefaultRetryPolicy
-import com.android.volley.RequestQueue
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Dispatchers
 import net.gini.android.core.api.*
 import net.gini.android.core.api.authorization.*
 import net.gini.android.core.api.models.ExtractionsContainer
 import net.gini.android.core.api.requests.DefaultRetryPolicyFactory
-import net.gini.android.core.api.requests.RetryPolicyFactory
+import okhttp3.Cache
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.net.MalformedURLException
 import java.net.URL
+import java.security.KeyManagementException
+import java.security.NoSuchAlgorithmException
+import java.util.*
 import java.util.concurrent.TimeUnit
+import javax.net.ssl.SSLContext
+import javax.net.ssl.SSLSocketFactory
 import javax.net.ssl.TrustManager
 
 abstract class KGiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : KGiniCoreAPI<DM,DR, E>, DR : DocumentRepository<E>, E : ExtractionsContainer>(
@@ -33,12 +38,8 @@ abstract class KGiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : KGiniCoreAPI
     @XmlRes
     private var mNetworkSecurityConfigResId = 0
     private var mMoshi: Moshi? = null
-    private var mRequestQueue: RequestQueue? = null
     private var mCredentialsStore: CredentialsStore? = null
-    private var mTimeoutInMs = DefaultRetryPolicy.DEFAULT_TIMEOUT_MS
-    private var mMaxRetries = DefaultRetryPolicy.DEFAULT_MAX_RETRIES
-    private var mBackOffMultiplier = DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
-    private var mRetryPolicyFactory: RetryPolicyFactory? = null
+    private var mTimeoutInMs = 2_500
     private var mCache: Cache? = null
     private var mTrustManager: TrustManager? = null
     private var mUserApiRetrofit: Retrofit? = null
@@ -106,31 +107,6 @@ abstract class KGiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : KGiniCoreAPI
     }
 
     /**
-     * Sets the maximal number of retries for each network request.
-     *
-     * @param maxNumberOfRetries maximal number of retries.
-     * @return The builder instance to enable chaining.
-     */
-    open fun setMaxNumberOfRetries(maxNumberOfRetries: Int): KGiniCoreAPIBuilder<DM, G, DR, E> {
-        require(maxNumberOfRetries >= 0) { "maxNumberOfRetries can't be less than 0" }
-        mMaxRetries = maxNumberOfRetries
-        return this
-    }
-
-    /**
-     * Sets the backoff multiplication factor for connection retries.
-     * In case of failed retries the timeout of the last request attempt is multiplied with this factor
-     *
-     * @param backOffMultiplier the backoff multiplication factor
-     * @return The builder instance to enable chaining.
-     */
-    open fun setConnectionBackOffMultiplier(backOffMultiplier: Float): KGiniCoreAPIBuilder<DM, G, DR, E> {
-        require(backOffMultiplier >= 0.0) { "backOffMultiplier can't be less than 0" }
-        mBackOffMultiplier = backOffMultiplier
-        return this
-    }
-
-    /**
      * Set the credentials store which is used by the library to store user credentials. If no credentials store is
      * set, the net.gini.android.core.api.authorization.SharedPreferencesCredentialsStore is used by default.
      *
@@ -176,30 +152,6 @@ abstract class KGiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : KGiniCoreAPI
      * @return The fully configured instance.
      */
     abstract fun build(): G
-
-    /**
-     * Helper method to create (and store) the RequestQueue which is used for both the requests to the Gini API and the
-     * Gini User Center API.
-     *
-     * @return The RequestQueue instance.
-     */
-    @Synchronized
-    open fun getRequestQueue(): RequestQueue {
-        if (mRequestQueue == null) {
-            val requestQueueBuilder = RequestQueueBuilder(context)
-            requestQueueBuilder.setHostnames(getHostnames())
-            if (mCache != null) {
-                requestQueueBuilder.setCache(mCache)
-            }
-            if (mNetworkSecurityConfigResId != 0) {
-                requestQueueBuilder.setNetworkSecurityConfigResId(mNetworkSecurityConfigResId)
-            } else if (mTrustManager != null) {
-                requestQueueBuilder.setTrustManager(mTrustManager!!)
-            }
-            mRequestQueue = requestQueueBuilder.build()
-        }
-        return mRequestQueue!!
-    }
 
     protected fun getApiBaseUrl(): String? {
         return if (mApiBaseUrl != null) mApiBaseUrl else getGiniApiType().baseUrl
@@ -270,23 +222,6 @@ abstract class KGiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : KGiniCoreAPI
     }
 
     /**
-     * Helper method to create a [RetryPolicyFactory] instance which is used to create a
-     * [com.android.volley.RetryPolicy] for each request.
-     *
-     * @return The RetryPolicyFactory instance.
-     */
-    @Synchronized
-    protected fun getRetryPolicyFactory(): RetryPolicyFactory {
-        if (mRetryPolicyFactory == null) {
-            mRetryPolicyFactory = DefaultRetryPolicyFactory(
-                mTimeoutInMs, mMaxRetries,
-                mBackOffMultiplier
-            )
-        }
-        return mRetryPolicyFactory as RetryPolicyFactory
-    }
-
-    /**
      * Helper method to create a DocumentTaskManager instance.
      *
      * @return The DocumentTaskManager instance.
@@ -319,32 +254,92 @@ abstract class KGiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : KGiniCoreAPI
 
     @Synchronized
     private fun getUserApiRetrofit(): Retrofit {
-        mUserApiRetrofit = Retrofit.Builder()
+        val retrofit = Retrofit.Builder()
             .baseUrl(mUserCenterApiBaseUrl)
-            .addConverterFactory(MoshiConverterFactory.create())
-            .client(
-                OkHttpClient.Builder()
-                    .connectTimeout(mTimeoutInMs.toLong(), TimeUnit.MILLISECONDS)
-                    .readTimeout(mTimeoutInMs.toLong(), TimeUnit.MILLISECONDS)
-                    .writeTimeout(mTimeoutInMs.toLong(), TimeUnit.MILLISECONDS).build()
-            )
+            .addConverterFactory(MoshiConverterFactory.create(getMoshi()))
+            .client(createOkHttpClient())
             .build()
-        return mUserApiRetrofit as Retrofit
+        mUserApiRetrofit = retrofit
+        return retrofit
+    }
+
+    private fun createOkHttpClient() = OkHttpClient.Builder()
+        .apply {
+           getTrustManagers()?.let { trustManagers ->
+                createSSLSocketFactory(trustManagers)?.let { socketFactory ->
+                    sslSocketFactory(socketFactory, X509TrustManagerAdapter(trustManagers[0]))
+                }
+            }
+
+            if (mCache != null) {
+                cache(mCache)
+            }
+
+            if (DEBUG && BuildConfig.DEBUG) {
+                Log.w(LOG_TAG, "Logging interceptor is enabled. Turn off debugging for release builds!")
+                addInterceptor(HttpLoggingInterceptor().apply {
+                    level = HttpLoggingInterceptor.Level.BODY
+                })
+            }
+        }
+        .connectTimeout(mTimeoutInMs.toLong(), TimeUnit.MILLISECONDS)
+        .readTimeout(mTimeoutInMs.toLong(), TimeUnit.MILLISECONDS)
+        .writeTimeout(mTimeoutInMs.toLong(), TimeUnit.MILLISECONDS)
+        .build()
+
+    private fun createSSLSocketFactory(trustManagers: Array<TrustManager>?): SSLSocketFactory? {
+        return try {
+            val sslContext: SSLContext = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                // Since Android 10 (Q) TLSv1.3 is default
+                // https://developer.android.com/reference/javax/net/ssl/SSLSocket#default-configuration-for-different-android-versions
+                // We still need to set it explicitly to be able to call init() on the SSLContext instance
+                SSLContext.getInstance("TLSv1.3")
+            } else {
+                // Force TLSv1.2 on older versions
+                SSLContext.getInstance("TLSv1.2")
+            }
+            sslContext.init(null, trustManagers, null)
+            sslContext.socketFactory
+        } catch (ignore: NoSuchAlgorithmException) {
+            null
+        } catch (ignore: KeyManagementException) {
+            null
+        }
+    }
+
+    private fun getTrustManagers(): Array<TrustManager>? {
+        if (mTrustManager != null) {
+            return arrayOf(mTrustManager!!)
+        }
+        val pubKeyManager = createPubKeyManager()
+        return if (pubKeyManager != null) {
+            arrayOf(pubKeyManager)
+        } else null
+    }
+
+    private fun createPubKeyManager(): PubKeyManager? {
+        val builder = PubKeyManager.builder(context)
+        val hostnames = getHostnames();
+        if (hostnames.isNotEmpty()) {
+            builder.setHostnames(hostnames)
+        }
+        if (mNetworkSecurityConfigResId != 0) {
+            builder.setNetworkSecurityConfigResId(mNetworkSecurityConfigResId)
+        }
+        return if (builder.canBuild()) {
+            builder.build()
+        } else null
     }
 
     @Synchronized
     protected fun getApiRetrofit(): Retrofit {
-        mPayApiRetrofit = Retrofit.Builder()
+        val retrofit = Retrofit.Builder()
             .baseUrl(getApiBaseUrl()!!)
-            .addConverterFactory(MoshiConverterFactory.create())
-            .client(
-                OkHttpClient.Builder()
-                    .connectTimeout(mTimeoutInMs.toLong(), TimeUnit.MILLISECONDS)
-                    .readTimeout(mTimeoutInMs.toLong(), TimeUnit.MILLISECONDS)
-                    .writeTimeout(mTimeoutInMs.toLong(), TimeUnit.MILLISECONDS).build()
-            )
+            .addConverterFactory(MoshiConverterFactory.create(getMoshi()))
+            .client(createOkHttpClient())
             .build()
-        return mPayApiRetrofit as Retrofit
+        mPayApiRetrofit = retrofit
+        return retrofit
     }
 
     @Synchronized
@@ -368,5 +363,10 @@ abstract class KGiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : KGiniCoreAPI
             mDocumentRepository = createDocumentRepository()
         }
         return mDocumentRepository as DR
+    }
+
+    companion object {
+        const val LOG_TAG = "GiniCoreAPIBuilder"
+        const val DEBUG = true
     }
 }

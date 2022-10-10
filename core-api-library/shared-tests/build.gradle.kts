@@ -40,6 +40,7 @@ android {
 dependencies {
     implementation(project(":core-api-library:library"))
     implementation(libs.trustkit)
+    implementation(libs.retrofit)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.kotlinx.coroutines.core)

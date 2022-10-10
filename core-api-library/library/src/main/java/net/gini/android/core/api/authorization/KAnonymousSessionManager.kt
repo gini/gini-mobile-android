@@ -22,56 +22,59 @@ class KAnonymousSessionManager(
 
         val userCredentials = credentialsStore.userCredentials
         return if (userCredentials == null) {
-            val createResponse = createUser()
-            if (createResponse is Resource.Success) {
-                return when (val loginResponse = loginUser()) {
-                    is Resource.Success -> {
-                        currentSession = loginResponse.data
-
-                        loginResponse
+            when (val createResponse = createUser()) {
+                is Resource.Cancelled -> Resource.Cancelled()
+                is Resource.Error -> Resource.Error(createResponse)
+                is Resource.Success -> {
+                    val loginResponse = loginUser()
+                    currentSession = when (loginResponse) {
+                        is Resource.Success -> loginResponse.data
+                        else -> null
                     }
-
-                    else -> {
-                        currentSession = null
-
-                        loginResponse
-                    }
+                    loginResponse
                 }
             }
-            Resource.Error(responseStatusCode = createResponse.responseStatusCode, responseHeaders = createResponse.responseHeaders)
         } else {
             return when (val loginResponse = loginUser()) {
                 is Resource.Success -> {
                     currentSession = loginResponse.data
                     loginResponse
                 }
-
                 is Resource.Error -> {
                     if (isInvalidUserError(loginResponse)) {
                         currentSession = null
                         credentialsStore.deleteUserCredentials()
-                        val createResponse = createUser()
-                        if (createResponse is Resource.Success) {
-                            currentSession = loginUser().data
-
-                            loginResponse
+                        return when (val createResponse = createUser()) {
+                            is Resource.Cancelled -> Resource.Cancelled()
+                            is Resource.Error -> Resource.Error(createResponse)
+                            is Resource.Success -> {
+                                val newUserLoginResponse = loginUser()
+                                currentSession = when (newUserLoginResponse) {
+                                    is Resource.Success -> newUserLoginResponse.data
+                                    else -> null
+                                }
+                                newUserLoginResponse
+                            }
                         }
+                    } else {
+                        loginResponse
                     }
-                   loginResponse
                 }
-
                 is Resource.Cancelled -> loginResponse
             }
         }
     }
 
-    suspend fun createUser(): Resource<ResponseBody> {
+    private suspend fun createUser(): Resource<Unit> {
         val userRequestModel = UserRequestModel(generateUserName(), generatePassword())
-        val response = userRepository.createUser(userRequestModel)
-        if (response is Resource.Success) {
-            credentialsStore.storeUserCredentials(UserCredentials(userRequestModel.username, userRequestModel.password))
+        return when (val response = userRepository.createUser(userRequestModel)) {
+            is Resource.Cancelled -> Resource.Cancelled()
+            is Resource.Error -> Resource.Error(response)
+            is Resource.Success -> {
+                credentialsStore.storeUserCredentials(UserCredentials(userRequestModel.email, userRequestModel.password))
+                response
+            }
         }
-        return response
     }
 
     suspend fun loginUser(): Resource<SessionToken?> {
@@ -81,23 +84,45 @@ class KAnonymousSessionManager(
                 return userRepository.loginUser(UserRequestModel(userCredentials.username, userCredentials.password))
             }
 
-            val updateCredentials = updateEmailDomain(userCredentials)
-            return userRepository.loginUser(UserRequestModel(updateCredentials.username, updateCredentials.password))
+            return when (val updateCredentials = updateEmailDomain(userCredentials)) {
+                is Resource.Cancelled -> Resource.Cancelled()
+                is Resource.Error -> Resource.Error(updateCredentials)
+                is Resource.Success -> {
+                    userRepository.loginUser(UserRequestModel(updateCredentials.data.username, updateCredentials.data.password))
+                }
+            }
         }
         return Resource.Error()
     }
 
-    suspend fun updateEmailDomain(userCredentials: UserCredentials): UserCredentials {
+    private suspend fun updateEmailDomain(userCredentials: UserCredentials): Resource<UserCredentials> {
         val oldEmail = userCredentials.username
         val newEmail = generateUserName()
 
-        val sessionFromLogin = userRepository.loginUser(UserRequestModel(userCredentials.username, userCredentials.password))
-        userRepository.updateEmail(newEmail, oldEmail, sessionFromLogin.data!!)
-        credentialsStore.deleteUserCredentials()
-        val newCredentials = UserCredentials(newEmail, userCredentials.password)
-        credentialsStore.storeUserCredentials(newCredentials)
+        return when (val loginUser = userRepository.loginUser(UserRequestModel(userCredentials.username, userCredentials.password))) {
+            is Resource.Cancelled -> Resource.Cancelled()
+            is Resource.Error -> Resource.Error(loginUser)
+            is Resource.Success -> {
+                val session = loginUser.data
+                    ?: return Resource.Error(
+                        "Session is missing from response",
+                        loginUser.responseStatusCode,
+                        loginUser.responseHeaders,
+                        loginUser.responseBody
+                    )
 
-        return newCredentials
+                return when (val updateEmail = userRepository.updateEmail(newEmail, oldEmail, session)) {
+                    is Resource.Cancelled -> Resource.Cancelled()
+                    is Resource.Error -> Resource.Error(updateEmail)
+                    is Resource.Success -> {
+                        credentialsStore.deleteUserCredentials()
+                        val newCredentials = UserCredentials(newEmail, userCredentials.password)
+                        credentialsStore.storeUserCredentials(newCredentials)
+                        Resource.Success(newCredentials)
+                    }
+                }
+            }
+        }
     }
 
     fun hasUserCredentialsEmailDomain(emailDomain: String, userCredentials: UserCredentials): Boolean {

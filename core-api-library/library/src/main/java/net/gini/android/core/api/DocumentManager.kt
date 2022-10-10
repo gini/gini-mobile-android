@@ -1,17 +1,9 @@
 package net.gini.android.core.api
 
 import android.net.Uri
-import bolts.Task
-import kotlin.coroutines.Continuation
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlinx.coroutines.asCoroutineDispatcher
-import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlinx.coroutines.withContext
 import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.models.ExtractionsContainer
 import net.gini.android.core.api.models.PaymentRequest
-import org.json.JSONObject
 
 /**
  * The [DocumentManager] is a high level API on top of the Gini API, which is used via the DocumentRepository. It
@@ -36,11 +28,7 @@ abstract class DocumentManager<out DR: DocumentRepository<E>, E: ExtractionsCont
         documentType: DocumentRemoteSource.DocumentType? = null,
         documentMetadata: DocumentMetadata? = null,
     ): Resource<Document> =
-        if (documentMetadata != null) {
-            documentRepository.createPartialDocument(document, contentType, filename, documentType, documentMetadata)
-        } else {
-            documentRepository.createPartialDocument(document, contentType, filename, documentType)
-        }
+        documentRepository.createPartialDocument(document, contentType, filename, documentType, documentMetadata)
 
     /**
      * Deletes a Gini partial document and all its parent composite documents.
@@ -52,7 +40,7 @@ abstract class DocumentManager<out DR: DocumentRepository<E>, E: ExtractionsCont
      * @return Empty Resource or informations about the error
      */
 
-    suspend fun deletePartialDocumentAndParents(documentId: String): Resource<String> =
+    suspend fun deletePartialDocumentAndParents(documentId: String): Resource<Unit> =
         documentRepository.deletePartialDocumentAndParents(documentId)
 
     /**
@@ -63,7 +51,7 @@ abstract class DocumentManager<out DR: DocumentRepository<E>, E: ExtractionsCont
      * @param documentId The id of an existing document
      * @return Empty Resource or informations about the error
      */
-    suspend fun deleteDocument(documentId: String): Resource<String> =
+    suspend fun deleteDocument(documentId: String): Resource<Unit> =
         documentRepository.deleteDocument(documentId)
 
     /**
@@ -182,14 +170,10 @@ abstract class DocumentManager<out DR: DocumentRepository<E>, E: ExtractionsCont
      */
     suspend fun getExtractions(
         document: Document
-    ) : Resource<E> {
-        val pollDocument = documentRepository.pollDocument(document)
-
-        if (pollDocument.data != null) {
-            return documentRepository.getAllExtractions(pollDocument.data)
-        }
-
-        return Resource.Error("Empty data from poll")
+    ): Resource<E> = when (val pollDocument = documentRepository.pollDocument(document)) {
+        is Resource.Cancelled -> Resource.Cancelled()
+        is Resource.Error -> Resource.Error(pollDocument)
+        is Resource.Success -> documentRepository.getAllExtractions(pollDocument.data)
     }
 
     /**

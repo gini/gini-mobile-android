@@ -90,4 +90,5 @@ trustkit = "com.datatheorem.android.trustkit:trustkit:1.1.5"
 jUnitParams = "pl.pragmatists:JUnitParams:1.1.1"
 retrofit = "com.squareup.retrofit2:retrofit:2.9.0"
 retrofit-moshi-converter = "com.squareup.retrofit2:converter-moshi:2.4.0"
+okhttp3-logging-interceptor = "com.squareup.okhttp3:logging-interceptor:4.2.1"
 

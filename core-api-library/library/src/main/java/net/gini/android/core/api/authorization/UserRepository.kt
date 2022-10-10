@@ -1,13 +1,10 @@
 package net.gini.android.core.api.authorization
 
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.*
 import net.gini.android.core.api.Resource
+import net.gini.android.core.api.Resource.Companion.wrapInResource
 import net.gini.android.core.api.authorization.apimodels.SessionToken
 import net.gini.android.core.api.authorization.apimodels.UserRequestModel
-import net.gini.android.core.api.requests.ApiException
-import okhttp3.ResponseBody
-import java.util.concurrent.CancellationException
 import kotlin.coroutines.CoroutineContext
 
 open class UserRepository(
@@ -19,50 +16,41 @@ open class UserRepository(
 
     //region Public methods
     suspend fun loginUser(userRequestModel: UserRequestModel): Resource<SessionToken?> =
-        wrapResponseIntoResource {
+        wrapInResource {
             userRemoteSource.signIn(userRequestModel)
         }
 
-    suspend fun loginClient(): Resource<SessionToken> =
-        wrapResponseIntoResource {
+    private suspend fun loginClient(): Resource<SessionToken> =
+        wrapInResource {
             userRemoteSource.loginClient()
         }
 
-    suspend fun createUser(userRequestModel: UserRequestModel): Resource<ResponseBody> =
-        wrapResponseIntoResource {
-            val token = getUserRepositorySession() ?: throw ApiException()
-            userRemoteSource.createUser(userRequestModel, token)
+    suspend fun createUser(userRequestModel: UserRequestModel): Resource<Unit> =
+        when (val token = getUserRepositorySession()) {
+            is Resource.Cancelled -> Resource.Cancelled()
+            is Resource.Error -> Resource.Error(token)
+            is Resource.Success -> wrapInResource {
+                userRemoteSource.createUser(userRequestModel, token.data)
+            }
         }
 
-    suspend fun getUserRepositorySession(): SessionToken? =
-            if (session?.hasExpired() == false || session != null) {
-                session
+    private suspend fun getUserRepositorySession(): Resource<SessionToken> =
+        session?.let { session ->
+            if (!session.hasExpired()) {
+                Resource.Success(session)
             } else {
-                loginClient().data
+                loginClient()
             }
+        } ?: loginClient()
 
-    suspend fun updateEmail(newEmail: String, oldEmail: String, session: SessionToken): Resource<ResponseBody>? =
-        getUserRepositorySession()?.accessToken?.let { token ->
-            val userId = userRemoteSource.getGiniApiSessionTokenInfo(token).userName
-            wrapResponseIntoResource {
-                userRemoteSource.updateEmail(userId ?: "", UserRequestModel(newEmail = newEmail, oldEmail = oldEmail), session)
+    suspend fun updateEmail(newEmail: String, oldEmail: String, session: SessionToken): Resource<Unit> =
+        when (val authToken = getUserRepositorySession()) {
+            is Resource.Cancelled -> Resource.Cancelled()
+            is Resource.Error -> Resource.Error(authToken)
+            is Resource.Success -> wrapInResource {
+                val userId = userRemoteSource.getGiniApiSessionTokenInfo(session.accessToken, authToken.data).userName
+                userRemoteSource.updateEmail(userId, UserRequestModel(email = newEmail, oldEmail = oldEmail), authToken.data)
             }
-
         }
-
-    fun foo(): Int {
-        throw Exception("Foo exception")
-    }
     //endregion
-
-    companion object {
-        private suspend fun <T> wrapResponseIntoResource(request: suspend () -> T) =
-            try {
-                Resource.Success(request())
-            } catch (e: ApiException) {
-                Resource.Error(e.message ?: "")
-            } catch (e: CancellationException) {
-                Resource.Cancelled()
-            }
-    }
 }

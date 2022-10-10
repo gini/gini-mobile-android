@@ -17,7 +17,6 @@ import static org.mockito.Mockito.verify;
 
 import android.net.Uri;
 
-import androidx.annotation.NonNull;
 import androidx.test.filters.MediumTest;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
@@ -27,12 +26,8 @@ import com.android.volley.RequestQueue;
 
 import net.gini.android.core.api.authorization.Session;
 import net.gini.android.core.api.requests.DefaultRetryPolicyFactory;
-import net.gini.android.core.api.requests.RetryPolicyFactory;
 import net.gini.android.core.api.test.TestGiniApiType;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

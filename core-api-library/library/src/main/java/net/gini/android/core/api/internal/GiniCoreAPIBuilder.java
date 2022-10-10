@@ -8,12 +8,8 @@ import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.RequestQueue;
 import com.squareup.moshi.Moshi;
 
-import net.gini.android.core.api.ApiCommunicator;
 import net.gini.android.core.api.DocumentManager;
-import net.gini.android.core.api.DocumentRemoteSource;
 import net.gini.android.core.api.DocumentRepository;
-import net.gini.android.core.api.DocumentService;
-import net.gini.android.core.api.DocumentTaskManager;
 import net.gini.android.core.api.GiniApiType;
 import net.gini.android.core.api.RequestQueueBuilder;
 import net.gini.android.core.api.authorization.AnonymousSessionManager;
@@ -22,16 +18,12 @@ import net.gini.android.core.api.authorization.EncryptedCredentialsStore;
 import net.gini.android.core.api.authorization.KAnonymousSessionManager;
 import net.gini.android.core.api.authorization.KSessionManager;
 import net.gini.android.core.api.authorization.SessionManager;
-import net.gini.android.core.api.authorization.UserCenterAPICommunicator;
 import net.gini.android.core.api.authorization.UserRemoteSource;
 import net.gini.android.core.api.authorization.UserRepository;
 import net.gini.android.core.api.authorization.UserService;
 import net.gini.android.core.api.models.ExtractionsContainer;
 import net.gini.android.core.api.requests.DefaultRetryPolicyFactory;
 import net.gini.android.core.api.requests.RetryPolicyFactory;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.net.MalformedURLException;
 import java.net.URL;

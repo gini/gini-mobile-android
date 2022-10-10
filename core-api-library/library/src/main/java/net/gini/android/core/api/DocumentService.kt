@@ -4,6 +4,7 @@ import android.net.Uri
 import net.gini.android.core.api.authorization.UserService
 import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.response.PaymentRequestResponse
+import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.*
@@ -11,7 +12,7 @@ import retrofit2.http.*
 interface DocumentService {
 
     @POST("documents/")
-    suspend fun uploadDocument(@HeaderMap bearer: Map<String, String>, @Body bytes: ByteArray,  @Query("filename") fileName: String?, @Query("doctype") docType: String?): Response<ResponseBody>
+    suspend fun uploadDocument(@HeaderMap bearer: Map<String, String>, @Body bytes: RequestBody, @Query("filename") fileName: String?, @Query("doctype") docType: String?): Response<ResponseBody>
 
     @GET("documents/{documentId}")
     suspend fun getDocument(@HeaderMap bearer: Map<String, String>, @Path("documentId") documentId: String): Response<ResponseBody>
@@ -26,10 +27,10 @@ interface DocumentService {
     suspend fun getIncubatorExtractions(@HeaderMap incubatorHeader: Map<String, String>, @Path("documentId") documentId: String): Response<ResponseBody>
 
     @DELETE("documents/{documentId}")
-    suspend fun deleteDocument(@HeaderMap bearer: Map<String, String>, @Path("documentId") documentId: String): Response<String>
+    suspend fun deleteDocument(@HeaderMap bearer: Map<String, String>, @Path("documentId") documentId: String): Response<ResponseBody>
 
     @DELETE
-    suspend fun deleteDocumentFromUri(@HeaderMap bearer: Map<String, String>, @Url documentUri: Uri): Response<String>
+    suspend fun deleteDocumentFromUri(@HeaderMap bearer: Map<String, String>, @Url documentUri: Uri): Response<ResponseBody>
 
     @POST("documents/{documentId}/errorreport")
     suspend fun errorReportForDocument(@HeaderMap bearer: Map<String, String>, @Path("documentId") documentId: String, @Query("summary") summary: String?, @Query("description") description: String?): Response<ResponseBody>

@@ -2,10 +2,11 @@ package net.gini.android.core.api.authorization
 
 import kotlinx.coroutines.withContext
 import net.gini.android.core.api.authorization.apimodels.SessionToken
+import net.gini.android.core.api.authorization.apimodels.SessionTokenInfo
 import net.gini.android.core.api.authorization.apimodels.UserRequestModel
 import net.gini.android.core.api.authorization.apimodels.UserResponseModel
+import net.gini.android.core.api.requests.ApiException
 import net.gini.android.core.api.requests.SafeApiRequest
-import okhttp3.ResponseBody
 import java.util.*
 import kotlin.coroutines.CoroutineContext
 
@@ -18,44 +19,42 @@ class UserRemoteSource(
 
     suspend fun signIn(userRequestModel: UserRequestModel): SessionToken = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
-            userService.signIn(basicHeaderMap(), userRequestModel.username ?: "", userRequestModel.password ?: "")
+            userService.signIn(basicHeaderMap(), userRequestModel.email ?: "", userRequestModel.password ?: "")
         }
-        response.first
+        response.body() ?: throw ApiException("Empty response body", response)
     }
 
     suspend fun loginClient(): SessionToken = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             userService.loginClient(basicHeaderMap())
         }
-        response.first
+        response.body() ?: throw ApiException("Empty response body", response)
     }
 
-    suspend fun createUser(userRequestModel: UserRequestModel, sessionToken: SessionToken): ResponseBody = withContext(coroutineContext) {
-        val response = SafeApiRequest.apiRequest {
+    suspend fun createUser(userRequestModel: UserRequestModel, sessionToken: SessionToken): Unit = withContext(coroutineContext) {
+        SafeApiRequest.apiRequest {
             userService.createUser(bearerHeaderMap(sessionToken), userRequestModel)
         }
-        response.first
     }
 
-    suspend fun getGiniApiSessionTokenInfo(token: String): SessionToken = withContext(coroutineContext) {
+    suspend fun getGiniApiSessionTokenInfo(token: String, authSessionToken: SessionToken): SessionTokenInfo = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
-           userService.getGiniApiSessionTokenInfo(token)
+           userService.getGiniApiSessionTokenInfo(bearerHeaderMap(authSessionToken), token)
         }
-        response.first
+        response.body() ?: throw ApiException("Empty response body", response)
     }
 
     suspend fun getUserInfo(uri: String, sessionToken: SessionToken): UserResponseModel = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             userService.getUserInfo(bearerHeaderMap(sessionToken), uri)
         }
-        response.first
+        response.body() ?: throw ApiException("Empty response body", response)
     }
 
-    suspend fun updateEmail(userId: String, userRequestModel: UserRequestModel, sessionToken: SessionToken): ResponseBody = withContext(coroutineContext) {
+    suspend fun updateEmail(userId: String, userRequestModel: UserRequestModel, sessionToken: SessionToken): Unit = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             userService.updateEmail(bearerHeaderMap(sessionToken), userId, userRequestModel)
         }
-        response.first
     }
 
     private fun basicHeaderMap(): Map<String, String> {
@@ -66,6 +65,6 @@ class UserRemoteSource(
 
     private fun bearerHeaderMap(sessionToken: SessionToken): Map<String, String> {
         return mapOf("Accept" to "application/json",
-            "Authorization" to "BEARER $sessionToken")
+            "Authorization" to "BEARER ${sessionToken.accessToken}")
     }
 }

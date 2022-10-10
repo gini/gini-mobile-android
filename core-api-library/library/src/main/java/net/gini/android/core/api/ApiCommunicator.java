@@ -1,7 +1,5 @@
 package net.gini.android.core.api;
 
-import static android.graphics.Bitmap.Config.ARGB_8888;
-
 import static com.android.volley.Request.Method.DELETE;
 import static com.android.volley.Request.Method.GET;
 import static com.android.volley.Request.Method.POST;
@@ -9,12 +7,10 @@ import static com.android.volley.Request.Method.POST;
 import static net.gini.android.core.api.Utils.checkNotNull;
 import static net.gini.android.core.api.Utils.mapToUrlEncodedString;
 
-import android.graphics.Bitmap;
 import android.net.Uri;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.StringRequest;
 
 import net.gini.android.core.api.authorization.Session;
@@ -26,7 +22,6 @@ import net.gini.android.core.api.requests.BearerUploadRequest;
 import net.gini.android.core.api.requests.RetryPolicyFactory;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Collections;

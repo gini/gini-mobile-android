@@ -9,7 +9,13 @@ import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.requests.ApiException
 import net.gini.android.core.api.requests.SafeApiRequest
 import net.gini.android.core.api.response.PaymentRequestResponse
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.Request
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody
+import okhttp3.ResponseBody.Companion.toResponseBody
 import retrofit2.Response
 import retrofit2.http.HEAD
 import retrofit2.http.Header
@@ -35,128 +41,129 @@ abstract class DocumentRemoteSource(
         val response = SafeApiRequest.apiRequest {
             val apiResult = sessionManager.getSession()
             if (apiResult is Resource.Error) {
-                throw ApiException(apiResult.message, apiResult.responseStatusCode, apiResult.responseBody, apiResult.responseHeaders)
+                throw apiResult.toApiException()
             }
-            documentService.uploadDocument(customBearerHeaderMap(apiResult.data, metadata, contentType), data, filename, docType)
+            val body: RequestBody = data.toRequestBody("application/octet-stream".toMediaTypeOrNull(), 0, data.size)
+            documentService.uploadDocument(customBearerHeaderMap(apiResult.data, metadata, contentType), body, filename, docType)
         }
-        Uri.parse(response.second[HEADER_LOCATION_KEY]?.first() ?: "")
+
+        Uri.parse(response.headers()[HEADER_LOCATION_KEY] ?: "")
     }
 
-    suspend fun deleteDocument(documentUri: Uri): String = withContext(coroutineContext) {
+    suspend fun deleteDocument(documentUri: Uri): Unit = withContext(coroutineContext) {
+        SafeApiRequest.apiRequest {
+            val apiResult = sessionManager.getSession()
+            if (apiResult is Resource.Error) {
+                throw apiResult.toApiException()
+            }
+
+            documentService.deleteDocumentFromUri(bearerHeaderMap(apiResult.data, giniApiType.giniJsonMediaType), documentUri)
+        }
+    }
+
+    suspend fun deleteDocument(documentId: String): Unit = withContext(coroutineContext) {
+        SafeApiRequest.apiRequest {
+            val apiResult = sessionManager.getSession()
+            if (apiResult is Resource.Error) {
+                throw apiResult.toApiException()
+            }
+
+            documentService.deleteDocument(bearerHeaderMap(apiResult.data, giniApiType.giniJsonMediaType), documentId)
+        }
+    }
+
+    suspend fun getDocument(documentId: String): String = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             val apiResult = sessionManager.getSession()
             if (apiResult is Resource.Error) {
-                throw ApiException(apiResult.message, apiResult.responseStatusCode, apiResult.responseBody, apiResult.responseHeaders)
+                throw apiResult.toApiException()
             }
-
-            documentService.deleteDocumentFromUri(bearerHeaderMap(apiResult.data), documentUri)
+            documentService.getDocument(bearerHeaderMap(apiResult.data, giniApiType.giniJsonMediaType), documentId)
         }
-        response.first
+        response.body()?.string() ?: throw ApiException("Empty response body", response)
     }
 
-    suspend fun deleteDocument(documentId: String): String = withContext(coroutineContext) {
+    suspend fun getDocumentFromUri(uri: Uri): String = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             val apiResult = sessionManager.getSession()
             if (apiResult is Resource.Error) {
-                throw ApiException(apiResult.message, apiResult.responseStatusCode, apiResult.responseBody, apiResult.responseHeaders)
+                throw apiResult.toApiException()
             }
-
-            documentService.deleteDocument(bearerHeaderMap(apiResult.data), documentId)
+            documentService.getDocumentFromUri(bearerHeaderMap(apiResult.data, giniApiType.giniJsonMediaType), uriRelativeToBaseUri(uri).toString())
         }
-        response.first
+        response.body()?.string() ?: throw ApiException("Empty response body", response)
     }
 
-    suspend fun getDocument(documentId: String): ResponseBody = withContext(coroutineContext) {
+    suspend fun getExtractions(documentId: String): String = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             val apiResult = sessionManager.getSession()
             if (apiResult is Resource.Error) {
-                throw ApiException(apiResult.message, apiResult.responseStatusCode, apiResult.responseBody, apiResult.responseHeaders)
+                throw apiResult.toApiException()
             }
-            documentService.getDocument(bearerHeaderMap(apiResult.data), documentId)
+            documentService.getExtractions(bearerHeaderMap(apiResult.data, giniApiType.giniJsonMediaType), documentId)
         }
-        response.first
+        response.body()?.string() ?: throw ApiException("Empty response body", response)
     }
 
-    suspend fun getDocumentFromUri(uri: Uri): ResponseBody = withContext(coroutineContext) {
+    suspend fun errorReportForDocument(documentId: String, summary: String?, description: String?): String = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             val apiResult = sessionManager.getSession()
             if (apiResult is Resource.Error) {
-                throw ApiException(apiResult.message, apiResult.responseStatusCode, apiResult.responseBody, apiResult.responseHeaders)
+                throw apiResult.toApiException()
             }
-            documentService.getDocumentFromUri(bearerHeaderMap(apiResult.data), uriRelativeToBaseUri(uri).toString())
+            documentService.errorReportForDocument(bearerHeaderMap(apiResult.data, giniApiType.giniJsonMediaType), documentId, summary, description)
         }
-        response.first
+        response.body()?.string() ?: throw ApiException("Empty response body", response)
     }
 
-    suspend fun getExtractions(documentId: String): ResponseBody = withContext(coroutineContext) {
+    suspend fun getLayout(documentId: String): String = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             val apiResult = sessionManager.getSession()
             if (apiResult is Resource.Error) {
-                throw ApiException(apiResult.message, apiResult.responseStatusCode, apiResult.responseBody, apiResult.responseHeaders)
+                throw apiResult.toApiException()
             }
-            documentService.getExtractions(bearerHeaderMap(apiResult.data), documentId)
+            documentService.getLayoutForDocument(bearerHeaderMap(apiResult.data, giniApiType.giniJsonMediaType), documentId)
         }
-        response.first
-    }
-
-    suspend fun errorReportForDocument(documentId: String, summary: String?, description: String?): ResponseBody = withContext(coroutineContext) {
-        val response = SafeApiRequest.apiRequest {
-            val apiResult = sessionManager.getSession()
-            if (apiResult is Resource.Error) {
-                throw ApiException(apiResult.message, apiResult.responseStatusCode, apiResult.responseBody, apiResult.responseHeaders)
-            }
-            documentService.errorReportForDocument(bearerHeaderMap(apiResult.data), documentId, summary, description)
-        }
-        response.first
-    }
-
-    suspend fun getLayout(documentId: String): ResponseBody = withContext(coroutineContext) {
-        val response = SafeApiRequest.apiRequest {
-            val apiResult = sessionManager.getSession()
-            if (apiResult is Resource.Error) {
-                throw ApiException(apiResult.message, apiResult.responseStatusCode, apiResult.responseBody, apiResult.responseHeaders)
-            }
-            documentService.getLayoutForDocument(bearerHeaderMap(apiResult.data), documentId)
-        }
-        response.first
+        response.body()?.string() ?: throw ApiException("Empty response body", response)
     }
 
     suspend fun getFile(location: String): ByteArray = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             val apiResult = sessionManager.getSession()
             if (apiResult is Resource.Error) {
-                throw ApiException(apiResult.message, apiResult.responseStatusCode, apiResult.responseBody, apiResult.responseHeaders)
+                throw apiResult.toApiException()
             }
-            documentService.getFile(bearerHeaderMap(apiResult.data), location)
+            documentService.getFile(bearerHeaderMap(apiResult.data, giniApiType.giniJsonMediaType), location)
         }
-        response.first
+        response.body() ?: throw ApiException("Empty response body", response)
     }
 
-    suspend fun getPaymentRequest(id: String): ResponseBody = withContext(coroutineContext) {
+    suspend fun getPaymentRequest(id: String): String = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             val apiResult = sessionManager.getSession()
             if (apiResult is Resource.Error) {
-                throw ApiException(apiResult.message, apiResult.responseStatusCode, apiResult.responseBody, apiResult.responseHeaders)
+                throw apiResult.toApiException()
             }
-            documentService.getPaymentRequest(bearerHeaderMap(apiResult.data), id)
+            documentService.getPaymentRequest(bearerHeaderMap(apiResult.data, giniApiType.giniJsonMediaType), id)
         }
-        response.first
+        response.body()?.string() ?: throw ApiException("Empty response body", response)
     }
 
-    suspend fun getPaymentRequests(): ResponseBody = withContext(coroutineContext) {
+    suspend fun getPaymentRequests(): String = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             val apiResult = sessionManager.getSession()
             if (apiResult is Resource.Error) {
-                throw ApiException(apiResult.message, apiResult.responseStatusCode, apiResult.responseBody, apiResult.responseHeaders)
+                throw apiResult.toApiException()
             }
-            documentService.getPaymentRequests(bearerHeaderMap(apiResult.data))
+            documentService.getPaymentRequests(bearerHeaderMap(apiResult.data, giniApiType.giniJsonMediaType))
         }
-        response.first
+        response.body()?.string() ?: throw ApiException("Empty response body", response)
     }
 
-    protected  fun bearerHeaderMap(sessionToken: SessionToken?): Map<String, String> {
+    protected fun bearerHeaderMap(sessionToken: SessionToken?, contentType: String): Map<String, String> {
         return mapOf("Accept" to giniApiType.giniJsonMediaType,
-            "Authorization" to "BEARER ${sessionToken?.accessToken}")
+            "Authorization" to "BEARER ${sessionToken?.accessToken}",
+            "Content-Type" to contentType)
     }
 
     protected fun customBearerHeaderMap(sessionToken: SessionToken?, metadata: Map<String, String>?, contentType: String): Map<String, String> {
