@@ -778,8 +778,15 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             topAdapterInjectedViewContainer.getInjectedViewAdapter().setTitle(mFragment.getActivity().getResources().getString(R.string.gc_title_camera));
             topAdapterInjectedViewContainer.getInjectedViewAdapter().setMenuResource(R.menu.gc_camera);
             topAdapterInjectedViewContainer.getInjectedViewAdapter().setOnMenuItemClickListener(item -> {
-                startHelpActivity();
+                if (item.getItemId() == R.id.gc_action_show_onboarding) {
+                    startHelpActivity();
+                } else {
+                     throw new UnsupportedOperationException("Unknown menu item id. Please don't call our OnMenuItemClickListener for custom menu items.");
+                }
                 return true;
+            });
+            topAdapterInjectedViewContainer.getInjectedViewAdapter().setOnNavButtonClickListener(v -> {
+                mFragment.getActivity().onBackPressed();
             });
         }
     }

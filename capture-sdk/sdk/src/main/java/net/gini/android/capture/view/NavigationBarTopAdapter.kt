@@ -77,8 +77,6 @@ internal class DefaultNavigationBarTopAdapter : NavigationBarTopAdapter {
 
     var viewBinding: GcNavigationBarTopBinding? = null
 
-    constructor()
-
     override fun setOnNavButtonClickListener(listener: View.OnClickListener?) {
         if (GiniCapture.hasInstance()
             && GiniCapture.getInstance().isBottomNavigationBarEnabled
