@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     android:minWidth="72dp"
     android:orientation="vertical"
+    android:background="?attr/backgroundColor"
     android:padding="16dp">
 
     <ImageView
@@ -24,8 +25,8 @@
         android:fontFamily="sans-serif-condensed"
         android:textAlignment="center"
         android:gravity="center"
-        android:textColor="@android:color/black"
         android:textSize="12sp"
+        style="@style/GiniCaptureTheme.Typography.Body1"
         tools:text="TextView" />
 
 </LinearLayout>
