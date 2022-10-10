@@ -43,13 +43,13 @@ class BankApiDocumentManager(private val documentRepository: BankApiDocumentRepo
         document: Document,
         specificExtractions: Map<String, SpecificExtraction>,
         compoundExtractions: Map<String, CompoundExtraction>,
-    ): Resource<ResponseBody> =
+    ): Resource<Unit> =
         documentRepository.sendFeedbackForExtractions(document, specificExtractions, compoundExtractions)
 
     suspend fun sendFeedback(
         document: Document,
         specificExtractions: Map<String, SpecificExtraction>,
-    ): Resource<ResponseBody> =
+    ): Resource<Unit> =
         documentRepository.sendFeedbackForExtractions(document, specificExtractions)
 
     /**
@@ -76,6 +76,6 @@ class BankApiDocumentManager(private val documentRepository: BankApiDocumentRepo
 
     suspend fun logErrorEvent(
         errorEvent: ErrorEvent
-    ): Resource<ResponseBody> =
+    ): Resource<Unit> =
         documentRepository.logErrorEvent(errorEvent)
 }

@@ -5,13 +5,16 @@ import net.gini.android.bank.api.models.*
 import net.gini.android.bank.api.requests.ErrorEvent
 import net.gini.android.core.api.DocumentRepository
 import net.gini.android.core.api.Resource
+import net.gini.android.core.api.Resource.Companion.wrapInResource
 import net.gini.android.core.api.models.CompoundExtraction
 import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.models.Extraction
 import net.gini.android.core.api.models.SpecificExtraction
 import net.gini.android.core.api.requests.ApiException
 import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody
 import org.json.JSONArray
 import org.json.JSONException
@@ -53,7 +56,7 @@ class BankApiDocumentRepository(
      */
 
     @Throws(JSONException::class)
-    suspend fun sendFeedbackForExtractions(document: Document, extractions: Map<String, SpecificExtraction>): Resource<ResponseBody> {
+    suspend fun sendFeedbackForExtractions(document: Document, extractions: Map<String, SpecificExtraction>): Resource<Unit> {
         val feedbackForExtractions = JSONObject()
         for (entry in extractions.entries) {
             val extraction = entry.value
@@ -65,14 +68,14 @@ class BankApiDocumentRepository(
 
         val bodyJSON = JSONObject()
         bodyJSON.put("feedback", feedbackForExtractions)
-        val body: RequestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), bodyJSON.toString())
-        return wrapResponseIntoResource {
+        val body: RequestBody = bodyJSON.toString().toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
+        return wrapInResource {
             documentRemoteSource.sendFeedback(document.id, body)
         }
     }
 
     @Throws(JSONException::class)
-    suspend fun sendFeedbackForExtractions(document: Document, extractions: Map<String, SpecificExtraction>, compoundExtractions: Map<String, CompoundExtraction>): Resource<ResponseBody> {
+    suspend fun sendFeedbackForExtractions(document: Document, extractions: Map<String, SpecificExtraction>, compoundExtractions: Map<String, CompoundExtraction>): Resource<Unit> {
         val feedbackForExtractions = JSONObject()
         for (entry in extractions.entries) {
             val extraction = entry.value
@@ -103,8 +106,8 @@ class BankApiDocumentRepository(
         val bodyJSON = JSONObject()
         bodyJSON.put("extractions", feedbackForExtractions)
         bodyJSON.put("compoundExtractions", feedbackForCompoundExtractions)
-        val body: RequestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), bodyJSON.toString())
-        return wrapResponseIntoResource {
+        val body: RequestBody = bodyJSON.toString().toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
+        return wrapInResource {
             documentRemoteSource.sendFeedback(document.id, body)
         }
     }
@@ -116,7 +119,7 @@ class BankApiDocumentRepository(
      * @param resolvePaymentInput information of the actual payment
      */
     suspend fun resolvePaymentRequest(requestId: String, resolvePaymentInput: ResolvePaymentInput): Resource<ResolvedPayment> =
-        wrapResponseIntoResource {
+        wrapInResource {
             documentRemoteSource.resolvePaymentRequests(requestId, resolvePaymentInput)
         }
 
@@ -126,12 +129,12 @@ class BankApiDocumentRepository(
      * @param id of the paid {@link PaymentRequest}
      */
     suspend fun getPayment(id: String): Resource<Payment> =
-        wrapResponseIntoResource {
+        wrapInResource {
             documentRemoteSource.getPayment(id)
         }
 
-    suspend fun logErrorEvent(errorEvent: ErrorEvent): Resource<ResponseBody> =
-        wrapResponseIntoResource {
+    suspend fun logErrorEvent(errorEvent: ErrorEvent): Resource<Unit> =
+        wrapInResource {
             documentRemoteSource.logErrorEvent(errorEvent)
         }
 
@@ -155,16 +158,5 @@ class BankApiDocumentRepository(
             returnReasons.add(ReturnReason(returnReasonJson.getString("id"), localizedLabels))
         }
         return returnReasons
-    }
-
-    companion object {
-        private suspend fun <T> wrapResponseIntoResource(request: suspend () -> T) =
-            try {
-                Resource.Success(request())
-            } catch (e: ApiException) {
-                Resource.Error()
-            } catch (e: CancellationException) {
-                Resource.Cancelled()
-            }
     }
 }

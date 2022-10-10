@@ -17,6 +17,7 @@ import net.gini.android.core.api.requests.ApiException
 import net.gini.android.core.api.requests.SafeApiRequest
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
+import okhttp3.ResponseBody.Companion.toResponseBody
 import kotlin.coroutines.CoroutineContext
 
 class BankApiDocumentRemoteSource(
@@ -27,52 +28,50 @@ class BankApiDocumentRemoteSource(
     baseUriString: String
 ): DocumentRemoteSource(coroutineContext, documentService, giniApiType, sessionManager, baseUriString) {
 
-    suspend fun sendFeedback(documentId: String, requestBody: RequestBody): ResponseBody = withContext(coroutineContext) {
-        val response = SafeApiRequest.apiRequest {
+    suspend fun sendFeedback(documentId: String, requestBody: RequestBody) = withContext(coroutineContext) {
+        SafeApiRequest.apiRequest {
             val apiResult = sessionManager.getSession()
             if (apiResult is Resource.Error) {
-                throw ApiException(apiResult.message, apiResult.responseStatusCode, apiResult.responseBody, apiResult.responseHeaders)
+                throw apiResult.toApiException()
             }
 
-            documentService.sendFeedback(bearerHeaderMap(apiResult.data), documentId, requestBody)
+            documentService.sendFeedback(bearerHeaderMap(apiResult.data, giniApiType.giniJsonMediaType), documentId, requestBody)
         }
-        response.first
     }
 
     suspend fun resolvePaymentRequests(id: String, input: ResolvePaymentInput): ResolvedPayment = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             val apiResult = sessionManager.getSession()
             if (apiResult is Resource.Error) {
-                throw ApiException(apiResult.message, apiResult.responseStatusCode, apiResult.responseBody, apiResult.responseHeaders)
+                throw apiResult.toApiException()
             }
 
-            documentService.resolvePaymentRequests(bearerHeaderMap(apiResult.data), id, input)
+            documentService.resolvePaymentRequests(bearerHeaderMap(apiResult.data, giniApiType.giniJsonMediaType), id, input)
         }
-        response.first
+        response.body() ?: throw ApiException("Empty response body", response)
     }
 
     suspend fun getPayment(id: String): Payment = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             val apiResult = sessionManager.getSession()
             if (apiResult is Resource.Error) {
-                throw ApiException(apiResult.message, apiResult.responseStatusCode, apiResult.responseBody, apiResult.responseHeaders)
+                throw apiResult.toApiException()
             }
 
-            documentService.getPayment(bearerHeaderMap(apiResult.data), id)
+            documentService.getPayment(bearerHeaderMap(apiResult.data, giniApiType.giniJsonMediaType), id)
         }
-        response.first
+        response.body() ?: throw ApiException("Empty response body", response)
     }
 
-    suspend fun logErrorEvent(errorEvent: ErrorEvent): ResponseBody =
+    suspend fun logErrorEvent(errorEvent: ErrorEvent) =
         withContext(coroutineContext) {
-            val response = SafeApiRequest.apiRequest {
+            SafeApiRequest.apiRequest {
                 val apiResult = sessionManager.getSession()
                 if (apiResult is Resource.Error) {
-                    throw ApiException(apiResult.message, apiResult.responseStatusCode, apiResult.responseBody, apiResult.responseHeaders)
+                    throw apiResult.toApiException()
                 }
 
-                documentService.logErrorEvent(bearerHeaderMap(apiResult.data), errorEvent)
+                documentService.logErrorEvent(bearerHeaderMap(apiResult.data, giniApiType.giniJsonMediaType), errorEvent)
             }
-            response.first
         }
 }

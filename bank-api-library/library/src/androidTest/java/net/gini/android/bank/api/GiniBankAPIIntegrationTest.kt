@@ -77,7 +77,7 @@ class GiniBankAPIIntegrationTest: GiniCoreAPIIntegrationTest<BankApiDocumentMana
         val feedbackCompound: MutableMap<String, CompoundExtraction> = HashMap()
         feedbackCompound["lineItems"] = compoundExtraction
         val sendFeedback =
-            giniCoreApi?.documentManager?.sendFeedback(document, feedback, feedbackCompound)
+            giniCoreApi.documentManager.sendFeedback(document, feedback, feedbackCompound)
 
         if (sendFeedback is Resource.Error) {
             Log.e("TEST", sendFeedback.toString())
@@ -106,7 +106,7 @@ class GiniBankAPIIntegrationTest: GiniCoreAPIIntegrationTest<BankApiDocumentMana
         feedback["amountToPay"] = getAmountToPay(extractionsContainer)!!
         feedback["bic"] = getBic(extractionsContainer)!!
         feedback["paymentRecipient"] = getPaymentRecipient(extractionsContainer)!!
-        val sendFeedback = giniCoreApi?.documentManager?.sendFeedback(document, feedback)
+        val sendFeedback = giniCoreApi.documentManager.sendFeedback(document, feedback)
 
         if (sendFeedback is Resource.Error) {
             Log.e("TEST", sendFeedback.toString())
@@ -124,7 +124,7 @@ class GiniBankAPIIntegrationTest: GiniCoreAPIIntegrationTest<BankApiDocumentMana
         val documentExtractions = processDocument(
             testDocument, "application/pdf", "line-items.pdf",
             DocumentRemoteSource.DocumentType.INVOICE
-        )
+        )  { }
         val document = documentExtractions.keys.iterator().next()
         val extractionsContainer = documentExtractions[document]!!
 
@@ -135,7 +135,7 @@ class GiniBankAPIIntegrationTest: GiniCoreAPIIntegrationTest<BankApiDocumentMana
         feedback["amountToPay"] = getAmountToPay(extractionsContainer)!!
         feedback["bic"] = getBic(extractionsContainer)!!
         feedback["paymentRecipient"] = getPaymentRecipient(extractionsContainer)!!
-        val sendFeedback = giniCoreApi?.documentManager?.sendFeedback(document, feedback)
+        val sendFeedback = giniCoreApi.documentManager.sendFeedback(document, feedback)
 
         if (sendFeedback is Resource.Error) {
             Log.e("TEST", sendFeedback.toString())
@@ -144,7 +144,6 @@ class GiniBankAPIIntegrationTest: GiniCoreAPIIntegrationTest<BankApiDocumentMana
     }
 
     @Test
-    @Ignore("compound extractions are not working (07.10.2021)")
     @Throws(Exception::class)
     fun sendFeedback_withCompoundExtractions_forDocument_withLineItems() = runTest {
         val assetManager = getApplicationContext<Context>().resources.assets
@@ -154,7 +153,7 @@ class GiniBankAPIIntegrationTest: GiniCoreAPIIntegrationTest<BankApiDocumentMana
         val documentExtractions = processDocument(
             testDocument, "application/pdf", "line-items.pdf",
             DocumentRemoteSource.DocumentType.INVOICE
-        )
+        ) { }
         val document = documentExtractions.keys.iterator().next()
         val extractionsContainer = documentExtractions[document]
         val compoundExtractions = extractionsContainer!!.compoundExtractions
@@ -172,7 +171,7 @@ class GiniBankAPIIntegrationTest: GiniCoreAPIIntegrationTest<BankApiDocumentMana
         val feedbackCompound: MutableMap<String, CompoundExtraction> = HashMap()
         feedbackCompound["lineItems"] = compoundExtractions["lineItems"]!!
         val sendFeedback =
-            giniCoreApi?.documentManager?.sendFeedback(document, feedback, feedbackCompound)
+            giniCoreApi.documentManager.sendFeedback(document, feedback, feedbackCompound)
 
         if (sendFeedback is Resource.Error) {
             Log.e("TEST", sendFeedback.toString())
@@ -231,7 +230,9 @@ class GiniBankAPIIntegrationTest: GiniCoreAPIIntegrationTest<BankApiDocumentMana
             Build.MODEL, "Android", Build.VERSION.RELEASE,
             "not available", BuildConfig.VERSION_NAME, "Error logging integration test"
         )
-        val resource = giniCoreApi?.documentManager?.logErrorEvent(errorEvent)
+        val resource = giniCoreApi.documentManager.logErrorEvent(errorEvent)
+
+        resource.throwIfNotSuccess()
 
         assertTrue(resource is Resource.Success)
     }
