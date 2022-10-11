@@ -42,5 +42,5 @@
     <dimen name="gc_photo_tip_text_margin">1dp</dimen>
     <dimen name="gc_tablet_width">582dp</dimen>
     <dimen name="gc_snackbar_text_height">60dp</dimen>
-    <dimen name="gc_camera_pan_width">124dp</dimen>
+    <dimen name="gc_camera_pane_width">124dp</dimen>
 </resources>

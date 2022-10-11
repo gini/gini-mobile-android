@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:visibility="invisible"
         tools:visibility="visible"
-        app:constraint_referenced_ids="gc_button_camera_flash,gc_camera_flash_button_subtitle"/>
+        app:constraint_referenced_ids="gc_flash_button_container"/>
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/gc_document_import_button_group"
@@ -36,7 +36,7 @@
         android:layout_height="wrap_content"
         android:visibility="invisible"
         tools:visibility="visible"
-        app:constraint_referenced_ids="gc_button_import_document,gc_document_import_button_subtitle"/>
+        app:constraint_referenced_ids="gc_document_import_button_container"/>
 
     <ImageView
         android:id="@+id/gc_camera_focus_indicator"
@@ -47,6 +47,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:alpha="0.5" />
+
+    <View
+        android:id="@+id/gc_camera_pane_background"
+        android:layout_width="@dimen/gc_camera_pane_width"
+        android:layout_height="0dp"
+        android:alpha="0.4"
+        android:background="@color/Dark_01"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/gc_camera_frame"
@@ -73,16 +83,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/gc_camera_pane_background"
         app:layout_constraintTop_toTopOf="@+id/gc_camera_pane_background" />
-
-    <View
-        android:id="@+id/gc_camera_pane_background"
-        android:layout_width="@dimen/gc_camera_pan_width"
-        android:layout_height="0dp"
-        android:alpha="0.4"
-        android:background="@color/Dark_01"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
 
     <LinearLayout
@@ -280,6 +280,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
+            android:textColor="@color/Light_01"
             style="@style/GiniCaptureTheme.Typography.Subtitle2"
             android:paddingBottom="@dimen/gc_camera_upload_button_subtitle_bottom_padding"
             android:text="@string/gc_camera_document_import_subtitle" />

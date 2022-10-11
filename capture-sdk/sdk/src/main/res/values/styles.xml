@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="Root.GiniCaptureTheme" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Root.GiniCaptureTheme" parent="Theme.Material3.DayNight">
         <item name="colorPrimary">@color/Accent_01</item>
         <item name="colorPrimaryDark">@color/Accent_03</item>
         <item name="colorOnPrimary">@color/Light_01</item>

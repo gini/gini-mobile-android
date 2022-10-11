@@ -32,6 +32,16 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:alpha="0.5" />
 
+    <View
+        android:id="@+id/gc_camera_pane_background"
+        android:layout_width="@dimen/gc_camera_pane_width"
+        android:layout_height="0dp"
+        android:alpha="0.4"
+        android:background="@color/Dark_01"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <ImageView
         android:id="@+id/gc_camera_frame"
         android:layout_width="0dp"
@@ -57,15 +67,6 @@
         app:layout_constraintStart_toStartOf="@+id/gc_camera_pane_background"
         app:layout_constraintTop_toTopOf="@+id/gc_camera_pane_background" />
 
-    <View
-        android:id="@+id/gc_camera_pane_background"
-        android:layout_width="@dimen/gc_camera_pan_width"
-        android:layout_height="0dp"
-        android:alpha="0.4"
-        android:background="@color/Dark_01"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/gc_camera_flash_button_group"
@@ -73,7 +74,7 @@
         android:layout_height="wrap_content"
         android:visibility="invisible"
         tools:visibility="visible"
-        app:constraint_referenced_ids="gc_button_camera_flash,gc_camera_flash_button_subtitle"/>
+        app:constraint_referenced_ids="gc_flash_button_container"/>
 
 
     <androidx.constraintlayout.widget.Group
@@ -82,7 +83,7 @@
         android:layout_height="wrap_content"
         android:visibility="invisible"
         tools:visibility="visible"
-        app:constraint_referenced_ids="gc_button_import_document,gc_document_import_button_subtitle"/>
+        app:constraint_referenced_ids="gc_document_import_button_container"/>
 
     <LinearLayout
         android:id="@+id/gc_flash_button_container"

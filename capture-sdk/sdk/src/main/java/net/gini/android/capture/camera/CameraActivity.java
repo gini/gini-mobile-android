@@ -364,6 +364,7 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
         showOnboardingIfRequested();
         setupHomeButton();
         handleOnBackPressed();
+        setTitleOnTablets();
     }
 
     private void handleOnBackPressed() {
@@ -386,6 +387,15 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
             return;
         }
         mOnboardingShown = savedInstanceState.getBoolean(ONBOARDING_SHOWN_KEY);
+    }
+
+    private void setTitleOnTablets() {
+
+        boolean isTablet = getResources().getBoolean(R.bool.gc_is_tablet);
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(isTablet ? getString(R.string.gc_camera_title) : getString(R.string.gc_title_camera));
+        }
     }
 
     @Override
