@@ -78,7 +78,7 @@ jobs:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-          key: avd-x86_64-31
+          key: avd-x86_64-31-${{ github.ref_name }}
 
       - name: create avd and generate snapshot for caching
         if: steps.avd-cache.outputs.cache-hit != 'true'
