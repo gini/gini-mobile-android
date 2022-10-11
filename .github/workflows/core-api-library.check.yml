@@ -60,6 +60,7 @@ jobs:
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           script: >
+            adb uninstall net.gini.android.core.api.test ;
             ./gradlew core-api-library:library:connectedCheck
 
       - name: archive instrumented test results

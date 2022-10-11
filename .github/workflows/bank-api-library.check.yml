@@ -65,6 +65,7 @@ jobs:
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           script: >
+            adb uninstall net.gini.android.bank.api.test ;
             ./gradlew bank-api-library:library:connectedCheck
             -PtestClientId="gini-mobile-test"
             -PtestClientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
