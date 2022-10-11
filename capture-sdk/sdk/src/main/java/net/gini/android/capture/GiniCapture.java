@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import net.gini.android.capture.analysis.AnalysisActivity;
+import net.gini.android.capture.camera.view.CameraBottomNavigationBarAdapter;
 import net.gini.android.capture.help.HelpItem;
 import net.gini.android.capture.help.view.DefaultHelpNavigationBarBottomAdapter;
 import net.gini.android.capture.help.view.HelpNavigationBarBottomAdapter;
@@ -98,6 +99,7 @@ public class GiniCapture {
     private final NavigationBarTopAdapter navigationBarTopAdapter;
     private final OnboardingNavigationBarBottomAdapter onboardingNavigationBarBottomAdapter;
     private final HelpNavigationBarBottomAdapter helpNavigationBarBottomAdapter;
+    private final CameraBottomNavigationBarAdapter cameraBottomNavigationBarAdapter;
     private final boolean isBottomNavigationBarEnabled;
     private final OnboardingIllustrationAdapter onboardingAlignCornersIllustrationAdapter;
     private final OnboardingIllustrationAdapter onboardingLightingIllustrationAdapter;
@@ -212,6 +214,7 @@ public class GiniCapture {
         onboardingLightingIllustrationAdapter = builder.getOnboardingLightingIllustrationAdapter();
         onboardingMultiPageIllustrationAdapter = builder.getOnboardingMultiPageIllustrationAdapter();
         onboardingQRCodeIllustrationAdapter = builder.getOnboardingQRCodeIllustrationAdapter();
+        cameraBottomNavigationBarAdapter = builder.getCameraBottomNavigationBarAdapter();
     }
 
     /**
@@ -556,6 +559,11 @@ public class GiniCapture {
         return helpNavigationBarBottomAdapter;
     }
 
+    @NonNull
+    public CameraBottomNavigationBarAdapter getCameraBottomNavigationBarAdapter() {
+        return cameraBottomNavigationBarAdapter;
+    }
+
     public boolean isBottomNavigationBarEnabled() {
         return isBottomNavigationBarEnabled;
     }
@@ -632,6 +640,7 @@ public class GiniCapture {
         private NavigationBarTopAdapter navigationBarTopAdapter = new DefaultNavigationBarTopAdapter();
         private OnboardingNavigationBarBottomAdapter navigationBarBottomAdapter = new DefaultOnboardingNavigationBarBottomAdapter();
         private HelpNavigationBarBottomAdapter helpNavigationBarBottomAdapter = new DefaultHelpNavigationBarBottomAdapter();
+        private CameraBottomNavigationBarAdapter cameraBottomNavigationBarAdapter = new CameraBottomNavigationBarAdapter();
         private boolean isBottomNavigationBarEnabled = false;
         private OnboardingIllustrationAdapter onboardingAlignCornersIllustrationAdapter;
         private OnboardingIllustrationAdapter onboardingLightingIllustrationAdapter;
@@ -1041,6 +1050,15 @@ public class GiniCapture {
         @NonNull
         private HelpNavigationBarBottomAdapter getHelpNavigationBarBottomAdapter() {
             return helpNavigationBarBottomAdapter;
+        }
+
+        public Builder setCameraBottomBarAdapter(@NonNull final CameraBottomNavigationBarAdapter adapter) {
+            cameraBottomNavigationBarAdapter = adapter;
+            return this;
+        }
+
+        public CameraBottomNavigationBarAdapter getCameraBottomNavigationBarAdapter() {
+            return cameraBottomNavigationBarAdapter;
         }
 
         /**
