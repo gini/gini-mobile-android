@@ -76,7 +76,6 @@
         android:paddingTop="@dimen/large"
         android:layout_marginBottom="@dimen/large" />
 
-<!--    TODO: use dimen size class from Help Screen branch-->
     <ImageButton
         android:id="@+id/gc_button_camera_trigger"
         android:layout_width="wrap_content"
@@ -84,7 +83,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="@dimen/large_24"
         android:background="@null"
         android:src="@drawable/gc_camera_trigger" />
 
@@ -220,15 +219,14 @@
 
     </RelativeLayout>
 
-    <!--    TODO: use dimen size class from Help Screen branch-->
     <RelativeLayout
         android:id="@+id/gc_unsupported_qrcode_detected_popup_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toTopOf="@+id/gc_button_camera_trigger"
         android:layout_marginBottom="@dimen/large"
-        android:layout_marginLeft="24dp"
-        android:layout_marginRight="24dp"
+        android:layout_marginLeft="@dimen/large_24"
+        android:layout_marginRight="@dimen/large_24"
         android:alpha="0"
         android:background="?attr/colorSurface"
         android:paddingBottom="@dimen/medium"
