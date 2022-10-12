@@ -38,16 +38,19 @@
     <ImageView
         android:id="@+id/gc_camera_frame"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginStart="@dimen/medium"
+        android:layout_marginTop="@dimen/xlarge"
         android:layout_marginEnd="@dimen/medium"
+        android:layout_marginBottom="@dimen/xlarge"
         android:adjustViewBounds="true"
+        android:scaleType="fitXY"
         android:src="@drawable/gc_camera_frame"
-        app:layout_constraintBottom_toTopOf="@id/gc_camera_pane_background"
+        app:layout_constraintBottom_toTopOf="@+id/gc_camera_pane_background"
+        app:layout_constraintDimensionRatio="W, 1:1.414"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <View
         android:id="@+id/gc_camera_pane_background"
