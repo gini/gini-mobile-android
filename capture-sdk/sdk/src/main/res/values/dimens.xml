@@ -92,6 +92,8 @@
     <dimen name="gc_analysis_hint_icon_margin">8dp</dimen>
     <dimen name="gc_analysis_hint_text_height">48dp</dimen>
     <dimen name="gc_analysis_hint_text_left_margin">16dp</dimen>
+    <item name="gc_analysis_preview_width_percentage" type="dimen" format="float">0.9</item>
+    <item name="gc_analysis_preview_alpha" type="dimen" format="float">0.25</item>
 
     <dimen name="gc_noresults_header_padding">8dp</dimen>
     <dimen name="gc_noresults_header_drawable_padding">16dp</dimen>

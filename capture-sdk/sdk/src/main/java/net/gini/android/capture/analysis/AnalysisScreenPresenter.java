@@ -159,22 +159,17 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
         ParcelableMemoryCache.getInstance().removeEntriesWithTag(PARCELABLE_MEMORY_CACHE_TAG);
     }
 
+
+    // TODO: check if these methods should do something or could be deleted from the interface
     @Override
-    public void hideError() {
-        getView().hideErrorSnackbar();
-    }
+    public void hideError() {}
 
     @Override
-    public void showError(@NonNull final String message, final int duration) {
-        getView().showErrorSnackbar(message, duration, null, null);
-    }
+    public void showError(@NonNull String message, int duration) {}
 
     @Override
     public void showError(@NonNull final String message, @NonNull final String buttonTitle,
-                          @NonNull final View.OnClickListener onClickListener) {
-        getView().showErrorSnackbar(message, ErrorSnackbar.LENGTH_INDEFINITE, buttonTitle,
-                onClickListener);
-    }
+                          @NonNull final View.OnClickListener onClickListener) {}
 
     private void startScanAnimation() {
         getView().showScanAnimation();
@@ -431,28 +426,6 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
             if (filename != null) {
                 getView().showPdfTitle(filename);
             }
-            mDocumentRenderer.getPageCount(getActivity(), new AsyncCallback<Integer, Exception>() {
-                @Override
-                public void onSuccess(final Integer result) {
-                    if (result > 0) {
-                        final String pageCount = getActivity().getResources().getQuantityString(
-                                R.plurals.gc_analysis_pdf_pages, result, result);
-                        getView().showPdfPageCount(pageCount);
-                    } else {
-                        getView().hidePdfPageCount();
-                    }
-                }
-
-                @Override
-                public void onError(final Exception exception) {
-                    getView().hidePdfPageCount();
-                }
-
-                @Override
-                public void onCancelled() {
-                    // Not used
-                }
-            });
         }
     }
 
@@ -467,6 +440,11 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                         if (isStopped()) {
                             return;
                         }
+
+                        if (mMultiPageDocument.getType() == Document.Type.IMAGE_MULTI_PAGE || mMultiPageDocument.getType() == Document.Type.IMAGE) {
+                            return;
+                        }
+
                         getView().showBitmap(bitmap, rotationForDisplay);
                     }
                 });

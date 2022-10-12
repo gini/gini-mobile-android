@@ -12,4 +12,12 @@
         <item name="colorOnSurface">@color/Light_04</item>
     </style>
 
+    <style name="GiniCaptureTheme.Analysis" parent="GiniCaptureTheme"></style>
+
+    <style name="Root.GiniCaptureTheme.Analysis.AnalysingMessage.TextStyle" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/Light_01</item>
+        <item name="gcCustomFont" />
+    </style>
+
 </resources>

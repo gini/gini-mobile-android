@@ -52,12 +52,12 @@
     <color name="gc_multi_page_review_add_pages_text">#fff</color>
 
     <color name="gc_analysis_activity_background">@android:color/transparent</color>
-    <color name="gc_analysis_fragment_background">@color/gc_background</color>
+    <color name="gc_analysis_fragment_background">@color/Light_02</color>
     <color name="gc_analysis_activity_indicator">#0095cf</color>
     <color name="gc_analysis_overlay">#b2000000</color>
     <color name="gc_analysis_pdf_info_background">#007C99</color>
     <color name="gc_analysis_pdf_info_text">#ffffff</color>
-    <color name="gc_analysis_analysing_message">#ffffff</color>
+    <color name="gc_analysis_analysing_message">@color/Light_01</color>
     <color name="gc_analysis_hint_headline">#ffffff</color>
     <color name="gc_analysis_hint">#ffffff</color>
 

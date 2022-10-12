@@ -27,7 +27,12 @@
         <item name="textAppearanceCaption">@style/GiniCaptureTheme.Typography.Caption</item>
         <item name="textAppearanceOverline">@style/GiniCaptureTheme.Typography.Overline</item>
     </style>
+
     <style name="GiniCaptureTheme" parent="Root.GiniCaptureTheme"/>
+
+    <style name="GiniCaptureTheme.Analysis" parent="GiniCaptureTheme">
+        <item name="backgroundColor">@color/Light_02</item>
+    </style>
 
     <style name="GiniCaptureTheme.ThemeOverlay.Dialog.Alert" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
         <item name="colorPrimary">?attr/colorPrimary</item>
@@ -164,8 +169,8 @@
     </style>
 
     <style name="Root.GiniCaptureTheme.Analysis.AnalysingMessage.TextStyle" parent="TextAppearance.AppCompat">
-        <item name="android:textSize">18sp</item>
-        <item name="android:textColor">@color/gc_analysis_analysing_message</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">?attr/colorOnBackground</item>
         <item name="gcCustomFont" />
     </style>
 

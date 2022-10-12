@@ -42,7 +42,8 @@
     <string name="gc_multi_page_review_file_import_delete_last_page_dialog_negative_button">Cancel</string>
     <string name="gc_document_analysis_error">An error has occurred.</string>
     <string name="gc_document_analysis_error_retry">Retry</string>
-    <string name="gc_analysis_activity_indicator_message">Document is being analysed</string>
+    <string name="gc_analysis_activity_indicator_message">Analyzing documents</string>
+    <string name="gc_pdf_analysis_activity_indicator_message">Analyzing %s</string>
     <string name="gc_photo_tip_align">Capture the entire page within the frame shown on the camera screen</string>
     <string name="gc_photo_tip_multipage">It\'s now possible to analyse an invoice with multiple pages</string>
     <string name="gc_photo_tip_lighting">Proper lighting leads to better results than flash</string>

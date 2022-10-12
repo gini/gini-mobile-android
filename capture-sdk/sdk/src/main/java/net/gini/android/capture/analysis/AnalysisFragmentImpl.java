@@ -32,6 +32,7 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import jersey.repackaged.jsr166e.CompletableFuture;
 
 class AnalysisFragmentImpl extends AnalysisScreenContract.View {
@@ -41,11 +42,8 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     private final FragmentImplCallback mFragment;
     private TextView mAnalysisMessageTextView;
     private ImageView mImageDocumentView;
-    private RelativeLayout mLayoutRoot;
+    private ConstraintLayout mLayoutRoot;
     private ProgressBar mProgressActivity;
-    private LinearLayout mPdfOverlayLayout;
-    private TextView mPdfTitleTextView;
-    private TextView mPdfPageCountTextView;
     private LinearLayout mAnalysisOverlay;
     private AnalysisHintsAnimator mHintsAnimator;
 
@@ -122,25 +120,12 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
 
     @Override
     void showPdfInfoPanel() {
-        mPdfOverlayLayout.setVisibility(View.VISIBLE);
         mAnalysisOverlay.setBackgroundColor(Color.TRANSPARENT);
-        mAnalysisMessageTextView.setText("");
     }
 
     @Override
     void showPdfTitle(@NonNull final String title) {
-        mPdfTitleTextView.setText(title);
-    }
-
-    @Override
-    void showPdfPageCount(@NonNull final String pageCount) {
-        mPdfPageCountTextView.setVisibility(View.VISIBLE);
-        mPdfPageCountTextView.setText(pageCount);
-    }
-
-    @Override
-    void hidePdfPageCount() {
-        mPdfPageCountTextView.setVisibility(View.GONE);
+        mAnalysisMessageTextView.setText(mFragment.getActivity().getString(R.string.gc_pdf_analysis_activity_indicator_message, title));
     }
 
     @Override
@@ -162,25 +147,6 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
             @Nullable final DialogInterface.OnCancelListener cancelListener) {
         mFragment.showAlertDialog(message, positiveButtonTitle, positiveButtonClickListener,
                 negativeButtonTitle, negativeButtonClickListener, cancelListener);
-    }
-
-    @Override
-    void showErrorSnackbar(@NonNull final String message, final int duration,
-            @Nullable final String buttonTitle,
-            @Nullable final View.OnClickListener onClickListener) {
-        if (mFragment.getActivity() == null) {
-            return;
-        }
-        ErrorSnackbar.make(mFragment.getActivity(), mLayoutRoot, message, buttonTitle,
-                onClickListener, ErrorSnackbar.LENGTH_INDEFINITE).show();
-    }
-
-    @Override
-    void hideErrorSnackbar() {
-        if (mLayoutRoot == null) {
-            return;
-        }
-        ErrorSnackbar.hideExisting(mLayoutRoot);
     }
 
     @Override
@@ -230,9 +196,6 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
         mImageDocumentView = view.findViewById(R.id.gc_image_picture);
         mProgressActivity = view.findViewById(R.id.gc_progress_activity);
         mAnalysisMessageTextView = view.findViewById(R.id.gc_analysis_message);
-        mPdfOverlayLayout = view.findViewById(R.id.gc_pdf_info);
-        mPdfTitleTextView = view.findViewById(R.id.gc_pdf_filename);
-        mPdfPageCountTextView = view.findViewById(R.id.gc_pdf_page_count);
         mAnalysisOverlay = view.findViewById(R.id.gc_analysis_overlay);
     }
 

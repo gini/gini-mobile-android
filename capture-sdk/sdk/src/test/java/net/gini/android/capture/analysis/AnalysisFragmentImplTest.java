@@ -275,8 +275,6 @@ public class AnalysisFragmentImplTest {
                     });
 
             // Then
-            onView(withId(R.id.gc_pdf_info)).check(matches(
-                    withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
             onView(withId(R.id.gc_analysis_overlay)).check(
                     matches(hasBackgroundColor(Color.TRANSPARENT)));
             onView(withId(R.id.gc_analysis_message)).check(matches(withText("")));

@@ -55,6 +55,7 @@
     <string name="gc_document_analysis_error_retry">Wiederholen</string>
 
     <string name="gc_analysis_activity_indicator_message">Dokument wird analysiert</string>
+    <string name="gc_pdf_analysis_activity_indicator_message">%s wird analysiert</string>
     <string name="gc_photo_tip_align">Das gesamte Dokumente sollte sich im Rahmen befinden</string>
     <string name="gc_photo_tip_multipage">Es ist nun möglich mehrere Seiten eines Dokuments zu scannen</string>
     <string name="gc_photo_tip_lighting">Gutes Licht führt zu besseren Ergebnissen als mit Blitz</string>
