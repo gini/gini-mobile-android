@@ -61,15 +61,16 @@
     <ImageView
         android:id="@+id/gc_camera_frame"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginStart="@dimen/xlarge"
         android:layout_marginEnd="@dimen/xlarge"
         android:adjustViewBounds="true"
-        android:src="@drawable/gc_camera_frame"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:scaleType="fitXY"
+        android:src="@drawable/gc_frame_tablet_portrait"
+        app:layout_constraintBottom_toTopOf="@+id/gc_tablet_bottom_guide"
         app:layout_constraintEnd_toStartOf="@+id/gc_camera_pane_background"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/gc_tablet_top_guide" />
 
     <ImageButton
         android:id="@+id/gc_button_camera_trigger"
@@ -309,5 +310,19 @@
         app:layout_constraintTop_toTopOf="@+id/gc_camera_preview_container"
         tools:targetApi="lollipop"
         tools:visibility="invisible" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/gc_tablet_top_guide"
+        app:layout_constraintGuide_percent="0.1"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/gc_tablet_bottom_guide"
+        app:layout_constraintGuide_percent="0.9"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
