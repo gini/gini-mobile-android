@@ -66,7 +66,7 @@
         android:layout_marginEnd="@dimen/xlarge"
         android:adjustViewBounds="true"
         android:scaleType="fitXY"
-        android:src="@drawable/gc_frame_tablet_portrait"
+        android:src="@drawable/gc_camera_frame"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="H, 1:1.414"
         app:layout_constraintEnd_toStartOf="@+id/gc_camera_pane_background"

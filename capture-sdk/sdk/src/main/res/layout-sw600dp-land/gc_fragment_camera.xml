@@ -52,7 +52,7 @@
         android:layout_marginBottom="@dimen/xxlarge"
         android:adjustViewBounds="true"
         android:scaleType="fitXY"
-        android:src="@drawable/gc_camera_frame_land"
+        android:src="@drawable/gc_camera_frame"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="H, 1:1.414"
         app:layout_constraintEnd_toStartOf="@+id/gc_camera_pane_background"
