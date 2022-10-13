@@ -9,7 +9,8 @@
         <item name="backgroundColor">@color/Dark_01</item>
         <item name="colorOnBackground">@color/Light_01</item>
         <item name="dividerColor">@color/Dark_03</item>
-        <item name="colorOnSurface">@color/Light_04</item>
+        <item name="colorSurfaceInverse">@color/Light_04</item>
+        <item name="colorOnSurfaceInverse">@color/Dark_02</item>
     </style>
 
     <style name="GiniCaptureTheme.Analysis" parent="GiniCaptureTheme">

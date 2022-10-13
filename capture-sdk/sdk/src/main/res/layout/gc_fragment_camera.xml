@@ -7,11 +7,17 @@
     android:background="@color/gc_camera_fragment_background"
     tools:context=".camera.CameraFragmentCompat">
 
+    <net.gini.android.capture.view.InjectedViewContainer
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/gc_navigation_top_bar"/>
+
     <net.gini.android.capture.internal.camera.view.CameraPreviewContainer
         android:id="@+id/gc_camera_preview_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_centerInParent="true">
+        android:layout_centerInParent="true"
+        android:layout_below="@+id/gc_navigation_top_bar">
     </net.gini.android.capture.internal.camera.view.CameraPreviewContainer>
 
     <View

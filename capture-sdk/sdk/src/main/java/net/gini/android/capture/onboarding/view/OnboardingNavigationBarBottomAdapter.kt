@@ -90,6 +90,7 @@ internal class DefaultOnboardingNavigationBarBottomAdapter : OnboardingNavigatio
     }
 
     override fun onCreateView(container: ViewGroup): View {
+
         val binding = GcOnboardingNavigationBarBottomBinding
             .inflate(LayoutInflater.from(container.context), container, false)
         viewBinding = binding

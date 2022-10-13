@@ -21,6 +21,7 @@ internal class DefaultHelpNavigationBarBottomAdapter: HelpNavigationBarBottomAda
     }
 
     override fun onCreateView(container: ViewGroup): View {
+
         val viewBinding = GcHelpNavigationBarBottomBinding.inflate(LayoutInflater.from(container.context), container, false)
         binding = viewBinding
 
