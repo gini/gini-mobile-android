@@ -255,33 +255,6 @@ public class AnalysisFragmentImplTest {
     }
 
     @Test
-    public void should_showPdfInfoPanel() throws Exception {
-        // Given
-        final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
-                new AtomicReference<>();
-
-        try (final ActivityScenario<AnalysisFragmentHostActivity> scenario = launchHostActivity(
-                analysisFragmentImplRef)) {
-
-            // When
-            scenario.onActivity(
-                    new ActivityScenario.ActivityAction<AnalysisFragmentHostActivity>() {
-                        @Override
-                        public void perform(final AnalysisFragmentHostActivity activity) {
-                            final AnalysisFragmentImpl analysisFragment =
-                                    analysisFragmentImplRef.get();
-                            analysisFragment.showPdfInfoPanel();
-                        }
-                    });
-
-            // Then
-            onView(withId(R.id.gc_analysis_overlay)).check(
-                    matches(hasBackgroundColor(Color.TRANSPARENT)));
-            onView(withId(R.id.gc_analysis_message)).check(matches(withText("")));
-        }
-    }
-
-    @Test
     public void should_showPdfTitle() throws Exception {
         // Given
         final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
@@ -297,69 +270,13 @@ public class AnalysisFragmentImplTest {
                         public void perform(final AnalysisFragmentHostActivity activity) {
                             final AnalysisFragmentImpl analysisFragment =
                                     analysisFragmentImplRef.get();
-                            analysisFragment.showPdfInfoPanel();
                             analysisFragment.showPdfTitle("PdfTitle");
                         }
                     });
 
             // Then
-            onView(withId(R.id.gc_pdf_filename)).check(matches(
-                    withText("PdfTitle")));
-        }
-    }
-
-    @Test
-    public void should_showPdfPageCount() throws Exception {
-        // Given
-        final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
-                new AtomicReference<>();
-
-        try (final ActivityScenario<AnalysisFragmentHostActivity> scenario = launchHostActivity(
-                analysisFragmentImplRef)) {
-
-            // When
-            scenario.onActivity(
-                    new ActivityScenario.ActivityAction<AnalysisFragmentHostActivity>() {
-                        @Override
-                        public void perform(final AnalysisFragmentHostActivity activity) {
-                            final AnalysisFragmentImpl analysisFragment =
-                                    analysisFragmentImplRef.get();
-                            analysisFragment.showPdfInfoPanel();
-                            analysisFragment.showPdfPageCount("42");
-                        }
-                    });
-
-            // Then
-            onView(withId(R.id.gc_pdf_page_count)).check(matches(
-                    withText("42")));
-        }
-    }
-
-    @Test
-    public void should_hidePdfPageCount() throws Exception {
-        // Given
-        final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
-                new AtomicReference<>();
-
-        try (final ActivityScenario<AnalysisFragmentHostActivity> scenario = launchHostActivity(
-                analysisFragmentImplRef)) {
-
-            // When
-            scenario.onActivity(
-                    new ActivityScenario.ActivityAction<AnalysisFragmentHostActivity>() {
-                        @Override
-                        public void perform(final AnalysisFragmentHostActivity activity) {
-                            final AnalysisFragmentImpl analysisFragment =
-                                    analysisFragmentImplRef.get();
-                            analysisFragment.showPdfInfoPanel();
-                            analysisFragment.showPdfPageCount("42");
-                            analysisFragment.hidePdfPageCount();
-                        }
-                    });
-
-            // Then
-            onView(withId(R.id.gc_pdf_page_count)).check(matches(
-                    withEffectiveVisibility(ViewMatchers.Visibility.GONE)));
+            onView(withId(R.id.gc_analysis_message)).check(matches(
+                    withText("Analyzing\nPdfTitle")));
         }
     }
 
@@ -479,60 +396,6 @@ public class AnalysisFragmentImplTest {
 
             // Then
             assertThat(DialogShadow.showCalled).isTrue();
-        }
-    }
-
-    @Test
-    public void should_showErrorSnackbar() throws Exception {
-        // Given
-        final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
-                new AtomicReference<>();
-
-        try (final ActivityScenario<AnalysisFragmentHostActivity> scenario = launchHostActivity(
-                analysisFragmentImplRef)) {
-
-            // When
-            scenario.onActivity(
-                    new ActivityScenario.ActivityAction<AnalysisFragmentHostActivity>() {
-                        @Override
-                        public void perform(final AnalysisFragmentHostActivity activity) {
-                            final AnalysisFragmentImpl analysisFragment =
-                                    analysisFragmentImplRef.get();
-                            analysisFragment.showErrorSnackbar("Message", 1000,
-                                    "ButtonTitle", mock(View.OnClickListener.class));
-                        }
-                    });
-
-            // Then
-            onView(withText("Message")).check(matches(isCompletelyDisplayed()));
-            onView(withText("ButtonTitle")).check(matches(isCompletelyDisplayed()));
-        }
-    }
-
-    @Test
-    public void should_hideErrorSnackbar() throws Exception {
-        // Given
-        final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
-                new AtomicReference<>();
-
-        try (final ActivityScenario<AnalysisFragmentHostActivity> scenario = launchHostActivity(
-                analysisFragmentImplRef)) {
-
-            // When
-            scenario.onActivity(
-                    new ActivityScenario.ActivityAction<AnalysisFragmentHostActivity>() {
-                        @Override
-                        public void perform(final AnalysisFragmentHostActivity activity) {
-                            final AnalysisFragmentImpl analysisFragment =
-                                    analysisFragmentImplRef.get();
-                            analysisFragment.showErrorSnackbar("Message", 1000,
-                                    "ButtonTitle", mock(View.OnClickListener.class));
-                            analysisFragment.hideErrorSnackbar();
-                        }
-                    });
-
-            // Then
-            assertThat(ErrorSnackbarShadow.hideCalled).isTrue();
         }
     }
 
