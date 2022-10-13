@@ -105,6 +105,7 @@ import static net.gini.android.capture.internal.network.NetworkRequestsManager.i
 import static net.gini.android.capture.internal.qrcode.EPSPaymentParser.EXTRACTION_ENTITY_NAME;
 import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
 import static net.gini.android.capture.internal.util.AndroidHelper.isMarshmallowOrLater;
+import static net.gini.android.capture.internal.util.ContextHelper.isTablet;
 import static net.gini.android.capture.internal.util.FeatureConfiguration.getDocumentImportEnabledFileTypes;
 import static net.gini.android.capture.internal.util.FeatureConfiguration.isMultiPageEnabled;
 import static net.gini.android.capture.internal.util.FeatureConfiguration.isQRCodeScanningEnabled;
@@ -666,34 +667,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         trackCameraScreenEvent(CameraScreenEvent.HELP);
     }
 
-    private void bindFlashButtonView(final View view) {
-        final Activity activity = mFragment.getActivity();
-        if (activity == null) {
-            return;
-        }
-        if (isTablet(activity)) {
-            mButtonCameraFlash = view.findViewById(R.id.gc_button_camera_flash);
-            if (mButtonCameraFlash != null) {
-                return;
-            }
-        }
-        final FlashButtonPosition flashButtonPosition = getFlashButtonPosition(
-                isDocumentImportEnabled(activity), isMultiPageEnabled());
-        switch (flashButtonPosition) {
-            case LEFT_OF_CAMERA_TRIGGER:
-                mButtonCameraFlash = view.findViewById(R.id.gc_button_camera_flash_left_of_trigger);
-                break;
-            case BOTTOM_LEFT:
-                mButtonCameraFlash = view.findViewById(R.id.gc_button_camera_flash_bottom_left);
-                break;
-            case BOTTOM_RIGHT:
-                mButtonCameraFlash = view.findViewById(R.id.gc_button_camera_flash_bottom_right);
-                break;
-            default:
-                throw new UnsupportedOperationException("Unknown flash button position: "
-                        + flashButtonPosition);
-        }
-    }
 
     private void initViews() {
         final Activity activity = mFragment.getActivity();

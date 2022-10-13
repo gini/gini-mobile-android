@@ -23,17 +23,6 @@
 
     </net.gini.android.capture.internal.camera.view.CameraPreviewContainer>
 
-
-        <View
-            android:id="@+id/gc_activity_indicator_background"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/gc_camera_preview_shade"
-            android:visibility="invisible"
-            tools:visibility="invisible" />
-
-    </net.gini.android.capture.internal.camera.view.CameraPreviewContainer>
-
     <ImageView
         android:id="@+id/gc_camera_focus_indicator"
         android:layout_width="wrap_content"
@@ -48,14 +37,14 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="@dimen/medium"
-        android:layout_marginTop="@dimen/medium"
+        android:layout_marginTop="@dimen/xlarge"
         android:layout_marginEnd="@dimen/medium"
-        android:layout_marginBottom="@dimen/medium"
+        android:layout_marginBottom="@dimen/xlarge"
         android:adjustViewBounds="true"
         android:scaleType="fitXY"
         android:src="@drawable/gc_camera_frame"
         app:layout_constraintBottom_toTopOf="@+id/gc_camera_pane_background"
-        app:layout_constraintDimensionRatio="H, 1:1.414"
+        app:layout_constraintDimensionRatio="W, 1:1.414"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
