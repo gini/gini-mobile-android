@@ -357,26 +357,7 @@ class AnalysisScreenPresenterTest {
         // Then
         verify(mView).showPdfTitle(pdfFilename)
     }
-
-    @Test
-    @Throws(Exception::class)
-    fun should_showDocument_afterDocumentWasLoaded() {
-        // Given
-        val imageDocument: ImageDocument = ImageDocumentFake()
-        whenever(mView.pdfPreviewSize).thenReturn(Size(1024, 768))
-        val bitmap = mock<Bitmap>()
-        val rotationForDisplay = 90
-        val presenter = spy(
-            createPresenter(imageDocument, bitmap = bitmap, rotationForDisplay = rotationForDisplay)
-        )
-
-        // When
-        presenter.start()
-
-        // Then
-        verify(mView).showBitmap(bitmap, rotationForDisplay)
-    }
-
+    
     @Test
     @Throws(Exception::class)
     fun should_analyzeDocument_afterDocumentWasLoaded() {
