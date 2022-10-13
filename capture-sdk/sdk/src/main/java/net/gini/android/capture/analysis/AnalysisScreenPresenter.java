@@ -123,6 +123,14 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
     private List<AnalysisHint> generateRandomHintsList() {
         final List<AnalysisHint> list = AnalysisHint.getArray();
         Collections.shuffle(list, new Random());
+        switch (mMultiPageDocument.getType()) {
+            case IMAGE_MULTI_PAGE:
+            case PDF_MULTI_PAGE:
+            case QR_CODE_MULTI_PAGE:
+                break;
+            default:
+                list.remove(AnalysisHint.MULTIPAGE);
+        }
         return list;
     }
 

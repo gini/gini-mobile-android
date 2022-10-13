@@ -75,27 +75,17 @@
 
     </LinearLayout>
 
-    <net.gini.android.capture.internal.ui.CustomFontTextView
-        android:id="@+id/gc_analysis_hint_headline"
-        style="@style/GiniCaptureTheme.Analysis.HintHeadline.TextStyle"
-        android:layout_width="match_parent"
-        app:layout_constraintBottom_toTopOf="@id/gc_analysis_hint_container"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/gc_analysis_hint_container"
-        android:layout_marginEnd="@dimen/gc_analysis_hint_headline_horizontal_margin"
-        android:layout_marginLeft="@dimen/gc_analysis_hint_headline_horizontal_margin"
-        android:layout_marginRight="@dimen/gc_analysis_hint_headline_horizontal_margin"
-        android:layout_marginStart="@dimen/gc_analysis_hint_headline_horizontal_margin"
-        android:gravity="center_horizontal"
-        tools:text="Um schneller Ergebnisse zu erhalten, bitte:" />
-
     <LinearLayout
         android:id="@+id/gc_analysis_hint_container"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/gc_analysis_hint_container_height"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/gc_analysis_hint_bottom_margin"
+        android:paddingTop="@dimen/gc_analysis_hint_top_margin"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
+        android:background="@drawable/gc_analysis_tips_background"
         app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="invisible"
         android:layout_marginBottom="@dimen/gc_analysis_hint_container_bottom_margin"
         android:layout_marginEnd="@dimen/gc_analysis_hint_container_horizontal_margin"
         android:layout_marginLeft="@dimen/gc_analysis_hint_container_horizontal_margin"
@@ -106,19 +96,33 @@
             android:id="@+id/gc_analysis_hint_image"
             android:layout_width="@dimen/gc_analysis_hint_icon_size"
             android:layout_height="@dimen/gc_analysis_hint_icon_size"
+            android:scaleType="center"
             android:layout_gravity="center_vertical"
-            android:layout_margin="@dimen/gc_analysis_hint_icon_margin"
-            tools:src="@drawable/gc_hint_icon" />
+            android:layout_marginStart="@dimen/gc_analysis_hint_icon_margin"
+            tools:src="@drawable/gc_analysis_tip_icon" />
 
-        <net.gini.android.capture.internal.ui.CustomFontTextView
-            android:id="@+id/gc_analysis_hint_text"
-            style="@style/GiniCaptureTheme.Analysis.Hint.TextStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/gc_analysis_hint_text_height"
-            android:layout_gravity="center"
-            android:layout_marginStart="@dimen/gc_analysis_hint_text_left_margin"
-            android:gravity="center_vertical"
-            tools:text="Gute Lichtverhältnisse beim Aufnehmen des Fotos beschleunigen die Analyse." />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/gc_analysis_hint_headline_horizontal_margin"
+            android:layout_marginStart="@dimen/gc_analysis_hint_container_horizontal_margin"
+            android:orientation="vertical">
+
+            <net.gini.android.capture.internal.ui.CustomFontTextView
+                android:id="@+id/gc_analysis_hint_headline"
+                style="@style/GiniCaptureTheme.Analysis.HintHeadline.TextStyle"
+                android:layout_width="match_parent"
+                app:layout_constraintBottom_toTopOf="@id/gc_analysis_hint_container"
+                android:layout_height="wrap_content"
+                tools:text="Tipp:" />
+
+            <net.gini.android.capture.internal.ui.CustomFontTextView
+                android:id="@+id/gc_analysis_hint_text"
+                style="@style/GiniCaptureTheme.Analysis.Hint.TextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Gute Lichtverhältnisse beim Aufnehmen des Fotos beschleunigen die Analyse." />
+        </LinearLayout>
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

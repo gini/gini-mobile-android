@@ -32,8 +32,9 @@
     <dimen name="gc_multi_page_review_thumbnail_card_vertical_margin">16dp</dimen>
     <dimen name="gc_multi_page_review_plus_button_subtitle_padding">16dp</dimen>
 
-    <dimen name="gc_analysis_hint_container_bottom_margin">48dp</dimen>
-    <dimen name="gc_analysis_hint_container_width">400dp</dimen>
+    <dimen name="gc_analysis_hint_container_bottom_margin">32dp</dimen>
+    <dimen name="gc_analysis_hint_container_bottom_margin_portrait">152dp</dimen>
+    <dimen name="gc_analysis_hint_container_width">336dp</dimen>
     <dimen name="gc_analysis_hint_container_height">64dp</dimen>
 
     <dimen name="gc_noresults_tip_icon_size">80dp</dimen>
