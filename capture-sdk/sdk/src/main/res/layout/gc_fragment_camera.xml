@@ -7,6 +7,11 @@
     android:background="@color/Dark_01"
     tools:context=".camera.CameraFragment">
 
+    <net.gini.android.capture.view.InjectedViewContainer
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/gc_navigation_top_bar"/>
+
     <net.gini.android.capture.internal.camera.view.CameraPreviewContainer
         android:id="@+id/gc_camera_preview_container"
         android:layout_width="match_parent"
@@ -15,6 +20,9 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
+
+    </net.gini.android.capture.internal.camera.view.CameraPreviewContainer>
+
 
         <View
             android:id="@+id/gc_activity_indicator_background"

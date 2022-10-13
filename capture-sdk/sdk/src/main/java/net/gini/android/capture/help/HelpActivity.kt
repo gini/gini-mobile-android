@@ -14,6 +14,8 @@ import net.gini.android.capture.help.HelpItem.PhotoTips
 import net.gini.android.capture.help.view.HelpNavigationBarBottomAdapter
 import net.gini.android.capture.internal.util.ActivityHelper
 import net.gini.android.capture.view.InjectedViewContainer
+import net.gini.android.capture.view.NavButtonType
+import net.gini.android.capture.view.NavigationBarTopAdapter
 
 /**
  * <h3>Screen API and Component API</h3>
@@ -83,8 +85,6 @@ class HelpActivity : AppCompatActivity() {
 
     private lateinit var mRecyclerView: RecyclerView
 
-    private var injectedViewContainer: InjectedViewContainer<HelpNavigationBarBottomAdapter>? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.gc_activity_help)
@@ -101,6 +101,7 @@ class HelpActivity : AppCompatActivity() {
 
         setupHomeButton()
         setupBottomBarNavigation()
+        setupTopBarNavigation()
     }
 
     private fun setupHomeButton() {
@@ -109,9 +110,25 @@ class HelpActivity : AppCompatActivity() {
         }
     }
 
+    private fun setupTopBarNavigation() {
+        val topBarInjectedViewContainer = findViewById<InjectedViewContainer<NavigationBarTopAdapter>>(R.id.gc_injected_navigation_bar_container_top)
+        if (GiniCapture.hasInstance()) {
+
+            topBarInjectedViewContainer.injectedViewAdapter = GiniCapture.getInstance().navigationBarTopAdapter
+
+            val topBarAdapter = topBarInjectedViewContainer?.injectedViewAdapter
+            topBarAdapter?.setNavButtonType(NavButtonType.BACK)
+            topBarAdapter?.setTitle(getString(R.string.gc_title_help))
+
+            topBarAdapter?.setOnNavButtonClickListener {
+                onBackPressed()
+            }
+        }
+    }
+
 
     private fun setupBottomBarNavigation() {
-        injectedViewContainer = findViewById(R.id.gc_injected_navigation_bar_container_bottom)
+        val injectedViewContainer: InjectedViewContainer<HelpNavigationBarBottomAdapter>? = findViewById(R.id.gc_injected_navigation_bar_container_bottom)
         if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled) {
 
             injectedViewContainer?.injectedViewAdapter = GiniCapture.getInstance().helpNavigationBarBottomAdapter
