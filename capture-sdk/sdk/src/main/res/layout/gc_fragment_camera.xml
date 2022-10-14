@@ -8,18 +8,21 @@
     tools:context=".camera.CameraFragment">
 
     <net.gini.android.capture.view.InjectedViewContainer
-        android:layout_width="match_parent"
+        android:id="@+id/gc_navigation_top_bar"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:id="@+id/gc_navigation_top_bar"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <net.gini.android.capture.internal.camera.view.CameraPreviewContainer
         android:id="@+id/gc_camera_preview_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/gc_navigation_top_bar">
 
     </net.gini.android.capture.internal.camera.view.CameraPreviewContainer>
 
@@ -38,7 +41,7 @@
         app:layout_constraintBottom_toTopOf="@+id/gc_pane_wrapper"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/gc_navigation_top_bar">
 
 
         <ImageView
