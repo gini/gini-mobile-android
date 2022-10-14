@@ -44,15 +44,8 @@ android {
 }
 
 dependencies {
-    api(project(":core-api-library:library"))
-
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.kotlinx.coroutines.core)
-    implementation(libs.kotlinx.coroutines.android)
+    implementation(project(":core-api-library:library"))
     kapt(libs.moshi.codegen)
-    implementation(libs.moshi.core)
-    implementation(libs.retrofit)
-    implementation(libs.retrofit.moshi.converter)
 
     kaptAndroidTest(libs.moshi.codegen)
     androidTestImplementation(libs.mockito.core)

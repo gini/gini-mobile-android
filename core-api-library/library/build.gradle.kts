@@ -46,15 +46,15 @@ android {
 dependencies {
     api("com.android.volley:volley:1.2.1")
     api("com.parse.bolts:bolts-tasks:1.4.0")
-    implementation(libs.trustkit)
+    api(libs.androidx.core.ktx)
+    api(libs.kotlinx.coroutines.core)
+    api(libs.kotlinx.coroutines.android)
+    api(libs.moshi.core)
+    api(libs.retrofit)
+    api(libs.retrofit.moshi.converter)
 
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.kotlinx.coroutines.core)
-    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.trustkit)
     kapt(libs.moshi.codegen)
-    implementation(libs.moshi.core)
-    implementation(libs.retrofit)
-    implementation(libs.retrofit.moshi.converter)
     implementation(libs.okhttp3.logging.interceptor)
 
     androidTestImplementation(libs.kotlinx.coroutines.test)
