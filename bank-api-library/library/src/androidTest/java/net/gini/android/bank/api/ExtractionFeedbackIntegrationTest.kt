@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.squareup.moshi.Moshi
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import net.gini.android.bank.api.test.ExtractionsFixture
 import net.gini.android.bank.api.test.fromJsonAsset
@@ -19,6 +20,7 @@ import java.util.*
  * Copyright (c) 2021 Gini GmbH.
  */
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
 class ExtractionFeedbackIntegrationTest {
 
@@ -82,7 +84,7 @@ class ExtractionFeedbackIntegrationTest {
         )
 
         // 4. Verify that the extractions were updated
-        val extractionsAfterFeedback = documentManager.getExtractions(compositeDocument)
+        val extractionsAfterFeedback = documentManager.getExtractions(compositeDocument).data
 
         val extractionsAfterFeedbackFixture =
             moshi.fromJsonAsset<ExtractionsFixture>("result_Gini_invoice_example_after_feedback.json")!!

@@ -8,6 +8,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import net.gini.android.bank.api.models.ExtractionsContainer
+import net.gini.android.bank.api.models.ResolvePaymentInput
+import net.gini.android.bank.api.models.ResolvedPayment
 import net.gini.android.core.api.test.shared.helpers.TestUtils
 import net.gini.android.bank.api.requests.ErrorEvent
 import net.gini.android.core.api.DocumentRemoteSource
@@ -15,11 +17,15 @@ import net.gini.android.core.api.Resource
 import net.gini.android.core.api.internal.KGiniCoreAPIBuilder
 import net.gini.android.core.api.models.Box
 import net.gini.android.core.api.models.CompoundExtraction
+import net.gini.android.core.api.models.PaymentRequest
 import net.gini.android.core.api.models.SpecificExtraction
 import net.gini.android.core.api.test.shared.GiniCoreAPIIntegrationTest
+import net.gini.android.health.api.GiniHealthAPI
+import net.gini.android.health.api.GiniHealthAPIBuilder
+import net.gini.android.health.api.models.PaymentRequestInput
 import org.junit.Assert
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.lang.Exception
@@ -35,8 +41,7 @@ import java.util.*
 @RunWith(AndroidJUnit4::class)
 class GiniBankAPIIntegrationTest: GiniCoreAPIIntegrationTest<BankApiDocumentManager, BankApiDocumentRepository, GiniBankAPI, ExtractionsContainer>() {
 
-    // TODO: test health related things when Health API is updated
-//    private lateinit var giniHealthAPI: GiniHealthAPI
+    private lateinit var giniHealthApi: GiniHealthAPI
 
     @Test
     @Throws(Exception::class)
@@ -179,49 +184,43 @@ class GiniBankAPIIntegrationTest: GiniCoreAPIIntegrationTest<BankApiDocumentMana
         Assert.assertTrue("Sending feedback should be successful", sendFeedback is Resource.Success)
     }
 
-    // TODO: test health related things when Health API is updated
-//    @Test
-//    @Throws(Exception::class)
-//    fun testResolvePayment() {
-//        val createPaymentTask = createPaymentRequest()
-//        createPaymentTask.waitForCompletion()
-//        val id = createPaymentTask.result
-//        val paymentRequestTask = giniCoreAPI.documentTaskManager.getPaymentRequest(id)
-//        paymentRequestTask.waitForCompletion()
-//        val (_, _, recipient, iban, _, amount, purpose) = paymentRequestTask.result
-//        val resolvePaymentInput = ResolvePaymentInput(
-//            recipient,
-//            iban, amount, purpose, null
-//        )
-//        val resolvePaymentRequestTask = giniCoreAPI.documentTaskManager.resolvePaymentRequest(id, resolvePaymentInput)
-//        resolvePaymentRequestTask.waitForCompletion()
-//        Assert.assertNotNull(resolvePaymentRequestTask.result)
-//    }
-//
-//    @Test
-//    @Throws(Exception::class)
-//    fun testGetPayment() {
-//        val createPaymentTask = createPaymentRequest()
-//        createPaymentTask.waitForCompletion()
-//        val id = createPaymentTask.result
-//        val paymentRequestTask = giniCoreAPI.documentTaskManager.getPaymentRequest(id)
-//        paymentRequestTask.waitForCompletion()
-//        val (_, _, recipient, iban, bic, amount, purpose) = paymentRequestTask.result
-//        val resolvePaymentInput = ResolvePaymentInput(
-//            recipient,
-//            iban, amount, purpose, null
-//        )
-//        val resolvePaymentRequestTask = giniCoreAPI.documentTaskManager.resolvePaymentRequest(id, resolvePaymentInput)
-//        resolvePaymentRequestTask.waitForCompletion()
-//        val getPaymentRequestTask = giniCoreAPI.documentTaskManager.getPayment(id)
-//        getPaymentRequestTask.waitForCompletion()
-//        Assert.assertNotNull(getPaymentRequestTask.result)
-//        Assert.assertEquals(recipient, getPaymentRequestTask.result.recipient)
-//        Assert.assertEquals(iban, getPaymentRequestTask.result.iban)
-//        Assert.assertEquals(bic, getPaymentRequestTask.result.bic)
-//        Assert.assertEquals(amount, getPaymentRequestTask.result.amount)
-//        Assert.assertEquals(purpose, getPaymentRequestTask.result.purpose)
-//    }
+    @Test
+    @Throws(Exception::class)
+    fun testResolvePayment() = runTest {
+        val paymentRequestId = createPaymentRequest()
+        val paymentRequest = giniCoreApi.documentManager.getPaymentRequest(paymentRequestId).dataOrThrow
+        val (_, _, recipient, iban, _, amount, purpose) = paymentRequest
+        val resolvePaymentInput = ResolvePaymentInput(
+            recipient,
+            iban, amount, purpose, null
+        )
+        val resolvedPayment = giniCoreApi.documentManager.resolvePaymentRequest(paymentRequestId, resolvePaymentInput).dataOrThrow
+        Assert.assertEquals(recipient, resolvedPayment.recipient)
+        Assert.assertEquals(iban, resolvedPayment.iban)
+        Assert.assertEquals(amount, resolvedPayment.amount)
+        Assert.assertEquals(purpose, resolvedPayment.purpose)
+        Assert.assertNull(resolvedPayment.bic)
+        Assert.assertEquals(ResolvedPayment.Status.PAID, resolvedPayment.status)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testGetPayment() = runTest {
+        val paymentRequestId = createPaymentRequest()
+        val paymentRequest = giniCoreApi.documentManager.getPaymentRequest(paymentRequestId).dataOrThrow
+        val (_, _, recipient, iban, bic, amount, purpose) = paymentRequest
+        val resolvePaymentInput = ResolvePaymentInput(
+            recipient,
+            iban, amount, purpose, null
+        )
+        val resolvePayment = giniCoreApi.documentManager.resolvePaymentRequest(paymentRequestId, resolvePaymentInput).dataOrThrow
+        val retrievedPaymentRequest = giniCoreApi.documentManager.getPayment(paymentRequestId).dataOrThrow
+        Assert.assertEquals(recipient, retrievedPaymentRequest.recipient)
+        Assert.assertEquals(iban, retrievedPaymentRequest.iban)
+        Assert.assertEquals(bic, retrievedPaymentRequest.bic)
+        Assert.assertEquals(amount, retrievedPaymentRequest.amount)
+        Assert.assertEquals(purpose, retrievedPaymentRequest.purpose)
+    }
 
     @Test
     @Throws(Exception::class)
@@ -237,41 +236,36 @@ class GiniBankAPIIntegrationTest: GiniCoreAPIIntegrationTest<BankApiDocumentMana
         assertTrue(resource is Resource.Success)
     }
 
-    // TODO: test health related things when Health API is updated
-//    @Throws(Exception::class)
-//    private fun createPaymentRequest(): Task<String?> {
-//        val assetManager = getApplicationContext<Context>().resources.assets
-//        val testDocumentAsStream = assetManager.open("test.jpg")
-//        Assert.assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream)
-//        val testDocument = TestUtils.createByteArray(testDocumentAsStream)
-//        val documentWithExtractions =
-//            processDocument(testDocument, "image/jpeg", "test.jpg", DocumentTaskManager.DocumentType.INVOICE)
-//        val document = documentWithExtractions.keys.iterator().next()
-//        val extractionsContainer = documentWithExtractions[document]!!
-//        val listTask = giniHealthAPI.documentTaskManager.paymentProviders
-//        listTask.waitForCompletion()
-//        Assert.assertNotNull(listTask.result)
-//        val providers = listTask.result
-//        val paymentRequest = PaymentRequestInput(
-//            providers[0].id,
-//            getPaymentRecipient(extractionsContainer)!!.value,
-//            getIban(extractionsContainer)!!.value,
-//            getAmountToPay(extractionsContainer)!!.value,
-//            getPaymentPurpose(extractionsContainer)!!.value,
-//            null,  // We make bic optional for now
-//            //                Objects.requireNonNull(extractions.get("bic")).getValue(),
-//            document.uri.toString()
-//        )
-//        return giniHealthAPI.documentTaskManager.createPaymentRequest(paymentRequest)
-//    }
+    @Throws(Exception::class)
+    private suspend fun createPaymentRequest(): String {
+        val assetManager = getApplicationContext<Context>().resources.assets
+        val testDocumentAsStream = assetManager.open("test.jpg")
+        Assert.assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream)
+        val testDocument = TestUtils.createByteArray(testDocumentAsStream)
+        val documentWithExtractions =
+            processDocument(testDocument, "image/jpeg", "test.jpg", DocumentRemoteSource.DocumentType.INVOICE)
+        val document = documentWithExtractions.keys.iterator().next()
+        val extractionsContainer = documentWithExtractions[document]!!
+        val providers = giniHealthApi.documentManager.getPaymentProviders().dataOrThrow
+        val paymentRequest = PaymentRequestInput(
+            providers[0].id,
+            getPaymentRecipient(extractionsContainer)!!.value,
+            getIban(extractionsContainer)!!.value,
+            getAmountToPay(extractionsContainer)!!.value,
+            getPaymentPurpose(extractionsContainer)!!.value,
+            null,  // We make bic optional for now
+            //                Objects.requireNonNull(extractions.get("bic")).getValue(),
+            document.uri.toString()
+        )
+        return giniHealthApi.documentManager.createPaymentRequest(paymentRequest).dataOrThrow
+    }
 
     override fun createGiniCoreAPIBuilder(
         clientId: String,
         clientSecret: String,
         emailDomain: String
     ): KGiniCoreAPIBuilder<BankApiDocumentManager, GiniBankAPI, BankApiDocumentRepository, ExtractionsContainer> {
-        // TODO: test health related things when Health API is updated
-//        giniHealthAPI = GiniHealthAPIBuilder(getApplicationContext(), clientId, clientSecret, emailDomain).build()
+        giniHealthApi = GiniHealthAPIBuilder(getApplicationContext(), clientId, clientSecret, emailDomain).build()
         return GiniBankAPIBuilder(getApplicationContext(), clientId, clientSecret, emailDomain)
     }
 

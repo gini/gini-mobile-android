@@ -6,6 +6,7 @@ import net.gini.android.bank.api.requests.ErrorEvent
 import net.gini.android.core.api.DocumentRepository
 import net.gini.android.core.api.Resource
 import net.gini.android.core.api.Resource.Companion.wrapInResource
+import net.gini.android.core.api.authorization.KSessionManager
 import net.gini.android.core.api.models.CompoundExtraction
 import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.models.Extraction
@@ -24,9 +25,9 @@ import kotlin.coroutines.CoroutineContext
 
 class BankApiDocumentRepository(
     private val documentRemoteSource: BankApiDocumentRemoteSource,
-    private val giniApiType: GiniBankApiType,
-    private val moshi: Moshi
-) : DocumentRepository<ExtractionsContainer>(documentRemoteSource, giniApiType, moshi) {
+    sessionManager: KSessionManager,
+    giniApiType: GiniBankApiType
+) : DocumentRepository<ExtractionsContainer>(documentRemoteSource, sessionManager, giniApiType) {
 
     override fun createExtractionsContainer(
         specificExtractions: Map<String, SpecificExtraction>,
@@ -53,7 +54,6 @@ class BankApiDocumentRepository(
      *
      * @throws JSONException When a value of an extraction is not JSON serializable.
      */
-
     @Throws(JSONException::class)
     suspend fun sendFeedbackForExtractions(document: Document, extractions: Map<String, SpecificExtraction>): Resource<Unit> {
         val feedbackForExtractions = JSONObject()
@@ -68,8 +68,10 @@ class BankApiDocumentRepository(
         val bodyJSON = JSONObject()
         bodyJSON.put("feedback", feedbackForExtractions)
         val body: RequestBody = bodyJSON.toString().toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
-        return wrapInResource {
-            documentRemoteSource.sendFeedback(document.id, body)
+        return withSession { sessionToken ->
+            wrapInResource {
+                documentRemoteSource.sendFeedback(sessionToken, document.id, body)
+            }
         }
     }
 
@@ -106,8 +108,10 @@ class BankApiDocumentRepository(
         bodyJSON.put("extractions", feedbackForExtractions)
         bodyJSON.put("compoundExtractions", feedbackForCompoundExtractions)
         val body: RequestBody = bodyJSON.toString().toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
-        return wrapInResource {
-            documentRemoteSource.sendFeedback(document.id, body)
+        return withSession { sessionToken ->
+            wrapInResource {
+                documentRemoteSource.sendFeedback(sessionToken, document.id, body)
+            }
         }
     }
 
@@ -118,8 +122,10 @@ class BankApiDocumentRepository(
      * @param resolvePaymentInput information of the actual payment
      */
     suspend fun resolvePaymentRequest(requestId: String, resolvePaymentInput: ResolvePaymentInput): Resource<ResolvedPayment> =
-        wrapInResource {
-            documentRemoteSource.resolvePaymentRequests(requestId, resolvePaymentInput)
+        withSession { sessionToken ->
+            wrapInResource {
+                documentRemoteSource.resolvePaymentRequests(sessionToken, requestId, resolvePaymentInput)
+            }
         }
 
     /**
@@ -128,13 +134,17 @@ class BankApiDocumentRepository(
      * @param id of the paid {@link PaymentRequest}
      */
     suspend fun getPayment(id: String): Resource<Payment> =
-        wrapInResource {
-            documentRemoteSource.getPayment(id)
+        withSession { sessionToken ->
+            wrapInResource {
+                documentRemoteSource.getPayment(sessionToken, id)
+            }
         }
 
     suspend fun logErrorEvent(errorEvent: ErrorEvent): Resource<Unit> =
-        wrapInResource {
-            documentRemoteSource.logErrorEvent(errorEvent)
+        withSession { sessionToken ->
+            wrapInResource {
+                documentRemoteSource.logErrorEvent(sessionToken, errorEvent)
+            }
         }
 
     @Throws(JSONException::class)

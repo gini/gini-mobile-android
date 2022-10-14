@@ -44,7 +44,14 @@ android {
 }
 
 dependencies {
-    implementation(project(":core-api-library:library"))
+    api(project(":core-api-library:library"))
+
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.moshi.core)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.moshi.converter)
     kapt(libs.moshi.codegen)
 
     kaptAndroidTest(libs.moshi.codegen)
@@ -58,7 +65,7 @@ dependencies {
     androidTestImplementation(libs.androidx.multidex)
     androidTestImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(project(":core-api-library:shared-tests"))
-//    androidTestImplementation(project(":health-api-library:library"))
+    androidTestImplementation(project(":health-api-library:library"))
 }
 
 apply<PublishToMavenPlugin>()
