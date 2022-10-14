@@ -16,6 +16,8 @@ import net.gini.android.capture.internal.util.FeatureConfiguration;
 import net.gini.android.capture.noresults.NoResultsActivity;
 import net.gini.android.capture.review.ReviewActivity;
 import net.gini.android.capture.view.InjectedViewContainer;
+import net.gini.android.capture.view.NavButtonType;
+import net.gini.android.capture.view.NavigationBarTopAdapter;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -124,6 +126,7 @@ public class PhotoTipsActivity extends AppCompatActivity {
         forcePortraitOrientationOnPhones(this);
         setupHomeButton();
         setupBottomBarNavigation();
+        setupTopBarNavigation();
     }
 
     private void setupHomeButton() {
@@ -142,6 +145,21 @@ public class PhotoTipsActivity extends AppCompatActivity {
             helpNavigationBarBottomAdapter.setOnBackClickListener(v -> {
                 onBackPressed();
             });
+        }
+    }
+
+    private void setupTopBarNavigation() {
+        InjectedViewContainer<NavigationBarTopAdapter> topBarInjectedViewContainer = findViewById(R.id.gc_injected_navigation_bar_container_top);
+        if (GiniCapture.hasInstance()) {
+
+            topBarInjectedViewContainer.setInjectedViewAdapter(GiniCapture.getInstance().getNavigationBarTopAdapter());
+
+            NavigationBarTopAdapter topBarAdapter = topBarInjectedViewContainer.getInjectedViewAdapter();
+            assert topBarAdapter != null;
+            topBarAdapter.setNavButtonType(NavButtonType.BACK);
+            topBarAdapter.setTitle(getString(R.string.gc_title_photo_tips));
+
+            topBarAdapter.setOnNavButtonClickListener(v -> onBackPressed());
         }
     }
 

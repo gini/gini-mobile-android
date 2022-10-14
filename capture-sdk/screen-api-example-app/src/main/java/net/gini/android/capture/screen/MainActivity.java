@@ -43,6 +43,9 @@ import net.gini.android.capture.tracking.EventTracker;
 import net.gini.android.capture.tracking.OnboardingScreenEvent;
 import net.gini.android.capture.tracking.ReviewScreenEvent;
 import net.gini.android.capture.util.CancellationToken;
+import net.gini.android.capture.view.DefaultNavigationBarTopAdapter;
+import net.gini.android.capture.view.NavButtonType;
+import net.gini.android.capture.view.NavigationBarTopAdapter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

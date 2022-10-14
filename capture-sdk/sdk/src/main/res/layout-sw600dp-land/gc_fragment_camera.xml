@@ -7,11 +7,23 @@
     android:background="@color/Dark_01"
     tools:context=".camera.CameraFragment">
 
+    <net.gini.android.capture.view.InjectedViewContainer
+        android:id="@+id/gc_navigation_top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <net.gini.android.capture.internal.camera.view.CameraPreviewContainer
         android:id="@+id/gc_camera_preview_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_centerInParent="true">
+        android:layout_height="0dp"
+        android:layout_below="@+id/gc_navigation_top_bar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/gc_navigation_top_bar">
 
         <View
             android:id="@+id/gc_activity_indicator_background"
@@ -45,11 +57,16 @@
     <ImageView
         android:id="@+id/gc_camera_frame"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/xxlarge"
+        android:layout_height="0dp"
+        android:layout_marginStart="@dimen/xlarge"
+        android:layout_marginTop="@dimen/xlarge"
+        android:layout_marginEnd="@dimen/xlarge"
+        android:layout_marginBottom="@dimen/xlarge"
         android:adjustViewBounds="true"
-        android:src="@drawable/gc_camera_frame_land"
+        android:scaleType="fitXY"
+        android:src="@drawable/gc_camera_frame"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="W, 1.414:1"
         app:layout_constraintEnd_toStartOf="@+id/gc_camera_pane_background"
         app:layout_constraintStart_toStartOf="@+id/gc_camera_preview_container"
         app:layout_constraintTop_toTopOf="@+id/gc_camera_preview_container" />

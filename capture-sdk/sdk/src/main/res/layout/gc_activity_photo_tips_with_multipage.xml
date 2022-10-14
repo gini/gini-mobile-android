@@ -7,6 +7,14 @@
     android:background="?attr/backgroundColor"
     android:orientation="vertical">
 
+    <net.gini.android.capture.view.InjectedViewContainer
+        android:id="@+id/gc_injected_navigation_bar_container_top"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 
     <ScrollView
         android:id="@+id/gc_photo_tips_scrollview"
@@ -19,7 +27,7 @@
         android:overScrollMode="ifContentScrolls"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/gc_injected_navigation_bar_container_top">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -76,8 +84,8 @@
                     android:layout_marginEnd="@dimen/large"
                     android:gravity="center_vertical"
                     android:maxWidth="@dimen/gc_photo_tips_tip_text_max_width"
-                    android:textColor="@color/Dark_06"
                     android:text="@string/gc_photo_tip_lighting"
+                    android:textColor="@color/Dark_06"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/gc_imageView"
                     app:layout_constraintTop_toTopOf="@+id/gc_light_guideline" />
@@ -139,8 +147,8 @@
                     android:layout_marginTop="@dimen/gc_photo_tip_text_margin"
                     android:gravity="center_vertical"
                     android:maxWidth="@dimen/gc_photo_tips_tip_text_max_width"
-                    android:textColor="@color/Dark_06"
                     android:text="@string/gc_photo_tip_flat"
+                    android:textColor="@color/Dark_06"
                     app:layout_constraintEnd_toEndOf="@+id/gc_flat_tip_title"
                     app:layout_constraintStart_toStartOf="@+id/gc_flat_tip_title"
                     app:layout_constraintTop_toBottomOf="@+id/gc_flatten_page_guideline" />
@@ -200,8 +208,8 @@
                     android:layout_marginTop="@dimen/gc_photo_tip_text_margin"
                     android:gravity="center_vertical"
                     android:maxWidth="@dimen/gc_photo_tips_tip_text_max_width"
-                    android:textColor="@color/Dark_06"
                     android:text="@string/gc_photo_tip_align"
+                    android:textColor="@color/Dark_06"
                     app:layout_constraintEnd_toEndOf="@+id/gc_align_tip_title"
                     app:layout_constraintStart_toEndOf="@+id/gc_align_photo"
                     app:layout_constraintTop_toBottomOf="@+id/gc_align_guideline" />
@@ -263,8 +271,8 @@
                     android:layout_marginTop="@dimen/gc_photo_tip_text_margin"
                     android:gravity="center_vertical"
                     android:maxWidth="@dimen/gc_photo_tips_tip_text_max_width"
-                    android:textColor="@color/Dark_06"
                     android:text="@string/gc_photo_tip_parallel"
+                    android:textColor="@color/Dark_06"
                     app:layout_constraintEnd_toEndOf="@+id/gc_parallel_page_title"
                     app:layout_constraintStart_toEndOf="@+id/gc_parallel_photo"
                     app:layout_constraintTop_toTopOf="@+id/gc_parallel_guideline" />
@@ -324,8 +332,8 @@
                     android:layout_marginTop="@dimen/gc_photo_tip_text_margin"
                     android:gravity="center_vertical"
                     android:maxWidth="@dimen/gc_photo_tips_tip_text_max_width"
-                    android:textColor="@color/Dark_06"
                     android:text="@string/gc_photo_tip_multipage"
+                    android:textColor="@color/Dark_06"
                     app:layout_constraintEnd_toEndOf="@+id/customFontTextView4"
                     app:layout_constraintStart_toEndOf="@+id/imageView2"
                     app:layout_constraintTop_toBottomOf="@+id/gc_multiple_pages_guideline" />
