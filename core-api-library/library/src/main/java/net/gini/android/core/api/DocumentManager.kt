@@ -181,7 +181,7 @@ abstract class DocumentManager<out DR: DocumentRepository<E>, E: ExtractionsCont
      */
     suspend fun getPaymentRequest(
         id: String,
-    ): Resource<PaymentRequest?> =
+    ): Resource<PaymentRequest> =
         documentRepository.getPaymentRequest(id)
 
 

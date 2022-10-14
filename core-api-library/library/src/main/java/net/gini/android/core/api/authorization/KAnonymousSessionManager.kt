@@ -15,9 +15,11 @@ class KAnonymousSessionManager(
 ): KSessionManager {
     private var currentSession: SessionToken? = null
 
-    override suspend fun getSession(): Resource<SessionToken?> {
-        if (currentSession != null && !currentSession!!.hasExpired()) {
-            return Resource.Success(currentSession)
+    override suspend fun getSession(): Resource<SessionToken> {
+        currentSession?.let { session ->
+            if (!session.hasExpired()) {
+                return Resource.Success(session)
+            }
         }
 
         val userCredentials = credentialsStore.userCredentials
@@ -77,7 +79,7 @@ class KAnonymousSessionManager(
         }
     }
 
-    suspend fun loginUser(): Resource<SessionToken?> {
+    suspend fun loginUser(): Resource<SessionToken> {
         val userCredentials = credentialsStore.userCredentials
         if (userCredentials != null) {
             if (hasUserCredentialsEmailDomain(emailDomain, userCredentials)) {
@@ -137,7 +139,7 @@ class KAnonymousSessionManager(
         return UUID.randomUUID().toString()
     }
 
-    private fun isInvalidUserError(resource: Resource<SessionToken?>): Boolean {
+    private fun isInvalidUserError(resource: Resource<SessionToken>): Boolean {
         when (resource.responseStatusCode ?: 0) {
             400 -> {
                 resource.responseBody?.let {

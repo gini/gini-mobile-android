@@ -39,12 +39,11 @@ interface DocumentService {
     suspend fun getLayoutForDocument(@HeaderMap bearer: Map<String, String>, @Path("documentId") documentId: String): Response<ResponseBody>
 
     @GET("paymentRequests/{id}")
-    suspend fun getPaymentRequest(@HeaderMap bearer: Map<String, String>, @Path("id") id: String): Response<ResponseBody>
+    suspend fun getPaymentRequest(@HeaderMap bearer: Map<String, String>, @Path("id") id: String): Response<PaymentRequestResponse>
 
     @GET("paymentRequests")
-    suspend fun getPaymentRequests(@HeaderMap bearer: Map<String, String>): Response<ResponseBody>
+    suspend fun getPaymentRequests(@HeaderMap bearer: Map<String, String>): Response<List<PaymentRequestResponse>>
 
     @GET
-    @Streaming
-    suspend fun getFile(@HeaderMap bearer: Map<String, String>, @Url location:String): Response<ByteArray>
+    suspend fun getFile(@HeaderMap bearer: Map<String, String>, @Url location:String): Response<ResponseBody>
 }

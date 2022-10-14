@@ -4,5 +4,5 @@ import net.gini.android.core.api.Resource
 import net.gini.android.core.api.authorization.apimodels.SessionToken
 
 interface KSessionManager {
-    suspend fun getSession(): Resource<SessionToken?>
+    suspend fun getSession(): Resource<SessionToken>
 }

@@ -1,7 +1,12 @@
 package net.gini.android.core.api.internal;
 
+import static net.gini.android.core.api.Utils.checkNotNull;
+
 import android.content.Context;
 import android.content.SharedPreferences;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.XmlRes;
 
 import com.android.volley.Cache;
 import com.android.volley.DefaultRetryPolicy;
@@ -33,14 +38,10 @@ import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.TrustManager;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.XmlRes;
 import kotlinx.coroutines.GlobalScope;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.moshi.MoshiConverterFactory;
-
-import static net.gini.android.core.api.Utils.checkNotNull;
 
 public abstract class GiniCoreAPIBuilder<DM extends DocumentManager<DR, E>, G extends GiniCoreAPI<DM,DR, E>, DR extends DocumentRepository<E>, E extends ExtractionsContainer> {
 
@@ -373,7 +374,7 @@ public abstract class GiniCoreAPIBuilder<DM extends DocumentManager<DR, E>, G ex
     private synchronized Retrofit getUserApiRetrofit() {
         mUserApiRetrofit = new Retrofit.Builder()
                 .baseUrl(mUserCenterApiBaseUrl)
-                .addConverterFactory(MoshiConverterFactory.create())
+                .addConverterFactory(MoshiConverterFactory.create(getMoshi()))
                 .client(new OkHttpClient.Builder()
                         .connectTimeout(mTimeoutInMs, TimeUnit.MILLISECONDS)
                         .readTimeout(mTimeoutInMs, TimeUnit.MILLISECONDS)
@@ -385,7 +386,7 @@ public abstract class GiniCoreAPIBuilder<DM extends DocumentManager<DR, E>, G ex
     private synchronized Retrofit getPayApiRetrofit() {
         mPayApiRetrofit = new Retrofit.Builder()
                 .baseUrl(getApiBaseUrl())
-                .addConverterFactory(MoshiConverterFactory.create())
+                .addConverterFactory(MoshiConverterFactory.create(getMoshi()))
                 .client(new OkHttpClient.Builder()
                         .connectTimeout(mTimeoutInMs, TimeUnit.MILLISECONDS)
                         .readTimeout(mTimeoutInMs, TimeUnit.MILLISECONDS)

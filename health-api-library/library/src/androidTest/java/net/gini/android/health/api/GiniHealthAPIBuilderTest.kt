@@ -20,10 +20,10 @@ class GiniHealthAPIBuilderTest {
         val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
 
         var healthAPIBuilder = GiniHealthAPIBuilder(targetContext, "", "", "")
-        assertEquals(healthAPIBuilder.giniApiType, GiniHealthApiType( apiVersion = 3))
+        assertEquals(healthAPIBuilder.getGiniApiType(), GiniHealthApiType( apiVersion = 3))
 
-        healthAPIBuilder = GiniHealthAPIBuilder(targetContext, mock())
-        assertEquals(healthAPIBuilder.giniApiType, GiniHealthApiType(apiVersion = 3))
+        healthAPIBuilder = GiniHealthAPIBuilder(targetContext, mock(), mock(), mock())
+        assertEquals(healthAPIBuilder.getGiniApiType(), GiniHealthApiType(apiVersion = 3))
     }
 
 }

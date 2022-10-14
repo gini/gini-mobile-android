@@ -4,11 +4,11 @@ import retrofit2.Response
 
 object SafeApiRequest {
     @Throws(ApiException::class, Exception::class)
-    inline fun <T : Any?> apiRequest(call: () -> Response<T>): Response<T> = try {
-        val response = call.invoke()
+    suspend inline fun <T : Any?> apiRequest(crossinline call: suspend () -> Response<T>): Response<T> = try {
+        val response = call()
 
         if (!response.isSuccessful) {
-            throw ApiException(response = response)
+            throw ApiException.forResponse(response = response)
         }
 
         response

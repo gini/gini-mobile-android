@@ -31,9 +31,6 @@ sealed class Resource<T>(
             error.exception
         )
 
-        fun toApiException(): ApiException =
-            ApiException(message, responseStatusCode, responseBody, responseHeaders, exception)
-
         companion object {
             fun <T> fromApiException(apiException: ApiException): Error<T> =
                 Error(
@@ -49,7 +46,7 @@ sealed class Resource<T>(
     class Cancelled<T> : Resource<T>()
 
     companion object {
-        suspend fun <T> wrapInResource(request: suspend () -> T) =
+        suspend inline fun <T> wrapInResource(crossinline request: suspend () -> T) =
             try {
                 Success(request())
             } catch (e: ApiException) {

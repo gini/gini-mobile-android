@@ -4,6 +4,7 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 
 import net.gini.android.core.api.DocumentManager;
+import net.gini.android.core.api.Resource
 import net.gini.android.core.api.models.CompoundExtraction
 import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.models.ExtractionsContainer
@@ -18,8 +19,8 @@ import org.json.JSONException
  * <p>
  * Copyright (c) 2022 Gini GmbH.
  */
-class HealthApiDocumentManager(documentTaskManager: HealthApiDocumentTaskManager) : DocumentManager<HealthApiCommunicator, HealthApiDocumentTaskManager, ExtractionsContainer>(
-    documentTaskManager
+class HealthApiDocumentManager(private val documentRepository: HealthApiDocumentRepository) : DocumentManager<HealthApiDocumentRepository, ExtractionsContainer>(
+    documentRepository
 ) {
 
     /**
@@ -33,20 +34,21 @@ class HealthApiDocumentManager(documentTaskManager: HealthApiDocumentTaskManager
      * @param compoundExtractions A Map where the key is the name of the compound extraction and the value is the
      *                            CompoundExtraction object. This is the same structure as returned by the getExtractions
      *                            method of this manager.
-     * @return The same document instance when storing the updated
-     * extractions was successful.
+     * @return Resource with the success API response
      * @throws JSONException When a value of an extraction is not JSON serializable.
      */
     suspend fun sendFeedback(
         document: Document,
         specificExtractions: Map<String, SpecificExtraction>,
         compoundExtractions: Map<String, CompoundExtraction>,
-    ): Document = withContext(taskDispatcher) {
-        suspendCancellableCoroutine { continuation ->
-            val task = documentTaskManager.sendFeedbackForExtractions(document, specificExtractions, compoundExtractions)
-            continuation.resumeTask(task)
-        }
-    }
+    ): Resource<Unit> =
+        documentRepository.sendFeedbackForExtractions(document, specificExtractions, compoundExtractions)
+
+    suspend fun sendFeedback(
+        document: Document,
+        specificExtractions: Map<String, SpecificExtraction>,
+    ): Resource<Unit> =
+        documentRepository.sendFeedbackForExtractions(document, specificExtractions)
 
     /**
      * Get the rendered image of a page as byte[]
@@ -57,37 +59,22 @@ class HealthApiDocumentManager(documentTaskManager: HealthApiDocumentTaskManager
     suspend fun getPageImage(
         documentId: String,
         page: Int
-    ): ByteArray = withContext(taskDispatcher) {
-        suspendCancellableCoroutine { continuation ->
-            val task = documentTaskManager.getPageImage(documentId, page)
-            continuation.resumeTask(task)
-        }
-    }
+    ): Resource<ByteArray> = documentRepository.getPageImage(documentId, page)
 
     /**
      * A payment provider is a Gini partner which integrated the GiniPay for Banks SDK into their mobile apps.
      *
      * @return A list of [PaymentProvider]
      */
-    suspend fun getPaymentProviders(): List<PaymentProvider> =
-    withContext(taskDispatcher) {
-        suspendCancellableCoroutine { continuation ->
-                val task = documentTaskManager.paymentProviders
-            continuation.resumeTask(task)
-        }
-    }
+    suspend fun getPaymentProviders(): Resource<List<PaymentProvider>> =
+        documentRepository.getPaymentProviders()
 
     /**
      * @return [PaymentProvider] for the given id.
      */
     suspend fun getPaymentProvider(
             id: String,
-            ): PaymentProvider = withContext(taskDispatcher) {
-        suspendCancellableCoroutine { continuation ->
-                val task = documentTaskManager.getPaymentProvider(id)
-            continuation.resumeTask(task)
-        }
-    }
+            ): Resource<PaymentProvider> = documentRepository.getPaymentProvider(id)
 
     /**
      *  A [PaymentRequest] is used to have on the backend the intent of making a payment
@@ -97,11 +84,6 @@ class HealthApiDocumentManager(documentTaskManager: HealthApiDocumentTaskManager
      */
     suspend fun createPaymentRequest(
         paymentRequestInput: PaymentRequestInput,
-            ): String = withContext(taskDispatcher) {
-        suspendCancellableCoroutine { continuation ->
-                val task = documentTaskManager.createPaymentRequest(paymentRequestInput)
-            continuation.resumeTask(task)
-        }
-    }
+            ): Resource<String> = documentRepository.createPaymentRequest(paymentRequestInput)
 
 }

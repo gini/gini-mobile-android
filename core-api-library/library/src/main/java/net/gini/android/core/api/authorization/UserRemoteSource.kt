@@ -21,14 +21,14 @@ class UserRemoteSource(
         val response = SafeApiRequest.apiRequest {
             userService.signIn(basicHeaderMap(), userRequestModel.email ?: "", userRequestModel.password ?: "")
         }
-        response.body() ?: throw ApiException("Empty response body", response)
+        response.body() ?: throw ApiException.forResponse("Empty response body", response)
     }
 
     suspend fun loginClient(): SessionToken = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             userService.loginClient(basicHeaderMap())
         }
-        response.body() ?: throw ApiException("Empty response body", response)
+        response.body() ?: throw ApiException.forResponse("Empty response body", response)
     }
 
     suspend fun createUser(userRequestModel: UserRequestModel, sessionToken: SessionToken): Unit = withContext(coroutineContext) {
@@ -41,14 +41,14 @@ class UserRemoteSource(
         val response = SafeApiRequest.apiRequest {
            userService.getGiniApiSessionTokenInfo(bearerHeaderMap(authSessionToken), token)
         }
-        response.body() ?: throw ApiException("Empty response body", response)
+        response.body() ?: throw ApiException.forResponse("Empty response body", response)
     }
 
     suspend fun getUserInfo(uri: String, sessionToken: SessionToken): UserResponseModel = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             userService.getUserInfo(bearerHeaderMap(sessionToken), uri)
         }
-        response.body() ?: throw ApiException("Empty response body", response)
+        response.body() ?: throw ApiException.forResponse("Empty response body", response)
     }
 
     suspend fun updateEmail(userId: String, userRequestModel: UserRequestModel, sessionToken: SessionToken): Unit = withContext(coroutineContext) {

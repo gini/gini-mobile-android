@@ -8,8 +8,6 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import net.gini.android.core.api.DocumentManager
-import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.api.HealthApiDocumentManager
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.review.bank.packageInfosFixture

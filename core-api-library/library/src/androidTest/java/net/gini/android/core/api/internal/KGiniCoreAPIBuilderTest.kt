@@ -59,26 +59,6 @@ class KGiniCoreAPIBuilderTest {
         }
     }
 
-    @Test
-    fun testSetWrongConnectionMaxNumberOfRetries() {
-        val builder = CoreAPIBuilder(ApplicationProvider.getApplicationContext(), "clientId", "clientSecret", "@example.com")
-        try {
-            builder.setMaxNumberOfRetries(-1)
-            Assert.fail("IllegalArgumentException should be thrown")
-        } catch (exc: java.lang.IllegalArgumentException) {
-        }
-    }
-
-    @Test
-    fun testSetWrongConnectionBackOffMultiplier() {
-        val builder = CoreAPIBuilder(ApplicationProvider.getApplicationContext(), "clientId", "clientSecret", "@example.com")
-        try {
-            builder.setConnectionBackOffMultiplier(-1f)
-            Assert.fail("IllegalArgumentException should be thrown")
-        } catch (exc: java.lang.IllegalArgumentException) {
-        }
-    }
-
     class CoreAPIBuilder(
         private val context: Context,
         private val clientId: String,
@@ -99,11 +79,11 @@ class KGiniCoreAPIBuilderTest {
         }
 
         override fun createDocumentRepository(): TestDocumentRepository {
-            return TestDocumentRepository(Dispatchers.IO, createDocumentRemoteSource(), getGiniApiType(), getMoshi())
+            return TestDocumentRepository(createDocumentRemoteSource(), getSessionManager(), getGiniApiType())
         }
 
         private fun createDocumentRemoteSource(): TestDocumentRemoteSource {
-            return TestDocumentRemoteSource(Dispatchers.IO, getApiRetrofit().create(TestService::class.java), getGiniApiType(), getSessionManager(), getApiBaseUrl() ?: "")
+            return TestDocumentRemoteSource(Dispatchers.IO, getApiRetrofit().create(TestService::class.java), getGiniApiType(), getApiBaseUrl() ?: "")
         }
     }
 
@@ -111,11 +91,10 @@ class KGiniCoreAPIBuilderTest {
         DocumentManager<TestDocumentRepository, ExtractionsContainer>(documentRepository)
 
     class TestDocumentRepository(
-        override val coroutineContext: CoroutineContext,
         documentRemoteSource: DocumentRemoteSource,
-        giniApiType: GiniApiType,
-        moshi: Moshi
-    ) : DocumentRepository<ExtractionsContainer>(coroutineContext, documentRemoteSource, giniApiType, moshi) {
+        sessionManager: KSessionManager,
+        giniApiType: GiniApiType
+    ) : DocumentRepository<ExtractionsContainer>(documentRemoteSource, sessionManager, giniApiType) {
         override fun createExtractionsContainer(specificExtractions: Map<String, SpecificExtraction>, compoundExtractions: Map<String, CompoundExtraction>, responseJSON: JSONObject
         ): ExtractionsContainer {
             return ExtractionsContainer(specificExtractions, compoundExtractions)
@@ -131,12 +110,11 @@ class KGiniCoreAPIBuilderTest {
         override val coroutineContext: CoroutineContext,
         private val documentService: DocumentService,
         private val giniApiType: GiniApiType,
-        private val sessionManager: KSessionManager,
         baseUriString: String
-    ): DocumentRemoteSource(coroutineContext, documentService, giniApiType, sessionManager, baseUriString)
+    ): DocumentRemoteSource(coroutineContext, documentService, giniApiType, baseUriString)
 
     class NullSessionManager: KSessionManager {
-        override suspend fun getSession(): Resource<SessionToken?> {
+        override suspend fun getSession(): Resource<SessionToken> {
             return Resource.Error("NullSessionManager can't create sessions")
         }
     }

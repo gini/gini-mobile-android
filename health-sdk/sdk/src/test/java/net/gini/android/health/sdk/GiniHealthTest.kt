@@ -7,9 +7,7 @@ import io.mockk.mockk
 import java.util.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import net.gini.android.core.api.DocumentManager
 import net.gini.android.core.api.models.CompoundExtraction
-import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.models.ExtractionsContainer
 import net.gini.android.core.api.models.SpecificExtraction

@@ -11,10 +11,10 @@ class ApiException(
     cause: Throwable? = null
 ) : IOException(message, cause) {
 
-    constructor(message: String? = null, response: Response<*>) : this(
-        message,
-        response.code(),
-        if (response.isSuccessful) response.body()?.toString() else response.errorBody()?.string(),
-        response.headers().toMultimap()
-    )
+    companion object {
+        fun forResponse(message: String? = null, response: Response<*>): ApiException {
+            val body = if (response.isSuccessful) response.body()?.toString() else response.errorBody()?.string()
+            return ApiException(message ?: body, response.code(), body, response.headers().toMultimap())
+        }
+    }
 }

@@ -14,7 +14,7 @@ open class UserRepository(
     private var session: SessionToken? = null
 
     //region Public methods
-    suspend fun loginUser(userRequestModel: UserRequestModel): Resource<SessionToken?> =
+    suspend fun loginUser(userRequestModel: UserRequestModel): Resource<SessionToken> =
         wrapInResource {
             userRemoteSource.signIn(userRequestModel)
         }
