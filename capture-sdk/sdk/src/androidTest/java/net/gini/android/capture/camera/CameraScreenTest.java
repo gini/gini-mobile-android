@@ -689,7 +689,7 @@ public class CameraScreenTest {
 
     @Test(expected = IllegalStateException.class)
     public void should_throwException_whenListener_wasNotSet() {
-        final CameraFragmentCompat cameraFragment = CameraFragmentCompat.createInstance();
+        final CameraFragment cameraFragment = CameraFragment.createInstance();
         cameraFragment.onCreate(null);
     }
 

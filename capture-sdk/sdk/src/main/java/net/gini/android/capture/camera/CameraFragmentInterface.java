@@ -3,11 +3,15 @@ package net.gini.android.capture.camera;
 import androidx.annotation.NonNull;
 
 /**
+ * Internal use only.
+ *
  * <p>
  *     Methods which Camera Fragment must implement.
  * </p>
+ *
+ * @suppress
  */
-public interface CameraFragmentInterface {
+interface CameraFragmentInterface {
 
     /**
      * <p>

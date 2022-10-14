@@ -348,7 +348,7 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
     private GiniCaptureCoordinator mGiniCaptureCoordinator;
     private Document mDocument;
 
-    private CameraFragmentCompat mFragment;
+    private CameraFragment mFragment;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -364,6 +364,7 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
         showOnboardingIfRequested();
         setupHomeButton();
         handleOnBackPressed();
+        setTitleOnTablets();
     }
 
     private void handleOnBackPressed() {
@@ -388,6 +389,15 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
         mOnboardingShown = savedInstanceState.getBoolean(ONBOARDING_SHOWN_KEY);
     }
 
+    private void setTitleOnTablets() {
+
+        boolean isTablet = getResources().getBoolean(R.bool.gc_is_tablet);
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(isTablet ? getString(R.string.gc_camera_title) : getString(R.string.gc_title_camera));
+        }
+    }
+
     @Override
     protected void onSaveInstanceState(final Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -395,11 +405,11 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
     }
 
     private void createFragment() {
-        mFragment = createCameraFragmentCompat();
+        mFragment = createCameraFragment();
     }
 
-    protected CameraFragmentCompat createCameraFragmentCompat() {
-        return CameraFragmentCompat.createInstance();
+    protected CameraFragment createCameraFragment() {
+        return CameraFragment.createInstance();
     }
 
     private void initFragment() {
@@ -414,7 +424,7 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
     }
 
     private void retainFragment() {
-        mFragment = (CameraFragmentCompat) getSupportFragmentManager().findFragmentByTag(
+        mFragment = (CameraFragment) getSupportFragmentManager().findFragmentByTag(
                 CAMERA_FRAGMENT);
     }
 

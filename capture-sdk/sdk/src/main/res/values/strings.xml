@@ -150,5 +150,7 @@
     <string name="gc_first_illustration_description">Aktivieren Sie die Teilen-Funktion. Dazu wählen Sie eine Datei aus und verwenden anschließend die Teilen-Funktion, dargestellt als Viereck mit hoch-zeigendem Pfeil.</string>
     <string name="gc_second_illustration_description">Banking App auswählen. Wählen Sie nun die gewünschte App aus mit der das Dokument geteilt werden soll.</string>
     <string name="gc_photos_of_monitors_or_screens">Monitoraufnahmen und Screenshots</string>
-
+    <string name="gc_camera_flash_on_subtitle">An</string>
+    <string name="gc_camera_flash_off_subtitle">Aus</string>
+    <string name="gc_camera_title">Rechnung oder QR Code scannen</string>
 </resources>

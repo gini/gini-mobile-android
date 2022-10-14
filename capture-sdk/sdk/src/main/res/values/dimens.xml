@@ -29,7 +29,6 @@
     <dimen name="gc_camera_image_stack_top_margin">8dp</dimen>
     <dimen name="gc_camera_image_stack_right_margin">40dp</dimen>
     <dimen name="gc_camera_image_stack_left_margin">40dp</dimen>
-    <dimen name="gc_camera_image_stack_badge_size">20dp</dimen>
     <dimen name="gc_camera_activity_indicator_padding">16dp</dimen>
     <dimen name="gc_camera_qrcode_detected_popup_horizontal_margin">24dp</dimen>
     <dimen name="gc_camera_qrcode_detected_popup_vertical_margin">16dp</dimen>
@@ -139,5 +138,6 @@
     <dimen name="gc_file_import_paragraphs_margin">50dp</dimen>
     <dimen name="gc_snackbar_card_corner_radius">5dp</dimen>
     <dimen name="gc_tablet_width">582dp</dimen>
+    <dimen name="gc_camera_pane_width">124dp</dimen>
 
 </resources>

@@ -46,7 +46,7 @@ public class DeviceMemoryRequirementTest {
     @Test
     public void should_reportFulfilled_ifEnoughMemory_isAvailable() {
         OldCameraApiHolder cameraHolder = getCameraHolder(
-                Collections.singletonList(new Size(3264, 2448)));
+                Collections.singletonList(new Size(4216, 2372)));
 
         DeviceMemoryRequirement requirement = new DeviceMemoryRequirement(cameraHolder);
 

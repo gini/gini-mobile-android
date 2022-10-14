@@ -28,7 +28,7 @@ public class CameraXPreviewContainer extends FrameLayout {
         CENTER_INSIDE
     }
 
-    private ScaleType mScaleType = ScaleType.CENTER_INSIDE;
+    private ScaleType mScaleType = ScaleType.CENTER_RESIZE;
 
     private final PreviewView mPreviewView;
 

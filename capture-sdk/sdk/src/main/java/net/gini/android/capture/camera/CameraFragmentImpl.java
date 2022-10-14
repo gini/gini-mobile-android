@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.media.Image;
@@ -22,18 +21,17 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 import androidx.annotation.VisibleForTesting;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.Group;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.ViewPropertyAnimatorCompat;
 import androidx.core.view.ViewPropertyAnimatorListenerAdapter;
-import androidx.transition.Transition;
-import androidx.transition.TransitionListenerAdapter;
 
 import net.gini.android.capture.AsyncCallback;
 import net.gini.android.capture.Document;
@@ -56,8 +54,6 @@ import net.gini.android.capture.internal.camera.api.camerax.CameraXController;
 import net.gini.android.capture.internal.camera.api.UIExecutor;
 import net.gini.android.capture.internal.camera.photo.Photo;
 import net.gini.android.capture.internal.camera.photo.PhotoEdit;
-import net.gini.android.capture.internal.camera.view.FlashButtonHelper.FlashButtonPosition;
-import net.gini.android.capture.internal.camera.view.HintPopup;
 import net.gini.android.capture.internal.camera.view.QRCodePopup;
 import net.gini.android.capture.internal.fileimport.FileChooserActivity;
 import net.gini.android.capture.internal.network.AnalysisNetworkRequestResult;
@@ -68,7 +64,6 @@ import net.gini.android.capture.internal.qrcode.PaymentQRCodeReader;
 import net.gini.android.capture.internal.qrcode.QRCodeDetectorTask;
 import net.gini.android.capture.internal.qrcode.QRCodeDetectorTaskMLKit;
 import net.gini.android.capture.internal.storage.ImageDiskStore;
-import net.gini.android.capture.internal.ui.ErrorSnackbar;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.ui.ViewStubSafeInflater;
 import net.gini.android.capture.internal.util.ApplicationHelper;
@@ -94,22 +89,18 @@ import net.gini.android.capture.view.NavigationBarTopAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
 import kotlin.Unit;
-import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 import static net.gini.android.capture.GiniCaptureError.ErrorCode.MISSING_GINI_CAPTURE_INSTANCE;
 import static net.gini.android.capture.document.ImageDocument.ImportMethod;
-import static net.gini.android.capture.internal.camera.view.FlashButtonHelper.getFlashButtonPosition;
 import static net.gini.android.capture.internal.network.NetworkRequestsManager.isCancellation;
 import static net.gini.android.capture.internal.qrcode.EPSPaymentParser.EXTRACTION_ENTITY_NAME;
 import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
@@ -121,6 +112,11 @@ import static net.gini.android.capture.internal.util.FeatureConfiguration.isQRCo
 import static net.gini.android.capture.internal.util.FileImportValidator.FILE_SIZE_LIMIT;
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackCameraScreenEvent;
 
+/**
+ * Legacy class which was used to share camera fragment logic between support library (androidx) fragments and
+ * native ones.
+ * TODO: refactor this to use a modern architecture for the camera fragment
+ */
 class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader.Listener {
 
     @VisibleForTesting
@@ -159,10 +155,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     };
 
     private static final int REQ_CODE_CHOOSE_FILE = 1;
-    @VisibleForTesting
-    static final String SHOW_UPLOAD_HINT_POP_UP = "SHOW_HINT_POP_UP";
-    @VisibleForTesting
-    static final String SHOW_QRCODE_SCANNER_HINT_POP_UP = "SHOW_QR_CODE_SCANNER_HINT_POP_UP";
     private static final String IN_MULTI_PAGE_STATE_KEY = "IN_MULTI_PAGE_STATE_KEY";
     private static final String IS_FLASH_ENABLED_KEY = "IS_FLASH_ENABLED_KEY";
 
@@ -173,7 +165,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private QRCodePopup<String> mUnsupportedQRCodePopup;
 
     private View mImageCorners;
-    private ImageStack mImageStack;
+    private PhotoThumbnail mPhotoThumbnail;
     private boolean mInterfaceHidden;
     private boolean mInMultiPageState;
     private boolean mIsFlashEnabled = true;
@@ -183,7 +175,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private ImageMultiPageDocument mMultiPageDocument;
     private PaymentQRCodeReader mPaymentQRCodeReader;
 
-    private RelativeLayout mLayoutRoot;
+    private ConstraintLayout mLayoutRoot;
     private InjectedViewContainer<NavigationBarTopAdapter> topAdapterInjectedViewContainer;
     private ViewGroup mCameraPreviewContainer;
     private View mCameraPreview;
@@ -191,23 +183,14 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     @VisibleForTesting
     ImageButton mButtonCameraTrigger;
     private ImageButton mButtonCameraFlash;
+    private Group mCameraFlashButtonGroup;
+    private TextView mCameraFlashButtonSubtitle;
     private LinearLayout mLayoutNoPermission;
     private ImageButton mButtonImportDocument;
     private View mQRCodeDetectedPopupContainer;
     private View mUnsupportedQRCodeDetectedPopupContainer;
-    private View mUploadHintCloseButton;
-    private View mUploadHintContainer;
-    private View mUploadHintContainerArrow;
-    private View mQRCodeScannerHintCloseButton;
-    private View mQRCodeScannerHintContainer;
-    private View mQRCodeScannerHintContainerArrow;
-    private View mCameraPreviewShade;
     private View mActivityIndicatorBackground;
     private ProgressBar mActivityIndicator;
-    private ViewPropertyAnimatorCompat mCameraPreviewShadeAnimation;
-
-    private HintPopup mUploadHintPopup;
-    private HintPopup mQRCodeScannerHintPopup;
 
     private ViewStubSafeInflater mViewStubInflater;
 
@@ -218,7 +201,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private boolean mProceededToMultiPageReview;
     private boolean mQRCodeAnalysisCompleted;
     private QRCodeDocument mQRCodeDocument;
-    private LinearLayout mImportButtonContainer;
+    private Group mImportButtonGroup;
     private boolean mInstanceStateSaved;
 
     CameraFragmentImpl(@NonNull final FragmentImplCallback fragment) {
@@ -237,9 +220,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private void handleQRCodeDetected(@Nullable final PaymentQRCodeData paymentQRCodeData,
                                       @NonNull final String qrCodeContent) {
-         if (mUploadHintContainer.getVisibility() == View.VISIBLE
-                 || mInterfaceHidden
-                 || mActivityIndicator.getVisibility() == View.VISIBLE) {
+         if (mInterfaceHidden || mActivityIndicator.getVisibility() == View.VISIBLE) {
             mPaymentQRCodePopup.hide();
             mUnsupportedQRCodePopup.hide();
              return;
@@ -346,26 +327,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                 new QRCodePopup<>(mFragment, mUnsupportedQRCodeDetectedPopupContainer,
                         DEFAULT_ANIMATION_DURATION, getHideQRCodeDetectedPopupDelayMs(),
                         getDifferentQRCodeDetectedPopupDelayMs());
-
-        mUploadHintPopup = new HintPopup(mUploadHintContainer, mUploadHintContainerArrow,
-                mUploadHintCloseButton, DEFAULT_ANIMATION_DURATION,
-                new Function0<Unit>() {
-                    @Override
-                    public Unit invoke() {
-                        closeUploadHintPopUp();
-                        return null;
-                    }
-                });
-
-        mQRCodeScannerHintPopup = new HintPopup(mQRCodeScannerHintContainer,
-                mQRCodeScannerHintContainerArrow, mQRCodeScannerHintCloseButton,
-                DEFAULT_ANIMATION_DURATION, new Function0<Unit>() {
-            @Override
-            public Unit invoke() {
-                closeQRCodeScannerHintPopUp();
-                return null;
-            }
-        });
     }
 
     public void onStart() {
@@ -388,7 +349,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                 @Override
                 public void accept(Void unused) {
                     enableTapToFocus();
-                    showHintPopUpsOnFirstExecution();
                     initFlashButton();
                 }
             });
@@ -417,7 +377,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         }
         if (mCameraController.isFlashAvailable()) {
             if (GiniCapture.hasInstance() && GiniCapture.getInstance().isFlashButtonEnabled()) {
-                mButtonCameraFlash.setVisibility(View.VISIBLE);
+                mCameraFlashButtonGroup.setVisibility(View.VISIBLE);
             }
             updateCameraFlashState();
         }
@@ -436,11 +396,11 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             if (multiPageDocument != null && multiPageDocument.getDocuments().size() > 0) {
                 mMultiPageDocument = multiPageDocument;
                 mInMultiPageState = true;
-                updateImageStack();
+                updatePhotoThumbnail();
             } else {
                 mInMultiPageState = false;
                 mMultiPageDocument = null;
-                mImageStack.removeImages();
+                mPhotoThumbnail.removeImage();
             }
         }
     }
@@ -476,91 +436,11 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         return mPaymentQRCodeReader;
     }
 
-
-     private void showUploadHintPopUpOnFirstExecution() {
-        if (mInterfaceHidden) {
-            return;
-        }
-        if (shouldShowUploadHintPopUp()) {
-            showUploadHintPopUp();
-        }
-    }
-
-    private void showQrcodeScannerHintPopUpOnFirstExecution() {
-        if (mInterfaceHidden) {
-            return;
-        }
-        if (shouldShowQRCodeScannerHintPopup()) {
-            showQRCodeScannerHintPopUp();
-        }
-    }
-
-    private void showHintPopUpsOnFirstExecution() {
-        if (mInterfaceHidden) {
-            return;
-        }
-        if (shouldShowUploadHintPopUp()) {
-             showUploadHintPopUp();
-        } else if (shouldShowQRCodeScannerHintPopup()) {
-            showQRCodeScannerHintPopUp();
-         }
-     }
-
-    @VisibleForTesting
-    void showUploadHintPopUp() {
-        disableCameraTriggerButtonAnimated(0.3f);
-        disableFlashButtonAnimated(0.3f);
-        showHintPopup(mUploadHintPopup);
-    }
-
-    private void showQRCodeScannerHintPopUp() {
-        disableImportButtonAnimated(0.3f);
-        disableFlashButtonAnimated(0.3f);
-        showHintPopup(mQRCodeScannerHintPopup);
-    }
-
-    private void showHintPopup(@NonNull final HintPopup hintPopup) {
-        clearHintPopupRelatedAnimations();
-        hintPopup.show();
-        mCameraPreviewShade.setVisibility(View.VISIBLE);
-        mCameraPreviewShade.setClickable(true);
-        mCameraPreviewShadeAnimation = ViewCompat.animate(
-                mCameraPreviewShade)
-                .alpha(1)
-                .setDuration(DEFAULT_ANIMATION_DURATION);
-        mCameraPreviewShadeAnimation.start();
-    }
-
-    private void clearHintPopupRelatedAnimations() {
-        if (mCameraPreviewShadeAnimation != null) {
-            mCameraPreviewShadeAnimation.cancel();
-            mCameraPreviewShade.clearAnimation();
-            mCameraPreviewShadeAnimation.setListener(null);
-        }
-    }
-
-    private boolean shouldShowUploadHintPopUp() {
-        final Activity activity = mFragment.getActivity();
-        if (activity == null) {
-            return false;
-        }
-        if (!isDocumentImportEnabled(activity) || mInterfaceHidden) {
-            return false;
-        }
-        final Context context = mFragment.getActivity();
-        if (context != null) {
-            final SharedPreferences gcSharedPrefs = context.getSharedPreferences(GC_SHARED_PREFS,
-                    Context.MODE_PRIVATE);
-            return gcSharedPrefs.getBoolean(SHOW_UPLOAD_HINT_POP_UP, true);
-        }
-        return false;
-    }
-
     private void enableTapToFocus() {
         mCameraController.enableTapToFocus(new CameraInterface.TapToFocusListener() {
                     @Override
                     public void onFocusing(@NonNull final Point point, @NonNull final Size previewViewSize) {
-                        showFocusIndicator(point, previewViewSize);
+                        showFocusIndicator(point);
                     }
 
                     @Override
@@ -570,16 +450,9 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                 });
     }
 
-    private void showFocusIndicator(@NonNull final Point point, @NonNull final Size previewViewSize) {
-        final int top = Math.round((mLayoutRoot.getHeight() - previewViewSize.height) / 2.0f);
-        final int left = Math.round((mLayoutRoot.getWidth() - previewViewSize.width) / 2.0f);
-        final RelativeLayout.LayoutParams layoutParams =
-                (RelativeLayout.LayoutParams) mCameraFocusIndicator.getLayoutParams();
-        layoutParams.leftMargin = (int) Math.round(
-                left + point.x - (mCameraFocusIndicator.getWidth() / 2.0));
-        layoutParams.topMargin = (int) Math.round(
-                top + point.y - (mCameraFocusIndicator.getHeight() / 2.0));
-        mCameraFocusIndicator.setLayoutParams(layoutParams);
+    private void showFocusIndicator(@NonNull final Point point) {
+        mCameraFocusIndicator.setX((float) (point.x - (mCameraFocusIndicator.getWidth() / 2.0)));
+        mCameraFocusIndicator.setY((float) (point.y - (mCameraFocusIndicator.getHeight() / 2.0)));
         mCameraFocusIndicator.animate().setDuration(DEFAULT_ANIMATION_DURATION).alpha(1.0f);
     }
 
@@ -635,8 +508,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     void onStop() {
         closeCamera();
-        clearHintPopupRelatedAnimations();
-        mUploadHintPopup.hide(null);
         if (mPaymentQRCodePopup != null) {
             mPaymentQRCodePopup.hide();
         }
@@ -737,21 +608,16 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private void bindViews(final View view) {
         mLayoutRoot = view.findViewById(R.id.gc_root);
         mCameraPreviewContainer = view.findViewById(R.id.gc_camera_preview_container);
-        mImageCorners = view.findViewById(R.id.gc_image_corners);
+        mImageCorners = view.findViewById(R.id.gc_camera_frame);
         mCameraFocusIndicator = view.findViewById(R.id.gc_camera_focus_indicator);
         mButtonCameraTrigger = view.findViewById(R.id.gc_button_camera_trigger);
-        bindFlashButtonView(view);
+        mButtonCameraFlash = view.findViewById(R.id.gc_button_camera_flash);
+        mCameraFlashButtonGroup = view.findViewById(R.id.gc_camera_flash_button_group);
+        mCameraFlashButtonSubtitle = view.findViewById(R.id.gc_camera_flash_button_subtitle);
         final ViewStub stubNoPermission = view.findViewById(R.id.gc_stub_camera_no_permission);
         mViewStubInflater = new ViewStubSafeInflater(stubNoPermission);
         mButtonImportDocument = view.findViewById(R.id.gc_button_import_document);
-        mImportButtonContainer = view.findViewById(R.id.gc_document_import_button_container);
-        mUploadHintContainer = view.findViewById(R.id.gc_document_import_hint_container);
-        mUploadHintContainerArrow = view.findViewById(R.id.gc_document_import_hint_container_arrow);
-        mUploadHintCloseButton = view.findViewById(R.id.gc_document_import_hint_close_button);
-        mQRCodeScannerHintContainer = view.findViewById(R.id.gc_qr_code_scanner_hint_container);
-        mQRCodeScannerHintContainerArrow = view.findViewById(R.id.gc_qr_code_scanner_hint_container_arrow);
-        mQRCodeScannerHintCloseButton = view.findViewById(R.id.gc_qr_code_scanner_hint_close_button);
-        mCameraPreviewShade = view.findViewById(R.id.gc_camera_preview_shade);
+        mImportButtonGroup = view.findViewById(R.id.gc_document_import_button_group);
         mActivityIndicatorBackground =
                 view.findViewById(R.id.gc_activity_indicator_background);
         mActivityIndicator = view.findViewById(R.id.gc_activity_indicator);
@@ -759,7 +625,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                 R.id.gc_qrcode_detected_popup_container);
         mUnsupportedQRCodeDetectedPopupContainer = view.findViewById(
                 R.id.gc_unsupported_qrcode_detected_popup_container);
-        mImageStack = view.findViewById(R.id.gc_image_stack);
+        mPhotoThumbnail = view.findViewById(R.id.gc_photo_thumbnail);
         topAdapterInjectedViewContainer = view.findViewById(R.id.gc_navigation_top_bar);
 
     }
@@ -801,34 +667,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         trackCameraScreenEvent(CameraScreenEvent.HELP);
     }
 
-    private void bindFlashButtonView(final View view) {
-        final Activity activity = mFragment.getActivity();
-        if (activity == null) {
-            return;
-        }
-        if (isTablet(activity)) {
-            mButtonCameraFlash = view.findViewById(R.id.gc_button_camera_flash);
-            if (mButtonCameraFlash != null) {
-                return;
-            }
-        }
-        final FlashButtonPosition flashButtonPosition = getFlashButtonPosition(
-                isDocumentImportEnabled(activity), isMultiPageEnabled());
-        switch (flashButtonPosition) {
-            case LEFT_OF_CAMERA_TRIGGER:
-                mButtonCameraFlash = view.findViewById(R.id.gc_button_camera_flash_left_of_trigger);
-                break;
-            case BOTTOM_LEFT:
-                mButtonCameraFlash = view.findViewById(R.id.gc_button_camera_flash_bottom_left);
-                break;
-            case BOTTOM_RIGHT:
-                mButtonCameraFlash = view.findViewById(R.id.gc_button_camera_flash_bottom_right);
-                break;
-            default:
-                throw new UnsupportedOperationException("Unknown flash button position: "
-                        + flashButtonPosition);
-        }
-    }
 
     private void initViews() {
         final Activity activity = mFragment.getActivity();
@@ -837,7 +675,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         }
         if (!mInterfaceHidden && isDocumentImportEnabled(activity)) {
             mImportDocumentButtonEnabled = true;
-            mImportButtonContainer.setVisibility(View.VISIBLE);
+            mImportButtonGroup.setVisibility(View.VISIBLE);
             showImportDocumentButtonAnimated();
         }
     }
@@ -849,21 +687,10 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     }
 
     private void setInputHandlers() {
-        mCameraPreviewShade.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                closeUploadHintPopUp();
-                closeQRCodeScannerHintPopUp();
-            }
-        });
         mButtonCameraTrigger.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                if (mQRCodeScannerHintPopup.isShown()) {
-                    closeQRCodeScannerHintPopUp();
-                } else {
-                    onCameraTriggerClicked();
-                }
+                onCameraTriggerClicked();
             }
         });
         mButtonCameraFlash.setOnClickListener(new View.OnClickListener() {
@@ -873,15 +700,13 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                 updateCameraFlashState();
             }
         });
-        mImportButtonContainer.setOnClickListener(new View.OnClickListener() {
+        mButtonImportDocument.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                mUploadHintPopup.setIsLastPopup(true);
-                closeUploadHintPopUp();
                 showFileChooser();
             }
         });
-        mImageStack.setOnClickListener(new View.OnClickListener() {
+        mPhotoThumbnail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
                 mProceededToMultiPageReview = true;
@@ -956,13 +781,16 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private void updateCameraFlashState() {
         mCameraController.setFlashEnabled(mIsFlashEnabled);
-        updateFlashButtonImage();
+        updateFlashButtonImageAndSubtitle();
     }
 
-    private void updateFlashButtonImage() {
+    private void updateFlashButtonImageAndSubtitle() {
         final int flashIconRes = mIsFlashEnabled ? R.drawable.gc_camera_flash_on
                 : R.drawable.gc_camera_flash_off;
         mButtonCameraFlash.setImageResource(flashIconRes);
+        final int flashSubtitleRes = mIsFlashEnabled ? R.string.gc_camera_flash_on_subtitle
+                : R.string.gc_camera_flash_off_subtitle;
+        mCameraFlashButtonSubtitle.setText(flashSubtitleRes);
     }
 
     @VisibleForTesting
@@ -1047,104 +875,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             return;
         }
         showError(activity.getString(R.string.gc_document_analysis_error), 3000);
-    }
-
-    private void closeUploadHintPopUp() {
-        if (!mUploadHintPopup.isShown()) {
-            return;
-        }
-        hideUploadHintPopup(new ViewPropertyAnimatorListenerAdapter() {
-             @Override
-             public void onAnimationEnd(final View view) {
-                 final Context context = view.getContext();
-                saveUploadHintPopUpShown(context);
-                if (shouldShowQRCodeScannerHintPopup()) {
-                    showQRCodeScannerHintPopUp();
-                }
-             }
-         });
-     }
-
-    private void hideUploadHintPopup(@Nullable final ViewPropertyAnimatorListenerAdapter
-                                             animatorListener) {
-         if (!mInterfaceHidden) {
-             enableCameraTriggerButtonAnimated();
-             enableFlashButtonAnimated();
-         }
-        hideHintPopup(mUploadHintPopup, animatorListener);
-    }
-
-    private void hideHintPopup(@NonNull final HintPopup hintPopup,
-                               @Nullable final ViewPropertyAnimatorListenerAdapter
-            animatorListener) {
-        clearHintPopupRelatedAnimations();
-        hintPopup.hide(new ViewPropertyAnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(View view) {
-                mCameraPreviewShade.setVisibility(View.GONE);
-                mCameraPreviewShade.setClickable(false);
-                if (animatorListener != null) {
-                    animatorListener.onAnimationEnd(view);
-                }
-            }
-        });
-        mCameraPreviewShadeAnimation = ViewCompat.animate(mCameraPreviewShade)
-                .alpha(0)
-                .setDuration(DEFAULT_ANIMATION_DURATION);
-        mCameraPreviewShadeAnimation.start();
-    }
-
-    private void closeQRCodeScannerHintPopUp() {
-        if (!mQRCodeScannerHintPopup.isShown()) {
-            return;
-        }
-        hideQRCodeScannerHintPopup(new ViewPropertyAnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(final View view) {
-                final Context context = view.getContext();
-                saveQRCodeScannerHintPopUpShown(context);
-            }
-        });
-    }
-
-    private boolean shouldShowQRCodeScannerHintPopup() {
-        final Activity activity = mFragment.getActivity();
-        if (activity == null) {
-            return false;
-        }
-        if (!isQRCodeScanningEnabled()
-                || mInterfaceHidden
-                || mUploadHintPopup.isLastPopup()) {
-            return false;
-        }
-        final Context context = mFragment.getActivity();
-        if (context != null) {
-            final SharedPreferences gcSharedPrefs = context.getSharedPreferences(GC_SHARED_PREFS,
-                    Context.MODE_PRIVATE);
-            return gcSharedPrefs.getBoolean(SHOW_QRCODE_SCANNER_HINT_POP_UP, true);
-        }
-        return false;
-    }
-
-    private void hideQRCodeScannerHintPopup(@Nullable final ViewPropertyAnimatorListenerAdapter
-                                             animatorListener) {
-        if (!mInterfaceHidden) {
-            enableFlashButtonAnimated();
-            enableImportButtonAnimated();
-        }
-        hideHintPopup(mQRCodeScannerHintPopup, animatorListener);
-    }
-
-    private void saveUploadHintPopUpShown(final Context context) {
-         final SharedPreferences gcSharedPrefs = context.getSharedPreferences(GC_SHARED_PREFS,
-                 Context.MODE_PRIVATE);
-        gcSharedPrefs.edit().putBoolean(SHOW_UPLOAD_HINT_POP_UP, false).apply();
-    }
-
-    private void saveQRCodeScannerHintPopUpShown(final Context context) {
-        final SharedPreferences gcSharedPrefs = context.getSharedPreferences(GC_SHARED_PREFS,
-                Context.MODE_PRIVATE);
-        gcSharedPrefs.edit().putBoolean(SHOW_QRCODE_SCANNER_HINT_POP_UP, false).apply();
     }
 
     private void showFileChooser() {
@@ -1337,7 +1067,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                             return;
                         }
                         LOG.info("Document imported: {}", mMultiPageDocument);
-                        updateImageStack();
+                        updatePhotoThumbnail();
                         hideActivityIndicatorAndEnableInteraction();
                         requestClientDocumentCheck(mMultiPageDocument);
                     }
@@ -1396,114 +1126,72 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         if (mFragment.getActivity() == null || mLayoutRoot == null) {
             return;
         }
-        ErrorSnackbar.make(mFragment.getActivity(), mLayoutRoot, message, null, null,
-                duration).show();
+        throw new UnsupportedOperationException("Cannot show error. Need to replace own ErrorSnackbar with Material Snackbar");
+//        ErrorSnackbar.make(mFragment.getActivity(), mLayoutRoot, message, null, null,
+//                duration).show();
     }
 
-    private void updateImageStack() {
-        final List<ImageDocument> documents = mMultiPageDocument.getDocuments();
-        if (!documents.isEmpty()) {
-            mImageStack.removeImages();
-        }
-        final int size = documents.size();
-        if (size >= 3) {
-            showImageDocumentsInStack(
-                    Arrays.asList(
-                            documents.get(size - 1),
-                            documents.get(size - 2),
-                            documents.get(size - 3)),
-                    Arrays.asList(
-                            ImageStack.Position.TOP,
-                            ImageStack.Position.MIDDLE,
-                            ImageStack.Position.BOTTOM));
-        } else if (size == 2) {
-            showImageDocumentsInStack(
-                    Arrays.asList(
-                            documents.get(size - 1),
-                            documents.get(size - 2)),
-                    Arrays.asList(
-                            ImageStack.Position.TOP,
-                            ImageStack.Position.MIDDLE));
-        } else if (size == 1) {
-            showImageDocumentsInStack(
-                    Collections.singletonList(
-                            documents.get(size - 1)),
-                    Collections.singletonList(
-                            ImageStack.Position.TOP));
-        }
-    }
-
-    private void showImageDocumentsInStack(@NonNull final List<ImageDocument> documents,
-            @NonNull final List<ImageStack.Position> positions) {
+    private void updatePhotoThumbnail() {
         if (!GiniCapture.hasInstance()) {
             LOG.error(
-                    "Cannot show images in stack. GiniCapture instance not available. Create it with GiniCapture.newInstance().");
-        }
-        if (documents.size() != positions.size()) {
-            return;
+                    "Cannot show photo thumbnail. GiniCapture instance not available. Create it with GiniCapture.newInstance().");
         }
         final Activity activity = mFragment.getActivity();
         if (activity == null) {
             return;
         }
-        final int imagesToLoadCount = documents.size();
-        final AtomicInteger imagesLoadedCounter = new AtomicInteger();
-        for (int i = 0; i < documents.size(); i++) {
-            final ImageDocument document = documents.get(i);
-            final ImageStack.Position position = positions.get(i);
-            GiniCapture.getInstance().internal().getPhotoMemoryCache()
-                    .get(activity, document, new AsyncCallback<Photo, Exception>() { // NOPMD
-                        @Override
-                        public void onSuccess(final Photo result) {
-                            mImageStack.setImage(
-                                    new ImageStack.StackBitmap(result.getBitmapPreview(),
-                                            document.getRotationForDisplay()), position);
-                            imagesLoadedCounter.incrementAndGet();
-                            if (imagesToLoadCount == imagesLoadedCounter.get()) {
-                                mImageStack.setImageCount(mMultiPageDocument.getDocuments().size());
-                            }
-                        }
 
-                        @Override
-                        public void onError(final Exception exception) {
-                            mImageStack.setImage(null, position);
-                            imagesLoadedCounter.incrementAndGet();
-                            if (imagesToLoadCount == imagesLoadedCounter.get()) {
-                                mImageStack.setImageCount(mMultiPageDocument.getDocuments().size());
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled() {
-                            // Not used
-                        }
-                    });
+        final List<ImageDocument> documents = mMultiPageDocument.getDocuments();
+        if (!documents.isEmpty()) {
+            mPhotoThumbnail.removeImage();
         }
+        final ImageDocument lastDocument = documents.get(documents.size() - 1);
+        GiniCapture.getInstance().internal().getPhotoMemoryCache()
+                .get(activity, lastDocument, new AsyncCallback<Photo, Exception>() { // NOPMD
+                    @Override
+                    public void onSuccess(final Photo result) {
+                        mPhotoThumbnail.setImage(
+                                new PhotoThumbnail.ThumbnailBitmap(result.getBitmapPreview(),
+                                        lastDocument.getRotationForDisplay()));
+                        mPhotoThumbnail.setImageCount(documents.size());
+                    }
+
+                    @Override
+                    public void onError(final Exception exception) {
+                        mPhotoThumbnail.setImage(null);
+                        mPhotoThumbnail.setImageCount(documents.size());
+                    }
+
+                    @Override
+                    public void onCancelled() {
+                        // Not used
+                    }
+                });
     }
 
     private void enableInteraction() {
         if (mCameraPreview == null
                 || mButtonImportDocument == null
-                || mImportButtonContainer == null
+                || mImportButtonGroup == null
                 || mButtonCameraTrigger == null) {
             return;
         }
         mCameraPreview.setEnabled(true);
         mButtonImportDocument.setEnabled(true);
-        mImportButtonContainer.setEnabled(true);
+        mImportButtonGroup.setEnabled(true);
         mButtonCameraTrigger.setEnabled(true);
     }
 
     private void disableInteraction() {
         if (mCameraPreview == null
                 || mButtonImportDocument == null
-                || mImportButtonContainer == null
+                || mImportButtonGroup == null
                 || mButtonCameraTrigger == null) {
             return;
         }
         mCameraPreview.setEnabled(false);
         mButtonImportDocument.setEnabled(false);
-        mImportButtonContainer.setEnabled(false);
+        mImportButtonGroup.setEnabled(false);
         mButtonCameraTrigger.setEnabled(false);
     }
 
@@ -1569,16 +1257,10 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                                 return;
                             }
                             mMultiPageDocument.addDocument(document);
-                            mImageStack.addImage(
-                                    new ImageStack.StackBitmap(result.getBitmapPreview(),
-                                            document.getRotationForDisplay()),
-                                    new TransitionListenerAdapter() {
-                                        @Override
-                                        public void onTransitionEnd(
-                                                @NonNull final Transition transition) {
-                                            mIsTakingPicture = false;
-                                        }
-                                    });
+                            mPhotoThumbnail.setImage(new PhotoThumbnail.ThumbnailBitmap(result.getBitmapPreview(),
+                                    document.getRotationForDisplay()));
+                            mPhotoThumbnail.setImageCount(mMultiPageDocument.getDocuments().size());
+                            mIsTakingPicture = false;
                             mCameraController.startPreview();
                         } else {
                             if (isMultiPageEnabled()) {
@@ -1598,18 +1280,12 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                                         .getImageMultiPageDocumentMemoryStore()
                                         .setMultiPageDocument(mMultiPageDocument);
                                 mMultiPageDocument.addDocument(document);
-                                mImageStack.addImage(
-                                        new ImageStack.StackBitmap(result.getBitmapPreview(),
-                                                document.getRotationForDisplay()),
-                                        new TransitionListenerAdapter() {
-                                            @Override
-                                            public void onTransitionEnd(
-                                                    @NonNull final Transition transition) {
-                                                mListener.onProceedToMultiPageReviewScreen(
-                                                        mMultiPageDocument);
-                                                mIsTakingPicture = false;
-                                            }
-                                        });
+                                mPhotoThumbnail.setImage(
+                                        new PhotoThumbnail.ThumbnailBitmap(result.getBitmapPreview(),
+                                                document.getRotationForDisplay()));
+                                mPhotoThumbnail.setImageCount(mMultiPageDocument.getDocuments().size());
+                                mListener.onProceedToMultiPageReviewScreen(mMultiPageDocument);
+                                mIsTakingPicture = false;
                             } else {
                                 final ImageDocument document =
                                         DocumentFactory.newImageDocumentFromPhoto(
@@ -1702,32 +1378,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         mButtonCameraTrigger.setEnabled(true);
     }
 
-    private void disableFlashButtonAnimated(final float alpha) {
-        mButtonCameraFlash.clearAnimation();
-        mButtonCameraFlash.animate().alpha(alpha).start();
-        mButtonCameraFlash.setEnabled(false);
-    }
-
-    private void enableFlashButtonAnimated() {
-        mButtonCameraFlash.clearAnimation();
-        mButtonCameraFlash.animate().alpha(1.0f).start();
-        mButtonCameraFlash.setEnabled(true);
-    }
-
-    private void enableImportButtonAnimated() {
-        mImportButtonContainer.clearAnimation();
-        mImportButtonContainer.animate().alpha(1.0f).start();
-        mButtonImportDocument.setEnabled(true);
-        mImportButtonContainer.setEnabled(true);
-    }
-
-    private void disableImportButtonAnimated(final float alpha) {
-        mImportButtonContainer.clearAnimation();
-        mImportButtonContainer.animate().alpha(alpha).start();
-        mButtonImportDocument.setEnabled(false);
-        mImportButtonContainer.setEnabled(false);
-    }
-
     @Override
     public void showInterface() {
         if (!mInterfaceHidden || isNoPermissionViewVisible()) {
@@ -1740,29 +1390,26 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private void showInterfaceAnimated() {
         showCameraTriggerButtonAnimated();
         showDocumentCornerGuidesAnimated();
-        showImageStackAnimated();
+        showPhotoThumbnailAnimated();
         showFlashButtonAnimated();
         if (mImportDocumentButtonEnabled) {
-            showUploadHintPopUpOnFirstExecution();
             showImportDocumentButtonAnimated();
-        } else {
-            showQrcodeScannerHintPopUpOnFirstExecution();
         }
     }
 
-    private void showImageStackAnimated() {
-        mImageStack.animate().alpha(1.0f).start();
+    private void showPhotoThumbnailAnimated() {
+        mPhotoThumbnail.animate().alpha(1.0f).start();
     }
 
     private void showImportDocumentButtonAnimated() {
-        mImportButtonContainer.animate().alpha(1.0f);
+        mImportButtonGroup.animate().alpha(1.0f);
         mButtonImportDocument.setEnabled(true);
-        mImportButtonContainer.setEnabled(true);
+        mImportButtonGroup.setEnabled(true);
     }
 
     private void showFlashButtonAnimated() {
-        mButtonCameraFlash.animate().alpha(1.0f);
-        mButtonCameraFlash.setEnabled(true);
+        mCameraFlashButtonGroup.animate().alpha(1.0f);
+        mCameraFlashButtonGroup.setEnabled(true);
     }
 
     @Override
@@ -1777,23 +1424,21 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private void hideInterfaceAnimated() {
         hideCameraTriggerButtonAnimated();
         hideDocumentCornerGuidesAnimated();
-        hideImageStackAnimated();
+        hidePhotoThumbnailAnimated();
         if (mImportDocumentButtonEnabled) {
-            hideUploadHintPopup(null);
             hideImportDocumentButtonAnimated();
         }
-        hideQRCodeScannerHintPopup(null);
         hideFlashButtonAnimated();
     }
 
-    private void hideImageStackAnimated() {
-        mImageStack.animate().alpha(0.0f).start();
+    private void hidePhotoThumbnailAnimated() {
+        mPhotoThumbnail.animate().alpha(0.0f).start();
     }
 
     private void hideImportDocumentButtonAnimated() {
-        mImportButtonContainer.animate().alpha(0.0f);
+        mImportButtonGroup.animate().alpha(0.0f);
         mButtonImportDocument.setEnabled(false);
-        mImportButtonContainer.setEnabled(false);
+        mImportButtonGroup.setEnabled(false);
     }
 
     private void showNoPermissionView() {
@@ -1870,8 +1515,8 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     }
 
     private void hideFlashButtonAnimated() {
-        mButtonCameraFlash.animate().alpha(0.0f);
-        mButtonCameraFlash.setEnabled(false);
+        mCameraFlashButtonGroup.animate().alpha(0.0f);
+        mCameraFlashButtonGroup.setEnabled(false);
     }
 
     private void startApplicationDetailsSettings() {
