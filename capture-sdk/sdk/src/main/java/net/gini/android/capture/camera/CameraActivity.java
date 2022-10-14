@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
@@ -20,11 +19,11 @@ import net.gini.android.capture.GiniCaptureCoordinator;
 import net.gini.android.capture.GiniCaptureError;
 import net.gini.android.capture.R;
 import net.gini.android.capture.analysis.AnalysisActivity;
-import net.gini.android.capture.camera.view.CameraBottomNavigationBar;
-import net.gini.android.capture.camera.view.CameraBottomNavigationBarAdapter;
+import net.gini.android.capture.camera.view.CameraBarBottomAdapter;
+import net.gini.android.capture.camera.view.DefaultCameraBarBottomAdapter;
 import net.gini.android.capture.document.GiniCaptureMultiPageDocument;
 import net.gini.android.capture.help.HelpActivity;
-import net.gini.android.capture.help.view.HelpNavigationBarBottomAdapter;
+import net.gini.android.capture.internal.util.ContextHelper;
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction;
 import net.gini.android.capture.network.model.GiniCaptureReturnReason;
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
@@ -397,18 +396,16 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
 
     private void setTitleOnTablets() {
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(isTablet() ? getString(R.string.gc_camera_title) : getString(R.string.gc_title_camera));
+            getSupportActionBar().setTitle(ContextHelper.isTablet(this) ? getString(R.string.gc_camera_title) : getString(R.string.gc_title_camera));
         }
     }
 
     private void setupCameraBottomNavigationBar() {
         if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
-            InjectedViewContainer<CameraBottomNavigationBar> injectedViewContainer =
+            InjectedViewContainer<CameraBarBottomAdapter> injectedViewContainer =
                     findViewById(R.id.gc_injected_navigation_bar_container_bottom);
-            CameraBottomNavigationBarAdapter adapter = GiniCapture.getInstance().getCameraBottomNavigationBarAdapter();
+            DefaultCameraBarBottomAdapter adapter = GiniCapture.getInstance().getCameraBottomNavigationBarAdapter();
             injectedViewContainer.setInjectedViewAdapter(adapter);
-
-            adapter.setTitle(isTablet() ? getString(R.string.gc_camera_title) : null);
 
             adapter.setOnBackButtonClickListener(v -> onBackPressed());
 
@@ -417,9 +414,6 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
 
     }
 
-    private boolean isTablet() {
-        return getResources().getBoolean(R.bool.gc_is_tablet);
-    }
 
     @Override
     protected void onSaveInstanceState(final Bundle outState) {

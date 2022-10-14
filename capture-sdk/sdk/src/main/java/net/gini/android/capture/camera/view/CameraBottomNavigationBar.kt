@@ -7,16 +7,15 @@ import net.gini.android.capture.R
 import net.gini.android.capture.databinding.GcCameraBottomBarBinding
 import net.gini.android.capture.view.InjectedViewAdapter
 
-interface CameraBottomNavigationBar: InjectedViewAdapter {
+interface CameraBarBottomAdapter: InjectedViewAdapter {
 
     fun setOnBackButtonClickListener(click: View.OnClickListener)
 
     fun setOnHelpButtonClickListener(click: View.OnClickListener)
 
-    fun setTitle(title: String?)
 }
 
-class CameraBottomNavigationBarAdapter: CameraBottomNavigationBar {
+class DefaultCameraBarBottomAdapter: CameraBarBottomAdapter {
     var viewBinding: GcCameraBottomBarBinding? = null
 
 
@@ -26,14 +25,6 @@ class CameraBottomNavigationBarAdapter: CameraBottomNavigationBar {
 
     override fun setOnHelpButtonClickListener(click: View.OnClickListener) {
         viewBinding?.gcHelp?.setOnClickListener(click)
-    }
-
-    override fun setTitle(title: String?) {
-        title?.let {
-            viewBinding?.gcCameraTitle?.visibility = View.VISIBLE
-            viewBinding?.gcCameraTitle?.text = title
-        }
-
     }
 
     override fun onCreateView(container: ViewGroup): View {
