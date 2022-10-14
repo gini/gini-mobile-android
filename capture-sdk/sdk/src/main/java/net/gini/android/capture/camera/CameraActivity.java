@@ -19,8 +19,8 @@ import net.gini.android.capture.GiniCaptureCoordinator;
 import net.gini.android.capture.GiniCaptureError;
 import net.gini.android.capture.R;
 import net.gini.android.capture.analysis.AnalysisActivity;
-import net.gini.android.capture.camera.view.CameraBarBottomAdapter;
-import net.gini.android.capture.camera.view.DefaultCameraBarBottomAdapter;
+import net.gini.android.capture.camera.view.CameraNavigationBarBottomAdapter;
+import net.gini.android.capture.camera.view.DefaultCameraNavigationBarBottomAdapter;
 import net.gini.android.capture.document.GiniCaptureMultiPageDocument;
 import net.gini.android.capture.help.HelpActivity;
 import net.gini.android.capture.internal.util.ContextHelper;
@@ -402,9 +402,9 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
 
     private void setupCameraBottomNavigationBar() {
         if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
-            InjectedViewContainer<CameraBarBottomAdapter> injectedViewContainer =
+            InjectedViewContainer<CameraNavigationBarBottomAdapter> injectedViewContainer =
                     findViewById(R.id.gc_injected_navigation_bar_container_bottom);
-            DefaultCameraBarBottomAdapter adapter = GiniCapture.getInstance().getCameraBottomNavigationBarAdapter();
+            CameraNavigationBarBottomAdapter adapter = GiniCapture.getInstance().getCameraNavigationBarBottomAdapter();
             injectedViewContainer.setInjectedViewAdapter(adapter);
 
             adapter.setOnBackButtonClickListener(v -> onBackPressed());

@@ -6,7 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 
 import net.gini.android.capture.analysis.AnalysisActivity;
-import net.gini.android.capture.camera.view.DefaultCameraBarBottomAdapter;
+import net.gini.android.capture.camera.view.CameraNavigationBarBottomAdapter;
+import net.gini.android.capture.camera.view.DefaultCameraNavigationBarBottomAdapter;
 import net.gini.android.capture.help.HelpItem;
 import net.gini.android.capture.help.view.DefaultHelpNavigationBarBottomAdapter;
 import net.gini.android.capture.help.view.HelpNavigationBarBottomAdapter;
@@ -99,7 +100,7 @@ public class GiniCapture {
     private final NavigationBarTopAdapter navigationBarTopAdapter;
     private final OnboardingNavigationBarBottomAdapter onboardingNavigationBarBottomAdapter;
     private final HelpNavigationBarBottomAdapter helpNavigationBarBottomAdapter;
-    private final DefaultCameraBarBottomAdapter cameraBottomNavigationBarAdapter;
+    private final CameraNavigationBarBottomAdapter cameraNavigationBarBottomAdapter;
     private final boolean isBottomNavigationBarEnabled;
     private final OnboardingIllustrationAdapter onboardingAlignCornersIllustrationAdapter;
     private final OnboardingIllustrationAdapter onboardingLightingIllustrationAdapter;
@@ -214,7 +215,7 @@ public class GiniCapture {
         onboardingLightingIllustrationAdapter = builder.getOnboardingLightingIllustrationAdapter();
         onboardingMultiPageIllustrationAdapter = builder.getOnboardingMultiPageIllustrationAdapter();
         onboardingQRCodeIllustrationAdapter = builder.getOnboardingQRCodeIllustrationAdapter();
-        cameraBottomNavigationBarAdapter = builder.getCameraBottomNavigationBarAdapter();
+        cameraNavigationBarBottomAdapter = builder.getCameraNavigationBarBottomAdapter();
     }
 
     /**
@@ -560,8 +561,8 @@ public class GiniCapture {
     }
 
     @NonNull
-    public DefaultCameraBarBottomAdapter getCameraBottomNavigationBarAdapter() {
-        return cameraBottomNavigationBarAdapter;
+    public CameraNavigationBarBottomAdapter getCameraNavigationBarBottomAdapter() {
+        return cameraNavigationBarBottomAdapter;
     }
 
     public boolean isBottomNavigationBarEnabled() {
@@ -640,7 +641,7 @@ public class GiniCapture {
         private NavigationBarTopAdapter navigationBarTopAdapter = new DefaultNavigationBarTopAdapter();
         private OnboardingNavigationBarBottomAdapter navigationBarBottomAdapter = new DefaultOnboardingNavigationBarBottomAdapter();
         private HelpNavigationBarBottomAdapter helpNavigationBarBottomAdapter = new DefaultHelpNavigationBarBottomAdapter();
-        private DefaultCameraBarBottomAdapter cameraBottomNavigationBarAdapter = new DefaultCameraBarBottomAdapter();
+        private CameraNavigationBarBottomAdapter cameraNavigationBarBottomAdapter = new DefaultCameraNavigationBarBottomAdapter();
         private boolean isBottomNavigationBarEnabled = false;
         private OnboardingIllustrationAdapter onboardingAlignCornersIllustrationAdapter;
         private OnboardingIllustrationAdapter onboardingLightingIllustrationAdapter;
@@ -1042,7 +1043,7 @@ public class GiniCapture {
             return navigationBarBottomAdapter;
         }
 
-        public Builder setHelpBottomNavigationBarAdapter(@NonNull final HelpNavigationBarBottomAdapter adapter) {
+        public Builder setHelpNavigationBarBottomAdapter(@NonNull final HelpNavigationBarBottomAdapter adapter) {
             helpNavigationBarBottomAdapter = adapter;
             return this;
         }
@@ -1052,13 +1053,13 @@ public class GiniCapture {
             return helpNavigationBarBottomAdapter;
         }
 
-        public Builder setCameraBottomBarAdapter(@NonNull final DefaultCameraBarBottomAdapter adapter) {
-            cameraBottomNavigationBarAdapter = adapter;
+        public Builder setCameraNavigationBarBottomAdapter(@NonNull final CameraNavigationBarBottomAdapter adapter) {
+            cameraNavigationBarBottomAdapter = adapter;
             return this;
         }
 
-        public DefaultCameraBarBottomAdapter getCameraBottomNavigationBarAdapter() {
-            return cameraBottomNavigationBarAdapter;
+        public CameraNavigationBarBottomAdapter getCameraNavigationBarBottomAdapter() {
+            return cameraNavigationBarBottomAdapter;
         }
 
         /**
