@@ -19,8 +19,11 @@ import net.gini.android.capture.GiniCaptureCoordinator;
 import net.gini.android.capture.GiniCaptureError;
 import net.gini.android.capture.R;
 import net.gini.android.capture.analysis.AnalysisActivity;
+import net.gini.android.capture.camera.view.CameraNavigationBarBottomAdapter;
+import net.gini.android.capture.camera.view.DefaultCameraNavigationBarBottomAdapter;
 import net.gini.android.capture.document.GiniCaptureMultiPageDocument;
 import net.gini.android.capture.help.HelpActivity;
+import net.gini.android.capture.internal.util.ContextHelper;
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction;
 import net.gini.android.capture.network.model.GiniCaptureReturnReason;
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
@@ -28,6 +31,7 @@ import net.gini.android.capture.onboarding.OnboardingActivity;
 import net.gini.android.capture.review.ReviewActivity;
 import net.gini.android.capture.review.multipage.MultiPageReviewActivity;
 import net.gini.android.capture.tracking.CameraScreenEvent;
+import net.gini.android.capture.view.InjectedViewContainer;
 
 import java.util.Map;
 
@@ -365,6 +369,7 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
         setupHomeButton();
         handleOnBackPressed();
         setTitleOnTablets();
+        setupCameraBottomNavigationBar();
     }
 
     private void handleOnBackPressed() {
@@ -390,13 +395,25 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
     }
 
     private void setTitleOnTablets() {
-
-        boolean isTablet = getResources().getBoolean(R.bool.gc_is_tablet);
-
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(isTablet ? getString(R.string.gc_camera_title) : getString(R.string.gc_title_camera));
+            getSupportActionBar().setTitle(ContextHelper.isTablet(this) ? getString(R.string.gc_camera_title) : getString(R.string.gc_title_camera));
         }
     }
+
+    private void setupCameraBottomNavigationBar() {
+        if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
+            InjectedViewContainer<CameraNavigationBarBottomAdapter> injectedViewContainer =
+                    findViewById(R.id.gc_injected_navigation_bar_container_bottom);
+            CameraNavigationBarBottomAdapter adapter = GiniCapture.getInstance().getCameraNavigationBarBottomAdapter();
+            injectedViewContainer.setInjectedViewAdapter(adapter);
+
+            adapter.setOnBackButtonClickListener(v -> onBackPressed());
+
+            adapter.setOnHelpButtonClickListener(v -> startHelpActivity());
+        }
+
+    }
+
 
     @Override
     protected void onSaveInstanceState(final Bundle outState) {
