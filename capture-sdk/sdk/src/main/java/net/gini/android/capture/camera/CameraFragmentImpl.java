@@ -7,9 +7,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -191,7 +193,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private View mUnsupportedQRCodeDetectedPopupContainer;
     private View mActivityIndicatorBackground;
     private ProgressBar mActivityIndicator;
-
+    private ImageView mImageFrame;
     private ViewStubSafeInflater mViewStubInflater;
 
     private boolean mIsTakingPicture;
@@ -627,7 +629,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                 R.id.gc_unsupported_qrcode_detected_popup_container);
         mPhotoThumbnail = view.findViewById(R.id.gc_photo_thumbnail);
         topAdapterInjectedViewContainer = view.findViewById(R.id.gc_navigation_top_bar);
-
+        mImageFrame = view.findViewById(R.id.gc_camera_frame);
     }
 
     private void setTopBarInjectedViewContainer() {
@@ -1241,8 +1243,11 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         } else {
             if (photo != null) {
                 LOG.info("Picture taken");
+                LOG.info("Picture: " + photo.getBitmapPreview().getWidth());
                 showActivityIndicatorAndDisableInteraction();
-                photo.edit().compressByDefault().applyAsync(new PhotoEdit.PhotoEditCallback() {
+                photo.edit()
+                        .crop(getRectFromImageFrame())
+                        .compressByDefault().applyAsync(new PhotoEdit.PhotoEditCallback() {
                     @Override
                     public void onDone(@NonNull final Photo result) {
                         hideActivityIndicatorAndEnableInteraction();
@@ -1313,6 +1318,14 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                 mIsTakingPicture = false;
             }
         }
+    }
+
+    private Rect getRectFromImageFrame() {
+        Rect rect = new Rect();
+
+        mImageFrame.getHitRect(rect);
+
+        return rect;
     }
 
     private void showMultiPageLimitError() {

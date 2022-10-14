@@ -1,7 +1,14 @@
 package net.gini.android.capture.internal.camera.photo;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Rect;
 import android.os.AsyncTask;
+import android.util.DisplayMetrics;
+import android.util.Log;
 
+import java.io.ByteArrayOutputStream;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,6 +78,24 @@ public class PhotoEdit {
                 return;
             }
         }
+    }
+
+    public PhotoEdit crop(Rect aRect) {
+
+        Bitmap original = BitmapFactory.decodeByteArray(mPhoto.getData(),
+                0, mPhoto.getData().length);
+
+        Bitmap cropped = Bitmap.createBitmap(original, aRect.left, aRect.top, aRect.width(),
+                aRect.height());
+
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        cropped.compress(Bitmap.CompressFormat.PNG, 100, stream);
+
+        byte[] byteArray = stream.toByteArray();
+        mPhoto.setData(byteArray);
+
+        cropped.recycle();
+        return this;
     }
 
     public void apply() {
