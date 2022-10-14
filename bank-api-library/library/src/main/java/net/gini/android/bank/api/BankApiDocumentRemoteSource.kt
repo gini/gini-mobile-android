@@ -28,7 +28,7 @@ class BankApiDocumentRemoteSource(
     baseUriString: String
 ): DocumentRemoteSource(coroutineContext, documentService, giniApiType, sessionManager, baseUriString) {
 
-    suspend fun sendFeedback(documentId: String, requestBody: RequestBody) = withContext(coroutineContext) {
+    suspend fun sendFeedback(documentId: String, requestBody: RequestBody): Unit = withContext(coroutineContext) {
         SafeApiRequest.apiRequest {
             val apiResult = sessionManager.getSession()
             if (apiResult is Resource.Error) {
@@ -63,7 +63,7 @@ class BankApiDocumentRemoteSource(
         response.body() ?: throw ApiException("Empty response body", response)
     }
 
-    suspend fun logErrorEvent(errorEvent: ErrorEvent) =
+    suspend fun logErrorEvent(errorEvent: ErrorEvent): Unit =
         withContext(coroutineContext) {
             SafeApiRequest.apiRequest {
                 val apiResult = sessionManager.getSession()
