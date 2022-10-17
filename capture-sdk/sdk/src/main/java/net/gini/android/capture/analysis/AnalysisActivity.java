@@ -344,26 +344,26 @@ public class AnalysisActivity extends AppCompatActivity implements
             @NonNull final List<GiniCaptureReturnReason> returnReasons) {
         final Intent result = new Intent();
 
-        final Bundle extractionsBundle = new Bundle();
-        for (final Map.Entry<String, GiniCaptureSpecificExtraction> extraction
-                : extractions.entrySet()) {
-            extractionsBundle.putParcelable(extraction.getKey(), extraction.getValue());
-        }
-        result.putExtra(CameraActivity.EXTRA_OUT_EXTRACTIONS, extractionsBundle);
-
-        final Bundle compoundExtractionsBundle = new Bundle();
-        for (final Map.Entry<String, GiniCaptureCompoundExtraction> extraction
-                : compoundExtractions.entrySet()) {
-            compoundExtractionsBundle.putParcelable(extraction.getKey(), extraction.getValue());
-        }
-        result.putExtra(CameraActivity.EXTRA_OUT_COMPOUND_EXTRACTIONS, compoundExtractionsBundle);
-
-        ArrayList<GiniCaptureReturnReason> returnReasonsExtra = new ArrayList<>(returnReasons);
-        result.putParcelableArrayListExtra(CameraActivity.EXTRA_OUT_RETURN_REASONS, returnReasonsExtra);
-
-        setResult(RESULT_OK, result);
-        finish();
-        clearMemory();
+//        final Bundle extractionsBundle = new Bundle();
+//        for (final Map.Entry<String, GiniCaptureSpecificExtraction> extraction
+//                : extractions.entrySet()) {
+//            extractionsBundle.putParcelable(extraction.getKey(), extraction.getValue());
+//        }
+//        result.putExtra(CameraActivity.EXTRA_OUT_EXTRACTIONS, extractionsBundle);
+//
+//        final Bundle compoundExtractionsBundle = new Bundle();
+//        for (final Map.Entry<String, GiniCaptureCompoundExtraction> extraction
+//                : compoundExtractions.entrySet()) {
+//            compoundExtractionsBundle.putParcelable(extraction.getKey(), extraction.getValue());
+//        }
+//        result.putExtra(CameraActivity.EXTRA_OUT_COMPOUND_EXTRACTIONS, compoundExtractionsBundle);
+//
+//        ArrayList<GiniCaptureReturnReason> returnReasonsExtra = new ArrayList<>(returnReasons);
+//        result.putParcelableArrayListExtra(CameraActivity.EXTRA_OUT_RETURN_REASONS, returnReasonsExtra);
+//
+//        setResult(RESULT_OK, result);
+//        finish();
+//        clearMemory();
     }
 
     @Override

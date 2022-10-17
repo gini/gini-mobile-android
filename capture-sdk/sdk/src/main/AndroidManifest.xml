@@ -19,7 +19,7 @@
             android:name="net.gini.android.capture.analysis.AnalysisActivity"
             android:exported="false"
             android:label="@string/gc_title_analysis"
-            android:theme="@style/GiniCaptureTheme.Analysis" />
+            android:theme="@style/GiniCaptureTheme" />
         <activity
             android:name="net.gini.android.capture.noresults.NoResultsActivity"
             android:exported="false"

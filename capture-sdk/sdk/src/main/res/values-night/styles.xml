@@ -13,28 +13,4 @@
         <item name="colorOnSurfaceInverse">@color/Dark_02</item>
     </style>
 
-    <style name="GiniCaptureTheme.Analysis" parent="GiniCaptureTheme">
-        <item name="dividerColor">@color/Dark_02</item>
-    </style>
-
-    <style name="Root.GiniCaptureTheme.Analysis.AnalysingMessage.TextStyle" parent="TextAppearance.AppCompat">
-        <item name="android:textSize">14sp</item>
-        <item name="android:textColor">@color/Light_01</item>
-        <item name="gcCustomFont" />
-    </style>
-
-    <style name="Root.GiniCaptureTheme.Analysis.HintHeadline.TextStyle" parent="TextAppearance.AppCompat">
-        <item name="android:textSize">16sp</item>
-        <item name="android:textColor">@color/gc_analysis_hint_headline_night</item>
-        <item name="gcCustomFont" />
-    </style>
-
-    <style name="Root.GiniCaptureTheme.Analysis.Hint.TextStyle" parent="TextAppearance.AppCompat">
-        <item name="android:textSize">16sp</item>
-        <item name="autoSizeMinTextSize">14sp</item>
-        <item name="autoSizeMaxTextSize">16sp</item>
-        <item name="android:textColor">@color/gc_analysis_hint_night</item>
-        <item name="gcCustomFont" />
-    </style>
-
 </resources>
