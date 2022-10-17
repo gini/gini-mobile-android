@@ -10,11 +10,11 @@ import net.gini.android.capture.internal.camera.api.CameraControllerFake;
 
 public class CameraActivityFake extends CameraActivity {
 
-    private CameraFragmentCompatFake mCameraFragmentCompatFake;
+    private CameraFragmentFake mCameraFragmentCompatFake;
 
     @Override
-    protected CameraFragmentCompat createCameraFragmentCompat() {
-        return mCameraFragmentCompatFake = CameraFragmentCompatFake.createInstance();
+    protected CameraFragment createCameraFragment() {
+        return mCameraFragmentCompatFake = CameraFragmentFake.createInstance();
     }
 
     public CameraControllerFake getCameraControllerFake() {

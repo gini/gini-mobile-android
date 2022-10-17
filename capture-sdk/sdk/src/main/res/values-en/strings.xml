@@ -126,5 +126,7 @@
     <string name="gc_first_illustration_description">Activate share function. Therefore select file and press share button, represented as a square with the arrow pointing up.</string>
     <string name="gc_second_illustration_description">Select Banking App from the list to start the analysis process.</string>
     <string name="gc_photos_of_monitors_or_screens">Photos of monitors or screens</string>
-
+    <string name="gc_camera_flash_on_subtitle">On</string>
+    <string name="gc_camera_flash_off_subtitle">Off</string>
+    <string name="gc_camera_title">Scan an invoice or a QR code</string>
 </resources>

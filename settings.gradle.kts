@@ -32,4 +32,4 @@ include("capture-sdk:screen-api-example-app")
 
 include("bank-sdk:sdk")
 include("bank-sdk:screen-api-example-app")
-include("bank-sdk:component-api-example-app")
+//include("bank-sdk:component-api-example-app")
