@@ -54,7 +54,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_marginBottom="54dp"
-        android:background="@drawable/gc_image_stack_badge_background"
+        android:background="@drawable/gc_photo_thumbnail_badge_background"
         android:elevation="2dp"
         android:gravity="center"
         tools:text="3" />

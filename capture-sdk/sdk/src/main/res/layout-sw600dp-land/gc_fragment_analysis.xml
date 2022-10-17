@@ -1,0 +1,128 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/gc_layout_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/backgroundColor"
+    tools:context=".analysis.AnalysisFragmentCompat">
+
+    <FrameLayout
+        android:id="@+id/frameLayout3"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:alpha="@dimen/gc_analysis_preview_alpha"
+        android:background="@color/Dark_01"
+        android:clipChildren="false"
+        app:layout_constraintBottom_toBottomOf="@+id/gc_analysis_overlay"
+        app:layout_constraintEnd_toEndOf="@+id/gc_analysis_overlay"
+        app:layout_constraintHeight_percent="@dimen/gc_analysis_preview_height_percentage_tablet"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="@dimen/gc_analysis_preview_width_percentage_tablet">
+
+        <ImageView
+            android:id="@+id/gc_image_picture"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:background="?attr/backgroundColor"
+            android:scaleType="fitCenter"
+            tools:src="@drawable/gc_no_camera" />
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/gc_analysis_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?attr/backgroundColor"
+        android:orientation="vertical">
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <ProgressBar
+            android:id="@+id/gc_progress_activity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminateOnly="true"
+            android:indeterminateTint="@color/Accent_01"
+            android:indeterminateTintMode="src_in"
+            android:padding="16dp"
+            android:visibility="gone"
+            tools:targetApi="lollipop"
+            tools:visibility="visible" />
+
+        <net.gini.android.capture.internal.ui.CustomFontTextView
+            android:id="@+id/gc_analysis_message"
+            style="@style/GiniCaptureTheme.Typography.Body2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="@string/gc_analysis_activity_indicator_message"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/gc_analysis_hint_container"
+        android:layout_width="@dimen/gc_analysis_hint_container_width"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/xlarge"
+        android:background="@drawable/gc_analysis_tips_background"
+        android:paddingTop="@dimen/medium"
+        android:paddingBottom="@dimen/large"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+            android:id="@+id/gc_analysis_hint_image"
+            android:layout_width="@dimen/gc_analysis_hint_icon_size"
+            android:layout_height="@dimen/gc_analysis_hint_icon_size"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/large_24"
+            android:scaleType="center"
+            tools:src="@drawable/gc_analysis_tip_icon" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/large"
+            android:layout_marginEnd="@dimen/large"
+            android:orientation="vertical">
+
+            <net.gini.android.capture.internal.ui.CustomFontTextView
+                android:id="@+id/gc_analysis_hint_headline"
+                style="@style/GiniCaptureTheme.Typography.Subtitle1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toTopOf="@id/gc_analysis_hint_container"
+                tools:text="Tipp:" />
+
+            <net.gini.android.capture.internal.ui.CustomFontTextView
+                android:id="@+id/gc_analysis_hint_text"
+                style="@style/GiniCaptureTheme.Typography.Body2"
+                android:textColor="@color/Dark_06"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Gute Lichtverhältnisse beim Aufnehmen des Fotos beschleunigen die Analyse." />
+        </LinearLayout>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

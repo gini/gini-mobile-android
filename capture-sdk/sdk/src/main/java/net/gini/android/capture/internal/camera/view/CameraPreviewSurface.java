@@ -25,7 +25,7 @@ public class CameraPreviewSurface extends SurfaceView {
         CENTER_INSIDE
     }
 
-    private ScaleType mScaleType = ScaleType.CENTER_INSIDE;
+    private ScaleType mScaleType = ScaleType.CENTER_RESIZE;
 
     public CameraPreviewSurface(final Context context) {
         super(context);

@@ -1,23 +1,32 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/gc_layout_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/gc_analysis_fragment_background"
+    android:background="?attr/backgroundColor"
     tools:context=".analysis.AnalysisFragmentCompat">
 
     <FrameLayout
-        android:layout_width="match_parent"
+        android:id="@+id/frameLayout3"
+        android:clipChildren="false"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_below="@+id/gc_pdf_info"
-        android:clipChildren="false">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/gc_analysis_overlay"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="@dimen/gc_analysis_preview_width_percentage_tablet"
+        android:background="@color/Dark_01"
+        android:alpha="@dimen/gc_analysis_preview_alpha">
 
         <ImageView
             android:id="@+id/gc_image_picture"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
+            android:background="?attr/backgroundColor"
             android:scaleType="fitCenter"
             tools:src="@drawable/gc_no_camera" />
 
@@ -27,7 +36,7 @@
         android:id="@+id/gc_analysis_overlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/gc_analysis_overlay"
+        android:background="?attr/backgroundColor"
         android:orientation="vertical">
 
         <Space
@@ -41,19 +50,20 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:indeterminateOnly="true"
-            android:indeterminateTint="@color/gc_analysis_activity_indicator"
+            android:indeterminateTint="@color/Accent_01"
             android:indeterminateTintMode="src_in"
-            android:padding="16dp"
+            android:padding="@dimen/large"
             android:visibility="gone"
             tools:targetApi="lollipop"
             tools:visibility="visible" />
 
         <net.gini.android.capture.internal.ui.CustomFontTextView
             android:id="@+id/gc_analysis_message"
-            style="@style/GiniCaptureTheme.Analysis.AnalysingMessage.TextStyle"
+            style="@style/GiniCaptureTheme.Typography.Body2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:gravity="center"
             android:text="@string/gc_analysis_activity_indicator_message"
             android:visibility="gone"
             tools:visibility="visible" />
@@ -66,89 +76,51 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/gc_pdf_info"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:background="@color/gc_analysis_pdf_info_background"
-        android:orientation="vertical"
-        android:padding="@dimen/gc_analysis_pdf_info_padding"
-        android:visibility="gone"
-        tools:visibility="visible">
-
-        <net.gini.android.capture.internal.ui.CustomFontTextView
-            android:id="@+id/gc_pdf_filename"
-            style="@style/GiniCaptureTheme.Analysis.PdfFilename.TextStyle"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/gc_analysis_pdf_filename_height"
-            android:layout_gravity="center_horizontal"
-            android:ellipsize="end"
-            android:gravity="center_horizontal"
-            android:lines="1"
-            android:text="@string/gc_analysis_pdf_default_title"
-            app:autoSizeStepGranularity="1sp"
-            app:autoSizeTextType="uniform"
-            tools:ignore="MissingPrefix" />
-
-        <net.gini.android.capture.internal.ui.CustomFontTextView
-            android:id="@+id/gc_pdf_page_count"
-            style="@style/GiniCaptureTheme.Analysis.PdfPageCount.TextStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/gc_analysis_pdf_page_count_top_margin"
-            android:visibility="gone"
-            tools:text="5 Seiten"
-            tools:visibility="visible" />
-    </LinearLayout>
-
-
-    <LinearLayout
+        android:id="@+id/gc_analysis_hint_container"
         android:layout_width="@dimen/gc_analysis_hint_container_width"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:orientation="vertical">
+        android:layout_marginBottom="@dimen/gc_analysis_hint_container_bottom_margin_portrait"
+        android:background="@drawable/gc_analysis_tips_background"
+        android:paddingTop="@dimen/medium"
+        android:paddingBottom="@dimen/large"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
-        <net.gini.android.capture.internal.ui.CustomFontTextView
-            android:id="@+id/gc_analysis_hint_headline"
-            style="@style/GiniCaptureTheme.Analysis.HintHeadline.TextStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/gc_analysis_hint_headline_bottom_margin"
-            android:layout_marginEnd="@dimen/gc_analysis_hint_headline_horizontal_margin"
-            android:layout_marginLeft="@dimen/gc_analysis_hint_headline_horizontal_margin"
-            android:layout_marginRight="@dimen/gc_analysis_hint_headline_horizontal_margin"
-            android:layout_marginStart="@dimen/gc_analysis_hint_headline_horizontal_margin"
-            android:gravity="center_horizontal"
-            tools:text="Um schneller Ergebnisse zu erhalten, bitte:" />
+        <ImageView
+            android:id="@+id/gc_analysis_hint_image"
+            android:layout_width="@dimen/gc_analysis_hint_icon_size"
+            android:layout_height="@dimen/gc_analysis_hint_icon_size"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/large_24"
+            android:scaleType="center"
+            tools:src="@drawable/gc_analysis_tip_icon" />
 
         <LinearLayout
-            android:id="@+id/gc_analysis_hint_container"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/gc_analysis_hint_container_height"
-            android:layout_gravity="center"
-            android:layout_marginBottom="@dimen/gc_analysis_hint_container_bottom_margin">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/large"
+            android:layout_marginEnd="@dimen/large"
+            android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/gc_analysis_hint_image"
-                android:layout_width="@dimen/gc_analysis_hint_icon_size"
-                android:layout_height="@dimen/gc_analysis_hint_icon_size"
-                android:layout_gravity="center_vertical"
-                android:layout_margin="@dimen/gc_analysis_hint_icon_margin"
-                tools:src="@drawable/gc_hint_icon" />
+            <net.gini.android.capture.internal.ui.CustomFontTextView
+                android:id="@+id/gc_analysis_hint_headline"
+                style="@style/GiniCaptureTheme.Typography.Subtitle1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toTopOf="@id/gc_analysis_hint_container"
+                tools:text="Tipp:" />
 
             <net.gini.android.capture.internal.ui.CustomFontTextView
                 android:id="@+id/gc_analysis_hint_text"
-                style="@style/GiniCaptureTheme.Analysis.Hint.TextStyle"
+                style="@style/GiniCaptureTheme.Typography.Body2"
+                android:textColor="@color/Dark_06"
                 android:layout_width="wrap_content"
-                android:layout_height="@dimen/gc_analysis_hint_text_height"
-                android:layout_gravity="center"
-                android:layout_marginStart="@dimen/gc_analysis_hint_text_left_margin"
-                android:gravity="center_vertical"
-                app:autoSizeStepGranularity="1sp"
-                app:autoSizeTextType="uniform"
+                android:layout_height="wrap_content"
                 tools:text="Gute Lichtverhältnisse beim Aufnehmen des Fotos beschleunigen die Analyse." />
         </LinearLayout>
     </LinearLayout>
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

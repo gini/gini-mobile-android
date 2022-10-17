@@ -9,5 +9,5 @@
         android:id="@+id/gc_section_title"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/gc_file_provider_separator"/>
+        android:background="?attr/dividerColor"/>
 </LinearLayout>

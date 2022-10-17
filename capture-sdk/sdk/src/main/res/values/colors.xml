@@ -57,9 +57,11 @@
     <color name="gc_analysis_overlay">#b2000000</color>
     <color name="gc_analysis_pdf_info_background">#007C99</color>
     <color name="gc_analysis_pdf_info_text">#ffffff</color>
-    <color name="gc_analysis_analysing_message">#ffffff</color>
-    <color name="gc_analysis_hint_headline">#ffffff</color>
-    <color name="gc_analysis_hint">#ffffff</color>
+    <color name="gc_analysis_analysing_message">@color/Light_01</color>
+    <color name="gc_analysis_hint_headline">@color/Dark_02</color>
+    <color name="gc_analysis_hint">@color/Dark_05</color>
+    <color name="gc_analysis_hint_headline_night">@color/Light_02</color>
+    <color name="gc_analysis_hint_night">@color/Dark_06</color>
 
     <color name="gc_snackbar_error_text">#85000a</color>
     <color name="gc_snackbar_error_button_title">#fff</color>

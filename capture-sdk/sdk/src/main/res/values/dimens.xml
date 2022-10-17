@@ -29,7 +29,6 @@
     <dimen name="gc_camera_image_stack_top_margin">8dp</dimen>
     <dimen name="gc_camera_image_stack_right_margin">40dp</dimen>
     <dimen name="gc_camera_image_stack_left_margin">40dp</dimen>
-    <dimen name="gc_camera_image_stack_badge_size">20dp</dimen>
     <dimen name="gc_camera_activity_indicator_padding">16dp</dimen>
     <dimen name="gc_camera_qrcode_detected_popup_horizontal_margin">24dp</dimen>
     <dimen name="gc_camera_qrcode_detected_popup_vertical_margin">16dp</dimen>
@@ -84,14 +83,21 @@
     <dimen name="gc_analysis_pdf_page_count_top_margin">4dp</dimen>
     <dimen name="gc_analysis_hint_headline_bottom_margin">16dp</dimen>
     <dimen name="gc_analysis_hint_headline_horizontal_margin">16dp</dimen>
+    <dimen name="gc_analysis_hint_container_bottom_margin_portrait">32dp</dimen>
     <dimen name="gc_analysis_hint_container_width">0dp</dimen>
     <dimen name="gc_analysis_hint_container_height">48dp</dimen>
     <dimen name="gc_analysis_hint_container_bottom_margin">32dp</dimen>
     <dimen name="gc_analysis_hint_container_horizontal_margin">16dp</dimen>
     <dimen name="gc_analysis_hint_icon_size">32dp</dimen>
-    <dimen name="gc_analysis_hint_icon_margin">8dp</dimen>
+    <dimen name="gc_analysis_hint_icon_margin">24dp</dimen>
     <dimen name="gc_analysis_hint_text_height">48dp</dimen>
     <dimen name="gc_analysis_hint_text_left_margin">16dp</dimen>
+    <dimen name="gc_analysis_hint_bottom_margin">17dp</dimen>
+    <dimen name="gc_analysis_hint_top_margin">12dp</dimen>
+    <item name="gc_analysis_preview_width_percentage" type="dimen" format="float">0.9</item>
+    <item name="gc_analysis_preview_width_percentage_tablet" type="dimen" format="float">0.75</item>
+    <item name="gc_analysis_preview_height_percentage_tablet" type="dimen" format="float">0.8</item>
+    <item name="gc_analysis_preview_alpha" type="dimen" format="float">0.25</item>
 
     <dimen name="gc_noresults_header_padding">8dp</dimen>
     <dimen name="gc_noresults_header_drawable_padding">16dp</dimen>
@@ -139,5 +145,6 @@
     <dimen name="gc_file_import_paragraphs_margin">50dp</dimen>
     <dimen name="gc_snackbar_card_corner_radius">5dp</dimen>
     <dimen name="gc_tablet_width">582dp</dimen>
+    <dimen name="gc_camera_pane_width">124dp</dimen>
 
 </resources>

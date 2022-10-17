@@ -1,5 +1,7 @@
 package net.gini.android.capture.camera;
 
+import static org.mockito.Mockito.spy;
+
 import net.gini.android.capture.internal.camera.api.CameraControllerFake;
 
 /**
@@ -8,21 +10,18 @@ import net.gini.android.capture.internal.camera.api.CameraControllerFake;
  * Copyright (c) 2017 Gini GmbH.
  */
 
-public class CameraFragmentCompatFake extends CameraFragmentCompat {
+public class CameraFragmentFake extends CameraFragment {
 
     private CameraFragmentImplFake mCameraFragmentImplFake;
 
-    public static CameraFragmentCompatFake createInstance() {
-        return new CameraFragmentCompatFake();
+    public static CameraFragmentFake createInstance() {
+        return new CameraFragmentFake();
     }
 
     @Override
     protected CameraFragmentImpl createFragmentImpl() {
-        final CameraFragmentHelperFake cameraFragmentHelperFake = new CameraFragmentHelperFake();
-        final CameraFragmentImpl cameraFragmentImpl = cameraFragmentHelperFake.createFragmentImpl(
-                this);
-        mCameraFragmentImplFake = cameraFragmentHelperFake.getCameraFragmentImplFake();
-        return cameraFragmentImpl;
+        mCameraFragmentImplFake = spy(new CameraFragmentImplFake(this));
+        return mCameraFragmentImplFake;
     }
 
     public CameraControllerFake getCameraControllerFake() {

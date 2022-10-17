@@ -55,6 +55,7 @@
     <string name="gc_document_analysis_error_retry">Wiederholen</string>
 
     <string name="gc_analysis_activity_indicator_message">Dokument wird analysiert</string>
+    <string name="gc_pdf_analysis_activity_indicator_message">%s\nwird analysiert</string>
     <string name="gc_photo_tip_align">Das gesamte Dokumente sollte sich im Rahmen befinden</string>
     <string name="gc_photo_tip_multipage">Es ist nun möglich mehrere Seiten eines Dokuments zu scannen</string>
     <string name="gc_photo_tip_lighting">Gutes Licht führt zu besseren Ergebnissen als mit Blitz</string>
@@ -137,11 +138,11 @@
     <string name="gc_onboarding_page_indicator_active_content_description">Aktive Seitenanzeige für Seite %1$d.</string>
     <string name="gc_onboarding_page_indicator_inactive_content_description">Inaktive Seitenanzeige für Seite %1$d.</string>
 
-    <string name="gc_photo_tip_good_lightning_title">Gute Lichtverhältnisse</string>
-    <string name="gc_photo_tip_flatten_the_page_title">Flach ausrichten</string>
-    <string name="gc_photo_tip_parallel_title">Parallel</string>
-    <string name="gc_photo_tip_align_title">Im Rahmen positionieren</string>
-    <string name="gc_photo_tip_multiple_pages_title">Mehrere Seiten</string>
+    <string name="gc_photo_tip_good_lightning_title">Tipp: Gute Lichtverhältnisse</string>
+    <string name="gc_photo_tip_flatten_the_page_title">Tipp: Flach ausrichten</string>
+    <string name="gc_photo_tip_parallel_title">Tipp: Parallel</string>
+    <string name="gc_photo_tip_align_title">Tipp: Im Rahmen positionieren</string>
+    <string name="gc_photo_tip_multiple_pages_title">Tipp: Mehrere Seiten</string>
 
     <string name="gc_back_button_description">Zurück</string>
 
@@ -150,5 +151,7 @@
     <string name="gc_first_illustration_description">Aktivieren Sie die Teilen-Funktion. Dazu wählen Sie eine Datei aus und verwenden anschließend die Teilen-Funktion, dargestellt als Viereck mit hoch-zeigendem Pfeil.</string>
     <string name="gc_second_illustration_description">Banking App auswählen. Wählen Sie nun die gewünschte App aus mit der das Dokument geteilt werden soll.</string>
     <string name="gc_photos_of_monitors_or_screens">Monitoraufnahmen und Screenshots</string>
-
+    <string name="gc_camera_flash_on_subtitle">An</string>
+    <string name="gc_camera_flash_off_subtitle">Aus</string>
+    <string name="gc_camera_title">Rechnung oder QR Code scannen</string>
 </resources>

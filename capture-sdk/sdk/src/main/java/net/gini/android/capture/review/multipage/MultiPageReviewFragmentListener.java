@@ -9,7 +9,7 @@ import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.GiniCaptureError;
 import net.gini.android.capture.analysis.AnalysisActivity;
 import net.gini.android.capture.analysis.AnalysisFragmentCompat;
-import net.gini.android.capture.camera.CameraFragmentCompat;
+import net.gini.android.capture.camera.CameraFragment;
 import net.gini.android.capture.document.GiniCaptureMultiPageDocument;
 
 import androidx.annotation.NonNull;
@@ -49,7 +49,7 @@ public interface MultiPageReviewFragmentListener {
      * simply finish the Activity.
      *
      * <p> If you use one Activity to host all the Gini Capture fragments, then you should display the
-     * {@link CameraFragmentCompat} again.
+     * {@link CameraFragment} again.
      */
     void onReturnToCameraScreen();
 
