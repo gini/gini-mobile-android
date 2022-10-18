@@ -1,11 +1,13 @@
 package net.gini.android.capture.internal.camera.photo;
 
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.os.AsyncTask;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.View;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
@@ -80,21 +82,52 @@ public class PhotoEdit {
         }
     }
 
-    public PhotoEdit crop(Rect aRect) {
+    public PhotoEdit crop(byte[] data, View frame, View reference) {
 
-        Bitmap original = BitmapFactory.decodeByteArray(mPhoto.getData(),
-                0, mPhoto.getData().length);
+        try {
+            int heightOriginal = frame.getHeight();
+            int widthOriginal = frame.getWidth();
 
-        Bitmap cropped = Bitmap.createBitmap(original, aRect.left, aRect.top, aRect.width(),
-                aRect.height());
+            Bitmap bitmap = BitmapFactory.decodeByteArray(data,
+                    0, data.length);
 
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        cropped.compress(Bitmap.CompressFormat.PNG, 100, stream);
+            int heightFrame = reference.getHeight();
+            int widthFrame = reference.getWidth();
+            int leftFrame = reference.getLeft();
+            int topFrame = reference.getTop();
 
-        byte[] byteArray = stream.toByteArray();
-        mPhoto.setData(byteArray);
+            int heightReal = bitmap.getHeight();
+            int widthReal = bitmap.getWidth();
 
-        cropped.recycle();
+            int widthFinal = (widthFrame * widthReal) / widthOriginal;
+            int heightFinal = (heightFrame * heightReal) / heightOriginal;
+            int leftFinal = (leftFrame * widthReal) / widthOriginal;
+            int topFinal = (topFrame * heightReal) / heightOriginal;
+
+            Log.d("Cropping", "Img: W " + widthOriginal);
+            Log.d("Cropping", "Img: H " + heightOriginal);
+
+            Log.d("Cropping", "Rect: L " + leftFinal);
+            Log.d("Cropping", "Rect: W " + widthFinal);
+            Log.d("Cropping", "Rect: H " + heightFinal);
+
+
+            Bitmap newBitmap = Bitmap.createBitmap(bitmap,
+                    leftFinal, topFinal, widthFinal, heightFinal);
+
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            newBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+
+            byte[] byteArray = stream.toByteArray();
+            mPhoto.setData(byteArray);
+
+            bitmap.recycle();
+            Log.d("Cropping", "Success");
+
+        } catch (IllegalArgumentException argumentException) {
+            Log.d("Cropping", argumentException.getMessage());
+            mPhoto.setData(data);
+        }
         return this;
     }
 
