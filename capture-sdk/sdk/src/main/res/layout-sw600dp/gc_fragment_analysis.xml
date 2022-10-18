@@ -17,7 +17,7 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_percent="@dimen/gc_analysis_preview_width_percentage_tablet"
+        app:layout_constraintWidth_percent="@dimen/gc_analysis_preview_width_percentage"
         android:background="@color/Dark_01"
         android:alpha="@dimen/gc_analysis_preview_alpha">
 
@@ -57,7 +57,7 @@
             tools:targetApi="lollipop"
             tools:visibility="visible" />
 
-        <net.gini.android.capture.internal.ui.CustomFontTextView
+        <TextView
             android:id="@+id/gc_analysis_message"
             style="@style/GiniCaptureTheme.Typography.Body2"
             android:layout_width="wrap_content"
@@ -79,7 +79,9 @@
         android:id="@+id/gc_analysis_hint_container"
         android:layout_width="@dimen/gc_analysis_hint_container_width"
         android:layout_height="wrap_content"
+        android:minHeight="@dimen/gc_analysis_hint_container_mini_height"
         android:layout_alignParentBottom="true"
+        android:layout_gravity="center_vertical"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="@dimen/gc_analysis_hint_container_bottom_margin_portrait"
         android:background="@drawable/gc_analysis_tips_background"
@@ -97,7 +99,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/large_24"
             android:scaleType="center"
-            tools:src="@drawable/gc_analysis_tip_icon" />
+            tools:src="@drawable/gc_photo_tip_lighting" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -106,7 +108,7 @@
             android:layout_marginEnd="@dimen/large"
             android:orientation="vertical">
 
-            <net.gini.android.capture.internal.ui.CustomFontTextView
+            <TextView
                 android:id="@+id/gc_analysis_hint_headline"
                 style="@style/GiniCaptureTheme.Typography.Subtitle1"
                 android:layout_width="match_parent"
@@ -114,7 +116,7 @@
                 app:layout_constraintBottom_toTopOf="@id/gc_analysis_hint_container"
                 tools:text="Tipp:" />
 
-            <net.gini.android.capture.internal.ui.CustomFontTextView
+            <TextView
                 android:id="@+id/gc_analysis_hint_text"
                 style="@style/GiniCaptureTheme.Typography.Body2"
                 android:textColor="@color/Dark_06"
