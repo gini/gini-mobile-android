@@ -38,10 +38,39 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:id="@+id/gc_camera_frame_wrapper"
         app:layout_constraintBottom_toTopOf="@+id/gc_pane_wrapper"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/gc_navigation_top_bar">
+
+        <TextView
+            android:id="@+id/gc_qr_code_status"
+            style="@style/GiniCaptureTheme.Typography.Body1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/gc_qr_code_detected_background"
+            android:paddingStart="@dimen/medium"
+            android:paddingEnd="@dimen/medium"
+            android:text="@string/gc_qr_code_detected"
+            android:textColor="@color/Light_01"
+            android:textSize="@dimen/text_min"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/gc_camera_frame"
+            app:layout_constraintEnd_toEndOf="@+id/gc_camera_frame"
+            app:layout_constraintStart_toStartOf="@+id/gc_camera_frame"
+            app:layout_constraintTop_toTopOf="@+id/gc_camera_frame" />
+
+        <ImageView
+            android:id="@+id/gc_qr_code_check"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/gc_check"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/gc_camera_frame"
+            app:layout_constraintEnd_toEndOf="@+id/gc_camera_frame"
+            app:layout_constraintStart_toStartOf="@+id/gc_camera_frame"
+            app:layout_constraintTop_toTopOf="@+id/gc_camera_frame" />
 
 
         <ImageView
@@ -186,109 +215,6 @@
             app:layout_constraintStart_toStartOf="@id/gc_button_import_document"
             app:layout_constraintTop_toBottomOf="@id/gc_button_import_document" />
 
-        <!--    TODO: use dimen size class from Help Screen branch-->
-        <RelativeLayout
-            android:id="@+id/gc_qrcode_detected_popup_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/large_24"
-            android:layout_marginRight="@dimen/large_24"
-            android:layout_marginBottom="@dimen/large"
-            android:alpha="0"
-            android:background="?attr/colorSurface"
-            android:paddingLeft="@dimen/medium"
-            android:paddingTop="@dimen/medium"
-            android:paddingRight="@dimen/medium"
-            android:paddingBottom="@dimen/medium"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toTopOf="@id/gc_button_camera_trigger"
-            tools:alpha="1"
-            tools:visibility="invisible">
-
-            <ImageView
-                android:id="@+id/gc_camera_qrcode_detected_popup_icon"
-                android:layout_width="@dimen/gc_camera_qrcode_icon_size"
-                android:layout_height="@dimen/gc_camera_qrcode_icon_size"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:src="@drawable/qr_code_icon"
-                tools:ignore="ContentDescription" />
-
-            <TextView
-                style="@style/GiniCaptureTheme.Typography.Body1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="@dimen/medium"
-                android:layout_marginEnd="@dimen/medium"
-                android:layout_toStartOf="@+id/gc_camera_qrcode_detected_popup_message_2"
-                android:layout_toEndOf="@id/gc_camera_qrcode_detected_popup_icon"
-                android:text="@string/gc_qrcode_detected_popup_message_1" />
-
-            <TextView
-                android:id="@+id/gc_camera_qrcode_detected_popup_message_2"
-                style="@style/GiniCaptureTheme.Typography.Body2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:text="@string/gc_qrcode_detected_popup_message_2"
-                android:textColor="?attr/colorAccent" />
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/gc_unsupported_qrcode_detected_popup_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/large_24"
-            android:layout_marginRight="@dimen/large_24"
-            android:layout_marginBottom="@dimen/large"
-            android:alpha="0"
-            android:background="?attr/colorSurface"
-            android:paddingLeft="@dimen/medium"
-            android:paddingTop="@dimen/medium"
-            android:paddingRight="@dimen/medium"
-            android:paddingBottom="@dimen/medium"
-            android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@+id/gc_button_camera_trigger"
-            tools:alpha="1"
-            tools:visibility="gone">
-
-            <ImageView
-                android:id="@+id/gc_camera_unsupported_qrcode_detected_popup_icon"
-                android:layout_width="@dimen/gc_camera_qrcode_icon_size"
-                android:layout_height="@dimen/gc_camera_qrcode_icon_size"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:src="@drawable/qr_code_icon"
-                tools:ignore="ContentDescription" />
-
-            <!--TODO: use theme error color-->
-            <TextView
-                android:id="@+id/gc_camera_unsupported_qrcode_detected_popup_message_1"
-                style="@style/GiniCaptureTheme.Typography.Body2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="@dimen/medium"
-                android:layout_marginEnd="@dimen/medium"
-                android:layout_toStartOf="@+id/gc_camera_unsupported_qrcode_detected_popup_message_2"
-                android:layout_toEndOf="@id/gc_camera_unsupported_qrcode_detected_popup_icon"
-                android:text="@string/gc_unsupported_qrcode_detected_popup_message_1"
-                android:textColor="@color/Error_01" />
-
-            <TextView
-                android:id="@+id/gc_camera_unsupported_qrcode_detected_popup_message_2"
-                style="@style/GiniCaptureTheme.Typography.Body2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:text="@string/gc_unsupported_qrcode_detected_popup_message_2"
-                android:textColor="@color/Error_01" />
-
-        </RelativeLayout>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

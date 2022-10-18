@@ -188,8 +188,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private TextView mCameraFlashButtonSubtitle;
     private LinearLayout mLayoutNoPermission;
     private ImageButton mButtonImportDocument;
-    private View mQRCodeDetectedPopupContainer;
-    private View mUnsupportedQRCodeDetectedPopupContainer;
+    private ConstraintLayout mCameraFrameWrapper;
     private View mActivityIndicatorBackground;
     private ProgressBar mActivityIndicator;
 
@@ -310,9 +309,9 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private void createPopups() {
         mPaymentQRCodePopup =
-                new QRCodePopup<>(mFragment, mQRCodeDetectedPopupContainer,
+                new QRCodePopup<>(mFragment, mCameraFrameWrapper,
                         DEFAULT_ANIMATION_DURATION, getHideQRCodeDetectedPopupDelayMs(),
-                        getDifferentQRCodeDetectedPopupDelayMs(),
+                        getDifferentQRCodeDetectedPopupDelayMs(), true,
                         new Function1<PaymentQRCodeData, Unit>() {
                             @Override
                             public Unit invoke(@Nullable PaymentQRCodeData paymentQRCodeData) {
@@ -325,9 +324,9 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                         });
 
         mUnsupportedQRCodePopup =
-                new QRCodePopup<>(mFragment, mUnsupportedQRCodeDetectedPopupContainer,
+                new QRCodePopup<>(mFragment, mCameraFrameWrapper,
                         DEFAULT_ANIMATION_DURATION, getHideQRCodeDetectedPopupDelayMs(),
-                        getDifferentQRCodeDetectedPopupDelayMs());
+                        getDifferentQRCodeDetectedPopupDelayMs(), false);
     }
 
     public void onStart() {
@@ -622,12 +621,9 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         mActivityIndicatorBackground =
                 view.findViewById(R.id.gc_activity_indicator_background);
         mActivityIndicator = view.findViewById(R.id.gc_activity_indicator);
-        mQRCodeDetectedPopupContainer = view.findViewById(
-                R.id.gc_qrcode_detected_popup_container);
-        mUnsupportedQRCodeDetectedPopupContainer = view.findViewById(
-                R.id.gc_unsupported_qrcode_detected_popup_container);
         mPhotoThumbnail = view.findViewById(R.id.gc_photo_thumbnail);
         topAdapterInjectedViewContainer = view.findViewById(R.id.gc_navigation_top_bar);
+        mCameraFrameWrapper = view.findViewById(R.id.gc_camera_frame_wrapper);
 
     }
 
