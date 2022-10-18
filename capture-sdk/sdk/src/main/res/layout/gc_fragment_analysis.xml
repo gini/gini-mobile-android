@@ -84,6 +84,7 @@
         android:paddingTop="@dimen/medium"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
+        android:visibility="invisible"
         android:background="@drawable/gc_analysis_tips_background"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginBottom="@dimen/gc_analysis_hint_container_bottom_margin"
