@@ -7,9 +7,17 @@
     android:background="?attr/backgroundColor"
     tools:context=".analysis.AnalysisFragmentCompat">
 
+    <net.gini.android.capture.view.InjectedViewContainer
+        android:id="@+id/gc_navigation_top_bar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <FrameLayout
         android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:clipChildren="false"
         android:background="@color/Dark_01"
         android:alpha="@dimen/gc_analysis_preview_alpha"
@@ -17,7 +25,7 @@
         app:layout_constraintEnd_toEndOf="@+id/gc_analysis_overlay"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/gc_navigation_top_bar"
         app:layout_constraintWidth_percent="@dimen/gc_analysis_preview_width_percentage">
 
         <ImageView
@@ -34,9 +42,11 @@
     <LinearLayout
         android:id="@+id/gc_analysis_overlay"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:background="?attr/backgroundColor"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/gc_navigation_top_bar"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <Space
             android:layout_width="match_parent"

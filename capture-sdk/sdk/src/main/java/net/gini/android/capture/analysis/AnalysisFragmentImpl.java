@@ -1,7 +1,5 @@
 package net.gini.android.capture.analysis;
 
-import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
-
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
@@ -15,14 +13,16 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import net.gini.android.capture.Document;
+import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.R;
-import net.gini.android.capture.internal.ui.ErrorSnackbar;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.util.Size;
+import net.gini.android.capture.view.InjectedViewContainer;
+import net.gini.android.capture.view.NavButtonType;
+import net.gini.android.capture.view.NavigationBarTopAdapter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +35,8 @@ import androidx.annotation.VisibleForTesting;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import jersey.repackaged.jsr166e.CompletableFuture;
 
+import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
+
 class AnalysisFragmentImpl extends AnalysisScreenContract.View {
 
     protected static final Logger LOG = LoggerFactory.getLogger(AnalysisFragmentImpl.class);
@@ -46,6 +48,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     private ProgressBar mProgressActivity;
     private LinearLayout mAnalysisOverlay;
     private AnalysisHintsAnimator mHintsAnimator;
+    private InjectedViewContainer<NavigationBarTopAdapter> topAdapterInjectedViewContainer;
 
     AnalysisFragmentImpl(final FragmentImplCallback fragment,
             @NonNull final Document document,
@@ -187,6 +190,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
             final Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.gc_fragment_analysis, container, false);
         bindViews(view);
+        setTopBarInjectedViewContainer();
         createHintsAnimator(view);
         return view;
     }
@@ -197,6 +201,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
         mProgressActivity = view.findViewById(R.id.gc_progress_activity);
         mAnalysisMessageTextView = view.findViewById(R.id.gc_analysis_message);
         mAnalysisOverlay = view.findViewById(R.id.gc_analysis_overlay);
+        topAdapterInjectedViewContainer = view.findViewById(R.id.gc_navigation_top_bar);
     }
 
     private void createHintsAnimator(@NonNull final View view) {
@@ -206,6 +211,26 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
         final TextView hintHeadlineTextView = view.findViewById(R.id.gc_analysis_hint_headline);
         mHintsAnimator = new AnalysisHintsAnimator(mFragment.getActivity().getApplication(),
                 hintContainer, hintImageView, hintTextView, hintHeadlineTextView);
+    }
+
+    private void setTopBarInjectedViewContainer() {
+        if (GiniCapture.hasInstance()) {
+            topAdapterInjectedViewContainer.setInjectedViewAdapter(GiniCapture.getInstance().getNavigationBarTopAdapter());
+
+            if (topAdapterInjectedViewContainer.getInjectedViewAdapter() == null)
+                return;
+
+            if (mFragment.getActivity() == null)
+                return;
+
+            topAdapterInjectedViewContainer.getInjectedViewAdapter().setNavButtonType(NavButtonType.CLOSE);
+            topAdapterInjectedViewContainer.getInjectedViewAdapter().setTitle(mFragment.getActivity().getResources().getString(R.string.gc_title_analysis));
+
+            topAdapterInjectedViewContainer.getInjectedViewAdapter().setOnNavButtonClickListener(v -> {
+                mFragment.getActivity().setResult(Activity.RESULT_CANCELED);
+                mFragment.getActivity().finish();
+            });
+        }
     }
 
     public void onStart() {

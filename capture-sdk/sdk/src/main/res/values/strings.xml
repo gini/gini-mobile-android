@@ -10,7 +10,7 @@
     <string name="gc_title_photo_tips">Tipps für Fotos</string>
     <string name="gc_title_supported_formats">Unterstützte Formate</string>
     <string name="gc_title_file_import">Importieren</string>
-    <string name="gc_title_analysis" />
+    <string name="gc_title_analysis">Übersicht</string>
     <string name="gc_title_multi_page_review">Fotos überprüfen</string>
     <string name="gc_show_onboarding">Hilfe</string>
 
