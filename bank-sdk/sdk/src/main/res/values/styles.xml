@@ -153,7 +153,7 @@
         <item name="textAppearanceSubtitle1">
             @style/Root.GiniCaptureTheme.DigitalInvoice.LineItemDetails.InputField.TextStyle
         </item>
-        <item name="textAppearanceCaption">@style/Root.GiniCaptureTheme.Analysis.Hint.TextStyle
+        <item name="textAppearanceCaption">@style/Root.GiniCaptureTheme.Typography.Subtitle1
         </item>
         <item name="editTextStyle">@style/Widget.MaterialComponents.TextInputLayout.FilledBox</item>
     </style>
