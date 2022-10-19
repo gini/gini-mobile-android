@@ -44,6 +44,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/gc_navigation_top_bar">
 
+
         <TextView
             android:id="@+id/gc_qr_code_status"
             style="@style/GiniCaptureTheme.Typography.Body1"
