@@ -1249,7 +1249,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                 LOG.info("Picture taken");
                 showActivityIndicatorAndDisableInteraction();
                 photo.edit()
-                        .crop(photo.getData(), mCameraPreview, mImageFrame)
+                        .crop(mFragment.getActivity(), getRectFromImageFrame())
                         .compressByDefault().applyAsync(new PhotoEdit.PhotoEditCallback() {
                             @Override
                             public void onDone(@NonNull final Photo result) {
@@ -1323,23 +1323,12 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         }
     }
 
-    private Bitmap getRectFromImageFrame(byte[] data) {
+    private Rect getRectFromImageFrame() {
         Rect rect = new Rect();
 
         mImageFrame.getHitRect(rect);
 
-        Log.d("Cropping", "mImg" + mImageFrame.getWidth());
-        Log.d("Cropping", "mRect" + rect.width());
-
-        Bitmap bitmap = BitmapFactory.decodeByteArray(data,
-                0, data.length);
-
-        int actualLeft = rect.left * (mCameraPreview.getWidth() / bitmap.getWidth());
-        int actualTop = rect.top * (mCameraPreview.getHeight() / bitmap.getHeight());
-        int actualWidth = rect.width() * (mCameraPreview.getWidth() / bitmap.getWidth());
-        int actualHeight = rect.height() * (mCameraPreview.getHeight() / bitmap.getHeight());
-
-        return Bitmap.createBitmap(bitmap, actualLeft, actualTop, actualWidth, actualHeight);
+       return rect;
     }
 
 
