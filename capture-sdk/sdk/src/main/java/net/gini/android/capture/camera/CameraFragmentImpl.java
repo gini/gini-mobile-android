@@ -73,6 +73,7 @@ import net.gini.android.capture.internal.storage.ImageDiskStore;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.ui.ViewStubSafeInflater;
 import net.gini.android.capture.internal.util.ApplicationHelper;
+import net.gini.android.capture.internal.util.ContextHelper;
 import net.gini.android.capture.internal.util.DeviceHelper;
 import net.gini.android.capture.internal.util.FileImportValidator;
 import net.gini.android.capture.internal.util.MimeType;
@@ -215,7 +216,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     }
 
     @Override
-    public void onPaymentQRCodeDataAvailable(@NonNull final PaymentQRCodeData paymentQRCodeData) {
+     public void onPaymentQRCodeDataAvailable(@NonNull final PaymentQRCodeData paymentQRCodeData) {
         handleQRCodeDetected(paymentQRCodeData, paymentQRCodeData.getUnparsedContent());
     }
 
@@ -226,11 +227,11 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private void handleQRCodeDetected(@Nullable final PaymentQRCodeData paymentQRCodeData,
                                       @NonNull final String qrCodeContent) {
-        if (mInterfaceHidden || mActivityIndicator.getVisibility() == View.VISIBLE) {
+         if (mInterfaceHidden || mActivityIndicator.getVisibility() == View.VISIBLE) {
             mPaymentQRCodePopup.hide();
             mUnsupportedQRCodePopup.hide();
-            return;
-        }
+             return;
+         }
 
         if (paymentQRCodeData == null) {
             final boolean showWithDelay = mPaymentQRCodePopup.isShown();
@@ -241,7 +242,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                             showWithDelay ? getDifferentQRCodeDetectedPopupDelayMs() : 0);
                 }
             });
-        } else {
+         } else {
             final boolean showWithDelay = mUnsupportedQRCodePopup.isShown();
             mUnsupportedQRCodePopup.hide(new ViewPropertyAnimatorListenerAdapter() {
                 @Override
@@ -250,8 +251,8 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                             showWithDelay ? getDifferentQRCodeDetectedPopupDelayMs() : 0);
                 }
             });
-        }
-    }
+         }
+     }
 
     @VisibleForTesting
     long getHideQRCodeDetectedPopupDelayMs() {
@@ -292,7 +293,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     }
 
     View onCreateView(final LayoutInflater inflater, final ViewGroup container,
-                      final Bundle savedInstanceState) {
+            final Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.gc_fragment_camera, container, false);
         bindViews(view);
         setInputHandlers();
@@ -444,16 +445,16 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private void enableTapToFocus() {
         mCameraController.enableTapToFocus(new CameraInterface.TapToFocusListener() {
-            @Override
-            public void onFocusing(@NonNull final Point point, @NonNull final Size previewViewSize) {
-                showFocusIndicator(point);
-            }
+                    @Override
+                    public void onFocusing(@NonNull final Point point, @NonNull final Size previewViewSize) {
+                        showFocusIndicator(point);
+                    }
 
-            @Override
-            public void onFocused(final boolean success) {
-                hideFocusIndicator();
-            }
-        });
+                    @Override
+                    public void onFocused(final boolean success) {
+                        hideFocusIndicator();
+                    }
+                });
     }
 
     private void showFocusIndicator(@NonNull final Point point) {
@@ -646,17 +647,25 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             if (mFragment.getActivity() == null)
                 return;
 
+            boolean isBottomBarEnabled = GiniCapture.getInstance().isBottomNavigationBarEnabled();
+
             topAdapterInjectedViewContainer.getInjectedViewAdapter().setNavButtonType(NavButtonType.BACK);
-            topAdapterInjectedViewContainer.getInjectedViewAdapter().setTitle(mFragment.getActivity().getResources().getString(R.string.gc_title_camera));
-            topAdapterInjectedViewContainer.getInjectedViewAdapter().setMenuResource(R.menu.gc_camera);
-            topAdapterInjectedViewContainer.getInjectedViewAdapter().setOnMenuItemClickListener(item -> {
-                if (item.getItemId() == R.id.gc_action_show_onboarding) {
-                    startHelpActivity();
-                } else {
-                    throw new UnsupportedOperationException("Unknown menu item id. Please don't call our OnMenuItemClickListener for custom menu items.");
-                }
-                return true;
-            });
+
+            topAdapterInjectedViewContainer.getInjectedViewAdapter().setTitle(ContextHelper.isTablet(mFragment.getActivity()) ? mFragment.getActivity().getResources().getString(R.string.gc_camera_title) :
+                    mFragment.getActivity().getResources().getString(R.string.gc_title_camera));
+
+            if (!isBottomBarEnabled) {
+                topAdapterInjectedViewContainer.getInjectedViewAdapter().setMenuResource(R.menu.gc_camera);
+                topAdapterInjectedViewContainer.getInjectedViewAdapter().setOnMenuItemClickListener(item -> {
+                    if (item.getItemId() == R.id.gc_action_show_onboarding) {
+                        startHelpActivity();
+                    } else {
+                        throw new UnsupportedOperationException("Unknown menu item id. Please don't call our OnMenuItemClickListener for custom menu items.");
+                    }
+                    return true;
+                });
+            }
+
             topAdapterInjectedViewContainer.getInjectedViewAdapter().setOnNavButtonClickListener(v -> {
                 mFragment.getActivity().onBackPressed();
             });
@@ -777,8 +786,8 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         final GiniCaptureSpecificExtraction specificExtraction = new GiniCaptureSpecificExtraction(
                 EXTRACTION_ENTITY_NAME,
                 paymentQRCodeData.getUnparsedContent(),
-                EXTRACTION_ENTITY_NAME,
-                null,
+                 EXTRACTION_ENTITY_NAME,
+                 null,
                 Collections.singletonList(extraction)
         );
         mListener.onExtractionsAvailable(
@@ -984,7 +993,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     }
 
     private void createSinglePageDocumentAndCallListener(final Intent data,
-                                                         final Activity activity) {
+            final Activity activity) {
         try {
             final GiniCaptureDocument document = DocumentFactory.newDocumentFromIntent(data,
                     activity,
@@ -1038,7 +1047,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     }
 
     private void handleMultiPageDocumentAndCallListener(@NonNull final Context context,
-                                                        @NonNull final Intent intent, @NonNull final List<Uri> uris) {
+            @NonNull final Intent intent, @NonNull final List<Uri> uris) {
         showActivityIndicatorAndDisableInteraction();
         if (mImportUrisAsyncTask != null) {
             mImportUrisAsyncTask.cancel(true);
@@ -1590,8 +1599,8 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     }
 
     private void handleError(final GiniCaptureError.ErrorCode errorCode,
-                             @NonNull final String message,
-                             @Nullable final Throwable throwable) {
+            @NonNull final String message,
+            @Nullable final Throwable throwable) {
         ErrorLogger.log(new ErrorLog(errorCode.toString() + ": " + message, throwable));
         String errorMessage = message;
         if (throwable != null) {
