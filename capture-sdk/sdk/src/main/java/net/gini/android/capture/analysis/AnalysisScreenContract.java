@@ -45,10 +45,6 @@ interface AnalysisScreenContract {
 
         abstract void showPdfTitle(@NonNull final String title);
 
-        abstract void showPdfPageCount(@NonNull final String pageCount);
-
-        abstract void hidePdfPageCount();
-
         abstract Size getPdfPreviewSize();
 
         abstract void showBitmap(@Nullable final Bitmap bitmap, final int rotationForDisplay);
@@ -59,12 +55,6 @@ interface AnalysisScreenContract {
                 @Nullable final String negativeButtonTitle,
                 @Nullable final DialogInterface.OnClickListener negativeButtonClickListener,
                 @Nullable final DialogInterface.OnCancelListener cancelListener);
-
-        abstract void showErrorSnackbar(@NonNull final String message, final int duration,
-                @Nullable final String buttonTitle,
-                @Nullable final android.view.View.OnClickListener onClickListener);
-
-        abstract void hideErrorSnackbar();
 
         abstract void showHints(List<AnalysisHint> hints);
     }
