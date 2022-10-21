@@ -30,7 +30,6 @@
         <item name="textAppearanceOverline">@style/GiniCaptureTheme.Typography.Overline</item>
     </style>
 
-
     <style name="GiniCaptureTheme" parent="Root.GiniCaptureTheme"/>
 
     <style name="GiniCaptureTheme.ThemeOverlay.Dialog.Alert" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
@@ -167,26 +166,6 @@
         <item name="gcCustomFont" />
     </style>
 
-    <style name="Root.GiniCaptureTheme.Analysis.AnalysingMessage.TextStyle" parent="TextAppearance.AppCompat">
-        <item name="android:textSize">18sp</item>
-        <item name="android:textColor">@color/gc_analysis_analysing_message</item>
-        <item name="gcCustomFont" />
-    </style>
-
-    <style name="Root.GiniCaptureTheme.Analysis.HintHeadline.TextStyle" parent="TextAppearance.AppCompat">
-        <item name="android:textSize">16sp</item>
-        <item name="android:textColor">@color/gc_analysis_hint_headline</item>
-        <item name="gcCustomFont" />
-    </style>
-
-    <style name="Root.GiniCaptureTheme.Analysis.Hint.TextStyle" parent="TextAppearance.AppCompat">
-        <item name="android:textSize">16sp</item>
-        <item name="autoSizeMinTextSize">14sp</item>
-        <item name="autoSizeMaxTextSize">16sp</item>
-        <item name="android:textColor">@color/gc_analysis_hint</item>
-        <item name="gcCustomFont" />
-    </style>
-
     <style name="Root.GiniCaptureTheme.NoResults.Header.TextStyle" parent="TextAppearance.AppCompat">
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/gc_noresults_header</item>
@@ -305,16 +284,6 @@
     <style name="GiniCaptureTheme.Snackbar.Error.TextStyle" parent="Root.GiniCaptureTheme.Snackbar.Error.TextStyle" />
 
     <style name="GiniCaptureTheme.Snackbar.Error.Button.TextStyle" parent="Root.GiniCaptureTheme.Snackbar.Error.Button.TextStyle" />
-
-    <style name="GiniCaptureTheme.Analysis.PdfFilename.TextStyle" parent="Root.GiniCaptureTheme.Analysis.PdfFilename.TextStyle" />
-
-    <style name="GiniCaptureTheme.Analysis.PdfPageCount.TextStyle" parent="Root.GiniCaptureTheme.Analysis.PdfPageCount.TextStyle" />
-
-    <style name="GiniCaptureTheme.Analysis.AnalysingMessage.TextStyle" parent="Root.GiniCaptureTheme.Analysis.AnalysingMessage.TextStyle" />
-
-    <style name="GiniCaptureTheme.Analysis.HintHeadline.TextStyle" parent="Root.GiniCaptureTheme.Analysis.HintHeadline.TextStyle" />
-
-    <style name="GiniCaptureTheme.Analysis.Hint.TextStyle" parent="Root.GiniCaptureTheme.Analysis.Hint.TextStyle" />
 
     <style name="GiniCaptureTheme.NoResults.Header.TextStyle" parent="Root.GiniCaptureTheme.NoResults.Header.TextStyle" />
 

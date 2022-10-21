@@ -42,7 +42,8 @@
     <string name="gc_multi_page_review_file_import_delete_last_page_dialog_negative_button">Cancel</string>
     <string name="gc_document_analysis_error">An error has occurred.</string>
     <string name="gc_document_analysis_error_retry">Retry</string>
-    <string name="gc_analysis_activity_indicator_message">Document is being analysed</string>
+    <string name="gc_analysis_activity_indicator_message">Analyzing documents</string>
+    <string name="gc_pdf_analysis_activity_indicator_message">Analyzing\n%s</string>
     <string name="gc_photo_tip_align">Capture the entire page within the frame shown on the camera screen</string>
     <string name="gc_photo_tip_multipage">It\'s now possible to analyse an invoice with multiple pages</string>
     <string name="gc_photo_tip_lighting">Proper lighting leads to better results than flash</string>
@@ -114,11 +115,11 @@
     <string name="gc_onboarding_viewpager_content_description">Onboarding</string>
     <string name="gc_onboarding_page_indicator_active_content_description">Active page indicator for page %1$d.</string>
     <string name="gc_onboarding_page_indicator_inactive_content_description">Inactive page indicator for page %1$d.</string>
-    <string name="gc_photo_tip_good_lightning_title">Good lightning</string>
-    <string name="gc_photo_tip_flatten_the_page_title">Flatten the page</string>
-    <string name="gc_photo_tip_parallel_title">Parallel</string>
-    <string name="gc_photo_tip_align_title">Position in the frame</string>
-    <string name="gc_photo_tip_multiple_pages_title">Multiple pages</string>
+    <string name="gc_photo_tip_good_lightning_title">Tip: Good lightning</string>
+    <string name="gc_photo_tip_flatten_the_page_title">Tip: Flatten the page</string>
+    <string name="gc_photo_tip_parallel_title">Tip: Parallel</string>
+    <string name="gc_photo_tip_align_title">Tip: Position in the frame</string>
+    <string name="gc_photo_tip_multiple_pages_title">Tip: Multiple pages</string>
     <string name="gc_snackbar_illustrations">These are only illustrations, look for the original in the corresponding apps.</string>
     <string name="gc_snackbar_dismiss">Dismiss</string>
     <string name="gc_back_button_description">Back</string>

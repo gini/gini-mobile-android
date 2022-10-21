@@ -9,17 +9,18 @@
 
     <FrameLayout
         android:id="@+id/frameLayout3"
-        android:clipChildren="false"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_height="0dp"
+        android:alpha="@dimen/gc_analysis_preview_alpha"
+        android:background="@color/Dark_01"
+        android:clipChildren="false"
+        app:layout_constraintBottom_toBottomOf="@+id/gc_analysis_overlay"
         app:layout_constraintEnd_toEndOf="@+id/gc_analysis_overlay"
+        app:layout_constraintHeight_percent="@dimen/gc_analysis_preview_height_percentage"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_percent="@dimen/gc_analysis_preview_width_percentage"
-        android:background="@color/Dark_01"
-        android:alpha="@dimen/gc_analysis_preview_alpha">
+        app:layout_constraintWidth_percent="@dimen/gc_analysis_preview_width_percentage">
 
         <ImageView
             android:id="@+id/gc_image_picture"
@@ -81,9 +82,9 @@
         android:layout_height="wrap_content"
         android:minHeight="@dimen/gc_analysis_hint_container_mini_height"
         android:layout_alignParentBottom="true"
-        android:layout_gravity="center_vertical"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="@dimen/gc_analysis_hint_container_bottom_margin_portrait"
+        android:layout_marginBottom="@dimen/xlarge"
+        android:layout_gravity="center_vertical"
         android:background="@drawable/gc_analysis_tips_background"
         android:paddingTop="@dimen/medium"
         android:paddingBottom="@dimen/large"
@@ -125,4 +126,5 @@
                 tools:text="Gute Lichtverhältnisse beim Aufnehmen des Fotos beschleunigen die Analyse." />
         </LinearLayout>
     </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
