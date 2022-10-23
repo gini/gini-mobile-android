@@ -4,16 +4,16 @@ import android.content.Context
 import kotlinx.coroutines.Dispatchers
 import net.gini.android.bank.api.models.ExtractionsContainer
 import net.gini.android.core.api.GiniApiType
-import net.gini.android.core.api.authorization.KSessionManager
-import net.gini.android.core.api.internal.KGiniCoreAPIBuilder
+import net.gini.android.core.api.authorization.SessionManager
+import net.gini.android.core.api.internal.GiniCoreAPIBuilder
 
 class GiniBankAPIBuilder @JvmOverloads constructor(
     context: Context,
     clientId: String = "",
     clientSecret: String = "",
     emailDomain: String = "",
-    sessionManager: KSessionManager? = null
-) : KGiniCoreAPIBuilder<BankApiDocumentManager, GiniBankAPI, BankApiDocumentRepository, ExtractionsContainer>(context, clientId, clientSecret, emailDomain, sessionManager) {
+    sessionManager: SessionManager? = null
+) : GiniCoreAPIBuilder<BankApiDocumentManager, GiniBankAPI, BankApiDocumentRepository, ExtractionsContainer>(context, clientId, clientSecret, emailDomain, sessionManager) {
 
     private val bankApiType = GiniBankApiType(1)
 

@@ -1,31 +1,25 @@
 package net.gini.android.bank.api
 
-import com.squareup.moshi.Moshi
 import net.gini.android.bank.api.models.*
 import net.gini.android.bank.api.requests.ErrorEvent
 import net.gini.android.core.api.DocumentRepository
 import net.gini.android.core.api.Resource
 import net.gini.android.core.api.Resource.Companion.wrapInResource
-import net.gini.android.core.api.authorization.KSessionManager
+import net.gini.android.core.api.authorization.SessionManager
 import net.gini.android.core.api.models.CompoundExtraction
 import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.models.Extraction
 import net.gini.android.core.api.models.SpecificExtraction
-import net.gini.android.core.api.requests.ApiException
-import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.ResponseBody
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
-import java.util.concurrent.CancellationException
-import kotlin.coroutines.CoroutineContext
 
 class BankApiDocumentRepository(
     private val documentRemoteSource: BankApiDocumentRemoteSource,
-    sessionManager: KSessionManager,
+    sessionManager: SessionManager,
     giniApiType: GiniBankApiType
 ) : DocumentRepository<ExtractionsContainer>(documentRemoteSource, sessionManager, giniApiType) {
 

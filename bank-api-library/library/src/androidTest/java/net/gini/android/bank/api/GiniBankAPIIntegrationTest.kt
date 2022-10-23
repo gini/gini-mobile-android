@@ -14,17 +14,15 @@ import net.gini.android.core.api.test.shared.helpers.TestUtils
 import net.gini.android.bank.api.requests.ErrorEvent
 import net.gini.android.core.api.DocumentRemoteSource
 import net.gini.android.core.api.Resource
-import net.gini.android.core.api.internal.KGiniCoreAPIBuilder
+import net.gini.android.core.api.internal.GiniCoreAPIBuilder
 import net.gini.android.core.api.models.Box
 import net.gini.android.core.api.models.CompoundExtraction
-import net.gini.android.core.api.models.PaymentRequest
 import net.gini.android.core.api.models.SpecificExtraction
 import net.gini.android.core.api.test.shared.GiniCoreAPIIntegrationTest
 import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.api.GiniHealthAPIBuilder
 import net.gini.android.health.api.models.PaymentRequestInput
 import org.junit.Assert
-import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -264,7 +262,7 @@ class GiniBankAPIIntegrationTest: GiniCoreAPIIntegrationTest<BankApiDocumentMana
         clientId: String,
         clientSecret: String,
         emailDomain: String
-    ): KGiniCoreAPIBuilder<BankApiDocumentManager, GiniBankAPI, BankApiDocumentRepository, ExtractionsContainer> {
+    ): GiniCoreAPIBuilder<BankApiDocumentManager, GiniBankAPI, BankApiDocumentRepository, ExtractionsContainer> {
         giniHealthApi = GiniHealthAPIBuilder(getApplicationContext(), clientId, clientSecret, emailDomain).build()
         return GiniBankAPIBuilder(getApplicationContext(), clientId, clientSecret, emailDomain)
     }
