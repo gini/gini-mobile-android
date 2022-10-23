@@ -12,7 +12,7 @@ import net.gini.android.bank.api.models.ResolvePaymentInput
 import net.gini.android.bank.api.models.ResolvedPayment
 import net.gini.android.core.api.test.shared.helpers.TestUtils
 import net.gini.android.bank.api.requests.ErrorEvent
-import net.gini.android.core.api.DocumentRemoteSource
+import net.gini.android.core.api.DocumentManager
 import net.gini.android.core.api.Resource
 import net.gini.android.core.api.internal.GiniCoreAPIBuilder
 import net.gini.android.core.api.models.Box
@@ -50,7 +50,7 @@ class GiniBankAPIIntegrationTest: GiniCoreAPIIntegrationTest<BankApiDocumentMana
         val testDocument = TestUtils.createByteArray(testDocumentAsStream)
         val documentExtractions = processDocument(
             testDocument, "image/jpeg", "test.jpg",
-            DocumentRemoteSource.DocumentType.INVOICE
+            DocumentManager.DocumentType.INVOICE
         )
         val document = documentExtractions.keys.iterator().next()
         val extractionsContainer = documentExtractions[document]!!
@@ -97,7 +97,7 @@ class GiniBankAPIIntegrationTest: GiniCoreAPIIntegrationTest<BankApiDocumentMana
         val testDocument = TestUtils.createByteArray(testDocumentAsStream)
         val documentExtractions = processDocument(
             testDocument, "image/jpeg", "test.jpg",
-            DocumentRemoteSource.DocumentType.INVOICE
+            DocumentManager.DocumentType.INVOICE
         )
         val document = documentExtractions.keys.iterator().next()
         val extractionsContainer = documentExtractions[document]!!
@@ -126,7 +126,7 @@ class GiniBankAPIIntegrationTest: GiniCoreAPIIntegrationTest<BankApiDocumentMana
         val testDocument = TestUtils.createByteArray(testDocumentAsStream)
         val documentExtractions = processDocument(
             testDocument, "application/pdf", "line-items.pdf",
-            DocumentRemoteSource.DocumentType.INVOICE
+            DocumentManager.DocumentType.INVOICE
         )  { }
         val document = documentExtractions.keys.iterator().next()
         val extractionsContainer = documentExtractions[document]!!
@@ -155,7 +155,7 @@ class GiniBankAPIIntegrationTest: GiniCoreAPIIntegrationTest<BankApiDocumentMana
         val testDocument = TestUtils.createByteArray(testDocumentAsStream)
         val documentExtractions = processDocument(
             testDocument, "application/pdf", "line-items.pdf",
-            DocumentRemoteSource.DocumentType.INVOICE
+            DocumentManager.DocumentType.INVOICE
         ) { }
         val document = documentExtractions.keys.iterator().next()
         val extractionsContainer = documentExtractions[document]
@@ -241,7 +241,7 @@ class GiniBankAPIIntegrationTest: GiniCoreAPIIntegrationTest<BankApiDocumentMana
         Assert.assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream)
         val testDocument = TestUtils.createByteArray(testDocumentAsStream)
         val documentWithExtractions =
-            processDocument(testDocument, "image/jpeg", "test.jpg", DocumentRemoteSource.DocumentType.INVOICE)
+            processDocument(testDocument, "image/jpeg", "test.jpg", DocumentManager.DocumentType.INVOICE)
         val document = documentWithExtractions.keys.iterator().next()
         val extractionsContainer = documentWithExtractions[document]!!
         val providers = giniHealthApi.documentManager.getPaymentProviders().dataOrThrow
