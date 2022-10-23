@@ -12,5 +12,5 @@ import net.gini.android.core.api.models.ExtractionsContainer
 
 class GiniHealthAPI(
     documentManager: HealthApiDocumentManager,
-    credentialsStore: CredentialsStore? = null
+    credentialsStore: CredentialsStore
 ): GiniCoreAPI<HealthApiDocumentManager, HealthApiDocumentRepository, ExtractionsContainer>(documentManager, credentialsStore)
