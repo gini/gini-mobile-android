@@ -25,7 +25,7 @@ abstract class DocumentManager<out DR: DocumentRepository<E>, E: ExtractionsCont
         document: ByteArray,
         contentType: String,
         filename: String? = null,
-        documentType: DocumentRemoteSource.DocumentType? = null,
+        documentType: DocumentType? = null,
         documentMetadata: DocumentMetadata? = null,
     ): Resource<Document> =
         documentRepository.createPartialDocument(document, contentType, filename, documentType, documentMetadata)
@@ -64,7 +64,7 @@ abstract class DocumentManager<out DR: DocumentRepository<E>, E: ExtractionsCont
      */
     suspend fun createCompositeDocument(
         documents: List<Document>,
-        documentType: DocumentRemoteSource.DocumentType? = null
+        documentType: DocumentType? = null
     ): Resource<Document> =
         documentRepository.createCompositeDocument(documents, documentType)
 
@@ -80,7 +80,7 @@ abstract class DocumentManager<out DR: DocumentRepository<E>, E: ExtractionsCont
      */
     suspend fun createCompositeDocument(
         documentRotationMap: LinkedHashMap<Document, Int>,
-        documentType: DocumentRemoteSource.DocumentType? = null
+        documentType: DocumentType? = null
     ): Resource<Document> =
         documentRepository.createCompositeDocument(documentRotationMap, documentType)
 
@@ -190,4 +190,15 @@ abstract class DocumentManager<out DR: DocumentRepository<E>, E: ExtractionsCont
      */
     suspend fun getPaymentRequests(): Resource<List<PaymentRequest>> =
         documentRepository.getPaymentRequests()
+
+    enum class DocumentType(val apiDoctypeHint: String) {
+        BANK_STATEMENT("BankStatement"),
+        CONTRACT("Contract"),
+        INVOICE("Invoice"),
+        RECEIPT("Receipt"),
+        REMINDER("Reminder"),
+        REMITTANCE_SLIP("RemittanceSlip"),
+        TRAVEL_EXPENSE_REPORT("TravelExpenseReport"),
+        OTHER("Other");
+    }
 }

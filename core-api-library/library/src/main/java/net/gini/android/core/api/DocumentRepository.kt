@@ -46,7 +46,7 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
 
     suspend fun createPartialDocument(documentData: ByteArray, contentType: String,
                                       filename: String? = null,
-                                      documentType: DocumentRemoteSource.DocumentType? = null,
+                                      documentType: DocumentManager.DocumentType? = null,
                                       documentMetadata: DocumentMetadata? = null): Resource<Document> =
         withSession { sessionToken ->
             wrapInResource {
@@ -71,7 +71,7 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
      * @return A Resource which has in the "data" the freshly created document.
      */
 
-    suspend fun createCompositeDocument(documents: List<Document>, documentType: DocumentRemoteSource.DocumentType?): Resource<Document> =
+    suspend fun createCompositeDocument(documents: List<Document>, documentType: DocumentManager.DocumentType?): Resource<Document> =
         withSession { sessionToken ->
             wrapInResource {
                 val uri = documentRemoteSource.uploadDocument(
@@ -97,7 +97,7 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
      * @return A Resource which has in the "data" the freshly created document.
      */
 
-    suspend fun createCompositeDocument(documentRotationMap: LinkedHashMap<Document, Int>, documentType: DocumentRemoteSource.DocumentType?): Resource<Document> =
+    suspend fun createCompositeDocument(documentRotationMap: LinkedHashMap<Document, Int>, documentType: DocumentManager.DocumentType?): Resource<Document> =
         withSession { sessionToken ->
             wrapInResource {
                 val uri = documentRemoteSource.uploadDocument(
@@ -128,7 +128,7 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
      * and to send feedback.
      */
 
-    suspend fun createDocument(document: ByteArray, filename: String?, documentType: DocumentRemoteSource.DocumentType?): Resource<Document> {
+    suspend fun createDocument(document: ByteArray, filename: String?, documentType: DocumentManager.DocumentType?): Resource<Document> {
         return createDocumentInternal(document, filename, documentType, null)
     }
 
@@ -150,14 +150,14 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
      * and to send feedback.
      */
 
-    suspend fun createDocument(document: ByteArray, filename: String?, documentType: DocumentRemoteSource.DocumentType?, documentMetadata: DocumentMetadata): Resource<Document> {
+    suspend fun createDocument(document: ByteArray, filename: String?, documentType: DocumentManager.DocumentType?, documentMetadata: DocumentMetadata): Resource<Document> {
         return createDocumentInternal(document, filename, documentType, documentMetadata)
     }
 
     private suspend fun createDocumentInternal(
         document: ByteArray,
         filename: String?,
-        documentType: DocumentRemoteSource.DocumentType?,
+        documentType: DocumentManager.DocumentType?,
         documentMetadata: DocumentMetadata?
     ): Resource<Document> =
         withSession { sessionToken ->
