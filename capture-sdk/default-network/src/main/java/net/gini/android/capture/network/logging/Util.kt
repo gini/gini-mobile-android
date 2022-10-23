@@ -1,31 +1,11 @@
 package net.gini.android.capture.network.logging
 
-import com.android.volley.VolleyError
 import net.gini.android.bank.api.BuildConfig
-import net.gini.android.capture.logging.ErrorLog
 import net.gini.android.bank.api.requests.ErrorEvent
+import net.gini.android.capture.logging.ErrorLog
+import net.gini.android.core.api.Resource
 import java.io.PrintWriter
 import java.io.StringWriter
-import java.nio.charset.Charset
-
-
-internal fun <T : Exception> errorLogFromException(description: String, exception: T): ErrorLog =
-    if (exception is VolleyError) {
-        ErrorLog(
-            description = description,
-            exception = RuntimeException(exception.responseDetails, exception)
-        )
-    } else {
-        ErrorLog(description = description, exception = exception)
-    }
-
-internal val VolleyError.responseDetails: String
-    get() = this.networkResponse?.let { response ->
-        val statusCode = response.statusCode
-        val headers = response.allHeaders?.toList()?.joinToString("\n") { "${it.name}: ${it.value}" } ?: ""
-        val body = response.data?.let { String(it, Charset.forName("UTF-8")) } ?: ""
-        return "Status code: $statusCode\nHeaders:\n$headers\nBody:\n$body"
-    } ?: this.message ?: toString()
 
 internal fun ErrorLog.toErrorEvent(): ErrorEvent =
     ErrorEvent(
@@ -46,3 +26,12 @@ internal val Throwable.stackTraceString: String
             sw.toString()
         }
     }
+
+internal val Resource.Error<*>.formattedErrorMessage: String
+    get() = """
+        Message: ${message ?: "unknown"}
+        Response status code: ${responseStatusCode ?: "n/a"}
+        Response headers: ${responseHeaders ?: "n/a"}
+        Response body: ${responseBody ?: "n/a"}
+        Exception: ${exception ?: "n/a"}
+    """.trimIndent()
