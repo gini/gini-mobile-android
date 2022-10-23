@@ -9,7 +9,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import net.gini.android.core.api.DocumentRemoteSource
 import net.gini.android.core.api.Resource
-import net.gini.android.core.api.internal.KGiniCoreAPIBuilder
+import net.gini.android.core.api.internal.GiniCoreAPIBuilder
 import net.gini.android.core.api.models.CompoundExtraction
 import net.gini.android.core.api.models.ExtractionsContainer
 import net.gini.android.core.api.models.PaymentRequest
@@ -175,7 +175,7 @@ class GiniHealthAPIIntegrationTest: GiniCoreAPIIntegrationTest<HealthApiDocument
         clientId: String,
         clientSecret: String,
         emailDomain: String
-    ): KGiniCoreAPIBuilder<HealthApiDocumentManager, GiniHealthAPI, HealthApiDocumentRepository, ExtractionsContainer> =
+    ): GiniCoreAPIBuilder<HealthApiDocumentManager, GiniHealthAPI, HealthApiDocumentRepository, ExtractionsContainer> =
         GiniHealthAPIBuilder(getApplicationContext(), clientId, clientSecret, emailDomain)
 
     override fun getNetworkSecurityConfigResId(): Int = net.gini.android.health.api.test.R.xml.network_security_config

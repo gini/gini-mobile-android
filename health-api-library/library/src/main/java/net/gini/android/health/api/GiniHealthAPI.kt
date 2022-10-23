@@ -1,7 +1,7 @@
 package net.gini.android.health.api
 
 import net.gini.android.core.api.authorization.CredentialsStore
-import net.gini.android.core.api.internal.KGiniCoreAPI
+import net.gini.android.core.api.internal.GiniCoreAPI
 import net.gini.android.core.api.models.ExtractionsContainer
 
 /**
@@ -13,4 +13,4 @@ import net.gini.android.core.api.models.ExtractionsContainer
 class GiniHealthAPI(
     documentManager: HealthApiDocumentManager,
     credentialsStore: CredentialsStore? = null
-): KGiniCoreAPI<HealthApiDocumentManager, HealthApiDocumentRepository, ExtractionsContainer>(documentManager, credentialsStore)
+): GiniCoreAPI<HealthApiDocumentManager, HealthApiDocumentRepository, ExtractionsContainer>(documentManager, credentialsStore)

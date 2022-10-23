@@ -3,8 +3,8 @@ package net.gini.android.health.api
 import android.content.Context
 import kotlinx.coroutines.Dispatchers
 import net.gini.android.core.api.GiniApiType
-import net.gini.android.core.api.authorization.KSessionManager
-import net.gini.android.core.api.internal.KGiniCoreAPIBuilder
+import net.gini.android.core.api.authorization.SessionManager
+import net.gini.android.core.api.internal.GiniCoreAPIBuilder
 import net.gini.android.core.api.models.ExtractionsContainer
 
 /**
@@ -18,8 +18,8 @@ class GiniHealthAPIBuilder @JvmOverloads constructor(
     clientId: String = "",
     clientSecret: String = "",
     emailDomain: String = "",
-    sessionManager: KSessionManager? = null
-) : KGiniCoreAPIBuilder<HealthApiDocumentManager, GiniHealthAPI, HealthApiDocumentRepository, ExtractionsContainer>(context, clientId, clientSecret, emailDomain, sessionManager) {
+    sessionManager: SessionManager? = null
+) : GiniCoreAPIBuilder<HealthApiDocumentManager, GiniHealthAPI, HealthApiDocumentRepository, ExtractionsContainer>(context, clientId, clientSecret, emailDomain, sessionManager) {
 
     private val healthApiType = GiniHealthApiType(3)
 

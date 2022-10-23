@@ -2,8 +2,6 @@ package net.gini.android.health.api
 
 import kotlinx.coroutines.withContext
 import net.gini.android.core.api.DocumentRemoteSource
-import net.gini.android.core.api.Resource
-import net.gini.android.core.api.authorization.KSessionManager
 import net.gini.android.core.api.authorization.apimodels.SessionToken
 import net.gini.android.core.api.requests.ApiException
 import net.gini.android.core.api.requests.SafeApiRequest

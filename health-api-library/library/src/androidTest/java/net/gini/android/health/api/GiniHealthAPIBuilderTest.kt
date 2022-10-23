@@ -3,7 +3,7 @@ package net.gini.android.health.api
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import net.gini.android.core.api.Resource
-import net.gini.android.core.api.authorization.KSessionManager
+import net.gini.android.core.api.authorization.SessionManager
 import net.gini.android.core.api.authorization.apimodels.SessionToken
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -25,7 +25,7 @@ class GiniHealthAPIBuilderTest {
         var healthAPIBuilder = GiniHealthAPIBuilder(targetContext, "", "", "")
         assertEquals(healthAPIBuilder.getGiniApiType(), GiniHealthApiType( apiVersion = 3))
 
-        healthAPIBuilder = GiniHealthAPIBuilder(targetContext, sessionManager = object: KSessionManager {
+        healthAPIBuilder = GiniHealthAPIBuilder(targetContext, sessionManager = object: SessionManager {
             override suspend fun getSession(): Resource<SessionToken> {
                 return mock()
             }

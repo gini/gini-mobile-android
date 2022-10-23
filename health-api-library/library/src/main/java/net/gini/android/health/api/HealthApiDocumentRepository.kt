@@ -2,11 +2,10 @@ package net.gini.android.health.api
 
 import android.net.Uri
 import android.util.Size
-import com.squareup.moshi.Moshi
 import net.gini.android.core.api.DocumentRepository
 import net.gini.android.core.api.Resource
 import net.gini.android.core.api.Resource.Companion.wrapInResource
-import net.gini.android.core.api.authorization.KSessionManager
+import net.gini.android.core.api.authorization.SessionManager
 import net.gini.android.core.api.authorization.apimodels.SessionToken
 import net.gini.android.core.api.models.CompoundExtraction
 import net.gini.android.core.api.models.Document
@@ -33,7 +32,7 @@ import org.json.JSONObject
  */
 class HealthApiDocumentRepository(
     private val documentRemoteSource: HealthApiDocumentRemoteSource,
-    sessionManager: KSessionManager,
+    sessionManager: SessionManager,
     private val giniApiType: GiniHealthApiType
 ) : DocumentRepository<ExtractionsContainer>(documentRemoteSource, sessionManager, giniApiType) {
 
