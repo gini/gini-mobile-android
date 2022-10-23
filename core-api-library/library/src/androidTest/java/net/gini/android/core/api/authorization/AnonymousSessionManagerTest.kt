@@ -123,9 +123,6 @@ class AnonymousSessionManagerTest {
     @Test
     @Throws(InterruptedException::class)
     fun testThatCreatedUserNamesAreEmailAddresses() = runTest {
-        // TODO: The returned "created" user has another email address than the UserCredentials instance which is given
-        //       to the mock.
-
         every { mCredentialsStore!!.userCredentials } returns (null)
         coEvery { mUserRepository?.createUser(ofType(UserRequestModel::class)) } returns Resource.Success(Unit)
 
