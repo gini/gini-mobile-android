@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -192,7 +193,9 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private View mUnsupportedQRCodeDetectedPopupContainer;
     private View mActivityIndicatorBackground;
     private ProgressBar mActivityIndicator;
-
+    private FrameLayout mPaneBackground;
+    private ConstraintLayout mPaneWrapper;
+    private ImageView mImageFrame;
     private ViewStubSafeInflater mViewStubInflater;
 
     private boolean mIsTakingPicture;
@@ -293,6 +296,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         setInputHandlers();
         createPopups();
         setTopBarInjectedViewContainer();
+        initOnlyQRScanning();
         return view;
     }
 
@@ -628,7 +632,9 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                 R.id.gc_unsupported_qrcode_detected_popup_container);
         mPhotoThumbnail = view.findViewById(R.id.gc_photo_thumbnail);
         topAdapterInjectedViewContainer = view.findViewById(R.id.gc_navigation_top_bar);
-
+        mPaneBackground = view.findViewById(R.id.gc_camera_pane_background);
+        mPaneWrapper = view.findViewById(R.id.gc_pane_wrapper);
+        mImageFrame = view.findViewById(R.id.gc_camera_frame);
     }
 
     private void setTopBarInjectedViewContainer() {
@@ -676,6 +682,22 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         trackCameraScreenEvent(CameraScreenEvent.HELP);
     }
 
+    private void initOnlyQRScanning() {
+        if (isOnlyQRCodeScanning()) {
+            mPaneBackground.setVisibility(View.GONE);
+            mPaneWrapper.setVisibility(View.GONE);
+            final ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) mImageFrame.getLayoutParams();
+            layoutParams.dimensionRatio = "1:1";
+        }
+    }
+
+    private boolean isOnlyQRCodeScanning() {
+        if (!GiniCapture.hasInstance()) {
+            return false;
+        }
+
+        return GiniCapture.getInstance().isQRCodeScanningEnabled();
+    }
 
     private void initViews() {
         final Activity activity = mFragment.getActivity();
