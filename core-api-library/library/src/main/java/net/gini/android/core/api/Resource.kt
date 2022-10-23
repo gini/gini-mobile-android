@@ -45,6 +45,14 @@ sealed class Resource<T>(
 
     class Cancelled<T> : Resource<T>()
 
+    suspend inline fun <U> mapSuccess(crossinline block: suspend (Success<T>) -> Resource<U>): Resource<U> {
+        return when(this) {
+            is Cancelled -> Cancelled()
+            is Error -> Error(this)
+            is Success -> block(this)
+        }
+    }
+
     companion object {
         suspend inline fun <T> wrapInResource(crossinline request: suspend () -> T) =
             try {
