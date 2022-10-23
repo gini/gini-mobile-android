@@ -51,6 +51,8 @@ dependencies {
     implementation(project(":capture-sdk:sdk"))
 
     implementation(libs.androidx.annotation)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
 
     testImplementation(libs.junit)
     testImplementation(libs.mockk)

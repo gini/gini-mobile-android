@@ -7,14 +7,11 @@ import bolts.Task
 import com.google.common.truth.Truth.assertThat
 import io.mockk.every
 import io.mockk.mockk
-import net.gini.android.bank.api.BankApiDocumentTaskManager
 import net.gini.android.bank.api.GiniBankAPI
 import net.gini.android.capture.Document
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Shadows.shadowOf
-import java.lang.Thread.sleep
-import java.text.DateFormat
 import java.util.*
 import kotlin.collections.LinkedHashMap
 
