@@ -6,5 +6,5 @@ import net.gini.android.core.api.internal.GiniCoreAPI
 
 class GiniBankAPI(
     documentManager: BankApiDocumentManager,
-    credentialsStore: CredentialsStore? = null
+    credentialsStore: CredentialsStore
 ): GiniCoreAPI<BankApiDocumentManager, BankApiDocumentRepository, ExtractionsContainer>(documentManager, credentialsStore)
