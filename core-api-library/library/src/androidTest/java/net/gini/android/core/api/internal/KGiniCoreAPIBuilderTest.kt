@@ -4,8 +4,6 @@ import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
-import com.android.volley.Cache
-import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Dispatchers
 import net.gini.android.core.api.*
 import net.gini.android.core.api.authorization.CredentialsStore

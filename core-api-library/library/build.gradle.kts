@@ -44,9 +44,6 @@ android {
 }
 
 dependencies {
-    api("com.android.volley:volley:1.2.1")
-    api("com.parse.bolts:bolts-tasks:1.4.0")
-
     implementation(libs.trustkit)
     implementation(libs.androidx.core.ktx)
     implementation(libs.kotlinx.coroutines.core)
