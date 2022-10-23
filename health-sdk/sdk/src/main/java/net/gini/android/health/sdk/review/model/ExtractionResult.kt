@@ -9,9 +9,13 @@ sealed class ResultWrapper<out T> {
 }
 
 suspend inline fun <T> wrapToResult(crossinline block: suspend () -> Resource<T>): ResultWrapper<T> {
-    return when(val resource = block()) {
-        is Resource.Cancelled -> ResultWrapper.Error(Exception("Cancelled"))
-        is Resource.Error -> ResultWrapper.Error(resource.exception ?: Exception(resource.message))
-        is Resource.Success -> ResultWrapper.Success(resource.data)
+    return try {
+        when(val resource = block()) {
+            is Resource.Cancelled -> ResultWrapper.Error(Exception("Cancelled"))
+            is Resource.Error -> ResultWrapper.Error(resource.exception ?: Exception(resource.message))
+            is Resource.Success -> ResultWrapper.Success(resource.data)
+        }
+    } catch (throwable: Throwable) {
+        ResultWrapper.Error(throwable)
     }
 }

@@ -8,6 +8,8 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import net.gini.android.core.api.Resource
+import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.api.HealthApiDocumentManager
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.review.bank.packageInfosFixture
@@ -46,8 +48,8 @@ class RequirementsTest {
         giniHealthAPI = mockk()
         documentManager = mockk()
         every { giniHealth!!.giniHealthAPI } returns giniHealthAPI!!
-        every { giniHealthAPI!!.documentManager } returns documentManager
-        coEvery { documentManager!!.getPaymentProviders() } returns paymentProvidersFixture
+        every { giniHealthAPI!!.documentManager } returns documentManager!!
+        coEvery { documentManager!!.getPaymentProviders() } returns Resource.Success(paymentProvidersFixture)
     }
 
     @After
@@ -182,7 +184,7 @@ class RequirementsTest {
         // Given
         every { packageManager!!.queryIntentActivities(any(), 0) } returns emptyList()
 
-        coEvery { documentManager!!.getPaymentProviders() } returns paymentProvidersFixture.subList(0, 1)
+        coEvery { documentManager!!.getPaymentProviders() } returns Resource.Success(paymentProvidersFixture.subList(0, 1))
 
         // When
         val requirements =

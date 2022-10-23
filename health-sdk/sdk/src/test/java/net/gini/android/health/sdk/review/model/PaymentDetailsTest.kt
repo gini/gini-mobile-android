@@ -4,7 +4,9 @@ import net.gini.android.core.api.models.CompoundExtraction
 import net.gini.android.core.api.models.ExtractionsContainer
 import net.gini.android.core.api.models.SpecificExtraction
 import org.junit.Assert.assertEquals
+import org.junit.Before
 import org.junit.Test
+import java.util.*
 
 /**
  * Created by Alpár Szotyori on 01.02.22.
@@ -12,6 +14,11 @@ import org.junit.Test
  * Copyright (c) 2022 Gini GmbH.
  */
 class PaymentDetailsTest {
+
+    @Before
+    fun setUp() {
+        Locale.setDefault(Locale.US)
+    }
 
     @Test
     fun `Updates payment extractions with payment detail values for feedback`() {
