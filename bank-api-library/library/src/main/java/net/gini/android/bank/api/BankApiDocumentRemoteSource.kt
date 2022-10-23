@@ -1,8 +1,6 @@
 package net.gini.android.bank.api
 
-import android.net.Uri
 import kotlinx.coroutines.withContext
-import net.gini.android.bank.api.models.FeedbackRequestModel
 import net.gini.android.bank.api.models.Payment
 import net.gini.android.bank.api.models.ResolvePaymentInput
 import net.gini.android.bank.api.models.ResolvedPayment
@@ -11,16 +9,10 @@ import net.gini.android.bank.api.models.toResolvedPayment
 import net.gini.android.bank.api.requests.ErrorEvent
 import net.gini.android.bank.api.requests.toResolvePaymentBody
 import net.gini.android.core.api.DocumentRemoteSource
-import net.gini.android.core.api.DocumentService
-import net.gini.android.core.api.GiniApiType
-import net.gini.android.core.api.Resource
-import net.gini.android.core.api.authorization.KSessionManager
 import net.gini.android.core.api.authorization.apimodels.SessionToken
 import net.gini.android.core.api.requests.ApiException
 import net.gini.android.core.api.requests.SafeApiRequest
 import okhttp3.RequestBody
-import okhttp3.ResponseBody
-import okhttp3.ResponseBody.Companion.toResponseBody
 import kotlin.coroutines.CoroutineContext
 
 class BankApiDocumentRemoteSource internal constructor(

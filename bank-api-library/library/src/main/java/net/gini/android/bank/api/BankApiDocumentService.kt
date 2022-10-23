@@ -1,16 +1,10 @@
 package net.gini.android.bank.api
 
-import android.graphics.Bitmap
-import net.gini.android.bank.api.models.FeedbackRequestModel
-import net.gini.android.bank.api.models.Payment
-import net.gini.android.bank.api.models.ResolvePaymentInput
-import net.gini.android.bank.api.models.ResolvedPayment
 import net.gini.android.bank.api.requests.ErrorEvent
 import net.gini.android.bank.api.requests.ResolvePaymentBody
 import net.gini.android.bank.api.response.PaymentResponse
 import net.gini.android.bank.api.response.ResolvePaymentResponse
 import net.gini.android.core.api.DocumentService
-import net.gini.android.core.api.Resource
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Response

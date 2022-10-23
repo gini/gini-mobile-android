@@ -3,6 +3,9 @@ package net.gini.android.bank.api
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import net.gini.android.core.api.GiniApiType
+import net.gini.android.core.api.Resource
+import net.gini.android.core.api.authorization.KSessionManager
+import net.gini.android.core.api.authorization.apimodels.SessionToken
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -23,7 +26,11 @@ class GiniBankAPIBuilderTest {
         var bankAPIBuilder = GiniBankAPIBuilder(targetContext, "", "", "")
         assertEquals(bankAPIBuilder.getGiniApiType(), GiniBankApiType(apiVersion = 1))
 
-        bankAPIBuilder = GiniBankAPIBuilder(targetContext, mock(), mock(), mock())
+        bankAPIBuilder = GiniBankAPIBuilder(targetContext, sessionManager = object: KSessionManager {
+            override suspend fun getSession(): Resource<SessionToken> {
+                return mock()
+            }
+        })
         assertEquals(bankAPIBuilder.getGiniApiType(), GiniBankApiType(apiVersion = 1))
     }
 }
