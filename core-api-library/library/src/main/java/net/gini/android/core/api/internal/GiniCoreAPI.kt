@@ -14,10 +14,5 @@ import net.gini.android.core.api.models.ExtractionsContainer
  */
 abstract class GiniCoreAPI <DM : DocumentManager<DR, E>, DR : DocumentRepository<E>, E : ExtractionsContainer> constructor(
     val documentManager: DM,
-    private val credentialsStore: CredentialsStore? = null
-) {
-
-    open fun getCredentialsStore(): CredentialsStore? {
-        return credentialsStore
-    }
-}
+    val credentialsStore: CredentialsStore
+)
