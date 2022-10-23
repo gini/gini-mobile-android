@@ -34,7 +34,7 @@ class GiniCoreAPIBuilderTest {
         val builder = CoreAPIBuilder(ApplicationProvider.getApplicationContext(), "clientId", "clientSecret", "@example.com")
         val giniCoreAPI: TestGiniCoreAPI = builder.build()
         Assert.assertNotNull(giniCoreAPI.documentManager)
-        Assert.assertNotNull(giniCoreAPI.getCredentialsStore())
+        Assert.assertNotNull(giniCoreAPI.credentialsStore)
     }
 
     @Test
@@ -44,7 +44,7 @@ class GiniCoreAPIBuilderTest {
         val giniCoreAPI: TestGiniCoreAPI = builder.build()
         Assert.assertNotNull(giniCoreAPI)
         Assert.assertNotNull(giniCoreAPI.documentManager)
-        Assert.assertNotNull(giniCoreAPI.getCredentialsStore())
+        Assert.assertNotNull(giniCoreAPI.credentialsStore)
     }
 
     @Test
@@ -101,7 +101,7 @@ class GiniCoreAPIBuilderTest {
 
     class TestGiniCoreAPI(
         documentManager: TestDocumentManager,
-        credentialsStore: CredentialsStore? = null
+        credentialsStore: CredentialsStore
     ): GiniCoreAPI<TestDocumentManager, TestDocumentRepository, ExtractionsContainer>(documentManager, credentialsStore)
 
     class TestDocumentRemoteSource(
