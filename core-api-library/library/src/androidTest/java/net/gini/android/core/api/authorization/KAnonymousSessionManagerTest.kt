@@ -41,7 +41,7 @@ class KAnonymousSessionManagerTest {
         val userCredentials = UserCredentials(email("foobar"), "1234")
         every { mCredentialsStore?.userCredentials } returns (userCredentials)
         coEvery {mUserRepository?.loginUser(any()) } returns Resource.Success(
-            SessionToken(accessToken = UUID.randomUUID().toString(), expirationDate = Date())
+            SessionToken(accessToken = UUID.randomUUID().toString(), tokenType = "bearer", expiresIn = 30000)
         )
 
         val sessionToken = mAnonymousSessionSessionManager?.getSession()
@@ -54,7 +54,7 @@ class KAnonymousSessionManagerTest {
         val userCredentials = UserCredentials(email("foobar"), "1234")
         every { mCredentialsStore?.userCredentials } returns (userCredentials)
         coEvery {mUserRepository?.loginUser(UserRequestModel(userCredentials.username, userCredentials.password)) } returns Resource.Success(
-            SessionToken(accessToken = UUID.randomUUID().toString(), expirationDate = Date())
+            SessionToken(accessToken = UUID.randomUUID().toString(), tokenType = "bearer", expiresIn = 30000)
         )
 
         val sessionToken = mAnonymousSessionSessionManager?.loginUser()
@@ -65,9 +65,7 @@ class KAnonymousSessionManagerTest {
     @Throws(InterruptedException::class)
     fun testThatNewUserCredentialsAreStored() = runTest {
         every { mCredentialsStore?.userCredentials } returns (null)
-        coEvery { mUserRepository?.createUser(any()) } returns Resource.Success(
-            ResponseBody.create(null, "")
-        )
+        coEvery { mUserRepository?.createUser(any()) } returns Resource.Success(Unit)
 
         every { mCredentialsStore?.storeUserCredentials(any()) } returns (true)
 
@@ -81,7 +79,7 @@ class KAnonymousSessionManagerTest {
         val userCredentials = UserCredentials(email("foobar"), "1234")
         every { mCredentialsStore!!.userCredentials } returns (userCredentials)
 
-        val sessionToken = SessionToken(accessToken = "1234-5678-9012", expirationDate = Date())
+        val sessionToken = SessionToken(accessToken = "1234-5678-9012", tokenType = "bearer", expiresIn = 30000)
         coEvery {mUserRepository?.loginUser(UserRequestModel(userCredentials.username, userCredentials.password)) } returns Resource.Success(
             sessionToken
         )
@@ -95,9 +93,9 @@ class KAnonymousSessionManagerTest {
     fun testThatUserSessionsAreReused() = runTest {
         every { mCredentialsStore!!.userCredentials } returns (UserCredentials(email("foobar"), "1234"))
         coEvery { mUserRepository?.loginUser(ofType(UserRequestModel::class)) } returnsMany listOf(Resource.Success(
-            SessionToken(accessToken = UUID.randomUUID().toString(), expirationDate = Date(Date().time + 10000))
+            SessionToken(accessToken = UUID.randomUUID().toString(), tokenType = "bearer", expiresIn = 10)
         ), Resource.Success(
-            SessionToken(accessToken = UUID.randomUUID().toString(), expirationDate = Date())
+            SessionToken(accessToken = UUID.randomUUID().toString(), tokenType = "bearer", expiresIn = 0)
         ))
 
         val firstSession = mAnonymousSessionSessionManager?.getSession()?.data
@@ -110,9 +108,9 @@ class KAnonymousSessionManagerTest {
     fun testThatUserSessionsAreNotReusedWhenTimedOut() = runTest {
         every { mCredentialsStore!!.userCredentials } returns (UserCredentials(email("foobar"), "1234"))
         coEvery {mUserRepository?.loginUser(ofType(UserRequestModel::class)) } returnsMany listOf(Resource.Success(
-            SessionToken(accessToken = UUID.randomUUID().toString(), expirationDate = Date(Date().time - 10000))
+            SessionToken(accessToken = UUID.randomUUID().toString(), tokenType = "bearer", expiresIn = -10)
         ), Resource.Success(
-            SessionToken(accessToken = UUID.randomUUID().toString(), expirationDate = Date())
+            SessionToken(accessToken = UUID.randomUUID().toString(), tokenType = "bearer", expiresIn = 0)
         ))
 
         val firstSession = mAnonymousSessionSessionManager?.getSession()?.data
@@ -130,9 +128,7 @@ class KAnonymousSessionManagerTest {
         //       to the mock.
 
         every { mCredentialsStore!!.userCredentials } returns (null)
-        coEvery { mUserRepository?.createUser(ofType(UserRequestModel::class)) } returns Resource.Success(
-            ResponseBody.create(null, "")
-        )
+        coEvery { mUserRepository?.createUser(ofType(UserRequestModel::class)) } returns Resource.Success(Unit)
 
         every { mCredentialsStore?.storeUserCredentials(any()) } returns (true)
         mAnonymousSessionSessionManager?.getSession()
@@ -140,7 +136,7 @@ class KAnonymousSessionManagerTest {
         val userRequestModelSlot = slot<UserRequestModel>()
         coVerify { mUserRepository?.createUser(capture(userRequestModelSlot)) }
 
-        assertTrue(userRequestModelSlot.captured.username?.endsWith("@$mEmailDomain") ?: false)
+        assertTrue(userRequestModelSlot.captured.email?.endsWith("@$mEmailDomain") ?: false)
     }
 
     @Test
@@ -148,13 +144,10 @@ class KAnonymousSessionManagerTest {
     fun testThatExistingUserIsDeletedAndNewUserIsCreatedIfExistingIsInvalid() = runTest {
         every { mCredentialsStore!!.userCredentials } returns (UserCredentials(email("foobar"), "1234"))
         val invalidGrantErrorJson = "{\"error\": \"invalid_grant\"}"
-        coEvery {mUserRepository?.loginUser(any()) } returns Resource.Error(
-            null, null, null, 400, null, invalidGrantErrorJson
-        )
+        coEvery {mUserRepository?.loginUser(any()) } returns Resource.Error(responseStatusCode = 400, responseBody = invalidGrantErrorJson)
+//        null, null, null, 400, null, invalidGrantErrorJson
 
-        coEvery { mUserRepository?.createUser(ofType(UserRequestModel::class)) } returns Resource.Success(
-            ResponseBody.create(null, "")
-        )
+        coEvery { mUserRepository?.createUser(ofType(UserRequestModel::class)) } returns Resource.Success(Unit)
 
         every { mCredentialsStore?.deleteUserCredentials() } returns (true)
         every { mCredentialsStore?.storeUserCredentials(any()) } returns (true)
@@ -170,13 +163,9 @@ class KAnonymousSessionManagerTest {
     fun testThatExistingUserIsDeletedAndNewUserIsCreatedIfExistingIsUnauthorized() = runTest {
         every { mCredentialsStore!!.userCredentials } returns (UserCredentials(email("foobar"), "1234"))
         val invalidGrantErrorJson = "{\"error\": \"Speak, friend, and enter.\"}"
-        coEvery {mUserRepository?.loginUser(any()) } returns Resource.Error(
-            null, null, null, 401, null, invalidGrantErrorJson
-        )
+        coEvery {mUserRepository?.loginUser(any()) } returns Resource.Error(responseStatusCode = 401, responseBody = invalidGrantErrorJson)
 
-        coEvery { mUserRepository?.createUser(ofType(UserRequestModel::class)) } returns Resource.Success(
-            ResponseBody.create(null, "")
-        )
+        coEvery { mUserRepository?.createUser(ofType(UserRequestModel::class)) } returns Resource.Success(Unit)
         every { mCredentialsStore?.deleteUserCredentials() } returns (true)
         every { mCredentialsStore?.storeUserCredentials(any()) } returns (true)
 
@@ -192,7 +181,7 @@ class KAnonymousSessionManagerTest {
         every { mCredentialsStore!!.userCredentials } returns (null)
         val invalidGrantErrorJson = "{\"error\": \"invalid_grant\"}"
         coEvery {mUserRepository?.createUser(any()) } returns Resource.Error(
-            null, null, null, 503, mapOf("Some-Header" to listOf("10")), invalidGrantErrorJson
+            responseStatusCode = 503, responseHeaders = mapOf("Some-Header" to listOf("10")), responseBody = invalidGrantErrorJson
         )
 
         val session = mAnonymousSessionSessionManager?.getSession()
@@ -230,13 +219,11 @@ class KAnonymousSessionManagerTest {
         mAnonymousSessionSessionManager = KAnonymousSessionManager(mUserRepository!!, mCredentialsStore!!, newEmailDomain)
 
         every { mCredentialsStore!!.userCredentials } returns (UserCredentials("1234@$oldEmailDomain", "5678"))
-        coEvery {mUserRepository?.updateEmail(any(), any(), any()) } returns Resource.Success(
-            ResponseBody.create(null, "")
-        )
+        coEvery {mUserRepository?.updateEmail(any(), any(), any()) } returns Resource.Success(Unit)
         coEvery {mUserRepository?.loginUser(ofType(UserRequestModel::class)) } returnsMany listOf(Resource.Success(
-            SessionToken(accessToken = "1234-5678-9012", expirationDate = Date())
+            SessionToken(accessToken = "1234-5678-9012", tokenType = "bearer", expiresIn = 30000)
         ), Resource.Success(
-            SessionToken(accessToken = "1234-5678-9012", expirationDate = Date())
+            SessionToken(accessToken = "1234-5678-9012", tokenType = "bearer", expiresIn = 30000)
         ))
 
         every { mCredentialsStore?.deleteUserCredentials() } returns (true)
