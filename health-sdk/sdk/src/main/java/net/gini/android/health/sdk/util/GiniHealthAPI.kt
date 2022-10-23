@@ -2,7 +2,6 @@ package net.gini.android.health.sdk.util
 
 import android.content.Context
 import net.gini.android.core.api.authorization.KSessionManager
-import net.gini.android.core.api.authorization.SessionManager
 import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.api.GiniHealthAPIBuilder
 
