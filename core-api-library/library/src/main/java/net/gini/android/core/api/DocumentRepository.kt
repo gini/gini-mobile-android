@@ -1,10 +1,9 @@
 package net.gini.android.core.api
 
 import android.net.Uri
-import com.squareup.moshi.Moshi
 import kotlinx.coroutines.*
 import net.gini.android.core.api.Resource.Companion.wrapInResource
-import net.gini.android.core.api.authorization.KSessionManager
+import net.gini.android.core.api.authorization.SessionManager
 import net.gini.android.core.api.authorization.apimodels.SessionToken
 import net.gini.android.core.api.models.*
 import net.gini.android.core.api.requests.ApiException
@@ -15,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap
 
 abstract class DocumentRepository<E: ExtractionsContainer>(
     private val documentRemoteSource: DocumentRemoteSource,
-    protected val sessionManager: KSessionManager,
+    protected val sessionManager: SessionManager,
     private val giniApiType: GiniApiType
 ) {
 

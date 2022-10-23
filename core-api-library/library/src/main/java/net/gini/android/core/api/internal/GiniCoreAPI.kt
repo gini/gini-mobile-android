@@ -12,7 +12,7 @@ import net.gini.android.core.api.models.ExtractionsContainer
  * @property documentManager The DocumentTaskManager provides high level methods to handle document related tasks easily.
  * @property credentialsStore CredentialsStore implementation which is used to store user information. Handy to get information on the "anonymous" user.
  */
-abstract class KGiniCoreAPI <DM : DocumentManager<DR, E>, DR : DocumentRepository<E>, E : ExtractionsContainer> constructor(
+abstract class GiniCoreAPI <DM : DocumentManager<DR, E>, DR : DocumentRepository<E>, E : ExtractionsContainer> constructor(
     val documentManager: DM,
     private val credentialsStore: CredentialsStore? = null
 ) {

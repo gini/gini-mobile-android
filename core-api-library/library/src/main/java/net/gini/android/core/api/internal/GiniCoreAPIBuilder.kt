@@ -25,12 +25,12 @@ import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSocketFactory
 import javax.net.ssl.TrustManager
 
-abstract class KGiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : KGiniCoreAPI<DM,DR, E>, DR : DocumentRepository<E>, E : ExtractionsContainer>(
+abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<DM,DR, E>, DR : DocumentRepository<E>, E : ExtractionsContainer>(
     private val context: Context,
     private val clientId: String,
     private val clientSecret: String,
     private val emailDomain: String,
-    private var sessionManager: KSessionManager? = null
+    private var sessionManager: SessionManager? = null
 ) {
     private var mApiBaseUrl: String? = null
     private var mUserCenterApiBaseUrl = "https://user.gini.net/"
@@ -55,7 +55,7 @@ abstract class KGiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : KGiniCoreAPI
      * @param networkSecurityConfigResId xml resource id
      * @return The builder instance to enable chaining.
      */
-    open fun setNetworkSecurityConfigResId(@XmlRes networkSecurityConfigResId: Int): KGiniCoreAPIBuilder<DM, G, DR, E> {
+    open fun setNetworkSecurityConfigResId(@XmlRes networkSecurityConfigResId: Int): GiniCoreAPIBuilder<DM, G, DR, E> {
         mNetworkSecurityConfigResId = networkSecurityConfigResId
         return this
     }
@@ -66,7 +66,7 @@ abstract class KGiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : KGiniCoreAPI
      * @param newUrl The URL of the Gini API which is used by the requests of the library.
      * @return The builder instance to enable chaining.
      */
-    open fun setApiBaseUrl(newUrl: String): KGiniCoreAPIBuilder<DM, G, DR, E> {
+    open fun setApiBaseUrl(newUrl: String): GiniCoreAPIBuilder<DM, G, DR, E> {
         var baseUrl = newUrl
         if (!newUrl.endsWith("/")) {
             baseUrl += "/"
@@ -81,7 +81,7 @@ abstract class KGiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : KGiniCoreAPI
      * @param newUrl The URL of the Gini User Center API which is used by the requests of the library.
      * @return The builder instance to enable chaining.
      */
-    open fun setUserCenterApiBaseUrl(newUrl: String): KGiniCoreAPIBuilder<DM, G, DR, E> {
+    open fun setUserCenterApiBaseUrl(newUrl: String): GiniCoreAPIBuilder<DM, G, DR, E> {
         var baseUrl = newUrl
         if (!newUrl.endsWith("/")) {
             baseUrl += "/"
@@ -99,7 +99,7 @@ abstract class KGiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : KGiniCoreAPI
      * @param connectionTimeoutInMs initial timeout
      * @return The builder instance to enable chaining.
      */
-    open fun setConnectionTimeoutInMs(connectionTimeoutInMs: Int): KGiniCoreAPIBuilder<DM, G, DR, E> {
+    open fun setConnectionTimeoutInMs(connectionTimeoutInMs: Int): GiniCoreAPIBuilder<DM, G, DR, E> {
         require(connectionTimeoutInMs >= 0) { "connectionTimeoutInMs can't be less than 0" }
         mTimeoutInMs = connectionTimeoutInMs
         return this
@@ -112,7 +112,7 @@ abstract class KGiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : KGiniCoreAPI
      * @param credentialsStore A credentials store instance (specified by the CredentialsStore interface).
      * @return The builder instance to enable chaining.
      */
-    open fun setCredentialsStore(credentialsStore: CredentialsStore): KGiniCoreAPIBuilder<DM, G, DR, E> {
+    open fun setCredentialsStore(credentialsStore: CredentialsStore): GiniCoreAPIBuilder<DM, G, DR, E> {
         mCredentialsStore = Utils.checkNotNull(credentialsStore)
         return this
     }
@@ -124,7 +124,7 @@ abstract class KGiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : KGiniCoreAPI
      * @param cache A cache instance (specified by the com.android.volley.Cache interface).
      * @return The builder instance to enable chaining.
      */
-    open fun setCache(cache: Cache): KGiniCoreAPIBuilder<DM, G, DR, E> {
+    open fun setCache(cache: Cache): GiniCoreAPIBuilder<DM, G, DR, E> {
         mCache = cache
         return this
     }
@@ -140,7 +140,7 @@ abstract class KGiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : KGiniCoreAPI
      * @param trustManager A [TrustManager] implementation.
      * @return The builder instance to enable chaining.
      */
-    open fun setTrustManager(trustManager: TrustManager): KGiniCoreAPIBuilder<DM, G, DR, E> {
+    open fun setTrustManager(trustManager: TrustManager): GiniCoreAPIBuilder<DM, G, DR, E> {
         mTrustManager = trustManager
         return this
     }
@@ -241,11 +241,11 @@ abstract class KGiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : KGiniCoreAPI
      * @return The SessionManager instance.
      */
     @Synchronized
-    open fun getSessionManager(): KSessionManager {
+    open fun getSessionManager(): SessionManager {
         if (sessionManager == null) {
-            sessionManager = KAnonymousSessionManager(getUserRepository(), getCredentialsStore(), emailDomain)
+            sessionManager = AnonymousSessionManager(getUserRepository(), getCredentialsStore(), emailDomain)
         }
-        return sessionManager as KSessionManager
+        return sessionManager as SessionManager
     }
 
     @Synchronized

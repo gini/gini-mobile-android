@@ -13,8 +13,8 @@ import net.gini.android.core.api.DocumentRepository
 import net.gini.android.core.api.Resource
 import net.gini.android.core.api.authorization.EncryptedCredentialsStore
 import net.gini.android.core.api.authorization.UserCredentials
-import net.gini.android.core.api.internal.KGiniCoreAPI
-import net.gini.android.core.api.internal.KGiniCoreAPIBuilder
+import net.gini.android.core.api.internal.GiniCoreAPI
+import net.gini.android.core.api.internal.GiniCoreAPIBuilder
 import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.models.ExtractionsContainer
 import net.gini.android.core.api.models.SpecificExtraction
@@ -38,7 +38,7 @@ import kotlin.coroutines.cancellation.CancellationException
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @LargeTest
-abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: DocumentRepository<E>, G: KGiniCoreAPI<DM, DR, E>, E: ExtractionsContainer>{
+abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: DocumentRepository<E>, G: GiniCoreAPI<DM, DR, E>, E: ExtractionsContainer>{
 
     protected lateinit var giniCoreApi: G
     private lateinit var clientId: String
@@ -70,7 +70,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
             .build()
     }
 
-    protected abstract fun createGiniCoreAPIBuilder(clientId: String, clientSecret: String, emailDomain: String): KGiniCoreAPIBuilder<DM, G, DR, E>
+    protected abstract fun createGiniCoreAPIBuilder(clientId: String, clientSecret: String, emailDomain: String): GiniCoreAPIBuilder<DM, G, DR, E>
 
     @Test
     @Throws(IOException::class, InterruptedException::class, JSONException::class)

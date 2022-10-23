@@ -7,7 +7,7 @@ import androidx.test.filters.SmallTest
 import kotlinx.coroutines.Dispatchers
 import net.gini.android.core.api.*
 import net.gini.android.core.api.authorization.CredentialsStore
-import net.gini.android.core.api.authorization.KSessionManager
+import net.gini.android.core.api.authorization.SessionManager
 import net.gini.android.core.api.authorization.apimodels.SessionToken
 import net.gini.android.core.api.models.CompoundExtraction
 import net.gini.android.core.api.models.ExtractionsContainer
@@ -21,7 +21,7 @@ import kotlin.coroutines.CoroutineContext
 
 @SmallTest
 @RunWith(AndroidJUnit4::class)
-class KGiniCoreAPIBuilderTest {
+class GiniCoreAPIBuilderTest {
 
     @Test
     fun testBuilderReturnsGiniInstance() {
@@ -39,7 +39,7 @@ class KGiniCoreAPIBuilderTest {
 
     @Test
     fun testBuilderWorksWithAlternativeSessionManager() {
-        val sessionManager: KSessionManager = NullSessionManager()
+        val sessionManager: SessionManager = NullSessionManager()
         val builder = CoreAPIBuilder(ApplicationProvider.getApplicationContext(), "clientId", "clientSecret", "@example.com", sessionManager)
         val giniCoreAPI: TestGiniCoreAPI = builder.build()
         Assert.assertNotNull(giniCoreAPI)
@@ -62,8 +62,8 @@ class KGiniCoreAPIBuilderTest {
         private val clientId: String,
         private val clientSecret: String,
         private val emailDomain: String,
-        sessionManager: KSessionManager? = null
-    ) : KGiniCoreAPIBuilder<TestDocumentManager, TestGiniCoreAPI, TestDocumentRepository, ExtractionsContainer>(context, clientId, clientSecret, emailDomain, sessionManager) {
+        sessionManager: SessionManager? = null
+    ) : GiniCoreAPIBuilder<TestDocumentManager, TestGiniCoreAPI, TestDocumentRepository, ExtractionsContainer>(context, clientId, clientSecret, emailDomain, sessionManager) {
         override fun getGiniApiType(): GiniApiType {
             return TestGiniApiType()
         }
@@ -90,7 +90,7 @@ class KGiniCoreAPIBuilderTest {
 
     class TestDocumentRepository(
         documentRemoteSource: DocumentRemoteSource,
-        sessionManager: KSessionManager,
+        sessionManager: SessionManager,
         giniApiType: GiniApiType
     ) : DocumentRepository<ExtractionsContainer>(documentRemoteSource, sessionManager, giniApiType) {
         override fun createExtractionsContainer(specificExtractions: Map<String, SpecificExtraction>, compoundExtractions: Map<String, CompoundExtraction>, responseJSON: JSONObject
@@ -102,7 +102,7 @@ class KGiniCoreAPIBuilderTest {
     class TestGiniCoreAPI(
         documentManager: TestDocumentManager,
         credentialsStore: CredentialsStore? = null
-    ): KGiniCoreAPI<TestDocumentManager, TestDocumentRepository, ExtractionsContainer>(documentManager, credentialsStore)
+    ): GiniCoreAPI<TestDocumentManager, TestDocumentRepository, ExtractionsContainer>(documentManager, credentialsStore)
 
     class TestDocumentRemoteSource(
         override val coroutineContext: CoroutineContext,
@@ -111,7 +111,7 @@ class KGiniCoreAPIBuilderTest {
         baseUriString: String
     ): DocumentRemoteSource(coroutineContext, documentService, giniApiType, baseUriString)
 
-    class NullSessionManager: KSessionManager {
+    class NullSessionManager: SessionManager {
         override suspend fun getSession(): Resource<SessionToken> {
             return Resource.Error("NullSessionManager can't create sessions")
         }

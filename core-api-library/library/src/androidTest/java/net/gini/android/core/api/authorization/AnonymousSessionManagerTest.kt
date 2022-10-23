@@ -9,7 +9,6 @@ import kotlinx.coroutines.test.runTest
 import net.gini.android.core.api.Resource
 import net.gini.android.core.api.authorization.apimodels.SessionToken
 import net.gini.android.core.api.authorization.apimodels.UserRequestModel
-import okhttp3.ResponseBody
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
@@ -18,9 +17,9 @@ import java.util.*
 
 @MediumTest
 @RunWith(AndroidJUnit4::class)
-class KAnonymousSessionManagerTest {
+class AnonymousSessionManagerTest {
 
-    private var mAnonymousSessionSessionManager: KAnonymousSessionManager? = null
+    private var mAnonymousSessionSessionManager: AnonymousSessionManager? = null
     private var mUserRepository: UserRepository? = null
     private var mCredentialsStore: CredentialsStore? = null
     private var mEmailDomain: String? = null
@@ -32,7 +31,7 @@ class KAnonymousSessionManagerTest {
         mUserRepository = mockk()
         mCredentialsStore = mockk()
         mEmailDomain = "example.com"
-        mAnonymousSessionSessionManager = KAnonymousSessionManager(mUserRepository!!, mCredentialsStore!!, mEmailDomain!!)
+        mAnonymousSessionSessionManager = AnonymousSessionManager(mUserRepository!!, mCredentialsStore!!, mEmailDomain!!)
     }
 
     @Test
@@ -216,7 +215,7 @@ class KAnonymousSessionManagerTest {
     fun testThatLoginUserUpdatesEmailDomainIfChanged() = runTest{
         val newEmailDomain = "beispiel.com"
         val oldEmailDomain = "example.com"
-        mAnonymousSessionSessionManager = KAnonymousSessionManager(mUserRepository!!, mCredentialsStore!!, newEmailDomain)
+        mAnonymousSessionSessionManager = AnonymousSessionManager(mUserRepository!!, mCredentialsStore!!, newEmailDomain)
 
         every { mCredentialsStore!!.userCredentials } returns (UserCredentials("1234@$oldEmailDomain", "5678"))
         coEvery {mUserRepository?.updateEmail(any(), any(), any()) } returns Resource.Success(Unit)
