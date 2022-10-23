@@ -1258,7 +1258,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                 LOG.info("Picture taken");
                 showActivityIndicatorAndDisableInteraction();
                 photo.edit()
-                        .crop(mFragment.getActivity(), getRectFromImageFrame())
+                        .crop(mCameraPreview, getRectFromImageFrame())
                         .compressByDefault().applyAsync(new PhotoEdit.PhotoEditCallback() {
                             @Override
                             public void onDone(@NonNull final Photo result) {

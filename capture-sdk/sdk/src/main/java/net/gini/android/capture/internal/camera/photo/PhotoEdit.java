@@ -85,35 +85,13 @@ public class PhotoEdit {
         }
     }
 
-    public PhotoEdit crop(Activity context, Rect aRect) {
+    public PhotoEdit crop(View mFrame, Rect aRect) {
 
-        byte[] originalBytes = mPhoto.getData();
+        int[] frameSize = {mFrame.getWidth(), mFrame.getHeight()};
 
-        try {
-            Bitmap originalBitmap = BitmapFactory.decodeByteArray(originalBytes,
-                    0, mPhoto.getData().length);
+        PhotoCropModifier cropModifier = new PhotoCropModifier(mPhoto, frameSize, aRect);
+        getPhotoModifiers().add(cropModifier);
 
-            DisplayMetrics metrics = new DisplayMetrics();
-            context.getWindowManager().getDefaultDisplay().getMetrics(metrics);
-
-            int x1 = originalBitmap.getWidth() * aRect.left / metrics.widthPixels;
-            int y1 = originalBitmap.getHeight() * aRect.top / metrics.heightPixels;
-            int width1 = originalBitmap.getWidth() * aRect.width() / metrics.widthPixels;
-            int height1 = originalBitmap.getHeight() * aRect.height() / metrics.heightPixels;
-
-
-            Bitmap cropped = Bitmap.createBitmap(originalBitmap, x1, y1,
-                    width1, height1, null, false);
-
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            cropped.compress(Bitmap.CompressFormat.PNG, 100, stream);
-
-            byte[] byteArray = stream.toByteArray();
-            mPhoto.setData(byteArray);
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-            mPhoto.setData(originalBytes);
-        }
         return this;
     }
 
