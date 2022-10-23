@@ -38,18 +38,15 @@ class UploadViewModel(
                         is Resource.Success -> partialDocumentResource.data
                     }
                 }
-                when(val documentResource = giniHealthAPI.documentManager.createCompositeDocument(documentPages)) {
+                val polledDocumentResource = giniHealthAPI.documentManager.createCompositeDocument(documentPages).mapSuccess {
+                        documentResource -> giniHealthAPI.documentManager.pollDocument(documentResource.data)
+                }
+                when (polledDocumentResource) {
                     is Resource.Cancelled -> throw Exception("Cancelled")
-                    is Resource.Error -> throw Exception(documentResource.exception)
+                    is Resource.Error -> throw Exception(polledDocumentResource.exception)
                     is Resource.Success -> {
-                        when(val polledDocumentResource = giniHealthAPI.documentManager.pollDocument(documentResource.data)) {
-                            is Resource.Cancelled -> throw Exception("Cancelled")
-                            is Resource.Error -> throw Exception(polledDocumentResource.exception)
-                            is Resource.Success -> {
-                                _uploadState.value = UploadState.Success(polledDocumentResource.data.id)
-                                setDocumentForReview(polledDocumentResource.data.id)
-                            }
-                        }
+                        _uploadState.value = UploadState.Success(polledDocumentResource.data.id)
+                        setDocumentForReview(polledDocumentResource.data.id)
                     }
                 }
             } catch (throwable: Throwable) {

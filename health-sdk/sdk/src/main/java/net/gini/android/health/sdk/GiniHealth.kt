@@ -99,8 +99,10 @@ class GiniHealth(
         _paymentFlow.value = ResultWrapper.Loading()
 
         _paymentFlow.value = wrapToResult {
-            documentManager.getExtractions(document)
-        }.mapSuccess { it.toPaymentDetails() }
+            documentManager.getExtractions(document).mapSuccess {
+                Resource.Success(it.data.toPaymentDetails())
+            }
+        }
     }
 
     /**
@@ -122,7 +124,9 @@ class GiniHealth(
             when (val documentResult = documentFlow.value) {
                 is ResultWrapper.Success -> {
                     _paymentFlow.value =
-                        wrapToResult { documentManager.getExtractions(documentResult.value) }.mapSuccess { it.toPaymentDetails() }
+                        wrapToResult { documentManager.getExtractions(documentResult.value).mapSuccess {
+                            Resource.Success(it.data.toPaymentDetails()) }
+                        }
                 }
                 is ResultWrapper.Error -> {
                     _paymentFlow.value = ResultWrapper.Error(Throwable("Failed to get document"))
@@ -162,17 +166,15 @@ class GiniHealth(
      * @throws Exception if there was an error while retrieving the document or the extractions
      */
     suspend fun checkIfDocumentIsPayable(documentId: String): Boolean {
-        return when (val documentResource = documentManager.getDocument(documentId)) {
+        val extractionsResource = documentManager.getDocument(documentId)
+            .mapSuccess { documentResource ->
+                documentManager.getExtractions(documentResource.data)
+            }
+        return when (extractionsResource) {
             is Resource.Cancelled -> false
             is Resource.Error -> false
-            is Resource.Success -> {
-                when (val extractionsResource = documentManager.getExtractions(documentResource.data)) {
-                    is Resource.Cancelled -> false
-                    is Resource.Error -> false
-                    is Resource.Success -> extractionsResource.data.compoundExtractions
-                        .getPaymentExtraction("iban")?.value?.isNotEmpty() ?: false
-                }
-            }
+            is Resource.Success -> extractionsResource.data.compoundExtractions
+                .getPaymentExtraction("iban")?.value?.isNotEmpty() ?: false
         }
     }
 
