@@ -13,6 +13,7 @@ import net.gini.android.capture.Document
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.document.GiniCaptureMultiPageDocument
 import net.gini.android.capture.logging.ErrorLog
+import net.gini.android.capture.network.GiniCaptureDefaultNetworkService.Companion.builder
 import net.gini.android.capture.network.logging.formattedErrorMessage
 import net.gini.android.capture.network.logging.toErrorEvent
 import net.gini.android.capture.network.model.CompoundExtractionsMapper
@@ -177,8 +178,9 @@ class GiniCaptureDefaultNetworkService(
     ): CancellationToken = launchCancellable {
         LOG.debug("Analyze documents {}", giniApiDocumentIdRotationMap)
         val giniApiDocumentRotationMap = giniApiDocumentIdRotationMap.mapNotNull { entry ->
-            giniApiDocuments[entry.key]
-        }
+            giniApiDocuments[entry.key]?.let { it to entry.value }
+        }.toMap(LinkedHashMap())
+
         if (giniApiDocumentRotationMap.isEmpty()) {
             val error = Error("Missing partial document.")
             LOG.error(
