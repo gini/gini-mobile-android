@@ -191,6 +191,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private ImageButton mButtonImportDocument;
     private ConstraintLayout mCameraFrameWrapper;
     private View mActivityIndicatorBackground;
+    private View mSupportedBackgroundView;
     private ProgressBar mActivityIndicator;
 
     private ViewStubSafeInflater mViewStubInflater;
@@ -221,9 +222,8 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private void handleQRCodeDetected(@Nullable final PaymentQRCodeData paymentQRCodeData,
                                       @NonNull final String qrCodeContent) {
-         if (mInterfaceHidden || mActivityIndicator.getVisibility() == View.VISIBLE) {
-            mPaymentQRCodePopup.hide();
-            mUnsupportedQRCodePopup.hide();
+
+        if (mInterfaceHidden || mActivityIndicator.getVisibility() == View.VISIBLE) {
              return;
          }
 
@@ -296,7 +296,8 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private void createPopups() {
         mPaymentQRCodePopup =
-                new QRCodePopup<>(mFragment, mCameraFrameWrapper, getHideQRCodeDetectedPopupDelayMs(), true,
+                new QRCodePopup<>(mFragment, mCameraFrameWrapper, mSupportedBackgroundView,
+                        getHideQRCodeDetectedPopupDelayMs(), true,
                         paymentQRCodeData -> {
                             if (paymentQRCodeData == null) {
                                 return null;
@@ -604,7 +605,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         mPhotoThumbnail = view.findViewById(R.id.gc_photo_thumbnail);
         topAdapterInjectedViewContainer = view.findViewById(R.id.gc_navigation_top_bar);
         mCameraFrameWrapper = view.findViewById(R.id.gc_camera_frame_wrapper);
-
+        mSupportedBackgroundView = view.findViewById(R.id.gc_background_qr_code_supported);
     }
 
     private void setTopBarInjectedViewContainer() {
