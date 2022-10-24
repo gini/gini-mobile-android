@@ -13,11 +13,14 @@ public class PhotoCropModifier implements PhotoModifier {
     private final Photo mPhoto;
     private final int[] mScreenSize;
     private final Rect aRect;
+    private final int mQuality;
 
-    public PhotoCropModifier(Photo mPhoto, int[] mScreenSize, Rect aRect) {
+
+    public PhotoCropModifier(Photo mPhoto, int[] mScreenSize, Rect aRect, int mQuality) {
         this.mPhoto = mPhoto;
         this.mScreenSize = mScreenSize;
         this.aRect = aRect;
+        this.mQuality = mQuality;
     }
 
     @Override
@@ -26,24 +29,13 @@ public class PhotoCropModifier implements PhotoModifier {
         if (mPhoto.getData() == null)
             return;
 
-        synchronized (aRect) {
-            byte[] originalBytes = mPhoto.getData();
-            try {
-                float rotation = 0;
+        synchronized (mPhoto) {
 
-                switch (mPhoto.getRotationForDisplay() % 360) {
-                    case 90:
-                        rotation = 90;
-                        break;
-                    case 180:
-                        rotation = 180;
-                        break;
-                    case 270:
-                        rotation = 270;
-                        break;
-                    default:
-                        break;
-                }
+            byte[] originalBytes = mPhoto.getData();
+
+            try {
+
+                float rotation = mPhoto.getRotationForDisplay() % 360;
 
                 Matrix matrix = new Matrix();
                 matrix.postRotate(rotation);
@@ -60,32 +52,28 @@ public class PhotoCropModifier implements PhotoModifier {
                 int width1 = rotatedBitmap.getWidth() * aRect.width() / mScreenSize[0];
                 int height1 = rotatedBitmap.getHeight() * aRect.height() / mScreenSize[1];
 
-                matrix.postRotate(finalRotation(rotation));
+                matrix.invert(matrix);
 
                 Bitmap cropped = Bitmap.createBitmap(rotatedBitmap, x1, y1,
                         width1, height1, matrix, false);
 
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                cropped.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                cropped.compress(Bitmap.CompressFormat.JPEG, mQuality, stream);
 
                 byte[] byteArray = stream.toByteArray();
+
                 mPhoto.setData(byteArray);
+                mPhoto.updateBitmapPreview();
+                mPhoto.updateExif();
 
                 originalBitmap.recycle();
                 cropped.recycle();
+                rotatedBitmap.recycle();
 
             } catch (IllegalArgumentException e) {
                 e.printStackTrace();
                 mPhoto.setData(originalBytes);
             }
         }
-    }
-
-    private int finalRotation(float rotation) {
-        if (rotation == 90)
-            return 180;
-        if (rotation == 180)
-            return 90;
-        return 0;
     }
 }

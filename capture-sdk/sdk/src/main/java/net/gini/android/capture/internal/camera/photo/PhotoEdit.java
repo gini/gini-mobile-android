@@ -89,7 +89,7 @@ public class PhotoEdit {
 
         int[] frameSize = {mFrame.getWidth(), mFrame.getHeight()};
 
-        PhotoCropModifier cropModifier = new PhotoCropModifier(mPhoto, frameSize, aRect);
+        PhotoCropModifier cropModifier = new PhotoCropModifier(mPhoto, frameSize, aRect, DEFAULT_JPEG_COMPRESSION_QUALITY);
         getPhotoModifiers().add(cropModifier);
 
         return this;
