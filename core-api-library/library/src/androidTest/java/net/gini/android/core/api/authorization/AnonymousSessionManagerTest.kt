@@ -1,9 +1,11 @@
 package net.gini.android.core.api.authorization
 
 import android.content.Context
+import androidx.annotation.RequiresApi
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
+import androidx.test.filters.SdkSuppress
 import io.mockk.*
 import kotlinx.coroutines.test.runTest
 import net.gini.android.core.api.Resource
@@ -35,6 +37,7 @@ class AnonymousSessionManagerTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = 28)
     @Throws(InterruptedException::class)
     fun testGetSessionShouldResolveToSession() = runTest {
         val userCredentials = UserCredentials(email("foobar"), "1234")
@@ -48,6 +51,7 @@ class AnonymousSessionManagerTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = 28)
     @Throws(InterruptedException::class)
     fun testLoginUserShouldResolveToSession() = runTest {
         val userCredentials = UserCredentials(email("foobar"), "1234")
@@ -61,6 +65,7 @@ class AnonymousSessionManagerTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = 28)
     @Throws(InterruptedException::class)
     fun testThatNewUserCredentialsAreStored() = runTest {
         every { mCredentialsStore?.userCredentials } returns (null)
@@ -73,6 +78,7 @@ class AnonymousSessionManagerTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = 28)
     @Throws(InterruptedException::class)
     fun testThatStoredUserCredentialsAreUsed() = runTest {
         val userCredentials = UserCredentials(email("foobar"), "1234")
@@ -88,6 +94,7 @@ class AnonymousSessionManagerTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = 28)
     @Throws(InterruptedException::class)
     fun testThatUserSessionsAreReused() = runTest {
         every { mCredentialsStore!!.userCredentials } returns (UserCredentials(email("foobar"), "1234"))
@@ -103,6 +110,7 @@ class AnonymousSessionManagerTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = 28)
     @Throws(InterruptedException::class)
     fun testThatUserSessionsAreNotReusedWhenTimedOut() = runTest {
         every { mCredentialsStore!!.userCredentials } returns (UserCredentials(email("foobar"), "1234"))
@@ -121,6 +129,7 @@ class AnonymousSessionManagerTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = 28)
     @Throws(InterruptedException::class)
     fun testThatCreatedUserNamesAreEmailAddresses() = runTest {
         every { mCredentialsStore!!.userCredentials } returns (null)
@@ -136,12 +145,12 @@ class AnonymousSessionManagerTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = 28)
     @Throws(InterruptedException::class)
     fun testThatExistingUserIsDeletedAndNewUserIsCreatedIfExistingIsInvalid() = runTest {
         every { mCredentialsStore!!.userCredentials } returns (UserCredentials(email("foobar"), "1234"))
         val invalidGrantErrorJson = "{\"error\": \"invalid_grant\"}"
         coEvery {mUserRepository?.loginUser(any()) } returns Resource.Error(responseStatusCode = 400, responseBody = invalidGrantErrorJson)
-//        null, null, null, 400, null, invalidGrantErrorJson
 
         coEvery { mUserRepository?.createUser(ofType(UserRequestModel::class)) } returns Resource.Success(Unit)
 
@@ -153,8 +162,8 @@ class AnonymousSessionManagerTest {
         coVerify { mUserRepository?.createUser(ofType(UserRequestModel::class)) }
     }
 
-
     @Test
+    @SdkSuppress(minSdkVersion = 28)
     @Throws(InterruptedException::class)
     fun testThatExistingUserIsDeletedAndNewUserIsCreatedIfExistingIsUnauthorized() = runTest {
         every { mCredentialsStore!!.userCredentials } returns (UserCredentials(email("foobar"), "1234"))
@@ -172,6 +181,7 @@ class AnonymousSessionManagerTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = 28)
     @Throws(InterruptedException::class)
     fun testThatCreateUserErrorIsReturnedWhenNewUserIsCreatedIfExistingIsInvalid() = runTest {
         every { mCredentialsStore!!.userCredentials } returns (null)
@@ -209,6 +219,7 @@ class AnonymousSessionManagerTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = 28)
     fun testThatLoginUserUpdatesEmailDomainIfChanged() = runTest{
         val newEmailDomain = "beispiel.com"
         val oldEmailDomain = "example.com"
