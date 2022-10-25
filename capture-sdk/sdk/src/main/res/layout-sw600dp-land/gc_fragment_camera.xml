@@ -25,13 +25,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/gc_navigation_top_bar">
 
-        <View
-            android:id="@+id/gc_activity_indicator_background"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/gc_camera_preview_shade"
-            android:visibility="invisible"
-            tools:visibility="invisible" />
     </net.gini.android.capture.internal.camera.view.CameraPreviewContainer>
 
     <ImageView
@@ -185,14 +178,12 @@
         android:layout="@layout/gc_layout_camera_no_permission" />
 
     <View
+        android:id="@+id/gc_activity_indicator_background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/gc_background_qr_code_supported"
-        android:background="@color/Dark_01"
-        android:clickable="true"
-        android:focusable="true"
-        android:visibility="gone"
-        android:alpha="0.75"/>
+        android:background="@color/gc_camera_preview_shade"
+        android:visibility="invisible"
+        tools:visibility="invisible" />
 
 
     <androidx.constraintlayout.widget.ConstraintLayout

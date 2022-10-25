@@ -126,7 +126,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     @VisibleForTesting
     static final int DEFAULT_ANIMATION_DURATION = 200;
     private static final long HIDE_QRCODE_DETECTED_POPUP_DELAY_MS = 2000;
-    private static final long DIFFERENT_QRCODE_DETECTED_POPUP_DELAY_MS = 2000;
+    private static final long DIFFERENT_QRCODE_DETECTED_POPUP_DELAY_MS = 250;
     private static final Logger LOG = LoggerFactory.getLogger(CameraFragmentImpl.class);
 
     private static final CameraFragmentListener NO_OP_LISTENER = new CameraFragmentListener() {
@@ -191,7 +191,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private ImageButton mButtonImportDocument;
     private ConstraintLayout mCameraFrameWrapper;
     private View mActivityIndicatorBackground;
-    private View mSupportedBackgroundView;
     private ProgressBar mActivityIndicator;
 
     private ViewStubSafeInflater mViewStubInflater;
@@ -296,8 +295,8 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private void createPopups() {
         mPaymentQRCodePopup =
-                new QRCodePopup<>(mFragment, mCameraFrameWrapper, mSupportedBackgroundView,
-                        getHideQRCodeDetectedPopupDelayMs(), true,
+                new QRCodePopup<>(mFragment, mCameraFrameWrapper, mActivityIndicatorBackground,
+                        getDifferentQRCodeDetectedPopupDelayMs(), true,
                         paymentQRCodeData -> {
                             if (paymentQRCodeData == null) {
                                 return null;
@@ -605,7 +604,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         mPhotoThumbnail = view.findViewById(R.id.gc_photo_thumbnail);
         topAdapterInjectedViewContainer = view.findViewById(R.id.gc_navigation_top_bar);
         mCameraFrameWrapper = view.findViewById(R.id.gc_camera_frame_wrapper);
-        mSupportedBackgroundView = view.findViewById(R.id.gc_background_qr_code_supported);
     }
 
     private void setTopBarInjectedViewContainer() {

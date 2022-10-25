@@ -174,15 +174,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout="@layout/gc_layout_camera_no_permission" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/gc_background_qr_code_supported"
-        android:background="@color/Dark_01"
-        android:clickable="true"
-        android:focusable="true"
-        android:visibility="gone"
-        android:alpha="0.75"/>
 
     <View
         android:id="@+id/gc_activity_indicator_background"
