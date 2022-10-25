@@ -194,6 +194,7 @@
         android:visibility="gone"
         android:alpha="0.75"/>
 
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/gc_camera_frame_wrapper"
         android:layout_width="0dp"
