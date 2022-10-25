@@ -10,6 +10,7 @@ import com.squareup.moshi.Moshi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.suspendCancellableCoroutine
 import net.gini.android.bank.api.GiniBankAPI
+import net.gini.android.bank.api.GiniBankAPIBuilder
 import net.gini.android.bank.sdk.capture.CaptureResult
 import net.gini.android.bank.sdk.capture.ResultError
 import net.gini.android.bank.sdk.test.ExtractionsFixture
@@ -109,14 +110,14 @@ class ExtractionFeedbackIntegrationTest {
         //    with the final (user confirmed or updated) extraction values
         suspendCancellableCoroutine<Unit> { continuation ->
             networkApi.sendFeedback(
-                mapOf(
+                mutableMapOf(
                     "amountToPay" to result.specificExtractions["amountToPay"]!!,
                     "iban" to result.specificExtractions["iban"]!!,
                     "bic" to result.specificExtractions["bic"]!!,
                     "paymentPurpose" to result.specificExtractions["paymentPurpose"]!!,
                     "paymentRecipient" to result.specificExtractions["paymentRecipient"]!!
                 ),
-                object : GiniCaptureNetworkCallback<Void?, Error> {
+                object : GiniCaptureNetworkCallback<Void, Error> {
                     override fun failure(error: Error) {
                         continuation.resumeWithException(RuntimeException(error.message, error.cause))
                     }
@@ -138,7 +139,7 @@ class ExtractionFeedbackIntegrationTest {
 
         val extractionsAfterFeedbackFixture =
             moshi.fromJsonAsset<ExtractionsFixture>("result_Gini_invoice_example_after_feedback.json")!!
-        Assert.assertTrue(extractionsAfterFeedbackFixture.equals(extractionsAfterFeedback))
+        Assert.assertTrue(extractionsAfterFeedbackFixture.equals(extractionsAfterFeedback.data))
     }
 
     /**
