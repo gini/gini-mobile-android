@@ -81,6 +81,9 @@ internal class QRCodePopup<T> @JvmOverloads constructor(
     }
 
     private fun showViews() {
+
+        supportedBackgroundView?.visibility = if (supported) View.VISIBLE else View.GONE
+
         qrStatusTxt.visibility = View.VISIBLE
 
         qrStatusTxt.text = if (supported) popupView.context.getString(R.string.gc_qr_code_detected)
