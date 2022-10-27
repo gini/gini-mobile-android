@@ -12,6 +12,7 @@ import static net.gini.android.capture.tracking.EventTrackingHelper.trackReviewS
 
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -20,6 +21,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import net.gini.android.capture.Document;
@@ -33,6 +35,7 @@ import net.gini.android.capture.document.ImageMultiPageDocument;
 import net.gini.android.capture.internal.network.NetworkRequestResult;
 import net.gini.android.capture.internal.network.NetworkRequestsManager;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
+import net.gini.android.capture.internal.util.ActivityHelper;
 import net.gini.android.capture.internal.util.AlertDialogHelperCompat;
 import net.gini.android.capture.internal.util.FileImportHelper;
 import net.gini.android.capture.review.multipage.previews.PreviewFragment;
@@ -46,6 +49,9 @@ import net.gini.android.capture.review.multipage.thumbnails.ThumbnailsAdapterLis
 import net.gini.android.capture.review.multipage.thumbnails.ThumbnailsTouchHelperCallback;
 import net.gini.android.capture.tracking.ReviewScreenEvent;
 import net.gini.android.capture.tracking.ReviewScreenEvent.UPLOAD_ERROR_DETAILS_MAP_KEY;
+import net.gini.android.capture.view.InjectedViewContainer;
+import net.gini.android.capture.view.NavButtonType;
+import net.gini.android.capture.view.NavigationBarTopAdapter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,7 +81,7 @@ import jersey.repackaged.jsr166e.CompletableFuture;
 
 /**
  * Created by Alpar Szotyori on 07.05.2018.
- *
+ * <p>
  * Copyright (c) 2018 Gini GmbH.
  */
 
@@ -128,11 +134,12 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     private ViewPager mPreviewsPager;
     private PreviewsAdapter mPreviewsAdapter;
     @VisibleForTesting
-   // ThumbnailsAdapter mThumbnailsAdapter;
-    private RecyclerView.SmoothScroller mThumbnailsScroller;
+    // ThumbnailsAdapter mThumbnailsAdapter;
     private AppCompatButton mButtonNext;
     private ImageButton mDeleteButton;
+    private LinearLayout mAddPages;
     private TabLayout mTabIndicator;
+    private InjectedViewContainer<NavigationBarTopAdapter> mTopAdapterInjectedViewContainer;
     private boolean mNextClicked;
     private boolean mPreviewsShown;
 
@@ -160,11 +167,11 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
 
     @Override
     public void showAlertDialog(@NonNull final String message,
-            @NonNull final String positiveButtonTitle,
-            @NonNull final DialogInterface.OnClickListener positiveButtonClickListener,
-            @Nullable final String negativeButtonTitle,
-            @Nullable final DialogInterface.OnClickListener negativeButtonClickListener,
-            @Nullable final DialogInterface.OnCancelListener cancelListener) {
+                                @NonNull final String positiveButtonTitle,
+                                @NonNull final DialogInterface.OnClickListener positiveButtonClickListener,
+                                @Nullable final String negativeButtonTitle,
+                                @Nullable final DialogInterface.OnClickListener negativeButtonClickListener,
+                                @Nullable final DialogInterface.OnCancelListener cancelListener) {
         final Activity activity = getActivity();
         if (activity == null) {
             return;
@@ -205,11 +212,12 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
 
     @Override
     public View onCreateView(@NonNull final LayoutInflater inflater, final ViewGroup container,
-            final Bundle savedInstanceState) {
+                             final Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.gc_fragment_multi_page_review, container,
                 false);
         bindViews(view);
         setInputHandlers();
+        setupTopNavigationBar();
         if (mMultiPageDocument != null) {
             setupPreviewsViewPager();
             //setupThumbnailsRecyclerView();
@@ -258,6 +266,21 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
         mTabIndicator.setVisibility(mPreviewsAdapter.getCount() <= 1 ? View.INVISIBLE : View.VISIBLE);
     }
 
+    private ViewPager.PageTransformer setupTransformer() {
+
+        Point screenSize = ActivityHelper.getRealScreenSize(requireActivity());
+        int nextItemVisiblePx = (int) screenSize.x / (int) 3.4;
+        float currentItemHorizontalMarginPx = 0f;
+        float pageTranslationX = nextItemVisiblePx + currentItemHorizontalMarginPx;
+
+        return (page, position) -> {
+            page.setTranslationX(-pageTranslationX * position);
+                // Next line scales the item's height. You can remove it if you don't want this effect
+                page.setScaleY(1 - (0.25f * Math.abs(position)));
+                page.setScaleX(1 - (0.25f * Math.abs(position)));
+        };
+    }
+
     private boolean shouldShowPlusButton() {
         return mMultiPageDocument.getImportMethod() != Document.ImportMethod.OPEN_WITH;
     }
@@ -267,10 +290,29 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
         mPreviewsPager = view.findViewById(R.id.gc_view_pager);
         mDeleteButton = view.findViewById(R.id.gc_button_delete);
         mTabIndicator = view.findViewById(R.id.gc_tab_indicator);
+        mTopAdapterInjectedViewContainer = view.findViewById(R.id.gc_navigation_top_bar);
+        mAddPages = view.findViewById(R.id.gc_add_pages_wrapper);
     }
 
     private void setupTopNavigationBar() {
         if (GiniCapture.hasInstance()) {
+            mTopAdapterInjectedViewContainer.setInjectedViewAdapter(GiniCapture.getInstance().getNavigationBarTopAdapter());
+
+            if (mTopAdapterInjectedViewContainer.getInjectedViewAdapter() == null)
+                return;
+
+            if (this.getActivity() == null)
+                return;
+
+            mTopAdapterInjectedViewContainer.getInjectedViewAdapter().setTitle(getString(R.string.gc_review));
+
+            mTopAdapterInjectedViewContainer.getInjectedViewAdapter().setNavButtonType(NavButtonType.CLOSE);
+
+            mTopAdapterInjectedViewContainer.getInjectedViewAdapter().setOnNavButtonClickListener(v -> {
+                if (MultiPageReviewFragment.this.getActivity() != null) {
+                    MultiPageReviewFragment.this.getActivity().onBackPressed();
+                }
+            });
 
         }
     }
@@ -282,12 +324,14 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
                 onNextButtonClicked();
             }
         });
-        /*mRotateButton.setOnClickListener(new View.OnClickListener() {
+
+        mAddPages.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(final View v) {
-                onRotateButtonClicked();
+            public void onClick(View v) {
+                mListener.onReturnToCameraScreen();
             }
-        });*/
+        });
+
         mDeleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
@@ -321,7 +365,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(final DialogInterface dialog,
-                                            final int which) {
+                                                        final int which) {
                                         mListener.onImportedDocumentReviewCancelled();
                                     }
                                 })
@@ -345,24 +389,14 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
 
         final int nrOfDocuments = mMultiPageDocument.getDocuments().size();
         final int newPosition = getNewPositionAfterDeletion(deletedPosition, nrOfDocuments);
-    /*    updatePageIndicator(newPosition);
-        updateReorderPagesTip();*/
 
         mPreviewsAdapter.notifyDataSetChanged();
-       // mThumbnailsAdapter.removeThumbnail(deletedPosition);
 
         updateNextButtonVisibility();
 
         updateDeleteButtonVisibility();
-        //updateRotateButtonVisibility();
     }
 
-   /* private void scrollToThumbnail(final int position) {
-        final int scrollTargetPosition = mThumbnailsAdapter.getScrollTargetPosition(position);
-        mThumbnailsScroller.setTargetPosition(scrollTargetPosition);
-        mThumbnailsRecycler.getLayoutManager().startSmoothScroll(mThumbnailsScroller);
-    }
-*/
     private void deleteDocument(@NonNull final ImageDocument document) {
         deleteFromMultiPageDocument(document);
         deleteFromCaches(document);
@@ -406,24 +440,6 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
             gcInternal.getPhotoMemoryCache().invalidate(document);
         }
     }
-
-   /* private void updatePageIndicator(final int position) {
-        final int nrOfDocuments = mMultiPageDocument.getDocuments().size();
-        String text = null;
-        if (nrOfDocuments > 0) {
-            text = getString(R.string.gc_multi_page_review_page_indicator, position + 1,
-                    nrOfDocuments);
-        }
-        mPageIndicator.setText(text);
-    }*/
-
-   /* private void updateReorderPagesTip() {
-        if (mMultiPageDocument.getDocuments().size() > 1) {
-            mReorderPagesTip.setText(getText(R.string.gc_multi_page_review_reorder_pages_tip));
-        } else {
-            mReorderPagesTip.setText("");
-        }
-    }*/
 
     private void updateNextButtonVisibility() {
         if (mMultiPageDocument.getDocuments().size() == 0) {
@@ -511,13 +527,13 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
                 mMultiPageDocument, new FileImportHelper.ShowAlertCallback() {
                     @Override
                     public void showAlertDialog(@NonNull final String message,
-                            @NonNull final String positiveButtonTitle,
-                            @NonNull final DialogInterface.OnClickListener
-                                    positiveButtonClickListener,
-                            @Nullable final String negativeButtonTitle,
-                            @Nullable final DialogInterface.OnClickListener
-                                    negativeButtonClickListener,
-                            @Nullable final DialogInterface.OnCancelListener cancelListener) {
+                                                @NonNull final String positiveButtonTitle,
+                                                @NonNull final DialogInterface.OnClickListener
+                                                        positiveButtonClickListener,
+                                                @Nullable final String negativeButtonTitle,
+                                                @Nullable final DialogInterface.OnClickListener
+                                                        negativeButtonClickListener,
+                                                @Nullable final DialogInterface.OnCancelListener cancelListener) {
                         MultiPageReviewFragment.this.showAlertDialog(message, positiveButtonTitle,
                                 positiveButtonClickListener,
                                 negativeButtonTitle, negativeButtonClickListener, cancelListener);
@@ -636,7 +652,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
         //updateRotateButtonVisibility();
 
         mPreviewsPager.setCurrentItem(0);
-       // updatePageIndicator(0);
+        // updatePageIndicator(0);
     }
 
     @Override

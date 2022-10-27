@@ -132,4 +132,5 @@
     <string name="gc_camera_title">Scan an invoice or a QR code</string>
     <string name="gc_payment_details_visible">Make sure the payment details are visible</string>
     <string name="gc_pages">Pages</string>
+    <string name="gc_review">Review</string>
 </resources>
