@@ -126,7 +126,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     @VisibleForTesting
     static final int DEFAULT_ANIMATION_DURATION = 200;
     private static final long HIDE_QRCODE_DETECTED_POPUP_DELAY_MS = 2000;
-    private static final long DIFFERENT_QRCODE_DETECTED_POPUP_DELAY_MS = 500;
+    private static final long DIFFERENT_QRCODE_DETECTED_POPUP_DELAY_MS = 1000;
     private static final Logger LOG = LoggerFactory.getLogger(CameraFragmentImpl.class);
 
     private static final CameraFragmentListener NO_OP_LISTENER = new CameraFragmentListener() {
