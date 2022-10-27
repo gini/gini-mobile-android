@@ -130,4 +130,6 @@
     <string name="gc_camera_flash_on_subtitle">On</string>
     <string name="gc_camera_flash_off_subtitle">Off</string>
     <string name="gc_camera_title">Scan an invoice or a QR code</string>
+    <string name="gc_payment_details_visible">Make sure the payment details are visible</string>
+    <string name="gc_pages">Pages</string>
 </resources>

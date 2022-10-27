@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -56,6 +57,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -65,6 +67,10 @@ import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
+
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.tabs.TabLayout;
+
 import jersey.repackaged.jsr166e.CompletableFuture;
 
 /**
@@ -121,15 +127,12 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     private MultiPageReviewFragmentListener mListener;
     private ViewPager mPreviewsPager;
     private PreviewsAdapter mPreviewsAdapter;
-    private TextView mPageIndicator;
-    private RecyclerView mThumbnailsRecycler;
     @VisibleForTesting
-    ThumbnailsAdapter mThumbnailsAdapter;
+   // ThumbnailsAdapter mThumbnailsAdapter;
     private RecyclerView.SmoothScroller mThumbnailsScroller;
-    private ImageButton mButtonNext;
-    private ImageButton mRotateButton;
+    private AppCompatButton mButtonNext;
     private ImageButton mDeleteButton;
-    private TextView mReorderPagesTip;
+    private TabLayout mTabIndicator;
     private boolean mNextClicked;
     private boolean mPreviewsShown;
 
@@ -209,7 +212,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
         setInputHandlers();
         if (mMultiPageDocument != null) {
             setupPreviewsViewPager();
-            setupThumbnailsRecyclerView();
+            //setupThumbnailsRecyclerView();
             updateNextButtonVisibility();
         }
         return view;
@@ -242,67 +245,17 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
                 new PreviewsPageChangeListener() {
                     @Override
                     public void onPageSelected(final int position) {
-                        updatePageIndicator(position);
-                        if (!mThumbnailsAdapter.isThumbnailHighlighted(position)) {
+                        //updatePageIndicator(position);
+                        /*if (!mThumbnailsAdapter.isThumbnailHighlighted(position)) {
                             highlightThumbnail(position);
-                        }
+                        }*/
                     }
                 });
         mPreviewsPager.addOnPageChangeListener(previewsPageChangeHandler);
-    }
 
-    private void highlightThumbnail(final int position) {
-        mThumbnailsAdapter.highlightPosition(position);
-        scrollToThumbnail(position);
-    }
+        mTabIndicator.setupWithViewPager(mPreviewsPager);
 
-    private void setupThumbnailsRecyclerView() {
-        final Activity activity = getActivity();
-        if (activity == null) {
-            return;
-        }
-
-        final LinearLayoutManager layoutManager = new LinearLayoutManager(activity,
-                LinearLayoutManager.HORIZONTAL, false);
-        mThumbnailsRecycler.setLayoutManager(layoutManager);
-
-        final ThumbnailsAdapterListener thumbnailsAdapterListener =
-                new ThumbnailsAdapterListener() {
-                    @Override
-                    public void onThumbnailMoved() {
-                        final PagerAdapter adapter = mPreviewsPager.getAdapter();
-                        if (adapter != null) {
-                            adapter.notifyDataSetChanged();
-                        }
-                    }
-
-                    @Override
-                    public void onThumbnailSelected(final int position) {
-                        mPreviewsPager.setCurrentItem(position);
-                    }
-
-                    @Override
-                    public void onPlusButtonClicked() {
-                        mListener.onReturnToCameraScreen();
-                    }
-                };
-
-        mThumbnailsAdapter = new ThumbnailsAdapter(activity, mMultiPageDocument,
-                thumbnailsAdapterListener, shouldShowPlusButton());
-        mThumbnailsRecycler.setAdapter(mThumbnailsAdapter);
-
-        mThumbnailsScroller = new LinearSmoothScroller(activity);
-
-        final ItemTouchHelper.Callback callback =
-                new ThumbnailsTouchHelperCallback(mThumbnailsAdapter);
-        final ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
-        touchHelper.attachToRecyclerView(mThumbnailsRecycler);
-        mThumbnailsAdapter.setItemTouchHelper(touchHelper);
-
-        // Disable item change animations to remove flickering when highlighting a thumbnail
-        final RecyclerView.ItemAnimator itemAnimator = new DefaultItemAnimator();
-        itemAnimator.setChangeDuration(0);
-        mThumbnailsRecycler.setItemAnimator(itemAnimator);
+        mTabIndicator.setVisibility(mPreviewsAdapter.getCount() <= 1 ? View.INVISIBLE : View.VISIBLE);
     }
 
     private boolean shouldShowPlusButton() {
@@ -312,11 +265,14 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     private void bindViews(final View view) {
         mButtonNext = view.findViewById(R.id.gc_button_next);
         mPreviewsPager = view.findViewById(R.id.gc_view_pager);
-        mPageIndicator = view.findViewById(R.id.gc_page_indicator);
-        mThumbnailsRecycler = view.findViewById(R.id.gc_thumbnails_panel);
-        mRotateButton = view.findViewById(R.id.gc_button_rotate);
         mDeleteButton = view.findViewById(R.id.gc_button_delete);
-        mReorderPagesTip = view.findViewById(R.id.gc_reorder_pages_tip);
+        mTabIndicator = view.findViewById(R.id.gc_tab_indicator);
+    }
+
+    private void setupTopNavigationBar() {
+        if (GiniCapture.hasInstance()) {
+
+        }
     }
 
     private void setInputHandlers() {
@@ -326,12 +282,12 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
                 onNextButtonClicked();
             }
         });
-        mRotateButton.setOnClickListener(new View.OnClickListener() {
+        /*mRotateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
                 onRotateButtonClicked();
             }
-        });
+        });*/
         mDeleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
@@ -389,25 +345,24 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
 
         final int nrOfDocuments = mMultiPageDocument.getDocuments().size();
         final int newPosition = getNewPositionAfterDeletion(deletedPosition, nrOfDocuments);
-        updatePageIndicator(newPosition);
-        updateReorderPagesTip();
+    /*    updatePageIndicator(newPosition);
+        updateReorderPagesTip();*/
 
         mPreviewsAdapter.notifyDataSetChanged();
-        mThumbnailsAdapter.removeThumbnail(deletedPosition);
-        scrollToThumbnail(newPosition);
+       // mThumbnailsAdapter.removeThumbnail(deletedPosition);
 
         updateNextButtonVisibility();
 
         updateDeleteButtonVisibility();
-        updateRotateButtonVisibility();
+        //updateRotateButtonVisibility();
     }
 
-    private void scrollToThumbnail(final int position) {
+   /* private void scrollToThumbnail(final int position) {
         final int scrollTargetPosition = mThumbnailsAdapter.getScrollTargetPosition(position);
         mThumbnailsScroller.setTargetPosition(scrollTargetPosition);
         mThumbnailsRecycler.getLayoutManager().startSmoothScroll(mThumbnailsScroller);
     }
-
+*/
     private void deleteDocument(@NonNull final ImageDocument document) {
         deleteFromMultiPageDocument(document);
         deleteFromCaches(document);
@@ -452,7 +407,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
         }
     }
 
-    private void updatePageIndicator(final int position) {
+   /* private void updatePageIndicator(final int position) {
         final int nrOfDocuments = mMultiPageDocument.getDocuments().size();
         String text = null;
         if (nrOfDocuments > 0) {
@@ -460,15 +415,15 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
                     nrOfDocuments);
         }
         mPageIndicator.setText(text);
-    }
+    }*/
 
-    private void updateReorderPagesTip() {
+   /* private void updateReorderPagesTip() {
         if (mMultiPageDocument.getDocuments().size() > 1) {
             mReorderPagesTip.setText(getText(R.string.gc_multi_page_review_reorder_pages_tip));
         } else {
             mReorderPagesTip.setText("");
         }
-    }
+    }*/
 
     private void updateNextButtonVisibility() {
         if (mMultiPageDocument.getDocuments().size() == 0) {
@@ -495,12 +450,12 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
         }
     }
 
-    private void updateRotateButtonVisibility() {
+   /* private void updateRotateButtonVisibility() {
         if (mMultiPageDocument.getDocuments().size() == 0) {
             mRotateButton.setEnabled(false);
             mRotateButton.setAlpha(0.2f);
         }
-    }
+    }*/
 
     private void updateDeleteButtonVisibility() {
         if (mMultiPageDocument.getDocuments().size() == 0) {
@@ -527,7 +482,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
         document.setRotationForDisplay(degrees);
         document.updateRotationDeltaBy(rotationStep);
         mPreviewsAdapter.rotateImageInCurrentItemBy(mPreviewsPager, rotationStep);
-        mThumbnailsAdapter.rotateHighlightedThumbnailBy(rotationStep);
+        //mThumbnailsAdapter.rotateHighlightedThumbnailBy(rotationStep);
     }
 
     @VisibleForTesting
@@ -600,8 +555,8 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
             return;
         }
 
-        mThumbnailsAdapter.setUploadState(ThumbnailsAdapter.UploadState.IN_PROGRESS,
-                document);
+       /* mThumbnailsAdapter.setUploadState(ThumbnailsAdapter.UploadState.IN_PROGRESS,
+                document);*/
         mMultiPageDocument.removeErrorForDocument(document);
         mDocumentUploadResults.put(document.getId(), false);
         networkRequestsManager.upload(activity, document)
@@ -617,14 +572,14 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
                             final String errorMessage = getString(
                                     R.string.gc_document_analysis_error);
                             showErrorOnPreview(errorMessage, document);
-                            mThumbnailsAdapter.setUploadState(
+                            /*mThumbnailsAdapter.setUploadState(
                                     ThumbnailsAdapter.UploadState.FAILED,
-                                    document);
+                                    document);*/
                         } else if (requestResult != null) {
                             mDocumentUploadResults.put(document.getId(), true);
-                            mThumbnailsAdapter.setUploadState(
+                          /*  mThumbnailsAdapter.setUploadState(
                                     ThumbnailsAdapter.UploadState.COMPLETED,
-                                    document);
+                                    document);*/
                         }
                         updateNextButtonVisibility();
                         return null;
@@ -675,14 +630,13 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
         }
         mPreviewsShown = true;
 
-        updateReorderPagesTip();
+        //updateReorderPagesTip();
 
         updateDeleteButtonVisibility();
-        updateRotateButtonVisibility();
+        //updateRotateButtonVisibility();
 
         mPreviewsPager.setCurrentItem(0);
-        updatePageIndicator(0);
-        highlightThumbnail(0);
+       // updatePageIndicator(0);
     }
 
     @Override

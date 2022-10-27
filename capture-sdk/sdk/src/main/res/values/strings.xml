@@ -154,4 +154,6 @@
     <string name="gc_camera_flash_on_subtitle">An</string>
     <string name="gc_camera_flash_off_subtitle">Aus</string>
     <string name="gc_camera_title">Rechnung oder QR Code scannen</string>
+    <string name="gc_payment_details_visible">Sind alle Zahlungsinformationen gut lesbar?</string>
+    <string name="gc_pages">Neue Seite</string>
 </resources>
