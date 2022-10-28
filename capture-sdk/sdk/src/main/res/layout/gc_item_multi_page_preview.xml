@@ -1,4 +1,5 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -10,6 +11,17 @@
 
     </net.gini.android.capture.review.RotatableTouchImageViewContainer>
 
+    <ImageButton
+        android:id="@+id/gc_button_delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/large"
+        android:layout_marginEnd="@dimen/large"
+        android:background="@android:color/transparent"
+        android:src="@drawable/gc_delete"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <ProgressBar
         android:id="@+id/gc_activity_indicator"
         android:layout_width="wrap_content"
@@ -20,8 +32,12 @@
         android:indeterminateTintMode="src_in"
         android:padding="@dimen/gc_review_progressbar_padding"
         android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/gc_image_container"
+        app:layout_constraintTop_toTopOf="parent"
         tools:targetApi="lollipop"
         tools:visibility="visible" />
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
 

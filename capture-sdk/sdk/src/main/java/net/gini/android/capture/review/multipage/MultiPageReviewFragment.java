@@ -133,10 +133,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     private MultiPageReviewFragmentListener mListener;
     private ViewPager mPreviewsPager;
     private PreviewsAdapter mPreviewsAdapter;
-    @VisibleForTesting
-    // ThumbnailsAdapter mThumbnailsAdapter;
     private AppCompatButton mButtonNext;
-    private ImageButton mDeleteButton;
     private LinearLayout mAddPages;
     private TabLayout mTabIndicator;
     private InjectedViewContainer<NavigationBarTopAdapter> mTopAdapterInjectedViewContainer;
@@ -288,7 +285,6 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     private void bindViews(final View view) {
         mButtonNext = view.findViewById(R.id.gc_button_next);
         mPreviewsPager = view.findViewById(R.id.gc_view_pager);
-        mDeleteButton = view.findViewById(R.id.gc_button_delete);
         mTabIndicator = view.findViewById(R.id.gc_tab_indicator);
         mTopAdapterInjectedViewContainer = view.findViewById(R.id.gc_navigation_top_bar);
         mAddPages = view.findViewById(R.id.gc_add_pages_wrapper);
@@ -329,13 +325,6 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
             @Override
             public void onClick(View v) {
                 mListener.onReturnToCameraScreen();
-            }
-        });
-
-        mDeleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                onDeleteButtonClicked();
             }
         });
     }
@@ -475,8 +464,8 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
 
     private void updateDeleteButtonVisibility() {
         if (mMultiPageDocument.getDocuments().size() == 0) {
-            mDeleteButton.setEnabled(false);
-            mDeleteButton.setAlpha(0.2f);
+           /* mDeleteButton.setEnabled(false);
+            mDeleteButton.setAlpha(0.2f);*/
         }
     }
 
