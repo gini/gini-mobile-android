@@ -6,10 +6,16 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -140,7 +146,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
         @Override
         public void onCheckImportedDocument(@NonNull final Document document,
-                @NonNull final DocumentCheckResultCallback callback) {
+                                            @NonNull final DocumentCheckResultCallback callback) {
             callback.documentAccepted();
         }
 
@@ -192,7 +198,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private View mUnsupportedQRCodeDetectedPopupContainer;
     private View mActivityIndicatorBackground;
     private ProgressBar mActivityIndicator;
-
+    private ImageView mImageFrame;
     private ViewStubSafeInflater mViewStubInflater;
 
     private boolean mIsTakingPicture;
@@ -628,7 +634,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                 R.id.gc_unsupported_qrcode_detected_popup_container);
         mPhotoThumbnail = view.findViewById(R.id.gc_photo_thumbnail);
         topAdapterInjectedViewContainer = view.findViewById(R.id.gc_navigation_top_bar);
-
+        mImageFrame = view.findViewById(R.id.gc_camera_frame);
     }
 
     private void setTopBarInjectedViewContainer() {
@@ -1251,70 +1257,72 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             if (photo != null) {
                 LOG.info("Picture taken");
                 showActivityIndicatorAndDisableInteraction();
-                photo.edit().compressByDefault().applyAsync(new PhotoEdit.PhotoEditCallback() {
-                    @Override
-                    public void onDone(@NonNull final Photo result) {
-                        hideActivityIndicatorAndEnableInteraction();
-                        if (mInMultiPageState) {
-                            final ImageDocument document = createSavedDocument(result);
-                            if (document == null) {
+                photo.edit()
+                        .crop(mCameraPreview, getRectFromImageFrame())
+                        .compressByDefault().applyAsync(new PhotoEdit.PhotoEditCallback() {
+                            @Override
+                            public void onDone(@NonNull final Photo result) {
+                                hideActivityIndicatorAndEnableInteraction();
+                                if (mInMultiPageState) {
+                                    final ImageDocument document = createSavedDocument(result);
+                                    if (document == null) {
+                                        handleError(GiniCaptureError.ErrorCode.CAMERA_SHOT_FAILED,
+                                                "Failed to take picture: could not save picture to disk",
+                                                null);
+                                        mCameraController.startPreview();
+                                        mIsTakingPicture = false;
+                                        return;
+                                    }
+                                    mMultiPageDocument.addDocument(document);
+                                    mPhotoThumbnail.setImage(new PhotoThumbnail.ThumbnailBitmap(result.getBitmapPreview(),
+                                            document.getRotationForDisplay()));
+                                    mPhotoThumbnail.setImageCount(mMultiPageDocument.getDocuments().size());
+                                    mIsTakingPicture = false;
+                                    mCameraController.startPreview();
+                                } else {
+                                    if (isMultiPageEnabled()) {
+                                        final ImageDocument document = createSavedDocument(result);
+                                        if (document == null) {
+                                            handleError(GiniCaptureError.ErrorCode.CAMERA_SHOT_FAILED,
+                                                    "Failed to take picture: could not save picture to disk",
+                                                    null);
+                                            mCameraController.startPreview();
+                                            mIsTakingPicture = false;
+                                            return;
+                                        }
+                                        mInMultiPageState = true;
+                                        mMultiPageDocument = new ImageMultiPageDocument(
+                                                Document.Source.newCameraSource(), ImportMethod.NONE);
+                                        GiniCapture.getInstance().internal()
+                                                .getImageMultiPageDocumentMemoryStore()
+                                                .setMultiPageDocument(mMultiPageDocument);
+                                        mMultiPageDocument.addDocument(document);
+                                        mPhotoThumbnail.setImage(
+                                                new PhotoThumbnail.ThumbnailBitmap(result.getBitmapPreview(),
+                                                        document.getRotationForDisplay()));
+                                        mPhotoThumbnail.setImageCount(mMultiPageDocument.getDocuments().size());
+                                        mListener.onProceedToMultiPageReviewScreen(mMultiPageDocument);
+                                        mIsTakingPicture = false;
+                                    } else {
+                                        final ImageDocument document =
+                                                DocumentFactory.newImageDocumentFromPhoto(
+                                                        result);
+                                        mListener.onDocumentAvailable(document);
+                                        mIsTakingPicture = false;
+                                    }
+                                    mCameraController.startPreview();
+                                }
+                            }
+
+                            @Override
+                            public void onFailed() {
+                                hideActivityIndicatorAndEnableInteraction();
                                 handleError(GiniCaptureError.ErrorCode.CAMERA_SHOT_FAILED,
-                                        "Failed to take picture: could not save picture to disk",
-                                        null);
+                                        "Failed to take picture: picture compression failed", null);
                                 mCameraController.startPreview();
                                 mIsTakingPicture = false;
-                                return;
                             }
-                            mMultiPageDocument.addDocument(document);
-                            mPhotoThumbnail.setImage(new PhotoThumbnail.ThumbnailBitmap(result.getBitmapPreview(),
-                                    document.getRotationForDisplay()));
-                            mPhotoThumbnail.setImageCount(mMultiPageDocument.getDocuments().size());
-                            mIsTakingPicture = false;
-                            mCameraController.startPreview();
-                        } else {
-                            if (isMultiPageEnabled()) {
-                                final ImageDocument document = createSavedDocument(result);
-                                if (document == null) {
-                                    handleError(GiniCaptureError.ErrorCode.CAMERA_SHOT_FAILED,
-                                            "Failed to take picture: could not save picture to disk",
-                                            null);
-                                    mCameraController.startPreview();
-                                    mIsTakingPicture = false;
-                                    return;
-                                }
-                                mInMultiPageState = true;
-                                mMultiPageDocument = new ImageMultiPageDocument(
-                                        Document.Source.newCameraSource(), ImportMethod.NONE);
-                                GiniCapture.getInstance().internal()
-                                        .getImageMultiPageDocumentMemoryStore()
-                                        .setMultiPageDocument(mMultiPageDocument);
-                                mMultiPageDocument.addDocument(document);
-                                mPhotoThumbnail.setImage(
-                                        new PhotoThumbnail.ThumbnailBitmap(result.getBitmapPreview(),
-                                                document.getRotationForDisplay()));
-                                mPhotoThumbnail.setImageCount(mMultiPageDocument.getDocuments().size());
-                                mListener.onProceedToMultiPageReviewScreen(mMultiPageDocument);
-                                mIsTakingPicture = false;
-                            } else {
-                                final ImageDocument document =
-                                        DocumentFactory.newImageDocumentFromPhoto(
-                                                result);
-                                mListener.onDocumentAvailable(document);
-                                mIsTakingPicture = false;
-                            }
-                            mCameraController.startPreview();
-                        }
-                    }
-
-                    @Override
-                    public void onFailed() {
-                        hideActivityIndicatorAndEnableInteraction();
-                        handleError(GiniCaptureError.ErrorCode.CAMERA_SHOT_FAILED,
-                                "Failed to take picture: picture compression failed", null);
-                        mCameraController.startPreview();
-                        mIsTakingPicture = false;
-                    }
-                });
+                        });
             } else {
                 handleError(GiniCaptureError.ErrorCode.CAMERA_SHOT_FAILED,
                         "Failed to take picture: no picture from the camera", null);
@@ -1323,6 +1331,15 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             }
         }
     }
+
+    private Rect getRectFromImageFrame() {
+        Rect rect = new Rect();
+
+        mImageFrame.getHitRect(rect);
+
+       return rect;
+    }
+
 
     private void showMultiPageLimitError() {
         final Activity activity = mFragment.getActivity();
