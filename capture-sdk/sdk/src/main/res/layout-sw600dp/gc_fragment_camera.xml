@@ -249,8 +249,8 @@
             android:padding="@dimen/gc_camera_activity_indicator_padding"
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="@+id/gc_camera_frame"
-            app:layout_constraintEnd_toEndOf="@+id/gc_camera_frame"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/gc_qr_code_check"
+            app:layout_constraintStart_toStartOf="@+id/gc_qr_code_check"
             app:layout_constraintTop_toTopOf="@+id/gc_camera_frame"
             tools:targetApi="lollipop"
             tools:visibility="gone" />
