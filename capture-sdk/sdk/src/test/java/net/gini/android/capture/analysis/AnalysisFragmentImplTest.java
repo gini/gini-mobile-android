@@ -30,6 +30,7 @@ import android.view.View;
 
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
+import net.gini.android.capture.GiniCaptureHelper;
 import net.gini.android.capture.R;
 import net.gini.android.capture.document.DocumentFactory;
 import net.gini.android.capture.document.ImageDocument;
@@ -82,6 +83,7 @@ public class AnalysisFragmentImplTest {
         AnalysisHintsAnimatorShadow.cleanup();
         ErrorSnackbarShadow.cleanup();
         DefaultLoadingIndicatorAdapterShadow.cleanup();
+        GiniCaptureHelper.setGiniCaptureInstance(null);
     }
 
     @Test
