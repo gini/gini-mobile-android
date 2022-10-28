@@ -13,12 +13,6 @@
         android:layout_above="@+id/gc_bottom_panel"
         android:clipChildren="false">
 
-        <com.ortiz.touch.TouchImageView
-            android:id="@+id/gc_image_document"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center" />
-
         <ProgressBar
             android:id="@+id/gc_activity_indicator"
             android:layout_width="wrap_content"
@@ -31,6 +25,12 @@
             android:visibility="gone"
             tools:targetApi="lollipop"
             tools:visibility="visible" />
+
+        <com.ortiz.touch.TouchImageView
+            android:id="@+id/gc_image_document"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center" />
 
     </FrameLayout>
 

@@ -1,7 +1,5 @@
 package net.gini.android.capture.analysis;
 
-import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
-
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
@@ -15,14 +13,16 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import net.gini.android.capture.Document;
+import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.R;
-import net.gini.android.capture.internal.ui.ErrorSnackbar;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.util.Size;
+import net.gini.android.capture.view.InjectedViewContainer;
+import net.gini.android.capture.view.NavButtonType;
+import net.gini.android.capture.view.NavigationBarTopAdapter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +32,10 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import jersey.repackaged.jsr166e.CompletableFuture;
+
+import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
 
 class AnalysisFragmentImpl extends AnalysisScreenContract.View {
 
@@ -41,13 +44,11 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     private final FragmentImplCallback mFragment;
     private TextView mAnalysisMessageTextView;
     private ImageView mImageDocumentView;
-    private RelativeLayout mLayoutRoot;
+    private ConstraintLayout mLayoutRoot;
     private ProgressBar mProgressActivity;
-    private LinearLayout mPdfOverlayLayout;
-    private TextView mPdfTitleTextView;
-    private TextView mPdfPageCountTextView;
     private LinearLayout mAnalysisOverlay;
     private AnalysisHintsAnimator mHintsAnimator;
+    private InjectedViewContainer<NavigationBarTopAdapter> topAdapterInjectedViewContainer;
 
     AnalysisFragmentImpl(final FragmentImplCallback fragment,
             @NonNull final Document document,
@@ -122,25 +123,12 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
 
     @Override
     void showPdfInfoPanel() {
-        mPdfOverlayLayout.setVisibility(View.VISIBLE);
         mAnalysisOverlay.setBackgroundColor(Color.TRANSPARENT);
-        mAnalysisMessageTextView.setText("");
     }
 
     @Override
     void showPdfTitle(@NonNull final String title) {
-        mPdfTitleTextView.setText(title);
-    }
-
-    @Override
-    void showPdfPageCount(@NonNull final String pageCount) {
-        mPdfPageCountTextView.setVisibility(View.VISIBLE);
-        mPdfPageCountTextView.setText(pageCount);
-    }
-
-    @Override
-    void hidePdfPageCount() {
-        mPdfPageCountTextView.setVisibility(View.GONE);
+        mAnalysisMessageTextView.setText(mFragment.getActivity().getString(R.string.gc_pdf_analysis_activity_indicator_message, title));
     }
 
     @Override
@@ -162,25 +150,6 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
             @Nullable final DialogInterface.OnCancelListener cancelListener) {
         mFragment.showAlertDialog(message, positiveButtonTitle, positiveButtonClickListener,
                 negativeButtonTitle, negativeButtonClickListener, cancelListener);
-    }
-
-    @Override
-    void showErrorSnackbar(@NonNull final String message, final int duration,
-            @Nullable final String buttonTitle,
-            @Nullable final View.OnClickListener onClickListener) {
-        if (mFragment.getActivity() == null) {
-            return;
-        }
-        ErrorSnackbar.make(mFragment.getActivity(), mLayoutRoot, message, buttonTitle,
-                onClickListener, ErrorSnackbar.LENGTH_INDEFINITE).show();
-    }
-
-    @Override
-    void hideErrorSnackbar() {
-        if (mLayoutRoot == null) {
-            return;
-        }
-        ErrorSnackbar.hideExisting(mLayoutRoot);
     }
 
     @Override
@@ -221,6 +190,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
             final Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.gc_fragment_analysis, container, false);
         bindViews(view);
+        setTopBarInjectedViewContainer();
         createHintsAnimator(view);
         return view;
     }
@@ -230,10 +200,8 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
         mImageDocumentView = view.findViewById(R.id.gc_image_picture);
         mProgressActivity = view.findViewById(R.id.gc_progress_activity);
         mAnalysisMessageTextView = view.findViewById(R.id.gc_analysis_message);
-        mPdfOverlayLayout = view.findViewById(R.id.gc_pdf_info);
-        mPdfTitleTextView = view.findViewById(R.id.gc_pdf_filename);
-        mPdfPageCountTextView = view.findViewById(R.id.gc_pdf_page_count);
         mAnalysisOverlay = view.findViewById(R.id.gc_analysis_overlay);
+        topAdapterInjectedViewContainer = view.findViewById(R.id.gc_navigation_top_bar);
     }
 
     private void createHintsAnimator(@NonNull final View view) {
@@ -243,6 +211,26 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
         final TextView hintHeadlineTextView = view.findViewById(R.id.gc_analysis_hint_headline);
         mHintsAnimator = new AnalysisHintsAnimator(mFragment.getActivity().getApplication(),
                 hintContainer, hintImageView, hintTextView, hintHeadlineTextView);
+    }
+
+    private void setTopBarInjectedViewContainer() {
+        if (GiniCapture.hasInstance()) {
+            topAdapterInjectedViewContainer.setInjectedViewAdapter(GiniCapture.getInstance().getNavigationBarTopAdapter());
+
+            if (topAdapterInjectedViewContainer.getInjectedViewAdapter() == null)
+                return;
+
+            if (mFragment.getActivity() == null)
+                return;
+
+            topAdapterInjectedViewContainer.getInjectedViewAdapter().setNavButtonType(NavButtonType.CLOSE);
+            topAdapterInjectedViewContainer.getInjectedViewAdapter().setTitle(mFragment.getActivity().getResources().getString(R.string.gc_title_analysis));
+
+            topAdapterInjectedViewContainer.getInjectedViewAdapter().setOnNavButtonClickListener(v -> {
+                mFragment.getActivity().setResult(Activity.RESULT_CANCELED);
+                mFragment.getActivity().finish();
+            });
+        }
     }
 
     public void onStart() {
