@@ -20,6 +20,8 @@ import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.R;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.util.Size;
+import net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomAdapter;
+import net.gini.android.capture.view.CustomLoadingIndicatorAdapter;
 import net.gini.android.capture.view.InjectedViewContainer;
 import net.gini.android.capture.view.NavButtonType;
 import net.gini.android.capture.view.NavigationBarTopAdapter;
@@ -45,10 +47,10 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     private TextView mAnalysisMessageTextView;
     private ImageView mImageDocumentView;
     private ConstraintLayout mLayoutRoot;
-    private ProgressBar mProgressActivity;
     private LinearLayout mAnalysisOverlay;
     private AnalysisHintsAnimator mHintsAnimator;
     private InjectedViewContainer<NavigationBarTopAdapter> topAdapterInjectedViewContainer;
+    private InjectedViewContainer<CustomLoadingIndicatorAdapter> injectedLoadingIndicatorContainer;
 
     AnalysisFragmentImpl(final FragmentImplCallback fragment,
             @NonNull final Document document,
@@ -90,13 +92,13 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
 
     @Override
     void showScanAnimation() {
-        mProgressActivity.setVisibility(View.VISIBLE);
         mAnalysisMessageTextView.setVisibility(View.VISIBLE);
+        injectedLoadingIndicatorContainer.getInjectedViewAdapter().onVisible();
     }
 
     @Override
     void hideScanAnimation() {
-        mProgressActivity.setVisibility(View.GONE);
+        injectedLoadingIndicatorContainer.getInjectedViewAdapter().onHidden();
         mAnalysisMessageTextView.setVisibility(View.GONE);
     }
 
@@ -191,6 +193,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
         final View view = inflater.inflate(R.layout.gc_fragment_analysis, container, false);
         bindViews(view);
         setTopBarInjectedViewContainer();
+        setLoadingIndicatorViewContainer();
         createHintsAnimator(view);
         return view;
     }
@@ -198,10 +201,10 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     private void bindViews(@NonNull final View view) {
         mLayoutRoot = view.findViewById(R.id.gc_layout_root);
         mImageDocumentView = view.findViewById(R.id.gc_image_picture);
-        mProgressActivity = view.findViewById(R.id.gc_progress_activity);
         mAnalysisMessageTextView = view.findViewById(R.id.gc_analysis_message);
         mAnalysisOverlay = view.findViewById(R.id.gc_analysis_overlay);
         topAdapterInjectedViewContainer = view.findViewById(R.id.gc_navigation_top_bar);
+        injectedLoadingIndicatorContainer = view.findViewById(R.id.gc_injected_loading_indicator_container);
     }
 
     private void createHintsAnimator(@NonNull final View view) {
@@ -230,6 +233,12 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
                 mFragment.getActivity().setResult(Activity.RESULT_CANCELED);
                 mFragment.getActivity().finish();
             });
+        }
+    }
+
+    private void setLoadingIndicatorViewContainer() {
+        if (GiniCapture.hasInstance()) {
+            injectedLoadingIndicatorContainer.setInjectedViewAdapter(GiniCapture.getInstance().getloadingIndicatorAdapter());
         }
     }
 

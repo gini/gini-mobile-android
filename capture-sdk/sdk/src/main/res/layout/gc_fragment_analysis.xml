@@ -53,18 +53,11 @@
             android:layout_height="0dp"
             android:layout_weight="1" />
 
-        <ProgressBar
-            android:id="@+id/gc_progress_activity"
+        <net.gini.android.capture.view.InjectedViewContainer
+            android:id="@+id/gc_injected_loading_indicator_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:indeterminateOnly="true"
-            android:indeterminateTint="@color/Accent_01"
-            android:indeterminateTintMode="src_in"
-            android:padding="@dimen/large"
-            android:visibility="gone"
-            tools:targetApi="lollipop"
-            tools:visibility="visible" />
+            android:layout_gravity="center" />
 
         <TextView
             android:id="@+id/gc_analysis_message"
