@@ -130,8 +130,8 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     static final String GC_SHARED_PREFS = "GC_SHARED_PREFS";
     @VisibleForTesting
     static final int DEFAULT_ANIMATION_DURATION = 200;
-    private static final long HIDE_QRCODE_DETECTED_POPUP_DELAY_MS = 10000;
-    private static final long DIFFERENT_QRCODE_DETECTED_POPUP_DELAY_MS = 200;
+    private static final long HIDE_QRCODE_DETECTED_POPUP_DELAY_MS = 2000;
+    private static final long DIFFERENT_QRCODE_DETECTED_POPUP_DELAY_MS = 1000;
     private static final Logger LOG = LoggerFactory.getLogger(CameraFragmentImpl.class);
 
     private static final CameraFragmentListener NO_OP_LISTENER = new CameraFragmentListener() {
@@ -194,8 +194,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private TextView mCameraFlashButtonSubtitle;
     private LinearLayout mLayoutNoPermission;
     private ImageButton mButtonImportDocument;
-    private View mQRCodeDetectedPopupContainer;
-    private View mUnsupportedQRCodeDetectedPopupContainer;
+    private ConstraintLayout mCameraFrameWrapper;
     private View mActivityIndicatorBackground;
     private ProgressBar mActivityIndicator;
     private ImageView mImageFrame;
@@ -227,30 +226,15 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private void handleQRCodeDetected(@Nullable final PaymentQRCodeData paymentQRCodeData,
                                       @NonNull final String qrCodeContent) {
-         if (mInterfaceHidden || mActivityIndicator.getVisibility() == View.VISIBLE) {
-            mPaymentQRCodePopup.hide();
-            mUnsupportedQRCodePopup.hide();
+
+        if (mInterfaceHidden || mActivityIndicator.getVisibility() == View.VISIBLE) {
              return;
          }
 
         if (paymentQRCodeData == null) {
-            final boolean showWithDelay = mPaymentQRCodePopup.isShown();
-            mPaymentQRCodePopup.hide(new ViewPropertyAnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(View view) {
-                    mUnsupportedQRCodePopup.show(qrCodeContent,
-                            showWithDelay ? getDifferentQRCodeDetectedPopupDelayMs() : 0);
-                }
-            });
+            mUnsupportedQRCodePopup.show(qrCodeContent);
          } else {
-            final boolean showWithDelay = mUnsupportedQRCodePopup.isShown();
-            mUnsupportedQRCodePopup.hide(new ViewPropertyAnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(View view) {
-                    mPaymentQRCodePopup.show(paymentQRCodeData,
-                            showWithDelay ? getDifferentQRCodeDetectedPopupDelayMs() : 0);
-                }
-            });
+            mPaymentQRCodePopup.show(paymentQRCodeData);
          }
      }
 
@@ -316,24 +300,18 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private void createPopups() {
         mPaymentQRCodePopup =
-                new QRCodePopup<>(mFragment, mQRCodeDetectedPopupContainer,
-                        DEFAULT_ANIMATION_DURATION, getHideQRCodeDetectedPopupDelayMs(),
-                        getDifferentQRCodeDetectedPopupDelayMs(),
-                        new Function1<PaymentQRCodeData, Unit>() {
-                            @Override
-                            public Unit invoke(@Nullable PaymentQRCodeData paymentQRCodeData) {
-                                if (paymentQRCodeData == null) {
-                                    return null;
-                                }
-                                handlePaymentQRCodeData(paymentQRCodeData);
+                new QRCodePopup<>(mFragment, mCameraFrameWrapper, mActivityIndicatorBackground,
+                        getDifferentQRCodeDetectedPopupDelayMs(), true,
+                        paymentQRCodeData -> {
+                            if (paymentQRCodeData == null) {
                                 return null;
                             }
+                            handlePaymentQRCodeData(paymentQRCodeData);
+                            return null;
                         });
 
         mUnsupportedQRCodePopup =
-                new QRCodePopup<>(mFragment, mUnsupportedQRCodeDetectedPopupContainer,
-                        DEFAULT_ANIMATION_DURATION, getHideQRCodeDetectedPopupDelayMs(),
-                        getDifferentQRCodeDetectedPopupDelayMs());
+                new QRCodePopup<>(mFragment, mCameraFrameWrapper, getHideQRCodeDetectedPopupDelayMs(), false);
     }
 
     public void onStart() {
@@ -628,13 +606,10 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         mActivityIndicatorBackground =
                 view.findViewById(R.id.gc_activity_indicator_background);
         mActivityIndicator = view.findViewById(R.id.gc_activity_indicator);
-        mQRCodeDetectedPopupContainer = view.findViewById(
-                R.id.gc_qrcode_detected_popup_container);
-        mUnsupportedQRCodeDetectedPopupContainer = view.findViewById(
-                R.id.gc_unsupported_qrcode_detected_popup_container);
         mPhotoThumbnail = view.findViewById(R.id.gc_photo_thumbnail);
         topAdapterInjectedViewContainer = view.findViewById(R.id.gc_navigation_top_bar);
         mImageFrame = view.findViewById(R.id.gc_camera_frame);
+        mCameraFrameWrapper = view.findViewById(R.id.gc_camera_frame_wrapper);
     }
 
     private void setTopBarInjectedViewContainer() {
@@ -822,59 +797,38 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                 showActivityIndicatorAndDisableInteraction();
                 networkRequestsManager
                         .upload(activity, qrCodeDocument)
-                        .handle(new CompletableFuture.BiFun<NetworkRequestResult<
-                                GiniCaptureDocument>, Throwable,
-                                NetworkRequestResult<GiniCaptureDocument>>() {
-                            @Override
-                            public NetworkRequestResult<GiniCaptureDocument> apply(
-                                    final NetworkRequestResult<GiniCaptureDocument> requestResult,
-                                    final Throwable throwable) {
-                                if (throwable != null) {
-                                    hideActivityIndicatorAndEnableInteraction();
-                                    if (!isCancellation(throwable)) {
-                                        handleAnalysisError();
-                                    }
+                        .handle((requestResult, throwable) -> {
+                            if (throwable != null) {
+                                hideActivityIndicatorAndEnableInteraction();
+                                if (!isCancellation(throwable)) {
+                                    handleAnalysisError();
                                 }
-                                return requestResult;
                             }
+                            return requestResult;
                         })
                         .thenCompose(
-                                new CompletableFuture.Fun<NetworkRequestResult<GiniCaptureDocument>,
-                                        CompletableFuture<AnalysisNetworkRequestResult<
-                                                GiniCaptureMultiPageDocument>>>() {
-                                    @Override
-                                    public CompletableFuture<AnalysisNetworkRequestResult<
-                                            GiniCaptureMultiPageDocument>> apply(
-                                            final NetworkRequestResult<GiniCaptureDocument>
-                                                    requestResult) {
-                                        if (requestResult != null) {
-                                            final GiniCaptureMultiPageDocument multiPageDocument =
-                                                    DocumentFactory.newMultiPageDocument(
-                                                            qrCodeDocument);
-                                            return networkRequestsManager.analyze(
-                                                    multiPageDocument);
-                                        }
-                                        return CompletableFuture.completedFuture(null);
+                                requestResult -> {
+                                    if (requestResult != null) {
+                                        final GiniCaptureMultiPageDocument multiPageDocument =
+                                                DocumentFactory.newMultiPageDocument(
+                                                        qrCodeDocument);
+                                        return networkRequestsManager.analyze(
+                                                multiPageDocument);
                                     }
+                                    return CompletableFuture.completedFuture(null);
                                 })
-                        .handle(new CompletableFuture.BiFun<AnalysisNetworkRequestResult<
-                                GiniCaptureMultiPageDocument>, Throwable, Void>() {
-                            @Override
-                            public Void apply(
-                                    final AnalysisNetworkRequestResult<GiniCaptureMultiPageDocument>
-                                            requestResult,
-                                    final Throwable throwable) {
-                                hideActivityIndicatorAndEnableInteraction();
-                                if (throwable != null
-                                        && !isCancellation(throwable)) {
-                                    handleAnalysisError();
-                                } else if (requestResult != null) {
-                                    mQRCodeAnalysisCompleted = true;
-                                    mListener.onExtractionsAvailable(
-                                            requestResult.getAnalysisResult().getExtractions());
-                                }
-                                return null;
+                        .handle((CompletableFuture.BiFun<AnalysisNetworkRequestResult<GiniCaptureMultiPageDocument>, Throwable, Void>) (requestResult, throwable) -> {
+                            hideActivityIndicatorAndEnableInteraction();
+                            if (throwable != null
+                                    && !isCancellation(throwable)) {
+                                handleAnalysisError();
+                            } else if (requestResult != null) {
+                                mPaymentQRCodePopup.hide();
+                                mQRCodeAnalysisCompleted = true;
+                                mListener.onExtractionsAvailable(
+                                        requestResult.getAnalysisResult().getExtractions());
                             }
+                            return null;
                         });
             } else {
                 mListener.onQRCodeAvailable(qrCodeDocument);
