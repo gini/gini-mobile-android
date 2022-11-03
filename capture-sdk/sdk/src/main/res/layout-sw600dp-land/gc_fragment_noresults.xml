@@ -15,7 +15,6 @@
         android:layout_centerHorizontal="true"
         android:drawablePadding="@dimen/gc_noresults_header_drawable_padding"
         android:drawableStart="@drawable/gc_alert_icon"
-        android:padding="@dimen/gc_noresults_header_padding"
         android:text="@string/gc_noresults_header" />
 
     <View
@@ -39,8 +38,8 @@
         android:id="@+id/gc_no_results_scrollview"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"
         android:layout_below="@+id/gc_no_results_headline"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:overScrollMode="ifContentScrolls"
         android:scrollbars="none">
@@ -56,10 +55,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginEnd="32dp"
-                android:layout_marginLeft="32dp"
-                android:layout_marginRight="32dp"
                 android:layout_marginStart="32dp"
+                android:layout_marginLeft="32dp"
+                android:layout_marginEnd="32dp"
+                android:layout_marginRight="32dp"
                 android:orientation="vertical">
 
                 <ImageView
@@ -74,10 +73,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginBottom="@dimen/gc_noresults_tip_text_bottom_margin"
-                    android:layout_marginEnd="@dimen/gc_noresults_tip_text_right_margin"
                     android:layout_marginStart="@dimen/gc_noresults_tip_text_left_margin"
                     android:layout_marginTop="@dimen/gc_noresults_tip_text_top_margin"
+                    android:layout_marginEnd="@dimen/gc_noresults_tip_text_right_margin"
+                    android:layout_marginBottom="@dimen/gc_noresults_tip_text_bottom_margin"
                     android:gravity="center_horizontal"
                     android:maxWidth="@dimen/gc_noresults_tip_text_max_width"
                     android:text="@string/gc_photo_tip_lighting" />
@@ -88,10 +87,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginEnd="32dp"
-                android:layout_marginLeft="32dp"
-                android:layout_marginRight="32dp"
                 android:layout_marginStart="32dp"
+                android:layout_marginLeft="32dp"
+                android:layout_marginEnd="32dp"
+                android:layout_marginRight="32dp"
                 android:orientation="vertical">
 
                 <ImageView
@@ -106,10 +105,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginBottom="@dimen/gc_noresults_tip_text_bottom_margin"
-                    android:layout_marginEnd="@dimen/gc_noresults_tip_text_right_margin"
                     android:layout_marginStart="@dimen/gc_noresults_tip_text_left_margin"
                     android:layout_marginTop="@dimen/gc_noresults_tip_text_top_margin"
+                    android:layout_marginEnd="@dimen/gc_noresults_tip_text_right_margin"
+                    android:layout_marginBottom="@dimen/gc_noresults_tip_text_bottom_margin"
                     android:gravity="center_horizontal"
                     android:maxWidth="@dimen/gc_noresults_tip_text_max_width"
                     android:text="@string/gc_photo_tip_flat" />
@@ -120,10 +119,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginEnd="32dp"
-                android:layout_marginLeft="32dp"
-                android:layout_marginRight="32dp"
                 android:layout_marginStart="32dp"
+                android:layout_marginLeft="32dp"
+                android:layout_marginEnd="32dp"
+                android:layout_marginRight="32dp"
                 android:orientation="vertical">
 
                 <ImageView
@@ -138,10 +137,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginBottom="@dimen/gc_noresults_tip_text_bottom_margin"
-                    android:layout_marginEnd="@dimen/gc_noresults_tip_text_right_margin"
                     android:layout_marginStart="@dimen/gc_noresults_tip_text_left_margin"
                     android:layout_marginTop="@dimen/gc_noresults_tip_text_top_margin"
+                    android:layout_marginEnd="@dimen/gc_noresults_tip_text_right_margin"
+                    android:layout_marginBottom="@dimen/gc_noresults_tip_text_bottom_margin"
                     android:gravity="center_horizontal"
                     android:maxWidth="@dimen/gc_noresults_tip_text_max_width"
                     android:text="@string/gc_photo_tip_parallel" />
@@ -152,10 +151,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginEnd="32dp"
-                android:layout_marginLeft="32dp"
-                android:layout_marginRight="32dp"
                 android:layout_marginStart="32dp"
+                android:layout_marginLeft="32dp"
+                android:layout_marginEnd="32dp"
+                android:layout_marginRight="32dp"
                 android:orientation="vertical">
 
                 <ImageView
@@ -170,10 +169,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginBottom="@dimen/gc_noresults_tip_text_bottom_margin"
-                    android:layout_marginEnd="@dimen/gc_noresults_tip_text_right_margin"
                     android:layout_marginStart="@dimen/gc_noresults_tip_text_left_margin"
                     android:layout_marginTop="@dimen/gc_noresults_tip_text_top_margin"
+                    android:layout_marginEnd="@dimen/gc_noresults_tip_text_right_margin"
+                    android:layout_marginBottom="@dimen/gc_noresults_tip_text_bottom_margin"
                     android:gravity="center_horizontal"
                     android:maxWidth="@dimen/gc_noresults_tip_text_max_width"
                     android:text="@string/gc_photo_tip_align" />

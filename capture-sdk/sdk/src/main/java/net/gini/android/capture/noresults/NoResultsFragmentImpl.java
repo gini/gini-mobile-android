@@ -13,10 +13,14 @@ import android.view.ViewGroup;
 
 import net.gini.android.capture.Document;
 import net.gini.android.capture.R;
+import net.gini.android.capture.help.PhotoTipsAdapter;
+import net.gini.android.capture.help.SupportedFormatsAdapter;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 class NoResultsFragmentImpl {
 
@@ -63,11 +67,27 @@ class NoResultsFragmentImpl {
         } else {
             backButton.setVisibility(GONE);
         }
+
+        setUpList(view);
+
         return view;
     }
 
     private boolean isDocumentFromCameraScreen() {
         return mDocument.getImportMethod() != Document.ImportMethod.OPEN_WITH;
+    }
+
+    private void setUpList(View view) {
+        final RecyclerView recyclerView = view.findViewById(R.id.gc_no_results_recyclerview);
+        recyclerView.setLayoutManager(new LinearLayoutManager(mFragment.getActivity()));
+
+        if (mDocument.getType() == Document.Type.PDF || mDocument.getType() == Document.Type.PDF_MULTI_PAGE) {
+            recyclerView.setAdapter(new SupportedFormatsAdapter());
+
+            return;
+        }
+
+        recyclerView.setAdapter(new PhotoTipsAdapter());
     }
 
 }
