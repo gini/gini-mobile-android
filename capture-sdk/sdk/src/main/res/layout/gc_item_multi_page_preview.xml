@@ -1,43 +1,61 @@
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/gc_image_preview_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <net.gini.android.capture.review.RotatableTouchImageViewContainer
-        android:id="@+id/gc_image_container"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    </net.gini.android.capture.review.RotatableTouchImageViewContainer>
+        <ImageView
+            android:id="@+id/gc_image_container"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:scaleType="fitCenter"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-    <ImageButton
-        android:id="@+id/gc_button_delete"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/large"
-        android:layout_marginEnd="@dimen/large"
-        android:background="@android:color/transparent"
-        android:src="@drawable/gc_delete"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        </ImageView>
 
-    <ProgressBar
-        android:id="@+id/gc_activity_indicator"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:indeterminateOnly="true"
-        android:indeterminateTint="@color/gc_analysis_activity_indicator"
-        android:indeterminateTintMode="src_in"
-        android:padding="@dimen/gc_review_progressbar_padding"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/gc_image_container"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:targetApi="lollipop"
-        tools:visibility="visible" />
+        <ImageButton
+            android:id="@+id/gc_button_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="24dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/gc_delete"
+            app:layout_constraintEnd_toEndOf="@+id/gc_image_container"
+            app:layout_constraintTop_toTopOf="@+id/gc_image_container" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <ProgressBar
+            android:id="@+id/gc_activity_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:indeterminateOnly="true"
+            android:indeterminateTint="@color/gc_analysis_activity_indicator"
+            android:indeterminateTintMode="src_in"
+            android:padding="@dimen/gc_review_progressbar_padding"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/gc_image_selected_rect"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:targetApi="lollipop"
+            tools:visibility="visible" />
+
+        <FrameLayout
+            android:id="@+id/gc_image_selected_rect"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/gc_image_preview_rectangle"
+            android:visibility="invisible" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>
 

@@ -65,4 +65,10 @@ public class PreviewsAdapter extends FragmentStatePagerAdapter {
                 viewPager.getCurrentItem());
         fragment.rotateImageViewBy(degrees, true);
     }
+
+    public void visibilitySelectionRect(@NonNull final ViewPager viewPager, int visibility) {
+        final PreviewFragment fragment = (PreviewFragment) instantiateItem(viewPager,
+                viewPager.getCurrentItem());
+        fragment.manageSelectionRect(visibility);
+    }
 }

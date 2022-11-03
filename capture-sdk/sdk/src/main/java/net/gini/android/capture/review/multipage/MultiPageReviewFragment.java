@@ -58,6 +58,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -66,6 +67,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.Lifecycle;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -73,9 +75,12 @@ import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.widget.MarginPageTransformer;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
 
@@ -118,7 +123,7 @@ import jersey.repackaged.jsr166e.CompletableFuture;
  * <p> Your Activity is automatically set as the listener in {@link MultiPageReviewFragment#onCreate(Bundle)}.
  *
  * <h3>Customizing the Multi-Page Review Screen</h3>
- *
+ * <p>
  * See the {@link MultiPageReviewActivity} for details.
  */
 public class MultiPageReviewFragment extends Fragment implements MultiPageReviewFragmentInterface,
@@ -131,8 +136,8 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     @VisibleForTesting
     ImageMultiPageDocument mMultiPageDocument;
     private MultiPageReviewFragmentListener mListener;
-    private ViewPager mPreviewsPager;
-    private PreviewsAdapter mPreviewsAdapter;
+    private ViewPager2 mPreviewsPager;
+    private PreviewsPager2Adapter mPreviewsAdapter;
     private AppCompatButton mButtonNext;
     private LinearLayout mAddPages;
     private TabLayout mTabIndicator;
@@ -242,28 +247,46 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
             }
         };
 
-        mPreviewsAdapter = new PreviewsAdapter(getChildFragmentManager(), mMultiPageDocument,
+        mPreviewsAdapter = new PreviewsPager2Adapter(requireActivity(), mMultiPageDocument,
                 previewsAdapterListener);
         mPreviewsPager.setAdapter(mPreviewsAdapter);
+        mPreviewsPager.setPageTransformer(new MarginPageTransformer(10));
 
-        final PreviewsPageChangeHandler previewsPageChangeHandler = new PreviewsPageChangeHandler(
-                new PreviewsPageChangeListener() {
-                    @Override
-                    public void onPageSelected(final int position) {
-                        //updatePageIndicator(position);
-                        /*if (!mThumbnailsAdapter.isThumbnailHighlighted(position)) {
-                            highlightThumbnail(position);
-                        }*/
-                    }
-                });
-        mPreviewsPager.addOnPageChangeListener(previewsPageChangeHandler);
+        TabLayoutMediator mediator = new TabLayoutMediator(mTabIndicator, mPreviewsPager, (tab, position) -> {
 
-        mTabIndicator.setupWithViewPager(mPreviewsPager);
+        });
+        mediator.attach();
 
-        mTabIndicator.setVisibility(mPreviewsAdapter.getCount() <= 1 ? View.INVISIBLE : View.VISIBLE);
+        mPreviewsPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                super.onPageScrolled(position, positionOffset, positionOffsetPixels);
+
+                Optional<Fragment> presentedFragment = getChildFragmentManager().getFragments().stream().findFirst();
+                presentedFragment.ifPresent(fragment -> ((PreviewFragment) fragment).manageSelectionRect(View.INVISIBLE));
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                super.onPageScrollStateChanged(state);
+                if (state == ViewPager2.SCROLL_STATE_IDLE) {
+                    Fragment current = mPreviewsAdapter.getCurrentFragment(mPreviewsPager);
+                    if (current != null)
+                        ((PreviewFragment) current).manageSelectionRect(View.VISIBLE);
+                }
+            }
+        });
+
+        mTabIndicator.setVisibility(mPreviewsAdapter.getItemCount() <= 1 ? View.INVISIBLE : View.VISIBLE);
     }
 
-    private ViewPager.PageTransformer setupTransformer() {
+
+    private ViewPager2.PageTransformer setupTransformer() {
 
         Point screenSize = ActivityHelper.getRealScreenSize(requireActivity());
         int nextItemVisiblePx = (int) screenSize.x / (int) 3.4;
@@ -272,9 +295,9 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
 
         return (page, position) -> {
             page.setTranslationX(-pageTranslationX * position);
-                // Next line scales the item's height. You can remove it if you don't want this effect
-                page.setScaleY(1 - (0.25f * Math.abs(position)));
-                page.setScaleX(1 - (0.25f * Math.abs(position)));
+            // Next line scales the item's height. You can remove it if you don't want this effect
+            page.setScaleY(1 - (0.25f * Math.abs(position)));
+            page.setScaleX(1 - (0.25f * Math.abs(position)));
         };
     }
 
@@ -467,27 +490,6 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
            /* mDeleteButton.setEnabled(false);
             mDeleteButton.setAlpha(0.2f);*/
         }
-    }
-
-    private void onRotateButtonClicked() {
-        if (!GiniCapture.hasInstance()) {
-            LOG.error(
-                    "Cannot rotate document. GiniCapture instance not available. Create it with GiniCapture.newInstance().");
-            return;
-        }
-        final Activity activity = getActivity();
-        if (activity == null) {
-            return;
-        }
-        final int currentItem = mPreviewsPager.getCurrentItem();
-        final ImageDocument document =
-                mMultiPageDocument.getDocuments().get(currentItem);
-        final int rotationStep = 90;
-        final int degrees = document.getRotationForDisplay() + rotationStep;
-        document.setRotationForDisplay(degrees);
-        document.updateRotationDeltaBy(rotationStep);
-        mPreviewsAdapter.rotateImageInCurrentItemBy(mPreviewsPager, rotationStep);
-        //mThumbnailsAdapter.rotateHighlightedThumbnailBy(rotationStep);
     }
 
     @VisibleForTesting

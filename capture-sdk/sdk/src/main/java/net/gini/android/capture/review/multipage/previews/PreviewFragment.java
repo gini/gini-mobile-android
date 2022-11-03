@@ -6,6 +6,8 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
@@ -23,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
 /**
@@ -39,8 +42,8 @@ public class PreviewFragment extends Fragment {
     private static final String ARGS_ERROR_BUTTON_ACTION = "ARGS_ERROR_BUTTON_ACTION";
     private static final String PARCELABLE_MEMORY_CACHE_TAG = "PAGE_PREVIEW_FRAGMENT";
 
-    private RotatableImageViewContainer mImageViewContainer;
-
+    private ImageView mImageViewContainer;
+    private FrameLayout mImageBlueRect;
     private ImageDocument mDocument;
     private String mErrorMessage;
     private ProgressBar mActivityIndicator;
@@ -85,6 +88,7 @@ public class PreviewFragment extends Fragment {
                 false);
         mImageViewContainer = view.findViewById(R.id.gc_image_container);
         mActivityIndicator = view.findViewById(R.id.gc_activity_indicator);
+        mImageBlueRect = view.findViewById(R.id.gc_image_selected_rect);
         return view;
     }
 
@@ -113,7 +117,7 @@ public class PreviewFragment extends Fragment {
                                 }
                                 hideActivityIndicator();
                                 LOG.debug("Showing preview ({})", this);
-                                mImageViewContainer.getImageView().setImageBitmap(
+                                mImageViewContainer.setImageBitmap(
                                         result.getBitmapPreview());
                                 LOG.debug("Applying rotation ({})", this);
                                 rotateImageView(mDocument.getRotationForDisplay(), false);
@@ -201,7 +205,7 @@ public class PreviewFragment extends Fragment {
 
     private boolean shouldShowPreviewImage() {
         return mDocument != null
-                && mImageViewContainer.getImageView().getDrawable() == null;
+                && mImageViewContainer.getDrawable() == null;
     }
 
     private void showActivityIndicator() {
@@ -232,11 +236,15 @@ public class PreviewFragment extends Fragment {
     }
 
     private void rotateImageView(final int degrees, final boolean animated) {
-        mImageViewContainer.rotateImageView(degrees, animated);
+        mImageViewContainer.setRotation(mDocument.getRotationForDisplay());
     }
 
     public void rotateImageViewBy(final int degrees, final boolean animated) {
-        mImageViewContainer.rotateImageViewBy(degrees, animated);
+        mImageViewContainer.setRotation(mDocument.getRotationForDisplay());
+    }
+
+    public void manageSelectionRect(int visibility) {
+        mImageBlueRect.setVisibility(visibility);
     }
 
     /**

@@ -43,7 +43,7 @@ public class RotatableImageViewContainer extends FrameLayout {
         mImageView = createImageView(context);
         final LayoutParams layoutParams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
-        layoutParams.gravity = Gravity.CENTER;
+        layoutParams.gravity = Gravity.FILL;
         mImageView.setLayoutParams(layoutParams);
 
         addView(mImageView);
