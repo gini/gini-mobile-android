@@ -1,11 +1,6 @@
 package net.gini.android.capture.noresults;
 
 
-import static android.view.View.GONE;
-
-import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
-
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +16,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import static android.view.View.GONE;
+import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
 
 class NoResultsFragmentImpl {
 
@@ -87,7 +85,6 @@ class NoResultsFragmentImpl {
             return;
         }
 
-        recyclerView.setAdapter(new PhotoTipsAdapter());
+        recyclerView.setAdapter(new PhotoTipsAdapter(view.getContext()));
     }
-
 }

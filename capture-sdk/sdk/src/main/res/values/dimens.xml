@@ -119,7 +119,8 @@
     <dimen name="gc_help_item_forward_icon_margin">12dp</dimen>
     <dimen name="gc_help_item_divider_height">1dp</dimen>
 
-    <dimen name="gc_photo_tips_tip_icon_size">64dp</dimen>
+    <dimen name="gc_photo_tips_tip_icon_size_width">80dp</dimen>
+    <dimen name="gc_photo_tips_tip_icon_size_height">48dp</dimen>
     <dimen name="gc_photo_tips_tip_icon_margin">16dp</dimen>
     <dimen name="gc_photo_tips_tip_text_top_margin">16dp</dimen>
     <dimen name="gc_photo_tips_tip_text_bottom_margin">16dp</dimen>
@@ -129,6 +130,7 @@
     <dimen name="gc_photo_tips_space_height_for_bottom_button">16dp</dimen>
     <dimen name="gc_photo_tips_bottom_button_height">48dp</dimen>
     <dimen name="gc_photo_tips_bottom_button_margin">16dp</dimen>
+    <dimen name="gc_photo_tips_row_min_height">76dp</dimen>
     <dimen name="gc_photo_tips_bottom_button_max_width">300dp</dimen>
 
     <dimen name="gc_supported_formats_item_margin">24dp</dimen>

@@ -1,18 +1,16 @@
 package net.gini.android.capture.help
 
-import android.media.Image
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import net.gini.android.capture.R
 import net.gini.android.capture.analysis.AnalysisHint
 import net.gini.android.capture.internal.util.FeatureConfiguration
-import java.util.*
 
 /**
  * Internal use only.
@@ -20,7 +18,7 @@ import java.util.*
  * @suppress
  */
 
-class PhotoTipsAdapter: RecyclerView.Adapter<PhotoTipsAdapter.PhotoTipsViewHolder>() {
+class PhotoTipsAdapter(private val context: Context): RecyclerView.Adapter<PhotoTipsAdapter.PhotoTipsViewHolder>() {
 
     private var tipList: MutableList<AnalysisHint> = mutableListOf(AnalysisHint.LIGHTING, AnalysisHint.FLAT, AnalysisHint.ALIGN, AnalysisHint.PARALLEL, AnalysisHint.MULTIPAGE)
 
@@ -32,7 +30,10 @@ class PhotoTipsAdapter: RecyclerView.Adapter<PhotoTipsAdapter.PhotoTipsViewHolde
         PhotoTipsViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.gc_item_tip, parent, false))
 
     override fun onBindViewHolder(holder: PhotoTipsViewHolder, position: Int) {
-        
+        holder.iconImageView.setImageDrawable(ContextCompat.getDrawable(context, tipList[position].drawableResource))
+        holder.tipTextView.text =  context.getString(tipList[position].textResource)
+        holder.tipTitleTextView.text =  context.getString(tipList[position].titleTextResource)
+        if (position == tipList.size - 1) holder.separatorView.visibility = View.INVISIBLE else holder.separatorView.visibility = View.VISIBLE
     }
 
     override fun getItemCount(): Int {
@@ -45,10 +46,11 @@ class PhotoTipsAdapter: RecyclerView.Adapter<PhotoTipsAdapter.PhotoTipsViewHolde
         }
     }
 
-    class PhotoTipsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var iconImageView: ImageView = itemView.findViewById(R.id.gc_tip_photo) as ImageView
-        var tipTitleTextView: TextView = itemView.findViewById<View>(R.id.gc_tip_title) as TextView
-        var tipTextView: TextView = itemView.findViewById<View>(R.id.gc_tip_title) as TextView
+    inner class PhotoTipsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val iconImageView: ImageView = itemView.findViewById(R.id.gc_tip_photo)
+        val tipTitleTextView: TextView = itemView.findViewById(R.id.gc_tip_title)
+        val tipTextView: TextView = itemView.findViewById(R.id.gc_tip_text)
+        val separatorView: View = itemView.findViewById(R.id.gc_divider)
     }
 }
 
