@@ -6,17 +6,22 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -125,8 +130,8 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     static final String GC_SHARED_PREFS = "GC_SHARED_PREFS";
     @VisibleForTesting
     static final int DEFAULT_ANIMATION_DURATION = 200;
-    private static final long HIDE_QRCODE_DETECTED_POPUP_DELAY_MS = 10000;
-    private static final long DIFFERENT_QRCODE_DETECTED_POPUP_DELAY_MS = 200;
+    private static final long HIDE_QRCODE_DETECTED_POPUP_DELAY_MS = 2000;
+    private static final long DIFFERENT_QRCODE_DETECTED_POPUP_DELAY_MS = 1000;
     private static final Logger LOG = LoggerFactory.getLogger(CameraFragmentImpl.class);
 
     private static final CameraFragmentListener NO_OP_LISTENER = new CameraFragmentListener() {
@@ -141,7 +146,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
         @Override
         public void onCheckImportedDocument(@NonNull final Document document,
-                @NonNull final DocumentCheckResultCallback callback) {
+                                            @NonNull final DocumentCheckResultCallback callback) {
             callback.documentAccepted();
         }
 
@@ -189,12 +194,9 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private TextView mCameraFlashButtonSubtitle;
     private LinearLayout mLayoutNoPermission;
     private ImageButton mButtonImportDocument;
-    private View mQRCodeDetectedPopupContainer;
-    private View mUnsupportedQRCodeDetectedPopupContainer;
+    private ConstraintLayout mCameraFrameWrapper;
     private View mActivityIndicatorBackground;
     private ProgressBar mActivityIndicator;
-    private FrameLayout mPaneBackground;
-    private ConstraintLayout mPaneWrapper;
     private ImageView mImageFrame;
     private ViewStubSafeInflater mViewStubInflater;
 
@@ -224,30 +226,15 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private void handleQRCodeDetected(@Nullable final PaymentQRCodeData paymentQRCodeData,
                                       @NonNull final String qrCodeContent) {
-         if (mInterfaceHidden || mActivityIndicator.getVisibility() == View.VISIBLE) {
-            mPaymentQRCodePopup.hide();
-            mUnsupportedQRCodePopup.hide();
+
+        if (mInterfaceHidden || mActivityIndicator.getVisibility() == View.VISIBLE) {
              return;
          }
 
         if (paymentQRCodeData == null) {
-            final boolean showWithDelay = mPaymentQRCodePopup.isShown();
-            mPaymentQRCodePopup.hide(new ViewPropertyAnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(View view) {
-                    mUnsupportedQRCodePopup.show(qrCodeContent,
-                            showWithDelay ? getDifferentQRCodeDetectedPopupDelayMs() : 0);
-                }
-            });
+            mUnsupportedQRCodePopup.show(qrCodeContent);
          } else {
-            final boolean showWithDelay = mUnsupportedQRCodePopup.isShown();
-            mUnsupportedQRCodePopup.hide(new ViewPropertyAnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(View view) {
-                    mPaymentQRCodePopup.show(paymentQRCodeData,
-                            showWithDelay ? getDifferentQRCodeDetectedPopupDelayMs() : 0);
-                }
-            });
+            mPaymentQRCodePopup.show(paymentQRCodeData);
          }
      }
 
@@ -296,7 +283,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         setInputHandlers();
         createPopups();
         setTopBarInjectedViewContainer();
-        initOnlyQRScanning();
         return view;
     }
 
@@ -314,24 +300,18 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private void createPopups() {
         mPaymentQRCodePopup =
-                new QRCodePopup<>(mFragment, mQRCodeDetectedPopupContainer,
-                        DEFAULT_ANIMATION_DURATION, getHideQRCodeDetectedPopupDelayMs(),
-                        getDifferentQRCodeDetectedPopupDelayMs(),
-                        new Function1<PaymentQRCodeData, Unit>() {
-                            @Override
-                            public Unit invoke(@Nullable PaymentQRCodeData paymentQRCodeData) {
-                                if (paymentQRCodeData == null) {
-                                    return null;
-                                }
-                                handlePaymentQRCodeData(paymentQRCodeData);
+                new QRCodePopup<>(mFragment, mCameraFrameWrapper, mActivityIndicatorBackground,
+                        getDifferentQRCodeDetectedPopupDelayMs(), true,
+                        paymentQRCodeData -> {
+                            if (paymentQRCodeData == null) {
                                 return null;
                             }
+                            handlePaymentQRCodeData(paymentQRCodeData);
+                            return null;
                         });
 
         mUnsupportedQRCodePopup =
-                new QRCodePopup<>(mFragment, mUnsupportedQRCodeDetectedPopupContainer,
-                        DEFAULT_ANIMATION_DURATION, getHideQRCodeDetectedPopupDelayMs(),
-                        getDifferentQRCodeDetectedPopupDelayMs());
+                new QRCodePopup<>(mFragment, mCameraFrameWrapper, getHideQRCodeDetectedPopupDelayMs(), false);
     }
 
     public void onStart() {
@@ -626,15 +606,10 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         mActivityIndicatorBackground =
                 view.findViewById(R.id.gc_activity_indicator_background);
         mActivityIndicator = view.findViewById(R.id.gc_activity_indicator);
-        mQRCodeDetectedPopupContainer = view.findViewById(
-                R.id.gc_qrcode_detected_popup_container);
-        mUnsupportedQRCodeDetectedPopupContainer = view.findViewById(
-                R.id.gc_unsupported_qrcode_detected_popup_container);
         mPhotoThumbnail = view.findViewById(R.id.gc_photo_thumbnail);
         topAdapterInjectedViewContainer = view.findViewById(R.id.gc_navigation_top_bar);
-        mPaneBackground = view.findViewById(R.id.gc_camera_pane_background);
-        mPaneWrapper = view.findViewById(R.id.gc_pane_wrapper);
         mImageFrame = view.findViewById(R.id.gc_camera_frame);
+        mCameraFrameWrapper = view.findViewById(R.id.gc_camera_frame_wrapper);
     }
 
     private void setTopBarInjectedViewContainer() {
@@ -682,22 +657,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         trackCameraScreenEvent(CameraScreenEvent.HELP);
     }
 
-    private void initOnlyQRScanning() {
-        if (isOnlyQRCodeScanning()) {
-            mPaneBackground.setVisibility(View.GONE);
-            mPaneWrapper.setVisibility(View.GONE);
-            final ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) mImageFrame.getLayoutParams();
-            layoutParams.dimensionRatio = "1:1";
-        }
-    }
-
-    private boolean isOnlyQRCodeScanning() {
-        if (!GiniCapture.hasInstance()) {
-            return false;
-        }
-
-        return GiniCapture.getInstance().isQRCodeScanningEnabled();
-    }
 
     private void initViews() {
         final Activity activity = mFragment.getActivity();
@@ -838,59 +797,38 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                 showActivityIndicatorAndDisableInteraction();
                 networkRequestsManager
                         .upload(activity, qrCodeDocument)
-                        .handle(new CompletableFuture.BiFun<NetworkRequestResult<
-                                GiniCaptureDocument>, Throwable,
-                                NetworkRequestResult<GiniCaptureDocument>>() {
-                            @Override
-                            public NetworkRequestResult<GiniCaptureDocument> apply(
-                                    final NetworkRequestResult<GiniCaptureDocument> requestResult,
-                                    final Throwable throwable) {
-                                if (throwable != null) {
-                                    hideActivityIndicatorAndEnableInteraction();
-                                    if (!isCancellation(throwable)) {
-                                        handleAnalysisError();
-                                    }
+                        .handle((requestResult, throwable) -> {
+                            if (throwable != null) {
+                                hideActivityIndicatorAndEnableInteraction();
+                                if (!isCancellation(throwable)) {
+                                    handleAnalysisError();
                                 }
-                                return requestResult;
                             }
+                            return requestResult;
                         })
                         .thenCompose(
-                                new CompletableFuture.Fun<NetworkRequestResult<GiniCaptureDocument>,
-                                        CompletableFuture<AnalysisNetworkRequestResult<
-                                                GiniCaptureMultiPageDocument>>>() {
-                                    @Override
-                                    public CompletableFuture<AnalysisNetworkRequestResult<
-                                            GiniCaptureMultiPageDocument>> apply(
-                                            final NetworkRequestResult<GiniCaptureDocument>
-                                                    requestResult) {
-                                        if (requestResult != null) {
-                                            final GiniCaptureMultiPageDocument multiPageDocument =
-                                                    DocumentFactory.newMultiPageDocument(
-                                                            qrCodeDocument);
-                                            return networkRequestsManager.analyze(
-                                                    multiPageDocument);
-                                        }
-                                        return CompletableFuture.completedFuture(null);
+                                requestResult -> {
+                                    if (requestResult != null) {
+                                        final GiniCaptureMultiPageDocument multiPageDocument =
+                                                DocumentFactory.newMultiPageDocument(
+                                                        qrCodeDocument);
+                                        return networkRequestsManager.analyze(
+                                                multiPageDocument);
                                     }
+                                    return CompletableFuture.completedFuture(null);
                                 })
-                        .handle(new CompletableFuture.BiFun<AnalysisNetworkRequestResult<
-                                GiniCaptureMultiPageDocument>, Throwable, Void>() {
-                            @Override
-                            public Void apply(
-                                    final AnalysisNetworkRequestResult<GiniCaptureMultiPageDocument>
-                                            requestResult,
-                                    final Throwable throwable) {
-                                hideActivityIndicatorAndEnableInteraction();
-                                if (throwable != null
-                                        && !isCancellation(throwable)) {
-                                    handleAnalysisError();
-                                } else if (requestResult != null) {
-                                    mQRCodeAnalysisCompleted = true;
-                                    mListener.onExtractionsAvailable(
-                                            requestResult.getAnalysisResult().getExtractions());
-                                }
-                                return null;
+                        .handle((CompletableFuture.BiFun<AnalysisNetworkRequestResult<GiniCaptureMultiPageDocument>, Throwable, Void>) (requestResult, throwable) -> {
+                            hideActivityIndicatorAndEnableInteraction();
+                            if (throwable != null
+                                    && !isCancellation(throwable)) {
+                                handleAnalysisError();
+                            } else if (requestResult != null) {
+                                mPaymentQRCodePopup.hide();
+                                mQRCodeAnalysisCompleted = true;
+                                mListener.onExtractionsAvailable(
+                                        requestResult.getAnalysisResult().getExtractions());
                             }
+                            return null;
                         });
             } else {
                 mListener.onQRCodeAvailable(qrCodeDocument);
@@ -1273,70 +1211,72 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             if (photo != null) {
                 LOG.info("Picture taken");
                 showActivityIndicatorAndDisableInteraction();
-                photo.edit().compressByDefault().applyAsync(new PhotoEdit.PhotoEditCallback() {
-                    @Override
-                    public void onDone(@NonNull final Photo result) {
-                        hideActivityIndicatorAndEnableInteraction();
-                        if (mInMultiPageState) {
-                            final ImageDocument document = createSavedDocument(result);
-                            if (document == null) {
+                photo.edit()
+                        .crop(mCameraPreview, getRectFromImageFrame())
+                        .compressByDefault().applyAsync(new PhotoEdit.PhotoEditCallback() {
+                            @Override
+                            public void onDone(@NonNull final Photo result) {
+                                hideActivityIndicatorAndEnableInteraction();
+                                if (mInMultiPageState) {
+                                    final ImageDocument document = createSavedDocument(result);
+                                    if (document == null) {
+                                        handleError(GiniCaptureError.ErrorCode.CAMERA_SHOT_FAILED,
+                                                "Failed to take picture: could not save picture to disk",
+                                                null);
+                                        mCameraController.startPreview();
+                                        mIsTakingPicture = false;
+                                        return;
+                                    }
+                                    mMultiPageDocument.addDocument(document);
+                                    mPhotoThumbnail.setImage(new PhotoThumbnail.ThumbnailBitmap(result.getBitmapPreview(),
+                                            document.getRotationForDisplay()));
+                                    mPhotoThumbnail.setImageCount(mMultiPageDocument.getDocuments().size());
+                                    mIsTakingPicture = false;
+                                    mCameraController.startPreview();
+                                } else {
+                                    if (isMultiPageEnabled()) {
+                                        final ImageDocument document = createSavedDocument(result);
+                                        if (document == null) {
+                                            handleError(GiniCaptureError.ErrorCode.CAMERA_SHOT_FAILED,
+                                                    "Failed to take picture: could not save picture to disk",
+                                                    null);
+                                            mCameraController.startPreview();
+                                            mIsTakingPicture = false;
+                                            return;
+                                        }
+                                        mInMultiPageState = true;
+                                        mMultiPageDocument = new ImageMultiPageDocument(
+                                                Document.Source.newCameraSource(), ImportMethod.NONE);
+                                        GiniCapture.getInstance().internal()
+                                                .getImageMultiPageDocumentMemoryStore()
+                                                .setMultiPageDocument(mMultiPageDocument);
+                                        mMultiPageDocument.addDocument(document);
+                                        mPhotoThumbnail.setImage(
+                                                new PhotoThumbnail.ThumbnailBitmap(result.getBitmapPreview(),
+                                                        document.getRotationForDisplay()));
+                                        mPhotoThumbnail.setImageCount(mMultiPageDocument.getDocuments().size());
+                                        mListener.onProceedToMultiPageReviewScreen(mMultiPageDocument);
+                                        mIsTakingPicture = false;
+                                    } else {
+                                        final ImageDocument document =
+                                                DocumentFactory.newImageDocumentFromPhoto(
+                                                        result);
+                                        mListener.onDocumentAvailable(document);
+                                        mIsTakingPicture = false;
+                                    }
+                                    mCameraController.startPreview();
+                                }
+                            }
+
+                            @Override
+                            public void onFailed() {
+                                hideActivityIndicatorAndEnableInteraction();
                                 handleError(GiniCaptureError.ErrorCode.CAMERA_SHOT_FAILED,
-                                        "Failed to take picture: could not save picture to disk",
-                                        null);
+                                        "Failed to take picture: picture compression failed", null);
                                 mCameraController.startPreview();
                                 mIsTakingPicture = false;
-                                return;
                             }
-                            mMultiPageDocument.addDocument(document);
-                            mPhotoThumbnail.setImage(new PhotoThumbnail.ThumbnailBitmap(result.getBitmapPreview(),
-                                    document.getRotationForDisplay()));
-                            mPhotoThumbnail.setImageCount(mMultiPageDocument.getDocuments().size());
-                            mIsTakingPicture = false;
-                            mCameraController.startPreview();
-                        } else {
-                            if (isMultiPageEnabled()) {
-                                final ImageDocument document = createSavedDocument(result);
-                                if (document == null) {
-                                    handleError(GiniCaptureError.ErrorCode.CAMERA_SHOT_FAILED,
-                                            "Failed to take picture: could not save picture to disk",
-                                            null);
-                                    mCameraController.startPreview();
-                                    mIsTakingPicture = false;
-                                    return;
-                                }
-                                mInMultiPageState = true;
-                                mMultiPageDocument = new ImageMultiPageDocument(
-                                        Document.Source.newCameraSource(), ImportMethod.NONE);
-                                GiniCapture.getInstance().internal()
-                                        .getImageMultiPageDocumentMemoryStore()
-                                        .setMultiPageDocument(mMultiPageDocument);
-                                mMultiPageDocument.addDocument(document);
-                                mPhotoThumbnail.setImage(
-                                        new PhotoThumbnail.ThumbnailBitmap(result.getBitmapPreview(),
-                                                document.getRotationForDisplay()));
-                                mPhotoThumbnail.setImageCount(mMultiPageDocument.getDocuments().size());
-                                mListener.onProceedToMultiPageReviewScreen(mMultiPageDocument);
-                                mIsTakingPicture = false;
-                            } else {
-                                final ImageDocument document =
-                                        DocumentFactory.newImageDocumentFromPhoto(
-                                                result);
-                                mListener.onDocumentAvailable(document);
-                                mIsTakingPicture = false;
-                            }
-                            mCameraController.startPreview();
-                        }
-                    }
-
-                    @Override
-                    public void onFailed() {
-                        hideActivityIndicatorAndEnableInteraction();
-                        handleError(GiniCaptureError.ErrorCode.CAMERA_SHOT_FAILED,
-                                "Failed to take picture: picture compression failed", null);
-                        mCameraController.startPreview();
-                        mIsTakingPicture = false;
-                    }
-                });
+                        });
             } else {
                 handleError(GiniCaptureError.ErrorCode.CAMERA_SHOT_FAILED,
                         "Failed to take picture: no picture from the camera", null);
@@ -1345,6 +1285,15 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             }
         }
     }
+
+    private Rect getRectFromImageFrame() {
+        Rect rect = new Rect();
+
+        mImageFrame.getHitRect(rect);
+
+       return rect;
+    }
+
 
     private void showMultiPageLimitError() {
         final Activity activity = mFragment.getActivity();
