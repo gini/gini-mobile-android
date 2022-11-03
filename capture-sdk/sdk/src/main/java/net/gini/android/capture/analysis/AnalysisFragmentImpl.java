@@ -93,12 +93,17 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     @Override
     void showScanAnimation() {
         mAnalysisMessageTextView.setVisibility(View.VISIBLE);
-        injectedLoadingIndicatorContainer.getInjectedViewAdapter().onVisible();
+
+        if (injectedLoadingIndicatorContainer.getInjectedViewAdapter() != null) {
+            injectedLoadingIndicatorContainer.getInjectedViewAdapter().onVisible();
+        }
     }
 
     @Override
     void hideScanAnimation() {
-        injectedLoadingIndicatorContainer.getInjectedViewAdapter().onHidden();
+        if (injectedLoadingIndicatorContainer.getInjectedViewAdapter() != null) {
+            injectedLoadingIndicatorContainer.getInjectedViewAdapter().onHidden();
+        }
         mAnalysisMessageTextView.setVisibility(View.GONE);
     }
 
