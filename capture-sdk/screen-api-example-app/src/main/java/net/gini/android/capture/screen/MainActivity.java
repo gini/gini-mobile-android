@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
 import net.gini.android.capture.help.view.HelpNavigationBarBottomAdapter;
 import net.gini.android.capture.onboarding.DefaultPages;
 import net.gini.android.capture.AsyncCallback;
@@ -202,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(final DialogInterface dialogInterface,
-                            final int i) {
+                                        final int i) {
                         finish();
                     }
                 })
@@ -315,7 +316,8 @@ public class MainActivity extends AppCompatActivity {
         builder.setDocumentImportEnabledFileTypes(DocumentImportEnabledFileTypes.PDF_AND_IMAGES)
                 .setFileImportEnabled(true)
                 .setQRCodeScanningEnabled(true)
-                .setMultiPageEnabled(true);
+                .setMultiPageEnabled(true)
+                .setOnlyQRCodeScanning(true);
         builder.setFlashButtonEnabled(true);
         builder.setEventTracker(new GiniCaptureEventTracker());
         builder.setCustomErrorLoggerListener(new CustomErrorLoggerListener());
@@ -390,7 +392,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode,
-            final Intent data) {
+                                    final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_SCAN) {
             if (data == null) {

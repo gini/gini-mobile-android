@@ -99,6 +99,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
 import kotlin.Unit;
@@ -660,17 +661,21 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     }
 
     private void initOnlyQRScanning() {
-        if (isOnlyQRCodeScanning()) {
+        if (isOnlyQRCodeScanningEnabled()) {
             mPaneWrapper.setVisibility(View.GONE);
+            ConstraintLayout.LayoutParams params = ((ConstraintLayout.LayoutParams)mImageFrame.getLayoutParams());
+            params.dimensionRatio = "1:1";
+            params.leftMargin = (int) Objects.requireNonNull(mFragment.getActivity()).getResources().getDimension(R.dimen.xlarge);
+            params.rightMargin = (int) Objects.requireNonNull(mFragment.getActivity()).getResources().getDimension(R.dimen.xlarge);
         }
     }
 
-    private boolean isOnlyQRCodeScanning() {
+    private boolean isOnlyQRCodeScanningEnabled() {
         if (!GiniCapture.hasInstance()) {
             return false;
         }
 
-        return GiniCapture.getInstance().isQRCodeScanningEnabled();
+        return GiniCapture.getInstance().isOnlyQRCodeScanning();
     }
 
     private void initViews() {

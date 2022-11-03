@@ -85,6 +85,7 @@ public class GiniCapture {
     private final DocumentImportEnabledFileTypes mDocumentImportEnabledFileTypes;
     private final boolean mFileImportEnabled;
     private final boolean mQRCodeScanningEnabled;
+    private final boolean mIsOnlyQRCodeScanning;
     private final ArrayList<OnboardingPage> mCustomOnboardingPages; // NOPMD - Bundle req. ArrayList
     private final boolean mShouldShowOnboardingAtFirstRun;
     private final boolean mMultiPageEnabled;
@@ -185,6 +186,7 @@ public class GiniCapture {
         mDocumentImportEnabledFileTypes = builder.getDocumentImportEnabledFileTypes();
         mFileImportEnabled = builder.isFileImportEnabled();
         mQRCodeScanningEnabled = builder.isQRCodeScanningEnabled();
+        mIsOnlyQRCodeScanning = builder.isOnlyQRCodeScanningEnabled();
         mCustomOnboardingPages = builder.getOnboardingPages();
         mShouldShowOnboardingAtFirstRun = builder.shouldShowOnboardingAtFirstRun();
         mShouldShowOnboarding = builder.shouldShowOnboarding();
@@ -270,6 +272,11 @@ public class GiniCapture {
      */
     public boolean isQRCodeScanningEnabled() {
         return mQRCodeScanningEnabled;
+    }
+
+
+    public boolean isOnlyQRCodeScanning() {
+        return mIsOnlyQRCodeScanning;
     }
 
     /**
@@ -609,6 +616,7 @@ public class GiniCapture {
                 DocumentImportEnabledFileTypes.NONE;
         private boolean mFileImportEnabled;
         private boolean mQRCodeScanningEnabled;
+        private boolean mOnlyQRCodeScanningEnabled;
         private ArrayList<OnboardingPage> mOnboardingPages; // NOPMD - ArrayList required (Bundle)
         private boolean mShouldShowOnboardingAtFirstRun = true;
         private boolean mShouldShowOnboarding;
@@ -617,6 +625,7 @@ public class GiniCapture {
         private boolean mFlashButtonEnabled;
         private boolean mBackButtonsEnabled = true;
         private boolean mIsFlashOnByDefault = true;
+
         private EventTracker mEventTracker = new EventTracker() {
             @Override
             public void onOnboardingScreenEvent(@NotNull final Event<OnboardingScreenEvent> event) {
@@ -850,6 +859,17 @@ public class GiniCapture {
             return this;
         }
 
+
+        boolean isOnlyQRCodeScanningEnabled() {
+            return mOnlyQRCodeScanningEnabled;
+        }
+
+
+        public Builder setOnlyQRCodeScanning(final boolean onlyQRCodeScanningEnabled) {
+            mOnlyQRCodeScanningEnabled = onlyQRCodeScanningEnabled;
+            return this;
+        }
+
         boolean shouldShowOnboarding() {
             return mShouldShowOnboarding;
         }
@@ -1061,6 +1081,7 @@ public class GiniCapture {
         public CameraNavigationBarBottomAdapter getCameraNavigationBarBottomAdapter() {
             return cameraNavigationBarBottomAdapter;
         }
+
 
         /**
          * Enable/disable the bottom navigation bar.
