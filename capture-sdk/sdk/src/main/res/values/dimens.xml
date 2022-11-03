@@ -10,6 +10,7 @@
     <dimen name="xxxxxlarge">96dp</dimen>
 
     <dimen name="text_small">8sp</dimen>
+    <dimen name="text_min">12sp</dimen>
     <dimen name="text_medium">16sp</dimen>
     <dimen name="text_large">24sp</dimen>
 
