@@ -199,7 +199,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private ProgressBar mActivityIndicator;
     private ImageView mImageFrame;
     private ViewStubSafeInflater mViewStubInflater;
-
+    private ConstraintLayout mPaneWrapper;
     private boolean mIsTakingPicture;
 
     private boolean mImportDocumentButtonEnabled;
@@ -283,6 +283,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         setInputHandlers();
         createPopups();
         setTopBarInjectedViewContainer();
+        initOnlyQRScanning();
         return view;
     }
 
@@ -610,6 +611,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         topAdapterInjectedViewContainer = view.findViewById(R.id.gc_navigation_top_bar);
         mImageFrame = view.findViewById(R.id.gc_camera_frame);
         mCameraFrameWrapper = view.findViewById(R.id.gc_camera_frame_wrapper);
+        mPaneWrapper = view.findViewById(R.id.gc_pane_wrapper);
     }
 
     private void setTopBarInjectedViewContainer() {
@@ -657,6 +659,19 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         trackCameraScreenEvent(CameraScreenEvent.HELP);
     }
 
+    private void initOnlyQRScanning() {
+        if (isOnlyQRCodeScanning()) {
+            mPaneWrapper.setVisibility(View.GONE);
+        }
+    }
+
+    private boolean isOnlyQRCodeScanning() {
+        if (!GiniCapture.hasInstance()) {
+            return false;
+        }
+
+        return GiniCapture.getInstance().isQRCodeScanningEnabled();
+    }
 
     private void initViews() {
         final Activity activity = mFragment.getActivity();
