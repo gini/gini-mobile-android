@@ -74,7 +74,7 @@ public class ZoomInPreviewFragment extends Fragment {
 
                             mRotatableTouchImageViewContainer.getImageView().setImageBitmap(
                                     result.getBitmapPreview());
-                            mRotatableTouchImageViewContainer.rotateImageView(mImageDocument.getRotationForDisplay(), false);
+                            mRotatableTouchImageViewContainer.setRotation(mImageDocument.getRotationForDisplay());
                         }
 
                         @Override
