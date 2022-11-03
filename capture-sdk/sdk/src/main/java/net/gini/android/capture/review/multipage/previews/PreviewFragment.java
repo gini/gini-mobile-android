@@ -244,7 +244,7 @@ public class PreviewFragment extends Fragment {
     }
 
     public void manageSelectionRect(int visibility) {
-        mImageBlueRect.setVisibility(visibility);
+        //mImageBlueRect.setVisibility(visibility);
     }
 
     /**

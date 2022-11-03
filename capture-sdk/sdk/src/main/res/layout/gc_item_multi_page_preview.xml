@@ -9,17 +9,27 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/gc_image_container"
+
+        <FrameLayout
+            android:id="@+id/gc_image_selected_rect"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:scaleType="fitCenter"
+            android:background="@drawable/gc_image_preview_rectangle"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1.414"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-        </ImageView>
+        <ImageView
+            android:id="@+id/gc_image_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter" />
+        </FrameLayout>
+
 
         <ImageButton
             android:id="@+id/gc_button_delete"
@@ -29,8 +39,8 @@
             android:layout_marginEnd="24dp"
             android:background="@android:color/transparent"
             android:src="@drawable/gc_delete"
-            app:layout_constraintEnd_toEndOf="@+id/gc_image_container"
-            app:layout_constraintTop_toTopOf="@+id/gc_image_container" />
+            app:layout_constraintEnd_toEndOf="@+id/gc_image_selected_rect"
+            app:layout_constraintTop_toTopOf="@+id/gc_image_selected_rect" />
 
         <ProgressBar
             android:id="@+id/gc_activity_indicator"
@@ -48,13 +58,6 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:targetApi="lollipop"
             tools:visibility="visible" />
-
-        <FrameLayout
-            android:id="@+id/gc_image_selected_rect"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/gc_image_preview_rectangle"
-            android:visibility="invisible" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </RelativeLayout>

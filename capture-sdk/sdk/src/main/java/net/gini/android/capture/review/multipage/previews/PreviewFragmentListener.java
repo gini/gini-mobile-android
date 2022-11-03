@@ -20,4 +20,6 @@ public interface PreviewFragmentListener {
     void onRetryUpload(@NonNull final ImageDocument document);
 
     void onDeleteDocument(@NonNull final ImageDocument document);
+
+    void onPageClicked(@NonNull final int position);
 }

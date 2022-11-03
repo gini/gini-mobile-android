@@ -1,6 +1,8 @@
 package net.gini.android.capture.review.zoom;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageButton;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,7 +22,7 @@ public class ZoomInPreviewActivity extends AppCompatActivity {
     private ZoomInPreviewFragment mZoomInFragment;
     private ImageDocument mImageDocument;
 
-    private InjectedViewContainer<NavigationBarTopAdapter> mTopAdapterInjectedViewContainer;
+    private ImageButton mClose;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -29,32 +31,17 @@ public class ZoomInPreviewActivity extends AppCompatActivity {
 
         initViews();
 
-        setupTopBarNavigation();
-
         mImageDocument = getIntent().getParcelableExtra(ARGS_DOCUMENT);
 
         addFragment();
     }
 
     private void initViews() {
-        mTopAdapterInjectedViewContainer = findViewById(R.id.gc_injected_navigation_bar_container_top);
+        mClose = findViewById(R.id.gc_action_close);
+
+        mClose.setOnClickListener(v -> onBackPressed());
     }
 
-    private void setupTopBarNavigation() {
-        if (GiniCapture.hasInstance()) {
-            mTopAdapterInjectedViewContainer.setInjectedViewAdapter(GiniCapture.getInstance().getNavigationBarTopAdapter());
-
-            if (mTopAdapterInjectedViewContainer.getInjectedViewAdapter() == null)
-                return;
-
-
-            mTopAdapterInjectedViewContainer.getInjectedViewAdapter().setTitle(getString(R.string.gc_review));
-
-            mTopAdapterInjectedViewContainer.getInjectedViewAdapter().setNavButtonType(NavButtonType.CLOSE);
-
-            mTopAdapterInjectedViewContainer.getInjectedViewAdapter().setOnNavButtonClickListener(v -> onBackPressed());
-        }
-    }
 
     private void addFragment() {
         mZoomInFragment = ZoomInPreviewFragment.newInstance(mImageDocument);

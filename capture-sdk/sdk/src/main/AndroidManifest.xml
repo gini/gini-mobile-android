@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="net.gini.android.capture">
 
-    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application>
         <activity
@@ -58,8 +58,10 @@
             android:exported="false"
             android:label="@string/gc_title_multi_page_review"
             android:theme="@style/GiniCaptureTheme" />
-
-
+        <activity
+            android:name=".review.zoom.ZoomInPreviewActivity"
+            android:exported="false"
+            android:theme="@style/GiniCaptureTheme" />
 
         <meta-data
             android:name="com.google.android.gms.version"

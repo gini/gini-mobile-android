@@ -12,6 +12,7 @@ import static net.gini.android.capture.tracking.EventTrackingHelper.trackReviewS
 
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
@@ -47,6 +48,7 @@ import net.gini.android.capture.review.multipage.previews.PreviewsPageChangeList
 import net.gini.android.capture.review.multipage.thumbnails.ThumbnailsAdapter;
 import net.gini.android.capture.review.multipage.thumbnails.ThumbnailsAdapterListener;
 import net.gini.android.capture.review.multipage.thumbnails.ThumbnailsTouchHelperCallback;
+import net.gini.android.capture.review.zoom.ZoomInPreviewActivity;
 import net.gini.android.capture.tracking.ReviewScreenEvent;
 import net.gini.android.capture.tracking.ReviewScreenEvent.UPLOAD_ERROR_DETAILS_MAP_KEY;
 import net.gini.android.capture.view.InjectedViewContainer;
@@ -129,6 +131,7 @@ import jersey.repackaged.jsr166e.CompletableFuture;
 public class MultiPageReviewFragment extends Fragment implements MultiPageReviewFragmentInterface,
         PreviewFragmentListener, FragmentImplCallback {
 
+    private static final String ARGS_DOCUMENT = "GC_ARGS_DOCUMENT";
     private static final Logger LOG = LoggerFactory.getLogger(MultiPageReviewFragment.class);
 
     @VisibleForTesting
@@ -248,7 +251,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
         };
 
         mPreviewsAdapter = new PreviewsPager2Adapter(requireActivity(), mMultiPageDocument,
-                previewsAdapterListener);
+                previewsAdapterListener, this);
         mPreviewsPager.setAdapter(mPreviewsAdapter);
         mPreviewsPager.setPageTransformer(new MarginPageTransformer(10));
 
@@ -262,8 +265,9 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 super.onPageScrolled(position, positionOffset, positionOffsetPixels);
 
-                Optional<Fragment> presentedFragment = getChildFragmentManager().getFragments().stream().findFirst();
-                presentedFragment.ifPresent(fragment -> ((PreviewFragment) fragment).manageSelectionRect(View.INVISIBLE));
+                Fragment current = mPreviewsAdapter.getCurrentFragment(mPreviewsPager.getCurrentItem());
+                if (current != null)
+                    ((PreviewFragment) current).manageSelectionRect(View.INVISIBLE);
             }
 
             @Override
@@ -275,12 +279,13 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
             public void onPageScrollStateChanged(int state) {
                 super.onPageScrollStateChanged(state);
                 if (state == ViewPager2.SCROLL_STATE_IDLE) {
-                    Fragment current = mPreviewsAdapter.getCurrentFragment(mPreviewsPager);
+                    Fragment current = mPreviewsAdapter.getCurrentFragment(mPreviewsPager.getCurrentItem());
                     if (current != null)
                         ((PreviewFragment) current).manageSelectionRect(View.VISIBLE);
                 }
             }
         });
+
 
         mTabIndicator.setVisibility(mPreviewsAdapter.getItemCount() <= 1 ? View.INVISIBLE : View.VISIBLE);
     }
@@ -673,20 +678,14 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
             if (networkRequestsManager != null) {
                 networkRequestsManager.cancel(mMultiPageDocument);
                 networkRequestsManager.delete(mMultiPageDocument)
-                        .handle(new CompletableFuture.BiFun<NetworkRequestResult<
-                                GiniCaptureDocument>, Throwable, Void>() {
-                            @Override
-                            public Void apply(
-                                    final NetworkRequestResult<GiniCaptureDocument> requestResult,
-                                    final Throwable throwable) {
-                                for (final Object document : mMultiPageDocument.getDocuments()) {
-                                    final GiniCaptureDocument giniCaptureDocument =
-                                            (GiniCaptureDocument) document;
-                                    networkRequestsManager.cancel(giniCaptureDocument);
-                                    networkRequestsManager.delete(giniCaptureDocument);
-                                }
-                                return null;
+                        .handle((CompletableFuture.BiFun<NetworkRequestResult<GiniCaptureDocument>, Throwable, Void>) (requestResult, throwable) -> {
+                            for (final Object document : mMultiPageDocument.getDocuments()) {
+                                final GiniCaptureDocument giniCaptureDocument =
+                                        (GiniCaptureDocument) document;
+                                networkRequestsManager.cancel(giniCaptureDocument);
+                                networkRequestsManager.delete(giniCaptureDocument);
                             }
+                            return null;
                         });
             }
         }
@@ -700,6 +699,14 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     @Override
     public void onDeleteDocument(@NonNull final ImageDocument document) {
         deleteDocumentAndUpdateUI(document);
+    }
+
+    @Override
+    public void onPageClicked(@NonNull int position) {
+        Document document = mMultiPageDocument.getDocuments().get(position);
+        Intent intent = new Intent(requireContext(), ZoomInPreviewActivity.class);
+        intent.putExtra(ARGS_DOCUMENT, document);
+        startActivity(intent);
     }
 
     @Override
