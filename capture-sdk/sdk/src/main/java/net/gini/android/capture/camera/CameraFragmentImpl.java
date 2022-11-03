@@ -662,8 +662,11 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private void initOnlyQRScanning() {
         if (isOnlyQRCodeScanningEnabled()) {
+
             mPaneWrapper.setVisibility(View.GONE);
+
             ConstraintLayout.LayoutParams params = ((ConstraintLayout.LayoutParams)mImageFrame.getLayoutParams());
+
             params.dimensionRatio = "1:1";
             params.leftMargin = (int) Objects.requireNonNull(mFragment.getActivity()).getResources().getDimension(R.dimen.xlarge);
             params.rightMargin = (int) Objects.requireNonNull(mFragment.getActivity()).getResources().getDimension(R.dimen.xlarge);
@@ -675,7 +678,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             return false;
         }
 
-        return GiniCapture.getInstance().isOnlyQRCodeScanning();
+        return GiniCapture.getInstance().isOnlyQRCodeScanning() && GiniCapture.getInstance().isQRCodeScanningEnabled();
     }
 
     private void initViews() {
