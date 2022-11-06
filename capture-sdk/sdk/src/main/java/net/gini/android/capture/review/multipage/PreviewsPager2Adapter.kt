@@ -40,26 +40,15 @@ class PreviewsPager2Adapter(
             errorButtonAction = listener.getErrorButtonAction(documentError)
         }
         val instance = PreviewFragment.createInstance(document, errorMessage, errorButtonAction)
+        instance.setListener(previewFragmentListener)
 
         mFragments.add(instance)
 
         return instance
     }
 
-    override fun onBindViewHolder(
-        holder: FragmentViewHolder,
-        position: Int,
-        payloads: MutableList<Any>
-    ) {
-        super.onBindViewHolder(holder, position, payloads)
-
-        holder.itemView.setOnClickListener {
-            previewFragmentListener.onPageClicked(position)
-        }
-    }
-
     fun getCurrentFragment(position: Int): Fragment? {
-        if (mFragments.isNotEmpty() && position <= mFragments.size)
+        if (mFragments.isNotEmpty() && position < mFragments.size)
             return mFragments[position]
 
         return null

@@ -12,7 +12,7 @@ import androidx.viewpager.widget.ViewPager;
 
 /**
  * Created by Alpar Szotyori on 08.05.2018.
- *
+ * <p>
  * Copyright (c) 2018 Gini GmbH.
  */
 
@@ -25,13 +25,17 @@ public class PreviewsAdapter extends FragmentStatePagerAdapter {
 
     private final ImageMultiPageDocument mMultiPageDocument;
     private final PreviewsAdapterListener mListener;
+    private final PreviewFragmentListener mPreviewFragmentListener;
+
 
     public PreviewsAdapter(@NonNull final FragmentManager fm,
-            @NonNull final ImageMultiPageDocument multiPageDocument,
-            @NonNull final PreviewsAdapterListener listener) {
+                           @NonNull final ImageMultiPageDocument multiPageDocument,
+                           @NonNull final PreviewsAdapterListener listener,
+    @NonNull final PreviewFragmentListener fragmentListener) {
         super(fm);
         mMultiPageDocument = multiPageDocument;
         mListener = listener;
+        mPreviewFragmentListener = fragmentListener;
     }
 
     @Override
@@ -57,13 +61,12 @@ public class PreviewsAdapter extends FragmentStatePagerAdapter {
             errorMessage = documentError.getMessage();
             errorButtonAction = mListener.getErrorButtonAction(documentError);
         }
-        return PreviewFragment.createInstance(document, errorMessage, errorButtonAction);
-    }
 
-    public void rotateImageInCurrentItemBy(@NonNull final ViewPager viewPager, final int degrees) {
-        final PreviewFragment fragment = (PreviewFragment) instantiateItem(viewPager,
-                viewPager.getCurrentItem());
-        fragment.rotateImageViewBy(degrees, true);
+        PreviewFragment instance = PreviewFragment.createInstance(document, errorMessage, errorButtonAction);
+
+        instance.setListener(mPreviewFragmentListener);
+
+        return instance;
     }
 
     public void visibilitySelectionRect(@NonNull final ViewPager viewPager, int visibility) {

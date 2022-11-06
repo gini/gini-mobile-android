@@ -28,6 +28,7 @@ public class PhotoMemoryCache extends MemoryCache<ImageDocument, Photo> {
 
     private static final int RUNNING_WORKERS_LIMIT = 3;
     private final DocumentDataMemoryCache mDocumentDataMemoryCache;
+    private boolean mRotate;
 
     public PhotoMemoryCache(@NonNull final DocumentDataMemoryCache documentDataMemoryCache) {
         super(RUNNING_WORKERS_LIMIT);

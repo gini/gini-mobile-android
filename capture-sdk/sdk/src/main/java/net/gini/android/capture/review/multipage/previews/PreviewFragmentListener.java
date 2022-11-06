@@ -21,5 +21,5 @@ public interface PreviewFragmentListener {
 
     void onDeleteDocument(@NonNull final ImageDocument document);
 
-    void onPageClicked(@NonNull final int position);
+    void onPageClicked(@NonNull final ImageDocument document);
 }

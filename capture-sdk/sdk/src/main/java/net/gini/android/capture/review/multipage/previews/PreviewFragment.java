@@ -1,13 +1,17 @@
 package net.gini.android.capture.review.multipage.previews;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
@@ -43,16 +47,18 @@ public class PreviewFragment extends Fragment {
     private static final String PARCELABLE_MEMORY_CACHE_TAG = "PAGE_PREVIEW_FRAGMENT";
 
     private ImageView mImageViewContainer;
-    private FrameLayout mImageBlueRect;
+    private LinearLayout mImageBlueRect;
+    private ImageButton mDeletePage;
     private ImageDocument mDocument;
     private String mErrorMessage;
     private ProgressBar mActivityIndicator;
     private boolean mStopped = true;
     private ErrorButtonAction mErrorButtonAction;
+    private PreviewFragmentListener listener;
 
     public static PreviewFragment createInstance(@Nullable final ImageDocument document,
-            @Nullable final String errorMessage,
-            @Nullable final ErrorButtonAction errorButtonAction) {
+                                                 @Nullable final String errorMessage,
+                                                 @Nullable final ErrorButtonAction errorButtonAction) {
         final PreviewFragment fragment = new PreviewFragment();
         final Bundle args = new Bundle();
         args.putParcelable(ARGS_DOCUMENT, document);
@@ -83,13 +89,33 @@ public class PreviewFragment extends Fragment {
 
     @Override
     public View onCreateView(@NonNull final LayoutInflater inflater, final ViewGroup container,
-            final Bundle savedInstanceState) {
-        final View view = inflater.inflate(R.layout.gc_item_multi_page_preview, container,
+                             final Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.gc_item_multi_page_preview, container,
                 false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
         mImageViewContainer = view.findViewById(R.id.gc_image_container);
         mActivityIndicator = view.findViewById(R.id.gc_activity_indicator);
         mImageBlueRect = view.findViewById(R.id.gc_image_selected_rect);
-        return view;
+        mDeletePage = view.findViewById(R.id.gc_button_delete);
+        setupHandlers();
+    }
+
+    private void setupHandlers() {
+
+        mDeletePage.setOnClickListener(v -> {
+            if (listener != null)
+                listener.onDeleteDocument(mDocument);
+        });
+
+        mImageViewContainer.setOnClickListener(v -> {
+            if (listener != null)
+                listener.onPageClicked(mDocument);
+        });
     }
 
     @Override
@@ -117,10 +143,9 @@ public class PreviewFragment extends Fragment {
                                 }
                                 hideActivityIndicator();
                                 LOG.debug("Showing preview ({})", this);
-                                mImageViewContainer.setImageBitmap(
-                                        result.getBitmapPreview());
+
+                                mImageViewContainer.setImageBitmap(result.getBitmapPreview());
                                 LOG.debug("Applying rotation ({})", this);
-                                rotateImageView(mDocument.getRotationForDisplay(), false);
                             }
 
                             @Override
@@ -150,14 +175,18 @@ public class PreviewFragment extends Fragment {
         }
     }
 
+    public void setListener(PreviewFragmentListener listener) {
+        this.listener = listener;
+    }
+
     private void showPreviewError(final Context context) {
         final View view = getView();
         if (view == null) {
             return;
         }
         ErrorSnackbar.make(context, (RelativeLayout) view, ErrorSnackbar.Position.TOP,
-                context.getString(R.string.gc_multi_page_review_image_preview_error),
-                null, null, ErrorSnackbar.LENGTH_INDEFINITE)
+                        context.getString(R.string.gc_multi_page_review_image_preview_error),
+                        null, null, ErrorSnackbar.LENGTH_INDEFINITE)
                 .showWithoutAnimation();
     }
 
@@ -166,24 +195,24 @@ public class PreviewFragment extends Fragment {
         if (view == null) {
             return;
         }
-        final String buttonTitle = getErrorButtonTitle(context);
+        /*final String buttonTitle = getErrorButtonTitle(context);
         ErrorSnackbar.make(context, (RelativeLayout) view, ErrorSnackbar.Position.TOP,
-                mErrorMessage,
-                buttonTitle,
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(final View v) {
-                        final PreviewFragmentListener listener = getListener();
-                        if (listener != null && mErrorButtonAction != null) {
-                            if (mErrorButtonAction == ErrorButtonAction.RETRY) {
-                                listener.onRetryUpload(mDocument);
-                            } else if (mErrorButtonAction == ErrorButtonAction.DELETE) {
-                                listener.onDeleteDocument(mDocument);
+                        mErrorMessage,
+                        buttonTitle,
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(final View v) {
+                                final PreviewFragmentListener listener = getListener();
+                                if (listener != null && mErrorButtonAction != null) {
+                                    if (mErrorButtonAction == ErrorButtonAction.RETRY) {
+                                        listener.onRetryUpload(mDocument);
+                                    } else if (mErrorButtonAction == ErrorButtonAction.DELETE) {
+                                        listener.onDeleteDocument(mDocument);
+                                    }
+                                }
                             }
-                        }
-                    }
-                }, ErrorSnackbar.LENGTH_INDEFINITE)
-                .showWithoutAnimation();
+                        }, ErrorSnackbar.LENGTH_INDEFINITE)
+                .showWithoutAnimation();*/
     }
 
     private String getErrorButtonTitle(@NonNull final Context context) {
@@ -227,6 +256,9 @@ public class PreviewFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         clearParcelableMemoryCache();
+
+        if (listener != null)
+            listener = null;
     }
 
     private void clearParcelableMemoryCache() {
@@ -235,16 +267,8 @@ public class PreviewFragment extends Fragment {
         ParcelableMemoryCache.getInstance().removeEntriesWithTag(PARCELABLE_MEMORY_CACHE_TAG);
     }
 
-    private void rotateImageView(final int degrees, final boolean animated) {
-        mImageViewContainer.setRotation(mDocument.getRotationForDisplay());
-    }
-
-    public void rotateImageViewBy(final int degrees, final boolean animated) {
-        mImageViewContainer.setRotation(mDocument.getRotationForDisplay());
-    }
-
     public void manageSelectionRect(int visibility) {
-        //mImageBlueRect.setVisibility(visibility);
+        mImageBlueRect.setVisibility(visibility);
     }
 
     /**

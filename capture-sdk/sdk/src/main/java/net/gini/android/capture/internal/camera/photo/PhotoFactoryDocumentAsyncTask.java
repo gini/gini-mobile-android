@@ -1,11 +1,15 @@
 package net.gini.android.capture.internal.camera.photo;
 
+import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.os.AsyncTask;
 
 import net.gini.android.capture.AsyncCallback;
 import net.gini.android.capture.document.ImageDocument;
 
 import androidx.annotation.NonNull;
+
+import java.io.ByteArrayOutputStream;
 
 /**
  * Internal use only.
@@ -25,6 +29,7 @@ public class PhotoFactoryDocumentAsyncTask extends AsyncTask<ImageDocument, Void
     protected Photo doInBackground(final ImageDocument... imageDocuments) {
         try {
             return PhotoFactory.newPhotoFromDocument(imageDocuments[0]);
+
         } catch (final Exception e) {
             mException = e;
             return null;
@@ -39,5 +44,4 @@ public class PhotoFactoryDocumentAsyncTask extends AsyncTask<ImageDocument, Void
         }
         mListener.onSuccess(photo);
     }
-
 }

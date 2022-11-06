@@ -34,21 +34,21 @@
         android:layout_height="0dp"
         android:layout_above="@+id/gc_thumbnails_panel"
         android:layout_marginTop="@dimen/large_24"
+        android:layout_marginBottom="@dimen/large_24"
         app:layout_constraintBottom_toTopOf="@+id/gc_tab_indicator"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/gc_payment_visible_txt">
 
-        <androidx.viewpager2.widget.ViewPager2
+        <androidx.viewpager.widget.ViewPager
             android:id="@+id/gc_view_pager"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginBottom="24dp"
+            android:layout_marginStart="@dimen/large_24"
+            android:layout_marginEnd="@dimen/large_24"
             android:clipToPadding="false"
-            android:paddingStart="@dimen/large"
-            android:paddingEnd="@dimen/large"
+            android:paddingStart="@dimen/xlarge"
+            android:paddingEnd="@dimen/xlarge"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
