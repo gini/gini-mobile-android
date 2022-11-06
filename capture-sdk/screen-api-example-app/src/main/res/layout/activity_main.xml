@@ -49,6 +49,16 @@
                 app:layout_constraintTop_toBottomOf="@id/bottom_navbar_switch"
                 app:switchPadding="8dp" />
 
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/gc_only_qr_code_scanning"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/gc_only_qr_code_scanning"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/animated_onboarding_illustrations_switch"
+                app:switchPadding="8dp" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>

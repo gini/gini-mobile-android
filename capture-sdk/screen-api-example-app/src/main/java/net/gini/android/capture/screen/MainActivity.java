@@ -81,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView mTextAppVersion;
     private SwitchMaterial bottomNavBarSwitch;
     private SwitchMaterial animatedOnboardingIllustrationsSwitch;
+    private SwitchMaterial onlyQRCodeSwitch;
     private CancellationToken mFileImportCancellationToken;
 
     @Override
@@ -316,8 +317,7 @@ public class MainActivity extends AppCompatActivity {
         builder.setDocumentImportEnabledFileTypes(DocumentImportEnabledFileTypes.PDF_AND_IMAGES)
                 .setFileImportEnabled(true)
                 .setQRCodeScanningEnabled(true)
-                .setMultiPageEnabled(true)
-                .setOnlyQRCodeScanning(true);
+                .setMultiPageEnabled(true);
         builder.setFlashButtonEnabled(true);
         builder.setEventTracker(new GiniCaptureEventTracker());
         builder.setCustomErrorLoggerListener(new CustomErrorLoggerListener());
@@ -352,6 +352,8 @@ public class MainActivity extends AppCompatActivity {
             builder.setOnboardingQRCodeIllustrationAdapter(new CustomOnboardingIllustrationAdapter(getResources().getIdentifier("scan_qr_code", "raw", this.getPackageName())));
         }
 
+        builder.setOnlyQRCodeScanning(onlyQRCodeSwitch.isChecked());
+
         builder.build();
     }
 
@@ -381,6 +383,7 @@ public class MainActivity extends AppCompatActivity {
         mTextAppVersion = (TextView) findViewById(R.id.text_app_version);
         bottomNavBarSwitch = findViewById(R.id.bottom_navbar_switch);
         animatedOnboardingIllustrationsSwitch = findViewById(R.id.animated_onboarding_illustrations_switch);
+        onlyQRCodeSwitch = findViewById(R.id.gc_only_qr_code_scanning);
     }
 
     private ArrayList<OnboardingPage> getOnboardingPages(final boolean isMultiPageEnabled, final boolean isQRCodeScanningEnabled) {
