@@ -32,9 +32,6 @@ interface DocumentService {
     @DELETE
     suspend fun deleteDocumentFromUri(@HeaderMap bearer: Map<String, String>, @Url documentUri: Uri): Response<ResponseBody>
 
-    @POST("documents/{documentId}/errorreport")
-    suspend fun errorReportForDocument(@HeaderMap bearer: Map<String, String>, @Path("documentId") documentId: String, @Query("summary") summary: String?, @Query("description") description: String?): Response<ResponseBody>
-
     @GET("documents/{documentId}/layout")
     suspend fun getLayoutForDocument(@HeaderMap bearer: Map<String, String>, @Path("documentId") documentId: String): Response<ResponseBody>
 

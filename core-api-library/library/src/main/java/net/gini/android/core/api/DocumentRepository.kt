@@ -264,30 +264,6 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
     }
 
     /**
-     * Sends an error report for the given document to Gini. If the processing result for a document was not
-     * satisfactory (e.g. extractions where empty or incorrect), you can create an error report for a document. This
-     * allows Gini to analyze and correct the problem that was found.
-     *
-     * <b>The owner of this document must agree that Gini can use this document for debugging and error analysis.</b>
-     *
-     * @param document    The erroneous document.
-     * @param summary     Optional a short summary of the occurred error.
-     * @param description Optional a more detailed description of the occurred error.
-     * @return A Resource which will resolve to an error ID. This is a unique identifier for your error report
-     * and can be used to refer to the reported error towards the Gini support.
-     */
-    @Throws(ApiException::class)
-    suspend fun reportDocument(document: Document, summary: String?, description: String?): Resource<String> {
-        return withSession { sessionToken ->
-            wrapInResource {
-                val response = documentRemoteSource.errorReportForDocument(sessionToken, document.id, summary, description)
-                val jsonObject = JSONObject(response)
-                jsonObject.getString("errorId")
-            }
-        }
-    }
-
-    /**
      * Gets the layout of a document. The layout of the document describes the textual content of a document with
      * positional information, based on the processed document.
      *

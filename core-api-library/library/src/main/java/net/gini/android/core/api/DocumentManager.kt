@@ -126,26 +126,6 @@ abstract class DocumentManager<out DR: DocumentRepository<E>, E: ExtractionsCont
         documentRepository.pollDocument(document)
 
     /**
-     * Sends an error report for the given document to Gini. If the processing result for a document was not
-     * satisfactory (e.g. extractions where empty or incorrect), you can create an error report for a document. This
-     * allows Gini to analyze and correct the problem that was found.
-     *
-     * The owner of this document must agree that Gini can use this document for debugging and error analysis.
-     *
-     * @param document    The erroneous document.
-     * @param summary     Optional a short summary of the occurred error.
-     * @param description Optional a more detailed description of the occurred error.
-     * @return Resource with Error ID (This is a unique identifier for your error report
-     * and can be used to refer to the reported error towards the Gini support.) or infos about API error
-     */
-    suspend fun reportDocument(
-        document: Document,
-        summary: String? = null,
-        description: String? = null,
-    ): Resource<String> =
-        documentRepository.reportDocument(document, summary, description)
-
-    /**
      * Gets the layout of a document. The layout of the document describes the textual content of a document with
      * positional information, based on the processed document.
      *
