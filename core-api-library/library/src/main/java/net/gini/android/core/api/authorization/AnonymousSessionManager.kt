@@ -12,9 +12,9 @@ class AnonymousSessionManager(
     private val credentialsStore: CredentialsStore,
     private val emailDomain: String
 ): SessionManager {
-    private var currentSession: SessionToken? = null
+    private var currentSession: Session? = null
 
-    override suspend fun getSession(): Resource<SessionToken> {
+    override suspend fun getSession(): Resource<Session> {
         currentSession?.let { session ->
             if (!session.hasExpired()) {
                 return Resource.Success(session)
@@ -78,7 +78,7 @@ class AnonymousSessionManager(
         }
     }
 
-    suspend fun loginUser(): Resource<SessionToken> {
+    suspend fun loginUser(): Resource<Session> {
         val userCredentials = credentialsStore.userCredentials
         if (userCredentials != null) {
             if (hasUserCredentialsEmailDomain(emailDomain, userCredentials)) {
@@ -105,14 +105,7 @@ class AnonymousSessionManager(
             is Resource.Error -> Resource.Error(loginUser)
             is Resource.Success -> {
                 val session = loginUser.data
-                    ?: return Resource.Error(
-                        "Session is missing from response",
-                        loginUser.responseStatusCode,
-                        loginUser.responseHeaders,
-                        loginUser.responseBody
-                    )
-
-                return when (val updateEmail = userRepository.updateEmail(newEmail, oldEmail, session)) {
+                return when (val updateEmail = userRepository.updateEmail(newEmail, oldEmail, session.accessToken)) {
                     is Resource.Cancelled -> Resource.Cancelled()
                     is Resource.Error -> Resource.Error(updateEmail)
                     is Resource.Success -> {
@@ -138,7 +131,7 @@ class AnonymousSessionManager(
         return UUID.randomUUID().toString()
     }
 
-    private fun isInvalidUserError(resource: Resource<SessionToken>): Boolean {
+    private fun isInvalidUserError(resource: Resource<Session>): Boolean {
         when (resource.responseStatusCode ?: 0) {
             400 -> {
                 resource.responseBody?.let {

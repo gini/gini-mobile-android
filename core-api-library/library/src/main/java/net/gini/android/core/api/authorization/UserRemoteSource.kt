@@ -31,29 +31,29 @@ class UserRemoteSource(
         response.body() ?: throw ApiException.forResponse("Empty response body", response)
     }
 
-    suspend fun createUser(userRequestModel: UserRequestModel, sessionToken: SessionToken): Unit = withContext(coroutineContext) {
+    suspend fun createUser(userRequestModel: UserRequestModel, accessToken: String): Unit = withContext(coroutineContext) {
         SafeApiRequest.apiRequest {
-            userService.createUser(bearerHeaderMap(sessionToken), userRequestModel)
+            userService.createUser(bearerHeaderMap(accessToken), userRequestModel)
         }
     }
 
-    suspend fun getGiniApiSessionTokenInfo(token: String, authSessionToken: SessionToken): SessionTokenInfo = withContext(coroutineContext) {
+    suspend fun getGiniApiSessionTokenInfo(token: String, authAccessToken: String): SessionTokenInfo = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
-           userService.getGiniApiSessionTokenInfo(bearerHeaderMap(authSessionToken), token)
-        }
-        response.body() ?: throw ApiException.forResponse("Empty response body", response)
-    }
-
-    suspend fun getUserInfo(uri: String, sessionToken: SessionToken): UserResponseModel = withContext(coroutineContext) {
-        val response = SafeApiRequest.apiRequest {
-            userService.getUserInfo(bearerHeaderMap(sessionToken), uri)
+           userService.getGiniApiSessionTokenInfo(bearerHeaderMap(authAccessToken), token)
         }
         response.body() ?: throw ApiException.forResponse("Empty response body", response)
     }
 
-    suspend fun updateEmail(userId: String, userRequestModel: UserRequestModel, sessionToken: SessionToken): Unit = withContext(coroutineContext) {
+    suspend fun getUserInfo(uri: String, accessToken: String): UserResponseModel = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
-            userService.updateEmail(bearerHeaderMap(sessionToken), userId, userRequestModel)
+            userService.getUserInfo(bearerHeaderMap(accessToken), uri)
+        }
+        response.body() ?: throw ApiException.forResponse("Empty response body", response)
+    }
+
+    suspend fun updateEmail(userId: String, userRequestModel: UserRequestModel, accessToken: String): Unit = withContext(coroutineContext) {
+        val response = SafeApiRequest.apiRequest {
+            userService.updateEmail(bearerHeaderMap(accessToken), userId, userRequestModel)
         }
     }
 
@@ -63,8 +63,8 @@ class UserRemoteSource(
             "Authorization" to "Basic $encoded")
     }
 
-    private fun bearerHeaderMap(sessionToken: SessionToken): Map<String, String> {
+    private fun bearerHeaderMap(accessToken: String): Map<String, String> {
         return mapOf("Accept" to "application/json",
-            "Authorization" to "BEARER ${sessionToken.accessToken}")
+            "Authorization" to "BEARER $accessToken")
     }
 }

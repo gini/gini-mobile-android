@@ -9,6 +9,7 @@ import androidx.test.filters.SmallTest;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import net.gini.android.core.api.authorization.Session;
+import net.gini.android.core.api.authorization.apimodels.SessionToken;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,13 +22,9 @@ import java.util.Date;
 @RunWith(AndroidJUnit4.class)
 public class SessionTest {
 
-    /** Helper method which creates a valid JSON object that can be used in tests. */
-    public JSONObject createTestResponse() throws JSONException {
-        return new JSONObject() {{
-            put("token_type", "bearer");
-            put("access_token", "74c1e7fe-e464-451f-a6eb-8f0998c46ff6");
-            put("expires_in", 3599);
-        }};
+    public SessionToken createTestResponse() {
+        return new SessionToken("74c1e7fe-e464-451f-a6eb-8f0998c46ff6",
+                "bearer", 3599, "");
     }
 
     @Test
@@ -38,14 +35,14 @@ public class SessionTest {
 
     @Test
     public void testFactoryReturnsSession() throws JSONException {
-        JSONObject responseData = createTestResponse();
+        SessionToken responseData = createTestResponse();
 
         assertNotNull(Session.fromAPIResponse(responseData));
     }
 
     @Test
     public void testFactorySetsCorrectAccessToken() throws JSONException {
-        JSONObject responseData = createTestResponse();
+        SessionToken responseData = createTestResponse();
 
         Session session = Session.fromAPIResponse(responseData);
 
@@ -54,7 +51,7 @@ public class SessionTest {
 
     @Test
     public void testFactorySetsCorrectExpirationDate() throws JSONException {
-        JSONObject responseData = createTestResponse();
+        SessionToken responseData = createTestResponse();
 
         Session session = Session.fromAPIResponse(responseData);
 

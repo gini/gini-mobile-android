@@ -11,17 +11,18 @@ open class UserRepository(
     private val userRemoteSource: UserRemoteSource
     ) {
 
-    private var session: SessionToken? = null
+    private var session: Session? = null
 
-    //region Public methods
-    suspend fun loginUser(userRequestModel: UserRequestModel): Resource<SessionToken> =
+    suspend fun loginUser(userRequestModel: UserRequestModel): Resource<Session> =
         wrapInResource {
-            userRemoteSource.signIn(userRequestModel)
+            Session.fromAPIResponse(userRemoteSource.signIn(userRequestModel))
         }
 
-    private suspend fun loginClient(): Resource<SessionToken> =
+    private suspend fun loginClient(): Resource<Session> =
         wrapInResource {
-            userRemoteSource.loginClient()
+            val newSession = Session.fromAPIResponse(userRemoteSource.loginClient())
+            session = newSession
+            newSession
         }
 
     suspend fun createUser(userRequestModel: UserRequestModel): Resource<Unit> =
@@ -29,11 +30,11 @@ open class UserRepository(
             is Resource.Cancelled -> Resource.Cancelled()
             is Resource.Error -> Resource.Error(token)
             is Resource.Success -> wrapInResource {
-                userRemoteSource.createUser(userRequestModel, token.data)
+                userRemoteSource.createUser(userRequestModel, token.data.accessToken)
             }
         }
 
-    private suspend fun getUserRepositorySession(): Resource<SessionToken> =
+    private suspend fun getUserRepositorySession(): Resource<Session> =
         session?.let { session ->
             if (!session.hasExpired()) {
                 Resource.Success(session)
@@ -42,14 +43,13 @@ open class UserRepository(
             }
         } ?: loginClient()
 
-    suspend fun updateEmail(newEmail: String, oldEmail: String, session: SessionToken): Resource<Unit> =
+    suspend fun updateEmail(newEmail: String, oldEmail: String, accessToken: String): Resource<Unit> =
         when (val authToken = getUserRepositorySession()) {
             is Resource.Cancelled -> Resource.Cancelled()
             is Resource.Error -> Resource.Error(authToken)
             is Resource.Success -> wrapInResource {
-                val userId = userRemoteSource.getGiniApiSessionTokenInfo(session.accessToken, authToken.data).userName
-                userRemoteSource.updateEmail(userId, UserRequestModel(email = newEmail, oldEmail = oldEmail), authToken.data)
+                val userId = userRemoteSource.getGiniApiSessionTokenInfo(accessToken, authToken.data.accessToken).userName
+                userRemoteSource.updateEmail(userId, UserRequestModel(email = newEmail, oldEmail = oldEmail), authToken.data.accessToken)
             }
         }
-    //endregion
 }

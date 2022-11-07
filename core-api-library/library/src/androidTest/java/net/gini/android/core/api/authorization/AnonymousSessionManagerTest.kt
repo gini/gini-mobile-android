@@ -1,7 +1,6 @@
 package net.gini.android.core.api.authorization
 
 import android.content.Context
-import androidx.annotation.RequiresApi
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
@@ -43,7 +42,7 @@ class AnonymousSessionManagerTest {
         val userCredentials = UserCredentials(email("foobar"), "1234")
         every { mCredentialsStore?.userCredentials } returns (userCredentials)
         coEvery {mUserRepository?.loginUser(any()) } returns Resource.Success(
-            SessionToken(accessToken = UUID.randomUUID().toString(), tokenType = "bearer", expiresIn = 30000)
+            Session.fromAPIResponse(SessionToken(accessToken = UUID.randomUUID().toString(), tokenType = "bearer", expiresIn = 30000))
         )
 
         val sessionToken = mAnonymousSessionSessionManager?.getSession()
@@ -57,7 +56,7 @@ class AnonymousSessionManagerTest {
         val userCredentials = UserCredentials(email("foobar"), "1234")
         every { mCredentialsStore?.userCredentials } returns (userCredentials)
         coEvery {mUserRepository?.loginUser(UserRequestModel(userCredentials.username, userCredentials.password)) } returns Resource.Success(
-            SessionToken(accessToken = UUID.randomUUID().toString(), tokenType = "bearer", expiresIn = 30000)
+            Session.fromAPIResponse(SessionToken(accessToken = UUID.randomUUID().toString(), tokenType = "bearer", expiresIn = 30000))
         )
 
         val sessionToken = mAnonymousSessionSessionManager?.loginUser()
@@ -84,13 +83,13 @@ class AnonymousSessionManagerTest {
         val userCredentials = UserCredentials(email("foobar"), "1234")
         every { mCredentialsStore!!.userCredentials } returns (userCredentials)
 
-        val sessionToken = SessionToken(accessToken = "1234-5678-9012", tokenType = "bearer", expiresIn = 30000)
+        val session = Session.fromAPIResponse(SessionToken(accessToken = "1234-5678-9012", tokenType = "bearer", expiresIn = 30000))
         coEvery {mUserRepository?.loginUser(UserRequestModel(userCredentials.username, userCredentials.password)) } returns Resource.Success(
-            sessionToken
+            session
         )
 
-        val session = mAnonymousSessionSessionManager?.getSession()?.data
-        assertSame(sessionToken, session)
+        val storedSession = mAnonymousSessionSessionManager?.getSession()?.data
+        assertSame(session, storedSession)
     }
 
     @Test
@@ -99,9 +98,9 @@ class AnonymousSessionManagerTest {
     fun testThatUserSessionsAreReused() = runTest {
         every { mCredentialsStore!!.userCredentials } returns (UserCredentials(email("foobar"), "1234"))
         coEvery { mUserRepository?.loginUser(ofType(UserRequestModel::class)) } returnsMany listOf(Resource.Success(
-            SessionToken(accessToken = UUID.randomUUID().toString(), tokenType = "bearer", expiresIn = 10)
+            Session.fromAPIResponse(SessionToken(accessToken = UUID.randomUUID().toString(), tokenType = "bearer", expiresIn = 10))
         ), Resource.Success(
-            SessionToken(accessToken = UUID.randomUUID().toString(), tokenType = "bearer", expiresIn = 0)
+                Session.fromAPIResponse(SessionToken(accessToken = UUID.randomUUID().toString(), tokenType = "bearer", expiresIn = 0))
         ))
 
         val firstSession = mAnonymousSessionSessionManager?.getSession()?.data
@@ -115,9 +114,9 @@ class AnonymousSessionManagerTest {
     fun testThatUserSessionsAreNotReusedWhenTimedOut() = runTest {
         every { mCredentialsStore!!.userCredentials } returns (UserCredentials(email("foobar"), "1234"))
         coEvery {mUserRepository?.loginUser(ofType(UserRequestModel::class)) } returnsMany listOf(Resource.Success(
-            SessionToken(accessToken = UUID.randomUUID().toString(), tokenType = "bearer", expiresIn = -10)
+            Session.fromAPIResponse(SessionToken(accessToken = UUID.randomUUID().toString(), tokenType = "bearer", expiresIn = -10))
         ), Resource.Success(
-            SessionToken(accessToken = UUID.randomUUID().toString(), tokenType = "bearer", expiresIn = 0)
+                Session.fromAPIResponse(SessionToken(accessToken = UUID.randomUUID().toString(), tokenType = "bearer", expiresIn = 0))
         ))
 
         val firstSession = mAnonymousSessionSessionManager?.getSession()?.data
@@ -228,9 +227,9 @@ class AnonymousSessionManagerTest {
         every { mCredentialsStore!!.userCredentials } returns (UserCredentials("1234@$oldEmailDomain", "5678"))
         coEvery {mUserRepository?.updateEmail(any(), any(), any()) } returns Resource.Success(Unit)
         coEvery {mUserRepository?.loginUser(ofType(UserRequestModel::class)) } returnsMany listOf(Resource.Success(
-            SessionToken(accessToken = "1234-5678-9012", tokenType = "bearer", expiresIn = 30000)
+            Session.fromAPIResponse(SessionToken(accessToken = "1234-5678-9012", tokenType = "bearer", expiresIn = 30000))
         ), Resource.Success(
-            SessionToken(accessToken = "1234-5678-9012", tokenType = "bearer", expiresIn = 30000)
+                Session.fromAPIResponse(SessionToken(accessToken = "1234-5678-9012", tokenType = "bearer", expiresIn = 30000))
         ))
 
         every { mCredentialsStore?.deleteUserCredentials() } returns (true)

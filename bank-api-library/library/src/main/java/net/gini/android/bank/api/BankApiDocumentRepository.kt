@@ -62,9 +62,9 @@ class BankApiDocumentRepository(
         val bodyJSON = JSONObject()
         bodyJSON.put("feedback", feedbackForExtractions)
         val body: RequestBody = bodyJSON.toString().toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
-        return withSession { sessionToken ->
+        return withAccessToken { accessToken ->
             wrapInResource {
-                documentRemoteSource.sendFeedback(sessionToken, document.id, body)
+                documentRemoteSource.sendFeedback(accessToken, document.id, body)
             }
         }
     }
@@ -102,9 +102,9 @@ class BankApiDocumentRepository(
         bodyJSON.put("extractions", feedbackForExtractions)
         bodyJSON.put("compoundExtractions", feedbackForCompoundExtractions)
         val body: RequestBody = bodyJSON.toString().toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
-        return withSession { sessionToken ->
+        return withAccessToken { accessToken ->
             wrapInResource {
-                documentRemoteSource.sendFeedback(sessionToken, document.id, body)
+                documentRemoteSource.sendFeedback(accessToken, document.id, body)
             }
         }
     }
@@ -116,9 +116,9 @@ class BankApiDocumentRepository(
      * @param resolvePaymentInput information of the actual payment
      */
     suspend fun resolvePaymentRequest(requestId: String, resolvePaymentInput: ResolvePaymentInput): Resource<ResolvedPayment> =
-        withSession { sessionToken ->
+        withAccessToken { accessToken ->
             wrapInResource {
-                documentRemoteSource.resolvePaymentRequests(sessionToken, requestId, resolvePaymentInput)
+                documentRemoteSource.resolvePaymentRequests(accessToken, requestId, resolvePaymentInput)
             }
         }
 
@@ -128,16 +128,16 @@ class BankApiDocumentRepository(
      * @param id of the paid {@link PaymentRequest}
      */
     suspend fun getPayment(id: String): Resource<Payment> =
-        withSession { sessionToken ->
+        withAccessToken { accessToken ->
             wrapInResource {
-                documentRemoteSource.getPayment(sessionToken, id)
+                documentRemoteSource.getPayment(accessToken, id)
             }
         }
 
     suspend fun logErrorEvent(errorEvent: ErrorEvent): Resource<Unit> =
-        withSession { sessionToken ->
+        withAccessToken { accessToken ->
             wrapInResource {
-                documentRemoteSource.logErrorEvent(sessionToken, errorEvent)
+                documentRemoteSource.logErrorEvent(accessToken, errorEvent)
             }
         }
 

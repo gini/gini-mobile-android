@@ -74,9 +74,9 @@ class HealthApiDocumentRepository(
         val bodyJSON = JSONObject()
         bodyJSON.put("feedback", feedbackForExtractions)
         val body: RequestBody = bodyJSON.toString().toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
-        return withSession { sessionToken ->
+        return withAccessToken { accessToken ->
             wrapInResource {
-                documentRemoteSource.sendFeedback(sessionToken, document.id, body)
+                documentRemoteSource.sendFeedback(accessToken, document.id, body)
             }
         }
     }
@@ -118,9 +118,9 @@ class HealthApiDocumentRepository(
         bodyJSON.put("extractions", feedbackForExtractions)
         bodyJSON.put("compoundExtractions", feedbackForCompoundExtractions)
         val body: RequestBody = bodyJSON.toString().toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
-        return withSession { sessionToken ->
+        return withAccessToken { accessToken ->
             wrapInResource {
-                documentRemoteSource.sendFeedback(sessionToken, document.id, body)
+                documentRemoteSource.sendFeedback(accessToken, document.id, body)
             }
         }
     }
@@ -129,29 +129,29 @@ class HealthApiDocumentRepository(
         documentId: String,
         page: Int
     ): Resource<ByteArray> =
-        withSession { sessionToken ->
+        withAccessToken { accessToken ->
             wrapInResource {
-                val imageUri = getPages(sessionToken, documentId)
+                val imageUri = getPages(accessToken, documentId)
                     .getPageByPageNumber(page)
                     .getLargestImageUriSmallerThan(Size(2000, 2000))
 
                 if (imageUri != null) {
-                    documentRemoteSource.getFile(sessionToken, imageUri.toString())
+                    documentRemoteSource.getFile(accessToken, imageUri.toString())
                 } else {
                     throw NoSuchElementException("No page image found for page number $page in document $documentId")
                 }
             }
         }
 
-    private suspend fun getPages(sessionToken: SessionToken, documentId: String): List<Page> =
-        documentRemoteSource.getPages(sessionToken, documentId)
+    private suspend fun getPages(accessToken: String, documentId: String): List<Page> =
+        documentRemoteSource.getPages(accessToken, documentId)
             .toPageList(Uri.parse(giniApiType.baseUrl))
 
     suspend fun getPaymentProviders(): Resource<List<PaymentProvider>> {
-        return withSession { sessionToken ->
+        return withAccessToken { accessToken ->
             wrapInResource {
-                documentRemoteSource.getPaymentProviders(sessionToken).map { paymentProviderResponse ->
-                    val icon = documentRemoteSource.getFile(sessionToken, paymentProviderResponse.iconLocation)
+                documentRemoteSource.getPaymentProviders(accessToken).map { paymentProviderResponse ->
+                    val icon = documentRemoteSource.getFile(accessToken, paymentProviderResponse.iconLocation)
                     paymentProviderResponse.toPaymentProvider(icon)
                 }
             }
@@ -159,18 +159,18 @@ class HealthApiDocumentRepository(
     }
 
     suspend fun getPaymentProvider(providerId: String): Resource<PaymentProvider> =
-        withSession { sessionToken ->
+        withAccessToken { accessToken ->
             wrapInResource {
-                val paymentProviderResponse = documentRemoteSource.getPaymentProvider(sessionToken, providerId)
-                val icon = documentRemoteSource.getFile(sessionToken, paymentProviderResponse.iconLocation)
+                val paymentProviderResponse = documentRemoteSource.getPaymentProvider(accessToken, providerId)
+                val icon = documentRemoteSource.getFile(accessToken, paymentProviderResponse.iconLocation)
                 paymentProviderResponse.toPaymentProvider(icon)
             }
         }
 
     suspend fun createPaymentRequest(paymentRequestInput: PaymentRequestInput): Resource<String> {
-        return withSession { sessionToken ->
+        return withAccessToken { accessToken ->
             wrapInResource {
-                documentRemoteSource.createPaymentRequest(sessionToken, paymentRequestInput)
+                documentRemoteSource.createPaymentRequest(accessToken, paymentRequestInput)
             }
         }
     }

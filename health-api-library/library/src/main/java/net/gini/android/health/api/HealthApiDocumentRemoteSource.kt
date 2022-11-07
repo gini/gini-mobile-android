@@ -24,37 +24,37 @@ class HealthApiDocumentRemoteSource internal constructor(
     baseUriString: String
 ): DocumentRemoteSource(coroutineContext, documentService, giniApiType, baseUriString) {
 
-    suspend fun sendFeedback(sessionToken: SessionToken, documentId: String, requestBody: RequestBody): Unit = withContext(coroutineContext) {
+    suspend fun sendFeedback(accessToken: String, documentId: String, requestBody: RequestBody): Unit = withContext(coroutineContext) {
         SafeApiRequest.apiRequest {
-            documentService.sendFeedback(bearerHeaderMap(sessionToken, contentType = giniApiType.giniJsonMediaType), documentId, requestBody)
+            documentService.sendFeedback(bearerHeaderMap(accessToken, contentType = giniApiType.giniJsonMediaType), documentId, requestBody)
         }
     }
 
-    internal suspend fun getPages(sessionToken: SessionToken, documentId: String): List<PageResponse> = withContext(coroutineContext) {
+    internal suspend fun getPages(accessToken: String, documentId: String): List<PageResponse> = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
-            documentService.getPages(bearerHeaderMap(sessionToken, contentType = giniApiType.giniJsonMediaType), documentId)
+            documentService.getPages(bearerHeaderMap(accessToken, contentType = giniApiType.giniJsonMediaType), documentId)
         }
         response.body() ?: throw ApiException.forResponse("Empty response body", response)
     }
 
-    internal suspend fun getPaymentProviders(sessionToken: SessionToken, ): List<PaymentProviderResponse> = withContext(coroutineContext) {
+    internal suspend fun getPaymentProviders(accessToken: String, ): List<PaymentProviderResponse> = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
-            documentService.getPaymentProviders(bearerHeaderMap(sessionToken, contentType = giniApiType.giniJsonMediaType))
+            documentService.getPaymentProviders(bearerHeaderMap(accessToken, contentType = giniApiType.giniJsonMediaType))
         }
         response.body() ?: throw ApiException.forResponse("Empty response body", response)
     }
 
-    internal suspend fun getPaymentProvider(sessionToken: SessionToken, providerId: String): PaymentProviderResponse = withContext(coroutineContext) {
+    internal suspend fun getPaymentProvider(accessToken: String, providerId: String): PaymentProviderResponse = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
-            documentService.getPaymentProvider(bearerHeaderMap(sessionToken, contentType = giniApiType.giniJsonMediaType), providerId)
+            documentService.getPaymentProvider(bearerHeaderMap(accessToken, contentType = giniApiType.giniJsonMediaType), providerId)
         }
         response.body() ?: throw ApiException.forResponse("Empty response body", response)
     }
 
-    suspend fun createPaymentRequest(sessionToken: SessionToken, paymentRequestInput: PaymentRequestInput): String = withContext(coroutineContext) {
+    suspend fun createPaymentRequest(accessToken: String, paymentRequestInput: PaymentRequestInput): String = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             documentService.createPaymentRequest(
-                bearerHeaderMap(sessionToken, contentType = giniApiType.giniJsonMediaType),
+                bearerHeaderMap(accessToken, contentType = giniApiType.giniJsonMediaType),
                 paymentRequestInput.toPaymentRequestBody()
             )
         }

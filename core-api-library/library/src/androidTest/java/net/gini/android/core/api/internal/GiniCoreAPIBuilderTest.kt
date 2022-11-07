@@ -7,6 +7,7 @@ import androidx.test.filters.SmallTest
 import kotlinx.coroutines.Dispatchers
 import net.gini.android.core.api.*
 import net.gini.android.core.api.authorization.CredentialsStore
+import net.gini.android.core.api.authorization.Session
 import net.gini.android.core.api.authorization.SessionManager
 import net.gini.android.core.api.authorization.apimodels.SessionToken
 import net.gini.android.core.api.models.CompoundExtraction
@@ -112,7 +113,7 @@ class GiniCoreAPIBuilderTest {
     ): DocumentRemoteSource(coroutineContext, documentService, giniApiType, baseUriString)
 
     class NullSessionManager: SessionManager {
-        override suspend fun getSession(): Resource<SessionToken> {
+        override suspend fun getSession(): Resource<Session> {
             return Resource.Error("NullSessionManager can't create sessions")
         }
     }
