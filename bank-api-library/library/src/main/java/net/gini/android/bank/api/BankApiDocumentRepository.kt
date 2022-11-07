@@ -17,6 +17,9 @@ import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 
+/**
+ * Internal use only.
+ */
 class BankApiDocumentRepository(
     private val documentRemoteSource: BankApiDocumentRemoteSource,
     sessionManager: SessionManager,
@@ -33,21 +36,6 @@ class BankApiDocumentRepository(
         return ExtractionsContainer(specificExtractions, compoundExtractions, returnReasons)
     }
 
-    /**
-     * Sends approved and conceivably corrected extractions for the given document. This is called "submitting feedback
-     * on extractions" in
-     * the Gini API documentation.
-     *
-     * @param document    The document for which the extractions should be updated.
-     * @param extractions A Map where the key is the name of the specific extraction and the value is the
-     *                    SpecificExtraction object. This is the same structure as returned by the getExtractions
-     *                    method of this manager.
-     *
-     * @return A Task which will resolve to the same document instance when storing the updated
-     * extractions was successful.
-     *
-     * @throws JSONException When a value of an extraction is not JSON serializable.
-     */
     @Throws(JSONException::class)
     suspend fun sendFeedbackForExtractions(document: Document, extractions: Map<String, SpecificExtraction>): Resource<Unit> {
         val feedbackForExtractions = JSONObject()
@@ -109,12 +97,6 @@ class BankApiDocumentRepository(
         }
     }
 
-    /**
-     * Mark a {@link PaymentRequest} as paid.
-     *
-     * @param requestId id of request
-     * @param resolvePaymentInput information of the actual payment
-     */
     suspend fun resolvePaymentRequest(requestId: String, resolvePaymentInput: ResolvePaymentInput): Resource<ResolvedPayment> =
         withAccessToken { accessToken ->
             wrapInResource {
@@ -122,11 +104,6 @@ class BankApiDocumentRepository(
             }
         }
 
-    /**
-     * Get information about the payment of the {@link PaymentRequest}
-     *
-     * @param id of the paid {@link PaymentRequest}
-     */
     suspend fun getPayment(id: String): Resource<Payment> =
         withAccessToken { accessToken ->
             wrapInResource {

@@ -15,6 +15,9 @@ import net.gini.android.core.api.requests.SafeApiRequest
 import okhttp3.RequestBody
 import kotlin.coroutines.CoroutineContext
 
+/**
+ * Internal use only.
+ */
 class BankApiDocumentRemoteSource internal constructor(
     override var coroutineContext: CoroutineContext,
     private val documentService: BankApiDocumentService,
