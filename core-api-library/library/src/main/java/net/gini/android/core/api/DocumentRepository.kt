@@ -106,69 +106,7 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
                     documentType?.apiDoctypeHint,
                     null
                 )
-                getDocumentInternal(sessionToken, uri)
-            }
-        }
-
-    /**
-     * Uploads raw data and creates a new Gini document.
-     *
-     * @param document     A byte array representing an image, a pdf or UTF-8 encoded text
-     * @param filename     Optional the filename of the given document.
-     * @param documentType Optional a document type hint. See the documentation for the document type hints for
-     *                     possible values.
-     * @return A Resource with the Document instance of the freshly created document or informations about error
-     *
-     * <b>Important:</b> If using the default Gini API, then use {@link #createPartialDocument(byte[], String, String, DocumentType)} to upload the
-     * document and then call {@link #createCompositeDocument(LinkedHashMap, DocumentType)}
-     * (or {@link #createCompositeDocument(List, DocumentType)}) to finish document creation. The
-     * returned composite document can be used to poll the processing state, to retrieve extractions
-     * and to send feedback.
-     */
-
-    suspend fun createDocument(document: ByteArray, filename: String?, documentType: DocumentManager.DocumentType?): Resource<Document> {
-        return createDocumentInternal(document, filename, documentType, null)
-    }
-
-    /**
-     * Uploads raw data and creates a new Gini document.
-     *
-     * @param document         A byte array representing an image, a pdf or UTF-8 encoded text
-     * @param filename         Optional the filename of the given document.
-     * @param documentType     Optional a document type hint. See the documentation for the document type hints for
-     *                         possible values.
-     * @param documentMetadata Additional information related to the document (e.g. the branch id
-     *                         to which the client app belongs)
-     * @return A Resource with the Document instance of the freshly created document or informations about error.
-     *
-     * <b>Important:</b> If using the default Gini API, then use {@link #createPartialDocument(byte[], String, String, DocumentType)} to upload the
-     * document and then call {@link #createCompositeDocument(LinkedHashMap, DocumentType)}
-     * (or {@link #createCompositeDocument(List, DocumentType)}) to finish document creation. The
-     * returned composite document can be used to poll the processing state, to retrieve extractions
-     * and to send feedback.
-     */
-
-    suspend fun createDocument(document: ByteArray, filename: String?, documentType: DocumentManager.DocumentType?, documentMetadata: DocumentMetadata): Resource<Document> {
-        return createDocumentInternal(document, filename, documentType, documentMetadata)
-    }
-
-    private suspend fun createDocumentInternal(
-        document: ByteArray,
-        filename: String?,
-        documentType: DocumentManager.DocumentType?,
-        documentMetadata: DocumentMetadata?
-    ): Resource<Document> =
-        withSession { sessionToken ->
-            wrapInResource {
-                val uri = documentRemoteSource.uploadDocument(
-                    sessionToken,
-                    document,
-                    MediaTypes.IMAGE_JPEG,
-                    filename,
-                    documentType?.apiDoctypeHint,
-                    documentMetadata?.metadata
-                )
-                getDocumentInternal(sessionToken, uri)
+                getDocumentInternal(accessToken, uri)
             }
         }
 
