@@ -1,8 +1,7 @@
 package net.gini.android.health.api
 
 import net.gini.android.core.api.DocumentService
-import net.gini.android.core.api.Resource
-import net.gini.android.core.api.requests.PaymentRequestBody
+import net.gini.android.health.api.requests.PaymentRequestBody
 import net.gini.android.health.api.response.PageResponse
 import net.gini.android.health.api.response.PaymentProviderResponse
 import okhttp3.RequestBody
