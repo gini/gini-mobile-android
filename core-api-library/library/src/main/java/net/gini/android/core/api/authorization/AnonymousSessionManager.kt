@@ -7,7 +7,10 @@ import net.gini.android.core.api.authorization.apimodels.UserRequestModel
 import org.json.JSONObject
 import java.util.*
 
-class AnonymousSessionManager(
+/**
+ * The [AnonymousSessionManager] is a [SessionManager] implementation that uses anonymous Gini users.
+ */
+internal class AnonymousSessionManager(
     private val userRepository: UserRepository,
     private val credentialsStore: CredentialsStore,
     private val emailDomain: String

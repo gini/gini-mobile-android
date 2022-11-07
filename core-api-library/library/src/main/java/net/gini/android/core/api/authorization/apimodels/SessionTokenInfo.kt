@@ -4,8 +4,11 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import java.util.*
 
+/**
+ * Holds information about a session token info response.
+ */
 @JsonClass(generateAdapter = true)
-class SessionTokenInfo (
+data class SessionTokenInfo (
     @field:Json(name = "user_name")
     val userName: String
 )

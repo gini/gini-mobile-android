@@ -5,6 +5,9 @@ import android.net.Uri;
 import java.nio.charset.Charset;
 import java.util.Map;
 
+/**
+ * Internal use only.
+ */
 public class Utils {
 
     private Utils(){

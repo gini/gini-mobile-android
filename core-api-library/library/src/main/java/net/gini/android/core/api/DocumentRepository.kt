@@ -1,17 +1,25 @@
 package net.gini.android.core.api
 
 import android.net.Uri
-import kotlinx.coroutines.*
+import kotlinx.coroutines.delay
 import net.gini.android.core.api.Resource.Companion.wrapInResource
+import net.gini.android.core.api.authorization.Session
 import net.gini.android.core.api.authorization.SessionManager
-import net.gini.android.core.api.authorization.apimodels.SessionToken
-import net.gini.android.core.api.models.*
-import net.gini.android.core.api.requests.ApiException
+import net.gini.android.core.api.models.Box
+import net.gini.android.core.api.models.CompoundExtraction
+import net.gini.android.core.api.models.Document
+import net.gini.android.core.api.models.Extraction
+import net.gini.android.core.api.models.ExtractionsContainer
+import net.gini.android.core.api.models.PaymentRequest
+import net.gini.android.core.api.models.SpecificExtraction
+import net.gini.android.core.api.models.toPaymentRequest
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
-import java.util.concurrent.ConcurrentHashMap
 
+/**
+ * Internal use only.
+ */
 abstract class DocumentRepository<E: ExtractionsContainer>(
     private val documentRemoteSource: DocumentRemoteSource,
     protected val sessionManager: SessionManager,
@@ -60,15 +68,6 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
             }
         }
 
-    /**
-     * Creates a new Gini composite document.
-     *
-     * @param documents    A list of partial documents which should be part of a multi-page document
-     * @param documentType Optional a document type hint. See the documentation for the document type hints for
-     *                     possible values
-     * @return A Resource which has in the "data" the freshly created document.
-     */
-
     suspend fun createCompositeDocument(documents: List<Document>, documentType: DocumentManager.DocumentType?): Resource<Document> =
         withAccessToken { accessToken ->
             wrapInResource {
@@ -83,17 +82,6 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
                 getDocumentInternal(accessToken, uri)
             }
         }
-
-    /**
-     * Creates a new Gini composite document. The input Map must contain the partial documents as keys. These will be
-     * part of the multi-page document. The value for each partial document key is the amount in degrees the document
-     * has been rotated by the user.
-     *
-     * @param documentRotationMap A map of partial documents and their rotation in degrees
-     * @param documentType        Optional a document type hint. See the documentation for the document type hints for
-     *                            possible values
-     * @return A Resource which has in the "data" the freshly created document.
-     */
 
     suspend fun createCompositeDocument(documentRotationMap: LinkedHashMap<Document, Int>, documentType: DocumentManager.DocumentType?): Resource<Document> =
         withAccessToken { accessToken ->
@@ -110,12 +98,6 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
             }
         }
 
-    /**
-     * Get the document with the given unique identifier.
-     *
-     * @param documentId The unique identifier of the document.
-     * @return A Resource document instance representing all the document's metadata.
-     */
     suspend fun getDocument(documentId: String): Resource<Document> =
         withAccessToken { accessToken ->
             wrapInResource {
@@ -135,20 +117,6 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
                                             compoundExtractions: Map<String, CompoundExtraction>,
                                             responseJSON: JSONObject): E
 
-
-    /**
-     * Get the extractions for the given document.
-     *
-     * @param document The Document instance for whose document the extractions are returned.
-     * @return A Task which will resolve to an {@link ExtractionsContainer} object.
-     */
-    /**
-     * Get the extractions for the given document.
-     *
-     * @param document The Document instance for whose document the extractions are returned.
-     * @return A Resource with an {@link ExtractionsContainer} object.
-     */
-    @Throws(ApiException::class)
     suspend fun getAllExtractions(document: Document): Resource<E> {
         return withAccessToken { accessToken ->
             wrapInResource {
@@ -164,16 +132,6 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
         }
     }
 
-    /**
-     * Continually checks the document status (via the Gini API) until the document is fully processed. To avoid
-     * flooding the network, there is a pause of at least the number of seconds that is set in the POLLING_INTERVAL
-     * constant of this class.
-     *
-     * <b>This method returns a Resource with a new document instance. It does not update the given
-     * document instance.</b>
-     *
-     * @param document The document which will be polled.
-     */
     suspend fun pollDocument(document: Document): Resource<Document> {
         if (document.state != Document.ProcessingState.PENDING) {
             return Resource.Success(document)
@@ -199,13 +157,6 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
         } while (true)
     }
 
-    /**
-     * Gets the layout of a document. The layout of the document describes the textual content of a document with
-     * positional information, based on the processed document.
-     *
-     * @param document The document for which the layouts is requested.
-     * @return A Resource with a string containing the layout xml or error data
-     */
     suspend fun getLayout(document: Document): Resource<JSONObject> {
         return withAccessToken { accessToken ->
             wrapInResource {
@@ -215,11 +166,6 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
         }
     }
 
-    /**
-     * Download a file.
-     *
-     * @return byte array of file contents
-     */
     suspend fun getFile(location: String): Resource<ByteArray> =
         withAccessToken { accessToken ->
             wrapInResource {
@@ -227,10 +173,6 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
             }
         }
 
-    /**
-     * @return Resource with {PaymentRequest} for the given id
-     */
-    @Throws(ApiException::class)
     suspend fun getPaymentRequest(id: String): Resource<PaymentRequest> {
         return withAccessToken { accessToken ->
             wrapInResource {
@@ -239,10 +181,6 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
         }
     }
 
-    /**
-     * @return List of payment {@link PaymentRequest}
-     */
-    @Throws(ApiException::class)
     suspend fun getPaymentRequests(): Resource<List<PaymentRequest>> {
         return withAccessToken { accessToken ->
             wrapInResource {
@@ -388,6 +326,9 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
          * The time in milliseconds between HTTP requests when a document is polled.
          */
         const val POLLING_INTERVAL = 1000L
+        /**
+         * The time in milliseconds until polling is retried.
+         */
         const val POLLING_TIMEOUT = 60000L
 
         /**

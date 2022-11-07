@@ -1,13 +1,10 @@
 package net.gini.android.core.api.authorization
 
-import kotlinx.coroutines.CoroutineScope
 import net.gini.android.core.api.Resource
 import net.gini.android.core.api.Resource.Companion.wrapInResource
-import net.gini.android.core.api.authorization.apimodels.SessionToken
 import net.gini.android.core.api.authorization.apimodels.UserRequestModel
-import kotlin.coroutines.CoroutineContext
 
-open class UserRepository(
+internal class UserRepository(
     private val userRemoteSource: UserRemoteSource
     ) {
 

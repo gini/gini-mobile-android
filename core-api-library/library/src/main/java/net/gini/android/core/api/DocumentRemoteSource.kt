@@ -11,6 +11,9 @@ import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import kotlin.coroutines.CoroutineContext
 
+/**
+ * Internal use only.
+ */
 abstract class DocumentRemoteSource(
     open val coroutineContext: CoroutineContext,
     private val documentService: DocumentService,

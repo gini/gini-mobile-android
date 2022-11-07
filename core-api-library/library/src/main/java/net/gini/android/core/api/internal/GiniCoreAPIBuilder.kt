@@ -339,7 +339,7 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
     }
 
     @Synchronized
-    protected fun getmUserService(): UserService? {
+    private fun getUserService(): UserService? {
         if (mUserService == null) {
             mUserService = getUserApiRetrofit().create(UserService::class.java)
         }
@@ -347,9 +347,9 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
     }
 
     @Synchronized
-    protected fun getUserRemoteSource(): UserRemoteSource {
+    private fun getUserRemoteSource(): UserRemoteSource {
         if (mUserRemoteSource == null) {
-            mUserRemoteSource = UserRemoteSource(Dispatchers.IO, getmUserService()!!, clientId, clientSecret)
+            mUserRemoteSource = UserRemoteSource(Dispatchers.IO, getUserService()!!, clientId, clientSecret)
         }
         return mUserRemoteSource as UserRemoteSource
     }

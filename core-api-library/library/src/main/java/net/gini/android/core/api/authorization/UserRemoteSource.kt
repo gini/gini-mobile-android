@@ -10,7 +10,7 @@ import net.gini.android.core.api.requests.SafeApiRequest
 import java.util.*
 import kotlin.coroutines.CoroutineContext
 
-class UserRemoteSource(
+internal class UserRemoteSource(
     val coroutineContext: CoroutineContext,
     private val userService: UserService,
     private val clientId: String,

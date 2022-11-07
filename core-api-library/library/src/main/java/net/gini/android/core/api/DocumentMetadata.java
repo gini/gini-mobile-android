@@ -18,7 +18,7 @@ import androidx.annotation.VisibleForTesting;
 /**
  * Use this class to pass additional information for a document when uploading it to the Gini API.
  *
- * <p> Besides the predefined metadata fields you may also add custom fields.
+ * Besides the predefined metadata fields you may also add custom fields.
  */
 public class DocumentMetadata {
 

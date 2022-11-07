@@ -5,7 +5,9 @@ import static net.gini.android.core.api.Utils.checkNotNull;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
-
+/**
+ * Internal use only.
+ */
 public class SharedPreferencesCredentialsStore implements CredentialsStore {
 
     static final String USERNAME_KEY = "GiniUsername";

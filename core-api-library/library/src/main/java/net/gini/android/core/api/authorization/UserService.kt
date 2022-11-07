@@ -8,7 +8,7 @@ import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.*
 
-interface UserService {
+internal interface UserService {
     @FormUrlEncoded
     @POST("oauth/token?grant_type=password")
     suspend fun signIn(@HeaderMap basicAuthHeaders: Map<String, String>, @Field("username") userName:String, @Field("password") password:String): Response<SessionToken>
