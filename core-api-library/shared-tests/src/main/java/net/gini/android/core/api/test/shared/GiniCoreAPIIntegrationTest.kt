@@ -21,9 +21,11 @@ import net.gini.android.core.api.test.shared.helpers.TestUtils
 import net.gini.android.core.api.test.shared.helpers.TrustKitHelper
 import okhttp3.Cache
 import org.json.JSONException
+import org.json.JSONObject
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
+import java.io.BufferedReader
 import java.io.File
 import java.io.IOException
 import java.security.cert.CertificateException
@@ -373,6 +375,22 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
 
         Assert.assertTrue(customTrustManagerWasCalled.get())
         Assert.assertTrue("Partial document upload should have failed", partialDocument is Resource.Error)
+    }
+
+    @Test
+    fun getDocumentLayout() = runTest {
+        // Given
+        val assetManager = ApplicationProvider.getApplicationContext<Context>().resources.assets
+        val testDocumentAsStream = assetManager.open("test.jpg")
+        Assert.assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream)
+        val testDocument = TestUtils.createByteArray(testDocumentAsStream)
+        val documentExtractionsMap = processDocument(testDocument, "image/jpeg", "test.jpg", DocumentManager.DocumentType.INVOICE)
+
+        // When
+        val layout = giniCoreApi.documentManager.getLayout(documentExtractionsMap.keys.first())
+
+        // Then
+        Assert.assertNotNull(layout.dataOrThrow.optJSONArray("pages"))
     }
 
     @Throws(InterruptedException::class)

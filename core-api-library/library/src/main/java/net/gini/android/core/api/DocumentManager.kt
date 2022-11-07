@@ -4,9 +4,10 @@ import android.net.Uri
 import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.models.ExtractionsContainer
 import net.gini.android.core.api.models.PaymentRequest
+import org.json.JSONObject
 
 /**
- * The [DocumentManager] is a high level API on top of the Gini API, which is used via the DocumentRepository. It
+ * The [DocumentManager] is a high level API on top of the Gini API, which is used via the [DocumentRepository]. It
  * provides high level methods to handle document related tasks easily.
  */
 abstract class DocumentManager<out DR: DocumentRepository<E>, E: ExtractionsContainer>(private val documentRepository: DR) {
@@ -113,7 +114,7 @@ abstract class DocumentManager<out DR: DocumentRepository<E>, E: ExtractionsCont
     /**
      * Continually checks the document status (via the Gini API) until the document is fully processed. To avoid
      * flooding the network, there is a pause of at least the number of seconds that is set in the POLLING_INTERVAL
-     * constant of [DocumentTaskManager].
+     * constant of [DocumentRepository].
      *
      * This method returns a Task which will resolve to a new document instance. It does not update the given
      * document instance.
@@ -134,7 +135,7 @@ abstract class DocumentManager<out DR: DocumentRepository<E>, E: ExtractionsCont
      */
     suspend fun getLayout(
         document: Document
-    ): Resource<String?> =
+    ): Resource<JSONObject> =
         documentRepository.getLayout(document)
 
     suspend fun getAllExtractions(

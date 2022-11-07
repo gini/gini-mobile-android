@@ -270,11 +270,11 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
      * @param document The document for which the layouts is requested.
      * @return A Resource with a string containing the layout xml or error data
      */
-    @Throws(ApiException::class)
-    suspend fun getLayout(document: Document): Resource<String?> {
+    suspend fun getLayout(document: Document): Resource<JSONObject> {
         return withSession { sessionToken ->
             wrapInResource {
-                documentRemoteSource.getLayout(sessionToken, document.id)
+                val layoutJsonString = documentRemoteSource.getLayout(sessionToken, document.id)
+                JSONObject(layoutJsonString)
             }
         }
     }
