@@ -99,7 +99,7 @@ class GiniHealth(
         _paymentFlow.value = ResultWrapper.Loading()
 
         _paymentFlow.value = wrapToResult {
-            documentManager.getExtractions(document).mapSuccess {
+            documentManager.getAllExtractionsWithPolling(document).mapSuccess {
                 Resource.Success(it.data.toPaymentDetails())
             }
         }
@@ -124,7 +124,7 @@ class GiniHealth(
             when (val documentResult = documentFlow.value) {
                 is ResultWrapper.Success -> {
                     _paymentFlow.value =
-                        wrapToResult { documentManager.getExtractions(documentResult.value).mapSuccess {
+                        wrapToResult { documentManager.getAllExtractionsWithPolling(documentResult.value).mapSuccess {
                             Resource.Success(it.data.toPaymentDetails()) }
                         }
                 }
@@ -168,7 +168,7 @@ class GiniHealth(
     suspend fun checkIfDocumentIsPayable(documentId: String): Boolean {
         val extractionsResource = documentManager.getDocument(documentId)
             .mapSuccess { documentResource ->
-                documentManager.getExtractions(documentResource.data)
+                documentManager.getAllExtractionsWithPolling(documentResource.data)
             }
         return when (extractionsResource) {
             is Resource.Cancelled -> false

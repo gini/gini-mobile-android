@@ -57,7 +57,7 @@ class ExtractionFeedbackIntegrationTest {
         val compositeDocument = documentManager.createCompositeDocument(listOf(partialDocument)).data!!
 
         // 2. Request the extractions
-        val extractions = documentManager.getExtractions(compositeDocument).data!!
+        val extractions = documentManager.getAllExtractionsWithPolling(compositeDocument).data!!
 
         //    Verify we received the correct extractions for this test
         val extractionsFixture = moshi.fromJsonAsset<ExtractionsFixture>("result_Gini_invoice_example.json")!!
@@ -84,7 +84,7 @@ class ExtractionFeedbackIntegrationTest {
         )
 
         // 4. Verify that the extractions were updated
-        val extractionsAfterFeedback = documentManager.getExtractions(compositeDocument).data
+        val extractionsAfterFeedback = documentManager.getAllExtractionsWithPolling(compositeDocument).data
 
         val extractionsAfterFeedbackFixture =
             moshi.fromJsonAsset<ExtractionsFixture>("result_Gini_invoice_example_after_feedback.json")!!

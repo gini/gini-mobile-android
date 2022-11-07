@@ -144,12 +144,12 @@ abstract class DocumentManager<out DR: DocumentRepository<E>, E: ExtractionsCont
         documentRepository.getAllExtractions(document)
 
     /**
-     * Get the extractions for the given document.
+     * Poll the document and get all extractions (specific and compound) once processing has completed.
      *
-     * @param document The Document instance for whose document the extractions are returned.
-     * @return [ExtractionsContainer] object.
+     * @param document The [Document] instance for whose document the extractions are returned.
+     * @return [Resource] with an [ExtractionsContainer] instance or information about the error
      */
-    suspend fun getExtractions(
+    suspend fun getAllExtractionsWithPolling(
         document: Document
     ): Resource<E> = when (val pollDocument = documentRepository.pollDocument(document)) {
         is Resource.Cancelled -> Resource.Cancelled()

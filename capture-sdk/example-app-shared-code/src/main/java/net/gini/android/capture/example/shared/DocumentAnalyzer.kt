@@ -57,7 +57,7 @@ class DocumentAnalyzer @JvmOverloads internal constructor(
                 Log.d(
                     "gini-api", "Getting extractions for composite document: " + compositeDocumentResource.data.id
                 )
-                documentManager.getExtractions(compositeDocumentResource.data)
+                documentManager.getAllExtractionsWithPolling(compositeDocumentResource.data)
             }
             when (extractionsResource) {
                 is Resource.Success -> {

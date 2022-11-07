@@ -57,7 +57,7 @@ class GiniCaptureDefaultNetworkServiceTest {
         coEvery { documentManager.createPartialDocument(any(), any(), null, null) } returns Resource.Success(partialDocument)
         coEvery { documentManager.createCompositeDocument(any<LinkedHashMap<net.gini.android.core.api.models.Document, Int>>(), any()) } returns Resource.Success(compositeDocument)
         coEvery { documentManager.pollDocument(any()) } returns Resource.Success(compositeDocument)
-        coEvery { documentManager.getExtractions(any()) } returns Resource.Success(mockk())
+        coEvery { documentManager.getAllExtractionsWithPolling(any()) } returns Resource.Success(mockk())
 
         // Mock GiniBankAPI
         val bankApi = mockk<GiniBankAPI>()

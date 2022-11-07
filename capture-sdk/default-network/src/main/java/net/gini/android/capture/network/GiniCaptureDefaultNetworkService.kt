@@ -199,7 +199,7 @@ class GiniCaptureDefaultNetworkService(
                 .mapSuccess { compositeDocumentResource ->
                     val compositeDocument = compositeDocumentResource.data
                     giniApiDocuments[compositeDocument.id] = compositeDocument
-                    giniBankApi.documentManager.getExtractions(compositeDocument).mapSuccess {
+                    giniBankApi.documentManager.getAllExtractionsWithPolling(compositeDocument).mapSuccess {
                         Resource.Success(compositeDocument to it.data)
                     }
                 }

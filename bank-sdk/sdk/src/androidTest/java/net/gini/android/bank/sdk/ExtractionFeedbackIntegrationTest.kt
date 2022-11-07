@@ -135,7 +135,7 @@ class ExtractionFeedbackIntegrationTest {
 
         // 4. Verify that the extractions were updated using the Gini Bank API
         val extractionsAfterFeedback =
-            giniBankAPI.documentManager.getExtractions(analyzedGiniApiDocument!!)
+            giniBankAPI.documentManager.getAllExtractionsWithPolling(analyzedGiniApiDocument!!)
 
         val extractionsAfterFeedbackFixture =
             moshi.fromJsonAsset<ExtractionsFixture>("result_Gini_invoice_example_after_feedback.json")!!

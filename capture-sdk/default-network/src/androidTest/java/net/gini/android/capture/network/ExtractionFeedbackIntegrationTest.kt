@@ -132,7 +132,7 @@ class ExtractionFeedbackIntegrationTest {
         //    This is only done for testing purposes. In your production code you don't need to interact with the
         //    Gini Bank API directly if you use the GiniCaptureDefaultNetworkService.
         val extractionsAfterFeedback =
-            giniBankAPI.documentManager.getExtractions(analyzedGiniApiDocument!!)
+            giniBankAPI.documentManager.getAllExtractionsWithPolling(analyzedGiniApiDocument!!)
 
         val extractionsAfterFeedbackFixture =
             moshi.fromJsonAsset<ExtractionsFixture>("result_Gini_invoice_example_after_feedback.json")!!
