@@ -36,17 +36,26 @@ class BankApiDocumentManager(private val documentRepository: BankApiDocumentRepo
      * @param compoundExtractions A Map where the key is the name of the compound extraction and the value is the
      *                            CompoundExtraction object. This is the same structure as returned by the getExtractions
      *                            method of this manager.
-     * @return Resource with the success API response
-     * @throws JSONException When a value of an extraction is not JSON serializable.
+     * @return Empty resource or information about the error
      */
-    suspend fun sendFeedback(
+    suspend fun sendFeedbackForExtractions(
         document: Document,
         specificExtractions: Map<String, SpecificExtraction>,
         compoundExtractions: Map<String, CompoundExtraction>,
     ): Resource<Unit> =
         documentRepository.sendFeedbackForExtractions(document, specificExtractions, compoundExtractions)
 
-    suspend fun sendFeedback(
+    /**
+     * Sends approved and conceivably corrected extractions for the given document. This is called "submitting feedback
+     * on extractions" in the Gini Bank API documentation.
+     *
+     * @param document            The document for which the extractions should be updated.
+     * @param specificExtractions A Map where the key is the name of the specific extraction and the value is the
+     *                            SpecificExtraction object. This is the same structure as returned by the getExtractions
+     *                            method of this manager.
+     * @return Empty resource or information about the error
+     */
+    suspend fun sendFeedbackForExtractions(
         document: Document,
         specificExtractions: Map<String, SpecificExtraction>,
     ): Resource<Unit> =

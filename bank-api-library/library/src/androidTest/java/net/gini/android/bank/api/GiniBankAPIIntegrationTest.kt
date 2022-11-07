@@ -80,7 +80,7 @@ class GiniBankAPIIntegrationTest: GiniCoreAPIIntegrationTest<BankApiDocumentMana
         val feedbackCompound: MutableMap<String, CompoundExtraction> = HashMap()
         feedbackCompound["lineItems"] = compoundExtraction
         val sendFeedback =
-            giniCoreApi.documentManager.sendFeedback(document, feedback, feedbackCompound)
+            giniCoreApi.documentManager.sendFeedbackForExtractions(document, feedback, feedbackCompound)
 
         if (sendFeedback is Resource.Error) {
             Log.e("TEST", sendFeedback.toString())
@@ -109,7 +109,7 @@ class GiniBankAPIIntegrationTest: GiniCoreAPIIntegrationTest<BankApiDocumentMana
         feedback["amountToPay"] = getAmountToPay(extractionsContainer)!!
         feedback["bic"] = getBic(extractionsContainer)!!
         feedback["paymentRecipient"] = getPaymentRecipient(extractionsContainer)!!
-        val sendFeedback = giniCoreApi.documentManager.sendFeedback(document, feedback)
+        val sendFeedback = giniCoreApi.documentManager.sendFeedbackForExtractions(document, feedback)
 
         if (sendFeedback is Resource.Error) {
             Log.e("TEST", sendFeedback.toString())
@@ -138,7 +138,7 @@ class GiniBankAPIIntegrationTest: GiniCoreAPIIntegrationTest<BankApiDocumentMana
         feedback["amountToPay"] = getAmountToPay(extractionsContainer)!!
         feedback["bic"] = getBic(extractionsContainer)!!
         feedback["paymentRecipient"] = getPaymentRecipient(extractionsContainer)!!
-        val sendFeedback = giniCoreApi.documentManager.sendFeedback(document, feedback)
+        val sendFeedback = giniCoreApi.documentManager.sendFeedbackForExtractions(document, feedback)
 
         if (sendFeedback is Resource.Error) {
             Log.e("TEST", sendFeedback.toString())
@@ -174,7 +174,7 @@ class GiniBankAPIIntegrationTest: GiniCoreAPIIntegrationTest<BankApiDocumentMana
         val feedbackCompound: MutableMap<String, CompoundExtraction> = HashMap()
         feedbackCompound["lineItems"] = compoundExtractions["lineItems"]!!
         val sendFeedback =
-            giniCoreApi.documentManager.sendFeedback(document, feedback, feedbackCompound)
+            giniCoreApi.documentManager.sendFeedbackForExtractions(document, feedback, feedbackCompound)
 
         if (sendFeedback is Resource.Error) {
             Log.e("TEST", sendFeedback.toString())

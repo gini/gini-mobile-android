@@ -72,7 +72,7 @@ class ExtractionFeedbackIntegrationTest {
 
         //    Send feedback for the extractions the user saw
         //    with the final (user confirmed or updated) extraction values
-        documentManager.sendFeedback(
+        documentManager.sendFeedbackForExtractions(
             compositeDocument,
             mapOf(
                 "amountToPay" to extractions.specificExtractions["amountToPay"]!!,

@@ -51,9 +51,9 @@ class GiniCaptureDefaultNetworkApi(
             // We require the Gini Bank API lib's net.gini.android.core.api.models.Document for sending the feedback
             if (document != null) {
                 val feedbackResource = if (updatedCompoundExtractions.isEmpty()) {
-                    documentManager.sendFeedback(document, SpecificExtractionMapper.mapToApiSdk(extractions))
+                    documentManager.sendFeedbackForExtractions(document, SpecificExtractionMapper.mapToApiSdk(extractions))
                 } else {
-                    documentManager.sendFeedback(
+                    documentManager.sendFeedbackForExtractions(
                         document,
                         SpecificExtractionMapper.mapToApiSdk(extractions),
                         CompoundExtractionsMapper.mapToApiSdk(updatedCompoundExtractions)
