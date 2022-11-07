@@ -17,6 +17,10 @@ import kotlin.coroutines.CoroutineContext
  *
  * Copyright (c) 2022 Gini GmbH.
  */
+
+/**
+ * Internal use only.
+ */
 class HealthApiDocumentRemoteSource internal constructor(
     override var coroutineContext: CoroutineContext,
     private val documentService: HealthApiDocumentService,

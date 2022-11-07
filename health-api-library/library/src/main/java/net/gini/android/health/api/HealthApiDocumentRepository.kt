@@ -30,6 +30,10 @@ import org.json.JSONObject
  *
  * Copyright (c) 2022 Gini GmbH.
  */
+
+/**
+ * Internal use only.
+ */
 class HealthApiDocumentRepository(
     private val documentRemoteSource: HealthApiDocumentRemoteSource,
     sessionManager: SessionManager,
@@ -41,45 +45,6 @@ class HealthApiDocumentRepository(
         compoundExtractions: Map<String, CompoundExtraction>,
         responseJSON: JSONObject
     ): ExtractionsContainer = ExtractionsContainer(specificExtractions, compoundExtractions)
-
-    /**
-     * Sends approved and conceivably corrected extractions for the given document. This is called "submitting feedback
-     * on extractions" in
-     * the Gini API documentation.
-     *
-     * @param document    The document for which the extractions should be updated.
-     * @param extractions A Map where the key is the name of the specific extraction and the value is the
-     *                    SpecificExtraction object. This is the same structure as returned by the getExtractions
-     *                    method of this manager.
-     *
-     * @return A Task which will resolve to the same document instance when storing the updated
-     * extractions was successful.
-     *
-     * @throws JSONException When a value of an extraction is not JSON serializable.
-     */
-    @Throws(JSONException::class)
-    suspend fun sendFeedbackForExtractions(
-        document: Document,
-        extractions: Map<String, SpecificExtraction>
-    ): Resource<Unit> {
-        val feedbackForExtractions = JSONObject()
-        for (entry in extractions.entries) {
-            val extraction = entry.value
-            val extractionData = JSONObject()
-            extractionData.put("value", extraction.value)
-            extractionData.put("entity", extraction.entity)
-            feedbackForExtractions.put(entry.key, extractionData)
-        }
-
-        val bodyJSON = JSONObject()
-        bodyJSON.put("feedback", feedbackForExtractions)
-        val body: RequestBody = bodyJSON.toString().toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
-        return withAccessToken { accessToken ->
-            wrapInResource {
-                documentRemoteSource.sendFeedback(accessToken, document.id, body)
-            }
-        }
-    }
 
     @Throws(JSONException::class)
     suspend fun sendFeedbackForExtractions(

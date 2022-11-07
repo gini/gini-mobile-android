@@ -10,6 +10,12 @@ import net.gini.android.core.api.models.ExtractionsContainer
  * Copyright (c) 2022 Gini GmbH.
  */
 
+/**
+ * The [GiniHealthAPI] instance is the main entry point when interacting with the Gini Health API. You must hold a reference
+ * to its instance as long as you interact with the API.
+ *
+ * To configure and create an instance use the [GiniHealthAPIBuilder].
+ */
 class GiniHealthAPI(
     documentManager: HealthApiDocumentManager,
     credentialsStore: CredentialsStore

@@ -13,6 +13,16 @@ import net.gini.android.core.api.models.ExtractionsContainer
  * Copyright (c) 2022 Gini GmbH.
  */
 
+/**
+ * The [GiniHealthAPIBuilder] allows you to configure and create a [GiniHealthAPI] instance.
+ *
+ * @constructor Initializes a new builder instance.
+ * @param context your application's Context instance (Android)
+ * @param clientId your application's client ID for the Gini Health API
+ * @param clientSecret your application's client secret for the Gini Health API
+ * @param emailDomain  the email domain which is used for created Gini users
+ * @param sessionManager if not null, then the [SessionManager] instance will be used for session management. If null, then anonymous Gini users will be used.
+ */
 class GiniHealthAPIBuilder @JvmOverloads constructor(
     context: Context,
     clientId: String = "",
