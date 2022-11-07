@@ -1,5 +1,6 @@
 package net.gini.android.capture.review.multipage;
 
+import static androidx.viewpager2.widget.ViewPager2.ORIENTATION_HORIZONTAL;
 import static net.gini.android.capture.GiniCaptureError.ErrorCode.MISSING_GINI_CAPTURE_INSTANCE;
 import static net.gini.android.capture.document.GiniCaptureDocumentError.ErrorCode.FILE_VALIDATION_FAILED;
 import static net.gini.android.capture.document.GiniCaptureDocumentError.ErrorCode.UPLOAD_FAILED;
@@ -41,6 +42,7 @@ import net.gini.android.capture.internal.network.NetworkRequestsManager;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.util.ActivityHelper;
 import net.gini.android.capture.internal.util.AlertDialogHelperCompat;
+import net.gini.android.capture.internal.util.ContextHelper;
 import net.gini.android.capture.internal.util.FileImportHelper;
 import net.gini.android.capture.review.multipage.previews.PreviewFragment;
 import net.gini.android.capture.review.multipage.previews.PreviewFragmentListener;
@@ -63,6 +65,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import androidx.annotation.NonNull;
@@ -70,6 +73,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Lifecycle;
@@ -143,14 +147,15 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     ImageMultiPageDocument mMultiPageDocument;
     private MultiPageReviewFragmentListener mListener;
     private PreviewFragmentListener mPreviewFragmentListener;
-    private ViewPager mPreviewsPager;
-    private PreviewsAdapter mPreviewsAdapter;
+    private ViewPager2 mPreviewsPager2;
+    private PreviewsPager2Adapter mPreviewsAdapter2;
     private AppCompatButton mButtonNext;
     private LinearLayout mAddPages;
     private TabLayout mTabIndicator;
     private InjectedViewContainer<NavigationBarTopAdapter> mTopAdapterInjectedViewContainer;
     private boolean mNextClicked;
     private boolean mPreviewsShown;
+    private ViewPager2.OnPageChangeCallback mPager2PageCallback;
 
     public static MultiPageReviewFragment createInstance() {
         return new MultiPageReviewFragment();
@@ -229,17 +234,39 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
         setInputHandlers();
         setupTopNavigationBar();
         if (mMultiPageDocument != null) {
-            setupPreviewsViewPager();
             updateNextButtonVisibility();
+            initViewPager2();
         }
         return view;
     }
 
-    private void setupPreviewsViewPager() {
-        final Activity activity = getActivity();
-        if (activity == null) {
-            return;
+    private void delayWithBlueRect() {
+        mPreviewsPager2.post(() -> showHideBlueRect(View.VISIBLE));
+    }
+
+    private void showHideBlueRect(int visibility) {
+        if (mPreviewsAdapter2.getItemCount() > 0 && selectedFragment() != null)
+            Objects.requireNonNull(selectedFragment()).manageSelectionRect(visibility);
+    }
+
+    private void shouldIndicatorBeVisible() {
+        mTabIndicator.setVisibility(mPreviewsAdapter2.getItemCount() <= 1 ? View.INVISIBLE : View.VISIBLE);
+    }
+
+    private PreviewFragment selectedFragment() {
+        Fragment current = mPreviewsAdapter2.getCurrentFragment(mPreviewsPager2.getCurrentItem());
+
+        if (current != null) {
+            return (PreviewFragment) current;
         }
+
+        return null;
+    }
+
+    private void initViewPager2() {
+
+        if (getActivity() == null)
+            return;
 
         final PreviewsAdapterListener previewsAdapterListener = documentError -> {
             if (documentError.getErrorCode() == UPLOAD_FAILED) {
@@ -250,68 +277,76 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
             return null;
         };
 
-        mPreviewsAdapter = new PreviewsAdapter(getChildFragmentManager(), mMultiPageDocument,
-                previewsAdapterListener, mPreviewFragmentListener);
-        mPreviewsPager.setAdapter(mPreviewsAdapter);
+        mPreviewsPager2.setClipChildren(false);
+        mPreviewsPager2.setClipToPadding(false);
+        mPreviewsPager2.setOffscreenPageLimit(3);
 
-        mTabIndicator.setupWithViewPager(mPreviewsPager);
+        mPreviewsAdapter2 = new PreviewsPager2Adapter(getActivity(), mMultiPageDocument, previewsAdapterListener, mPreviewFragmentListener);
+        mPreviewsPager2.setAdapter(mPreviewsAdapter2);
 
-        mPreviewsPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        mPreviewsPager2.setPageTransformer(setupTransformer());
+
+        TabLayoutMediator mediator = new TabLayoutMediator(mTabIndicator, mPreviewsPager2, true, (tab, position) -> {
+
+        });
+        mediator.attach();
+
+        mPager2PageCallback = new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                super.onPageScrolled(position, positionOffset, positionOffsetPixels);
             }
 
             @Override
             public void onPageSelected(int position) {
+                super.onPageSelected(position);
+
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
+                super.onPageScrollStateChanged(state);
                 if (state == ViewPager.SCROLL_STATE_IDLE)
-                    mPreviewsAdapter.visibilitySelectionRect(mPreviewsPager, View.VISIBLE);
-                else mPreviewsAdapter.visibilitySelectionRect(mPreviewsPager, View.INVISIBLE);
-
+                    showHideBlueRect(View.VISIBLE);
+                else showHideBlueRect(View.INVISIBLE);
             }
-        });
+        };
+
+        mPreviewsPager2.registerOnPageChangeCallback(mPager2PageCallback);
+
         delayWithBlueRect();
         shouldIndicatorBeVisible();
     }
 
-    private void delayWithBlueRect() {
-        Handler handler = new Handler(Looper.getMainLooper());
-        handler.postDelayed(() -> mPreviewsAdapter.visibilitySelectionRect(mPreviewsPager, View.VISIBLE), 100);
-    }
-
-    private void showBlueRect() {
-        if (mPreviewsAdapter.getCount() > 0)
-            mPreviewsAdapter.visibilitySelectionRect(mPreviewsPager, View.VISIBLE);
-    }
-
-    private void shouldIndicatorBeVisible() {
-        mTabIndicator.setVisibility(mPreviewsAdapter.getCount() <= 1 ? View.INVISIBLE : View.VISIBLE);
-    }
-
     private ViewPager2.PageTransformer setupTransformer() {
 
-        Point screenSize = ActivityHelper.getRealScreenSize(requireActivity());
-        int nextItemVisiblePx = (int) screenSize.x / (int) 3.4;
-        float currentItemHorizontalMarginPx = 0f;
-        float pageTranslationX = nextItemVisiblePx + currentItemHorizontalMarginPx;
+        int pageMarginPx = (ContextHelper.isTablet(requireContext())) ? getResources().getDimensionPixelOffset(R.dimen.large)
+                : getResources().getDimensionPixelOffset(R.dimen.large);
+        int offsetPx = (ContextHelper.isTablet(requireContext())) ? getResources().getDimensionPixelOffset(R.dimen.xlarge)
+                : getResources().getDimensionPixelOffset(R.dimen.small);
 
         return (page, position) -> {
-            page.setTranslationX(-pageTranslationX * position);
-            // Next line scales the item's height. You can remove it if you don't want this effect
-            page.setScaleY(1 - (0.25f * Math.abs(position)));
-            page.setScaleX(1 - (0.25f * Math.abs(position)));
+            ViewPager2 viewPager = (ViewPager2) page.getParent().getParent();
+            float offset = position * -(2 * offsetPx + pageMarginPx);
+            if (viewPager.getOrientation() == ORIENTATION_HORIZONTAL) {
+                if (ViewCompat.getLayoutDirection(viewPager) == ViewCompat.LAYOUT_DIRECTION_RTL) {
+                    page.setTranslationX(-offset);
+                } else {
+                    page.setTranslationX(offset);
+                }
+            } else {
+                page.setTranslationY(offset);
+            }
         };
     }
 
     private void bindViews(final View view) {
         mButtonNext = view.findViewById(R.id.gc_button_next);
-        mPreviewsPager = view.findViewById(R.id.gc_view_pager);
         mTabIndicator = view.findViewById(R.id.gc_tab_indicator);
         mTopAdapterInjectedViewContainer = view.findViewById(R.id.gc_navigation_top_bar);
         mAddPages = view.findViewById(R.id.gc_add_pages_wrapper);
+        mPreviewsPager2 = view.findViewById(R.id.gc_view_pager2);
+
     }
 
     private void setupTopNavigationBar() {
@@ -382,10 +417,11 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
         final int nrOfDocuments = mMultiPageDocument.getDocuments().size();
         final int newPosition = getNewPositionAfterDeletion(deletedPosition, nrOfDocuments);
 
-        mPreviewsAdapter.notifyDataSetChanged();
-        mPreviewsPager.setCurrentItem(newPosition);
+        mPreviewsAdapter2.notifyItemRemoved(deletedPosition);
+        mPreviewsAdapter2.removeFragmentFromTheList(deletedPosition);
+        mPreviewsPager2.post(() -> mPreviewsPager2.requestTransform());
 
-        showBlueRect();
+        delayWithBlueRect();
 
         updateNextButtonVisibility();
 
@@ -567,8 +603,11 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
         mMultiPageDocument.setErrorForDocument(imageDocument,
                 new GiniCaptureDocumentError(errorMessage,
                         UPLOAD_FAILED));
-        mPreviewsAdapter.notifyDataSetChanged();
-        showBlueRect();
+
+        mPreviewsAdapter2.notifyDataSetChanged();
+        mPreviewsPager2.post(() -> mPreviewsPager2.requestTransform());
+
+        showHideBlueRect(View.VISIBLE);
     }
 
     private void observeViewTree() {
@@ -599,7 +638,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
             return;
         }
         mPreviewsShown = true;
-        mPreviewsPager.setCurrentItem(0);
+        mPreviewsPager2.setCurrentItem(0);
     }
 
     @Override
@@ -623,6 +662,10 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
 
         if (mPreviewFragmentListener != null) {
             mPreviewFragmentListener = null;
+        }
+
+        if (mPager2PageCallback != null) {
+            mPreviewsPager2.unregisterOnPageChangeCallback(mPager2PageCallback);
         }
     }
 

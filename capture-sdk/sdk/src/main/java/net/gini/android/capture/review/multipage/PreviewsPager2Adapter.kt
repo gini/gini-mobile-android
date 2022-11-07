@@ -23,7 +23,7 @@ class PreviewsPager2Adapter(
     private val previewFragmentListener: PreviewFragmentListener
 ) : FragmentStateAdapter(fm) {
 
-    private val mFragments = arrayListOf<PreviewFragment>()
+    private val mFragments = mutableListOf<PreviewFragment>()
 
     override fun getItemCount(): Int {
         return multiPageDocument.documents.size
@@ -47,10 +47,20 @@ class PreviewsPager2Adapter(
         return instance
     }
 
+
+    override fun getItemId(position: Int): Long {
+        return multiPageDocument.documents[position].id.hashCode().toLong()
+    }
+
+    override fun containsItem(itemId: Long): Boolean {
+        return multiPageDocument.documents.find { it.id.hashCode().toLong() == itemId } != null
+    }
+
+    fun removeFragmentFromTheList(position: Int) = mFragments.removeAt(position)
+
     fun getCurrentFragment(position: Int): Fragment? {
         if (mFragments.isNotEmpty() && position < mFragments.size)
             return mFragments[position]
-
         return null
     }
 
