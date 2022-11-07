@@ -24,20 +24,5 @@ public class Utils {
         return reference;
     }
 
-    /**
-     * Creates an urlencoded string from the given data. The created string can be used as a query string or the request
-     * body of a x-www-form-urlencoded form.
-     *
-     * @param data  A map where the key is the name of the query parameter and the value is the parameter's value.
-     * @return      The urlencoded data.
-     */
-    public static String mapToUrlEncodedString(Map<String, String> data) {
-        final Uri.Builder uriBuilder = Uri.parse("").buildUpon();
-        for (Map.Entry<String, String> entry : data.entrySet()) {
-            uriBuilder.appendQueryParameter(entry.getKey(), entry.getValue());
-        }
-        return uriBuilder.build().getEncodedQuery();
-    }
-
     public static Charset CHARSET_UTF8 = Charset.forName("utf-8");
 }
