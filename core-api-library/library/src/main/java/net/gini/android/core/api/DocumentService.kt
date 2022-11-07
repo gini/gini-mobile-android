@@ -23,9 +23,6 @@ interface DocumentService {
     @GET("documents/{documentId}/extractions")
     suspend fun getExtractions(@HeaderMap bearer: Map<String, String>, @Path("documentId") documentId: String): Response<ResponseBody>
 
-    @GET("documents/{documentId}/extractions")
-    suspend fun getIncubatorExtractions(@HeaderMap incubatorHeader: Map<String, String>, @Path("documentId") documentId: String): Response<ResponseBody>
-
     @DELETE("documents/{documentId}")
     suspend fun deleteDocument(@HeaderMap bearer: Map<String, String>, @Path("documentId") documentId: String): Response<ResponseBody>
 
