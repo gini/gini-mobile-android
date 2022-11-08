@@ -28,42 +28,6 @@ class BankApiDocumentManager internal constructor(private val documentRepository
 ) {
 
     /**
-     * Sends approved and conceivably corrected extractions for the given document. This is called "submitting feedback
-     * on extractions" in the Gini Bank API documentation.
-     *
-     * @param document            The document for which the extractions should be updated.
-     * @param specificExtractions A Map where the key is the name of the specific extraction and the value is the
-     *                            SpecificExtraction object. This is the same structure as returned by the getExtractions
-     *                            method of this manager.
-     * @param compoundExtractions A Map where the key is the name of the compound extraction and the value is the
-     *                            CompoundExtraction object. This is the same structure as returned by the getExtractions
-     *                            method of this manager.
-     * @return Empty [Resource] or information about the error
-     */
-    suspend fun sendFeedbackForExtractions(
-        document: Document,
-        specificExtractions: Map<String, SpecificExtraction>,
-        compoundExtractions: Map<String, CompoundExtraction>,
-    ): Resource<Unit> =
-        documentRepository.sendFeedbackForExtractions(document, specificExtractions, compoundExtractions)
-
-    /**
-     * Sends approved and conceivably corrected extractions for the given document. This is called "submitting feedback
-     * on extractions" in the Gini Bank API documentation.
-     *
-     * @param document            The document for which the extractions should be updated.
-     * @param specificExtractions A Map where the key is the name of the specific extraction and the value is the
-     *                            SpecificExtraction object. This is the same structure as returned by the getExtractions
-     *                            method of this manager.
-     * @return Empty [Resource] or information about the error
-     */
-    suspend fun sendFeedbackForExtractions(
-        document: Document,
-        specificExtractions: Map<String, SpecificExtraction>,
-    ): Resource<Unit> =
-        documentRepository.sendFeedbackForExtractions(document, specificExtractions)
-
-    /**
      * Mark a [PaymentRequest] as paid.
      *
      * @param requestId id of request

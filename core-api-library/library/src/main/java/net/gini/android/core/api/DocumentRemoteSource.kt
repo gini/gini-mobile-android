@@ -76,6 +76,12 @@ abstract class DocumentRemoteSource(
         response.body()?.string() ?: throw ApiException.forResponse("Empty response body", response)
     }
 
+    suspend fun sendFeedback(accessToken: String, documentId: String, requestBody: RequestBody): Unit = withContext(coroutineContext) {
+        SafeApiRequest.apiRequest {
+            documentService.sendFeedback(bearerHeaderMap(accessToken, contentType = giniApiType.giniJsonMediaType), documentId, requestBody)
+        }
+    }
+
     suspend fun getFile(accessToken: String, location: String): ByteArray = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             documentService.getFile(bearerHeaderMap(accessToken, accept = null, contentType = giniApiType.giniJsonMediaType), location)

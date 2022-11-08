@@ -26,6 +26,10 @@ interface DocumentService {
     @GET("documents/{documentId}/extractions")
     suspend fun getExtractions(@HeaderMap bearer: Map<String, String>, @Path("documentId") documentId: String): Response<ResponseBody>
 
+    suspend fun sendFeedback(bearer: Map<String, String>, id: String, params: RequestBody): Response<ResponseBody> {
+        throw NotImplementedError("sendFeedback must be overridden by interfaces extending DocumentService")
+    }
+
     @DELETE("documents/{documentId}")
     suspend fun deleteDocument(@HeaderMap bearer: Map<String, String>, @Path("documentId") documentId: String): Response<ResponseBody>
 

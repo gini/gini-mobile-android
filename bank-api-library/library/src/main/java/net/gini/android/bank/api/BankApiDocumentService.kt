@@ -13,7 +13,7 @@ import retrofit2.http.*
 internal interface BankApiDocumentService: DocumentService {
 
     @POST("documents/{id}/extractions/feedback")
-    suspend fun sendFeedback(@HeaderMap bearer: Map<String, String>, @Path("id") id: String, @Body params: RequestBody): Response<ResponseBody>
+    override suspend fun sendFeedback(@HeaderMap bearer: Map<String, String>, @Path("id") id: String, @Body params: RequestBody): Response<ResponseBody>
 
     @POST("paymentRequests/{id}/payment")
     suspend fun resolvePaymentRequests(@HeaderMap bearer: Map<String, String>, @Path("id") id: String, @Body input: ResolvePaymentBody): Response<ResolvePaymentResponse>

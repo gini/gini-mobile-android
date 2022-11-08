@@ -25,12 +25,6 @@ class BankApiDocumentRemoteSource internal constructor(
     baseUriString: String
 ): DocumentRemoteSource(coroutineContext, documentService, giniApiType, baseUriString) {
 
-    suspend fun sendFeedback(accessToken: String, documentId: String, requestBody: RequestBody): Unit = withContext(coroutineContext) {
-        SafeApiRequest.apiRequest {
-            documentService.sendFeedback(bearerHeaderMap(accessToken, contentType = giniApiType.giniJsonMediaType), documentId, requestBody)
-        }
-    }
-
     suspend fun resolvePaymentRequests(accessToken: String, id: String, input: ResolvePaymentInput): ResolvedPayment = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             documentService.resolvePaymentRequests(bearerHeaderMap(accessToken, contentType = giniApiType.giniJsonMediaType), id, input.toResolvePaymentBody())

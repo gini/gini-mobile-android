@@ -36,67 +36,6 @@ class BankApiDocumentRepository(
         return ExtractionsContainer(specificExtractions, compoundExtractions, returnReasons)
     }
 
-    @Throws(JSONException::class)
-    suspend fun sendFeedbackForExtractions(document: Document, extractions: Map<String, SpecificExtraction>): Resource<Unit> {
-        val feedbackForExtractions = JSONObject()
-        for (entry in extractions.entries) {
-            val extraction = entry.value
-            val extractionData = JSONObject()
-            extractionData.put("value", extraction.value)
-            extractionData.put("entity", extraction.entity)
-            feedbackForExtractions.put(entry.key, extractionData)
-        }
-
-        val bodyJSON = JSONObject()
-        bodyJSON.put("feedback", feedbackForExtractions)
-        val body: RequestBody = bodyJSON.toString().toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
-        return withAccessToken { accessToken ->
-            wrapInResource {
-                documentRemoteSource.sendFeedback(accessToken, document.id, body)
-            }
-        }
-    }
-
-    @Throws(JSONException::class)
-    suspend fun sendFeedbackForExtractions(document: Document, extractions: Map<String, SpecificExtraction>, compoundExtractions: Map<String, CompoundExtraction>): Resource<Unit> {
-        val feedbackForExtractions = JSONObject()
-        for (entry in extractions.entries) {
-            val extraction = entry.value
-            val extractionData = JSONObject()
-            extractionData.put("value", extraction.value)
-            extractionData.put("entity", extraction.entity)
-            feedbackForExtractions.put(entry.key, extractionData)
-        }
-
-        val feedbackForCompoundExtractions = JSONObject()
-        for (compoundExtractionEntry in compoundExtractions.entries) {
-            val compoundExtraction: CompoundExtraction = compoundExtractionEntry.value
-            val specificExtractionsFeedbackObjects = JSONArray()
-            for (specificExtractionMap in compoundExtraction.specificExtractionMaps) {
-                val specificExtractionsFeedback = JSONObject()
-                for (specificExtractionEntry in specificExtractionMap.entries) {
-                    val extraction: Extraction = specificExtractionEntry.value
-                    val extractionData = JSONObject()
-                    extractionData.put("value", extraction.value)
-                    extractionData.put("entity", extraction.entity)
-                    specificExtractionsFeedback.put(specificExtractionEntry.key, extractionData)
-                }
-                specificExtractionsFeedbackObjects.put(specificExtractionsFeedback)
-            }
-            feedbackForCompoundExtractions.put(compoundExtractionEntry.key, specificExtractionsFeedbackObjects)
-        }
-
-        val bodyJSON = JSONObject()
-        bodyJSON.put("extractions", feedbackForExtractions)
-        bodyJSON.put("compoundExtractions", feedbackForCompoundExtractions)
-        val body: RequestBody = bodyJSON.toString().toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
-        return withAccessToken { accessToken ->
-            wrapInResource {
-                documentRemoteSource.sendFeedback(accessToken, document.id, body)
-            }
-        }
-    }
-
     suspend fun resolvePaymentRequest(requestId: String, resolvePaymentInput: ResolvePaymentInput): Resource<ResolvedPayment> =
         withAccessToken { accessToken ->
             wrapInResource {

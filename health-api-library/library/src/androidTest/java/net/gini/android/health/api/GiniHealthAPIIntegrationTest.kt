@@ -50,7 +50,7 @@ class GiniHealthAPIIntegrationTest: GiniCoreAPIIntegrationTest<HealthApiDocument
         val feedbackSpecific: MutableMap<String, SpecificExtraction> = HashMap()
         feedbackSpecific["amount_to_pay"] = extractionsContainer.specificExtractions["amount_to_pay"]!!
 
-        val sendFeedback = giniCoreApi.documentManager.sendFeedback(document, feedbackSpecific)
+        val sendFeedback = giniCoreApi.documentManager.sendFeedbackForExtractions(document, feedbackSpecific)
 
         if (sendFeedback is Resource.Error) {
             Log.e("TEST", sendFeedback.toString())
@@ -91,7 +91,7 @@ class GiniHealthAPIIntegrationTest: GiniCoreAPIIntegrationTest<HealthApiDocument
         // we should only send feedback for extractions we have seen and accepted
         feedbackCompound["line_items"] = compoundExtractions["line_items"]!!
         val sendFeedback =
-            giniCoreApi.documentManager.sendFeedback(document, feedbackSpecific, feedbackCompound)
+            giniCoreApi.documentManager.sendFeedbackForExtractions(document, feedbackSpecific, feedbackCompound)
 
         if (sendFeedback is Resource.Error) {
             Log.e("TEST", sendFeedback.toString())
