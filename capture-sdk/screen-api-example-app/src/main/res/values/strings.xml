@@ -33,6 +33,7 @@
     <string name="configuration_options_header">Configuration options</string>
     <string name="bottom_navbar_switch_label">Bottom navigation bar</string>
     <string name="animated_onboarding_illustrations_switch_label">Animated onboarding illustrations</string>
+    <string name="custom_loading_indicator_switch_label">Custom loading indicator animation</string>
 
     <!-- String customization examples -->
 

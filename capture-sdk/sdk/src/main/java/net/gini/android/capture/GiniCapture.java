@@ -21,6 +21,8 @@ import net.gini.android.capture.logging.ErrorLoggerListener;
 import net.gini.android.capture.onboarding.view.DefaultOnboardingNavigationBarBottomAdapter;
 import net.gini.android.capture.onboarding.view.OnboardingIllustrationAdapter;
 import net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomAdapter;
+import net.gini.android.capture.view.CustomLoadingIndicatorAdapter;
+import net.gini.android.capture.view.DefaultLoadingIndicatorAdapter;
 import net.gini.android.capture.view.NavigationBarTopAdapter;
 import net.gini.android.capture.view.DefaultNavigationBarTopAdapter;
 import net.gini.android.capture.network.GiniCaptureNetworkApi;
@@ -106,6 +108,7 @@ public class GiniCapture {
     private final OnboardingIllustrationAdapter onboardingLightingIllustrationAdapter;
     private final OnboardingIllustrationAdapter onboardingMultiPageIllustrationAdapter;
     private final OnboardingIllustrationAdapter onboardingQRCodeIllustrationAdapter;
+    private final CustomLoadingIndicatorAdapter loadingIndicatorAdapter;
 
     /**
      * Retrieve the current instance.
@@ -216,6 +219,7 @@ public class GiniCapture {
         onboardingMultiPageIllustrationAdapter = builder.getOnboardingMultiPageIllustrationAdapter();
         onboardingQRCodeIllustrationAdapter = builder.getOnboardingQRCodeIllustrationAdapter();
         cameraNavigationBarBottomAdapter = builder.getCameraNavigationBarBottomAdapter();
+        loadingIndicatorAdapter = builder.getLoadingIndicatorAdapter();
     }
 
     /**
@@ -589,6 +593,11 @@ public class GiniCapture {
         return onboardingQRCodeIllustrationAdapter;
     }
 
+    @Nullable
+    public CustomLoadingIndicatorAdapter getloadingIndicatorAdapter() {
+        return loadingIndicatorAdapter;
+    }
+
     /**
      * The size limit in bytes for imported files.
      *
@@ -647,6 +656,7 @@ public class GiniCapture {
         private OnboardingIllustrationAdapter onboardingLightingIllustrationAdapter;
         private OnboardingIllustrationAdapter onboardingMultiPageIllustrationAdapter;
         private OnboardingIllustrationAdapter onboardingQRCodeIllustrationAdapter;
+        private CustomLoadingIndicatorAdapter loadingIndicatorAdapter = new DefaultLoadingIndicatorAdapter();
 
         /**
          * Create a new {@link GiniCapture} instance.
@@ -1139,6 +1149,22 @@ public class GiniCapture {
          */
         public Builder setOnboardingQRCodeIllustrationAdapter(@NonNull final OnboardingIllustrationAdapter adapter) {
             onboardingQRCodeIllustrationAdapter = adapter;
+            return this;
+        }
+
+        @NonNull
+        private CustomLoadingIndicatorAdapter getLoadingIndicatorAdapter() {
+            return loadingIndicatorAdapter;
+        }
+
+        /**
+         * Set an adapter implementation to show a custom loading indicator.
+         *
+         * @param adapter an {@link CustomLoadingIndicatorAdapter} interface implementation
+         * @return the {@link Builder} instance
+         */
+        public Builder setLoadingIndicatorAdapter(@NonNull final CustomLoadingIndicatorAdapter adapter) {
+            loadingIndicatorAdapter = adapter;
             return this;
         }
     }

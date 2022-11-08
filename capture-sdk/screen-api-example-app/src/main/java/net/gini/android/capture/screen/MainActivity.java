@@ -43,6 +43,7 @@ import net.gini.android.capture.tracking.EventTracker;
 import net.gini.android.capture.tracking.OnboardingScreenEvent;
 import net.gini.android.capture.tracking.ReviewScreenEvent;
 import net.gini.android.capture.util.CancellationToken;
+import net.gini.android.capture.view.CustomLoadingIndicatorAdapter;
 import net.gini.android.capture.view.DefaultNavigationBarTopAdapter;
 import net.gini.android.capture.view.NavButtonType;
 import net.gini.android.capture.view.NavigationBarTopAdapter;
@@ -80,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView mTextAppVersion;
     private SwitchMaterial bottomNavBarSwitch;
     private SwitchMaterial animatedOnboardingIllustrationsSwitch;
+    private SwitchMaterial customLoadingAnimationSwitch;
     private CancellationToken mFileImportCancellationToken;
 
     @Override
@@ -350,6 +352,10 @@ public class MainActivity extends AppCompatActivity {
             builder.setOnboardingQRCodeIllustrationAdapter(new CustomOnboardingIllustrationAdapter(getResources().getIdentifier("scan_qr_code", "raw", this.getPackageName())));
         }
 
+        if (customLoadingAnimationSwitch.isChecked()) {
+            builder.setLoadingIndicatorAdapter(new CustomLottiLoadingIndicatorAdapter(getResources().getIdentifier("custom_loading", "raw", this.getPackageName())));
+        }
+
         builder.build();
     }
 
@@ -379,6 +385,7 @@ public class MainActivity extends AppCompatActivity {
         mTextAppVersion = (TextView) findViewById(R.id.text_app_version);
         bottomNavBarSwitch = findViewById(R.id.bottom_navbar_switch);
         animatedOnboardingIllustrationsSwitch = findViewById(R.id.animated_onboarding_illustrations_switch);
+        customLoadingAnimationSwitch = findViewById(R.id.custom_loading_indicator_switch);
     }
 
     private ArrayList<OnboardingPage> getOnboardingPages(final boolean isMultiPageEnabled, final boolean isQRCodeScanningEnabled) {
