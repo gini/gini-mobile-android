@@ -30,7 +30,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/gc_view_pager_wrapper"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_above="@+id/gc_thumbnails_panel"
         android:layout_marginTop="@dimen/large_24"
@@ -46,10 +46,36 @@
             android:layout_height="0dp"
             android:paddingStart="@dimen/xlarge"
             android:paddingEnd="@dimen/xlarge"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/gc_view_pager"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:paddingStart="@dimen/xlarge"
+            android:paddingEnd="@dimen/xlarge"
+            android:clipToPadding="false"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:id="@+id/gc_pager_recycler_view"
+            android:orientation="horizontal"
+            android:visibility="visible"
+            android:clipToPadding="false"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -72,15 +98,14 @@
         app:tabSelectedTextColor="@android:color/transparent"
         app:tabTextColor="@android:color/transparent" />
 
-    <androidx.appcompat.widget.AppCompatButton
+    <Button
         android:id="@+id/gc_button_next"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/xlarge"
         android:text="@string/gc_process_documents"
-        android:backgroundTint="@color/Accent_01"
-        android:textColor="@color/Light_01"
         android:textAllCaps="false"
+        style="@style/GiniCaptureTheme.Widget.Button.UnelevatedButton"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

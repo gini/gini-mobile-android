@@ -49,7 +49,7 @@ public class PreviewFragment extends Fragment {
 
     private ImageView mImageViewContainer;
     private LinearLayout mImageBlueRect;
-    private ConstraintLayout mRootPreview;
+    private LinearLayout mRootPreview;
     private ImageButton mDeletePage;
     private ImageDocument mDocument;
     private String mErrorMessage;
@@ -104,26 +104,8 @@ public class PreviewFragment extends Fragment {
         mActivityIndicator = view.findViewById(R.id.gc_activity_indicator);
         mImageBlueRect = view.findViewById(R.id.gc_image_selected_rect);
         mDeletePage = view.findViewById(R.id.gc_button_delete);
-        mRootPreview = view.findViewById(R.id.gc_image_preview_root);
+       // mRootPreview = view.findViewById(R.id.gc_image_preview_root);
         setupHandlers();
-    }
-
-    @Override
-    public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-
-        boolean isPortrait = getResources().getBoolean(R.bool.gc_is_portrait);
-
-        /*if (!isPortrait) {
-            int imgWrapperWidth = mImageBlueRect.getWidth();
-            int imgWrapperHeight = mImageBlueRect.getHeight();
-
-            ViewGroup.LayoutParams params = mRootPreview.getLayoutParams();
-            params.height = imgWrapperHeight;
-            params.width = imgWrapperWidth;
-            mRootPreview.setLayoutParams(params);
-            mRootPreview.invalidate();
-        }*/
     }
 
     private void setupHandlers() {
