@@ -14,12 +14,14 @@ import static net.gini.android.capture.tracking.EventTrackingHelper.trackReviewS
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -84,6 +86,7 @@ import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.MarginPageTransformer;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -301,6 +304,11 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
 
+                View view = ((RecyclerView)mPreviewsPager2.getChildAt(0))
+                        .getLayoutManager().findViewByPosition(position);
+
+                if (view != null)
+                    updateChildPagerWidth(view, mPreviewsPager2);
             }
 
             @Override
@@ -320,9 +328,9 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
 
     private ViewPager2.PageTransformer setupTransformer() {
 
-        int pageMarginPx = (ContextHelper.isTablet(requireContext())) ? getResources().getDimensionPixelOffset(R.dimen.large)
-                : getResources().getDimensionPixelOffset(R.dimen.large);
-        int offsetPx = (ContextHelper.isTablet(requireContext())) ? getResources().getDimensionPixelOffset(R.dimen.xlarge)
+        int pageMarginPx = (ContextHelper.isTablet(requireContext())) ? getResources().getDimensionPixelOffset(R.dimen.medium)
+                : getResources().getDimensionPixelOffset(R.dimen.medium);
+        int offsetPx = (ContextHelper.isTablet(requireContext())) ? getResources().getDimensionPixelOffset(R.dimen.large_24)
                 : getResources().getDimensionPixelOffset(R.dimen.small);
 
         return (page, position) -> {
@@ -334,10 +342,23 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
                 } else {
                     page.setTranslationX(offset);
                 }
-            } else {
-                page.setTranslationY(offset);
             }
         };
+    }
+
+    private void updateChildPagerWidth(View view, ViewPager2 pager) {
+        view.post(() -> {
+            int wMeasureSpec =
+                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+            int hMeasureSpec = View.MeasureSpec.makeMeasureSpec(view.getHeight(), View.MeasureSpec.EXACTLY);
+            view.measure(wMeasureSpec, hMeasureSpec);
+
+            if (pager.getLayoutParams().width != view.getMeasuredWidth()) {
+                ViewGroup.LayoutParams params = pager.getLayoutParams();
+                params.width = view.getMeasuredWidth();
+                pager.setLayoutParams(params);
+            }
+        });
     }
 
     private void bindViews(final View view) {

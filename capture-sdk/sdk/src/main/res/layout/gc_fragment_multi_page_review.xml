@@ -30,7 +30,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/gc_view_pager_wrapper"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_above="@+id/gc_thumbnails_panel"
         android:layout_marginTop="@dimen/large_24"
@@ -42,9 +42,8 @@
 
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/gc_view_pager2"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="0dp"
-            android:clipToPadding="false"
             android:paddingStart="@dimen/xlarge"
             android:paddingEnd="@dimen/xlarge"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -60,7 +59,7 @@
         android:layout_width="wrap_content"
         android:layout_height="@dimen/large"
         android:layout_gravity="bottom|center"
-        android:layout_marginBottom="@dimen/xxlarge"
+        android:layout_marginBottom="@dimen/xlarge"
         app:layout_constraintBottom_toTopOf="@+id/gc_button_next"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -77,8 +76,8 @@
         android:id="@+id/gc_button_next"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/xxlarge"
-        android:text="Process Documents"
+        android:layout_marginBottom="@dimen/xlarge"
+        android:text="@string/gc_process_documents"
         android:backgroundTint="@color/Accent_01"
         android:textColor="@color/Light_01"
         android:textAllCaps="false"

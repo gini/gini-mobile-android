@@ -72,7 +72,6 @@ class MultipageReviewFragmentTest {
 
         // TODO: use FragmentScenario to fix the error
         `when`(fragment.activity).thenReturn(mock())
-        fragment.mThumbnailsAdapter = mock()
         fragment.mMultiPageDocument = mock()
         fragment.mDocumentUploadResults = mock()
 

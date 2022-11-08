@@ -24,6 +24,7 @@
         android:layout_marginTop="@dimen/xlarge"
         android:background="@android:color/transparent"
         android:src="@drawable/gc_close_round_btn"
+        android:contentDescription="@string/gc_close"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
