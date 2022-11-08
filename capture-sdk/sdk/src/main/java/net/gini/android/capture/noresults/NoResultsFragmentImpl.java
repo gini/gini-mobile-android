@@ -54,16 +54,16 @@ class NoResultsFragmentImpl {
     View onCreateView(final LayoutInflater inflater, final ViewGroup container,
             final Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.gc_fragment_noresults, container, false);
-        final View backButton = view.findViewById(R.id.gc_button_no_results_back);
+        final View retakeImagesButton = view.findViewById(R.id.gc_button_no_results_retake_images);
         if (isDocumentFromCameraScreen()) {
-            backButton.setOnClickListener(new View.OnClickListener() {
+            retakeImagesButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View view) {
                     mListener.onBackToCameraPressed();
                 }
             });
         } else {
-            backButton.setVisibility(GONE);
+            retakeImagesButton.setVisibility(GONE);
         }
 
         setUpList(view);
@@ -72,7 +72,7 @@ class NoResultsFragmentImpl {
     }
 
     private boolean isDocumentFromCameraScreen() {
-        return mDocument.getImportMethod() != Document.ImportMethod.OPEN_WITH;
+        return mDocument.getImportMethod() == Document.ImportMethod.NONE && mDocument.getSource().getName().equals("camera");
     }
 
     private void setUpList(View view) {

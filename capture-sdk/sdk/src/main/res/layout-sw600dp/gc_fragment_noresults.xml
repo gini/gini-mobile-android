@@ -6,6 +6,16 @@
     android:background="?attr/backgroundColor"
     android:orientation="vertical">
 
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="@id/gc_no_results_header_layout"
+        app:layout_constraintEnd_toEndOf="@id/gc_no_results_header_layout"
+        app:layout_constraintTop_toTopOf="@id/gc_no_results_header_layout"
+        app:layout_constraintBottom_toBottomOf="@id/gc_no_results_header_layout"
+        android:alpha="0.15"
+        android:background="@color/Error_01"/>
+
     <RelativeLayout
         android:id="@+id/gc_no_results_header_layout"
         android:layout_width="match_parent"
@@ -15,7 +25,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_alignParentTop="true"
         android:layout_marginTop="@dimen/large"
-        android:background="@drawable/gc_no_results_error_background"
         android:minHeight="@dimen/gc_noresults_header_min_height"
         android:paddingStart="@dimen/gc_noresults_header_drawable_padding"
         android:paddingEnd="@dimen/gc_noresults_header_drawable_padding">
@@ -46,20 +55,37 @@
         android:layout_marginTop="@dimen/xxxlarge"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/gc_no_results_button_container"
         app:layout_constraintTop_toBottomOf="@id/gc_no_results_header_layout"
         android:overScrollMode="never"/>
 
-    <Button
-        android:id="@+id/gc_button_no_results_back"
-        style="@style/GiniCaptureTheme.Button"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/gc_noresults_bottom_button_height"
+    <LinearLayout
+        android:id="@+id/gc_no_results_button_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="@dimen/gc_noresults_bottom_button_margin"
-        android:text="@string/gc_noresults_back_button"
-        android:width="@dimen/gc_noresults_bottom_button_max_width" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="@dimen/large_24"
+        android:layout_marginEnd="@dimen/large_24"
+        android:maxWidth="@dimen/gc_noresults_bottom_button_max_width"
+        android:layout_marginBottom="@dimen/gc_noresults_bottom_button_margin">
 
+        <Button
+            android:id="@+id/gc_button_no_results_enter_manually"
+            style="@style/GiniCaptureTheme.Button"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/gc_noresults_bottom_button_height"
+            android:text="@string/gc_noresults_enter_manually" />
+
+        <Button
+            android:id="@+id/gc_button_no_results_retake_images"
+            style="@style/GiniCaptureTheme.Button"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/gc_noresults_bottom_button_height"
+            android:layout_marginTop="@dimen/gc_noresults_bottom_button_top_margin"
+            android:text="@string/gc_noresults_retake_images" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

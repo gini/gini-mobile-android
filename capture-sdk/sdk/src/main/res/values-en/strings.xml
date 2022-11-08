@@ -50,9 +50,12 @@
     <string name="gc_photo_tip_lighting">Proper lighting leads to better results than flash</string>
     <string name="gc_photo_tip_parallel">Hold device parallel over the page</string>
     <string name="gc_photo_tip_flat">A flat paper helps to receive better results</string>
+
     <string name="gc_noresults_header">Could not retrieve any information from your documents.</string>
     <string name="gc_noresults_headline">Tips for best results:</string>
-    <string name="gc_noresults_back_button">To the camera</string>
+    <string name="gc_noresults_retake_images">Retake Images</string>
+    <string name="gc_noresults_enter_manually">Enter Manually</string>
+
     <string name="gc_document_import_hint_text">Now documents can be conveniently uploaded for analysis.</string>
     <string name="gc_qr_code_scanner_hint_text">Have you checked out the QR code scanner yet?</string>
     <string name="gc_document_import_error">The document could not be opened. Please try a different document.</string>
