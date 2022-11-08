@@ -13,8 +13,10 @@ import static net.gini.android.capture.tracking.EventTrackingHelper.trackReviewS
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +35,7 @@ import net.gini.android.capture.internal.network.NetworkRequestResult;
 import net.gini.android.capture.internal.network.NetworkRequestsManager;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.util.AlertDialogHelperCompat;
+import net.gini.android.capture.internal.util.AndroidHelper;
 import net.gini.android.capture.internal.util.FileImportHelper;
 import net.gini.android.capture.review.multipage.previews.MiddlePageManager;
 import net.gini.android.capture.review.multipage.previews.PreviewFragmentListener;
@@ -41,6 +44,7 @@ import net.gini.android.capture.review.multipage.previews.PreviewsAdapterListene
 import net.gini.android.capture.review.zoom.ZoomInPreviewActivity;
 import net.gini.android.capture.tracking.ReviewScreenEvent;
 import net.gini.android.capture.tracking.ReviewScreenEvent.UPLOAD_ERROR_DETAILS_MAP_KEY;
+import net.gini.android.capture.view.CustomLoadingIndicatorAdapter;
 import net.gini.android.capture.view.InjectedViewContainer;
 import net.gini.android.capture.view.NavButtonType;
 import net.gini.android.capture.view.NavigationBarTopAdapter;
@@ -126,10 +130,12 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     private LinearLayout mAddPages;
     private TabLayout mTabIndicator;
     private InjectedViewContainer<NavigationBarTopAdapter> mTopAdapterInjectedViewContainer;
+    private InjectedViewContainer<CustomLoadingIndicatorAdapter> injectedLoadingIndicatorContainer;
     private boolean mNextClicked;
     private boolean mPreviewsShown;
     private SnapHelper mSnapHelper;
     private MiddlePageManager mSnapManager;
+    private int mSnapViewPosition = 0;
 
     public static MultiPageReviewFragment createInstance() {
         return new MultiPageReviewFragment();
@@ -205,9 +211,15 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
         final View view = inflater.inflate(R.layout.gc_fragment_multi_page_review, container,
                 false);
         bindViews(view);
+
+        setInjectedLoadingIndicatorContainer();
+
         setupTabIndicator();
+
         setInputHandlers();
+
         setupTopNavigationBar();
+
         if (mMultiPageDocument != null) {
             updateNextButtonVisibility();
             initRecyclerView();
@@ -215,10 +227,44 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
         return view;
     }
 
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        //Needed to refresh views in the recyclerview
+        mRecyclerView.setAdapter(null);
+        mSnapHelper.attachToRecyclerView(null);
+        mSnapHelper = null;
+        mPreviewPagesAdapter = null;
+        mSnapManager = null;
+        mRecyclerView.setLayoutManager(null);
+
+        initRecyclerView();
+
+        mRecyclerView.postDelayed(() -> {
+            scrollToCorrectPosition(mSnapViewPosition, false);
+            findPageByPosition();
+        }, 100);
+
+    }
+
+    private void findPageByPosition() {
+        mRecyclerView.post(() -> {
+            View childView = mRecyclerView.getChildAt(mSnapViewPosition);
+            if (childView != null) {
+                childView.findViewById(R.id.gc_image_selected_rect)
+                        .setVisibility(View.VISIBLE);
+            }
+        });
+    }
+
+    //Delay with blue rect when starting the screen
     private void delayWithBlueRect() {
         mRecyclerView.post(() -> showHideBlueRect(View.VISIBLE));
     }
 
+    //Look for the page in the middle
+    //Make it blue
     private View showHideBlueRect(int visibility) {
         View mChild = mSnapHelper.findSnapView(mSnapManager);
 
@@ -247,10 +293,12 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
             return null;
         };
 
+        //Custom LayoutManager for keeping the page in the middle
         mSnapManager = new MiddlePageManager(requireContext(), MiddlePageManager.HORIZONTAL, false);
         mRecyclerView.setLayoutManager(mSnapManager);
         mRecyclerView.setClipToPadding(false);
 
+        //Snap helper to mimic ViewPager snap behaviour
         mSnapHelper = new PagerSnapHelper();
         mSnapHelper.attachToRecyclerView(mRecyclerView);
 
@@ -259,6 +307,10 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
 
+                //Wait to state goes in IDLE
+                //Make the middle page rect blue
+                //Update position of tablayout
+                //Save the position for screen change
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
 
                     View viewAtPosition = showHideBlueRect(View.VISIBLE);
@@ -266,6 +318,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
                     if (viewAtPosition != null) {
                         int position = mRecyclerView.getChildAdapterPosition(viewAtPosition);
                         updateTabIndicatorPosition(position);
+                        mSnapViewPosition = position;
                     }
 
                 } else if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
@@ -284,13 +337,27 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setAdapter(mPreviewPagesAdapter);
 
+        //Scroll to the last captured document
         if (mMultiPageDocument.getDocuments().size() > 1) {
-            mRecyclerView.post(() -> {
-                mRecyclerView.scrollToPosition(mMultiPageDocument.getDocuments().size() - 1);
-            });
+            if (AndroidHelper.STORE_SCROLL_STATE > -1) {
+                scrollToCorrectPosition(AndroidHelper.STORE_SCROLL_STATE, true);
+            } else {
+                scrollToCorrectPosition(mMultiPageDocument.getDocuments().size() - 1, true);
+            }
         }
-
         shouldIndicatorBeVisible();
+    }
+
+    //Smooth scroll needed when starting screen
+    //Ordinary scroll needed when screen rotated
+    private void scrollToCorrectPosition(int mSnapViewPosition, boolean isSmooth) {
+        mRecyclerView.post(() -> {
+            if (!isSmooth)
+                mRecyclerView.scrollToPosition(mSnapViewPosition);
+            else mRecyclerView.smoothScrollToPosition(mSnapViewPosition);
+
+            mTabIndicator.selectTab(mTabIndicator.getTabAt(mSnapViewPosition));
+        });
     }
 
 
@@ -300,8 +367,16 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
         mTopAdapterInjectedViewContainer = view.findViewById(R.id.gc_navigation_top_bar);
         mAddPages = view.findViewById(R.id.gc_add_pages_wrapper);
         mRecyclerView = view.findViewById(R.id.gc_pager_recycler_view);
+        injectedLoadingIndicatorContainer = view.findViewById(R.id.gc_injected_loading_indicator_container);
     }
 
+    private void setInjectedLoadingIndicatorContainer() {
+        if (GiniCapture.hasInstance()) {
+            injectedLoadingIndicatorContainer.setInjectedViewAdapter(GiniCapture.getInstance().getloadingIndicatorAdapter());
+        }
+    }
+
+    //Add empty tabs to present dots on the screen
     private void setupTabIndicator() {
 
         for (int i = 0; i < mMultiPageDocument.getDocuments().size(); i++) {
@@ -391,6 +466,9 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
         updateNextButtonVisibility();
 
         shouldIndicatorBeVisible();
+
+        if (mMultiPageDocument.getDocuments().isEmpty())
+            AndroidHelper.STORE_SCROLL_STATE = -1;
     }
 
     private void deleteDocument(@NonNull final ImageDocument document) {
@@ -533,6 +611,8 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
             return;
         }
 
+        showIndicator();
+
         mMultiPageDocument.removeErrorForDocument(document);
         mDocumentUploadResults.put(document.getId(), false);
         networkRequestsManager.upload(activity, document)
@@ -544,11 +624,16 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
                             final Throwable throwable) {
                         if (throwable != null
                                 && !NetworkRequestsManager.isCancellation(throwable)) {
+
+                            hideIndicator();
+
                             trackUploadError(throwable);
                             final String errorMessage = getString(
                                     R.string.gc_document_analysis_error);
                             showErrorOnPreview(errorMessage, document);
+
                         } else if (requestResult != null) {
+                            hideIndicator();
                             mDocumentUploadResults.put(document.getId(), true);
                         }
                         updateNextButtonVisibility();
@@ -571,6 +656,16 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
 
 
         showHideBlueRect(View.VISIBLE);
+    }
+
+    private void showIndicator() {
+        if (injectedLoadingIndicatorContainer.getInjectedViewAdapter() != null)
+            injectedLoadingIndicatorContainer.getInjectedViewAdapter().onVisible();
+    }
+
+    private void hideIndicator() {
+        if (injectedLoadingIndicatorContainer.getInjectedViewAdapter() != null)
+            injectedLoadingIndicatorContainer.getInjectedViewAdapter().onHidden();
     }
 
     private void observeViewTree() {
@@ -626,6 +721,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
             mPreviewFragmentListener = null;
         }
 
+        AndroidHelper.STORE_SCROLL_STATE = mSnapViewPosition;
     }
 
     private void deleteUploadedDocuments() {

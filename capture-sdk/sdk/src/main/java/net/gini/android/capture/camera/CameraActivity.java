@@ -23,6 +23,7 @@ import net.gini.android.capture.camera.view.CameraNavigationBarBottomAdapter;
 import net.gini.android.capture.camera.view.DefaultCameraNavigationBarBottomAdapter;
 import net.gini.android.capture.document.GiniCaptureMultiPageDocument;
 import net.gini.android.capture.help.HelpActivity;
+import net.gini.android.capture.internal.util.AndroidHelper;
 import net.gini.android.capture.internal.util.ContextHelper;
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction;
 import net.gini.android.capture.network.model.GiniCaptureReturnReason;
@@ -471,6 +472,7 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
     protected void onDestroy() {
         super.onDestroy();
         clearMemory();
+        AndroidHelper.STORE_SCROLL_STATE = -1;
     }
 
     private void createGiniCaptureCoordinator() {

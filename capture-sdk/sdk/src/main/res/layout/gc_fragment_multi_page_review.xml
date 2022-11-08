@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?backgroundColor"
+    android:saveEnabled="true"
     tools:context=".review.multipage.MultiPageReviewActivity">
 
     <net.gini.android.capture.view.InjectedViewContainer
@@ -40,31 +41,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/gc_payment_visible_txt">
 
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/gc_view_pager2"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:paddingStart="@dimen/xlarge"
-            android:paddingEnd="@dimen/xlarge"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <androidx.viewpager.widget.ViewPager
-            android:id="@+id/gc_view_pager"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:paddingStart="@dimen/xlarge"
-            android:paddingEnd="@dimen/xlarge"
-            android:clipToPadding="false"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -98,6 +74,7 @@
         app:tabSelectedTextColor="@android:color/transparent"
         app:tabTextColor="@android:color/transparent" />
 
+
     <Button
         android:id="@+id/gc_button_next"
         android:layout_width="wrap_content"
@@ -109,6 +86,16 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <net.gini.android.capture.view.InjectedViewContainer
+        android:id="@+id/gc_injected_loading_indicator_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        app:layout_constraintBottom_toBottomOf="@+id/gc_button_next"
+        app:layout_constraintEnd_toEndOf="@+id/gc_button_next"
+        app:layout_constraintStart_toStartOf="@+id/gc_button_next"
+        app:layout_constraintTop_toTopOf="@+id/gc_button_next" />
 
     <LinearLayout
         android:id="@+id/gc_add_pages_wrapper"

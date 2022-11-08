@@ -336,5 +336,4 @@ public class MultiPageReviewActivity extends AppCompatActivity implements
             }
         }
     }
-
 }
