@@ -61,21 +61,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginStart="@dimen/large_24"
         android:layout_marginEnd="@dimen/large_24"
-        android:maxWidth="@dimen/gc_noresults_bottom_button_max_width"
         android:layout_marginBottom="@dimen/gc_noresults_bottom_button_margin">
 
         <Button
             android:id="@+id/gc_button_no_results_enter_manually"
-            style="@style/GiniCaptureTheme.NoResults.Manually.Button"
+            style="@style/GiniCaptureTheme.Widget.Button.OutlinedButton"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/gc_noresults_bottom_button_height"
+            android:layout_height="wrap_content"
             android:text="@string/gc_noresults_enter_manually" />
 
         <Button
             android:id="@+id/gc_button_no_results_retake_images"
-            style="@style/GiniCaptureTheme.NoResults.Retake.Button"
+            style="@style/GiniCaptureTheme.Widget.Button.UnelevatedButton"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/gc_noresults_bottom_button_height"
+            android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/gc_noresults_bottom_button_top_margin"
             android:text="@string/gc_noresults_retake_images" />
     </LinearLayout>

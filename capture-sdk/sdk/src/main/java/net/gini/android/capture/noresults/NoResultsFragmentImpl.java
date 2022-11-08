@@ -72,7 +72,7 @@ class NoResultsFragmentImpl {
     }
 
     private boolean isDocumentFromCameraScreen() {
-        return mDocument.getImportMethod() == Document.ImportMethod.NONE && mDocument.getSource().getName().equals("camera");
+        return mDocument.getImportMethod() != Document.ImportMethod.OPEN_WITH && mDocument.getSource().getName().equals("camera");
     }
 
     private void setUpList(View view) {

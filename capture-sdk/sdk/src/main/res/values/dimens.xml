@@ -111,7 +111,6 @@
     <dimen name="gc_noresults_tip_text_left_margin">8dp</dimen>
     <dimen name="gc_noresults_tip_text_max_width">250dp</dimen>
     <dimen name="gc_noresults_space_height_for_bottom_button">64dp</dimen>
-    <dimen name="gc_noresults_bottom_button_height">40dp</dimen>
     <dimen name="gc_noresults_bottom_button_margin">21dp</dimen>
     <dimen name="gc_noresults_bottom_button_max_width">312dp</dimen>
     <dimen name="gc_noresults_bottom_button_top_margin">12dp</dimen>
