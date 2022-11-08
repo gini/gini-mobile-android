@@ -224,7 +224,7 @@ internal class ReviewViewModel(internal val giniHealth: GiniHealth) : ViewModel(
             try {
                 when (val documentResult = giniHealth.documentFlow.value) {
                     is ResultWrapper.Success -> paymentDetails.value.extractions?.let { extractionsContainer ->
-                        giniHealth.giniHealthAPI.documentManager.sendFeedback(
+                        giniHealth.giniHealthAPI.documentManager.sendFeedbackForExtractions(
                             documentResult.value,
                             extractionsContainer.specificExtractions,
                             extractionsContainer.compoundExtractions.withFeedback(paymentDetails.value)

@@ -29,26 +29,6 @@ class HealthApiDocumentManager(private val documentRepository: HealthApiDocument
 ) {
 
     /**
-     * Sends approved and conceivably corrected extractions for the given document. This is called "submitting feedback
-     * on extractions" in the Gini Health API documentation.
-     *
-     * @param document            The document for which the extractions should be updated.
-     * @param specificExtractions A Map where the key is the name of the specific extraction and the value is the
-     *                            SpecificExtraction object. This is the same structure as returned by the getExtractions
-     *                            method of this manager.
-     * @param compoundExtractions A Map where the key is the name of the compound extraction and the value is the
-     *                            CompoundExtraction object. This is the same structure as returned by the getExtractions
-     *                            method of this manager.
-     * @return Empty [Resource] or information about the error
-     */
-    suspend fun sendFeedback(
-        document: Document,
-        specificExtractions: Map<String, SpecificExtraction>,
-        compoundExtractions: Map<String, CompoundExtraction>,
-    ): Resource<Unit> =
-        documentRepository.sendFeedbackForExtractions(document, specificExtractions, compoundExtractions)
-
-    /**
      * Get the rendered image of a page as byte[]
      *
      * @param documentId id of document
