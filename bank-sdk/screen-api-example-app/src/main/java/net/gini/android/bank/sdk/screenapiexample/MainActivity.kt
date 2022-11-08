@@ -25,6 +25,7 @@ import net.gini.android.capture.network.GiniCaptureDefaultNetworkApi
 import net.gini.android.capture.network.GiniCaptureDefaultNetworkService
 import net.gini.android.capture.requirements.RequirementsReport
 import net.gini.android.capture.util.CancellationToken
+import net.gini.android.capture.view.DefaultLoadingIndicatorAdapter
 import net.gini.android.capture.view.NavButtonType
 import net.gini.android.capture.view.NavigationBarTopAdapter
 import org.koin.android.ext.android.inject
@@ -66,6 +67,7 @@ class MainActivity : AppCompatActivity() {
         GiniBank.releaseCapture(this)
         val enableBottomNavigationBar = false
         val useCustomOnboardingPages = false
+        val useCustomLoadingIndicator = false
         GiniBank.setCaptureConfiguration(
             CaptureConfiguration(
                 networkService = networkService,
@@ -127,6 +129,17 @@ class MainActivity : AppCompatActivity() {
                     )
                 } else {
                     null
+                },
+                customLoadingIndicatorAdapter = if (useCustomLoadingIndicator) {
+                    CustomLottiLoadingIndicatorAdapter(
+                        resources.getIdentifier(
+                            "custom_loading",
+                            "raw",
+                            this.packageName
+                        )
+                    )
+                } else {
+                    DefaultLoadingIndicatorAdapter()
                 },
                 showOnboarding = true
             )

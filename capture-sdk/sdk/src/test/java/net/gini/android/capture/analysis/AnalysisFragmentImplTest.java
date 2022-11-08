@@ -29,6 +29,8 @@ import android.graphics.Color;
 import android.view.View;
 
 import net.gini.android.capture.Document;
+import net.gini.android.capture.GiniCapture;
+import net.gini.android.capture.GiniCaptureHelper;
 import net.gini.android.capture.R;
 import net.gini.android.capture.document.DocumentFactory;
 import net.gini.android.capture.document.ImageDocument;
@@ -36,7 +38,10 @@ import net.gini.android.capture.internal.camera.photo.Photo;
 import net.gini.android.capture.internal.camera.photo.PhotoFactory;
 import net.gini.android.capture.internal.ui.ErrorSnackbar;
 import net.gini.android.capture.internal.util.Size;
+import net.gini.android.capture.network.GiniCaptureNetworkApi;
+import net.gini.android.capture.network.GiniCaptureNetworkService;
 import net.gini.android.capture.test.FragmentImplFactory;
+import net.gini.android.capture.view.DefaultLoadingIndicatorAdapter;
 
 import org.junit.After;
 import org.junit.Test;
@@ -66,7 +71,8 @@ import jersey.repackaged.jsr166e.CompletableFuture;
 @Config(shadows = {
         AnalysisFragmentImplTest.DialogShadow.class,
         AnalysisFragmentImplTest.AnalysisHintsAnimatorShadow.class,
-        AnalysisFragmentImplTest.ErrorSnackbarShadow.class
+        AnalysisFragmentImplTest.ErrorSnackbarShadow.class,
+        AnalysisFragmentImplTest.DefaultLoadingIndicatorAdapterShadow.class
 })
 public class AnalysisFragmentImplTest {
 
@@ -76,6 +82,8 @@ public class AnalysisFragmentImplTest {
         DialogShadow.cleanup();
         AnalysisHintsAnimatorShadow.cleanup();
         ErrorSnackbarShadow.cleanup();
+        DefaultLoadingIndicatorAdapterShadow.cleanup();
+        GiniCaptureHelper.setGiniCaptureInstance(null);
     }
 
     @Test
@@ -146,14 +154,17 @@ public class AnalysisFragmentImplTest {
     @Test
     public void should_notShowScanAnimation_byDefault() throws Exception {
         // Given
+        GiniCapture.newInstance()
+                .setGiniCaptureNetworkService(mock(GiniCaptureNetworkService.class))
+                .setGiniCaptureNetworkApi(mock(GiniCaptureNetworkApi.class))
+                .build();
+
         final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
                 new AtomicReference<>();
 
         try (final ActivityScenario<AnalysisFragmentHostActivity> scenario = launchHostActivity(
                 analysisFragmentImplRef)) {
             // Then
-            onView(withId(R.id.gc_progress_activity)).check(matches(
-                    withEffectiveVisibility(ViewMatchers.Visibility.GONE)));
             onView(withId(R.id.gc_analysis_message)).check(matches(
                     withEffectiveVisibility(ViewMatchers.Visibility.GONE)));
         }
@@ -168,6 +179,11 @@ public class AnalysisFragmentImplTest {
     @Test
     public void should_showScanAnimation_whenRequested() throws Exception {
         // Given
+        GiniCapture.newInstance()
+                .setGiniCaptureNetworkService(mock(GiniCaptureNetworkService.class))
+                .setGiniCaptureNetworkApi(mock(GiniCaptureNetworkApi.class))
+                .build();
+
         final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
                 new AtomicReference<>();
 
@@ -177,17 +193,19 @@ public class AnalysisFragmentImplTest {
             // When
             scenario.onActivity(
                     new ActivityScenario.ActivityAction<AnalysisFragmentHostActivity>() {
+
                         @Override
                         public void perform(final AnalysisFragmentHostActivity activity) {
+
                             final AnalysisFragmentImpl analysisFragment =
                                     analysisFragmentImplRef.get();
+
                             analysisFragment.showScanAnimation();
                         }
                     });
 
             // Then
-            onView(withId(R.id.gc_progress_activity)).check(matches(
-                    withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
+            assertThat(DefaultLoadingIndicatorAdapterShadow.isOnVisibleCalled).isTrue();
             onView(withId(R.id.gc_analysis_message)).check(matches(
                     withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
         }
@@ -196,6 +214,11 @@ public class AnalysisFragmentImplTest {
     @Test
     public void should_hideScanAnimation_whenRequested() throws Exception {
         // Given
+        GiniCapture.newInstance()
+                .setGiniCaptureNetworkService(mock(GiniCaptureNetworkService.class))
+                .setGiniCaptureNetworkApi(mock(GiniCaptureNetworkApi.class))
+                .build();
+
         final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
                 new AtomicReference<>();
 
@@ -215,8 +238,7 @@ public class AnalysisFragmentImplTest {
                     });
 
             // Then
-            onView(withId(R.id.gc_progress_activity)).check(matches(
-                    withEffectiveVisibility(ViewMatchers.Visibility.GONE)));
+            assertThat(DefaultLoadingIndicatorAdapterShadow.isOnHiddenCalled).isTrue();
             onView(withId(R.id.gc_analysis_message)).check(matches(
                     withEffectiveVisibility(ViewMatchers.Visibility.GONE)));
         }
@@ -569,5 +591,22 @@ public class AnalysisFragmentImplTest {
         public void hide() {
             hideCalled = true;
         }
+    }
+
+    @Implements(DefaultLoadingIndicatorAdapter.class)
+    public static class DefaultLoadingIndicatorAdapterShadow {
+        static boolean isOnVisibleCalled;
+        static boolean isOnHiddenCalled;
+
+        static void cleanup() {
+            isOnVisibleCalled = false;
+            isOnHiddenCalled = false;
+        }
+
+        @Implementation
+        public void onVisible() { isOnVisibleCalled = true; }
+
+        @Implementation
+        public void onHidden() { isOnHiddenCalled = true; }
     }
 }
