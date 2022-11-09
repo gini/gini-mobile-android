@@ -12,11 +12,10 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent">
 
-    <ImageView
+    <net.gini.android.capture.review.RotatableImageViewContainer
         android:id="@+id/gc_image_container"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:scaleType="fitCenter"
         android:background="@color/Dark_06"
         app:layout_constraintBottom_toBottomOf="@+id/gc_image_selected_rect"
         app:layout_constraintEnd_toEndOf="@+id/gc_image_selected_rect"

@@ -16,6 +16,7 @@ import net.gini.android.capture.document.GiniCaptureDocumentError
 import net.gini.android.capture.document.ImageDocument
 import net.gini.android.capture.document.ImageMultiPageDocument
 import net.gini.android.capture.internal.camera.photo.Photo
+import net.gini.android.capture.review.RotatableImageViewContainer
 
 class PreviewPagesAdapter(
     private val multiPageDocument: ImageMultiPageDocument,
@@ -26,7 +27,7 @@ class PreviewPagesAdapter(
 
     inner class PagesViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
 
-        val mImageViewContainer: ImageView? = view.findViewById(R.id.gc_image_container)
+        val mImageViewContainer: RotatableImageViewContainer? = view.findViewById(R.id.gc_image_container)
         private val mImageBlueRect: LinearLayout? = view.findViewById(R.id.gc_image_selected_rect)
         private val mDeletePage: ImageButton? = view.findViewById(R.id.gc_button_delete)
         private val mErrorMessage: String? = null
@@ -54,7 +55,7 @@ class PreviewPagesAdapter(
 
         val mDocument = multiPageDocument.documents[position]
 
-        if (shouldShowPreviewImage(mDocument, holder.mImageViewContainer)) {
+        if (shouldShowPreviewImage(mDocument, holder.mImageViewContainer?.imageView)) {
             showActivityIndicator(holder.mActivityIndicator)
             if (GiniCapture.hasInstance()) {
                 GiniCapture.getInstance()
@@ -67,7 +68,8 @@ class PreviewPagesAdapter(
 
                     override fun onSuccess(result: Photo?) {
                         hideActivityIndicator(holder.mActivityIndicator)
-                        holder.mImageViewContainer?.setImageBitmap(result?.bitmapPreview)
+                        holder.mImageViewContainer?.imageView?.setImageBitmap(result?.bitmapPreview)
+                        holder.mImageViewContainer?.rotateImageView(result?.rotationForDisplay ?: 0, false);
                     }
 
                     override fun onError(exception: Exception?) {

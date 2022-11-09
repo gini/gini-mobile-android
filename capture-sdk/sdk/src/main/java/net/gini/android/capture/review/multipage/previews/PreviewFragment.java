@@ -47,7 +47,7 @@ public class PreviewFragment extends Fragment {
     private static final String ARGS_ERROR_BUTTON_ACTION = "ARGS_ERROR_BUTTON_ACTION";
     private static final String PARCELABLE_MEMORY_CACHE_TAG = "PAGE_PREVIEW_FRAGMENT";
 
-    private ImageView mImageViewContainer;
+    private RotatableImageViewContainer mImageViewContainer;
     private LinearLayout mImageBlueRect;
     private LinearLayout mRootPreview;
     private ImageButton mDeletePage;
@@ -147,8 +147,9 @@ public class PreviewFragment extends Fragment {
                                 hideActivityIndicator();
                                 LOG.debug("Showing preview ({})", this);
 
-                                mImageViewContainer.setImageBitmap(result.getBitmapPreview());
+                                mImageViewContainer.getImageView().setImageBitmap(result.getBitmapPreview());
                                 LOG.debug("Applying rotation ({})", this);
+                                mImageViewContainer.rotateImageView(mDocument.getRotationForDisplay(), false);
                             }
 
                             @Override
@@ -237,7 +238,7 @@ public class PreviewFragment extends Fragment {
 
     private boolean shouldShowPreviewImage() {
         return mDocument != null
-                && mImageViewContainer.getDrawable() == null;
+                && mImageViewContainer.getImageView().getDrawable() == null;
     }
 
     private void showActivityIndicator() {
