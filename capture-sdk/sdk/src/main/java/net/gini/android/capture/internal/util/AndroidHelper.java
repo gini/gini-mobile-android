@@ -17,6 +17,7 @@ public final class AndroidHelper {
     //Let me know if we don't want to use this
 
     public static int STORE_SCROLL_STATE = -1;
+    public static int STORE_DOCUMENTS_SIZE = -1;
 
     /**
      * Internal use only.

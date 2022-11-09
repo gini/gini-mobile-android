@@ -472,7 +472,9 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
     protected void onDestroy() {
         super.onDestroy();
         clearMemory();
+
         AndroidHelper.STORE_SCROLL_STATE = -1;
+        AndroidHelper.STORE_DOCUMENTS_SIZE = -1;
     }
 
     private void createGiniCaptureCoordinator() {
