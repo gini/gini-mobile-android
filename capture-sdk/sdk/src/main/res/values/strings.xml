@@ -12,6 +12,7 @@
     <string name="gc_title_file_import">Importieren</string>
     <string name="gc_title_analysis">Übersicht</string>
     <string name="gc_title_multi_page_review">Fotos überprüfen</string>
+    <string name="gc_title_no_results">Keine Ergebnisse</string>
     <string name="gc_show_onboarding">Hilfe</string>
 
     <string name="gc_camera_error_no_permission">Um Dokumente zu fotografieren, erlaube Gini Pay den Zugriff auf die Kamera.</string>
@@ -64,8 +65,8 @@
     <string name="gc_photo_tip_flat">Flach gestrichene Dokumente erleichtern die Auswertung</string>
     <string name="gc_noresults_header">Leider konnten keine Informationen aus dem Dokument ausgelesen werden.</string>
     <string name="gc_noresults_headline">Tipps für beste Ergebnisse:</string>
-    <string name="gc_noresults_retake_images">Foto wiederholen</string>
-    <string name="gc_noresults_enter_manually">Zahlungsdaten manuell eingeben</string>
+    <string name="gc_noresults_retake_images">Foto Wiederholen</string>
+    <string name="gc_noresults_enter_manually">Manuell Eingeben</string>
 
     <string name="gc_document_import_hint_text">Es können jetzt auch ganz einfach Dateien hochgeladen werden.</string>
     <string name="gc_qr_code_scanner_hint_text">Haben Sie schon den QR-Codeleser ausprobiert?</string>

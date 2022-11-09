@@ -9,7 +9,9 @@
     <string name="gc_title_supported_formats">Supported formats</string>
     <string name="gc_title_file_import">How to import</string>
     <string name="gc_title_multi_page_review">Check photo quality</string>
+    <string name="gc_title_no_results">No results</string>
     <string name="gc_show_onboarding">Help</string>
+
     <string name="gc_camera_error_no_permission">To photograph a document, please grant us permission to use the camera</string>
     <string name="gc_camera_error_no_permission_button_title">Grant permission</string>
     <string name="gc_camera_image_stack_subtitle">Pages</string>
