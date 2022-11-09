@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?backgroundColor"
-    android:saveEnabled="true"
+    android:background="?attr/backgroundColor"
     tools:context=".review.multipage.MultiPageReviewActivity">
 
     <net.gini.android.capture.view.InjectedViewContainer
@@ -54,7 +54,6 @@
             app:layout_constraintTop_toTopOf="parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/gc_tab_indicator"
@@ -112,7 +111,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:src="@drawable/gc_add_page" />
+            app:srcCompat="@drawable/gc_add_page" />
 
         <TextView
             android:id="@+id/gc_pages_txt"

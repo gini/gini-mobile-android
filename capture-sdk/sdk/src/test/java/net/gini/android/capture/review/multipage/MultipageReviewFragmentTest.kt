@@ -26,6 +26,8 @@ import org.mockito.Mockito
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.any
 import org.robolectric.annotation.LooperMode
+import net.gini.android.capture.R
+
 
 /**
  * Created by Alpar Szotyori on 02.03.2020.
@@ -112,7 +114,7 @@ class MultipageReviewFragmentTest {
         // Given
         val listener = mock<MultiPageReviewFragmentListener>()
 
-        val scenario = launchFragment(initialState = CREATED) {
+        val scenario = launchFragment(initialState = CREATED, themeResId = R.style.GiniCaptureTheme) {
             MultiPageReviewFragment.createInstance().apply {
                 setListener(listener)
             }

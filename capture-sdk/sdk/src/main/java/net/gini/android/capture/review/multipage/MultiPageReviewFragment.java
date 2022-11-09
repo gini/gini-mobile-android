@@ -21,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.Button;
 import android.widget.LinearLayout;
 
 import net.gini.android.capture.Document;
@@ -41,6 +42,8 @@ import net.gini.android.capture.review.multipage.previews.MiddlePageManager;
 import net.gini.android.capture.review.multipage.previews.PreviewFragmentListener;
 import net.gini.android.capture.review.multipage.previews.PreviewPagesAdapter;
 import net.gini.android.capture.review.multipage.previews.PreviewsAdapterListener;
+import net.gini.android.capture.review.multipage.thumbnails.ThumbnailsAdapter;
+import net.gini.android.capture.review.multipage.thumbnails.ThumbnailsAdapterListener;
 import net.gini.android.capture.review.zoom.ZoomInPreviewActivity;
 import net.gini.android.capture.tracking.ReviewScreenEvent;
 import net.gini.android.capture.tracking.ReviewScreenEvent.UPLOAD_ERROR_DETAILS_MAP_KEY;
@@ -126,7 +129,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     private PreviewFragmentListener mPreviewFragmentListener;
     private PreviewPagesAdapter mPreviewPagesAdapter;
     private RecyclerView mRecyclerView;
-    private AppCompatButton mButtonNext;
+    private Button mButtonNext;
     private LinearLayout mAddPages;
     private TabLayout mTabIndicator;
     private InjectedViewContainer<NavigationBarTopAdapter> mTopAdapterInjectedViewContainer;
@@ -376,6 +379,9 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
 
     //Add empty tabs to present dots on the screen
     private void setupTabIndicator() {
+
+        if (mMultiPageDocument == null)
+            return;
 
         for (int i = 0; i < mMultiPageDocument.getDocuments().size(); i++) {
             mTabIndicator.addTab(mTabIndicator.newTab());

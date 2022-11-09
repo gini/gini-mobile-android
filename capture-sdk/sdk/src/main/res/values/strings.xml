@@ -160,5 +160,5 @@
     <string name="gc_payment_details_visible">Sind alle Zahlungsinformationen gut lesbar?</string>
     <string name="gc_pages">Neue Seite</string>
     <string name="gc_review">Übersicht</string>
-    <string name="gc_process_documents">Process Documents</string>
+    <string name="gc_process_documents">Dokumente verarbeiten</string>
 </resources>
