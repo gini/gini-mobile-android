@@ -665,12 +665,12 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     }
 
     private void showIndicator() {
-        if (injectedLoadingIndicatorContainer.getInjectedViewAdapter() != null)
+        if (injectedLoadingIndicatorContainer != null && injectedLoadingIndicatorContainer.getInjectedViewAdapter() != null)
             injectedLoadingIndicatorContainer.getInjectedViewAdapter().onVisible();
     }
 
     private void hideIndicator() {
-        if (injectedLoadingIndicatorContainer.getInjectedViewAdapter() != null)
+        if (injectedLoadingIndicatorContainer != null && injectedLoadingIndicatorContainer.getInjectedViewAdapter() != null)
             injectedLoadingIndicatorContainer.getInjectedViewAdapter().onHidden();
     }
 
