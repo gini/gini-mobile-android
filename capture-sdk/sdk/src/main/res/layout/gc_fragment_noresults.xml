@@ -25,9 +25,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_alignParentTop="true"
         android:layout_marginTop="@dimen/large"
-        android:minHeight="@dimen/gc_noresults_header_min_height"
-        android:paddingStart="@dimen/gc_noresults_header_drawable_padding"
-        android:paddingEnd="@dimen/gc_noresults_header_drawable_padding">
+        android:minHeight="@dimen/xxxlarge"
+        android:paddingStart="@dimen/large_24"
+        android:paddingEnd="@dimen/large_24">
 
         <TextView
             android:id="@+id/gc_no_results_header"
@@ -35,8 +35,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:drawableStart="@drawable/ic_alert_triangle"
-            android:drawablePadding="@dimen/gc_noresults_header_drawable_padding"
+            android:drawableStart="@drawable/gc_alert_triangle_icon"
+            android:drawablePadding="@dimen/large_24"
             android:gravity="center_vertical"
             android:text="@string/gc_noresults_header" />
     </RelativeLayout>
@@ -61,7 +61,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginStart="@dimen/large_24"
         android:layout_marginEnd="@dimen/large_24"
-        android:layout_marginBottom="@dimen/gc_noresults_bottom_button_margin">
+        android:layout_marginBottom="@dimen/large_24">
 
         <Button
             android:id="@+id/gc_button_no_results_enter_manually"
@@ -75,7 +75,7 @@
             style="@style/GiniCaptureTheme.Widget.Button.UnelevatedButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/gc_noresults_bottom_button_top_margin"
+            android:layout_marginTop="@dimen/medium"
             android:text="@string/gc_noresults_retake_images" />
     </LinearLayout>
 

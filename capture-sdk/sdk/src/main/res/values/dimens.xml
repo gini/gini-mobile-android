@@ -100,20 +100,8 @@
     <item name="gc_analysis_preview_height_percentage" type="dimen" format="float">1</item>
     <item name="gc_analysis_preview_alpha" type="dimen" format="float">0.25</item>
 
-    <dimen name="gc_noresults_text_header_margin">21dp</dimen>
-    <dimen name="gc_noresults_header_drawable_padding">26dp</dimen>
-    <dimen name="gc_noresults_header_min_height">62dp</dimen>
-    <dimen name="gc_noresults_tip_icon_size">64dp</dimen>
-    <dimen name="gc_noresults_tip_icon_margin">16dp</dimen>
-    <dimen name="gc_noresults_tip_text_top_margin">16dp</dimen>
-    <dimen name="gc_noresults_tip_text_bottom_margin">12dp</dimen>
-    <dimen name="gc_noresults_tip_text_right_margin">16dp</dimen>
-    <dimen name="gc_noresults_tip_text_left_margin">8dp</dimen>
     <dimen name="gc_noresults_tip_text_max_width">250dp</dimen>
-    <dimen name="gc_noresults_space_height_for_bottom_button">64dp</dimen>
-    <dimen name="gc_noresults_bottom_button_margin">21dp</dimen>
     <dimen name="gc_noresults_bottom_button_max_width">312dp</dimen>
-    <dimen name="gc_noresults_bottom_button_top_margin">12dp</dimen>
 
     <dimen name="gc_help_item_margin">16dp</dimen>
     <dimen name="gc_help_item_forward_icon_margin">12dp</dimen>
