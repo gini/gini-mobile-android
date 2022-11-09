@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
 import net.gini.android.capture.help.view.HelpNavigationBarBottomAdapter;
 import net.gini.android.capture.onboarding.DefaultPages;
 import net.gini.android.capture.AsyncCallback;
@@ -82,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
     private SwitchMaterial bottomNavBarSwitch;
     private SwitchMaterial animatedOnboardingIllustrationsSwitch;
     private SwitchMaterial customLoadingAnimationSwitch;
+    private SwitchMaterial onlyQRCodeSwitch;
     private CancellationToken mFileImportCancellationToken;
 
     @Override
@@ -204,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(final DialogInterface dialogInterface,
-                            final int i) {
+                                        final int i) {
                         finish();
                     }
                 })
@@ -356,6 +358,8 @@ public class MainActivity extends AppCompatActivity {
             builder.setLoadingIndicatorAdapter(new CustomLottiLoadingIndicatorAdapter(getResources().getIdentifier("custom_loading", "raw", this.getPackageName())));
         }
 
+        builder.setOnlyQRCodeScanning(onlyQRCodeSwitch.isChecked());
+
         builder.build();
     }
 
@@ -386,6 +390,7 @@ public class MainActivity extends AppCompatActivity {
         bottomNavBarSwitch = findViewById(R.id.bottom_navbar_switch);
         animatedOnboardingIllustrationsSwitch = findViewById(R.id.animated_onboarding_illustrations_switch);
         customLoadingAnimationSwitch = findViewById(R.id.custom_loading_indicator_switch);
+        onlyQRCodeSwitch = findViewById(R.id.gc_only_qr_code_scanning);
     }
 
     private ArrayList<OnboardingPage> getOnboardingPages(final boolean isMultiPageEnabled, final boolean isQRCodeScanningEnabled) {
@@ -397,7 +402,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode,
-            final Intent data) {
+                                    final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_SCAN) {
             if (data == null) {
