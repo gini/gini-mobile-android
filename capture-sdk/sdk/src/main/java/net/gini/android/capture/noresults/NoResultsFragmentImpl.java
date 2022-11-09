@@ -25,8 +25,10 @@ class NoResultsFragmentImpl {
     private static final NoResultsFragmentListener NO_OP_LISTENER =
             new NoResultsFragmentListener() {
                 @Override
-                public void onBackToCameraPressed() {
-                }
+                public void onBackToCameraPressed() {}
+
+                @Override
+                public void onEnterManuallyPressed() {}
             };
 
     private final FragmentImplCallback mFragment;
@@ -56,15 +58,13 @@ class NoResultsFragmentImpl {
         final View view = inflater.inflate(R.layout.gc_fragment_noresults, container, false);
         final View retakeImagesButton = view.findViewById(R.id.gc_button_no_results_retake_images);
         if (isDocumentFromCameraScreen()) {
-            retakeImagesButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View view) {
-                    mListener.onBackToCameraPressed();
-                }
-            });
+            retakeImagesButton.setOnClickListener(view12 -> mListener.onBackToCameraPressed());
         } else {
             retakeImagesButton.setVisibility(GONE);
         }
+
+        final View enterManuallyButton = view.findViewById(R.id.gc_button_no_results_enter_manually);
+        enterManuallyButton.setOnClickListener(view1 -> mListener.onEnterManuallyPressed());
 
         setUpList(view);
 
