@@ -383,6 +383,7 @@ public class AnalysisActivity extends AppCompatActivity implements
             noResultsActivity.setExtrasClassLoader(AnalysisActivity.class.getClassLoader());
             startActivityForResult(noResultsActivity, NO_RESULT_REQUEST);
             setResult(RESULT_NO_EXTRACTIONS);
+            GiniCapture.getInstance().internal().getImageMultiPageDocumentMemoryStore().clear();
         } else {
             final Intent result = new Intent();
             setResult(RESULT_OK, result);
@@ -399,9 +400,6 @@ public class AnalysisActivity extends AppCompatActivity implements
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == NO_RESULT_REQUEST && resultCode == RESULT_ENTER_MANUALLY) {
             setResult(resultCode, data);
-            finish();
-
-            return;
         }
 
         finish();
