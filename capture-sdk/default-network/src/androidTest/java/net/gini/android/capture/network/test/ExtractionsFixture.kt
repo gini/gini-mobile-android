@@ -30,12 +30,7 @@ class ExtractionsFixture(
                             val extraction: GiniCaptureSpecificExtraction? = other.getParcelable(key)
                             fixtureEntry.key == key &&
                                     fixtureEntry.value.entity == extraction?.entity &&
-                                    fixtureEntry.value.value == extraction.value &&
-                                    fixtureEntry.value.box?.top == extraction.box?.top &&
-                                    fixtureEntry.value.box?.left == extraction.box?.left &&
-                                    fixtureEntry.value.box?.width == extraction.box?.width &&
-                                    fixtureEntry.value.box?.height == extraction.box?.height &&
-                                    fixtureEntry.value.box?.page == extraction.box?.pageNumber
+                                    fixtureEntry.value.value == extraction.value
                         }
                     }
         }
