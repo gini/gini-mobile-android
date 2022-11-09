@@ -28,12 +28,6 @@
     <dimen name="gc_multi_page_review_thumbnail_card_highlight_height">2dp</dimen>
     <dimen name="gc_multi_page_review_plus_button_subtitle_padding">8dp</dimen>
 
-    <dimen name="gc_noresults_tip_icon_margin">16dp</dimen>
-    <dimen name="gc_noresults_tip_text_top_margin">0dp</dimen>
-    <dimen name="gc_noresults_tip_text_bottom_margin">32dp</dimen>
-    <dimen name="gc_noresults_tip_text_right_margin">16dp</dimen>
-    <dimen name="gc_noresults_tip_text_left_margin">16dp</dimen>
-
     <dimen name="gc_photo_tips_tip_icon_margin">16dp</dimen>
     <dimen name="gc_photo_tips_tip_text_top_margin">0dp</dimen>
     <dimen name="gc_photo_tips_tip_text_bottom_margin">32dp</dimen>
