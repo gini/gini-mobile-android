@@ -3,13 +3,6 @@
     "paymentRecipient": {
       "entity": "companyname",
       "value": "Fahrrad Rückenwind",
-      "box": {
-        "top": 617.53,
-        "left": 66.25,
-        "width": 192.95999999999998,
-        "height": 11.040000000000077,
-        "page": 1
-      },
       "candidates": "paymentRecipients"
     },
     "paymentPurpose": {
@@ -19,37 +12,16 @@
     "bic": {
       "entity": "bic",
       "value": "BYLADEM1001",
-      "box": {
-        "top": 642.49,
-        "left": 66.25,
-        "width": 86.03,
-        "height": 11.039999999999964,
-        "page": 1
-      },
       "candidates": "bics"
     },
     "amountToPay": {
       "entity": "amount",
       "value": "995.00:EUR",
-      "box": {
-        "top": 464.89,
-        "left": 496.45,
-        "width": 29.439999999999998,
-        "height": 10.080000000000041,
-        "page": 1
-      },
       "candidates": "amounts"
     },
     "iban": {
       "entity": "iban",
       "value": "DE02120300000000202051",
-      "box": {
-        "top": 666.49,
-        "left": 93.65,
-        "width": 121.82999999999998,
-        "height": 11.039999999999964,
-        "page": 1
-      },
       "candidates": "ibans"
     },
     "docType": {
