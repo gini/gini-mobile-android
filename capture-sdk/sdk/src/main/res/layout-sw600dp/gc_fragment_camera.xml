@@ -57,9 +57,9 @@
             android:id="@+id/gc_camera_flash_button_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="invisible"
+            android:visibility="gone"
             app:constraint_referenced_ids="gc_flash_button_container"
-            tools:visibility="visible" />
+            tools:visibility="gone" />
 
         <androidx.constraintlayout.widget.Group
             android:id="@+id/gc_document_import_button_group"
