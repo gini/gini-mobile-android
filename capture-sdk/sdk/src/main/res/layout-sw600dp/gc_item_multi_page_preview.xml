@@ -3,10 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/gc_image_preview_root"
     android:layout_gravity="center_horizontal"
-    android:layout_marginStart="@dimen/large_24"
-    android:layout_marginEnd="@dimen/large_24"
+    android:orientation="horizontal"
     android:layout_width="wrap_content"
     android:layout_height="match_parent">
+
+    <Space
+        android:layout_width="@dimen/xlarge"
+        android:layout_height="match_parent"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
@@ -16,7 +19,7 @@
         android:id="@+id/gc_image_container"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@color/Dark_06"
+        android:background="@color/Light_03"
         app:layout_constraintBottom_toBottomOf="@+id/gc_image_selected_rect"
         app:layout_constraintEnd_toEndOf="@+id/gc_image_selected_rect"
         app:layout_constraintStart_toStartOf="@+id/gc_image_selected_rect"
@@ -66,6 +69,10 @@
         tools:targetApi="lollipop"
         tools:visibility="visible" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <Space
+        android:layout_width="@dimen/xlarge"
+        android:layout_height="match_parent"/>
 
 </LinearLayout>
 

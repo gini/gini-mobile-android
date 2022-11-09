@@ -38,10 +38,16 @@ class MiddlePageManager : LinearLayoutManager {
     override fun measureChildWithMargins(child: View, widthUsed: Int, heightUsed: Int) {
         val lp = (child.layoutParams as RecyclerView.LayoutParams).absoluteAdapterPosition
         super.measureChildWithMargins(child, widthUsed, heightUsed)
+
         if (lp != 0 && lp != itemCount - 1) return
-        val hPadding = ((width - child.measuredWidth) / 2).coerceAtLeast(0)
-        if (lp == 0) recyclerView.updatePaddingRelative(start = hPadding)
-        if (lp == itemCount - 1) recyclerView.updatePaddingRelative(end = hPadding)
+
+        //Post wait to obtain child width
+        //Pas the calculation to start and end padding to centre the child
+        child.post {
+            val hPadding = ((width - child.measuredWidth) / 2).coerceAtLeast(0)
+            if (lp == 0) recyclerView.updatePaddingRelative(start = hPadding, end = hPadding)
+            if (lp == itemCount - 1) recyclerView.updatePaddingRelative(end = hPadding)
+        }
     }
 
     override fun onAttachedToWindow(view: RecyclerView) {
