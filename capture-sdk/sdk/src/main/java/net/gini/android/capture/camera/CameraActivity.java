@@ -6,12 +6,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import androidx.activity.OnBackPressedCallback;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.VisibleForTesting;
-import androidx.appcompat.app.AppCompatActivity;
-
 import net.gini.android.capture.Document;
 import net.gini.android.capture.DocumentImportEnabledFileTypes;
 import net.gini.android.capture.GiniCapture;
@@ -20,7 +14,6 @@ import net.gini.android.capture.GiniCaptureError;
 import net.gini.android.capture.R;
 import net.gini.android.capture.analysis.AnalysisActivity;
 import net.gini.android.capture.camera.view.CameraNavigationBarBottomAdapter;
-import net.gini.android.capture.camera.view.DefaultCameraNavigationBarBottomAdapter;
 import net.gini.android.capture.document.GiniCaptureMultiPageDocument;
 import net.gini.android.capture.help.HelpActivity;
 import net.gini.android.capture.internal.util.ContextHelper;
@@ -35,12 +28,17 @@ import net.gini.android.capture.view.InjectedViewContainer;
 
 import java.util.Map;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
+import androidx.appcompat.app.AppCompatActivity;
+
 import static net.gini.android.capture.internal.util.ActivityHelper.enableHomeAsUp;
 import static net.gini.android.capture.internal.util.ActivityHelper.interceptOnBackPressed;
 import static net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboarding;
 import static net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboardingAtFirstRun;
 import static net.gini.android.capture.review.ReviewActivity.EXTRA_IN_ANALYSIS_ACTIVITY;
-import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackCameraScreenEvent;
 
 /**
@@ -340,6 +338,12 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
      */
     public static final int RESULT_ERROR = RESULT_FIRST_USER + 1;
 
+    /**
+     * <p> Returned result code in case the user wants to enter data manually if
+     * the scanning gives no results</p>
+     */
+    public static final int RESULT_ENTER_MANUALLY = RESULT_FIRST_USER + 99;
+
     @VisibleForTesting
     static final int REVIEW_DOCUMENT_REQUEST = 1;
     private static final int ONBOARDING_REQUEST = 2;
@@ -597,6 +601,14 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode,
             final Intent data) {
+        if (resultCode == RESULT_ENTER_MANUALLY) {
+            setResult(resultCode, data);
+            finish();
+            clearMemory();
+
+            return;
+        }
+
         switch (requestCode) {
             case REVIEW_DOCUMENT_REQUEST:
             case ANALYSE_DOCUMENT_REQUEST:

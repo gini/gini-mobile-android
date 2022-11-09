@@ -149,6 +149,7 @@
     <color name="Error_02">#FF453A</color>
     <color name="Error_03">#ECD0D0</color>
     <color name="Error_04">#EEDEDE</color>
+    <color name="Error_05">#830801</color>
 
     <color name="Warning_01">#D9A00E</color>
     <color name="Warning_02">#FFC73A</color>
