@@ -14,6 +14,7 @@ import net.gini.android.capture.onboarding.view.OnboardingIllustrationAdapter
 import net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomAdapter
 import net.gini.android.capture.review.ReviewActivity
 import net.gini.android.capture.tracking.EventTracker
+import net.gini.android.capture.view.CustomLoadingIndicatorAdapter
 import net.gini.android.capture.view.NavigationBarTopAdapter
 
 /**
@@ -166,6 +167,12 @@ data class CaptureConfiguration(
      * Set an adapter implementation to show a custom illustration on the "QR code" onboarding page.
      */
     val onboardingQRCodeIllustrationAdapter: OnboardingIllustrationAdapter? = null,
+
+    /**
+     * Set an adapter implementation to show a custom loading animation during analyse and scan.
+     */
+
+    val customLoadingIndicatorAdapter: CustomLoadingIndicatorAdapter? = null
 )
 
 internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfiguration): GiniCapture.Builder {
@@ -199,5 +206,6 @@ internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfig
             configuration.onboardingLightingIllustrationAdapter?.let { setOnboardingLightingIllustrationAdapter(it) }
             configuration.onboardingMultiPageIllustrationAdapter?.let { setOnboardingMultiPageIllustrationAdapter(it) }
             configuration.onboardingQRCodeIllustrationAdapter?.let { setOnboardingQRCodeIllustrationAdapter(it) }
+            configuration.customLoadingIndicatorAdapter?.let { setLoadingIndicatorAdapter(it) }
         }
 }
