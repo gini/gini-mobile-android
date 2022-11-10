@@ -12,6 +12,7 @@
     <string name="gc_title_file_import">Importieren</string>
     <string name="gc_title_analysis">Übersicht</string>
     <string name="gc_title_multi_page_review">Fotos überprüfen</string>
+    <string name="gc_title_no_results">Keine Ergebnisse</string>
     <string name="gc_show_onboarding">Hilfe</string>
 
     <string name="gc_camera_error_no_permission">Um Dokumente zu fotografieren, erlaube Gini Pay den Zugriff auf die Kamera.</string>
@@ -62,10 +63,10 @@
     <string name="gc_photo_tip_parallel">Das Handy sollte parallel über dem Dokument gehalten werden</string>
 
     <string name="gc_photo_tip_flat">Flach gestrichene Dokumente erleichtern die Auswertung</string>
-    <string name="gc_noresults_header">Es konnten keine Daten ausgelesen werden. Bitte Aufnahme wiederholen.</string>
+    <string name="gc_noresults_header">Leider konnten keine Informationen aus dem Dokument ausgelesen werden.</string>
     <string name="gc_noresults_headline">Tipps für beste Ergebnisse:</string>
-
-    <string name="gc_noresults_back_button">Zur Kamera</string>
+    <string name="gc_noresults_retake_images">Foto Wiederholen</string>
+    <string name="gc_noresults_enter_manually">Manuell Eingeben</string>
 
     <string name="gc_document_import_hint_text">Es können jetzt auch ganz einfach Dateien hochgeladen werden.</string>
     <string name="gc_qr_code_scanner_hint_text">Haben Sie schon den QR-Codeleser ausprobiert?</string>
@@ -133,16 +134,17 @@
     <string name="gc_close">Schließen</string>
     <string name="gc_skip">Überspringen</string>
     <string name="gc_next">Weiter</string>
+    <string name="gc_tip">Tipp:\u0020</string>
     <string name="gc_get_started">Los geht`s</string>
     <string name="gc_onboarding_viewpager_content_description">Onboarding</string>
     <string name="gc_onboarding_page_indicator_active_content_description">Aktive Seitenanzeige für Seite %1$d.</string>
     <string name="gc_onboarding_page_indicator_inactive_content_description">Inaktive Seitenanzeige für Seite %1$d.</string>
 
-    <string name="gc_photo_tip_good_lightning_title">Tipp: Gute Lichtverhältnisse</string>
-    <string name="gc_photo_tip_flatten_the_page_title">Tipp: Flach ausrichten</string>
-    <string name="gc_photo_tip_parallel_title">Tipp: Parallel</string>
-    <string name="gc_photo_tip_align_title">Tipp: Im Rahmen positionieren</string>
-    <string name="gc_photo_tip_multiple_pages_title">Tipp: Mehrere Seiten</string>
+    <string name="gc_photo_tip_good_lightning_title">Gute Lichtverhältnisse</string>
+    <string name="gc_photo_tip_flatten_the_page_title">Flach ausrichten</string>
+    <string name="gc_photo_tip_parallel_title">Parallel</string>
+    <string name="gc_photo_tip_align_title">Im Rahmen positionieren</string>
+    <string name="gc_photo_tip_multiple_pages_title">Mehrere Seiten</string>
 
     <string name="gc_back_button_description">Zurück</string>
 

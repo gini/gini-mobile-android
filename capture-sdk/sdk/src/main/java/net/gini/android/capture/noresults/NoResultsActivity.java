@@ -1,6 +1,7 @@
 package net.gini.android.capture.noresults;
 
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -13,6 +14,8 @@ import net.gini.android.capture.review.ReviewActivity;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+
+import static net.gini.android.capture.camera.CameraActivity.RESULT_ENTER_MANUALLY;
 
 /**
  * <h3>Screen API</h3>
@@ -136,6 +139,18 @@ public class NoResultsActivity extends AppCompatActivity implements NoResultsFra
 
     @Override
     public void onBackToCameraPressed() {
+        finish();
+    }
+
+    @Override
+    public void onEnterManuallyPressed() {
+        setResult(RESULT_ENTER_MANUALLY);
+        finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        setResult(Activity.RESULT_CANCELED);
         finish();
     }
 
