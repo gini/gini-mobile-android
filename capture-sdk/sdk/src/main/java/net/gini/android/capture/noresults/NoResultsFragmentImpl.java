@@ -1,11 +1,6 @@
 package net.gini.android.capture.noresults;
 
 
-import static android.view.View.GONE;
-
-import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
-
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,10 +8,17 @@ import android.view.ViewGroup;
 
 import net.gini.android.capture.Document;
 import net.gini.android.capture.R;
+import net.gini.android.capture.help.PhotoTipsAdapter;
+import net.gini.android.capture.help.SupportedFormatsAdapter;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import static android.view.View.GONE;
+import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
 
 class NoResultsFragmentImpl {
 
@@ -52,22 +54,37 @@ class NoResultsFragmentImpl {
     View onCreateView(final LayoutInflater inflater, final ViewGroup container,
             final Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.gc_fragment_noresults, container, false);
-        final View backButton = view.findViewById(R.id.gc_button_no_results_back);
+        final View retakeImagesButton = view.findViewById(R.id.gc_button_no_results_retake_images);
         if (isDocumentFromCameraScreen()) {
-            backButton.setOnClickListener(new View.OnClickListener() {
+            retakeImagesButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View view) {
                     mListener.onBackToCameraPressed();
                 }
             });
         } else {
-            backButton.setVisibility(GONE);
+            retakeImagesButton.setVisibility(GONE);
         }
+
+        setUpList(view);
+
         return view;
     }
 
     private boolean isDocumentFromCameraScreen() {
-        return mDocument.getImportMethod() != Document.ImportMethod.OPEN_WITH;
+        return mDocument.getImportMethod() != Document.ImportMethod.OPEN_WITH && mDocument.getSource().getName().equals("camera");
     }
 
+    private void setUpList(View view) {
+        final RecyclerView recyclerView = view.findViewById(R.id.gc_no_results_recyclerview);
+        recyclerView.setLayoutManager(new LinearLayoutManager(mFragment.getActivity()));
+
+        if (mDocument.getType() == Document.Type.PDF || mDocument.getType() == Document.Type.PDF_MULTI_PAGE) {
+            recyclerView.setAdapter(new SupportedFormatsAdapter());
+
+            return;
+        }
+
+        recyclerView.setAdapter(new PhotoTipsAdapter(view.getContext()));
+    }
 }

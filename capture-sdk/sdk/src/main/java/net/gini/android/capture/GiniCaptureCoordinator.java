@@ -26,8 +26,7 @@ public class GiniCaptureCoordinator {
     private static final Logger LOG = LoggerFactory.getLogger(GiniCaptureCoordinator.class);
 
     public static boolean shouldShowGiniCaptureNoResultsScreen(final Document document) {
-        return document.getType() == Document.Type.IMAGE
-                || document.getType() == Document.Type.IMAGE_MULTI_PAGE;
+        return document.getType() != Document.Type.QRCode && document.getType() != Document.Type.QR_CODE_MULTI_PAGE;
     }
 
     /**

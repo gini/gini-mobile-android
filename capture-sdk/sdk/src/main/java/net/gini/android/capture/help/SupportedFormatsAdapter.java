@@ -31,12 +31,12 @@ import static net.gini.android.capture.internal.util.FeatureConfiguration.isQRCo
  *
  * @suppress
  */
-class SupportedFormatsAdapter extends
+public class SupportedFormatsAdapter extends
         RecyclerView.Adapter<SupportedFormatsAdapter.FormatItemViewHolder> {
 
     private final List<Enum> mItems;
 
-    SupportedFormatsAdapter() {
+    public SupportedFormatsAdapter() {
         mItems = setUpItems();
     }
 
