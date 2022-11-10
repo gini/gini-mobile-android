@@ -1,5 +1,6 @@
 package net.gini.android.capture.noresults;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -127,7 +128,8 @@ class NoResultsFragmentImpl {
             topAdapterInjectedViewContainer.getInjectedViewAdapter().setTitle(mFragment.getActivity().getResources().getString(R.string.gc_title_no_results));
 
             topAdapterInjectedViewContainer.getInjectedViewAdapter().setOnNavButtonClickListener(v -> {
-                mFragment.getActivity().onBackPressed();
+                mFragment.getActivity().setResult(Activity.RESULT_CANCELED);
+                mFragment.getActivity().finish();
             });
         }
     }

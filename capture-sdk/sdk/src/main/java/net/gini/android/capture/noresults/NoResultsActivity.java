@@ -1,6 +1,7 @@
 package net.gini.android.capture.noresults;
 
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -144,6 +145,12 @@ public class NoResultsActivity extends AppCompatActivity implements NoResultsFra
     @Override
     public void onEnterManuallyPressed() {
         setResult(RESULT_ENTER_MANUALLY);
+        finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        setResult(Activity.RESULT_CANCELED);
         finish();
     }
 
