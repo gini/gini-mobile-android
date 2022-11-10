@@ -38,6 +38,7 @@ import static net.gini.android.capture.internal.util.ActivityHelper.enableHomeAs
 import static net.gini.android.capture.internal.util.ActivityHelper.interceptOnBackPressed;
 import static net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboarding;
 import static net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboardingAtFirstRun;
+import static net.gini.android.capture.noresults.NoResultsActivity.NO_RESULT_CANCEL_KEY;
 import static net.gini.android.capture.review.ReviewActivity.EXTRA_IN_ANALYSIS_ACTIVITY;
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackCameraScreenEvent;
 
@@ -612,9 +613,9 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
         switch (requestCode) {
             case REVIEW_DOCUMENT_REQUEST:
             case ANALYSE_DOCUMENT_REQUEST:
-                if (resultCode != Activity.RESULT_CANCELED
+                if ((resultCode != Activity.RESULT_CANCELED
                         && resultCode != AnalysisActivity.RESULT_NO_EXTRACTIONS
-                        && resultCode != ReviewActivity.RESULT_NO_EXTRACTIONS) {
+                        && resultCode != ReviewActivity.RESULT_NO_EXTRACTIONS) || (data != null && data.hasExtra(NO_RESULT_CANCEL_KEY))) {
                     setResult(resultCode, data);
                     finish();
                     clearMemory();
@@ -625,8 +626,8 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
                 showInterface();
                 break;
             case MULTI_PAGE_REVIEW_REQUEST:
-                if (resultCode != Activity.RESULT_CANCELED
-                        && resultCode != AnalysisActivity.RESULT_NO_EXTRACTIONS) {
+                if ((resultCode != Activity.RESULT_CANCELED
+                        && resultCode != AnalysisActivity.RESULT_NO_EXTRACTIONS) || (data != null && data.hasExtra(NO_RESULT_CANCEL_KEY))) {
                     setResult(resultCode, data);
                     finish();
                     clearMemory();
