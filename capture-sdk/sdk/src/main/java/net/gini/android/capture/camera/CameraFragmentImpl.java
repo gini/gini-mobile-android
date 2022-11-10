@@ -439,7 +439,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private void showFocusIndicator(@NonNull final Point point) {
         mCameraFocusIndicator.setX((float) (point.x - (mCameraFocusIndicator.getWidth() / 2.0)));
-        mCameraFocusIndicator.setY((float) (point.y - (mCameraFocusIndicator.getHeight() / 2.0)));
+        mCameraFocusIndicator.setY(point.y);
         mCameraFocusIndicator.animate().setDuration(DEFAULT_ANIMATION_DURATION).alpha(1.0f);
     }
 
