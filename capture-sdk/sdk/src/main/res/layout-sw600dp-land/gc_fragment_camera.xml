@@ -89,11 +89,11 @@
             android:id="@+id/gc_document_import_button_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="invisible"
+            android:visibility="gone"
             app:constraint_referenced_ids="gc_document_import_button_container"
-            tools:visibility="visible" />
+            tools:visibility="gone" />
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/gc_flash_button_container"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -109,16 +109,16 @@
 
             <ImageButton
                 android:id="@+id/gc_button_camera_flash"
-                android:layout_width="@dimen/xxlarge"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/large"
                 android:layout_marginBottom="@dimen/small"
                 android:background="@null"
                 android:clickable="false"
                 android:scaleType="centerInside"
                 android:src="@drawable/gc_camera_flash_on"
                 app:layout_constraintBottom_toTopOf="@id/gc_camera_flash_button_subtitle"
-                app:layout_constraintEnd_toStartOf="@id/gc_button_camera_trigger"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/gc_button_camera_trigger"
                 app:layout_constraintVertical_chainStyle="packed" />
 
@@ -135,7 +135,7 @@
                 app:layout_constraintStart_toStartOf="@id/gc_button_camera_flash"
                 app:layout_constraintTop_toBottomOf="@id/gc_button_camera_flash" />
 
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <net.gini.android.capture.camera.PhotoThumbnail
             android:id="@+id/gc_photo_thumbnail"
