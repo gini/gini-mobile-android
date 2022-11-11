@@ -1102,6 +1102,11 @@ public class GiniCapture {
             return cameraNavigationBarBottomAdapter;
         }
 
+        public Builder setNoResultsNavigationBarBottomAdapter(@NonNull final NoResultsNavigationBarBottomAdapter adapter) {
+            noResultsNavigationBarBottomAdapter = adapter;
+            return this;
+        }
+
         public NoResultsNavigationBarBottomAdapter getNoResultsNavigationBarBottomAdapter() {
             return noResultsNavigationBarBottomAdapter;
         }
