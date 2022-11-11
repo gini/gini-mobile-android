@@ -90,6 +90,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
 
@@ -187,7 +188,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private ProgressBar mActivityIndicator;
     private ImageView mImageFrame;
     private ViewStubSafeInflater mViewStubInflater;
-
+    private ConstraintLayout mPaneWrapper;
     private boolean mIsTakingPicture;
 
     private boolean mImportDocumentButtonEnabled;
@@ -273,6 +274,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         setInputHandlers();
         createPopups();
         setTopBarInjectedViewContainer();
+        initOnlyQRScanning();
         return view;
     }
 
@@ -435,7 +437,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private void showFocusIndicator(@NonNull final Point point) {
         mCameraFocusIndicator.setX((float) (point.x - (mCameraFocusIndicator.getWidth() / 2.0)));
-        mCameraFocusIndicator.setY((float) (point.y - (mCameraFocusIndicator.getHeight() / 2.0)));
+        mCameraFocusIndicator.setY(point.y);
         mCameraFocusIndicator.animate().setDuration(DEFAULT_ANIMATION_DURATION).alpha(1.0f);
     }
 
@@ -608,6 +610,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         topAdapterInjectedViewContainer = view.findViewById(R.id.gc_navigation_top_bar);
         mImageFrame = view.findViewById(R.id.gc_camera_frame);
         mCameraFrameWrapper = view.findViewById(R.id.gc_camera_frame_wrapper);
+        mPaneWrapper = view.findViewById(R.id.gc_pane_wrapper);
     }
 
     private void setTopBarInjectedViewContainer() {
@@ -655,6 +658,26 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         trackCameraScreenEvent(CameraScreenEvent.HELP);
     }
 
+    private void initOnlyQRScanning() {
+        if (isOnlyQRCodeScanningEnabled()) {
+
+            mPaneWrapper.setVisibility(View.GONE);
+
+            ConstraintLayout.LayoutParams params = ((ConstraintLayout.LayoutParams)mImageFrame.getLayoutParams());
+
+            params.dimensionRatio = "1:1";
+            params.leftMargin = (int) Objects.requireNonNull(mFragment.getActivity()).getResources().getDimension(R.dimen.xlarge);
+            params.rightMargin = (int) Objects.requireNonNull(mFragment.getActivity()).getResources().getDimension(R.dimen.xlarge);
+        }
+    }
+
+    private boolean isOnlyQRCodeScanningEnabled() {
+        if (!GiniCapture.hasInstance()) {
+            return false;
+        }
+
+        return GiniCapture.getInstance().isOnlyQRCodeScanning() && GiniCapture.getInstance().isQRCodeScanningEnabled();
+    }
 
     private void initViews() {
         final Activity activity = mFragment.getActivity();

@@ -18,6 +18,8 @@ import net.gini.android.capture.internal.network.NetworkRequestsManager;
 import net.gini.android.capture.internal.storage.ImageDiskStore;
 import net.gini.android.capture.logging.ErrorLogger;
 import net.gini.android.capture.logging.ErrorLoggerListener;
+import net.gini.android.capture.noresults.view.DefaultNoResultsNavigationBarBottomAdapter;
+import net.gini.android.capture.noresults.view.NoResultsNavigationBarBottomAdapter;
 import net.gini.android.capture.onboarding.view.DefaultOnboardingNavigationBarBottomAdapter;
 import net.gini.android.capture.onboarding.view.OnboardingIllustrationAdapter;
 import net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomAdapter;
@@ -87,6 +89,7 @@ public class GiniCapture {
     private final DocumentImportEnabledFileTypes mDocumentImportEnabledFileTypes;
     private final boolean mFileImportEnabled;
     private final boolean mQRCodeScanningEnabled;
+    private final boolean mIsOnlyQRCodeScanning;
     private final ArrayList<OnboardingPage> mCustomOnboardingPages; // NOPMD - Bundle req. ArrayList
     private final boolean mShouldShowOnboardingAtFirstRun;
     private final boolean mMultiPageEnabled;
@@ -103,6 +106,7 @@ public class GiniCapture {
     private final OnboardingNavigationBarBottomAdapter onboardingNavigationBarBottomAdapter;
     private final HelpNavigationBarBottomAdapter helpNavigationBarBottomAdapter;
     private final CameraNavigationBarBottomAdapter cameraNavigationBarBottomAdapter;
+    private final NoResultsNavigationBarBottomAdapter noResultsNavigationBarBottomAdapter;
     private final boolean isBottomNavigationBarEnabled;
     private final OnboardingIllustrationAdapter onboardingAlignCornersIllustrationAdapter;
     private final OnboardingIllustrationAdapter onboardingLightingIllustrationAdapter;
@@ -188,6 +192,7 @@ public class GiniCapture {
         mDocumentImportEnabledFileTypes = builder.getDocumentImportEnabledFileTypes();
         mFileImportEnabled = builder.isFileImportEnabled();
         mQRCodeScanningEnabled = builder.isQRCodeScanningEnabled();
+        mIsOnlyQRCodeScanning = builder.isOnlyQRCodeScanningEnabled();
         mCustomOnboardingPages = builder.getOnboardingPages();
         mShouldShowOnboardingAtFirstRun = builder.shouldShowOnboardingAtFirstRun();
         mShouldShowOnboarding = builder.shouldShowOnboarding();
@@ -219,6 +224,7 @@ public class GiniCapture {
         onboardingMultiPageIllustrationAdapter = builder.getOnboardingMultiPageIllustrationAdapter();
         onboardingQRCodeIllustrationAdapter = builder.getOnboardingQRCodeIllustrationAdapter();
         cameraNavigationBarBottomAdapter = builder.getCameraNavigationBarBottomAdapter();
+        noResultsNavigationBarBottomAdapter = builder.getNoResultsNavigationBarBottomAdapter();
         loadingIndicatorAdapter = builder.getLoadingIndicatorAdapter();
     }
 
@@ -274,6 +280,11 @@ public class GiniCapture {
      */
     public boolean isQRCodeScanningEnabled() {
         return mQRCodeScanningEnabled;
+    }
+
+
+    public boolean isOnlyQRCodeScanning() {
+        return mIsOnlyQRCodeScanning;
     }
 
     /**
@@ -569,6 +580,11 @@ public class GiniCapture {
         return cameraNavigationBarBottomAdapter;
     }
 
+    @NonNull
+    public NoResultsNavigationBarBottomAdapter getNoResultsNavigationBarBottomAdapter() {
+        return noResultsNavigationBarBottomAdapter;
+    }
+
     public boolean isBottomNavigationBarEnabled() {
         return isBottomNavigationBarEnabled;
     }
@@ -618,6 +634,7 @@ public class GiniCapture {
                 DocumentImportEnabledFileTypes.NONE;
         private boolean mFileImportEnabled;
         private boolean mQRCodeScanningEnabled;
+        private boolean mOnlyQRCodeScanningEnabled;
         private ArrayList<OnboardingPage> mOnboardingPages; // NOPMD - ArrayList required (Bundle)
         private boolean mShouldShowOnboardingAtFirstRun = true;
         private boolean mShouldShowOnboarding;
@@ -626,6 +643,7 @@ public class GiniCapture {
         private boolean mFlashButtonEnabled;
         private boolean mBackButtonsEnabled = true;
         private boolean mIsFlashOnByDefault = true;
+
         private EventTracker mEventTracker = new EventTracker() {
             @Override
             public void onOnboardingScreenEvent(@NotNull final Event<OnboardingScreenEvent> event) {
@@ -651,6 +669,7 @@ public class GiniCapture {
         private OnboardingNavigationBarBottomAdapter navigationBarBottomAdapter = new DefaultOnboardingNavigationBarBottomAdapter();
         private HelpNavigationBarBottomAdapter helpNavigationBarBottomAdapter = new DefaultHelpNavigationBarBottomAdapter();
         private CameraNavigationBarBottomAdapter cameraNavigationBarBottomAdapter = new DefaultCameraNavigationBarBottomAdapter();
+        private NoResultsNavigationBarBottomAdapter noResultsNavigationBarBottomAdapter = new DefaultNoResultsNavigationBarBottomAdapter();
         private boolean isBottomNavigationBarEnabled = false;
         private OnboardingIllustrationAdapter onboardingAlignCornersIllustrationAdapter;
         private OnboardingIllustrationAdapter onboardingLightingIllustrationAdapter;
@@ -857,6 +876,17 @@ public class GiniCapture {
         @NonNull
         public Builder setQRCodeScanningEnabled(final boolean qrCodeScanningEnabled) {
             mQRCodeScanningEnabled = qrCodeScanningEnabled;
+            return this;
+        }
+
+
+        boolean isOnlyQRCodeScanningEnabled() {
+            return mOnlyQRCodeScanningEnabled;
+        }
+
+
+        public Builder setOnlyQRCodeScanning(final boolean onlyQRCodeScanningEnabled) {
+            mOnlyQRCodeScanningEnabled = onlyQRCodeScanningEnabled;
             return this;
         }
 
@@ -1070,6 +1100,15 @@ public class GiniCapture {
 
         public CameraNavigationBarBottomAdapter getCameraNavigationBarBottomAdapter() {
             return cameraNavigationBarBottomAdapter;
+        }
+
+        public Builder setNoResultsNavigationBarBottomAdapter(@NonNull final NoResultsNavigationBarBottomAdapter adapter) {
+            noResultsNavigationBarBottomAdapter = adapter;
+            return this;
+        }
+
+        public NoResultsNavigationBarBottomAdapter getNoResultsNavigationBarBottomAdapter() {
+            return noResultsNavigationBarBottomAdapter;
         }
 
         /**

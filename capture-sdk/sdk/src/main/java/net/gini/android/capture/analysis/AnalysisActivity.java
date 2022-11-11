@@ -5,11 +5,6 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 
-import androidx.activity.OnBackPressedCallback;
-import androidx.annotation.NonNull;
-import androidx.annotation.VisibleForTesting;
-import androidx.appcompat.app.AppCompatActivity;
-
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.GiniCaptureCoordinator;
@@ -30,8 +25,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
+import androidx.appcompat.app.AppCompatActivity;
+
+import static net.gini.android.capture.camera.CameraActivity.RESULT_ENTER_MANUALLY;
 import static net.gini.android.capture.internal.util.ActivityHelper.enableHomeAsUp;
 import static net.gini.android.capture.internal.util.ActivityHelper.interceptOnBackPressed;
+import static net.gini.android.capture.noresults.NoResultsActivity.NO_RESULT_CANCEL_KEY;
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
 
 /**
@@ -210,6 +213,13 @@ public class AnalysisActivity extends AppCompatActivity implements
      */
     public static final int RESULT_NO_EXTRACTIONS = RESULT_FIRST_USER + 2;
 
+    /**
+     * Internal use only.
+     *
+     * @suppress
+     */
+    private static final int NO_RESULT_REQUEST = 999;
+
     private static final String ANALYSIS_FRAGMENT = "ANALYSIS_FRAGMENT";
 
     private String mAnalysisErrorMessage;
@@ -372,17 +382,28 @@ public class AnalysisActivity extends AppCompatActivity implements
             final Intent noResultsActivity = new Intent(this, NoResultsActivity.class);
             noResultsActivity.putExtra(NoResultsActivity.EXTRA_IN_DOCUMENT, mDocument);
             noResultsActivity.setExtrasClassLoader(AnalysisActivity.class.getClassLoader());
-            startActivity(noResultsActivity);
+            startActivityForResult(noResultsActivity, NO_RESULT_REQUEST);
             setResult(RESULT_NO_EXTRACTIONS);
+            GiniCapture.getInstance().internal().getImageMultiPageDocumentMemoryStore().clear();
         } else {
             final Intent result = new Intent();
             setResult(RESULT_OK, result);
+            finish();
         }
-        finish();
     }
 
     @Override
     public void onDefaultPDFAppAlertDialogCancelled() {
+        finish();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (requestCode == NO_RESULT_REQUEST &&
+                ((resultCode == RESULT_CANCELED && data != null && data.hasExtra(NO_RESULT_CANCEL_KEY)) || resultCode == RESULT_ENTER_MANUALLY)) {
+            setResult(resultCode, data);
+        }
+
         finish();
     }
 }

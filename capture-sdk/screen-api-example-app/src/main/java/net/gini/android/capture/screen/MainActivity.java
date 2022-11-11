@@ -4,18 +4,19 @@ import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+
+import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
 import net.gini.android.capture.help.view.HelpNavigationBarBottomAdapter;
 import net.gini.android.capture.onboarding.DefaultPages;
 import net.gini.android.capture.AsyncCallback;
@@ -30,9 +31,8 @@ import net.gini.android.capture.example.shared.RuntimePermissionHandler;
 import net.gini.android.capture.help.HelpItem;
 import net.gini.android.capture.logging.ErrorLog;
 import net.gini.android.capture.logging.ErrorLoggerListener;
+import net.gini.android.capture.onboarding.DefaultPages;
 import net.gini.android.capture.onboarding.OnboardingPage;
-import net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomAdapter;
-import net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomButton;
 import net.gini.android.capture.requirements.GiniCaptureRequirements;
 import net.gini.android.capture.requirements.RequirementReport;
 import net.gini.android.capture.requirements.RequirementsReport;
@@ -43,10 +43,6 @@ import net.gini.android.capture.tracking.EventTracker;
 import net.gini.android.capture.tracking.OnboardingScreenEvent;
 import net.gini.android.capture.tracking.ReviewScreenEvent;
 import net.gini.android.capture.util.CancellationToken;
-import net.gini.android.capture.view.CustomLoadingIndicatorAdapter;
-import net.gini.android.capture.view.DefaultNavigationBarTopAdapter;
-import net.gini.android.capture.view.NavButtonType;
-import net.gini.android.capture.view.NavigationBarTopAdapter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,13 +50,15 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.android.LogcatAppender;
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 
 import static net.gini.android.capture.example.shared.ExampleUtil.isPay5Extraction;
-
-import com.google.android.material.switchmaterial.SwitchMaterial;
 
 /**
  * Entry point for the screen api example app.
@@ -82,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
     private SwitchMaterial bottomNavBarSwitch;
     private SwitchMaterial animatedOnboardingIllustrationsSwitch;
     private SwitchMaterial customLoadingAnimationSwitch;
+    private SwitchMaterial onlyQRCodeSwitch;
     private CancellationToken mFileImportCancellationToken;
 
     @Override
@@ -204,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(final DialogInterface dialogInterface,
-                            final int i) {
+                                        final int i) {
                         finish();
                     }
                 })
@@ -314,7 +313,8 @@ public class MainActivity extends AppCompatActivity {
                 .setGiniCaptureNetworkService(
                         app.getGiniCaptureNetworkService("ScreenAPI")
                 ).setGiniCaptureNetworkApi(app.getGiniCaptureNetworkApi());
-        builder.setDocumentImportEnabledFileTypes(DocumentImportEnabledFileTypes.PDF_AND_IMAGES)
+        builder
+                .setDocumentImportEnabledFileTypes(DocumentImportEnabledFileTypes.PDF_AND_IMAGES)
                 .setFileImportEnabled(true)
                 .setQRCodeScanningEnabled(true)
                 .setMultiPageEnabled(true);
@@ -356,6 +356,8 @@ public class MainActivity extends AppCompatActivity {
             builder.setLoadingIndicatorAdapter(new CustomLottiLoadingIndicatorAdapter(getResources().getIdentifier("custom_loading", "raw", this.getPackageName())));
         }
 
+        builder.setOnlyQRCodeScanning(onlyQRCodeSwitch.isChecked());
+
         builder.build();
     }
 
@@ -386,6 +388,7 @@ public class MainActivity extends AppCompatActivity {
         bottomNavBarSwitch = findViewById(R.id.bottom_navbar_switch);
         animatedOnboardingIllustrationsSwitch = findViewById(R.id.animated_onboarding_illustrations_switch);
         customLoadingAnimationSwitch = findViewById(R.id.custom_loading_indicator_switch);
+        onlyQRCodeSwitch = findViewById(R.id.gc_only_qr_code_scanning);
     }
 
     private ArrayList<OnboardingPage> getOnboardingPages(final boolean isMultiPageEnabled, final boolean isQRCodeScanningEnabled) {
@@ -397,16 +400,23 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode,
-            final Intent data) {
+                                    final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_SCAN) {
             if (data == null) {
                 if (isIntentActionViewOrSend(getIntent())) {
                     finish();
                 }
+
+                if (resultCode == CameraActivity.RESULT_ENTER_MANUALLY) {
+                    handleEnterManuallyAction();
+                }
                 return;
             }
             switch (resultCode) {
+                case CameraActivity.RESULT_ENTER_MANUALLY:
+                    handleEnterManuallyAction();
+                    break;
                 case RESULT_CANCELED:
                     break;
                 case RESULT_OK:
@@ -505,6 +515,10 @@ public class MainActivity extends AppCompatActivity {
         final ch.qos.logback.classic.Logger root =
                 (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
         root.addAppender(logcatAppender);
+    }
+
+    private void handleEnterManuallyAction() {
+        Toast.makeText(this, "Scan exited for manual enter mode", Toast.LENGTH_SHORT).show();
     }
 
     private static class GiniCaptureEventTracker implements EventTracker {

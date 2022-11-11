@@ -3,6 +3,7 @@ package net.gini.android.capture.review.multipage;
 import static net.gini.android.capture.analysis.AnalysisActivity.RESULT_NO_EXTRACTIONS;
 import static net.gini.android.capture.internal.util.ActivityHelper.enableHomeAsUp;
 import static net.gini.android.capture.internal.util.ActivityHelper.interceptOnBackPressed;
+import static net.gini.android.capture.noresults.NoResultsActivity.NO_RESULT_CANCEL_KEY;
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackReviewScreenEvent;
 
 import android.app.Activity;
@@ -341,10 +342,11 @@ public class MultiPageReviewActivity extends AppCompatActivity implements
         if (requestCode == ANALYSE_DOCUMENT_REQUEST) {
             if (resultCode == RESULT_NO_EXTRACTIONS) {
                 finish();
-            } else if (resultCode != Activity.RESULT_CANCELED) {
+            } else if (resultCode != Activity.RESULT_CANCELED || (data != null && data.hasExtra(NO_RESULT_CANCEL_KEY))) {
                 setResult(resultCode, data);
                 finish();
             }
         }
     }
+
 }

@@ -26,23 +26,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/gc_navigation_top_bar">
 
+        <View
+            android:id="@+id/gc_activity_indicator_background"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/gc_camera_preview_shade"
+            android:visibility="invisible"
+            tools:visibility="invisible" />
     </net.gini.android.capture.internal.camera.view.CameraPreviewContainer>
-
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/gc_camera_flash_button_group"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="invisible"
-        tools:visibility="visible"
-        app:constraint_referenced_ids="gc_flash_button_container"/>
-
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/gc_document_import_button_group"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="invisible"
-        tools:visibility="visible"
-        app:constraint_referenced_ids="gc_document_import_button_container"/>
 
     <ImageView
         android:id="@+id/gc_camera_focus_indicator"
@@ -54,124 +45,147 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:alpha="0.5" />
 
-    <View
-        android:id="@+id/gc_camera_pane_background"
-        android:layout_width="@dimen/gc_camera_pane_width"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/gc_pane_wrapper"
+        android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:alpha="0.4"
-        android:background="@color/Dark_01"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/gc_navigation_top_bar" />
+        app:layout_constraintTop_toBottomOf="@+id/gc_navigation_top_bar">
 
-        android:layout_marginTop="@dimen/xlarge"
-
-    <ImageButton
-        android:id="@+id/gc_button_camera_trigger"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:background="@null"
-        android:src="@drawable/gc_camera_trigger"
-        app:layout_constraintBottom_toBottomOf="@+id/gc_camera_pane_background"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/gc_camera_pane_background"
-        app:layout_constraintTop_toTopOf="@+id/gc_camera_pane_background" />
-
-
-    <LinearLayout
-        android:id="@+id/gc_flash_button_container"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@id/gc_button_camera_trigger"
-        android:layout_alignBottom="@id/gc_button_camera_trigger"
-        android:layout_toStartOf="@id/gc_button_camera_trigger"
-        android:layout_toEndOf="@id/gc_document_import_button_container"
-        android:orientation="vertical"
-        android:layout_marginTop="@dimen/xlarge"
-        app:layout_constraintEnd_toEndOf="@+id/gc_button_camera_trigger"
-        app:layout_constraintStart_toStartOf="@+id/gc_button_camera_trigger"
-        app:layout_constraintTop_toBottomOf="@+id/gc_button_camera_trigger">
-
-        <ImageButton
-            android:id="@+id/gc_button_camera_flash"
-            android:layout_width="@dimen/xxlarge"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="@id/gc_button_camera_trigger"
-            app:layout_constraintEnd_toStartOf="@id/gc_button_camera_trigger"
-            app:layout_constraintBottom_toTopOf="@id/gc_camera_flash_button_subtitle"
-            android:layout_marginEnd="@dimen/large"
-            android:background="@null"
-            android:clickable="false"
-            android:scaleType="centerInside"
-            android:layout_marginBottom="@dimen/small"
-            android:src="@drawable/gc_camera_flash_on"
-            app:layout_constraintVertical_chainStyle="packed"/>
-
-        <TextView
-            android:id="@+id/gc_camera_flash_button_subtitle"
-            style="@style/GiniCaptureTheme.Typography.Subtitle2"
-            app:layout_constraintBottom_toBottomOf="@id/gc_button_camera_trigger"
-            app:layout_constraintTop_toBottomOf="@id/gc_button_camera_flash"
-            app:layout_constraintStart_toStartOf="@id/gc_button_camera_flash"
-            app:layout_constraintEnd_toEndOf="@id/gc_button_camera_flash"
-            android:textColor="@color/Light_01"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/gc_camera_flash_on_subtitle" />
-
-    </LinearLayout>
-
-
-    <net.gini.android.capture.camera.PhotoThumbnail
-        android:id="@+id/gc_photo_thumbnail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/gc_button_camera_trigger"
-        app:layout_constraintEnd_toEndOf="@+id/gc_button_camera_trigger"
-        app:layout_constraintStart_toStartOf="@+id/gc_button_camera_trigger"
-        android:layout_toEndOf="@id/gc_button_camera_trigger"
-        android:layout_alignTop="@id/gc_button_camera_trigger"
-        android:layout_marginBottom="@dimen/xlarge" />
-
-
-    <LinearLayout
-        android:id="@+id/gc_document_import_button_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@id/gc_button_camera_trigger"
-        android:layout_alignBottom="@+id/gc_button_camera_trigger"
-        android:layout_alignParentStart="true"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:visibility="gone"
-        android:layout_marginTop="@dimen/xlarge"
-        app:layout_constraintEnd_toEndOf="@+id/gc_button_camera_trigger"
-        app:layout_constraintStart_toStartOf="@+id/gc_button_camera_trigger"
-        app:layout_constraintTop_toBottomOf="@+id/gc_flash_button_container"
-        tools:visibility="visible">
-
-        <ImageButton
-            android:id="@+id/gc_button_import_document"
-            android:layout_width="@dimen/gc_camera_upload_button_size"
-            android:layout_height="@dimen/gc_camera_upload_button_size"
-            android:background="@null"
-            android:clickable="false"
-            android:scaleType="centerInside"
-            android:src="@drawable/gc_document_import_icon" />
-
-        <TextView
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/gc_camera_flash_button_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textColor="@color/Light_01"
-            style="@style/GiniCaptureTheme.Typography.Subtitle2"
-            android:paddingBottom="@dimen/gc_camera_upload_button_subtitle_bottom_padding"
-            android:text="@string/gc_camera_document_import_subtitle" />
+            android:visibility="gone"
+            app:constraint_referenced_ids="gc_flash_button_container"
+            tools:visibility="gone" />
 
-    </LinearLayout>
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/gc_document_import_button_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:constraint_referenced_ids="gc_document_import_button_container"
+            tools:visibility="gone" />
+
+        <View
+            android:id="@+id/gc_camera_pane_background"
+            android:layout_width="@dimen/gc_camera_pane_width"
+            android:layout_height="0dp"
+            android:alpha="0.4"
+            android:background="@color/Dark_01"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/gc_navigation_top_bar" />
+
+        <ImageButton
+            android:id="@+id/gc_button_camera_trigger"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:background="@null"
+            android:src="@drawable/gc_camera_trigger"
+            app:layout_constraintBottom_toBottomOf="@+id/gc_camera_pane_background"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/gc_camera_pane_background"
+            app:layout_constraintTop_toTopOf="@+id/gc_camera_pane_background" />
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/gc_flash_button_container"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/gc_button_camera_trigger"
+            android:layout_alignBottom="@id/gc_button_camera_trigger"
+            android:layout_marginTop="@dimen/xlarge"
+            android:layout_toStartOf="@id/gc_button_camera_trigger"
+            android:layout_toEndOf="@id/gc_document_import_button_container"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="@+id/gc_button_camera_trigger"
+            app:layout_constraintStart_toStartOf="@+id/gc_button_camera_trigger"
+            app:layout_constraintTop_toBottomOf="@+id/gc_button_camera_trigger">
+
+            <ImageButton
+                android:id="@+id/gc_button_camera_flash"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/small"
+                android:background="@null"
+                android:clickable="false"
+                android:scaleType="centerInside"
+                android:src="@drawable/gc_camera_flash_on"
+                app:layout_constraintBottom_toTopOf="@id/gc_camera_flash_button_subtitle"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/gc_button_camera_trigger"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+            <TextView
+                android:id="@+id/gc_camera_flash_button_subtitle"
+                style="@style/GiniCaptureTheme.Typography.Subtitle2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/gc_camera_flash_on_subtitle"
+                android:textColor="@color/Light_01"
+                app:layout_constraintBottom_toBottomOf="@id/gc_button_camera_trigger"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/gc_button_camera_flash" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <net.gini.android.capture.camera.PhotoThumbnail
+            android:id="@+id/gc_photo_thumbnail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/gc_button_camera_trigger"
+            android:layout_marginBottom="@dimen/xlarge"
+            android:layout_toEndOf="@id/gc_button_camera_trigger"
+            app:layout_constraintBottom_toTopOf="@+id/gc_button_camera_trigger"
+            app:layout_constraintEnd_toEndOf="@+id/gc_button_camera_trigger"
+            app:layout_constraintStart_toStartOf="@+id/gc_button_camera_trigger" />
+
+
+        <LinearLayout
+            android:id="@+id/gc_document_import_button_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/gc_button_camera_trigger"
+            android:layout_alignBottom="@+id/gc_button_camera_trigger"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="@dimen/xlarge"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@+id/gc_button_camera_trigger"
+            app:layout_constraintStart_toStartOf="@+id/gc_button_camera_trigger"
+            app:layout_constraintTop_toBottomOf="@+id/gc_flash_button_container"
+            tools:visibility="visible">
+
+            <ImageButton
+                android:id="@+id/gc_button_import_document"
+                android:layout_width="@dimen/gc_camera_upload_button_size"
+                android:layout_height="@dimen/gc_camera_upload_button_size"
+                android:background="@null"
+                android:clickable="false"
+                android:scaleType="centerInside"
+                android:src="@drawable/gc_document_import_icon" />
+
+            <TextView
+                style="@style/GiniCaptureTheme.Typography.Subtitle2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingBottom="@dimen/gc_camera_upload_button_subtitle_bottom_padding"
+                android:text="@string/gc_camera_document_import_subtitle"
+                android:textColor="@color/Light_01" />
+
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ViewStub
         android:id="@+id/gc_stub_camera_no_permission"
@@ -180,20 +194,12 @@
         android:layout="@layout/gc_layout_camera_no_permission" />
 
 
-    <View
-        android:id="@+id/gc_activity_indicator_background"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/gc_camera_preview_shade"
-        android:visibility="invisible"
-        tools:visibility="invisible" />
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:id="@+id/gc_camera_frame_wrapper"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/gc_camera_pane_background"
+        app:layout_constraintEnd_toStartOf="@+id/gc_pane_wrapper"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/gc_navigation_top_bar">
 

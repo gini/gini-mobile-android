@@ -1,18 +1,13 @@
 package net.gini.android.capture.help;
 
-import static net.gini.android.capture.internal.util.ActivityHelper.enableHomeAsUp;
-import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
-
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
 
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.R;
 import net.gini.android.capture.analysis.AnalysisActivity;
 import net.gini.android.capture.camera.CameraActivity;
 import net.gini.android.capture.help.view.HelpNavigationBarBottomAdapter;
-import net.gini.android.capture.internal.util.FeatureConfiguration;
 import net.gini.android.capture.noresults.NoResultsActivity;
 import net.gini.android.capture.review.ReviewActivity;
 import net.gini.android.capture.view.InjectedViewContainer;
@@ -20,7 +15,11 @@ import net.gini.android.capture.view.NavButtonType;
 import net.gini.android.capture.view.NavigationBarTopAdapter;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import static net.gini.android.capture.internal.util.ActivityHelper.enableHomeAsUp;
+import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
 
 /**
  * <h3>Screen API and Component API</h3>
@@ -117,14 +116,12 @@ public class PhotoTipsActivity extends AppCompatActivity {
             finish();
             return;
         }
-        if (FeatureConfiguration.isMultiPageEnabled()) {
-            setContentView(R.layout.gc_activity_photo_tips_with_multipage);
-        } else {
-            setContentView(R.layout.gc_activity_photo_tips);
-        }
+
+        setContentView(R.layout.gc_activity_photo_tips);
 
         forcePortraitOrientationOnPhones(this);
         setupHomeButton();
+        setupTipList();
         setupBottomBarNavigation();
         setupTopBarNavigation();
     }
@@ -161,6 +158,12 @@ public class PhotoTipsActivity extends AppCompatActivity {
 
             topBarAdapter.setOnNavButtonClickListener(v -> onBackPressed());
         }
+    }
+
+    private void setupTipList() {
+        final RecyclerView recyclerView = findViewById(R.id.gc_tips_recycleview);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(new PhotoTipsAdapter(this));
     }
 
     @Override
