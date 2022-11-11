@@ -178,8 +178,7 @@ public final class GiniCaptureFileImport {
                                 final Intent giniCaptureIntent;
                                 if (result.getType() == Document.Type.IMAGE_MULTI_PAGE) {
                                     // The new ImageMultiPageDocument was already added to the memory store
-                                    giniCaptureIntent = MultiPageReviewActivity.createIntent(
-                                            context);
+                                    giniCaptureIntent = MultiPageReviewActivity.createIntent(context, false);
                                 } else {
                                     giniCaptureIntent = createIntentForSingleDocument(context,
                                             ReviewActivity.class, AnalysisActivity.class,

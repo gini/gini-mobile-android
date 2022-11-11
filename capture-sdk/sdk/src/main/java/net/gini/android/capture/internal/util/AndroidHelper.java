@@ -1,6 +1,8 @@
 package net.gini.android.capture.internal.util;
 
 import android.Manifest;
+import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Build;
 
 import java.lang.reflect.Field;
@@ -17,8 +19,6 @@ public final class AndroidHelper {
     //Let me know if we don't want to use this
 
     public static int STORE_SCROLL_STATE = -1;
-    public static int STORE_DOCUMENTS_SIZE = -1;
-
     /**
      * Internal use only.
      *
@@ -30,10 +30,10 @@ public final class AndroidHelper {
 
     /**
      * Internal use only
-     *
+     * <p>
      * Checks whether the current android version is Tiramisu (Android 13, API Level 33) or later using reflection
      * to enable forward compatibility.
-     *
+     * <p>
      * This method helps you prepare for changes that need to be activated on Android 13 and later without
      * having to set the compile sdk to android api level 33.
      *
@@ -51,9 +51,9 @@ public final class AndroidHelper {
 
     /**
      * Internal use only.
-     *
+     * <p>
      * Checks whether a permission is available using reflection to enable forward compatibility.
-     *
+     * <p>
      * This methods helps you handle permissions that will be available in a later android sdk version without
      * having to bump the compile sdk and target sdk versions in the build.gradle file. Once you are ready to
      * target the newer android sdk no more code changes will be needed.
@@ -72,9 +72,9 @@ public final class AndroidHelper {
 
     /**
      * Internal use only.
-     *
+     * <p>
      * Gets the fully qualified permission name using reflection to enable forward compatibility.
-     *
+     * <p>
      * This methods helps you handle permissions that will be available in a later android sdk version without
      * having to bump the compile sdk and target sdk versions in the build.gradle file. Once your app is ready to
      * target the newer android sdk no more code changes will be needed.
@@ -90,6 +90,21 @@ public final class AndroidHelper {
             return "";
         }
     }
+
+    public static int findScreenSize(Context context) {
+        int screenLayout = context.getResources().getConfiguration().screenLayout;
+
+        if ((screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_SMALL)
+            return Configuration.SCREENLAYOUT_SIZE_SMALL;
+        if ((screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_NORMAL)
+            return Configuration.SCREENLAYOUT_SIZE_NORMAL;
+        if ((screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE)
+            return Configuration.SCREENLAYOUT_SIZE_LARGE;
+        if ((screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE)
+            return Configuration.SCREENLAYOUT_SIZE_XLARGE;
+        else return Configuration.SCREENLAYOUT_SIZE_UNDEFINED;
+    }
+
 
     private AndroidHelper() {
     }

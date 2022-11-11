@@ -1,15 +1,9 @@
 package net.gini.android.capture.internal.camera.photo;
 
-import android.graphics.Bitmap;
-import android.graphics.Matrix;
 import android.os.AsyncTask;
-
 import net.gini.android.capture.AsyncCallback;
 import net.gini.android.capture.document.ImageDocument;
-
 import androidx.annotation.NonNull;
-
-import java.io.ByteArrayOutputStream;
 
 /**
  * Internal use only.

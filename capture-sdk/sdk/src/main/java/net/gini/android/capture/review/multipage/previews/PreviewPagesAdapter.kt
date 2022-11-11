@@ -1,12 +1,10 @@
 package net.gini.android.capture.review.multipage.previews
 
+import android.content.res.Configuration
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.ProgressBar
+import android.widget.*
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import net.gini.android.capture.AsyncCallback
@@ -16,6 +14,7 @@ import net.gini.android.capture.document.GiniCaptureDocumentError
 import net.gini.android.capture.document.ImageDocument
 import net.gini.android.capture.document.ImageMultiPageDocument
 import net.gini.android.capture.internal.camera.photo.Photo
+import net.gini.android.capture.internal.util.AndroidHelper
 import net.gini.android.capture.review.RotatableImageViewContainer
 
 class PreviewPagesAdapter(
@@ -33,7 +32,10 @@ class PreviewPagesAdapter(
         private val mErrorMessage: String? = null
         val mActivityIndicator: ProgressBar = view.findViewById(R.id.gc_activity_indicator)
 
+
+
         init {
+
             mDeletePage?.setOnClickListener {
                 previewFragmentListener.onDeleteDocument(multiPageDocument.documents[absoluteAdapterPosition])
             }

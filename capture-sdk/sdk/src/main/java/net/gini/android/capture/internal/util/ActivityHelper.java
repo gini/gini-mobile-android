@@ -80,16 +80,6 @@ public final class ActivityHelper {
         });
     }
 
-    public static Point getRealScreenSize(Activity activity) {
-        WindowManager windowManager = (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
-        Point size = new Point();
-        if (null != windowManager) {
-            Display display = windowManager.getDefaultDisplay();
-            display.getRealSize(size);
-        }
-        return size;
-    }
-
     private ActivityHelper() {
     }
 

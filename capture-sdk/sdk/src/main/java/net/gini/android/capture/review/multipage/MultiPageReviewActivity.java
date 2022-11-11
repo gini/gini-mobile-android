@@ -3,7 +3,6 @@ package net.gini.android.capture.review.multipage;
 import static net.gini.android.capture.analysis.AnalysisActivity.RESULT_NO_EXTRACTIONS;
 import static net.gini.android.capture.internal.util.ActivityHelper.enableHomeAsUp;
 import static net.gini.android.capture.internal.util.ActivityHelper.interceptOnBackPressed;
-import static net.gini.android.capture.tracking.EventTrackingHelper.trackCameraScreenEvent;
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackReviewScreenEvent;
 
 import android.app.Activity;
@@ -228,16 +227,28 @@ public class MultiPageReviewActivity extends AppCompatActivity implements
      */
     public static final int RESULT_ERROR = RESULT_FIRST_USER + 1;
 
-    private MultiPageReviewFragment mFragment;
 
-    public static Intent createIntent(@NonNull final Context context) {
-        return new Intent(context, MultiPageReviewActivity.class);
+    public static final String SHOULD_SCROLL_TO_LAST_PAGE = "GC_SHOULD_SCROLL_TO_LAST_PAGE";
+
+
+    private MultiPageReviewFragment mFragment;
+    private boolean mShouldScrollToLastPage;
+
+    public static Intent createIntent(@NonNull final Context context, boolean shouldScrollToLastPage) {
+        Intent intent = new Intent(context, MultiPageReviewActivity.class);
+        intent.putExtra(SHOULD_SCROLL_TO_LAST_PAGE, shouldScrollToLastPage);
+        return intent;
     }
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gc_activity_multi_page_review);
+
+        if (getIntent() != null) {
+            mShouldScrollToLastPage = getIntent().getBooleanExtra(SHOULD_SCROLL_TO_LAST_PAGE, false);
+        }
+
         if (savedInstanceState == null) {
             initFragment();
         } else {
@@ -268,7 +279,7 @@ public class MultiPageReviewActivity extends AppCompatActivity implements
     }
 
     private void createFragment() {
-        mFragment = MultiPageReviewFragment.createInstance();
+        mFragment = MultiPageReviewFragment.newInstance(mShouldScrollToLastPage);
     }
 
     private void showFragment() {

@@ -16,7 +16,6 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -97,7 +96,7 @@ import jersey.repackaged.jsr166e.CompletableFuture;
  * </ul>
  *
  * <p> Include the {@code MultiPageReviewFragment} into your layout by using the {@link
- * MultiPageReviewFragment#createInstance()} factory method to create an instance and display it
+ * MultiPageReviewFragment#newInstance(boolean)} ()} factory method to create an instance and display it
  * using the {@link androidx.fragment.app.FragmentManager}.
  *
  * <p> A {@link MultiPageReviewFragmentListener} instance must be available until the {@code
@@ -135,9 +134,16 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     private boolean mPreviewsShown;
     private SnapHelper mSnapHelper;
     private MiddlePageManager mSnapManager;
+    private boolean mShouldScrollToLastPage = false;
 
-    public static MultiPageReviewFragment createInstance() {
-        return new MultiPageReviewFragment();
+
+    public static MultiPageReviewFragment newInstance(boolean shouldScrollToLastPage) {
+
+        Bundle args = new Bundle();
+        args.putBoolean(MultiPageReviewActivity.SHOULD_SCROLL_TO_LAST_PAGE, shouldScrollToLastPage);
+        MultiPageReviewFragment fragment = new MultiPageReviewFragment();
+        fragment.setArguments(args);
+        return fragment;
     }
 
     /**
@@ -148,8 +154,16 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (getArguments() != null) {
+            mShouldScrollToLastPage = getArguments().getBoolean(MultiPageReviewActivity.SHOULD_SCROLL_TO_LAST_PAGE, false);
+        }
+
         forcePortraitOrientationOnPhones(getActivity());
+
         initListener();
+
+
         if (!GiniCapture.hasInstance()) {
             mListener.onError(new GiniCaptureError(MISSING_GINI_CAPTURE_INSTANCE,
                     "Missing GiniCapture instance. It was not created or there was an application process restart."));
@@ -186,11 +200,6 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
         }
         initUploadResults();
 
-        //Check if user has taken pictures when left the screen and visited again
-        if (mMultiPageDocument.getDocuments().size() > AndroidHelper.STORE_DOCUMENTS_SIZE) {
-            AndroidHelper.STORE_DOCUMENTS_SIZE = mMultiPageDocument.getDocuments().size();
-            AndroidHelper.STORE_SCROLL_STATE = mMultiPageDocument.getDocuments().size() - 1;
-        }
     }
 
     private void initUploadResults() {
@@ -248,7 +257,8 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
 
         initRecyclerView();
 
-        scrollToCorrectPosition(AndroidHelper.STORE_SCROLL_STATE, false);
+        if (AndroidHelper.STORE_SCROLL_STATE > -1 && AndroidHelper.STORE_SCROLL_STATE <= mMultiPageDocument.getDocuments().size() - 1)
+            scrollToCorrectPosition(AndroidHelper.STORE_SCROLL_STATE, false);
 
         mRecyclerView.postDelayed(() -> showHideBlueRect(View.VISIBLE), 1000);
 
@@ -302,6 +312,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setAdapter(mPreviewPagesAdapter);
 
+
         shouldIndicatorBeVisible();
     }
 
@@ -318,7 +329,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     }
 
     private void attachScrollListener() {
-        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        mRecyclerView.post(() -> mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
@@ -346,14 +357,20 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
             }
-        });
+        }));
+        //If there is one document highlight it
+        if (mMultiPageDocument.getDocuments().size() == 1) {
+            mRecyclerView.post(() -> showHideBlueRect(View.VISIBLE));
+        }
 
         //Scroll to the last captured document
         if (mMultiPageDocument.getDocuments().size() > 1) {
-            if (AndroidHelper.STORE_SCROLL_STATE > -1) {
-                scrollToCorrectPosition(AndroidHelper.STORE_SCROLL_STATE, true);
-            } else {
+            if (mShouldScrollToLastPage) {
                 scrollToCorrectPosition(mMultiPageDocument.getDocuments().size() - 1, true);
+            } else {
+                if (AndroidHelper.STORE_SCROLL_STATE > -1)
+                    scrollToCorrectPosition(AndroidHelper.STORE_SCROLL_STATE, true);
+                else scrollToCorrectPosition(mMultiPageDocument.getDocuments().size() - 1, true);
             }
         }
     }
@@ -470,7 +487,6 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
 
         if (mMultiPageDocument.getDocuments().isEmpty()) {
             AndroidHelper.STORE_SCROLL_STATE = -1;
-            AndroidHelper.STORE_DOCUMENTS_SIZE = -1;
         }
     }
 
@@ -713,8 +729,6 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     @Override
     public void onDestroy() {
         super.onDestroy();
-
-        AndroidHelper.STORE_DOCUMENTS_SIZE = mMultiPageDocument.getDocuments().size();
 
         if (!mNextClicked && mMultiPageDocument != null
                 && mMultiPageDocument.getImportMethod() == Document.ImportMethod.OPEN_WITH) {

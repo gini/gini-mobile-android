@@ -474,7 +474,6 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
         clearMemory();
 
         AndroidHelper.STORE_SCROLL_STATE = -1;
-        AndroidHelper.STORE_DOCUMENTS_SIZE = -1;
     }
 
     private void createGiniCaptureCoordinator() {
@@ -546,9 +545,9 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
 
     @Override
     public void onProceedToMultiPageReviewScreen(
-            @NonNull final GiniCaptureMultiPageDocument multiPageDocument) {
+            @NonNull final GiniCaptureMultiPageDocument multiPageDocument, boolean shouldScrollToLastPage) {
         if (multiPageDocument.getType() == Document.Type.IMAGE_MULTI_PAGE) {
-            final Intent intent = MultiPageReviewActivity.createIntent(this);
+            final Intent intent = MultiPageReviewActivity.createIntent(this, shouldScrollToLastPage);
             startActivityForResult(intent, MULTI_PAGE_REVIEW_REQUEST);
         } else {
             throw new UnsupportedOperationException("Unsupported multi-page document type.");
