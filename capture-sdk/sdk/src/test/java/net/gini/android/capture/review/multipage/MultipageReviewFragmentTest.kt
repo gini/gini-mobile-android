@@ -115,7 +115,7 @@ class MultipageReviewFragmentTest {
         val listener = mock<MultiPageReviewFragmentListener>()
 
         val scenario = launchFragment(initialState = CREATED, themeResId = R.style.GiniCaptureTheme) {
-            MultiPageReviewFragment.createInstance().apply {
+            MultiPageReviewFragment.newInstance(true).apply {
                 setListener(listener)
             }
         }
