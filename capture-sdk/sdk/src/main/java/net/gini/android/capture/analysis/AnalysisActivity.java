@@ -34,6 +34,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import static net.gini.android.capture.camera.CameraActivity.RESULT_ENTER_MANUALLY;
 import static net.gini.android.capture.internal.util.ActivityHelper.enableHomeAsUp;
 import static net.gini.android.capture.internal.util.ActivityHelper.interceptOnBackPressed;
+import static net.gini.android.capture.noresults.NoResultsActivity.NO_RESULT_CANCEL_KEY;
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
 
 /**
@@ -398,7 +399,8 @@ public class AnalysisActivity extends AppCompatActivity implements
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (requestCode == NO_RESULT_REQUEST && resultCode == RESULT_ENTER_MANUALLY) {
+        if (requestCode == NO_RESULT_REQUEST &&
+                ((resultCode == RESULT_CANCELED && data != null && data.hasExtra(NO_RESULT_CANCEL_KEY)) || resultCode == RESULT_ENTER_MANUALLY)) {
             setResult(resultCode, data);
         }
 

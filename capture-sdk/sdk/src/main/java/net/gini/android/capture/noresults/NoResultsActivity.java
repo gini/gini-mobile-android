@@ -1,6 +1,8 @@
 package net.gini.android.capture.noresults;
 
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -10,11 +12,13 @@ import net.gini.android.capture.analysis.AnalysisActivity;
 import net.gini.android.capture.camera.CameraActivity;
 import net.gini.android.capture.review.ReviewActivity;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import static net.gini.android.capture.camera.CameraActivity.RESULT_ENTER_MANUALLY;
+import static net.gini.android.capture.internal.util.ActivityHelper.interceptOnBackPressed;
 
 /**
  * <h3>Screen API</h3>
@@ -134,6 +138,13 @@ public class NoResultsActivity extends AppCompatActivity implements NoResultsFra
      */
     public static final String EXTRA_IN_DOCUMENT = "GC_EXTRA_IN_DOCUMENT";
 
+    /**
+     * Internal use only.
+     *
+     * @suppress
+     */
+    public static final String NO_RESULT_CANCEL_KEY = "GC_NO_RESULT_CANCEL";
+
     private Document mDocument;
 
     @Override
@@ -161,6 +172,19 @@ public class NoResultsActivity extends AppCompatActivity implements NoResultsFra
         if (savedInstanceState == null) {
             initFragment();
         }
+        handleOnBackPressed();
+    }
+
+    private void handleOnBackPressed() {
+        interceptOnBackPressed(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                Intent noResultsIntent = new Intent();
+                noResultsIntent.putExtra(NO_RESULT_CANCEL_KEY, true);
+                setResult(Activity.RESULT_CANCELED, noResultsIntent);
+                finish();
+            }
+        });
     }
 
     private void readExtras() {

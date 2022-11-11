@@ -6,11 +6,15 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import net.gini.android.capture.Document;
+import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.R;
 import net.gini.android.capture.document.ImageMultiPageDocument;
 import net.gini.android.capture.help.PhotoTipsAdapter;
 import net.gini.android.capture.help.SupportedFormatsAdapter;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
+import net.gini.android.capture.view.InjectedViewContainer;
+import net.gini.android.capture.view.NavButtonType;
+import net.gini.android.capture.view.NavigationBarTopAdapter;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -34,6 +38,8 @@ class NoResultsFragmentImpl {
     private final FragmentImplCallback mFragment;
     private final Document mDocument;
     private NoResultsFragmentListener mListener;
+
+    private InjectedViewContainer<NavigationBarTopAdapter> topAdapterInjectedViewContainer;
 
     NoResultsFragmentImpl(@NonNull final FragmentImplCallback fragment,
             @NonNull final Document document) {
@@ -66,6 +72,8 @@ class NoResultsFragmentImpl {
         final View enterManuallyButton = view.findViewById(R.id.gc_button_no_results_enter_manually);
         enterManuallyButton.setOnClickListener(view1 -> mListener.onEnterManuallyPressed());
 
+        bindViews(view);
+        setTopBarInjectedViewContainer();
         setUpList(view);
 
         return view;
@@ -103,5 +111,28 @@ class NoResultsFragmentImpl {
         }
 
         recyclerView.setAdapter(new PhotoTipsAdapter(view.getContext()));
+    }
+
+    private void setTopBarInjectedViewContainer() {
+        if (GiniCapture.hasInstance()) {
+            topAdapterInjectedViewContainer.setInjectedViewAdapter(GiniCapture.getInstance().getNavigationBarTopAdapter());
+
+            if (topAdapterInjectedViewContainer.getInjectedViewAdapter() == null)
+                return;
+
+            if (mFragment.getActivity() == null)
+                return;
+
+            topAdapterInjectedViewContainer.getInjectedViewAdapter().setNavButtonType(NavButtonType.BACK);
+            topAdapterInjectedViewContainer.getInjectedViewAdapter().setTitle(mFragment.getActivity().getResources().getString(R.string.gc_title_no_results));
+
+            topAdapterInjectedViewContainer.getInjectedViewAdapter().setOnNavButtonClickListener(v -> {
+                mFragment.getActivity().onBackPressed();
+            });
+        }
+    }
+
+    private void bindViews(@NonNull final View view) {
+        topAdapterInjectedViewContainer = view.findViewById(R.id.gc_navigation_top_bar);
     }
 }

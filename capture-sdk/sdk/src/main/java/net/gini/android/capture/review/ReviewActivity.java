@@ -26,6 +26,7 @@ import net.gini.android.capture.tracking.ReviewScreenEvent;
 
 import static net.gini.android.capture.internal.util.ActivityHelper.enableHomeAsUp;
 import static net.gini.android.capture.internal.util.ActivityHelper.interceptOnBackPressed;
+import static net.gini.android.capture.noresults.NoResultsActivity.NO_RESULT_CANCEL_KEY;
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackReviewScreenEvent;
 
 /**
@@ -334,7 +335,7 @@ public class ReviewActivity extends AppCompatActivity implements ReviewFragmentL
                 finish();
                 clearMemory();
             } else if (mBackButtonShouldCloseLibrary
-                    || resultCode != Activity.RESULT_CANCELED) {
+                    || resultCode != Activity.RESULT_CANCELED || (data != null && data.hasExtra(NO_RESULT_CANCEL_KEY))) {
                 setResult(resultCode, data);
                 finish();
                 clearMemory();
