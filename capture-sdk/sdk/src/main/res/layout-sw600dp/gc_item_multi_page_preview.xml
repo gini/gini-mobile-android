@@ -5,15 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center_horizontal"
-    android:paddingStart="@dimen/small"
-    android:paddingEnd="@dimen/small">
-
+    android:paddingStart="@dimen/large"
+    android:paddingEnd="@dimen/large"
+    android:orientation="horizontal">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        android:layout_height="match_parent">
 
         <net.gini.android.capture.review.RotatableImageViewContainer
             android:id="@+id/gc_image_container"

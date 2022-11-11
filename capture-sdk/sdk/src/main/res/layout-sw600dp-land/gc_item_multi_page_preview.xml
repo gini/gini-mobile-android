@@ -5,15 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center_horizontal"
-    android:paddingStart="@dimen/small"
-    android:paddingEnd="@dimen/small">
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/large_24"
+    android:paddingEnd="@dimen/large_24">
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        android:layout_height="match_parent">
 
         <net.gini.android.capture.review.RotatableImageViewContainer
             android:id="@+id/gc_image_container"
@@ -32,7 +31,7 @@
             android:background="@drawable/gc_image_preview_rectangle"
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintDimensionRatio="1:1.414"
+            app:layout_constraintDimensionRatio="1.414:1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">

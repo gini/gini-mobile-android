@@ -6,18 +6,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
@@ -26,7 +20,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -35,9 +28,7 @@ import androidx.annotation.UiThread;
 import androidx.annotation.VisibleForTesting;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.Group;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
-import androidx.core.view.ViewPropertyAnimatorListenerAdapter;
 
 import net.gini.android.capture.AsyncCallback;
 import net.gini.android.capture.Document;
@@ -102,8 +93,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
-import kotlin.Unit;
-import kotlin.jvm.functions.Function1;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
@@ -113,7 +102,6 @@ import static net.gini.android.capture.internal.network.NetworkRequestsManager.i
 import static net.gini.android.capture.internal.qrcode.EPSPaymentParser.EXTRACTION_ENTITY_NAME;
 import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
 import static net.gini.android.capture.internal.util.AndroidHelper.isMarshmallowOrLater;
-import static net.gini.android.capture.internal.util.ContextHelper.isTablet;
 import static net.gini.android.capture.internal.util.FeatureConfiguration.getDocumentImportEnabledFileTypes;
 import static net.gini.android.capture.internal.util.FeatureConfiguration.isMultiPageEnabled;
 import static net.gini.android.capture.internal.util.FeatureConfiguration.isQRCodeScanningEnabled;
@@ -142,7 +130,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
         @Override
         public void onProceedToMultiPageReviewScreen(
-                @NonNull final GiniCaptureMultiPageDocument multiPageDocument) {
+                @NonNull final GiniCaptureMultiPageDocument multiPageDocument, boolean shouldScrollToLastPage) {
         }
 
         @Override
@@ -210,13 +198,15 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private QRCodeDocument mQRCodeDocument;
     private Group mImportButtonGroup;
     private boolean mInstanceStateSaved;
+    private int mMultiPageDocumentSize = 0;
+    private boolean mShouldScrollToLastPage = false;
 
     CameraFragmentImpl(@NonNull final FragmentImplCallback fragment) {
         mFragment = fragment;
     }
 
     @Override
-     public void onPaymentQRCodeDataAvailable(@NonNull final PaymentQRCodeData paymentQRCodeData) {
+    public void onPaymentQRCodeDataAvailable(@NonNull final PaymentQRCodeData paymentQRCodeData) {
         handleQRCodeDetected(paymentQRCodeData, paymentQRCodeData.getUnparsedContent());
     }
 
@@ -229,15 +219,15 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                                       @NonNull final String qrCodeContent) {
 
         if (mInterfaceHidden || mActivityIndicator.getVisibility() == View.VISIBLE) {
-             return;
-         }
+            return;
+        }
 
         if (paymentQRCodeData == null) {
             mUnsupportedQRCodePopup.show(qrCodeContent);
-         } else {
+        } else {
             mPaymentQRCodePopup.show(paymentQRCodeData);
-         }
-     }
+        }
+    }
 
     @VisibleForTesting
     long getHideQRCodeDetectedPopupDelayMs() {
@@ -278,7 +268,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     }
 
     View onCreateView(final LayoutInflater inflater, final ViewGroup container,
-            final Bundle savedInstanceState) {
+                      final Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.gc_fragment_camera, container, false);
         bindViews(view);
         setInputHandlers();
@@ -384,6 +374,14 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                 mMultiPageDocument = multiPageDocument;
                 mInMultiPageState = true;
                 updatePhotoThumbnail();
+
+                if (multiPageDocument.getDocuments().size() > mMultiPageDocumentSize) {
+                    mMultiPageDocumentSize = multiPageDocument.getDocuments().size();
+                    setShouldScrollToLastPage(true);
+                } else {
+                    setShouldScrollToLastPage(false);
+                }
+
             } else {
                 mInMultiPageState = false;
                 mMultiPageDocument = null;
@@ -425,16 +423,16 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private void enableTapToFocus() {
         mCameraController.enableTapToFocus(new CameraInterface.TapToFocusListener() {
-                    @Override
-                    public void onFocusing(@NonNull final Point point, @NonNull final Size previewViewSize) {
-                        showFocusIndicator(point);
-                    }
+            @Override
+            public void onFocusing(@NonNull final Point point, @NonNull final Size previewViewSize) {
+                showFocusIndicator(point);
+            }
 
-                    @Override
-                    public void onFocused(final boolean success) {
-                        hideFocusIndicator();
-                    }
-                });
+            @Override
+            public void onFocused(final boolean success) {
+                hideFocusIndicator();
+            }
+        });
     }
 
     private void showFocusIndicator(@NonNull final Point point) {
@@ -723,7 +721,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             @Override
             public void onClick(final View v) {
                 mProceededToMultiPageReview = true;
-                mListener.onProceedToMultiPageReviewScreen(mMultiPageDocument);
+                mListener.onProceedToMultiPageReviewScreen(mMultiPageDocument, shouldScrollToLastPage());
             }
         });
     }
@@ -784,8 +782,8 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         final GiniCaptureSpecificExtraction specificExtraction = new GiniCaptureSpecificExtraction(
                 EXTRACTION_ENTITY_NAME,
                 paymentQRCodeData.getUnparsedContent(),
-                 EXTRACTION_ENTITY_NAME,
-                 null,
+                EXTRACTION_ENTITY_NAME,
+                null,
                 Collections.singletonList(extraction)
         );
         mListener.onExtractionsAvailable(
@@ -970,7 +968,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     }
 
     private void createSinglePageDocumentAndCallListener(final Intent data,
-            final Activity activity) {
+                                                         final Activity activity) {
         try {
             final GiniCaptureDocument document = DocumentFactory.newDocumentFromIntent(data,
                     activity,
@@ -999,8 +997,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                             final ImageMultiPageDocument multiPageDocument =
                                     (ImageMultiPageDocument) document;
                             addToMultiPageDocumentMemoryStore(multiPageDocument);
-                            mListener.onProceedToMultiPageReviewScreen(
-                                    multiPageDocument);
+                            mListener.onProceedToMultiPageReviewScreen(multiPageDocument, shouldScrollToLastPage());
                         } else {
                             mListener.onDocumentAvailable(document);
                         }
@@ -1024,7 +1021,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     }
 
     private void handleMultiPageDocumentAndCallListener(@NonNull final Context context,
-            @NonNull final Intent intent, @NonNull final List<Uri> uris) {
+                                                        @NonNull final Intent intent, @NonNull final List<Uri> uris) {
         showActivityIndicatorAndDisableInteraction();
         if (mImportUrisAsyncTask != null) {
             mImportUrisAsyncTask.cancel(true);
@@ -1278,7 +1275,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                                                 new PhotoThumbnail.ThumbnailBitmap(result.getBitmapPreview(),
                                                         document.getRotationForDisplay()));
                                         mPhotoThumbnail.setImageCount(mMultiPageDocument.getDocuments().size());
-                                        mListener.onProceedToMultiPageReviewScreen(mMultiPageDocument);
+                                        mListener.onProceedToMultiPageReviewScreen(mMultiPageDocument, shouldScrollToLastPage());
                                         mIsTakingPicture = false;
                                     } else {
                                         final ImageDocument document =
@@ -1314,7 +1311,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
         mImageFrame.getHitRect(rect);
 
-       return rect;
+        return rect;
     }
 
 
@@ -1330,8 +1327,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                     public void onClick(
                             final DialogInterface dialogInterface,
                             final int i) {
-                        mProceededToMultiPageReview = true;
-                        mListener.onProceedToMultiPageReviewScreen(mMultiPageDocument);
+                        mListener.onProceedToMultiPageReviewScreen(mMultiPageDocument, shouldScrollToLastPage());
                     }
                 }, activity.getString(R.string.gc_document_error_multi_page_limit_cancel_button),
                 null, null);
@@ -1576,8 +1572,8 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     }
 
     private void handleError(final GiniCaptureError.ErrorCode errorCode,
-            @NonNull final String message,
-            @Nullable final Throwable throwable) {
+                             @NonNull final String message,
+                             @Nullable final Throwable throwable) {
         ErrorLogger.log(new ErrorLog(errorCode.toString() + ": " + message, throwable));
         String errorMessage = message;
         if (throwable != null) {
@@ -1588,5 +1584,13 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             LOG.error(message);
         }
         mListener.onError(new GiniCaptureError(errorCode, errorMessage));
+    }
+
+    public boolean shouldScrollToLastPage() {
+        return mMultiPageDocumentSize < mMultiPageDocument.getDocuments().size();
+    }
+
+    public void setShouldScrollToLastPage(boolean mShouldScrollToLastPage) {
+        this.mShouldScrollToLastPage = mShouldScrollToLastPage;
     }
 }

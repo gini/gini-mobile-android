@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.Rect;
-import android.util.DisplayMetrics;
 
 import java.io.ByteArrayOutputStream;
 
@@ -52,16 +51,15 @@ public class PhotoCropModifier implements PhotoModifier {
                 int width1 = rotatedBitmap.getWidth() * aRect.width() / mScreenSize[0];
                 int height1 = rotatedBitmap.getHeight() * aRect.height() / mScreenSize[1];
 
-                matrix.invert(matrix);
-
                 Bitmap cropped = Bitmap.createBitmap(rotatedBitmap, x1, y1,
-                        width1, height1, matrix, false);
+                        width1, height1, null, false);
 
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 cropped.compress(Bitmap.CompressFormat.JPEG, mQuality, stream);
 
                 byte[] byteArray = stream.toByteArray();
 
+                mPhoto.setRotationForDisplay(0);
                 mPhoto.setData(byteArray);
                 mPhoto.updateBitmapPreview();
                 mPhoto.updateExif();

@@ -32,7 +32,7 @@ interface CameraFragmentListener {
     void onDocumentAvailable(@NonNull Document document);
 
     void onProceedToMultiPageReviewScreen(
-            @NonNull final GiniCaptureMultiPageDocument multiPageDocument);
+            @NonNull final GiniCaptureMultiPageDocument multiPageDocument, boolean shouldScrollToLastPage);
 
     /**
      * <p>
