@@ -313,7 +313,8 @@ public class MainActivity extends AppCompatActivity {
                 .setGiniCaptureNetworkService(
                         app.getGiniCaptureNetworkService("ScreenAPI")
                 ).setGiniCaptureNetworkApi(app.getGiniCaptureNetworkApi());
-        builder.setDocumentImportEnabledFileTypes(DocumentImportEnabledFileTypes.PDF_AND_IMAGES)
+        builder
+                .setDocumentImportEnabledFileTypes(DocumentImportEnabledFileTypes.PDF_AND_IMAGES)
                 .setFileImportEnabled(true)
                 .setQRCodeScanningEnabled(true)
                 .setMultiPageEnabled(true);
