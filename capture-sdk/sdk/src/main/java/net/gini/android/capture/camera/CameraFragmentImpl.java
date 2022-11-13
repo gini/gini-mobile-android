@@ -11,6 +11,8 @@ import android.graphics.Rect;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -222,11 +224,21 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             return;
         }
 
-        if (paymentQRCodeData == null) {
-            mUnsupportedQRCodePopup.show(qrCodeContent);
-        } else {
-            mPaymentQRCodePopup.show(paymentQRCodeData);
-        }
+        if (mUnsupportedQRCodePopup.isShown() || mPaymentQRCodePopup.isShown())
+            return;
+
+        showQRCodeView(paymentQRCodeData);
+    }
+
+    private void showQRCodeView(PaymentQRCodeData data) {
+        new Handler(Looper.getMainLooper())
+                .postDelayed(() -> {
+                    if (data == null) {
+                        mUnsupportedQRCodePopup.show(null);
+                    } else {
+                        mPaymentQRCodePopup.show(data);
+                    }
+                }, 1000);
     }
 
     @VisibleForTesting
