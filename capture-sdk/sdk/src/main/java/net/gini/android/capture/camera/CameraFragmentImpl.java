@@ -80,6 +80,7 @@ import net.gini.android.capture.requirements.RequirementReport;
 import net.gini.android.capture.tracking.CameraScreenEvent;
 import net.gini.android.capture.util.IntentHelper;
 import net.gini.android.capture.util.UriHelper;
+import net.gini.android.capture.view.CustomLoadingIndicatorAdapter;
 import net.gini.android.capture.view.InjectedViewContainer;
 import net.gini.android.capture.view.NavButtonType;
 import net.gini.android.capture.view.NavigationBarTopAdapter;
@@ -185,7 +186,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private ImageButton mButtonImportDocument;
     private ConstraintLayout mCameraFrameWrapper;
     private View mActivityIndicatorBackground;
-    private ProgressBar mActivityIndicator;
     private ImageView mImageFrame;
     private ViewStubSafeInflater mViewStubInflater;
     private ConstraintLayout mPaneWrapper;
@@ -200,6 +200,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private boolean mInstanceStateSaved;
     private int mMultiPageDocumentSize = 0;
     private boolean mShouldScrollToLastPage = false;
+    private InjectedViewContainer<CustomLoadingIndicatorAdapter> mLoadingIndicator;
 
     CameraFragmentImpl(@NonNull final FragmentImplCallback fragment) {
         mFragment = fragment;
@@ -218,7 +219,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private void handleQRCodeDetected(@Nullable final PaymentQRCodeData paymentQRCodeData,
                                       @NonNull final String qrCodeContent) {
 
-        if (mInterfaceHidden || mActivityIndicator.getVisibility() == View.VISIBLE) {
+        if (mInterfaceHidden || mLoadingIndicator.getVisibility() == View.VISIBLE) {
             return;
         }
 
@@ -274,6 +275,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         setInputHandlers();
         createPopups();
         setTopBarInjectedViewContainer();
+        setCustomLoadingIndicator();
         initOnlyQRScanning();
         return view;
     }
@@ -605,12 +607,12 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         mImportButtonGroup = view.findViewById(R.id.gc_document_import_button_group);
         mActivityIndicatorBackground =
                 view.findViewById(R.id.gc_activity_indicator_background);
-        mActivityIndicator = view.findViewById(R.id.gc_activity_indicator);
         mPhotoThumbnail = view.findViewById(R.id.gc_photo_thumbnail);
         topAdapterInjectedViewContainer = view.findViewById(R.id.gc_navigation_top_bar);
         mImageFrame = view.findViewById(R.id.gc_camera_frame);
         mCameraFrameWrapper = view.findViewById(R.id.gc_camera_frame_wrapper);
         mPaneWrapper = view.findViewById(R.id.gc_pane_wrapper);
+        mLoadingIndicator = view.findViewById(R.id.gc_injected_loading_indicator);
     }
 
     private void setTopBarInjectedViewContainer() {
@@ -645,6 +647,12 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             topAdapterInjectedViewContainer.getInjectedViewAdapter().setOnNavButtonClickListener(v -> {
                 mFragment.getActivity().onBackPressed();
             });
+        }
+    }
+
+    private void setCustomLoadingIndicator() {
+        if (GiniCapture.hasInstance()) {
+            mLoadingIndicator.setInjectedViewAdapter(GiniCapture.getInstance().getloadingIndicatorAdapter());
         }
     }
 
@@ -1088,25 +1096,25 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     @Override
     public void showActivityIndicatorAndDisableInteraction() {
-        if (mActivityIndicator == null
+        if (mLoadingIndicator.getInjectedViewAdapter() == null
                 || mActivityIndicatorBackground == null) {
             return;
         }
         mActivityIndicatorBackground.setVisibility(View.VISIBLE);
         mActivityIndicatorBackground.setClickable(true);
-        mActivityIndicator.setVisibility(View.VISIBLE);
+        mLoadingIndicator.getInjectedViewAdapter().onVisible();
         disableInteraction();
     }
 
     @Override
     public void hideActivityIndicatorAndEnableInteraction() {
-        if (mActivityIndicator == null
+        if (mLoadingIndicator.getInjectedViewAdapter() == null
                 || mActivityIndicatorBackground == null) {
             return;
         }
         mActivityIndicatorBackground.setVisibility(View.INVISIBLE);
         mActivityIndicatorBackground.setClickable(false);
-        mActivityIndicator.setVisibility(View.INVISIBLE);
+        mLoadingIndicator.getInjectedViewAdapter().onHidden();
         enableInteraction();
     }
 

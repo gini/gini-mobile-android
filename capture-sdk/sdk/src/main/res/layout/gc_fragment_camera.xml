@@ -263,20 +263,15 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ProgressBar
-            android:id="@+id/gc_activity_indicator"
+        <net.gini.android.capture.view.InjectedViewContainer
+            android:id="@+id/gc_injected_loading_indicator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:indeterminateOnly="true"
-            android:indeterminateTint="@color/gc_analysis_activity_indicator"
-            android:indeterminateTintMode="src_in"
-            android:padding="@dimen/large"
-            android:visibility="gone"
-            tools:targetApi="lollipop" />
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <TextView
             style="@style/GiniCaptureTheme.Typography.Body2"

@@ -248,22 +248,15 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ProgressBar
-            android:id="@+id/gc_activity_indicator"
+        <net.gini.android.capture.view.InjectedViewContainer
+            android:id="@+id/gc_injected_loading_indicator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:indeterminateOnly="true"
-            android:indeterminateTint="@color/gc_analysis_activity_indicator"
-            android:indeterminateTintMode="src_in"
-            android:padding="@dimen/gc_camera_activity_indicator_padding"
-            android:visibility="invisible"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@+id/gc_camera_frame"
             app:layout_constraintEnd_toEndOf="@+id/gc_qr_code_check"
             app:layout_constraintStart_toStartOf="@+id/gc_qr_code_check"
-            app:layout_constraintTop_toTopOf="@+id/gc_camera_frame"
-            tools:targetApi="lollipop"
-            tools:visibility="gone" />
+            app:layout_constraintTop_toTopOf="@+id/gc_camera_frame" />
 
         <TextView
             android:id="@+id/gc_retrieving_invoice"
