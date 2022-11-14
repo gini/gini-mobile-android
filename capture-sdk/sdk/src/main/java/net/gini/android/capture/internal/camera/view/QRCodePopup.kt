@@ -1,6 +1,8 @@
 package net.gini.android.capture.internal.camera.view
 
 import android.content.res.ColorStateList
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
@@ -26,7 +28,8 @@ internal class QRCodePopup<T> @JvmOverloads constructor(
     private val supportedBackgroundView: View? = null,
     private val hideDelayMs: Long,
     private val supported: Boolean,
-    private val onClicked: (T?) -> Unit = {}
+    private var onClicked: ((T?) -> Unit)? = {},
+    private val onHide: (() -> Unit)? = null
 ) {
 
     private var qrStatusTxt: TextView = popupView.findViewById(R.id.gc_qr_code_status)
@@ -40,8 +43,13 @@ internal class QRCodePopup<T> @JvmOverloads constructor(
     private val hideRunnable: Runnable = Runnable {
 
         if (qrCodeContent != null) {
-            onClicked(qrCodeContent)
+            onClicked?.let { it(qrCodeContent) }
         }
+
+        //Wait for a second to reset the QR Code content value
+        Handler(Looper.getMainLooper()).postDelayed({
+            onHide?.invoke()
+        }, 1000)
 
         if (supported) {
             progressViews()
@@ -102,10 +110,14 @@ internal class QRCodePopup<T> @JvmOverloads constructor(
                     R.color.Success_01
                 )
             )
-        }
-        else {
+        } else {
             mUnknownQRCodeWrapper.visibility = View.VISIBLE
-            qrImageFrame.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(popupView.context, R.color.Warning_01))
+            qrImageFrame.imageTintList = ColorStateList.valueOf(
+                ContextCompat.getColor(
+                    popupView.context,
+                    R.color.Warning_01
+                )
+            )
         }
 
         isShown = true
