@@ -34,7 +34,7 @@ internal class QRCodePopup<T> @JvmOverloads constructor(
     private var qrStatusTxt: TextView = popupView.findViewById(R.id.gc_qr_code_status)
     private var qrImageFrame: ImageView = popupView.findViewById(R.id.gc_camera_frame)
     private var qrCheckImage: ImageView = popupView.findViewById(R.id.gc_qr_code_check)
-    private var mLoadingIndicatorAdapter: InjectedViewContainer<CustomLoadingIndicatorAdapter> = popupView.findViewById(R.id.gc_injected_loading_indicator)
+    private var mLoadingIndicatorAdapter: InjectedViewContainer<CustomLoadingIndicatorAdapter> = popupView.findViewById(R.id.gc_injected_loading_indicator_container)
     private var mInvoiceTxt: TextView = popupView.findViewById(R.id.gc_retrieving_invoice)
 
     private val hideRunnable: Runnable = Runnable {

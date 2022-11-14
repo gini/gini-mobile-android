@@ -612,7 +612,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         mImageFrame = view.findViewById(R.id.gc_camera_frame);
         mCameraFrameWrapper = view.findViewById(R.id.gc_camera_frame_wrapper);
         mPaneWrapper = view.findViewById(R.id.gc_pane_wrapper);
-        mLoadingIndicator = view.findViewById(R.id.gc_injected_loading_indicator);
+        mLoadingIndicator = view.findViewById(R.id.gc_injected_loading_indicator_container);
     }
 
     private void setTopBarInjectedViewContainer() {
