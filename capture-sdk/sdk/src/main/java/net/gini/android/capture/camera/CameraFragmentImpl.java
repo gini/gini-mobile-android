@@ -11,11 +11,13 @@ import android.graphics.Rect;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -219,7 +221,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private void handleQRCodeDetected(@Nullable final PaymentQRCodeData paymentQRCodeData,
                                       @NonNull final String qrCodeContent) {
 
-        if (mInterfaceHidden || mLoadingIndicator.getVisibility() == View.VISIBLE) {
+        if (mInterfaceHidden) {
             return;
         }
 
@@ -272,10 +274,10 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                       final Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.gc_fragment_camera, container, false);
         bindViews(view);
+        setCustomLoadingIndicator(view);
         setInputHandlers();
-        createPopups();
         setTopBarInjectedViewContainer();
-        setCustomLoadingIndicator();
+        createPopups();
         initOnlyQRScanning();
         return view;
     }
@@ -294,7 +296,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private void createPopups() {
         mPaymentQRCodePopup =
-                new QRCodePopup<>(mFragment, mCameraFrameWrapper, mActivityIndicatorBackground,
+                new QRCodePopup<>(mFragment, mCameraFrameWrapper, mActivityIndicatorBackground, mLoadingIndicator.getInjectedViewAdapter(),
                         getDifferentQRCodeDetectedPopupDelayMs(), true,
                         paymentQRCodeData -> {
                             if (paymentQRCodeData == null) {
@@ -305,7 +307,8 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                         });
 
         mUnsupportedQRCodePopup =
-                new QRCodePopup<>(mFragment, mCameraFrameWrapper, getHideQRCodeDetectedPopupDelayMs(), false);
+                new QRCodePopup<>(mFragment, mCameraFrameWrapper, mLoadingIndicator.getInjectedViewAdapter(),
+                        getHideQRCodeDetectedPopupDelayMs(), false);
     }
 
     public void onStart() {
@@ -365,6 +368,9 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     public void onResume() {
         initMultiPageDocument();
+
+        //We need this to enforce inflation again
+        setCustomLoadingIndicator(mFragment.getView());
     }
 
     private void initMultiPageDocument() {
@@ -612,7 +618,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         mImageFrame = view.findViewById(R.id.gc_camera_frame);
         mCameraFrameWrapper = view.findViewById(R.id.gc_camera_frame_wrapper);
         mPaneWrapper = view.findViewById(R.id.gc_pane_wrapper);
-        mLoadingIndicator = view.findViewById(R.id.gc_injected_loading_indicator_container);
     }
 
     private void setTopBarInjectedViewContainer() {
@@ -650,9 +655,15 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         }
     }
 
-    private void setCustomLoadingIndicator() {
-        if (GiniCapture.hasInstance()) {
+    private void setCustomLoadingIndicator(View view) {
+        if (GiniCapture.hasInstance() && view != null) {
+            mLoadingIndicator = view.findViewById(R.id.gc_injected_loading_indicator);
+            mLoadingIndicator.invalidate();
+            mLoadingIndicator.setInjectedViewAdapter(null);
             mLoadingIndicator.setInjectedViewAdapter(GiniCapture.getInstance().getloadingIndicatorAdapter());
+
+            if (mLoadingIndicator.getInjectedViewAdapter() != null)
+                mLoadingIndicator.getInjectedViewAdapter().onHidden();
         }
     }
 
@@ -671,7 +682,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
             mPaneWrapper.setVisibility(View.GONE);
 
-            ConstraintLayout.LayoutParams params = ((ConstraintLayout.LayoutParams)mImageFrame.getLayoutParams());
+            ConstraintLayout.LayoutParams params = ((ConstraintLayout.LayoutParams) mImageFrame.getLayoutParams());
 
             params.dimensionRatio = "1:1";
             params.leftMargin = (int) Objects.requireNonNull(mFragment.getActivity()).getResources().getDimension(R.dimen.xlarge);
