@@ -6,6 +6,8 @@ import androidx.annotation.XmlRes
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
 import net.gini.android.bank.api.GiniBankAPI
 import net.gini.android.bank.api.GiniBankAPIBuilder
@@ -249,7 +251,7 @@ class GiniCaptureDefaultNetworkService(
         try {
             analyzedGiniApiDocument = null
             giniApiDocuments.clear()
-            coroutineScope.cancel()
+            coroutineScope.coroutineContext.cancelChildren()
         } catch (ignored: IllegalStateException) {
         }
     }
