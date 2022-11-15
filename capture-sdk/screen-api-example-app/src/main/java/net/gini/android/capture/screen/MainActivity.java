@@ -54,6 +54,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.android.LogcatAppender;
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
@@ -81,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
     private SwitchMaterial animatedOnboardingIllustrationsSwitch;
     private SwitchMaterial customLoadingAnimationSwitch;
     private SwitchMaterial onlyQRCodeSwitch;
+    private SwitchMaterial disableCameraPermission;
     private CancellationToken mFileImportCancellationToken;
 
     @Override
@@ -232,9 +234,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void addInputHandlers() {
-        mButtonStartScanner.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
+        mButtonStartScanner.setOnClickListener(v -> {
+            if (disableCameraPermission.isChecked()) {
+                doStartGiniCaptureSdk();
+            }
+            else {
                 startGiniCaptureSdk();
             }
         });
@@ -249,7 +253,6 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void permissionDenied() {
-
             }
         });
     }
@@ -390,6 +393,7 @@ public class MainActivity extends AppCompatActivity {
         animatedOnboardingIllustrationsSwitch = findViewById(R.id.animated_onboarding_illustrations_switch);
         customLoadingAnimationSwitch = findViewById(R.id.custom_loading_indicator_switch);
         onlyQRCodeSwitch = findViewById(R.id.gc_only_qr_code_scanning);
+        disableCameraPermission = findViewById(R.id.gc_disable_camera_permision);
     }
 
     private ArrayList<OnboardingPage> getOnboardingPages(final boolean isMultiPageEnabled, final boolean isQRCodeScanningEnabled) {

@@ -6,8 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
-    android:orientation="vertical"
-    tools:background="#000">
+    android:background="?attr/backgroundColor"
+    android:orientation="vertical">
 
     <ImageView
         android:id="@+id/gc_image_camera_no_permission"
@@ -24,9 +24,8 @@
         style="@style/GiniCaptureTheme.Typography.Headline6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="@dimen/large"
         android:text="@string/gc_camera_access"
-        android:textColor="#fff"
         app:layout_constraintBottom_toTopOf="@+id/gc_text_camera_no_permission"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -56,7 +55,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/xxxlarge"
-        android:minWidth="120dp"
+        android:minWidth="@dimen/gc_give_permission_button_width"
         android:text="@string/gc_camera_error_no_permission_button_title"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

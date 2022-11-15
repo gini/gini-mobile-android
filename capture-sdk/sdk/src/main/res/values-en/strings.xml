@@ -13,7 +13,7 @@
     <string name="gc_show_onboarding">Help</string>
 
     <string name="gc_camera_error_no_permission">We need access to your camera to enable you to capture your invoices</string>
-    <string name="gc_camera_error_no_permission_button_title">Give permission</string>
+    <string name="gc_camera_error_no_permission_button_title">Give Access</string>
     <string name="gc_camera_image_stack_subtitle">Pages</string>
     <string name="gc_camera_document_import_subtitle">Import</string>
     <string name="gc_document_error_multi_page_limit_review_pages_button">Overview of pages</string>
