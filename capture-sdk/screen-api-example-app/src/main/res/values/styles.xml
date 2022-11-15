@@ -8,6 +8,11 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <!-- Example of customizing the status bar color -->
+<!--    <style name="GiniCaptureTheme" parent="Root.GiniCaptureTheme">-->
+<!--        <item name="colorPrimaryDark">@color/Error_03</item>-->
+<!--    </style>-->
+
     <!-- Example of customizing the Camera Screen no camera permission error's text style -->
     <!--<style name="GiniCaptureTheme.Camera.Error.NoPermission.TextStyle" parent="Root.GiniCaptureTheme.Camera.Error.NoPermission.TextStyle">-->
         <!--<item name="android:textStyle">bold</item>-->
