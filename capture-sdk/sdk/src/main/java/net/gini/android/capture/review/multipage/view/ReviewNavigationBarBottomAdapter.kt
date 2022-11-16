@@ -17,6 +17,8 @@ interface ReviewNavigationBarBottomAdapter: InjectedViewAdapter {
 
     fun onAddPageVisible(visibility: Int)
 
+    fun onButtonStatus(enabled: Boolean)
+
     fun onLoadingIndicatorSet(customLoadingIndicatorAdapter: CustomLoadingIndicatorAdapter?)
 
     fun onLoadingIndicatorGet(): CustomLoadingIndicatorAdapter?
@@ -37,6 +39,10 @@ class DefaultReviewNavigationBarBottomAdapter: ReviewNavigationBarBottomAdapter 
 
     override fun onAddPageVisible(visibility: Int) {
         this.viewBinding?.gcAddPage?.visibility = visibility
+    }
+
+    override fun onButtonStatus(enabled: Boolean) {
+        viewBinding?.gcContinue?.isEnabled = enabled
     }
 
     override fun onLoadingIndicatorSet(customLoadingIndicatorAdapter: CustomLoadingIndicatorAdapter?) {

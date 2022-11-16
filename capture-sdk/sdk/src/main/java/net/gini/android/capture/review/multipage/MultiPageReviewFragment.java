@@ -594,11 +594,21 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     }
 
     private void setNextButtonEnabled(final boolean enabled) {
-        mButtonNext.setEnabled(enabled);
-        if (enabled) {
-            mButtonNext.animate().alpha(1.0f).start();
-        } else {
-            mButtonNext.animate().alpha(0.5f).start();
+
+        if (!GiniCapture.hasInstance())
+            return;
+
+        if (!GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
+            mButtonNext.setEnabled(enabled);
+            if (enabled) {
+                mButtonNext.animate().alpha(1.0f).start();
+            } else {
+                mButtonNext.animate().alpha(0.5f).start();
+            }
+        } else if (mReviewNavigationBarBottomAdapter != null
+                && mReviewNavigationBarBottomAdapter.getInjectedViewAdapter() != null) {
+            mReviewNavigationBarBottomAdapter.getInjectedViewAdapter()
+                    .onButtonStatus(enabled);
         }
     }
 
