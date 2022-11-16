@@ -397,18 +397,37 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
         InjectedViewContainer<ReviewNavigationBarBottomAdapter> mReviewNavigationBarBottomAdapter =
                 view.findViewById(R.id.gc_injected_navigation_bar_container_bottom);
 
+        ViewGroup.LayoutParams params = mReviewNavigationBarBottomAdapter.getLayoutParams();
+        params.height = getResources().getDimensionPixelSize(R.dimen.gc_review_bottom_bar_height);
+
+        mReviewNavigationBarBottomAdapter.setLayoutParams(params);
+
         if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
 
             mReviewNavigationBarBottomAdapter.setInjectedViewAdapter(GiniCapture.getInstance().getReviewNavigationBarBottomAdapter());
 
-            if (mReviewNavigationBarBottomAdapter.getInjectedViewAdapter() == null)
+            if (mReviewNavigationBarBottomAdapter.getInjectedViewAdapter() == null) {
                 return;
+            }
+
+            hideViewsIfBottomBarEnabled();
 
             mReviewNavigationBarBottomAdapter.getInjectedViewAdapter().onAddPageClickListener(v -> mListener.onReturnToCameraScreen());
 
+            boolean isMultiPage = GiniCapture.getInstance().isMultiPageEnabled();
+
+            mReviewNavigationBarBottomAdapter.getInjectedViewAdapter().onAddPageVisible(isMultiPage ? View.VISIBLE : View.GONE);
             mReviewNavigationBarBottomAdapter.getInjectedViewAdapter().onContinueClickListener(v -> onNextButtonClicked());
+
         }
 
+    }
+
+    private void hideViewsIfBottomBarEnabled() {
+        mAddPages.setVisibility(View.GONE);
+        mAddPages.setEnabled(false);
+        mButtonNext.setVisibility(View.GONE);
+        mButtonNext.setEnabled(false);
     }
 
     //Add empty tabs to present dots on the screen
@@ -453,7 +472,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     private void setInputHandlers() {
         mButtonNext.setOnClickListener(v -> onNextButtonClicked());
 
-        if (GiniCapture.hasInstance()) {
+        if (GiniCapture.hasInstance() && !GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
             mAddPages.setVisibility(GiniCapture.getInstance().isMultiPageEnabled() ? View.VISIBLE : View.GONE);
         }
 

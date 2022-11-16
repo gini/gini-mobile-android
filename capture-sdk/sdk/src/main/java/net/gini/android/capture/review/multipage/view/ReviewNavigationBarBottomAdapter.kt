@@ -12,6 +12,8 @@ interface ReviewNavigationBarBottomAdapter: InjectedViewAdapter {
     fun onContinueClickListener(clickListener: View.OnClickListener)
 
     fun onAddPageClickListener(clickListener: View.OnClickListener)
+
+    fun onAddPageVisible(visibility: Int)
 }
 
 class DefaultReviewNavigationBarBottomAdapter: ReviewNavigationBarBottomAdapter {
@@ -24,6 +26,10 @@ class DefaultReviewNavigationBarBottomAdapter: ReviewNavigationBarBottomAdapter 
 
     override fun onAddPageClickListener(clickListener: View.OnClickListener) {
         this.viewBinding?.gcAddPage?.setOnClickListener(clickListener)
+    }
+
+    override fun onAddPageVisible(visibility: Int) {
+        this.viewBinding?.gcAddPage?.visibility = visibility
     }
 
     override fun onCreateView(container: ViewGroup): View {
