@@ -34,7 +34,7 @@ public class ImageMultiPageDocument extends
     public ImageMultiPageDocument(@NonNull final Source source,
             @NonNull final ImportMethod importMethod) {
         super(Type.IMAGE_MULTI_PAGE, source, importMethod, MimeType.IMAGE_WILDCARD.asString(),
-                true);
+                importMethod != ImportMethod.OPEN_WITH);
     }
 
     public ImageMultiPageDocument(
