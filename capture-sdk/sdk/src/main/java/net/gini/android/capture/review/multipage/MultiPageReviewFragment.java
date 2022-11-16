@@ -46,6 +46,7 @@ import net.gini.android.capture.review.zoom.ZoomInPreviewActivity;
 import net.gini.android.capture.tracking.ReviewScreenEvent;
 import net.gini.android.capture.tracking.ReviewScreenEvent.UPLOAD_ERROR_DETAILS_MAP_KEY;
 import net.gini.android.capture.view.CustomLoadingIndicatorAdapter;
+import net.gini.android.capture.view.DefaultLoadingIndicatorAdapter;
 import net.gini.android.capture.view.InjectedViewContainer;
 import net.gini.android.capture.view.NavButtonType;
 import net.gini.android.capture.view.NavigationBarTopAdapter;
@@ -131,6 +132,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     private TabLayout mTabIndicator;
     private InjectedViewContainer<NavigationBarTopAdapter> mTopAdapterInjectedViewContainer;
     private InjectedViewContainer<CustomLoadingIndicatorAdapter> injectedLoadingIndicatorContainer;
+    private InjectedViewContainer<ReviewNavigationBarBottomAdapter> mReviewNavigationBarBottomAdapter;
     private boolean mNextClicked;
     private boolean mPreviewsShown;
     private SnapHelper mSnapHelper;
@@ -388,13 +390,13 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     }
 
     private void setInjectedLoadingIndicatorContainer() {
-        if (GiniCapture.hasInstance()) {
+        if (GiniCapture.hasInstance() && !GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
             injectedLoadingIndicatorContainer.setInjectedViewAdapter(GiniCapture.getInstance().getloadingIndicatorAdapter());
         }
     }
 
     private void setReviewNavigationBarBottomAdapter(View view) {
-        InjectedViewContainer<ReviewNavigationBarBottomAdapter> mReviewNavigationBarBottomAdapter =
+        mReviewNavigationBarBottomAdapter =
                 view.findViewById(R.id.gc_injected_navigation_bar_container_bottom);
 
         ViewGroup.LayoutParams params = mReviewNavigationBarBottomAdapter.getLayoutParams();
@@ -418,6 +420,8 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
 
             mReviewNavigationBarBottomAdapter.getInjectedViewAdapter().onAddPageVisible(isMultiPage ? View.VISIBLE : View.GONE);
             mReviewNavigationBarBottomAdapter.getInjectedViewAdapter().onContinueClickListener(v -> onNextButtonClicked());
+
+            mReviewNavigationBarBottomAdapter.getInjectedViewAdapter().onLoadingIndicatorSet(new DefaultLoadingIndicatorAdapter());
 
         }
 
@@ -719,12 +723,25 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     private void showIndicator() {
         if (injectedLoadingIndicatorContainer != null && injectedLoadingIndicatorContainer.getInjectedViewAdapter() != null)
             injectedLoadingIndicatorContainer.getInjectedViewAdapter().onVisible();
+        else if (mReviewNavigationBarBottomAdapter != null && mReviewNavigationBarBottomAdapter.getInjectedViewAdapter() != null &&
+                mReviewNavigationBarBottomAdapter.getInjectedViewAdapter()
+                        .onLoadingIndicatorGet() != null) {
+            mReviewNavigationBarBottomAdapter.getInjectedViewAdapter()
+                    .onLoadingIndicatorGet().onVisible();
+        }
     }
 
     private void hideIndicator() {
         if (injectedLoadingIndicatorContainer != null && injectedLoadingIndicatorContainer.getInjectedViewAdapter() != null)
             injectedLoadingIndicatorContainer.getInjectedViewAdapter().onHidden();
+        else if (mReviewNavigationBarBottomAdapter != null && mReviewNavigationBarBottomAdapter.getInjectedViewAdapter() != null &&
+                mReviewNavigationBarBottomAdapter.getInjectedViewAdapter()
+                        .onLoadingIndicatorGet() != null) {
+            mReviewNavigationBarBottomAdapter.getInjectedViewAdapter()
+                    .onLoadingIndicatorGet().onHidden();
+        }
     }
+
 
     private void observeViewTree() {
         final View view = getView();

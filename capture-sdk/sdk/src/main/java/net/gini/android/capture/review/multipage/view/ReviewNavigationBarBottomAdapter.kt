@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import net.gini.android.capture.databinding.GcReviewNavigationBarBottomBinding
+import net.gini.android.capture.view.CustomLoadingIndicatorAdapter
+import net.gini.android.capture.view.DefaultLoadingIndicatorAdapter
 import net.gini.android.capture.view.InjectedViewAdapter
 
 interface ReviewNavigationBarBottomAdapter: InjectedViewAdapter {
@@ -14,11 +16,16 @@ interface ReviewNavigationBarBottomAdapter: InjectedViewAdapter {
     fun onAddPageClickListener(clickListener: View.OnClickListener)
 
     fun onAddPageVisible(visibility: Int)
+
+    fun onLoadingIndicatorSet(customLoadingIndicatorAdapter: CustomLoadingIndicatorAdapter?)
+
+    fun onLoadingIndicatorGet(): CustomLoadingIndicatorAdapter?
 }
 
 class DefaultReviewNavigationBarBottomAdapter: ReviewNavigationBarBottomAdapter {
 
     private var viewBinding: GcReviewNavigationBarBottomBinding? = null
+    private var customLoadingIndicatorAdapter: CustomLoadingIndicatorAdapter? = null
 
     override fun onContinueClickListener(clickListener: View.OnClickListener) {
         this.viewBinding?.gcContinue?.setOnClickListener(clickListener)
@@ -31,6 +38,22 @@ class DefaultReviewNavigationBarBottomAdapter: ReviewNavigationBarBottomAdapter 
     override fun onAddPageVisible(visibility: Int) {
         this.viewBinding?.gcAddPage?.visibility = visibility
     }
+
+    override fun onLoadingIndicatorSet(customLoadingIndicatorAdapter: CustomLoadingIndicatorAdapter?) {
+
+        this@DefaultReviewNavigationBarBottomAdapter.customLoadingIndicatorAdapter =
+            customLoadingIndicatorAdapter ?: DefaultLoadingIndicatorAdapter()
+
+        this@DefaultReviewNavigationBarBottomAdapter.viewBinding?.gcInjectedLoadingIndicatorContainer?.injectedViewAdapter =
+            this@DefaultReviewNavigationBarBottomAdapter.customLoadingIndicatorAdapter
+
+    }
+
+    override fun onLoadingIndicatorGet(): CustomLoadingIndicatorAdapter? {
+        return this.customLoadingIndicatorAdapter
+    }
+
+
 
     override fun onCreateView(container: ViewGroup): View {
         val viewBinding = GcReviewNavigationBarBottomBinding.inflate(LayoutInflater.from(container.context))

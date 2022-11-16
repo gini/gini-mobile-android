@@ -29,5 +29,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/gc_continue" />
 
+    <net.gini.android.capture.view.InjectedViewContainer
+        android:id="@+id/gc_injected_loading_indicator_container"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="@+id/gc_continue"
+        app:layout_constraintEnd_toEndOf="@+id/gc_continue"
+        app:layout_constraintStart_toStartOf="@+id/gc_continue"
+        app:layout_constraintTop_toTopOf="@+id/gc_continue" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
