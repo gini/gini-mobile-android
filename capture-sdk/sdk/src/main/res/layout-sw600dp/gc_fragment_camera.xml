@@ -187,11 +187,6 @@
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <ViewStub
-        android:id="@+id/gc_stub_camera_no_permission"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout="@layout/gc_layout_camera_no_permission" />
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -279,5 +274,15 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <ViewStub
+        android:id="@+id/gc_stub_camera_no_permission"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout="@layout/gc_layout_camera_no_permission"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/gc_navigation_top_bar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
