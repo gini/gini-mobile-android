@@ -11,6 +11,8 @@ import android.graphics.Rect;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -93,6 +95,9 @@ import java.util.Map;
 import java.util.Objects;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
+import kotlin.jvm.functions.Function1;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
@@ -200,6 +205,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private boolean mInstanceStateSaved;
     private int mMultiPageDocumentSize = 0;
     private boolean mShouldScrollToLastPage = false;
+    private String mQRCodeContent;
 
     CameraFragmentImpl(@NonNull final FragmentImplCallback fragment) {
         mFragment = fragment;
@@ -222,10 +228,34 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             return;
         }
 
-        if (paymentQRCodeData == null) {
-            mUnsupportedQRCodePopup.show(qrCodeContent);
+        if (mUnsupportedQRCodePopup.isShown() || mPaymentQRCodePopup.isShown())
+            return;
+
+        if (mQRCodeContent == null || !mQRCodeContent.equals(qrCodeContent)) {
+            showQRCodeView(paymentQRCodeData, qrCodeContent);
         } else {
-            mPaymentQRCodePopup.show(paymentQRCodeData);
+            showQRCodeViewWithDelay(paymentQRCodeData, qrCodeContent);
+        }
+    }
+
+    private void showQRCodeViewWithDelay(PaymentQRCodeData data, String qrCodeContent) {
+        new Handler(Looper.getMainLooper())
+                .postDelayed(() -> {
+                    if (data == null) {
+                        mQRCodeContent = qrCodeContent;
+                        mUnsupportedQRCodePopup.show(null);
+                    } else {
+                        mPaymentQRCodePopup.show(data);
+                    }
+                }, 1000);
+    }
+
+    private void showQRCodeView(PaymentQRCodeData data, String qrCodeContent) {
+        if (data == null) {
+            mQRCodeContent = qrCodeContent;
+            mUnsupportedQRCodePopup.show(null);
+        } else {
+            mPaymentQRCodePopup.show(data);
         }
     }
 
@@ -303,7 +333,11 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                         });
 
         mUnsupportedQRCodePopup =
-                new QRCodePopup<>(mFragment, mCameraFrameWrapper, getHideQRCodeDetectedPopupDelayMs(), false);
+                new QRCodePopup<>(mFragment, mCameraFrameWrapper, mActivityIndicatorBackground,
+                        getHideQRCodeDetectedPopupDelayMs(), false, null, () -> {
+                            mQRCodeContent = null;
+                            return null;
+                        });
     }
 
     public void onStart() {
@@ -663,7 +697,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
             mPaneWrapper.setVisibility(View.GONE);
 
-            ConstraintLayout.LayoutParams params = ((ConstraintLayout.LayoutParams)mImageFrame.getLayoutParams());
+            ConstraintLayout.LayoutParams params = ((ConstraintLayout.LayoutParams) mImageFrame.getLayoutParams());
 
             params.dimensionRatio = "1:1";
             params.leftMargin = (int) Objects.requireNonNull(mFragment.getActivity()).getResources().getDimension(R.dimen.xlarge);

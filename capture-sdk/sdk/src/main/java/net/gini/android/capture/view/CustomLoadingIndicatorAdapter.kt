@@ -42,6 +42,7 @@ class DefaultLoadingIndicatorAdapter: CustomLoadingIndicatorAdapter {
             indeterminateTintMode = PorterDuff.Mode.SRC_IN
             isIndeterminate = true
             indeterminateTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.Accent_01))
+            visibility = View.GONE
         }
 
         return progressBar

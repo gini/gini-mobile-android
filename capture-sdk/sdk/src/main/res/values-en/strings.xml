@@ -143,5 +143,7 @@
     <string name="gc_pages">Pages</string>
     <string name="gc_review">Review</string>
     <string name="gc_process_documents">Process Documents</string>
+    <string name="gc_unknown_qr_code_description">This code does not contain any payment details. Please use another QR-code or take an image of your invoice.</string>
+
     <string name="gc_camera_access">Camera access</string>
 </resources>
