@@ -12,11 +12,13 @@ class CustomLottiLoadingIndicatorAdapter(@RawRes val animationRes: Int) : Custom
     private var viewBinding: AnimationOnboardingLottieBinding? = null
 
     override fun onVisible() {
+        viewBinding?.animationView?.visibility = View.VISIBLE
         viewBinding?.animationView?.playAnimation()
     }
 
     override fun onHidden() {
         viewBinding?.animationView?.cancelAnimation()
+        viewBinding?.animationView?.visibility = View.GONE
         viewBinding?.animationView?.progress = 0f
     }
 
@@ -26,6 +28,7 @@ class CustomLottiLoadingIndicatorAdapter(@RawRes val animationRes: Int) : Custom
         viewBinding = binding
 
         viewBinding?.animationView?.setAnimation(animationRes)
+        viewBinding?.animationView?.visibility = View.GONE
 
         return binding.root
     }
