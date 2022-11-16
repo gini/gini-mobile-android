@@ -41,6 +41,7 @@ import net.gini.android.capture.review.multipage.previews.MiddlePageManager;
 import net.gini.android.capture.review.multipage.previews.PreviewFragmentListener;
 import net.gini.android.capture.review.multipage.previews.PreviewPagesAdapter;
 import net.gini.android.capture.review.multipage.previews.PreviewsAdapterListener;
+import net.gini.android.capture.review.multipage.view.ReviewNavigationBarBottomAdapter;
 import net.gini.android.capture.review.zoom.ZoomInPreviewActivity;
 import net.gini.android.capture.tracking.ReviewScreenEvent;
 import net.gini.android.capture.tracking.ReviewScreenEvent.UPLOAD_ERROR_DETAILS_MAP_KEY;
@@ -383,12 +384,31 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
         mAddPages = view.findViewById(R.id.gc_add_pages_wrapper);
         mRecyclerView = view.findViewById(R.id.gc_pager_recycler_view);
         injectedLoadingIndicatorContainer = view.findViewById(R.id.gc_injected_loading_indicator_container);
+        setReviewNavigationBarBottomAdapter(view);
     }
 
     private void setInjectedLoadingIndicatorContainer() {
         if (GiniCapture.hasInstance()) {
             injectedLoadingIndicatorContainer.setInjectedViewAdapter(GiniCapture.getInstance().getloadingIndicatorAdapter());
         }
+    }
+
+    private void setReviewNavigationBarBottomAdapter(View view) {
+        InjectedViewContainer<ReviewNavigationBarBottomAdapter> mReviewNavigationBarBottomAdapter =
+                view.findViewById(R.id.gc_injected_navigation_bar_container_bottom);
+
+        if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
+
+            mReviewNavigationBarBottomAdapter.setInjectedViewAdapter(GiniCapture.getInstance().getReviewNavigationBarBottomAdapter());
+
+            if (mReviewNavigationBarBottomAdapter.getInjectedViewAdapter() == null)
+                return;
+
+            mReviewNavigationBarBottomAdapter.getInjectedViewAdapter().onAddPageClickListener(v -> mListener.onReturnToCameraScreen());
+
+            mReviewNavigationBarBottomAdapter.getInjectedViewAdapter().onContinueClickListener(v -> onNextButtonClicked());
+        }
+
     }
 
     //Add empty tabs to present dots on the screen

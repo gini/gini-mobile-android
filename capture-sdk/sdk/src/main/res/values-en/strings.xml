@@ -143,4 +143,5 @@
     <string name="gc_pages">Pages</string>
     <string name="gc_review">Review</string>
     <string name="gc_process_documents">Process Documents</string>
+    <string name="gc_continue">Continue</string>
 </resources>

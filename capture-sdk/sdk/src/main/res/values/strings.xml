@@ -163,4 +163,5 @@
     <string name="gc_pages">Seite</string>
     <string name="gc_review">Übersicht</string>
     <string name="gc_process_documents">Dokumente verarbeiten</string>
+    <string name="gc_continue">Verarbeiten</string>
 </resources>
