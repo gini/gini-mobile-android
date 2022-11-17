@@ -49,6 +49,7 @@ import net.gini.android.capture.view.CustomLoadingIndicatorAdapter;
 import net.gini.android.capture.view.InjectedViewContainer;
 import net.gini.android.capture.view.NavButtonType;
 import net.gini.android.capture.view.NavigationBarTopAdapter;
+import net.gini.android.capture.view.OnButtonLoadingIndicatorAdapter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -130,7 +131,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     private LinearLayout mAddPages;
     private TabLayout mTabIndicator;
     private InjectedViewContainer<NavigationBarTopAdapter> mTopAdapterInjectedViewContainer;
-    private InjectedViewContainer<CustomLoadingIndicatorAdapter> injectedLoadingIndicatorContainer;
+    private InjectedViewContainer<OnButtonLoadingIndicatorAdapter> injectedLoadingIndicatorContainer;
     private boolean mNextClicked;
     private boolean mPreviewsShown;
     private SnapHelper mSnapHelper;
@@ -388,7 +389,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
 
     private void setInjectedLoadingIndicatorContainer() {
         if (GiniCapture.hasInstance()) {
-            injectedLoadingIndicatorContainer.setInjectedViewAdapter(GiniCapture.getInstance().getloadingIndicatorAdapter());
+            injectedLoadingIndicatorContainer.setInjectedViewAdapter(GiniCapture.getInstance().getOnButtonLoadingIndicatorAdapter());
         }
     }
 

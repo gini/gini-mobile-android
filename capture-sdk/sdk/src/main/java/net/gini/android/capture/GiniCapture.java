@@ -25,6 +25,7 @@ import net.gini.android.capture.onboarding.view.OnboardingIllustrationAdapter;
 import net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomAdapter;
 import net.gini.android.capture.view.CustomLoadingIndicatorAdapter;
 import net.gini.android.capture.view.DefaultLoadingIndicatorAdapter;
+import net.gini.android.capture.view.DefaultOnButtonLoadingIndicatorAdapter;
 import net.gini.android.capture.view.NavigationBarTopAdapter;
 import net.gini.android.capture.view.DefaultNavigationBarTopAdapter;
 import net.gini.android.capture.network.GiniCaptureNetworkApi;
@@ -40,6 +41,7 @@ import net.gini.android.capture.tracking.EventTracker;
 import net.gini.android.capture.tracking.OnboardingScreenEvent;
 import net.gini.android.capture.tracking.ReviewScreenEvent;
 import net.gini.android.capture.util.CancellationToken;
+import net.gini.android.capture.view.OnButtonLoadingIndicatorAdapter;
 
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -113,6 +115,7 @@ public class GiniCapture {
     private final OnboardingIllustrationAdapter onboardingMultiPageIllustrationAdapter;
     private final OnboardingIllustrationAdapter onboardingQRCodeIllustrationAdapter;
     private final CustomLoadingIndicatorAdapter loadingIndicatorAdapter;
+    private final OnButtonLoadingIndicatorAdapter onButtonLoadingIndicatorAdapter;
 
     /**
      * Retrieve the current instance.
@@ -226,6 +229,7 @@ public class GiniCapture {
         cameraNavigationBarBottomAdapter = builder.getCameraNavigationBarBottomAdapter();
         noResultsNavigationBarBottomAdapter = builder.getNoResultsNavigationBarBottomAdapter();
         loadingIndicatorAdapter = builder.getLoadingIndicatorAdapter();
+        onButtonLoadingIndicatorAdapter = builder.getOnButtonLoadingIndicatorAdapter();
     }
 
     /**
@@ -614,6 +618,11 @@ public class GiniCapture {
         return loadingIndicatorAdapter;
     }
 
+    @Nullable
+    public OnButtonLoadingIndicatorAdapter getOnButtonLoadingIndicatorAdapter() {
+        return onButtonLoadingIndicatorAdapter;
+    }
+
     /**
      * The size limit in bytes for imported files.
      *
@@ -676,7 +685,7 @@ public class GiniCapture {
         private OnboardingIllustrationAdapter onboardingMultiPageIllustrationAdapter;
         private OnboardingIllustrationAdapter onboardingQRCodeIllustrationAdapter;
         private CustomLoadingIndicatorAdapter loadingIndicatorAdapter = new DefaultLoadingIndicatorAdapter();
-
+        private OnButtonLoadingIndicatorAdapter onButtonLoadingIndicatorAdapter = new DefaultOnButtonLoadingIndicatorAdapter();
         /**
          * Create a new {@link GiniCapture} instance.
          */
@@ -1204,6 +1213,17 @@ public class GiniCapture {
          */
         public Builder setLoadingIndicatorAdapter(@NonNull final CustomLoadingIndicatorAdapter adapter) {
             loadingIndicatorAdapter = adapter;
+            return this;
+        }
+
+
+        @NonNull
+        private OnButtonLoadingIndicatorAdapter getOnButtonLoadingIndicatorAdapter() {
+            return onButtonLoadingIndicatorAdapter;
+        }
+
+        public Builder setOnButtonLoadingIndicatorAdapter(@NonNull final OnButtonLoadingIndicatorAdapter adapter) {
+            onButtonLoadingIndicatorAdapter = adapter;
             return this;
         }
     }

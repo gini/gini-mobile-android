@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,6 +45,8 @@ import net.gini.android.capture.tracking.OnboardingScreenEvent;
 import net.gini.android.capture.tracking.ReviewScreenEvent;
 import net.gini.android.capture.util.CancellationToken;
 import net.gini.android.capture.view.DefaultLoadingIndicatorAdapter;
+import net.gini.android.capture.view.DefaultOnButtonLoadingIndicatorAdapter;
+import net.gini.android.capture.view.OnButtonLoadingIndicatorAdapter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

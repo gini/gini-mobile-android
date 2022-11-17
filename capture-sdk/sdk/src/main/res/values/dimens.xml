@@ -139,5 +139,6 @@
     <dimen name="gc_tablet_width">582dp</dimen>
     <dimen name="gc_camera_pane_width">124dp</dimen>
     <dimen name="gc_unknown_banner_width">330dp</dimen>
+    <dimen name="gc_unelevated_button_height">55dp</dimen>
 
 </resources>
