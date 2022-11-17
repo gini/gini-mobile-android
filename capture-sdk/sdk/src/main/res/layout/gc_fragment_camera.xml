@@ -1,6 +1,6 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/gc_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,7 +10,7 @@
     <net.gini.android.capture.view.InjectedViewContainer
         android:id="@+id/gc_navigation_top_bar"
         android:layout_width="0dp"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -31,10 +31,10 @@
         android:id="@+id/gc_camera_focus_indicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         android:alpha="0"
-        android:src="@drawable/gc_camera_focus_indicator" />
+        android:src="@drawable/gc_camera_focus_indicator"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <FrameLayout
         android:id="@+id/gc_camera_pane_background"
@@ -199,9 +199,9 @@
         android:visibility="gone" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/gc_camera_frame_wrapper"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:id="@+id/gc_camera_frame_wrapper"
         app:layout_constraintBottom_toTopOf="@+id/gc_pane_wrapper"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -297,32 +297,28 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ProgressBar
-            android:id="@+id/gc_activity_indicator"
+
+        <net.gini.android.capture.view.InjectedViewContainer
+            android:id="@+id/gc_injected_loading_indicator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:indeterminateOnly="true"
-            android:indeterminateTint="@color/gc_analysis_activity_indicator"
-            android:indeterminateTintMode="src_in"
-            android:padding="@dimen/large"
-            android:visibility="gone"
-            tools:targetApi="lollipop" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
 
         <TextView
+            android:id="@+id/gc_retrieving_invoice"
             style="@style/GiniCaptureTheme.Typography.Body2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/gc_retrieving_invoice"
             android:textColor="@color/Light_01"
-            android:id="@+id/gc_retrieving_invoice"
             android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="@+id/gc_activity_indicator"
-            app:layout_constraintStart_toStartOf="@+id/gc_activity_indicator"
-            app:layout_constraintTop_toBottomOf="@+id/gc_activity_indicator" />
+            app:layout_constraintEnd_toEndOf="@+id/gc_injected_loading_indicator"
+            app:layout_constraintStart_toStartOf="@+id/gc_injected_loading_indicator"
+            app:layout_constraintTop_toBottomOf="@+id/gc_injected_loading_indicator" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

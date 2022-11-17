@@ -16,6 +16,9 @@ import androidx.core.view.ViewPropertyAnimatorListener
 import androidx.core.view.ViewPropertyAnimatorListenerAdapter
 import net.gini.android.capture.R
 import net.gini.android.capture.internal.ui.FragmentImplCallback
+import net.gini.android.capture.view.CustomLoadingIndicatorAdapter
+import net.gini.android.capture.view.InjectedViewAdapter
+import net.gini.android.capture.view.InjectedViewContainer
 
 /**
  * Internal use only.
@@ -26,6 +29,7 @@ internal class QRCodePopup<T> @JvmOverloads constructor(
     private val fragmentImplCallback: FragmentImplCallback,
     private val popupView: View,
     private val supportedBackgroundView: View? = null,
+    private val loadingIndicatorAdapter: CustomLoadingIndicatorAdapter?,
     private val hideDelayMs: Long,
     private val supported: Boolean,
     private var onClicked: ((T?) -> Unit)? = {},
@@ -35,7 +39,6 @@ internal class QRCodePopup<T> @JvmOverloads constructor(
     private var qrStatusTxt: TextView = popupView.findViewById(R.id.gc_qr_code_status)
     private var qrImageFrame: ImageView = popupView.findViewById(R.id.gc_camera_frame)
     private var qrCheckImage: ImageView = popupView.findViewById(R.id.gc_qr_code_check)
-    private var mProgressBar: ProgressBar = popupView.findViewById(R.id.gc_activity_indicator)
     private var mInvoiceTxt: TextView = popupView.findViewById(R.id.gc_retrieving_invoice)
     private var mUnknownQRCodeWrapper: ConstraintLayout =
         popupView.findViewById(R.id.gc_unknown_qr_wrapper);
@@ -127,7 +130,7 @@ internal class QRCodePopup<T> @JvmOverloads constructor(
 
         qrCheckImage.visibility = View.GONE
         qrImageFrame.visibility = View.INVISIBLE
-        mProgressBar.visibility = View.VISIBLE
+        loadingIndicatorAdapter?.onVisible()
         mInvoiceTxt.visibility = View.VISIBLE
         supportedBackgroundView?.visibility = View.VISIBLE
     }
@@ -139,7 +142,7 @@ internal class QRCodePopup<T> @JvmOverloads constructor(
         qrImageFrame.visibility = View.VISIBLE
         qrImageFrame.imageTintList =
             ColorStateList.valueOf(ContextCompat.getColor(popupView.context, R.color.Light_01))
-        mProgressBar.visibility = View.GONE
+        loadingIndicatorAdapter?.onHidden()
         mInvoiceTxt.visibility = View.GONE
         supportedBackgroundView?.visibility = View.GONE
         mUnknownQRCodeWrapper.visibility = View.GONE
