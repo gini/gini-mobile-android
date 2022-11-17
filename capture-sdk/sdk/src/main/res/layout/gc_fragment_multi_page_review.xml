@@ -46,9 +46,9 @@
             android:layout_height="match_parent"
             android:clipToPadding="false"
             android:orientation="horizontal"
-            android:visibility="visible"
             android:paddingStart="@dimen/large_24"
             android:paddingEnd="@dimen/large_24"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -63,7 +63,7 @@
         android:layout_gravity="bottom|center"
         android:layout_marginBottom="@dimen/xlarge"
         android:backgroundTint="@android:color/transparent"
-        app:layout_constraintBottom_toTopOf="@+id/gc_button_next"
+        app:layout_constraintBottom_toTopOf="@+id/gc_review_button_wrapper"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:tabBackground="@drawable/gc_tab_selector"
@@ -75,54 +75,65 @@
         app:tabTextColor="@android:color/transparent" />
 
 
-    <net.gini.android.capture.view.InjectedViewContainer
-        android:id="@+id/gc_injected_loading_indicator_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        app:layout_constraintBottom_toBottomOf="@+id/gc_button_next"
-        app:layout_constraintEnd_toEndOf="@+id/gc_button_next"
-        app:layout_constraintStart_toStartOf="@+id/gc_button_next"
-        app:layout_constraintTop_toTopOf="@+id/gc_button_next" />
-
-    <Button
-        android:id="@+id/gc_button_next"
-        style="@style/GiniCaptureTheme.Widget.Button.UnelevatedButton"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/gc_review_button_wrapper"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/xlarge"
-        android:text="@string/gc_process_documents"
-        android:textAllCaps="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent">
 
-    <LinearLayout
-        android:id="@+id/gc_add_pages_wrapper"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/large"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="@+id/gc_button_next"
-        app:layout_constraintStart_toEndOf="@+id/gc_button_next"
-        app:layout_constraintTop_toTopOf="@+id/gc_button_next">
 
-        <ImageView
-            android:id="@+id/gc_add_page"
+        <Button
+            android:id="@+id/gc_button_next"
+            style="@style/GiniCaptureTheme.Widget.Button.UnelevatedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            app:srcCompat="@drawable/gc_add_page" />
+            android:text="@string/gc_process_documents"
+            android:textAllCaps="false"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/gc_pages_txt"
-            style="@style/GiniCaptureTheme.Typography.Subtitle2"
+        <LinearLayout
+            android:id="@+id/gc_add_pages_wrapper"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="@string/gc_pages" />
+            android:layout_marginStart="@dimen/large"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="@+id/gc_button_next"
+            app:layout_constraintStart_toEndOf="@+id/gc_button_next"
+            app:layout_constraintTop_toTopOf="@+id/gc_button_next">
 
-    </LinearLayout>
+            <ImageView
+                android:id="@+id/gc_add_page"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                app:srcCompat="@drawable/gc_add_page" />
+
+            <TextView
+                android:id="@+id/gc_pages_txt"
+                style="@style/GiniCaptureTheme.Typography.Subtitle2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/gc_pages" />
+
+        </LinearLayout>
+
+        <net.gini.android.capture.view.InjectedViewContainer
+            android:id="@+id/gc_injected_loading_indicator_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:layout_constraintBottom_toBottomOf="@+id/gc_button_next"
+            app:layout_constraintEnd_toEndOf="@+id/gc_button_next"
+            app:layout_constraintStart_toStartOf="@+id/gc_button_next"
+            app:layout_constraintTop_toTopOf="@+id/gc_button_next" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
