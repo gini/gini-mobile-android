@@ -4,12 +4,14 @@ import android.content.DialogInterface.OnClickListener
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.databinding.GcReviewNavigationBarBottomBinding
 import net.gini.android.capture.view.CustomLoadingIndicatorAdapter
 import net.gini.android.capture.view.DefaultLoadingIndicatorAdapter
 import net.gini.android.capture.view.InjectedViewAdapter
+import net.gini.android.capture.view.OnButtonLoadingIndicatorAdapter
 
-interface ReviewNavigationBarBottomAdapter: InjectedViewAdapter {
+interface ReviewNavigationBarBottomAdapter : InjectedViewAdapter {
 
     fun onContinueClickListener(clickListener: View.OnClickListener)
 
@@ -17,17 +19,17 @@ interface ReviewNavigationBarBottomAdapter: InjectedViewAdapter {
 
     fun onAddPageVisible(visibility: Int)
 
-    fun onButtonStatus(enabled: Boolean)
+    fun setContinueButtonEnabled(enabled: Boolean)
 
-    fun onLoadingIndicatorSet(customLoadingIndicatorAdapter: CustomLoadingIndicatorAdapter?)
+    fun showLoadingIndicator()
 
-    fun onLoadingIndicatorGet(): CustomLoadingIndicatorAdapter?
+    fun hideLoadingIndicator()
 }
 
-class DefaultReviewNavigationBarBottomAdapter: ReviewNavigationBarBottomAdapter {
+class DefaultReviewNavigationBarBottomAdapter : ReviewNavigationBarBottomAdapter {
 
     private var viewBinding: GcReviewNavigationBarBottomBinding? = null
-    private var customLoadingIndicatorAdapter: CustomLoadingIndicatorAdapter? = null
+    private var customLoadingIndicatorAdapter: OnButtonLoadingIndicatorAdapter? = null
 
     override fun onContinueClickListener(clickListener: View.OnClickListener) {
         this.viewBinding?.gcContinue?.setOnClickListener(clickListener)
@@ -41,30 +43,29 @@ class DefaultReviewNavigationBarBottomAdapter: ReviewNavigationBarBottomAdapter 
         this.viewBinding?.gcAddPage?.visibility = visibility
     }
 
-    override fun onButtonStatus(enabled: Boolean) {
+    override fun setContinueButtonEnabled(enabled: Boolean) {
         viewBinding?.gcContinue?.isEnabled = enabled
     }
 
-    override fun onLoadingIndicatorSet(customLoadingIndicatorAdapter: CustomLoadingIndicatorAdapter?) {
-
-        this@DefaultReviewNavigationBarBottomAdapter.customLoadingIndicatorAdapter =
-            customLoadingIndicatorAdapter ?: DefaultLoadingIndicatorAdapter()
-
-        this@DefaultReviewNavigationBarBottomAdapter.viewBinding?.gcInjectedLoadingIndicatorContainer?.injectedViewAdapter =
-            this@DefaultReviewNavigationBarBottomAdapter.customLoadingIndicatorAdapter
-
+    override fun hideLoadingIndicator() {
+        this.customLoadingIndicatorAdapter?.onHidden()
     }
 
-    override fun onLoadingIndicatorGet(): CustomLoadingIndicatorAdapter? {
-        return this.customLoadingIndicatorAdapter
+    override fun showLoadingIndicator() {
+        this.customLoadingIndicatorAdapter?.onVisible()
     }
-
 
 
     override fun onCreateView(container: ViewGroup): View {
-        val viewBinding = GcReviewNavigationBarBottomBinding.inflate(LayoutInflater.from(container.context))
+        val viewBinding =
+            GcReviewNavigationBarBottomBinding.inflate(LayoutInflater.from(container.context))
 
         this.viewBinding = viewBinding
+
+        if (GiniCapture.hasInstance()) {
+            this.customLoadingIndicatorAdapter = GiniCapture.getInstance().onButtonLoadingIndicatorAdapter
+            viewBinding.gcInjectedLoadingIndicatorContainer.injectedViewAdapter = this.customLoadingIndicatorAdapter
+        }
 
         return viewBinding.root
     }

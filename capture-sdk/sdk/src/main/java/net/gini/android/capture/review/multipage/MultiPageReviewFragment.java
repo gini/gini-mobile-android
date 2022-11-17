@@ -133,9 +133,8 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     private LinearLayout mAddPages;
     private TabLayout mTabIndicator;
     private InjectedViewContainer<NavigationBarTopAdapter> mTopAdapterInjectedViewContainer;
-    private InjectedViewContainer<CustomLoadingIndicatorAdapter> injectedLoadingIndicatorContainer;
-    private InjectedViewContainer<ReviewNavigationBarBottomAdapter> mReviewNavigationBarBottomAdapter;
     private InjectedViewContainer<OnButtonLoadingIndicatorAdapter> injectedLoadingIndicatorContainer;
+    private InjectedViewContainer<ReviewNavigationBarBottomAdapter> mReviewNavigationBarBottomAdapter;
     private boolean mNextClicked;
     private boolean mPreviewsShown;
     private SnapHelper mSnapHelper;
@@ -394,7 +393,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
 
     private void setInjectedLoadingIndicatorContainer() {
         if (GiniCapture.hasInstance() && !GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
-            injectedLoadingIndicatorContainer.setInjectedViewAdapter(GiniCapture.getInstance().getloadingIndicatorAdapter());
+            injectedLoadingIndicatorContainer.setInjectedViewAdapter(GiniCapture.getInstance().getOnButtonLoadingIndicatorAdapter());
         }
     }
 
@@ -403,7 +402,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
                 view.findViewById(R.id.gc_injected_navigation_bar_container_bottom);
 
         ViewGroup.LayoutParams params = mReviewNavigationBarBottomAdapter.getLayoutParams();
-        params.height = getResources().getDimensionPixelSize(R.dimen.gc_review_bottom_bar_height);
+        params.height = (int) getResources().getDimension(R.dimen.gc_review_bottom_bar_height);
 
         mReviewNavigationBarBottomAdapter.setLayoutParams(params);
 
@@ -423,8 +422,6 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
 
             mReviewNavigationBarBottomAdapter.getInjectedViewAdapter().onAddPageVisible(isMultiPage ? View.VISIBLE : View.GONE);
             mReviewNavigationBarBottomAdapter.getInjectedViewAdapter().onContinueClickListener(v -> onNextButtonClicked());
-
-            mReviewNavigationBarBottomAdapter.getInjectedViewAdapter().onLoadingIndicatorSet(new DefaultLoadingIndicatorAdapter());
 
         }
 
@@ -611,7 +608,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
         } else if (mReviewNavigationBarBottomAdapter != null
                 && mReviewNavigationBarBottomAdapter.getInjectedViewAdapter() != null) {
             mReviewNavigationBarBottomAdapter.getInjectedViewAdapter()
-                    .onButtonStatus(enabled);
+                    .setContinueButtonEnabled(enabled);
         }
     }
 
@@ -736,22 +733,16 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     private void showIndicator() {
         if (injectedLoadingIndicatorContainer != null && injectedLoadingIndicatorContainer.getInjectedViewAdapter() != null)
             injectedLoadingIndicatorContainer.getInjectedViewAdapter().onVisible();
-        else if (mReviewNavigationBarBottomAdapter != null && mReviewNavigationBarBottomAdapter.getInjectedViewAdapter() != null &&
-                mReviewNavigationBarBottomAdapter.getInjectedViewAdapter()
-                        .onLoadingIndicatorGet() != null) {
-            mReviewNavigationBarBottomAdapter.getInjectedViewAdapter()
-                    .onLoadingIndicatorGet().onVisible();
+        else if (mReviewNavigationBarBottomAdapter != null && mReviewNavigationBarBottomAdapter.getInjectedViewAdapter() != null) {
+            mReviewNavigationBarBottomAdapter.getInjectedViewAdapter().showLoadingIndicator();
         }
     }
 
     private void hideIndicator() {
         if (injectedLoadingIndicatorContainer != null && injectedLoadingIndicatorContainer.getInjectedViewAdapter() != null)
             injectedLoadingIndicatorContainer.getInjectedViewAdapter().onHidden();
-        else if (mReviewNavigationBarBottomAdapter != null && mReviewNavigationBarBottomAdapter.getInjectedViewAdapter() != null &&
-                mReviewNavigationBarBottomAdapter.getInjectedViewAdapter()
-                        .onLoadingIndicatorGet() != null) {
-            mReviewNavigationBarBottomAdapter.getInjectedViewAdapter()
-                    .onLoadingIndicatorGet().onHidden();
+        else if (mReviewNavigationBarBottomAdapter != null && mReviewNavigationBarBottomAdapter.getInjectedViewAdapter() != null) {
+            mReviewNavigationBarBottomAdapter.getInjectedViewAdapter().hideLoadingIndicator();
         }
     }
 
