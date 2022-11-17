@@ -85,15 +85,15 @@
             app:tabTextColor="@android:color/transparent" />
 
 
-        <net.gini.android.capture.view.InjectedViewContainer
-            android:id="@+id/gc_injected_loading_indicator_container"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            app:layout_constraintBottom_toBottomOf="@+id/gc_button_next"
-            app:layout_constraintEnd_toEndOf="@+id/gc_button_next"
-            app:layout_constraintStart_toStartOf="@+id/gc_button_next"
-            app:layout_constraintTop_toTopOf="@+id/gc_button_next" />
+    <net.gini.android.capture.view.InjectedViewContainer
+        android:id="@+id/gc_injected_loading_indicator_container"
+        android:layout_width="@dimen/gc_unelevated_button_height"
+        android:layout_height="@dimen/gc_unelevated_button_height"
+        android:layout_gravity="center"
+        app:layout_constraintBottom_toBottomOf="@+id/gc_button_next"
+        app:layout_constraintEnd_toEndOf="@+id/gc_button_next"
+        app:layout_constraintStart_toStartOf="@+id/gc_button_next"
+        app:layout_constraintTop_toTopOf="@+id/gc_button_next" />
 
         <Button
             android:id="@+id/gc_button_next"

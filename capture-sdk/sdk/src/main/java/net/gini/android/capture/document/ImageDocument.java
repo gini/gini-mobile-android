@@ -146,7 +146,7 @@ public class ImageDocument extends GiniCaptureDocument {
     ImageDocument(@Nullable final byte[] data, @NonNull final Source source,
             @NonNull final ImportMethod importMethod) {
         super(Type.IMAGE, source, importMethod, MimeType.IMAGE_JPEG.asString(),
-                data, null, null, true);
+                data, null, null, importMethod != ImportMethod.OPEN_WITH);
         mRotationForDisplay = 0;
         mFormat = ImageFormat.JPEG;
         mDeviceOrientation = "";
@@ -167,7 +167,7 @@ public class ImageDocument extends GiniCaptureDocument {
         super(uniqueId, Type.IMAGE,
                 photo.getSource() != null ? photo.getSource() : Source.newUnknownSource(),
                 photo.getImportMethod() != null ? photo.getImportMethod() : ImportMethod.NONE,
-                mimeTypeFromFormat(photo.getImageFormat()), photo.getData(), intent, uri, true);
+                mimeTypeFromFormat(photo.getImageFormat()), photo.getData(), intent, uri, photo.getImportMethod() != ImportMethod.OPEN_WITH);
         mRotationForDisplay = photo.getRotationForDisplay();
         mRotationDelta = photo.getRotationDelta();
         mFormat = photo.getImageFormat();
@@ -182,7 +182,7 @@ public class ImageDocument extends GiniCaptureDocument {
             @NonNull final Source source,
             @NonNull final ImportMethod importMethod) {
         super(Type.IMAGE, source, importMethod, mimeTypeFromFormat(format),
-                null, intent, uri, true);
+                null, intent, uri, importMethod != ImportMethod.OPEN_WITH);
         mRotationForDisplay = 0;
         mFormat = format;
         mDeviceOrientation = deviceOrientation;
@@ -194,7 +194,7 @@ public class ImageDocument extends GiniCaptureDocument {
             @NonNull final String deviceType,
             @NonNull final Source source,
             @NonNull final ImportMethod importMethod) {
-        super(Type.IMAGE, source, importMethod, mimeTypeFromFormat(format), null, null, uri, true);
+        super(Type.IMAGE, source, importMethod, mimeTypeFromFormat(format), null, null, uri, importMethod != ImportMethod.OPEN_WITH);
         mRotationForDisplay = 0;
         mFormat = format;
         mDeviceOrientation = deviceOrientation;

@@ -21,6 +21,9 @@ import net.gini.android.capture.document.GiniCaptureMultiPageDocument;
 import net.gini.android.capture.onboarding.OnboardingActivity;
 import net.gini.android.capture.review.ReviewActivity;
 import net.gini.android.capture.tracking.ReviewScreenEvent;
+import net.gini.android.capture.view.InjectedViewContainer;
+import net.gini.android.capture.view.NavButtonType;
+import net.gini.android.capture.view.NavigationBarTopAdapter;
 
 import java.util.List;
 
@@ -246,6 +249,8 @@ public class MultiPageReviewActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gc_activity_multi_page_review);
 
+        setTopBarNavigation();
+
         if (getIntent() != null) {
             mShouldScrollToLastPage = getIntent().getBooleanExtra(SHOULD_SCROLL_TO_LAST_PAGE, false);
         }
@@ -257,6 +262,23 @@ public class MultiPageReviewActivity extends AppCompatActivity implements
         }
         enableHomeAsUp(this);
         handleOnBackPressed();
+    }
+
+    private void setTopBarNavigation() {
+
+        InjectedViewContainer<NavigationBarTopAdapter> mTopBarNavigation = findViewById(R.id.gc_injected_navigation_bar_container_top);
+
+        if (GiniCapture.hasInstance()) {
+            mTopBarNavigation.setInjectedViewAdapter(GiniCapture.getInstance().getNavigationBarTopAdapter());
+
+            if (mTopBarNavigation.getInjectedViewAdapter() == null)
+                return;
+
+            mTopBarNavigation.getInjectedViewAdapter().setNavButtonType(NavButtonType.BACK);
+            mTopBarNavigation.getInjectedViewAdapter().setTitle(getResources().getString(R.string.gc_review));
+
+            mTopBarNavigation.getInjectedViewAdapter().setOnNavButtonClickListener(v -> onBackPressed());
+        }
     }
 
     private void handleOnBackPressed() {

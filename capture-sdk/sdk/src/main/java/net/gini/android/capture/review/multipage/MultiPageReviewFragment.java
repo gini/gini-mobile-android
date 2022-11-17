@@ -16,6 +16,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,6 +51,7 @@ import net.gini.android.capture.view.DefaultLoadingIndicatorAdapter;
 import net.gini.android.capture.view.InjectedViewContainer;
 import net.gini.android.capture.view.NavButtonType;
 import net.gini.android.capture.view.NavigationBarTopAdapter;
+import net.gini.android.capture.view.OnButtonLoadingIndicatorAdapter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -133,6 +135,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     private InjectedViewContainer<NavigationBarTopAdapter> mTopAdapterInjectedViewContainer;
     private InjectedViewContainer<CustomLoadingIndicatorAdapter> injectedLoadingIndicatorContainer;
     private InjectedViewContainer<ReviewNavigationBarBottomAdapter> mReviewNavigationBarBottomAdapter;
+    private InjectedViewContainer<OnButtonLoadingIndicatorAdapter> injectedLoadingIndicatorContainer;
     private boolean mNextClicked;
     private boolean mPreviewsShown;
     private SnapHelper mSnapHelper;

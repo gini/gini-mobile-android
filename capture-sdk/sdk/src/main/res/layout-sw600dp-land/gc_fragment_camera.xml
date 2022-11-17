@@ -231,6 +231,47 @@
             app:layout_constraintStart_toStartOf="@+id/gc_camera_frame"
             app:layout_constraintTop_toTopOf="@+id/gc_camera_frame" />
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/gc_unknown_qr_wrapper"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/medium"
+            android:background="@drawable/gc_qr_code_warning_background"
+            android:minWidth="@dimen/gc_unknown_banner_width"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@+id/gc_camera_frame"
+            app:layout_constraintStart_toStartOf="@+id/gc_camera_frame"
+            app:layout_constraintTop_toTopOf="@+id/gc_camera_frame">
+
+            <TextView
+                android:id="@+id/gc_unknown_qr_txt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/large"
+                android:layout_marginTop="@dimen/large"
+                android:text="@string/gc_unknown_qr_code"
+                android:textColor="@color/Dark_01"
+                android:textSize="@dimen/text_min"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/gc_unknown_qr_txt_desc"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/large"
+                android:layout_marginTop="@dimen/small"
+                android:layout_marginBottom="@dimen/large"
+                android:text="@string/gc_unknown_qr_code_description"
+                android:textColor="@color/Dark_01"
+                android:textSize="@dimen/text_min"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/gc_unknown_qr_txt" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
         <ImageView
             android:id="@+id/gc_camera_frame"
             android:layout_width="0dp"
@@ -248,22 +289,14 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ProgressBar
-            android:id="@+id/gc_activity_indicator"
+        <net.gini.android.capture.view.InjectedViewContainer
+            android:id="@+id/gc_injected_loading_indicator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:indeterminateOnly="true"
-            android:indeterminateTint="@color/gc_analysis_activity_indicator"
-            android:indeterminateTintMode="src_in"
-            android:padding="@dimen/gc_camera_activity_indicator_padding"
-            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="@+id/gc_camera_frame"
             app:layout_constraintEnd_toEndOf="@+id/gc_qr_code_check"
             app:layout_constraintStart_toStartOf="@+id/gc_qr_code_check"
-            app:layout_constraintTop_toTopOf="@+id/gc_camera_frame"
-            tools:targetApi="lollipop"
-            tools:visibility="gone" />
+            app:layout_constraintTop_toTopOf="@+id/gc_camera_frame" />
 
         <TextView
             android:id="@+id/gc_retrieving_invoice"
@@ -273,9 +306,9 @@
             android:text="Retrieving invoice"
             android:textColor="@color/Light_01"
             android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="@+id/gc_activity_indicator"
-            app:layout_constraintStart_toStartOf="@+id/gc_activity_indicator"
-            app:layout_constraintTop_toBottomOf="@+id/gc_activity_indicator" />
+            app:layout_constraintEnd_toEndOf="@+id/gc_injected_loading_indicator"
+            app:layout_constraintStart_toStartOf="@+id/gc_injected_loading_indicator"
+            app:layout_constraintTop_toBottomOf="@+id/gc_injected_loading_indicator" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

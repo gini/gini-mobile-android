@@ -11,6 +11,8 @@ import android.graphics.Rect;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -80,6 +82,7 @@ import net.gini.android.capture.requirements.RequirementReport;
 import net.gini.android.capture.tracking.CameraScreenEvent;
 import net.gini.android.capture.util.IntentHelper;
 import net.gini.android.capture.util.UriHelper;
+import net.gini.android.capture.view.CustomLoadingIndicatorAdapter;
 import net.gini.android.capture.view.InjectedViewContainer;
 import net.gini.android.capture.view.NavButtonType;
 import net.gini.android.capture.view.NavigationBarTopAdapter;
@@ -93,6 +96,9 @@ import java.util.Map;
 import java.util.Objects;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
+import kotlin.jvm.functions.Function1;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
@@ -185,7 +191,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private ImageButton mButtonImportDocument;
     private ConstraintLayout mCameraFrameWrapper;
     private View mActivityIndicatorBackground;
-    private ProgressBar mActivityIndicator;
     private ImageView mImageFrame;
     private ViewStubSafeInflater mViewStubInflater;
     private ConstraintLayout mPaneWrapper;
@@ -200,6 +205,8 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private boolean mInstanceStateSaved;
     private int mMultiPageDocumentSize = 0;
     private boolean mShouldScrollToLastPage = false;
+    private String mQRCodeContent;
+    private InjectedViewContainer<CustomLoadingIndicatorAdapter> mLoadingIndicator;
 
     CameraFragmentImpl(@NonNull final FragmentImplCallback fragment) {
         mFragment = fragment;
@@ -218,14 +225,38 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private void handleQRCodeDetected(@Nullable final PaymentQRCodeData paymentQRCodeData,
                                       @NonNull final String qrCodeContent) {
 
-        if (mInterfaceHidden || mActivityIndicator.getVisibility() == View.VISIBLE) {
+        if (mInterfaceHidden) {
             return;
         }
 
-        if (paymentQRCodeData == null) {
-            mUnsupportedQRCodePopup.show(qrCodeContent);
+        if (mUnsupportedQRCodePopup.isShown() || mPaymentQRCodePopup.isShown())
+            return;
+
+        if (mQRCodeContent == null || !mQRCodeContent.equals(qrCodeContent)) {
+            showQRCodeView(paymentQRCodeData, qrCodeContent);
         } else {
-            mPaymentQRCodePopup.show(paymentQRCodeData);
+            showQRCodeViewWithDelay(paymentQRCodeData, qrCodeContent);
+        }
+    }
+
+    private void showQRCodeViewWithDelay(PaymentQRCodeData data, String qrCodeContent) {
+        new Handler(Looper.getMainLooper())
+                .postDelayed(() -> {
+                    if (data == null) {
+                        mQRCodeContent = qrCodeContent;
+                        mUnsupportedQRCodePopup.show(null);
+                    } else {
+                        mPaymentQRCodePopup.show(data);
+                    }
+                }, 1000);
+    }
+
+    private void showQRCodeView(PaymentQRCodeData data, String qrCodeContent) {
+        if (data == null) {
+            mQRCodeContent = qrCodeContent;
+            mUnsupportedQRCodePopup.show(null);
+        } else {
+            mPaymentQRCodePopup.show(data);
         }
     }
 
@@ -271,9 +302,10 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                       final Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.gc_fragment_camera, container, false);
         bindViews(view);
+        setCustomLoadingIndicator(view);
         setInputHandlers();
-        createPopups();
         setTopBarInjectedViewContainer();
+        createPopups();
         initOnlyQRScanning();
         return view;
     }
@@ -292,7 +324,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private void createPopups() {
         mPaymentQRCodePopup =
-                new QRCodePopup<>(mFragment, mCameraFrameWrapper, mActivityIndicatorBackground,
+                new QRCodePopup<>(mFragment, mCameraFrameWrapper, mActivityIndicatorBackground, mLoadingIndicator.getInjectedViewAdapter(),
                         getDifferentQRCodeDetectedPopupDelayMs(), true,
                         paymentQRCodeData -> {
                             if (paymentQRCodeData == null) {
@@ -303,7 +335,11 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                         });
 
         mUnsupportedQRCodePopup =
-                new QRCodePopup<>(mFragment, mCameraFrameWrapper, getHideQRCodeDetectedPopupDelayMs(), false);
+                new QRCodePopup<>(mFragment, mCameraFrameWrapper, mActivityIndicatorBackground, null,
+                        getHideQRCodeDetectedPopupDelayMs(), false, null, () -> {
+                            mQRCodeContent = null;
+                            return null;
+                        });
     }
 
     public void onStart() {
@@ -363,6 +399,9 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     public void onResume() {
         initMultiPageDocument();
+
+        //We need this to enforce inflation again
+        setCustomLoadingIndicator(mFragment.getView());
     }
 
     private void initMultiPageDocument() {
@@ -605,7 +644,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         mImportButtonGroup = view.findViewById(R.id.gc_document_import_button_group);
         mActivityIndicatorBackground =
                 view.findViewById(R.id.gc_activity_indicator_background);
-        mActivityIndicator = view.findViewById(R.id.gc_activity_indicator);
         mPhotoThumbnail = view.findViewById(R.id.gc_photo_thumbnail);
         topAdapterInjectedViewContainer = view.findViewById(R.id.gc_navigation_top_bar);
         mImageFrame = view.findViewById(R.id.gc_camera_frame);
@@ -648,6 +686,18 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         }
     }
 
+    private void setCustomLoadingIndicator(View view) {
+        if (GiniCapture.hasInstance() && view != null) {
+            mLoadingIndicator = view.findViewById(R.id.gc_injected_loading_indicator);
+            mLoadingIndicator.invalidate();
+            mLoadingIndicator.setInjectedViewAdapter(null);
+            mLoadingIndicator.setInjectedViewAdapter(GiniCapture.getInstance().getloadingIndicatorAdapter());
+
+            if (mLoadingIndicator.getInjectedViewAdapter() != null)
+                mLoadingIndicator.getInjectedViewAdapter().onHidden();
+        }
+    }
+
     private void startHelpActivity() {
 
         if (mFragment.getActivity() == null)
@@ -663,7 +713,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
             mPaneWrapper.setVisibility(View.GONE);
 
-            ConstraintLayout.LayoutParams params = ((ConstraintLayout.LayoutParams)mImageFrame.getLayoutParams());
+            ConstraintLayout.LayoutParams params = ((ConstraintLayout.LayoutParams) mImageFrame.getLayoutParams());
 
             params.dimensionRatio = "1:1";
             params.leftMargin = (int) Objects.requireNonNull(mFragment.getActivity()).getResources().getDimension(R.dimen.xlarge);
@@ -1088,25 +1138,25 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     @Override
     public void showActivityIndicatorAndDisableInteraction() {
-        if (mActivityIndicator == null
+        if (mLoadingIndicator.getInjectedViewAdapter() == null
                 || mActivityIndicatorBackground == null) {
             return;
         }
         mActivityIndicatorBackground.setVisibility(View.VISIBLE);
         mActivityIndicatorBackground.setClickable(true);
-        mActivityIndicator.setVisibility(View.VISIBLE);
+        mLoadingIndicator.getInjectedViewAdapter().onVisible();
         disableInteraction();
     }
 
     @Override
     public void hideActivityIndicatorAndEnableInteraction() {
-        if (mActivityIndicator == null
+        if (mLoadingIndicator.getInjectedViewAdapter() == null
                 || mActivityIndicatorBackground == null) {
             return;
         }
         mActivityIndicatorBackground.setVisibility(View.INVISIBLE);
         mActivityIndicatorBackground.setClickable(false);
-        mActivityIndicator.setVisibility(View.INVISIBLE);
+        mLoadingIndicator.getInjectedViewAdapter().onHidden();
         enableInteraction();
     }
 
