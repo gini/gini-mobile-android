@@ -1,23 +1,20 @@
 package net.gini.android.capture.review.multipage.view
 
-import android.content.DialogInterface.OnClickListener
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.databinding.GcReviewNavigationBarBottomBinding
-import net.gini.android.capture.view.CustomLoadingIndicatorAdapter
-import net.gini.android.capture.view.DefaultLoadingIndicatorAdapter
 import net.gini.android.capture.view.InjectedViewAdapter
 import net.gini.android.capture.view.OnButtonLoadingIndicatorAdapter
 
 interface ReviewNavigationBarBottomAdapter : InjectedViewAdapter {
 
-    fun onContinueClickListener(clickListener: View.OnClickListener)
+    fun setOnContinueButtonClickListener(clickListener: View.OnClickListener)
 
-    fun onAddPageClickListener(clickListener: View.OnClickListener)
+    fun setOnAddPageButtonClickListener(clickListener: View.OnClickListener)
 
-    fun onAddPageVisible(visibility: Int)
+    fun setAddPageButtonVisibility(visibility: Int)
 
     fun setContinueButtonEnabled(enabled: Boolean)
 
@@ -31,15 +28,15 @@ class DefaultReviewNavigationBarBottomAdapter : ReviewNavigationBarBottomAdapter
     private var viewBinding: GcReviewNavigationBarBottomBinding? = null
     private var customLoadingIndicatorAdapter: OnButtonLoadingIndicatorAdapter? = null
 
-    override fun onContinueClickListener(clickListener: View.OnClickListener) {
+    override fun setOnContinueButtonClickListener(clickListener: View.OnClickListener) {
         this.viewBinding?.gcContinue?.setOnClickListener(clickListener)
     }
 
-    override fun onAddPageClickListener(clickListener: View.OnClickListener) {
+    override fun setOnAddPageButtonClickListener(clickListener: View.OnClickListener) {
         this.viewBinding?.gcAddPage?.setOnClickListener(clickListener)
     }
 
-    override fun onAddPageVisible(visibility: Int) {
+    override fun setAddPageButtonVisibility(visibility: Int) {
         this.viewBinding?.gcAddPage?.visibility = visibility
     }
 

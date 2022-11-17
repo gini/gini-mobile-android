@@ -16,7 +16,6 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,8 +45,6 @@ import net.gini.android.capture.review.multipage.view.ReviewNavigationBarBottomA
 import net.gini.android.capture.review.zoom.ZoomInPreviewActivity;
 import net.gini.android.capture.tracking.ReviewScreenEvent;
 import net.gini.android.capture.tracking.ReviewScreenEvent.UPLOAD_ERROR_DETAILS_MAP_KEY;
-import net.gini.android.capture.view.CustomLoadingIndicatorAdapter;
-import net.gini.android.capture.view.DefaultLoadingIndicatorAdapter;
 import net.gini.android.capture.view.InjectedViewContainer;
 import net.gini.android.capture.view.NavButtonType;
 import net.gini.android.capture.view.NavigationBarTopAdapter;
@@ -416,12 +413,12 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
 
             hideViewsIfBottomBarEnabled();
 
-            mReviewNavigationBarBottomAdapter.getInjectedViewAdapter().onAddPageClickListener(v -> mListener.onReturnToCameraScreen());
+            mReviewNavigationBarBottomAdapter.getInjectedViewAdapter().setOnAddPageButtonClickListener(v -> mListener.onReturnToCameraScreen());
 
             boolean isMultiPage = GiniCapture.getInstance().isMultiPageEnabled();
 
-            mReviewNavigationBarBottomAdapter.getInjectedViewAdapter().onAddPageVisible(isMultiPage ? View.VISIBLE : View.GONE);
-            mReviewNavigationBarBottomAdapter.getInjectedViewAdapter().onContinueClickListener(v -> onNextButtonClicked());
+            mReviewNavigationBarBottomAdapter.getInjectedViewAdapter().setAddPageButtonVisibility(isMultiPage ? View.VISIBLE : View.GONE);
+            mReviewNavigationBarBottomAdapter.getInjectedViewAdapter().setOnContinueButtonClickListener(v -> onNextButtonClicked());
 
         }
 
