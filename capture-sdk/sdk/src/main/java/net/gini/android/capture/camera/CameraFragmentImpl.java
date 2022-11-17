@@ -187,7 +187,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private ImageButton mButtonCameraFlash;
     private Group mCameraFlashButtonGroup;
     private TextView mCameraFlashButtonSubtitle;
-    private LinearLayout mLayoutNoPermission;
+    private ConstraintLayout mLayoutNoPermission;
     private ImageButton mButtonImportDocument;
     private ConstraintLayout mCameraFrameWrapper;
     private View mActivityIndicatorBackground;
@@ -1508,7 +1508,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private void inflateNoPermissionStub() {
         if (mLayoutNoPermission == null) {
             LOG.debug("Inflating no permission view");
-            mLayoutNoPermission = (LinearLayout) mViewStubInflater.inflate();
+            mLayoutNoPermission = (ConstraintLayout) mViewStubInflater.inflate();
         }
     }
 

@@ -12,8 +12,8 @@
     <string name="gc_title_no_results">No results</string>
     <string name="gc_show_onboarding">Help</string>
 
-    <string name="gc_camera_error_no_permission">To photograph a document, please grant us permission to use the camera</string>
-    <string name="gc_camera_error_no_permission_button_title">Grant permission</string>
+    <string name="gc_camera_error_no_permission">We need access to your camera to enable you to capture your invoices</string>
+    <string name="gc_camera_error_no_permission_button_title">Give Access</string>
     <string name="gc_camera_image_stack_subtitle">Pages</string>
     <string name="gc_camera_document_import_subtitle">Import</string>
     <string name="gc_document_error_multi_page_limit_review_pages_button">Overview of pages</string>
@@ -146,4 +146,5 @@
     <string name="gc_continue">Continue</string>
     <string name="gc_unknown_qr_code_description">This code does not contain any payment details. Please use another QR-code or take an image of your invoice.</string>
 
+    <string name="gc_camera_access">Camera access</string>
 </resources>
