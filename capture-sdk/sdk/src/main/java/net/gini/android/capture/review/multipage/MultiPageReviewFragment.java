@@ -60,6 +60,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AlertDialog;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.PagerSnapHelper;
@@ -129,6 +130,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     private Button mButtonNext;
     private LinearLayout mAddPages;
     private TabLayout mTabIndicator;
+    private ConstraintLayout mProcessDocumentsWrapper;
     private InjectedViewContainer<NavigationBarTopAdapter> mTopAdapterInjectedViewContainer;
     private InjectedViewContainer<OnButtonLoadingIndicatorAdapter> injectedLoadingIndicatorContainer;
     private InjectedViewContainer<ReviewNavigationBarBottomAdapter> mReviewNavigationBarBottomAdapter;
@@ -385,6 +387,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
         mAddPages = view.findViewById(R.id.gc_add_pages_wrapper);
         mRecyclerView = view.findViewById(R.id.gc_pager_recycler_view);
         injectedLoadingIndicatorContainer = view.findViewById(R.id.gc_injected_loading_indicator_container);
+        mProcessDocumentsWrapper = view.findViewById(R.id.gc_process_documents_wrapper);
         setReviewNavigationBarBottomAdapter(view);
     }
 
@@ -395,15 +398,15 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     }
 
     private void setReviewNavigationBarBottomAdapter(View view) {
-        mReviewNavigationBarBottomAdapter =
-                view.findViewById(R.id.gc_injected_navigation_bar_container_bottom);
-
-        ViewGroup.LayoutParams params = mReviewNavigationBarBottomAdapter.getLayoutParams();
-        params.height = (int) getResources().getDimension(R.dimen.gc_review_bottom_bar_height);
-
-        mReviewNavigationBarBottomAdapter.setLayoutParams(params);
-
         if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
+
+            mReviewNavigationBarBottomAdapter =
+                    view.findViewById(R.id.gc_injected_navigation_bar_container_bottom);
+
+            ViewGroup.LayoutParams params = mReviewNavigationBarBottomAdapter.getLayoutParams();
+            params.height = (int) getResources().getDimension(R.dimen.gc_review_bottom_bar_height);
+
+            mReviewNavigationBarBottomAdapter.setLayoutParams(params);
 
             mReviewNavigationBarBottomAdapter.setInjectedViewAdapter(GiniCapture.getInstance().getReviewNavigationBarBottomAdapter());
 
@@ -425,10 +428,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     }
 
     private void hideViewsIfBottomBarEnabled() {
-        mAddPages.setVisibility(View.GONE);
-        mAddPages.setEnabled(false);
-        mButtonNext.setVisibility(View.GONE);
-        mButtonNext.setEnabled(false);
+        mProcessDocumentsWrapper.setVisibility(View.GONE);
     }
 
     //Add empty tabs to present dots on the screen
