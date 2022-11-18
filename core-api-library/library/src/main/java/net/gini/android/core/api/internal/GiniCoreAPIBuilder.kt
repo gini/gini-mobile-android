@@ -7,8 +7,20 @@ import android.util.Log
 import androidx.annotation.XmlRes
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Dispatchers
-import net.gini.android.core.api.*
-import net.gini.android.core.api.authorization.*
+import net.gini.android.core.api.BuildConfig
+import net.gini.android.core.api.DocumentManager
+import net.gini.android.core.api.DocumentRepository
+import net.gini.android.core.api.GiniApiType
+import net.gini.android.core.api.Utils
+import net.gini.android.core.api.authorization.AnonymousSessionManager
+import net.gini.android.core.api.authorization.CredentialsStore
+import net.gini.android.core.api.authorization.EncryptedCredentialsStore
+import net.gini.android.core.api.authorization.PubKeyManager
+import net.gini.android.core.api.authorization.SessionManager
+import net.gini.android.core.api.authorization.UserRemoteSource
+import net.gini.android.core.api.authorization.UserRepository
+import net.gini.android.core.api.authorization.UserService
+import net.gini.android.core.api.authorization.X509TrustManagerAdapter
 import net.gini.android.core.api.models.ExtractionsContainer
 import okhttp3.Cache
 import okhttp3.OkHttpClient
@@ -19,7 +31,6 @@ import java.net.MalformedURLException
 import java.net.URL
 import java.security.KeyManagementException
 import java.security.NoSuchAlgorithmException
-import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSocketFactory
@@ -48,6 +59,12 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
     private var mUserRemoteSource: UserRemoteSource? = null
     private var mDocumentManager: DM? = null
     private var mDocumentRepository: DR? = null
+    private var isDebuggingEnabled = false
+    private val httpLoggingInterceptor: HttpLoggingInterceptor by lazy {
+        HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        }
+    }
 
     /**
      * Set the resource id for the network security configuration xml to enable public key pinning.
@@ -142,6 +159,26 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
      */
     open fun setTrustManager(trustManager: TrustManager): GiniCoreAPIBuilder<DM, G, DR, E> {
         mTrustManager = trustManager
+        return this
+    }
+
+    /**
+     * Enable or disable debugging.
+     *
+     * Disabled by default.
+     *
+     * When enabled all the requests and responses are logged.
+     *
+     * WARNING: Make sure to disable debugging for release builds.
+     *
+     * @param enabled pass `true` to enable and `false` to disable debugging
+     * @return The builder instance to enable chaining.
+     */
+    fun setDebuggingEnabled(enabled: Boolean): GiniCoreAPIBuilder<DM, G, DR, E> {
+        isDebuggingEnabled = enabled
+        if (isDebuggingEnabled) {
+            Log.w(LOG_TAG, "Debugging enabled. Make sure to disable debugging for release builds!")
+        }
         return this
     }
 
@@ -271,11 +308,9 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
                 cache(mCache)
             }
 
-            if (DEBUG && BuildConfig.DEBUG) {
-                Log.w(LOG_TAG, "Logging interceptor is enabled. Turn off debugging for release builds!")
-                addInterceptor(HttpLoggingInterceptor().apply {
-                    level = HttpLoggingInterceptor.Level.BODY
-                })
+            if (isDebuggingEnabled && BuildConfig.DEBUG) {
+                Log.w(LOG_TAG, "Logging interceptor is enabled. Make sure to disable debugging for release builds!")
+                addInterceptor(httpLoggingInterceptor)
             }
         }
         .connectTimeout(mTimeoutInMs.toLong(), TimeUnit.MILLISECONDS)
@@ -363,6 +398,5 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
 
     companion object {
         const val LOG_TAG = "GiniCoreAPIBuilder"
-        const val DEBUG = true
     }
 }

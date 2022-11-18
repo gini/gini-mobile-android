@@ -5,9 +5,7 @@ import android.text.TextUtils
 import androidx.annotation.XmlRes
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.cancelChildren
-import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
 import net.gini.android.bank.api.GiniBankAPI
 import net.gini.android.bank.api.GiniBankAPIBuilder
@@ -275,6 +273,7 @@ class GiniCaptureDefaultNetworkService(
         private var connectionTimeoutUnit: TimeUnit? = null
         private var documentMetadata: DocumentMetadata? = null
         private var trustManager: TrustManager? = null
+        private var isDebuggingEnabled = false
 
         /**
          * Create a new instance of the [GiniCaptureDefaultNetworkService].
@@ -307,6 +306,7 @@ class GiniCaptureDefaultNetworkService(
                 )
             }
             trustManager?.let { giniApiBuilder.setTrustManager(it) }
+            giniApiBuilder.setDebuggingEnabled(isDebuggingEnabled)
             val giniBankApi = giniApiBuilder.build()
             return GiniCaptureDefaultNetworkService(giniBankApi, documentMetadata)
         }
@@ -458,6 +458,26 @@ class GiniCaptureDefaultNetworkService(
          */
         fun setTrustManager(trustManager: TrustManager): Builder {
             this.trustManager = trustManager
+            return this
+        }
+
+        /**
+         * Enable or disable debugging.
+         *
+         * Disabled by default.
+         *
+         * When enabled all the requests and responses are logged.
+         *
+         * WARNING: Make sure to disable debugging for release builds.
+         *
+         * @param enabled pass `true` to enable and `false` to disable debugging
+         * @return the [Builder] instance
+         */
+        fun setDebuggingEnabled(enabled: Boolean): Builder {
+            isDebuggingEnabled = enabled
+            if (isDebuggingEnabled) {
+                LOG.warn("Debugging enabled. Make sure to disable debugging for release builds!")
+            }
             return this
         }
     }
