@@ -162,7 +162,7 @@
     <string name="gc_payment_details_visible">Sind alle Zahlungsinformationen gut lesbar?</string>
     <string name="gc_pages">Seite</string>
     <string name="gc_review">Übersicht</string>
-    <string name="gc_process_documents">Dokumente verarbeiten</string>
+    <string name="gc_process_documents">Verarbeiten</string>
     <string name="gc_continue">Verarbeiten</string>
     <string name="gc_camera_access">Kamerazugriff</string>
     <string name="gc_unknown_qr_code_description">Dieser Code enthält keine Zahlungsinformationen. Bitte anderen QR-Code oder Rechnung abfotografieren.</string>
