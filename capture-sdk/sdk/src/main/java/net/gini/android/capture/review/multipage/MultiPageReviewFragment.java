@@ -16,7 +16,6 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,10 +41,10 @@ import net.gini.android.capture.review.multipage.previews.MiddlePageManager;
 import net.gini.android.capture.review.multipage.previews.PreviewFragmentListener;
 import net.gini.android.capture.review.multipage.previews.PreviewPagesAdapter;
 import net.gini.android.capture.review.multipage.previews.PreviewsAdapterListener;
+import net.gini.android.capture.review.multipage.view.ReviewNavigationBarBottomAdapter;
 import net.gini.android.capture.review.zoom.ZoomInPreviewActivity;
 import net.gini.android.capture.tracking.ReviewScreenEvent;
 import net.gini.android.capture.tracking.ReviewScreenEvent.UPLOAD_ERROR_DETAILS_MAP_KEY;
-import net.gini.android.capture.view.CustomLoadingIndicatorAdapter;
 import net.gini.android.capture.view.InjectedViewContainer;
 import net.gini.android.capture.view.NavButtonType;
 import net.gini.android.capture.view.NavigationBarTopAdapter;
@@ -132,6 +131,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     private TabLayout mTabIndicator;
     private InjectedViewContainer<NavigationBarTopAdapter> mTopAdapterInjectedViewContainer;
     private InjectedViewContainer<OnButtonLoadingIndicatorAdapter> injectedLoadingIndicatorContainer;
+    private InjectedViewContainer<ReviewNavigationBarBottomAdapter> mReviewNavigationBarBottomAdapter;
     private boolean mNextClicked;
     private boolean mPreviewsShown;
     private SnapHelper mSnapHelper;
@@ -385,12 +385,50 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
         mAddPages = view.findViewById(R.id.gc_add_pages_wrapper);
         mRecyclerView = view.findViewById(R.id.gc_pager_recycler_view);
         injectedLoadingIndicatorContainer = view.findViewById(R.id.gc_injected_loading_indicator_container);
+        setReviewNavigationBarBottomAdapter(view);
     }
 
     private void setInjectedLoadingIndicatorContainer() {
-        if (GiniCapture.hasInstance()) {
+        if (GiniCapture.hasInstance() && !GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
             injectedLoadingIndicatorContainer.setInjectedViewAdapter(GiniCapture.getInstance().getOnButtonLoadingIndicatorAdapter());
         }
+    }
+
+    private void setReviewNavigationBarBottomAdapter(View view) {
+        mReviewNavigationBarBottomAdapter =
+                view.findViewById(R.id.gc_injected_navigation_bar_container_bottom);
+
+        ViewGroup.LayoutParams params = mReviewNavigationBarBottomAdapter.getLayoutParams();
+        params.height = (int) getResources().getDimension(R.dimen.gc_review_bottom_bar_height);
+
+        mReviewNavigationBarBottomAdapter.setLayoutParams(params);
+
+        if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
+
+            mReviewNavigationBarBottomAdapter.setInjectedViewAdapter(GiniCapture.getInstance().getReviewNavigationBarBottomAdapter());
+
+            if (mReviewNavigationBarBottomAdapter.getInjectedViewAdapter() == null) {
+                return;
+            }
+
+            hideViewsIfBottomBarEnabled();
+
+            mReviewNavigationBarBottomAdapter.getInjectedViewAdapter().setOnAddPageButtonClickListener(v -> mListener.onReturnToCameraScreen());
+
+            boolean isMultiPage = GiniCapture.getInstance().isMultiPageEnabled();
+
+            mReviewNavigationBarBottomAdapter.getInjectedViewAdapter().setAddPageButtonVisibility(isMultiPage ? View.VISIBLE : View.GONE);
+            mReviewNavigationBarBottomAdapter.getInjectedViewAdapter().setOnContinueButtonClickListener(v -> onNextButtonClicked());
+
+        }
+
+    }
+
+    private void hideViewsIfBottomBarEnabled() {
+        mAddPages.setVisibility(View.GONE);
+        mAddPages.setEnabled(false);
+        mButtonNext.setVisibility(View.GONE);
+        mButtonNext.setEnabled(false);
     }
 
     //Add empty tabs to present dots on the screen
@@ -435,7 +473,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     private void setInputHandlers() {
         mButtonNext.setOnClickListener(v -> onNextButtonClicked());
 
-        if (GiniCapture.hasInstance()) {
+        if (GiniCapture.hasInstance() && !GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
             mAddPages.setVisibility(GiniCapture.getInstance().isMultiPageEnabled() ? View.VISIBLE : View.GONE);
         }
 
@@ -553,11 +591,21 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     }
 
     private void setNextButtonEnabled(final boolean enabled) {
-        mButtonNext.setEnabled(enabled);
-        if (enabled) {
-            mButtonNext.animate().alpha(1.0f).start();
-        } else {
-            mButtonNext.animate().alpha(0.5f).start();
+
+        if (!GiniCapture.hasInstance())
+            return;
+
+        if (!GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
+            mButtonNext.setEnabled(enabled);
+            if (enabled) {
+                mButtonNext.animate().alpha(1.0f).start();
+            } else {
+                mButtonNext.animate().alpha(0.5f).start();
+            }
+        } else if (mReviewNavigationBarBottomAdapter != null
+                && mReviewNavigationBarBottomAdapter.getInjectedViewAdapter() != null) {
+            mReviewNavigationBarBottomAdapter.getInjectedViewAdapter()
+                    .setContinueButtonEnabled(enabled);
         }
     }
 
@@ -682,12 +730,19 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     private void showIndicator() {
         if (injectedLoadingIndicatorContainer != null && injectedLoadingIndicatorContainer.getInjectedViewAdapter() != null)
             injectedLoadingIndicatorContainer.getInjectedViewAdapter().onVisible();
+        else if (mReviewNavigationBarBottomAdapter != null && mReviewNavigationBarBottomAdapter.getInjectedViewAdapter() != null) {
+            mReviewNavigationBarBottomAdapter.getInjectedViewAdapter().showLoadingIndicator();
+        }
     }
 
     private void hideIndicator() {
         if (injectedLoadingIndicatorContainer != null && injectedLoadingIndicatorContainer.getInjectedViewAdapter() != null)
             injectedLoadingIndicatorContainer.getInjectedViewAdapter().onHidden();
+        else if (mReviewNavigationBarBottomAdapter != null && mReviewNavigationBarBottomAdapter.getInjectedViewAdapter() != null) {
+            mReviewNavigationBarBottomAdapter.getInjectedViewAdapter().hideLoadingIndicator();
+        }
     }
+
 
     private void observeViewTree() {
         final View view = getView();

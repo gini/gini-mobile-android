@@ -37,6 +37,7 @@ import net.gini.android.capture.onboarding.OnboardingPage;
 import net.gini.android.capture.requirements.GiniCaptureRequirements;
 import net.gini.android.capture.requirements.RequirementReport;
 import net.gini.android.capture.requirements.RequirementsReport;
+import net.gini.android.capture.review.multipage.view.DefaultReviewNavigationBarBottomAdapter;
 import net.gini.android.capture.tracking.AnalysisScreenEvent;
 import net.gini.android.capture.tracking.CameraScreenEvent;
 import net.gini.android.capture.tracking.Event;
@@ -328,6 +329,7 @@ public class MainActivity extends AppCompatActivity {
         builder.setFlashButtonEnabled(true);
         builder.setEventTracker(new GiniCaptureEventTracker());
         builder.setCustomErrorLoggerListener(new CustomErrorLoggerListener());
+        builder.setReviewBottomBarNavigationAdapter(new DefaultReviewNavigationBarBottomAdapter());
         builder.setLoadingIndicatorAdapter(new DefaultLoadingIndicatorAdapter());
         // Uncomment to disable sending errors to Gini
 //        builder.setGiniErrorLoggerIsOn(false);
