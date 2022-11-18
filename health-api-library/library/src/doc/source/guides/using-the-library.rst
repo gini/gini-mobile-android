@@ -178,3 +178,9 @@ Handling errors
 
 Errors are returned via ``Resource.Error`` instances which contain the response details and/or the exception which
 caused the failure. You can use these to log the error and decide whether to allow the user to retry the request or not.
+
+Debugging
+---------
+
+You can enable the debugging mode by passing ``true`` to the ``GiniBankAPIBuilder.setDebuggingEnabled()``. This will
+cause all requests and responses to be logged.

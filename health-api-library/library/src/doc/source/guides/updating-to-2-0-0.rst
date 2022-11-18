@@ -29,12 +29,14 @@ which had to be removed or changed due to the switch to Retrofit2.
 GiniHealthAPIBuilder
 ~~~~~~~~~~~~~~~~~~
 
-The ``GiniHealthAPIBuilder`` was ported to kotlin and the following methods had to be changed or removed: 
+The ``GiniHealthAPIBuilder`` was ported to kotlin and the following methods were changed, removed or added:
 
 - ``setCache()`` now takes an ``okhttp3.Cache`` instead of ``com.android.volley.Cache``. Please consult the `okhttp3
   documentation <https://square.github.io/okhttp/features/caching/>`_ on how to customize caching.
 - ``setConnectionBackOffMultiplier()`` was removed as it's not available in Retrofit2 and okhttp3.
 - ``setMaxNumberOfRetries()`` was removed as it's not available in Retrofit2 and okhttp3.
+- ``setDebuggingEnabled()`` was added to allow enabling debugging mode which will log all requests and responses. Make
+  sure to disable debugging for release builds!
 
 GiniHealthAPI
 ~~~~~~~~~~~
