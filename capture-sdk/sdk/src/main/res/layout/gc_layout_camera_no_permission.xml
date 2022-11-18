@@ -1,37 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/gc_layout_camera_no_permission"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
-    android:orientation="vertical"
-    tools:background="#000">
+    android:background="?attr/backgroundColor"
+    android:orientation="vertical">
 
     <ImageView
         android:id="@+id/gc_image_camera_no_permission"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingBottom="16dp"
-        android:src="@drawable/gc_no_camera" />
+        android:src="@drawable/gc_no_camera"
+        app:layout_constraintBottom_toTopOf="@+id/gc_no_camera_title"
+        app:layout_constraintEnd_toEndOf="@+id/gc_no_camera_title"
+        app:layout_constraintStart_toStartOf="@+id/gc_no_camera_title" />
 
-    <!--suppress AndroidDomInspection -->
-    <net.gini.android.capture.internal.ui.CustomFontTextView
-        android:id="@+id/gc_text_camera_no_permission"
-        style="@style/GiniCaptureTheme.Camera.Error.NoPermission.TextStyle"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textStyle="bold"
-        android:text="@string/gc_camera_error_no_permission" />
-
-    <!--suppress AndroidDomInspection -->
-    <net.gini.android.capture.internal.ui.CustomFontButton
-        android:id="@+id/gc_button_camera_no_permission"
-        style="@style/GiniCaptureTheme.Camera.Error.NoPermission.Button.TextStyle"
+    <TextView
+        android:id="@+id/gc_no_camera_title"
+        style="@style/GiniCaptureTheme.Typography.Headline6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:background="@null"
-        android:text="@string/gc_camera_error_no_permission_button_title" />
-</LinearLayout>
+        android:layout_marginBottom="@dimen/large"
+        android:text="@string/gc_camera_access"
+        app:layout_constraintBottom_toTopOf="@+id/gc_text_camera_no_permission"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!--suppress AndroidDomInspection -->
+    <TextView
+        android:id="@+id/gc_text_camera_no_permission"
+        style="@style/GiniCaptureTheme.Typography.Body1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/xxlarge"
+        android:layout_marginEnd="@dimen/xxlarge"
+        android:gravity="center"
+        android:text="@string/gc_camera_error_no_permission"
+        android:textColor="@color/Dark_06"
+        android:lineSpacingExtra="5sp"
+        android:translationY="-2.62sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!--suppress AndroidDomInspection -->
+    <Button
+        android:id="@+id/gc_button_camera_no_permission"
+        style="@style/GiniCaptureTheme.Widget.Button.OutlinedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/xxxlarge"
+        android:minWidth="@dimen/gc_give_permission_button_width"
+        android:text="@string/gc_camera_error_no_permission_button_title"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

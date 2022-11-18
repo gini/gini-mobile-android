@@ -87,6 +87,23 @@ public final class GiniCaptureFileImport {
     }
 
     @NonNull
+    private static Intent createIntentForMultiPageDocument(@NonNull final Context context,
+                                                           @NonNull final Class<? extends AnalysisActivity> analysisActivityClass,
+                                                        final Document document) {
+        final Intent giniCaptureIntent;
+        if (document.isReviewable()) {
+            // The new ImageMultiPageDocument was already added to the memory store
+            giniCaptureIntent = MultiPageReviewActivity.createIntent(context, false);
+        } else {
+            giniCaptureIntent = new Intent(context, analysisActivityClass);
+            giniCaptureIntent.putExtra(AnalysisActivity.EXTRA_IN_DOCUMENT, document);
+            giniCaptureIntent.setExtrasClassLoader(GiniCaptureFileImport.class.getClassLoader());
+        }
+
+        return giniCaptureIntent;
+    }
+
+    @NonNull
     private static Intent createReviewActivityIntent(@NonNull final Context context,
             @Nullable final Class<? extends ReviewActivity> reviewActivityClass,
             @Nullable final Class<? extends AnalysisActivity> analysisActivityClass,
@@ -177,8 +194,7 @@ public final class GiniCaptureFileImport {
                             public void onSuccess(final Document result) {
                                 final Intent giniCaptureIntent;
                                 if (result.getType() == Document.Type.IMAGE_MULTI_PAGE) {
-                                    // The new ImageMultiPageDocument was already added to the memory store
-                                    giniCaptureIntent = MultiPageReviewActivity.createIntent(context, false);
+                                    giniCaptureIntent = createIntentForMultiPageDocument(context, AnalysisActivity.class, result);
                                 } else {
                                     giniCaptureIntent = createIntentForSingleDocument(context,
                                             ReviewActivity.class, AnalysisActivity.class,

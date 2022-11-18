@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,6 +37,7 @@ import net.gini.android.capture.onboarding.OnboardingPage;
 import net.gini.android.capture.requirements.GiniCaptureRequirements;
 import net.gini.android.capture.requirements.RequirementReport;
 import net.gini.android.capture.requirements.RequirementsReport;
+import net.gini.android.capture.review.multipage.view.DefaultReviewNavigationBarBottomAdapter;
 import net.gini.android.capture.tracking.AnalysisScreenEvent;
 import net.gini.android.capture.tracking.CameraScreenEvent;
 import net.gini.android.capture.tracking.Event;
@@ -44,6 +46,8 @@ import net.gini.android.capture.tracking.OnboardingScreenEvent;
 import net.gini.android.capture.tracking.ReviewScreenEvent;
 import net.gini.android.capture.util.CancellationToken;
 import net.gini.android.capture.view.DefaultLoadingIndicatorAdapter;
+import net.gini.android.capture.view.DefaultOnButtonLoadingIndicatorAdapter;
+import net.gini.android.capture.view.OnButtonLoadingIndicatorAdapter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,6 +59,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.android.LogcatAppender;
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
@@ -82,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
     private SwitchMaterial animatedOnboardingIllustrationsSwitch;
     private SwitchMaterial customLoadingAnimationSwitch;
     private SwitchMaterial onlyQRCodeSwitch;
+    private SwitchMaterial disableCameraPermission;
     private CancellationToken mFileImportCancellationToken;
 
     @Override
@@ -233,9 +239,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void addInputHandlers() {
-        mButtonStartScanner.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
+        mButtonStartScanner.setOnClickListener(v -> {
+            if (disableCameraPermission.isChecked()) {
+                doStartGiniCaptureSdk();
+            }
+            else {
                 startGiniCaptureSdk();
             }
         });
@@ -250,7 +258,6 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void permissionDenied() {
-
             }
         });
     }
@@ -322,6 +329,7 @@ public class MainActivity extends AppCompatActivity {
         builder.setFlashButtonEnabled(true);
         builder.setEventTracker(new GiniCaptureEventTracker());
         builder.setCustomErrorLoggerListener(new CustomErrorLoggerListener());
+        builder.setReviewBottomBarNavigationAdapter(new DefaultReviewNavigationBarBottomAdapter());
         builder.setLoadingIndicatorAdapter(new DefaultLoadingIndicatorAdapter());
         // Uncomment to disable sending errors to Gini
 //        builder.setGiniErrorLoggerIsOn(false);
@@ -391,6 +399,7 @@ public class MainActivity extends AppCompatActivity {
         animatedOnboardingIllustrationsSwitch = findViewById(R.id.animated_onboarding_illustrations_switch);
         customLoadingAnimationSwitch = findViewById(R.id.custom_loading_indicator_switch);
         onlyQRCodeSwitch = findViewById(R.id.gc_only_qr_code_scanning);
+        disableCameraPermission = findViewById(R.id.gc_disable_camera_permision);
     }
 
     private ArrayList<OnboardingPage> getOnboardingPages(final boolean isMultiPageEnabled, final boolean isQRCodeScanningEnabled) {

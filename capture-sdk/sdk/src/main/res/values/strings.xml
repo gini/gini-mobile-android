@@ -15,7 +15,7 @@
     <string name="gc_title_no_results">Keine Ergebnisse</string>
     <string name="gc_show_onboarding">Hilfe</string>
 
-    <string name="gc_camera_error_no_permission">Um Dokumente zu fotografieren, erlaube Gini Pay den Zugriff auf die Kamera.</string>
+    <string name="gc_camera_error_no_permission">Bitte gestatte Zugriff auf deine Kamera, um Dokumente fotografieren zu können.</string>
     <string name="gc_camera_error_no_permission_button_title">Zugriff erlauben</string>
     <string name="gc_camera_image_stack_subtitle">Seiten</string>
     <string name="gc_camera_document_import_subtitle">Importieren</string>
@@ -163,5 +163,7 @@
     <string name="gc_pages">Seite</string>
     <string name="gc_review">Übersicht</string>
     <string name="gc_process_documents">Verarbeiten</string>
+    <string name="gc_continue">Verarbeiten</string>
+    <string name="gc_camera_access">Kamerazugriff</string>
     <string name="gc_unknown_qr_code_description">Dieser Code enthält keine Zahlungsinformationen. Bitte anderen QR-Code oder Rechnung abfotografieren.</string>
 </resources>
