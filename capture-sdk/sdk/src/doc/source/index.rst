@@ -25,6 +25,6 @@ Table of contents
     integration
     features
     customization-guide
-    updating-to-2-0-0
+    migrate-to-2-0-0
     reference
     license

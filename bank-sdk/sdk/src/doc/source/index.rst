@@ -24,7 +24,7 @@ Table of contents
     integration
     capture-features
     customization-guide
-    updating-to-2-0-0
+    migrate-to-2-0-0
     migrating-from-gvl
     reference
     license

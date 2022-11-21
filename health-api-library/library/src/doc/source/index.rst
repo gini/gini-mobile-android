@@ -22,7 +22,7 @@ Table of contents
 
    guides/getting-started
    guides/using-the-library
-   guides/updating-to-2-0-0
+   guides/migrate-to-2-0-0
    see_also
    license
 .. todolist::

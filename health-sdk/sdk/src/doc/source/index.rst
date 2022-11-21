@@ -24,6 +24,6 @@ Table of contents
     flow
     testing
     customization
-    updating-to-2-0-0
+    migrate-to-2-0-0
     reference
     license

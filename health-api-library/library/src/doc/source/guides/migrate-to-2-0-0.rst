@@ -1,5 +1,5 @@
-Updating to 2.0.0
-=================
+Migrate to 2.0.0
+================
 
 ..
   Audience: Android dev who has integrated 1.0.0
