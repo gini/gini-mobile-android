@@ -144,6 +144,8 @@
     <color name="Success_02">#32D74B</color>
     <color name="Success_03">#D0ECD4</color>
     <color name="Success_04">#DEEEE1</color>
+    <color name="Success_05">#048016</color>
+
 
     <color name="Error_01">#D9190E</color>
     <color name="Error_02">#FF453A</color>
