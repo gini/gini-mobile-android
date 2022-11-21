@@ -3,18 +3,15 @@ package net.gini.android.capture.network
 import android.net.Uri
 import android.os.Looper
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import bolts.Task
 import com.google.common.truth.Truth.assertThat
-import io.mockk.every
-import io.mockk.mockk
-import net.gini.android.bank.api.BankApiDocumentTaskManager
+import io.mockk.*
+import net.gini.android.bank.api.BankApiDocumentManager
 import net.gini.android.bank.api.GiniBankAPI
 import net.gini.android.capture.Document
+import net.gini.android.core.api.Resource
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Shadows.shadowOf
-import java.lang.Thread.sleep
-import java.text.DateFormat
 import java.util.*
 import kotlin.collections.LinkedHashMap
 
@@ -56,25 +53,15 @@ class GiniCaptureDefaultNetworkServiceTest {
         )
 
         // Mock DocumentTaskManager returning the mock documents
-        val documentTaskManager = mockk<BankApiDocumentTaskManager>()
-        every { documentTaskManager.createPartialDocument(any(), any(), null, null) }
-            .returns(
-                Task.forResult(
-                    partialDocument
-                )
-            )
-        every { documentTaskManager.createCompositeDocument(any<LinkedHashMap<net.gini.android.core.api.models.Document, Int>>(), any()) }
-            .returns(
-                Task.forResult(
-                    compositeDocument
-                )
-            )
-        every { documentTaskManager.pollDocument(any()) } returns Task.forResult(compositeDocument)
-        every { documentTaskManager.getAllExtractions(any()) } returns Task.forResult(mockk())
+        val documentManager = mockk<BankApiDocumentManager>()
+        coEvery { documentManager.createPartialDocument(any(), any(), null, null) } returns Resource.Success(partialDocument)
+        coEvery { documentManager.createCompositeDocument(any<LinkedHashMap<net.gini.android.core.api.models.Document, Int>>(), any()) } returns Resource.Success(compositeDocument)
+        coEvery { documentManager.pollDocument(any()) } returns Resource.Success(compositeDocument)
+        coEvery { documentManager.getAllExtractionsWithPolling(any()) } returns Resource.Success(mockk())
 
         // Mock GiniBankAPI
         val bankApi = mockk<GiniBankAPI>()
-        every { bankApi.documentTaskManager } returns documentTaskManager
+        every { bankApi.documentManager } returns documentManager
 
         val networkService = GiniCaptureDefaultNetworkService(bankApi, null)
 

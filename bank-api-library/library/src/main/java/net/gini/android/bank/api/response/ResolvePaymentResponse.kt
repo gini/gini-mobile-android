@@ -3,6 +3,9 @@ package net.gini.android.bank.api.response
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
+/**
+ * Internal use only.
+ */
 @JsonClass(generateAdapter = true)
 data class ResolvePaymentResponse(
     @Json(name = "requesterUri") val requesterUri: String,

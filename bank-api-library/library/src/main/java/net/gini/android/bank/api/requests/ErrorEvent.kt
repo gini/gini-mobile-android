@@ -3,6 +3,9 @@ package net.gini.android.bank.api.requests
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
+/**
+ * Holds information about error events.
+ */
 @JsonClass(generateAdapter = true)
 data class ErrorEvent @JvmOverloads constructor(
     @Json(name = "device_model") val deviceModel: String,

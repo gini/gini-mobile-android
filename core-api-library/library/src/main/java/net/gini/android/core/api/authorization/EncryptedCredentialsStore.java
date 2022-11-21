@@ -13,6 +13,10 @@ import net.gini.android.core.api.authorization.crypto.GiniCryptoException;
  *
  * Copyright (c) 2018 Gini GmbH.
  */
+
+/**
+ * Internal use only.
+ */
 public class EncryptedCredentialsStore implements CredentialsStore {
 
     @VisibleForTesting

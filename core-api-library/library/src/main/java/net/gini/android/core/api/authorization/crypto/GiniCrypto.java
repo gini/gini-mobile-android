@@ -24,6 +24,10 @@ import javax.crypto.IllegalBlockSizeException;
  *
  * Copyright (c) 2018 Gini GmbH.
  */
+
+/**
+ * Internal use only.
+ */
 public abstract class GiniCrypto {
 
     static final String ANDROID_KEY_STORE = "AndroidKeyStore";

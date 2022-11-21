@@ -5,6 +5,10 @@ package net.gini.android.core.api.authorization.crypto;
  *
  * Copyright (c) 2018 Gini GmbH.
  */
+
+/**
+ * Internal use only.
+ */
 public class GiniCryptoException extends Exception {
 
     GiniCryptoException(final Exception e) {

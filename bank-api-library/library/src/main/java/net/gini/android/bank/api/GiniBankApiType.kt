@@ -7,6 +7,10 @@ import net.gini.android.core.api.GiniApiType
  *
  * Copyright (c) 2022 Gini GmbH.
  */
+
+/**
+ * Internal use only.
+ */
 class GiniBankApiType @JvmOverloads constructor(
     private val apiVersion: Int,
     override val baseUrl: String = "https://pay-api.gini.net/",

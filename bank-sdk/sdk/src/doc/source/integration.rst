@@ -238,9 +238,8 @@ If you use your own networking implementation and directly communicate with the 
 <https://pay-api.gini.net/documentation/#submitting-feedback-on-extractions>`_ in its documentation on how to send
 feedback.
 
-In case you use the Gini Bank API Library then see `this section
-<https://developer.gini.net/gini-mobile-android/bank-api-library/library/html/guides/common-tasks.html#sending-feedback>`_
-in its documentation for details.
+In case you use the Gini Bank API Library then consult its `documentation
+<https://developer.gini.net/gini-mobile-android/bank-api-library/library/>`_ for details.
 
 .. note::
 

@@ -4,18 +4,14 @@ import android.content.Context
 import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
 import net.gini.android.bank.api.GiniBankAPI
-import net.gini.android.capture.AsyncCallback
-import net.gini.android.capture.Document
-import net.gini.android.capture.GiniCapture
-import net.gini.android.capture.ImportedFileValidationException
-import net.gini.android.capture.requirements.GiniCaptureRequirements
-import net.gini.android.capture.requirements.RequirementsReport
-import net.gini.android.capture.util.CancellationToken
-import net.gini.android.core.api.models.PaymentRequest
 import net.gini.android.bank.api.models.ResolvePaymentInput
 import net.gini.android.bank.api.models.ResolvedPayment
+import net.gini.android.bank.sdk.GiniBank.getPaymentRequest
 import net.gini.android.bank.sdk.GiniBank.releaseCapture
+import net.gini.android.bank.sdk.GiniBank.resolvePaymentRequest
+import net.gini.android.bank.sdk.GiniBank.returnToPaymentInitiatorApp
 import net.gini.android.bank.sdk.GiniBank.setCaptureConfiguration
+import net.gini.android.bank.sdk.GiniBank.setGiniApi
 import net.gini.android.bank.sdk.GiniBank.startCaptureFlow
 import net.gini.android.bank.sdk.GiniBank.startCaptureFlowForIntent
 import net.gini.android.bank.sdk.capture.CaptureConfiguration
@@ -26,6 +22,15 @@ import net.gini.android.bank.sdk.error.AmountParsingException
 import net.gini.android.bank.sdk.pay.getBusinessIntent
 import net.gini.android.bank.sdk.pay.getRequestId
 import net.gini.android.bank.sdk.util.parseAmountToBackendFormat
+import net.gini.android.capture.AsyncCallback
+import net.gini.android.capture.Document
+import net.gini.android.capture.GiniCapture
+import net.gini.android.capture.ImportedFileValidationException
+import net.gini.android.capture.requirements.GiniCaptureRequirements
+import net.gini.android.capture.requirements.RequirementsReport
+import net.gini.android.capture.util.CancellationToken
+import net.gini.android.core.api.Resource
+import net.gini.android.core.api.models.PaymentRequest
 
 /**
  * Api for interacting with Capture and Payment features.
@@ -169,7 +174,11 @@ object GiniBank {
     suspend fun getPaymentRequest(id: String): PaymentRequest {
         val api = giniApi
         check(api != null) { "Gini Api is not set" }
-        return api.documentManager.getPaymentRequest(id)
+        return when(val paymentRequestResource = api.documentManager.getPaymentRequest(id)) {
+            is Resource.Cancelled -> throw Exception("Cancelled")
+            is Resource.Error -> throw Exception(paymentRequestResource.message, paymentRequestResource.exception)
+            is Resource.Success -> paymentRequestResource.data
+        }
     }
 
     /**
@@ -187,7 +196,14 @@ object GiniBank {
     suspend fun resolvePaymentRequest(requestId: String, resolvePaymentInput: ResolvePaymentInput): ResolvedPayment {
         val api = giniApi
         check(api != null) { "Gini Api is not set" }
-        return api.documentManager.resolvePaymentRequest(requestId, resolvePaymentInput.copy(amount = resolvePaymentInput.parseAmountToBackendFormat()))
+        return when (val resolvedPaymentResource = api.documentManager.resolvePaymentRequest(
+            requestId,
+            resolvePaymentInput.copy(amount = resolvePaymentInput.parseAmountToBackendFormat())
+        )) {
+            is Resource.Cancelled -> throw Exception("Cancelled")
+            is Resource.Error -> throw Exception(resolvedPaymentResource.message, resolvedPaymentResource.exception)
+            is Resource.Success -> resolvedPaymentResource.data
+        }
     }
 
     /**
