@@ -55,7 +55,7 @@
         <item name="android:textColor">?attr/colorOnBackground</item>
     </style>
 
-    <style name="Root.GiniCaptureTheme.Typography.Caption" parent="TextAppearance.MaterialComponents.Caption">
+    <style name="Root.GiniCaptureTheme.Typography.Caption1" parent="TextAppearance.MaterialComponents.Caption">
         <item name="android:textSize">12sp</item>
         <item name="android:textColor">?attr/colorOnBackground</item>
     </style>
@@ -76,7 +76,7 @@
     <style name="GiniCaptureTheme.Typography.Subtitle1" parent="Root.GiniCaptureTheme.Typography.Subtitle1"/>
     <style name="GiniCaptureTheme.Typography.Subtitle2" parent="Root.GiniCaptureTheme.Typography.Subtitle2"/>
     <style name="GiniCaptureTheme.Typography.Button" parent="Root.GiniCaptureTheme.Typography.Button"/>
-    <style name="GiniCaptureTheme.Typography.Caption" parent="Root.GiniCaptureTheme.Typography.Caption"/>
+    <style name="GiniCaptureTheme.Typography.Caption1" parent="Root.GiniCaptureTheme.Typography.Caption1"/>
     <style name="GiniCaptureTheme.Typography.Overline" parent="Root.GiniCaptureTheme.Typography.Overline"/>
 
 

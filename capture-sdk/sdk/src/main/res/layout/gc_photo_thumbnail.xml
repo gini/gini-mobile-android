@@ -20,7 +20,7 @@
 
     <TextView
         android:id="@+id/gc_badge"
-        style="@style/GiniCaptureTheme.Typography.Caption"
+        style="@style/GiniCaptureTheme.Typography.Caption1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@drawable/gc_photo_thumbnail_badge_background"

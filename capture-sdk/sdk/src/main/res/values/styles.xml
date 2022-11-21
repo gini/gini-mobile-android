@@ -26,7 +26,7 @@
         <item name="textAppearanceSubtitle1">@style/GiniCaptureTheme.Typography.Subtitle1</item>
         <item name="textAppearanceSubtitle2">@style/GiniCaptureTheme.Typography.Subtitle2</item>
         <item name="textAppearanceButton">@style/GiniCaptureTheme.Typography.Button</item>
-        <item name="textAppearanceCaption">@style/GiniCaptureTheme.Typography.Caption</item>
+        <item name="textAppearanceCaption">@style/GiniCaptureTheme.Typography.Caption1</item>
         <item name="textAppearanceOverline">@style/GiniCaptureTheme.Typography.Overline</item>
     </style>
 
