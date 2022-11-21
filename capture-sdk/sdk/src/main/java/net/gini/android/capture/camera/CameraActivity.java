@@ -552,8 +552,9 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
     public void onProceedToMultiPageReviewScreen(
             @NonNull final GiniCaptureMultiPageDocument multiPageDocument, boolean shouldScrollToLastPage) {
         if (multiPageDocument.getType() == Document.Type.IMAGE_MULTI_PAGE) {
+            finish();
             final Intent intent = MultiPageReviewActivity.createIntent(this, shouldScrollToLastPage);
-            startActivityForResult(intent, MULTI_PAGE_REVIEW_REQUEST);
+            startActivity(intent);
         } else {
             throw new UnsupportedOperationException("Unsupported multi-page document type.");
         }
@@ -566,6 +567,7 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
     }
 
     private void startReviewActivity(@NonNull final Document document) {
+        finish();
         final Intent reviewIntent = new Intent(this, ReviewActivity.class);
         reviewIntent.putExtra(ReviewActivity.EXTRA_IN_DOCUMENT, document);
         reviewIntent.putExtra(EXTRA_IN_ANALYSIS_ACTIVITY, new Intent(this, AnalysisActivity.class));

@@ -322,7 +322,9 @@ public class MultiPageReviewActivity extends AppCompatActivity implements
 
     @Override
     public void onReturnToCameraScreen() {
-        finish();
+        Intent intent = new Intent(this, CameraActivity.class);
+        startActivity(intent);
+        //finish();
     }
 
     @Override

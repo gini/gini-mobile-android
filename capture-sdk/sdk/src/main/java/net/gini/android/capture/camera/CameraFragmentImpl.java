@@ -337,9 +337,9 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         mUnsupportedQRCodePopup =
                 new QRCodePopup<>(mFragment, mCameraFrameWrapper, mActivityIndicatorBackground, null,
                         getHideQRCodeDetectedPopupDelayMs(), false, null, () -> {
-                            mQRCodeContent = null;
-                            return null;
-                        });
+                    mQRCodeContent = null;
+                    return null;
+                });
     }
 
     public void onStart() {
@@ -771,7 +771,9 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             @Override
             public void onClick(final View v) {
                 mProceededToMultiPageReview = true;
-                mListener.onProceedToMultiPageReviewScreen(mMultiPageDocument, shouldScrollToLastPage());
+
+                if (mFragment.getActivity() != null)
+                    (mFragment.getActivity()).finish();
             }
         });
     }
@@ -1301,8 +1303,12 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                                     mPhotoThumbnail.setImage(new PhotoThumbnail.ThumbnailBitmap(result.getBitmapPreview(),
                                             document.getRotationForDisplay()));
                                     mPhotoThumbnail.setImageCount(mMultiPageDocument.getDocuments().size());
-                                    mIsTakingPicture = false;
-                                    mCameraController.startPreview();
+                                    /*mIsTakingPicture = false;
+                                    mCameraController.startPreview();*/
+
+                                    if (mFragment.getActivity() != null && mFragment.getActivity() instanceof CameraActivity)
+                                        ((CameraActivity) mFragment.getActivity())
+                                                .onProceedToMultiPageReviewScreen(mMultiPageDocument, true);
                                 } else {
                                     if (isMultiPageEnabled()) {
                                         final ImageDocument document = createSavedDocument(result);
