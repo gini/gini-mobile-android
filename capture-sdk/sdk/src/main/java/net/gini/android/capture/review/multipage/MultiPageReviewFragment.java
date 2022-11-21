@@ -201,8 +201,15 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
             throw new IllegalStateException(
                     "MultiPageReviewFragment requires an ImageMultiPageDocuments.");
         }
-        initUploadResults();
 
+        if (mMultiPageDocument.getDocuments().isEmpty()) {
+            final Activity activity = getActivity();
+            if (activity != null) {
+                activity.finish();
+            }
+        }
+
+        initUploadResults();
     }
 
     private void initUploadResults() {
