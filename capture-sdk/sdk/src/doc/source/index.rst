@@ -12,6 +12,9 @@ The Gini Bank API provides an information extraction service for analyzing docum
 Specifically it extracts information such as the document sender or the payment relevant information (amount to pay,
 IBAN, etc.) in an invoice.
 
+.. note::
+   The documentation for the 1.x.x version can be found `here <https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/1.11.2/html/index.html>`_.
+
 Table of contents
 -----------------
 
@@ -22,6 +25,7 @@ Table of contents
     integration
     features
     customization-guide
+    migrate-to-2-0-0
     migrate-to-3-0-0
     reference
     license

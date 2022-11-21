@@ -1,6 +1,8 @@
 package net.gini.android.core.api.authorization;
 
-
+/**
+ * Interface for storing [UserCredentials].
+ */
 public interface CredentialsStore {
 
     /**

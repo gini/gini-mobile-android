@@ -1,6 +1,7 @@
 package net.gini.android.health.sdk.requirement
 
 import android.content.pm.PackageManager
+import net.gini.android.core.api.Resource
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.review.bank.getInstalledBankApps
 import net.gini.android.health.sdk.review.bank.getInstalledBankAppsWhichHavePaymentProviders
@@ -58,10 +59,19 @@ internal class AtLeastOneInstalledBankAppHasPaymentProviderRequirement(
 ) : RequirementCheck {
 
     override suspend fun check(): Requirement? {
-        val paymentProviders = giniHealth.giniHealthAPI.documentManager.getPaymentProviders()
-        return if (packageManager.getInstalledBankAppsWhichHavePaymentProviders(paymentProviders)
-                .isEmpty()
-        ) Requirement.NoBank else null
+        return when (val paymentProvidersResource = giniHealth.giniHealthAPI.documentManager.getPaymentProviders()) {
+            is Resource.Cancelled -> null
+            is Resource.Error -> Requirement.NoBank
+            is Resource.Success -> {
+                val availableBankApps =
+                    packageManager.getInstalledBankAppsWhichHavePaymentProviders(paymentProvidersResource.data)
+                if (availableBankApps.isEmpty()) {
+                    Requirement.NoBank
+                } else {
+                    null
+                }
+            }
+        }
     }
 
 }

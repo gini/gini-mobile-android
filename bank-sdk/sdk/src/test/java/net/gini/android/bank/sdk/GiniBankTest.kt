@@ -10,6 +10,7 @@ import net.gini.android.bank.api.GiniBankAPI
 import net.gini.android.bank.api.models.ResolvePaymentInput
 import net.gini.android.bank.api.models.ResolvedPayment
 import net.gini.android.bank.sdk.error.AmountParsingException
+import net.gini.android.core.api.Resource
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -45,7 +46,7 @@ class GiniBankTest {
                 any(),
                 capture(resolvePaymentInputSlot)
             )
-        } returns ResolvedPayment("", "", "", "", "", "", ResolvedPayment.Status.OPEN)
+        } returns Resource.Success(ResolvedPayment("", "", "", "", "", "", ResolvedPayment.Status.OPEN))
 
         val resolvePaymentInfo = ResolvePaymentInput("recipient", "iban", "12.46", "purpose")
 
@@ -65,7 +66,7 @@ class GiniBankTest {
                 any(),
                 capture(resolvePaymentInputSlot)
             )
-        } returns ResolvedPayment("", "", "", "", "", "", ResolvedPayment.Status.OPEN)
+        } returns Resource.Success(ResolvedPayment("", "", "", "", "", "", ResolvedPayment.Status.OPEN))
 
         val resolvePaymentInfo = ResolvePaymentInput("recipient", "iban", "12.46€", "purpose")
 

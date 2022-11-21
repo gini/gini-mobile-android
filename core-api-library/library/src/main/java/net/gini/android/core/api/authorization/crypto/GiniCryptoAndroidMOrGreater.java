@@ -27,6 +27,10 @@ import javax.crypto.spec.GCMParameterSpec;
  *
  * Copyright (c) 2018 Gini GmbH.
  */
+
+/**
+ * Internal use only.
+ */
 @RequiresApi(api = Build.VERSION_CODES.M)
 class GiniCryptoAndroidMOrGreater extends GiniCrypto {
 

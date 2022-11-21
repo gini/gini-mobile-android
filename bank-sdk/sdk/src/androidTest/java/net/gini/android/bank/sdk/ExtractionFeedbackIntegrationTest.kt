@@ -110,14 +110,14 @@ class ExtractionFeedbackIntegrationTest {
         //    with the final (user confirmed or updated) extraction values
         suspendCancellableCoroutine<Unit> { continuation ->
             networkApi.sendFeedback(
-                mapOf(
+                mutableMapOf(
                     "amountToPay" to result.specificExtractions["amountToPay"]!!,
                     "iban" to result.specificExtractions["iban"]!!,
                     "bic" to result.specificExtractions["bic"]!!,
                     "paymentPurpose" to result.specificExtractions["paymentPurpose"]!!,
                     "paymentRecipient" to result.specificExtractions["paymentRecipient"]!!
                 ),
-                object : GiniCaptureNetworkCallback<Void?, Error> {
+                object : GiniCaptureNetworkCallback<Void, Error> {
                     override fun failure(error: Error) {
                         continuation.resumeWithException(RuntimeException(error.message, error.cause))
                     }
@@ -135,11 +135,11 @@ class ExtractionFeedbackIntegrationTest {
 
         // 4. Verify that the extractions were updated using the Gini Bank API
         val extractionsAfterFeedback =
-            giniBankAPI.documentManager.getExtractions(analyzedGiniApiDocument!!)
+            giniBankAPI.documentManager.getAllExtractionsWithPolling(analyzedGiniApiDocument!!)
 
         val extractionsAfterFeedbackFixture =
             moshi.fromJsonAsset<ExtractionsFixture>("result_Gini_invoice_example_after_feedback.json")!!
-        Assert.assertTrue(extractionsAfterFeedbackFixture.equals(extractionsAfterFeedback))
+        Assert.assertTrue(extractionsAfterFeedbackFixture.equals(extractionsAfterFeedback.data))
     }
 
     /**

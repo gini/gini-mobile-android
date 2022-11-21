@@ -8,6 +8,9 @@ import net.gini.android.core.api.GiniApiType
  * Copyright (c) 2022 Gini GmbH.
  */
 
+/**
+ * Internal use only.
+ */
 class GiniHealthApiType @JvmOverloads constructor(
     val apiVersion: Int,
     override val baseUrl: String = "https://health-api.gini.net/",

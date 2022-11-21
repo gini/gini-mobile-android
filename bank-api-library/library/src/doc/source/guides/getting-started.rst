@@ -22,7 +22,7 @@ Integrating the Gini Bank API Library
 
 The Gini Bank API Library provides the ``GiniBankAPI`` class which is a façade to all functionality of the library.
 We recommend using a single instance of this class and avoid instantiating it each time you need to interact with the
-Gini Bank API. You can reuse the instance either through your `Application` subclass or via a dependency injection
+Gini Bank API. You can reuse the instance either through your ``Application`` subclass or via a dependency injection
 solution. This has the benefits that the library can reuse sessions between requests to the Gini Bank API which may
 save a noteworthy number of HTTP requests.
 
@@ -31,7 +31,7 @@ Creating the GiniBankAPI instance
 
 In order to create an instance of the ``GiniBankAPI`` class, you need both your client id and your client
 secret. If you don't have a client id and client secret yet, you need to contact us and we'll provide 
-you with credential.
+you with the credentials.
 
 All requests to the Gini Bank API are made on behalf of a user. This means particularly that all created
 documents are bound to a specific user account. But since you are most likely only interested in the
@@ -49,12 +49,12 @@ with this configuration would be ``550e8400-e29b-11d4-a716-446655440000@example.
     
     // The GiniBankAPI instance is a facade to all available managers of the library. Configure and
     // create the library with the GiniBankAPIBuilder.
-    GiniBankAPI giniBankApi =
-            new GiniBankAPIBuilder(getContext(), "gini-client-id", "GiniClientSecret", "example.com")
+    val giniBankApi: GiniBankAPI =
+            GiniBankAPIBuilder(context, "gini-client-id", "GiniClientSecret", "example.com")
                     .build();
 
-    // The DocumentTaskManager provides the high-level API to work with documents.
-    DocumentTaskManager documentManager = giniBankApi.getDocumentTaskManager();
+    // The BankApiDocumentManager provides the high-level API to work with documents.
+    val documentManager: BankApiDocumentManager = giniBankApi.documentManager;
 
 Public Key Pinning
 ==================
@@ -81,7 +81,7 @@ Configure Pinning
 -----------------
 
 The following sample configuration shows how to set the public key pin for the two domains. The Gini
-Bank API Library uses by default (``pay-api.gini.net`` and ``user.gini.net``). It should be saved under
+Bank API Library uses by default ``pay-api.gini.net`` and ``user.gini.net``. It should be saved under
 ``res/xml/network_security_config.xml``:
 
 .. code-block:: xml
@@ -95,9 +95,9 @@ Bank API Library uses by default (``pay-api.gini.net`` and ``user.gini.net``). I
             <domain includeSubdomains="false">pay-api.gini.net</domain>
             <pin-set>
                 <!-- old *.gini.net public key-->
-                <pin digest="SHA-256">yGLLyvZLo2NNXeBNKJwx1PlCtm+YEVU6h2hxVpRa4l4=</pin>
-                <!-- new *.gini.net public key, active from around mid September 2018 -->
                 <pin digest="SHA-256">cNzbGowA+LNeQ681yMm8ulHxXiGojHE8qAjI+M7bIxU=</pin>
+                <!-- new *.gini.net public key, active from around June 2020 -->
+                <pin digest="SHA-256">zEVdOCzXU8euGVuMJYPr3DUU/d1CaKevtr0dW0XzZNo=</pin>
             </pin-set>
             <domain-config>
                 <trustkit-config
@@ -152,7 +152,7 @@ For the library to know about the xml you need to set the xml resource id using 
 
 .. code-block:: java
 
-    GiniBankAPI giniBankApi = new GiniBankAPIBuilder(getContext(), "gini-client-id", "GiniClientSecret", "example.com")
+    val giniBankApi: GiniBankAPI = GiniBankAPIBuilder(context, "gini-client-id", "GiniClientSecret", "example.com")
             .setNetworkSecurityConfigResId(R.xml.network_security_config)
             .build();
 
@@ -164,7 +164,7 @@ to the ``GiniBankAPIBuilder#setTrustManager()`` method:
 
 .. code-block:: java
 
-    GiniBankAPI giniBankApi = new GiniBankAPIBuilder(getContext(), "gini-client-id", "GiniClientSecret", "example.com")
+    val giniBankApi: GiniBankAPI = GiniBankAPIBuilder(context, "gini-client-id", "GiniClientSecret", "example.com")
             .setTrustManager(yourTrustManager)
             .build();
 
@@ -172,22 +172,22 @@ to the ``GiniBankAPIBuilder#setTrustManager()`` method:
 
     Setting a custom ``TrustManager`` will override the network security configuration.
 
-Extract Hash From gini.net
---------------------------
+Extract Hash From pay-api.gini.net
+----------------------------------
 
 The current Gini Bank API public key SHA256 hash digest in Base64 encoding can be extracted with the
 following openssl commands:
 
 .. code-block:: bash
 
-    $ openssl s_client -servername gini.net -connect gini.net:443 | openssl x509 -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64
+    $ openssl s_client -servername pay-api.gini.net -connect pay-api.gini.net:443 | openssl x509 -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64
 
 Extract Hash From Public Key
 ----------------------------
 
 You can also extract the hash from a public key. The following example shows how to extract it from
-a public key named ``gini.pub``:
+a public key named ``pay-api.gini.pub``:
 
 .. code-block:: bash
 
-    $ cat gini.pub | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64
+    $ cat pay-api.gini.pub | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64

@@ -42,7 +42,7 @@ public class SingleDocumentAnalyzer {
         }
         Log.d("gini-api", "Starting a new analysis");
 
-        mAnalyzer = new DocumentAnalyzer(mGiniApi.getDocumentTaskManager());
+        mAnalyzer = new DocumentAnalyzer(mGiniApi.getDocumentManager());
         setListener(listener);
         mAnalyzer.analyze(document);
     }
@@ -59,9 +59,9 @@ public class SingleDocumentAnalyzer {
 
                 @Override
                 public void onExtractionsReceived(
-                        final Map<String, SpecificExtraction> extractions) {
-                    logExtractions(extractions);
-                    listener.onExtractionsReceived(extractions);
+                        final Map<String, ? extends SpecificExtraction> extractions) {
+                    logExtractions((Map<String, SpecificExtraction>) extractions);
+                    listener.onExtractionsReceived((Map<String, SpecificExtraction>) extractions);
                 }
             });
             Log.d("gini-api", "Listener set");

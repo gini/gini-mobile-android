@@ -4,7 +4,8 @@ import android.content.Context
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.squareup.moshi.Moshi
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import net.gini.android.bank.api.test.ExtractionsFixture
 import net.gini.android.bank.api.test.fromJsonAsset
 import org.junit.Assert.assertTrue
@@ -19,6 +20,7 @@ import java.util.*
  * Copyright (c) 2021 Gini GmbH.
  */
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
 class ExtractionFeedbackIntegrationTest {
 
@@ -44,18 +46,18 @@ class ExtractionFeedbackIntegrationTest {
     }
 
     @Test
-    fun sendExtractionFeedback() = runBlocking {
+    fun sendExtractionFeedback() = runTest {
         val documentManager = giniBankAPI.documentManager
 
         // 1. Upload a test document
         val pdfBytes = getApplicationContext<Context>().resources.assets
             .open("Gini_invoice_example.pdf").use { it.readBytes() }
 
-        val partialDocument = documentManager.createPartialDocument(pdfBytes, "application/pdf")
-        val compositeDocument = documentManager.createCompositeDocument(listOf(partialDocument))
+        val partialDocument = documentManager.createPartialDocument(pdfBytes, "application/pdf").data!!
+        val compositeDocument = documentManager.createCompositeDocument(listOf(partialDocument)).data!!
 
         // 2. Request the extractions
-        val extractions = documentManager.getExtractions(compositeDocument)
+        val extractions = documentManager.getAllExtractionsWithPolling(compositeDocument).data!!
 
         //    Verify we received the correct extractions for this test
         val extractionsFixture = moshi.fromJsonAsset<ExtractionsFixture>("result_Gini_invoice_example.json")!!
@@ -70,7 +72,7 @@ class ExtractionFeedbackIntegrationTest {
 
         //    Send feedback for the extractions the user saw
         //    with the final (user confirmed or updated) extraction values
-        documentManager.sendFeedback(
+        documentManager.sendFeedbackForExtractions(
             compositeDocument,
             mapOf(
                 "amountToPay" to extractions.specificExtractions["amountToPay"]!!,
@@ -82,7 +84,7 @@ class ExtractionFeedbackIntegrationTest {
         )
 
         // 4. Verify that the extractions were updated
-        val extractionsAfterFeedback = documentManager.getExtractions(compositeDocument)
+        val extractionsAfterFeedback = documentManager.getAllExtractionsWithPolling(compositeDocument).data
 
         val extractionsAfterFeedbackFixture =
             moshi.fromJsonAsset<ExtractionsFixture>("result_Gini_invoice_example_after_feedback.json")!!

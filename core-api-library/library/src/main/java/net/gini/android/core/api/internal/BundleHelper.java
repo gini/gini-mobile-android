@@ -13,6 +13,10 @@ import java.util.Map;
  *
  * Copyright (c) 2020 Gini GmbH.
  */
+
+/**
+ * Internal use only.
+ */
 public class BundleHelper {
 
     public static <V extends Parcelable> Bundle mapToBundle(Map<String, V> map) {

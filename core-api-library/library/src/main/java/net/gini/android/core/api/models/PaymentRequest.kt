@@ -3,6 +3,9 @@ package net.gini.android.core.api.models
 import java.util.*
 import net.gini.android.core.api.response.PaymentRequestResponse
 
+/**
+ * Holds information about a payment request.
+ */
 data class PaymentRequest(
     val paymentProviderId: String?,
     val requesterUri: String?,
@@ -18,7 +21,7 @@ data class PaymentRequest(
     }
 }
 
-fun PaymentRequestResponse.toPaymentRequest() = PaymentRequest(
+internal fun PaymentRequestResponse.toPaymentRequest() = PaymentRequest(
     paymentProviderId = paymentProvider,
     requesterUri = requesterUri,
     recipient = recipient,

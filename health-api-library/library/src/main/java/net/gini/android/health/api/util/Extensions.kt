@@ -8,5 +8,5 @@ import java.util.*
  * Copyright (c) 2022 Gini GmbH.
  */
 
-fun <K, V> Map<out K, V>.toTreeMap(comparator: Comparator<in K>): TreeMap<K, V> =
+internal fun <K, V> Map<out K, V>.toTreeMap(comparator: Comparator<in K>): TreeMap<K, V> =
     TreeMap<K, V>(comparator).apply { putAll(this@toTreeMap) }

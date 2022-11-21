@@ -16,5 +16,5 @@ fun getGiniApi(context: Context, clientId: String, clientSecret: String, emailDo
  * Minimal configuration for Gini Bank API
  */
 fun getGiniApi(context: Context, sessionManager: SessionManager): GiniBankAPI {
-    return GiniBankAPIBuilder(context, sessionManager).build()
+    return GiniBankAPIBuilder(context, sessionManager = sessionManager).build()
 }

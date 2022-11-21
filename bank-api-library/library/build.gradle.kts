@@ -49,8 +49,10 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
-    kapt(libs.moshi.codegen)
     implementation(libs.moshi.core)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.moshi.converter)
+    kapt(libs.moshi.codegen)
 
     kaptAndroidTest(libs.moshi.codegen)
     androidTestImplementation(libs.mockito.core)
@@ -61,6 +63,7 @@ dependencies {
     androidTestImplementation(libs.androidx.test.rules)
     androidTestImplementation(libs.androidx.test.junit)
     androidTestImplementation(libs.androidx.multidex)
+    androidTestImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(project(":core-api-library:shared-tests"))
     androidTestImplementation(project(":health-api-library:library"))
 }

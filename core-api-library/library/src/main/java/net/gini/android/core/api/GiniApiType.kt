@@ -5,6 +5,10 @@ package net.gini.android.core.api
  *
  * Copyright (c) 2022 Gini GmbH.
  */
+
+/**
+ * Internal use only.
+ */
 interface GiniApiType {
     val baseUrl: String
     val giniJsonMediaType: String

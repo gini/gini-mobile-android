@@ -125,9 +125,8 @@ If you use your own networking implementation and directly communicate with the 
 feedback for the compound extractions.
 
 In case you use the Gini Bank API Library then sending compound extraction feedback is very similar to how it's shown in
-`this section <https://developer.gini.net/gini-mobile-android/bank-api-library/library/html/guides/common-tasks.html#sending-feedback>`_
-in its documentation. The only difference is that you need to also pass in the ``CompoundExtraction`` map to
-``DocumentTaskManager.sendFeebackForExtractions()``:
+its `documentation <https://developer.gini.net/gini-mobile-android/bank-api-library/library/>`_. The only difference is
+that you need to also pass in the ``CompoundExtraction`` map to ``DocumentTaskManager.sendFeebackForExtractions()``:
 
 .. code-block:: java
 
