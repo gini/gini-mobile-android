@@ -45,6 +45,7 @@ android {
 
 dependencies {
     api(libs.retrofit)
+    implementation(libs.okhttp3)
     implementation(libs.trustkit)
     implementation(libs.androidx.core.ktx)
     implementation(libs.kotlinx.coroutines.core)
