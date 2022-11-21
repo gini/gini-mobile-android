@@ -1,9 +1,9 @@
-Migrate to 2.0.0
+Migrate to 3.0.0
 ================
 
 ..
   Audience: Android dev who has integrated 1.0.0
-  Purpose: Describe what is new in 2.0.0 and how to migrate from 1.0.0 to 2.0.0
+  Purpose: Describe what is new in 3.0.0 and how to migrate from 2.0.0 to 3.0.0
   Content type: Procedural - How-To
 
   Headers:
@@ -13,7 +13,7 @@ Migrate to 2.0.0
   h4 +++++
   h5 ^^^^^
 
-In version 2.0.0 we modernized our UI and added support for light and dark modes. In addition, we simplified how the UI
+In version 3.0.0 we modernized our UI and added support for light and dark modes. In addition, we simplified how the UI
 is customized. We also unified the public API of the SDK and introduced an easier way to customize certain parts of the
 UI.
 
@@ -80,7 +80,7 @@ application use ``Root.GiniCaptureTheme`` as the parent:
 Widgets
 +++++++
 
-The style of buttons and other widgets is based on Material Design v2. To override them in your application use the
+The style of buttons and other widgets is based on Material Design v3. To override them in your application use the
 root style as the parent, for example:
 
 .. code-block:: xml
@@ -115,7 +115,7 @@ If you use vector drawables please add them to the `drawable-anydpi` folder so t
 Typography
 ~~~~~~~~~~
 
-We introduced a global typography based on text appearance styles from Material Design v2. To override them in your application use the
+We introduced a global typography based on text appearance styles from Material Design v3. To override them in your application use the
 root style as the parent, for example:
 
 .. code-block:: xml
