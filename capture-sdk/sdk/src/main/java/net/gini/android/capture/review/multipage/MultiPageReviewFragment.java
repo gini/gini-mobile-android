@@ -167,7 +167,6 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
 
         initListener();
 
-
         if (!GiniCapture.hasInstance()) {
             mListener.onError(new GiniCaptureError(MISSING_GINI_CAPTURE_INSTANCE,
                     "Missing GiniCapture instance. It was not created or there was an application process restart."));
@@ -207,6 +206,13 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     }
 
     private void initUploadResults() {
+
+        if (mPreviewPagesAdapter != null && mDocumentUploadResults.size() < mMultiPageDocument.getDocuments().size()) {
+            setupTabIndicator();
+            resetUplodedDocumentsViews();
+            scrollToCorrectPosition(mMultiPageDocument.getDocuments().size() - 1, true);
+        }
+
         for (final ImageDocument imageDocument : mMultiPageDocument.getDocuments()) {
             mDocumentUploadResults.put(imageDocument.getId(), false);
         }
@@ -251,6 +257,10 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
+        resetUplodedDocumentsViews();
+    }
+
+    private void resetUplodedDocumentsViews() {
         //Needed to refresh views in the recyclerview
         mRecyclerView.setAdapter(null);
         mSnapHelper.attachToRecyclerView(null);
@@ -265,7 +275,6 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
             scrollToCorrectPosition(AndroidHelper.STORE_SCROLL_STATE, false);
 
         mRecyclerView.postDelayed(() -> showHideBlueRect(View.VISIBLE), 1000);
-
     }
 
     //Delay with blue rect when starting the screen
@@ -436,6 +445,8 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
 
         if (mMultiPageDocument == null)
             return;
+
+        mTabIndicator.removeAllTabs();
 
         for (int i = 0; i < mMultiPageDocument.getDocuments().size(); i++) {
             mTabIndicator.addTab(mTabIndicator.newTab());

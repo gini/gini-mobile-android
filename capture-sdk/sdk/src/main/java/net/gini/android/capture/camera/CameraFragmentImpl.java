@@ -1308,7 +1308,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
                                     if (mFragment.getActivity() != null && mFragment.getActivity() instanceof CameraActivity)
                                         ((CameraActivity) mFragment.getActivity())
-                                                .onProceedToMultiPageReviewScreen(mMultiPageDocument, true);
+                                                .finish();
                                 } else {
                                     if (isMultiPageEnabled()) {
                                         final ImageDocument document = createSavedDocument(result);
