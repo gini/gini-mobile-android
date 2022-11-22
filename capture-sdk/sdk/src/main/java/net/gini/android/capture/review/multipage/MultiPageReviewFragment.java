@@ -139,7 +139,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     private SnapHelper mSnapHelper;
     private MiddlePageManager mSnapManager;
     private boolean mShouldScrollToLastPage = false;
-
+    private int mScrollPosition = -1;
 
     public static MultiPageReviewFragment newInstance(boolean shouldScrollToLastPage) {
 
@@ -216,7 +216,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
 
         if (mPreviewPagesAdapter != null && mDocumentUploadResults.size() < mMultiPageDocument.getDocuments().size()) {
             setupTabIndicator();
-            resetUplodedDocumentsViews();
+            resetUploadedDocumentsViews();
             scrollToCorrectPosition(mMultiPageDocument.getDocuments().size() - 1, true);
         }
 
@@ -264,10 +264,10 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
-        resetUplodedDocumentsViews();
+        resetUploadedDocumentsViews();
     }
 
-    private void resetUplodedDocumentsViews() {
+    private void resetUploadedDocumentsViews() {
         //Needed to refresh views in the recyclerview
         mRecyclerView.setAdapter(null);
         mSnapHelper.attachToRecyclerView(null);
@@ -278,8 +278,8 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
 
         initRecyclerView();
 
-        if (AndroidHelper.STORE_SCROLL_STATE > -1 && AndroidHelper.STORE_SCROLL_STATE <= mMultiPageDocument.getDocuments().size() - 1)
-            scrollToCorrectPosition(AndroidHelper.STORE_SCROLL_STATE, false);
+        if (mScrollPosition > -1 && mScrollPosition <= mMultiPageDocument.getDocuments().size() - 1)
+            scrollToCorrectPosition(mScrollPosition, false);
 
         mRecyclerView.postDelayed(() -> showHideBlueRect(View.VISIBLE), 1000);
     }
@@ -365,7 +365,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
                     if (viewAtPosition != null) {
                         int position = mRecyclerView.getChildAdapterPosition(viewAtPosition);
                         updateTabIndicatorPosition(position);
-                        AndroidHelper.STORE_SCROLL_STATE = position;
+                        mScrollPosition = position;
                     }
 
                 } else if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
@@ -388,8 +388,8 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
             if (mShouldScrollToLastPage) {
                 scrollToCorrectPosition(mMultiPageDocument.getDocuments().size() - 1, true);
             } else {
-                if (AndroidHelper.STORE_SCROLL_STATE > -1)
-                    scrollToCorrectPosition(AndroidHelper.STORE_SCROLL_STATE, true);
+                if (mScrollPosition > -1)
+                    scrollToCorrectPosition(mScrollPosition, true);
                 else scrollToCorrectPosition(mMultiPageDocument.getDocuments().size() - 1, true);
             }
         }
@@ -544,7 +544,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
         shouldIndicatorBeVisible();
 
         if (mMultiPageDocument.getDocuments().isEmpty()) {
-            AndroidHelper.STORE_SCROLL_STATE = -1;
+            mScrollPosition = -1;
         }
     }
 

@@ -373,7 +373,6 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
         setupHomeButton();
         handleOnBackPressed();
         setTitleOnTablets();
-        setupCameraBottomNavigationBar();
     }
 
     private void handleOnBackPressed() {
@@ -402,20 +401,6 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(ContextHelper.isTablet(this) ? getString(R.string.gc_camera_title) : getString(R.string.gc_title_camera));
         }
-    }
-
-    private void setupCameraBottomNavigationBar() {
-        if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
-            InjectedViewContainer<CameraNavigationBarBottomAdapter> injectedViewContainer =
-                    findViewById(R.id.gc_injected_navigation_bar_container_bottom);
-            CameraNavigationBarBottomAdapter adapter = GiniCapture.getInstance().getCameraNavigationBarBottomAdapter();
-            injectedViewContainer.setInjectedViewAdapter(adapter);
-
-            adapter.setOnBackButtonClickListener(v -> onBackPressed());
-
-            adapter.setOnHelpButtonClickListener(v -> startHelpActivity());
-        }
-
     }
 
 
@@ -475,8 +460,6 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
     protected void onDestroy() {
         super.onDestroy();
         clearMemory();
-
-        AndroidHelper.STORE_SCROLL_STATE = -1;
     }
 
     private void createGiniCaptureCoordinator() {

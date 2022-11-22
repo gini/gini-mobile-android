@@ -12,6 +12,8 @@ interface CameraNavigationBarBottomAdapter: InjectedViewAdapter {
 
     fun setOnHelpButtonClickListener(click: View.OnClickListener)
 
+    fun setBackButtonVisibility(visibility: Int)
+
 }
 
 class DefaultCameraNavigationBarBottomAdapter: CameraNavigationBarBottomAdapter {
@@ -24,6 +26,10 @@ class DefaultCameraNavigationBarBottomAdapter: CameraNavigationBarBottomAdapter 
 
     override fun setOnHelpButtonClickListener(click: View.OnClickListener) {
         viewBinding?.gcHelp?.setOnClickListener(click)
+    }
+
+    override fun setBackButtonVisibility(visibility: Int) {
+        viewBinding?.gcGoBack?.visibility = visibility
     }
 
     override fun onCreateView(container: ViewGroup): View {

@@ -20,8 +20,6 @@ import android.view.ViewStub;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -39,6 +37,7 @@ import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.GiniCaptureError;
 import net.gini.android.capture.ImportedFileValidationException;
 import net.gini.android.capture.R;
+import net.gini.android.capture.camera.view.CameraNavigationBarBottomAdapter;
 import net.gini.android.capture.document.DocumentFactory;
 import net.gini.android.capture.document.GiniCaptureDocument;
 import net.gini.android.capture.document.GiniCaptureMultiPageDocument;
@@ -96,9 +95,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
-import kotlin.Unit;
-import kotlin.jvm.functions.Function0;
-import kotlin.jvm.functions.Function1;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
@@ -178,7 +174,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private PaymentQRCodeReader mPaymentQRCodeReader;
 
     private ConstraintLayout mLayoutRoot;
-    private InjectedViewContainer<NavigationBarTopAdapter> topAdapterInjectedViewContainer;
     private ViewGroup mCameraPreviewContainer;
     private View mCameraPreview;
     private ImageView mCameraFocusIndicator;
@@ -206,7 +201,10 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private int mMultiPageDocumentSize = 0;
     private boolean mShouldScrollToLastPage = false;
     private String mQRCodeContent;
+
+    private InjectedViewContainer<NavigationBarTopAdapter> topAdapterInjectedViewContainer;
     private InjectedViewContainer<CustomLoadingIndicatorAdapter> mLoadingIndicator;
+    private  InjectedViewContainer<CameraNavigationBarBottomAdapter> mBottomInjectedContainer;
 
     CameraFragmentImpl(@NonNull final FragmentImplCallback fragment) {
         mFragment = fragment;
@@ -285,6 +283,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         if (savedInstanceState != null) {
             restoreSavedState(savedInstanceState);
         }
+
     }
 
     private void initFlashState() {
@@ -301,10 +300,15 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                       final Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.gc_fragment_camera, container, false);
+
         bindViews(view);
         setCustomLoadingIndicator(view);
         setInputHandlers();
+
+        initMultiPageDocument();
+
         setTopBarInjectedViewContainer();
+        setBottomInjectedViewContainer();
         createPopups();
         initOnlyQRScanning();
         return view;
@@ -646,6 +650,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                 view.findViewById(R.id.gc_activity_indicator_background);
         mPhotoThumbnail = view.findViewById(R.id.gc_photo_thumbnail);
         topAdapterInjectedViewContainer = view.findViewById(R.id.gc_navigation_top_bar);
+        mBottomInjectedContainer = view.findViewById(R.id.gc_injected_navigation_bar_container_bottom);
         mImageFrame = view.findViewById(R.id.gc_camera_frame);
         mCameraFrameWrapper = view.findViewById(R.id.gc_camera_frame_wrapper);
         mPaneWrapper = view.findViewById(R.id.gc_pane_wrapper);
@@ -663,7 +668,11 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
             boolean isBottomBarEnabled = GiniCapture.getInstance().isBottomNavigationBarEnabled();
 
-            topAdapterInjectedViewContainer.getInjectedViewAdapter().setNavButtonType(NavButtonType.BACK);
+            if (mMultiPageDocument != null && !mMultiPageDocument.getDocuments().isEmpty()) {
+                topAdapterInjectedViewContainer.getInjectedViewAdapter().setNavButtonType(NavButtonType.BACK);
+            } else {
+                topAdapterInjectedViewContainer.getInjectedViewAdapter().setNavButtonType(NavButtonType.CLOSE);
+            }
 
             topAdapterInjectedViewContainer.getInjectedViewAdapter().setTitle(ContextHelper.isTablet(mFragment.getActivity()) ? mFragment.getActivity().getResources().getString(R.string.gc_camera_title) :
                     mFragment.getActivity().getResources().getString(R.string.gc_title_camera));
@@ -684,6 +693,32 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                 mFragment.getActivity().onBackPressed();
             });
         }
+    }
+
+
+    private void setBottomInjectedViewContainer() {
+        if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
+            CameraNavigationBarBottomAdapter adapter = GiniCapture.getInstance().getCameraNavigationBarBottomAdapter();
+
+            mBottomInjectedContainer.setInjectedViewAdapter(adapter);
+
+            if (mBottomInjectedContainer.getInjectedViewAdapter() == null)
+                return;
+
+            boolean isEmpty = mMultiPageDocument == null || mMultiPageDocument.getDocuments().isEmpty();
+
+            mBottomInjectedContainer.getInjectedViewAdapter()
+                    .setBackButtonVisibility(isEmpty ? View.GONE : View.VISIBLE);
+
+
+            adapter.setOnBackButtonClickListener(v -> {
+                if (mFragment.getActivity() != null)
+                    mFragment.getActivity().finish();
+            });
+
+            adapter.setOnHelpButtonClickListener(v -> startHelpActivity());
+        }
+
     }
 
     private void setCustomLoadingIndicator(View view) {
