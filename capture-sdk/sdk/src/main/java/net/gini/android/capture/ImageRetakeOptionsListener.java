@@ -11,7 +11,7 @@ public interface ImageRetakeOptionsListener {
 
     /**
      * <p>
-     *     Called when the button on the bottom of the No Results Screen was pressed. This button
+     *     Called when the button on the bottom of the No Results/Error Screen was pressed. This button
      *     should lead the user back to the Camera Screen.
      * </p>
      */
@@ -19,7 +19,7 @@ public interface ImageRetakeOptionsListener {
 
     /**
      * <p>
-     *     Called when the button on the bottom of the No Results Screen was pressed. This button
+     *     Called when the button on the bottom of the No Results/Error Screen was pressed. This button
      *     should lead the user to the manual data input form/site.
      * </p>
      */
