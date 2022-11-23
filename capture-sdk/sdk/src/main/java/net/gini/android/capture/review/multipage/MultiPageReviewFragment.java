@@ -140,6 +140,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     private MiddlePageManager mSnapManager;
     private boolean mShouldScrollToLastPage = false;
     private int mScrollPosition = -1;
+    private boolean mInstanceStateSaved;
 
     public static MultiPageReviewFragment newInstance(boolean shouldScrollToLastPage) {
 
@@ -174,6 +175,18 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
             initMultiPageDocument();
         }
 
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mInstanceStateSaved = false;
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mInstanceStateSaved = true;
     }
 
     @Override
@@ -805,11 +818,15 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     public void onDestroy() {
         super.onDestroy();
 
-        if (!mNextClicked && mMultiPageDocument != null
-                && mMultiPageDocument.getImportMethod() == Document.ImportMethod.OPEN_WITH) {
-            // Delete documents imported using "open with" because the
-            // Camera Screen is not launched for "open with"
-            deleteUploadedDocuments();
+        if (!mInstanceStateSaved) {
+            // Instance state wasn't saved meaning that this fragment won't restart
+            if (!mNextClicked) {
+                // Delete documents because the Multi-Page Review Fragment
+                // acts as the root screen and when it's destroyed it means
+                // the user will exit the SDK
+                deleteUploadedDocuments();
+                clearMultiPageDocument();
+            }
         }
 
         if (mPreviewFragmentListener != null) {
@@ -818,6 +835,10 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     }
 
     private void deleteUploadedDocuments() {
+        if (mMultiPageDocument == null) {
+            return;
+        }
+
         if (GiniCapture.hasInstance()) {
             final NetworkRequestsManager networkRequestsManager = GiniCapture.getInstance()
                     .internal().getNetworkRequestsManager();
@@ -834,6 +855,14 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
                             return null;
                         });
             }
+        }
+    }
+
+    private void clearMultiPageDocument() {
+        if (GiniCapture.hasInstance()) {
+            mMultiPageDocument = null; // NOPMD
+            GiniCapture.getInstance().internal()
+                    .getImageMultiPageDocumentMemoryStore().clear();
         }
     }
 

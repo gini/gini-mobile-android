@@ -193,7 +193,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private boolean mImportDocumentButtonEnabled;
     private ImportImageDocumentUrisAsyncTask mImportUrisAsyncTask;
-    private boolean mProceededToMultiPageReview;
     private boolean mQRCodeAnalysisCompleted;
     private QRCodeDocument mQRCodeDocument;
     private Group mImportButtonGroup;
@@ -353,7 +352,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             return;
         }
         mInstanceStateSaved = false;
-        mProceededToMultiPageReview = false;
         initViews();
         initCameraController(activity);
         addCameraPreviewView();
@@ -550,54 +548,8 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         }
 
         if (!mInstanceStateSaved) {
-            if (!mProceededToMultiPageReview) {
-                deleteUploadedMultiPageDocuments();
-                clearMultiPageDocument();
-            }
             if (!mQRCodeAnalysisCompleted) {
                 deleteUploadedQRCodeDocument();
-            }
-        }
-    }
-
-    private void clearMultiPageDocument() {
-        if (GiniCapture.hasInstance()) {
-            mMultiPageDocument = null; // NOPMD
-            GiniCapture.getInstance().internal()
-                    .getImageMultiPageDocumentMemoryStore().clear();
-        }
-    }
-
-    private void deleteUploadedMultiPageDocuments() {
-        final Activity activity = mFragment.getActivity();
-        if (activity == null) {
-            return;
-        }
-        if (mMultiPageDocument == null) {
-            return;
-        }
-
-        if (GiniCapture.hasInstance()) {
-            final NetworkRequestsManager networkRequestsManager = GiniCapture.getInstance()
-                    .internal().getNetworkRequestsManager();
-            if (networkRequestsManager != null) {
-                networkRequestsManager.cancel(mMultiPageDocument);
-                networkRequestsManager.delete(mMultiPageDocument)
-                        .handle(new CompletableFuture.BiFun<NetworkRequestResult<
-                                GiniCaptureDocument>, Throwable, Void>() {
-                            @Override
-                            public Void apply(
-                                    final NetworkRequestResult<GiniCaptureDocument> requestResult,
-                                    final Throwable throwable) {
-                                for (final Object document : mMultiPageDocument.getDocuments()) {
-                                    final GiniCaptureDocument giniCaptureDocument =
-                                            (GiniCaptureDocument) document;
-                                    networkRequestsManager.cancel(giniCaptureDocument);
-                                    networkRequestsManager.delete(giniCaptureDocument);
-                                }
-                                return null;
-                            }
-                        });
             }
         }
     }
@@ -805,8 +757,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         mPhotoThumbnail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                mProceededToMultiPageReview = true;
-
                 if (mFragment.getActivity() != null)
                     (mFragment.getActivity()).finish();
             }
@@ -1080,7 +1030,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                         LOG.debug("Client accepted the document");
                         hideActivityIndicatorAndEnableInteraction();
                         if (document.getType() == Document.Type.IMAGE_MULTI_PAGE) {
-                            mProceededToMultiPageReview = true;
                             final ImageMultiPageDocument multiPageDocument =
                                     (ImageMultiPageDocument) document;
                             addToMultiPageDocumentMemoryStore(multiPageDocument);
