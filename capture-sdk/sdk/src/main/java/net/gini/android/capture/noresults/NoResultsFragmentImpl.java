@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
+import net.gini.android.capture.ImageRetakeOptionsListener;
 import net.gini.android.capture.R;
 import net.gini.android.capture.document.ImageMultiPageDocument;
 import net.gini.android.capture.help.PhotoTipsAdapter;
@@ -26,8 +27,8 @@ import static net.gini.android.capture.internal.util.ActivityHelper.forcePortrai
 
 class NoResultsFragmentImpl {
 
-    private static final NoResultsFragmentListener NO_OP_LISTENER =
-            new NoResultsFragmentListener() {
+    private static final ImageRetakeOptionsListener NO_OP_LISTENER =
+            new ImageRetakeOptionsListener() {
                 @Override
                 public void onBackToCameraPressed() {}
 
@@ -37,7 +38,7 @@ class NoResultsFragmentImpl {
 
     private final FragmentImplCallback mFragment;
     private final Document mDocument;
-    private NoResultsFragmentListener mListener;
+    private ImageRetakeOptionsListener mListener;
 
     private InjectedViewContainer<NavigationBarTopAdapter> topAdapterInjectedViewContainer;
 
@@ -47,7 +48,7 @@ class NoResultsFragmentImpl {
         mDocument = document;
     }
 
-    void setListener(@Nullable final NoResultsFragmentListener listener) {
+    void setListener(@Nullable final ImageRetakeOptionsListener listener) {
         if (listener == null) {
             mListener = NO_OP_LISTENER;
         } else {

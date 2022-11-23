@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import net.gini.android.capture.Document;
+import net.gini.android.capture.ImageRetakeOptionsListener;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.util.AlertDialogHelperCompat;
 
@@ -29,7 +30,7 @@ import androidx.fragment.app.Fragment;
  * display it using the {@link androidx.fragment.app.FragmentManager}.
  * </p>
  * <p>
- * Your Activity must implement the {@link NoResultsFragmentListener} interface to receive events
+ * Your Activity must implement the {@link ImageRetakeOptionsListener} interface to receive events
  * from the No Results Fragment. Failing to do so will throw an exception.
  * </p>
  * <p>

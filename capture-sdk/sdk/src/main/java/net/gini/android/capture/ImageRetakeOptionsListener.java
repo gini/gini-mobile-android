@@ -1,11 +1,13 @@
-package net.gini.android.capture.noresults;
+package net.gini.android.capture;
+
+import net.gini.android.capture.noresults.NoResultsFragmentCompat;
 
 /**
  * <p>
- * Interface used by {@link NoResultsFragmentCompat} to dispatch events to the hosting Activity.
+ * Interface used by {@link NoResultsFragmentCompat} and (@link ErrorFragmentCompat} to dispatch events to the hosting Activity.
  * </p>
  */
-public interface NoResultsFragmentListener {
+public interface ImageRetakeOptionsListener {
 
     /**
      * <p>
