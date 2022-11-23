@@ -68,6 +68,18 @@
     <string name="gc_noresults_retake_images">Foto Wiederholen</string>
     <string name="gc_noresults_enter_manually">Manuell Eingeben</string>
 
+    <string name="gc_error_back_to_camera">Back to camera</string>
+    <string name="gc_error_upload_title">Upload des Dokuments fehlgeschlagen</string>
+    <string name="gc_error_upload_text">Das Dokument konnte nicht angenommen werden. Bitte überprüfen Sie, ob das Bild scharf ist, das Dokument Zahlungsinformationen enthält und im richtigen Dateiformathochgeladen wird.</string>
+    <string name="gc_error_connection_title">Überprüfen Sie Ihre Internetverbindung</string>
+    <string name="gc_error_connection_text">Es konnte keine Verbindung zum Internet hergestellt werden. Bitte überprüfen Sie Ihre Netzwerkverbindung und wiederholen Sie den Vorgang</string>
+    <string name="gc_error_server_title">Dienst nicht verfügbar</string>
+    <string name="gc_error_server_text">Upload des Dokuments ist fehlgeschlagen aufgrund eines Serverfehlers. Bitte versuchen Sie es später noch einmal.</string>
+    <string name="gc_error_auth_title">Authentifizierung fehlgeschlagen</string>
+    <string name="gc_error_auth_text">Upload des Dokuments ist fehlgeschlagen aufgrund eines Fehlers bei der Authentifizierung. Bitte versuchen Sie es später noch einmal.</string>
+    <string name="gc_error_unexpected_title">Oh hier ist etwas schiefgelaufen</string>
+    <string name="gc_error_unexpected_text">Es scheint hier ist etwas schiefgelaufen. Bitte versuchen Sie es später noch einmal.</string>
+
     <string name="gc_document_import_hint_text">Es können jetzt auch ganz einfach Dateien hochgeladen werden.</string>
     <string name="gc_qr_code_scanner_hint_text">Haben Sie schon den QR-Codeleser ausprobiert?</string>
 

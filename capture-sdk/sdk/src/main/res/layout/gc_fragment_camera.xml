@@ -219,7 +219,7 @@
             android:paddingBottom="@dimen/small"
             android:text="@string/gc_qr_code_detected"
             android:textColor="@color/Light_01"
-            style="@style/GiniCaptureTheme.Typography.Caption"
+            style="@style/GiniCaptureTheme.Typography.Caption1"
             android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@+id/gc_camera_frame"
             app:layout_constraintEnd_toEndOf="@+id/gc_camera_frame"
@@ -248,7 +248,7 @@
                 android:text="@string/gc_unknown_qr_code"
                 android:textColor="@color/Dark_01"
                 android:textStyle="bold"
-                style="@style/GiniCaptureTheme.Typography.Caption"
+                style="@style/GiniCaptureTheme.Typography.Caption1"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -260,7 +260,7 @@
                 android:layout_marginTop="@dimen/small"
                 android:layout_marginEnd="@dimen/large"
                 android:layout_marginBottom="@dimen/large"
-                style="@style/GiniCaptureTheme.Typography.Caption"
+                style="@style/GiniCaptureTheme.Typography.Caption1"
                 android:text="@string/gc_unknown_qr_code_description"
                 android:textColor="@color/Dark_01"
                 app:layout_constraintBottom_toBottomOf="parent"
