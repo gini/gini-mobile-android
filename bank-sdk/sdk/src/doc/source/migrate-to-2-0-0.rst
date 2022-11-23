@@ -13,17 +13,10 @@ Migrate to 2.0.0
   h4 +++++
   h5 ^^^^^
 
-In version 2.0.0 we modernised our UI and added support for light and dark modes. In addition we simplified how the UI
-is customised. We also unified the public API of the SDK and introduced an easier way to customise certain parts of the
-UI.
+In version 2.0.0 we updated the Gini Bank API Library to version 2.0.0 which removed dependency on Bolts and Volley.
+Bolts was replaced with kotlin coroutines which is part of the kotlin standard library. Volley was replaced with
+Retrofit2, a more popular and elegant networking library built upon okhttp3.
 
-Migrate the Invoice Capture Feature
------------------------------------
-
-The capture feature uses our `Gini Capture SDK <https://github.com/gini/gini-mobile-android/tree/main/capture-sdk>`_ and
-its `migration guide <https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/html/migrate-to-2-0-0.html>`_
-describes what has changed.
-
-Please be aware that for the Gini Bank SDK you need to use the ``CaptureConfiguration`` instead of the Gini Capture SDK's
-``GiniCapture.Builder``. The configuration names are the same so you can easily map them to the
-``CaptureConfiguration``. This applies also to the new configuration options added in 2.0.0.
+The breaking changes affect only the Gini Bank API Library. If you are interacting with it directly, then please consult
+the Gini Bank API Library's `update guide <https://developer.gini.net/gini-mobile-android/bank-api-library/library/>`_
+for details.

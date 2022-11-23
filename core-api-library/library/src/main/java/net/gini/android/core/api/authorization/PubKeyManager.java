@@ -23,7 +23,9 @@ import javax.net.ssl.X509TrustManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.XmlRes;
 
-
+/**
+ * Internal use only.
+ */
 public final class PubKeyManager implements X509TrustManager {
 
     private final Context mContext;

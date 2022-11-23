@@ -3,6 +3,9 @@ package net.gini.android.bank.api.models
 import net.gini.android.bank.api.response.ResolvePaymentResponse
 import java.util.*
 
+/**
+ * Holds information about a resolved payment.
+ */
 data class ResolvedPayment(
     val requesterUri: String,
     val recipient: String,

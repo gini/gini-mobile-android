@@ -4,19 +4,16 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import net.gini.android.core.api.Resource
 import net.gini.android.core.api.models.Document
 import net.gini.android.health.api.models.PaymentRequestInput
 import net.gini.android.health.sdk.GiniHealth
@@ -115,8 +112,20 @@ internal class ReviewViewModel(internal val giniHealth: GiniHealth) : ViewModel(
         _bankApps.value = BankAppsState.Loading
         withContext(viewModelScope.coroutineContext) {
             _bankApps.value = try {
-                val paymentProviders = giniHealth.giniHealthAPI.documentManager.getPaymentProviders()
-                BankAppsState.Success(context.packageManager.getValidBankApps(paymentProviders, context))
+                when (val paymentProvidersResource = giniHealth.giniHealthAPI.documentManager.getPaymentProviders()) {
+                    is Resource.Cancelled -> BankAppsState.Error(Exception("Cancelled"))
+                    is Resource.Error -> BankAppsState.Error(
+                        paymentProvidersResource.exception ?: Exception(
+                            paymentProvidersResource.message
+                        )
+                    )
+                    is Resource.Success -> BankAppsState.Success(
+                        context.packageManager.getValidBankApps(
+                            paymentProvidersResource.data,
+                            context
+                        )
+                    )
+                }
             } catch (e: Exception) {
                 BankAppsState.Error(e)
             }
@@ -168,19 +177,20 @@ internal class ReviewViewModel(internal val giniHealth: GiniHealth) : ViewModel(
     }
 
     private suspend fun getPaymentRequest(bank: BankApp): PaymentRequest {
-        return PaymentRequest(
-            id = giniHealth.giniHealthAPI.documentManager.createPaymentRequest(
-                PaymentRequestInput(
-                    paymentProvider = bank.paymentProvider.id,
-                    recipient = paymentDetails.value.recipient,
-                    iban = paymentDetails.value.iban,
-                    amount = "${paymentDetails.value.amount.toBackendFormat()}:EUR",
-                    bic = null,
-                    purpose = paymentDetails.value.purpose,
-                )
-            ),
-            bankApp = bank
-        )
+        return when(val createPaymentRequestResource = giniHealth.giniHealthAPI.documentManager.createPaymentRequest(
+            PaymentRequestInput(
+                paymentProvider = bank.paymentProvider.id,
+                recipient = paymentDetails.value.recipient,
+                iban = paymentDetails.value.iban,
+                amount = "${paymentDetails.value.amount.toBackendFormat()}:EUR",
+                bic = null,
+                purpose = paymentDetails.value.purpose,
+            )
+        )) {
+            is Resource.Cancelled -> throw Exception("Cancelled")
+            is Resource.Error -> throw Exception(createPaymentRequestResource.exception)
+            is Resource.Success -> PaymentRequest(id = createPaymentRequestResource.data, bankApp = bank)
+        }
     }
 
     fun onPayment() {
@@ -214,7 +224,7 @@ internal class ReviewViewModel(internal val giniHealth: GiniHealth) : ViewModel(
             try {
                 when (val documentResult = giniHealth.documentFlow.value) {
                     is ResultWrapper.Success -> paymentDetails.value.extractions?.let { extractionsContainer ->
-                        giniHealth.giniHealthAPI.documentManager.sendFeedback(
+                        giniHealth.giniHealthAPI.documentManager.sendFeedbackForExtractions(
                             documentResult.value,
                             extractionsContainer.specificExtractions,
                             extractionsContainer.compoundExtractions.withFeedback(paymentDetails.value)

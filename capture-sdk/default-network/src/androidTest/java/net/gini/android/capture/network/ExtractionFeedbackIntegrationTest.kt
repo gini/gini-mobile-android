@@ -104,14 +104,14 @@ class ExtractionFeedbackIntegrationTest {
         //    with the final (user confirmed or updated) extraction values
         suspendCancellableCoroutine<Unit> { continuation ->
             networkApi.sendFeedback(
-                mapOf(
+                mutableMapOf(
                     "amountToPay" to amountToPay,
                     "iban" to extractionsBundle.getParcelable("iban")!!,
                     "bic" to extractionsBundle.getParcelable("bic")!!,
                     "paymentPurpose" to extractionsBundle.getParcelable("paymentPurpose")!!,
                     "paymentRecipient" to extractionsBundle.getParcelable("paymentRecipient")!!
                 ),
-                object : GiniCaptureNetworkCallback<Void?, Error> {
+                object : GiniCaptureNetworkCallback<Void, Error> {
                     override fun failure(error: Error) {
                         continuation.resumeWithException(RuntimeException(error.message, error.cause))
                     }
@@ -132,11 +132,11 @@ class ExtractionFeedbackIntegrationTest {
         //    This is only done for testing purposes. In your production code you don't need to interact with the
         //    Gini Bank API directly if you use the GiniCaptureDefaultNetworkService.
         val extractionsAfterFeedback =
-            giniBankAPI.documentManager.getExtractions(analyzedGiniApiDocument!!)
+            giniBankAPI.documentManager.getAllExtractionsWithPolling(analyzedGiniApiDocument!!)
 
         val extractionsAfterFeedbackFixture =
             moshi.fromJsonAsset<ExtractionsFixture>("result_Gini_invoice_example_after_feedback.json")!!
-        Assert.assertTrue(extractionsAfterFeedbackFixture.equals(extractionsAfterFeedback))
+        Assert.assertTrue(extractionsAfterFeedbackFixture.equals(extractionsAfterFeedback.data))
     }
 
     /**

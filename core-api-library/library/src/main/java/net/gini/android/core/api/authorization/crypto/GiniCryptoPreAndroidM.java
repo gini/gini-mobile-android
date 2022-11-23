@@ -35,6 +35,10 @@ import javax.security.auth.x500.X500Principal;
  *
  * Copyright (c) 2018 Gini GmbH.
  */
+
+/**
+ * Internal use only.
+ */
 class GiniCryptoPreAndroidM extends GiniCrypto {
 
     private static final String AES_KEY = "GiniKey";

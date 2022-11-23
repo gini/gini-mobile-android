@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
+import net.gini.android.core.api.Resource
 import net.gini.android.core.api.models.Document
 import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.sdk.requirement.AtLeastOneInstalledBankAppRequirement
@@ -98,7 +99,9 @@ class GiniHealth(
         _paymentFlow.value = ResultWrapper.Loading()
 
         _paymentFlow.value = wrapToResult {
-            documentManager.getExtractions(document).toPaymentDetails()
+            documentManager.getAllExtractionsWithPolling(document).mapSuccess {
+                Resource.Success(it.data.toPaymentDetails())
+            }
         }
     }
 
@@ -120,7 +123,10 @@ class GiniHealth(
         } else {
             when (val documentResult = documentFlow.value) {
                 is ResultWrapper.Success -> {
-                    _paymentFlow.value = wrapToResult { documentManager.getExtractions(documentResult.value).toPaymentDetails() }
+                    _paymentFlow.value =
+                        wrapToResult { documentManager.getAllExtractionsWithPolling(documentResult.value).mapSuccess {
+                            Resource.Success(it.data.toPaymentDetails()) }
+                        }
                 }
                 is ResultWrapper.Error -> {
                     _paymentFlow.value = ResultWrapper.Error(Throwable("Failed to get document"))
@@ -159,12 +165,18 @@ class GiniHealth(
      * @return `true` if the document is payable and `false` otherwise
      * @throws Exception if there was an error while retrieving the document or the extractions
      */
-    suspend fun checkIfDocumentIsPayable(documentId: String): Boolean =
-        with(documentManager) {
-            getExtractions(getDocument(documentId))
-                .compoundExtractions.getPaymentExtraction("iban")?.value?.isNotEmpty()
-                ?: false
+    suspend fun checkIfDocumentIsPayable(documentId: String): Boolean {
+        val extractionsResource = documentManager.getDocument(documentId)
+            .mapSuccess { documentResource ->
+                documentManager.getAllExtractionsWithPolling(documentResource.data)
+            }
+        return when (extractionsResource) {
+            is Resource.Cancelled -> false
+            is Resource.Error -> false
+            is Resource.Success -> extractionsResource.data.compoundExtractions
+                .getPaymentExtraction("iban")?.value?.isNotEmpty() ?: false
         }
+    }
 
     internal fun setOpenBankState(state: PaymentState) {
         _openBankState.value = state

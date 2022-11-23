@@ -5,20 +5,21 @@ import android.graphics.BitmapFactory
 import android.util.Log
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import bolts.Task
-import net.gini.android.core.api.DocumentTaskManager
-import net.gini.android.core.api.test.shared.helpers.TestUtils
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
+import net.gini.android.core.api.DocumentManager
+import net.gini.android.core.api.Resource
 import net.gini.android.core.api.internal.GiniCoreAPIBuilder
 import net.gini.android.core.api.models.CompoundExtraction
-import net.gini.android.core.api.test.shared.GiniCoreAPIIntegrationTest
 import net.gini.android.core.api.models.ExtractionsContainer
+import net.gini.android.core.api.models.PaymentRequest
 import net.gini.android.core.api.models.SpecificExtraction
+import net.gini.android.core.api.test.shared.GiniCoreAPIIntegrationTest
+import net.gini.android.core.api.test.shared.helpers.TestUtils
 import net.gini.android.health.api.models.PaymentRequestInput
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.lang.Exception
-import java.util.*
 import java.util.Collections.singletonList
 
 /**
@@ -27,46 +28,46 @@ import java.util.Collections.singletonList
  * Copyright (c) 2022 Gini GmbH.
  */
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
-class GiniHealthAPIIntegrationTest: GiniCoreAPIIntegrationTest<HealthApiDocumentTaskManager, HealthApiDocumentManager, GiniHealthAPI, HealthApiCommunicator, ExtractionsContainer>() {
+class GiniHealthAPIIntegrationTest: GiniCoreAPIIntegrationTest<HealthApiDocumentManager, HealthApiDocumentRepository, GiniHealthAPI, ExtractionsContainer>() {
 
     @Test
     @Throws(Exception::class)
-    fun sendFeedback_withoutCompoundExtractions_forDocument_withLineItems() {
+    fun sendFeedback_withoutCompoundExtractions_forDocument_withLineItems() = runTest {
         val assetManager = getApplicationContext<Context>().resources.assets
         val testDocumentAsStream = assetManager.open("line-items.pdf")
         Assert.assertNotNull("test pdf line-items.pdf could not be loaded", testDocumentAsStream)
         val testDocument = TestUtils.createByteArray(testDocumentAsStream)
         val documentExtractions = processDocument(testDocument, "application/pdf", "line-items.pdf",
-            DocumentTaskManager.DocumentType.INVOICE
-        ) { extractionsContainer: ExtractionsContainer? -> }
+            DocumentManager.DocumentType.INVOICE
+        ) { }
         val document = documentExtractions.keys.iterator().next()
         val extractionsContainer = documentExtractions[document]!!
 
         // All extractions are correct, that means we have nothing to correct and will only send positive feedback
         // we should only send feedback for extractions we have seen and accepted
-        val feedbackSpecific: MutableMap<String, SpecificExtraction?> = HashMap()
-        feedbackSpecific["amount_to_pay"] = extractionsContainer.specificExtractions["amount_to_pay"]
+        val feedbackSpecific: MutableMap<String, SpecificExtraction> = HashMap()
+        feedbackSpecific["amount_to_pay"] = extractionsContainer.specificExtractions["amount_to_pay"]!!
 
-        val sendFeedback = giniCoreAPI.documentTaskManager.sendFeedbackForExtractions(document, feedbackSpecific)
-        sendFeedback.waitForCompletion()
-        if (sendFeedback.isFaulted) {
-            Log.e("TEST", Log.getStackTraceString(sendFeedback.error))
+        val sendFeedback = giniCoreApi.documentManager.sendFeedbackForExtractions(document, feedbackSpecific)
+
+        if (sendFeedback is Resource.Error) {
+            Log.e("TEST", sendFeedback.toString())
         }
-        Assert.assertTrue("Sending feedback should be completed", sendFeedback.isCompleted)
-        Assert.assertFalse("Sending feedback should be successful", sendFeedback.isFaulted)
+        Assert.assertTrue("Sending feedback should be successful", sendFeedback is Resource.Success)
     }
 
     @Test
     @Throws(Exception::class)
-    fun sendFeedback_withCompoundExtractions_forDocument_withLineItems() {
+    fun sendFeedback_withCompoundExtractions_forDocument_withLineItems() = runTest {
         val assetManager = getApplicationContext<Context>().resources.assets
         val testDocumentAsStream = assetManager.open("line-items.pdf")
         Assert.assertNotNull("test pdf line-items.pdf could not be loaded", testDocumentAsStream)
         val testDocument = TestUtils.createByteArray(testDocumentAsStream)
         val documentExtractions = processDocument(testDocument, "application/pdf", "line-items.pdf",
-            DocumentTaskManager.DocumentType.INVOICE
-        ) { extractionsContainer: ExtractionsContainer? -> }
+            DocumentManager.DocumentType.INVOICE
+        ) { }
         val document = documentExtractions.keys.iterator().next()
         val extractionsContainer = documentExtractions[document]
         val compoundExtractions: Map<String, CompoundExtraction> = extractionsContainer!!.compoundExtractions
@@ -75,14 +76,14 @@ class GiniHealthAPIIntegrationTest: GiniCoreAPIIntegrationTest<HealthApiDocument
 
         // All extractions are correct, that means we have nothing to correct and will only send positive feedback
         // we should only send feedback for extractions we have seen and accepted
-        val feedbackSpecific: MutableMap<String, SpecificExtraction?> = HashMap()
-        feedbackSpecific["amount_to_pay"] = extractionsContainer.specificExtractions["amount_to_pay"]
+        val feedbackSpecific: MutableMap<String, SpecificExtraction> = HashMap()
+        feedbackSpecific["amount_to_pay"] = extractionsContainer.specificExtractions["amount_to_pay"]!!
 
-        val feedbackPayment: MutableMap<String, SpecificExtraction?> = HashMap()
-        feedbackPayment["iban"] = getIban(extractionsContainer)
-        feedbackPayment["amount_to_pay"] = getAmountToPay(extractionsContainer)
-        feedbackPayment["bic"] = getBic(extractionsContainer)
-        feedbackPayment["payment_recipient"] = getPaymentRecipient(extractionsContainer)
+        val feedbackPayment: MutableMap<String, SpecificExtraction> = HashMap()
+        feedbackPayment["iban"] = getIban(extractionsContainer)!!
+        feedbackPayment["amount_to_pay"] = getAmountToPay(extractionsContainer)!!
+        feedbackPayment["bic"] = getBic(extractionsContainer)!!
+        feedbackPayment["payment_recipient"] = getPaymentRecipient(extractionsContainer)!!
 
         feedbackCompound["payment"] = CompoundExtraction("payment", singletonList(feedbackPayment))
 
@@ -90,68 +91,58 @@ class GiniHealthAPIIntegrationTest: GiniCoreAPIIntegrationTest<HealthApiDocument
         // we should only send feedback for extractions we have seen and accepted
         feedbackCompound["line_items"] = compoundExtractions["line_items"]!!
         val sendFeedback =
-            giniCoreAPI.documentTaskManager.sendFeedbackForExtractions(document, feedbackSpecific, feedbackCompound)
-        sendFeedback.waitForCompletion()
-        if (sendFeedback.isFaulted) {
-            Log.e("TEST", Log.getStackTraceString(sendFeedback.error))
+            giniCoreApi.documentManager.sendFeedbackForExtractions(document, feedbackSpecific, feedbackCompound)
+
+        if (sendFeedback is Resource.Error) {
+            Log.e("TEST", sendFeedback.toString())
         }
-        Assert.assertTrue("Sending feedback should be completed", sendFeedback.isCompleted)
-        Assert.assertFalse("Sending feedback should be successful", sendFeedback.isFaulted)
+        Assert.assertTrue("Sending feedback should be successful", sendFeedback is Resource.Success)
     }
 
     @Test
     @Throws(Exception::class)
-    fun testGetPaymentProviders() {
-        val task = giniCoreAPI.documentTaskManager.paymentProviders
-        task.waitForCompletion()
-        Assert.assertNotNull(task.result)
+    fun testGetPaymentProviders() = runTest {
+        val paymentProviders = giniCoreApi.documentManager.getPaymentProviders().dataOrThrow
+
+        Assert.assertTrue("Payment providers list should not be empty", paymentProviders.isNotEmpty())
     }
 
     @Test
     @Throws(Exception::class)
-    fun testGetPaymentProvider() {
-        val listTask = giniCoreAPI.documentTaskManager.paymentProviders
-        listTask.waitForCompletion()
-        Assert.assertNotNull(listTask.result)
-        val providers = listTask.result
-        val task = giniCoreAPI.documentTaskManager.getPaymentProvider(providers[0].id)
-        task.waitForCompletion()
-        Assert.assertEquals(providers[0], task.result)
+    fun testGetPaymentProvider() = runTest {
+        val paymentProviders = giniCoreApi.documentManager.getPaymentProviders().dataOrThrow
+
+        val paymentProvider = giniCoreApi.documentManager.getPaymentProvider(paymentProviders[0].id).dataOrThrow
+
+        Assert.assertEquals(paymentProviders[0], paymentProvider)
     }
 
     @Test
     @Throws(Exception::class)
-    fun testCreatePaymentRequest() {
-        val task = createPaymentRequest()
-        task.waitForCompletion()
-        Assert.assertNotNull(task.result)
+    fun testCreatePaymentRequest() = runTest {
+        val paymentRequestId = createPaymentRequest()
+        Assert.assertTrue("Payment request id should not be empty string", paymentRequestId.isNotBlank())
     }
 
     @Test
     @Throws(Exception::class)
-    fun testGetPaymentRequest() {
-        val createPaymentTask = createPaymentRequest()
-        createPaymentTask.waitForCompletion()
-        val id = createPaymentTask.result
-        val paymentRequestTask = giniCoreAPI.documentTaskManager.getPaymentRequest(id)
-        paymentRequestTask.waitForCompletion()
-        Assert.assertNotNull(paymentRequestTask.result)
+    fun testGetPaymentRequest() = runTest {
+        val paymentRequestId = createPaymentRequest()
+        val paymentRequest = giniCoreApi.documentManager.getPaymentRequest(paymentRequestId).dataOrThrow
+        Assert.assertEquals(paymentRequest.status, PaymentRequest.Status.OPEN)
     }
 
     @Throws(Exception::class)
-    private fun createPaymentRequest(): Task<String?> {
+    private suspend fun createPaymentRequest(): String {
         val assetManager = getApplicationContext<Context>().resources.assets
         val testDocumentAsStream = assetManager.open("test.jpg")
         Assert.assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream)
         val testDocument = TestUtils.createByteArray(testDocumentAsStream)
         val documentWithExtractions =
-            processDocument(testDocument, "image/jpeg", "test.jpg", DocumentTaskManager.DocumentType.INVOICE)
+            processDocument(testDocument, "image/jpeg", "test.jpg", DocumentManager.DocumentType.INVOICE)
         val document = documentWithExtractions.keys.iterator().next()
         val extractionsContainer = documentWithExtractions[document]!!
-        val listTask = giniCoreAPI.documentTaskManager.paymentProviders
-        listTask.waitForCompletion()
-        Assert.assertNotNull(listTask.result)
-        val providers = listTask.result
+        val providers = giniCoreApi.documentManager.getPaymentProviders().dataOrThrow
         val paymentRequest = PaymentRequestInput(
             providers[0].id,
             getPaymentRecipient(extractionsContainer)!!.value,
@@ -162,31 +153,29 @@ class GiniHealthAPIIntegrationTest: GiniCoreAPIIntegrationTest<HealthApiDocument
             //                Objects.requireNonNull(extractions.get("bic")).getValue(),
             document.uri.toString()
         )
-        return giniCoreAPI.documentTaskManager.createPaymentRequest(paymentRequest)
+        return giniCoreApi.documentManager.createPaymentRequest(paymentRequest).dataOrThrow
     }
 
     @Test
     @Throws(Exception::class)
-    fun testGetImage() {
+    fun testGetImage() = runTest {
         val assetManager = getApplicationContext<Context>().resources.assets
         val testDocumentAsStream = assetManager.open("test.jpg")
         Assert.assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream)
         val testDocument = TestUtils.createByteArray(testDocumentAsStream)
         val documentWithExtractions =
-            processDocument(testDocument, "image/jpeg", "test.jpg", DocumentTaskManager.DocumentType.INVOICE)
+            processDocument(testDocument, "image/jpeg", "test.jpg",
+                DocumentManager.DocumentType.INVOICE) { }
         val document = documentWithExtractions.keys.iterator().next()
-        val task = giniCoreAPI.documentTaskManager.getPageImage(document.id, 1)
-        task.waitForCompletion()
-        Assert.assertNotNull(task.result)
-        val bytes = task.result
-        Assert.assertNotNull(BitmapFactory.decodeByteArray(bytes, 0, bytes.size))
+        val imageBytes = giniCoreApi.documentManager.getPageImage(document.id, 1).dataOrThrow
+        Assert.assertNotNull(BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size))
     }
 
     override fun createGiniCoreAPIBuilder(
         clientId: String,
         clientSecret: String,
         emailDomain: String
-    ): GiniCoreAPIBuilder<HealthApiDocumentTaskManager, HealthApiDocumentManager, GiniHealthAPI, HealthApiCommunicator, ExtractionsContainer> =
+    ): GiniCoreAPIBuilder<HealthApiDocumentManager, GiniHealthAPI, HealthApiDocumentRepository, ExtractionsContainer> =
         GiniHealthAPIBuilder(getApplicationContext(), clientId, clientSecret, emailDomain)
 
     override fun getNetworkSecurityConfigResId(): Int = net.gini.android.health.api.test.R.xml.network_security_config

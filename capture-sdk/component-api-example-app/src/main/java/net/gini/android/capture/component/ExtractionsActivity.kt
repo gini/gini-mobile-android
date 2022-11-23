@@ -137,66 +137,6 @@ class ExtractionsActivity : AppCompatActivity() {
         })
     }
 
-    private fun legacySendFeedback(binding: ActivityExtractionsBinding) {
-        val documentTaskManager = (application as BaseExampleApp).giniApi.documentTaskManager
-        // An example for sending feedback where we change the amount or add one if it is missing
-        // Feedback should be sent only for the user visible fields. Non-visible fields should be filtered out.
-        // In a real application the user input should be used as the new value.
-
-        val amount = mLegacyExtractions["amountToPay"]
-        if (amount != null) { // Let's assume the amount was wrong and change it
-            amount.value = "10.00:EUR"
-            Toast.makeText(this, "Amount changed to 10.00:EUR", Toast.LENGTH_SHORT).show()
-        } else { // Amount was missing, let's add it
-            val extraction =
-                    SpecificExtraction("amountToPay", "10.00:EUR",
-                            "amount", null, emptyList())
-            mLegacyExtractions["amountToPay"] = extraction
-            mExtractionsAdapter?.extractions = getSortedExtractions(mLegacyExtractions)
-            Toast.makeText(this, "Added amount of 10.00:EUR", Toast.LENGTH_SHORT).show()
-        }
-        mExtractionsAdapter!!.notifyDataSetChanged()
-        val document = (application as BaseExampleApp).singleDocumentAnalyzer
-                .giniApiDocument
-        // We require the Gini Bank API Library's net.gini.android.core.api.models.Document for sending the feedback
-        if (document != null) {
-            try {
-                showProgressIndicator(binding)
-                documentTaskManager.sendFeedbackForExtractions(document, mLegacyExtractions)
-                        .continueWith<Any> { task ->
-                            runOnUiThread {
-                                if (task.isFaulted) {
-                                    LOG.error("Feedback error",
-                                            task.error)
-                                    var message: String? = "unknown"
-                                    if (task.error != null) {
-                                        message = task.error.message
-                                    }
-                                    Toast.makeText(
-                                            this@ExtractionsActivity,
-                                            "Feedback error:\n$message",
-                                            Toast.LENGTH_LONG).show()
-                                } else {
-                                    Toast.makeText(
-                                            this@ExtractionsActivity,
-                                            "Feedback successful",
-                                            Toast.LENGTH_LONG).show()
-                                }
-                                hideProgressIndicator(binding)
-                            }
-                            null
-                        }
-            } catch (e: JSONException) {
-                LOG.error("Feedback not sent", e)
-                Toast.makeText(this, "Feedback not set:\n" + e.message,
-                        Toast.LENGTH_LONG).show()
-            }
-        } else {
-            Toast.makeText(this, "Feedback not set: no Gini Api Document available",
-                    Toast.LENGTH_LONG).show()
-        }
-    }
-
     private fun showProgressIndicator(binding: ActivityExtractionsBinding) {
         binding.recyclerviewExtractions.animate().alpha(0.5f)
         binding.layoutProgress.visibility = View.VISIBLE

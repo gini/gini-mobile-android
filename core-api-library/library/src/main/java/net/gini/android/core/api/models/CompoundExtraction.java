@@ -18,6 +18,7 @@ import java.util.Map;
  *
  * Copyright (c) 2020 Gini GmbH.
  */
+
 public class CompoundExtraction implements Parcelable {
 
     private final String mName;

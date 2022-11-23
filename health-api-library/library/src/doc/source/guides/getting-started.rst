@@ -13,7 +13,7 @@ build.gradle:
 .. code-block:: groovy
 
     dependencies {
-        implementation 'net.gini.android:gini-health-api-lib:1.2.2'
+        implementation 'net.gini.android:gini-health-api-lib:1.2.1'
     }
 
 Integrating the Gini Health API Library
@@ -22,7 +22,7 @@ Integrating the Gini Health API Library
 
 The Gini Health API Library provides the ``GiniHealthAPI`` class which is a façade to all functionality of the library.
 We recommend using a single instance of this class and avoid instantiating it each time you need to interact with the
-Gini Health API. You can reuse the instance either through your `Application` subclass or via a dependency injection
+Gini Health API. You can reuse the instance either through your ``Application`` subclass or via a dependency injection
 solution. This has the benefits that the library can reuse sessions between requests to the Gini Health API which may
 save a noteworthy number of HTTP requests.
 
@@ -31,7 +31,7 @@ Creating the GiniHealthAPI instance
 
 In order to create an instance of the ``GiniHealthAPI`` class, you need both your client id and your client
 secret. If you don't have a client id and client secret yet, you need to contact us and we'll provide 
-you with credential.
+you with the credentials.
 
 All requests to the Gini Health API are made on behalf of a user. This means particularly that all created
 documents are bound to a specific user account. But since you are most likely only interested in the
@@ -49,12 +49,12 @@ with this configuration would be ``550e8400-e29b-11d4-a716-446655440000@example.
     
     // The GiniHealthAPI instance is a facade to all available managers of the library. Configure and
     // create the library with the GiniHealthAPIBuilder.
-    GiniHealthAPI giniHealthApi = 
-            new GiniHealthAPIBuilder(getContext(), "gini-client-id", "GiniClientSecret", "example.com")
+    val giniHealthApi: GiniHealthAPI =
+            GiniHealthAPIBuilder(context, "gini-client-id", "GiniClientSecret", "example.com")
                     .build();
 
-    // The DocumentTaskManager provides the high-level API to work with documents.
-    DocumentTaskManager documentManager = giniHealthApi.getDocumentTaskManager();
+    // The HealthApiDocumentManager provides the high-level API to work with documents.
+    val documentManager: HealthApiDocumentManager = giniHealthApi.documentManager;
 
 Public Key Pinning
 ==================
@@ -63,11 +63,15 @@ Public key pinning is provided using the `Android Network Security Configuration
 <https://developer.android.com/training/articles/security-config.html>`_ and `TrustKit
 <https://github.com/datatheorem/TrustKit-Android>`_.
 
-To use public key pinning you need to create an `Android network security configuration
-<https://developer.android.com/training/articles/security-config.html>`_ xml file. This
-configuration is supported natively on Android Nougat (API Level 24) and newer. For versions between
-API Level 21 and 23 the Gini Health API Library relies on `TrustKit
-<https://github.com/datatheorem/TrustKit-Android>`_.
+To use public key pinning you can either create an `Android network security configuration
+<https://developer.android.com/training/articles/security-config.html>`_ xml file or set a custom `TrustManager
+<https://developer.android.com/reference/javax/net/ssl/TrustManager>`_ implementation.
+
+The network security configuration is supported
+natively on Android Nougat (API Level 24) and newer. For versions between API Level 21 and 23 the Gini SDK relies on
+`TrustKit <https://github.com/datatheorem/TrustKit-Android>`_.
+
+The custom ``TrustManager`` is supported on all Android versions.
 
 We recommend reading the `Android Network Security Configuration
 <https://developer.android.com/training/articles/security-config.html>`_ guide and the `TrustKit
@@ -77,7 +81,7 @@ Configure Pinning
 -----------------
 
 The following sample configuration shows how to set the public key pin for the two domains. The Gini
-Health API Library uses by default (``health-api.gini.net`` and ``user.gini.net``). It should be saved under
+Health API Library uses by default ``health-api.gini.net`` and ``user.gini.net``. It should be saved under
 ``res/xml/network_security_config.xml``:
 
 .. code-block:: xml
@@ -91,9 +95,9 @@ Health API Library uses by default (``health-api.gini.net`` and ``user.gini.net`
             <domain includeSubdomains="false">health-api.gini.net</domain>
             <pin-set>
                 <!-- old *.gini.net public key-->
-                <pin digest="SHA-256">yGLLyvZLo2NNXeBNKJwx1PlCtm+YEVU6h2hxVpRa4l4=</pin>
-                <!-- new *.gini.net public key, active from around mid September 2018 -->
                 <pin digest="SHA-256">cNzbGowA+LNeQ681yMm8ulHxXiGojHE8qAjI+M7bIxU=</pin>
+                <!-- new *.gini.net public key, active from around June 2020 -->
+                <pin digest="SHA-256">zEVdOCzXU8euGVuMJYPr3DUU/d1CaKevtr0dW0XzZNo=</pin>
             </pin-set>
             <domain-config>
                 <trustkit-config
@@ -140,34 +144,50 @@ the ``<application>`` tag to point to the xml:
         ...
     </manifest>
 
-Enable Pinning
---------------
+Enable Pinning with a Network Security Configuration
+----------------------------------------------------
 
 For the library to know about the xml you need to set the xml resource id using the
 ``GiniHealthAPIBuilder#setNetworkSecurityConfigResId()`` method:
 
 .. code-block:: java
 
-    GiniHealthAPI giniHealthApi = new GiniHealthAPIBuilder(getContext(), "gini-client-id", "GiniClientSecret", "example.com")
+    val giniHealthApi: GiniHealthAPI = GiniHealthAPIBuilder(context, "gini-client-id", "GiniClientSecret", "example.com")
             .setNetworkSecurityConfigResId(R.xml.network_security_config)
             .build();
 
-Extract Hash From gini.net
---------------------------
+Enable Pinning with a custom TrustManager implementation
+--------------------------------------------------------
+
+You can also take full control over which certificates to trust by passing your own ``TrustManager`` implementation
+to the ``GiniHealthAPIBuilder#setTrustManager()`` method:
+
+.. code-block:: java
+
+    val giniHealthApi: GiniHealthAPI = GiniHealthAPIBuilder(context, "gini-client-id", "GiniClientSecret", "example.com")
+            .setTrustManager(yourTrustManager)
+            .build();
+
+.. warning::
+
+    Setting a custom ``TrustManager`` will override the network security configuration.
+
+Extract Hash From health-api.gini.net
+----------------------------------
 
 The current Gini Health API public key SHA256 hash digest in Base64 encoding can be extracted with the
 following openssl commands:
 
 .. code-block:: bash
 
-    $ openssl s_client -servername gini.net -connect gini.net:443 | openssl x509 -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64
+    $ openssl s_client -servername health-api.gini.net -connect health-api.gini.net:443 | openssl x509 -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64
 
 Extract Hash From Public Key
 ----------------------------
 
 You can also extract the hash from a public key. The following example shows how to extract it from
-a public key named ``gini.pub``:
+a public key named ``health-api.gini.pub``:
 
 .. code-block:: bash
 
-    $ cat gini.pub | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64
+    $ cat health-api.gini.pub | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64

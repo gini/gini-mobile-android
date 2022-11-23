@@ -1,25 +1,18 @@
 package net.gini.android.core.api
 
 import android.net.Uri
-import bolts.Task
-import kotlin.coroutines.Continuation
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlinx.coroutines.asCoroutineDispatcher
-import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlinx.coroutines.withContext
+import net.gini.android.core.api.models.CompoundExtraction
 import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.models.ExtractionsContainer
 import net.gini.android.core.api.models.PaymentRequest
+import net.gini.android.core.api.models.SpecificExtraction
 import org.json.JSONObject
 
 /**
- * The [DocumentManager] is a high level API on top of the Gini API, which is used via the ApiCommunicator. It
+ * The [DocumentManager] is a high level API on top of the Gini API, which is used via the [DocumentRepository]. It
  * provides high level methods to handle document related tasks easily.
  */
-open class DocumentManager<A: ApiCommunicator, DTM: DocumentTaskManager<A, E>, E: ExtractionsContainer>(protected val documentTaskManager: DTM) {
-
-    protected val taskDispatcher = Task.BACKGROUND_EXECUTOR.asCoroutineDispatcher()
+abstract class DocumentManager<out DR: DocumentRepository<E>, E: ExtractionsContainer>(private val documentRepository: DR) {
 
     /**
      * Uploads raw data and creates a new Gini partial document.
@@ -29,24 +22,16 @@ open class DocumentManager<A: ApiCommunicator, DTM: DocumentTaskManager<A, E>, E
      * @param filename     Optional the filename of the given document
      * @param documentType Optional a document type hint. See the documentation for the document type hints for
      *                     possible values
-     * @return the Document instance of the freshly created document.
+     * @return [Resource] with the [Document] instance of the freshly created document or information about the error
      */
     suspend fun createPartialDocument(
         document: ByteArray,
         contentType: String,
         filename: String? = null,
-        documentType: DocumentTaskManager.DocumentType? = null,
+        documentType: DocumentType? = null,
         documentMetadata: DocumentMetadata? = null,
-    ): Document = withContext(taskDispatcher) {
-        suspendCancellableCoroutine { continuation ->
-            val task = if (documentMetadata != null) {
-                documentTaskManager.createPartialDocument(document, contentType, filename, documentType, documentMetadata)
-            } else {
-                documentTaskManager.createPartialDocument(document, contentType, filename, documentType)
-            }
-            continuation.resumeTask(task)
-        }
-    }
+    ): Resource<Document> =
+        documentRepository.createPartialDocument(document, contentType, filename, documentType, documentMetadata)
 
     /**
      * Deletes a Gini partial document and all its parent composite documents.
@@ -55,15 +40,11 @@ open class DocumentManager<A: ApiCommunicator, DTM: DocumentTaskManager<A, E>, E
      * this method deletes the parents before deleting the partial document.
      *
      * @param documentId The id of an existing partial document
+     * @return Empty [Resource] or information about the error
      */
-    suspend fun deletePartialDocumentAndParents(
-        documentId: String,
-    ) = withContext(taskDispatcher) {
-        suspendCancellableCoroutine<Unit> { continuation ->
-            val task = documentTaskManager.deletePartialDocumentAndParents(documentId)
-            continuation.resumeUnitTask(task)
-        }
-    }
+
+    suspend fun deletePartialDocumentAndParents(documentId: String): Resource<Unit> =
+        documentRepository.deletePartialDocumentAndParents(documentId)
 
     /**
      * Deletes a Gini document.
@@ -71,15 +52,10 @@ open class DocumentManager<A: ApiCommunicator, DTM: DocumentTaskManager<A, E>, E
      * For deleting partial documents use [deletePartialDocumentAndParents] instead.
      *
      * @param documentId The id of an existing document
+     * @return Empty [Resource] or information about the error
      */
-    suspend fun deleteDocument(
-        documentId: String,
-    ) = withContext(taskDispatcher) {
-        suspendCancellableCoroutine<Unit> { continuation ->
-            val task = documentTaskManager.deleteDocument(documentId)
-            continuation.resumeUnitTask(task)
-        }
-    }
+    suspend fun deleteDocument(documentId: String): Resource<Unit> =
+        documentRepository.deleteDocument(documentId)
 
     /**
      * Creates a new Gini composite document.
@@ -87,17 +63,13 @@ open class DocumentManager<A: ApiCommunicator, DTM: DocumentTaskManager<A, E>, E
      * @param documents    A list of partial documents which should be part of a multi-page document
      * @param documentType Optional a document type hint. See the documentation for the document type hints for
      *                     possible values
-     * @return the Document instance of the freshly created document.
+     * @return [Resource] with the [Document] instance or information about the error
      */
     suspend fun createCompositeDocument(
         documents: List<Document>,
-        documentType: DocumentTaskManager.DocumentType? = null,
-    ): Document = withContext(taskDispatcher) {
-        suspendCancellableCoroutine { continuation ->
-            val task = documentTaskManager.createCompositeDocument(documents, documentType)
-            continuation.resumeTask(task)
-        }
-    }
+        documentType: DocumentType? = null
+    ): Resource<Document> =
+        documentRepository.createCompositeDocument(documents, documentType)
 
     /**
      * Creates a new Gini composite document. The input Map must contain the partial documents as keys. These will be
@@ -107,32 +79,24 @@ open class DocumentManager<A: ApiCommunicator, DTM: DocumentTaskManager<A, E>, E
      * @param documentRotationMap A map of partial documents and their rotation in degrees
      * @param documentType        Optional a document type hint. See the documentation for the document type hints for
      *                            possible values
-     * @return the Document instance of the freshly created document.
+     * @return [Resource] with the [Document] instance or information about the error
      */
     suspend fun createCompositeDocument(
         documentRotationMap: LinkedHashMap<Document, Int>,
-        documentType: DocumentTaskManager.DocumentType,
-    ): Document = withContext(taskDispatcher) {
-        suspendCancellableCoroutine { continuation ->
-            val task = documentTaskManager.createCompositeDocument(documentRotationMap, documentType)
-            continuation.resumeTask(task)
-        }
-    }
+        documentType: DocumentType? = null
+    ): Resource<Document> =
+        documentRepository.createCompositeDocument(documentRotationMap, documentType)
 
     /**
      * Get the document with the given unique identifier.
      *
      * @param id The unique identifier of the document.
-     * @return A [Document] instance representing all the document's metadata.
+     * @return [Resource] with the [Document] instance representing all the document's metadata or information about the error
      */
     suspend fun getDocument(
         id: String,
-    ): Document = withContext(taskDispatcher) {
-        suspendCancellableCoroutine { continuation ->
-            val task = documentTaskManager.getDocument(id)
-            continuation.resumeTask(task)
-        }
-    }
+    ): Resource<Document> =
+        documentRepository.getDocument(id)
 
     /**
      * Get the document with the given unique identifier.
@@ -142,148 +106,122 @@ open class DocumentManager<A: ApiCommunicator, DTM: DocumentTaskManager<A, E>, E
      * get a document from an arbitrary URI.
      *
      * @param uri The URI of the document.
-     * @return A [Document] instance representing all the document's metadata.
+     * @return [Resource] with the [Document] instance representing all the document's metadata or information about the error
      */
     suspend fun getDocument(
         uri: Uri,
-    ): Document = withContext(taskDispatcher) {
-        suspendCancellableCoroutine { continuation ->
-            val task = documentTaskManager.getDocument(uri)
-            continuation.resumeTask(task)
-        }
-    }
+    ): Resource<Document> =
+        documentRepository.getDocument(uri)
 
     /**
      * Continually checks the document status (via the Gini API) until the document is fully processed. To avoid
-     * flooding the network, there is a pause of at least the number of seconds that is set in the POLLING_INTERVAL
-     * constant of [DocumentTaskManager].
-     *
-     * This method returns a Task which will resolve to a new document instance. It does not update the given
-     * document instance.
+     * flooding the network, there is a pause of at least [DocumentRepository.POLLING_INTERVAL]
+     * and a timeout of [DocumentRepository.POLLING_TIMEOUT].
      *
      * @param document The document which will be polled.
+     * @return [Resource] with the [Document] instance representing all the document's metadata or information about the error
      */
     suspend fun pollDocument(
         document: Document,
-    ): Document = withContext(taskDispatcher) {
-        suspendCancellableCoroutine { continuation ->
-            val task = documentTaskManager.pollDocument(document)
-            continuation.resumeTask(task)
-
-            continuation.invokeOnCancellation {
-                documentTaskManager.cancelDocumentPolling(document)
-            }
-        }
-    }
-
-    /**
-     * Sends an error report for the given document to Gini. If the processing result for a document was not
-     * satisfactory (e.g. extractions where empty or incorrect), you can create an error report for a document. This
-     * allows Gini to analyze and correct the problem that was found.
-     *
-     * The owner of this document must agree that Gini can use this document for debugging and error analysis.
-     *
-     * @param document    The erroneous document.
-     * @param summary     Optional a short summary of the occurred error.
-     * @param description Optional a more detailed description of the occurred error.
-     * @return Error ID. This is a unique identifier for your error report
-     * and can be used to refer to the reported error towards the Gini support.
-     */
-    suspend fun reportDocument(
-        document: Document,
-        summary: String? = null,
-        description: String? = null,
-    ): String = withContext(taskDispatcher) {
-        suspendCancellableCoroutine { continuation ->
-            val task = documentTaskManager.reportDocument(document, summary, description)
-            continuation.resumeTask(task)
-        }
-    }
+    ): Resource<Document> =
+        documentRepository.pollDocument(document)
 
     /**
      * Gets the layout of a document. The layout of the document describes the textual content of a document with
      * positional information, based on the processed document.
      *
      * @param document The document for which the layouts is requested.
-     * @return A JSONObject containing the layout.
+     * @return [Resource] with a [JSONObject] instance containing the layout or information about the error
      */
     suspend fun getLayout(
-        document: Document,
-    ): JSONObject = withContext(taskDispatcher) {
-        suspendCancellableCoroutine { continuation ->
-            val task = documentTaskManager.getLayout(document)
-            continuation.resumeTask(task)
-        }
-    }
+        document: Document
+    ): Resource<JSONObject> =
+        documentRepository.getLayout(document)
 
     /**
-     * Get the extractions for the given document.
+     * Get all extractions (specific and compound) for the given document.
      *
-     * @param document The Document instance for whose document the extractions are returned.
-     * @return [ExtractionsContainer] object.
+     * @param document The [Document] instance for whose document the extractions are returned.
+     * @return [Resource] with an [ExtractionsContainer] instance or information about the error
      */
-    suspend fun getExtractions(
-        document: Document,
-    ) = withContext(taskDispatcher) {
-        suspendCancellableCoroutine<ExtractionsContainer> { continuation ->
-            val pollDocumentTask = documentTaskManager.pollDocument(document)
-            pollDocumentTask.waitForCompletion()
+    suspend fun getAllExtractions(
+        document: Document
+    ): Resource<E> =
+        documentRepository.getAllExtractions(document)
 
-            if (!continuation.isActive) return@suspendCancellableCoroutine
-
-            if (!pollDocumentTask.isFaulted) {
-                val extractionTask = documentTaskManager.getAllExtractions(pollDocumentTask.result)
-                continuation.resumeTask(extractionTask)
-            } else {
-                continuation.resumeWithException(pollDocumentTask.error)
-            }
-
-            continuation.invokeOnCancellation {
-                if (!pollDocumentTask.isCompleted) {
-                    documentTaskManager.cancelDocumentPolling(document)
-                }
-            }
-        }
+    /**
+     * Poll the document and get all extractions (specific and compound) once processing has completed.
+     *
+     * @param document The [Document] instance for whose document the extractions are returned.
+     * @return [Resource] with an [ExtractionsContainer] instance or information about the error
+     */
+    suspend fun getAllExtractionsWithPolling(
+        document: Document
+    ): Resource<E> = when (val pollDocument = documentRepository.pollDocument(document)) {
+        is Resource.Cancelled -> Resource.Cancelled()
+        is Resource.Error -> Resource.Error(pollDocument)
+        is Resource.Success -> documentRepository.getAllExtractions(pollDocument.data)
     }
 
     /**
-     * @return [PaymentRequest] for the given id
+     * Sends approved and conceivably corrected extractions for the given document. This is called "submitting feedback
+     * on extractions" in the Gini API documentation.
+     *
+     * @param document            The document for which the extractions should be updated.
+     * @param specificExtractions A Map where the key is the name of the specific extraction and the value is the
+     *                            SpecificExtraction object. This is the same structure as returned by the getExtractions
+     *                            method of this manager.
+     * @param compoundExtractions A Map where the key is the name of the compound extraction and the value is the
+     *                            CompoundExtraction object. This is the same structure as returned by the getExtractions
+     *                            method of this manager.
+     * @return Empty [Resource] or information about the error
+     */
+    suspend fun sendFeedbackForExtractions(
+        document: Document,
+        specificExtractions: Map<String, SpecificExtraction>,
+        compoundExtractions: Map<String, CompoundExtraction>,
+    ): Resource<Unit> =
+        documentRepository.sendFeedbackForExtractions(document, specificExtractions, compoundExtractions)
+
+    /**
+     * Sends approved and conceivably corrected extractions for the given document. This is called "submitting feedback
+     * on extractions" in the Gini API documentation.
+     *
+     * @param document            The document for which the extractions should be updated.
+     * @param specificExtractions A Map where the key is the name of the specific extraction and the value is the
+     *                            SpecificExtraction object. This is the same structure as returned by the getExtractions
+     *                            method of this manager.
+     * @return Empty [Resource] or information about the error
+     */
+    suspend fun sendFeedbackForExtractions(
+        document: Document,
+        specificExtractions: Map<String, SpecificExtraction>,
+    ): Resource<Unit> =
+        documentRepository.sendFeedbackForExtractions(document, specificExtractions)
+
+    /**
+     * @return Resource with [PaymentRequest] for the given id or information about the error
      */
     suspend fun getPaymentRequest(
         id: String,
-    ): PaymentRequest = withContext(taskDispatcher) {
-        suspendCancellableCoroutine { continuation ->
-            val task = documentTaskManager.getPaymentRequest(id)
-            continuation.resumeTask(task)
-        }
-    }
+    ): Resource<PaymentRequest> =
+        documentRepository.getPaymentRequest(id)
+
 
     /**
-     * @return List of payment [PaymentRequest]
+     * @return Resource with a list of payment [PaymentRequest] or information about the error
      */
-    suspend fun getPaymentRequests(): List<PaymentRequest> = withContext(taskDispatcher) {
-        suspendCancellableCoroutine { continuation ->
-            val task = documentTaskManager.paymentRequests
-            continuation.resumeTask(task)
-        }
-    }
+    suspend fun getPaymentRequests(): Resource<List<PaymentRequest>> =
+        documentRepository.getPaymentRequests()
 
-    protected fun <T> Continuation<T>.resumeTask(task: Task<T>) {
-        task.waitForCompletion()
-        if (!task.isFaulted) {
-            this.resume(task.result)
-        } else {
-            this.resumeWithException(task.error)
-        }
+    enum class DocumentType(val apiDoctypeHint: String) {
+        BANK_STATEMENT("BankStatement"),
+        CONTRACT("Contract"),
+        INVOICE("Invoice"),
+        RECEIPT("Receipt"),
+        REMINDER("Reminder"),
+        REMITTANCE_SLIP("RemittanceSlip"),
+        TRAVEL_EXPENSE_REPORT("TravelExpenseReport"),
+        OTHER("Other");
     }
-
-    private fun <T> Continuation<Unit>.resumeUnitTask(task: Task<T>) {
-        task.waitForCompletion()
-        if (!task.isFaulted) {
-            this.resume(Unit)
-        } else {
-            this.resumeWithException(task.error)
-        }
-    }
-
 }

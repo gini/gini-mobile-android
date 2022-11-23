@@ -7,12 +7,12 @@ import io.mockk.mockk
 import java.util.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import net.gini.android.core.api.DocumentManager
+import net.gini.android.core.api.Resource
 import net.gini.android.core.api.models.CompoundExtraction
-import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.models.ExtractionsContainer
 import net.gini.android.core.api.models.SpecificExtraction
+import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.api.HealthApiDocumentManager
 import net.gini.android.health.sdk.review.error.NoPaymentDataExtracted
 import net.gini.android.health.sdk.review.model.PaymentDetails
@@ -58,7 +58,7 @@ class GiniHealthTest {
 
     @Test
     fun `When setting document for review then document and payment flow emit success`() = runTest {
-        coEvery { documentManager.getExtractions(document) } returns extractions
+        coEvery { documentManager.getAllExtractionsWithPolling(document) } returns Resource.Success(extractions)
         val paymentDetails = PaymentDetails("recipient", "iban", "123.56", "purpose", extractions)
 
         assert(giniHealth.documentFlow.value is ResultWrapper.Loading<Document>) { "Expected Loading but was ${giniHealth.documentFlow.value}" }
@@ -73,10 +73,10 @@ class GiniHealthTest {
 
     @Test
     fun `When setting document for review then payment flow emits failure if extractions have no payment details`() = runTest {
-        coEvery { documentManager.getExtractions(document) } returns ExtractionsContainer(
+        coEvery { documentManager.getAllExtractionsWithPolling(document) } returns Resource.Success(ExtractionsContainer(
             emptyMap(),
             emptyMap()
-        )
+        ))
 
         assert(giniHealth.paymentFlow.value is ResultWrapper.Loading<PaymentDetails>) { "Expected Loading but was ${giniHealth.paymentFlow.value}" }
         giniHealth.setDocumentForReview(document)
@@ -86,7 +86,7 @@ class GiniHealthTest {
 
     @Test
     fun `When setting document id for review with payment details then document flow emits document`() = runTest {
-        coEvery { documentManager.getDocument(any<String>()) } returns document
+        coEvery { documentManager.getDocument(any<String>()) } returns Resource.Success(document)
         val paymentDetails = PaymentDetails("recipient", "iban", "123.56", "purpose")
 
         assert(giniHealth.documentFlow.value is ResultWrapper.Loading<Document>) { "Expected Loading" }
@@ -107,8 +107,8 @@ class GiniHealthTest {
 
     @Test
     fun `When setting document id for review without payment details then payment flow emits details`() = runTest {
-        coEvery { documentManager.getExtractions(any()) } returns extractions
-        coEvery { documentManager.getDocument(any<String>()) } returns document
+        coEvery { documentManager.getAllExtractionsWithPolling(any()) } returns Resource.Success(extractions)
+        coEvery { documentManager.getDocument(any<String>()) } returns Resource.Success(document)
         val paymentDetails = PaymentDetails("recipient", "iban", "123.56", "purpose", extractions)
 
         assert(giniHealth.paymentFlow.value is ResultWrapper.Loading<PaymentDetails>) { "Expected Loading" }
@@ -119,11 +119,11 @@ class GiniHealthTest {
 
     @Test
     fun `When setting document id for review without payment details then payment flow emits failure if extractions have no payment details`() = runTest {
-        coEvery { documentManager.getDocument(any<String>()) } returns document
-        coEvery { documentManager.getExtractions(document) } returns ExtractionsContainer(
+        coEvery { documentManager.getDocument(any<String>()) } returns Resource.Success(document)
+        coEvery { documentManager.getAllExtractionsWithPolling(document) } returns Resource.Success(ExtractionsContainer(
             emptyMap(),
             emptyMap()
-        )
+        ))
 
         assert(giniHealth.paymentFlow.value is ResultWrapper.Loading<PaymentDetails>) { "Expected Loading but was ${giniHealth.paymentFlow.value}" }
         giniHealth.setDocumentForReview("")
@@ -133,8 +133,8 @@ class GiniHealthTest {
 
     @Test
     fun `Document is payable if it has an IBAN extraction`() = runTest {
-        coEvery { documentManager.getExtractions(any()) } returns extractions
-        coEvery { documentManager.getDocument(any<String>()) } returns document
+        coEvery { documentManager.getAllExtractionsWithPolling(any()) } returns Resource.Success(extractions)
+        coEvery { documentManager.getDocument(any<String>()) } returns Resource.Success(document)
 
         assertTrue(giniHealth.checkIfDocumentIsPayable(document.id))
     }
@@ -144,8 +144,8 @@ class GiniHealthTest {
         val extractionsWithoutIBAN = copyExtractions(extractions).apply {
             compoundExtractions["payment"]?.specificExtractionMaps?.get(0)?.remove("iban")
         }
-        coEvery { documentManager.getExtractions(any()) } returns extractionsWithoutIBAN
-        coEvery { documentManager.getDocument(any<String>()) } returns document
+        coEvery { documentManager.getAllExtractionsWithPolling(any()) } returns Resource.Success(extractionsWithoutIBAN)
+        coEvery { documentManager.getDocument(any<String>()) } returns Resource.Success(document)
 
         assertFalse(giniHealth.checkIfDocumentIsPayable(document.id))
     }
@@ -156,8 +156,8 @@ class GiniHealthTest {
             compoundExtractions["payment"]?.specificExtractionMaps?.get(0)
                 ?.set("iban", SpecificExtraction("iban", "", "", null, listOf()))
         }
-        coEvery { documentManager.getExtractions(any()) } returns extractionsWithoutIBAN
-        coEvery { documentManager.getDocument(any<String>()) } returns document
+        coEvery { documentManager.getAllExtractionsWithPolling(any()) } returns Resource.Success(extractionsWithoutIBAN)
+        coEvery { documentManager.getDocument(any<String>()) } returns Resource.Success(document)
 
         assertFalse(giniHealth.checkIfDocumentIsPayable(document.id))
     }

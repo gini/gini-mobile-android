@@ -3,7 +3,7 @@ package net.gini.android.health.api.models
 import net.gini.android.health.api.response.PaymentProviderResponse
 
 /**
- * A payment provider is a Gini partner which integrated the GiniPay for Banks SDK into their mobile apps.
+ * A payment provider is a Gini partner which integrated Gini Pay Connect (via Gini Bank SDK) into their mobile apps.
  */
 data class PaymentProvider(
     val id: String,

@@ -1,7 +1,10 @@
 package net.gini.android.health.api.models
 
-import net.gini.android.core.api.requests.PaymentRequestBody
+import net.gini.android.health.api.requests.PaymentRequestBody
 
+/**
+ * Holds input information required for creating a payment request.
+ */
 data class PaymentRequestInput(
     val paymentProvider: String,
     val recipient: String,
@@ -12,6 +15,6 @@ data class PaymentRequestInput(
     val sourceDocumentLocation: String? = null,
 )
 
-fun PaymentRequestInput.toPaymentRequestBody() = PaymentRequestBody(
+internal fun PaymentRequestInput.toPaymentRequestBody() = PaymentRequestBody(
     sourceDocumentLocation, paymentProvider, recipient, iban, amount, purpose, bic
 )
