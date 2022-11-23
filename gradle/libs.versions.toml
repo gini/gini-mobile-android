@@ -90,6 +90,7 @@ trustkit = "com.datatheorem.android.trustkit:trustkit:1.1.5"
 lottie = "com.airbnb.android:lottie:5.1.1"
 jUnitParams = "pl.pragmatists:JUnitParams:1.1.1"
 retrofit = "com.squareup.retrofit2:retrofit:2.9.0"
+okhttp3 = "com.squareup.okhttp3:okhttp:4.10.0"
 retrofit-moshi-converter = "com.squareup.retrofit2:converter-moshi:2.4.0"
 okhttp3-logging-interceptor = "com.squareup.okhttp3:logging-interceptor:4.2.1"
 

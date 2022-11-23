@@ -18,5 +18,5 @@ Bolts was replaced with kotlin coroutines which is part of the kotlin standard l
 Retrofit2, a more popular and elegant networking library built upon okhttp3.
 
 The breaking changes affect only the Gini Bank API Library. If you are interacting with it directly, then please consult
-the Gini Bank API Library's `update guide <https://developer.gini.net/gini-mobile-android/bank-api-library/library/>`_
+the Gini Bank API Library's `migration guide <https://developer.gini.net/gini-mobile-android/bank-api-library/library/>`_
 for details.
