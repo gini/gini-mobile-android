@@ -50,7 +50,6 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.moshi.core)
-    implementation(libs.retrofit)
     implementation(libs.retrofit.moshi.converter)
     kapt(libs.moshi.codegen)
 
