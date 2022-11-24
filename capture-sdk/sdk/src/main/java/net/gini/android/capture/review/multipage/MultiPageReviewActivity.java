@@ -236,7 +236,7 @@ public class MultiPageReviewActivity extends AppCompatActivity implements
 
 
     private MultiPageReviewFragment mFragment;
-    private boolean mShouldScrollToLastPage;
+    private boolean mShouldScrollToLastPage = true;
 
     public static Intent createIntent(@NonNull final Context context, boolean shouldScrollToLastPage) {
         Intent intent = new Intent(context, MultiPageReviewActivity.class);
@@ -322,7 +322,9 @@ public class MultiPageReviewActivity extends AppCompatActivity implements
 
     @Override
     public void onReturnToCameraScreen() {
-        finish();
+        Intent intent = new Intent(this, CameraActivity.class);
+        startActivity(intent);
+        //finish();
     }
 
     @Override

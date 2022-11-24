@@ -1,10 +1,22 @@
 package net.gini.android.capture.camera;
 
-import android.app.Activity;
+import static net.gini.android.capture.internal.util.ActivityHelper.enableHomeAsUp;
+import static net.gini.android.capture.internal.util.ActivityHelper.interceptOnBackPressed;
+import static net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboarding;
+import static net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboardingAtFirstRun;
+import static net.gini.android.capture.review.ReviewActivity.EXTRA_IN_ANALYSIS_ACTIVITY;
+import static net.gini.android.capture.tracking.EventTrackingHelper.trackCameraScreenEvent;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
+import androidx.appcompat.app.AppCompatActivity;
 
 import net.gini.android.capture.Document;
 import net.gini.android.capture.DocumentImportEnabledFileTypes;
@@ -28,20 +40,6 @@ import net.gini.android.capture.tracking.CameraScreenEvent;
 import net.gini.android.capture.view.InjectedViewContainer;
 
 import java.util.Map;
-
-import androidx.activity.OnBackPressedCallback;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.VisibleForTesting;
-import androidx.appcompat.app.AppCompatActivity;
-
-import static net.gini.android.capture.internal.util.ActivityHelper.enableHomeAsUp;
-import static net.gini.android.capture.internal.util.ActivityHelper.interceptOnBackPressed;
-import static net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboarding;
-import static net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboardingAtFirstRun;
-import static net.gini.android.capture.noresults.NoResultsActivity.NO_RESULT_CANCEL_KEY;
-import static net.gini.android.capture.review.ReviewActivity.EXTRA_IN_ANALYSIS_ACTIVITY;
-import static net.gini.android.capture.tracking.EventTrackingHelper.trackCameraScreenEvent;
 
 /**
  * <h3>Screen API</h3>
@@ -375,7 +373,6 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
         setupHomeButton();
         handleOnBackPressed();
         setTitleOnTablets();
-        setupCameraBottomNavigationBar();
     }
 
     private void handleOnBackPressed() {
@@ -404,20 +401,6 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(ContextHelper.isTablet(this) ? getString(R.string.gc_camera_title) : getString(R.string.gc_title_camera));
         }
-    }
-
-    private void setupCameraBottomNavigationBar() {
-        if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
-            InjectedViewContainer<CameraNavigationBarBottomAdapter> injectedViewContainer =
-                    findViewById(R.id.gc_injected_navigation_bar_container_bottom);
-            CameraNavigationBarBottomAdapter adapter = GiniCapture.getInstance().getCameraNavigationBarBottomAdapter();
-            injectedViewContainer.setInjectedViewAdapter(adapter);
-
-            adapter.setOnBackButtonClickListener(v -> onBackPressed());
-
-            adapter.setOnHelpButtonClickListener(v -> startHelpActivity());
-        }
-
     }
 
 
@@ -477,8 +460,6 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
     protected void onDestroy() {
         super.onDestroy();
         clearMemory();
-
-        AndroidHelper.STORE_SCROLL_STATE = -1;
     }
 
     private void createGiniCaptureCoordinator() {
@@ -552,8 +533,16 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
     public void onProceedToMultiPageReviewScreen(
             @NonNull final GiniCaptureMultiPageDocument multiPageDocument, boolean shouldScrollToLastPage) {
         if (multiPageDocument.getType() == Document.Type.IMAGE_MULTI_PAGE) {
-            final Intent intent = MultiPageReviewActivity.createIntent(this, shouldScrollToLastPage);
-            startActivityForResult(intent, MULTI_PAGE_REVIEW_REQUEST);
+            if (multiPageDocument.getDocuments().size() > 1) {
+                // For subsequent images a new CameraActivity was launched from the MultiPageReviewActivity
+                // and so we can simply finish to return to the review activity
+                finish();
+            } else {
+                // For the first image navigate to the review activity and when it returns a result
+                // we will return it directly to the client
+                final Intent intent = MultiPageReviewActivity.createIntent(this, shouldScrollToLastPage);
+                startActivityForResult(intent, MULTI_PAGE_REVIEW_REQUEST);
+            }
         } else {
             throw new UnsupportedOperationException("Unsupported multi-page document type.");
         }
@@ -565,6 +554,7 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
         callback.documentAccepted();
     }
 
+    // TODO: can be deleted
     private void startReviewActivity(@NonNull final Document document) {
         final Intent reviewIntent = new Intent(this, ReviewActivity.class);
         reviewIntent.putExtra(ReviewActivity.EXTRA_IN_DOCUMENT, document);
@@ -616,25 +606,18 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
         switch (requestCode) {
             case REVIEW_DOCUMENT_REQUEST:
             case ANALYSE_DOCUMENT_REQUEST:
-                if ((resultCode != Activity.RESULT_CANCELED
-                        && resultCode != AnalysisActivity.RESULT_NO_EXTRACTIONS
-                        && resultCode != ReviewActivity.RESULT_NO_EXTRACTIONS) || (data != null && data.hasExtra(NO_RESULT_CANCEL_KEY))) {
-                    setResult(resultCode, data);
-                    finish();
-                    clearMemory();
-                }
+            case MULTI_PAGE_REVIEW_REQUEST:
+                // The first CameraActivity instance is invisible to the user
+                // after we navigate to the review or analysis activity.
+                // Once we get a result it means we are back at the first CameraActivity instance
+                // so we need to return the result to the client.
+                setResult(resultCode, data);
+                finish();
+                clearMemory();
                 break;
             case ONBOARDING_REQUEST:
                 mOnboardingShown = false;
                 showInterface();
-                break;
-            case MULTI_PAGE_REVIEW_REQUEST:
-                if ((resultCode != Activity.RESULT_CANCELED
-                        && resultCode != AnalysisActivity.RESULT_NO_EXTRACTIONS) || (data != null && data.hasExtra(NO_RESULT_CANCEL_KEY))) {
-                    setResult(resultCode, data);
-                    finish();
-                    clearMemory();
-                }
                 break;
             default:
                 super.onActivityResult(requestCode, resultCode, data);
