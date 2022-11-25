@@ -6,17 +6,32 @@ package net.gini.android.capture.network;
  * Copyright (c) 2018 Gini GmbH.
  */
 
+import java.util.ArrayList;
+import java.util.Map;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+enum FileImportErrors {
+    GENERIC,
+    PAGE,
+    SIZE,
+    UNSUPPORTED,
+    PASSWORD,
+    CUSTOM
+}
 /**
  * Used by the {@link GiniCaptureNetworkService} and {@link GiniCaptureNetworkApi} to return error
  * messages.
  */
 public class Error {
 
-    private final String mMessage;
-    private final Throwable mCause;
+    private String mMessage;
+    private Throwable mCause;
+
+    private Integer mStatusCode;
+    private Map<String, ArrayList<String>> mHeaders;
+    private FileImportErrors mFileImportErrors;
 
     /**
      * Create a new error.
@@ -40,6 +55,26 @@ public class Error {
     }
 
     /**
+     * Create a new error with status code and headers.
+     *
+     * @param statusCode API response status code
+     * @param headers API response headers
+     */
+    public Error(final Integer statusCode,final Map<String, ArrayList<String>> headers) {
+        mStatusCode = statusCode;
+        mHeaders = headers;
+    }
+
+    /**
+     * Create a new error for file handling
+     *
+     * @param fileImportErrors import error type
+     */
+    public Error(FileImportErrors fileImportErrors) {
+        mFileImportErrors = fileImportErrors;
+    }
+
+    /**
      * @return error message
      */
     @NonNull
@@ -53,5 +88,28 @@ public class Error {
     @Nullable
     public Throwable getCause() {
         return mCause;
+    }
+
+    /**
+     * @return error status code
+     */
+    @Nullable
+    public Integer getStatusCode() {
+        return mStatusCode;
+    }
+
+    /**
+     * @return error response headers
+     */
+    @Nullable
+    public Map<String, ArrayList<String>> getHeaders() {
+        return mHeaders;
+    }
+
+    /**
+     * @return error file import type
+     */
+    public FileImportErrors getFileImportErrors() {
+        return mFileImportErrors;
     }
 }
