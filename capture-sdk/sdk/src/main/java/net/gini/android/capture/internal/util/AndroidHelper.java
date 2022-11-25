@@ -18,7 +18,6 @@ public final class AndroidHelper {
     //Shared preferences would be maybe overthinking
     //Let me know if we don't want to use this
 
-    public static int STORE_SCROLL_STATE = -1;
     /**
      * Internal use only.
      *
