@@ -10,12 +10,14 @@ import net.gini.android.capture.R
 import net.gini.android.capture.camera.CameraActivity.RESULT_ENTER_MANUALLY
 import net.gini.android.capture.internal.util.ActivityHelper
 import net.gini.android.capture.ImageRetakeOptionsListener
+import net.gini.android.capture.network.ErrorType
 import net.gini.android.capture.noresults.NoResultsActivity
 
 class ErrorActivity : AppCompatActivity(),
     ImageRetakeOptionsListener {
 
     private var mDocument: Document? = null
+    private var mErrorType: ErrorType? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,7 +53,7 @@ class ErrorActivity : AppCompatActivity(),
     }
 
     private fun initFragment() {
-        val errorFragment = ErrorFragmentCompat.createInstance(mDocument)
+        val errorFragment = ErrorFragmentCompat.createInstance(mErrorType, mDocument)
         supportFragmentManager
             .beginTransaction()
             .add(R.id.gc_fragment_error, errorFragment)
@@ -62,6 +64,7 @@ class ErrorActivity : AppCompatActivity(),
         val extras = intent.extras
         if (extras != null) {
             mDocument = extras.getParcelable(NoResultsActivity.EXTRA_IN_DOCUMENT)
+            mErrorType = extras.getSerializable(EXTRA_IN_ERROR) as? ErrorType
         }
     }
 
@@ -83,5 +86,7 @@ class ErrorActivity : AppCompatActivity(),
          * @suppress
          */
         const val ERROR_REQUEST = 999
+
+        const val EXTRA_IN_ERROR = "GC_EXTRA_IN_ERROR"
     }
 }

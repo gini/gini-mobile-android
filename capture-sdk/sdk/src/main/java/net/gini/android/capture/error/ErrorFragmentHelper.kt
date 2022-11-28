@@ -5,6 +5,7 @@ import android.os.Bundle
 import net.gini.android.capture.Document
 import net.gini.android.capture.internal.ui.FragmentImplCallback
 import net.gini.android.capture.ImageRetakeOptionsListener
+import net.gini.android.capture.network.ErrorType
 
 class ErrorFragmentHelper {
 
@@ -12,10 +13,9 @@ class ErrorFragmentHelper {
         private const val ARGS_ERROR = "GC_ARGS_ERROR"
         private const val ARGS_DOCUMENT = "ARGS_DOCUMENT"
 
-        // TODO: set correct param when handling real errors
-        fun createArguments(document: Document?): Bundle {
+        fun createArguments(errorType: ErrorType?, document: Document?): Bundle {
             val arguments = Bundle()
-            arguments.putString(ARGS_ERROR, "error")
+            arguments.putSerializable(ARGS_ERROR, errorType)
             arguments.putParcelable(ARGS_DOCUMENT, document)
             return arguments
         }
@@ -25,9 +25,9 @@ class ErrorFragmentHelper {
             arguments: Bundle?
         ): ErrorFragmentImpl {
             val document = arguments?.getParcelable<Document>(ARGS_DOCUMENT)
+            val error = arguments?.getSerializable(ARGS_ERROR) as? ErrorType
 
-            // TODO: handle Resource<Error>
-            return ErrorFragmentImpl(fragment, document)
+            return ErrorFragmentImpl(fragment, document, error)
         }
 
         fun setListener(
