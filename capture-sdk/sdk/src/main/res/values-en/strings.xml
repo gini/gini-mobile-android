@@ -5,7 +5,7 @@
     <string name="gc_title_review">Check photo quality</string>
     <string name="gc_title_help">Help</string>
     <string name="gc_title_analysis">Review</string>
-    <string name="gc_title_photo_tips">Tips for photos</string>
+    <string name="gc_title_photo_tips">Tips</string>
     <string name="gc_title_supported_formats">Supported formats</string>
     <string name="gc_title_file_import">How to import</string>
     <string name="gc_title_multi_page_review">Check photo quality</string>
@@ -84,7 +84,7 @@
     <string name="gc_file_chooser_fotos_section_header">Photos</string>
     <string name="gc_file_chooser_pdfs_section_header">PDF</string>
     <string name="gc_help_item_photo_tips_title">Tips for best results from photos</string>
-    <string name="gc_help_item_file_import_guide_title">Open documents from other apps</string>
+    <string name="gc_help_item_file_import_guide_title">Import documents from other apps</string>
     <string name="gc_help_item_supported_formats_title">Supported formats</string>
     <string name="gc_photo_tips_headline">For best extraction results, please apply the following tips for photos:</string>
     <string name="gc_photo_tips_camera_button">To the camera</string>
@@ -97,7 +97,7 @@
     <string name="gc_supported_format_section_header">Supported formats</string>
     <string name="gc_unsupported_format_section_header">Not supported formats</string>
     <string name="gc_file_import_header"><![CDATA[Paying digital invoices has now become even more convenient. Send a PDF invoice directly to <Partner App Name>. The document will automatically be analysed for payment transfer.]]></string>
-    <string name="gc_file_import_section_1_title">1. Please select an invoice</string>
+    <string name="gc_file_import_section_1_title">1. Select an invoice</string>
     <string name="gc_file_import_section_1_body">To do so, please select a PDF invoice from within your email app, PDF viewer or other app on your smarthpone. To redirect the file to GiniVision, use the “Share” function, represented as a square with the arrow pointing up.</string>
     <string name="gc_file_import_section_2_title">2. Import to app</string>
     <string name="gc_file_import_section_2_body">Please select your Banking App from the list to start the analysis and transfer process.</string>
