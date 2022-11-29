@@ -12,7 +12,7 @@
         android:id="@+id/gc_onboarding_viewpager"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="32dp"
+        android:layout_marginBottom="@dimen/xlarge"
         android:contentDescription="@string/gc_onboarding_viewpager_content_description"
         app:layout_constraintBottom_toTopOf="@+id/gc_layout_page_indicators"
         app:layout_constraintEnd_toEndOf="parent"
@@ -30,7 +30,7 @@
         app:layout_constraintBottom_toTopOf="@id/gc_skip"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_goneMarginBottom="@dimen/xxxxlarge">
+        app:layout_goneMarginBottom="@dimen/xlarge">
 
         <!--         These views are created during runtime. Kept here only for visualization during development. -->
         <!--        <ImageView-->
