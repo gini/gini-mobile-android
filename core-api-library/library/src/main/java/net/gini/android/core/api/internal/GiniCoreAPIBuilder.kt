@@ -298,6 +298,16 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
 
     private fun createOkHttpClient() = OkHttpClient.Builder()
         .apply {
+            // Set system user agent string or fallback user agent if it's not available
+            addInterceptor { chain ->
+                chain.proceed(
+                    chain.request()
+                        .newBuilder()
+                        .header("User-Agent", System.getProperty("http.agent") ?: FALLBACK_USER_AGENT)
+                        .build()
+                )
+            }
+
            getTrustManagers()?.let { trustManagers ->
                 createSSLSocketFactory(trustManagers)?.let { socketFactory ->
                     sslSocketFactory(socketFactory, X509TrustManagerAdapter(trustManagers[0]))
@@ -398,5 +408,6 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
 
     companion object {
         const val LOG_TAG = "GiniCoreAPIBuilder"
+        val FALLBACK_USER_AGENT = "okhttp/${okhttp3.OkHttp.VERSION} (Android ${Build.VERSION.RELEASE}; ${Build.MODEL} Build/${Build.ID})"
     }
 }
