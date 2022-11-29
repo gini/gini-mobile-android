@@ -122,7 +122,9 @@ class GiniCaptureDefaultNetworkService(
                 callback.success(Result(apiDocument.id))
             }
             is Resource.Error -> {
-                val error = Error(partialDocumentResource.formattedErrorMessage)
+
+                val error = Error(partialDocumentResource.responseStatusCode,
+                    partialDocumentResource.responseHeaders, partialDocumentResource.exception)
                 LOG.error(
                     "Document upload failed for {}: {}", document.id,
                     error.message

@@ -3,6 +3,7 @@ package net.gini.android.capture.review.multipage;
 import static net.gini.android.capture.GiniCaptureError.ErrorCode.MISSING_GINI_CAPTURE_INSTANCE;
 import static net.gini.android.capture.document.GiniCaptureDocumentError.ErrorCode.FILE_VALIDATION_FAILED;
 import static net.gini.android.capture.document.GiniCaptureDocumentError.ErrorCode.UPLOAD_FAILED;
+import static net.gini.android.capture.error.ErrorActivity.EXTRA_IN_ERROR;
 import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
 import static net.gini.android.capture.internal.util.FileImportHelper.showAlertIfOpenWithDocumentAndAppIsDefault;
 import static net.gini.android.capture.review.multipage.previews.PreviewFragment.ErrorButtonAction.DELETE;
@@ -31,12 +32,15 @@ import net.gini.android.capture.document.GiniCaptureDocument;
 import net.gini.android.capture.document.GiniCaptureDocumentError;
 import net.gini.android.capture.document.ImageDocument;
 import net.gini.android.capture.document.ImageMultiPageDocument;
+import net.gini.android.capture.error.ErrorActivity;
 import net.gini.android.capture.internal.network.NetworkRequestResult;
 import net.gini.android.capture.internal.network.NetworkRequestsManager;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.util.AlertDialogHelperCompat;
 import net.gini.android.capture.internal.util.AndroidHelper;
 import net.gini.android.capture.internal.util.FileImportHelper;
+import net.gini.android.capture.network.FailureException;
+import net.gini.android.capture.noresults.NoResultsActivity;
 import net.gini.android.capture.review.multipage.previews.MiddlePageManager;
 import net.gini.android.capture.review.multipage.previews.PreviewFragmentListener;
 import net.gini.android.capture.review.multipage.previews.PreviewPagesAdapter;
@@ -728,9 +732,12 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
                             hideIndicator();
 
                             trackUploadError(throwable);
-                            final String errorMessage = getString(
-                                    R.string.gc_document_analysis_error);
-                            showErrorOnPreview(errorMessage, document);
+
+                            FailureException exception = (FailureException) throwable;
+                            Intent intent = new Intent(requireContext(), ErrorActivity.class);
+                            intent.putExtra(EXTRA_IN_ERROR, exception.errorType);
+                            intent.putExtra(NoResultsActivity.EXTRA_IN_DOCUMENT, document);
+                            startActivity(intent);
 
                         } else if (requestResult != null) {
                             hideIndicator();

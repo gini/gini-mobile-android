@@ -3,6 +3,13 @@ package net.gini.android.capture.network
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import net.gini.android.capture.R
+import net.gini.android.capture.network.FileImportErrors.*
+import java.net.UnknownHostException
+
+
+enum class FileImportErrors {
+    GENERIC, PAGE, SIZE, UNSUPPORTED, PASSWORD, CUSTOM
+}
 
 enum class ErrorType(@DrawableRes val drawableResource: Int,
                      @StringRes val titleTextResource: Int,
@@ -21,16 +28,22 @@ enum class ErrorType(@DrawableRes val drawableResource: Int,
     CUSTOM_VALIDATION(R.drawable.gc_alert_triangle_icon, R.string.gc_error_file_custom_validation_title, R.string.gc_error_file_custom_validation_text);
 
     fun typeFromError(error: Error): ErrorType {
-        // TODO: handle no internet case
+
+        if (error.cause != null && (error.cause is UnknownHostException)) {
+            return NO_CONNECTION
+        }
 
         if (error.statusCode == null) {
             return when (error.fileImportErrors) {
-                FileImportErrors.GENERIC -> FILE_IMPORT_GENERIC
-                FileImportErrors.SIZE -> FILE_IMPORT_SIZE
-                FileImportErrors.PAGE -> FILE_IMPORT_PAGE_COUNT
-                FileImportErrors.UNSUPPORTED -> FILE_IMPORT_UNSUPPORTED
-                FileImportErrors.PASSWORD -> FILE_IMPORT_PASSWORD
-                FileImportErrors.CUSTOM -> CUSTOM_VALIDATION
+                GENERIC -> FILE_IMPORT_GENERIC
+                SIZE -> FILE_IMPORT_SIZE
+                PAGE -> FILE_IMPORT_PAGE_COUNT
+                UNSUPPORTED -> FILE_IMPORT_UNSUPPORTED
+                PASSWORD -> FILE_IMPORT_PASSWORD
+                CUSTOM -> CUSTOM_VALIDATION
+                else -> {
+                    GENERAL
+                }
             }
         }
 

@@ -7,19 +7,12 @@ package net.gini.android.capture.network;
  */
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-enum FileImportErrors {
-    GENERIC,
-    PAGE,
-    SIZE,
-    UNSUPPORTED,
-    PASSWORD,
-    CUSTOM
-}
 /**
  * Used by the {@link GiniCaptureNetworkService} and {@link GiniCaptureNetworkApi} to return error
  * messages.
@@ -30,8 +23,9 @@ public class Error {
     private Throwable mCause;
 
     private Integer mStatusCode;
-    private Map<String, ArrayList<String>> mHeaders;
+    private Map<String, List<String>> mHeaders;
     private FileImportErrors mFileImportErrors;
+    private Exception mException;
 
     /**
      * Create a new error.
@@ -60,9 +54,10 @@ public class Error {
      * @param statusCode API response status code
      * @param headers API response headers
      */
-    public Error(final Integer statusCode,final Map<String, ArrayList<String>> headers) {
+    public Error(final Integer statusCode,final Map<String, List<String>> headers, final Throwable exception) {
         mStatusCode = statusCode;
         mHeaders = headers;
+        mCause = exception;
     }
 
     /**
@@ -102,7 +97,7 @@ public class Error {
      * @return error response headers
      */
     @Nullable
-    public Map<String, ArrayList<String>> getHeaders() {
+    public Map<String, List<String>> getHeaders() {
         return mHeaders;
     }
 
