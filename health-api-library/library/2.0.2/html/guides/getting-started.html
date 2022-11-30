@@ -1,0 +1,368 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Getting started &mdash; Gini Health API Library for Android v1 documentation</title>
+  
+
+  
+  
+
+  
+  <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,400italic,600italic|Source+Code+Pro|Roboto+Slab:400,700" rel="stylesheet" type="text/css" />
+
+  
+  
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:'../',
+        VERSION:'v1',
+        COLLAPSE_INDEX:false,
+        FILE_SUFFIX:'.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="../_static/language_data.js"></script>
+
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+    <script type="text/javascript">
+        jQuery(function () {
+            SphinxRtdTheme.StickyNav.enable();
+        });
+    </script>
+  
+
+  
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="Gini Health API Library for Android v1 documentation" href="../index.html"/>
+        <link rel="next" title="Using the Gini Health API Library" href="using-the-library.html"/>
+        <link rel="prev" title="Gini Health API Library for Android" href="../index.html"/> 
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../index.html" id="gini-logo">
+          <img src="../_static/logo_flat.png" />
+        </a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#first-of-all-add-the-library-to-your-build">First of all: Add the library to your build</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#integrating-the-gini-health-api-library">Integrating the Gini Health API Library</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#creating-the-ginihealthapi-instance">Creating the GiniHealthAPI instance</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#public-key-pinning">Public Key Pinning</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#configure-pinning">Configure Pinning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">TrustKit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#enable-pinning-with-a-network-security-configuration">Enable Pinning with a Network Security Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#enable-pinning-with-a-custom-trustmanager-implementation">Enable Pinning with a custom TrustManager implementation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#extract-hash-from-health-api-gini-net">Extract Hash From health-api.gini.net</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#extract-hash-from-public-key">Extract Hash From Public Key</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="using-the-library.html">Using the Gini Health API Library</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="using-the-library.html#upload-a-document">Upload a document</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="using-the-library.html#setting-the-document-type-hint">Setting the document type hint</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="using-the-library.html#getting-extractions">Getting extractions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="using-the-library.html#sending-feedback">Sending feedback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="using-the-library.html#handling-errors">Handling errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="using-the-library.html#debugging">Debugging</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="migrate-to-2-0-0.html">Migrate to 2.0.0</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="migrate-to-2-0-0.html#overview-of-public-api-changes">Overview of public API changes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-2-0-0.html#ginihealthapibuilder">GiniHealthAPIBuilder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-2-0-0.html#ginihealthapi">GiniHealthAPI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-2-0-0.html#healthapidocumenttaskmanager">HealthApiDocumentTaskManager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-2-0-0.html#healthapidocumentmanager">HealthApiDocumentManager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-2-0-0.html#sessionmanager">SessionManager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-2-0-0.html#resource">Resource</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-2-0-0.html#documenttype">DocumentType</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="migrate-to-2-0-0.html#examples">Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-2-0-0.html#custom-caching">Custom caching</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-2-0-0.html#custom-sessionmanager">Custom SessionManager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-2-0-0.html#upload-and-analyze-a-document">Upload and analyze a document</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../see_also.html">See also</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../license.html#licenses-and-acknowledgements-for-incorporated-software">Licenses and Acknowledgements for Incorporated Software</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../license.html#bolts">Bolts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../license.html#android-volley">Android Volley</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../license.html#trustkit">TrustKit</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">Gini Health API Library for Android</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>Getting started</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="getting-started">
+<span id="guide-getting-started"></span><h1>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="first-of-all-add-the-library-to-your-build">
+<h2>First of all: Add the library to your build<a class="headerlink" href="#first-of-all-add-the-library-to-your-build" title="Permalink to this headline">¶</a></h2>
+<p>build.gradle:</p>
+<div class="highlight-groovy notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span> <span class="o">{</span>
+    <span class="n">implementation</span> <span class="s1">&#39;net.gini.android:gini-health-api-lib:2.0.2&#39;</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="integrating-the-gini-health-api-library">
+<h2>Integrating the Gini Health API Library<a class="headerlink" href="#integrating-the-gini-health-api-library" title="Permalink to this headline">¶</a></h2>
+<p>The Gini Health API Library provides the <code class="docutils literal notranslate"><span class="pre">GiniHealthAPI</span></code> class which is a façade to all functionality of the library.
+We recommend using a single instance of this class and avoid instantiating it each time you need to interact with the
+Gini Health API. You can reuse the instance either through your <code class="docutils literal notranslate"><span class="pre">Application</span></code> subclass or via a dependency injection
+solution. This has the benefits that the library can reuse sessions between requests to the Gini Health API which may
+save a noteworthy number of HTTP requests.</p>
+<div class="section" id="creating-the-ginihealthapi-instance">
+<h3>Creating the GiniHealthAPI instance<a class="headerlink" href="#creating-the-ginihealthapi-instance" title="Permalink to this headline">¶</a></h3>
+<p>In order to create an instance of the <code class="docutils literal notranslate"><span class="pre">GiniHealthAPI</span></code> class, you need both your client id and your client
+secret. If you don’t have a client id and client secret yet, you need to contact us and we’ll provide
+you with the credentials.</p>
+<p>All requests to the Gini Health API are made on behalf of a user. This means particularly that all created
+documents are bound to a specific user account. But since you are most likely only interested in the
+results of the semantic document analysis and not in a cloud document storage system, the Gini Health API
+has the feature of <em>anonymous users</em>. This means that user accounts are created on the fly and the
+user account is unknown to your application’s user.</p>
+<p>The following example describes how to use the Gini Health API in your application with such anonymous user
+accounts. To use the Gini Health API, you must create an instance of the <code class="docutils literal notranslate"><span class="pre">GiniHealthAPI</span></code> class. The <code class="docutils literal notranslate"><span class="pre">GiniHealthAPI</span></code>
+instance is configured and created with the help of the <code class="docutils literal notranslate"><span class="pre">GiniHealthAPIBuilder</span></code> class. In this example, the
+anonymous users are created with the email domain “example.com”. An example of a username created
+with this configuration would be <code class="docutils literal notranslate"><span class="pre">550e8400-e29b-11d4-a716-446655440000&#64;example.com</span></code></p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// The GiniHealthAPI instance is a facade to all available managers of the library. Configure and</span>
+<span class="c1">// create the library with the GiniHealthAPIBuilder.</span>
+<span class="n">val</span> <span class="n">giniHealthApi</span><span class="p">:</span> <span class="n">GiniHealthAPI</span> <span class="o">=</span>
+        <span class="n">GiniHealthAPIBuilder</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="s">&quot;gini-client-id&quot;</span><span class="p">,</span> <span class="s">&quot;GiniClientSecret&quot;</span><span class="p">,</span> <span class="s">&quot;example.com&quot;</span><span class="p">)</span>
+                <span class="p">.</span><span class="na">build</span><span class="p">();</span>
+
+<span class="c1">// The HealthApiDocumentManager provides the high-level API to work with documents.</span>
+<span class="n">val</span> <span class="n">documentManager</span><span class="p">:</span> <span class="n">HealthApiDocumentManager</span> <span class="o">=</span> <span class="n">giniHealthApi</span><span class="p">.</span><span class="na">documentManager</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="public-key-pinning">
+<h2>Public Key Pinning<a class="headerlink" href="#public-key-pinning" title="Permalink to this headline">¶</a></h2>
+<p>Public key pinning is provided using the <a class="reference external" href="https://developer.android.com/training/articles/security-config.html">Android Network Security Configuration</a> and <a class="reference external" href="https://github.com/datatheorem/TrustKit-Android">TrustKit</a>.</p>
+<p>To use public key pinning you can either create an <a class="reference external" href="https://developer.android.com/training/articles/security-config.html">Android network security configuration</a> xml file or set a custom <a class="reference external" href="https://developer.android.com/reference/javax/net/ssl/TrustManager">TrustManager</a> implementation.</p>
+<p>The network security configuration is supported
+natively on Android Nougat (API Level 24) and newer. For versions between API Level 21 and 23 the Gini SDK relies on
+<a class="reference external" href="https://github.com/datatheorem/TrustKit-Android">TrustKit</a>.</p>
+<p>The custom <code class="docutils literal notranslate"><span class="pre">TrustManager</span></code> is supported on all Android versions.</p>
+<p>We recommend reading the <a class="reference external" href="https://developer.android.com/training/articles/security-config.html">Android Network Security Configuration</a> guide and the <a class="reference external" href="https://github.com/datatheorem/TrustKit-Android#limitations">TrustKit
+limitations for API Levels 21 to 23</a>.</p>
+<div class="section" id="configure-pinning">
+<h3>Configure Pinning<a class="headerlink" href="#configure-pinning" title="Permalink to this headline">¶</a></h3>
+<p>The following sample configuration shows how to set the public key pin for the two domains. The Gini
+Health API Library uses by default <code class="docutils literal notranslate"><span class="pre">health-api.gini.net</span></code> and <code class="docutils literal notranslate"><span class="pre">user.gini.net</span></code>. It should be saved under
+<code class="docutils literal notranslate"><span class="pre">res/xml/network_security_config.xml</span></code>:</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
+<span class="nt">&lt;network-security-config&gt;</span>
+    <span class="nt">&lt;domain-config&gt;</span>
+        <span class="nt">&lt;trustkit-config</span>
+            <span class="na">disableDefaultReportUri=</span><span class="s">&quot;true&quot;</span>
+            <span class="na">enforcePinning=</span><span class="s">&quot;true&quot;</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;domain</span> <span class="na">includeSubdomains=</span><span class="s">&quot;false&quot;</span><span class="nt">&gt;</span>health-api.gini.net<span class="nt">&lt;/domain&gt;</span>
+        <span class="nt">&lt;pin-set&gt;</span>
+            <span class="c">&lt;!-- old *.gini.net public key--&gt;</span>
+            <span class="nt">&lt;pin</span> <span class="na">digest=</span><span class="s">&quot;SHA-256&quot;</span><span class="nt">&gt;</span>cNzbGowA+LNeQ681yMm8ulHxXiGojHE8qAjI+M7bIxU=<span class="nt">&lt;/pin&gt;</span>
+            <span class="c">&lt;!-- new *.gini.net public key, active from around June 2020 --&gt;</span>
+            <span class="nt">&lt;pin</span> <span class="na">digest=</span><span class="s">&quot;SHA-256&quot;</span><span class="nt">&gt;</span>zEVdOCzXU8euGVuMJYPr3DUU/d1CaKevtr0dW0XzZNo=<span class="nt">&lt;/pin&gt;</span>
+        <span class="nt">&lt;/pin-set&gt;</span>
+        <span class="nt">&lt;domain-config&gt;</span>
+            <span class="nt">&lt;trustkit-config</span>
+                <span class="na">disableDefaultReportUri=</span><span class="s">&quot;true&quot;</span>
+                <span class="na">enforcePinning=</span><span class="s">&quot;true&quot;</span> <span class="nt">/&gt;</span>
+            <span class="nt">&lt;domain</span> <span class="na">includeSubdomains=</span><span class="s">&quot;false&quot;</span><span class="nt">&gt;</span>user.gini.net<span class="nt">&lt;/domain&gt;</span>
+        <span class="nt">&lt;/domain-config&gt;</span>
+    <span class="nt">&lt;/domain-config&gt;</span>
+<span class="nt">&lt;/network-security-config&gt;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you set different base urls when instantiating with the <code class="docutils literal notranslate"><span class="pre">GiniHealthAPIBuilder</span></code>, then make sure
+you set matching domains in the network security configuration xml.</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">The above digests serve as an example only. You should <strong>always</strong> create the digest yourself
+from the Gini API’s public key and use that one (see <a href="#id6"><span class="problematic" id="id7">`Extract Hash From gini.net`_</span></a>). If you
+received a digest from us then <strong>always</strong> validate it by comparing it to the digest you created
+from the public key (see <a class="reference internal" href="#extract-hash-from-public-key">Extract Hash From Public Key</a>). Failing to validate a digest may lead
+to security vulnerabilities.</p>
+</div>
+</div>
+<div class="section" id="id4">
+<h3>TrustKit<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<p>The <a class="reference external" href="https://github.com/datatheorem/TrustKit-Android">TrustKit</a> configuration tag
+<code class="docutils literal notranslate"><span class="pre">&lt;trustkit-config&gt;</span></code> is required in order to disable TrustKit reporting and to enforce public key
+pinning. This is important because without it TrustKit won’t throw <code class="docutils literal notranslate"><span class="pre">CertificateExceptions</span></code> if the
+local public keys didn’t match any of the remote ones, effectively disabling pinning. The only
+downside of enforcing pinning is that two public key hashes are required. In the example above we
+create and used a “zero” key hash as a placeholder. Setting the same key hash twice won’t help since
+key hashes are stored in a set. Ideally you should use a backup public key hash as the second one.</p>
+<p>In your <code class="docutils literal notranslate"><span class="pre">AndroidManifest.xml</span></code> you need to set the <code class="docutils literal notranslate"><span class="pre">android:networkSecurityConfig</span></code> attribute on
+the <code class="docutils literal notranslate"><span class="pre">&lt;application&gt;</span></code> tag to point to the xml:</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span>&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+&lt;manifest ...&gt;
+    ...
+    &lt;application android:networkSecurityConfig=&quot;@xml/network_security_config&quot;&gt;
+    ...
+&lt;/manifest&gt;
+</pre></div>
+</div>
+</div>
+<div class="section" id="enable-pinning-with-a-network-security-configuration">
+<h3>Enable Pinning with a Network Security Configuration<a class="headerlink" href="#enable-pinning-with-a-network-security-configuration" title="Permalink to this headline">¶</a></h3>
+<p>For the library to know about the xml you need to set the xml resource id using the
+<code class="docutils literal notranslate"><span class="pre">GiniHealthAPIBuilder#setNetworkSecurityConfigResId()</span></code> method:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">val</span> <span class="n">giniHealthApi</span><span class="p">:</span> <span class="n">GiniHealthAPI</span> <span class="o">=</span> <span class="n">GiniHealthAPIBuilder</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="s">&quot;gini-client-id&quot;</span><span class="p">,</span> <span class="s">&quot;GiniClientSecret&quot;</span><span class="p">,</span> <span class="s">&quot;example.com&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="na">setNetworkSecurityConfigResId</span><span class="p">(</span><span class="n">R</span><span class="p">.</span><span class="na">xml</span><span class="p">.</span><span class="na">network_security_config</span><span class="p">)</span>
+        <span class="p">.</span><span class="na">build</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="enable-pinning-with-a-custom-trustmanager-implementation">
+<h3>Enable Pinning with a custom TrustManager implementation<a class="headerlink" href="#enable-pinning-with-a-custom-trustmanager-implementation" title="Permalink to this headline">¶</a></h3>
+<p>You can also take full control over which certificates to trust by passing your own <code class="docutils literal notranslate"><span class="pre">TrustManager</span></code> implementation
+to the <code class="docutils literal notranslate"><span class="pre">GiniHealthAPIBuilder#setTrustManager()</span></code> method:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">val</span> <span class="n">giniHealthApi</span><span class="p">:</span> <span class="n">GiniHealthAPI</span> <span class="o">=</span> <span class="n">GiniHealthAPIBuilder</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="s">&quot;gini-client-id&quot;</span><span class="p">,</span> <span class="s">&quot;GiniClientSecret&quot;</span><span class="p">,</span> <span class="s">&quot;example.com&quot;</span><span class="p">)</span>
+        <span class="p">.</span><span class="na">setTrustManager</span><span class="p">(</span><span class="n">yourTrustManager</span><span class="p">)</span>
+        <span class="p">.</span><span class="na">build</span><span class="p">();</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Setting a custom <code class="docutils literal notranslate"><span class="pre">TrustManager</span></code> will override the network security configuration.</p>
+</div>
+</div>
+<div class="section" id="extract-hash-from-health-api-gini-net">
+<h3>Extract Hash From health-api.gini.net<a class="headerlink" href="#extract-hash-from-health-api-gini-net" title="Permalink to this headline">¶</a></h3>
+<p>The current Gini Health API public key SHA256 hash digest in Base64 encoding can be extracted with the
+following openssl commands:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ openssl s_client -servername health-api.gini.net -connect health-api.gini.net:443 <span class="p">|</span> openssl x509 -pubkey -noout <span class="p">|</span> openssl pkey -pubin -outform der <span class="p">|</span> openssl dgst -sha256 -binary <span class="p">|</span> openssl enc -base64
+</pre></div>
+</div>
+</div>
+<div class="section" id="extract-hash-from-public-key">
+<h3>Extract Hash From Public Key<a class="headerlink" href="#extract-hash-from-public-key" title="Permalink to this headline">¶</a></h3>
+<p>You can also extract the hash from a public key. The following example shows how to extract it from
+a public key named <code class="docutils literal notranslate"><span class="pre">health-api.gini.pub</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ cat health-api.gini.pub <span class="p">|</span> openssl pkey -pubin -outform der <span class="p">|</span> openssl dgst -sha256 -binary <span class="p">|</span> openssl enc -base64
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="using-the-library.html" class="btn btn-neutral float-right" title="Using the Gini Health API Library">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../index.html" class="btn btn-neutral" title="Gini Health API Library for Android"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+    </p>
+  </div>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  
+</body>
+</html>
