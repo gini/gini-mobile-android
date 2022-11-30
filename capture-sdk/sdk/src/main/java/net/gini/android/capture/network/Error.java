@@ -13,6 +13,8 @@ import java.util.Map;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import net.gini.android.capture.internal.util.FileImportValidator;
+
 /**
  * Used by the {@link GiniCaptureNetworkService} and {@link GiniCaptureNetworkApi} to return error
  * messages.
@@ -24,7 +26,7 @@ public class Error {
 
     private Integer mStatusCode;
     private Map<String, List<String>> mHeaders;
-    private FileImportErrors mFileImportErrors;
+    private FileImportValidator.Error mFileImportErrors;
     private Exception mException;
 
     /**
@@ -65,7 +67,7 @@ public class Error {
      *
      * @param fileImportErrors import error type
      */
-    public Error(FileImportErrors fileImportErrors) {
+    public Error(FileImportValidator.Error fileImportErrors) {
         mFileImportErrors = fileImportErrors;
     }
 
@@ -104,7 +106,7 @@ public class Error {
     /**
      * @return error file import type
      */
-    public FileImportErrors getFileImportErrors() {
+    public FileImportValidator.Error getFileImportErrors() {
         return mFileImportErrors;
     }
 }

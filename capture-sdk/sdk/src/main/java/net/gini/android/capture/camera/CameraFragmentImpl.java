@@ -27,6 +27,7 @@ import net.gini.android.capture.Document;
 import net.gini.android.capture.DocumentImportEnabledFileTypes;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.GiniCaptureError;
+import net.gini.android.capture.ImportImageFileUrisAsyncTask;
 import net.gini.android.capture.ImportedFileValidationException;
 import net.gini.android.capture.R;
 import net.gini.android.capture.camera.view.CameraNavigationBarBottomAdapter;
@@ -66,6 +67,8 @@ import net.gini.android.capture.internal.util.MimeType;
 import net.gini.android.capture.internal.util.Size;
 import net.gini.android.capture.logging.ErrorLog;
 import net.gini.android.capture.logging.ErrorLogger;
+import net.gini.android.capture.network.Error;
+import net.gini.android.capture.network.ErrorType;
 import net.gini.android.capture.network.FailureException;
 import net.gini.android.capture.network.model.GiniCaptureExtraction;
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
@@ -108,6 +111,7 @@ import static net.gini.android.capture.error.ErrorActivity.ERROR_SCREEN_REQUEST;
 import static net.gini.android.capture.internal.network.NetworkRequestsManager.isCancellation;
 import static net.gini.android.capture.internal.qrcode.EPSPaymentParser.EXTRACTION_ENTITY_NAME;
 import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
+import static net.gini.android.capture.internal.util.ActivityHelper.startErrorActivity;
 import static net.gini.android.capture.internal.util.AndroidHelper.isMarshmallowOrLater;
 import static net.gini.android.capture.internal.util.FeatureConfiguration.getDocumentImportEnabledFileTypes;
 import static net.gini.android.capture.internal.util.FeatureConfiguration.isMultiPageEnabled;
@@ -197,7 +201,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private boolean mIsTakingPicture;
 
     private boolean mImportDocumentButtonEnabled;
-    private ImportImageDocumentUrisAsyncTask mImportUrisAsyncTask;
+    private ImportImageFileUrisAsyncTask mImportUrisAsyncTask;
     private boolean mQRCodeAnalysisCompleted;
     private QRCodeDocument mQRCodeDocument;
     private Group mImportButtonGroup;
@@ -998,9 +1002,9 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                 } else {
                     final FileImportValidator.Error error = fileImportValidator.getError();
                     if (error != null) {
-                        showInvalidFileError(error);
-                    } else {
-                        showGenericInvalidFileError();
+                        Error errorClass = new Error(FileImportValidator.Error.valueOf(error.name()));
+                        ErrorType errorType = ErrorType.GENERAL.typeFromError(errorClass);
+                        startErrorActivity(mFragment.getActivity(), new FailureException(errorType), null);
                     }
                 }
             }
@@ -1049,6 +1053,8 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                     @Override
                     public void documentRejected(@NonNull final String messageForUser) {
                         LOG.debug("Client rejected the document: {}", messageForUser);
+
+                        //TODO custom error
                         hideActivityIndicatorAndEnableInteraction();
                         showInvalidFileAlert(messageForUser);
                     }
@@ -1079,7 +1085,9 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             showMultiPageLimitError();
             return;
         }
-        mImportUrisAsyncTask = new ImportImageDocumentUrisAsyncTask(
+
+
+        mImportUrisAsyncTask = new ImportImageFileUrisAsyncTask(
                 context, intent, GiniCapture.getInstance(),
                 Document.Source.newExternalSource(), ImportMethod.PICKER,
                 new AsyncCallback<ImageMultiPageDocument, ImportedFileValidationException>() {
@@ -1110,9 +1118,9 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                         hideActivityIndicatorAndEnableInteraction();
                         final FileImportValidator.Error error = exception.getValidationError();
                         if (error != null) {
-                            showInvalidFileError(error);
-                        } else {
-                            showGenericInvalidFileError();
+                            Error errorClass = new Error(FileImportValidator.Error.valueOf(error.name()));
+                            ErrorType errorType = ErrorType.GENERAL.typeFromError(errorClass);
+                            startErrorActivity(mFragment.getActivity(), new FailureException(errorType), null);
                         }
                     }
 

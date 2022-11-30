@@ -40,6 +40,9 @@ import net.gini.android.capture.internal.util.ActivityHelper;
 import net.gini.android.capture.internal.util.AlertDialogHelperCompat;
 import net.gini.android.capture.internal.util.AndroidHelper;
 import net.gini.android.capture.internal.util.FileImportHelper;
+import net.gini.android.capture.internal.util.FileImportValidator;
+import net.gini.android.capture.network.Error;
+import net.gini.android.capture.network.ErrorType;
 import net.gini.android.capture.network.FailureException;
 import net.gini.android.capture.noresults.NoResultsActivity;
 import net.gini.android.capture.review.multipage.previews.MiddlePageManager;
@@ -697,6 +700,16 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
             if (!mMultiPageDocument.hasDocumentError(imageDocument)) {
                 // Documents with a an error should not be uploaded automatically
                 uploadDocument(imageDocument);
+            } else {
+                if (mMultiPageDocument.getErrorForDocument(imageDocument) != null
+                        && mMultiPageDocument.getErrorForDocument(imageDocument).getErrorCode() != null) {
+                    GiniCaptureDocumentError.ErrorCode errorCode = mMultiPageDocument.getErrorForDocument(imageDocument).getErrorCode();
+                    FileImportValidator.Error fileImportErrors = FileImportValidator.Error.valueOf(errorCode.name());
+                    Error error = new Error(fileImportErrors);
+
+                    ErrorType errorType = ErrorType.GENERAL.typeFromError(error);
+                    ActivityHelper.startErrorActivity(requireActivity(), new FailureException(errorType), imageDocument);
+                }
             }
         }
     }
@@ -735,8 +748,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
                             trackUploadError(throwable);
 
                             if (getActivity() != null) {
-                                FailureException exception = (FailureException) throwable;
-                                ActivityHelper.startErrorActivity(requireActivity(), exception, document);
+                                handleError(throwable, document);
                             }
 
                         } else if (requestResult != null) {
@@ -756,14 +768,12 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
         trackReviewScreenEvent(ReviewScreenEvent.UPLOAD_ERROR, errorDetails);
     }
 
-    private void showErrorOnPreview(final String errorMessage, final ImageDocument imageDocument) {
-        mMultiPageDocument.setErrorForDocument(imageDocument,
-                new GiniCaptureDocumentError(errorMessage,
-                        UPLOAD_FAILED));
-
-
-        showHideBlueRect(View.VISIBLE);
-    }
+   private void handleError(Throwable throwable, Document document) {
+       if (getActivity() != null) {
+           FailureException exception = (FailureException) throwable;
+           ActivityHelper.startErrorActivity(requireActivity(), exception, document);
+       }
+   }
 
     private void showIndicator() {
         if (injectedLoadingIndicatorContainer != null && injectedLoadingIndicatorContainer.getInjectedViewAdapter() != null)
