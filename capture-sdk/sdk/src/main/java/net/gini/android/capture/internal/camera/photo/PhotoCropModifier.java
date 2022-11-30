@@ -2,11 +2,14 @@ package net.gini.android.capture.internal.camera.photo;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.Size;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 public class PhotoCropModifier implements PhotoModifier {
 
@@ -40,36 +43,61 @@ public class PhotoCropModifier implements PhotoModifier {
                 Matrix matrix = new Matrix();
                 matrix.postRotate(rotation);
 
-                Bitmap originalBitmap = BitmapFactory.decodeByteArray(mPhoto.getData(),
+                Bitmap originalPhotoBitmap = BitmapFactory.decodeByteArray(mPhoto.getData(),
                         0, mPhoto.getData().length);
 
-                Bitmap rotatedBitmap = Bitmap.createBitmap(originalBitmap, 0, 0, originalBitmap.getWidth(),
-                        originalBitmap.getHeight(), matrix, false);
+                Bitmap rotatedPhotoBitmap = Bitmap.createBitmap(originalPhotoBitmap, 0, 0, originalPhotoBitmap.getWidth(),
+                        originalPhotoBitmap.getHeight(), matrix, false);
 
+                final float cropScalePercent = 0.2f;
 
-                int x1 = rotatedBitmap.getWidth() * mCropRect.left / mCameraPreviewSize.getWidth();
-                int y1 = rotatedBitmap.getHeight() * mCropRect.top / mCameraPreviewSize.getHeight();
-                int width1 = rotatedBitmap.getWidth() * mCropRect.width() / mCameraPreviewSize.getWidth();
-                int height1 = rotatedBitmap.getHeight() * mCropRect.height() / mCameraPreviewSize.getHeight();
+                // Scale the crop rect
+                final int scaledCropX = (int) (mCropRect.left - (mCropRect.width() * cropScalePercent));
+                final int scaledCropY = (int) (mCropRect.top - (mCropRect.height() * cropScalePercent));
+                final int scaledCropWidth = (int) (mCropRect.width() * (1 + cropScalePercent * 2));
+                final int scaledCropHeight = (int) (mCropRect.height() * (1 + cropScalePercent * 2));
 
-                Bitmap cropped = Bitmap.createBitmap(rotatedBitmap, x1, y1,
-                        width1, height1, null, false);
+                // Transfer the crop rect into the photo's coordinate space
+                int photoCropX = rotatedPhotoBitmap.getWidth() * scaledCropX / mCameraPreviewSize.getWidth();
+                int photoCropY = rotatedPhotoBitmap.getHeight() * scaledCropY / mCameraPreviewSize.getHeight();
+                int photoCropWidth = rotatedPhotoBitmap.getWidth() * scaledCropWidth / mCameraPreviewSize.getWidth();
+                int photoCropHeight = rotatedPhotoBitmap.getHeight() * scaledCropHeight / mCameraPreviewSize.getHeight();
 
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                cropped.compress(Bitmap.CompressFormat.JPEG, mQuality, stream);
+                final Bitmap croppedBitmap;
+                if (scaledCropX < 0 || scaledCropY < 0) {
+                    // The scaled crop rect is larger than the photo
+                    // We will draw the photo into a canvas
+                    croppedBitmap = Bitmap.createBitmap(photoCropWidth, photoCropHeight, Bitmap.Config.ARGB_8888);
 
-                byte[] byteArray = stream.toByteArray();
+                    final Canvas canvas = new Canvas();
+                    canvas.setBitmap(croppedBitmap);
 
-                mPhoto.setRotationForDisplay(0);
-                mPhoto.setData(byteArray);
-                mPhoto.updateBitmapPreview();
-                mPhoto.updateExif();
+                    final Paint paint = new Paint();
 
-                originalBitmap.recycle();
-                cropped.recycle();
-                rotatedBitmap.recycle();
+                    canvas.drawBitmap(rotatedPhotoBitmap, Math.abs(photoCropX), Math.abs(photoCropY), paint);
+                } else {
+                    // The scaled crop rect is smaller than the photo
+                    // We will crop the rect from the photo
+                    croppedBitmap = Bitmap.createBitmap(rotatedPhotoBitmap, photoCropX, photoCropY,
+                            photoCropWidth, photoCropHeight, null, false);
+                }
 
-            } catch (IllegalArgumentException e) {
+                try (ByteArrayOutputStream stream = new ByteArrayOutputStream()) {
+                    croppedBitmap.compress(Bitmap.CompressFormat.JPEG, mQuality, stream);
+
+                    byte[] byteArray = stream.toByteArray();
+
+                    mPhoto.setRotationForDisplay(0);
+                    mPhoto.setData(byteArray);
+                    mPhoto.updateBitmapPreview();
+                    mPhoto.updateExif();
+                }
+
+                originalPhotoBitmap.recycle();
+                croppedBitmap.recycle();
+                rotatedPhotoBitmap.recycle();
+
+            } catch (IllegalArgumentException | IOException e) {
                 e.printStackTrace();
                 mPhoto.setData(originalBytes);
             }
