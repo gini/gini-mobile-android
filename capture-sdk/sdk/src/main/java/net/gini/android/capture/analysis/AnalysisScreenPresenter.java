@@ -25,10 +25,12 @@ import net.gini.android.capture.internal.document.DocumentRenderer;
 import net.gini.android.capture.internal.document.DocumentRendererFactory;
 import net.gini.android.capture.internal.storage.ImageDiskStore;
 import net.gini.android.capture.internal.ui.ErrorSnackbar;
+import net.gini.android.capture.internal.util.ActivityHelper;
 import net.gini.android.capture.internal.util.FileImportHelper;
 import net.gini.android.capture.internal.util.MimeType;
 import net.gini.android.capture.logging.ErrorLog;
 import net.gini.android.capture.logging.ErrorLogger;
+import net.gini.android.capture.network.FailureException;
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction;
 import net.gini.android.capture.network.model.GiniCaptureReturnReason;
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
@@ -329,7 +331,8 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                                       final Throwable throwable) {
                         stopScanAnimation();
                         if (throwable != null) {
-                            handleAnalysisError(throwable);
+                            FailureException exception = (FailureException) throwable;
+                            ActivityHelper.startErrorActivity(getActivity(), exception, mMultiPageDocument);
                             return null;
                         }
                         final AnalysisInteractor.Result result = resultHolder.getResult();

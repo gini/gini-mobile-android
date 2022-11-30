@@ -36,6 +36,7 @@ import net.gini.android.capture.error.ErrorActivity;
 import net.gini.android.capture.internal.network.NetworkRequestResult;
 import net.gini.android.capture.internal.network.NetworkRequestsManager;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
+import net.gini.android.capture.internal.util.ActivityHelper;
 import net.gini.android.capture.internal.util.AlertDialogHelperCompat;
 import net.gini.android.capture.internal.util.AndroidHelper;
 import net.gini.android.capture.internal.util.FileImportHelper;
@@ -733,11 +734,10 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
 
                             trackUploadError(throwable);
 
-                            FailureException exception = (FailureException) throwable;
-                            Intent intent = new Intent(requireContext(), ErrorActivity.class);
-                            intent.putExtra(EXTRA_IN_ERROR, exception.errorType);
-                            intent.putExtra(NoResultsActivity.EXTRA_IN_DOCUMENT, document);
-                            startActivity(intent);
+                            if (getActivity() != null) {
+                                FailureException exception = (FailureException) throwable;
+                                ActivityHelper.startErrorActivity(requireActivity(), exception, document);
+                            }
 
                         } else if (requestResult != null) {
                             hideIndicator();

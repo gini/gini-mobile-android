@@ -1,6 +1,9 @@
 package net.gini.android.capture.review.multipage;
 
 import static net.gini.android.capture.analysis.AnalysisActivity.RESULT_NO_EXTRACTIONS;
+import static net.gini.android.capture.camera.CameraActivity.RESULT_CAMERA_SCREEN;
+import static net.gini.android.capture.camera.CameraActivity.RESULT_ENTER_MANUALLY;
+import static net.gini.android.capture.error.ErrorActivity.ERROR_SCREEN_REQUEST;
 import static net.gini.android.capture.internal.util.ActivityHelper.enableHomeAsUp;
 import static net.gini.android.capture.internal.util.ActivityHelper.interceptOnBackPressed;
 import static net.gini.android.capture.noresults.NoResultsActivity.NO_RESULT_CANCEL_KEY;
@@ -33,7 +36,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * Created by Alpar Szotyori on 16.02.2018.
- *
+ * <p>
  * Copyright (c) 2018 Gini GmbH.
  */
 
@@ -342,7 +345,7 @@ public class MultiPageReviewActivity extends AppCompatActivity implements
 
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode,
-            final Intent data) {
+                                    final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == ANALYSE_DOCUMENT_REQUEST) {
             if (resultCode == RESULT_NO_EXTRACTIONS) {
@@ -351,6 +354,17 @@ public class MultiPageReviewActivity extends AppCompatActivity implements
                 setResult(resultCode, data);
                 finish();
             }
+        }
+
+        if (requestCode == ERROR_SCREEN_REQUEST) {
+            if (resultCode == RESULT_CAMERA_SCREEN) {
+                GiniCapture.getInstance().internal().getImageMultiPageDocumentMemoryStore().clear();
+                startActivity(new Intent(MultiPageReviewActivity.this, CameraActivity.class));
+            }
+            if (resultCode == RESULT_ENTER_MANUALLY) {
+                setResult(resultCode, data);
+            }
+            finish();
         }
     }
 

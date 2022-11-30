@@ -10,6 +10,7 @@ import net.gini.android.capture.R
 import net.gini.android.capture.camera.CameraActivity.RESULT_ENTER_MANUALLY
 import net.gini.android.capture.internal.util.ActivityHelper
 import net.gini.android.capture.ImageRetakeOptionsListener
+import net.gini.android.capture.camera.CameraActivity.RESULT_CAMERA_SCREEN
 import net.gini.android.capture.network.ErrorType
 import net.gini.android.capture.noresults.NoResultsActivity
 
@@ -36,6 +37,7 @@ class ErrorActivity : AppCompatActivity(),
     }
 
     override fun onBackToCameraPressed() {
+        setResult(RESULT_CAMERA_SCREEN)
         finish()
     }
 
@@ -86,6 +88,8 @@ class ErrorActivity : AppCompatActivity(),
          * @suppress
          */
         const val ERROR_REQUEST = 999
+
+        const val ERROR_SCREEN_REQUEST = 111
 
         const val EXTRA_IN_ERROR = "GC_EXTRA_IN_ERROR"
     }

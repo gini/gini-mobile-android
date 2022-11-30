@@ -12,6 +12,8 @@ import net.gini.android.capture.document.GiniCaptureMultiPageDocument;
 import net.gini.android.capture.internal.network.AnalysisNetworkRequestResult;
 import net.gini.android.capture.internal.network.NetworkRequestResult;
 import net.gini.android.capture.internal.network.NetworkRequestsManager;
+import net.gini.android.capture.internal.util.ActivityHelper;
+import net.gini.android.capture.network.FailureException;
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction;
 import net.gini.android.capture.network.model.GiniCaptureReturnReason;
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;

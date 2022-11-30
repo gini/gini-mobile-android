@@ -1,5 +1,6 @@
 package net.gini.android.capture.network
 
+import android.os.Parcelable
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import net.gini.android.capture.R

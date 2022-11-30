@@ -57,6 +57,7 @@ import net.gini.android.capture.internal.qrcode.QRCodeDetectorTaskMLKit;
 import net.gini.android.capture.internal.storage.ImageDiskStore;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.ui.ViewStubSafeInflater;
+import net.gini.android.capture.internal.util.ActivityHelper;
 import net.gini.android.capture.internal.util.ApplicationHelper;
 import net.gini.android.capture.internal.util.ContextHelper;
 import net.gini.android.capture.internal.util.DeviceHelper;
@@ -65,6 +66,7 @@ import net.gini.android.capture.internal.util.MimeType;
 import net.gini.android.capture.internal.util.Size;
 import net.gini.android.capture.logging.ErrorLog;
 import net.gini.android.capture.logging.ErrorLogger;
+import net.gini.android.capture.network.FailureException;
 import net.gini.android.capture.network.model.GiniCaptureExtraction;
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
 import net.gini.android.capture.requirements.CameraHolder;
@@ -94,12 +96,15 @@ import androidx.annotation.VisibleForTesting;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.Group;
 import androidx.core.content.ContextCompat;
+
 import jersey.repackaged.jsr166e.CompletableFuture;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 import static net.gini.android.capture.GiniCaptureError.ErrorCode.MISSING_GINI_CAPTURE_INSTANCE;
+import static net.gini.android.capture.camera.CameraActivity.RESULT_ENTER_MANUALLY;
 import static net.gini.android.capture.document.ImageDocument.ImportMethod;
+import static net.gini.android.capture.error.ErrorActivity.ERROR_SCREEN_REQUEST;
 import static net.gini.android.capture.internal.network.NetworkRequestsManager.isCancellation;
 import static net.gini.android.capture.internal.qrcode.EPSPaymentParser.EXTRACTION_ENTITY_NAME;
 import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
@@ -203,7 +208,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private InjectedViewContainer<NavigationBarTopAdapter> topAdapterInjectedViewContainer;
     private InjectedViewContainer<CustomLoadingIndicatorAdapter> mLoadingIndicator;
-    private  InjectedViewContainer<CameraNavigationBarBottomAdapter> mBottomInjectedContainer;
+    private InjectedViewContainer<CameraNavigationBarBottomAdapter> mBottomInjectedContainer;
 
     CameraFragmentImpl(@NonNull final FragmentImplCallback fragment) {
         mFragment = fragment;
@@ -863,7 +868,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                             if (throwable != null) {
                                 hideActivityIndicatorAndEnableInteraction();
                                 if (!isCancellation(throwable)) {
-                                    handleAnalysisError();
+                                    handleAnalysisError(throwable, qrCodeDocument);
                                 }
                             }
                             return requestResult;
@@ -883,7 +888,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                             hideActivityIndicatorAndEnableInteraction();
                             if (throwable != null
                                     && !isCancellation(throwable)) {
-                                handleAnalysisError();
+                                handleAnalysisError(throwable, qrCodeDocument);
                             } else if (requestResult != null) {
                                 mPaymentQRCodePopup.hide();
                                 mQRCodeAnalysisCompleted = true;
@@ -900,12 +905,9 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         }
     }
 
-    private void handleAnalysisError() {
-        final Activity activity = mFragment.getActivity();
-        if (activity == null) {
-            return;
-        }
-        showError(activity.getString(R.string.gc_document_analysis_error), 3000);
+    private void handleAnalysisError(Throwable throwable, Document document) {
+        FailureException exception = (FailureException) throwable;
+        ActivityHelper.startErrorActivity(mFragment.getActivity(), exception, document);
     }
 
     private void showFileChooser() {
@@ -949,6 +951,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             }
             return true;
         }
+
         return false;
     }
 

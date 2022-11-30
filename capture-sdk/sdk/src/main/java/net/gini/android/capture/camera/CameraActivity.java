@@ -344,6 +344,11 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
      */
     public static final int RESULT_ENTER_MANUALLY = RESULT_FIRST_USER + 99;
 
+    /**
+     * <p> Returned result code in case the user wants to go back to camera screen </p>
+     */
+    public static final int RESULT_CAMERA_SCREEN = RESULT_FIRST_USER + 100;
+
     @VisibleForTesting
     static final int REVIEW_DOCUMENT_REQUEST = 1;
     private static final int ONBOARDING_REQUEST = 2;

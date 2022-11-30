@@ -1,6 +1,9 @@
 package net.gini.android.capture.internal.util;
 
+import static net.gini.android.capture.error.ErrorActivity.ERROR_SCREEN_REQUEST;
+import static net.gini.android.capture.error.ErrorActivity.EXTRA_IN_ERROR;
 import static net.gini.android.capture.internal.util.ContextHelper.isTablet;
+import static net.gini.android.capture.noresults.NoResultsActivity.EXTRA_IN_DOCUMENT;
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
 
 import android.annotation.SuppressLint;
@@ -9,6 +12,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Point;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.Display;
 import android.view.WindowManager;
 
@@ -18,7 +23,14 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import net.gini.android.capture.document.ImageDocument;
+import net.gini.android.capture.error.ErrorActivity;
+import net.gini.android.capture.network.FailureException;
+import net.gini.android.capture.noresults.NoResultsActivity;
 import net.gini.android.capture.tracking.AnalysisScreenEvent;
+
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Internal use only.
@@ -38,6 +50,17 @@ public final class ActivityHelper {
             final Intent target, final String extraKey, final Context context,
             final Class<T> activityClass) {
         target.putExtra(extraKey, new Intent(context, activityClass));
+    }
+
+
+    public static void startErrorActivity(final Activity context,
+                                          final FailureException exception, Parcelable document) {
+
+        Intent intent = new Intent(context, ErrorActivity.class);
+        intent.putExtra(EXTRA_IN_ERROR, exception.errorType);
+        intent.putExtra(EXTRA_IN_DOCUMENT, document);
+
+        context.startActivityForResult(intent, ERROR_SCREEN_REQUEST);
     }
 
     @SuppressLint("SourceLockedOrientationActivity")
