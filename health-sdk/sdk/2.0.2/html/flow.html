@@ -1,0 +1,256 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Flow &mdash; Gini Health SDK for Android  documentation</title>
+  
+
+  
+  
+
+  
+  <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,400italic,600italic|Source+Code+Pro|Roboto+Slab:400,700" rel="stylesheet" type="text/css" />
+
+  
+  
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:'./',
+        VERSION:'',
+        COLLAPSE_INDEX:false,
+        FILE_SUFFIX:'.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/language_data.js"></script>
+
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+    <script type="text/javascript">
+        jQuery(function () {
+            SphinxRtdTheme.StickyNav.enable();
+        });
+    </script>
+  
+
+  
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Gini Health SDK for Android  documentation" href="index.html"/>
+        <link rel="next" title="Testing" href="testing.html"/>
+        <link rel="prev" title="Authentication" href="authentication.html"/> 
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="index.html" id="gini-logo">
+          <img src="_static/logo_flat.png" />
+        </a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="setup.html">Getting started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="setup.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="setup.html#gini-pay-deep-link-for-your-app">Gini Pay Deep Link For Your App</a></li>
+<li class="toctree-l2"><a class="reference internal" href="setup.html#gini-pay-api-client-credentials">Gini Pay API Client Credentials</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="authentication.html">Authentication</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Flow</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#checking-requirements">Checking requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#setting-a-document-for-review">Setting a document for review</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#display-reviewfragment">Display ReviewFragment</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#event-tracking">Event Tracking</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#requirements">Requirements</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#example-banking-app">Example banking app</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#development-gini-pay-api-client-credentials">Development Gini Pay API client credentials</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#end-to-end-testing">End to end testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#testing-in-production">Testing in production</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="customization.html">Customization</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="customization.html#dark-mode">Dark Mode</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="migrate-to-2-0-0.html">Migrate to 2.0.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">Reference Docs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="license.html#licenses-and-acknowledgements-for-incorporated-software">Licenses and Acknowledgements for Incorporated Software</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="license.html#photoview">PhotoView</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license.html#insetter">Insetter</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Gini Health SDK for Android</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Flow</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="flow">
+<h1>Flow<a class="headerlink" href="#flow" title="Permalink to this headline">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">GiniHealth</span></code> is the main class for interacting with the Gini Health SDK.
+It provides a way to submit a document for reviewing its extracted payment details and
+let’s the user make the payment with one of the payment providers.</p>
+<dl class="docutils">
+<dt>The recommended flow is to:</dt>
+<dd><ol class="first last arabic simple">
+<li>Call <code class="docutils literal notranslate"><span class="pre">GiniHealth.checkRequirementsAsync()</span></code> to make sure that the flow can be completed.</li>
+<li>Call one of the overloads of <code class="docutils literal notranslate"><span class="pre">setDocumentForReview</span></code>, to submit a document.</li>
+<li>Display <code class="docutils literal notranslate"><span class="pre">ReviewFragment</span></code>.</li>
+</ol>
+</dd>
+</dl>
+<div class="section" id="checking-requirements">
+<h2>Checking requirements<a class="headerlink" href="#checking-requirements" title="Permalink to this headline">¶</a></h2>
+<p>Requirements are not enforced, but recommended. Review Fragment will still start, but
+the flow cannot be completed if not all requirements are met.</p>
+<p><code class="docutils literal notranslate"><span class="pre">checkRequirementsAsync()</span></code> returns a list of missing requirements. Empty list means all requirements are met.</p>
+</div>
+<div class="section" id="setting-a-document-for-review">
+<h2>Setting a document for review<a class="headerlink" href="#setting-a-document-for-review" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt><code class="docutils literal notranslate"><span class="pre">setDocumentForReview</span></code> can be called with:</dt>
+<dd><ol class="first last arabic simple">
+<li><code class="docutils literal notranslate"><span class="pre">Document</span></code> instance in the case the upload was performed with Gini Pay Api lib (see <code class="docutils literal notranslate"><span class="pre">Gini</span></code> class).</li>
+<li>Document id, this will probably be the case when there’s backend integration between the client and Gini.</li>
+</ol>
+</dd>
+</dl>
+<p>When calling it with an id the SDK will make a network call to obtain a <code class="docutils literal notranslate"><span class="pre">Document</span></code> instance.
+So it is preferred to use the <code class="docutils literal notranslate"><span class="pre">Document</span></code> instance if you already have it.
+The same applies to the optional <code class="docutils literal notranslate"><span class="pre">PaymentDetails</span></code>, if they are present they will be displayed
+and network calls to get extractions will be skipped.</p>
+<p>The exposed flows of <code class="docutils literal notranslate"><span class="pre">GiniHealth</span></code> are used by the <code class="docutils literal notranslate"><span class="pre">ReviewFragment</span></code> to observe the state of the document and extractions, but they are public
+so that they can be observed anywhere, the main purpose for this is to observe errors.</p>
+<p>Note: If you observe payment details flow, you can check PaymentDetails.isPayable as an extra condition before displaying the <code class="docutils literal notranslate"><span class="pre">ReviewFragment</span></code>.</p>
+</div>
+<div class="section" id="display-reviewfragment">
+<h2>Display ReviewFragment<a class="headerlink" href="#display-reviewfragment" title="Permalink to this headline">¶</a></h2>
+<p>ReviewFragment displays document pages and extractions and it lets the user pay using a payment provider</p>
+<p>To instantiate it you need to create a <code class="docutils literal notranslate"><span class="pre">FragmentFactory</span></code> and set it to fragment manager:</p>
+<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ReviewFragmentFactory</span><span class="p">(</span><span class="k">private</span> <span class="k">val</span> <span class="py">giniHealth</span><span class="p">:</span> <span class="n">GiniHealth</span><span class="p">,</span>
+                            <span class="k">private</span> <span class="k">val</span> <span class="py">configuration</span><span class="p">:</span> <span class="n">ReviewConfiguration</span><span class="p">,</span>
+                            <span class="k">private</span> <span class="k">val</span> <span class="py">listener</span><span class="p">:</span> <span class="n">ReviewFragmentListener</span>
+<span class="p">)</span> <span class="p">:</span> <span class="n">FragmentFactory</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">instantiate</span><span class="p">(</span><span class="n">classLoader</span><span class="p">:</span> <span class="n">ClassLoader</span><span class="p">,</span> <span class="n">className</span><span class="p">:</span> <span class="n">String</span><span class="p">):</span> <span class="n">Fragment</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">ReviewFragment</span><span class="p">(</span><span class="n">giniHealth</span><span class="p">,</span> <span class="n">configuration</span><span class="p">,</span> <span class="n">listener</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">supportFragmentManager</span><span class="p">.</span><span class="n">fragmentFactory</span> <span class="p">=</span> <span class="n">ReviewFragmentFactory</span><span class="p">(</span><span class="n">giniHealth</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">ReviewFragment</span></code> handles errors by default, displaying snackbars for errors, but it
+can be configured to ignore them, in which case all flows of <code class="docutils literal notranslate"><span class="pre">GiniHealth</span></code> should
+be observed for errors.</p>
+<div class="section" id="event-tracking">
+<h3>Event Tracking<a class="headerlink" href="#event-tracking" title="Permalink to this headline">¶</a></h3>
+<p>To get informed of <code class="docutils literal notranslate"><span class="pre">ReviewFragment</span></code> events (like the user clicking the “close” or “next” button) you can implement
+the <code class="docutils literal notranslate"><span class="pre">ReviewFragmentListener</span></code> and pass it to the fragment constructor.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="testing.html" class="btn btn-neutral float-right" title="Testing">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="authentication.html" class="btn btn-neutral" title="Authentication"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+    </p>
+  </div>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  
+</body>
+</html>
