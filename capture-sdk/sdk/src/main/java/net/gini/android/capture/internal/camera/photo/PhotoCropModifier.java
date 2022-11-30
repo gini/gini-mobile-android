@@ -4,21 +4,22 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.Rect;
+import android.util.Size;
 
 import java.io.ByteArrayOutputStream;
 
 public class PhotoCropModifier implements PhotoModifier {
 
     private final Photo mPhoto;
-    private final int[] mScreenSize;
-    private final Rect aRect;
+    private final Size mCameraPreviewSize;
+    private final Rect mCropRect;
     private final int mQuality;
 
 
-    public PhotoCropModifier(Photo mPhoto, int[] mScreenSize, Rect aRect, int mQuality) {
+    public PhotoCropModifier(Photo mPhoto, Size cameraPreviewSize, Rect cropRect, int mQuality) {
         this.mPhoto = mPhoto;
-        this.mScreenSize = mScreenSize;
-        this.aRect = aRect;
+        this.mCameraPreviewSize = cameraPreviewSize;
+        this.mCropRect = cropRect;
         this.mQuality = mQuality;
     }
 
@@ -46,10 +47,10 @@ public class PhotoCropModifier implements PhotoModifier {
                         originalBitmap.getHeight(), matrix, false);
 
 
-                int x1 = rotatedBitmap.getWidth() * aRect.left / mScreenSize[0];
-                int y1 = rotatedBitmap.getHeight() * aRect.top / mScreenSize[1];
-                int width1 = rotatedBitmap.getWidth() * aRect.width() / mScreenSize[0];
-                int height1 = rotatedBitmap.getHeight() * aRect.height() / mScreenSize[1];
+                int x1 = rotatedBitmap.getWidth() * mCropRect.left / mCameraPreviewSize.getWidth();
+                int y1 = rotatedBitmap.getHeight() * mCropRect.top / mCameraPreviewSize.getHeight();
+                int width1 = rotatedBitmap.getWidth() * mCropRect.width() / mCameraPreviewSize.getWidth();
+                int height1 = rotatedBitmap.getHeight() * mCropRect.height() / mCameraPreviewSize.getHeight();
 
                 Bitmap cropped = Bitmap.createBitmap(rotatedBitmap, x1, y1,
                         width1, height1, null, false);

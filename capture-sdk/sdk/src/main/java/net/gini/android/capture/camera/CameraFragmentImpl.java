@@ -55,7 +55,6 @@ import net.gini.android.capture.internal.camera.photo.PhotoEdit;
 import net.gini.android.capture.internal.camera.view.QRCodePopup;
 import net.gini.android.capture.internal.fileimport.FileChooserActivity;
 import net.gini.android.capture.internal.network.AnalysisNetworkRequestResult;
-import net.gini.android.capture.internal.network.NetworkRequestResult;
 import net.gini.android.capture.internal.network.NetworkRequestsManager;
 import net.gini.android.capture.internal.qrcode.PaymentQRCodeData;
 import net.gini.android.capture.internal.qrcode.PaymentQRCodeReader;
@@ -1268,7 +1267,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                 LOG.info("Picture taken");
                 showActivityIndicatorAndDisableInteraction();
                 photo.edit()
-                        .crop(mCameraPreview, getRectFromImageFrame())
+                        .crop(mCameraPreview, getRectForCroppingFromImageFrame())
                         .compressByDefault().applyAsync(new PhotoEdit.PhotoEditCallback() {
                             @Override
                             public void onDone(@NonNull final Photo result) {
@@ -1346,12 +1345,18 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         }
     }
 
-    private Rect getRectFromImageFrame() {
-        Rect rect = new Rect();
+    private Rect getRectForCroppingFromImageFrame() {
+        final Rect frameHitRect = new Rect();
+        mImageFrame.getHitRect(frameHitRect);
 
-        mImageFrame.getHitRect(rect);
+        final Rect cameraPreviewHitRect = new Rect();
+        mCameraPreview.getHitRect(cameraPreviewHitRect);
 
-        return rect;
+        // The camera preview can be wider or taller than the screen
+        // and we need the frame rect relative to the camera preview's origin
+        frameHitRect.offset(-cameraPreviewHitRect.left, -cameraPreviewHitRect.top);
+
+        return frameHitRect;
     }
 
 
