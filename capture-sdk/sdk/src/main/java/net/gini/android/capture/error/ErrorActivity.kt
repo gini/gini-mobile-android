@@ -19,6 +19,7 @@ class ErrorActivity : AppCompatActivity(),
 
     private var mDocument: Document? = null
     private var mErrorType: ErrorType? = null
+    private var mCustomError: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,7 +56,7 @@ class ErrorActivity : AppCompatActivity(),
     }
 
     private fun initFragment() {
-        val errorFragment = ErrorFragmentCompat.createInstance(mErrorType, mDocument)
+        val errorFragment = ErrorFragmentCompat.createInstance(mErrorType, mDocument, mCustomError)
         supportFragmentManager
             .beginTransaction()
             .add(R.id.gc_fragment_error, errorFragment)
@@ -67,6 +68,7 @@ class ErrorActivity : AppCompatActivity(),
         if (extras != null) {
             mDocument = extras.getParcelable(NoResultsActivity.EXTRA_IN_DOCUMENT)
             mErrorType = extras.getSerializable(EXTRA_IN_ERROR) as? ErrorType
+            mCustomError = extras.getString(EXTRA_ERROR_STRING)
         }
     }
 
@@ -92,5 +94,8 @@ class ErrorActivity : AppCompatActivity(),
         const val ERROR_SCREEN_REQUEST = 111
 
         const val EXTRA_IN_ERROR = "GC_EXTRA_IN_ERROR"
+
+        const val EXTRA_ERROR_STRING = "GC_EXTRA_IN_ERROR"
+
     }
 }

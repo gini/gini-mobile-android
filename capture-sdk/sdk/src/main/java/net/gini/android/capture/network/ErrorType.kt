@@ -1,6 +1,5 @@
 package net.gini.android.capture.network
 
-import android.os.Parcelable
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import net.gini.android.capture.R
@@ -21,8 +20,7 @@ enum class ErrorType(@DrawableRes val drawableResource: Int,
     FILE_IMPORT_SIZE(R.drawable.gc_alert_triangle_icon, R.string.gc_error_file_import_size_title, R.string.gc_error_file_import_size_text),
     FILE_IMPORT_PAGE_COUNT(R.drawable.gc_alert_triangle_icon, R.string.gc_error_file_import_page_count_title, R.string.gc_error_file_import_page_count_text),
     FILE_IMPORT_UNSUPPORTED(R.drawable.gc_alert_triangle_icon, R.string.gc_error_file_import_unsupported_title, R.string.gc_error_file_import_unsupported_text),
-    FILE_IMPORT_PASSWORD(R.drawable.gc_alert_triangle_icon, R.string.gc_error_file_import_password_title, R.string.gc_error_file_import_password_text),
-    CUSTOM_VALIDATION(R.drawable.gc_alert_triangle_icon, R.string.gc_error_file_custom_validation_title, R.string.gc_error_file_custom_validation_text);
+    FILE_IMPORT_PASSWORD(R.drawable.gc_alert_triangle_icon, R.string.gc_error_file_import_password_title, R.string.gc_error_file_import_password_text);
 
     fun typeFromError(error: Error): ErrorType {
 
@@ -36,7 +34,6 @@ enum class ErrorType(@DrawableRes val drawableResource: Int,
                 FileImportValidator.Error.TYPE_NOT_SUPPORTED -> FILE_IMPORT_UNSUPPORTED
                 FileImportValidator.Error.PASSWORD_PROTECTED_PDF -> FILE_IMPORT_PASSWORD
                 FileImportValidator.Error.TOO_MANY_PDF_PAGES -> FILE_IMPORT_PAGE_COUNT
-                //CUSTOM -> CUSTOM_VALIDATION
                 else -> {
                     GENERAL
                 }
