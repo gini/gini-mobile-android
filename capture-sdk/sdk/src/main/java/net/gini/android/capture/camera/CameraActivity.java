@@ -7,7 +7,9 @@ import static net.gini.android.capture.internal.util.FeatureConfiguration.should
 import static net.gini.android.capture.review.ReviewActivity.EXTRA_IN_ANALYSIS_ACTIVITY;
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackCameraScreenEvent;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Camera;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -308,6 +310,8 @@ import java.util.Map;
 public class CameraActivity extends AppCompatActivity implements CameraFragmentListener,
         CameraFragmentInterface {
 
+    public static final String EXTRA_IN_ADD_PAGES = "GC_EXTRA_IN_ADD_PAGES";
+
     /**
      * <p> Returned when the result code is {@link CameraActivity#RESULT_ERROR} and contains a
      * {@link GiniCaptureError} object detailing what went wrong. </p>
@@ -360,13 +364,28 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
     private boolean mOnboardingShown;
     private GiniCaptureCoordinator mGiniCaptureCoordinator;
     private Document mDocument;
+    private boolean mAddPages;
 
     private CameraFragment mFragment;
+
+    /**
+     * Internal use only.
+     *
+     * @param context android context
+     * @param addPages pass `true` when launching to add more pages. If there are no pages, then pass `false`.
+     * @return the intent to launch the {@link CameraActivity}
+     */
+    public static Intent createIntent(@NonNull final Context context, boolean addPages) {
+        Intent intent = new Intent(context, CameraActivity.class);
+        intent.putExtra(EXTRA_IN_ADD_PAGES, addPages);
+        return intent;
+    }
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gc_activity_camera);
+        readExtras();
         createGiniCaptureCoordinator();
         if (savedInstanceState == null) {
             initFragment();
@@ -378,6 +397,10 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
         setupHomeButton();
         handleOnBackPressed();
         setTitleOnTablets();
+    }
+
+    private void readExtras() {
+        mAddPages = getIntent().getBooleanExtra(EXTRA_IN_ADD_PAGES, false);
     }
 
     private void handleOnBackPressed() {
@@ -538,7 +561,7 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
     public void onProceedToMultiPageReviewScreen(
             @NonNull final GiniCaptureMultiPageDocument multiPageDocument, boolean shouldScrollToLastPage) {
         if (multiPageDocument.getType() == Document.Type.IMAGE_MULTI_PAGE) {
-            if (multiPageDocument.getDocuments().size() > 1) {
+            if (mAddPages) {
                 // For subsequent images a new CameraActivity was launched from the MultiPageReviewActivity
                 // and so we can simply finish to return to the review activity
                 finish();

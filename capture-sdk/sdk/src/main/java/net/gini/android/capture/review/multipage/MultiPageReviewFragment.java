@@ -453,7 +453,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
 
             hideViewsIfBottomBarEnabled();
 
-            mReviewNavigationBarBottomAdapter.getInjectedViewAdapter().setOnAddPageButtonClickListener(v -> mListener.onReturnToCameraScreen());
+            mReviewNavigationBarBottomAdapter.getInjectedViewAdapter().setOnAddPageButtonClickListener(v -> mListener.onReturnToCameraScreenToAddPages());
 
             boolean isMultiPage = GiniCapture.getInstance().isMultiPageEnabled();
 
@@ -516,7 +516,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
             mAddPages.setVisibility(GiniCapture.getInstance().isMultiPageEnabled() ? View.VISIBLE : View.GONE);
         }
 
-        mAddPages.setOnClickListener(v -> mListener.onReturnToCameraScreen());
+        mAddPages.setOnClickListener(v -> mListener.onReturnToCameraScreenToAddPages());
     }
 
 
@@ -539,7 +539,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
                         .create().show();
             } else {
                 doDeleteDocumentAndUpdateUI(document);
-                mListener.onReturnToCameraScreen();
+                mListener.onReturnToCameraScreenForFirstPage();
             }
         } else {
             doDeleteDocumentAndUpdateUI(document);
