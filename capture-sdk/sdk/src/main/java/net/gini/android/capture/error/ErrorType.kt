@@ -45,7 +45,7 @@ enum class ErrorType(@DrawableRes val drawableResource: Int,
             }
 
             error.statusCode?.let {
-                if (it > 500) {
+                if (it >= 500) {
                     return SERVER
                 }
 
