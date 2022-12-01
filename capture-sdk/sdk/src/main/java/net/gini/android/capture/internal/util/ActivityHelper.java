@@ -25,6 +25,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import net.gini.android.capture.document.ImageDocument;
 import net.gini.android.capture.error.ErrorActivity;
+import net.gini.android.capture.error.ErrorType;
 import net.gini.android.capture.network.FailureException;
 import net.gini.android.capture.noresults.NoResultsActivity;
 import net.gini.android.capture.tracking.AnalysisScreenEvent;
@@ -53,15 +54,6 @@ public final class ActivityHelper {
     }
 
 
-    public static void startErrorActivity(final Activity context,
-                                          final FailureException exception, Parcelable document) {
-
-        Intent intent = new Intent(context, ErrorActivity.class);
-        intent.putExtra(EXTRA_IN_ERROR, exception.errorType);
-        intent.putExtra(EXTRA_IN_DOCUMENT, document);
-
-        context.startActivityForResult(intent, ERROR_SCREEN_REQUEST);
-    }
 
     @SuppressLint("SourceLockedOrientationActivity")
     public static void lockToPortraitOrientation(@Nullable final Activity activity) {

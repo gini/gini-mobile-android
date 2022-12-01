@@ -1,11 +1,11 @@
 package net.gini.android.capture.internal.util;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.DialogInterface;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 /**
  * Created by Alpar Szotyori on 04.02.2019.
  *

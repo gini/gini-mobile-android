@@ -31,6 +31,7 @@ import net.gini.android.capture.document.GiniCaptureDocument;
 import net.gini.android.capture.document.GiniCaptureDocumentError;
 import net.gini.android.capture.document.ImageDocument;
 import net.gini.android.capture.document.ImageMultiPageDocument;
+import net.gini.android.capture.error.ErrorActivity;
 import net.gini.android.capture.internal.network.NetworkRequestResult;
 import net.gini.android.capture.internal.network.NetworkRequestsManager;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
@@ -700,7 +701,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
                 final GiniCaptureDocumentError documentError = mMultiPageDocument.getErrorForDocument(imageDocument);
                 if (documentError != null) {
                     ErrorType errorType = ErrorType.typeFromDocumentErrorCode(documentError.getErrorCode());
-                    ActivityHelper.startErrorActivity(requireActivity(), new FailureException(errorType), imageDocument);
+                    ErrorActivity.startErrorActivity(requireActivity(), errorType, imageDocument);
                 }
             }
         }
@@ -763,7 +764,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
    private void handleError(Throwable throwable, Document document) {
        if (getActivity() != null) {
            FailureException exception = (FailureException) throwable;
-           ActivityHelper.startErrorActivity(requireActivity(), exception, document);
+           ErrorActivity.startErrorActivity(requireActivity(), exception.errorType, document);
        }
    }
 

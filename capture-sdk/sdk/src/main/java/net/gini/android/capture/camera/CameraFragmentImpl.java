@@ -110,7 +110,6 @@ import static net.gini.android.capture.error.ErrorActivity.EXTRA_ERROR_STRING;
 import static net.gini.android.capture.internal.network.NetworkRequestsManager.isCancellation;
 import static net.gini.android.capture.internal.qrcode.EPSPaymentParser.EXTRACTION_ENTITY_NAME;
 import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
-import static net.gini.android.capture.internal.util.ActivityHelper.startErrorActivity;
 import static net.gini.android.capture.internal.util.AndroidHelper.isMarshmallowOrLater;
 import static net.gini.android.capture.internal.util.FeatureConfiguration.getDocumentImportEnabledFileTypes;
 import static net.gini.android.capture.internal.util.FeatureConfiguration.isMultiPageEnabled;
@@ -641,11 +640,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                 topAdapterInjectedViewContainer.getInjectedViewAdapter().setMenuResource(R.menu.gc_camera);
                 topAdapterInjectedViewContainer.getInjectedViewAdapter().setOnMenuItemClickListener(item -> {
                     if (item.getItemId() == R.id.gc_action_show_onboarding) {
-
-                        // TODO: set back to help screen after first test
-//                        startHelpActivity();
-                        final Intent intent = new Intent(mFragment.getActivity(), ErrorActivity.class);
-                        mFragment.getActivity().startActivityForResult(intent, ErrorActivity.ERROR_REQUEST);
+                        startHelpActivity();
                     } else {
                         throw new UnsupportedOperationException("Unknown menu item id. Please don't call our OnMenuItemClickListener for custom menu items.");
                     }
@@ -909,8 +904,12 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     }
 
     private void handleAnalysisError(Throwable throwable, Document document) {
+
+        if (mFragment.getActivity() == null)
+            return;
+
         FailureException exception = (FailureException) throwable;
-        ActivityHelper.startErrorActivity(mFragment.getActivity(), exception, document);
+        ErrorActivity.startErrorActivity(mFragment.getActivity(), exception.errorType, document);
     }
 
     private void showFileChooser() {
@@ -950,7 +949,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                     message = "Document import failed: unknown result code " + resultCode;
                 }
                 LOG.error(message);
-                showGenericInvalidFileError();
+                showGenericInvalidFileError(ErrorType.FILE_IMPORT_GENERIC);
             }
             return true;
         }
@@ -968,7 +967,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             final List<Uri> uris = IntentHelper.getUris(data);
             if (uris == null) {
                 LOG.error("Document import failed: Intent has no Uris");
-                showGenericInvalidFileError();
+                showGenericInvalidFileError(ErrorType.FILE_IMPORT_GENERIC);
                 return;
             }
             handleMultiPageDocumentAndCallListener(activity, data, uris);
@@ -976,12 +975,12 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             final Uri uri = IntentHelper.getUri(data);
             if (uri == null) {
                 LOG.error("Document import failed: Intent has no Uri");
-                showGenericInvalidFileError();
+                showGenericInvalidFileError(ErrorType.FILE_IMPORT_GENERIC);
                 return;
             }
             if (!UriHelper.isUriInputStreamAvailable(uri, activity)) {
                 LOG.error("Document import failed: InputStream not available for the Uri");
-                showGenericInvalidFileError();
+                showGenericInvalidFileError(ErrorType.FILE_IMPORT_GENERIC);
                 return;
             }
 
@@ -1003,7 +1002,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                     if (error != null) {
                         Error errorClass = new Error(FileImportValidator.Error.valueOf(error.name()));
                         ErrorType errorType = ErrorType.typeFromError(errorClass);
-                        startErrorActivity(mFragment.getActivity(), new FailureException(errorType), null);
+                        ErrorActivity.startErrorActivity(mFragment.getActivity(), errorType, null);
                     }
                 }
             }
@@ -1026,7 +1025,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             requestClientDocumentCheck(document);
         } catch (final IllegalArgumentException e) {
             LOG.error("Failed to import selected document", e);
-            showGenericInvalidFileError();
+            showGenericInvalidFileError(ErrorType.FILE_IMPORT_GENERIC);
         }
     }
 
@@ -1053,7 +1052,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                     public void documentRejected(@NonNull final String messageForUser) {
                         LOG.debug("Client rejected the document: {}", messageForUser);
 
-                        //TODO custom error
                         hideActivityIndicatorAndEnableInteraction();
 
                         if (mFragment.getActivity() == null)
@@ -1107,7 +1105,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                         }
                         if (mMultiPageDocument.getDocuments().isEmpty()) {
                             LOG.error("Document import failed: Intent did not contain images");
-                            showGenericInvalidFileError();
+                            showGenericInvalidFileError(ErrorType.FILE_IMPORT_GENERIC);
                             mMultiPageDocument = null; // NOPMD
                             mInMultiPageState = false;
                             return;
@@ -1123,10 +1121,10 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                         LOG.error("Document import failed", exception);
                         hideActivityIndicatorAndEnableInteraction();
                         final FileImportValidator.Error error = exception.getValidationError();
-                        if (error != null) {
+                        if (error != null && mFragment.getActivity() != null) {
                             Error errorClass = new Error(FileImportValidator.Error.valueOf(error.name()));
                             ErrorType errorType = ErrorType.typeFromError(errorClass);
-                            startErrorActivity(mFragment.getActivity(), new FailureException(errorType), null);
+                            showGenericInvalidFileError(errorType);
                         }
                     }
 
@@ -1242,16 +1240,31 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     }
 
 
-    private void showGenericInvalidFileError() {
+    private void showGenericInvalidFileError(ErrorType errorType) {
         final Activity activity = mFragment.getActivity();
         if (activity == null) {
             return;
         }
-        final String message = activity.getString(R.string.gc_document_import_invalid_document);
+        String message = activity.getString(errorType.getTitleTextResource());
         LOG.error("Invalid document {}", message);
+        showInvalidFileAlert(message);
+    }
 
-       ErrorType errorType = ErrorType.FILE_IMPORT_GENERIC;
-       startErrorActivity(activity, new FailureException(errorType), null);
+    private void showInvalidFileAlert(final String message) {
+        final Activity activity = mFragment.getActivity();
+        if (activity == null) {
+            return;
+        }
+        mFragment.showAlertDialog(message,
+                activity.getString(R.string.gc_document_import_pick_another_document),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(
+                            final DialogInterface dialogInterface,
+                            final int i) {
+                        showFileChooser();
+                    }
+                }, activity.getString(R.string.gc_document_import_close_error), null, null);
     }
 
     @UiThread

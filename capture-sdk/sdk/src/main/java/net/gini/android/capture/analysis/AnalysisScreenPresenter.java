@@ -20,6 +20,7 @@ import net.gini.android.capture.document.GiniCaptureDocument;
 import net.gini.android.capture.document.GiniCaptureDocumentError;
 import net.gini.android.capture.document.GiniCaptureMultiPageDocument;
 import net.gini.android.capture.document.PdfDocument;
+import net.gini.android.capture.error.ErrorActivity;
 import net.gini.android.capture.internal.camera.photo.ParcelableMemoryCache;
 import net.gini.android.capture.internal.document.DocumentRenderer;
 import net.gini.android.capture.internal.document.DocumentRendererFactory;
@@ -495,6 +496,6 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
         trackAnalysisScreenEvent(AnalysisScreenEvent.ERROR, errorDetails);
 
         FailureException exception = (FailureException) throwable;
-        ActivityHelper.startErrorActivity(getActivity(), exception, mMultiPageDocument);
+        ErrorActivity.startErrorActivity(getActivity(), exception.errorType, mMultiPageDocument);
     }
 }
