@@ -697,13 +697,9 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
                 // Documents with a an error should not be uploaded automatically
                 uploadDocument(imageDocument);
             } else {
-                if (mMultiPageDocument.getErrorForDocument(imageDocument) != null
-                        && mMultiPageDocument.getErrorForDocument(imageDocument).getErrorCode() != null) {
-                    GiniCaptureDocumentError.ErrorCode errorCode = mMultiPageDocument.getErrorForDocument(imageDocument).getErrorCode();
-                    FileImportValidator.Error fileImportErrors = FileImportValidator.Error.valueOf(errorCode.name());
-                    Error error = new Error(fileImportErrors);
-
-                    ErrorType errorType = ErrorType.typeFromError(error);
+                final GiniCaptureDocumentError documentError = mMultiPageDocument.getErrorForDocument(imageDocument);
+                if (documentError != null) {
+                    ErrorType errorType = ErrorType.typeFromDocumentErrorCode(documentError.getErrorCode());
                     ActivityHelper.startErrorActivity(requireActivity(), new FailureException(errorType), imageDocument);
                 }
             }

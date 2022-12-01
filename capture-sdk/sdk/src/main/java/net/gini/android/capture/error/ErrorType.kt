@@ -3,6 +3,7 @@ package net.gini.android.capture.error
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import net.gini.android.capture.R
+import net.gini.android.capture.document.GiniCaptureDocumentError
 import net.gini.android.capture.internal.util.FileImportValidator
 import net.gini.android.capture.network.Error
 import java.net.UnknownHostException
@@ -60,6 +61,12 @@ enum class ErrorType(@DrawableRes val drawableResource: Int,
             }
 
             return GENERAL
+        }
+
+        @JvmStatic
+        fun typeFromDocumentErrorCode(errorCode: GiniCaptureDocumentError.ErrorCode): ErrorType = when(errorCode) {
+            GiniCaptureDocumentError.ErrorCode.UPLOAD_FAILED -> UPLOAD
+            GiniCaptureDocumentError.ErrorCode.FILE_VALIDATION_FAILED -> FILE_IMPORT_GENERIC
         }
     }
 }
