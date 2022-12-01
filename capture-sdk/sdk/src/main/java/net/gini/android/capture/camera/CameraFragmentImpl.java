@@ -1004,7 +1004,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                     final FileImportValidator.Error error = fileImportValidator.getError();
                     if (error != null) {
                         Error errorClass = new Error(FileImportValidator.Error.valueOf(error.name()));
-                        ErrorType errorType = ErrorType.GENERAL.typeFromError(errorClass);
+                        ErrorType errorType = ErrorType.typeFromError(errorClass);
                         startErrorActivity(mFragment.getActivity(), new FailureException(errorType), null);
                     }
                 }
@@ -1127,7 +1127,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                         final FileImportValidator.Error error = exception.getValidationError();
                         if (error != null) {
                             Error errorClass = new Error(FileImportValidator.Error.valueOf(error.name()));
-                            ErrorType errorType = ErrorType.GENERAL.typeFromError(errorClass);
+                            ErrorType errorType = ErrorType.typeFromError(errorClass);
                             startErrorActivity(mFragment.getActivity(), new FailureException(errorType), null);
                         }
                     }

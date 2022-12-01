@@ -707,7 +707,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
                     FileImportValidator.Error fileImportErrors = FileImportValidator.Error.valueOf(errorCode.name());
                     Error error = new Error(fileImportErrors);
 
-                    ErrorType errorType = ErrorType.GENERAL.typeFromError(error);
+                    ErrorType errorType = ErrorType.typeFromError(error);
                     ActivityHelper.startErrorActivity(requireActivity(), new FailureException(errorType), imageDocument);
                 }
             }

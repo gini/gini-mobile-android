@@ -98,7 +98,7 @@ public class NetworkRequestsManager {
                                         LOG.error("Document upload failed for {}: {}",
                                                 document.getId(),
                                                 error.getMessage());
-                                        ErrorType errorType = ErrorType.GENERAL.typeFromError(error);
+                                        ErrorType errorType = ErrorType.typeFromError(error);
                                         future.completeExceptionally(new FailureException(errorType));
                                     }
 

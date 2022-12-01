@@ -6,7 +6,7 @@ import net.gini.android.capture.R
 import net.gini.android.capture.internal.util.FileImportValidator
 import java.net.UnknownHostException
 
-
+// Alpar: move to error screen package
 enum class ErrorType(@DrawableRes val drawableResource: Int,
                      @StringRes val titleTextResource: Int,
                      @StringRes val descriptionTextResource: Int
@@ -22,41 +22,44 @@ enum class ErrorType(@DrawableRes val drawableResource: Int,
     FILE_IMPORT_UNSUPPORTED(R.drawable.gc_alert_triangle_icon, R.string.gc_error_file_import_unsupported_title, R.string.gc_error_file_import_unsupported_text),
     FILE_IMPORT_PASSWORD(R.drawable.gc_alert_triangle_icon, R.string.gc_error_file_import_password_title, R.string.gc_error_file_import_password_text);
 
-    fun typeFromError(error: Error): ErrorType {
+    companion object {
+        @JvmStatic
+        fun typeFromError(error: Error): ErrorType {
 
-        if (error.cause != null && (error.cause is UnknownHostException)) {
-            return NO_CONNECTION
-        }
+            if (error.cause != null && (error.cause is UnknownHostException)) {
+                return NO_CONNECTION
+            }
 
-        if (error.statusCode == null) {
-            return when (error.fileImportErrors) {
-                FileImportValidator.Error.SIZE_TOO_LARGE -> FILE_IMPORT_SIZE
-                FileImportValidator.Error.TYPE_NOT_SUPPORTED -> FILE_IMPORT_UNSUPPORTED
-                FileImportValidator.Error.PASSWORD_PROTECTED_PDF -> FILE_IMPORT_PASSWORD
-                FileImportValidator.Error.TOO_MANY_PDF_PAGES -> FILE_IMPORT_PAGE_COUNT
-                FileImportValidator.Error.TOO_MANY_DOCUMENT_PAGES -> FILE_IMPORT_PAGE_COUNT
-                else -> {
-                    GENERAL
+            if (error.statusCode == null) {
+                return when (error.fileImportErrors) {
+                    FileImportValidator.Error.SIZE_TOO_LARGE -> FILE_IMPORT_SIZE
+                    FileImportValidator.Error.TYPE_NOT_SUPPORTED -> FILE_IMPORT_UNSUPPORTED
+                    FileImportValidator.Error.PASSWORD_PROTECTED_PDF -> FILE_IMPORT_PASSWORD
+                    FileImportValidator.Error.TOO_MANY_PDF_PAGES -> FILE_IMPORT_PAGE_COUNT
+                    FileImportValidator.Error.TOO_MANY_DOCUMENT_PAGES -> FILE_IMPORT_PAGE_COUNT
+                    else -> {
+                        GENERAL
+                    }
                 }
             }
-        }
 
-        error.statusCode?.let {
-            if (it > 500) {
-                return SERVER
-            }
+            error.statusCode?.let {
+                if (it > 500) {
+                    return SERVER
+                }
 
-            if (it == 401) {
-                return AUTH
-            }
+                if (it == 401) {
+                    return AUTH
+                }
 
-            if (it == 400 || (it in 402..498)) {
-                return UPLOAD
+                if (it == 400 || (it in 402..498)) {
+                    return UPLOAD
+                }
+
+                return GENERAL
             }
 
             return GENERAL
         }
-
-        return GENERAL
     }
 }
