@@ -39,7 +39,7 @@ enum class ErrorType(@DrawableRes val drawableResource: Int,
                     FileImportValidator.Error.TOO_MANY_PDF_PAGES -> FILE_IMPORT_PAGE_COUNT
                     FileImportValidator.Error.TOO_MANY_DOCUMENT_PAGES -> FILE_IMPORT_PAGE_COUNT
                     else -> {
-                        GENERAL
+                        FILE_IMPORT_GENERIC
                     }
                 }
             }
