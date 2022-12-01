@@ -35,9 +35,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:drawableStart="@drawable/gc_error_upload_icon"
-            android:gravity="center"
-            android:text="@string/gc_error_upload_title" />
+            android:gravity="center_vertical"
+            android:drawablePadding="@dimen/large_24"
+            android:text="@string/gc_error_upload_title"
+            app:drawableStartCompat="@drawable/gc_error_upload_icon" />
     </RelativeLayout>
 
     <TextView
