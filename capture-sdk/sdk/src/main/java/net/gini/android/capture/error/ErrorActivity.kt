@@ -11,7 +11,6 @@ import net.gini.android.capture.camera.CameraActivity.RESULT_ENTER_MANUALLY
 import net.gini.android.capture.internal.util.ActivityHelper
 import net.gini.android.capture.ImageRetakeOptionsListener
 import net.gini.android.capture.camera.CameraActivity.RESULT_CAMERA_SCREEN
-import net.gini.android.capture.network.ErrorType
 import net.gini.android.capture.noresults.NoResultsActivity
 
 class ErrorActivity : AppCompatActivity(),

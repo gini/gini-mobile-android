@@ -1,12 +1,12 @@
-package net.gini.android.capture.network
+package net.gini.android.capture.error
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import net.gini.android.capture.R
 import net.gini.android.capture.internal.util.FileImportValidator
+import net.gini.android.capture.network.Error
 import java.net.UnknownHostException
 
-// Alpar: move to error screen package
 enum class ErrorType(@DrawableRes val drawableResource: Int,
                      @StringRes val titleTextResource: Int,
                      @StringRes val descriptionTextResource: Int

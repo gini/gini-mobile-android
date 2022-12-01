@@ -12,7 +12,6 @@ import net.gini.android.capture.document.ImageMultiPageDocument
 import net.gini.android.capture.internal.ui.FragmentImplCallback
 import net.gini.android.capture.internal.util.ActivityHelper
 import net.gini.android.capture.ImageRetakeOptionsListener
-import net.gini.android.capture.network.ErrorType
 
 class ErrorFragmentImpl(
     private val fragment: FragmentImplCallback,

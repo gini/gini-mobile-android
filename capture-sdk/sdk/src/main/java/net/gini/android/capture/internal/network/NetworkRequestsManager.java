@@ -18,7 +18,7 @@ import net.gini.android.capture.logging.ErrorLog;
 import net.gini.android.capture.logging.ErrorLogger;
 import net.gini.android.capture.network.AnalysisResult;
 import net.gini.android.capture.network.Error;
-import net.gini.android.capture.network.ErrorType;
+import net.gini.android.capture.error.ErrorType;
 import net.gini.android.capture.network.FailureException;
 import net.gini.android.capture.network.GiniCaptureNetworkCallback;
 import net.gini.android.capture.network.GiniCaptureNetworkService;
