@@ -18,7 +18,7 @@
     <string name="gc_camera_error_no_permission">Bitte gestatte Zugriff auf deine Kamera, um Dokumente fotografieren zu können.</string>
     <string name="gc_camera_error_no_permission_button_title">Zugriff erlauben</string>
     <string name="gc_camera_image_stack_subtitle">Seiten</string>
-    <string name="gc_camera_document_import_subtitle">Durchsuchen</string>
+    <string name="gc_camera_document_import_subtitle">Dateien</string>
 
     <string name="gc_document_error_multi_page_limit_review_pages_button">Seitenübersicht</string>
     <string name="gc_document_error_multi_page_limit_cancel_button">Abbrechen</string>
