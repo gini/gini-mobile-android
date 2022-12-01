@@ -15,7 +15,7 @@
     <string name="gc_camera_error_no_permission">We need access to your camera to enable you to capture your invoices</string>
     <string name="gc_camera_error_no_permission_button_title">Give Access</string>
     <string name="gc_camera_image_stack_subtitle">Pages</string>
-    <string name="gc_camera_document_import_subtitle">Import</string>
+    <string name="gc_camera_document_import_subtitle">Browse</string>
     <string name="gc_document_error_multi_page_limit_review_pages_button">Overview of pages</string>
     <string name="gc_document_error_multi_page_limit_cancel_button">Cancel</string>
     <string name="gc_qrcode_detected_popup_message_1">Use QR code?</string>
