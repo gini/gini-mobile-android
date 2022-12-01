@@ -8,6 +8,7 @@ import android.view.MenuItem;
 
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
+import net.gini.android.capture.ImageRetakeOptionsListener;
 import net.gini.android.capture.R;
 import net.gini.android.capture.analysis.AnalysisActivity;
 import net.gini.android.capture.camera.CameraActivity;
@@ -132,7 +133,7 @@ import static net.gini.android.capture.internal.util.ActivityHelper.interceptOnB
  * </ul>
  * </p>
  */
-public class NoResultsActivity extends AppCompatActivity implements NoResultsFragmentListener {
+public class NoResultsActivity extends AppCompatActivity implements ImageRetakeOptionsListener {
 
     /**
      * Internal use only.

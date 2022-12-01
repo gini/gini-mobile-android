@@ -16,6 +16,6 @@ didn't include the required extractions.
 
 To use the Component API you have to include the [net.gini.android.capture.noresults.NoResultsFragmentCompat] 
 in an Activity in your app (a dedicated Activity is recommended). To receive events from the Fragments 
-your Activity must implement the [net.gini.android.capture.noresults.NoResultsFragmentListener] interface.
+your Activity must implement the [net.gini.android.capture.ImageRetakeOptionsListener] interface.
 
 

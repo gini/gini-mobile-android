@@ -58,6 +58,18 @@
     <string name="gc_noresults_retake_images">Retake Images</string>
     <string name="gc_noresults_enter_manually">Enter Manually</string>
 
+    <string name="gc_error_back_to_camera">Back to camera</string>
+    <string name="gc_error_upload_title">There was a problem with the upload</string>
+    <string name="gc_error_upload_text">The document couldn’t be accepted. Please check if the image is sharp, the document contains payment information and has the right file type.</string>
+    <string name="gc_error_connection_title">There was a problem connecting to the internet</string>
+    <string name="gc_error_connection_text">Please check your internet connection and try again later on.</string>
+    <string name="gc_error_server_title">Service unavailable</string>
+    <string name="gc_error_server_text">Upload failed due to a server error. Please try again later.</string>
+    <string name="gc_error_auth_title">There has been an authentication error</string>
+    <string name="gc_error_auth_text">Upload failed due to authentication error. Please try again later.</string>
+    <string name="gc_error_unexpected_title">Oh something went wrong</string>
+    <string name="gc_error_unexpected_text">It seems something went wrong. Please try again later.</string>
+
     <string name="gc_document_import_hint_text">Now documents can be conveniently uploaded for analysis.</string>
     <string name="gc_qr_code_scanner_hint_text">Have you checked out the QR code scanner yet?</string>
     <string name="gc_document_import_error">The document could not be opened. Please try a different document.</string>

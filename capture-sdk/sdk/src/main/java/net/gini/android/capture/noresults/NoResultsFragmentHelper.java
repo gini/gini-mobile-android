@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 
 import net.gini.android.capture.Document;
+import net.gini.android.capture.ImageRetakeOptionsListener;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 
 import androidx.annotation.NonNull;
@@ -31,8 +32,8 @@ final class NoResultsFragmentHelper {
 
     public static void setListener(@NonNull final NoResultsFragmentImpl fragmentImpl,
             @NonNull final Context context) {
-        if (context instanceof NoResultsFragmentListener) {
-            fragmentImpl.setListener((NoResultsFragmentListener) context);
+        if (context instanceof ImageRetakeOptionsListener) {
+            fragmentImpl.setListener((ImageRetakeOptionsListener) context);
         } else {
             throw new IllegalStateException(
                     "Hosting activity must implement NoResultsFragmentListener.");

@@ -6,6 +6,10 @@
 
     <application>
         <activity
+            android:name="net.gini.android.capture.error.ErrorActivity"
+            android:exported="false"
+            android:theme="@style/GiniCaptureTheme"/>
+        <activity
             android:name="net.gini.android.capture.camera.CameraActivity"
             android:exported="false"
             android:label="@string/gc_title_camera"
