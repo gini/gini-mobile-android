@@ -331,8 +331,7 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                                       final Throwable throwable) {
                         stopScanAnimation();
                         if (throwable != null) {
-                            FailureException exception = (FailureException) throwable;
-                            ActivityHelper.startErrorActivity(getActivity(), exception, mMultiPageDocument);
+                            handleAnalysisError(throwable);
                             return null;
                         }
                         final AnalysisInteractor.Result result = resultHolder.getResult();
@@ -494,14 +493,8 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
         errorDetails.put(ERROR_DETAILS_MAP_KEY.MESSAGE, throwable.getMessage());
         errorDetails.put(ERROR_DETAILS_MAP_KEY.ERROR_OBJECT, throwable);
         trackAnalysisScreenEvent(AnalysisScreenEvent.ERROR, errorDetails);
-        showError(getActivity().getString(R.string.gc_document_analysis_error),
-                getActivity().getString(R.string.gc_document_analysis_error_retry),
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(final View v) {
-                        trackAnalysisScreenEvent(AnalysisScreenEvent.RETRY);
-                        doAnalyzeDocument();
-                    }
-                });
+
+        FailureException exception = (FailureException) throwable;
+        ActivityHelper.startErrorActivity(getActivity(), exception, mMultiPageDocument);
     }
 }
