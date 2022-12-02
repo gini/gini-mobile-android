@@ -15,3 +15,8 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+# Retain Retrofit service methods
+-keep,allowobfuscation interface * {
+    @retrofit2.http.* <methods>;
+}
