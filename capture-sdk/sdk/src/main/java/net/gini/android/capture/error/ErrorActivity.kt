@@ -85,6 +85,11 @@ class ErrorActivity : AppCompatActivity(),
         })
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        isActivityShown = false
+    }
+
     companion object {
         /**
          * Internal use only.
@@ -99,8 +104,17 @@ class ErrorActivity : AppCompatActivity(),
 
         const val EXTRA_ERROR_STRING = "GC_EXTRA_IN_ERROR"
 
+        var isActivityShown: Boolean = false
+
         @JvmStatic
         fun startErrorActivity(context: Activity, errorType: ErrorType?, document: Parcelable?) {
+
+            //Error activity is already shown don't start new one
+            if (isActivityShown)
+                return
+
+            isActivityShown = true
+
             val intent = Intent(context, ErrorActivity::class.java)
             intent.putExtra(EXTRA_IN_ERROR, errorType)
             intent.putExtra(EXTRA_IN_DOCUMENT, document)
