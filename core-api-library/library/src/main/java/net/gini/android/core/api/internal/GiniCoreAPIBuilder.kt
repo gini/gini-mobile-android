@@ -49,7 +49,7 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
     private var mNetworkSecurityConfigResId = 0
     private var mMoshi: Moshi? = null
     private var mCredentialsStore: CredentialsStore? = null
-    private var mTimeoutInMs = 2_500
+    private var mTimeoutInMs = 6_0000
     private var mCache: Cache? = null
     private var mTrustManager: TrustManager? = null
     private var mUserApiRetrofit: Retrofit? = null

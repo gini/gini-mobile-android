@@ -1002,7 +1002,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                     if (error != null) {
                         Error errorClass = new Error(FileImportValidator.Error.valueOf(error.name()));
                         ErrorType errorType = ErrorType.typeFromError(errorClass);
-                        ErrorActivity.startErrorActivity(mFragment.getActivity(), errorType, null);
+                        showGenericInvalidFileError(errorType);
                     }
                 }
             }
