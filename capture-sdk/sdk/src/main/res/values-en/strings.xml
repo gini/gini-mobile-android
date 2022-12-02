@@ -159,4 +159,5 @@
     <string name="gc_unknown_qr_code_description">This code does not contain any payment details. Please use another QR-code or take an image of your invoice.</string>
 
     <string name="gc_camera_access">Camera access</string>
+    <string name="gc_scan">Scan</string>
 </resources>
