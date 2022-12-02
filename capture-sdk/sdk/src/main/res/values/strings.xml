@@ -3,12 +3,12 @@
         <item quantity="one">%d Seite</item>
         <item quantity="other">%d Seiten</item>
     </plurals>
-    <string name="gc_title_camera">Dokument fotografieren</string>
+    <string name="gc_title_camera">Aufnahme</string>
     <string name="gc_title_onboarding"/>
     <string name="gc_title_review">Foto überprüfen</string>
     <string name="gc_title_help">Hilfe</string>
-    <string name="gc_title_photo_tips">Tipps für Fotos</string>
-    <string name="gc_title_supported_formats">Unterstützte Formate</string>
+    <string name="gc_title_photo_tips">Tipps</string>
+    <string name="gc_title_supported_formats">Formate</string>
     <string name="gc_title_file_import">Importieren</string>
     <string name="gc_title_analysis">Übersicht</string>
     <string name="gc_title_multi_page_review">Fotos überprüfen</string>
@@ -30,17 +30,17 @@
     <string name="gc_unsupported_qrcode_detected_popup_message_2">X</string>
 
     <string name="gc_onboarding_align_corners_illustration_content_description">Flat paper within the frame illustration</string>
-    <string name="gc_onboarding_align_corners_title">Flat paper within the frame</string>
-    <string name="gc_onboarding_align_corners_message">Ensure that the document is flat, and positioned within the frame</string>
+    <string name="gc_onboarding_align_corners_title">Dokument flach ausrichten</string>
+    <string name="gc_onboarding_align_corners_message">Das Dokument sollte flach liegen und sich im Rahmen befinden</string>
     <string name="gc_onboarding_lighting_title_illustration_content_description">Good lighting illustration</string>
-    <string name="gc_onboarding_lighting_title">Good lighting</string>
-    <string name="gc_onboarding_lighting_message">Proper lighting leads to better results than flash</string>
+    <string name="gc_onboarding_lighting_title">Gute Lichtverhältnisse</string>
+    <string name="gc_onboarding_lighting_message">Gutes Licht führt zu besseren Ergebnisse als mit Blitz</string>
     <string name="gc_onboarding_multipage_illustration_content_description">Add multiple pages illustration</string>
-    <string name="gc_onboarding_multipage_title">Add multiple pages</string>
-    <string name="gc_onboarding_multipage_message">It’s now possible to analyse an invoice with multiple pages</string>
+    <string name="gc_onboarding_multipage_title">Mehrere Seiten</string>
+    <string name="gc_onboarding_multipage_message">Es ist möglich mehrer Seiten eines Dokuments zu Scannen</string>
     <string name="gc_onboarding_qr_code_illustration_content_description">QR codes supported illustration</string>
-    <string name="gc_onboarding_qr_code_title">QR codes supported</string>
-    <string name="gc_onboarding_qr_code_message">Besides invoices, QR codes are also supported</string>
+    <string name="gc_onboarding_qr_code_title">QR Codes scannen</string>
+    <string name="gc_onboarding_qr_code_message">QR Codes werden automatisch erkannt und analysiert</string>
 
     <string name="gc_review_bottom_panel_text">Dokument vollständig, scharf und in Leserichtung fotografiert?\n\nDoppeltippen um Schärfe zu prüfen.</string>
     <string name="gc_multi_page_review_page_indicator" tools:ignore="PluralsCandidate">%1$d von %2$d</string>
@@ -118,24 +118,24 @@
 
     <string name="gc_file_chooser_fotos_section_header">Fotos</string>
     <string name="gc_file_chooser_pdfs_section_header">PDF</string>
-    <string name="gc_help_item_photo_tips_title">Tipps für beste Ergebnisse aus Fotos</string>
-    <string name="gc_help_item_file_import_guide_title">Dokumente aus anderen Apps öffnen</string>
+    <string name="gc_help_item_photo_tips_title">Tipps für beste Ergebnisse</string>
+    <string name="gc_help_item_file_import_guide_title">Dokumente von anderen Apps importieren</string>
     <string name="gc_help_item_supported_formats_title">Unterstützte Formate</string>
 
     <string name="gc_photo_tips_headline">Zur Erkennung aller Daten bitte folgende Tipps beim Abfotografieren beachten:</string>
     <string name="gc_photo_tips_camera_button">Zur Kamera</string>
 
-    <string name="gc_supported_format_printed_invoices">Computer-erstellte Überweisungsträger und Rechnungen</string>
-    <string name="gc_supported_format_single_page_as_jpeg_png_gif">Einseitige Bilder im jpeg, png oder gif Format</string>
+    <string name="gc_supported_format_printed_invoices">Computer-generierte Rechnung und Überweisungsträger</string>
+    <string name="gc_supported_format_single_page_as_jpeg_png_gif">1-seitige Fotos im Format jpeg, png oder gif</string>
     <string name="gc_supported_format_pdf">PDF Dokumente von bis zu 10 Seiten</string>
     <string name="gc_supported_format_qr_code">QR Codes</string>
     <string name="gc_unsupported_format_handwriting">Handschrift</string>
     <string name="gc_unsupported_format_photos_of_screens">Fotos von Bildschirmen</string>
-    <string name="gc_supported_format_section_header">Folgende Formate werden unterstützt:</string>
-    <string name="gc_unsupported_format_section_header">Was nicht analysiert wird:</string>
+    <string name="gc_supported_format_section_header">Unterstützte Formate:</string>
+    <string name="gc_unsupported_format_section_header">Nicht unterstützte Formate:</string>
 
     <string name="gc_file_import_header"><![CDATA[Digitale Rechnungen können nun noch komfortabler beglichen werden: Senden Sie einfach Ihre Rechnung als PDF direkt an Ihre <Partner App Name>. Diese wird automatisch für die Überweisung analysiert.]]></string>
-    <string name="gc_file_import_section_1_title">1. Wählen Sie bitte eine Rechnung aus</string>
+    <string name="gc_file_import_section_1_title">1. Rechnung auswählen</string>
     <string name="gc_file_import_section_1_body">Bitte die PDF-Rechnung in der Email-App, PDF-Ordner oder einer anderen App auswählen. Um das Dokument nun an die Banking App zu senden, sollte die “Teilen mit” Funktion benitzt werden, welche mit einem Rechteck und einem Pfeil nach oben zeigend darstellt wird.</string>
 
     <string name="gc_file_import_section_2_title">2. Aus der App importieren</string>
