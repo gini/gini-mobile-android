@@ -6,6 +6,7 @@ import net.gini.android.capture.R
 import net.gini.android.capture.document.GiniCaptureDocumentError
 import net.gini.android.capture.internal.util.FileImportValidator
 import net.gini.android.capture.network.Error
+import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
 enum class ErrorType(@DrawableRes val drawableResource: Int,
@@ -31,19 +32,6 @@ enum class ErrorType(@DrawableRes val drawableResource: Int,
                 return NO_CONNECTION
             }
 
-            if (error.statusCode == null) {
-                return when (error.fileImportErrors) {
-                    FileImportValidator.Error.SIZE_TOO_LARGE -> FILE_IMPORT_SIZE
-                    FileImportValidator.Error.TYPE_NOT_SUPPORTED -> FILE_IMPORT_UNSUPPORTED
-                    FileImportValidator.Error.PASSWORD_PROTECTED_PDF -> FILE_IMPORT_PASSWORD
-                    FileImportValidator.Error.TOO_MANY_PDF_PAGES -> FILE_IMPORT_PAGE_COUNT
-                    FileImportValidator.Error.TOO_MANY_DOCUMENT_PAGES -> FILE_IMPORT_PAGE_COUNT
-                    else -> {
-                        FILE_IMPORT_GENERIC
-                    }
-                }
-            }
-
             error.statusCode?.let {
                 if (it >= 500) {
                     return SERVER
@@ -58,6 +46,23 @@ enum class ErrorType(@DrawableRes val drawableResource: Int,
                 }
 
                 return GENERAL
+            }
+
+            if (error.statusCode == null) {
+                (error.cause as? SocketTimeoutException)?.let {
+                    return UPLOAD
+                }
+
+                return when (error.fileImportErrors) {
+                    FileImportValidator.Error.SIZE_TOO_LARGE -> FILE_IMPORT_SIZE
+                    FileImportValidator.Error.TYPE_NOT_SUPPORTED -> FILE_IMPORT_UNSUPPORTED
+                    FileImportValidator.Error.PASSWORD_PROTECTED_PDF -> FILE_IMPORT_PASSWORD
+                    FileImportValidator.Error.TOO_MANY_PDF_PAGES -> FILE_IMPORT_PAGE_COUNT
+                    FileImportValidator.Error.TOO_MANY_DOCUMENT_PAGES -> FILE_IMPORT_PAGE_COUNT
+                    else -> {
+                        NO_CONNECTION
+                    }
+                }
             }
 
             return GENERAL
