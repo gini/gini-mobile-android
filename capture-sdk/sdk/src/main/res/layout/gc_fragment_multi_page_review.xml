@@ -28,28 +28,28 @@
 
         <TextView
             android:id="@+id/gc_payment_visible_txt"
+            style="@style/GiniCaptureTheme.Typography.Caption1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/large"
+            android:layout_marginBottom="@dimen/large"
             android:text="@string/gc_payment_details_visible"
             android:textColor="@color/Dark_06"
             android:textSize="@dimen/text_min"
-            style="@style/GiniCaptureTheme.Typography.Caption1"
+            app:layout_constraintBottom_toTopOf="@+id/gc_view_pager_wrapper"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/gc_navigation_top_bar" />
+            app:layout_constraintStart_toStartOf="parent" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/gc_view_pager_wrapper"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_above="@+id/gc_thumbnails_panel"
-            android:layout_marginTop="@dimen/large_24"
+            android:layout_marginTop="@dimen/xxxlarge"
             android:layout_marginBottom="@dimen/large_24"
             app:layout_constraintBottom_toTopOf="@+id/gc_tab_indicator"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/gc_payment_visible_txt">
+            app:layout_constraintTop_toBottomOf="@+id/gc_navigation_top_bar">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/gc_pager_recycler_view"
