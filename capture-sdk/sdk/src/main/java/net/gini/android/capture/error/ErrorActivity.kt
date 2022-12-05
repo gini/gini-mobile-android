@@ -45,7 +45,7 @@ class ErrorActivity : AppCompatActivity(),
             bottomBarContainer.injectedViewAdapter = GiniCapture.getInstance().helpNavigationBarBottomAdapter
             bottomBarContainer.injectedViewAdapter?.apply {
                 setOnBackClickListener {
-                    finish()
+                    onBackPressed()
                 }
             }
         }
