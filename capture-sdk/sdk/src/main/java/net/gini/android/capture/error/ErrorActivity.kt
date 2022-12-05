@@ -50,7 +50,7 @@ class ErrorActivity : AppCompatActivity(),
                 if (!GiniCapture.getInstance().isBottomNavigationBarEnabled) {
                     setNavButtonType(NavButtonType.BACK)
                     setOnNavButtonClickListener {
-                        finish()
+                        onBackPressed()
                     }
                 }
             }
