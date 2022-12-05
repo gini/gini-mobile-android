@@ -4,4 +4,6 @@
     <declare-styleable name="CustomFont">
         <attr name="gcCustomFont" format="string" />
     </declare-styleable>
+
+    <attr name="pageItemBackground" format="reference|color"/>
 </resources>
