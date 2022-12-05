@@ -20,13 +20,15 @@ internal class HelpItemsAdapter(val onItemSelected: (HelpItem) -> Unit) :
 
     val items: List<HelpItem> = mutableListOf<HelpItem>().apply {
         add(HelpItem.PhotoTips)
-        if (FeatureConfiguration.isFileImportEnabled()) {
-            add(HelpItem.FileImportGuide)
-        }
+
         if (GiniCapture.hasInstance()
             && GiniCapture.getInstance().isSupportedFormatsHelpScreenEnabled
         ) {
             add(HelpItem.SupportedFormats)
+        }
+
+        if (FeatureConfiguration.isFileImportEnabled()) {
+            add(HelpItem.FileImportGuide)
         }
         if (GiniCapture.hasInstance()) {
             addAll(GiniCapture.getInstance().customHelpItems)

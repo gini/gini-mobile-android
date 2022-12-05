@@ -630,24 +630,27 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
             boolean isBottomBarEnabled = GiniCapture.getInstance().isBottomNavigationBarEnabled();
 
-            if (mMultiPageDocument != null && !mMultiPageDocument.getDocuments().isEmpty()) {
+            if (isOnlyQRCodeScanningEnabled()) {
+                topAdapterInjectedViewContainer.getInjectedViewAdapter().setNavButtonType(NavButtonType.CLOSE);
+            } else if (mMultiPageDocument != null && !mMultiPageDocument.getDocuments().isEmpty()) {
                 topAdapterInjectedViewContainer.getInjectedViewAdapter().setNavButtonType(NavButtonType.BACK);
             } else {
                 topAdapterInjectedViewContainer.getInjectedViewAdapter().setNavButtonType(NavButtonType.CLOSE);
             }
 
-            topAdapterInjectedViewContainer.getInjectedViewAdapter().setTitle(ContextHelper.isTablet(mFragment.getActivity()) ? mFragment.getActivity().getResources().getString(R.string.gc_camera_title) :
-                    mFragment.getActivity().getResources().getString(R.string.gc_title_camera));
+            if (!isOnlyQRCodeScanningEnabled()) {
+                topAdapterInjectedViewContainer.getInjectedViewAdapter().setTitle(ContextHelper.isTablet(mFragment.getActivity()) ? mFragment.getActivity().getResources().getString(R.string.gc_camera_title) :
+                        mFragment.getActivity().getResources().getString(R.string.gc_title_camera));
+            } else {
+                topAdapterInjectedViewContainer.getInjectedViewAdapter()
+                        .setTitle(mFragment.getActivity().getString(R.string.gc_scan));
+            }
 
-            if (!isBottomBarEnabled) {
+            if (!isBottomBarEnabled && !isOnlyQRCodeScanningEnabled()) {
                 topAdapterInjectedViewContainer.getInjectedViewAdapter().setMenuResource(R.menu.gc_camera);
                 topAdapterInjectedViewContainer.getInjectedViewAdapter().setOnMenuItemClickListener(item -> {
                     if (item.getItemId() == R.id.gc_action_show_onboarding) {
-
-                        // TODO: set back to help screen after first test
-//                        startHelpActivity();
-                        final Intent intent = new Intent(mFragment.getActivity(), ErrorActivity.class);
-                        mFragment.getActivity().startActivityForResult(intent, ErrorActivity.ERROR_REQUEST);
+                        startHelpActivity();
                     } else {
                         throw new UnsupportedOperationException("Unknown menu item id. Please don't call our OnMenuItemClickListener for custom menu items.");
                     }
@@ -663,7 +666,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
 
     private void setBottomInjectedViewContainer() {
-        if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
+        if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled() && !isOnlyQRCodeScanningEnabled()) {
             CameraNavigationBarBottomAdapter adapter = GiniCapture.getInstance().getCameraNavigationBarBottomAdapter();
 
             mBottomInjectedContainer.setInjectedViewAdapter(adapter);

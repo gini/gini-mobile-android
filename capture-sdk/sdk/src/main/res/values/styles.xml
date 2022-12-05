@@ -13,6 +13,7 @@
         <item name="colorOnSurfaceInverse">@color/Light_02</item>
         <item name="android:windowLightStatusBar">@bool/gc_light_status_bar</item>
         <item name="colorAccent">?attr/colorPrimary</item>
+        <item name="pageItemBackground">@color/Light_01</item>
         <item name="alertDialogTheme">@style/GiniCaptureTheme.ThemeOverlay.Dialog.Alert</item>
         <item name="toolbarStyle">@style/Widget.MaterialComponents.Toolbar.Surface</item>
         <item name="textAppearanceHeadline1">@style/GiniCaptureTheme.Typography.Headline1</item>
