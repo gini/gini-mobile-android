@@ -190,5 +190,6 @@
     <string name="gc_continue">Verarbeiten</string>
     <string name="gc_camera_access">Kamerazugriff</string>
     <string name="gc_unknown_qr_code_description">Dieser Code enthält keine Zahlungsinformationen. Bitte anderen QR-Code oder Rechnung abfotografieren.</string>
+    <string name="gc_error_screen_title">Fehler</string>
     <string name="gc_scan">Scan</string>
 </resources>
