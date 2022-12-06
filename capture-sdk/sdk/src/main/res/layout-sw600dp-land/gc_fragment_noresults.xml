@@ -70,14 +70,14 @@
 
     <LinearLayout
         android:id="@+id/gc_no_results_button_container"
-        android:layout_width="@dimen/gc_tablet_width"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginStart="@dimen/large_24"
-        android:layout_marginEnd="@dimen/large_24"
+        android:layout_marginStart="@dimen/xxlarge"
+        android:layout_marginEnd="@dimen/xxlarge"
         android:layout_marginBottom="@dimen/large_24">
 
         <Button
