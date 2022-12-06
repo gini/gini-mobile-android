@@ -28,12 +28,6 @@ data class CaptureConfiguration(
     val networkService: GiniCaptureNetworkService,
 
     /**
-     * Set the [GiniCaptureNetworkApi] instance which clients can use to request network
-     * calls (e.g. for sending feedback).
-     */
-    val networkApi: GiniCaptureNetworkApi,
-
-    /**
      * Screen API only
      *
      * When enabled shows the OnboardingActivity the first time the CameraActivity is launched.
@@ -176,7 +170,6 @@ data class CaptureConfiguration(
 
 internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfiguration): GiniCapture.Builder {
     return this.setGiniCaptureNetworkService(configuration.networkService)
-        .setGiniCaptureNetworkApi(configuration.networkApi)
         .setShouldShowOnboardingAtFirstRun(configuration.showOnboardingAtFirstRun)
         .setShouldShowOnboarding(configuration.showOnboarding)
         .setMultiPageEnabled(configuration.multiPageEnabled)

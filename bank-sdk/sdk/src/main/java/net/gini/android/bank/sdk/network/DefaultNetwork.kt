@@ -19,12 +19,3 @@ fun getDefaultNetworkService(
         .setClientCredentials(clientId, clientSecret, emailDomain)
         .setDocumentMetadata(documentMetadata)
         .build()
-
-/**
- * Utility method to create a basic Default Network Api.
- * For more details see [GiniCaptureDefaultNetworkApi].
- */
-fun getDefaultNetworkApi(service: GiniCaptureDefaultNetworkService): GiniCaptureDefaultNetworkApi =
-    GiniCaptureDefaultNetworkApi.builder()
-        .withGiniCaptureDefaultNetworkService(service)
-        .build()
