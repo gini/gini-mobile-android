@@ -3,9 +3,11 @@ package net.gini.android.capture;
 import static net.gini.android.capture.internal.util.FileImportValidator.FILE_SIZE_LIMIT;
 
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
 
 import android.content.Context;
 import android.content.Intent;
+import android.widget.Toast;
 
 import net.gini.android.capture.analysis.AnalysisActivity;
 import net.gini.android.capture.camera.view.CameraNavigationBarBottomAdapter;
@@ -197,21 +199,33 @@ public class GiniCapture {
 
         Map<String, GiniCaptureSpecificExtraction> extractionMap = new HashMap<>();
 
-        GiniCaptureSpecificExtraction extraction = new GiniCaptureSpecificExtraction("amountToPay",
-                amountToPay, "amount", null, emptyList());
+        extractionMap.put("amountToPay", new GiniCaptureSpecificExtraction("amountToPay", amountToPay,
+                "amount", null, emptyList()));
 
-        extractionMap.put("amountToPay", extraction);
+        extractionMap.put("paymentRecipient", new GiniCaptureSpecificExtraction("paymentRecipient", paymentRecipient,
+                "companyname", null, emptyList()));
+
+        extractionMap.put("paymentPurpose", new GiniCaptureSpecificExtraction("paymentPurpose", paymentReference,
+                "reference", null, emptyList()));
+
+        extractionMap.put("iban", new GiniCaptureSpecificExtraction("iban", iban,
+                "iban", null, emptyList()));
+
+        extractionMap.put("bic", new GiniCaptureSpecificExtraction("bic", bic,
+                "bic", null, emptyList()));
 
         sInstance.mGiniCaptureNetworkService.sendFeedback(extractionMap,
                 sInstance.mInternal.getCompoundExtractions(), new GiniCaptureNetworkCallback<Void, Error>() {
                     @Override
                     public void failure(Error error) {
-
+                        Toast.makeText(context, "Feedback error:\n" + error.getMessage(),
+                                Toast.LENGTH_LONG).show();
                     }
 
                     @Override
                     public void success(Void result) {
-
+                        Toast.makeText(context, "Feedback successful",
+                                Toast.LENGTH_LONG).show();
                     }
 
                     @Override
@@ -225,6 +239,7 @@ public class GiniCapture {
         if (sInstance.mNetworkRequestsManager != null) {
             sInstance.mNetworkRequestsManager.cleanup();
         }
+        sInstance.mInternal.setUpdatedCompoundExtractions(emptyMap());
         sInstance.mImageMultiPageDocumentMemoryStore.clear();
         sInstance.internal().setReviewScreenAnalysisError(null);
         sInstance = null; // NOPMD
