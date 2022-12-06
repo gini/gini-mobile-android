@@ -64,7 +64,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun configureGiniCapture() {
-        GiniBank.releaseCapture(this)
+        GiniBank.releaseCapture(this, null,
+            null, null, null, null)
         val enableBottomNavigationBar = false
         val useCustomOnboardingPages = false
         val useCustomLoadingIndicator = false

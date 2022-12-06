@@ -7,7 +7,6 @@ import net.gini.android.capture.camera.CameraActivity
 import net.gini.android.capture.help.HelpItem
 import net.gini.android.capture.internal.util.FileImportValidator.FILE_SIZE_LIMIT
 import net.gini.android.capture.logging.ErrorLoggerListener
-import net.gini.android.capture.network.GiniCaptureNetworkApi
 import net.gini.android.capture.network.GiniCaptureNetworkService
 import net.gini.android.capture.onboarding.OnboardingPage
 import net.gini.android.capture.onboarding.view.OnboardingIllustrationAdapter

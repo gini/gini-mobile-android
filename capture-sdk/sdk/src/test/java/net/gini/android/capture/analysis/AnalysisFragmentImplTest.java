@@ -4,7 +4,6 @@ import static com.google.common.truth.Truth.assertThat;
 
 import static net.gini.android.capture.analysis.BitmapMatcher.withBitmap;
 import static net.gini.android.capture.analysis.RotationMatcher.withRotation;
-import static net.gini.android.capture.test.BackgroundColorMatcher.hasBackgroundColor;
 import static net.gini.android.capture.test.Helpers.getTestJpeg;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -16,7 +15,6 @@ import static org.mockito.Mockito.verify;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
@@ -25,7 +23,6 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.view.View;
 
 import net.gini.android.capture.Document;
@@ -38,7 +35,6 @@ import net.gini.android.capture.internal.camera.photo.Photo;
 import net.gini.android.capture.internal.camera.photo.PhotoFactory;
 import net.gini.android.capture.internal.ui.ErrorSnackbar;
 import net.gini.android.capture.internal.util.Size;
-import net.gini.android.capture.network.GiniCaptureNetworkApi;
 import net.gini.android.capture.network.GiniCaptureNetworkService;
 import net.gini.android.capture.test.FragmentImplFactory;
 import net.gini.android.capture.view.DefaultLoadingIndicatorAdapter;

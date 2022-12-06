@@ -36,76 +36,7 @@ import kotlin.coroutines.CoroutineContext
 class GiniCaptureDefaultNetworkApi(
     private val defaultNetworkService: GiniCaptureDefaultNetworkService,
     coroutineContext: CoroutineContext = Dispatchers.Main
-) : GiniCaptureNetworkApi {
-
-    private val coroutineScope = CoroutineScope(coroutineContext)
-    private var updatedCompoundExtractions = emptyMap<String, GiniCaptureCompoundExtraction>()
-
-    override fun sendFeedback(
-        extractions: MutableMap<String, GiniCaptureSpecificExtraction>,
-        callback: GiniCaptureNetworkCallback<Void, Error>
-    ) {
-        coroutineScope.launch {
-            val documentManager = defaultNetworkService.giniBankApi.documentManager
-            val document = defaultNetworkService.analyzedGiniApiDocument
-            // We require the Gini Bank API lib's net.gini.android.core.api.models.Document for sending the feedback
-            if (document != null) {
-                val feedbackResource = if (updatedCompoundExtractions.isEmpty()) {
-                    documentManager.sendFeedbackForExtractions(document, SpecificExtractionMapper.mapToApiSdk(extractions))
-                } else {
-                    documentManager.sendFeedbackForExtractions(
-                        document,
-                        SpecificExtractionMapper.mapToApiSdk(extractions),
-                        CompoundExtractionsMapper.mapToApiSdk(updatedCompoundExtractions)
-                    )
-                }
-                when (feedbackResource) {
-                    is Resource.Success -> {
-                        LOG.debug(
-                            "Send feedback success for api document {}",
-                            document.id
-                        )
-                        callback.success(null)
-                    }
-                    is Resource.Error -> {
-                        val error = Error(feedbackResource.formattedErrorMessage)
-                        LOG.error("Send feedback failed for api document {}: {}", document.id, error.message)
-                        defaultNetworkService.handleErrorLog(
-                            ErrorLog(
-                                description = "Failed to send feedback for document ${document.id}",
-                                exception = feedbackResource.exception
-                            )
-                        )
-                        callback.failure(error)
-                    }
-                    is Resource.Cancelled -> {
-                        LOG.debug(
-                            "Send feedback cancelled for api document {}",
-                            document.id
-                        )
-                        callback.cancelled()
-                    }
-                }
-            } else {
-                LOG.error("Send feedback failed: no api document available")
-                defaultNetworkService.handleErrorLog(
-                    ErrorLog(
-                        description = "Failed to send feedback: no api document available",
-                        exception = null
-                    )
-                )
-                callback.failure(Error("Feedback not set: no api document available"))
-            }
-        }
-    }
-
-    override fun deleteGiniUserCredentials() {
-        defaultNetworkService.giniBankApi.credentialsStore.deleteUserCredentials()
-    }
-
-    override fun setUpdatedCompoundExtractions(compoundExtractions: Map<String, GiniCaptureCompoundExtraction>) {
-        updatedCompoundExtractions = compoundExtractions
-    }
+) {
 
     /**
      * Builder for configuring a new instance of the [GiniCaptureDefaultNetworkApi].

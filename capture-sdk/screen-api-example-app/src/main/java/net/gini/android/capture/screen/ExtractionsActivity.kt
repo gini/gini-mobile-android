@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import net.gini.android.bank.api.GiniBankAPI
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.example.shared.BaseExampleApp
 import net.gini.android.capture.network.Error
@@ -209,31 +210,8 @@ class ExtractionsActivity : AppCompatActivity() {
         }
         mExtractionsAdapter?.notifyDataSetChanged()
         showProgressIndicator(binding)
-        val giniCaptureNetworkApi = GiniCapture.getInstance().giniCaptureNetworkApi
-        if (giniCaptureNetworkApi == null) {
-            Toast.makeText(this, "Feedback not sent: missing GiniCaptureNetworkApi implementation.",
-                    Toast.LENGTH_SHORT).show()
-            return
-        }
-        giniCaptureNetworkApi.sendFeedback(mExtractions, object : GiniCaptureNetworkCallback<Void, Error> {
-            override fun failure(error: Error) {
-                hideProgressIndicator(binding)
-                Toast.makeText(this@ExtractionsActivity,
-                        "Feedback error:\n" + error.message,
-                        Toast.LENGTH_LONG).show()
-            }
 
-            override fun success(result: Void?) {
-                hideProgressIndicator(binding)
-                Toast.makeText(this@ExtractionsActivity,
-                        "Feedback successful",
-                        Toast.LENGTH_LONG).show()
-            }
-
-            override fun cancelled() {
-                hideProgressIndicator(binding)
-            }
-        })
+        GiniCapture.cleanup(applicationContext, "", "", "", "", "")
     }
 
     private fun legacySendFeedback() {

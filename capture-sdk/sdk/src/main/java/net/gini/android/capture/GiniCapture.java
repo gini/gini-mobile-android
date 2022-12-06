@@ -2,6 +2,8 @@ package net.gini.android.capture;
 
 import static net.gini.android.capture.internal.util.FileImportValidator.FILE_SIZE_LIMIT;
 
+import static java.util.Collections.emptyList;
+
 import android.content.Context;
 import android.content.Intent;
 
@@ -18,6 +20,7 @@ import net.gini.android.capture.internal.network.NetworkRequestsManager;
 import net.gini.android.capture.internal.storage.ImageDiskStore;
 import net.gini.android.capture.logging.ErrorLogger;
 import net.gini.android.capture.logging.ErrorLoggerListener;
+import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
 import net.gini.android.capture.noresults.view.DefaultNoResultsNavigationBarBottomAdapter;
 import net.gini.android.capture.noresults.view.NoResultsNavigationBarBottomAdapter;
 import net.gini.android.capture.onboarding.view.DefaultOnboardingNavigationBarBottomAdapter;
@@ -30,7 +33,6 @@ import net.gini.android.capture.view.DefaultLoadingIndicatorAdapter;
 import net.gini.android.capture.view.DefaultOnButtonLoadingIndicatorAdapter;
 import net.gini.android.capture.view.NavigationBarTopAdapter;
 import net.gini.android.capture.view.DefaultNavigationBarTopAdapter;
-import net.gini.android.capture.network.GiniCaptureNetworkApi;
 import net.gini.android.capture.network.GiniCaptureNetworkService;
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction;
 import net.gini.android.capture.onboarding.OnboardingPage;
@@ -51,7 +53,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -72,9 +76,9 @@ import androidx.annotation.VisibleForTesting;
  *
  * <p> To create and configure a singleton instance use the {@link #newInstance()} method and the
  * returned {@link Builder}. If an instance is already available you need to call {@link
- * #cleanup(Context)} before creating a new instance. Failing to do so will throw an exception.
+ * #cleanup(Context, String, String, String, String, String)} before creating a new instance. Failing to do so will throw an exception.
  *
- * <p> After you are done using the Gini Capture SDK use the {@link #cleanup(Context)} method.
+ * <p> After you are done using the Gini Capture SDK use the {@link #cleanup(Context, String, String, String, String, String)} method.
  * This will free up resources used by the library.
  */
 public class GiniCapture {
@@ -82,7 +86,6 @@ public class GiniCapture {
     private static final Logger LOG = LoggerFactory.getLogger(GiniCapture.class);
     private static GiniCapture sInstance;
     private final GiniCaptureNetworkService mGiniCaptureNetworkService;
-    private final GiniCaptureNetworkApi mGiniCaptureNetworkApi;
     private final NetworkRequestsManager mNetworkRequestsManager;
     private final DocumentDataMemoryCache mDocumentDataMemoryCache;
     private final PhotoMemoryCache mPhotoMemoryCache;
@@ -154,7 +157,7 @@ public class GiniCapture {
      *
      * @return a new {@link Builder}
      *
-     * @throws IllegalStateException when an instance already exists. Call {@link #cleanup(Context)}
+     * @throws IllegalStateException when an instance already exists. Call {@link #cleanup(Context, String, String, String, String, String)}
      *                               before trying to create a new instance
      */
     @NonNull
@@ -171,20 +174,42 @@ public class GiniCapture {
      *
      * @param context Android context
      */
-    public static synchronized void cleanup(@NonNull final Context context) {
-        if (sInstance != null) {
-            sInstance.mDocumentDataMemoryCache.clear();
+    public static synchronized void cleanup(@NonNull final Context context,
+                                            @Nullable final String paymentRecipient,
+                                            @Nullable final String paymentReference,
+                                            @Nullable final String iban,
+                                            @Nullable final String bic,
+                                            @Nullable final String amountToPay) {
+
+        if (sInstance == null) {
+            throw new IllegalStateException("Cleanup called before creating an instance or cleanup was called twice.");
+        }
+
+
+        if (amountToPay != null) {
+            String[] result = amountToPay.split("\\.");
+            if (result.length > 0) {
+                if (result[1].length() != 2)
+                    throw new IllegalStateException("");
+            }
+        }
+
+        Map<String, GiniCaptureSpecificExtraction> extractionMap = new HashMap<>();
+
+        GiniCaptureSpecificExtraction extraction = new GiniCaptureSpecificExtraction("amountToPay",
+                amountToPay, "amount", null, emptyList());
+
+        extractionMap.put("amountToPay", extraction);
+
+
+        sInstance.mDocumentDataMemoryCache.clear();
             sInstance.mPhotoMemoryCache.clear();
             if (sInstance.mNetworkRequestsManager != null) {
                 sInstance.mNetworkRequestsManager.cleanup();
             }
-            if (sInstance.mGiniCaptureNetworkApi != null) {
-                sInstance.mGiniCaptureNetworkApi.setUpdatedCompoundExtractions(Collections.<String, GiniCaptureCompoundExtraction>emptyMap());
-            }
             sInstance.mImageMultiPageDocumentMemoryStore.clear();
             sInstance.internal().setReviewScreenAnalysisError(null);
             sInstance = null; // NOPMD
-        }
         ImageDiskStore.clear(context);
     }
 
@@ -194,7 +219,6 @@ public class GiniCapture {
 
     private GiniCapture(@NonNull final Builder builder) {
         mGiniCaptureNetworkService = builder.getGiniCaptureNetworkService();
-        mGiniCaptureNetworkApi = builder.getGiniCaptureNetworkApi();
         mDocumentImportEnabledFileTypes = builder.getDocumentImportEnabledFileTypes();
         mFileImportEnabled = builder.isFileImportEnabled();
         mQRCodeScanningEnabled = builder.isQRCodeScanningEnabled();
@@ -244,16 +268,6 @@ public class GiniCapture {
     @NonNull
     public Internal internal() {
         return mInternal;
-    }
-
-    /**
-     * Retrieve the {@link GiniCaptureNetworkApi} instance, if available.
-     *
-     * @return {@link GiniCaptureNetworkApi} instance or {@code null}
-     */
-    @Nullable
-    public GiniCaptureNetworkApi getGiniCaptureNetworkApi() {
-        return mGiniCaptureNetworkApi;
     }
 
     /**
@@ -647,7 +661,6 @@ public class GiniCapture {
     public static class Builder {
 
         private GiniCaptureNetworkService mGiniCaptureNetworkService;
-        private GiniCaptureNetworkApi mGiniCaptureNetworkApi;
         private DocumentImportEnabledFileTypes mDocumentImportEnabledFileTypes =
                 DocumentImportEnabledFileTypes.NONE;
         private boolean mFileImportEnabled;
@@ -711,12 +724,6 @@ public class GiniCapture {
                         + "Relying on client to perform network calls."
                         + "You may provide a GiniCaptureNetworkService instance with "
                         + "GiniCapture.newInstance().setGiniCaptureNetworkService()");
-            }
-            if (mGiniCaptureNetworkApi == null) {
-                LOG.warn("GiniCaptureNetworkApi instance not set. "
-                        + "Relying on client to perform network calls."
-                        + "You may provide a GiniCaptureNetworkApi instance with "
-                        + "GiniCapture.newInstance().setGiniCaptureNetworkApi()");
             }
         }
 
@@ -816,26 +823,6 @@ public class GiniCapture {
         public Builder setGiniCaptureNetworkService(
                 @NonNull final GiniCaptureNetworkService giniCaptureNetworkService) {
             mGiniCaptureNetworkService = giniCaptureNetworkService;
-            return this;
-        }
-
-        @Nullable
-        GiniCaptureNetworkApi getGiniCaptureNetworkApi() {
-            return mGiniCaptureNetworkApi;
-        }
-
-        /**
-         * Set the {@link GiniCaptureNetworkApi} instance which clients can use to request network
-         * calls (e.g. for sending feedback).
-         *
-         * @param giniCaptureNetworkApi a {@link GiniCaptureNetworkApi} instance
-         *
-         * @return the {@link Builder} instance
-         */
-        @NonNull
-        public Builder setGiniCaptureNetworkApi(
-                @NonNull final GiniCaptureNetworkApi giniCaptureNetworkApi) {
-            mGiniCaptureNetworkApi = giniCaptureNetworkApi;
             return this;
         }
 
@@ -1259,6 +1246,8 @@ public class GiniCapture {
 
         private Throwable mReviewScreenAnalysisError;
 
+        private Map<String, GiniCaptureCompoundExtraction> mCompoundExtractions;
+
         public Internal(@NonNull final GiniCapture giniCapture) {
             mGiniCapture = giniCapture;
         }
@@ -1306,6 +1295,15 @@ public class GiniCapture {
 
         public ErrorLogger getErrorLogger() {
             return mGiniCapture.getErrorLogger();
+        }
+
+
+        public void setUpdatedCompoundExtractions(@NonNull final Map<String, GiniCaptureCompoundExtraction> compoundExtractions) {
+            mCompoundExtractions = compoundExtractions;
+        }
+
+        public Map<String, GiniCaptureCompoundExtraction> getCompoundExtractions() {
+            return mCompoundExtractions;
         }
     }
 
