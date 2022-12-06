@@ -12,6 +12,7 @@ import net.gini.android.capture.camera.CameraActivity.RESULT_ENTER_MANUALLY
 import net.gini.android.capture.internal.util.ActivityHelper
 import net.gini.android.capture.ImageRetakeOptionsListener
 import net.gini.android.capture.camera.CameraActivity.RESULT_CAMERA_SCREEN
+import net.gini.android.capture.help.view.HelpNavigationBarBottomAdapter
 import net.gini.android.capture.network.ErrorType
 import net.gini.android.capture.noresults.NoResultsActivity
 import net.gini.android.capture.view.InjectedViewContainer
@@ -28,10 +29,11 @@ class ErrorActivity : AppCompatActivity(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.gc_activity_error)
+
         readExtras()
 
         setInjectedTopBarContainer()
-
+        setBottomBarInjectedContainer()
         if (savedInstanceState == null) {
             initFragment()
         }
@@ -40,7 +42,8 @@ class ErrorActivity : AppCompatActivity(),
     }
 
     private fun setInjectedTopBarContainer() {
-        val topBarContainer = findViewById<InjectedViewContainer<NavigationBarTopAdapter>>(R.id.gc_injected_navigation_bar_container_top)
+        val topBarContainer =
+            findViewById<InjectedViewContainer<NavigationBarTopAdapter>>(R.id.gc_injected_navigation_bar_container_top)
         if (GiniCapture.hasInstance()) {
             topBarContainer.injectedViewAdapter = GiniCapture.getInstance().navigationBarTopAdapter
 
@@ -52,6 +55,18 @@ class ErrorActivity : AppCompatActivity(),
                     setOnNavButtonClickListener {
                         onBackPressed()
                     }
+                }
+            }
+        }
+    }
+
+    private fun setBottomBarInjectedContainer() {
+        if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled) {
+            val bottomBarContainer = findViewById<InjectedViewContainer<HelpNavigationBarBottomAdapter>>(R.id.gc_injected_navigation_bar_container_bottom)
+            bottomBarContainer.injectedViewAdapter = GiniCapture.getInstance().helpNavigationBarBottomAdapter
+            bottomBarContainer.injectedViewAdapter?.apply {
+                setOnBackClickListener {
+                    onBackPressed()
                 }
             }
         }
