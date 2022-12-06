@@ -4,9 +4,6 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -21,13 +18,10 @@ import net.gini.android.bank.sdk.screenapiexample.util.PermissionHandler
 import net.gini.android.capture.DocumentImportEnabledFileTypes
 import net.gini.android.capture.GiniCaptureDebug
 import net.gini.android.capture.help.HelpItem
-import net.gini.android.capture.network.GiniCaptureDefaultNetworkApi
 import net.gini.android.capture.network.GiniCaptureDefaultNetworkService
 import net.gini.android.capture.requirements.RequirementsReport
 import net.gini.android.capture.util.CancellationToken
 import net.gini.android.capture.view.DefaultLoadingIndicatorAdapter
-import net.gini.android.capture.view.NavButtonType
-import net.gini.android.capture.view.NavigationBarTopAdapter
 import org.koin.android.ext.android.inject
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

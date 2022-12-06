@@ -2,7 +2,6 @@ package net.gini.android.bank.sdk.network
 
 import android.content.Context
 import net.gini.android.core.api.DocumentMetadata
-import net.gini.android.capture.network.GiniCaptureDefaultNetworkApi
 import net.gini.android.capture.network.GiniCaptureDefaultNetworkService
 
 /**

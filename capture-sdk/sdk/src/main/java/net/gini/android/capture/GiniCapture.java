@@ -56,7 +56,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -194,7 +193,7 @@ public class GiniCapture {
 
         if (!amountToPay.isEmpty()) {
             if (!isAmountValid(amountToPay))
-                throw new IllegalStateException("Amount doesn't have proper format");
+                throw new IllegalStateException("Amount doesn't have a proper format");
         }
 
         Map<String, GiniCaptureSpecificExtraction> extractionMap = new HashMap<>();
@@ -214,26 +213,41 @@ public class GiniCapture {
         extractionMap.put("bic", new GiniCaptureSpecificExtraction("bic", bic,
                 "bic", null, emptyList()));
 
+
         sInstance.mGiniCaptureNetworkService.sendFeedback(extractionMap,
                 sInstance.mInternal.getCompoundExtractions(), new GiniCaptureNetworkCallback<Void, Error>() {
                     @Override
                     public void failure(Error error) {
                         Toast.makeText(context, "Feedback error:\n" + error.getMessage(),
                                 Toast.LENGTH_LONG).show();
+
+                        doActualCleanUp(context);
                     }
 
                     @Override
                     public void success(Void result) {
                         Toast.makeText(context, "Feedback successful",
                                 Toast.LENGTH_LONG).show();
+
+                        doActualCleanUp(context);
                     }
 
                     @Override
                     public void cancelled() {
-
+                        doActualCleanUp(context);
                     }
                 });
 
+    }
+
+
+    private static boolean isAmountValid(final String input) {
+        final Pattern pattern = Pattern.compile("[0-9]*\\.[0-9]+:EUR", Pattern.CASE_INSENSITIVE);
+        final Matcher matcher = pattern.matcher(input);
+        return matcher.matches();
+    }
+
+    private static void doActualCleanUp(Context context) {
         sInstance.mDocumentDataMemoryCache.clear();
         sInstance.mPhotoMemoryCache.clear();
         if (sInstance.mNetworkRequestsManager != null) {
@@ -244,13 +258,6 @@ public class GiniCapture {
         sInstance.internal().setReviewScreenAnalysisError(null);
         sInstance = null; // NOPMD
         ImageDiskStore.clear(context);
-    }
-
-
-    public static boolean isAmountValid(final String input) {
-        final Pattern pattern = Pattern.compile("[0-9]*\\.[0-9]+:EUR", Pattern.CASE_INSENSITIVE);
-        final Matcher matcher = pattern.matcher(input);
-        return matcher.matches();
     }
 
     private static synchronized void createInstance(@NonNull final Builder builder) {
@@ -1289,7 +1296,7 @@ public class GiniCapture {
 
         private Throwable mReviewScreenAnalysisError;
 
-        private Map<String, GiniCaptureCompoundExtraction> mCompoundExtractions;
+        private Map<String, GiniCaptureCompoundExtraction> mCompoundExtractions = new HashMap<>();
 
         public Internal(@NonNull final GiniCapture giniCapture) {
             mGiniCapture = giniCapture;

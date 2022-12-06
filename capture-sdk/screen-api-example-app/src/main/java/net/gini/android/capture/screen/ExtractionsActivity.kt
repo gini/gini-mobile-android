@@ -214,8 +214,6 @@ class ExtractionsActivity : AppCompatActivity() {
             Toast.makeText(this, "Added amount of 10.00:EUR", Toast.LENGTH_SHORT).show()
         }
         mExtractionsAdapter?.notifyDataSetChanged()
-        showProgressIndicator(binding)
-
 
         GiniCapture.cleanup(applicationContext, paymentRecipient, paymentReference, iban, bic, amount!!.value)
     }

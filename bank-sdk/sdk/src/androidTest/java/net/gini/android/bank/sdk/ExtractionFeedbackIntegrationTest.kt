@@ -39,7 +39,6 @@ import kotlin.coroutines.resumeWithException
 class ExtractionFeedbackIntegrationTest {
 
     private lateinit var networkService: GiniCaptureDefaultNetworkService
-    private lateinit var networkApi: GiniCaptureDefaultNetworkApi
     private lateinit var giniBankAPI: GiniBankAPI
     private var analyzedGiniApiDocument: net.gini.android.core.api.models.Document? = null
 
@@ -61,11 +60,6 @@ class ExtractionFeedbackIntegrationTest {
             )
             .setBaseUrl(testProperties["testApiUri"] as String)
             .setUserCenterBaseUrl(testProperties["testUserCenterUri"] as String)
-            .build()
-
-        networkApi = GiniCaptureDefaultNetworkApi
-            .builder()
-            .withGiniCaptureDefaultNetworkService(networkService)
             .build()
 
         giniBankAPI = GiniBankAPIBuilder(
@@ -109,17 +103,17 @@ class ExtractionFeedbackIntegrationTest {
         //    Send feedback for the extractions the user saw
         //    with the final (user confirmed or updated) extraction values
         suspendCancellableCoroutine<Unit> { continuation ->
-            networkApi.sendFeedback(
+            networkService.sendFeedback(
                 mutableMapOf(
                     "amountToPay" to result.specificExtractions["amountToPay"]!!,
                     "iban" to result.specificExtractions["iban"]!!,
                     "bic" to result.specificExtractions["bic"]!!,
                     "paymentPurpose" to result.specificExtractions["paymentPurpose"]!!,
                     "paymentRecipient" to result.specificExtractions["paymentRecipient"]!!
-                ),
+                ), Collections.emptyMap(),
                 object : GiniCaptureNetworkCallback<Void, Error> {
-                    override fun failure(error: Error) {
-                        continuation.resumeWithException(RuntimeException(error.message, error.cause))
+                    override fun failure(error: Error?) {
+                        continuation.resumeWithException(RuntimeException(error?.message, error?.cause))
                     }
 
                     override fun success(result: Void?) {
@@ -129,6 +123,7 @@ class ExtractionFeedbackIntegrationTest {
                     override fun cancelled() {
                         continuation.cancel()
                     }
+
                 }
             )
         }

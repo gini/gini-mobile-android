@@ -14,11 +14,8 @@ import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.network.Error
 import net.gini.android.capture.network.GiniCaptureNetworkCallback
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
-import net.gini.android.bank.sdk.screenapiexample.R
 import net.gini.android.bank.sdk.screenapiexample.databinding.ActivityExtractionsBinding
-import net.gini.android.capture.network.GiniCaptureDefaultNetworkApi
 import net.gini.android.capture.network.GiniCaptureDefaultNetworkService
-import net.gini.android.capture.network.GiniCaptureNetworkService
 import org.koin.android.ext.android.inject
 
 /**
