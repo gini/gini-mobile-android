@@ -20,6 +20,8 @@ import net.gini.android.capture.internal.network.NetworkRequestsManager;
 import net.gini.android.capture.internal.storage.ImageDiskStore;
 import net.gini.android.capture.logging.ErrorLogger;
 import net.gini.android.capture.logging.ErrorLoggerListener;
+import net.gini.android.capture.network.Error;
+import net.gini.android.capture.network.GiniCaptureNetworkCallback;
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
 import net.gini.android.capture.noresults.view.DefaultNoResultsNavigationBarBottomAdapter;
 import net.gini.android.capture.noresults.view.NoResultsNavigationBarBottomAdapter;
@@ -56,6 +58,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -63,7 +67,7 @@ import androidx.annotation.VisibleForTesting;
 
 /**
  * Created by Alpar Szotyori on 22.02.2018.
- *
+ * <p>
  * Copyright (c) 2018 Gini GmbH.
  */
 
@@ -175,23 +179,20 @@ public class GiniCapture {
      * @param context Android context
      */
     public static synchronized void cleanup(@NonNull final Context context,
-                                            @Nullable final String paymentRecipient,
-                                            @Nullable final String paymentReference,
-                                            @Nullable final String iban,
-                                            @Nullable final String bic,
-                                            @Nullable final String amountToPay) {
+                                            @NonNull final String paymentRecipient,
+                                            @NonNull final String paymentReference,
+                                            @NonNull final String iban,
+                                            @NonNull final String bic,
+                                            @NonNull final String amountToPay) {
 
         if (sInstance == null) {
             throw new IllegalStateException("Cleanup called before creating an instance or cleanup was called twice.");
         }
 
 
-        if (amountToPay != null) {
-            String[] result = amountToPay.split("\\.");
-            if (result.length > 0) {
-                if (result[1].length() != 2)
-                    throw new IllegalStateException("");
-            }
+        if (!amountToPay.isEmpty()) {
+            if (!isAmountValid(amountToPay))
+                throw new IllegalStateException("Amount doesn't have proper format");
         }
 
         Map<String, GiniCaptureSpecificExtraction> extractionMap = new HashMap<>();
@@ -201,16 +202,40 @@ public class GiniCapture {
 
         extractionMap.put("amountToPay", extraction);
 
+        sInstance.mGiniCaptureNetworkService.sendFeedback(extractionMap,
+                sInstance.mInternal.getCompoundExtractions(), new GiniCaptureNetworkCallback<Void, Error>() {
+                    @Override
+                    public void failure(Error error) {
+
+                    }
+
+                    @Override
+                    public void success(Void result) {
+
+                    }
+
+                    @Override
+                    public void cancelled() {
+
+                    }
+                });
 
         sInstance.mDocumentDataMemoryCache.clear();
-            sInstance.mPhotoMemoryCache.clear();
-            if (sInstance.mNetworkRequestsManager != null) {
-                sInstance.mNetworkRequestsManager.cleanup();
-            }
-            sInstance.mImageMultiPageDocumentMemoryStore.clear();
-            sInstance.internal().setReviewScreenAnalysisError(null);
-            sInstance = null; // NOPMD
+        sInstance.mPhotoMemoryCache.clear();
+        if (sInstance.mNetworkRequestsManager != null) {
+            sInstance.mNetworkRequestsManager.cleanup();
+        }
+        sInstance.mImageMultiPageDocumentMemoryStore.clear();
+        sInstance.internal().setReviewScreenAnalysisError(null);
+        sInstance = null; // NOPMD
         ImageDiskStore.clear(context);
+    }
+
+
+    public static boolean isAmountValid(final String input) {
+        final Pattern pattern = Pattern.compile("[0-9]*\\.[0-9]+:EUR", Pattern.CASE_INSENSITIVE);
+        final Matcher matcher = pattern.matcher(input);
+        return matcher.matches();
     }
 
     private static synchronized void createInstance(@NonNull final Builder builder) {
@@ -441,8 +466,8 @@ public class GiniCapture {
      */
     @NonNull
     public CancellationToken createIntentForImportedFiles(@NonNull final Intent intent,
-            @NonNull final Context context,
-            @NonNull final AsyncCallback<Intent, ImportedFileValidationException> callback) {
+                                                          @NonNull final Context context,
+                                                          @NonNull final AsyncCallback<Intent, ImportedFileValidationException> callback) {
         return mGiniCaptureFileImport.createIntentForImportedFiles(intent, context, callback);
     }
 
@@ -470,8 +495,8 @@ public class GiniCapture {
      */
     @NonNull
     public CancellationToken createDocumentForImportedFiles(@NonNull final Intent intent,
-            @NonNull final Context context,
-            @NonNull final AsyncCallback<Document, ImportedFileValidationException> callback) {
+                                                            @NonNull final Context context,
+                                                            @NonNull final AsyncCallback<Document, ImportedFileValidationException> callback) {
         return mGiniCaptureFileImport.createDocumentForImportedFiles(intent, context, callback);
     }
 
@@ -499,9 +524,9 @@ public class GiniCapture {
      **/
     @NonNull
     public static Intent createIntentForImportedFile(@NonNull final Intent intent,
-            @NonNull final Context context,
-            @Nullable final Class<? extends ReviewActivity> reviewActivityClass,
-            @Nullable final Class<? extends AnalysisActivity> analysisActivityClass)
+                                                     @NonNull final Context context,
+                                                     @Nullable final Class<? extends ReviewActivity> reviewActivityClass,
+                                                     @Nullable final Class<? extends AnalysisActivity> analysisActivityClass)
             throws ImportedFileValidationException {
         return GiniCaptureFileImport.createIntentForImportedFile(intent, context,
                 reviewActivityClass, analysisActivityClass);
@@ -530,7 +555,7 @@ public class GiniCapture {
      */
     @NonNull
     public static Document createDocumentForImportedFile(@NonNull final Intent intent,
-            @NonNull final Context context) throws ImportedFileValidationException {
+                                                         @NonNull final Context context) throws ImportedFileValidationException {
         return GiniCaptureFileImport.createDocumentForImportedFile(intent, context);
     }
 
@@ -580,7 +605,9 @@ public class GiniCapture {
     }
 
     @NonNull
-    ErrorLogger getErrorLogger() { return mErrorLogger; }
+    ErrorLogger getErrorLogger() {
+        return mErrorLogger;
+    }
 
     @NonNull
     public NavigationBarTopAdapter getNavigationBarTopAdapter() {
@@ -710,6 +737,7 @@ public class GiniCapture {
         private ReviewNavigationBarBottomAdapter reviewNavigationBarBottomAdapter = new DefaultReviewNavigationBarBottomAdapter();
 
         private OnButtonLoadingIndicatorAdapter onButtonLoadingIndicatorAdapter = new DefaultOnButtonLoadingIndicatorAdapter();
+
         /**
          * Create a new {@link GiniCapture} instance.
          */

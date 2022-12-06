@@ -197,6 +197,11 @@ class ExtractionsActivity : AppCompatActivity() {
         // In a real application the user input should be used as the new value.
 
         val amount = mExtractions["amountToPay"]
+        val paymentRecipient = mExtractions["paymentRecipient"]?.value ?: ""
+        val paymentReference = mExtractions["paymentReference"]?.value ?: ""
+        val iban = mExtractions["iban"]?.value ?: ""
+        val bic = mExtractions["bic"]?.value ?: ""
+
         if (amount != null) { // Let's assume the amount was wrong and change it
             amount.value = "10.00:EUR"
             Toast.makeText(this, "Amount changed to 10.00:EUR", Toast.LENGTH_SHORT).show()
@@ -211,7 +216,8 @@ class ExtractionsActivity : AppCompatActivity() {
         mExtractionsAdapter?.notifyDataSetChanged()
         showProgressIndicator(binding)
 
-        GiniCapture.cleanup(applicationContext, "", "", "", "", "")
+
+        GiniCapture.cleanup(applicationContext, paymentRecipient, paymentReference, iban, bic, amount!!.value)
     }
 
     private fun legacySendFeedback() {

@@ -83,11 +83,11 @@ object GiniBank {
      */
     fun releaseCapture(
         context: Context,
-        paymentRecipient: String?,
-        paymentReference: String?,
-        iban: String?,
-        bic: String?,
-        amountToPay: String?
+        paymentRecipient: String,
+        paymentReference: String,
+        iban: String,
+        bic: String,
+        amountToPay: String
     ) {
         GiniCapture.cleanup(context, paymentRecipient, paymentReference, iban, bic, amountToPay)
         captureConfiguration = null
