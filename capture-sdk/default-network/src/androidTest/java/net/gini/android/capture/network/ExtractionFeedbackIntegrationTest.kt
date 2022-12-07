@@ -8,11 +8,13 @@ import android.os.Parcel
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.squareup.moshi.Moshi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.suspendCancellableCoroutine
 import net.gini.android.bank.api.GiniBankAPI
 import net.gini.android.bank.api.GiniBankAPIBuilder
 import net.gini.android.capture.Document
+import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.internal.util.MimeType
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.network.test.ExtractionsFixture
@@ -60,6 +62,10 @@ class ExtractionFeedbackIntegrationTest {
             .setUserCenterBaseUrl(testProperties["testUserCenterUri"] as String)
             .build()
 
+        GiniCapture.newInstance()
+            .setGiniCaptureNetworkService(networkService)
+            .build()
+
         giniBankAPI = GiniBankAPIBuilder(
             getApplicationContext(),
             testProperties["testClientId"] as String,
@@ -74,7 +80,7 @@ class ExtractionFeedbackIntegrationTest {
 
     @After
     fun tearDown() {
-        networkService.cleanup()
+        GiniCapture.cleanup(getApplicationContext(), "", "", "", "", "")
     }
 
     @Test
@@ -94,32 +100,21 @@ class ExtractionFeedbackIntegrationTest {
         val amountToPay = extractionsBundle.getParcelable<GiniCaptureSpecificExtraction>("amountToPay")
         amountToPay!!.value = "950.00:EUR"
 
-        //    Send feedback for the extractions the user saw
-        //    with the final (user confirmed or updated) extraction values
-        suspendCancellableCoroutine<Unit> { continuation ->
-            networkService.sendFeedback(
-                mutableMapOf(
-                    "amountToPay" to amountToPay,
-                    "iban" to extractionsBundle.getParcelable("iban")!!,
-                    "bic" to extractionsBundle.getParcelable("bic")!!,
-                    "paymentPurpose" to extractionsBundle.getParcelable("paymentPurpose")!!,
-                    "paymentRecipient" to extractionsBundle.getParcelable("paymentRecipient")!!
-                ), Collections.emptyMap(),
-                object : GiniCaptureNetworkCallback<Void, Error> {
-                    override fun failure(error: Error) {
-                        continuation.resumeWithException(RuntimeException(error.message, error.cause))
-                    }
+        //    When releasing capture we need to provide the values the user has used for
+        //    creating the transaction.
+        //    Supposing the user changed the amountToPay from "995.00:EUR" to "950.00:EUR"
+        //    we need to pass in the changed value. For the other extractions we can pass in
+        //    the original values since the user did not edit them.
+        GiniCapture.cleanup(getApplicationContext(),
+            extractionsBundle.getParcelable<GiniCaptureSpecificExtraction>("paymentRecipient")!!.value,
+            extractionsBundle.getParcelable<GiniCaptureSpecificExtraction>("paymentPurpose")!!.value,
+            extractionsBundle.getParcelable<GiniCaptureSpecificExtraction>("iban")!!.value,
+            extractionsBundle.getParcelable<GiniCaptureSpecificExtraction>("bic")!!.value,
+            "950.00:EUR"
+        )
 
-                    override fun success(result: Void?) {
-                        continuation.resume(Unit)
-                    }
-
-                    override fun cancelled() {
-                        continuation.cancel()
-                    }
-                }
-            )
-        }
+        //    Wait a little for the feedback sending to complete
+        delay(2_000)
 
         // 4. Verify that the extractions were updated using the Gini Bank API (available in your app when using
         //    the GiniCaptureDefaultNetworkService).
