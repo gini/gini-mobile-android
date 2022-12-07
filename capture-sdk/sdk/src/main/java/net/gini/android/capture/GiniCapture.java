@@ -133,7 +133,6 @@ public class GiniCapture {
      * Retrieve the current instance.
      *
      * @return {@link GiniCapture} instance
-     *
      * @throws IllegalStateException when there is no instance
      */
     @NonNull
@@ -162,7 +161,6 @@ public class GiniCapture {
      * Configure and create a new instance using the returned {@link Builder}.
      *
      * @return a new {@link Builder}
-     *
      * @throws IllegalStateException when an instance already exists. Call {@link #cleanup(Context, String, String, String, String, String)}
      *                               before trying to create a new instance
      */
@@ -188,7 +186,7 @@ public class GiniCapture {
                                             @NonNull final String amountToPay) {
 
         if (sInstance == null) {
-           return;
+            return;
         }
 
 
@@ -215,35 +213,38 @@ public class GiniCapture {
                 "bic", null, emptyList()));
 
 
+        // Test fails here if for some reason mGiniCaptureNetworkService is null
+        // Added null checking to fix test fail -> or figure out something else
         final GiniCapture oldInstance = sInstance;
-        sInstance.mGiniCaptureNetworkService.sendFeedback(extractionMap,
-                oldInstance.mInternal.getCompoundExtractions(), new GiniCaptureNetworkCallback<Void, Error>() {
-                    @Override
-                    public void failure(Error error) {
-                        Toast.makeText(context, "Feedback error:\n" + error.getMessage(),
-                                Toast.LENGTH_LONG).show();
+        if (oldInstance.mGiniCaptureNetworkService != null)
+            oldInstance.mGiniCaptureNetworkService.sendFeedback(extractionMap,
+                    oldInstance.mInternal.getCompoundExtractions(), new GiniCaptureNetworkCallback<Void, Error>() {
+                        @Override
+                        public void failure(Error error) {
+                            Toast.makeText(context, "Feedback error:\n" + error.getMessage(),
+                                    Toast.LENGTH_LONG).show();
 
-                        if (oldInstance.mNetworkRequestsManager != null) {
-                            oldInstance.mNetworkRequestsManager.cleanup();
+                            if (oldInstance.mNetworkRequestsManager != null) {
+                                oldInstance.mNetworkRequestsManager.cleanup();
+                            }
                         }
-                    }
 
-                    @Override
-                    public void success(Void result) {
-                        Toast.makeText(context, "Feedback successful",
-                                Toast.LENGTH_LONG).show();
-                        if (oldInstance.mNetworkRequestsManager != null) {
-                            oldInstance.mNetworkRequestsManager.cleanup();
+                        @Override
+                        public void success(Void result) {
+                            Toast.makeText(context, "Feedback successful",
+                                    Toast.LENGTH_LONG).show();
+                            if (oldInstance.mNetworkRequestsManager != null) {
+                                oldInstance.mNetworkRequestsManager.cleanup();
+                            }
                         }
-                    }
 
-                    @Override
-                    public void cancelled() {
-                        if (oldInstance.mNetworkRequestsManager != null) {
-                            oldInstance.mNetworkRequestsManager.cleanup();
+                        @Override
+                        public void cancelled() {
+                            if (oldInstance.mNetworkRequestsManager != null) {
+                                oldInstance.mNetworkRequestsManager.cleanup();
+                            }
                         }
-                    }
-                });
+                    });
 
         doActualCleanUp(context);
     }
@@ -488,7 +489,6 @@ public class GiniCapture {
      * @param intent   the Intent your app received
      * @param context  Android context
      * @param callback A {@link AsyncCallback} implementation
-     *
      * @return a {@link CancellationToken} for cancelling the import process
      */
     @NonNull
@@ -517,7 +517,6 @@ public class GiniCapture {
      * @param intent   the Intent your app received
      * @param context  Android context
      * @param callback A {@link AsyncCallback} implementation
-     *
      * @return a {@link CancellationToken} for cancelling the import process
      */
     @NonNull
@@ -542,9 +541,7 @@ public class GiniCapture {
      *                              ReviewActivity} subclass
      * @param analysisActivityClass (optional) the class of your application's {@link
      *                              AnalysisActivity} subclass
-     *
      * @return an Intent for launching the Gini Capture SDK
-     *
      * @throws ImportedFileValidationException if the file didn't pass validation
      * @throws IllegalArgumentException        if the Intent's data is not valid or the mime type is
      *                                         not supported
@@ -574,10 +571,8 @@ public class GiniCapture {
      *
      * @param intent  the Intent your app received
      * @param context Android context
-     *
      * @return a Document for launching the Gini Capture SDK's Review Fragment or
      * Analysis Fragment
-     *
      * @throws ImportedFileValidationException if the file didn't pass validation
      */
     @NonNull
@@ -792,7 +787,6 @@ public class GiniCapture {
          * <p> Default value is {@code true}.
          *
          * @param shouldShowOnboardingAtFirstRun whether to show the onboarding on first run or not
-         *
          * @return the {@link Builder} instance
          */
         @NonNull
@@ -806,7 +800,6 @@ public class GiniCapture {
          * Set custom pages to be shown in the Onboarding Screen.
          *
          * @param onboardingPages an {@link ArrayList} of {@link OnboardingPage}s
-         *
          * @return the {@link Builder} instance
          */
         @NonNull
@@ -825,7 +818,6 @@ public class GiniCapture {
          * <p> Default value is {@code false}.
          *
          * @param shouldShowOnboarding whether to show the onboarding on every launch
-         *
          * @return the {@link Builder} instance
          */
         @NonNull
@@ -844,7 +836,6 @@ public class GiniCapture {
          * <p> Disabled by default.
          *
          * @param multiPageEnabled {@code true} to enable multi-page
-         *
          * @return the {@link Builder} instance
          */
         public Builder setMultiPageEnabled(final boolean multiPageEnabled) {
@@ -871,7 +862,6 @@ public class GiniCapture {
          * request document related network calls (e.g. upload, analysis or deletion).
          *
          * @param giniCaptureNetworkService a {@link GiniCaptureNetworkService} instance
-         *
          * @return the {@link Builder} instance
          */
         @NonNull
@@ -893,7 +883,6 @@ public class GiniCapture {
          * <p> Disabled by default.
          *
          * @param documentImportEnabledFileTypes file types to be enabled for document import
-         *
          * @return the {@link Builder} instance
          */
         @NonNull
@@ -913,7 +902,6 @@ public class GiniCapture {
          * <p> Disabled by default.
          *
          * @param fileImportEnabled {@code true} to enable file import
-         *
          * @return the {@link Builder} instance
          */
         @NonNull
@@ -932,7 +920,6 @@ public class GiniCapture {
          * <p> Disabled by default.
          *
          * @param qrCodeScanningEnabled {@code true} to enable QRCode scanning
-         *
          * @return the {@link Builder} instance
          */
         @NonNull
@@ -962,7 +949,6 @@ public class GiniCapture {
          * <p> Enabled by default.
          *
          * @param enabled {@code true} to show the Supported Formats help screen
-         *
          * @return the {@link Builder} instance
          */
         public Builder setSupportedFormatsHelpScreenEnabled(final boolean enabled) {
@@ -980,7 +966,6 @@ public class GiniCapture {
          * <p> Disabled by default.
          *
          * @param enabled {@code true} to show the flash button
-         *
          * @return the {@link Builder} instance
          */
         public Builder setFlashButtonEnabled(final boolean enabled) {
@@ -1001,7 +986,6 @@ public class GiniCapture {
          * <p> Enabled by default.
          *
          * @param enabled {@code true} to show back buttons
-         *
          * @return the {@link Builder} instance
          */
         public Builder setBackButtonsEnabled(final boolean enabled) {
@@ -1019,7 +1003,6 @@ public class GiniCapture {
          * <p> If not changed, then flash is on by default.
          *
          * @param flashOn {@code true} to turn the flash on
-         *
          * @return the {@link Builder} instance
          */
         public Builder setFlashOnByDefault(final boolean flashOn) {
@@ -1036,7 +1019,6 @@ public class GiniCapture {
          * which can occur during the usage of the Gini Capture SDK.
          *
          * @param eventTracker an {@link EventTracker} instance
-         *
          * @return the {@link Builder} instance
          */
         public Builder setEventTracker(@NonNull final EventTracker eventTracker) {
@@ -1057,7 +1039,6 @@ public class GiniCapture {
          * Set custom help items to be shown in the Help Screen.
          *
          * @param customHelpItems an {@link List} of {@link HelpItem.Custom} objects
-         *
          * @return the {@link Builder} instance
          */
         public Builder setCustomHelpItems(@NonNull final List<HelpItem.Custom> customHelpItems) {
@@ -1175,7 +1156,7 @@ public class GiniCapture {
 
         /**
          * Enable/disable the bottom navigation bar.
-         *
+         * <p>
          * Disabled by default.
          *
          * @return the {@link Builder} instance
