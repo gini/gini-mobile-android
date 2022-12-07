@@ -27,7 +27,8 @@ class HelpActivityTest {
 
     @After
     fun tearDown() {
-        GiniCapture.cleanup(InstrumentationRegistry.getInstrumentation().targetContext)
+        GiniCapture.cleanup(InstrumentationRegistry.getInstrumentation().targetContext, "", "", "", "",
+            "")
     }
 
     @Test
@@ -37,7 +38,6 @@ class HelpActivityTest {
 
         GiniCapture.newInstance()
             .setGiniCaptureNetworkService(mock())
-            .setGiniCaptureNetworkApi(mock())
             .setCustomHelpItems(
                 listOf(
                     HelpItem.Custom(
@@ -65,7 +65,6 @@ class HelpActivityTest {
 
         GiniCapture.newInstance()
             .setGiniCaptureNetworkService(mock())
-            .setGiniCaptureNetworkApi(mock())
             .setCustomHelpItems(
                 listOf(
                     HelpItem.Custom(

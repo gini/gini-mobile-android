@@ -31,7 +31,7 @@ class AnalysisActivityTest {
 
     @After
     fun after() {
-        GiniCapture.cleanup(getInstrumentation().targetContext)
+        GiniCapture.cleanup(getInstrumentation().targetContext, "", "", "", "", "")
     }
 
     @Test

@@ -140,9 +140,9 @@ class AnalysisScreenPresenterTest {
     }
 
     private fun createGiniCaptureInstance(): GiniCapture {
-        GiniCapture.cleanup(InstrumentationRegistry.getInstrumentation().targetContext)
+        GiniCapture.cleanup(InstrumentationRegistry.getInstrumentation().targetContext, "", "", "", "",
+            "")
         GiniCapture.newInstance()
-            .setGiniCaptureNetworkApi(mock())
             .setGiniCaptureNetworkService(mock())
             .build()
         return GiniCapture.getInstance()

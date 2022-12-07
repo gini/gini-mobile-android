@@ -28,7 +28,11 @@ class CameraFragmentImplTest {
 
     @After
     fun after() {
-        GiniCapture.cleanup(InstrumentationRegistry.getInstrumentation().targetContext)
+        GiniCapture.cleanup(InstrumentationRegistry.getInstrumentation().targetContext, "",
+            "",
+            "",
+            "",
+            "")
     }
 
     @Test

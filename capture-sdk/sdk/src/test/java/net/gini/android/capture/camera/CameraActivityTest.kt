@@ -29,7 +29,13 @@ class CameraActivityTest {
 
     @After
     fun after() {
-        GiniCapture.cleanup(InstrumentationRegistry.getInstrumentation().targetContext)
+        GiniCapture.cleanup(
+            InstrumentationRegistry.getInstrumentation().targetContext, "",
+            "",
+            "",
+            "",
+            ""
+        )
     }
 
     @Test
@@ -38,11 +44,11 @@ class CameraActivityTest {
         val eventTracker = spy<EventTracker>()
         GiniCapture.Builder().setEventTracker(eventTracker).build()
 
-        ActivityScenario.launch(CameraActivity::class.java).use {scenario ->
+        ActivityScenario.launch(CameraActivity::class.java).use { scenario ->
             scenario.moveToState(Lifecycle.State.STARTED)
 
             // When
-            scenario.onActivity {activity ->
+            scenario.onActivity { activity ->
                 activity.onBackPressed()
 
                 // Then
@@ -57,11 +63,11 @@ class CameraActivityTest {
         val eventTracker = spy<EventTracker>()
         GiniCapture.Builder().setEventTracker(eventTracker).build()
 
-        ActivityScenario.launch(CameraActivity::class.java).use {scenario ->
+        ActivityScenario.launch(CameraActivity::class.java).use { scenario ->
             scenario.moveToState(Lifecycle.State.STARTED)
 
             // When
-            scenario.onActivity {activity ->
+            scenario.onActivity { activity ->
                 val menuItem = mock<MenuItem>()
                 whenever(menuItem.itemId).thenReturn(R.id.gc_action_show_onboarding)
                 activity.onOptionsItemSelected(menuItem)

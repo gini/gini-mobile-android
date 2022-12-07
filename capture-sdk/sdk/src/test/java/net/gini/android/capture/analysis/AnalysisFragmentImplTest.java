@@ -152,7 +152,6 @@ public class AnalysisFragmentImplTest {
         // Given
         GiniCapture.newInstance()
                 .setGiniCaptureNetworkService(mock(GiniCaptureNetworkService.class))
-                .setGiniCaptureNetworkApi(mock(GiniCaptureNetworkApi.class))
                 .build();
 
         final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
@@ -177,7 +176,6 @@ public class AnalysisFragmentImplTest {
         // Given
         GiniCapture.newInstance()
                 .setGiniCaptureNetworkService(mock(GiniCaptureNetworkService.class))
-                .setGiniCaptureNetworkApi(mock(GiniCaptureNetworkApi.class))
                 .build();
 
         final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
@@ -212,7 +210,6 @@ public class AnalysisFragmentImplTest {
         // Given
         GiniCapture.newInstance()
                 .setGiniCaptureNetworkService(mock(GiniCaptureNetworkService.class))
-                .setGiniCaptureNetworkApi(mock(GiniCaptureNetworkApi.class))
                 .build();
 
         final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
