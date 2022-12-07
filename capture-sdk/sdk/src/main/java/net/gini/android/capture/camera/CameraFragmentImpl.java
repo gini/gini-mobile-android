@@ -1007,7 +1007,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                 } else {
                     final FileImportValidator.Error error = fileImportValidator.getError();
                     if (error != null) {
-                        Error errorClass = new Error(FileImportValidator.Error.valueOf(error.name()));
+                        Error errorClass = new Error(error);
                         ErrorType errorType = ErrorType.typeFromError(errorClass);
                         showGenericInvalidFileError(errorType);
                     }
@@ -1064,10 +1064,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                         if (mFragment.getActivity() == null)
                             return;
 
-                        Intent intent = new Intent(mFragment.getActivity(), ErrorActivity.class);
-                        intent.putExtra(EXTRA_ERROR_STRING, messageForUser);
-
-                        mFragment.getActivity().startActivityForResult(intent, ERROR_SCREEN_REQUEST);
+                        showInvalidFileAlert(messageForUser);
                     }
                 });
     }
@@ -1129,7 +1126,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                         hideActivityIndicatorAndEnableInteraction();
                         final FileImportValidator.Error error = exception.getValidationError();
                         if (error != null && mFragment.getActivity() != null) {
-                            Error errorClass = new Error(FileImportValidator.Error.valueOf(error.name()));
+                            Error errorClass = new Error(error);
                             ErrorType errorType = ErrorType.typeFromError(errorClass);
                             showGenericInvalidFileError(errorType);
                         }
