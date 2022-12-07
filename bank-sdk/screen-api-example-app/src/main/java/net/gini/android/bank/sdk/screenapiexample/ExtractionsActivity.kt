@@ -85,47 +85,26 @@ class ExtractionsActivity : AppCompatActivity() {
         // In a real application the user input should be used as the new value.
 
         val amount = mExtractions["amountToPay"]
+        val paymentRecipient = mExtractions["paymentRecipient"]?.value ?: ""
+        val paymentReference = mExtractions["paymentReference"]?.value ?: ""
+        val iban = mExtractions["iban"]?.value ?: ""
+        val bic = mExtractions["bic"]?.value ?: ""
+
         if (amount != null) { // Let's assume the amount was wrong and change it
             amount.value = "10.00:EUR"
             Toast.makeText(this, "Amount changed to 10.00:EUR", Toast.LENGTH_SHORT).show()
         } else { // Amount was missing, let's add it
-            mExtractions["amountToPay"] = GiniCaptureSpecificExtraction("amountToPay", "10.00:EUR", "amount", null, emptyList())
-            mExtractionsAdapter.extractions = getSortedExtractions(mExtractions)
+            val extraction = GiniCaptureSpecificExtraction(
+                "amountToPay", "10.00:EUR",
+                "amount", null, emptyList())
+            mExtractions["amountToPay"] = extraction
+            mExtractionsAdapter?.extractions = getSortedExtractions(mExtractions)
             Toast.makeText(this, "Added amount of 10.00:EUR", Toast.LENGTH_SHORT).show()
         }
-        mExtractionsAdapter.notifyDataSetChanged()
-        showProgressIndicator(binding)
-        val giniCaptureNetworkApi = GiniCapture.getInstance().giniCaptureNetworkApi
-        if (giniCaptureNetworkApi == null) {
-            Toast.makeText(
-                this, "Feedback not sent: missing GiniCaptureNetworkApi implementation.",
-                Toast.LENGTH_SHORT
-            ).show()
-            return
-        }
-        giniCaptureNetworkApi.sendFeedback(mExtractions, object : GiniCaptureNetworkCallback<Void, Error> {
-            override fun failure(error: Error) {
-                hideProgressIndicator(binding)
-                Toast.makeText(
-                    this@ExtractionsActivity,
-                    "Feedback error:\n" + error.message,
-                    Toast.LENGTH_LONG
-                ).show()
-            }
+        mExtractionsAdapter?.notifyDataSetChanged()
 
-            override fun success(result: Void?) {
-                hideProgressIndicator(binding)
-                Toast.makeText(
-                    this@ExtractionsActivity,
-                    "Feedback successful",
-                    Toast.LENGTH_LONG
-                ).show()
-            }
+        GiniCapture.cleanup(applicationContext, paymentRecipient, paymentReference, iban, bic, amount!!.value)
 
-            override fun cancelled() {
-                hideProgressIndicator(binding)
-            }
-        })
     }
 
     private fun showProgressIndicator(binding: ActivityExtractionsBinding) {

@@ -34,7 +34,6 @@ class MainActivity : AppCompatActivity() {
     private val noExtractionsLauncher = registerForActivityResult(NoExtractionContract(), ::onStartAgainResult)
     private var cancellationToken: CancellationToken? = null // should be kept across configuration changes
     private val networkService: GiniCaptureDefaultNetworkService by inject()
-    private val networkApi: GiniCaptureDefaultNetworkApi by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,7 +65,6 @@ class MainActivity : AppCompatActivity() {
         GiniBank.setCaptureConfiguration(
             CaptureConfiguration(
                 networkService = networkService,
-                networkApi = networkApi,
                 documentImportEnabledFileTypes = DocumentImportEnabledFileTypes.PDF_AND_IMAGES,
                 fileImportEnabled = true,
                 qrCodeScanningEnabled = true,
