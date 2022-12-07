@@ -242,8 +242,7 @@ public class MainActivity extends AppCompatActivity {
         mButtonStartScanner.setOnClickListener(v -> {
             if (disableCameraPermission.isChecked()) {
                 doStartGiniCaptureSdk();
-            }
-            else {
+            } else {
                 startGiniCaptureSdk();
             }
         });
@@ -315,7 +314,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void configureGiniCapture() {
         final BaseExampleApp app = (BaseExampleApp) getApplication();
-        //GiniCapture.cleanup(this, "", "", "", "", "");
+
+        GiniCapture.cleanup(this, "", "", "", "", "");
+
         app.clearGiniCaptureNetworkInstances();
         final GiniCapture.Builder builder = GiniCapture.newInstance()
                 .setGiniCaptureNetworkService(

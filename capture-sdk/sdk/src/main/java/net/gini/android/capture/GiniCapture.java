@@ -52,6 +52,7 @@ import net.gini.android.capture.util.CancellationToken;
 import net.gini.android.capture.view.OnButtonLoadingIndicatorAdapter;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.TestOnly;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -187,7 +188,7 @@ public class GiniCapture {
                                             @NonNull final String amountToPay) {
 
         if (sInstance == null) {
-            throw new IllegalStateException("Cleanup called before creating an instance or cleanup was called twice.");
+           return;
         }
 
 
@@ -214,30 +215,37 @@ public class GiniCapture {
                 "bic", null, emptyList()));
 
 
+        final GiniCapture oldInstance = sInstance;
         sInstance.mGiniCaptureNetworkService.sendFeedback(extractionMap,
-                sInstance.mInternal.getCompoundExtractions(), new GiniCaptureNetworkCallback<Void, Error>() {
+                oldInstance.mInternal.getCompoundExtractions(), new GiniCaptureNetworkCallback<Void, Error>() {
                     @Override
                     public void failure(Error error) {
                         Toast.makeText(context, "Feedback error:\n" + error.getMessage(),
                                 Toast.LENGTH_LONG).show();
 
-                        doActualCleanUp(context);
+                        if (oldInstance.mNetworkRequestsManager != null) {
+                            oldInstance.mNetworkRequestsManager.cleanup();
+                        }
                     }
 
                     @Override
                     public void success(Void result) {
                         Toast.makeText(context, "Feedback successful",
                                 Toast.LENGTH_LONG).show();
-
-                        doActualCleanUp(context);
+                        if (oldInstance.mNetworkRequestsManager != null) {
+                            oldInstance.mNetworkRequestsManager.cleanup();
+                        }
                     }
 
                     @Override
                     public void cancelled() {
-                        doActualCleanUp(context);
+                        if (oldInstance.mNetworkRequestsManager != null) {
+                            oldInstance.mNetworkRequestsManager.cleanup();
+                        }
                     }
                 });
 
+        doActualCleanUp(context);
     }
 
 
@@ -250,9 +258,6 @@ public class GiniCapture {
     private static void doActualCleanUp(Context context) {
         sInstance.mDocumentDataMemoryCache.clear();
         sInstance.mPhotoMemoryCache.clear();
-        if (sInstance.mNetworkRequestsManager != null) {
-            sInstance.mNetworkRequestsManager.cleanup();
-        }
         sInstance.mInternal.setUpdatedCompoundExtractions(emptyMap());
         sInstance.mImageMultiPageDocumentMemoryStore.clear();
         sInstance.internal().setReviewScreenAnalysisError(null);
