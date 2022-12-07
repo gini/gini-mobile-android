@@ -98,8 +98,9 @@
             <net.gini.android.capture.view.InjectedViewContainer
                 android:id="@+id/gc_injected_loading_indicator_container"
                 android:layout_width="@dimen/gc_unelevated_button_height"
-                android:layout_height="@dimen/gc_unelevated_button_height"
+                android:layout_height="0dp"
                 android:layout_gravity="center"
+                android:layout_margin="@dimen/medium"
                 app:layout_constraintBottom_toBottomOf="@+id/gc_button_next"
                 app:layout_constraintEnd_toEndOf="@+id/gc_button_next"
                 app:layout_constraintStart_toStartOf="@+id/gc_button_next"
