@@ -21,6 +21,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import static net.gini.android.capture.camera.CameraActivity.RESULT_CAMERA_SCREEN;
 import static net.gini.android.capture.camera.CameraActivity.RESULT_ENTER_MANUALLY;
 import static net.gini.android.capture.internal.util.ActivityHelper.interceptOnBackPressed;
 
@@ -153,6 +154,7 @@ public class NoResultsActivity extends AppCompatActivity implements ImageRetakeO
 
     @Override
     public void onBackToCameraPressed() {
+        setResult(RESULT_CAMERA_SCREEN);
         finish();
     }
 

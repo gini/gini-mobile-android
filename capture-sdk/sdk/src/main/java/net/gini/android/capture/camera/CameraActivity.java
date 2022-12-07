@@ -638,7 +638,14 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
                 // The first CameraActivity instance is invisible to the user
                 // after we navigate to the review or analysis activity.
                 // Once we get a result it means we are back at the first CameraActivity instance
-                // so we need to return the result to the client.
+                // so we need to return the result to the client if result is not retake images from No Results
+
+                if (resultCode == RESULT_CAMERA_SCREEN) {
+                    clearMemory();
+                    super.onActivityResult(requestCode, resultCode, data);
+                    break;
+                }
+
                 setResult(resultCode, data);
                 finish();
                 clearMemory();
