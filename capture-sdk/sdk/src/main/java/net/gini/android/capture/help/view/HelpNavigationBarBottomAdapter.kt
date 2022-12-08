@@ -31,6 +31,4 @@ internal class DefaultHelpNavigationBarBottomAdapter: HelpNavigationBarBottomAda
     override fun onDestroy() {
         binding = null
     }
-
 }
-

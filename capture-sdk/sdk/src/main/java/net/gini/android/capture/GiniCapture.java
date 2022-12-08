@@ -8,6 +8,8 @@ import android.content.Intent;
 import net.gini.android.capture.analysis.AnalysisActivity;
 import net.gini.android.capture.camera.view.CameraNavigationBarBottomAdapter;
 import net.gini.android.capture.camera.view.DefaultCameraNavigationBarBottomAdapter;
+import net.gini.android.capture.error.view.DefaultErrorNavigationBarBottomAdapter;
+import net.gini.android.capture.error.view.ErrorNavigationBarBottomAdapter;
 import net.gini.android.capture.help.HelpItem;
 import net.gini.android.capture.help.view.DefaultHelpNavigationBarBottomAdapter;
 import net.gini.android.capture.help.view.HelpNavigationBarBottomAdapter;
@@ -111,6 +113,7 @@ public class GiniCapture {
     private final HelpNavigationBarBottomAdapter helpNavigationBarBottomAdapter;
     private final CameraNavigationBarBottomAdapter cameraNavigationBarBottomAdapter;
     private final NoResultsNavigationBarBottomAdapter noResultsNavigationBarBottomAdapter;
+    private final ErrorNavigationBarBottomAdapter errorNavigationBarBottomAdapter;
     private final boolean isBottomNavigationBarEnabled;
     private final OnboardingIllustrationAdapter onboardingAlignCornersIllustrationAdapter;
     private final OnboardingIllustrationAdapter onboardingLightingIllustrationAdapter;
@@ -231,6 +234,7 @@ public class GiniCapture {
         onboardingQRCodeIllustrationAdapter = builder.getOnboardingQRCodeIllustrationAdapter();
         cameraNavigationBarBottomAdapter = builder.getCameraNavigationBarBottomAdapter();
         noResultsNavigationBarBottomAdapter = builder.getNoResultsNavigationBarBottomAdapter();
+        errorNavigationBarBottomAdapter = builder.getErrorNavigationBarBottomAdapter();
         loadingIndicatorAdapter = builder.getLoadingIndicatorAdapter();
         reviewNavigationBarBottomAdapter = builder.getReviewNavigationBarBottomAdapter();
         onButtonLoadingIndicatorAdapter = builder.getOnButtonLoadingIndicatorAdapter();
@@ -593,6 +597,11 @@ public class GiniCapture {
         return noResultsNavigationBarBottomAdapter;
     }
 
+    @NonNull
+    public ErrorNavigationBarBottomAdapter getErrorNavigationBarBottomAdapter() {
+        return errorNavigationBarBottomAdapter;
+    }
+
     public boolean isBottomNavigationBarEnabled() {
         return isBottomNavigationBarEnabled;
     }
@@ -688,6 +697,7 @@ public class GiniCapture {
         private HelpNavigationBarBottomAdapter helpNavigationBarBottomAdapter = new DefaultHelpNavigationBarBottomAdapter();
         private CameraNavigationBarBottomAdapter cameraNavigationBarBottomAdapter = new DefaultCameraNavigationBarBottomAdapter();
         private NoResultsNavigationBarBottomAdapter noResultsNavigationBarBottomAdapter = new DefaultNoResultsNavigationBarBottomAdapter();
+        private ErrorNavigationBarBottomAdapter errorNavigationBarBottomAdapter = new DefaultErrorNavigationBarBottomAdapter();
         private boolean isBottomNavigationBarEnabled = false;
         private OnboardingIllustrationAdapter onboardingAlignCornersIllustrationAdapter;
         private OnboardingIllustrationAdapter onboardingLightingIllustrationAdapter;
@@ -1131,6 +1141,14 @@ public class GiniCapture {
             return noResultsNavigationBarBottomAdapter;
         }
 
+        public ErrorNavigationBarBottomAdapter getErrorNavigationBarBottomAdapter() {
+            return errorNavigationBarBottomAdapter;
+        }
+
+        public void setErrorNavigationBarBottomAdapter(@NonNull final ErrorNavigationBarBottomAdapter adapter) {
+            this.errorNavigationBarBottomAdapter = adapter;
+        }
+
         /**
          * Enable/disable the bottom navigation bar.
          *
@@ -1226,7 +1244,6 @@ public class GiniCapture {
             loadingIndicatorAdapter = adapter;
             return this;
         }
-
 
         @NonNull
         private OnButtonLoadingIndicatorAdapter getOnButtonLoadingIndicatorAdapter() {

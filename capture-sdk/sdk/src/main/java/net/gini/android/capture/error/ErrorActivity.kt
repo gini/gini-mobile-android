@@ -12,6 +12,7 @@ import net.gini.android.capture.camera.CameraActivity.RESULT_ENTER_MANUALLY
 import net.gini.android.capture.internal.util.ActivityHelper
 import net.gini.android.capture.ImageRetakeOptionsListener
 import net.gini.android.capture.camera.CameraActivity.RESULT_CAMERA_SCREEN
+import net.gini.android.capture.error.view.ErrorNavigationBarBottomAdapter
 import net.gini.android.capture.help.view.HelpNavigationBarBottomAdapter
 import net.gini.android.capture.network.ErrorType
 import net.gini.android.capture.noresults.NoResultsActivity
@@ -62,10 +63,10 @@ class ErrorActivity : AppCompatActivity(),
 
     private fun setBottomBarInjectedContainer() {
         if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled) {
-            val bottomBarContainer = findViewById<InjectedViewContainer<HelpNavigationBarBottomAdapter>>(R.id.gc_injected_navigation_bar_container_bottom)
-            bottomBarContainer.injectedViewAdapter = GiniCapture.getInstance().helpNavigationBarBottomAdapter
+            val bottomBarContainer = findViewById<InjectedViewContainer<ErrorNavigationBarBottomAdapter>>(R.id.gc_injected_navigation_bar_container_bottom)
+            bottomBarContainer.injectedViewAdapter = GiniCapture.getInstance().errorNavigationBarBottomAdapter
             bottomBarContainer.injectedViewAdapter?.apply {
-                setOnBackClickListener {
+                setOnBackButtonClickListener() {
                     onBackPressed()
                 }
             }
