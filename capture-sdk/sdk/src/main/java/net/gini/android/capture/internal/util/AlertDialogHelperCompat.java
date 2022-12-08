@@ -6,6 +6,8 @@ import android.content.DialogInterface;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 /**
  * Created by Alpar Szotyori on 04.02.2019.
  *
@@ -29,7 +31,7 @@ public final class AlertDialogHelperCompat {
         if (activity == null) {
             return;
         }
-        final AlertDialog alertDialog = new AlertDialog.Builder(activity)
+        final AlertDialog alertDialog = new MaterialAlertDialogBuilder(activity)
                 .setMessage(message)
                 .setPositiveButton(positiveButtonTitle, positiveButtonClickListener)
                 .setNegativeButton(negativeButtonTitle, negativeButtonClickListener)

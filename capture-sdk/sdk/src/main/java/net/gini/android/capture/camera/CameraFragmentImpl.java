@@ -27,6 +27,7 @@ import net.gini.android.capture.Document;
 import net.gini.android.capture.DocumentImportEnabledFileTypes;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.GiniCaptureError;
+import net.gini.android.capture.ImportImageFileUrisAsyncTask;
 import net.gini.android.capture.ImportedFileValidationException;
 import net.gini.android.capture.R;
 import net.gini.android.capture.camera.view.CameraNavigationBarBottomAdapter;
@@ -48,7 +49,6 @@ import net.gini.android.capture.internal.camera.photo.PhotoEdit;
 import net.gini.android.capture.internal.camera.view.QRCodePopup;
 import net.gini.android.capture.internal.fileimport.FileChooserActivity;
 import net.gini.android.capture.internal.network.AnalysisNetworkRequestResult;
-import net.gini.android.capture.internal.network.NetworkRequestResult;
 import net.gini.android.capture.internal.network.NetworkRequestsManager;
 import net.gini.android.capture.internal.qrcode.PaymentQRCodeData;
 import net.gini.android.capture.internal.qrcode.PaymentQRCodeReader;
@@ -57,6 +57,7 @@ import net.gini.android.capture.internal.qrcode.QRCodeDetectorTaskMLKit;
 import net.gini.android.capture.internal.storage.ImageDiskStore;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.ui.ViewStubSafeInflater;
+import net.gini.android.capture.internal.util.ActivityHelper;
 import net.gini.android.capture.internal.util.ApplicationHelper;
 import net.gini.android.capture.internal.util.ContextHelper;
 import net.gini.android.capture.internal.util.DeviceHelper;
@@ -65,6 +66,9 @@ import net.gini.android.capture.internal.util.MimeType;
 import net.gini.android.capture.internal.util.Size;
 import net.gini.android.capture.logging.ErrorLog;
 import net.gini.android.capture.logging.ErrorLogger;
+import net.gini.android.capture.network.Error;
+import net.gini.android.capture.error.ErrorType;
+import net.gini.android.capture.network.FailureException;
 import net.gini.android.capture.network.model.GiniCaptureExtraction;
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
 import net.gini.android.capture.requirements.CameraHolder;
@@ -94,12 +98,15 @@ import androidx.annotation.VisibleForTesting;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.Group;
 import androidx.core.content.ContextCompat;
+
 import jersey.repackaged.jsr166e.CompletableFuture;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 import static net.gini.android.capture.GiniCaptureError.ErrorCode.MISSING_GINI_CAPTURE_INSTANCE;
 import static net.gini.android.capture.document.ImageDocument.ImportMethod;
+import static net.gini.android.capture.error.ErrorActivity.ERROR_SCREEN_REQUEST;
+import static net.gini.android.capture.error.ErrorActivity.EXTRA_ERROR_STRING;
 import static net.gini.android.capture.internal.network.NetworkRequestsManager.isCancellation;
 import static net.gini.android.capture.internal.qrcode.EPSPaymentParser.EXTRACTION_ENTITY_NAME;
 import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
@@ -192,7 +199,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private boolean mIsTakingPicture;
 
     private boolean mImportDocumentButtonEnabled;
-    private ImportImageDocumentUrisAsyncTask mImportUrisAsyncTask;
+    private ImportImageFileUrisAsyncTask mImportUrisAsyncTask;
     private boolean mQRCodeAnalysisCompleted;
     private QRCodeDocument mQRCodeDocument;
     private Group mImportButtonGroup;
@@ -203,7 +210,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private InjectedViewContainer<NavigationBarTopAdapter> topAdapterInjectedViewContainer;
     private InjectedViewContainer<CustomLoadingIndicatorAdapter> mLoadingIndicator;
-    private  InjectedViewContainer<CameraNavigationBarBottomAdapter> mBottomInjectedContainer;
+    private InjectedViewContainer<CameraNavigationBarBottomAdapter> mBottomInjectedContainer;
 
     CameraFragmentImpl(@NonNull final FragmentImplCallback fragment) {
         mFragment = fragment;
@@ -866,7 +873,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                             if (throwable != null) {
                                 hideActivityIndicatorAndEnableInteraction();
                                 if (!isCancellation(throwable)) {
-                                    handleAnalysisError();
+                                    handleAnalysisError(throwable, qrCodeDocument);
                                 }
                             }
                             return requestResult;
@@ -886,7 +893,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                             hideActivityIndicatorAndEnableInteraction();
                             if (throwable != null
                                     && !isCancellation(throwable)) {
-                                handleAnalysisError();
+                                handleAnalysisError(throwable, qrCodeDocument);
                             } else if (requestResult != null) {
                                 mPaymentQRCodePopup.hide();
                                 mQRCodeAnalysisCompleted = true;
@@ -903,12 +910,13 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         }
     }
 
-    private void handleAnalysisError() {
-        final Activity activity = mFragment.getActivity();
-        if (activity == null) {
+    private void handleAnalysisError(Throwable throwable, Document document) {
+
+        if (mFragment.getActivity() == null)
             return;
-        }
-        showError(activity.getString(R.string.gc_document_analysis_error), 3000);
+
+        FailureException exception = (FailureException) throwable;
+        ErrorActivity.startErrorActivity(mFragment.getActivity(), exception.errorType, document);
     }
 
     private void showFileChooser() {
@@ -948,10 +956,11 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                     message = "Document import failed: unknown result code " + resultCode;
                 }
                 LOG.error(message);
-                showGenericInvalidFileError();
+                showGenericInvalidFileError(ErrorType.FILE_IMPORT_GENERIC);
             }
             return true;
         }
+
         return false;
     }
 
@@ -965,7 +974,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             final List<Uri> uris = IntentHelper.getUris(data);
             if (uris == null) {
                 LOG.error("Document import failed: Intent has no Uris");
-                showGenericInvalidFileError();
+                showGenericInvalidFileError(ErrorType.FILE_IMPORT_GENERIC);
                 return;
             }
             handleMultiPageDocumentAndCallListener(activity, data, uris);
@@ -973,12 +982,12 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             final Uri uri = IntentHelper.getUri(data);
             if (uri == null) {
                 LOG.error("Document import failed: Intent has no Uri");
-                showGenericInvalidFileError();
+                showGenericInvalidFileError(ErrorType.FILE_IMPORT_GENERIC);
                 return;
             }
             if (!UriHelper.isUriInputStreamAvailable(uri, activity)) {
                 LOG.error("Document import failed: InputStream not available for the Uri");
-                showGenericInvalidFileError();
+                showGenericInvalidFileError(ErrorType.FILE_IMPORT_GENERIC);
                 return;
             }
 
@@ -998,9 +1007,9 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                 } else {
                     final FileImportValidator.Error error = fileImportValidator.getError();
                     if (error != null) {
-                        showInvalidFileError(error);
-                    } else {
-                        showGenericInvalidFileError();
+                        Error errorClass = new Error(error);
+                        ErrorType errorType = ErrorType.typeFromError(errorClass);
+                        showGenericInvalidFileError(errorType);
                     }
                 }
             }
@@ -1023,7 +1032,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             requestClientDocumentCheck(document);
         } catch (final IllegalArgumentException e) {
             LOG.error("Failed to import selected document", e);
-            showGenericInvalidFileError();
+            showGenericInvalidFileError(ErrorType.FILE_IMPORT_GENERIC);
         }
     }
 
@@ -1049,7 +1058,12 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                     @Override
                     public void documentRejected(@NonNull final String messageForUser) {
                         LOG.debug("Client rejected the document: {}", messageForUser);
+
                         hideActivityIndicatorAndEnableInteraction();
+
+                        if (mFragment.getActivity() == null)
+                            return;
+
                         showInvalidFileAlert(messageForUser);
                     }
                 });
@@ -1079,7 +1093,9 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             showMultiPageLimitError();
             return;
         }
-        mImportUrisAsyncTask = new ImportImageDocumentUrisAsyncTask(
+
+
+        mImportUrisAsyncTask = new ImportImageFileUrisAsyncTask(
                 context, intent, GiniCapture.getInstance(),
                 Document.Source.newExternalSource(), ImportMethod.PICKER,
                 new AsyncCallback<ImageMultiPageDocument, ImportedFileValidationException>() {
@@ -1093,7 +1109,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                         }
                         if (mMultiPageDocument.getDocuments().isEmpty()) {
                             LOG.error("Document import failed: Intent did not contain images");
-                            showGenericInvalidFileError();
+                            showGenericInvalidFileError(ErrorType.FILE_IMPORT_GENERIC);
                             mMultiPageDocument = null; // NOPMD
                             mInMultiPageState = false;
                             return;
@@ -1109,10 +1125,10 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                         LOG.error("Document import failed", exception);
                         hideActivityIndicatorAndEnableInteraction();
                         final FileImportValidator.Error error = exception.getValidationError();
-                        if (error != null) {
-                            showInvalidFileError(error);
-                        } else {
-                            showGenericInvalidFileError();
+                        if (error != null && mFragment.getActivity() != null) {
+                            Error errorClass = new Error(error);
+                            ErrorType errorType = ErrorType.typeFromError(errorClass);
+                            showGenericInvalidFileError(errorType);
                         }
                     }
 
@@ -1227,21 +1243,13 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         mButtonCameraTrigger.setEnabled(false);
     }
 
-    private void showInvalidFileError(@NonNull final FileImportValidator.Error error) {
-        LOG.error("Invalid document {}", error.toString());
-        final Activity activity = mFragment.getActivity();
-        if (activity == null) {
-            return;
-        }
-        showInvalidFileAlert(activity.getString(error.getTextResource()));
-    }
 
-    private void showGenericInvalidFileError() {
+    private void showGenericInvalidFileError(ErrorType errorType) {
         final Activity activity = mFragment.getActivity();
         if (activity == null) {
             return;
         }
-        final String message = activity.getString(R.string.gc_document_import_invalid_document);
+        String message = activity.getString(errorType.getTitleTextResource());
         LOG.error("Invalid document {}", message);
         showInvalidFileAlert(message);
     }

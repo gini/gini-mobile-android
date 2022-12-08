@@ -75,9 +75,9 @@ class ErrorFragmentCompat : Fragment(), FragmentImplCallback {
          *
          * @return a new instance of the Fragment
          */
-        fun createInstance(document: Document?): ErrorFragmentCompat {
+        fun createInstance(errorType: ErrorType?, document: Document?, customError: String?): ErrorFragmentCompat {
             val fragment = ErrorFragmentCompat()
-            fragment.arguments = ErrorFragmentHelper.createArguments(document)
+            fragment.arguments = ErrorFragmentHelper.createArguments(errorType, document, customError)
             return fragment
         }
     }

@@ -31,6 +31,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AppCompatActivity;
 
+import static net.gini.android.capture.camera.CameraActivity.RESULT_CAMERA_SCREEN;
 import static net.gini.android.capture.camera.CameraActivity.RESULT_ENTER_MANUALLY;
 import static net.gini.android.capture.internal.util.ActivityHelper.enableHomeAsUp;
 import static net.gini.android.capture.internal.util.ActivityHelper.interceptOnBackPressed;
@@ -400,7 +401,7 @@ public class AnalysisActivity extends AppCompatActivity implements
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == NO_RESULT_REQUEST &&
-                ((resultCode == RESULT_CANCELED && data != null && data.hasExtra(NO_RESULT_CANCEL_KEY)) || resultCode == RESULT_ENTER_MANUALLY)) {
+                ((resultCode == RESULT_CANCELED && data != null && data.hasExtra(NO_RESULT_CANCEL_KEY)) || resultCode == RESULT_ENTER_MANUALLY || resultCode == RESULT_CAMERA_SCREEN)) {
             setResult(resultCode, data);
         }
 

@@ -14,16 +14,16 @@ import androidx.annotation.NonNull;
  * Copyright (c) 2018 Gini GmbH.
  */
 
-class ImportImageFileUrisAsyncTask extends AbstractImportImageUrisAsyncTask {
+public class ImportImageFileUrisAsyncTask extends AbstractImportImageUrisAsyncTask {
 
     private ImportedFileValidationException mException;
 
-    protected ImportImageFileUrisAsyncTask(@NonNull final Context context,
-            @NonNull final Intent intent, @NonNull final GiniCapture giniCapture,
-            @NonNull final Document.Source source,
-            @NonNull final Document.ImportMethod importMethod,
-            @NonNull final AsyncCallback<ImageMultiPageDocument, ImportedFileValidationException>
-                    callback) {
+    public ImportImageFileUrisAsyncTask(@NonNull final Context context,
+                                        @NonNull final Intent intent, @NonNull final GiniCapture giniCapture,
+                                        @NonNull final Document.Source source,
+                                        @NonNull final Document.ImportMethod importMethod,
+                                        @NonNull final AsyncCallback<ImageMultiPageDocument, ImportedFileValidationException>
+                                                callback) {
         super(context, intent, giniCapture, source, importMethod, callback);
     }
 
