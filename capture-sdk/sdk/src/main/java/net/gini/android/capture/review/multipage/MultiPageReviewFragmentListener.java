@@ -51,7 +51,9 @@ public interface MultiPageReviewFragmentListener {
      * <p> If you use one Activity to host all the Gini Capture fragments, then you should display the
      * {@link CameraFragment} again.
      */
-    void onReturnToCameraScreen();
+    void onReturnToCameraScreenToAddPages();
+
+    void onReturnToCameraScreenForFirstPage();
 
     /**
      * Called when the user deleted all the pages of a document received from another app.

@@ -3,7 +3,6 @@ package net.gini.android.capture.review.multipage;
 import static net.gini.android.capture.GiniCaptureError.ErrorCode.MISSING_GINI_CAPTURE_INSTANCE;
 import static net.gini.android.capture.document.GiniCaptureDocumentError.ErrorCode.FILE_VALIDATION_FAILED;
 import static net.gini.android.capture.document.GiniCaptureDocumentError.ErrorCode.UPLOAD_FAILED;
-import static net.gini.android.capture.error.ErrorActivity.EXTRA_IN_ERROR;
 import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
 import static net.gini.android.capture.internal.util.FileImportHelper.showAlertIfOpenWithDocumentAndAppIsDefault;
 import static net.gini.android.capture.review.multipage.previews.PreviewFragment.ErrorButtonAction.DELETE;
@@ -38,13 +37,11 @@ import net.gini.android.capture.internal.network.NetworkRequestsManager;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.util.ActivityHelper;
 import net.gini.android.capture.internal.util.AlertDialogHelperCompat;
-import net.gini.android.capture.internal.util.AndroidHelper;
 import net.gini.android.capture.internal.util.FileImportHelper;
 import net.gini.android.capture.internal.util.FileImportValidator;
 import net.gini.android.capture.network.Error;
-import net.gini.android.capture.network.ErrorType;
+import net.gini.android.capture.error.ErrorType;
 import net.gini.android.capture.network.FailureException;
-import net.gini.android.capture.noresults.NoResultsActivity;
 import net.gini.android.capture.review.multipage.previews.MiddlePageManager;
 import net.gini.android.capture.review.multipage.previews.PreviewFragmentListener;
 import net.gini.android.capture.review.multipage.previews.PreviewPagesAdapter;
@@ -453,7 +450,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
 
             hideViewsIfBottomBarEnabled();
 
-            mReviewNavigationBarBottomAdapter.getInjectedViewAdapter().setOnAddPageButtonClickListener(v -> mListener.onReturnToCameraScreen());
+            mReviewNavigationBarBottomAdapter.getInjectedViewAdapter().setOnAddPageButtonClickListener(v -> mListener.onReturnToCameraScreenToAddPages());
 
             boolean isMultiPage = GiniCapture.getInstance().isMultiPageEnabled();
 
@@ -516,7 +513,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
             mAddPages.setVisibility(GiniCapture.getInstance().isMultiPageEnabled() ? View.VISIBLE : View.GONE);
         }
 
-        mAddPages.setOnClickListener(v -> mListener.onReturnToCameraScreen());
+        mAddPages.setOnClickListener(v -> mListener.onReturnToCameraScreenToAddPages());
     }
 
 
@@ -539,7 +536,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
                         .create().show();
             } else {
                 doDeleteDocumentAndUpdateUI(document);
-                mListener.onReturnToCameraScreen();
+                mListener.onReturnToCameraScreenForFirstPage();
             }
         } else {
             doDeleteDocumentAndUpdateUI(document);
@@ -701,14 +698,10 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
                 // Documents with a an error should not be uploaded automatically
                 uploadDocument(imageDocument);
             } else {
-                if (mMultiPageDocument.getErrorForDocument(imageDocument) != null
-                        && mMultiPageDocument.getErrorForDocument(imageDocument).getErrorCode() != null) {
-                    GiniCaptureDocumentError.ErrorCode errorCode = mMultiPageDocument.getErrorForDocument(imageDocument).getErrorCode();
-                    FileImportValidator.Error fileImportErrors = FileImportValidator.Error.valueOf(errorCode.name());
-                    Error error = new Error(fileImportErrors);
-
-                    ErrorType errorType = ErrorType.GENERAL.typeFromError(error);
-                    ActivityHelper.startErrorActivity(requireActivity(), new FailureException(errorType), imageDocument);
+                final GiniCaptureDocumentError documentError = mMultiPageDocument.getErrorForDocument(imageDocument);
+                if (documentError != null) {
+                    ErrorType errorType = ErrorType.typeFromDocumentErrorCode(documentError.getErrorCode());
+                    ErrorActivity.startErrorActivity(requireActivity(), errorType, imageDocument);
                 }
             }
         }
@@ -771,7 +764,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
    private void handleError(Throwable throwable, Document document) {
        if (getActivity() != null) {
            FailureException exception = (FailureException) throwable;
-           ActivityHelper.startErrorActivity(requireActivity(), exception, document);
+           ErrorActivity.startErrorActivity(requireActivity(), exception.errorType, document);
        }
    }
 

@@ -1,11 +1,13 @@
-package net.gini.android.capture.network
+package net.gini.android.capture.error
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import net.gini.android.capture.R
+import net.gini.android.capture.document.GiniCaptureDocumentError
 import net.gini.android.capture.internal.util.FileImportValidator
+import net.gini.android.capture.network.Error
+import java.net.SocketTimeoutException
 import java.net.UnknownHostException
-
 
 enum class ErrorType(@DrawableRes val drawableResource: Int,
                      @StringRes val titleTextResource: Int,
@@ -22,40 +24,54 @@ enum class ErrorType(@DrawableRes val drawableResource: Int,
     FILE_IMPORT_UNSUPPORTED(R.drawable.gc_alert_triangle_icon, R.string.gc_error_file_import_unsupported_title, R.string.gc_error_file_import_unsupported_text),
     FILE_IMPORT_PASSWORD(R.drawable.gc_alert_triangle_icon, R.string.gc_error_file_import_password_title, R.string.gc_error_file_import_password_text);
 
-    fun typeFromError(error: Error): ErrorType {
+    companion object {
+        @JvmStatic
+        fun typeFromError(error: Error): ErrorType {
 
-        if (error.cause != null && (error.cause is UnknownHostException)) {
-            return NO_CONNECTION
-        }
+            if (error.cause != null && (error.cause is UnknownHostException)) {
+                return NO_CONNECTION
+            }
 
-        if (error.statusCode == null) {
-            return when (error.fileImportErrors) {
-                FileImportValidator.Error.SIZE_TOO_LARGE -> FILE_IMPORT_SIZE
-                FileImportValidator.Error.TYPE_NOT_SUPPORTED -> FILE_IMPORT_UNSUPPORTED
-                FileImportValidator.Error.PASSWORD_PROTECTED_PDF -> FILE_IMPORT_PASSWORD
-                FileImportValidator.Error.TOO_MANY_PDF_PAGES -> FILE_IMPORT_PAGE_COUNT
-                else -> {
-                    GENERAL
+            error.statusCode?.let {
+                if (it >= 500) {
+                    return SERVER
                 }
-            }
-        }
 
-        error.statusCode?.let {
-            if (it > 500) {
-                return SERVER
+                if (it == 401) {
+                    return AUTH
+                }
+
+                if (it == 400 || (it in 402..498)) {
+                    return UPLOAD
+                }
+
+                return GENERAL
             }
 
-            if (it == 401) {
-                return AUTH
-            }
+            if (error.statusCode == null) {
+                (error.cause as? SocketTimeoutException)?.let {
+                    return UPLOAD
+                }
 
-            if (it == 400 || (it in 402..498)) {
-                return UPLOAD
+                return when (error.fileImportErrors) {
+                    FileImportValidator.Error.SIZE_TOO_LARGE -> FILE_IMPORT_SIZE
+                    FileImportValidator.Error.TYPE_NOT_SUPPORTED -> FILE_IMPORT_UNSUPPORTED
+                    FileImportValidator.Error.PASSWORD_PROTECTED_PDF -> FILE_IMPORT_PASSWORD
+                    FileImportValidator.Error.TOO_MANY_PDF_PAGES -> FILE_IMPORT_PAGE_COUNT
+                    FileImportValidator.Error.TOO_MANY_DOCUMENT_PAGES -> FILE_IMPORT_PAGE_COUNT
+                    else -> {
+                        NO_CONNECTION
+                    }
+                }
             }
 
             return GENERAL
         }
 
-        return GENERAL
+        @JvmStatic
+        fun typeFromDocumentErrorCode(errorCode: GiniCaptureDocumentError.ErrorCode): ErrorType = when(errorCode) {
+            GiniCaptureDocumentError.ErrorCode.UPLOAD_FAILED -> UPLOAD
+            GiniCaptureDocumentError.ErrorCode.FILE_VALIDATION_FAILED -> FILE_IMPORT_GENERIC
+        }
     }
 }

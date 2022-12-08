@@ -1,21 +1,22 @@
 package net.gini.android.capture.error
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.MenuItem
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import net.gini.android.capture.Document
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.R
+import net.gini.android.capture.camera.CameraActivity.RESULT_CAMERA_SCREEN
 import net.gini.android.capture.camera.CameraActivity.RESULT_ENTER_MANUALLY
 import net.gini.android.capture.internal.util.ActivityHelper
-import net.gini.android.capture.ImageRetakeOptionsListener
-import net.gini.android.capture.camera.CameraActivity.RESULT_CAMERA_SCREEN
-import net.gini.android.capture.error.view.ErrorNavigationBarBottomAdapter
-import net.gini.android.capture.help.view.HelpNavigationBarBottomAdapter
-import net.gini.android.capture.network.ErrorType
 import net.gini.android.capture.noresults.NoResultsActivity
+import net.gini.android.capture.noresults.NoResultsActivity.EXTRA_IN_DOCUMENT
+import net.gini.android.capture.ImageRetakeOptionsListener
+import net.gini.android.capture.error.view.ErrorNavigationBarBottomAdapter
 import net.gini.android.capture.view.InjectedViewContainer
 import net.gini.android.capture.view.NavButtonType
 import net.gini.android.capture.view.NavigationBarTopAdapter
@@ -119,6 +120,11 @@ class ErrorActivity : AppCompatActivity(),
         })
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        isActivityShown = false
+    }
+
     companion object {
         /**
          * Internal use only.
@@ -132,6 +138,23 @@ class ErrorActivity : AppCompatActivity(),
         const val EXTRA_IN_ERROR = "GC_EXTRA_IN_ERROR"
 
         const val EXTRA_ERROR_STRING = "GC_EXTRA_IN_ERROR"
+
+        var isActivityShown: Boolean = false
+
+        @JvmStatic
+        fun startErrorActivity(context: Activity, errorType: ErrorType?, document: Parcelable?) {
+
+            //Error activity is already shown don't start new one
+            if (isActivityShown)
+                return
+
+            isActivityShown = true
+
+            val intent = Intent(context, ErrorActivity::class.java)
+            intent.putExtra(EXTRA_IN_ERROR, errorType)
+            intent.putExtra(EXTRA_IN_DOCUMENT, document)
+            context.startActivityForResult(intent, ERROR_SCREEN_REQUEST)
+        }
 
     }
 }

@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment
 import net.gini.android.capture.Document
 import net.gini.android.capture.internal.ui.FragmentImplCallback
 import net.gini.android.capture.internal.util.AlertDialogHelperCompat
-import net.gini.android.capture.network.ErrorType
 
 /**
  * <h3>Component API</h3>

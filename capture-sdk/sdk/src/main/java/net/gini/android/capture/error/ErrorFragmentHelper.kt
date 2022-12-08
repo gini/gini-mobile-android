@@ -5,7 +5,6 @@ import android.os.Bundle
 import net.gini.android.capture.Document
 import net.gini.android.capture.internal.ui.FragmentImplCallback
 import net.gini.android.capture.ImageRetakeOptionsListener
-import net.gini.android.capture.network.ErrorType
 
 class ErrorFragmentHelper {
 

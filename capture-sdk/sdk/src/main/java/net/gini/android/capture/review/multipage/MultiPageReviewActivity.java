@@ -324,11 +324,17 @@ public class MultiPageReviewActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onReturnToCameraScreen() {
-        Intent intent = new Intent(this, CameraActivity.class);
+    public void onReturnToCameraScreenToAddPages() {
+        Intent intent = CameraActivity.createIntent(this, true);
         startActivity(intent);
-        //finish();
     }
+
+    @Override
+    public void onReturnToCameraScreenForFirstPage() {
+        Intent intent = CameraActivity.createIntent(this, false);
+        startActivity(intent);
+    }
+
 
     @Override
     public void onImportedDocumentReviewCancelled() {
@@ -359,7 +365,7 @@ public class MultiPageReviewActivity extends AppCompatActivity implements
         if (requestCode == ERROR_SCREEN_REQUEST) {
             if (resultCode == RESULT_CAMERA_SCREEN) {
                 GiniCapture.getInstance().internal().getImageMultiPageDocumentMemoryStore().clear();
-                startActivity(new Intent(MultiPageReviewActivity.this, CameraActivity.class));
+                startActivity(CameraActivity.createIntent(MultiPageReviewActivity.this, false));
             }
             if (resultCode == RESULT_ENTER_MANUALLY) {
                 setResult(resultCode, data);

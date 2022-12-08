@@ -49,7 +49,6 @@ import net.gini.android.capture.internal.camera.photo.PhotoEdit;
 import net.gini.android.capture.internal.camera.view.QRCodePopup;
 import net.gini.android.capture.internal.fileimport.FileChooserActivity;
 import net.gini.android.capture.internal.network.AnalysisNetworkRequestResult;
-import net.gini.android.capture.internal.network.NetworkRequestResult;
 import net.gini.android.capture.internal.network.NetworkRequestsManager;
 import net.gini.android.capture.internal.qrcode.PaymentQRCodeData;
 import net.gini.android.capture.internal.qrcode.PaymentQRCodeReader;
@@ -68,7 +67,7 @@ import net.gini.android.capture.internal.util.Size;
 import net.gini.android.capture.logging.ErrorLog;
 import net.gini.android.capture.logging.ErrorLogger;
 import net.gini.android.capture.network.Error;
-import net.gini.android.capture.network.ErrorType;
+import net.gini.android.capture.error.ErrorType;
 import net.gini.android.capture.network.FailureException;
 import net.gini.android.capture.network.model.GiniCaptureExtraction;
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
@@ -105,14 +104,12 @@ import jersey.repackaged.jsr166e.CompletableFuture;
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 import static net.gini.android.capture.GiniCaptureError.ErrorCode.MISSING_GINI_CAPTURE_INSTANCE;
-import static net.gini.android.capture.camera.CameraActivity.RESULT_ENTER_MANUALLY;
 import static net.gini.android.capture.document.ImageDocument.ImportMethod;
 import static net.gini.android.capture.error.ErrorActivity.ERROR_SCREEN_REQUEST;
 import static net.gini.android.capture.error.ErrorActivity.EXTRA_ERROR_STRING;
 import static net.gini.android.capture.internal.network.NetworkRequestsManager.isCancellation;
 import static net.gini.android.capture.internal.qrcode.EPSPaymentParser.EXTRACTION_ENTITY_NAME;
 import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
-import static net.gini.android.capture.internal.util.ActivityHelper.startErrorActivity;
 import static net.gini.android.capture.internal.util.AndroidHelper.isMarshmallowOrLater;
 import static net.gini.android.capture.internal.util.FeatureConfiguration.getDocumentImportEnabledFileTypes;
 import static net.gini.android.capture.internal.util.FeatureConfiguration.isMultiPageEnabled;
@@ -914,8 +911,12 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     }
 
     private void handleAnalysisError(Throwable throwable, Document document) {
+
+        if (mFragment.getActivity() == null)
+            return;
+
         FailureException exception = (FailureException) throwable;
-        ActivityHelper.startErrorActivity(mFragment.getActivity(), exception, document);
+        ErrorActivity.startErrorActivity(mFragment.getActivity(), exception.errorType, document);
     }
 
     private void showFileChooser() {
@@ -955,7 +956,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                     message = "Document import failed: unknown result code " + resultCode;
                 }
                 LOG.error(message);
-                showGenericInvalidFileError();
+                showGenericInvalidFileError(ErrorType.FILE_IMPORT_GENERIC);
             }
             return true;
         }
@@ -973,7 +974,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             final List<Uri> uris = IntentHelper.getUris(data);
             if (uris == null) {
                 LOG.error("Document import failed: Intent has no Uris");
-                showGenericInvalidFileError();
+                showGenericInvalidFileError(ErrorType.FILE_IMPORT_GENERIC);
                 return;
             }
             handleMultiPageDocumentAndCallListener(activity, data, uris);
@@ -981,12 +982,12 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             final Uri uri = IntentHelper.getUri(data);
             if (uri == null) {
                 LOG.error("Document import failed: Intent has no Uri");
-                showGenericInvalidFileError();
+                showGenericInvalidFileError(ErrorType.FILE_IMPORT_GENERIC);
                 return;
             }
             if (!UriHelper.isUriInputStreamAvailable(uri, activity)) {
                 LOG.error("Document import failed: InputStream not available for the Uri");
-                showGenericInvalidFileError();
+                showGenericInvalidFileError(ErrorType.FILE_IMPORT_GENERIC);
                 return;
             }
 
@@ -1006,9 +1007,9 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                 } else {
                     final FileImportValidator.Error error = fileImportValidator.getError();
                     if (error != null) {
-                        Error errorClass = new Error(FileImportValidator.Error.valueOf(error.name()));
-                        ErrorType errorType = ErrorType.GENERAL.typeFromError(errorClass);
-                        startErrorActivity(mFragment.getActivity(), new FailureException(errorType), null);
+                        Error errorClass = new Error(error);
+                        ErrorType errorType = ErrorType.typeFromError(errorClass);
+                        showGenericInvalidFileError(errorType);
                     }
                 }
             }
@@ -1031,7 +1032,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             requestClientDocumentCheck(document);
         } catch (final IllegalArgumentException e) {
             LOG.error("Failed to import selected document", e);
-            showGenericInvalidFileError();
+            showGenericInvalidFileError(ErrorType.FILE_IMPORT_GENERIC);
         }
     }
 
@@ -1058,16 +1059,12 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                     public void documentRejected(@NonNull final String messageForUser) {
                         LOG.debug("Client rejected the document: {}", messageForUser);
 
-                        //TODO custom error
                         hideActivityIndicatorAndEnableInteraction();
 
                         if (mFragment.getActivity() == null)
                             return;
 
-                        Intent intent = new Intent(mFragment.getActivity(), ErrorActivity.class);
-                        intent.putExtra(EXTRA_ERROR_STRING, messageForUser);
-
-                        mFragment.getActivity().startActivityForResult(intent, ERROR_SCREEN_REQUEST);
+                        showInvalidFileAlert(messageForUser);
                     }
                 });
     }
@@ -1112,7 +1109,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                         }
                         if (mMultiPageDocument.getDocuments().isEmpty()) {
                             LOG.error("Document import failed: Intent did not contain images");
-                            showGenericInvalidFileError();
+                            showGenericInvalidFileError(ErrorType.FILE_IMPORT_GENERIC);
                             mMultiPageDocument = null; // NOPMD
                             mInMultiPageState = false;
                             return;
@@ -1128,10 +1125,10 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                         LOG.error("Document import failed", exception);
                         hideActivityIndicatorAndEnableInteraction();
                         final FileImportValidator.Error error = exception.getValidationError();
-                        if (error != null) {
-                            Error errorClass = new Error(FileImportValidator.Error.valueOf(error.name()));
-                            ErrorType errorType = ErrorType.GENERAL.typeFromError(errorClass);
-                            startErrorActivity(mFragment.getActivity(), new FailureException(errorType), null);
+                        if (error != null && mFragment.getActivity() != null) {
+                            Error errorClass = new Error(error);
+                            ErrorType errorType = ErrorType.typeFromError(errorClass);
+                            showGenericInvalidFileError(errorType);
                         }
                     }
 
@@ -1247,16 +1244,31 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     }
 
 
-    private void showGenericInvalidFileError() {
+    private void showGenericInvalidFileError(ErrorType errorType) {
         final Activity activity = mFragment.getActivity();
         if (activity == null) {
             return;
         }
-        final String message = activity.getString(R.string.gc_document_import_invalid_document);
+        String message = activity.getString(errorType.getTitleTextResource());
         LOG.error("Invalid document {}", message);
+        showInvalidFileAlert(message);
+    }
 
-       ErrorType errorType = ErrorType.FILE_IMPORT_GENERIC;
-       startErrorActivity(activity, new FailureException(errorType), null);
+    private void showInvalidFileAlert(final String message) {
+        final Activity activity = mFragment.getActivity();
+        if (activity == null) {
+            return;
+        }
+        mFragment.showAlertDialog(message,
+                activity.getString(R.string.gc_document_import_pick_another_document),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(
+                            final DialogInterface dialogInterface,
+                            final int i) {
+                        showFileChooser();
+                    }
+                }, activity.getString(R.string.gc_document_import_close_error), null, null);
     }
 
     @UiThread
