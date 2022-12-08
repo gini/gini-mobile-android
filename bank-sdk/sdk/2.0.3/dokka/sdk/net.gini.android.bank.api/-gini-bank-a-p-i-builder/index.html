@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>GiniBankAPIBuilder</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script>var pathToRoot = "../../../";</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/jetbrains-mono.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer="defer"></script>
+</head>
+<body>
+<div class="navigation-wrapper" id="navigation-wrapper">
+    <div id="leftToggler"><span class="icon-toggler"></span></div>
+    <div class="library-name">
+            <a href="../../../index.html">
+                    <span>sdk</span>
+            </a>
+    </div>
+    <div>
+    </div>
+    <div class="pull-right d-flex">
+        <button id="theme-toggle-button"><span id="theme-toggle"></span></button>
+        <div id="searchBar"></div>
+    </div>
+</div>
+<div id="container">
+    <div id="leftColumn">
+        <div id="sideMenu"></div>
+    </div>
+    <div id="main">
+<div class="main-content" id="content" pageIds="sdk::net.gini.android.bank.api/GiniBankAPIBuilder///PointingToDeclaration//-1647097541">
+  <div class="breadcrumbs"><a href="../../../index.html">sdk</a><span class="delimiter">/</span><a href="../index.html">net.gini.android.bank.api</a><span class="delimiter">/</span><span class="current">GiniBankAPIBuilder</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Gini</span><wbr></wbr><span>Bank</span><wbr></wbr><span><span>APIBuilder</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><span class="token keyword">class </span><a href="index.html">GiniBankAPIBuilder</a><span class="token keyword"> extends </span><a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/index.html">GiniCoreAPIBuilder</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="../-bank-api-document-manager/index.html">BankApiDocumentManager</a><span class="token punctuation">, </span><span class="token keyword"></span><a href="../-gini-bank-a-p-i/index.html">GiniBankAPI</a><span class="token punctuation">, </span><span class="token keyword"></span><a href="../-bank-api-document-repository/index.html">BankApiDocumentRepository</a><span class="token punctuation">, </span><span class="token keyword"></span><a href="../../net.gini.android.bank.api.models/-extractions-container/index.html">ExtractionsContainer</a><span class="token operator">&gt;</span></div><p class="paragraph">The <a href="index.html">GiniBankAPIBuilder</a> allows you to configure and create a <a href="../-gini-bank-a-p-i/index.html">GiniBankAPI</a> instance.</p></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="Constructors">Constructors</button><button class="section-tab" data-togglable="Functions">Functions</button><button class="section-tab" data-togglable="Parameters">Parameters</button></div>
+    <div class="tabs-section-body">
+      <h4 class="">Parameters</h4>
+      <div data-togglable="Parameters">
+        <div class="platform-hinted WithExtraAttributes" data-platform-hinted="data-platform-hinted" data-togglable="Parameters"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div data-togglable="Parameters"><div class="table" data-togglable="Parameters"><div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"><div class="main-subrow keyValue WithExtraAttributes"><div class=""><span class="inline-flex"><div><u><span><span>context</span></span></u></div></span></div><div><div class="title"><div data-togglable="Parameters"><p class="paragraph">your application's Context instance (Android)</p></div></div></div></div></div><div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"><div class="main-subrow keyValue WithExtraAttributes"><div class=""><span class="inline-flex"><div><u><span>client</span><wbr></wbr><span><span>Id</span></span></u></div></span></div><div><div class="title"><div data-togglable="Parameters"><p class="paragraph">your application's client ID for the Gini Bank API</p></div></div></div></div></div><div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"><div class="main-subrow keyValue WithExtraAttributes"><div class=""><span class="inline-flex"><div><u><span>client</span><wbr></wbr><span><span>Secret</span></span></u></div></span></div><div><div class="title"><div data-togglable="Parameters"><p class="paragraph">your application's client secret for the Gini Bank API</p></div></div></div></div></div><div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"><div class="main-subrow keyValue WithExtraAttributes"><div class=""><span class="inline-flex"><div><u><span>email</span><wbr></wbr><span><span>Domain</span></span></u></div></span></div><div><div class="title"><div data-togglable="Parameters"><p class="paragraph">the email domain which is used for created Gini users</p></div></div></div></div></div><div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"><div class="main-subrow keyValue WithExtraAttributes"><div class=""><span class="inline-flex"><div><u><span>session</span><wbr></wbr><span><span>Manager</span></span></u></div></span></div><div><div class="title"><div data-togglable="Parameters"><p class="paragraph">if not null, then the <a href="../../net.gini.android.core.api.authorization/-session-manager/index.html">SessionManager</a> instance will be used for session management. If null, then anonymous Gini users will be used.</p></div></div></div></div></div></div></div></div></div>
+      </div>
+      <h2 class="tabbedcontent">Constructors</h2>
+      <div class="table" data-togglable="Constructors"><a data-name="-1740180748%2FConstructors%2F-1647097541" anchor-label="GiniBankAPIBuilder" id="-1740180748%2FConstructors%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue TabbedContent">
+            <div class=""><span class="inline-flex">
+                <div><a href="-gini-bank-a-p-i-builder.html"><span>Gini</span><wbr></wbr><span>Bank</span><wbr></wbr><span><span>APIBuilder</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1740180748%2FConstructors%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.jvm/-jvm-overloads/index.html"><span class="token annotation builtin">JvmOverloads</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div><span class="token keyword">public </span><span class="token keyword"></span><a href="index.html">GiniBankAPIBuilder</a> <a href="-gini-bank-a-p-i-builder.html"><span class="token function">GiniBankAPIBuilder</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/android/content/Context.html">Context</a> context<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> clientId<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> clientSecret<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> emailDomain<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="../../net.gini.android.core.api.authorization/-session-manager/index.html">SessionManager</a> sessionManager</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Initializes a new builder instance.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-1740180748%2FConstructors%2F-1647097541" anchor-label="GiniBankAPIBuilder" id="-1740180748%2FConstructors%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue TabbedContent">
+            <div class=""><span class="inline-flex">
+                <div><a href="-gini-bank-a-p-i-builder.html"><span>Gini</span><wbr></wbr><span>Bank</span><wbr></wbr><span><span>APIBuilder</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1740180748%2FConstructors%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.jvm/-jvm-overloads/index.html"><span class="token annotation builtin">JvmOverloads</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div><span class="token keyword">public </span><span class="token keyword"></span><a href="index.html">GiniBankAPIBuilder</a> <a href="-gini-bank-a-p-i-builder.html"><span class="token function">GiniBankAPIBuilder</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/android/content/Context.html">Context</a> context<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> clientId<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> clientSecret<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> emailDomain</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Initializes a new builder instance.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-1740180748%2FConstructors%2F-1647097541" anchor-label="GiniBankAPIBuilder" id="-1740180748%2FConstructors%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue TabbedContent">
+            <div class=""><span class="inline-flex">
+                <div><a href="-gini-bank-a-p-i-builder.html"><span>Gini</span><wbr></wbr><span>Bank</span><wbr></wbr><span><span>APIBuilder</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1740180748%2FConstructors%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.jvm/-jvm-overloads/index.html"><span class="token annotation builtin">JvmOverloads</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div><span class="token keyword">public </span><span class="token keyword"></span><a href="index.html">GiniBankAPIBuilder</a> <a href="-gini-bank-a-p-i-builder.html"><span class="token function">GiniBankAPIBuilder</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/android/content/Context.html">Context</a> context<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> clientId<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> clientSecret</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Initializes a new builder instance.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-1740180748%2FConstructors%2F-1647097541" anchor-label="GiniBankAPIBuilder" id="-1740180748%2FConstructors%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue TabbedContent">
+            <div class=""><span class="inline-flex">
+                <div><a href="-gini-bank-a-p-i-builder.html"><span>Gini</span><wbr></wbr><span>Bank</span><wbr></wbr><span><span>APIBuilder</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1740180748%2FConstructors%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.jvm/-jvm-overloads/index.html"><span class="token annotation builtin">JvmOverloads</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div><span class="token keyword">public </span><span class="token keyword"></span><a href="index.html">GiniBankAPIBuilder</a> <a href="-gini-bank-a-p-i-builder.html"><span class="token function">GiniBankAPIBuilder</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/android/content/Context.html">Context</a> context<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> clientId</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Initializes a new builder instance.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-1740180748%2FConstructors%2F-1647097541" anchor-label="GiniBankAPIBuilder" id="-1740180748%2FConstructors%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue TabbedContent">
+            <div class=""><span class="inline-flex">
+                <div><a href="-gini-bank-a-p-i-builder.html"><span>Gini</span><wbr></wbr><span>Bank</span><wbr></wbr><span><span>APIBuilder</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1740180748%2FConstructors%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.jvm/-jvm-overloads/index.html"><span class="token annotation builtin">JvmOverloads</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div><span class="token keyword">public </span><span class="token keyword"></span><a href="index.html">GiniBankAPIBuilder</a> <a href="-gini-bank-a-p-i-builder.html"><span class="token function">GiniBankAPIBuilder</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/android/content/Context.html">Context</a> context</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Initializes a new builder instance.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <h2 class="">Functions</h2>
+      <div class="table" data-togglable="Functions"><a data-name="1054364860%2FFunctions%2F-1647097541" anchor-label="build" id="1054364860%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="build.html"><span><span>build</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1054364860%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword"></span><a href="../-gini-bank-a-p-i/index.html">GiniBankAPI</a> <a href="build.html"><span class="token function">build</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Builds the GiniBankAPI instance with the configuration settings of the builder instance.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-298611857%2FFunctions%2F-1647097541" anchor-label="getGiniApiType" id="-298611857%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-gini-api-type.html"><span>get</span><wbr></wbr><span>Gini</span><wbr></wbr><span>Api</span><wbr></wbr><span><span>Type</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-298611857%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword"></span><a href="../../net.gini.android.core.api/-gini-api-type/index.html">GiniApiType</a> <a href="get-gini-api-type.html"><span class="token function">getGiniApiType</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="417287252%2FFunctions%2F-1647097541" anchor-label="getSessionManager" id="417287252%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/get-session-manager.html"><span>get</span><wbr></wbr><span>Session</span><wbr></wbr><span><span>Manager</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="417287252%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword"></span><a href="../../net.gini.android.core.api.authorization/-session-manager/index.html">SessionManager</a> <a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/get-session-manager.html"><span class="token function">getSessionManager</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="1627719337%2FFunctions%2F-1647097541" anchor-label="setApiBaseUrl" id="1627719337%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/set-api-base-url.html"><span>set</span><wbr></wbr><span>Api</span><wbr></wbr><span>Base</span><wbr></wbr><span><span>Url</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1627719337%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword"></span><a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/index.html">GiniCoreAPIBuilder</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="../-bank-api-document-manager/index.html">BankApiDocumentManager</a><span class="token punctuation">, </span><span class="token keyword"></span><a href="../-gini-bank-a-p-i/index.html">GiniBankAPI</a><span class="token punctuation">, </span><span class="token keyword"></span><a href="../-bank-api-document-repository/index.html">BankApiDocumentRepository</a><span class="token punctuation">, </span><span class="token keyword"></span><a href="../../net.gini.android.bank.api.models/-extractions-container/index.html">ExtractionsContainer</a><span class="token operator">&gt;</span> <a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/set-api-base-url.html"><span class="token function">setApiBaseUrl</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> newUrl</span></span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="1308192486%2FFunctions%2F-1647097541" anchor-label="setCache" id="1308192486%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/set-cache.html"><span>set</span><wbr></wbr><span><span>Cache</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1308192486%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword"></span><a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/index.html">GiniCoreAPIBuilder</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="../-bank-api-document-manager/index.html">BankApiDocumentManager</a><span class="token punctuation">, </span><span class="token keyword"></span><a href="../-gini-bank-a-p-i/index.html">GiniBankAPI</a><span class="token punctuation">, </span><span class="token keyword"></span><a href="../-bank-api-document-repository/index.html">BankApiDocumentRepository</a><span class="token punctuation">, </span><span class="token keyword"></span><a href="../../net.gini.android.bank.api.models/-extractions-container/index.html">ExtractionsContainer</a><span class="token operator">&gt;</span> <a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/set-cache.html"><span class="token function">setCache</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword"></span><span data-unresolved-link="okhttp3/Cache///PointingToDeclaration/">Cache</span> cache</span></span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-122833077%2FFunctions%2F-1647097541" anchor-label="setConnectionTimeoutInMs" id="-122833077%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/set-connection-timeout-in-ms.html"><span>set</span><wbr></wbr><span>Connection</span><wbr></wbr><span>Timeout</span><wbr></wbr><span>In</span><wbr></wbr><span><span>Ms</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-122833077%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword"></span><a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/index.html">GiniCoreAPIBuilder</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="../-bank-api-document-manager/index.html">BankApiDocumentManager</a><span class="token punctuation">, </span><span class="token keyword"></span><a href="../-gini-bank-a-p-i/index.html">GiniBankAPI</a><span class="token punctuation">, </span><span class="token keyword"></span><a href="../-bank-api-document-repository/index.html">BankApiDocumentRepository</a><span class="token punctuation">, </span><span class="token keyword"></span><a href="../../net.gini.android.bank.api.models/-extractions-container/index.html">ExtractionsContainer</a><span class="token operator">&gt;</span> <a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/set-connection-timeout-in-ms.html"><span class="token function">setConnectionTimeoutInMs</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/Integer.html">Integer</a> connectionTimeoutInMs</span></span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-1316682596%2FFunctions%2F-1647097541" anchor-label="setCredentialsStore" id="-1316682596%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/set-credentials-store.html"><span>set</span><wbr></wbr><span>Credentials</span><wbr></wbr><span><span>Store</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1316682596%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword"></span><a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/index.html">GiniCoreAPIBuilder</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="../-bank-api-document-manager/index.html">BankApiDocumentManager</a><span class="token punctuation">, </span><span class="token keyword"></span><a href="../-gini-bank-a-p-i/index.html">GiniBankAPI</a><span class="token punctuation">, </span><span class="token keyword"></span><a href="../-bank-api-document-repository/index.html">BankApiDocumentRepository</a><span class="token punctuation">, </span><span class="token keyword"></span><a href="../../net.gini.android.bank.api.models/-extractions-container/index.html">ExtractionsContainer</a><span class="token operator">&gt;</span> <a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/set-credentials-store.html"><span class="token function">setCredentialsStore</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword"></span><a href="../../net.gini.android.core.api.authorization/-credentials-store/index.html">CredentialsStore</a> credentialsStore</span></span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-349541679%2FFunctions%2F-1647097541" anchor-label="setDebuggingEnabled" id="-349541679%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/set-debugging-enabled.html"><span>set</span><wbr></wbr><span>Debugging</span><wbr></wbr><span><span>Enabled</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-349541679%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/index.html">GiniCoreAPIBuilder</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="../-bank-api-document-manager/index.html">BankApiDocumentManager</a><span class="token punctuation">, </span><span class="token keyword"></span><a href="../-gini-bank-a-p-i/index.html">GiniBankAPI</a><span class="token punctuation">, </span><span class="token keyword"></span><a href="../-bank-api-document-repository/index.html">BankApiDocumentRepository</a><span class="token punctuation">, </span><span class="token keyword"></span><a href="../../net.gini.android.bank.api.models/-extractions-container/index.html">ExtractionsContainer</a><span class="token operator">&gt;</span> <a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/set-debugging-enabled.html"><span class="token function">setDebuggingEnabled</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/Boolean.html">Boolean</a> enabled</span></span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="812049106%2FFunctions%2F-1647097541" anchor-label="setNetworkSecurityConfigResId" id="812049106%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/set-network-security-config-res-id.html"><span>set</span><wbr></wbr><span>Network</span><wbr></wbr><span>Security</span><wbr></wbr><span>Config</span><wbr></wbr><span>Res</span><wbr></wbr><span><span>Id</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="812049106%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword"></span><a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/index.html">GiniCoreAPIBuilder</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="../-bank-api-document-manager/index.html">BankApiDocumentManager</a><span class="token punctuation">, </span><span class="token keyword"></span><a href="../-gini-bank-a-p-i/index.html">GiniBankAPI</a><span class="token punctuation">, </span><span class="token keyword"></span><a href="../-bank-api-document-repository/index.html">BankApiDocumentRepository</a><span class="token punctuation">, </span><span class="token keyword"></span><a href="../../net.gini.android.bank.api.models/-extractions-container/index.html">ExtractionsContainer</a><span class="token operator">&gt;</span> <a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/set-network-security-config-res-id.html"><span class="token function">setNetworkSecurityConfigResId</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/Integer.html">Integer</a> networkSecurityConfigResId</span></span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-501245622%2FFunctions%2F-1647097541" anchor-label="setTrustManager" id="-501245622%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/set-trust-manager.html"><span>set</span><wbr></wbr><span>Trust</span><wbr></wbr><span><span>Manager</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-501245622%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword"></span><a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/index.html">GiniCoreAPIBuilder</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="../-bank-api-document-manager/index.html">BankApiDocumentManager</a><span class="token punctuation">, </span><span class="token keyword"></span><a href="../-gini-bank-a-p-i/index.html">GiniBankAPI</a><span class="token punctuation">, </span><span class="token keyword"></span><a href="../-bank-api-document-repository/index.html">BankApiDocumentRepository</a><span class="token punctuation">, </span><span class="token keyword"></span><a href="../../net.gini.android.bank.api.models/-extractions-container/index.html">ExtractionsContainer</a><span class="token operator">&gt;</span> <a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/set-trust-manager.html"><span class="token function">setTrustManager</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/javax/net/ssl/TrustManager.html">TrustManager</a> trustManager</span></span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-288658103%2FFunctions%2F-1647097541" anchor-label="setUserCenterApiBaseUrl" id="-288658103%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/set-user-center-api-base-url.html"><span>set</span><wbr></wbr><span>User</span><wbr></wbr><span>Center</span><wbr></wbr><span>Api</span><wbr></wbr><span>Base</span><wbr></wbr><span><span>Url</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-288658103%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword"></span><a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/index.html">GiniCoreAPIBuilder</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="../-bank-api-document-manager/index.html">BankApiDocumentManager</a><span class="token punctuation">, </span><span class="token keyword"></span><a href="../-gini-bank-a-p-i/index.html">GiniBankAPI</a><span class="token punctuation">, </span><span class="token keyword"></span><a href="../-bank-api-document-repository/index.html">BankApiDocumentRepository</a><span class="token punctuation">, </span><span class="token keyword"></span><a href="../../net.gini.android.bank.api.models/-extractions-container/index.html">ExtractionsContainer</a><span class="token operator">&gt;</span> <a href="../../net.gini.android.core.api.internal/-gini-core-a-p-i-builder/set-user-center-api-base-url.html"><span class="token function">setUserCenterApiBaseUrl</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> newUrl</span></span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2022 Copyright</span><span
+                class="pull-right"><span>Generated by </span><a
+                href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+    </div>
+</div>
+</body>
+</html>
