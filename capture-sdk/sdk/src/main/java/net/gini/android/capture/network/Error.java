@@ -6,8 +6,14 @@ package net.gini.android.capture.network;
  * Copyright (c) 2018 Gini GmbH.
  */
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import net.gini.android.capture.internal.util.FileImportValidator;
 
 /**
  * Used by the {@link GiniCaptureNetworkService} and {@link GiniCaptureNetworkApi} to return error
@@ -15,8 +21,13 @@ import androidx.annotation.Nullable;
  */
 public class Error {
 
-    private final String mMessage;
-    private final Throwable mCause;
+    private String mMessage;
+    private Throwable mCause;
+
+    private Integer mStatusCode;
+    private Map<String, List<String>> mHeaders;
+    private FileImportValidator.Error mFileImportErrors;
+    private Exception mException;
 
     /**
      * Create a new error.
@@ -40,6 +51,27 @@ public class Error {
     }
 
     /**
+     * Create a new error with status code and headers.
+     *
+     * @param statusCode API response status code
+     * @param headers API response headers
+     */
+    public Error(final Integer statusCode,final Map<String, List<String>> headers, final Throwable exception) {
+        mStatusCode = statusCode;
+        mHeaders = headers;
+        mCause = exception;
+    }
+
+    /**
+     * Create a new error for file handling
+     *
+     * @param fileImportErrors import error type
+     */
+    public Error(FileImportValidator.Error fileImportErrors) {
+        mFileImportErrors = fileImportErrors;
+    }
+
+    /**
      * @return error message
      */
     @NonNull
@@ -53,5 +85,28 @@ public class Error {
     @Nullable
     public Throwable getCause() {
         return mCause;
+    }
+
+    /**
+     * @return error status code
+     */
+    @Nullable
+    public Integer getStatusCode() {
+        return mStatusCode;
+    }
+
+    /**
+     * @return error response headers
+     */
+    @Nullable
+    public Map<String, List<String>> getHeaders() {
+        return mHeaders;
+    }
+
+    /**
+     * @return error file import type
+     */
+    public FileImportValidator.Error getFileImportErrors() {
+        return mFileImportErrors;
     }
 }

@@ -5,16 +5,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.TextView
 import net.gini.android.capture.Document
 import net.gini.android.capture.R
 import net.gini.android.capture.document.ImageMultiPageDocument
 import net.gini.android.capture.internal.ui.FragmentImplCallback
 import net.gini.android.capture.internal.util.ActivityHelper
 import net.gini.android.capture.ImageRetakeOptionsListener
+import net.gini.android.capture.network.ErrorType
 
-class ErrorFragmentImpl(private val fragment: FragmentImplCallback,
-                        private val document: Document?)
-{
+class ErrorFragmentImpl(
+    private val fragment: FragmentImplCallback,
+    private val document: Document?,
+    private val errorType: ErrorType?,
+    private val customError: String?
+) {
 
     private val defaultListener: ImageRetakeOptionsListener = object :
         ImageRetakeOptionsListener {
@@ -29,12 +34,13 @@ class ErrorFragmentImpl(private val fragment: FragmentImplCallback,
         ActivityHelper.forcePortraitOrientationOnPhones(fragment.activity)
     }
 
-    fun onCreateView(inflater: LayoutInflater,
-                     container: ViewGroup?,
-                     savedInstanceState: Bundle?
+    fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         val view: View = inflater.inflate(R.layout.gc_fragment_error, container, false)
-        retakeImagesButton = view.findViewById<Button>(R.id.gc_button_error_retake_images)
+        retakeImagesButton = view.findViewById(R.id.gc_button_error_retake_images)
 
         if (shouldAllowRetakeImages()) {
             retakeImagesButton.setOnClickListener { view12: View? -> imageRetakeOptionsListener?.onBackToCameraPressed() }
@@ -44,6 +50,20 @@ class ErrorFragmentImpl(private val fragment: FragmentImplCallback,
 
         val enterManuallyButton = view.findViewById<View>(R.id.gc_button_error_enter_manually)
         enterManuallyButton.setOnClickListener { view1: View? -> imageRetakeOptionsListener?.onEnterManuallyPressed() }
+
+        customError?.let {
+            view.findViewById<TextView>(R.id.gc_error_header).text = it
+        }
+
+        errorType?.let {
+            view.findViewById<TextView>(R.id.gc_error_header).text =
+                fragment.activity?.getString(it.titleTextResource)
+            view.findViewById<TextView>(R.id.gc_error_textview).text =
+                fragment.activity?.getString(it.descriptionTextResource)
+            view.findViewById<TextView>(R.id.gc_error_header)
+                .setCompoundDrawablesWithIntrinsicBounds(it.drawableResource, 0, 0, 0)
+        }
+
         return view
     }
 

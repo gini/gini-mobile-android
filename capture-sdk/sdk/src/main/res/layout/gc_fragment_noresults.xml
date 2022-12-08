@@ -42,7 +42,6 @@
             style="@style/GiniCaptureTheme.Typography.Body2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
             android:drawableStart="@drawable/gc_alert_triangle_icon"
             android:drawablePadding="@dimen/large_24"
             android:gravity="center_vertical"

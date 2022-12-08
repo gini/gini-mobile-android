@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import net.gini.android.capture.Document
 import net.gini.android.capture.internal.ui.FragmentImplCallback
 import net.gini.android.capture.internal.util.AlertDialogHelperCompat
+import net.gini.android.capture.network.ErrorType
 
 /**
  * <h3>Component API</h3>
@@ -75,9 +76,9 @@ class ErrorFragmentCompat : Fragment(), FragmentImplCallback {
          *
          * @return a new instance of the Fragment
          */
-        fun createInstance(document: Document?): ErrorFragmentCompat {
+        fun createInstance(errorType: ErrorType?, document: Document?, customError: String?): ErrorFragmentCompat {
             val fragment = ErrorFragmentCompat()
-            fragment.arguments = ErrorFragmentHelper.createArguments(document)
+            fragment.arguments = ErrorFragmentHelper.createArguments(errorType, document, customError)
             return fragment
         }
     }

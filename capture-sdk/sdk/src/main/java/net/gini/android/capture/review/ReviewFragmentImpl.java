@@ -42,9 +42,11 @@ import net.gini.android.capture.internal.camera.photo.PhotoFactoryDocumentAsyncT
 import net.gini.android.capture.internal.network.NetworkRequestResult;
 import net.gini.android.capture.internal.network.NetworkRequestsManager;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
+import net.gini.android.capture.internal.util.ActivityHelper;
 import net.gini.android.capture.internal.util.FileImportHelper;
 import net.gini.android.capture.logging.ErrorLog;
 import net.gini.android.capture.logging.ErrorLogger;
+import net.gini.android.capture.network.FailureException;
 import net.gini.android.capture.tracking.ReviewScreenEvent;
 
 import org.slf4j.Logger;
@@ -238,7 +240,7 @@ class ReviewFragmentImpl implements ReviewFragmentInterface {
                                     final NetworkRequestResult<GiniCaptureDocument> requestResult,
                                     final Throwable throwable) {
                                 if (throwable != null && !isCancellation(throwable)) {
-                                    handleAnalysisError(throwable);
+                                    handleAnalysisError(throwable, document);
                                 } else if (requestResult != null) {
                                     mDocumentWasUploaded = true;
                                 }
@@ -249,15 +251,19 @@ class ReviewFragmentImpl implements ReviewFragmentInterface {
         }
     }
 
-    private void handleAnalysisError(@NonNull final Throwable throwable) {
+    private void handleAnalysisError(@NonNull final Throwable throwable, Document document) {
         final Activity activity = mFragment.getActivity();
         if (activity == null) {
             return;
         }
+
+        FailureException exception = (FailureException) throwable;
+        ActivityHelper.startErrorActivity(activity, exception, document);
+
         if (GiniCapture.hasInstance()) {
             GiniCapture.getInstance().internal().setReviewScreenAnalysisError(throwable);
         }
-        mDocumentAnalysisErrorMessage = activity.getString(R.string.gc_document_analysis_error);
+       // mDocumentAnalysisErrorMessage = activity.getString(R.string.gc_document_analysis_error);
     }
 
     private void createPhoto() {

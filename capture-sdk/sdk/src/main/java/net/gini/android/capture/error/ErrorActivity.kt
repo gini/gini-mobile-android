@@ -6,34 +6,74 @@ import android.view.MenuItem
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import net.gini.android.capture.Document
+import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.R
 import net.gini.android.capture.camera.CameraActivity.RESULT_ENTER_MANUALLY
 import net.gini.android.capture.internal.util.ActivityHelper
 import net.gini.android.capture.ImageRetakeOptionsListener
+import net.gini.android.capture.camera.CameraActivity.RESULT_CAMERA_SCREEN
+import net.gini.android.capture.help.view.HelpNavigationBarBottomAdapter
+import net.gini.android.capture.network.ErrorType
 import net.gini.android.capture.noresults.NoResultsActivity
+import net.gini.android.capture.view.InjectedViewContainer
+import net.gini.android.capture.view.NavButtonType
+import net.gini.android.capture.view.NavigationBarTopAdapter
 
 class ErrorActivity : AppCompatActivity(),
     ImageRetakeOptionsListener {
 
     private var mDocument: Document? = null
+    private var mErrorType: ErrorType? = null
+    private var mCustomError: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.gc_activity_error)
-        setTitle("")
+
         readExtras()
-        val supportActionBar = supportActionBar
-        if (supportActionBar != null) {
-            supportActionBar.setDisplayHomeAsUpEnabled(true)
-            supportActionBar.setDisplayShowHomeEnabled(true)
-        }
+
+        setInjectedTopBarContainer()
+        setBottomBarInjectedContainer()
         if (savedInstanceState == null) {
             initFragment()
         }
+
         handleOnBackPressed()
     }
 
+    private fun setInjectedTopBarContainer() {
+        val topBarContainer =
+            findViewById<InjectedViewContainer<NavigationBarTopAdapter>>(R.id.gc_injected_navigation_bar_container_top)
+        if (GiniCapture.hasInstance()) {
+            topBarContainer.injectedViewAdapter = GiniCapture.getInstance().navigationBarTopAdapter
+
+            topBarContainer.injectedViewAdapter?.apply {
+                setTitle(getString(R.string.gc_error_screen_title))
+
+                if (!GiniCapture.getInstance().isBottomNavigationBarEnabled) {
+                    setNavButtonType(NavButtonType.BACK)
+                    setOnNavButtonClickListener {
+                        onBackPressed()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun setBottomBarInjectedContainer() {
+        if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled) {
+            val bottomBarContainer = findViewById<InjectedViewContainer<HelpNavigationBarBottomAdapter>>(R.id.gc_injected_navigation_bar_container_bottom)
+            bottomBarContainer.injectedViewAdapter = GiniCapture.getInstance().helpNavigationBarBottomAdapter
+            bottomBarContainer.injectedViewAdapter?.apply {
+                setOnBackClickListener {
+                    onBackPressed()
+                }
+            }
+        }
+    }
+
     override fun onBackToCameraPressed() {
+        setResult(RESULT_CAMERA_SCREEN)
         finish()
     }
 
@@ -51,7 +91,7 @@ class ErrorActivity : AppCompatActivity(),
     }
 
     private fun initFragment() {
-        val errorFragment = ErrorFragmentCompat.createInstance(mDocument)
+        val errorFragment = ErrorFragmentCompat.createInstance(mErrorType, mDocument, mCustomError)
         supportFragmentManager
             .beginTransaction()
             .add(R.id.gc_fragment_error, errorFragment)
@@ -62,6 +102,8 @@ class ErrorActivity : AppCompatActivity(),
         val extras = intent.extras
         if (extras != null) {
             mDocument = extras.getParcelable(NoResultsActivity.EXTRA_IN_DOCUMENT)
+            mErrorType = extras.getSerializable(EXTRA_IN_ERROR) as? ErrorType
+            mCustomError = extras.getString(EXTRA_ERROR_STRING)
         }
     }
 
@@ -83,5 +125,12 @@ class ErrorActivity : AppCompatActivity(),
          * @suppress
          */
         const val ERROR_REQUEST = 999
+
+        const val ERROR_SCREEN_REQUEST = 111
+
+        const val EXTRA_IN_ERROR = "GC_EXTRA_IN_ERROR"
+
+        const val EXTRA_ERROR_STRING = "GC_EXTRA_IN_ERROR"
+
     }
 }

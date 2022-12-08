@@ -2,6 +2,7 @@ package net.gini.android.capture.camera;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import net.gini.android.capture.AsyncCallback;
 import net.gini.android.capture.Document;
@@ -75,7 +76,7 @@ class ImportImageDocumentUrisAsyncTask extends AbstractImportImageUrisAsyncTask 
             @NonNull final ImportedFileValidationException exception) {
         final String errorMessage = getErrorMessage(exception);
         addMultiPageDocumentError(errorMessage, multiPageDocument);
-        return false;
+        return true;
     }
 
     private void addMultiPageDocumentError(@NonNull final String string,

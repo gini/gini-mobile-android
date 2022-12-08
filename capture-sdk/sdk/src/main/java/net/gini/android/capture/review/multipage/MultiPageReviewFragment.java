@@ -3,6 +3,7 @@ package net.gini.android.capture.review.multipage;
 import static net.gini.android.capture.GiniCaptureError.ErrorCode.MISSING_GINI_CAPTURE_INSTANCE;
 import static net.gini.android.capture.document.GiniCaptureDocumentError.ErrorCode.FILE_VALIDATION_FAILED;
 import static net.gini.android.capture.document.GiniCaptureDocumentError.ErrorCode.UPLOAD_FAILED;
+import static net.gini.android.capture.error.ErrorActivity.EXTRA_IN_ERROR;
 import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
 import static net.gini.android.capture.internal.util.FileImportHelper.showAlertIfOpenWithDocumentAndAppIsDefault;
 import static net.gini.android.capture.review.multipage.previews.PreviewFragment.ErrorButtonAction.DELETE;
@@ -31,12 +32,19 @@ import net.gini.android.capture.document.GiniCaptureDocument;
 import net.gini.android.capture.document.GiniCaptureDocumentError;
 import net.gini.android.capture.document.ImageDocument;
 import net.gini.android.capture.document.ImageMultiPageDocument;
+import net.gini.android.capture.error.ErrorActivity;
 import net.gini.android.capture.internal.network.NetworkRequestResult;
 import net.gini.android.capture.internal.network.NetworkRequestsManager;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
+import net.gini.android.capture.internal.util.ActivityHelper;
 import net.gini.android.capture.internal.util.AlertDialogHelperCompat;
 import net.gini.android.capture.internal.util.AndroidHelper;
 import net.gini.android.capture.internal.util.FileImportHelper;
+import net.gini.android.capture.internal.util.FileImportValidator;
+import net.gini.android.capture.network.Error;
+import net.gini.android.capture.network.ErrorType;
+import net.gini.android.capture.network.FailureException;
+import net.gini.android.capture.noresults.NoResultsActivity;
 import net.gini.android.capture.review.multipage.previews.MiddlePageManager;
 import net.gini.android.capture.review.multipage.previews.PreviewFragmentListener;
 import net.gini.android.capture.review.multipage.previews.PreviewPagesAdapter;
@@ -692,6 +700,16 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
             if (!mMultiPageDocument.hasDocumentError(imageDocument)) {
                 // Documents with a an error should not be uploaded automatically
                 uploadDocument(imageDocument);
+            } else {
+                if (mMultiPageDocument.getErrorForDocument(imageDocument) != null
+                        && mMultiPageDocument.getErrorForDocument(imageDocument).getErrorCode() != null) {
+                    GiniCaptureDocumentError.ErrorCode errorCode = mMultiPageDocument.getErrorForDocument(imageDocument).getErrorCode();
+                    FileImportValidator.Error fileImportErrors = FileImportValidator.Error.valueOf(errorCode.name());
+                    Error error = new Error(fileImportErrors);
+
+                    ErrorType errorType = ErrorType.GENERAL.typeFromError(error);
+                    ActivityHelper.startErrorActivity(requireActivity(), new FailureException(errorType), imageDocument);
+                }
             }
         }
     }
@@ -728,9 +746,10 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
                             hideIndicator();
 
                             trackUploadError(throwable);
-                            final String errorMessage = getString(
-                                    R.string.gc_document_analysis_error);
-                            showErrorOnPreview(errorMessage, document);
+
+                            if (getActivity() != null) {
+                                handleError(throwable, document);
+                            }
 
                         } else if (requestResult != null) {
                             hideIndicator();
@@ -749,14 +768,12 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
         trackReviewScreenEvent(ReviewScreenEvent.UPLOAD_ERROR, errorDetails);
     }
 
-    private void showErrorOnPreview(final String errorMessage, final ImageDocument imageDocument) {
-        mMultiPageDocument.setErrorForDocument(imageDocument,
-                new GiniCaptureDocumentError(errorMessage,
-                        UPLOAD_FAILED));
-
-
-        showHideBlueRect(View.VISIBLE);
-    }
+   private void handleError(Throwable throwable, Document document) {
+       if (getActivity() != null) {
+           FailureException exception = (FailureException) throwable;
+           ActivityHelper.startErrorActivity(requireActivity(), exception, document);
+       }
+   }
 
     private void showIndicator() {
         if (injectedLoadingIndicatorContainer != null && injectedLoadingIndicatorContainer.getInjectedViewAdapter() != null)

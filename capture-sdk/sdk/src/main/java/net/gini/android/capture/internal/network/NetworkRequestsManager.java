@@ -18,6 +18,8 @@ import net.gini.android.capture.logging.ErrorLog;
 import net.gini.android.capture.logging.ErrorLogger;
 import net.gini.android.capture.network.AnalysisResult;
 import net.gini.android.capture.network.Error;
+import net.gini.android.capture.network.ErrorType;
+import net.gini.android.capture.network.FailureException;
 import net.gini.android.capture.network.GiniCaptureNetworkCallback;
 import net.gini.android.capture.network.GiniCaptureNetworkService;
 import net.gini.android.capture.network.Result;
@@ -96,8 +98,8 @@ public class NetworkRequestsManager {
                                         LOG.error("Document upload failed for {}: {}",
                                                 document.getId(),
                                                 error.getMessage());
-                                        future.completeExceptionally(
-                                                new RuntimeException(error.getMessage(), error.getCause()));
+                                        ErrorType errorType = ErrorType.GENERAL.typeFromError(error);
+                                        future.completeExceptionally(new FailureException(errorType));
                                     }
 
                                     @Override
