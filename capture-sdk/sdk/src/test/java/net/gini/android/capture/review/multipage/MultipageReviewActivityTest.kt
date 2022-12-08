@@ -31,7 +31,7 @@ class MultipageReviewActivityTest {
     @After
     fun after() {
         GiniCapture.cleanup(getInstrumentation().targetContext, "", "", "", "",
-            Amount.EMPTY())
+            Amount.EMPTY)
     }
 
     @Test

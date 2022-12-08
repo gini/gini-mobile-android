@@ -33,7 +33,7 @@ class CameraFragmentImplTest {
             "",
             "",
             "",
-            Amount.EMPTY())
+            Amount.EMPTY)
     }
 
     @Test

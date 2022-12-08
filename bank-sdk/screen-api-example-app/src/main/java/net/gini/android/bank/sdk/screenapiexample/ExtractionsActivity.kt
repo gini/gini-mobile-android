@@ -11,11 +11,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import java.util.*
 import net.gini.android.capture.GiniCapture
-import net.gini.android.capture.network.Error
-import net.gini.android.capture.network.GiniCaptureNetworkCallback
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.bank.sdk.screenapiexample.databinding.ActivityExtractionsBinding
-import net.gini.android.capture.Amount
 import net.gini.android.capture.AmountCurrency
 import net.gini.android.capture.network.GiniCaptureDefaultNetworkService
 import org.koin.android.ext.android.inject

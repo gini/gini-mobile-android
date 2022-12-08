@@ -35,7 +35,7 @@ class CameraActivityTest {
             "",
             "",
             "",
-            Amount.EMPTY()
+            Amount.EMPTY
         )
     }
 

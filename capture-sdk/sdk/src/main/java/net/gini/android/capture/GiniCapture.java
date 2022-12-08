@@ -162,7 +162,7 @@ public class GiniCapture {
      * Configure and create a new instance using the returned {@link Builder}.
      *
      * @return a new {@link Builder}
-     * @throws IllegalStateException when an instance already exists. Call {@link #cleanup(Context, String, String, String, String, String)}
+     * @throws IllegalStateException when an instance already exists. Call {@link #cleanup(Context, String, String, String, String, Amount)}
      *                               before trying to create a new instance
      */
     @NonNull
@@ -189,7 +189,6 @@ public class GiniCapture {
         if (sInstance == null) {
             return;
         }
-
 
         Map<String, GiniCaptureSpecificExtraction> extractionMap = new HashMap<>();
 
@@ -245,12 +244,6 @@ public class GiniCapture {
         doActualCleanUp(context);
     }
 
-
-    private static boolean isAmountValid(final String input) {
-        final Pattern pattern = Pattern.compile("[0-9]*\\.[0-9]+:EUR", Pattern.CASE_INSENSITIVE);
-        final Matcher matcher = pattern.matcher(input);
-        return matcher.matches();
-    }
 
     private static void doActualCleanUp(Context context) {
         sInstance.mDocumentDataMemoryCache.clear();

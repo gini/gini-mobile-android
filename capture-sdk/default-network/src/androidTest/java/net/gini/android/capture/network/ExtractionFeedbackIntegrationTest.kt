@@ -83,7 +83,7 @@ class ExtractionFeedbackIntegrationTest {
 
     @After
     fun tearDown() {
-        GiniCapture.cleanup(getApplicationContext(), "", "", "", "", Amount.EMPTY())
+        GiniCapture.cleanup(getApplicationContext(), "", "", "", "", Amount.EMPTY)
     }
 
     @Test

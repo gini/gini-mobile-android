@@ -85,7 +85,7 @@ class ExtractionFeedbackIntegrationTest {
 
     @After
     fun tearDown() {
-        GiniBank.releaseCapture(getApplicationContext(),"","","","", Amount.EMPTY())
+        GiniBank.releaseCapture(getApplicationContext(),"","","","", Amount.EMPTY)
     }
 
     @Test
