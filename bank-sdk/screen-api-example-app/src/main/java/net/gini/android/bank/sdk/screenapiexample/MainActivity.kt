@@ -15,6 +15,7 @@ import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.capture.*
 import net.gini.android.bank.sdk.screenapiexample.databinding.ActivityMainBinding
 import net.gini.android.bank.sdk.screenapiexample.util.PermissionHandler
+import net.gini.android.capture.Amount
 import net.gini.android.capture.DocumentImportEnabledFileTypes
 import net.gini.android.capture.GiniCaptureDebug
 import net.gini.android.capture.help.HelpItem
@@ -58,7 +59,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun configureGiniCapture() {
         GiniBank.releaseCapture(this, "",
-            "", "", "", "")
+            "", "", "", Amount.EMPTY())
         val enableBottomNavigationBar = false
         val useCustomOnboardingPages = false
         val useCustomLoadingIndicator = false

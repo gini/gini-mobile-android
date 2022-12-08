@@ -18,6 +18,8 @@ import net.gini.android.bank.sdk.capture.ResultError
 import net.gini.android.bank.sdk.test.ExtractionsFixture
 import net.gini.android.bank.sdk.test.bankAPIDocumentWithId
 import net.gini.android.bank.sdk.test.fromJsonAsset
+import net.gini.android.capture.Amount
+import net.gini.android.capture.AmountCurrency
 import net.gini.android.capture.Document
 import net.gini.android.capture.GiniCaptureError
 import net.gini.android.capture.internal.util.MimeType
@@ -27,6 +29,7 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.math.BigDecimal
 import java.util.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -82,7 +85,7 @@ class ExtractionFeedbackIntegrationTest {
 
     @After
     fun tearDown() {
-        GiniBank.releaseCapture(getApplicationContext(),"","","","","")
+        GiniBank.releaseCapture(getApplicationContext(),"","","","", Amount.EMPTY())
     }
 
     @Test
@@ -112,7 +115,7 @@ class ExtractionFeedbackIntegrationTest {
             result.specificExtractions["paymentPurpose"]!!.value,
             result.specificExtractions["iban"]!!.value,
             result.specificExtractions["bic"]!!.value,
-            "950.00:EUR"
+            Amount(BigDecimal("950.00"), AmountCurrency.EUR)
         )
 
         //    Wait a little for the feedback sending to complete
