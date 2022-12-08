@@ -7,10 +7,12 @@ import android.os.Parcel
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.squareup.moshi.Moshi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.suspendCancellableCoroutine
 import net.gini.android.bank.api.GiniBankAPI
 import net.gini.android.bank.api.GiniBankAPIBuilder
+import net.gini.android.bank.sdk.capture.CaptureConfiguration
 import net.gini.android.bank.sdk.capture.CaptureResult
 import net.gini.android.bank.sdk.capture.ResultError
 import net.gini.android.bank.sdk.test.ExtractionsFixture
@@ -62,6 +64,10 @@ class ExtractionFeedbackIntegrationTest {
             .setUserCenterBaseUrl(testProperties["testUserCenterUri"] as String)
             .build()
 
+        GiniBank.setCaptureConfiguration(CaptureConfiguration(
+            networkService = networkService
+        ))
+
         giniBankAPI = GiniBankAPIBuilder(
             getApplicationContext(),
             testProperties["testClientId"] as String,
@@ -76,7 +82,7 @@ class ExtractionFeedbackIntegrationTest {
 
     @After
     fun tearDown() {
-        networkService.cleanup()
+        GiniBank.releaseCapture(getApplicationContext(),"","","","","")
     }
 
     @Test
@@ -96,37 +102,21 @@ class ExtractionFeedbackIntegrationTest {
         // 3. Assuming the user saw the following extractions:
         //    amountToPay, iban, bic, paymentPurpose and paymentRecipient
 
+        //    When releasing capture we need to provide the values the user has used for
+        //    creating the transaction.
         //    Supposing the user changed the amountToPay from "995.00:EUR" to "950.00:EUR"
-        //    we need to update that extraction
-        result.specificExtractions["amountToPay"]!!.value = "950.00:EUR"
+        //    we need to pass in the changed value. For the other extractions we can pass in
+        //    the original values since the user did not edit them.
+        GiniBank.releaseCapture(getApplicationContext(),
+            result.specificExtractions["paymentRecipient"]!!.value,
+            result.specificExtractions["paymentPurpose"]!!.value,
+            result.specificExtractions["iban"]!!.value,
+            result.specificExtractions["bic"]!!.value,
+            "950.00:EUR"
+        )
 
-        //    Send feedback for the extractions the user saw
-        //    with the final (user confirmed or updated) extraction values
-        suspendCancellableCoroutine<Unit> { continuation ->
-            networkService.sendFeedback(
-                mutableMapOf(
-                    "amountToPay" to result.specificExtractions["amountToPay"]!!,
-                    "iban" to result.specificExtractions["iban"]!!,
-                    "bic" to result.specificExtractions["bic"]!!,
-                    "paymentPurpose" to result.specificExtractions["paymentPurpose"]!!,
-                    "paymentRecipient" to result.specificExtractions["paymentRecipient"]!!
-                ), Collections.emptyMap(),
-                object : GiniCaptureNetworkCallback<Void, Error> {
-                    override fun failure(error: Error?) {
-                        continuation.resumeWithException(RuntimeException(error?.message, error?.cause))
-                    }
-
-                    override fun success(result: Void?) {
-                        continuation.resume(Unit)
-                    }
-
-                    override fun cancelled() {
-                        continuation.cancel()
-                    }
-
-                }
-            )
-        }
+        //    Wait a little for the feedback sending to complete
+        delay(2_000)
 
         // 4. Verify that the extractions were updated using the Gini Bank API
         val extractionsAfterFeedback =
