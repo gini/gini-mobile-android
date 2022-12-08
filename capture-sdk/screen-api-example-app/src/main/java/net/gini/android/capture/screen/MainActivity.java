@@ -18,6 +18,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import net.gini.android.capture.Amount;
+import net.gini.android.capture.AmountCurrency;
+import net.gini.android.capture.BuildConfig;
 import net.gini.android.capture.help.view.HelpNavigationBarBottomAdapter;
 import net.gini.android.capture.onboarding.DefaultPages;
 import net.gini.android.capture.AsyncCallback;
@@ -52,6 +55,7 @@ import net.gini.android.capture.view.OnButtonLoadingIndicatorAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -315,7 +319,7 @@ public class MainActivity extends AppCompatActivity {
     private void configureGiniCapture() {
         final BaseExampleApp app = (BaseExampleApp) getApplication();
 
-        GiniCapture.cleanup(this, "", "", "", "", "");
+        GiniCapture.cleanup(this, "", "", "", "", Amount.EMPTY());
 
         app.clearGiniCaptureNetworkInstances();
         final GiniCapture.Builder builder = GiniCapture.newInstance()

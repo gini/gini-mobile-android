@@ -14,6 +14,8 @@ import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import net.gini.android.bank.api.GiniBankAPI
+import net.gini.android.capture.Amount
+import net.gini.android.capture.AmountCurrency
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.example.shared.BaseExampleApp
 import net.gini.android.capture.network.Error
@@ -27,6 +29,7 @@ import org.slf4j.LoggerFactory
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.math.BigDecimal
 import java.util.*
 
 /**
@@ -203,19 +206,20 @@ class ExtractionsActivity : AppCompatActivity() {
         val bic = mExtractions["bic"]?.value ?: ""
 
         if (amount != null) { // Let's assume the amount was wrong and change it
-            amount.value = "10.00:EUR"
-            Toast.makeText(this, "Amount changed to 10.00:EUR", Toast.LENGTH_SHORT).show()
+            amount.value = "10.00"
+            Toast.makeText(this, "Amount changed to 10.00", Toast.LENGTH_SHORT).show()
         } else { // Amount was missing, let's add it
             val extraction = GiniCaptureSpecificExtraction(
-                    "amountToPay", "10.00:EUR",
+                    "amountToPay", "10.00",
                     "amount", null, emptyList())
             mExtractions["amountToPay"] = extraction
             mExtractionsAdapter?.extractions = getSortedExtractions(mExtractions)
-            Toast.makeText(this, "Added amount of 10.00:EUR", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Added amount of 10.00", Toast.LENGTH_SHORT).show()
         }
         mExtractionsAdapter?.notifyDataSetChanged()
 
-        GiniCapture.cleanup(applicationContext, paymentRecipient, paymentReference, iban, bic, amount!!.value)
+        GiniCapture.cleanup(applicationContext, paymentRecipient, paymentReference, iban, bic, Amount(
+            BigDecimal(amount!!.value), AmountCurrency.EUR))
     }
 
     private fun legacySendFeedback() {

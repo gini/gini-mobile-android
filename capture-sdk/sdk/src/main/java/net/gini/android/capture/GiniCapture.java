@@ -7,6 +7,7 @@ import static java.util.Collections.emptyMap;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.widget.Toast;
 
 import net.gini.android.capture.analysis.AnalysisActivity;
@@ -82,9 +83,9 @@ import androidx.annotation.VisibleForTesting;
  *
  * <p> To create and configure a singleton instance use the {@link #newInstance()} method and the
  * returned {@link Builder}. If an instance is already available you need to call {@link
- * #cleanup(Context, String, String, String, String, String)} before creating a new instance. Failing to do so will throw an exception.
+ * #cleanup(Context, String, String, String, String, Amount)} before creating a new instance. Failing to do so will throw an exception.
  *
- * <p> After you are done using the Gini Capture SDK use the {@link #cleanup(Context, String, String, String, String, String)} method.
+ * <p> After you are done using the Gini Capture SDK use the {@link #cleanup(Context, String, String, String, String, Amount)} method.
  * This will free up resources used by the library.
  */
 public class GiniCapture {
@@ -183,21 +184,16 @@ public class GiniCapture {
                                             @NonNull final String paymentReference,
                                             @NonNull final String iban,
                                             @NonNull final String bic,
-                                            @NonNull final String amountToPay) {
+                                            @NonNull final Amount amount) {
 
         if (sInstance == null) {
             return;
         }
 
 
-        if (!amountToPay.isEmpty()) {
-            if (!isAmountValid(amountToPay))
-                throw new IllegalStateException("Amount doesn't have a proper format");
-        }
-
         Map<String, GiniCaptureSpecificExtraction> extractionMap = new HashMap<>();
 
-        extractionMap.put("amountToPay", new GiniCaptureSpecificExtraction("amountToPay", amountToPay,
+        extractionMap.put("amountToPay", new GiniCaptureSpecificExtraction("amountToPay", amount.amountToPay(),
                 "amount", null, emptyList()));
 
         extractionMap.put("paymentRecipient", new GiniCaptureSpecificExtraction("paymentRecipient", paymentRecipient,

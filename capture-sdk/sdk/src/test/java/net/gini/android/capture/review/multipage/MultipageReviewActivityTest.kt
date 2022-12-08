@@ -8,6 +8,7 @@ import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.spy
 import com.nhaarman.mockitokotlin2.verify
+import net.gini.android.capture.Amount
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.tracking.Event
 import net.gini.android.capture.tracking.EventTracker
@@ -30,7 +31,7 @@ class MultipageReviewActivityTest {
     @After
     fun after() {
         GiniCapture.cleanup(getInstrumentation().targetContext, "", "", "", "",
-            "")
+            Amount.EMPTY())
     }
 
     @Test

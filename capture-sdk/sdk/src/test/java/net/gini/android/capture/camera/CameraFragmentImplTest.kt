@@ -6,6 +6,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.*
 import jersey.repackaged.jsr166e.CompletableFuture
+import net.gini.android.capture.Amount
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.GiniCaptureError
 import net.gini.android.capture.internal.camera.api.CameraInterface
@@ -32,7 +33,7 @@ class CameraFragmentImplTest {
             "",
             "",
             "",
-            "")
+            Amount.EMPTY())
     }
 
     @Test

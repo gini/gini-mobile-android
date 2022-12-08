@@ -9,6 +9,7 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.spy
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
+import net.gini.android.capture.Amount
 import net.gini.android.capture.Document
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.document.ImageDocument
@@ -31,7 +32,7 @@ class AnalysisActivityTest {
 
     @After
     fun after() {
-        GiniCapture.cleanup(getInstrumentation().targetContext, "", "", "", "", "")
+        GiniCapture.cleanup(getInstrumentation().targetContext, "", "", "", "", Amount.EMPTY())
     }
 
     @Test

@@ -22,6 +22,7 @@ import net.gini.android.bank.sdk.error.AmountParsingException
 import net.gini.android.bank.sdk.pay.getBusinessIntent
 import net.gini.android.bank.sdk.pay.getRequestId
 import net.gini.android.bank.sdk.util.parseAmountToBackendFormat
+import net.gini.android.capture.Amount
 import net.gini.android.capture.AsyncCallback
 import net.gini.android.capture.Document
 import net.gini.android.capture.GiniCapture
@@ -87,9 +88,9 @@ object GiniBank {
         paymentReference: String,
         iban: String,
         bic: String,
-        amountToPay: String
+        amount: Amount
     ) {
-        GiniCapture.cleanup(context, paymentRecipient, paymentReference, iban, bic, amountToPay)
+        GiniCapture.cleanup(context, paymentRecipient, paymentReference, iban, bic, amount)
         captureConfiguration = null
         giniCapture = null
     }

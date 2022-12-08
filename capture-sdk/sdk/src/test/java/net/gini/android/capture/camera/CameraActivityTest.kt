@@ -9,6 +9,7 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.spy
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
+import net.gini.android.capture.Amount
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.R
 import net.gini.android.capture.tracking.CameraScreenEvent
@@ -34,7 +35,7 @@ class CameraActivityTest {
             "",
             "",
             "",
-            ""
+            Amount.EMPTY()
         )
     }
 

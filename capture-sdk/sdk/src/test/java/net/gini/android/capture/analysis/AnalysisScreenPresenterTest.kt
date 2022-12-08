@@ -148,7 +148,7 @@ class AnalysisScreenPresenterTest {
                 "",
                 "",
                 "",
-                ""
+                Amount.EMPTY()
             )
         GiniCapture.newInstance()
             .setGiniCaptureNetworkService(mock())
