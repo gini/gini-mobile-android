@@ -13,6 +13,7 @@ import java.util.*
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.bank.sdk.screenapiexample.databinding.ActivityExtractionsBinding
+import net.gini.android.capture.Amount
 import net.gini.android.capture.AmountCurrency
 import net.gini.android.capture.network.GiniCaptureDefaultNetworkService
 import org.koin.android.ext.android.inject
@@ -104,7 +105,8 @@ class ExtractionsActivity : AppCompatActivity() {
         mExtractionsAdapter?.notifyDataSetChanged()
 
         GiniCapture.cleanup(applicationContext, paymentRecipient, paymentReference, iban, bic, Amount(
-            BigDecimal(amount!!.value), AmountCurrency.EUR))
+            BigDecimal(amount!!.value), AmountCurrency.EUR)
+        )
 
     }
 
