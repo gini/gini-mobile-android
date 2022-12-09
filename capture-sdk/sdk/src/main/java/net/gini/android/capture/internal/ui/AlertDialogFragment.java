@@ -11,6 +11,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 /**
  * Created by Alpar Szotyori on 05.06.2018.
  *
@@ -65,7 +67,7 @@ public class AlertDialogFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(final Bundle savedInstanceState) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        final AlertDialog.Builder builder = new MaterialAlertDialogBuilder(requireActivity());
         if (mTitle != 0) {
             builder.setTitle(mTitle);
         }

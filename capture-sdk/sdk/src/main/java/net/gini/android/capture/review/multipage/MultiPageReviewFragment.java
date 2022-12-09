@@ -72,6 +72,7 @@ import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.tabs.TabLayout;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
@@ -524,7 +525,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
                 return;
             }
             if (mMultiPageDocument.getImportMethod() == Document.ImportMethod.OPEN_WITH) {
-                new AlertDialog.Builder(activity)
+                new MaterialAlertDialogBuilder(activity)
                         .setMessage(
                                 R.string.gc_multi_page_review_file_import_delete_last_page_dialog_message)
                         .setPositiveButton(
