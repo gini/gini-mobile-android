@@ -399,7 +399,7 @@ public class CameraScreenHandler implements CameraFragmentListener,
         if (exception.getValidationError() != null) {
             message = mActivity.getString(exception.getValidationError().getTextResource());
         }
-        new AlertDialog.Builder(mActivity)
+        new MaterialAlertDialogBuilder(mActivity)
                 .setMessage(message)
                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
