@@ -6,4 +6,6 @@
     </declare-styleable>
 
     <attr name="pageItemBackground" format="reference|color"/>
+    <attr name="errorScreenSubtitle" format="reference|color"/>
+
 </resources>

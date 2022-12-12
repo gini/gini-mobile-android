@@ -47,7 +47,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="@dimen/large"
-        android:textColor="@color/Dark_06"
+        android:textColor="?attr/errorScreenSubtitle"
         android:text="@string/gc_error_upload_text"
         android:layout_marginStart="@dimen/large_24"
         android:layout_marginEnd="@dimen/large_24"

@@ -12,6 +12,7 @@
         <item name="colorSurfaceInverse">@color/Light_04</item>
         <item name="colorOnSurfaceInverse">@color/Dark_02</item>
         <item name="pageItemBackground">@color/Dark_01</item>
+        <item name="errorScreenSubtitle">@color/Dark_06</item>
         <item name="android:windowLightStatusBar">false</item>
     </style>
 
