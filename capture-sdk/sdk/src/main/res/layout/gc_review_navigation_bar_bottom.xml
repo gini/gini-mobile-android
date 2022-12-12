@@ -6,37 +6,67 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <Button
-        android:id="@+id/gc_continue"
-        style="@style/GiniCaptureTheme.Widget.Button.UnelevatedButton"
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/gc_process_documents_wrapper"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:minWidth="@dimen/gc_review_bottom_bar_button_width"
-        android:text="@string/gc_continue"
+        android:layout_marginTop="@dimen/large"
+        android:layout_marginBottom="@dimen/large"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <ImageButton
-        android:id="@+id/gc_add_page"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/large"
-        android:src="@drawable/gc_add_page_custom_bottom_bar"
-        android:background="@android:color/transparent"
-        app:layout_constraintBottom_toBottomOf="@+id/gc_continue"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/gc_continue" />
+        <net.gini.android.capture.view.InjectedViewContainer
+            android:id="@+id/gc_injected_loading_indicator_container"
+            android:layout_width="@dimen/gc_unelevated_button_height"
+            android:layout_height="0dp"
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/medium"
+            app:layout_constraintBottom_toBottomOf="@+id/gc_continue"
+            app:layout_constraintEnd_toEndOf="@+id/gc_continue"
+            app:layout_constraintStart_toStartOf="@+id/gc_continue"
+            app:layout_constraintTop_toTopOf="@+id/gc_continue" />
 
-    <net.gini.android.capture.view.InjectedViewContainer
-        android:id="@+id/gc_injected_loading_indicator_container"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="@+id/gc_continue"
-        app:layout_constraintEnd_toEndOf="@+id/gc_continue"
-        app:layout_constraintStart_toStartOf="@+id/gc_continue"
-        app:layout_constraintTop_toTopOf="@+id/gc_continue" />
+        <Button
+            android:id="@+id/gc_continue"
+            style="@style/GiniCaptureTheme.Widget.Button.UnelevatedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/gc_process_documents"
+            android:textAllCaps="false"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
+        <LinearLayout
+            android:id="@+id/gc_add_pages_wrapper"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/large_24"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="@+id/gc_continue"
+            app:layout_constraintStart_toEndOf="@+id/gc_continue"
+            app:layout_constraintTop_toTopOf="@+id/gc_continue">
+
+            <ImageView
+                android:id="@+id/gc_add_page"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                app:srcCompat="@drawable/gc_add_page" />
+
+            <TextView
+                android:id="@+id/gc_pages_txt"
+                style="@style/GiniCaptureTheme.Typography.Subtitle2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/gc_pages" />
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

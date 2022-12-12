@@ -33,11 +33,11 @@ class DefaultReviewNavigationBarBottomAdapter : ReviewNavigationBarBottomAdapter
     }
 
     override fun setOnAddPageButtonClickListener(clickListener: View.OnClickListener) {
-        this.viewBinding?.gcAddPage?.setOnClickListener(clickListener)
+        this.viewBinding?.gcAddPagesWrapper?.setOnClickListener(clickListener)
     }
 
     override fun setAddPageButtonVisibility(visibility: Int) {
-        this.viewBinding?.gcAddPage?.visibility = visibility
+        this.viewBinding?.gcAddPagesWrapper?.visibility = visibility
     }
 
     override fun setContinueButtonEnabled(enabled: Boolean) {
