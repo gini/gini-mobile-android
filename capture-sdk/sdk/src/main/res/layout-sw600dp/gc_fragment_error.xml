@@ -30,6 +30,7 @@
         android:paddingEnd="@dimen/large_24">
 
         <ImageView
+            android:id="@+id/gc_error_header_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"

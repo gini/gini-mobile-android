@@ -29,16 +29,23 @@
         android:paddingStart="@dimen/large_24"
         android:paddingEnd="@dimen/large_24">
 
+        <ImageView
+            android:id="@+id/gc_error_header_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:src="@drawable/gc_alert_triangle_icon"/>
+
         <TextView
             android:id="@+id/gc_error_header"
             style="@style/GiniCaptureTheme.Typography.Body2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/large_24"
             android:layout_centerVertical="true"
+            android:layout_toEndOf="@id/gc_error_header_icon"
             android:gravity="center_vertical"
-            android:drawablePadding="@dimen/large_24"
-            android:text="@string/gc_error_upload_title"
-            app:drawableStartCompat="@drawable/gc_error_upload_icon" />
+            android:text="@string/gc_error_upload_title" />
     </RelativeLayout>
 
     <TextView

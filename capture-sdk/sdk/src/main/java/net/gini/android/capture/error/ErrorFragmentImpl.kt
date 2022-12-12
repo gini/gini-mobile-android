@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import net.gini.android.capture.Document
 import net.gini.android.capture.R
@@ -59,8 +60,8 @@ class ErrorFragmentImpl(
                 fragment.activity?.getString(it.titleTextResource)
             view.findViewById<TextView>(R.id.gc_error_textview).text =
                 fragment.activity?.getString(it.descriptionTextResource)
-            view.findViewById<TextView>(R.id.gc_error_header)
-                .setCompoundDrawablesWithIntrinsicBounds(it.drawableResource, 0, 0, 0)
+            view.findViewById<ImageView>(R.id.gc_error_header_icon)
+                .setImageResource(it.drawableResource)
         }
 
         return view
