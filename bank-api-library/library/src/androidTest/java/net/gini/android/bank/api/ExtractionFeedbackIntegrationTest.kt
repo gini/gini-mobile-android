@@ -68,7 +68,7 @@ class ExtractionFeedbackIntegrationTest {
 
         //    Supposing the user changed the amountToPay from "995.00:EUR" to "950.00:EUR"
         //    we need to update that extraction
-        extractions.specificExtractions["amountToPay"]!!.value = "950.00"
+        extractions.specificExtractions["amountToPay"]!!.value = "950.00:EUR"
 
         //    Send feedback for the extractions the user saw
         //    with the final (user confirmed or updated) extraction values
