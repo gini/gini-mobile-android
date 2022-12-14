@@ -29,8 +29,15 @@ class ReviewFragmentImplTest {
 
     @After
     fun after() {
-        GiniCapture.cleanup(InstrumentationRegistry.getInstrumentation().targetContext, "", "", "", "",
-            Amount.EMPTY)
+        GiniCapture.cleanup(
+            InstrumentationRegistry.getInstrumentation().targetContext,
+            "",
+            "",
+            "",
+            "",
+            "",
+            Amount.EMPTY
+        )
     }
 
     @Test

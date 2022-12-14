@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.spy
@@ -30,8 +31,15 @@ class MultipageReviewActivityTest {
 
     @After
     fun after() {
-        GiniCapture.cleanup(getInstrumentation().targetContext, "", "", "", "",
-            Amount.EMPTY)
+        GiniCapture.cleanup(
+            InstrumentationRegistry.getInstrumentation().targetContext,
+            "",
+            "",
+            "",
+            "",
+            "",
+            Amount.EMPTY
+        )
     }
 
     @Test

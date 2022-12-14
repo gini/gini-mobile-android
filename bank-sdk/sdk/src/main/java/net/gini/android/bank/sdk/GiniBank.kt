@@ -82,11 +82,12 @@ object GiniBank {
         context: Context,
         paymentRecipient: String,
         paymentReference: String,
+        paymentPurpose: String,
         iban: String,
         bic: String,
         amount: Amount
     ) {
-        GiniCapture.cleanup(context, paymentRecipient, paymentReference, iban, bic, amount)
+        GiniCapture.cleanup(context, paymentRecipient, paymentReference, paymentPurpose, iban, bic, amount)
         captureConfiguration = null
         giniCapture = null
     }

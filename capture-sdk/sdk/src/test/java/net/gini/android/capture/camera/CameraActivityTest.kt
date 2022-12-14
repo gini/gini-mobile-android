@@ -31,7 +31,9 @@ class CameraActivityTest {
     @After
     fun after() {
         GiniCapture.cleanup(
-            InstrumentationRegistry.getInstrumentation().targetContext, "",
+            InstrumentationRegistry.getInstrumentation().targetContext,
+            "",
+            "",
             "",
             "",
             "",

@@ -148,6 +148,7 @@ class AnalysisScreenPresenterTest {
                 "",
                 "",
                 "",
+                "",
                 Amount.EMPTY
             )
         GiniCapture.newInstance()

@@ -88,6 +88,7 @@ class ExtractionsActivity : AppCompatActivity() {
         val amount = mExtractions["amountToPay"]
         val paymentRecipient = mExtractions["paymentRecipient"]?.value ?: ""
         val paymentReference = mExtractions["paymentReference"]?.value ?: ""
+        val paymentPurpose = mExtractions["paymentPurpose"]?.value ?: ""
         val iban = mExtractions["iban"]?.value ?: ""
         val bic = mExtractions["bic"]?.value ?: ""
 
@@ -104,7 +105,7 @@ class ExtractionsActivity : AppCompatActivity() {
         }
         mExtractionsAdapter?.notifyDataSetChanged()
 
-        GiniCapture.cleanup(applicationContext, paymentRecipient, paymentReference, iban, bic, Amount(
+        GiniCapture.cleanup(applicationContext, paymentRecipient, paymentReference, paymentPurpose, iban, bic, Amount(
             BigDecimal(amount!!.value), AmountCurrency.EUR)
         )
 

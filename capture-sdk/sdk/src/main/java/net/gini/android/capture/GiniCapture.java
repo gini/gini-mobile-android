@@ -180,6 +180,7 @@ public class GiniCapture {
      * @param context Android context
      * @param paymentRecipient payment receiver.
      * @param paymentReference ID based on Client ID (Kundennummer) and invoice ID (Rechnungsnummer).
+     * @param paymentPurpose statement what this payment is for.
      * @param iban international bank account.
      * @param bic bank identification code.
      * @param amount accepts extracted amount and currency.
@@ -187,6 +188,7 @@ public class GiniCapture {
     public static synchronized void cleanup(@NonNull final Context context,
                                             @NonNull final String paymentRecipient,
                                             @NonNull final String paymentReference,
+                                            @NonNull final String paymentPurpose,
                                             @NonNull final String iban,
                                             @NonNull final String bic,
                                             @NonNull final Amount amount) {
@@ -194,6 +196,8 @@ public class GiniCapture {
         if (sInstance == null) {
             return;
         }
+
+        //TODO Check if IDs are correct, feel free to fix any which isn't @Alpar
 
         Map<String, GiniCaptureSpecificExtraction> extractionMap = new HashMap<>();
 
@@ -203,7 +207,10 @@ public class GiniCapture {
         extractionMap.put("paymentRecipient", new GiniCaptureSpecificExtraction("paymentRecipient", paymentRecipient,
                 "companyname", null, emptyList()));
 
-        extractionMap.put("paymentPurpose", new GiniCaptureSpecificExtraction("paymentPurpose", paymentReference,
+        extractionMap.put("paymentReference", new GiniCaptureSpecificExtraction("paymentReference", paymentReference,
+                "reference", null, emptyList()));
+
+        extractionMap.put("paymentPurpose", new GiniCaptureSpecificExtraction("paymentPurpose", paymentPurpose,
                 "reference", null, emptyList()));
 
         extractionMap.put("iban", new GiniCaptureSpecificExtraction("iban", iban,

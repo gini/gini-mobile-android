@@ -25,6 +25,7 @@ import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObject;
 import androidx.test.uiautomator.UiSelector;
 
+import net.gini.android.capture.Amount;
 import net.gini.android.capture.Document;
 import net.gini.android.capture.DocumentImportEnabledFileTypes;
 import net.gini.android.capture.GiniCapture;
@@ -91,7 +92,8 @@ public class CameraScreenTest {
     }
 
     private GiniCapture.Builder getNewGiniCaptureInstanceBuilder() {
-        GiniCapture.cleanup(ApplicationProvider.getApplicationContext(), null, null, null, null, null);
+        GiniCapture.cleanup(ApplicationProvider.getApplicationContext(), "",
+                "", "", "", "", Amount.getEMPTY());
         return GiniCapture.newInstance()
                 .setGiniCaptureNetworkService(mock(GiniCaptureNetworkService.class));
     }
@@ -102,7 +104,8 @@ public class CameraScreenTest {
         // Wait a little for the camera to close
         Thread.sleep(CLOSE_CAMERA_PAUSE_DURATION);
         resetDeviceOrientation();
-        GiniCapture.cleanup(ApplicationProvider.getApplicationContext(), null, null, null, null, null);
+        GiniCapture.cleanup(ApplicationProvider.getApplicationContext(), "",
+                "", "", "", "", Amount.getEMPTY());
         Intents.release();
     }
 
