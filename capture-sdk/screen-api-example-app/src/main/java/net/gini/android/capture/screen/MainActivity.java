@@ -4,8 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,7 +17,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import net.gini.android.capture.help.view.HelpNavigationBarBottomAdapter;
+import net.gini.android.capture.Amount;
+import net.gini.android.capture.BuildConfig;
 import net.gini.android.capture.onboarding.DefaultPages;
 import net.gini.android.capture.AsyncCallback;
 import net.gini.android.capture.DocumentImportEnabledFileTypes;
@@ -33,7 +32,6 @@ import net.gini.android.capture.example.shared.RuntimePermissionHandler;
 import net.gini.android.capture.help.HelpItem;
 import net.gini.android.capture.logging.ErrorLog;
 import net.gini.android.capture.logging.ErrorLoggerListener;
-import net.gini.android.capture.onboarding.DefaultPages;
 import net.gini.android.capture.onboarding.OnboardingPage;
 import net.gini.android.capture.requirements.GiniCaptureRequirements;
 import net.gini.android.capture.requirements.RequirementReport;
@@ -47,19 +45,12 @@ import net.gini.android.capture.tracking.OnboardingScreenEvent;
 import net.gini.android.capture.tracking.ReviewScreenEvent;
 import net.gini.android.capture.util.CancellationToken;
 import net.gini.android.capture.view.DefaultLoadingIndicatorAdapter;
-import net.gini.android.capture.view.DefaultOnButtonLoadingIndicatorAdapter;
-import net.gini.android.capture.view.OnButtonLoadingIndicatorAdapter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.android.LogcatAppender;
@@ -243,8 +234,7 @@ public class MainActivity extends AppCompatActivity {
         mButtonStartScanner.setOnClickListener(v -> {
             if (disableCameraPermission.isChecked()) {
                 doStartGiniCaptureSdk();
-            }
-            else {
+            } else {
                 startGiniCaptureSdk();
             }
         });
@@ -316,13 +306,15 @@ public class MainActivity extends AppCompatActivity {
 
     private void configureGiniCapture() {
         final BaseExampleApp app = (BaseExampleApp) getApplication();
-        GiniCapture.cleanup(this);
+
+        GiniCapture.cleanup(this, "", "",
+                "", "","", Amount.Companion.getEMPTY());
+
         app.clearGiniCaptureNetworkInstances();
         final GiniCapture.Builder builder = GiniCapture.newInstance()
                 .setGiniCaptureNetworkService(
                         app.getGiniCaptureNetworkService("ScreenAPI")
-                ).setGiniCaptureNetworkApi(app.getGiniCaptureNetworkApi());
-        builder
+                )
                 .setDocumentImportEnabledFileTypes(DocumentImportEnabledFileTypes.PDF_AND_IMAGES)
                 .setFileImportEnabled(true)
                 .setQRCodeScanningEnabled(true)

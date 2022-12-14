@@ -9,10 +9,13 @@ import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.analysis.AnalysisFragmentListener;
 import net.gini.android.capture.logging.ErrorLog;
 import net.gini.android.capture.logging.ErrorLoggerListener;
+import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction;
+import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
 import net.gini.android.capture.review.ReviewFragmentListener;
 import net.gini.android.capture.util.CancellationToken;
 
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Created by Alpar Szotyori on 29.01.2018.
@@ -83,9 +86,29 @@ public interface GiniCaptureNetworkService extends ErrorLoggerListener {
             @NonNull final LinkedHashMap<String, Integer> giniApiDocumentIdRotationMap, // NOPMD
             @NonNull final GiniCaptureNetworkCallback<AnalysisResult, Error> callback);
 
+
+
+    /**
+     * Call this method with the extractions the user has seen and accepted. The {@link
+     * GiniCaptureSpecificExtraction}s must contain the final user corrected and/or accepted values.
+     *
+     * @param extractions a map of extraction labels and specific extractions
+     * @param callback    a callback implementation to return the outcome
+     */
+    void sendFeedback(@NonNull final Map<String, GiniCaptureSpecificExtraction> extractions,
+                      @NonNull final Map<String, GiniCaptureCompoundExtraction> compoundExtractions,
+                      @NonNull final GiniCaptureNetworkCallback<Void, Error> callback);
+
+    /**
+     * Delete the anonymous gini user credentials. These were automatically generated when the first document was uploaded.
+     * <p>
+     * By deleting the credentials, new ones will be generated at the next upload.
+     */
+    void deleteGiniUserCredentials();
+
     /**
      * Called when the Gini Capture SDK is not needed anymore and the {@link
-     * GiniCapture#cleanup(Context)} method has been called.
+     * GiniCapture#cleanup(Context, String, String, String, String, String)} method has been called.
      *
      * <p> Free up any resources your implementation is using.
      */

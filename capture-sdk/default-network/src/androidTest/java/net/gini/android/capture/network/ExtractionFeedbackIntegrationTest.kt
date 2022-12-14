@@ -8,11 +8,15 @@ import android.os.Parcel
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.squareup.moshi.Moshi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.suspendCancellableCoroutine
 import net.gini.android.bank.api.GiniBankAPI
 import net.gini.android.bank.api.GiniBankAPIBuilder
+import net.gini.android.capture.Amount
+import net.gini.android.capture.AmountCurrency
 import net.gini.android.capture.Document
+import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.internal.util.MimeType
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.network.test.ExtractionsFixture
@@ -23,6 +27,7 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.math.BigDecimal
 import java.util.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -37,7 +42,6 @@ import kotlin.coroutines.resumeWithException
 class ExtractionFeedbackIntegrationTest {
 
     private lateinit var networkService: GiniCaptureDefaultNetworkService
-    private lateinit var networkApi: GiniCaptureDefaultNetworkApi
     private lateinit var giniBankAPI: GiniBankAPI
     private var analyzedGiniApiDocument: net.gini.android.core.api.models.Document? = null
 
@@ -61,9 +65,8 @@ class ExtractionFeedbackIntegrationTest {
             .setUserCenterBaseUrl(testProperties["testUserCenterUri"] as String)
             .build()
 
-        networkApi = GiniCaptureDefaultNetworkApi
-            .builder()
-            .withGiniCaptureDefaultNetworkService(networkService)
+        GiniCapture.newInstance()
+            .setGiniCaptureNetworkService(networkService)
             .build()
 
         giniBankAPI = GiniBankAPIBuilder(
@@ -80,13 +83,13 @@ class ExtractionFeedbackIntegrationTest {
 
     @After
     fun tearDown() {
-        networkService.cleanup()
+        GiniCapture.cleanup(getApplicationContext(), "", "", "", "", "", Amount.EMPTY)
     }
 
     @Test
-    fun sendExtractionFeedback() = runBlocking {
+    fun sendExtractionFeedbackWithoutPaymentReference() = runBlocking {
         // 1. Analyze a test document
-        val extractionsBundle = getExtractionsFromCaptureSDK()
+        val extractionsBundle = getExtractionsFromCaptureSDK(TEST_DOCUMENT_WITHOUT_PAYMENT_REFERENCE)
 
         //    Verify we received the correct extractions for this test
         val extractionsFixture = moshi.fromJsonAsset<ExtractionsFixture>("result_Gini_invoice_example.json")!!
@@ -100,32 +103,22 @@ class ExtractionFeedbackIntegrationTest {
         val amountToPay = extractionsBundle.getParcelable<GiniCaptureSpecificExtraction>("amountToPay")
         amountToPay!!.value = "950.00:EUR"
 
-        //    Send feedback for the extractions the user saw
-        //    with the final (user confirmed or updated) extraction values
-        suspendCancellableCoroutine<Unit> { continuation ->
-            networkApi.sendFeedback(
-                mutableMapOf(
-                    "amountToPay" to amountToPay,
-                    "iban" to extractionsBundle.getParcelable("iban")!!,
-                    "bic" to extractionsBundle.getParcelable("bic")!!,
-                    "paymentPurpose" to extractionsBundle.getParcelable("paymentPurpose")!!,
-                    "paymentRecipient" to extractionsBundle.getParcelable("paymentRecipient")!!
-                ),
-                object : GiniCaptureNetworkCallback<Void, Error> {
-                    override fun failure(error: Error) {
-                        continuation.resumeWithException(RuntimeException(error.message, error.cause))
-                    }
+        //    When releasing capture we need to provide the values the user has used for
+        //    creating the transaction.
+        //    Supposing the user changed the amountToPay from "995.00:EUR" to "950.00:EUR"
+        //    we need to pass in the changed value. For the other extractions we can pass in
+        //    the original values since the user did not edit them.
+        GiniCapture.cleanup(getApplicationContext(),
+            extractionsBundle.getParcelable<GiniCaptureSpecificExtraction>("paymentRecipient")!!.value,
+            "", // Payment reference was not shown to the user and can be left empty
+            extractionsBundle.getParcelable<GiniCaptureSpecificExtraction>("paymentPurpose")!!.value,
+            extractionsBundle.getParcelable<GiniCaptureSpecificExtraction>("iban")!!.value,
+            extractionsBundle.getParcelable<GiniCaptureSpecificExtraction>("bic")!!.value,
+            Amount(BigDecimal("950.00"), AmountCurrency.EUR)
+        )
 
-                    override fun success(result: Void?) {
-                        continuation.resume(Unit)
-                    }
-
-                    override fun cancelled() {
-                        continuation.cancel()
-                    }
-                }
-            )
-        }
+        //    Wait a little for the feedback sending to complete
+        delay(2_000)
 
         // 4. Verify that the extractions were updated using the Gini Bank API (available in your app when using
         //    the GiniCaptureDefaultNetworkService).
@@ -139,6 +132,53 @@ class ExtractionFeedbackIntegrationTest {
         Assert.assertTrue(extractionsAfterFeedbackFixture.equals(extractionsAfterFeedback.data))
     }
 
+    @Test
+    fun sendExtractionFeedbackWithPaymentReference() = runBlocking {
+        // 1. Analyze a test document
+        val extractionsBundle = getExtractionsFromCaptureSDK(TEST_DOCUMENT_WITH_PAYMENT_REFERENCE)
+
+        //    Verify we received the correct extractions for this test
+        val extractionsFixture =
+            moshi.fromJsonAsset<ExtractionsFixture>("result_Gini_invoice_example_payment_reference.json")!!
+        Assert.assertTrue(extractionsFixture.equals(extractionsBundle))
+
+        // 3. Assuming the user saw the following extractions:
+        //    amountToPay, iban, bic, paymentPurpose, paymentReference and paymentRecipient
+
+        //    Supposing the user changed the amountToPay from "995.00:EUR" to "950.00:EUR"
+        //    we need to update that extraction
+        val amountToPay = extractionsBundle.getParcelable<GiniCaptureSpecificExtraction>("amountToPay")
+        amountToPay!!.value = "950.00:EUR"
+
+        //    When releasing capture we need to provide the values the user has used for
+        //    creating the transaction.
+        //    Supposing the user changed the amountToPay from "995.00:EUR" to "950.00:EUR"
+        //    we need to pass in the changed value. For the other extractions we can pass in
+        //    the original values since the user did not edit them.
+        GiniCapture.cleanup(getApplicationContext(),
+            extractionsBundle.getParcelable<GiniCaptureSpecificExtraction>("paymentRecipient")!!.value,
+            extractionsBundle.getParcelable<GiniCaptureSpecificExtraction>("paymentReference")!!.value,
+            extractionsBundle.getParcelable<GiniCaptureSpecificExtraction>("paymentPurpose")!!.value,
+            extractionsBundle.getParcelable<GiniCaptureSpecificExtraction>("iban")!!.value,
+            extractionsBundle.getParcelable<GiniCaptureSpecificExtraction>("bic")!!.value,
+            Amount(BigDecimal("950.00"), AmountCurrency.EUR)
+        )
+
+        //    Wait a little for the feedback sending to complete
+        delay(2_000)
+
+        // 4. Verify that the extractions were updated using the Gini Bank API (available in your app when using
+        //    the GiniCaptureDefaultNetworkService).
+        //    This is only done for testing purposes. In your production code you don't need to interact with the
+        //    Gini Bank API directly if you use the GiniCaptureDefaultNetworkService.
+        val extractionsAfterFeedback =
+            giniBankAPI.documentManager.getAllExtractionsWithPolling(analyzedGiniApiDocument!!)
+
+        val extractionsAfterFeedbackFixture =
+            moshi.fromJsonAsset<ExtractionsFixture>("result_Gini_invoice_example_payment_reference_after_feedback.json")!!
+        Assert.assertTrue(extractionsAfterFeedbackFixture.equals(extractionsAfterFeedback.data))
+    }
+
     /**
      * This method reproduces the document upload and analysis done by the Capture SDK.
      *
@@ -148,10 +188,10 @@ class ExtractionFeedbackIntegrationTest {
      * In your production code you should not call [GiniCaptureDefaultNetworkService] methods.
      * Interaction with the network service is handled by the Capture SDK internally.
      */
-    private suspend fun getExtractionsFromCaptureSDK(): Bundle {
+    private suspend fun getExtractionsFromCaptureSDK(testDocument: TestDocument): Bundle {
         // Upload a test document
         val uploadResult = suspendCancellableCoroutine<Result> { continuation ->
-            networkService.upload(TEST_DOCUMENT, object : GiniCaptureNetworkCallback<Result, Error> {
+            networkService.upload(testDocument, object : GiniCaptureNetworkCallback<Result, Error> {
                 override fun failure(error: Error) {
                     continuation.resumeWithException(RuntimeException(error.message, error.cause))
                 }
@@ -193,33 +233,37 @@ class ExtractionFeedbackIntegrationTest {
     }
 
     companion object {
-        val TEST_DOCUMENT = object : Document {
-            private val pdfBytes = getApplicationContext<Context>().resources.assets
-                .open("Gini_invoice_example.pdf").use { it.readBytes() }
+        val TEST_DOCUMENT_WITHOUT_PAYMENT_REFERENCE = TestDocument("Gini_invoice_example.pdf")
 
-            override fun describeContents(): Int = 0
+        val TEST_DOCUMENT_WITH_PAYMENT_REFERENCE = TestDocument("Gini_invoice_example_payment_reference.pdf")
+    }
 
-            override fun writeToParcel(dest: Parcel?, flags: Int) {}
+    class TestDocument(assetFileName: String): Document {
+        private val pdfBytes = getApplicationContext<Context>().resources.assets
+            .open(assetFileName).use { it.readBytes() }
 
-            override fun getId(): String = UUID.randomUUID().toString()
+        override fun describeContents(): Int = 0
 
-            override fun getType(): Document.Type = Document.Type.PDF
+        override fun writeToParcel(dest: Parcel?, flags: Int) {}
 
-            override fun getMimeType(): String = MimeType.APPLICATION_PDF.asString()
+        override fun getId(): String = UUID.randomUUID().toString()
 
-            override fun getData(): ByteArray = pdfBytes
+        override fun getType(): Document.Type = Document.Type.PDF
 
-            override fun getIntent(): Intent? = null
+        override fun getMimeType(): String = MimeType.APPLICATION_PDF.asString()
 
-            override fun getUri(): Uri? = null
+        override fun getData(): ByteArray = pdfBytes
 
-            override fun isImported(): Boolean = false
+        override fun getIntent(): Intent? = null
 
-            override fun getImportMethod(): Document.ImportMethod = Document.ImportMethod.NONE
+        override fun getUri(): Uri? = null
 
-            override fun getSource(): Document.Source = Document.Source.newSource("androidTest")
+        override fun isImported(): Boolean = false
 
-            override fun isReviewable(): Boolean = false
-        }
+        override fun getImportMethod(): Document.ImportMethod = Document.ImportMethod.NONE
+
+        override fun getSource(): Document.Source = Document.Source.newSource("androidTest")
+
+        override fun isReviewable(): Boolean = false
     }
 }

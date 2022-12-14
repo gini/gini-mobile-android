@@ -22,10 +22,7 @@ import net.gini.android.bank.sdk.error.AmountParsingException
 import net.gini.android.bank.sdk.pay.getBusinessIntent
 import net.gini.android.bank.sdk.pay.getRequestId
 import net.gini.android.bank.sdk.util.parseAmountToBackendFormat
-import net.gini.android.capture.AsyncCallback
-import net.gini.android.capture.Document
-import net.gini.android.capture.GiniCapture
-import net.gini.android.capture.ImportedFileValidationException
+import net.gini.android.capture.*
 import net.gini.android.capture.requirements.GiniCaptureRequirements
 import net.gini.android.capture.requirements.RequirementsReport
 import net.gini.android.capture.util.CancellationToken
@@ -81,8 +78,16 @@ object GiniBank {
     /**
      *  Frees up resources used by Capture.
      */
-    fun releaseCapture(context: Context) {
-        GiniCapture.cleanup(context)
+    fun releaseCapture(
+        context: Context,
+        paymentRecipient: String,
+        paymentReference: String,
+        paymentPurpose: String,
+        iban: String,
+        bic: String,
+        amount: Amount
+    ) {
+        GiniCapture.cleanup(context, paymentRecipient, paymentReference, paymentPurpose, iban, bic, amount)
         captureConfiguration = null
         giniCapture = null
     }
@@ -91,7 +96,8 @@ object GiniBank {
      *  Checks hardware requirements for Capture feature.
      *  Requirements are not enforced, but are recommended to be checked before using.
      */
-    fun checkCaptureRequirements(context: Context): RequirementsReport = GiniCaptureRequirements.checkRequirements(context)
+    fun checkCaptureRequirements(context: Context): RequirementsReport =
+        GiniCaptureRequirements.checkRequirements(context)
 
     /**
      * Screen API for starting the capture flow.
@@ -111,17 +117,31 @@ object GiniBank {
      *
      * @throws IllegalStateException if the capture feature was not configured.
      */
-    fun startCaptureFlowForIntent(resultLauncher: ActivityResultLauncher<CaptureImportInput>, context: Context, intent: Intent): CancellationToken {
+    fun startCaptureFlowForIntent(
+        resultLauncher: ActivityResultLauncher<CaptureImportInput>,
+        context: Context,
+        intent: Intent
+    ): CancellationToken {
         giniCapture.let { capture ->
             check(capture != null) { "Capture feature is not configured. Call setCaptureConfiguration before starting the flow." }
             if (capture.isMultiPageEnabled) {
-                return capture.createIntentForImportedFiles(intent, context, getImportFileCallback(resultLauncher))
+                return capture.createIntentForImportedFiles(
+                    intent,
+                    context,
+                    getImportFileCallback(resultLauncher)
+                )
             } else {
                 try {
-                    val captureIntent = GiniCapture.createIntentForImportedFile(intent, context, null, null)
+                    val captureIntent =
+                        GiniCapture.createIntentForImportedFile(intent, context, null, null)
                     resultLauncher.launch(CaptureImportInput.Forward(captureIntent))
                 } catch (exception: ImportedFileValidationException) {
-                    resultLauncher.launch(CaptureImportInput.Error(exception.validationError, exception.message))
+                    resultLauncher.launch(
+                        CaptureImportInput.Error(
+                            exception.validationError,
+                            exception.message
+                        )
+                    )
                 }
                 return CancellationToken {}
             }
@@ -142,7 +162,11 @@ object GiniBank {
      *
      * @return a {@link CancellationToken} for cancelling the import process
      */
-    fun createDocumentForImportedFiles(intent: Intent, context: Context, callback: AsyncCallback<Document, ImportedFileValidationException>) {
+    fun createDocumentForImportedFiles(
+        intent: Intent,
+        context: Context,
+        callback: AsyncCallback<Document, ImportedFileValidationException>
+    ) {
         giniCapture.let { capture ->
             check(capture != null) { "Capture feature is not configured. Call setCaptureConfiguration before creating the document." }
             capture.createDocumentForImportedFiles(intent, context, callback)
@@ -174,9 +198,12 @@ object GiniBank {
     suspend fun getPaymentRequest(id: String): PaymentRequest {
         val api = giniApi
         check(api != null) { "Gini Api is not set" }
-        return when(val paymentRequestResource = api.documentManager.getPaymentRequest(id)) {
+        return when (val paymentRequestResource = api.documentManager.getPaymentRequest(id)) {
             is Resource.Cancelled -> throw Exception("Cancelled")
-            is Resource.Error -> throw Exception(paymentRequestResource.message, paymentRequestResource.exception)
+            is Resource.Error -> throw Exception(
+                paymentRequestResource.message,
+                paymentRequestResource.exception
+            )
             is Resource.Success -> paymentRequestResource.data
         }
     }
@@ -193,7 +220,10 @@ object GiniBank {
      * @throws Throwable This method makes a network call which may fail, the resulting throwable is not caught and a type is not guaranteed.
      * @throws AmountParsingException If the amount string could not be parsed
      */
-    suspend fun resolvePaymentRequest(requestId: String, resolvePaymentInput: ResolvePaymentInput): ResolvedPayment {
+    suspend fun resolvePaymentRequest(
+        requestId: String,
+        resolvePaymentInput: ResolvePaymentInput
+    ): ResolvedPayment {
         val api = giniApi
         check(api != null) { "Gini Api is not set" }
         return when (val resolvedPaymentResource = api.documentManager.resolvePaymentRequest(
@@ -201,7 +231,10 @@ object GiniBank {
             resolvePaymentInput.copy(amount = resolvePaymentInput.parseAmountToBackendFormat())
         )) {
             is Resource.Cancelled -> throw Exception("Cancelled")
-            is Resource.Error -> throw Exception(resolvedPaymentResource.message, resolvedPaymentResource.exception)
+            is Resource.Error -> throw Exception(
+                resolvedPaymentResource.message,
+                resolvedPaymentResource.exception
+            )
             is Resource.Success -> resolvedPaymentResource.data
         }
     }

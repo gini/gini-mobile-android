@@ -2,8 +2,13 @@ package net.gini.android.capture;
 
 import static net.gini.android.capture.internal.util.FileImportValidator.FILE_SIZE_LIMIT;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
+
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
+import android.widget.Toast;
 
 import net.gini.android.capture.analysis.AnalysisActivity;
 import net.gini.android.capture.camera.view.CameraNavigationBarBottomAdapter;
@@ -20,6 +25,9 @@ import net.gini.android.capture.internal.network.NetworkRequestsManager;
 import net.gini.android.capture.internal.storage.ImageDiskStore;
 import net.gini.android.capture.logging.ErrorLogger;
 import net.gini.android.capture.logging.ErrorLoggerListener;
+import net.gini.android.capture.network.Error;
+import net.gini.android.capture.network.GiniCaptureNetworkCallback;
+import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
 import net.gini.android.capture.noresults.view.DefaultNoResultsNavigationBarBottomAdapter;
 import net.gini.android.capture.noresults.view.NoResultsNavigationBarBottomAdapter;
 import net.gini.android.capture.onboarding.view.DefaultOnboardingNavigationBarBottomAdapter;
@@ -32,7 +40,6 @@ import net.gini.android.capture.view.DefaultLoadingIndicatorAdapter;
 import net.gini.android.capture.view.DefaultOnButtonLoadingIndicatorAdapter;
 import net.gini.android.capture.view.NavigationBarTopAdapter;
 import net.gini.android.capture.view.DefaultNavigationBarTopAdapter;
-import net.gini.android.capture.network.GiniCaptureNetworkApi;
 import net.gini.android.capture.network.GiniCaptureNetworkService;
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction;
 import net.gini.android.capture.onboarding.OnboardingPage;
@@ -48,12 +55,16 @@ import net.gini.android.capture.util.CancellationToken;
 import net.gini.android.capture.view.OnButtonLoadingIndicatorAdapter;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.TestOnly;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -61,7 +72,7 @@ import androidx.annotation.VisibleForTesting;
 
 /**
  * Created by Alpar Szotyori on 22.02.2018.
- *
+ * <p>
  * Copyright (c) 2018 Gini GmbH.
  */
 
@@ -74,9 +85,9 @@ import androidx.annotation.VisibleForTesting;
  *
  * <p> To create and configure a singleton instance use the {@link #newInstance()} method and the
  * returned {@link Builder}. If an instance is already available you need to call {@link
- * #cleanup(Context)} before creating a new instance. Failing to do so will throw an exception.
+ * #cleanup(Context, String, String, String, String, Amount)} before creating a new instance. Failing to do so will throw an exception.
  *
- * <p> After you are done using the Gini Capture SDK use the {@link #cleanup(Context)} method.
+ * <p> After you are done using the Gini Capture SDK use the {@link #cleanup(Context, String, String, String, String, Amount)} method.
  * This will free up resources used by the library.
  */
 public class GiniCapture {
@@ -84,7 +95,6 @@ public class GiniCapture {
     private static final Logger LOG = LoggerFactory.getLogger(GiniCapture.class);
     private static GiniCapture sInstance;
     private final GiniCaptureNetworkService mGiniCaptureNetworkService;
-    private final GiniCaptureNetworkApi mGiniCaptureNetworkApi;
     private final NetworkRequestsManager mNetworkRequestsManager;
     private final DocumentDataMemoryCache mDocumentDataMemoryCache;
     private final PhotoMemoryCache mPhotoMemoryCache;
@@ -127,7 +137,6 @@ public class GiniCapture {
      * Retrieve the current instance.
      *
      * @return {@link GiniCapture} instance
-     *
      * @throws IllegalStateException when there is no instance
      */
     @NonNull
@@ -156,8 +165,7 @@ public class GiniCapture {
      * Configure and create a new instance using the returned {@link Builder}.
      *
      * @return a new {@link Builder}
-     *
-     * @throws IllegalStateException when an instance already exists. Call {@link #cleanup(Context)}
+     * @throws IllegalStateException when an instance already exists. Call {@link #cleanup(Context, String, String, String, String, Amount)}
      *                               before trying to create a new instance
      */
     @NonNull
@@ -173,21 +181,92 @@ public class GiniCapture {
      * Destroys the {@link GiniCapture} instance and frees up used resources.
      *
      * @param context Android context
+     * @param paymentRecipient payment receiver.
+     * @param paymentReference ID based on Client ID (Kundennummer) and invoice ID (Rechnungsnummer).
+     * @param paymentPurpose statement what this payment is for.
+     * @param iban international bank account.
+     * @param bic bank identification code.
+     * @param amount accepts extracted amount and currency.
      */
-    public static synchronized void cleanup(@NonNull final Context context) {
-        if (sInstance != null) {
-            sInstance.mDocumentDataMemoryCache.clear();
-            sInstance.mPhotoMemoryCache.clear();
-            if (sInstance.mNetworkRequestsManager != null) {
-                sInstance.mNetworkRequestsManager.cleanup();
-            }
-            if (sInstance.mGiniCaptureNetworkApi != null) {
-                sInstance.mGiniCaptureNetworkApi.setUpdatedCompoundExtractions(Collections.<String, GiniCaptureCompoundExtraction>emptyMap());
-            }
-            sInstance.mImageMultiPageDocumentMemoryStore.clear();
-            sInstance.internal().setReviewScreenAnalysisError(null);
-            sInstance = null; // NOPMD
+    public static synchronized void cleanup(@NonNull final Context context,
+                                            @NonNull final String paymentRecipient,
+                                            @NonNull final String paymentReference,
+                                            @NonNull final String paymentPurpose,
+                                            @NonNull final String iban,
+                                            @NonNull final String bic,
+                                            @NonNull final Amount amount) {
+
+        if (sInstance == null) {
+            return;
         }
+
+        //TODO Check if IDs are correct, feel free to fix any which isn't @Alpar
+
+        Map<String, GiniCaptureSpecificExtraction> extractionMap = new HashMap<>();
+
+        extractionMap.put("amountToPay", new GiniCaptureSpecificExtraction("amountToPay", amount.amountToPay(),
+                "amount", null, emptyList()));
+
+        extractionMap.put("paymentRecipient", new GiniCaptureSpecificExtraction("paymentRecipient", paymentRecipient,
+                "companyname", null, emptyList()));
+
+        extractionMap.put("paymentReference", new GiniCaptureSpecificExtraction("paymentReference", paymentReference,
+                "reference", null, emptyList()));
+
+        extractionMap.put("paymentPurpose", new GiniCaptureSpecificExtraction("paymentPurpose", paymentPurpose,
+                "reference", null, emptyList()));
+
+        extractionMap.put("iban", new GiniCaptureSpecificExtraction("iban", iban,
+                "iban", null, emptyList()));
+
+        extractionMap.put("bic", new GiniCaptureSpecificExtraction("bic", bic,
+                "bic", null, emptyList()));
+
+
+        // Test fails here if for some reason mGiniCaptureNetworkService is null
+        // Added null checking to fix test fail -> or figure out something else
+        final GiniCapture oldInstance = sInstance;
+        if (oldInstance.mGiniCaptureNetworkService != null)
+            oldInstance.mGiniCaptureNetworkService.sendFeedback(extractionMap,
+                    oldInstance.mInternal.getCompoundExtractions(), new GiniCaptureNetworkCallback<Void, Error>() {
+                        @Override
+                        public void failure(Error error) {
+                            Toast.makeText(context, "Feedback error:\n" + error.getMessage(),
+                                    Toast.LENGTH_LONG).show();
+
+                            if (oldInstance.mNetworkRequestsManager != null) {
+                                oldInstance.mNetworkRequestsManager.cleanup();
+                            }
+                        }
+
+                        @Override
+                        public void success(Void result) {
+                            Toast.makeText(context, "Feedback successful",
+                                    Toast.LENGTH_LONG).show();
+                            if (oldInstance.mNetworkRequestsManager != null) {
+                                oldInstance.mNetworkRequestsManager.cleanup();
+                            }
+                        }
+
+                        @Override
+                        public void cancelled() {
+                            if (oldInstance.mNetworkRequestsManager != null) {
+                                oldInstance.mNetworkRequestsManager.cleanup();
+                            }
+                        }
+                    });
+
+        doActualCleanUp(context);
+    }
+
+
+    private static void doActualCleanUp(Context context) {
+        sInstance.mDocumentDataMemoryCache.clear();
+        sInstance.mPhotoMemoryCache.clear();
+        sInstance.mInternal.setUpdatedCompoundExtractions(emptyMap());
+        sInstance.mImageMultiPageDocumentMemoryStore.clear();
+        sInstance.internal().setReviewScreenAnalysisError(null);
+        sInstance = null; // NOPMD
         ImageDiskStore.clear(context);
     }
 
@@ -197,7 +276,6 @@ public class GiniCapture {
 
     private GiniCapture(@NonNull final Builder builder) {
         mGiniCaptureNetworkService = builder.getGiniCaptureNetworkService();
-        mGiniCaptureNetworkApi = builder.getGiniCaptureNetworkApi();
         mDocumentImportEnabledFileTypes = builder.getDocumentImportEnabledFileTypes();
         mFileImportEnabled = builder.isFileImportEnabled();
         mQRCodeScanningEnabled = builder.isQRCodeScanningEnabled();
@@ -248,16 +326,6 @@ public class GiniCapture {
     @NonNull
     public Internal internal() {
         return mInternal;
-    }
-
-    /**
-     * Retrieve the {@link GiniCaptureNetworkApi} instance, if available.
-     *
-     * @return {@link GiniCaptureNetworkApi} instance or {@code null}
-     */
-    @Nullable
-    public GiniCaptureNetworkApi getGiniCaptureNetworkApi() {
-        return mGiniCaptureNetworkApi;
     }
 
     /**
@@ -426,13 +494,12 @@ public class GiniCapture {
      * @param intent   the Intent your app received
      * @param context  Android context
      * @param callback A {@link AsyncCallback} implementation
-     *
      * @return a {@link CancellationToken} for cancelling the import process
      */
     @NonNull
     public CancellationToken createIntentForImportedFiles(@NonNull final Intent intent,
-            @NonNull final Context context,
-            @NonNull final AsyncCallback<Intent, ImportedFileValidationException> callback) {
+                                                          @NonNull final Context context,
+                                                          @NonNull final AsyncCallback<Intent, ImportedFileValidationException> callback) {
         return mGiniCaptureFileImport.createIntentForImportedFiles(intent, context, callback);
     }
 
@@ -455,13 +522,12 @@ public class GiniCapture {
      * @param intent   the Intent your app received
      * @param context  Android context
      * @param callback A {@link AsyncCallback} implementation
-     *
      * @return a {@link CancellationToken} for cancelling the import process
      */
     @NonNull
     public CancellationToken createDocumentForImportedFiles(@NonNull final Intent intent,
-            @NonNull final Context context,
-            @NonNull final AsyncCallback<Document, ImportedFileValidationException> callback) {
+                                                            @NonNull final Context context,
+                                                            @NonNull final AsyncCallback<Document, ImportedFileValidationException> callback) {
         return mGiniCaptureFileImport.createDocumentForImportedFiles(intent, context, callback);
     }
 
@@ -480,18 +546,16 @@ public class GiniCapture {
      *                              ReviewActivity} subclass
      * @param analysisActivityClass (optional) the class of your application's {@link
      *                              AnalysisActivity} subclass
-     *
      * @return an Intent for launching the Gini Capture SDK
-     *
      * @throws ImportedFileValidationException if the file didn't pass validation
      * @throws IllegalArgumentException        if the Intent's data is not valid or the mime type is
      *                                         not supported
      **/
     @NonNull
     public static Intent createIntentForImportedFile(@NonNull final Intent intent,
-            @NonNull final Context context,
-            @Nullable final Class<? extends ReviewActivity> reviewActivityClass,
-            @Nullable final Class<? extends AnalysisActivity> analysisActivityClass)
+                                                     @NonNull final Context context,
+                                                     @Nullable final Class<? extends ReviewActivity> reviewActivityClass,
+                                                     @Nullable final Class<? extends AnalysisActivity> analysisActivityClass)
             throws ImportedFileValidationException {
         return GiniCaptureFileImport.createIntentForImportedFile(intent, context,
                 reviewActivityClass, analysisActivityClass);
@@ -512,15 +576,13 @@ public class GiniCapture {
      *
      * @param intent  the Intent your app received
      * @param context Android context
-     *
      * @return a Document for launching the Gini Capture SDK's Review Fragment or
      * Analysis Fragment
-     *
      * @throws ImportedFileValidationException if the file didn't pass validation
      */
     @NonNull
     public static Document createDocumentForImportedFile(@NonNull final Intent intent,
-            @NonNull final Context context) throws ImportedFileValidationException {
+                                                         @NonNull final Context context) throws ImportedFileValidationException {
         return GiniCaptureFileImport.createDocumentForImportedFile(intent, context);
     }
 
@@ -570,7 +632,9 @@ public class GiniCapture {
     }
 
     @NonNull
-    ErrorLogger getErrorLogger() { return mErrorLogger; }
+    ErrorLogger getErrorLogger() {
+        return mErrorLogger;
+    }
 
     @NonNull
     public NavigationBarTopAdapter getNavigationBarTopAdapter() {
@@ -656,7 +720,6 @@ public class GiniCapture {
     public static class Builder {
 
         private GiniCaptureNetworkService mGiniCaptureNetworkService;
-        private GiniCaptureNetworkApi mGiniCaptureNetworkApi;
         private DocumentImportEnabledFileTypes mDocumentImportEnabledFileTypes =
                 DocumentImportEnabledFileTypes.NONE;
         private boolean mFileImportEnabled;
@@ -707,6 +770,7 @@ public class GiniCapture {
         private ReviewNavigationBarBottomAdapter reviewNavigationBarBottomAdapter = new DefaultReviewNavigationBarBottomAdapter();
 
         private OnButtonLoadingIndicatorAdapter onButtonLoadingIndicatorAdapter = new DefaultOnButtonLoadingIndicatorAdapter();
+
         /**
          * Create a new {@link GiniCapture} instance.
          */
@@ -722,12 +786,6 @@ public class GiniCapture {
                         + "You may provide a GiniCaptureNetworkService instance with "
                         + "GiniCapture.newInstance().setGiniCaptureNetworkService()");
             }
-            if (mGiniCaptureNetworkApi == null) {
-                LOG.warn("GiniCaptureNetworkApi instance not set. "
-                        + "Relying on client to perform network calls."
-                        + "You may provide a GiniCaptureNetworkApi instance with "
-                        + "GiniCapture.newInstance().setGiniCaptureNetworkApi()");
-            }
         }
 
         /**
@@ -740,7 +798,6 @@ public class GiniCapture {
          * <p> Default value is {@code true}.
          *
          * @param shouldShowOnboardingAtFirstRun whether to show the onboarding on first run or not
-         *
          * @return the {@link Builder} instance
          */
         @NonNull
@@ -754,7 +811,6 @@ public class GiniCapture {
          * Set custom pages to be shown in the Onboarding Screen.
          *
          * @param onboardingPages an {@link ArrayList} of {@link OnboardingPage}s
-         *
          * @return the {@link Builder} instance
          */
         @NonNull
@@ -773,7 +829,6 @@ public class GiniCapture {
          * <p> Default value is {@code false}.
          *
          * @param shouldShowOnboarding whether to show the onboarding on every launch
-         *
          * @return the {@link Builder} instance
          */
         @NonNull
@@ -792,7 +847,6 @@ public class GiniCapture {
          * <p> Disabled by default.
          *
          * @param multiPageEnabled {@code true} to enable multi-page
-         *
          * @return the {@link Builder} instance
          */
         public Builder setMultiPageEnabled(final boolean multiPageEnabled) {
@@ -819,33 +873,12 @@ public class GiniCapture {
          * request document related network calls (e.g. upload, analysis or deletion).
          *
          * @param giniCaptureNetworkService a {@link GiniCaptureNetworkService} instance
-         *
          * @return the {@link Builder} instance
          */
         @NonNull
         public Builder setGiniCaptureNetworkService(
                 @NonNull final GiniCaptureNetworkService giniCaptureNetworkService) {
             mGiniCaptureNetworkService = giniCaptureNetworkService;
-            return this;
-        }
-
-        @Nullable
-        GiniCaptureNetworkApi getGiniCaptureNetworkApi() {
-            return mGiniCaptureNetworkApi;
-        }
-
-        /**
-         * Set the {@link GiniCaptureNetworkApi} instance which clients can use to request network
-         * calls (e.g. for sending feedback).
-         *
-         * @param giniCaptureNetworkApi a {@link GiniCaptureNetworkApi} instance
-         *
-         * @return the {@link Builder} instance
-         */
-        @NonNull
-        public Builder setGiniCaptureNetworkApi(
-                @NonNull final GiniCaptureNetworkApi giniCaptureNetworkApi) {
-            mGiniCaptureNetworkApi = giniCaptureNetworkApi;
             return this;
         }
 
@@ -861,7 +894,6 @@ public class GiniCapture {
          * <p> Disabled by default.
          *
          * @param documentImportEnabledFileTypes file types to be enabled for document import
-         *
          * @return the {@link Builder} instance
          */
         @NonNull
@@ -881,7 +913,6 @@ public class GiniCapture {
          * <p> Disabled by default.
          *
          * @param fileImportEnabled {@code true} to enable file import
-         *
          * @return the {@link Builder} instance
          */
         @NonNull
@@ -900,7 +931,6 @@ public class GiniCapture {
          * <p> Disabled by default.
          *
          * @param qrCodeScanningEnabled {@code true} to enable QRCode scanning
-         *
          * @return the {@link Builder} instance
          */
         @NonNull
@@ -930,7 +960,6 @@ public class GiniCapture {
          * <p> Enabled by default.
          *
          * @param enabled {@code true} to show the Supported Formats help screen
-         *
          * @return the {@link Builder} instance
          */
         public Builder setSupportedFormatsHelpScreenEnabled(final boolean enabled) {
@@ -948,7 +977,6 @@ public class GiniCapture {
          * <p> Disabled by default.
          *
          * @param enabled {@code true} to show the flash button
-         *
          * @return the {@link Builder} instance
          */
         public Builder setFlashButtonEnabled(final boolean enabled) {
@@ -969,7 +997,6 @@ public class GiniCapture {
          * <p> Enabled by default.
          *
          * @param enabled {@code true} to show back buttons
-         *
          * @return the {@link Builder} instance
          */
         public Builder setBackButtonsEnabled(final boolean enabled) {
@@ -987,7 +1014,6 @@ public class GiniCapture {
          * <p> If not changed, then flash is on by default.
          *
          * @param flashOn {@code true} to turn the flash on
-         *
          * @return the {@link Builder} instance
          */
         public Builder setFlashOnByDefault(final boolean flashOn) {
@@ -1004,7 +1030,6 @@ public class GiniCapture {
          * which can occur during the usage of the Gini Capture SDK.
          *
          * @param eventTracker an {@link EventTracker} instance
-         *
          * @return the {@link Builder} instance
          */
         public Builder setEventTracker(@NonNull final EventTracker eventTracker) {
@@ -1025,7 +1050,6 @@ public class GiniCapture {
          * Set custom help items to be shown in the Help Screen.
          *
          * @param customHelpItems an {@link List} of {@link HelpItem.Custom} objects
-         *
          * @return the {@link Builder} instance
          */
         public Builder setCustomHelpItems(@NonNull final List<HelpItem.Custom> customHelpItems) {
@@ -1151,7 +1175,7 @@ public class GiniCapture {
 
         /**
          * Enable/disable the bottom navigation bar.
-         *
+         * <p>
          * Disabled by default.
          *
          * @return the {@link Builder} instance
@@ -1276,6 +1300,8 @@ public class GiniCapture {
 
         private Throwable mReviewScreenAnalysisError;
 
+        private Map<String, GiniCaptureCompoundExtraction> mCompoundExtractions = new HashMap<>();
+
         public Internal(@NonNull final GiniCapture giniCapture) {
             mGiniCapture = giniCapture;
         }
@@ -1323,6 +1349,15 @@ public class GiniCapture {
 
         public ErrorLogger getErrorLogger() {
             return mGiniCapture.getErrorLogger();
+        }
+
+
+        public void setUpdatedCompoundExtractions(@NonNull final Map<String, GiniCaptureCompoundExtraction> compoundExtractions) {
+            mCompoundExtractions = compoundExtractions;
+        }
+
+        public Map<String, GiniCaptureCompoundExtraction> getCompoundExtractions() {
+            return mCompoundExtractions;
         }
     }
 

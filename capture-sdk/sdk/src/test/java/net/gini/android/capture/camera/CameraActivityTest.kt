@@ -9,6 +9,7 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.spy
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
+import net.gini.android.capture.Amount
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.R
 import net.gini.android.capture.tracking.CameraScreenEvent
@@ -29,7 +30,15 @@ class CameraActivityTest {
 
     @After
     fun after() {
-        GiniCapture.cleanup(InstrumentationRegistry.getInstrumentation().targetContext)
+        GiniCapture.cleanup(
+            InstrumentationRegistry.getInstrumentation().targetContext,
+            "",
+            "",
+            "",
+            "",
+            "",
+            Amount.EMPTY
+        )
     }
 
     @Test
@@ -38,11 +47,11 @@ class CameraActivityTest {
         val eventTracker = spy<EventTracker>()
         GiniCapture.Builder().setEventTracker(eventTracker).build()
 
-        ActivityScenario.launch(CameraActivity::class.java).use {scenario ->
+        ActivityScenario.launch(CameraActivity::class.java).use { scenario ->
             scenario.moveToState(Lifecycle.State.STARTED)
 
             // When
-            scenario.onActivity {activity ->
+            scenario.onActivity { activity ->
                 activity.onBackPressed()
 
                 // Then
@@ -57,11 +66,11 @@ class CameraActivityTest {
         val eventTracker = spy<EventTracker>()
         GiniCapture.Builder().setEventTracker(eventTracker).build()
 
-        ActivityScenario.launch(CameraActivity::class.java).use {scenario ->
+        ActivityScenario.launch(CameraActivity::class.java).use { scenario ->
             scenario.moveToState(Lifecycle.State.STARTED)
 
             // When
-            scenario.onActivity {activity ->
+            scenario.onActivity { activity ->
                 val menuItem = mock<MenuItem>()
                 whenever(menuItem.itemId).thenReturn(R.id.gc_action_show_onboarding)
                 activity.onOptionsItemSelected(menuItem)

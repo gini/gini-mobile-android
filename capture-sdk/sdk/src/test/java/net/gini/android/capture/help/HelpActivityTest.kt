@@ -7,18 +7,16 @@ import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.Intents.intended
-import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
-import androidx.test.espresso.intent.rule.IntentsTestRule
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.nhaarman.mockitokotlin2.mock
+import net.gini.android.capture.Amount
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.R
 import org.junit.After
-import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -27,7 +25,15 @@ class HelpActivityTest {
 
     @After
     fun tearDown() {
-        GiniCapture.cleanup(InstrumentationRegistry.getInstrumentation().targetContext)
+        GiniCapture.cleanup(
+            InstrumentationRegistry.getInstrumentation().targetContext,
+            "",
+            "",
+            "",
+            "",
+            "",
+            Amount.EMPTY
+        )
     }
 
     @Test
@@ -37,7 +43,6 @@ class HelpActivityTest {
 
         GiniCapture.newInstance()
             .setGiniCaptureNetworkService(mock())
-            .setGiniCaptureNetworkApi(mock())
             .setCustomHelpItems(
                 listOf(
                     HelpItem.Custom(
@@ -65,7 +70,6 @@ class HelpActivityTest {
 
         GiniCapture.newInstance()
             .setGiniCaptureNetworkService(mock())
-            .setGiniCaptureNetworkApi(mock())
             .setCustomHelpItems(
                 listOf(
                     HelpItem.Custom(

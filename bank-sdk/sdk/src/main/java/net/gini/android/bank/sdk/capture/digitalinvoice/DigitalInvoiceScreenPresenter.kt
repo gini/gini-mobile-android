@@ -134,7 +134,7 @@ internal class DigitalInvoiceScreenPresenter(
         digitalInvoice.updateLineItemExtractionsWithReviewedLineItems()
         digitalInvoice.updateAmountToPayExtractionWithTotalPrice()
         if (GiniCapture.hasInstance()) {
-            GiniCapture.getInstance().giniCaptureNetworkApi?.setUpdatedCompoundExtractions(
+            GiniCapture.getInstance().internal().setUpdatedCompoundExtractions(
                 digitalInvoice.compoundExtractions
             )
         }

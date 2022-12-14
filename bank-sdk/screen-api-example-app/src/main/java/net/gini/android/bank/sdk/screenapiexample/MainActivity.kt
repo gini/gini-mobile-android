@@ -4,9 +4,6 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -18,16 +15,14 @@ import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.capture.*
 import net.gini.android.bank.sdk.screenapiexample.databinding.ActivityMainBinding
 import net.gini.android.bank.sdk.screenapiexample.util.PermissionHandler
+import net.gini.android.capture.Amount
 import net.gini.android.capture.DocumentImportEnabledFileTypes
 import net.gini.android.capture.GiniCaptureDebug
 import net.gini.android.capture.help.HelpItem
-import net.gini.android.capture.network.GiniCaptureDefaultNetworkApi
 import net.gini.android.capture.network.GiniCaptureDefaultNetworkService
 import net.gini.android.capture.requirements.RequirementsReport
 import net.gini.android.capture.util.CancellationToken
 import net.gini.android.capture.view.DefaultLoadingIndicatorAdapter
-import net.gini.android.capture.view.NavButtonType
-import net.gini.android.capture.view.NavigationBarTopAdapter
 import org.koin.android.ext.android.inject
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -40,7 +35,6 @@ class MainActivity : AppCompatActivity() {
     private val noExtractionsLauncher = registerForActivityResult(NoExtractionContract(), ::onStartAgainResult)
     private var cancellationToken: CancellationToken? = null // should be kept across configuration changes
     private val networkService: GiniCaptureDefaultNetworkService by inject()
-    private val networkApi: GiniCaptureDefaultNetworkApi by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,14 +58,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun configureGiniCapture() {
-        GiniBank.releaseCapture(this)
+        GiniBank.releaseCapture(this, "",
+            "", "", "","", Amount.EMPTY)
         val enableBottomNavigationBar = false
         val useCustomOnboardingPages = false
         val useCustomLoadingIndicator = false
         GiniBank.setCaptureConfiguration(
             CaptureConfiguration(
                 networkService = networkService,
-                networkApi = networkApi,
                 documentImportEnabledFileTypes = DocumentImportEnabledFileTypes.PDF_AND_IMAGES,
                 fileImportEnabled = true,
                 qrCodeScanningEnabled = true,
