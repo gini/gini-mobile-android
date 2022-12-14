@@ -41,12 +41,7 @@ class ExtractionsFixture(
                         other.specificExtractions.any { entry ->
                             fixtureEntry.key == entry.key &&
                                     fixtureEntry.value.entity == entry.value.entity &&
-                                    fixtureEntry.value.value == entry.value.value &&
-                                    fixtureEntry.value.box?.top == entry.value.box?.top &&
-                                    fixtureEntry.value.box?.left == entry.value.box?.left &&
-                                    fixtureEntry.value.box?.width == entry.value.box?.width &&
-                                    fixtureEntry.value.box?.height == entry.value.box?.height &&
-                                    fixtureEntry.value.box?.page == entry.value.box?.pageNumber
+                                    fixtureEntry.value.value == entry.value.value
                         }
                     }
         }

@@ -85,13 +85,13 @@ class ExtractionFeedbackIntegrationTest {
 
     @After
     fun tearDown() {
-        GiniBank.releaseCapture(getApplicationContext(),"","","","", Amount.EMPTY)
+        GiniBank.releaseCapture(getApplicationContext(),"","","", "","", Amount.EMPTY)
     }
 
     @Test
-    fun sendExtractionFeedback() = runBlocking {
+    fun sendExtractionFeedbackWithoutPaymentReference() = runBlocking {
         // 1. Analyze a test document
-        val result = getExtractionsFromBankSDK()
+        val result = getExtractionsFromBankSDK(TEST_DOCUMENT_WITHOUT_PAYMENT_REFERENCE)
 
         if (result !is CaptureResult.Success) {
             Assert.fail(result.toString())
@@ -112,6 +112,7 @@ class ExtractionFeedbackIntegrationTest {
         //    the original values since the user did not edit them.
         GiniBank.releaseCapture(getApplicationContext(),
             result.specificExtractions["paymentRecipient"]!!.value,
+            "", // Payment reference was not shown to the user and can be left empty
             result.specificExtractions["paymentPurpose"]!!.value,
             result.specificExtractions["iban"]!!.value,
             result.specificExtractions["bic"]!!.value,
@@ -130,6 +131,49 @@ class ExtractionFeedbackIntegrationTest {
         Assert.assertTrue(extractionsAfterFeedbackFixture.equals(extractionsAfterFeedback.data))
     }
 
+    @Test
+    fun sendExtractionFeedbackWithPaymentReference() = runBlocking {
+        // 1. Analyze a test document
+        val result = getExtractionsFromBankSDK(TEST_DOCUMENT_WITH_PAYMENT_REFERENCE)
+
+        if (result !is CaptureResult.Success) {
+            Assert.fail(result.toString())
+            return@runBlocking
+        }
+
+        //    Verify we received the correct extractions for this test
+        val extractionsFixture = moshi.fromJsonAsset<ExtractionsFixture>("result_Gini_invoice_example_payment_reference.json")!!
+        Assert.assertTrue(extractionsFixture.equals(result.specificExtractions))
+
+        // 3. Assuming the user saw the following extractions:
+        //    amountToPay, iban, bic, paymentPurpose, paymentReference and paymentRecipient
+
+        //    When releasing capture we need to provide the values the user has used for
+        //    creating the transaction.
+        //    Supposing the user changed the amountToPay from "995.00:EUR" to "950.00:EUR"
+        //    we need to pass in the changed value. For the other extractions we can pass in
+        //    the original values since the user did not edit them.
+        GiniBank.releaseCapture(getApplicationContext(),
+            result.specificExtractions["paymentRecipient"]!!.value,
+            result.specificExtractions["paymentReference"]!!.value,
+            result.specificExtractions["paymentPurpose"]!!.value,
+            result.specificExtractions["iban"]!!.value,
+            result.specificExtractions["bic"]!!.value,
+            Amount(BigDecimal("950.00"), AmountCurrency.EUR)
+        )
+
+        //    Wait a little for the feedback sending to complete
+        delay(2_000)
+
+        // 4. Verify that the extractions were updated using the Gini Bank API
+        val extractionsAfterFeedback =
+            giniBankAPI.documentManager.getAllExtractionsWithPolling(analyzedGiniApiDocument!!)
+
+        val extractionsAfterFeedbackFixture =
+            moshi.fromJsonAsset<ExtractionsFixture>("result_Gini_invoice_example_payment_reference_after_feedback.json")!!
+        Assert.assertTrue(extractionsAfterFeedbackFixture.equals(extractionsAfterFeedback.data))
+    }
+
     /**
      * This method reproduces the document upload and analysis done by the Bank SDK.
      *
@@ -139,11 +183,11 @@ class ExtractionFeedbackIntegrationTest {
      * In your production code you should not call [GiniCaptureDefaultNetworkService] methods.
      * Interaction with the network service is handled by the Bank SDK internally.
      */
-    private suspend fun getExtractionsFromBankSDK(): CaptureResult {
+    private suspend fun getExtractionsFromBankSDK(testDocument: TestDocument): CaptureResult {
         try {
             // Upload a test document
             val uploadResult = suspendCancellableCoroutine<Result> { continuation ->
-                networkService.upload(TEST_DOCUMENT, object : GiniCaptureNetworkCallback<Result, Error> {
+                networkService.upload(testDocument, object : GiniCaptureNetworkCallback<Result, Error> {
                     override fun failure(error: Error) {
                         continuation.resumeWithException(RuntimeException(error.message, error.cause))
                     }
@@ -190,33 +234,37 @@ class ExtractionFeedbackIntegrationTest {
     }
 
     companion object {
-        val TEST_DOCUMENT = object : Document {
-            private val pdfBytes = getApplicationContext<Context>().resources.assets
-                .open("Gini_invoice_example.pdf").use { it.readBytes() }
+        val TEST_DOCUMENT_WITHOUT_PAYMENT_REFERENCE = TestDocument("Gini_invoice_example.pdf")
 
-            override fun describeContents(): Int = 0
+        val TEST_DOCUMENT_WITH_PAYMENT_REFERENCE = TestDocument("Gini_invoice_example_payment_reference.pdf")
+    }
 
-            override fun writeToParcel(dest: Parcel?, flags: Int) {}
+    class TestDocument(assetFileName: String): Document {
+        private val pdfBytes = getApplicationContext<Context>().resources.assets
+            .open(assetFileName).use { it.readBytes() }
 
-            override fun getId(): String = UUID.randomUUID().toString()
+        override fun describeContents(): Int = 0
 
-            override fun getType(): Document.Type = Document.Type.PDF
+        override fun writeToParcel(dest: Parcel?, flags: Int) {}
 
-            override fun getMimeType(): String = MimeType.APPLICATION_PDF.asString()
+        override fun getId(): String = UUID.randomUUID().toString()
 
-            override fun getData(): ByteArray = pdfBytes
+        override fun getType(): Document.Type = Document.Type.PDF
 
-            override fun getIntent(): Intent? = null
+        override fun getMimeType(): String = MimeType.APPLICATION_PDF.asString()
 
-            override fun getUri(): Uri? = null
+        override fun getData(): ByteArray = pdfBytes
 
-            override fun isImported(): Boolean = false
+        override fun getIntent(): Intent? = null
 
-            override fun getImportMethod(): Document.ImportMethod = Document.ImportMethod.NONE
+        override fun getUri(): Uri? = null
 
-            override fun getSource(): Document.Source = Document.Source.newSource("androidTest")
+        override fun isImported(): Boolean = false
 
-            override fun isReviewable(): Boolean = false
-        }
+        override fun getImportMethod(): Document.ImportMethod = Document.ImportMethod.NONE
+
+        override fun getSource(): Document.Source = Document.Source.newSource("androidTest")
+
+        override fun isReviewable(): Boolean = false
     }
 }
