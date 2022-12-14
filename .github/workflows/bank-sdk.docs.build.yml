@@ -4,6 +4,8 @@ on:
   push:
     paths:
       - 'bank-sdk/**'
+    branches:
+      - '**'
     tags-ignore:
       - '**'
   pull_request:

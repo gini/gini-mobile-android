@@ -6,6 +6,8 @@ on:
       - 'health-api-library/**'
       - 'core-api-library/**'
       - 'gradle/**'
+    branches:
+      - '**'
     tags-ignore:
       - '**'
   pull_request:

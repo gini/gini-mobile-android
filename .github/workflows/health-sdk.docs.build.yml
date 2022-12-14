@@ -4,6 +4,8 @@ on:
   push:
     paths:
       - 'health-sdk/**'
+    branches:
+      - '**'
     tags-ignore:
       - '**'
   pull_request:

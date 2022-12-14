@@ -4,6 +4,8 @@ on:
   push:
     paths:
       - 'health-api-library/**'
+    branches:
+      - '**'
     tags-ignore:
       - '**'
   pull_request:
