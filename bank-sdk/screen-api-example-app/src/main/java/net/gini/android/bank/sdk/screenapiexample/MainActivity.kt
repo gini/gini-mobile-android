@@ -134,8 +134,7 @@ class MainActivity : AppCompatActivity() {
                     )
                 } else {
                     DefaultLoadingIndicatorAdapter()
-                },
-                showOnboarding = true
+                }
             )
         )
     }
