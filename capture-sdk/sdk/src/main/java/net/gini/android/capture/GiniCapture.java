@@ -178,6 +178,11 @@ public class GiniCapture {
      * Destroys the {@link GiniCapture} instance and frees up used resources.
      *
      * @param context Android context
+     * @param paymentRecipient payment receiver.
+     * @param paymentReference ID based on Client ID (Kundennummer) and invoice ID (Rechnungsnummer).
+     * @param iban international bank account.
+     * @param bic bank identification code.
+     * @param amount accepts extracted amount and currency.
      */
     public static synchronized void cleanup(@NonNull final Context context,
                                             @NonNull final String paymentRecipient,
