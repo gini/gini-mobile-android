@@ -200,8 +200,6 @@ public class GiniCapture {
             return;
         }
 
-        //TODO Check if IDs are correct, feel free to fix any which isn't @Alpar
-
         Map<String, GiniCaptureSpecificExtraction> extractionMap = new HashMap<>();
 
         extractionMap.put("amountToPay", new GiniCaptureSpecificExtraction("amountToPay", amount.amountToPay(),
@@ -231,9 +229,6 @@ public class GiniCapture {
                     oldInstance.mInternal.getCompoundExtractions(), new GiniCaptureNetworkCallback<Void, Error>() {
                         @Override
                         public void failure(Error error) {
-                            Toast.makeText(context, "Feedback error:\n" + error.getMessage(),
-                                    Toast.LENGTH_LONG).show();
-
                             if (oldInstance.mNetworkRequestsManager != null) {
                                 oldInstance.mNetworkRequestsManager.cleanup();
                             }
@@ -241,8 +236,6 @@ public class GiniCapture {
 
                         @Override
                         public void success(Void result) {
-                            Toast.makeText(context, "Feedback successful",
-                                    Toast.LENGTH_LONG).show();
                             if (oldInstance.mNetworkRequestsManager != null) {
                                 oldInstance.mNetworkRequestsManager.cleanup();
                             }
