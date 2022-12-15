@@ -227,6 +227,8 @@ You can find more details `here <customization-guide.html>`_.
 Help
 ~~~~~
 
+The new help screen uses the global UI customization options.
+
 New Features
 ++++++++++++
 
