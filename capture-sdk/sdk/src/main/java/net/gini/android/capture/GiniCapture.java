@@ -356,6 +356,13 @@ public class GiniCapture {
     }
 
 
+    /**
+     * Find out whether only QRCode scanning has been enabled.
+     *
+     * <p> Disabled by default.
+     *
+     * @return {@code true} if only QRCode scanning was enabled
+     */
     public boolean isOnlyQRCodeScanning() {
         return mIsOnlyQRCodeScanning;
     }
@@ -938,6 +945,14 @@ public class GiniCapture {
         }
 
 
+        /**
+         * Enable/disable only the QRCode scanning feature.
+         *
+         * <p> Disabled by default.
+         *
+         * @param onlyQRCodeScanningEnabled {@code true} to enable only QRCode scanning
+         * @return the {@link Builder} instance
+         */
         public Builder setOnlyQRCodeScanning(final boolean onlyQRCodeScanningEnabled) {
             mOnlyQRCodeScanningEnabled = onlyQRCodeScanningEnabled;
             return this;
