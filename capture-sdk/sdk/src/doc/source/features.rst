@@ -364,7 +364,9 @@ When multi-page is disabled then the difference is only that the single-page rev
 Help Screen Customization
 -------------------------
 
-You can show your own help screens in the Gini Capture SDK. You can pass the title and activity for each screen to the
+You can show your own help screens in the Gini Capture SDK. These screens could be shown from a list on the main Help screen opened from the Camera screen
+navigation bars.
+You can pass the title and activity for each screen to the
 ``GiniCapture.Builder`` using a list of ``HelpItem.Custom`` objects:
 
 .. code-block:: java
@@ -380,6 +382,18 @@ You can show your own help screens in the Gini Capture SDK. You can pass the tit
 
 You can also disable the supported formats help screen by passing ``false`` to
 ``GiniCapture.Builder.setSupportedFormatsHelpScreenEnabled()``.
+
+Furthermore you can set custom action to the bottom navigation bar action button. You can pass your custom ``HelpNavigationBarBottomAdapter`` implementation to
+``GiniCapture.Builder``:
+
+.. code-block:: java
+
+    CustomHelpNavigationBarBottomAdapter customHelpNavigationBarBottomAdapter = new CustomHelpNavigationBarBottomAdapter();
+
+    GiniCapture.newInstance()
+            .setHelpNavigationBarBottomAdapter(customHelpNavigationBarBottomAdapter)
+            .build();
+
 
 Event Tracking
 --------------
