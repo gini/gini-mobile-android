@@ -386,7 +386,9 @@ public class AnalysisActivity extends AppCompatActivity implements
             noResultsActivity.setExtrasClassLoader(AnalysisActivity.class.getClassLoader());
             startActivityForResult(noResultsActivity, NO_RESULT_REQUEST);
             setResult(RESULT_NO_EXTRACTIONS);
-            GiniCapture.getInstance().internal().getImageMultiPageDocumentMemoryStore().clear();
+            if (GiniCapture.hasInstance()) {
+                GiniCapture.getInstance().internal().getImageMultiPageDocumentMemoryStore().clear();
+            }
         } else {
             final Intent result = new Intent();
             setResult(RESULT_OK, result);
@@ -404,7 +406,9 @@ public class AnalysisActivity extends AppCompatActivity implements
         if ((requestCode == NO_RESULT_REQUEST || requestCode == ERROR_SCREEN_REQUEST) &&
                 ((resultCode == RESULT_CANCELED && data != null && data.hasExtra(NO_RESULT_CANCEL_KEY)) || resultCode == RESULT_ENTER_MANUALLY || resultCode == RESULT_CAMERA_SCREEN)) {
             if (resultCode == RESULT_CAMERA_SCREEN) {
-                GiniCapture.getInstance().internal().getImageMultiPageDocumentMemoryStore().clear();
+                if (GiniCapture.hasInstance()) {
+                    GiniCapture.getInstance().internal().getImageMultiPageDocumentMemoryStore().clear();
+                }
             }
             setResult(resultCode, data);
         }

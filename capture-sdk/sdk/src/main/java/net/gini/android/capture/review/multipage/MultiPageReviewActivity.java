@@ -364,7 +364,9 @@ public class MultiPageReviewActivity extends AppCompatActivity implements
 
         if (requestCode == ERROR_SCREEN_REQUEST) {
             if (resultCode == RESULT_CAMERA_SCREEN) {
-                GiniCapture.getInstance().internal().getImageMultiPageDocumentMemoryStore().clear();
+                if (GiniCapture.hasInstance()) {
+                    GiniCapture.getInstance().internal().getImageMultiPageDocumentMemoryStore().clear();
+                }
                 startActivity(CameraActivity.createIntent(MultiPageReviewActivity.this, false));
             }
             if (resultCode == RESULT_ENTER_MANUALLY) {
