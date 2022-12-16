@@ -383,7 +383,7 @@ You can pass the title and activity for each screen to the
 You can also disable the supported formats help screen by passing ``false`` to
 ``GiniCapture.Builder.setSupportedFormatsHelpScreenEnabled()``.
 
-Furthermore you can set back navigation action on a custom view on bottom navigation bar. You can pass your custom ``HelpNavigationBarBottomAdapter`` implementation to
+Furthermore you can show back navigation button on bottom navigation bar. You can pass your custom ``HelpNavigationBarBottomAdapter`` implementation to
 ``GiniCapture.Builder``:
 
 .. code-block:: java

@@ -14,7 +14,7 @@ interface HelpNavigationBarBottomAdapter : InjectedViewAdapter {
 
     /**
      * <p>
-     *  Set a listener for back navigation on a view on bottom navigation bar layout.
+     *  Set a listener for the back navigation button.
      * </p>
      */
     fun setOnBackClickListener(listener: View.OnClickListener?)
