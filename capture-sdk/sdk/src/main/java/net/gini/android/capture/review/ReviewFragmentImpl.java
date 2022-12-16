@@ -35,6 +35,7 @@ import net.gini.android.capture.document.DocumentFactory;
 import net.gini.android.capture.document.GiniCaptureDocument;
 import net.gini.android.capture.document.ImageDocument;
 import net.gini.android.capture.error.ErrorActivity;
+import net.gini.android.capture.error.ErrorType;
 import net.gini.android.capture.internal.cache.PhotoMemoryCache;
 import net.gini.android.capture.internal.camera.photo.ParcelableMemoryCache;
 import net.gini.android.capture.internal.camera.photo.Photo;
@@ -258,8 +259,12 @@ class ReviewFragmentImpl implements ReviewFragmentInterface {
             return;
         }
 
-        FailureException exception = (FailureException) throwable;
-        ErrorActivity.startErrorActivity(activity, exception.errorType, document);
+        if (throwable instanceof FailureException) {
+            FailureException exception = (FailureException) throwable;
+            ErrorActivity.startErrorActivity(activity, exception.errorType, document);
+        } else {
+            ErrorActivity.startErrorActivity(activity, ErrorType.GENERAL, document);
+        }
 
         if (GiniCapture.hasInstance()) {
             GiniCapture.getInstance().internal().setReviewScreenAnalysisError(throwable);

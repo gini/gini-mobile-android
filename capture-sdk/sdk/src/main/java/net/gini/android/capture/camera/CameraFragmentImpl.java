@@ -915,8 +915,12 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         if (mFragment.getActivity() == null)
             return;
 
-        FailureException exception = (FailureException) throwable;
-        ErrorActivity.startErrorActivity(mFragment.getActivity(), exception.errorType, document);
+        if (throwable instanceof FailureException) {
+            FailureException exception = (FailureException) throwable;
+            ErrorActivity.startErrorActivity(mFragment.getActivity(), exception.errorType, document);
+        } else {
+            ErrorActivity.startErrorActivity(mFragment.getActivity(), ErrorType.GENERAL, document);
+        }
     }
 
     private void showFileChooser() {

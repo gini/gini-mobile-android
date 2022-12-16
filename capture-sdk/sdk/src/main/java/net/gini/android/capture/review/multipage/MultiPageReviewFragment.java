@@ -764,8 +764,12 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
 
    private void handleError(Throwable throwable, Document document) {
        if (getActivity() != null) {
-           FailureException exception = (FailureException) throwable;
-           ErrorActivity.startErrorActivity(requireActivity(), exception.errorType, document);
+           if (throwable instanceof FailureException) {
+               FailureException exception = (FailureException) throwable;
+               ErrorActivity.startErrorActivity(requireActivity(), exception.errorType, document);
+           } else {
+               ErrorActivity.startErrorActivity(requireActivity(), ErrorType.GENERAL, document);
+           }
        }
    }
 
