@@ -18,7 +18,6 @@ import net.gini.android.capture.GiniCaptureError;
 import net.gini.android.capture.R;
 import net.gini.android.capture.analysis.AnalysisActivity;
 import net.gini.android.capture.camera.CameraActivity;
-import net.gini.android.capture.network.GiniCaptureNetworkApi;
 import net.gini.android.capture.network.GiniCaptureNetworkService;
 import net.gini.android.capture.noresults.NoResultsActivity;
 import net.gini.android.capture.onboarding.OnboardingActivity;

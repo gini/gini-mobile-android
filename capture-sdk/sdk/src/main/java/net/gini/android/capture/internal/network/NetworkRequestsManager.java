@@ -269,9 +269,8 @@ public class NetworkRequestsManager {
                                         "Document deletion failed for {}: {}",
                                         document.getId(),
                                         error.getMessage());
-                                future.completeExceptionally(
-                                        new RuntimeException(
-                                                error.getMessage(), error.getCause()));
+                                ErrorType errorType = ErrorType.typeFromError(error);
+                                future.completeExceptionally(new FailureException(errorType));
                             }
 
                             @Override
@@ -384,8 +383,8 @@ public class NetworkRequestsManager {
                             public void failure(final Error error) {
                                 LOG.error("Document analysis failed for {}: {}",
                                         multiPageDocument.getId(), error.getMessage());
-                                future.completeExceptionally(
-                                        new RuntimeException(error.getMessage(), error.getCause()));
+                                ErrorType errorType = ErrorType.typeFromError(error);
+                                future.completeExceptionally(new FailureException(errorType));
                             }
 
                             @Override

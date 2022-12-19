@@ -223,3 +223,20 @@ For example if you need to show animated illustrations you can use a `Lottie
 <https://github.com/airbnb/lottie-android>`_ view in your ``OnboardingIllustrationAdapter`` implementation.
 
 You can find more details `here <customization-guide.html>`_.
+
+Help
+~~~~~
+
+The new help screen uses the global UI customization options.
+
+New Features
+++++++++++++
+
+Bottom navigation bar
+^^^^^^^^^^^^^^^^^^^^^
+
+You can show a bottom navigation bar by passing true to ``GiniCapture`` ``setBottomNavigationBarEnabled``. There is a default implementation, but you can also use
+your own by implementing the ``HelpNavigationBarBottomAdapter`` interface and passing it to ``GiniCapture``.
+
+You can find more details `here <features.html#help-screen-customization>`_ and `here <features.html#bottom-navigation-bar>`_.
+

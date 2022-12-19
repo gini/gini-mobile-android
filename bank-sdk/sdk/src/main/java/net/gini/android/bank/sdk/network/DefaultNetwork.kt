@@ -2,7 +2,6 @@ package net.gini.android.bank.sdk.network
 
 import android.content.Context
 import net.gini.android.core.api.DocumentMetadata
-import net.gini.android.capture.network.GiniCaptureDefaultNetworkApi
 import net.gini.android.capture.network.GiniCaptureDefaultNetworkService
 
 /**
@@ -19,13 +18,4 @@ fun getDefaultNetworkService(
     GiniCaptureDefaultNetworkService.builder(context)
         .setClientCredentials(clientId, clientSecret, emailDomain)
         .setDocumentMetadata(documentMetadata)
-        .build()
-
-/**
- * Utility method to create a basic Default Network Api.
- * For more details see [GiniCaptureDefaultNetworkApi].
- */
-fun getDefaultNetworkApi(service: GiniCaptureDefaultNetworkService): GiniCaptureDefaultNetworkApi =
-    GiniCaptureDefaultNetworkApi.builder()
-        .withGiniCaptureDefaultNetworkService(service)
         .build()

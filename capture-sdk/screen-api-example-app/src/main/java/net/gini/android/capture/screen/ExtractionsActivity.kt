@@ -13,11 +13,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import net.gini.android.capture.Amount
+import net.gini.android.capture.AmountCurrency
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.example.shared.BaseExampleApp
-import net.gini.android.capture.network.Error
 import net.gini.android.capture.network.GiniCaptureDefaultNetworkService
-import net.gini.android.capture.network.GiniCaptureNetworkCallback
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.screen.databinding.ActivityExtractionsBinding
@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.math.BigDecimal
 import java.util.*
 
 /**
@@ -196,44 +197,28 @@ class ExtractionsActivity : AppCompatActivity() {
         // In a real application the user input should be used as the new value.
 
         val amount = mExtractions["amountToPay"]
+        val paymentRecipient = mExtractions["paymentRecipient"]?.value ?: ""
+        val paymentReference = mExtractions["paymentReference"]?.value ?: ""
+        val paymentPurpose = mExtractions["paymentPurpose"]?.value ?: ""
+        val iban = mExtractions["iban"]?.value ?: ""
+        val bic = mExtractions["bic"]?.value ?: ""
+
         if (amount != null) { // Let's assume the amount was wrong and change it
-            amount.value = "10.00:EUR"
-            Toast.makeText(this, "Amount changed to 10.00:EUR", Toast.LENGTH_SHORT).show()
+            amount.value = "10.00"
+            Toast.makeText(this, "Amount changed to 10.00", Toast.LENGTH_SHORT).show()
         } else { // Amount was missing, let's add it
             val extraction = GiniCaptureSpecificExtraction(
-                    "amountToPay", "10.00:EUR",
+                    "amountToPay", "10.00",
                     "amount", null, emptyList())
             mExtractions["amountToPay"] = extraction
             mExtractionsAdapter?.extractions = getSortedExtractions(mExtractions)
-            Toast.makeText(this, "Added amount of 10.00:EUR", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Added amount of 10.00", Toast.LENGTH_SHORT).show()
         }
         mExtractionsAdapter?.notifyDataSetChanged()
-        showProgressIndicator(binding)
-        val giniCaptureNetworkApi = GiniCapture.getInstance().giniCaptureNetworkApi
-        if (giniCaptureNetworkApi == null) {
-            Toast.makeText(this, "Feedback not sent: missing GiniCaptureNetworkApi implementation.",
-                    Toast.LENGTH_SHORT).show()
-            return
-        }
-        giniCaptureNetworkApi.sendFeedback(mExtractions, object : GiniCaptureNetworkCallback<Void, Error> {
-            override fun failure(error: Error) {
-                hideProgressIndicator(binding)
-                Toast.makeText(this@ExtractionsActivity,
-                        "Feedback error:\n" + error.message,
-                        Toast.LENGTH_LONG).show()
-            }
 
-            override fun success(result: Void?) {
-                hideProgressIndicator(binding)
-                Toast.makeText(this@ExtractionsActivity,
-                        "Feedback successful",
-                        Toast.LENGTH_LONG).show()
-            }
-
-            override fun cancelled() {
-                hideProgressIndicator(binding)
-            }
-        })
+        GiniCapture.cleanup(applicationContext, paymentRecipient, paymentReference, paymentPurpose, iban, bic, Amount(
+            BigDecimal(amount!!.value), AmountCurrency.EUR)
+        )
     }
 
     private fun legacySendFeedback() {

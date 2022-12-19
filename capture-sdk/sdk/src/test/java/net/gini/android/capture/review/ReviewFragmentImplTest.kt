@@ -4,6 +4,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.*
+import net.gini.android.capture.Amount
 import net.gini.android.capture.Document
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.GiniCaptureError
@@ -28,7 +29,15 @@ class ReviewFragmentImplTest {
 
     @After
     fun after() {
-        GiniCapture.cleanup(InstrumentationRegistry.getInstrumentation().targetContext)
+        GiniCapture.cleanup(
+            InstrumentationRegistry.getInstrumentation().targetContext,
+            "",
+            "",
+            "",
+            "",
+            "",
+            Amount.EMPTY
+        )
     }
 
     @Test

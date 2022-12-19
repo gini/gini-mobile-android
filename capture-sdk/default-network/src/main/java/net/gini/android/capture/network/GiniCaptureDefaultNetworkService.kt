@@ -16,9 +16,7 @@ import net.gini.android.capture.logging.ErrorLog
 import net.gini.android.capture.network.GiniCaptureDefaultNetworkService.Companion.builder
 import net.gini.android.capture.network.logging.formattedErrorMessage
 import net.gini.android.capture.network.logging.toErrorEvent
-import net.gini.android.capture.network.model.CompoundExtractionsMapper
-import net.gini.android.capture.network.model.ReturnReasonsMapper
-import net.gini.android.capture.network.model.SpecificExtractionMapper
+import net.gini.android.capture.network.model.*
 import net.gini.android.capture.util.CancellationToken
 import net.gini.android.core.api.DocumentMetadata
 import net.gini.android.core.api.Resource
@@ -238,6 +236,70 @@ class GiniCaptureDefaultNetworkService(
                 callback.success(AnalysisResult(compositeDocument.id, extractions, compoundExtractions, returnReasons))
             }
         }
+    }
+
+    override fun sendFeedback(
+        extractions: MutableMap<String, GiniCaptureSpecificExtraction>,
+        compoundExtractions: MutableMap<String, GiniCaptureCompoundExtraction>,
+        callback: GiniCaptureNetworkCallback<Void, Error>
+    ) {
+        coroutineScope.launch {
+            val documentManager = giniBankApi.documentManager
+            val document = analyzedGiniApiDocument
+            // We require the Gini Bank API lib's net.gini.android.core.api.models.Document for sending the feedback
+            if (document != null) {
+                val feedbackResource = if (compoundExtractions.isEmpty()) {
+                    documentManager.sendFeedbackForExtractions(document, SpecificExtractionMapper.mapToApiSdk(extractions))
+                } else {
+                    documentManager.sendFeedbackForExtractions(
+                        document,
+                        SpecificExtractionMapper.mapToApiSdk(extractions),
+                        CompoundExtractionsMapper.mapToApiSdk(compoundExtractions)
+                    )
+                }
+                when (feedbackResource) {
+                    is Resource.Success -> {
+                        LOG.debug(
+                            "Send feedback success for api document {}",
+                            document.id
+                        )
+                        callback.success(null)
+                    }
+                    is Resource.Error -> {
+                        val error = Error(feedbackResource.formattedErrorMessage)
+                        LOG.error("Send feedback failed for api document {}: {}", document.id, error.message)
+                        handleErrorLog(
+                            ErrorLog(
+                                description = "Failed to send feedback for document ${document.id}",
+                                exception = feedbackResource.exception
+                            )
+                        )
+                        callback.failure(error)
+                    }
+                    is Resource.Cancelled -> {
+                       LOG.debug(
+                            "Send feedback cancelled for api document {}",
+                            document.id
+                        )
+                        callback.cancelled()
+                    }
+                }
+            } else {
+                LOG.error("Send feedback failed: no api document available")
+                handleErrorLog(
+                    ErrorLog(
+                        description = "Failed to send feedback: no api document available",
+                        exception = null
+                    )
+                )
+                callback.failure(Error("Feedback not set: no api document available"))
+            }
+        }
+    }
+
+    override fun deleteGiniUserCredentials() {
+        giniBankApi.credentialsStore.deleteUserCredentials()
+
     }
 
     override fun handleErrorLog(errorLog: ErrorLog) {

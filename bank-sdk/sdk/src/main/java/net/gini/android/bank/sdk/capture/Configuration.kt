@@ -7,7 +7,6 @@ import net.gini.android.capture.camera.CameraActivity
 import net.gini.android.capture.help.HelpItem
 import net.gini.android.capture.internal.util.FileImportValidator.FILE_SIZE_LIMIT
 import net.gini.android.capture.logging.ErrorLoggerListener
-import net.gini.android.capture.network.GiniCaptureNetworkApi
 import net.gini.android.capture.network.GiniCaptureNetworkService
 import net.gini.android.capture.onboarding.OnboardingPage
 import net.gini.android.capture.onboarding.view.OnboardingIllustrationAdapter
@@ -27,12 +26,6 @@ data class CaptureConfiguration(
      * request document related network calls (e.g. upload, analysis or deletion).
      */
     val networkService: GiniCaptureNetworkService,
-
-    /**
-     * Set the [GiniCaptureNetworkApi] instance which clients can use to request network
-     * calls (e.g. for sending feedback).
-     */
-    val networkApi: GiniCaptureNetworkApi,
 
     /**
      * Screen API only
@@ -177,7 +170,6 @@ data class CaptureConfiguration(
 
 internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfiguration): GiniCapture.Builder {
     return this.setGiniCaptureNetworkService(configuration.networkService)
-        .setGiniCaptureNetworkApi(configuration.networkApi)
         .setShouldShowOnboardingAtFirstRun(configuration.showOnboardingAtFirstRun)
         .setShouldShowOnboarding(configuration.showOnboarding)
         .setMultiPageEnabled(configuration.multiPageEnabled)

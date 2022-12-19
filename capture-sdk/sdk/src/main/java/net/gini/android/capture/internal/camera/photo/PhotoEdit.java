@@ -10,6 +10,7 @@ import android.graphics.Rect;
 import android.os.AsyncTask;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.Size;
 import android.view.View;
 
 import java.io.ByteArrayOutputStream;
@@ -85,11 +86,11 @@ public class PhotoEdit {
         }
     }
 
-    public PhotoEdit crop(View mFrame, Rect aRect) {
+    public PhotoEdit crop(View cameraPreview, Rect cropRect) {
 
-        int[] frameSize = {mFrame.getWidth(), mFrame.getHeight()};
+        Size cameraPreviewSize = new Size(cameraPreview.getWidth(), cameraPreview.getHeight());
 
-        PhotoCropModifier cropModifier = new PhotoCropModifier(mPhoto, frameSize, aRect, DEFAULT_JPEG_COMPRESSION_QUALITY);
+        PhotoCropModifier cropModifier = new PhotoCropModifier(mPhoto, cameraPreviewSize, cropRect, DEFAULT_JPEG_COMPRESSION_QUALITY);
         getPhotoModifiers().add(cropModifier);
 
         return this;

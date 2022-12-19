@@ -47,6 +47,7 @@ class AnalysisScreenPresenterTest {
 
     @Mock
     private lateinit var mView: AnalysisScreenContract.View
+
     @Before
     @Throws(Exception::class)
     fun setUp() {
@@ -140,9 +141,17 @@ class AnalysisScreenPresenterTest {
     }
 
     private fun createGiniCaptureInstance(): GiniCapture {
-        GiniCapture.cleanup(InstrumentationRegistry.getInstrumentation().targetContext)
+        if (GiniCapture.hasInstance())
+            GiniCapture.cleanup(
+                InstrumentationRegistry.getInstrumentation().targetContext,
+                "",
+                "",
+                "",
+                "",
+                "",
+                Amount.EMPTY
+            )
         GiniCapture.newInstance()
-            .setGiniCaptureNetworkApi(mock())
             .setGiniCaptureNetworkService(mock())
             .build()
         return GiniCapture.getInstance()
@@ -357,7 +366,7 @@ class AnalysisScreenPresenterTest {
         // Then
         verify(mView).showPdfTitle(pdfFilename)
     }
-    
+
     @Test
     @Throws(Exception::class)
     fun should_analyzeDocument_afterDocumentWasLoaded() {
@@ -399,7 +408,8 @@ class AnalysisScreenPresenterTest {
                 AnalysisInteractor.Result.SUCCESS_NO_EXTRACTIONS
             )
         )
-        val presenter = createPresenterWithAnalysisFuture(imageDocument, analysisFuture = analysisFuture)
+        val presenter =
+            createPresenterWithAnalysisFuture(imageDocument, analysisFuture = analysisFuture)
 
         // When
         presenter.start()
@@ -416,7 +426,11 @@ class AnalysisScreenPresenterTest {
         val analysisInteractor = mock<AnalysisInteractor> {
             on { analyzeMultiPageDocument(any()) } doReturn analysisFuture
         }
-        return createPresenter(document, giniCapture = giniCapture, analysisInteractor = analysisInteractor)
+        return createPresenter(
+            document,
+            giniCapture = giniCapture,
+            analysisInteractor = analysisInteractor
+        )
     }
 
     @Test
@@ -431,7 +445,8 @@ class AnalysisScreenPresenterTest {
                 AnalysisInteractor.Result.SUCCESS_NO_EXTRACTIONS
             )
         )
-        val presenter = createPresenterWithAnalysisFuture(imageDocument, analysisFuture = analysisFuture)
+        val presenter =
+            createPresenterWithAnalysisFuture(imageDocument, analysisFuture = analysisFuture)
         val listener = mock<AnalysisFragmentListener>()
         presenter.setListener(listener)
 
@@ -464,7 +479,8 @@ class AnalysisScreenPresenterTest {
                 extractions, compoundExtraction, returnReasons
             )
         )
-        val presenter = createPresenterWithAnalysisFuture(imageDocument, analysisFuture = analysisFuture)
+        val presenter =
+            createPresenterWithAnalysisFuture(imageDocument, analysisFuture = analysisFuture)
         val listener = mock<AnalysisFragmentListener>()
         presenter.setListener(listener)
 
@@ -567,7 +583,8 @@ class AnalysisScreenPresenterTest {
         future.completeExceptionally(CancellationException())
         doReturn(future)
             .whenever(presenter)
-            .showAlertIfOpenWithDocumentAndAppIsDefault(any(), any()
+            .showAlertIfOpenWithDocumentAndAppIsDefault(
+                any(), any()
             )
         val listener = mock<AnalysisFragmentListener>()
         presenter.setListener(listener)
@@ -639,7 +656,8 @@ class AnalysisScreenPresenterTest {
         whenever(internal.imageMultiPageDocumentMemoryStore).thenReturn(memoryStore)
         val giniCapture = mock<GiniCapture>()
         whenever(giniCapture.internal()).thenReturn(internal)
-        val presenter = createPresenterWithAnalysisFuture(imageDocument,
+        val presenter = createPresenterWithAnalysisFuture(
+            imageDocument,
             giniCapture = giniCapture, analysisFuture = analysisFuture
         )
 

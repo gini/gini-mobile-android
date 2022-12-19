@@ -7,11 +7,16 @@ import net.gini.android.capture.databinding.GcHelpNavigationBarBottomBinding
 import net.gini.android.capture.view.InjectedViewAdapter
 
 /**
- * Implement this interface if you would like custom action triggered when tapping back navigation
+ * Implement this interface to add back navigation to a custom view on bottom navigation bar
  * and pass it to the {@link GiniCapture.Builder#setHelpNavigationBarBottomAdapter(HelpNavigationBarBottomAdapter)}
  */
 interface HelpNavigationBarBottomAdapter : InjectedViewAdapter {
 
+    /**
+     * <p>
+     *  Set a listener for the back navigation button.
+     * </p>
+     */
     fun setOnBackClickListener(listener: View.OnClickListener?)
 }
 
