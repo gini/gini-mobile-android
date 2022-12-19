@@ -66,7 +66,11 @@ public class AnalysisInteractor {
                                             requestResult,
                                     final Throwable throwable) {
                                 if (throwable != null && !isCancellation(throwable)) {
-                                    throw new RuntimeException(throwable); // NOPMD
+                                    if (throwable instanceof FailureException) {
+                                        throw new FailureException(((FailureException) throwable).errorType);
+                                    } else {
+                                        throw new RuntimeException(throwable); // NOPMD
+                                    }
                                 } else if (requestResult != null) {
                                     final Map<String, GiniCaptureSpecificExtraction> extractions =
                                             requestResult.getAnalysisResult().getExtractions();

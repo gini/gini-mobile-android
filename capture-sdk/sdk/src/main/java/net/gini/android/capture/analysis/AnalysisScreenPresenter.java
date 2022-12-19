@@ -21,6 +21,7 @@ import net.gini.android.capture.document.GiniCaptureDocumentError;
 import net.gini.android.capture.document.GiniCaptureMultiPageDocument;
 import net.gini.android.capture.document.PdfDocument;
 import net.gini.android.capture.error.ErrorActivity;
+import net.gini.android.capture.error.ErrorType;
 import net.gini.android.capture.internal.camera.photo.ParcelableMemoryCache;
 import net.gini.android.capture.internal.document.DocumentRenderer;
 import net.gini.android.capture.internal.document.DocumentRendererFactory;
@@ -495,7 +496,16 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
         errorDetails.put(ERROR_DETAILS_MAP_KEY.ERROR_OBJECT, throwable);
         trackAnalysisScreenEvent(AnalysisScreenEvent.ERROR, errorDetails);
 
-        FailureException exception = (FailureException) throwable;
-        ErrorActivity.startErrorActivity(getActivity(), exception.errorType, mMultiPageDocument);
+        final ErrorType errorType;
+        if (throwable instanceof FailureException) {
+            FailureException exception = (FailureException) throwable;
+            errorType = exception.errorType;
+        } else if (throwable.getCause() instanceof FailureException) {
+            FailureException exception = (FailureException) throwable.getCause();
+            errorType = exception.errorType;
+        } else {
+            errorType = ErrorType.GENERAL;
+        }
+        ErrorActivity.startErrorActivity(getActivity(), errorType, mMultiPageDocument);
     }
 }

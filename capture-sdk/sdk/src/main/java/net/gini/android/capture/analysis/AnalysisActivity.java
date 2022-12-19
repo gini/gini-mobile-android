@@ -18,6 +18,7 @@ import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
 import net.gini.android.capture.noresults.NoResultsActivity;
 import net.gini.android.capture.onboarding.OnboardingActivity;
 import net.gini.android.capture.review.ReviewActivity;
+import net.gini.android.capture.review.multipage.MultiPageReviewActivity;
 import net.gini.android.capture.tracking.AnalysisScreenEvent;
 
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import static net.gini.android.capture.camera.CameraActivity.RESULT_CAMERA_SCREEN;
 import static net.gini.android.capture.camera.CameraActivity.RESULT_ENTER_MANUALLY;
+import static net.gini.android.capture.error.ErrorActivity.ERROR_SCREEN_REQUEST;
 import static net.gini.android.capture.internal.util.ActivityHelper.enableHomeAsUp;
 import static net.gini.android.capture.internal.util.ActivityHelper.interceptOnBackPressed;
 import static net.gini.android.capture.noresults.NoResultsActivity.NO_RESULT_CANCEL_KEY;
@@ -384,7 +386,9 @@ public class AnalysisActivity extends AppCompatActivity implements
             noResultsActivity.setExtrasClassLoader(AnalysisActivity.class.getClassLoader());
             startActivityForResult(noResultsActivity, NO_RESULT_REQUEST);
             setResult(RESULT_NO_EXTRACTIONS);
-            GiniCapture.getInstance().internal().getImageMultiPageDocumentMemoryStore().clear();
+            if (GiniCapture.hasInstance()) {
+                GiniCapture.getInstance().internal().getImageMultiPageDocumentMemoryStore().clear();
+            }
         } else {
             final Intent result = new Intent();
             setResult(RESULT_OK, result);
@@ -399,8 +403,13 @@ public class AnalysisActivity extends AppCompatActivity implements
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (requestCode == NO_RESULT_REQUEST &&
+        if ((requestCode == NO_RESULT_REQUEST || requestCode == ERROR_SCREEN_REQUEST) &&
                 ((resultCode == RESULT_CANCELED && data != null && data.hasExtra(NO_RESULT_CANCEL_KEY)) || resultCode == RESULT_ENTER_MANUALLY || resultCode == RESULT_CAMERA_SCREEN)) {
+            if (resultCode == RESULT_CAMERA_SCREEN) {
+                if (GiniCapture.hasInstance()) {
+                    GiniCapture.getInstance().internal().getImageMultiPageDocumentMemoryStore().clear();
+                }
+            }
             setResult(resultCode, data);
         }
 
