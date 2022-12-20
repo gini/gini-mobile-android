@@ -84,14 +84,6 @@ import jersey.repackaged.jsr166e.CompletableFuture;
  */
 
 /**
- * <h3>Component API</h3>
- *
- * <p> When you use the Compontent API and have enabled the multi-page feature, the {@code
- * MultiPageReviewFragment} displays the photographed or imported images and allows the user to
- * review them by checking the order, sharpness, quality and orientation of the images. The user can
- * correct the order by dragging the thumbnails of the images and can also correct the orientation
- * by rotating the images.
- *
  * <p> <b>Important:</b>
  *
  * <ul>

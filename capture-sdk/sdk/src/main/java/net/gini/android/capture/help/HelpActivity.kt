@@ -18,13 +18,13 @@ import net.gini.android.capture.view.NavButtonType
 import net.gini.android.capture.view.NavigationBarTopAdapter
 
 /**
- * <h3>Screen API and Component API</h3>
+ * <h3>Screen API</h3>
  *
  * <p>
  * On the Help Screen users can get information about how to best use the Gini Capture SDK.
  * </p>
  * <p>
- * This Activity can be used for both Screen and Component APIs.
+ * This Activity can be used for Screen APIs.
  * </p>
  *
  * <h3>Customizing the Help Screen</h3>

@@ -11,12 +11,6 @@ import net.gini.android.capture.internal.ui.FragmentImplCallback
 import net.gini.android.capture.internal.util.AlertDialogHelperCompat
 
 /**
- * <h3>Component API</h3>
- *
- * <p>
- * When you use the Component API with the Android Support Library, the {@code
- * ErrorFragmentCompat} displays details about errors that occured during using the app.
- * </p>
  * <p>
  * Include the {@code ErrorFragmentCompat} into your layout by using the {@link
  * ErrorFragmentCompat#createInstance(Document)} factory method to create an instance and

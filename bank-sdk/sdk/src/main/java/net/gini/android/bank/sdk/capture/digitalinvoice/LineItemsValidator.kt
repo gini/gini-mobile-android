@@ -12,9 +12,6 @@ import net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceException.
 internal typealias Validate = (compoundExtractions: Map<String, GiniCaptureCompoundExtraction>) -> Unit
 
 /**
- * Use this class with the Component API if you are using the return assistant. You should call its [validate] method
- * with the compound extractions received in the [AnalysisFragmentListener.onExtractionsAvailable()] listener method.
- *
  * It checks that the compound extractions contain valid line items which can be used to show the return assistant.
  */
 class LineItemsValidator {

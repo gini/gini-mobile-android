@@ -18,7 +18,6 @@ import net.gini.android.bank.sdk.databinding.GbsFragmentDigitalInvoiceOnboarding
  */
 
 /**
- * When you use the Component API the `DigitalInvoiceOnboardingFragment` displays information about the return assistant to the user.
  *
  * You should show the `DigitalInvoiceOnboardingFragment` when the
  * [DigitalInvoiceFragmentListener.showOnboarding()] is called.

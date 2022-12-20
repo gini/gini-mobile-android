@@ -35,8 +35,6 @@ import net.gini.android.core.api.models.PaymentRequest
  * The Capture feature is a layer of abstraction above Gini Capture SDK and the Return Assistant feature.
  * Capture feature can be used with:
  *  - the Screen API by calling [startCaptureFlow] or [startCaptureFlowForIntent].
- *  - the Component API by building everything around the provided fragments.
- * See example apps for more details about usage of Screen and Component APIs.
  *
  * To use capture features, they need to be configured with [setCaptureConfiguration].
  * Note that configuration is immutable. [releaseCapture] needs to be called before passing a new configuration.
@@ -145,31 +143,6 @@ object GiniBank {
                 }
                 return CancellationToken {}
             }
-        }
-    }
-
-    /**
-     * Component API
-     *
-     * Creates an [Document] for a pdf or image that was shared from another app.
-     *
-     * Importing the files is executed on a secondary thread as it can take several seconds for
-     * the process to complete. The callback methods are invoked on the main thread.
-     *
-     * @param intent the Intent your app received
-     * @param context Android context
-     * @param callback A [AsyncCallback} implementation
-     *
-     * @return a {@link CancellationToken} for cancelling the import process
-     */
-    fun createDocumentForImportedFiles(
-        intent: Intent,
-        context: Context,
-        callback: AsyncCallback<Document, ImportedFileValidationException>
-    ) {
-        giniCapture.let { capture ->
-            check(capture != null) { "Capture feature is not configured. Call setCaptureConfiguration before creating the document." }
-            capture.createDocumentForImportedFiles(intent, context, callback)
         }
     }
 

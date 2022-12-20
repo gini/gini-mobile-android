@@ -6,15 +6,11 @@ package net.gini.android.capture.tracking;
  * Copyright (c) 2020 Gini GmbH.
  */
 
-import android.app.Activity;
-
 /**
  * Events triggered on the camera screen.
  *
  * <p> If you use the Screen API all events will be triggered automatically.
  *
- * <p> If you use the Component API some events will not be triggered (for ex. events which rely on {@link Activity#onBackPressed()}). You
- * need to check whether all the events you are interested in are triggered.
  */
 public enum CameraScreenEvent {
     /**
@@ -26,7 +22,7 @@ public enum CameraScreenEvent {
      */
     HELP,
     /**
-     * Triggers when the user takes a picture.(<b>Screen API + Component API</b>)
+     * Triggers when the user takes a picture.(<b>Screen API</b>)
      */
     TAKE_PICTURE
 }

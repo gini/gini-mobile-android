@@ -22,13 +22,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 /**
- * <h3>Screen API and Component API</h3>
+ * <h3>Screen API</h3>
  *
  * <p>
  *     The Supported Formats Screen shows information about the document formats supported by the Gini Capture SDK.
  * </p>
  * <p>
- *     This Activity is launched by the {@link HelpActivity} for both Screen and Component APIs.
+ *     This Activity is launched by the {@link HelpActivity} for Screen APIs.
  * </p>
  *
  * <h3>Customizing the File Import Screen</h3>

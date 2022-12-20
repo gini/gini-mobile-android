@@ -9,15 +9,15 @@ package net.gini.android.capture.tracking;
 /**
  * Events triggered on the onboarding screen.
  *
- * <p> All events trigger on both Screen and Component APIs.
+ * <p> All events trigger on Screen APIs.
  */
 public enum OnboardingScreenEvent {
     /**
-     * Triggers when the first onboarding page is shown.(<b>Screen API + Component API</b>)
+     * Triggers when the first onboarding page is shown.(<b>Screen API</b>)
      */
     START,
     /**
-     * Triggers when the user presses the next button on the last page.(<b>Screen API + Component API</b>)
+     * Triggers when the user presses the next button on the last page.(<b>Screen API</b>)
      */
     FINISH
 }

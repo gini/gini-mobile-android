@@ -37,13 +37,13 @@ import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.snackbar.Snackbar;
 
 /**
- * <h3>Screen API and Component API</h3>
+ * <h3>Screen API</h3>
  *
  * <p>
  * On the File Import Screen users can get information about how import files from other apps via "open with".
  * </p>
  * <p>
- * This Activity is launched by the {@link HelpActivity} for both Screen and Component APIs.
+ * This Activity is launched by the {@link HelpActivity} for Screen APIs.
  * </p>
  * <p>
  * The contents of this screen need to be customized to insert your App's name or label for the "open with" functionality into the texts and illustrations.

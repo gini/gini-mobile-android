@@ -13,8 +13,6 @@ import android.app.Activity;
  *
  * <p> If you use the Screen API all events will be triggered automatically.
  *
- * <p> If you use the Component API some events will not be triggered (for ex. events which rely on {@link Activity#onBackPressed()}). You
- * need to check whether all the events you are interested in are triggered.
  */
 public enum ReviewScreenEvent {
     /**
@@ -22,11 +20,11 @@ public enum ReviewScreenEvent {
      */
     BACK,
     /**
-     * Triggers when the user presses the next button.(<b>Screen API + Component API</b>)
+     * Triggers when the user presses the next button.(<b>Screen API</b>)
      */
     NEXT,
     /**
-     * Triggers when upload failed.(<b>Screen API + Component API</b>)
+     * Triggers when upload failed.(<b>Screen API</b>)
      *
      * <p> Use the keys in {@link ReviewScreenEvent.UPLOAD_ERROR_DETAILS_MAP_KEY} to get details about the event from the details map.
      */

@@ -85,9 +85,9 @@ import androidx.annotation.VisibleForTesting;
  *
  * <p> To create and configure a singleton instance use the {@link #newInstance()} method and the
  * returned {@link Builder}. If an instance is already available you need to call {@link
- * #cleanup(Context, String, String, String, String, Amount)} before creating a new instance. Failing to do so will throw an exception.
+ * #cleanup(Context, String, String, String, String, String, Amount)} before creating a new instance. Failing to do so will throw an exception.
  *
- * <p> After you are done using the Gini Capture SDK use the {@link #cleanup(Context, String, String, String, String, Amount)} method.
+ * <p> After you are done using the Gini Capture SDK use the {@link #cleanup(Context, String, String, String, String, String, Amount)} method.
  * This will free up resources used by the library.
  */
 public class GiniCapture {
@@ -165,7 +165,7 @@ public class GiniCapture {
      * Configure and create a new instance using the returned {@link Builder}.
      *
      * @return a new {@link Builder}
-     * @throws IllegalStateException when an instance already exists. Call {@link #cleanup(Context, String, String, String, String, Amount)}
+     * @throws IllegalStateException when an instance already exists. Call {@link #cleanup(Context, String, String, String, String, String, Amount)}
      *                               before trying to create a new instance
      */
     @NonNull
@@ -497,34 +497,6 @@ public class GiniCapture {
     }
 
     /**
-     * Component API
-     *
-     * <p> If you have enabled the multi-page feature and your application receives one or multiple
-     * files from another application you can use this method to create a Document for launching the
-     * Gini Capture SDK's {@link MultiPageReviewFragment} or the Analysis Fragment.
-     *
-     * <p> Importing the files is executed on a secondary thread as it can take several seconds for
-     * the process to complete. The callback methods are invoked on the main thread.
-     *
-     * <p> If the Document can be reviewed ({@link Document#isReviewable()}) launch the {@link
-     * MultiPageReviewFragment}.
-     *
-     * <p> If the Document cannot be reviewed you must launch the Analysis Fragment ({@link
-     * net.gini.android.capture.analysis.AnalysisFragmentCompat}).
-     *
-     * @param intent   the Intent your app received
-     * @param context  Android context
-     * @param callback A {@link AsyncCallback} implementation
-     * @return a {@link CancellationToken} for cancelling the import process
-     */
-    @NonNull
-    public CancellationToken createDocumentForImportedFiles(@NonNull final Intent intent,
-                                                            @NonNull final Context context,
-                                                            @NonNull final AsyncCallback<Document, ImportedFileValidationException> callback) {
-        return mGiniCaptureFileImport.createDocumentForImportedFiles(intent, context, callback);
-    }
-
-    /**
      * Screen API
      *
      * <p> When your application receives a file from another application you can use this method to
@@ -552,31 +524,6 @@ public class GiniCapture {
             throws ImportedFileValidationException {
         return GiniCaptureFileImport.createIntentForImportedFile(intent, context,
                 reviewActivityClass, analysisActivityClass);
-    }
-
-    /**
-     * Component API
-     *
-     * <p> When your application receives a file from another application you can use this method to
-     * create a Document for launching the Gini Capture SDK's Review Fragment or Analysis
-     * Fragment.
-     *
-     * <p> If the Document can be reviewed ({@link Document#isReviewable()}) launch the
-     * Review Fragment ({@link net.gini.android.capture.review.ReviewFragmentCompat}).
-     *
-     * <p> If the Document cannot be reviewed you must launch the Analysis Fragment ({@link
-     * net.gini.android.capture.analysis.AnalysisFragmentCompat}).
-     *
-     * @param intent  the Intent your app received
-     * @param context Android context
-     * @return a Document for launching the Gini Capture SDK's Review Fragment or
-     * Analysis Fragment
-     * @throws ImportedFileValidationException if the file didn't pass validation
-     */
-    @NonNull
-    public static Document createDocumentForImportedFile(@NonNull final Intent intent,
-                                                         @NonNull final Context context) throws ImportedFileValidationException {
-        return GiniCaptureFileImport.createDocumentForImportedFile(intent, context);
     }
 
     /**
