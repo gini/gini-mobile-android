@@ -43,7 +43,7 @@ import com.google.android.material.snackbar.Snackbar;
  * On the File Import Screen users can get information about how import files from other apps via "open with".
  * </p>
  * <p>
- * This Activity is launched by the {@link HelpActivity} for Screen APIs.
+ * This Activity is launched by the {@link HelpActivity}.
  * </p>
  * <p>
  * The contents of this screen need to be customized to insert your App's name or label for the "open with" functionality into the texts and illustrations.

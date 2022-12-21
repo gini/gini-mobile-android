@@ -18,7 +18,6 @@ import net.gini.android.bank.sdk.databinding.GbsFragmentDigitalInvoiceOnboarding
  */
 
 /**
- *
  * You should show the `DigitalInvoiceOnboardingFragment` when the
  * [DigitalInvoiceFragmentListener.showOnboarding()] is called.
  *

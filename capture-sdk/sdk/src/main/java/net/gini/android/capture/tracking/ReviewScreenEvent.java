@@ -16,15 +16,15 @@ import android.app.Activity;
  */
 public enum ReviewScreenEvent {
     /**
-     * Triggers when the user presses back.(<b>Screen API only</b>)
+     * Triggers when the user presses back.
      */
     BACK,
     /**
-     * Triggers when the user presses the next button.(<b>Screen API</b>)
+     * Triggers when the user presses the next button.
      */
     NEXT,
     /**
-     * Triggers when upload failed.(<b>Screen API</b>)
+     * Triggers when upload failed.
      *
      * <p> Use the keys in {@link ReviewScreenEvent.UPLOAD_ERROR_DETAILS_MAP_KEY} to get details about the event from the details map.
      */

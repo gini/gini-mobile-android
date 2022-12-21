@@ -23,9 +23,6 @@ import net.gini.android.capture.view.NavigationBarTopAdapter
  * <p>
  * On the Help Screen users can get information about how to best use the Gini Capture SDK.
  * </p>
- * <p>
- * This Activity can be used for Screen APIs.
- * </p>
  *
  * <h3>Customizing the Help Screen</h3>
  *

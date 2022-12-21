@@ -28,7 +28,7 @@ import static net.gini.android.capture.internal.util.ActivityHelper.forcePortrai
  * On the Photo Tips Screen users can get information about how to take better pictures.
  * </p>
  * <p>
- * This Activity is launched by the {@link HelpActivity} for Screen APIs.
+ * This Activity is launched by the {@link HelpActivity}.
  * </p>
  *
  * <h3>Customizing the Photo Tips Screen</h3>
