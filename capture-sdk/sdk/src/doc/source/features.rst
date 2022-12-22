@@ -143,8 +143,8 @@ To enable this feature simply pass ``true`` to ``GiniCapture.Builder.setQRCodeSc
 Only QR Code Scanning
 ----------------
 
-The app supports QR code only scanning. To enable this feature simply pass ``true`` to ``GiniCapture.Builder.setOnlyQRCodeScanning``.
-When enabled this feature removes all UI elements related to taking picture from the Camera screen and leaves only QR code related UI elements.
+The app supports QR code only scanning mode. To enable this feature simply pass ``true`` to ``GiniCapture.Builder.setOnlyQRCodeScanning``.
+Enabling this feature removes all UI elements related to taking pictures from the Camera screen and leaves only QR code-related UI elements.
 
 .. note::
 
