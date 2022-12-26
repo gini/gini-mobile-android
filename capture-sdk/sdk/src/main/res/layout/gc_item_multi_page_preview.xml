@@ -45,10 +45,12 @@
             android:id="@+id/gc_button_delete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:layout_marginEnd="24dp"
+            android:layout_marginTop="@dimen/large_24"
+            android:layout_marginEnd="@dimen/large_24"
+            android:padding="@dimen/small"
             android:background="@android:color/transparent"
             android:src="@drawable/gc_delete"
+            android:contentDescription="@string/gc_delete_document"
             app:layout_constraintEnd_toEndOf="@+id/gc_image_selected_rect"
             app:layout_constraintTop_toTopOf="@+id/gc_image_selected_rect" />
 

@@ -192,4 +192,8 @@
     <string name="gc_unknown_qr_code_description">Dieser Code enthält keine Zahlungsinformationen. Bitte anderen QR-Code oder Rechnung abfotografieren.</string>
     <string name="gc_error_screen_title">Fehler</string>
     <string name="gc_scan">Scan</string>
+
+    <!-- TODO check and translate this  !-->
+    <string name="gc_delete_document">Delete document</string>
+    <string name="gc_document">Document</string>
 </resources>

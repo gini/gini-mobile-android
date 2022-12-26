@@ -15,6 +15,8 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import net.gini.android.capture.R;
+
 /**
  * Created by Alpar Szotyori on 19.02.2018.
  *
@@ -45,7 +47,7 @@ public class RotatableImageViewContainer extends FrameLayout {
                 ViewGroup.LayoutParams.MATCH_PARENT);
         layoutParams.gravity = Gravity.CENTER;
         mImageView.setLayoutParams(layoutParams);
-
+        mImageView.setContentDescription(context.getString(R.string.gc_document));
         addView(mImageView);
     }
 

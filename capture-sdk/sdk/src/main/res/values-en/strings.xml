@@ -172,4 +172,6 @@
     <string name="gc_camera_access">Camera access</string>
     <string name="gc_error_screen_title">Error</string>
     <string name="gc_scan">Scan</string>
+    <string name="gc_delete_document">Delete document</string>
+    <string name="gc_document">Document</string>
 </resources>
