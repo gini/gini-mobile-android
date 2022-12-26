@@ -18,8 +18,6 @@ import net.gini.android.capture.GiniCapture;
  *
  * <p> If you use the Screen API all events will be triggered automatically.
  *
- * <p> If you use the Component API some events will not be triggered (for ex. events which rely on {@link Activity#onBackPressed()}). You
- * need to check whether all the events you are interested in are triggered.
  */
 public interface EventTracker {
 
