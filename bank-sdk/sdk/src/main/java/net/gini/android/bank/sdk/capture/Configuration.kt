@@ -69,6 +69,11 @@ data class CaptureConfiguration(
     val qrCodeScanningEnabled: Boolean = false,
 
     /**
+     * Enable/disable only the QRCode scanning feature.
+     */
+    val onlyQRCodeScanningEnabled: Boolean = false,
+
+    /**
      * Enable/disable the Supported Formats help screen.
      */
     val supportedFormatsHelpScreenEnabled: Boolean = true,
@@ -164,7 +169,6 @@ data class CaptureConfiguration(
     /**
      * Set an adapter implementation to show a custom loading animation during analyse and scan.
      */
-
     val customLoadingIndicatorAdapter: CustomLoadingIndicatorAdapter? = null
 )
 
@@ -176,6 +180,7 @@ internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfig
         .setDocumentImportEnabledFileTypes(configuration.documentImportEnabledFileTypes)
         .setFileImportEnabled(configuration.fileImportEnabled)
         .setQRCodeScanningEnabled(configuration.qrCodeScanningEnabled)
+        .setOnlyQRCodeScanning(configuration.onlyQRCodeScanningEnabled)
         .setSupportedFormatsHelpScreenEnabled(configuration.supportedFormatsHelpScreenEnabled)
         .setFlashButtonEnabled(configuration.flashButtonEnabled)
         .setBackButtonsEnabled(configuration.backButtonsEnabled)
