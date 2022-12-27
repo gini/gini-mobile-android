@@ -88,6 +88,7 @@
             android:layout_centerHorizontal="true"
             android:background="@null"
             android:src="@drawable/gc_camera_trigger"
+            android:contentDescription="@string/gc_take_a_picture"
             app:layout_constraintBottom_toBottomOf="@+id/gc_camera_pane_background"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/gc_camera_pane_background"
