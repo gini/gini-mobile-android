@@ -31,6 +31,16 @@ interface CameraFragmentListener {
      */
     void onDocumentAvailable(@NonNull Document document);
 
+
+    /**
+     * <p>
+     * Called when starting MultiPageReview Screen
+     * </p>
+     *
+     * @param multiPageDocument the image taken by the camera or the validated imported document
+     * @param shouldScrollToLastPage if pages should scroll to the last one
+     */
+
     void onProceedToMultiPageReviewScreen(
             @NonNull final GiniCaptureMultiPageDocument multiPageDocument, boolean shouldScrollToLastPage);
 

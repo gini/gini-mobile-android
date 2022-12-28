@@ -352,6 +352,11 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                 });
     }
 
+    /**
+     * Internal use only.
+     *
+     * @suppress
+     */
     public void onStart() {
         checkGiniCaptureInstance();
         final Activity activity = mFragment.getActivity();
@@ -367,12 +372,9 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         }
 
         if (isCameraPermissionGranted()) {
-            openCamera().thenAccept(new CompletableFuture.Action<Void>() {
-                @Override
-                public void accept(Void unused) {
-                    enableTapToFocus();
-                    initFlashButton();
-                }
+            openCamera().thenAccept(unused -> {
+                enableTapToFocus();
+                initFlashButton();
             });
         } else {
             showNoPermissionView();
@@ -406,6 +408,11 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     }
 
+    /**
+     * Internal use only.
+     *
+     * @suppress
+     */
     public void onResume() {
         initMultiPageDocument();
 
@@ -464,11 +471,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         });
     }
 
-    @VisibleForTesting
-    PaymentQRCodeReader getPaymentQRCodeReader() {
-        return mPaymentQRCodeReader;
-    }
-
     private void enableTapToFocus() {
         mCameraController.enableTapToFocus(new CameraInterface.TapToFocusListener() {
             @Override
@@ -496,40 +498,37 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private CompletableFuture<Void> openCamera() {
         LOG.info("Opening camera");
         return mCameraController.open()
-                .handle(new CompletableFuture.BiFun<Void, Throwable, Void>() {
-                    @Override
-                    public Void apply(final Void aVoid, final Throwable throwable) {
-                        if (throwable != null) {
-                            if (throwable.getCause() instanceof CameraException) {
-                                final CameraException cameraException = (CameraException) throwable.getCause();
-                                switch (cameraException.getType()) {
-                                    case NO_ACCESS:
-                                        showNoPermissionView();
-                                        break;
-                                    case NO_BACK_CAMERA:
-                                    case OPEN_FAILED:
-                                        handleError(GiniCaptureError.ErrorCode.CAMERA_OPEN_FAILED,
-                                                "Failed to open camera", cameraException);
-                                        break;
-                                    case NO_PREVIEW:
-                                        handleError(GiniCaptureError.ErrorCode.CAMERA_NO_PREVIEW,
-                                                "Failed to open camera", cameraException);
-                                        break;
-                                    case SHOT_FAILED:
-                                        handleError(GiniCaptureError.ErrorCode.CAMERA_SHOT_FAILED,
-                                                "Failed to open camera", cameraException);
-                                        break;
-                                }
-                            } else {
-                                handleError(GiniCaptureError.ErrorCode.CAMERA_UNKNOWN,
-                                        "Failed to open camera", throwable.getCause());
+                .handle((aVoid, throwable) -> {
+                    if (throwable != null) {
+                        if (throwable.getCause() instanceof CameraException) {
+                            final CameraException cameraException = (CameraException) throwable.getCause();
+                            switch (cameraException.getType()) {
+                                case NO_ACCESS:
+                                    showNoPermissionView();
+                                    break;
+                                case NO_BACK_CAMERA:
+                                case OPEN_FAILED:
+                                    handleError(GiniCaptureError.ErrorCode.CAMERA_OPEN_FAILED,
+                                            "Failed to open camera", cameraException);
+                                    break;
+                                case NO_PREVIEW:
+                                    handleError(GiniCaptureError.ErrorCode.CAMERA_NO_PREVIEW,
+                                            "Failed to open camera", cameraException);
+                                    break;
+                                case SHOT_FAILED:
+                                    handleError(GiniCaptureError.ErrorCode.CAMERA_SHOT_FAILED,
+                                            "Failed to open camera", cameraException);
+                                    break;
                             }
                         } else {
-                            LOG.info("Camera opened");
-                            hideNoPermissionView();
+                            handleError(GiniCaptureError.ErrorCode.CAMERA_UNKNOWN,
+                                    "Failed to open camera", throwable.getCause());
                         }
-                        return null;
+                    } else {
+                        LOG.info("Camera opened");
+                        hideNoPermissionView();
                     }
+                    return null;
                 });
     }
 
@@ -749,31 +748,18 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     }
 
     private void setInputHandlers() {
-        mButtonCameraTrigger.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                onCameraTriggerClicked();
-            }
+        mButtonCameraTrigger.setOnClickListener(v -> onCameraTriggerClicked());
+
+        mButtonCameraFlash.setOnClickListener(v -> {
+            mIsFlashEnabled = !mCameraController.isFlashEnabled();
+            updateCameraFlashState();
         });
-        mButtonCameraFlash.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                mIsFlashEnabled = !mCameraController.isFlashEnabled();
-                updateCameraFlashState();
-            }
-        });
-        mButtonImportDocument.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
-                showFileChooser();
-            }
-        });
-        mPhotoThumbnail.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                if (mFragment.getActivity() != null)
-                    (mFragment.getActivity()).finish();
-            }
+
+        mButtonImportDocument.setOnClickListener(view -> showFileChooser());
+
+        mPhotoThumbnail.setOnClickListener(v -> {
+            if (mFragment.getActivity() != null)
+                (mFragment.getActivity()).finish();
         });
     }
 
@@ -794,18 +780,12 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         }
         mIsTakingPicture = true;
         mCameraController.takePicture()
-                .handle(new CompletableFuture.BiFun<Photo, Throwable, Void>() {
-                    @Override
-                    public Void apply(final Photo photo, final Throwable throwable) {
-                        mUIExecutor.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                trackCameraScreenEvent(CameraScreenEvent.TAKE_PICTURE);
-                                onPictureTaken(photo, throwable);
-                            }
-                        });
-                        return null;
-                    }
+                .handle((CompletableFuture.BiFun<Photo, Throwable, Void>) (photo, throwable) -> {
+                    mUIExecutor.runOnUiThread(() -> {
+                        trackCameraScreenEvent(CameraScreenEvent.TAKE_PICTURE);
+                        onPictureTaken(photo, throwable);
+                    });
+                    return null;
                 });
     }
 
@@ -1179,8 +1159,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             return;
         }
         throw new UnsupportedOperationException("Cannot show error. Need to replace own ErrorSnackbar with Material Snackbar");
-//        ErrorSnackbar.make(mFragment.getActivity(), mLayoutRoot, message, null, null,
-//                duration).show();
     }
 
     private void updatePhotoThumbnail() {
@@ -1265,14 +1243,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         }
         mFragment.showAlertDialog(message,
                 activity.getString(R.string.gc_document_import_pick_another_document),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(
-                            final DialogInterface dialogInterface,
-                            final int i) {
-                        showFileChooser();
-                    }
-                }, activity.getString(R.string.gc_document_import_close_error), null, null);
+                (dialogInterface, i) -> showFileChooser(), activity.getString(R.string.gc_document_import_close_error), null, null);
     }
 
     @UiThread
@@ -1387,14 +1358,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         }
         mFragment.showAlertDialog(activity.getString(R.string.gc_document_error_too_many_pages),
                 activity.getString(R.string.gc_document_error_multi_page_limit_review_pages_button),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(
-                            final DialogInterface dialogInterface,
-                            final int i) {
-                        mListener.onProceedToMultiPageReviewScreen(mMultiPageDocument, shouldScrollToLastPage());
-                    }
-                }, activity.getString(R.string.gc_document_error_multi_page_limit_cancel_button),
+                (dialogInterface, i) -> mListener.onProceedToMultiPageReviewScreen(mMultiPageDocument, shouldScrollToLastPage()), activity.getString(R.string.gc_document_error_multi_page_limit_cancel_button),
                 null, null);
     }
 
@@ -1561,12 +1525,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             return;
         }
         final Button button = view.findViewById(R.id.gc_button_camera_no_permission);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                startApplicationDetailsSettings();
-            }
-        });
+        button.setOnClickListener(v -> startApplicationDetailsSettings());
     }
 
     private void hideNoPermissionButton() {
@@ -1651,11 +1610,11 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         mListener.onError(new GiniCaptureError(errorCode, errorMessage));
     }
 
-    public boolean shouldScrollToLastPage() {
+    private boolean shouldScrollToLastPage() {
         return mMultiPageDocumentSize < mMultiPageDocument.getDocuments().size();
     }
 
-    public void setShouldScrollToLastPage(boolean mShouldScrollToLastPage) {
+    private void setShouldScrollToLastPage(boolean mShouldScrollToLastPage) {
         this.mShouldScrollToLastPage = mShouldScrollToLastPage;
     }
 }
