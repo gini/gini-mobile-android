@@ -17,13 +17,6 @@ import androidx.annotation.VisibleForTesting;
 import androidx.fragment.app.Fragment;
 
 /**
- * <h3>Component API</h3>
- *
- * <p> When you use the Compontent API with the Android Support Library, the {@code
- * ReviewFragmentCompat} displays the photographed or imported image and allows the user to review
- * it by checking the sharpness, quality and orientation of the image. The user can correct the
- * orientation by rotating the image.
- *
  * <p> <b>Note:</b> Your Activity hosting this Fragment must extend the {@link
  * androidx.appcompat.app.AppCompatActivity} and use an AppCompat Theme.
  *

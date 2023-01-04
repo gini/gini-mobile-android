@@ -84,14 +84,6 @@ import jersey.repackaged.jsr166e.CompletableFuture;
  */
 
 /**
- * <h3>Component API</h3>
- *
- * <p> When you use the Compontent API and have enabled the multi-page feature, the {@code
- * MultiPageReviewFragment} displays the photographed or imported images and allows the user to
- * review them by checking the order, sharpness, quality and orientation of the images. The user can
- * correct the order by dragging the thumbnails of the images and can also correct the orientation
- * by rotating the images.
- *
  * <p> <b>Important:</b>
  *
  * <ul>
@@ -475,13 +467,41 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
         mTabIndicator.removeAllTabs();
 
         for (int i = 0; i < mMultiPageDocument.getDocuments().size(); i++) {
-            mTabIndicator.addTab(mTabIndicator.newTab());
+            TabLayout.Tab tab = mTabIndicator.newTab();
+
+            tab.view.setOnClickListener(v -> {
+
+                //If user is clicking on same tab -> return
+                if (mTabIndicator.getSelectedTabPosition() == tab.getPosition())
+                    return;
+
+                clearAllBlueRect();
+                scrollToCorrectPosition(tab.getPosition(), true);
+                mRecyclerView.postDelayed(() -> showHideBlueRect(View.VISIBLE), 200);
+            });
+
+            mTabIndicator.addTab(tab);
         }
         mTabIndicator.setSmoothScrollingEnabled(true);
+
     }
 
     private void updateTabIndicatorPosition(int viewAtPosition) {
         mTabIndicator.selectTab(mTabIndicator.getTabAt(viewAtPosition));
+    }
+
+    //Clear all blue rect from views
+    private void clearAllBlueRect() {
+        for (int i = 0; i < mPreviewPagesAdapter.getItemCount(); i++) {
+            View child = mSnapManager.getChildAt(i);
+            if (child != null) {
+                ConstraintLayout c = child.findViewById(R.id.gc_image_wrapper);
+                if (c != null) {
+                    c.findViewById(R.id.gc_image_selected_rect)
+                            .setVisibility(View.INVISIBLE);
+                }
+            }
+        }
     }
 
     private void setupTopNavigationBar() {
