@@ -82,9 +82,11 @@ import androidx.appcompat.app.AppCompatActivity;
  * style as their parent. Ex.: the parent of {@code GiniCaptureTheme.Typography.Subtitle2}
  * must be {@code Root.GiniCaptureTheme.Typography.Subtitle2}.
  *
- * <h3>Customizing the Action Bar</h3>
+ * <h3>Customizing the Top navigation bar</h3>
  *
- * Customizing the Action Bar can be done by injecting your own Action Bar in GiniCapture Builder {@code builder.setNavigationBarTopAdapter()}
+ <p>Customizing the top navigation bar is done via setNavigationBarTopAdapter in GiniCapture builder,
+ * this is global to all Activities ({@link CameraActivity}, {@link OnboardingActivity}, {@link ReviewActivity},
+ * {@link net.gini.android.capture.review.multipage.MultiPageReviewActivity}, {@link AnalysisActivity}).
  *
  * </ul>
  */
