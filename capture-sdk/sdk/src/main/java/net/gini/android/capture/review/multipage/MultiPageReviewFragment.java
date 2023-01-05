@@ -91,7 +91,7 @@ import jersey.repackaged.jsr166e.CompletableFuture;
  * <li> A {@link GiniCapture} instance is required to use the {@code MultiPageReviewFragment}
  *
  * <li> Your Activity hosting this Fragment must extend the {@link androidx.appcompat.app.AppCompatActivity}
- * and use an AppCompat Theme.
+ * and use an Material3 Theme.
  *
  * </ul>
  *
