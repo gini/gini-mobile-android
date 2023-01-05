@@ -38,7 +38,7 @@ interface CameraFragmentListener {
      * </p>
      *
      * @param multiPageDocument the image taken by the camera or the validated imported document
-     * @param shouldScrollToLastPage if pages should scroll to the last one
+     * @param shouldScrollToLastPage flag which defines if pages should scroll to the last page
      */
 
     void onProceedToMultiPageReviewScreen(
