@@ -57,9 +57,7 @@ import static net.gini.android.capture.internal.util.NullabilityHelper.getMapOrE
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
 
 /**
- * Created by Alpar Szotyori on 08.05.2019.
- * <p>
- * Copyright (c) 2019 Gini GmbH.
+ * Internal use only
  */
 class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
 
