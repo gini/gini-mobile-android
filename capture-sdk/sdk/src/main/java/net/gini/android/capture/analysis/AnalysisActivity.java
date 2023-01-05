@@ -52,7 +52,7 @@ import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysi
  * the PDF's filename. On Android KitKat and older only the PDF's filename is shown with the preview area
  * left empty.
  *
- * <p> For images only the activity indicator and activity indicator message is shown without preview
+ * <p> For images only the activity indicator and activity indicator message is shown without preview.
  *
  * <p> The preferred way of adding network calls to the Gini Capture SDK is by creating a {@link GiniCapture} instance with a {@link
  * GiniCaptureNetworkService} and a {@link GiniCaptureNetworkApi} implementation.

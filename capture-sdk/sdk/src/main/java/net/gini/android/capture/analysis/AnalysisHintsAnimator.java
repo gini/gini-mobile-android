@@ -19,6 +19,12 @@ import androidx.core.view.ViewPropertyAnimatorCompat;
 import androidx.core.view.ViewPropertyAnimatorListenerAdapter;
 
 /**
+ * Created by Alpar Szotyori on 09.05.2019.
+ *
+ * Copyright (c) 2019 Gini GmbH.
+ */
+
+/**
  * Internal use only
  */
 class AnalysisHintsAnimator {
