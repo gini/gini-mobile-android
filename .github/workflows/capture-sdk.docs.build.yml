@@ -31,6 +31,11 @@ jobs:
         with:
           python-version: '2.7.x'
 
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '2.7.3'
+          bundler-cache: true
+
       - name: build sdk documentation
         uses: maierj/fastlane-action@v2.0.1
         with:
