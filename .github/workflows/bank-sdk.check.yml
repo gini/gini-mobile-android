@@ -29,10 +29,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: setup java
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '11'
@@ -43,7 +43,7 @@ jobs:
 
       - name: archive unit test results
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: bank-sdk-unit-test-results
           path: bank-sdk/sdk/build/reports/tests
@@ -55,7 +55,7 @@ jobs:
 #
 #      - name: archive unit test coverage report
 #        if: always()
-#        uses: actions/upload-artifact@v2
+#        uses: actions/upload-artifact@v3
 #        with:
 #          name: bank-sdk-unit-test-coverage
 #          path: bank-sdk/sdk/build/jacoco/jacocoHtml
@@ -64,17 +64,17 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: setup java
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '11'
           cache: 'gradle'
 
       - name: avd cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         id: avd-cache
         with:
           path: |
@@ -112,7 +112,7 @@ jobs:
 
       - name: archive instrumented test results
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: capture-sdk-default-network-instrumented-test-results
           path: capture-sdk/default-network/build/outputs/androidTest-results/connected
@@ -121,9 +121,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '11'
@@ -136,7 +136,7 @@ jobs:
           -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
 
       - name: archive screen api example app
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: bank-sdk-screen-api-example-app
           path: bank-sdk/screen-api-example-app/build/outputs/apk
@@ -148,7 +148,7 @@ jobs:
 #          -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
 #
 #      - name: archive component api example app
-#        uses: actions/upload-artifact@v2
+#        uses: actions/upload-artifact@v3
 #        with:
 #          name: bank-sdk-component-api-example-app
 #          path: bank-sdk/component-api-example-app/build/outputs/apk
@@ -157,9 +157,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '11'
@@ -169,7 +169,7 @@ jobs:
         run: ./gradlew bank-sdk:sdk:lint
 
       - name: archive android lint report
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: bank-sdk-android-lint-report
           path: bank-sdk/sdk/build/reports/lint-results*.html
@@ -178,9 +178,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '11'
@@ -190,7 +190,7 @@ jobs:
         run: ./gradlew bank-sdk:sdk:detekt
 
       - name: archive detekt report
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: bank-sdk-detekt-report
           path: bank-sdk/sdk/build/reports/detekt/*.html
@@ -199,9 +199,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '11'
@@ -211,7 +211,7 @@ jobs:
         run: ./gradlew bank-sdk:sdk:ktlintCheck
 
       - name: archive ktlint report
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: bank-sdk-ktlint-report
           path: bank-sdk/sdk/build/reports/ktlint/**/*.html
