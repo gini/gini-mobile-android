@@ -166,7 +166,7 @@ platform :android do
 
     sphinx_doc_dir = "../#{project_id}/#{module_id}/src/doc"
 
-    if Dir.exists? sphinx_doc_dir
+    if Dir.exist? sphinx_doc_dir
       UI.message "Building integration guide (Sphinx)"
 
       # Get the version for each linked project and create a space separated string of
