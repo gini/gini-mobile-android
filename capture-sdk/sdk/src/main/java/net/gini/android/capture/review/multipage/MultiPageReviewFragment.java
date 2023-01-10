@@ -287,6 +287,11 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
         mSnapManager = null;
         mRecyclerView.setLayoutManager(null);
 
+        if (getView() != null) {
+            getView().getRootView();
+            getView().forceLayout();
+        }
+
         initRecyclerView();
 
         if (mScrollPosition > -1 && mScrollPosition <= mMultiPageDocument.getDocuments().size() - 1)
@@ -782,16 +787,16 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
         trackReviewScreenEvent(ReviewScreenEvent.UPLOAD_ERROR, errorDetails);
     }
 
-   private void handleError(Throwable throwable, Document document) {
-       if (getActivity() != null) {
-           if (throwable instanceof FailureException) {
-               FailureException exception = (FailureException) throwable;
-               ErrorActivity.startErrorActivity(requireActivity(), exception.errorType, document);
-           } else {
-               ErrorActivity.startErrorActivity(requireActivity(), ErrorType.GENERAL, document);
-           }
-       }
-   }
+    private void handleError(Throwable throwable, Document document) {
+        if (getActivity() != null) {
+            if (throwable instanceof FailureException) {
+                FailureException exception = (FailureException) throwable;
+                ErrorActivity.startErrorActivity(requireActivity(), exception.errorType, document);
+            } else {
+                ErrorActivity.startErrorActivity(requireActivity(), ErrorType.GENERAL, document);
+            }
+        }
+    }
 
     private void showIndicator() {
         if (injectedLoadingIndicatorContainer != null && injectedLoadingIndicatorContainer.getInjectedViewAdapter() != null)
