@@ -11,6 +11,7 @@ on:
     tags-ignore:
       - '**'
   pull_request:
+    types: [opened, edited, reopened]
     paths:
       - 'bank-api-library/**'
       - 'core-api-library/**'
@@ -28,17 +29,17 @@ jobs:
         api-level: [22, 31]
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: setup java
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '11'
           cache: 'gradle'
 
       - name: avd cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         id: avd-cache
         with:
           path: |
@@ -76,7 +77,7 @@ jobs:
 
       - name: archive instrumented test results
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: bank-api-library-instrumented-test-results
           path: bank-api-library/library/build/outputs/androidTest-results/connected
@@ -85,9 +86,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '11'
@@ -97,7 +98,7 @@ jobs:
         run: ./gradlew bank-api-library:library:checkstyle
 
       - name: archive checkstyle report
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: bank-api-library-checkstyle-report
           path: bank-api-library/library/build/reports/checkstyle/*.html
@@ -106,9 +107,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '11'
@@ -118,7 +119,7 @@ jobs:
         run: ./gradlew bank-api-library:library:pmd
 
       - name: archive pmd report
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: bank-api-library-pmd-report
           path: bank-api-library/library/build/reports/pmd/*.html
@@ -127,9 +128,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '11'
@@ -139,7 +140,7 @@ jobs:
         run: ./gradlew bank-api-library:library:lint
 
       - name: archive android lint report
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: bank-api-library-android-lint-report
           path: bank-api-library/library/build/reports/lint-results*.html
@@ -148,9 +149,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '11'
@@ -160,7 +161,7 @@ jobs:
         run: ./gradlew bank-api-library:library:detekt
 
       - name: archive detekt report
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: bank-api-library-detekt-report
           path: bank-api-library/library/build/reports/detekt/*.html
@@ -169,9 +170,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '11'
@@ -181,7 +182,7 @@ jobs:
         run: ./gradlew bank-api-library:library:ktlintCheck
 
       - name: archive ktlint report
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: bank-api-library-ktlint-report
           path: bank-api-library/library/build/reports/ktlint/**/*.html
