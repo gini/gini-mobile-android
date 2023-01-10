@@ -16,6 +16,8 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -288,8 +290,8 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
         mRecyclerView.setLayoutManager(null);
 
         if (getView() != null) {
-            getView().getRootView();
-            getView().forceLayout();
+            getView().getRootView().invalidate();
+            getView().getRootView().requestLayout();
         }
 
         initRecyclerView();
