@@ -14,10 +14,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: setup java
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '11'
@@ -26,11 +26,11 @@ jobs:
       - name: setup ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.7
+          ruby-version: '3.2.0'
           bundler-cache: true
 
       - name: "publish to gini's maven repo at https://repo.gini.net/nexus/content/repositories/open"
-        uses: maierj/fastlane-action@v2.0.1
+        uses: maierj/fastlane-action@v3.0.0
         with:
           lane: 'publish_to_maven_repo'
           options: >
@@ -47,7 +47,7 @@ jobs:
             }
     
       - name: "publish to Maven Central staging repo at https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-        uses: maierj/fastlane-action@v2.0.1
+        uses: maierj/fastlane-action@v3.0.0
         with:
           lane: 'publish_to_maven_repo'
           options: >

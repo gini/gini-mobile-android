@@ -11,6 +11,7 @@ on:
     tags-ignore:
       - '**'
   pull_request:
+    types: [opened, edited, reopened]
     paths:
       - 'health-api-library/**'
       - 'core-api-library/**'
@@ -25,10 +26,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: setup java
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '11'
@@ -39,7 +40,7 @@ jobs:
 
       - name: archive unit test results
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: health-api-library-unit-test-results
           path: health-api-library/library/build/reports/tests
@@ -49,7 +50,7 @@ jobs:
 
       - name: archive unit test coverage report
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: health-api-library-unit-test-coverage
           path: health-api-library/library/build/jacoco/jacocoHtml
@@ -61,17 +62,17 @@ jobs:
         api-level: [22, 31]
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: setup java
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '11'
           cache: 'gradle'
 
       - name: avd cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         id: avd-cache
         with:
           path: |
@@ -109,7 +110,7 @@ jobs:
 
       - name: archive instrumented test results
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: health-api-library-instrumented-test-results
           path: health-api-library/library/build/outputs/androidTest-results/connected
@@ -118,9 +119,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '11'
@@ -130,7 +131,7 @@ jobs:
         run: ./gradlew health-api-library:library:checkstyle
 
       - name: archive checkstyle report
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: health-api-library-checkstyle-report
           path: health-api-library/library/build/reports/checkstyle/*.html
@@ -139,9 +140,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '11'
@@ -151,7 +152,7 @@ jobs:
         run: ./gradlew health-api-library:library:pmd
 
       - name: archive pmd report
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: health-api-library-pmd-report
           path: health-api-library/library/build/reports/pmd/*.html
@@ -160,9 +161,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '11'
@@ -172,7 +173,7 @@ jobs:
         run: ./gradlew health-api-library:library:lint
 
       - name: archive android lint report
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: health-api-library-android-lint-report
           path: health-api-library/library/build/reports/lint-results*.html
@@ -181,9 +182,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '11'
@@ -193,7 +194,7 @@ jobs:
         run: ./gradlew health-api-library:library:detekt
 
       - name: archive detekt report
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: health-api-library-detekt-report
           path: health-api-library/library/build/reports/detekt/*.html
@@ -202,9 +203,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '11'
@@ -214,7 +215,7 @@ jobs:
         run: ./gradlew health-api-library:library:ktlintCheck
 
       - name: archive ktlint report
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: health-api-library-ktlint-report
           path: health-api-library/library/build/reports/ktlint/**/*.html
