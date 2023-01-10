@@ -406,7 +406,7 @@ Furthermore you can show back navigation button on bottom navigation bar. You ca
             .build();
 
 Analysis Screen Customization
--------------------------
+-----------------------------
 
 .. note::
 
