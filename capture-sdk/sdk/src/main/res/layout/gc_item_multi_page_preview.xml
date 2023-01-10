@@ -50,7 +50,7 @@
             android:padding="@dimen/small"
             android:background="@android:color/transparent"
             android:src="@drawable/gc_delete"
-            android:contentDescription="@string/gc_delete_document"
+            android:contentDescription="@string/gc_delete_page"
             app:layout_constraintEnd_toEndOf="@+id/gc_image_selected_rect"
             app:layout_constraintTop_toTopOf="@+id/gc_image_selected_rect" />
 

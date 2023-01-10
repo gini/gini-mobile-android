@@ -46,7 +46,7 @@
             android:layout_marginTop="@dimen/large_24"
             android:layout_marginEnd="@dimen/large_24"
             android:padding="@dimen/small"
-            android:contentDescription="@string/gc_delete_document"
+            android:contentDescription="@string/gc_delete_page"
             android:background="@android:color/transparent"
             android:src="@drawable/gc_delete"
             app:layout_constraintEnd_toEndOf="@+id/gc_image_selected_rect"
