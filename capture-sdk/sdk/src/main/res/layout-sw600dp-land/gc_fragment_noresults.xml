@@ -41,7 +41,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_toLeftOf="@id/gc_no_results_header"
+            android:layout_toStartOf="@id/gc_no_results_header"
             android:layout_marginEnd="@dimen/large_24"
             android:src="@drawable/gc_alert_triangle_icon"/>
 
