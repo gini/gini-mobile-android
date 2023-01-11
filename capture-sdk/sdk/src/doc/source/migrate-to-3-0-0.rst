@@ -224,6 +224,14 @@ For example if you need to show animated illustrations you can use a `Lottie
 
 You can find more details `here <customization-guide.html>`_.
 
+QR code scanning
+~~~~~
+
+Breaking Changes
+++++++++++++++++
+
+QR code scanning UI and functionality are changed. Scanning and processing happens automatically. You can find more details `here <features.html#qr-code-scanning>`_.
+
 Help
 ~~~~~
 

@@ -472,7 +472,7 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
     }
 
     private void showOnboardingIfRequested() {
-        if (shouldShowOnboarding()) {
+        if (shouldShowOnboarding() && !mAddPages) {
             startOnboardingActivity();
         }
     }

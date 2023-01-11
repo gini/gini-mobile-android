@@ -77,6 +77,7 @@
             android:layout_marginBottom="24dp"
             android:background="@null"
             android:src="@drawable/gc_camera_trigger"
+            android:contentDescription="@string/gc_take_a_picture"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -109,6 +110,7 @@
                 android:clickable="false"
                 android:scaleType="centerInside"
                 android:src="@drawable/gc_camera_flash_on"
+                android:contentDescription="@string/gc_flash_button"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -169,6 +171,7 @@
                 android:clickable="false"
                 android:scaleType="centerInside"
                 android:src="@drawable/gc_document_import_icon"
+                android:contentDescription="@string/gc_camera_document_import_subtitle"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

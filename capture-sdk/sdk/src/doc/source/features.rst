@@ -118,13 +118,11 @@ By using the Google Mobile Vision API the SDK can read payment data from QR Code
 (`Stuzza (AT) <https://www.stuzza.at/de/zahlungsverkehr/qr-code.html>`_ and `GiroCode (DE)
 <https://www.girocode.de/rechnungsempfaenger/>`_) and `EPS <https://eservice.stuzza.at/de/eps-ueberweisung-dokumentation/category/5-dokumentation.html>`_ formats.
 
-When a supported QR code is detected with valid payment data a popup is shown in the camera screen. The user may tap the
-popup to use the payment data directly without the need to analyze the document.
+When a supported QR code is detected with valid payment data, white camera frame will turn into the green color with proper message that QR code is detected.
 
-If the QR code does not have a supported payment format then a popup informs the user that a QR code was detected, but it
-cannot be used.
+If the QR code does not have a supported payment format, white camera frame will turn into the yellow color with proper message that QR code is not supported.
 
-After the user tapped on the QR code detected popup the payment information is extracted form the QR code. The extractions are
+Payment information extraction starts immediately after supported QR code is successfully scanned. The extractions are
 returned in the result of the ``CameraActivity``.
 
 QR Code Scanning is available on devices running Android with Google Play Services installed.
@@ -405,6 +403,23 @@ Furthermore you can show back navigation button on bottom navigation bar. You ca
             .setHelpNavigationBarBottomAdapter(customHelpNavigationBarBottomAdapter)
             .build();
 
+Analysis Screen Customization
+-----------------------------
+
+.. note::
+
+    This screen does not show a bottom navigation bar even if the value passed to ``GiniCapture.newInstance().setBottomNavigationBarEnabled()`` is ``true``
+
+You can show customized activity indicator on this screen. You can pass your custom ``CustomLoadingIndicatorAdapter`` implementation to
+``GiniCapture.Builder`` :
+
+.. code-block:: java
+
+    CustomLottiLoadingIndicatorAdapter customLottiLoadingIndicatorAdapter = new CustomLottiLoadingIndicatorAdapter(getResources().getIdentifier("custom_loading", "raw", this.getPackageName()));
+
+    GiniCapture.newInstance()
+            .setLoadingIndicatorAdapter(customLottiLoadingIndicatorAdapter)
+            .build();
 
 Event Tracking
 --------------
