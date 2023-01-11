@@ -265,6 +265,6 @@ Custom activity indicator view
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 There is a default implementation for indicating that document analysis is in progress, but you can show your own activity indicator
-by by implementing the ``CustomLoadingIndicatorAdapter`` interface and passing it to ``GiniCapture``.
+by implementing the ``CustomLoadingIndicatorAdapter`` interface and passing it to ``GiniCapture``.
 
 You can find more details `here <features.html#analysis-screen-customization>`_.
