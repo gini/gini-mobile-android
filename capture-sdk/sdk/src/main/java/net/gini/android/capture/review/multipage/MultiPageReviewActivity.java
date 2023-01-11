@@ -41,54 +41,9 @@ import androidx.appcompat.app.AppCompatActivity;
  */
 
 /**
- * <h3>Screen API</h3>
+ * Internal use only.
  *
- * When you use the Screen API and have enabled the multi-page feature, the {@code
- * MultiPageReviewActivity} displays the photographed or imported images and allows the user to
- * review them by checking the order, sharpness, quality and orientation of the images.
- *
- * <p> If multi-page has been enabled then the {@code MultiPageReviewActivity} is started by the
- * {@link CameraActivity} after the user has taken the first photo or imported the first image of a
- * document. For subsequent images the user has to tap on the image stack in the Camera Screen to
- * launch it.
- *
- * <p> <b>Important:</b> A {@link GiniCapture} instance is required to use the {@code
- * MultiPageReviewActivity}
- *
- * <h3>Customizing the Multi-Page Review Screen</h3>
- *
- * Customizing the look of the Review Screen is done via overriding of app resources.
- *
- * <p> The following items are customizable:
- *
- * <ul>
- *
- * <li><b>Next button style via overriding {@code GiniCaptureTheme.Widget.Button.UnelevatedButton}
- *
- * <li><b>Thumbnails panel background color:</b> via the color resource named {@code
- * gc_multi_page_review_thumbnails_panel_background}
- *
- * <li><b>Add page icon:</b> via svg image {@code gc_add_page.svg}
- *
- * <li> <b>Add page icon subtitle text:</b> via the string resource named {@code gc_pages_txt}
- *
- * <li> <b>Add page icon subtitle text style:</b> via overriding the style named {@code GiniCaptureTheme.Typography.Subtitle2}
- *
- * <li><b>Delete icon:</b> via svg images named {@code gc_button_delete.svg}
- *
- * </ul>
- *
- * <p> <b>Important:</b> All overridden styles must have their respective {@code Root.} prefixed
- * style as their parent. Ex.: the parent of {@code GiniCaptureTheme.Typography.Subtitle2}
- * must be {@code Root.GiniCaptureTheme.Typography.Subtitle2}.
- *
- * <h3>Customizing the Top navigation bar</h3>
- *
- <p>Customizing the top navigation bar is done via setNavigationBarTopAdapter in GiniCapture builder,
- * this is global to all Activities ({@link CameraActivity}, {@link OnboardingActivity}, {@link ReviewActivity},
- * {@link net.gini.android.capture.review.multipage.MultiPageReviewActivity}, {@link AnalysisActivity}).
- *
- * </ul>
+ * @suppress
  */
 public class MultiPageReviewActivity extends AppCompatActivity implements
         MultiPageReviewFragmentListener {

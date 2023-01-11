@@ -84,32 +84,9 @@ import jersey.repackaged.jsr166e.CompletableFuture;
  */
 
 /**
- * <p> <b>Important:</b>
+ * Internal use only.
  *
- * <ul>
- *
- * <li> A {@link GiniCapture} instance is required to use the {@code MultiPageReviewFragment}
- *
- * <li> Your Activity hosting this Fragment must extend the {@link androidx.appcompat.app.AppCompatActivity}
- * and use an Material3 Theme.
- *
- * </ul>
- *
- * <p> Include the {@code MultiPageReviewFragment} into your layout by using the {@link
- * MultiPageReviewFragment#newInstance(boolean)} ()} factory method to create an instance and display it
- * using the {@link androidx.fragment.app.FragmentManager}.
- *
- * <p> A {@link MultiPageReviewFragmentListener} instance must be available until the {@code
- * MultiPageReviewFragment} is attached to an activity. Failing to do so will throw an exception.
- * The listener instance can be provided either implicitly by making the hosting Activity implement
- * the {@link MultiPageReviewFragmentListener} interface or explicitly by setting the listener using
- * {@link MultiPageReviewFragment#setListener(MultiPageReviewFragmentListener)}.
- *
- * <p> Your Activity is automatically set as the listener in {@link MultiPageReviewFragment#onCreate(Bundle)}.
- *
- * <h3>Customizing the Multi-Page Review Screen</h3>
- * <p>
- * See the {@link MultiPageReviewActivity} for details.
+ * @suppress
  */
 public class MultiPageReviewFragment extends Fragment implements MultiPageReviewFragmentInterface,
         PreviewFragmentListener, FragmentImplCallback {
