@@ -12,6 +12,7 @@ import static net.gini.android.capture.tracking.EventTrackingHelper.trackReviewS
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -42,7 +43,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * <h3>Screen API</h3>
- *
+ * <p>
  * When you use the Screen API and have enabled the multi-page feature, the {@code
  * MultiPageReviewActivity} displays the photographed or imported images and allows the user to
  * review them by checking the order, sharpness, quality and orientation of the images. The user can
@@ -58,7 +59,7 @@ import androidx.appcompat.app.AppCompatActivity;
  * MultiPageReviewActivity}
  *
  * <h3>Customizing the Multi-Page Review Screen</h3>
- *
+ * <p>
  * Customizing the look of the Review Screen is done via overriding of app resources.
  *
  * <p> The following items are customizable:
@@ -191,7 +192,7 @@ import androidx.appcompat.app.AppCompatActivity;
  * must be {@code Root.GiniCaptureTheme.Review.BottomPanel.TextStyle}.
  *
  * <h3>Customizing the Action Bar</h3>
- *
+ * <p>
  * Customizing the Action Bar is also done via overriding of app resources and each one - except the
  * title string resource - is global to all Activities ({@link CameraActivity}, {@link
  * OnboardingActivity}, {@link ReviewActivity}, {@link MultiPageReviewActivity}, {@link
@@ -235,11 +236,27 @@ public class MultiPageReviewActivity extends AppCompatActivity implements
     public static final int RESULT_ERROR = RESULT_FIRST_USER + 1;
 
 
+    /**
+     * Internal use only.
+     *
+     * @suppress
+     */
+    public static final int REQUEST_SCROLL_TO_LAST_PAGE = RESULT_FIRST_USER + 2;
+
+    /**
+     * Internal use only.
+     *
+     * @suppress
+     */
+    public static final int RESULT_SCROLL_TO_LAST_PAGE = RESULT_FIRST_USER + 3;
+
+
     public static final String SHOULD_SCROLL_TO_LAST_PAGE = "GC_SHOULD_SCROLL_TO_LAST_PAGE";
 
 
     private MultiPageReviewFragment mFragment;
     private boolean mShouldScrollToLastPage = true;
+    private int mScrollToPosition = -1;
 
     public static Intent createIntent(@NonNull final Context context, boolean shouldScrollToLastPage) {
         Intent intent = new Intent(context, MultiPageReviewActivity.class);
@@ -265,6 +282,14 @@ public class MultiPageReviewActivity extends AppCompatActivity implements
         handleOnBackPressed();
     }
 
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        createFragment();
+        showFragment();
+    }
+
     private void handleOnBackPressed() {
         interceptOnBackPressed(this, new OnBackPressedCallback(true) {
             @Override
@@ -286,7 +311,7 @@ public class MultiPageReviewActivity extends AppCompatActivity implements
     }
 
     private void createFragment() {
-        mFragment = MultiPageReviewFragment.newInstance(mShouldScrollToLastPage);
+        mFragment = MultiPageReviewFragment.newInstance();
     }
 
     private void showFragment() {
@@ -326,7 +351,7 @@ public class MultiPageReviewActivity extends AppCompatActivity implements
     @Override
     public void onReturnToCameraScreenToAddPages() {
         Intent intent = CameraActivity.createIntent(this, true);
-        startActivity(intent);
+        startActivityForResult(intent, REQUEST_SCROLL_TO_LAST_PAGE);
     }
 
     @Override
@@ -348,6 +373,7 @@ public class MultiPageReviewActivity extends AppCompatActivity implements
         setResult(RESULT_ERROR, result);
         finish();
     }
+
 
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode,
@@ -374,6 +400,32 @@ public class MultiPageReviewActivity extends AppCompatActivity implements
             }
             finish();
         }
+
+        if (requestCode == REQUEST_SCROLL_TO_LAST_PAGE) {
+            if (resultCode == RESULT_SCROLL_TO_LAST_PAGE && data != null) {
+                if (data.hasExtra(SHOULD_SCROLL_TO_LAST_PAGE)) {
+                    setShouldScrollToLastPage(data.getBooleanExtra(SHOULD_SCROLL_TO_LAST_PAGE, false));
+                    data.removeExtra(SHOULD_SCROLL_TO_LAST_PAGE);
+                }
+            }
+        }
+
+    }
+
+    public int getScrollToPosition() {
+        return this.mScrollToPosition;
+    }
+
+    public void setScrollToPosition(int mScrollToPosition) {
+        this.mScrollToPosition = mScrollToPosition;
+    }
+
+    public boolean shouldScrollToLastPage() {
+        return this.mShouldScrollToLastPage;
+    }
+
+    public void setShouldScrollToLastPage(boolean shouldScrollToLastPage) {
+        this.mShouldScrollToLastPage = shouldScrollToLastPage;
     }
 
 }

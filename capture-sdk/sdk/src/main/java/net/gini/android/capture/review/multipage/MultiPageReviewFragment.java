@@ -98,7 +98,7 @@ import jersey.repackaged.jsr166e.CompletableFuture;
  * </ul>
  *
  * <p> Include the {@code MultiPageReviewFragment} into your layout by using the {@link
- * MultiPageReviewFragment#newInstance(boolean)} ()} factory method to create an instance and display it
+ * MultiPageReviewFragment#newInstance()} ()} factory method to create an instance and display it
  * using the {@link androidx.fragment.app.FragmentManager}.
  *
  * <p> A {@link MultiPageReviewFragmentListener} instance must be available until the {@code
@@ -138,14 +138,11 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     private boolean mPreviewsShown;
     private SnapHelper mSnapHelper;
     private MiddlePageManager mSnapManager;
-    private boolean mShouldScrollToLastPage = false;
-    private int mScrollPosition = -1;
     private boolean mInstanceStateSaved;
 
-    public static MultiPageReviewFragment newInstance(boolean shouldScrollToLastPage) {
+    public static MultiPageReviewFragment newInstance() {
 
         Bundle args = new Bundle();
-        args.putBoolean(MultiPageReviewActivity.SHOULD_SCROLL_TO_LAST_PAGE, shouldScrollToLastPage);
         MultiPageReviewFragment fragment = new MultiPageReviewFragment();
         fragment.setArguments(args);
         return fragment;
@@ -159,10 +156,6 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (getArguments() != null) {
-            mShouldScrollToLastPage = getArguments().getBoolean(MultiPageReviewActivity.SHOULD_SCROLL_TO_LAST_PAGE, false);
-        }
 
         forcePortraitOrientationOnPhones(getActivity());
 
@@ -223,6 +216,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
         }
 
         initUploadResults();
+
     }
 
     private void initUploadResults() {
@@ -253,8 +247,15 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     @Override
     public View onCreateView(@NonNull final LayoutInflater inflater, final ViewGroup container,
                              final Bundle savedInstanceState) {
-        final View view = inflater.inflate(R.layout.gc_fragment_multi_page_review, container,
+
+        return inflater.inflate(R.layout.gc_fragment_multi_page_review, container,
                 false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
         bindViews(view);
 
         setInjectedLoadingIndicatorContainer();
@@ -268,17 +269,9 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
         if (mMultiPageDocument != null) {
             updateNextButtonVisibility();
             initRecyclerView();
-            attachScrollListener();
         }
-        return view;
     }
 
-    @Override
-    public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-
-        resetUploadedDocumentsViews();
-    }
 
     private void resetUploadedDocumentsViews() {
         //Needed to refresh views in the recyclerview
@@ -289,17 +282,11 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
         mSnapManager = null;
         mRecyclerView.setLayoutManager(null);
 
-        if (getView() != null) {
-            getView().getRootView().invalidate();
-            getView().getRootView().requestLayout();
-        }
-
         initRecyclerView();
 
-        if (mScrollPosition > -1 && mScrollPosition <= mMultiPageDocument.getDocuments().size() - 1)
-            scrollToCorrectPosition(mScrollPosition, false);
+        if (getScrollPosition() > -1 && getScrollPosition() <= mMultiPageDocument.getDocuments().size() - 1)
+            scrollToCorrectPosition(getScrollPosition(), true);
 
-        mRecyclerView.postDelayed(() -> showHideBlueRect(View.VISIBLE), 1000);
     }
 
     //Delay with blue rect when starting the screen
@@ -351,6 +338,8 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
         mRecyclerView.setAdapter(mPreviewPagesAdapter);
 
 
+        mRecyclerView.postDelayed(this::attachScrollListener, 200);
+
         shouldIndicatorBeVisible();
     }
 
@@ -367,7 +356,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     }
 
     private void attachScrollListener() {
-        mRecyclerView.post(() -> mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
@@ -383,7 +372,10 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
                     if (viewAtPosition != null) {
                         int position = mRecyclerView.getChildAdapterPosition(viewAtPosition);
                         updateTabIndicatorPosition(position);
-                        mScrollPosition = position;
+                        setScrollToPosition(position);
+
+                        if (position < mMultiPageDocument.getDocuments().size() - 1)
+                            setShouldScrollToLastPage(false);
                     }
 
                 } else if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
@@ -395,21 +387,22 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
             }
-        }));
-        //If there is one document highlight it
-        if (mMultiPageDocument.getDocuments().size() == 1) {
-            mRecyclerView.post(() -> showHideBlueRect(View.VISIBLE));
-        }
+        });
 
         //Scroll to the last captured document
         if (mMultiPageDocument.getDocuments().size() > 1) {
-            if (mShouldScrollToLastPage) {
+            if (shouldScrollToLastPage()) {
                 scrollToCorrectPosition(mMultiPageDocument.getDocuments().size() - 1, true);
             } else {
-                if (mScrollPosition > -1)
-                    scrollToCorrectPosition(mScrollPosition, true);
+                if (getScrollPosition() > -1)
+                    scrollToCorrectPosition(getScrollPosition(), true);
                 else scrollToCorrectPosition(mMultiPageDocument.getDocuments().size() - 1, true);
             }
+        }
+
+        //If there is one document highlight it
+        if (mMultiPageDocument.getDocuments().size() == 1) {
+            mRecyclerView.post(() -> showHideBlueRect(View.VISIBLE));
         }
     }
 
@@ -590,7 +583,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
         shouldIndicatorBeVisible();
 
         if (mMultiPageDocument.getDocuments().isEmpty()) {
-            mScrollPosition = -1;
+            setScrollToPosition(-1);
         }
     }
 
@@ -845,6 +838,34 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
             return;
         }
         mPreviewsShown = true;
+    }
+
+    private int getScrollPosition() {
+        if (getActivity() == null)
+            return -1;
+
+        return ((MultiPageReviewActivity) getActivity()).getScrollToPosition();
+    }
+
+    private void setScrollToPosition(int scrollToPosition) {
+        if (getActivity() == null)
+            return;
+
+        ((MultiPageReviewActivity) getActivity()).setScrollToPosition(scrollToPosition);
+    }
+
+    public boolean shouldScrollToLastPage() {
+        if (getActivity() == null)
+            return false;
+
+        return ((MultiPageReviewActivity) getActivity()).shouldScrollToLastPage();
+    }
+
+    public void setShouldScrollToLastPage(boolean shouldScrollToLastPage) {
+        if (getActivity() == null)
+            return;
+
+        ((MultiPageReviewActivity) getActivity()).setShouldScrollToLastPage(shouldScrollToLastPage);
     }
 
     @Override
