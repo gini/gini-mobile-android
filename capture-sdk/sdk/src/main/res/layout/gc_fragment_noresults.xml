@@ -42,11 +42,11 @@
             style="@style/GiniCaptureTheme.Typography.Body2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:drawableStart="@drawable/gc_alert_triangle_icon"
             android:drawablePadding="@dimen/large_24"
             android:gravity="center_vertical"
             android:layout_centerInParent="true"
-            android:text="@string/gc_noresults_header" />
+            android:text="@string/gc_noresults_header"
+            app:drawableStartCompat="@drawable/gc_alert_triangle_icon" />
     </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
