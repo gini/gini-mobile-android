@@ -403,6 +403,23 @@ Furthermore you can show back navigation button on bottom navigation bar. You ca
             .setHelpNavigationBarBottomAdapter(customHelpNavigationBarBottomAdapter)
             .build();
 
+Analysis Screen Customization
+-----------------------------
+
+.. note::
+
+    This screen does not show a bottom navigation bar even if the value passed to ``GiniCapture.newInstance().setBottomNavigationBarEnabled()`` is ``true``
+
+You can show customized activity indicator on this screen. You can pass your custom ``CustomLoadingIndicatorAdapter`` implementation to
+``GiniCapture.Builder`` :
+
+.. code-block:: java
+
+    CustomLottiLoadingIndicatorAdapter customLottiLoadingIndicatorAdapter = new CustomLottiLoadingIndicatorAdapter(getResources().getIdentifier("custom_loading", "raw", this.getPackageName()));
+
+    GiniCapture.newInstance()
+            .setLoadingIndicatorAdapter(customLottiLoadingIndicatorAdapter)
+            .build();
 
 Event Tracking
 --------------
