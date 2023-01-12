@@ -1241,9 +1241,10 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         if (activity == null) {
             return;
         }
+
         mFragment.showAlertDialog(message,
-                activity.getString(R.string.gc_document_import_pick_another_document),
-                (dialogInterface, i) -> showFileChooser(), activity.getString(R.string.gc_document_import_close_error), null, null);
+                activity.getString(R.string.gc_document_import_close_error),
+                (dialogInterface, i) -> dialogInterface.dismiss() , null, null, null);
     }
 
     @UiThread
