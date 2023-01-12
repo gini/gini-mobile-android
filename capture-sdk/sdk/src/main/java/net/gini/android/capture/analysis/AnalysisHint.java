@@ -10,6 +10,9 @@ import java.util.List;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.StringRes;
 
+/**
+ * Custom enum class to gather all resources needed to show a hint during analysis
+ */
 public enum AnalysisHint {
     FLAT(R.drawable.gc_photo_tip_flat, R.string.gc_photo_tip_flat, R.string.gc_photo_tip_flatten_the_page_title),
     ALIGN(R.drawable.gc_photo_tip_align, R.string.gc_photo_tip_align, R.string.gc_photo_tip_align_title),

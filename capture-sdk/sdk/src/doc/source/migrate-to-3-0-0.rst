@@ -248,3 +248,23 @@ your own by implementing the ``HelpNavigationBarBottomAdapter`` interface and pa
 
 You can find more details `here <features.html#help-screen-customization>`_ and `here <features.html#bottom-navigation-bar>`_.
 
+Analysis
+~~~~~~~~
+
+The new analysis screen uses the global UI customization options.
+
+Breaking Changes
+++++++++++++++++
+
+The new analysis screen does not show the page count of PDF files and preview image for photo documents.
+
+New Features
+++++++++++++
+
+Custom activity indicator view
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+There is a default implementation for indicating that document analysis is in progress, but you can show your own activity indicator
+by implementing the ``CustomLoadingIndicatorAdapter`` interface and passing it to ``GiniCapture``.
+
+You can find more details `here <features.html#analysis-screen-customization>`_.

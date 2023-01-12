@@ -18,6 +18,7 @@ import android.widget.TextView;
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.R;
+import net.gini.android.capture.camera.CameraActivity;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.util.Size;
 import net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomAdapter;
@@ -39,6 +40,9 @@ import jersey.repackaged.jsr166e.CompletableFuture;
 
 import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
 
+/**
+ * Main logic implementation for analysis UI presented by {@link AnalysisActivity}
+ */
 class AnalysisFragmentImpl extends AnalysisScreenContract.View {
 
     protected static final Logger LOG = LoggerFactory.getLogger(AnalysisFragmentImpl.class);
