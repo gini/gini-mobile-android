@@ -53,6 +53,9 @@ public interface MultiPageReviewFragmentListener {
      */
     void onReturnToCameraScreenToAddPages();
 
+    /**
+     * Called when user deletes the last taken or imported image from {@link MultiPageReviewFragment}
+     */
     void onReturnToCameraScreenForFirstPage();
 
     /**
