@@ -82,51 +82,51 @@
         android:id="@+id/gc_analysis_hint_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="@dimen/gc_analysis_hint_container_mini_height"
-        android:paddingBottom="@dimen/large"
-        android:paddingTop="@dimen/medium"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:visibility="invisible"
-        android:background="@drawable/gc_analysis_tips_background"
-        app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginBottom="@dimen/gc_analysis_hint_container_bottom_margin"
+        android:layout_marginStart="@dimen/gc_analysis_hint_container_horizontal_margin"
         android:layout_marginEnd="@dimen/gc_analysis_hint_container_horizontal_margin"
-        android:layout_marginLeft="@dimen/gc_analysis_hint_container_horizontal_margin"
-        android:layout_marginRight="@dimen/gc_analysis_hint_container_horizontal_margin"
-        android:layout_marginStart="@dimen/gc_analysis_hint_container_horizontal_margin">
+        android:background="@drawable/gc_analysis_tips_background"
+        android:minHeight="@dimen/gc_analysis_hint_container_mini_height"
+        android:paddingTop="@dimen/medium"
+        android:paddingBottom="@dimen/large"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
         <ImageView
             android:id="@+id/gc_analysis_hint_image"
             android:layout_width="@dimen/gc_analysis_hint_icon_size"
             android:layout_height="@dimen/gc_analysis_hint_icon_size"
-            android:scaleType="center"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/gc_analysis_hint_icon_margin"
+            android:scaleType="center"
             tools:src="@drawable/gc_analysis_tips_background" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginEnd="@dimen/gc_analysis_hint_headline_horizontal_margin"
             android:layout_marginStart="@dimen/gc_analysis_hint_container_horizontal_margin"
+            android:layout_marginEnd="@dimen/gc_analysis_hint_headline_horizontal_margin"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/gc_analysis_hint_headline"
                 style="@style/GiniCaptureTheme.Typography.Subtitle1"
                 android:layout_width="match_parent"
-                app:layout_constraintBottom_toTopOf="@id/gc_analysis_hint_container"
                 android:layout_height="wrap_content"
+                app:layout_constraintBottom_toTopOf="@id/gc_analysis_hint_container"
                 tools:text="Tipp:" />
 
             <TextView
                 android:id="@+id/gc_analysis_hint_text"
                 style="@style/GiniCaptureTheme.Typography.Body2"
-                android:textColor="@color/Dark_06"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/Dark_06"
                 tools:text="Gute Lichtverhältnisse beim Aufnehmen des Fotos beschleunigen die Analyse." />
         </LinearLayout>
 
