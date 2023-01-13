@@ -224,6 +224,19 @@ For example if you need to show animated illustrations you can use a `Lottie
 
 You can find more details `here <customization-guide.html>`_.
 
+Camera
+~~~~~
+
+New Features
+++++++++++++
+
+We implemented image cropping. Parts of the image that appears outside the white camera frame will be cut out from the final image.
+
+Breaking Changes
+++++++++++++++++
+
+Help tips are removed.
+
 QR code scanning
 ~~~~~
 
