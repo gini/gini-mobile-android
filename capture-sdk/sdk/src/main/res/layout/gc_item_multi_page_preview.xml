@@ -12,9 +12,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/gc_image_wrapper"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        android:id="@+id/gc_image_wrapper">
 
         <net.gini.android.capture.review.RotatableImageViewContainer
             android:id="@+id/gc_image_container"

@@ -5,6 +5,8 @@ import static net.gini.android.capture.internal.util.ActivityHelper.interceptOnB
 import static net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboarding;
 import static net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboardingAtFirstRun;
 import static net.gini.android.capture.review.ReviewActivity.EXTRA_IN_ANALYSIS_ACTIVITY;
+import static net.gini.android.capture.review.multipage.MultiPageReviewActivity.RESULT_SCROLL_TO_LAST_PAGE;
+import static net.gini.android.capture.review.multipage.MultiPageReviewActivity.SHOULD_SCROLL_TO_LAST_PAGE;
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackCameraScreenEvent;
 
 import android.content.Context;
@@ -562,6 +564,13 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
             @NonNull final GiniCaptureMultiPageDocument multiPageDocument, boolean shouldScrollToLastPage) {
         if (multiPageDocument.getType() == Document.Type.IMAGE_MULTI_PAGE) {
             if (mAddPages) {
+
+                // In case we returned to take more images
+                // Let the app know if it should scroll to the last position
+                Intent intent = new Intent(this, MultiPageReviewActivity.class);
+                intent.putExtra(SHOULD_SCROLL_TO_LAST_PAGE, shouldScrollToLastPage);
+                setResult(RESULT_SCROLL_TO_LAST_PAGE, intent);
+
                 // For subsequent images a new CameraActivity was launched from the MultiPageReviewActivity
                 // and so we can simply finish to return to the review activity
                 finish();

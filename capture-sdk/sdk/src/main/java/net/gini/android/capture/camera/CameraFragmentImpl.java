@@ -115,6 +115,8 @@ import static net.gini.android.capture.internal.util.FeatureConfiguration.getDoc
 import static net.gini.android.capture.internal.util.FeatureConfiguration.isMultiPageEnabled;
 import static net.gini.android.capture.internal.util.FeatureConfiguration.isQRCodeScanningEnabled;
 import static net.gini.android.capture.internal.util.FileImportValidator.FILE_SIZE_LIMIT;
+import static net.gini.android.capture.review.multipage.MultiPageReviewActivity.RESULT_SCROLL_TO_LAST_PAGE;
+import static net.gini.android.capture.review.multipage.MultiPageReviewActivity.SHOULD_SCROLL_TO_LAST_PAGE;
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackCameraScreenEvent;
 
 /**
@@ -1281,9 +1283,8 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                                     /*mIsTakingPicture = false;
                                     mCameraController.startPreview();*/
 
-                                    if (mFragment.getActivity() != null && mFragment.getActivity() instanceof CameraActivity)
-                                        ((CameraActivity) mFragment.getActivity())
-                                                .finish();
+                                    mListener.onProceedToMultiPageReviewScreen(mMultiPageDocument, shouldScrollToLastPage());
+
                                 } else {
                                     if (isMultiPageEnabled()) {
                                         final ImageDocument document = createSavedDocument(result);
