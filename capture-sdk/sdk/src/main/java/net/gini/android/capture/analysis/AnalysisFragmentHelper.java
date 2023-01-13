@@ -9,6 +9,9 @@ import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+/**
+ * Helper class for setting arguments to analysis fragment
+ */
 final class AnalysisFragmentHelper {
 
     private static final String ARGS_DOCUMENT = "GC_ARGS_DOCUMENT";
