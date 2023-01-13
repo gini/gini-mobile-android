@@ -232,6 +232,15 @@ Breaking Changes
 
 QR code scanning UI and functionality are changed. Scanning and processing happens automatically. You can find more details `here <features.html#qr-code-scanning>`_.
 
+Review
+~~~~~
+
+Breaking Changes
+++++++++++++++++
+
+Review screen doesn't support re-ordering the images anymore.
+If processing of images fails user is redirected to Error screen.
+
 Help
 ~~~~~
 
