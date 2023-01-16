@@ -1,0 +1,376 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Gini Capture SDK for Android &mdash; Gini Capture SDK for Android 2.0 documentation</title>
+  
+
+  
+  
+
+  
+  <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,400italic,600italic|Source+Code+Pro|Roboto+Slab:400,700" rel="stylesheet" type="text/css" />
+
+  
+  
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:'./',
+        VERSION:'2.0',
+        COLLAPSE_INDEX:false,
+        FILE_SUFFIX:'.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/language_data.js"></script>
+
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+    <script type="text/javascript">
+        jQuery(function () {
+            SphinxRtdTheme.StickyNav.enable();
+        });
+    </script>
+  
+
+  
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Gini Capture SDK for Android 2.0 documentation" href="#"/>
+        <link rel="next" title="Getting started" href="getting-started.html"/> 
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="#" id="gini-logo">
+          <img src="_static/logo.png" />
+        </a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="getting-started.html#requirements">Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting-started.html#installation">Installation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="integration.html">Integration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="integration.html#android-manifest">Android Manifest</a></li>
+<li class="toctree-l2"><a class="reference internal" href="integration.html#requirements-check">Requirements Check</a></li>
+<li class="toctree-l2"><a class="reference internal" href="integration.html#configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="integration.html#tablet-support">Tablet Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="integration.html#networking">Networking</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#default-implementation">Default Implementation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#custom-implementation">Custom Implementation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#sending-feedback">Sending Feedback</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="integration.html#capturing-documents">Capturing documents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="features.html">Features</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="features.html#document-capture">Document Capture</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="features.html#custom-ui-elements">Custom UI Elements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features.html#onboarding">Onboarding</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features.html#single-page">Single Page</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features.html#multi-page">Multi-Page</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features.html#camera">Camera</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#qr-code-scanning">QR Code Scanning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#only-qr-code-scanning">Only QR Code Scanning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#document-import">Document Import</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="features.html#android-manifest">Android Manifest</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features.html#intercepting-the-imported-document">Intercepting the imported document</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#file-import-open-with">File Import (Open With)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="features.html#registering-pdf-and-image-file-types">Registering pdf and image file types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features.html#handling-imported-files">Handling Imported Files</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#help-screen-customization">Help Screen Customization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#analysis-screen-customization">Analysis Screen Customization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#event-tracking">Event Tracking</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="features.html#events">Events</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#error-logging">Error Logging</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="customization-guide.html">Customization Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#overview-of-ui-customization-options">Overview of UI Customization Options</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#styles">Styles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#colors">Colors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#images">Images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#typography">Typography</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#text">Text</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#ui-elements">UI Elements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#dark-mode">Dark mode</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#onboarding-screen">Onboarding Screen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#camera-screen">Camera Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#document-import-hint">8.1 Document Import Hint</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#qr-code-scanner-hint">8.2 QR Code Scanner Hint</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#review-screen">Review Screen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#analysis-screen">Analysis Screen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#multi-page-review-screen">Multi-Page Review Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#badge">5.1 Badge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#drag-indicator-bumps">5.2 Drag Indicator Bumps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#highlight-strip">5.3 Highlight Strip</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#activity-indicator">5.4 Activity Indicator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#upload-success-icon">5.5 Upload Success Icon</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#upload-failure-icon">5.6 Upload Failure Icon</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#help-screen">Help Screen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#photo-tips-screen">Photo Tips Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#good-lighting">4.1 Good Lighting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#document-should-be-flat">4.2 Document Should be Flat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#device-parallel-to-document">4.3 Device Parallel to Document</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#document-aligned-with-corner-guides">4.4 Document Aligned with Corner Guides</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#document-with-multiple-pages">4.5 Document with Multiple Pages</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#supported-formats-screen">Supported Formats Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#supported-format-icon">4.1 Supported Format Icon</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#unsupported-format-icon">4.2 Unsupported Format Icon</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#file-import-screen">File Import Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#number">5.1 Number</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#title">5.2 Title</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#body">5.3 Body</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#illustration">5.4 Illustration</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#clear-defaults-dialog">Clear Defaults Dialog</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#file-type">1.1 File Type</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#positive-button-title">2. Positive Button Title</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#negative-button-title">3. Negative Button Title</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="migrate-to-2-0-0.html">Migrate to 2.0.0</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="migrate-to-2-0-0.html#default-networking-implementation">Default Networking Implementation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-2-0-0.html#ginicapturedefaultnetworkservice-builder">GiniCaptureDefaultNetworkService.Builder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-2-0-0.html#sessionmanager">SessionManager</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="migrate-to-3-0-0.html">Migrate to 3.0.0</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="migrate-to-3-0-0.html#migrate-from-component-api">Migrate from Component API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrate-to-3-0-0.html#migrate-from-screen-api">Migrate from Screen API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrate-to-3-0-0.html#overview-of-new-ui-customization-options">Overview of New UI Customization Options</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#styles">Styles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#colors">Colors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#images">Images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#typography">Typography</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#text">Text</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#ui-elements">UI Elements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#dark-mode">Dark mode</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="migrate-to-3-0-0.html#migrate-to-the-new-ui">Migrate to the new UI</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#onboarding">Onboarding</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#qr-code-scanning">QR code scanning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#review">Review</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#help">Help</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#analysis">Analysis</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">Reference Docs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="license.html#licenses-and-acknowledgements-for-incorporated-software">Licenses and Acknowledgements for Incorporated Software</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="license.html#apache-commons-imaging">Apache Commons Imaging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license.html#touchimageview">TouchImageView</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license.html#simple-logging-facade-for-java-slf4j">Simple Logging Facade for Java (SLF4J)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license.html#jersey-repackaged-jsr166e">Jersey Repackaged JSR166e</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="#">Gini Capture SDK for Android</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="#">Docs</a> &raquo;</li>
+      
+    <li>Gini Capture SDK for Android</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="gini-capture-sdk-for-android">
+<h1>Gini Capture SDK for Android<a class="headerlink" href="#gini-capture-sdk-for-android" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>The Gini Capture SDK for Android provides Activities and Fragments to capture documents and prepare them for upload to
+the Gini Bank API. It also allows documents to be imported from other apps. The captured images can be reviewed and are
+optimized on the device to provide the best results when used with the Gini Bank API.</p>
+<p>The Gini Bank API provides an information extraction service for analyzing documents (e.g. invoices or contracts).
+Specifically it extracts information such as the document sender or the payment relevant information (amount to pay,
+IBAN, etc.) in an invoice.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The documentation for the 1.x.x version can be found <a class="reference external" href="https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/1.11.2/html/index.html">here</a>.</p>
+</div>
+</div>
+<div class="section" id="table-of-contents">
+<h2>Table of contents<a class="headerlink" href="#table-of-contents" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="getting-started.html#requirements">Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting-started.html#installation">Installation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="integration.html">Integration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="integration.html#android-manifest">Android Manifest</a></li>
+<li class="toctree-l2"><a class="reference internal" href="integration.html#requirements-check">Requirements Check</a></li>
+<li class="toctree-l2"><a class="reference internal" href="integration.html#configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="integration.html#tablet-support">Tablet Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="integration.html#networking">Networking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="integration.html#capturing-documents">Capturing documents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="features.html">Features</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="features.html#document-capture">Document Capture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#qr-code-scanning">QR Code Scanning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#only-qr-code-scanning">Only QR Code Scanning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#document-import">Document Import</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#file-import-open-with">File Import (Open With)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#help-screen-customization">Help Screen Customization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#analysis-screen-customization">Analysis Screen Customization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#event-tracking">Event Tracking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#error-logging">Error Logging</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="customization-guide.html">Customization Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#overview-of-ui-customization-options">Overview of UI Customization Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#onboarding-screen">Onboarding Screen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#camera-screen">Camera Screen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#review-screen">Review Screen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#analysis-screen">Analysis Screen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#multi-page-review-screen">Multi-Page Review Screen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#help-screen">Help Screen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#photo-tips-screen">Photo Tips Screen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#supported-formats-screen">Supported Formats Screen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#file-import-screen">File Import Screen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#clear-defaults-dialog">Clear Defaults Dialog</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="migrate-to-2-0-0.html">Migrate to 2.0.0</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="migrate-to-2-0-0.html#default-networking-implementation">Default Networking Implementation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="migrate-to-3-0-0.html">Migrate to 3.0.0</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="migrate-to-3-0-0.html#migrate-from-component-api">Migrate from Component API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrate-to-3-0-0.html#migrate-from-screen-api">Migrate from Screen API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrate-to-3-0-0.html#overview-of-new-ui-customization-options">Overview of New UI Customization Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrate-to-3-0-0.html#migrate-to-the-new-ui">Migrate to the new UI</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">Reference Docs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="license.html#licenses-and-acknowledgements-for-incorporated-software">Licenses and Acknowledgements for Incorporated Software</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="getting-started.html" class="btn btn-neutral float-right" title="Getting started">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+    </p>
+  </div>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  
+</body>
+</html>

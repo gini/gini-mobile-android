@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>GiniCaptureExtraction</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script>var pathToRoot = "../../../";</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/jetbrains-mono.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer="defer"></script>
+</head>
+<body>
+<div class="navigation-wrapper" id="navigation-wrapper">
+    <div id="leftToggler"><span class="icon-toggler"></span></div>
+    <div class="library-name">
+            <a href="../../../index.html">
+                    <span>sdk</span>
+            </a>
+    </div>
+    <div>
+    </div>
+    <div class="pull-right d-flex">
+        <button id="theme-toggle-button"><span id="theme-toggle"></span></button>
+        <div id="searchBar"></div>
+    </div>
+</div>
+<div id="container">
+    <div id="leftColumn">
+        <div id="sideMenu"></div>
+    </div>
+    <div id="main">
+<div class="main-content" id="content" pageIds="sdk::net.gini.android.capture.network.model/GiniCaptureExtraction///PointingToDeclaration//532391635">
+  <div class="breadcrumbs"><a href="../../../index.html">sdk</a><span class="delimiter">/</span><a href="../index.html">net.gini.android.capture.network.model</a><span class="delimiter">/</span><span class="current">GiniCaptureExtraction</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Gini</span><wbr></wbr><span>Capture</span><wbr></wbr><span><span>Extraction</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:sdk:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">public </span><span class="token keyword">class </span><a href="index.html">GiniCaptureExtraction</a><span class="token keyword"> implements </span><a href="https://developer.android.com/reference/kotlin/android/os/Parcelable.html">Parcelable</a></div><p class="paragraph">Contains a Gini API <a href="http://developer.gini.net/gini-api/html/document_extractions.html#extractions">extraction</a>. </p><p class="paragraph"> An extraction contains an entity describing the general semantic type of the extraction (e.g. a date), which also determines the format of the value containing the information as text. Optionally there may be a box describing the position of the extraction value on the document. In most instances, extractions without a bounding box are meta information (e.g. doctype).</p></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="Constructors">Constructors</button><button class="section-tab" data-togglable="Functions">Functions</button><button class="section-tab" data-togglable="Properties">Properties</button><button class="section-tab" data-togglable="Inheritors">Inheritors</button></div>
+    <div class="tabs-section-body">
+      <h2 class="tabbedcontent">Constructors</h2>
+      <div class="table" data-togglable="Constructors"><a data-name="1654106171%2FConstructors%2F532391635" anchor-label="GiniCaptureExtraction" id="1654106171%2FConstructors%2F532391635" data-filterable-set=":capture-sdk:sdk:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:sdk:dokkaHtml/release" data-filterable-set=":capture-sdk:sdk:dokkaHtml/release">
+          <div class="main-subrow keyValue TabbedContent">
+            <div class=""><span class="inline-flex">
+                <div><a href="-gini-capture-extraction.html"><span>Gini</span><wbr></wbr><span>Capture</span><wbr></wbr><span><span>Extraction</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1654106171%2FConstructors%2F532391635"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:sdk:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword"></span>void <a href="-gini-capture-extraction.html"><span class="token function">GiniCaptureExtraction</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span> </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> value<span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span> </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> entity<span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html"><span class="token annotation builtin">Nullable</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span> </span><span class="token keyword"></span><a href="../-gini-capture-box/index.html">GiniCaptureBox</a> box</span></span><span class="token punctuation">)</span></div><div class="brief ">Value object for an extraction from the Gini API.</div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <h2 class="">Functions</h2>
+      <div class="table" data-togglable="Functions"><a data-name="-933857172%2FFunctions%2F532391635" anchor-label="describeContents" id="-933857172%2FFunctions%2F532391635" data-filterable-set=":capture-sdk:sdk:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:sdk:dokkaHtml/release" data-filterable-set=":capture-sdk:sdk:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="describe-contents.html"><span>describe</span><wbr></wbr><span><span>Contents</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-933857172%2FFunctions%2F532391635"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:sdk:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword"></span>int <a href="describe-contents.html"><span class="token function">describeContents</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-1669189668%2FFunctions%2F532391635" anchor-label="getBox" id="-1669189668%2FFunctions%2F532391635" data-filterable-set=":capture-sdk:sdk:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:sdk:dokkaHtml/release" data-filterable-set=":capture-sdk:sdk:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-box.html"><span>get</span><wbr></wbr><span><span>Box</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1669189668%2FFunctions%2F532391635"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:sdk:dokkaHtml/release"><div class="symbol monospace block"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html"><span class="token annotation builtin">Nullable</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div><span class="token keyword">public </span><span class="token keyword">synchronized </span><a href="../-gini-capture-box/index.html">GiniCaptureBox</a> <a href="get-box.html"><span class="token function">getBox</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-1516392080%2FFunctions%2F532391635" anchor-label="getEntity" id="-1516392080%2FFunctions%2F532391635" data-filterable-set=":capture-sdk:sdk:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:sdk:dokkaHtml/release" data-filterable-set=":capture-sdk:sdk:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-entity.html"><span>get</span><wbr></wbr><span><span>Entity</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1516392080%2FFunctions%2F532391635"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:sdk:dokkaHtml/release"><div class="symbol monospace block"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div><span class="token keyword">public </span><span class="token keyword">synchronized </span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> <a href="get-entity.html"><span class="token function">getEntity</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="170698870%2FFunctions%2F532391635" anchor-label="getValue" id="170698870%2FFunctions%2F532391635" data-filterable-set=":capture-sdk:sdk:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:sdk:dokkaHtml/release" data-filterable-set=":capture-sdk:sdk:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-value.html"><span>get</span><wbr></wbr><span><span>Value</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="170698870%2FFunctions%2F532391635"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:sdk:dokkaHtml/release"><div class="symbol monospace block"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div><span class="token keyword">public </span><span class="token keyword">synchronized </span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> <a href="get-value.html"><span class="token function">getValue</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-1454584479%2FFunctions%2F532391635" anchor-label="isDirty" id="-1454584479%2FFunctions%2F532391635" data-filterable-set=":capture-sdk:sdk:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:sdk:dokkaHtml/release" data-filterable-set=":capture-sdk:sdk:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="is-dirty.html"><span>is</span><wbr></wbr><span><span>Dirty</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1454584479%2FFunctions%2F532391635"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:sdk:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">synchronized </span>boolean <a href="is-dirty.html"><span class="token function">isDirty</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-1982932468%2FFunctions%2F532391635" anchor-label="setBox" id="-1982932468%2FFunctions%2F532391635" data-filterable-set=":capture-sdk:sdk:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:sdk:dokkaHtml/release" data-filterable-set=":capture-sdk:sdk:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="set-box.html"><span>set</span><wbr></wbr><span><span>Box</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1982932468%2FFunctions%2F532391635"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:sdk:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">synchronized </span>void <a href="set-box.html"><span class="token function">setBox</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html"><span class="token annotation builtin">Nullable</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span> </span><span class="token keyword"></span><a href="../-gini-capture-box/index.html">GiniCaptureBox</a> newBox</span></span><span class="token punctuation">)</span></div><div class="brief ">Set a new bounding box.</div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-695374289%2FFunctions%2F532391635" anchor-label="setIsDirty" id="-695374289%2FFunctions%2F532391635" data-filterable-set=":capture-sdk:sdk:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:sdk:dokkaHtml/release" data-filterable-set=":capture-sdk:sdk:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="set-is-dirty.html"><span>set</span><wbr></wbr><span>Is</span><wbr></wbr><span><span>Dirty</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-695374289%2FFunctions%2F532391635"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:sdk:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">synchronized </span>void <a href="set-is-dirty.html"><span class="token function">setIsDirty</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword"></span>boolean isDirty</span></span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-502866307%2FFunctions%2F532391635" anchor-label="setValue" id="-502866307%2FFunctions%2F532391635" data-filterable-set=":capture-sdk:sdk:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:sdk:dokkaHtml/release" data-filterable-set=":capture-sdk:sdk:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="set-value.html"><span>set</span><wbr></wbr><span><span>Value</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-502866307%2FFunctions%2F532391635"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:sdk:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">synchronized </span>void <a href="set-value.html"><span class="token function">setValue</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span> </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> newValue</span></span><span class="token punctuation">)</span></div><div class="brief ">Set a new value for this extraction.</div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-2137766171%2FFunctions%2F532391635" anchor-label="toString" id="-2137766171%2FFunctions%2F532391635" data-filterable-set=":capture-sdk:sdk:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:sdk:dokkaHtml/release" data-filterable-set=":capture-sdk:sdk:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="to-string.html"><span>to</span><wbr></wbr><span><span>String</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2137766171%2FFunctions%2F532391635"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:sdk:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> <a href="to-string.html"><span class="token function">toString</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="904833916%2FFunctions%2F532391635" anchor-label="writeToParcel" id="904833916%2FFunctions%2F532391635" data-filterable-set=":capture-sdk:sdk:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:sdk:dokkaHtml/release" data-filterable-set=":capture-sdk:sdk:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="write-to-parcel.html"><span>write</span><wbr></wbr><span>To</span><wbr></wbr><span><span>Parcel</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="904833916%2FFunctions%2F532391635"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:sdk:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword"></span>void <a href="write-to-parcel.html"><span class="token function">writeToParcel</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/android/os/Parcel.html">Parcel</a> dest<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span>int flags</span></span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <h2 class="">Properties</h2>
+      <div class="table" data-togglable="Properties"><a data-name="-255210448%2FProperties%2F532391635" anchor-label="CONTENTS_FILE_DESCRIPTOR" id="-255210448%2FProperties%2F532391635" data-filterable-set=":capture-sdk:sdk:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:sdk:dokkaHtml/release" data-filterable-set=":capture-sdk:sdk:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="../../net.gini.android.capture.document/-gini-capture-document/index.html#-255210448%2FProperties%2F532391635"><span><span>CONTENTS_FILE_DESCRIPTOR</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-255210448%2FProperties%2F532391635"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:sdk:dokkaHtml/release"><a data-name="-255210448%2FProperties%2F532391635" anchor-label="CONTENTS_FILE_DESCRIPTOR" id="-255210448%2FProperties%2F532391635" data-filterable-set=":capture-sdk:sdk:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword">static </span>int <a href="../../net.gini.android.capture.document/-gini-capture-document/index.html#-255210448%2FProperties%2F532391635">CONTENTS_FILE_DESCRIPTOR</a></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-2097117539%2FProperties%2F532391635" anchor-label="CREATOR" id="-2097117539%2FProperties%2F532391635" data-filterable-set=":capture-sdk:sdk:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:sdk:dokkaHtml/release" data-filterable-set=":capture-sdk:sdk:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="../-gini-capture-specific-extraction/index.html#-2097117539%2FProperties%2F532391635"><span><span>CREATOR</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2097117539%2FProperties%2F532391635"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:sdk:dokkaHtml/release"><a data-name="-2097117539%2FProperties%2F532391635" anchor-label="CREATOR" id="-2097117539%2FProperties%2F532391635" data-filterable-set=":capture-sdk:sdk:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword">static </span><a href="https://developer.android.com/reference/kotlin/android/os/Parcelable.Creator.html">Parcelable.Creator</a><span class="token operator">&lt;</span><a href="index.html">GiniCaptureExtraction</a><span class="token operator">&gt;</span> <a href="../-gini-capture-specific-extraction/index.html#-2097117539%2FProperties%2F532391635">CREATOR</a></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-865205281%2FProperties%2F532391635" anchor-label="PARCELABLE_WRITE_RETURN_VALUE" id="-865205281%2FProperties%2F532391635" data-filterable-set=":capture-sdk:sdk:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:sdk:dokkaHtml/release" data-filterable-set=":capture-sdk:sdk:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="../../net.gini.android.capture.document/-gini-capture-document/index.html#-865205281%2FProperties%2F532391635"><span><span>PARCELABLE_WRITE_RETURN_VALUE</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-865205281%2FProperties%2F532391635"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:sdk:dokkaHtml/release"><a data-name="-865205281%2FProperties%2F532391635" anchor-label="PARCELABLE_WRITE_RETURN_VALUE" id="-865205281%2FProperties%2F532391635" data-filterable-set=":capture-sdk:sdk:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword">static </span>int <a href="../../net.gini.android.capture.document/-gini-capture-document/index.html#-865205281%2FProperties%2F532391635">PARCELABLE_WRITE_RETURN_VALUE</a></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <h2 class="">Inheritors</h2>
+      <div class="table" data-togglable="Inheritors"><a data-name="992929244%2FInheritors%2F532391635" anchor-label="GiniCaptureSpecificExtraction" id="992929244%2FInheritors%2F532391635" data-filterable-set=":capture-sdk:sdk:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:sdk:dokkaHtml/release" data-filterable-set=":capture-sdk:sdk:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="../-gini-capture-specific-extraction/index.html">GiniCaptureSpecificExtraction</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="992929244%2FInheritors%2F532391635"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2023 Copyright</span><span
+                class="pull-right"><span>Generated by </span><a
+                href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+    </div>
+</div>
+</body>
+</html>
