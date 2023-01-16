@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - 'health-sdk;[0-9]+.[0-9]+.[0-9]+;doc**'
+      - 'health-sdk;[0-9]+.[0-9]+.[0-9]+-beta[0-9][0-9];doc**'
   workflow_call:
     secrets:
       RELEASE_GITHUB_USER:

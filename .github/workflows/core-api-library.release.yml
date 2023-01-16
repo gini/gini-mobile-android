@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - 'core-api-library;[0-9]+.[0-9]+.[0-9]+'
+      - 'core-api-library;[0-9]+.[0-9]+.[0-9]+-beta[0-9][0-9]'
 
 jobs:
   check:
