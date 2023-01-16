@@ -168,6 +168,21 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
         buttonSkip = view.findViewById(R.id.gc_skip);
         buttonGetStarted = view.findViewById(R.id.gc_get_started);
         groupNextAndSkipButtons = view.findViewById(R.id.gc_next_skip_group);
+
+        handleSkipButtonMultipleLines();
+    }
+
+    //Wait for view to be inflated
+    //Check how many lines
+    private void handleSkipButtonMultipleLines() {
+        buttonSkip.post(() -> {
+            int lines = buttonSkip.getLineCount();
+            if (lines != 2)
+                return;
+
+            buttonSkip.setText(getString(R.string.gc_skip_two_lines));
+        });
+
     }
 
     private void addInputHandlers() {
