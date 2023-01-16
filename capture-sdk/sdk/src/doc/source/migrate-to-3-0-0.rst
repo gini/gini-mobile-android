@@ -238,6 +238,12 @@ Bottom navigation bar
 You can show a bottom navigation bar by passing true to ``GiniCapture`` ``setBottomNavigationBarEnabled``. There is a default implementation, but you can also use
 your own by implementing the ``CameraNavigationBarBottomAdapter`` interface and passing it to ``GiniCapture``.
 
+Custom activity indicator view
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+There is a default implementation of indicator which indicates that image is in the cropping process, but you can show your own activity indicator
+by implementing the ``CustomLoadingIndicatorAdapter`` interface and passing it to ``GiniCapture``.
+
 Breaking Changes
 ++++++++++++++++
 
