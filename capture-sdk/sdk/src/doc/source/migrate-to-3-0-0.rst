@@ -224,6 +224,31 @@ For example if you need to show animated illustrations you can use a `Lottie
 
 You can find more details `here <customization-guide.html>`_.
 
+Camera
+~~~~~
+
+New Features
+++++++++++++
+
+We implemented image cropping. Parts of the image that appears outside the white camera frame will be cut out from the final image.
+
+Bottom navigation bar
+^^^^^^^^^^^^^^^^^^^^^
+
+You can show a bottom navigation bar by passing true to ``GiniCapture`` ``setBottomNavigationBarEnabled``. There is a default implementation, but you can also use
+your own by implementing the ``CameraNavigationBarBottomAdapter`` interface and passing it to ``GiniCapture``.
+
+Custom activity indicator view
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+There is a default implementation of indicator which indicates that image is in the cropping process, but you can show your own activity indicator
+by implementing the ``CustomLoadingIndicatorAdapter`` interface and passing it to ``GiniCapture``.
+
+Breaking Changes
+++++++++++++++++
+
+We removed the tooltip popups that were shown on first launch.
+
 QR code scanning
 ~~~~~
 
