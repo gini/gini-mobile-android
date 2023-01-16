@@ -32,6 +32,18 @@
         <item name="textAppearanceButton">@style/GiniCaptureTheme.Typography.Button</item>
         <item name="textAppearanceCaption">@style/GiniCaptureTheme.Typography.Caption1</item>
         <item name="textAppearanceOverline">@style/GiniCaptureTheme.Typography.Overline</item>
+        <item name="textAppearanceDisplaySmall">?attr/textAppearanceHeadline1</item>
+        <item name="textAppearanceHeadlineLarge">?attr/textAppearanceHeadline2</item>
+        <item name="textAppearanceHeadlineMedium">?attr/textAppearanceHeadline3</item>
+        <item name="textAppearanceHeadlineSmall">?attr/textAppearanceHeadline4</item>
+        <item name="textAppearanceTitleLarge">?attr/textAppearanceHeadline5</item>
+        <item name="textAppearanceTitleMedium">?attr/textAppearanceSubtitle1</item>
+        <item name="textAppearanceTitleSmall">?attr/textAppearanceSubtitle2</item>
+        <item name="textAppearanceBodyLarge">?attr/textAppearanceBody1</item>
+        <item name="textAppearanceBodyMedium">?attr/textAppearanceBody2</item>
+        <item name="textAppearanceBodySmall">?attr/textAppearanceCaption</item>
+        <item name="textAppearanceLabelLarge">?attr/textAppearanceButton</item>
+        <item name="textAppearanceLabelMedium">?attr/textAppearanceOverline</item>
     </style>
 
     <style name="GiniCaptureTheme" parent="Root.GiniCaptureTheme"/>
