@@ -232,6 +232,31 @@ Breaking Changes
 
 QR code scanning UI and functionality are changed. Scanning and processing happens automatically. You can find more details `here <features.html#qr-code-scanning>`_.
 
+Review
+~~~~~
+
+New Features
+++++++++++++
+
+Custom loading indicator on the ``Process`` button
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+There is a default implementation of loading indicator on ``Process`` button that indicates document upload is in progress, but you can show your own indicator
+by implementing the ``CustomLoadingIndicatorAdapter`` interface and passing it to ``GiniCapture``.
+
+Bottom navigation bar
+^^^^^^^^^^^^^^^^^^^^^
+
+You can show a bottom navigation bar by passing true to ``GiniCapture`` ``setBottomNavigationBarEnabled``. There is a default implementation, but you can also use
+your own by implementing the ``ReviewNavigationBarBottomAdapter`` interface and passing it to ``GiniCapture``.
+
+
+Breaking Changes
+++++++++++++++++
+
+Re-ordering and rotation of the images are not supported anymore. The Gini Pay API can automatically correct rotation during processing.
+If processing of images fails user is redirected to the Error screen.
+
 Help
 ~~~~~
 
