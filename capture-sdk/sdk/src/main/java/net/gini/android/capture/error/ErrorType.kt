@@ -9,6 +9,9 @@ import net.gini.android.capture.network.Error
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
+/**
+ * Custom enum class to gather all resources needed to show an error that occured during using all features of the app
+ */
 enum class ErrorType(@DrawableRes val drawableResource: Int,
                      @StringRes val titleTextResource: Int,
                      @StringRes val descriptionTextResource: Int
