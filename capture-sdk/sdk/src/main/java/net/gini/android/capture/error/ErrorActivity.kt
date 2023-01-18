@@ -137,7 +137,7 @@ class ErrorActivity : AppCompatActivity(),
 
         const val EXTRA_IN_ERROR = "GC_EXTRA_IN_ERROR"
 
-        const val EXTRA_ERROR_STRING = "GC_EXTRA_IN_ERROR"
+        const val EXTRA_ERROR_STRING = "GC_EXTRA_ERROR_STRING"
 
         var isActivityShown: Boolean = false
 
