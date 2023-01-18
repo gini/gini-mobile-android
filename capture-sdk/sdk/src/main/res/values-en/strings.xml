@@ -140,6 +140,7 @@
 
     <string name="gc_close">Close</string>
     <string name="gc_skip">Skip</string>
+    <string name="gc_skip_two_lines">Skip</string>
     <string name="gc_next">Next</string>
     <string name="gc_tip">Tip:\u0020</string>
     <string name="gc_get_started">Get Started</string>
