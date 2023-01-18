@@ -1,7 +1,5 @@
 package net.gini.android.capture.analysis;
 
-import static net.gini.android.capture.internal.network.NetworkRequestsManager.isCancellation;
-
 import android.app.Application;
 
 import net.gini.android.capture.GiniCapture;
@@ -12,8 +10,6 @@ import net.gini.android.capture.document.GiniCaptureMultiPageDocument;
 import net.gini.android.capture.internal.network.AnalysisNetworkRequestResult;
 import net.gini.android.capture.internal.network.NetworkRequestResult;
 import net.gini.android.capture.internal.network.NetworkRequestsManager;
-import net.gini.android.capture.internal.util.ActivityHelper;
-import net.gini.android.capture.network.FailureException;
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction;
 import net.gini.android.capture.network.model.GiniCaptureReturnReason;
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
@@ -58,35 +54,22 @@ public class AnalysisInteractor {
                     networkRequestsManager.upload(mApp, giniCaptureDocument);
                 }
                 return networkRequestsManager.analyze(multiPageDocument)
-                        .handle(new CompletableFuture.BiFun<AnalysisNetworkRequestResult<
-                                GiniCaptureMultiPageDocument>, Throwable, ResultHolder>() {
-                            @Override
-                            public ResultHolder apply(
-                                    final AnalysisNetworkRequestResult<GiniCaptureMultiPageDocument>
-                                            requestResult,
-                                    final Throwable throwable) {
-                                if (throwable != null && !isCancellation(throwable)) {
-                                    if (throwable instanceof FailureException) {
-                                        throw new FailureException(((FailureException) throwable).errorType);
-                                    } else {
-                                        throw new RuntimeException(throwable); // NOPMD
-                                    }
-                                } else if (requestResult != null) {
-                                    final Map<String, GiniCaptureSpecificExtraction> extractions =
-                                            requestResult.getAnalysisResult().getExtractions();
-                                    final Map<String, GiniCaptureCompoundExtraction> compoundExtractions =
-                                            requestResult.getAnalysisResult().getCompoundExtractions();
-                                    if (extractions.isEmpty() && compoundExtractions.isEmpty()) {
-                                        return new ResultHolder(Result.SUCCESS_NO_EXTRACTIONS);
-                                    } else {
-                                        return new ResultHolder(Result.SUCCESS_WITH_EXTRACTIONS,
-                                                extractions,
-                                                compoundExtractions,
-                                                requestResult.getAnalysisResult().getReturnReasons());
-                                    }
+                        .thenApply(requestResult -> {
+                            if (requestResult != null) {
+                                final Map<String, GiniCaptureSpecificExtraction> extractions =
+                                        requestResult.getAnalysisResult().getExtractions();
+                                final Map<String, GiniCaptureCompoundExtraction> compoundExtractions =
+                                        requestResult.getAnalysisResult().getCompoundExtractions();
+                                if (extractions.isEmpty() && compoundExtractions.isEmpty()) {
+                                    return new ResultHolder(Result.SUCCESS_NO_EXTRACTIONS);
+                                } else {
+                                    return new ResultHolder(Result.SUCCESS_WITH_EXTRACTIONS,
+                                            extractions,
+                                            compoundExtractions,
+                                            requestResult.getAnalysisResult().getReturnReasons());
                                 }
-                                return null;
                             }
+                            return null;
                         });
             } else {
                 return CompletableFuture.completedFuture(
