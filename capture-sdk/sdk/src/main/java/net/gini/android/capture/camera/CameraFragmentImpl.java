@@ -336,7 +336,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private void createPopups() {
         mPaymentQRCodePopup =
-                new QRCodePopup<>(mFragment, mCameraFrameWrapper, mActivityIndicatorBackground, mLoadingIndicator.getInjectedViewAdapter(),
+                new QRCodePopup<>(mFragment, mCameraFrameWrapper, mActivityIndicatorBackground, mLoadingIndicator,
                         getDifferentQRCodeDetectedPopupDelayMs(), true,
                         paymentQRCodeData -> {
                             if (paymentQRCodeData == null) {
@@ -542,6 +542,11 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     void onStop() {
         closeCamera();
+
+        // Remove the injected view adapter to prevent interacting with it
+        // while it might be used in another activity/fragment (it is injected here again in onResume)
+        mLoadingIndicator.setInjectedViewAdapter(null);
+
         if (mPaymentQRCodePopup != null) {
             mPaymentQRCodePopup.hide();
         }
