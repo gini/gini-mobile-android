@@ -421,6 +421,20 @@ You can show customized activity indicator on this screen. You can pass your cus
             .setLoadingIndicatorAdapter(customLottiLoadingIndicatorAdapter)
             .build();
 
+Error Screen Customization
+--------------------------
+
+You can show custom back navigation button on bottom navigation bar. You can pass your custom ``ErrorNavigationBarBottomAdapter`` implementation to
+``GiniCapture.Builder``:
+
+.. code-block:: java
+
+    CustomErrorNavigationBarBottomAdapter customErrorNavigationBarBottomAdapter = new CustomErrorNavigationBarBottomAdapter();
+
+    GiniCapture.newInstance()
+            .setErrorNavigationBarBottomAdapter(customErrorNavigationBarBottomAdapter)
+            .build();
+
 Event Tracking
 --------------
 
