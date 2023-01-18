@@ -268,7 +268,6 @@ class ReviewFragmentImpl implements ReviewFragmentInterface {
         if (GiniCapture.hasInstance()) {
             GiniCapture.getInstance().internal().setReviewScreenAnalysisError(throwable);
         }
-       // mDocumentAnalysisErrorMessage = activity.getString(R.string.gc_document_analysis_error);
     }
 
     private void createPhoto() {
