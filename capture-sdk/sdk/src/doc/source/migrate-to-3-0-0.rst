@@ -318,3 +318,29 @@ There is a default implementation for indicating that document analysis is in pr
 by implementing the ``CustomLoadingIndicatorAdapter`` interface and passing it to ``GiniCapture``.
 
 You can find more details `here <features.html#analysis-screen-customization>`_.
+
+Error
+~~~~~
+
+The new error screen uses the global UI customization options.
+
+Breaking Changes
+++++++++++++++++
+
+Showing errors during usage of the SDK was changed from snackbar to a whole new screen.
+
+New Features
+++++++++++++
+
+New UI
+^^^^^^
+
+The new error screen gives options to retake photos or enter details manually and displays errors with more detailed description.
+
+Bottom navigation bar
+^^^^^^^^^^^^^^^^^^^^^
+
+You can show a bottom navigation bar by passing true to ``GiniCapture`` ``setBottomNavigationBarEnabled``. There is a default implementation, but you can also use
+your own by implementing the ``ErrorNavigationBarBottomAdapter`` interface and passing it to ``GiniCapture``.
+
+You can find more details `here <features.html#error-screen-customization>`_.
