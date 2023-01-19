@@ -51,9 +51,9 @@
     <string name="gbs_digital_invoice_addon_other_discounts">Other discounts</string>
     <string name="gbs_digital_invoice_addon_other_charges">Other charges</string>
     <string name="gbs_digital_invoice_addon_shipment">Shipment</string>
-    <string name="gbs_digital_invoice_onboarding_text_1">Your new return assistant!</string>
-    <string name="gbs_digital_invoice_onboarding_text_2">Deselect article that you want to return and pay only for what you keep!</string>
-    <string name="gbs_digital_invoice_onboarding_done_button_title">Next</string>
+    <string name="gbs_digital_invoice_onboarding_text_1">Digital invoice</string>
+    <string name="gbs_digital_invoice_onboarding_text_2">Deselect the products you want to return and we will recalculate the price for you.</string>
+    <string name="gbs_digital_invoice_onboarding_done_button_title">Get Started</string>
     <string name="gbs_digital_invoice_onboarding_do_not_show_button_title">Don’t show anymore</string>
 
     <string name="gbs_return_assistant_help_title">The new Return Assistant</string>

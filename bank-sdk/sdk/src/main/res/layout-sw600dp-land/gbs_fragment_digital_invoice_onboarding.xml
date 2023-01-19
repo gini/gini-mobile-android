@@ -16,16 +16,14 @@
 
         <TextView
             android:id="@+id/onboarding_text_1"
+            style="@style/GiniCaptureTheme.Typography.Headline6"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_marginStart="@dimen/gbs_digital_invoice_onboarding_text_1_horiztonal_margin"
-            android:layout_marginEnd="@dimen/gbs_digital_invoice_onboarding_text_1_horiztonal_margin"
             android:gravity="center"
             android:text="@string/gbs_digital_invoice_onboarding_text_1"
-            style="@style/GiniCaptureTheme.Typography.Headline6"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/digital_invoice_image"
+            app:layout_constraintStart_toStartOf="@+id/digital_invoice_image"
             app:layout_constraintTop_toBottomOf="@+id/digital_invoice_image" />
 
         <ImageView
@@ -46,16 +44,26 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_marginStart="@dimen/gbs_digital_invoice_onboarding_text_2_horiztonal_margin"
             android:layout_marginTop="@dimen/medium"
-            android:layout_marginEnd="@dimen/gbs_digital_invoice_onboarding_text_2_horiztonal_margin"
             android:gravity="center"
             android:lineSpacingExtra="5sp"
-            android:translationY="-2.62sp"
             android:text="@string/gbs_digital_invoice_onboarding_text_2"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            android:translationY="-2.62sp"
+            app:layout_constraintEnd_toEndOf="@+id/gbs_right_space"
+            app:layout_constraintStart_toStartOf="@+id/gbs_left_space"
             app:layout_constraintTop_toBottomOf="@+id/onboarding_text_1" />
+
+        <Space
+            android:id="@+id/gbs_left_space"
+            android:layout_width="@dimen/large"
+            android:layout_height="match_parent"
+            app:layout_constraintEnd_toStartOf="@+id/digital_invoice_image" />
+
+        <Space
+            android:id="@+id/gbs_right_space"
+            android:layout_width="@dimen/large"
+            android:layout_height="match_parent"
+            app:layout_constraintStart_toEndOf="@+id/digital_invoice_image" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
