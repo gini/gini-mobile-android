@@ -292,15 +292,6 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
         if (getActivity() == null)
             return;
 
-        final PreviewsAdapterListener previewsAdapterListener = documentError -> {
-            if (documentError.getErrorCode() == UPLOAD_FAILED) {
-                return RETRY;
-            } else if (documentError.getErrorCode() == FILE_VALIDATION_FAILED) {
-                return DELETE;
-            }
-            return null;
-        };
-
         //Custom LayoutManager for keeping the page in the middle
         mSnapManager = new MiddlePageManager(requireContext(), MiddlePageManager.HORIZONTAL, false);
         mRecyclerView.setLayoutManager(mSnapManager);
@@ -310,7 +301,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
         mSnapHelper = new PagerSnapHelper();
         mSnapHelper.attachToRecyclerView(mRecyclerView);
 
-        mPreviewPagesAdapter = new PreviewPagesAdapter(mMultiPageDocument, previewsAdapterListener, mPreviewFragmentListener);
+        mPreviewPagesAdapter = new PreviewPagesAdapter(mMultiPageDocument, mPreviewFragmentListener);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setAdapter(mPreviewPagesAdapter);
 

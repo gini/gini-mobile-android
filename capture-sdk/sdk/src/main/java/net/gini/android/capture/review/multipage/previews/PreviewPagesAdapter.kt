@@ -19,7 +19,6 @@ import net.gini.android.capture.review.RotatableImageViewContainer
 
 class PreviewPagesAdapter(
     private val multiPageDocument: ImageMultiPageDocument,
-    private val listener: PreviewsAdapterListener,
     private val previewFragmentListener: PreviewFragmentListener
 ) : RecyclerView.Adapter<PreviewPagesAdapter.PagesViewHolder>() {
 
@@ -27,12 +26,8 @@ class PreviewPagesAdapter(
     inner class PagesViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
 
         val mImageViewContainer: RotatableImageViewContainer? = view.findViewById(R.id.gc_image_container)
-        private val mImageBlueRect: LinearLayout? = view.findViewById(R.id.gc_image_selected_rect)
         private val mDeletePage: ImageButton? = view.findViewById(R.id.gc_button_delete)
-        private val mErrorMessage: String? = null
         val mActivityIndicator: ProgressBar = view.findViewById(R.id.gc_activity_indicator)
-
-
 
         init {
 
@@ -41,7 +36,6 @@ class PreviewPagesAdapter(
             }
 
             mImageViewContainer?.setOnClickListener {
-
                 previewFragmentListener.onPageClicked(multiPageDocument.documents[absoluteAdapterPosition])
             }
         }
@@ -76,7 +70,6 @@ class PreviewPagesAdapter(
 
                     override fun onError(exception: Exception?) {
                         hideActivityIndicator(holder.mActivityIndicator)
-                        //showPreviewError(context)
                     }
                 }]
             }
