@@ -22,6 +22,8 @@ import net.gini.android.bank.sdk.capture.digitalinvoice.info.DigitalInvoiceInfoF
 import net.gini.android.bank.sdk.capture.digitalinvoice.onboarding.DigitalInvoiceOnboardingFragment
 import net.gini.android.bank.sdk.capture.digitalinvoice.onboarding.DigitalInvoiceOnboardingFragmentListener
 import net.gini.android.bank.sdk.capture.internalParseResult
+import net.gini.android.capture.view.InjectedViewContainer
+import net.gini.android.capture.help.view.HelpNavigationBarBottomAdapter
 
 /**
  * Created by Alpar Szotyori on 05.12.2019.
@@ -96,6 +98,12 @@ internal class DigitalInvoiceActivity : AppCompatActivity(), DigitalInvoiceFragm
             retainFragment()
         }
         enableHomeAsUp(this)
+    }
+
+
+    private fun setNavigationBottomBar() {
+        val injectedViewAdapter = findViewById<InjectedViewContainer<HelpNavigationBarBottomAdapter>>(R.id.gbs_injected_navigation_bar_container_bottom)
+
     }
 
     /**
