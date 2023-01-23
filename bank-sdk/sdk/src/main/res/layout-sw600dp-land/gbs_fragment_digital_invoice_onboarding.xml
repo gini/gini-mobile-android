@@ -22,20 +22,20 @@
             android:layout_centerHorizontal="true"
             android:gravity="center"
             android:text="@string/gbs_digital_invoice_onboarding_text_1"
+            android:layout_marginBottom="@dimen/large"
+            app:layout_constraintBottom_toTopOf="@+id/onboarding_text_2"
             app:layout_constraintEnd_toEndOf="@+id/digital_invoice_image"
-            app:layout_constraintStart_toStartOf="@+id/digital_invoice_image"
-            app:layout_constraintTop_toBottomOf="@+id/digital_invoice_image" />
+            app:layout_constraintStart_toStartOf="@+id/digital_invoice_image" />
 
         <ImageView
             android:id="@+id/digital_invoice_image"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:src="@drawable/gbs_digital_invoice_list_image"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/onboarding_text_1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             tools:ignore="ContentDescription" />
 
         <TextView
@@ -44,14 +44,14 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="@dimen/medium"
+            android:layout_marginBottom="@dimen/xxlarge"
             android:gravity="center"
             android:lineSpacingExtra="5sp"
             android:text="@string/gbs_digital_invoice_onboarding_text_2"
             android:translationY="-2.62sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/gbs_right_space"
-            app:layout_constraintStart_toStartOf="@+id/gbs_left_space"
-            app:layout_constraintTop_toBottomOf="@+id/onboarding_text_1" />
+            app:layout_constraintStart_toStartOf="@+id/gbs_left_space" />
 
         <Space
             android:id="@+id/gbs_left_space"
