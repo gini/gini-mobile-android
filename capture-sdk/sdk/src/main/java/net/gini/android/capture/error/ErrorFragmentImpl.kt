@@ -15,8 +15,8 @@ import net.gini.android.capture.internal.util.ActivityHelper
 import net.gini.android.capture.ImageRetakeOptionsListener
 
 /**
- * Main logic implementation for error handling UI presented by {@link ErrorActivity}
- * Internal use only
+ * Main logic implementation for error handling UI presented by {@link ErrorActivity}.
+ * Internal use only.
  */
 class ErrorFragmentImpl(
     private val fragment: FragmentImplCallback,

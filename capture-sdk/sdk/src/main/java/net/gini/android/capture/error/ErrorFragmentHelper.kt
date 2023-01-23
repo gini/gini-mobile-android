@@ -7,8 +7,8 @@ import net.gini.android.capture.internal.ui.FragmentImplCallback
 import net.gini.android.capture.ImageRetakeOptionsListener
 
 /**
- * Helper class for setting arguments to analysis fragment
- * Internal use only
+ * Helper class for setting arguments to analysis fragment.
+ * Internal use only.
  */
 class ErrorFragmentHelper {
 

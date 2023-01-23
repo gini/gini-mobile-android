@@ -9,14 +9,14 @@ import net.gini.android.capture.view.InjectedViewAdapter
 
 /**
  * Implement this interface to add back navigation to a custom view on bottom navigation bar
- * and pass it to the {@link GiniCapture.Builder#setErrorNavigationBarBottomAdapter(ErrorNavigationBarBottomAdapter)}
+ * and pass it to the {@link GiniCapture.Builder#setErrorNavigationBarBottomAdapter(ErrorNavigationBarBottomAdapter)}.
  */
 interface ErrorNavigationBarBottomAdapter: InjectedViewAdapter {
     fun setOnBackButtonClickListener(click: View.OnClickListener)
 }
 
 /**
- * Internal use only
+ * Internal use only.
  */
 class DefaultErrorNavigationBarBottomAdapter: ErrorNavigationBarBottomAdapter {
     var viewBinding: GcErrorNavigationBarBottomBinding? = null

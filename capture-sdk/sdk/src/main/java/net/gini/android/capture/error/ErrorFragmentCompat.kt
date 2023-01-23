@@ -11,6 +11,10 @@ import net.gini.android.capture.internal.ui.FragmentImplCallback
 import net.gini.android.capture.internal.util.AlertDialogHelperCompat
 
 /**
+ * Internal use only.
+ */
+
+/**
  * <p>
  * Include the {@code ErrorFragmentCompat} into your layout by using the {@link
  * ErrorFragmentCompat#createInstance(Document)} factory method to create an instance and
