@@ -53,7 +53,6 @@ public class PreviewFragment extends Fragment {
     private ImageButton mDeletePage;
     private ImageDocument mDocument;
     private String mErrorMessage;
-    private ProgressBar mActivityIndicator;
     private boolean mStopped = true;
     private ErrorButtonAction mErrorButtonAction;
     private PreviewFragmentListener listener;
@@ -101,7 +100,6 @@ public class PreviewFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         mImageViewContainer = view.findViewById(R.id.gc_image_container);
-        mActivityIndicator = view.findViewById(R.id.gc_activity_indicator);
         mImageBlueRect = view.findViewById(R.id.gc_image_selected_rect);
         mDeletePage = view.findViewById(R.id.gc_button_delete);
        // mRootPreview = view.findViewById(R.id.gc_image_preview_root);
@@ -133,7 +131,6 @@ public class PreviewFragment extends Fragment {
         clearParcelableMemoryCache();
         if (shouldShowPreviewImage()) {
             LOG.debug("Loading preview bitmap ({})", this);
-            showActivityIndicator();
             if (GiniCapture.hasInstance()) {
                 GiniCapture.getInstance().internal().getPhotoMemoryCache()
                         .get(context, mDocument, new AsyncCallback<Photo, Exception>() {
@@ -144,7 +141,6 @@ public class PreviewFragment extends Fragment {
                                     LOG.debug("Stopped: preview discarded ({})", this);
                                     return;
                                 }
-                                hideActivityIndicator();
                                 LOG.debug("Showing preview ({})", this);
 
                                 mImageViewContainer.getImageView().setImageBitmap(result.getBitmapPreview());
@@ -159,7 +155,6 @@ public class PreviewFragment extends Fragment {
                                     LOG.debug("Stopped: ignoring error ({})", this);
                                     return;
                                 }
-                                hideActivityIndicator();
                                 LOG.debug("Showing error ({})", this);
                                 showPreviewError(context);
                             }
@@ -241,13 +236,6 @@ public class PreviewFragment extends Fragment {
                 && mImageViewContainer.getImageView().getDrawable() == null;
     }
 
-    private void showActivityIndicator() {
-        mActivityIndicator.setVisibility(View.VISIBLE);
-    }
-
-    private void hideActivityIndicator() {
-        mActivityIndicator.setVisibility(View.GONE);
-    }
 
     @Override
     public void onStop() {
