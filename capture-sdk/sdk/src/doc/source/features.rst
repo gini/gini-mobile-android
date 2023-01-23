@@ -435,6 +435,32 @@ You can show custom back navigation button on bottom navigation bar. You can pas
             .setErrorNavigationBarBottomAdapter(customErrorNavigationBarBottomAdapter)
             .build();
 
+You can show your own UI if an error occured and the user chooses to enter details manually. For this you must handle
+``CameraActivity.RESULT_ENTER_MANUALLY`` result code in your main activity.
+
+.. code-block:: java
+
+    @Override
+    protected void onActivityResult(final int requestCode, final int resultCode,
+                                    final Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_SCAN) {
+             (...)
+             if (resultCode == CameraActivity.RESULT_ENTER_MANUALLY) {
+                 handleEnterManuallyAction();
+             }
+             return;
+
+            switch (resultCode) {
+                case CameraActivity.RESULT_ENTER_MANUALLY:
+                    handleEnterManuallyAction();
+                    break;
+                (...)
+            }
+            (...)
+        }
+
 Event Tracking
 --------------
 
