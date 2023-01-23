@@ -344,3 +344,10 @@ You can show a bottom navigation bar by passing true to ``GiniCapture`` ``setBot
 your own by implementing the ``ErrorNavigationBarBottomAdapter`` interface and passing it to ``GiniCapture``.
 
 You can find more details `here <features.html#error-screen-customization>`_.
+
+Option to enter details manually
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+You can show your own UI for data input if an error occured and the user clicks the "Enter manually" button on the error screen.
+
+You can find more details `here <features.html#error-screen-customization>`_.
