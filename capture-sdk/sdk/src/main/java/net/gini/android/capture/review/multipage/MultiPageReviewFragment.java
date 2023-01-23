@@ -13,11 +13,8 @@ import static net.gini.android.capture.tracking.EventTrackingHelper.trackReviewS
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,13 +34,10 @@ import net.gini.android.capture.error.ErrorActivity;
 import net.gini.android.capture.internal.network.NetworkRequestResult;
 import net.gini.android.capture.internal.network.NetworkRequestsManager;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
-import net.gini.android.capture.internal.util.ActivityHelper;
 import net.gini.android.capture.internal.util.AlertDialogHelperCompat;
 import net.gini.android.capture.internal.util.FileImportHelper;
-import net.gini.android.capture.internal.util.FileImportValidator;
-import net.gini.android.capture.network.Error;
 import net.gini.android.capture.error.ErrorType;
-import net.gini.android.capture.network.FailureException;
+import net.gini.android.capture.internal.network.FailureException;
 import net.gini.android.capture.review.multipage.previews.MiddlePageManager;
 import net.gini.android.capture.review.multipage.previews.PreviewFragmentListener;
 import net.gini.android.capture.review.multipage.previews.PreviewPagesAdapter;
@@ -66,7 +60,6 @@ import java.util.Map;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
-import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -761,9 +754,9 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
 
     private void handleError(Throwable throwable, Document document) {
         if (getActivity() != null) {
-            if (throwable instanceof FailureException) {
-                FailureException exception = (FailureException) throwable;
-                ErrorActivity.startErrorActivity(requireActivity(), exception.errorType, document);
+            final FailureException failureException = FailureException.tryCastFromCompletableFutureThrowable(throwable);
+            if (failureException != null) {
+                ErrorActivity.startErrorActivity(requireActivity(), failureException.getErrorType(), document);
             } else {
                 ErrorActivity.startErrorActivity(requireActivity(), ErrorType.GENERAL, document);
             }

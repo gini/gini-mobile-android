@@ -23,16 +23,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
-import net.gini.android.capture.document.ImageDocument;
-import net.gini.android.capture.error.ErrorActivity;
-import net.gini.android.capture.error.ErrorType;
-import net.gini.android.capture.network.FailureException;
-import net.gini.android.capture.noresults.NoResultsActivity;
-import net.gini.android.capture.tracking.AnalysisScreenEvent;
-
-import java.util.Map;
-import java.util.Set;
-
 /**
  * Internal use only.
  *
