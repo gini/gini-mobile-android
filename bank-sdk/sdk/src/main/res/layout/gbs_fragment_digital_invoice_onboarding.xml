@@ -16,28 +16,28 @@
 
         <TextView
             android:id="@+id/onboarding_text_1"
+            style="@style/GiniCaptureTheme.Typography.Headline6"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_marginStart="@dimen/gbs_digital_invoice_onboarding_text_1_horiztonal_margin"
-            android:layout_marginEnd="@dimen/gbs_digital_invoice_onboarding_text_1_horiztonal_margin"
+            android:layout_marginStart="@dimen/xxxlarge"
+            android:layout_marginEnd="@dimen/xxxlarge"
+            android:layout_marginBottom="@dimen/large"
             android:gravity="center"
             android:text="@string/gbs_digital_invoice_onboarding_text_1"
-            style="@style/GiniCaptureTheme.Typography.Headline6"
+            app:layout_constraintBottom_toTopOf="@+id/onboarding_text_2"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/digital_invoice_image" />
+            app:layout_constraintStart_toStartOf="parent" />
 
         <ImageView
             android:id="@+id/digital_invoice_image"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:src="@drawable/gbs_digital_invoice_list_image"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/onboarding_text_1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             tools:ignore="ContentDescription" />
 
         <TextView
@@ -46,17 +46,17 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_marginStart="@dimen/gbs_digital_invoice_onboarding_text_2_horiztonal_margin"
-            android:layout_marginTop="@dimen/medium"
-            android:layout_marginEnd="@dimen/gbs_digital_invoice_onboarding_text_2_horiztonal_margin"
+            android:layout_marginStart="@dimen/xxxlarge"
+            android:layout_marginEnd="@dimen/xxxlarge"
+            android:layout_marginBottom="@dimen/xxlarge"
             android:gravity="center"
             android:lineSpacingExtra="5sp"
-            android:translationY="-2.62sp"
-            android:textColor="@color/Dark_06"
             android:text="@string/gbs_digital_invoice_onboarding_text_2"
+            android:textColor="@color/Dark_06"
+            android:translationY="-2.62sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/onboarding_text_1" />
+            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

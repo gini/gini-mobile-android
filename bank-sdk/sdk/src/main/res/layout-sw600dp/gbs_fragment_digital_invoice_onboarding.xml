@@ -22,8 +22,10 @@
             android:layout_centerHorizontal="true"
             android:gravity="center"
             android:text="@string/gbs_digital_invoice_onboarding_text_1"
-            app:layout_constraintEnd_toEndOf="@+id/digital_invoice_image"
-            app:layout_constraintStart_toStartOf="@+id/digital_invoice_image"
+            android:layout_marginStart="@dimen/xxxlarge"
+            android:layout_marginEnd="@dimen/xxxlarge"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/digital_invoice_image" />
 
         <ImageView
@@ -44,26 +46,17 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
+            android:layout_marginStart="@dimen/xxxlarge"
+            android:layout_marginEnd="@dimen/xxxlarge"
             android:layout_marginTop="@dimen/medium"
             android:gravity="center"
             android:lineSpacingExtra="5sp"
             android:text="@string/gbs_digital_invoice_onboarding_text_2"
             android:translationY="-2.62sp"
-            app:layout_constraintEnd_toEndOf="@+id/gbs_right_space"
-            app:layout_constraintStart_toStartOf="@+id/gbs_left_space"
+            android:textColor="@color/Dark_06"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/onboarding_text_1" />
-
-        <Space
-            android:id="@+id/gbs_left_space"
-            android:layout_width="@dimen/large"
-            android:layout_height="match_parent"
-            app:layout_constraintEnd_toStartOf="@+id/digital_invoice_image" />
-
-        <Space
-            android:id="@+id/gbs_right_space"
-            android:layout_width="@dimen/large"
-            android:layout_height="match_parent"
-            app:layout_constraintStart_toEndOf="@+id/digital_invoice_image" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
