@@ -461,7 +461,7 @@ result code, which is returned by the SDK when the user clicks the "Enter manual
             (...)
         }
 
-No results Screen Customization
+No Results Screen Customization
 -------------------------------
 
 You can show custom back navigation button on bottom navigation bar. You can pass your custom ``NoResultsNavigationBarBottomAdapter`` implementation to
