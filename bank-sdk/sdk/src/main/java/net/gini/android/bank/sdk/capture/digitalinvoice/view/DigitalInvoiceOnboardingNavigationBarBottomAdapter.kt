@@ -3,7 +3,7 @@ package net.gini.android.bank.sdk.capture.digitalinvoice.view
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import net.gini.android.bank.sdk.databinding.GbsDigitalInvoiceNavigationBarBottomBinding
+import net.gini.android.bank.sdk.databinding.GbsDigitalInvoiceOnboardingNavigationBarBottomBinding
 import net.gini.android.capture.view.InjectedViewAdapter
 
 interface DigitalInvoiceOnboardingNavigationBarBottomAdapter: InjectedViewAdapter {
@@ -13,7 +13,7 @@ interface DigitalInvoiceOnboardingNavigationBarBottomAdapter: InjectedViewAdapte
 
 class DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter: DigitalInvoiceOnboardingNavigationBarBottomAdapter {
 
-    var viewBinding: GbsDigitalInvoiceNavigationBarBottomBinding? = null
+    var viewBinding: GbsDigitalInvoiceOnboardingNavigationBarBottomBinding? = null
 
 
     override fun setGetStartedButtonClickListener(click: View.OnClickListener) {
@@ -21,7 +21,7 @@ class DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter: DigitalInvoiceO
     }
 
     override fun onCreateView(container: ViewGroup): View {
-        val binding = GbsDigitalInvoiceNavigationBarBottomBinding.inflate(LayoutInflater.from(container.context), container, false)
+        val binding = GbsDigitalInvoiceOnboardingNavigationBarBottomBinding.inflate(LayoutInflater.from(container.context), container, false)
 
         viewBinding = binding
 
