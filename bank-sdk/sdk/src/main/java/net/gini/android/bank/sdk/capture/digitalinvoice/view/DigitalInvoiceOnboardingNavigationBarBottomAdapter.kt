@@ -11,7 +11,7 @@ interface DigitalInvoiceOnboardingNavigationBarBottomAdapter: InjectedViewAdapte
     fun setGetStartedButtonClickListener(click: View.OnClickListener)
 }
 
-class DefaultDigitalInvoiceOnboardingBarBottomAdapter: DigitalInvoiceOnboardingNavigationBarBottomAdapter {
+class DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter: DigitalInvoiceOnboardingNavigationBarBottomAdapter {
 
     var viewBinding: GbsDigitalInvoiceNavigationBarBottomBinding? = null
 

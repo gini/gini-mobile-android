@@ -130,18 +130,18 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setInputHandlers()
-        setupBottomNavigationBar()
+        setupOnboardingBottomNavigationBar()
     }
 
 
-    private fun setupBottomNavigationBar() {
+    private fun setupOnboardingBottomNavigationBar() {
         if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled) {
 
             binding.doneButton.visibility = View.INVISIBLE
             binding.doneButton.isEnabled = false
 
-            binding.gbsInjectedNavigationBarContainerBottom?.injectedViewAdapter = GiniBank.digitalInvoiceOnboardingBarBottomAdapter
-            GiniBank.digitalInvoiceOnboardingBarBottomAdapter.setGetStartedButtonClickListener {
+            binding.gbsInjectedNavigationBarContainerBottom.injectedViewAdapter = GiniBank.digitalInvoiceOnboardingNavigationBarBottomAdapter
+            GiniBank.digitalInvoiceOnboardingNavigationBarBottomAdapter.setGetStartedButtonClickListener {
                 presenter?.dismisOnboarding(false)
             }
         }
