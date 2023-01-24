@@ -44,11 +44,10 @@ import net.gini.android.capture.internal.camera.photo.PhotoFactoryDocumentAsyncT
 import net.gini.android.capture.internal.network.NetworkRequestResult;
 import net.gini.android.capture.internal.network.NetworkRequestsManager;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
-import net.gini.android.capture.internal.util.ActivityHelper;
 import net.gini.android.capture.internal.util.FileImportHelper;
 import net.gini.android.capture.logging.ErrorLog;
 import net.gini.android.capture.logging.ErrorLogger;
-import net.gini.android.capture.network.FailureException;
+import net.gini.android.capture.internal.network.FailureException;
 import net.gini.android.capture.tracking.ReviewScreenEvent;
 
 import org.slf4j.Logger;
@@ -259,9 +258,9 @@ class ReviewFragmentImpl implements ReviewFragmentInterface {
             return;
         }
 
-        if (throwable instanceof FailureException) {
-            FailureException exception = (FailureException) throwable;
-            ErrorActivity.startErrorActivity(activity, exception.errorType, document);
+        final FailureException failureException = FailureException.tryCastFromCompletableFutureThrowable(throwable);
+        if (failureException != null) {
+            ErrorActivity.startErrorActivity(activity, failureException.getErrorType(), document);
         } else {
             ErrorActivity.startErrorActivity(activity, ErrorType.GENERAL, document);
         }
@@ -269,7 +268,6 @@ class ReviewFragmentImpl implements ReviewFragmentInterface {
         if (GiniCapture.hasInstance()) {
             GiniCapture.getInstance().internal().setReviewScreenAnalysisError(throwable);
         }
-       // mDocumentAnalysisErrorMessage = activity.getString(R.string.gc_document_analysis_error);
     }
 
     private void createPhoto() {

@@ -21,6 +21,9 @@ import net.gini.android.capture.view.InjectedViewContainer
 import net.gini.android.capture.view.NavButtonType
 import net.gini.android.capture.view.NavigationBarTopAdapter
 
+/**
+ * Internal use only
+ */
 class ErrorActivity : AppCompatActivity(),
     ImageRetakeOptionsListener {
 

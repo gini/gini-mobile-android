@@ -26,13 +26,11 @@ import net.gini.android.capture.internal.camera.photo.ParcelableMemoryCache;
 import net.gini.android.capture.internal.document.DocumentRenderer;
 import net.gini.android.capture.internal.document.DocumentRendererFactory;
 import net.gini.android.capture.internal.storage.ImageDiskStore;
-import net.gini.android.capture.internal.ui.ErrorSnackbar;
-import net.gini.android.capture.internal.util.ActivityHelper;
 import net.gini.android.capture.internal.util.FileImportHelper;
 import net.gini.android.capture.internal.util.MimeType;
 import net.gini.android.capture.logging.ErrorLog;
 import net.gini.android.capture.logging.ErrorLogger;
-import net.gini.android.capture.network.FailureException;
+import net.gini.android.capture.internal.network.FailureException;
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction;
 import net.gini.android.capture.network.model.GiniCaptureReturnReason;
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
@@ -501,12 +499,9 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
         trackAnalysisScreenEvent(AnalysisScreenEvent.ERROR, errorDetails);
 
         final ErrorType errorType;
-        if (throwable instanceof FailureException) {
-            FailureException exception = (FailureException) throwable;
-            errorType = exception.errorType;
-        } else if (throwable.getCause() instanceof FailureException) {
-            FailureException exception = (FailureException) throwable.getCause();
-            errorType = exception.errorType;
+        final FailureException failureException = FailureException.tryCastFromCompletableFutureThrowable(throwable);
+        if (failureException != null) {
+            errorType = failureException.getErrorType();
         } else {
             errorType = ErrorType.GENERAL;
         }
