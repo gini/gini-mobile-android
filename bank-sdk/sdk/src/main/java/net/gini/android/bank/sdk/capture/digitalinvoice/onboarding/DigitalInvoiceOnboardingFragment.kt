@@ -141,7 +141,7 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
             binding.doneButton.isEnabled = false
 
             binding.gbsInjectedNavigationBarContainerBottom?.injectedViewAdapter = GiniBank.digitalInvoiceOnboardingBarBottomAdapter
-            GiniBank.digitalInvoiceOnboardingBarBottomAdapter.setOnNextButtonClickListener {
+            GiniBank.digitalInvoiceOnboardingBarBottomAdapter.setGetStartedButtonClickListener {
                 presenter?.dismisOnboarding(false)
             }
         }
