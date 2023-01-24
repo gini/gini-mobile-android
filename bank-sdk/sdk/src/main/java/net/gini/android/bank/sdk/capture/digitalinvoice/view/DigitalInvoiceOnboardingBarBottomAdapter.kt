@@ -6,12 +6,12 @@ import android.view.ViewGroup
 import net.gini.android.bank.sdk.databinding.GbsDigitalInvoiceNavigationBarBottomBinding
 import net.gini.android.capture.view.InjectedViewAdapter
 
-interface DigitalInvoiceBarBottomAdapter: InjectedViewAdapter {
+interface DigitalInvoiceOnboardingBarBottomAdapter: InjectedViewAdapter {
 
     fun setOnNextButtonClickListener(click: View.OnClickListener)
 }
 
-class DefaultDigitalInvoiceBarBottomAdapter: DigitalInvoiceBarBottomAdapter {
+class DefaultDigitalInvoiceOnboardingBarBottomAdapter: DigitalInvoiceOnboardingBarBottomAdapter {
 
     var viewBinding: GbsDigitalInvoiceNavigationBarBottomBinding? = null
 

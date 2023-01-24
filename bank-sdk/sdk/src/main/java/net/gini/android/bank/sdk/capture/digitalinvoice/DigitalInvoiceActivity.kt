@@ -101,11 +101,6 @@ internal class DigitalInvoiceActivity : AppCompatActivity(), DigitalInvoiceFragm
     }
 
 
-    private fun setNavigationBottomBar() {
-        val injectedViewAdapter = findViewById<InjectedViewContainer<HelpNavigationBarBottomAdapter>>(R.id.gbs_injected_navigation_bar_container_bottom)
-
-    }
-
     /**
      * Internal use only.
      *

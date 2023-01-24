@@ -7,9 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.transition.TransitionInflater
+import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.capture.util.autoCleared
 import net.gini.android.bank.sdk.databinding.GbsFragmentDigitalInvoiceOnboardingBinding
+import net.gini.android.capture.GiniCapture
 
 /**
  * Created by Alpar Szotyori on 14.10.2020.
@@ -128,6 +130,21 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setInputHandlers()
+        setupBottomNavigationBar()
+    }
+
+
+    private fun setupBottomNavigationBar() {
+        if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled) {
+
+            binding.doneButton.visibility = View.INVISIBLE
+            binding.doneButton.isEnabled = false
+
+            binding.gbsInjectedNavigationBarContainerBottom?.injectedViewAdapter = GiniBank.digitalInvoiceOnboardingBarBottomAdapter
+            GiniBank.digitalInvoiceOnboardingBarBottomAdapter.setOnNextButtonClickListener {
+                presenter?.dismisOnboarding(false)
+            }
+        }
     }
 
     /**
