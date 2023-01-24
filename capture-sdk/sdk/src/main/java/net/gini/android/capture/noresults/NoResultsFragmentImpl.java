@@ -25,6 +25,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import static android.view.View.GONE;
 import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
 
+/**
+ * Main logic implementation for no results UI presented by {@link NoResultsActivity}.
+ * Internal use only.
+ */
 class NoResultsFragmentImpl {
 
     private static final ImageRetakeOptionsListener NO_OP_LISTENER =
