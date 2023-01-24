@@ -11,6 +11,10 @@ import net.gini.android.capture.internal.ui.FragmentImplCallback
 import net.gini.android.capture.internal.util.AlertDialogHelperCompat
 
 /**
+ * Internal use only.
+ */
+
+/**
  * <p>
  * Include the {@code ErrorFragmentCompat} into your layout by using the {@link
  * ErrorFragmentCompat#createInstance(Document)} factory method to create an instance and
@@ -18,7 +22,7 @@ import net.gini.android.capture.internal.util.AlertDialogHelperCompat
  * </p>
  * <p>
  * Your Activity must implement the {@link ImageRetakeOptionsListener} interface to receive events
- * from the No Results Fragment. Failing to do so will throw an exception.
+ * from the Error Fragment. Failing to do so will throw an exception.
  * </p>
  * <p>
  * Your Activity is automatically set as the listener in {@link ErrorFragmentCompat#onCreate(Bundle)}.
