@@ -436,7 +436,47 @@ You can show custom back navigation button on bottom navigation bar. You can pas
             .build();
 
 You can show your own UI if an error occured and the user chooses to enter details manually. For this you must handle ``CameraActivity.RESULT_ENTER_MANUALLY``
-result code which is returned by the SDK when the user clicks the "Enter manually" button on the error screen in your main activity.
+result code, which is returned by the SDK when the user clicks the "Enter manually" button on the error screen, in your main activity.
+
+.. code-block:: java
+
+    @Override
+    protected void onActivityResult(final int requestCode, final int resultCode,
+                                    final Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_SCAN) {
+             (...)
+             if (resultCode == CameraActivity.RESULT_ENTER_MANUALLY) {
+                 handleEnterManuallyAction();
+             }
+             return;
+
+            switch (resultCode) {
+                case CameraActivity.RESULT_ENTER_MANUALLY:
+                    handleEnterManuallyAction();
+                    break;
+                (...)
+            }
+            (...)
+        }
+
+No results Screen Customization
+-------------------------------
+
+You can show custom back navigation button on bottom navigation bar. You can pass your custom ``NoResultsNavigationBarBottomAdapter`` implementation to
+``GiniCapture.Builder``:
+
+.. code-block:: java
+
+    CustomNoResultsNavigationBarBottomAdapter customNoResultsNavigationBarBottomAdapter = new CustomNoResultsNavigationBarBottomAdapter();
+
+    GiniCapture.newInstance()
+            .setNoResultsNavigationBarBottomAdapter(customNoResultsNavigationBarBottomAdapter)
+            .build();
+
+You can show your own UI if the document analysis returned with no result and the user chooses to enter details manually. For this you must handle ``CameraActivity.RESULT_ENTER_MANUALLY``
+result code, which is returned by the SDK when the user clicks the "Enter manually" button on the no results screen, in your main activity.
 
 .. code-block:: java
 
