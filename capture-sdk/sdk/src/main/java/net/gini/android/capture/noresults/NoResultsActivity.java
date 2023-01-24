@@ -26,10 +26,8 @@ import static net.gini.android.capture.camera.CameraActivity.RESULT_ENTER_MANUAL
 import static net.gini.android.capture.internal.util.ActivityHelper.interceptOnBackPressed;
 
 /**
- * Internal use only
- */
-
-/**
+ * Internal use only.
+ *
  * <h3>Screen API</h3>
  *
  * <p>
