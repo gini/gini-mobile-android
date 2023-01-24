@@ -52,26 +52,24 @@ import static net.gini.android.capture.internal.util.ActivityHelper.interceptOnB
  *             <b>Tip text style:</b> via overriding the style named {@code GiniCaptureTheme.Typography.Subtitle1}
  *         </li>
  *         <li>
- *             <b>Tip image - Good lighting:</b> via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi
- *             named
- *             {@code gc_photo_tip_lighting.png}
+ *             <b>Tip image - Good lighting:</b> via vector asset xml file
+ *             named {@code gc_photo_tip_lighting.xml}
  *         </li>
  *         <li>
- *             <b>Tip image - Document should be flat:</b> via images for mdpi, hdpi, xhdpi, xxhdpi,
- *             xxxhdpi
- *             named {@code gc_photo_tip_flat.png}
+ *             <b>Tip image - Document should be flat:</b> via vector asset xml file
+ *             named {@code gc_photo_tip_flat.xml}
  *         </li>
  *         <li>
- *             <b>Tip image - Device should be parallel to document:</b> via images for mdpi, hdpi,
- *             xhdpi,xxhdpi, xxxhdpi named {@code gc_photo_tip_parallel.png}
+ *             <b>Tip image - Device should be parallel to document:</b> via ivia vector asset xml file
+ *             named {@code gc_photo_tip_parallel.xml}
  *         </li>
  *         <li>
- *             <b>Tip image - Document should be aligned with corner guides:</b> via
- *             images for mdpi, hdpi, xhdpi,xxhdpi, xxxhdpi named {@code gc_photo_tip_align.png}
+ *             <b>Tip image - Document should be aligned with corner guides:</b> via vector asset xml file
+ *             named {@code gc_photo_tip_align.xml}
  *         </li>
  *         <li>
- *             <b>Tip image - It's now possible to analyse an invoice with multiple pages:</b> via
- *             images for mdpi, hdpi, xhdpi,xxhdpi, xxxhdpi named {@code gc_photo_tip_multipage.png}
+ *             <b>Tip image - It's now possible to analyse an invoice with multiple pages:</b> via vector asset xml file
+ *             named {@code gc_photo_tip_multipage.xml}
  *         </li>
  *     </ul>
  * </p>
