@@ -144,9 +144,5 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
         binding.doneButton.setOnClickListener {
             presenter?.dismisOnboarding(false)
         }
-
-        binding.doNotShowButton.setOnClickListener {
-            presenter?.dismisOnboarding(true)
-        }
     }
 }

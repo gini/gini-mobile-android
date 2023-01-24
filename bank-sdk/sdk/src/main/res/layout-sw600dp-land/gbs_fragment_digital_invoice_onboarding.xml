@@ -52,8 +52,8 @@
             android:gravity="center"
             android:lineSpacingExtra="5sp"
             android:text="@string/gbs_digital_invoice_onboarding_text_2"
-            android:textColor="@color/Dark_06"
             android:translationY="-2.62sp"
+            android:textColor="@color/Dark_06"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
