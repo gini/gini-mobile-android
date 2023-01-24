@@ -27,7 +27,6 @@ class PreviewPagesAdapter(
 
         val mImageViewContainer: RotatableImageViewContainer? = view.findViewById(R.id.gc_image_container)
         private val mDeletePage: ImageButton? = view.findViewById(R.id.gc_button_delete)
-        val mActivityIndicator: ProgressBar = view.findViewById(R.id.gc_activity_indicator)
 
         init {
 
@@ -52,7 +51,6 @@ class PreviewPagesAdapter(
         val mDocument = multiPageDocument.documents[position]
 
         if (shouldShowPreviewImage(mDocument, holder.mImageViewContainer?.imageView)) {
-            showActivityIndicator(holder.mActivityIndicator)
             if (GiniCapture.hasInstance()) {
                 GiniCapture.getInstance()
                     .internal().photoMemoryCache[holder.view.context, mDocument, object :
@@ -63,13 +61,11 @@ class PreviewPagesAdapter(
                     }
 
                     override fun onSuccess(result: Photo?) {
-                        hideActivityIndicator(holder.mActivityIndicator)
                         holder.mImageViewContainer?.imageView?.setImageBitmap(result?.bitmapPreview)
                         holder.mImageViewContainer?.rotateImageView(result?.rotationForDisplay ?: 0, false);
                     }
 
                     override fun onError(exception: Exception?) {
-                        hideActivityIndicator(holder.mActivityIndicator)
                     }
                 }]
             }
@@ -84,13 +80,6 @@ class PreviewPagesAdapter(
                 && mImageViewContainer?.drawable == null)
     }
 
-    private fun showActivityIndicator(mActivityIndicator: ProgressBar) {
-        mActivityIndicator.visibility = View.VISIBLE
-    }
-
-    private fun hideActivityIndicator(mActivityIndicator: ProgressBar) {
-        mActivityIndicator.visibility = View.GONE
-    }
 
     override fun getItemCount(): Int {
         return multiPageDocument.documents.size

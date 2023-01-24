@@ -47,24 +47,6 @@
         app:layout_constraintEnd_toEndOf="@+id/gc_image_selected_rect"
         app:layout_constraintTop_toTopOf="@+id/gc_image_selected_rect" />
 
-    <ProgressBar
-        android:id="@+id/gc_activity_indicator"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:indeterminateOnly="true"
-        android:indeterminateTint="@color/gc_analysis_activity_indicator"
-        android:indeterminateTintMode="src_in"
-        android:padding="@dimen/gc_review_progressbar_padding"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:targetApi="lollipop"
-        tools:visibility="visible" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 
