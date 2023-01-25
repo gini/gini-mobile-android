@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityMainBinding
     private val permissionHandler = PermissionHandler(this)
     private val captureLauncher = registerForActivityResult(CaptureFlowContract(), ::onCaptureResult)
     private val captureImportLauncher = registerForActivityResult(CaptureFlowImportContract(), ::onCaptureResult)
@@ -38,8 +39,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val binding = ActivityMainBinding.inflate(layoutInflater)
+        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         showVersions(binding)
         setViewListeners(binding)
         setGiniCaptureSdkDebugging()
@@ -60,7 +62,6 @@ class MainActivity : AppCompatActivity() {
     private fun configureGiniCapture() {
         GiniBank.releaseCapture(this, "",
             "", "", "","", Amount.EMPTY)
-        val enableBottomNavigationBar = false
         val useCustomOnboardingPages = false
         val useCustomLoadingIndicator = false
         GiniBank.setCaptureConfiguration(
@@ -79,7 +80,7 @@ class MainActivity : AppCompatActivity() {
                     )
                 ),
                 importedFileSizeBytesLimit = 5 * 1024 * 1024,
-                bottomNavigationBarEnabled = enableBottomNavigationBar,
+                bottomNavigationBarEnabled = binding.gbsEnableBottomBar.isChecked,
                 onboardingAlignCornersIllustrationAdapter = if (useCustomOnboardingPages) {
                     CustomOnboardingIllustrationAdapter(
                         resources.getIdentifier(
