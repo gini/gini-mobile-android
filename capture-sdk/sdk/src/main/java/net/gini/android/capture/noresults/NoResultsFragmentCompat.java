@@ -18,13 +18,10 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 /**
- * <h3>Component API</h3>
- *
- * <p>
- * When you use the Component API with the Android Support Library, the {@code
- * NoResultsFragmentCompat} displays hints that show how to best take a picture of a document.
- * </p>
- * <p>
+ * Internal use only.
+ */
+
+/**
  * Include the {@code NoResultsFragmentCompat} into your layout by using the {@link
  * NoResultsFragmentCompat#createInstance(Document)} factory method to create an instance and
  * display it using the {@link androidx.fragment.app.FragmentManager}.

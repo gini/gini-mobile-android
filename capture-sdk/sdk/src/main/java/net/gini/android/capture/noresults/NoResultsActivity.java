@@ -26,6 +26,8 @@ import static net.gini.android.capture.camera.CameraActivity.RESULT_ENTER_MANUAL
 import static net.gini.android.capture.internal.util.ActivityHelper.interceptOnBackPressed;
 
 /**
+ * Internal use only.
+ *
  * <h3>Screen API</h3>
  *
  * <p>
@@ -43,95 +45,39 @@ import static net.gini.android.capture.internal.util.ActivityHelper.interceptOnB
  *     <ul>
  *         <li>
  *             <b>Header icon:</b> via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named
- *             {@code gc_alert_icon.png}
+ *             {@code gc_alert_triangle_icon.png}
  *         </li>
  *         <li>
- *             <b>Header text color:</b> via the color resource named {@code
- *             gc_noresults_header}
+ *             <b>Header and tip title text style:</b> via overriding the style named {@code @style/GiniCaptureTheme.Typography.Body2}
  *         </li>
  *         <li>
- *             <b>Header text font:</b> via overriding the style named {@code GiniCaptureTheme
- *             .NoResults.Header.TextStyle} and setting an item named {@code gcCustomFont} with the path to the font file in your {@code assets} folder
+ *             <b>Tip text style:</b> via overriding the style named {@code GiniCaptureTheme.Typography.Subtitle1}
  *         </li>
  *         <li>
- *             <b>Header text style:</b> via overriding the style named {@code GiniCaptureTheme.NoResults.Header.TextStyle} and setting an item named {@code android:textStyle} to {@code normal}, {@code bold} or {@code italic}
+ *             <b>Tip image - Good lighting:</b> via vector asset xml file
+ *             named {@code gc_photo_tip_lighting.xml}
  *         </li>
  *         <li>
- *             <b>Header text size:</b> via overriding the style named {@code GiniCaptureTheme.NoResults.Header.TextStyle} and setting an item named {@code android:textSize} to the desired {@code sp} size
+ *             <b>Tip image - Document should be flat:</b> via vector asset xml file
+ *             named {@code gc_photo_tip_flat.xml}
  *         </li>
  *         <li>
- *             <b>Headline text color:</b> via the color resource named {@code gc_noresults_headline}
+ *             <b>Tip image - Device should be parallel to document:</b> via ivia vector asset xml file
+ *             named {@code gc_photo_tip_parallel.xml}
  *         </li>
  *         <li>
- *             <b>Headline text font:</b> via overriding the style named {@code GiniCaptureTheme.NoResults.Headline.TextStyle} and setting an item named {@code gcCustomFont} with the path to the font file in your {@code assets} folder
+ *             <b>Tip image - Document should be aligned with corner guides:</b> via vector asset xml file
+ *             named {@code gc_photo_tip_align.xml}
  *         </li>
  *         <li>
- *             <b>Headline text style:</b> via overriding the style named {@code GiniCaptureTheme.NoResults.Headline.TextStyle} and setting an item named {@code android:textStyle} to {@code normal}, {@code bold} or {@code italic}
- *         </li>
- *         <li>
- *             <b>Headline text size:</b> via overriding the style named {@code GiniCaptureTheme.NoResults.Headline.TextStyle} and setting an item named {@code android:textSize} to the desired {@code sp} size
- *         </li>
- *         <li>
- *             <b>Tip text color:</b> via the color resource named {@code gc_noresults_tip}
- *         </li>
- *         <li>
- *             <b>Tip text font:</b> via overriding the style named {@code GiniCaptureTheme.NoResults.Tip.TextStyle} and setting an item named {@code gcCustomFont} with the path to the font file in your {@code assets} folder
- *         </li>
- *         <li>
- *             <b>Tip text style:</b> via overriding the style named {@code GiniCaptureTheme.NoResults.Tip.TextStyle} and setting an item named {@code android:textStyle} to {@code normal}, {@code bold} or {@code italic}
- *         </li>
- *         <li>
- *             <b>Tip text size:</b> via overriding the style named {@code GiniCaptureTheme.NoResults.Tip.TextStyle} and setting an item named {@code android:textSize} to the desired {@code sp} size
- *         </li>
- *         <li>
- *             <b>Tip image - Good lighting:</b> via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi
- *             named
- *             {@code gc_photo_tip_lighting.png}
- *         </li>
- *         <li>
- *             <b>Tip image - Document should be flat:</b> via images for mdpi, hdpi, xhdpi, xxhdpi,
- *             xxxhdpi
- *             named {@code gc_photo_tip_flat.png}
- *         </li>
- *         <li>
- *             <b>Tip image - Device should be parallel to document:</b> via images for mdpi, hdpi,
- *             xhdpi,xxhdpi, xxxhdpi named {@code gc_photo_tip_parallel.png}
- *         </li>
- *         <li>
- *             <b>Tip image - Document should be aligned with corner guides:</b> via
- *             images for mdpi, hdpi, xhdpi,xxhdpi, xxxhdpi named {@code gc_photo_tip_align.png}
- *         </li>
- *         <li>
- *             <b>Button color:</b> via the color resource named {@code gc_noresults_button}
- *         </li>
- *         <li>
- *             <b>Button text color:</b> via the color resource named {@code gc_noresults_button_text}
- *         </li>
- *         <li>
- *             <b>Background color:</b> via the color resource named {@code gc_noresults_background}.
+ *             <b>Tip image - It's now possible to analyse an invoice with multiple pages:</b> via vector asset xml file
+ *             named {@code gc_photo_tip_multipage.xml}
  *         </li>
  *     </ul>
  * </p>
  *
  * <p>
  *     <b>Important:</b> All overriden styles must have their respective {@code Root.} prefixed style as their parent. Ex.: the parent of {@code GiniCaptureTheme.Onboarding.Message.TextStyle} must be {@code Root.GiniCaptureTheme.Onboarding.Message.TextStyle}.
- * </p>
- *
- * <h3>Customizing the Action Bar</h3>
- *
- * <p>
- * Customizing the Action Bar is done via overriding of app resources and each one - except the
- * title string resource - is global to all Activities ({@link CameraActivity}, {@link
- * NoResultsActivity}, {@link ReviewActivity}, {@link AnalysisActivity}).
- * </p>
- * <p>
- * The following items are customizable:
- * <ul>
- * <li>
- * <b>Background color:</b> via the color resource named {@code gc_action_bar} (highly recommended
- * for Android 5+: customize the status bar color via {@code gc_status_bar})
- * </li>
- * </ul>
  * </p>
  */
 public class NoResultsActivity extends AppCompatActivity implements ImageRetakeOptionsListener {
