@@ -6,9 +6,17 @@ import android.view.ViewGroup
 import net.gini.android.bank.sdk.databinding.GbsDigitalInvoiceOnboardingNavigationBarBottomBinding
 import net.gini.android.capture.view.InjectedViewAdapter
 
+/**
+ * Adapter for injecting a custom bottom navigation bar on the onboarding screen.
+ */
 interface DigitalInvoiceOnboardingNavigationBarBottomAdapter: InjectedViewAdapter {
 
-    fun setGetStartedButtonClickListener(click: View.OnClickListener)
+    /**
+     * Set the click listener on get started button
+     *
+     * @param listener the click listener for the button
+     */
+    fun setGetStartedButtonClickListener(listener: View.OnClickListener)
 }
 
 class DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter: DigitalInvoiceOnboardingNavigationBarBottomAdapter {
@@ -16,8 +24,8 @@ class DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter: DigitalInvoiceO
     var viewBinding: GbsDigitalInvoiceOnboardingNavigationBarBottomBinding? = null
 
 
-    override fun setGetStartedButtonClickListener(click: View.OnClickListener) {
-        viewBinding?.gbsBarBottomNextButton?.setOnClickListener(click)
+    override fun setGetStartedButtonClickListener(listener: View.OnClickListener) {
+        viewBinding?.gbsBarBottomNextButton?.setOnClickListener(listener)
     }
 
     override fun onCreateView(container: ViewGroup): View {
