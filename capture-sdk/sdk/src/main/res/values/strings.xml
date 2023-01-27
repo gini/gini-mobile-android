@@ -192,7 +192,7 @@
     <string name="gc_camera_access">Kamerazugriff</string>
     <string name="gc_unknown_qr_code_description">Dieser Code enthält keine Zahlungsinformationen. Bitte anderen QR-Code oder Rechnung abfotografieren.</string>
     <string name="gc_error_screen_title">Fehler</string>
-    <string name="gc_scan">Scan</string>
+    <string name="gc_scan">Aufnahme</string>
     <string name="gc_take_a_picture">Photo schießen</string>
     <string name="gc_flash_button">Blitz</string>
     <string name="gc_delete_page">Seite löschen</string>
