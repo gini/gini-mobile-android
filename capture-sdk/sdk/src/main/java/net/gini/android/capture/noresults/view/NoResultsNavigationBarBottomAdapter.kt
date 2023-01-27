@@ -6,12 +6,19 @@ import android.view.ViewGroup
 import net.gini.android.capture.databinding.GcNoResultsNavigationBarBottomBinding
 import net.gini.android.capture.view.InjectedViewAdapter
 
+/**
+ * Implement this interface to add back navigation to a custom view on bottom navigation bar
+ * and pass it to the {@link GiniCapture.Builder#setNoResultsNavigationBarBottomAdapter(NoResultsNavigationBarBottomAdapter)}.
+ */
 interface NoResultsNavigationBarBottomAdapter: InjectedViewAdapter {
 
     fun setOnBackButtonClickListener(click: View.OnClickListener)
 
 }
 
+/**
+ * Internal use only.
+ */
 class DefaultNoResultsNavigationBarBottomAdapter: NoResultsNavigationBarBottomAdapter {
     var viewBinding: GcNoResultsNavigationBarBottomBinding? = null
 

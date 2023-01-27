@@ -14,6 +14,8 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         app:layout_constraintBottom_toTopOf="@+id/done_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
@@ -24,22 +26,22 @@
             android:layout_centerHorizontal="true"
             android:layout_marginStart="@dimen/xxxlarge"
             android:layout_marginEnd="@dimen/xxxlarge"
-            android:layout_marginBottom="@dimen/large"
             android:gravity="center"
             android:text="@string/gbs_digital_invoice_onboarding_text_1"
-            app:layout_constraintBottom_toTopOf="@+id/onboarding_text_2"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/digital_invoice_image" />
 
         <ImageView
             android:id="@+id/digital_invoice_image"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:src="@drawable/gbs_digital_invoice_list_image"
-            app:layout_constraintBottom_toTopOf="@+id/onboarding_text_1"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.5"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             tools:ignore="ContentDescription" />
 
         <TextView
@@ -49,22 +51,16 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_marginStart="@dimen/xxxlarge"
+            android:layout_marginTop="@dimen/medium"
             android:layout_marginEnd="@dimen/xxxlarge"
             android:gravity="center"
             android:lineSpacingExtra="5sp"
             android:text="@string/gbs_digital_invoice_onboarding_text_2"
             android:textColor="@color/Dark_06"
             android:translationY="-2.62sp"
-            app:layout_constraintBottom_toTopOf="@+id/gbs_guideline_onboarding"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/gbs_guideline_onboarding"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.85" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/onboarding_text_1" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -78,8 +74,7 @@
         android:text="@string/gbs_digital_invoice_onboarding_done_button_title"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <net.gini.android.capture.view.InjectedViewContainer
         android:id="@+id/gbs_injected_navigation_bar_container_bottom"
@@ -88,5 +83,4 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

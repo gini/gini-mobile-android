@@ -19,7 +19,6 @@ import net.gini.android.capture.review.RotatableImageViewContainer
 
 class PreviewPagesAdapter(
     private val multiPageDocument: ImageMultiPageDocument,
-    private val listener: PreviewsAdapterListener,
     private val previewFragmentListener: PreviewFragmentListener
 ) : RecyclerView.Adapter<PreviewPagesAdapter.PagesViewHolder>() {
 
@@ -27,12 +26,7 @@ class PreviewPagesAdapter(
     inner class PagesViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
 
         val mImageViewContainer: RotatableImageViewContainer? = view.findViewById(R.id.gc_image_container)
-        private val mImageBlueRect: LinearLayout? = view.findViewById(R.id.gc_image_selected_rect)
         private val mDeletePage: ImageButton? = view.findViewById(R.id.gc_button_delete)
-        private val mErrorMessage: String? = null
-        val mActivityIndicator: ProgressBar = view.findViewById(R.id.gc_activity_indicator)
-
-
 
         init {
 
@@ -41,7 +35,6 @@ class PreviewPagesAdapter(
             }
 
             mImageViewContainer?.setOnClickListener {
-
                 previewFragmentListener.onPageClicked(multiPageDocument.documents[absoluteAdapterPosition])
             }
         }
@@ -58,7 +51,6 @@ class PreviewPagesAdapter(
         val mDocument = multiPageDocument.documents[position]
 
         if (shouldShowPreviewImage(mDocument, holder.mImageViewContainer?.imageView)) {
-            showActivityIndicator(holder.mActivityIndicator)
             if (GiniCapture.hasInstance()) {
                 GiniCapture.getInstance()
                     .internal().photoMemoryCache[holder.view.context, mDocument, object :
@@ -69,14 +61,11 @@ class PreviewPagesAdapter(
                     }
 
                     override fun onSuccess(result: Photo?) {
-                        hideActivityIndicator(holder.mActivityIndicator)
                         holder.mImageViewContainer?.imageView?.setImageBitmap(result?.bitmapPreview)
                         holder.mImageViewContainer?.rotateImageView(result?.rotationForDisplay ?: 0, false);
                     }
 
                     override fun onError(exception: Exception?) {
-                        hideActivityIndicator(holder.mActivityIndicator)
-                        //showPreviewError(context)
                     }
                 }]
             }
@@ -91,13 +80,6 @@ class PreviewPagesAdapter(
                 && mImageViewContainer?.drawable == null)
     }
 
-    private fun showActivityIndicator(mActivityIndicator: ProgressBar) {
-        mActivityIndicator.visibility = View.VISIBLE
-    }
-
-    private fun hideActivityIndicator(mActivityIndicator: ProgressBar) {
-        mActivityIndicator.visibility = View.GONE
-    }
 
     override fun getItemCount(): Int {
         return multiPageDocument.documents.size

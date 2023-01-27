@@ -29,7 +29,7 @@ internal class QRCodePopup<T> @JvmOverloads constructor(
     private val fragmentImplCallback: FragmentImplCallback,
     private val popupView: View,
     private val supportedBackgroundView: View? = null,
-    private val loadingIndicatorAdapter: CustomLoadingIndicatorAdapter?,
+    private val loadingIndicatorContainer: InjectedViewContainer<CustomLoadingIndicatorAdapter>?,
     private val hideDelayMs: Long,
     private val supported: Boolean,
     private var onClicked: ((T?) -> Unit)? = {},
@@ -130,7 +130,7 @@ internal class QRCodePopup<T> @JvmOverloads constructor(
 
         qrCheckImage.visibility = View.GONE
         qrImageFrame.visibility = View.INVISIBLE
-        loadingIndicatorAdapter?.onVisible()
+        loadingIndicatorContainer?.injectedViewAdapter?.onVisible()
         mInvoiceTxt.visibility = View.VISIBLE
         supportedBackgroundView?.visibility = View.VISIBLE
     }
@@ -142,7 +142,7 @@ internal class QRCodePopup<T> @JvmOverloads constructor(
         qrImageFrame.visibility = View.VISIBLE
         qrImageFrame.imageTintList =
             ColorStateList.valueOf(ContextCompat.getColor(popupView.context, R.color.Light_01))
-        loadingIndicatorAdapter?.onHidden()
+        loadingIndicatorContainer?.injectedViewAdapter?.onHidden()
         mInvoiceTxt.visibility = View.GONE
         supportedBackgroundView?.visibility = View.GONE
         mUnknownQRCodeWrapper.visibility = View.GONE

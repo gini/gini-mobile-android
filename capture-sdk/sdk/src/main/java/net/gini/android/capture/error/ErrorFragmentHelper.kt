@@ -6,6 +6,10 @@ import net.gini.android.capture.Document
 import net.gini.android.capture.internal.ui.FragmentImplCallback
 import net.gini.android.capture.ImageRetakeOptionsListener
 
+/**
+ * Helper class for setting arguments to error fragment.
+ * Internal use only.
+ */
 class ErrorFragmentHelper {
 
     companion object {

@@ -10,10 +10,9 @@ import net.gini.android.capture.document.GiniCaptureDocument;
 import net.gini.android.capture.document.GiniCaptureDocumentError;
 import net.gini.android.capture.document.GiniCaptureMultiPageDocument;
 import net.gini.android.capture.internal.network.AnalysisNetworkRequestResult;
+import net.gini.android.capture.internal.network.FailureException;
 import net.gini.android.capture.internal.network.NetworkRequestResult;
 import net.gini.android.capture.internal.network.NetworkRequestsManager;
-import net.gini.android.capture.internal.util.ActivityHelper;
-import net.gini.android.capture.network.FailureException;
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction;
 import net.gini.android.capture.network.model.GiniCaptureReturnReason;
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
@@ -66,8 +65,9 @@ public class AnalysisInteractor {
                                             requestResult,
                                     final Throwable throwable) {
                                 if (throwable != null && !isCancellation(throwable)) {
-                                    if (throwable instanceof FailureException) {
-                                        throw new FailureException(((FailureException) throwable).errorType);
+                                    final FailureException failureException = FailureException.tryCastFromCompletableFutureThrowable(throwable);
+                                    if (failureException != null) {
+                                        throw new FailureException(failureException.getErrorType());
                                     } else {
                                         throw new RuntimeException(throwable); // NOPMD
                                     }

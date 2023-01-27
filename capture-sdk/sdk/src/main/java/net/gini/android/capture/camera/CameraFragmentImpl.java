@@ -3,7 +3,6 @@ package net.gini.android.capture.camera;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
@@ -57,7 +56,6 @@ import net.gini.android.capture.internal.qrcode.QRCodeDetectorTaskMLKit;
 import net.gini.android.capture.internal.storage.ImageDiskStore;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.ui.ViewStubSafeInflater;
-import net.gini.android.capture.internal.util.ActivityHelper;
 import net.gini.android.capture.internal.util.ApplicationHelper;
 import net.gini.android.capture.internal.util.ContextHelper;
 import net.gini.android.capture.internal.util.DeviceHelper;
@@ -68,7 +66,7 @@ import net.gini.android.capture.logging.ErrorLog;
 import net.gini.android.capture.logging.ErrorLogger;
 import net.gini.android.capture.network.Error;
 import net.gini.android.capture.error.ErrorType;
-import net.gini.android.capture.network.FailureException;
+import net.gini.android.capture.internal.network.FailureException;
 import net.gini.android.capture.network.model.GiniCaptureExtraction;
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
 import net.gini.android.capture.requirements.CameraHolder;
@@ -105,8 +103,6 @@ import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 import static net.gini.android.capture.GiniCaptureError.ErrorCode.MISSING_GINI_CAPTURE_INSTANCE;
 import static net.gini.android.capture.document.ImageDocument.ImportMethod;
-import static net.gini.android.capture.error.ErrorActivity.ERROR_SCREEN_REQUEST;
-import static net.gini.android.capture.error.ErrorActivity.EXTRA_ERROR_STRING;
 import static net.gini.android.capture.internal.network.NetworkRequestsManager.isCancellation;
 import static net.gini.android.capture.internal.qrcode.EPSPaymentParser.EXTRACTION_ENTITY_NAME;
 import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
@@ -115,8 +111,6 @@ import static net.gini.android.capture.internal.util.FeatureConfiguration.getDoc
 import static net.gini.android.capture.internal.util.FeatureConfiguration.isMultiPageEnabled;
 import static net.gini.android.capture.internal.util.FeatureConfiguration.isQRCodeScanningEnabled;
 import static net.gini.android.capture.internal.util.FileImportValidator.FILE_SIZE_LIMIT;
-import static net.gini.android.capture.review.multipage.MultiPageReviewActivity.RESULT_SCROLL_TO_LAST_PAGE;
-import static net.gini.android.capture.review.multipage.MultiPageReviewActivity.SHOULD_SCROLL_TO_LAST_PAGE;
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackCameraScreenEvent;
 
 /**
@@ -336,7 +330,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private void createPopups() {
         mPaymentQRCodePopup =
-                new QRCodePopup<>(mFragment, mCameraFrameWrapper, mActivityIndicatorBackground, mLoadingIndicator.getInjectedViewAdapter(),
+                new QRCodePopup<>(mFragment, mCameraFrameWrapper, mActivityIndicatorBackground, mLoadingIndicator,
                         getDifferentQRCodeDetectedPopupDelayMs(), true,
                         paymentQRCodeData -> {
                             if (paymentQRCodeData == null) {
@@ -542,6 +536,11 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     void onStop() {
         closeCamera();
+
+        // Remove the injected view adapter to prevent interacting with it
+        // while it might be used in another activity/fragment (it is injected here again in onResume)
+        mLoadingIndicator.setInjectedViewAdapter(null);
+
         if (mPaymentQRCodePopup != null) {
             mPaymentQRCodePopup.hide();
         }
@@ -897,9 +896,9 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         if (mFragment.getActivity() == null)
             return;
 
-        if (throwable instanceof FailureException) {
-            FailureException exception = (FailureException) throwable;
-            ErrorActivity.startErrorActivity(mFragment.getActivity(), exception.errorType, document);
+        final FailureException failureException = FailureException.tryCastFromCompletableFutureThrowable(throwable);
+        if (failureException != null) {
+            ErrorActivity.startErrorActivity(mFragment.getActivity(), failureException.getErrorType(), document);
         } else {
             ErrorActivity.startErrorActivity(mFragment.getActivity(), ErrorType.GENERAL, document);
         }

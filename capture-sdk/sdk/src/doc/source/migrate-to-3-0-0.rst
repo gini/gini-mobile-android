@@ -224,6 +224,31 @@ For example if you need to show animated illustrations you can use a `Lottie
 
 You can find more details `here <customization-guide.html>`_.
 
+Camera
+~~~~~
+
+New Features
+++++++++++++
+
+We implemented image cropping. Parts of the image that appears outside the white camera frame will be cut out from the final image.
+
+Bottom navigation bar
+^^^^^^^^^^^^^^^^^^^^^
+
+You can show a bottom navigation bar by passing true to ``GiniCapture`` ``setBottomNavigationBarEnabled``. There is a default implementation, but you can also use
+your own by implementing the ``CameraNavigationBarBottomAdapter`` interface and passing it to ``GiniCapture``.
+
+Custom activity indicator view
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+There is a default implementation of indicator which indicates that image is in the cropping process, but you can show your own activity indicator
+by implementing the ``CustomLoadingIndicatorAdapter`` interface and passing it to ``GiniCapture``.
+
+Breaking Changes
+++++++++++++++++
+
+We removed the tooltip popups that were shown on first launch.
+
 QR code scanning
 ~~~~~
 
@@ -293,3 +318,64 @@ There is a default implementation for indicating that document analysis is in pr
 by implementing the ``CustomLoadingIndicatorAdapter`` interface and passing it to ``GiniCapture``.
 
 You can find more details `here <features.html#analysis-screen-customization>`_.
+
+Error
+~~~~~
+
+The new error screen uses the global UI customization options.
+
+Breaking Changes
+++++++++++++++++
+
+Showing errors during usage of the SDK was changed from snackbar to a whole new screen.
+
+New Features
+++++++++++++
+
+New UI
+^^^^^^
+
+The new error screen gives options to retake photos or enter details manually and displays errors with more detailed description.
+
+Bottom navigation bar
+^^^^^^^^^^^^^^^^^^^^^
+
+You can show a bottom navigation bar by passing true to ``GiniCapture`` ``setBottomNavigationBarEnabled``. There is a default implementation, but you can also use
+your own by implementing the ``ErrorNavigationBarBottomAdapter`` interface and passing it to ``GiniCapture``.
+
+You can find more details `here <features.html#error-screen-customization>`_.
+
+Option to enter details manually
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+You can show your own UI for data input if an error occured and the user clicks the "Enter manually" button on the error screen.
+
+You can find more details `here <features.html#error-screen-customization>`_.
+
+No results
+~~~~~~~~~~
+
+The new no results screen uses the global UI customization options.
+
+New Features
+++++++++++++
+
+New UI
+^^^^^^
+
+The new no results screen gives options to enter document details manually.
+
+Bottom navigation bar
+^^^^^^^^^^^^^^^^^^^^^
+
+You can show a bottom navigation bar by passing true to ``GiniCapture`` ``setBottomNavigationBarEnabled``. There is a default implementation, but you can also use
+your own by implementing the ``NoResultsNavigationBarBottomAdapter`` interface and passing it to ``GiniCapture``.
+
+You can find more details `here <features.html#no-results-screen-customization>`_.
+
+Option to enter details manually
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+You can show your own UI if the document analysis returned with no result and the user clicks the "Enter manually" button.
+
+You can find more details `here <features.html#no-results-screen-customization>`_.
