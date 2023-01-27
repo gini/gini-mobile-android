@@ -138,8 +138,8 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
 
     private fun setupImageIllustrationAdapter() {
         if (GiniCapture.hasInstance()) {
-            binding.digitalInvoiceImageContainer.injectedViewAdapter = GiniBank.digitalInvoiceOnboardingIllustrationAdapter
-            GiniBank.digitalInvoiceOnboardingIllustrationAdapter.onIllustrationSet(R.drawable.gbs_digital_invoice_list_image)
+            binding.digitalInvoiceImageContainer.injectedViewAdapter =
+                GiniBank.digitalInvoiceOnboardingIllustrationAdapter
         }
     }
 
@@ -149,7 +149,8 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
             binding.doneButton.visibility = View.INVISIBLE
             binding.doneButton.isEnabled = false
 
-            binding.gbsInjectedNavigationBarContainerBottom.injectedViewAdapter = GiniBank.digitalInvoiceOnboardingNavigationBarBottomAdapter
+            binding.gbsInjectedNavigationBarContainerBottom.injectedViewAdapter =
+                GiniBank.digitalInvoiceOnboardingNavigationBarBottomAdapter
             GiniBank.digitalInvoiceOnboardingNavigationBarBottomAdapter.setGetStartedButtonClickListener {
                 presenter?.dismisOnboarding(false)
             }

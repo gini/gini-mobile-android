@@ -1,8 +1,11 @@
 package net.gini.android.bank.sdk
 
+import android.content.ClipDescription
 import android.content.Context
 import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import net.gini.android.bank.api.GiniBankAPI
 import net.gini.android.bank.api.models.ResolvePaymentInput
 import net.gini.android.bank.api.models.ResolvedPayment
@@ -18,15 +21,14 @@ import net.gini.android.bank.sdk.capture.CaptureConfiguration
 import net.gini.android.bank.sdk.capture.CaptureImportInput
 import net.gini.android.bank.sdk.capture.applyConfiguration
 import net.gini.android.bank.sdk.capture.digitalinvoice.view.DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter
-import net.gini.android.bank.sdk.capture.digitalinvoice.view.DigitalInvoiceOnboardingIllustrationAdapter
 import net.gini.android.bank.sdk.capture.digitalinvoice.view.DigitalInvoiceOnboardingNavigationBarBottomAdapter
-import net.gini.android.bank.sdk.capture.digitalinvoice.view.ImageDigitalInvoiceOnboardingIllustrationAdapter
 import net.gini.android.bank.sdk.capture.util.getImportFileCallback
 import net.gini.android.bank.sdk.error.AmountParsingException
 import net.gini.android.bank.sdk.pay.getBusinessIntent
 import net.gini.android.bank.sdk.pay.getRequestId
 import net.gini.android.bank.sdk.util.parseAmountToBackendFormat
 import net.gini.android.capture.*
+import net.gini.android.capture.onboarding.view.ImageOnboardingIllustrationAdapter
 import net.gini.android.capture.requirements.GiniCaptureRequirements
 import net.gini.android.capture.requirements.RequirementsReport
 import net.gini.android.capture.util.CancellationToken
@@ -55,8 +57,13 @@ object GiniBank {
     private var captureConfiguration: CaptureConfiguration? = null
     private var giniApi: GiniBankAPI? = null
 
-    var digitalInvoiceOnboardingNavigationBarBottomAdapter: DigitalInvoiceOnboardingNavigationBarBottomAdapter = DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter()
-    var digitalInvoiceOnboardingIllustrationAdapter: DigitalInvoiceOnboardingIllustrationAdapter = ImageDigitalInvoiceOnboardingIllustrationAdapter()
+    var digitalInvoiceOnboardingIllustrationAdapter: ImageOnboardingIllustrationAdapter = ImageOnboardingIllustrationAdapter(R.drawable.gbs_digital_invoice_list_image,
+        R.string.gbs_digital_invoice_illustration)
+
+    var digitalInvoiceOnboardingNavigationBarBottomAdapter: DigitalInvoiceOnboardingNavigationBarBottomAdapter =
+        DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter()
+
+
     internal fun getCaptureConfiguration() = captureConfiguration
 
     /**
@@ -91,11 +98,24 @@ object GiniBank {
         bic: String,
         amount: Amount
     ) {
-        GiniCapture.cleanup(context, paymentRecipient, paymentReference, paymentPurpose, iban, bic, amount)
+        GiniCapture.cleanup(
+            context,
+            paymentRecipient,
+            paymentReference,
+            paymentPurpose,
+            iban,
+            bic,
+            amount
+        )
         captureConfiguration = null
         giniCapture = null
-        digitalInvoiceOnboardingNavigationBarBottomAdapter = DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter()
-        digitalInvoiceOnboardingIllustrationAdapter = ImageDigitalInvoiceOnboardingIllustrationAdapter()
+
+        digitalInvoiceOnboardingNavigationBarBottomAdapter =
+            DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter()
+
+        digitalInvoiceOnboardingIllustrationAdapter = ImageOnboardingIllustrationAdapter(R.drawable.gbs_digital_invoice_list_image,
+        R.string.gbs_digital_invoice_illustration)
+
     }
 
     /**
