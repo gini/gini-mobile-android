@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.transition.TransitionInflater
 import net.gini.android.bank.sdk.GiniBank
@@ -130,9 +131,17 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setInputHandlers()
+        setupImageIllustrationAdapter()
         setupOnboardingBottomNavigationBar()
     }
 
+
+    private fun setupImageIllustrationAdapter() {
+        if (GiniCapture.hasInstance()) {
+            binding.digitalInvoiceImageContainer.injectedViewAdapter = GiniBank.digitalInvoiceOnboardingIllustrationAdapter
+            GiniBank.digitalInvoiceOnboardingIllustrationAdapter.onIllustrationSet(R.drawable.gbs_digital_invoice_list_image)
+        }
+    }
 
     private fun setupOnboardingBottomNavigationBar() {
         if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled) {

@@ -18,7 +18,9 @@ import net.gini.android.bank.sdk.capture.CaptureConfiguration
 import net.gini.android.bank.sdk.capture.CaptureImportInput
 import net.gini.android.bank.sdk.capture.applyConfiguration
 import net.gini.android.bank.sdk.capture.digitalinvoice.view.DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter
+import net.gini.android.bank.sdk.capture.digitalinvoice.view.DigitalInvoiceOnboardingIllustrationAdapter
 import net.gini.android.bank.sdk.capture.digitalinvoice.view.DigitalInvoiceOnboardingNavigationBarBottomAdapter
+import net.gini.android.bank.sdk.capture.digitalinvoice.view.ImageDigitalInvoiceOnboardingIllustrationAdapter
 import net.gini.android.bank.sdk.capture.util.getImportFileCallback
 import net.gini.android.bank.sdk.error.AmountParsingException
 import net.gini.android.bank.sdk.pay.getBusinessIntent
@@ -54,7 +56,7 @@ object GiniBank {
     private var giniApi: GiniBankAPI? = null
 
     var digitalInvoiceOnboardingNavigationBarBottomAdapter: DigitalInvoiceOnboardingNavigationBarBottomAdapter = DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter()
-
+    var digitalInvoiceOnboardingIllustrationAdapter: DigitalInvoiceOnboardingIllustrationAdapter = ImageDigitalInvoiceOnboardingIllustrationAdapter()
     internal fun getCaptureConfiguration() = captureConfiguration
 
     /**
@@ -93,6 +95,7 @@ object GiniBank {
         captureConfiguration = null
         giniCapture = null
         digitalInvoiceOnboardingNavigationBarBottomAdapter = DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter()
+        digitalInvoiceOnboardingIllustrationAdapter = ImageDigitalInvoiceOnboardingIllustrationAdapter()
     }
 
     /**
