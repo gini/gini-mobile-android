@@ -157,6 +157,10 @@
 </li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Migrate to 3.0.0</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#migrate-the-invoice-capture-feature">Migrate the Invoice Capture Feature</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#migrate-the-return-assistant">Migrate the Return Assistant</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#onboarding">Onboarding</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="reference.html">Reference Doc</a></li>
@@ -206,6 +210,33 @@ describes what has changed.</p>
 <p>Please be aware that for the Gini Bank SDK you need to use the <code class="docutils literal notranslate"><span class="pre">CaptureConfiguration</span></code> instead of the Gini Capture SDK’s
 <code class="docutils literal notranslate"><span class="pre">GiniCapture.Builder</span></code>. The configuration names are the same so you can easily map them to the
 <code class="docutils literal notranslate"><span class="pre">CaptureConfiguration</span></code>. This applies also to the new configuration options added in 3.0.0.</p>
+</div>
+<div class="section" id="migrate-the-return-assistant">
+<h2>Migrate the Return Assistant<a class="headerlink" href="#migrate-the-return-assistant" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="onboarding">
+<h3>Onboarding<a class="headerlink" href="#onboarding" title="Permalink to this headline">¶</a></h3>
+<p>The new onboarding screen uses the global UI customization options. You can discard the old screen specific
+customizations.</p>
+<p><a class="reference external" href="customization-guide.html#onboarding-screen">Here</a> you can find the detailed description on how to customize this screen.</p>
+<div class="section" id="breaking-changes">
+<h4>Breaking Changes<a class="headerlink" href="#breaking-changes" title="Permalink to this headline">¶</a></h4>
+<p>Old UI is replaced with new UI.</p>
+</div>
+<div class="section" id="new-features">
+<h4>New Features<a class="headerlink" href="#new-features" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="custom-illustration-view">
+<h5>Custom illustration view<a class="headerlink" href="#custom-illustration-view" title="Permalink to this headline">¶</a></h5>
+<p>By implementing the <code class="docutils literal notranslate"><span class="pre">OnboardingIllustrationAdapter</span></code> interface and passing it to <code class="docutils literal notranslate"><span class="pre">GiniBank.digitalInvoiceOnboardingIllustrationAdapter</span></code> you can inject any custom view for the illustration.</p>
+<p>For example if you need to show animated illustrations you can use a <a class="reference external" href="https://github.com/airbnb/lottie-android">Lottie</a> view in your <code class="docutils literal notranslate"><span class="pre">OnboardingIllustrationAdapter</span></code> implementation.</p>
+<p>You can find more details <a class="reference external" href="customization-guide.html">here</a>.</p>
+</div>
+<div class="section" id="bottom-navigation-bar">
+<h5>Bottom navigation bar<a class="headerlink" href="#bottom-navigation-bar" title="Permalink to this headline">¶</a></h5>
+<p>You can show a bottom navigation bar by passing true to <code class="docutils literal notranslate"><span class="pre">GiniCapture</span></code> <code class="docutils literal notranslate"><span class="pre">setBottomNavigationBarEnabled</span></code>. There is a default implementation, but you can also use
+your own by implementing the <code class="docutils literal notranslate"><span class="pre">DigitalInvoiceOnboardingNavigationBarBottomAdapter</span></code> interface and passing it to <code class="docutils literal notranslate"><span class="pre">GiniBank</span></code>.</p>
+</div>
+</div>
+</div>
 </div>
 </div>
 
