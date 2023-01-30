@@ -30,13 +30,12 @@
             android:text="@string/gbs_digital_invoice_onboarding_text_1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/digital_invoice_image" />
+            app:layout_constraintTop_toBottomOf="@+id/digital_invoice_image_container" />
 
-        <ImageView
-            android:id="@+id/digital_invoice_image"
+        <net.gini.android.capture.view.InjectedViewContainer
+            android:id="@+id/digital_invoice_image_container"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
-            android:src="@drawable/gbs_digital_invoice_list_image"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.5"

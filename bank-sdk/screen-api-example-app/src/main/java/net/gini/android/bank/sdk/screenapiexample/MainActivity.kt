@@ -31,10 +31,14 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private val permissionHandler = PermissionHandler(this)
-    private val captureLauncher = registerForActivityResult(CaptureFlowContract(), ::onCaptureResult)
-    private val captureImportLauncher = registerForActivityResult(CaptureFlowImportContract(), ::onCaptureResult)
-    private val noExtractionsLauncher = registerForActivityResult(NoExtractionContract(), ::onStartAgainResult)
-    private var cancellationToken: CancellationToken? = null // should be kept across configuration changes
+    private val captureLauncher =
+        registerForActivityResult(CaptureFlowContract(), ::onCaptureResult)
+    private val captureImportLauncher =
+        registerForActivityResult(CaptureFlowImportContract(), ::onCaptureResult)
+    private val noExtractionsLauncher =
+        registerForActivityResult(NoExtractionContract(), ::onStartAgainResult)
+    private var cancellationToken: CancellationToken? =
+        null // should be kept across configuration changes
     private val networkService: GiniCaptureDefaultNetworkService by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,10 +64,23 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun configureGiniCapture() {
-        GiniBank.releaseCapture(this, "",
-            "", "", "","", Amount.EMPTY)
+        GiniBank.releaseCapture(
+            this, "",
+            "", "", "", "", Amount.EMPTY
+        )
         val useCustomOnboardingPages = false
         val useCustomLoadingIndicator = false
+
+        if (binding.gbsEnableCustomIllustration.isChecked)
+            GiniBank.digitalInvoiceOnboardingIllustrationAdapter =
+                CustomOnboardingIllustrationAdapter(
+                    this.resources.getIdentifier(
+                        "ai_animation",
+                        "raw",
+                        this.packageName
+                    )
+                )
+
         GiniBank.setCaptureConfiguration(
             CaptureConfiguration(
                 networkService = networkService,
@@ -181,7 +198,11 @@ class MainActivity : AppCompatActivity() {
                 configureGiniCapture()
 
                 if (intent != null) {
-                    cancellationToken = GiniBank.startCaptureFlowForIntent(captureImportLauncher, this@MainActivity, intent)
+                    cancellationToken = GiniBank.startCaptureFlowForIntent(
+                        captureImportLauncher,
+                        this@MainActivity,
+                        intent
+                    )
                 } else {
                     GiniBank.startCaptureFlow(captureLauncher)
                 }
@@ -246,7 +267,8 @@ class MainActivity : AppCompatActivity() {
 
     @SuppressLint("SetTextI18n")
     private fun showVersions(binding: ActivityMainBinding) {
-        binding.textGiniBankVersion.text = "Gini Bank SDK v${net.gini.android.bank.sdk.BuildConfig.VERSION_NAME}"
+        binding.textGiniBankVersion.text =
+            "Gini Bank SDK v${net.gini.android.bank.sdk.BuildConfig.VERSION_NAME}"
         binding.textAppVersion.text = "v${BuildConfig.VERSION_NAME}"
     }
 

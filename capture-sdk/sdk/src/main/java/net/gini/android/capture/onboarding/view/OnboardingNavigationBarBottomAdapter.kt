@@ -3,6 +3,7 @@ package net.gini.android.capture.onboarding.view
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import net.gini.android.capture.R
 import net.gini.android.capture.databinding.GcOnboardingNavigationBarBottomBinding
 import net.gini.android.capture.view.InjectedViewAdapter
 
@@ -95,7 +96,20 @@ internal class DefaultOnboardingNavigationBarBottomAdapter : OnboardingNavigatio
             .inflate(LayoutInflater.from(container.context), container, false)
         viewBinding = binding
 
+        handleSkipButtonMultipleLines()
+
         return binding.root
+    }
+
+    //Wait for view to be inflated
+    //Check how many lines
+    private fun handleSkipButtonMultipleLines() {
+        viewBinding?.gcSkip?.post {
+            val buttonSkip = viewBinding?.gcSkip
+            when (buttonSkip?.lineCount) {
+                2 -> buttonSkip.text = buttonSkip.context.getString(R.string.gc_skip_two_lines)
+            }
+        }
     }
 
     override fun onDestroy() {

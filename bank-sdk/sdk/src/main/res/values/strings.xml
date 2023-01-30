@@ -73,5 +73,6 @@
     <string name="gbs_return_assistant_help_section_3_body">Sollte der Preis mal nicht perfekt ausgelesen worden sein, können Sie diesen einfach manuell korrigieren. Der Gesamtpreis aktualisiert sich automatisch.</string>
     <string name="gbs_return_assistant_help_section_3_title">Preis korrigieren</string>
     <string name="gbs_return_assistant_help_back_button_title">Zurück</string>
+    <string name="gbs_digital_invoice_illustration">Digital invoice illustration</string>
 
 </resources>
