@@ -140,6 +140,8 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
         if (GiniCapture.hasInstance()) {
             binding.digitalInvoiceImageContainer.injectedViewAdapter =
                 GiniBank.digitalInvoiceOnboardingIllustrationAdapter
+
+            GiniBank.digitalInvoiceOnboardingIllustrationAdapter.onVisible()
         }
     }
 
@@ -164,6 +166,7 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
      */
     override fun onDestroyView() {
         listener = null
+        GiniBank.digitalInvoiceOnboardingIllustrationAdapter.onHidden()
         super.onDestroyView()
     }
 
