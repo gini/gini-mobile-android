@@ -3,6 +3,10 @@
     package="net.gini.android.bank.sdk">
 
     <application>
+        <activity
+            android:name=".capture.digitalinvoice.help.HelpActivity"
+            android:exported="false"
+            android:theme="@style/GiniCaptureTheme" />
         <activity android:name=".capture.CaptureFlowActivity" />
         <activity
             android:name=".capture.digitalinvoice.DigitalInvoiceActivity"
@@ -13,7 +17,8 @@
             android:name=".capture.digitalinvoice.details.LineItemDetailsActivity"
             android:exported="false"
             android:label="@string/gbs_title_line_item_details"
-            android:windowSoftInputMode="adjustResize"
-            android:theme="@style/GiniCaptureTheme" />
+            android:theme="@style/GiniCaptureTheme"
+            android:windowSoftInputMode="adjustResize" />
     </application>
+
 </manifest>
