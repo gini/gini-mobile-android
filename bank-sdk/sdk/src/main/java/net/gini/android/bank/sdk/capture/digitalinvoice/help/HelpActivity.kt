@@ -15,6 +15,10 @@ import net.gini.android.capture.view.InjectedViewContainer
 import net.gini.android.capture.view.NavButtonType
 import net.gini.android.capture.view.NavigationBarTopAdapter
 
+/**
+ * Internal use only.
+ *
+ */
 class HelpActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
