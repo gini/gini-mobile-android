@@ -118,7 +118,7 @@ internal class QRCodePopup<T> @JvmOverloads constructor(
             qrImageFrame.imageTintList = ColorStateList.valueOf(
                 ContextCompat.getColor(
                     popupView.context,
-                    R.color.Warning_01
+                    R.color.Warning_02
                 )
             )
         }
