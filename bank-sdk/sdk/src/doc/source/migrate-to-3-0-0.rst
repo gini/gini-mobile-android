@@ -48,6 +48,16 @@ Old UI is replaced with new UI.
 New Features
 ++++++++++++
 
+Custom illustration view
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+By implementing the ``OnboardingIllustrationAdapter`` interface and passing it to ``GiniBank.digitalInvoiceOnboardingIllustrationAdapter`` you can inject any custom view for the illustration.
+
+For example if you need to show animated illustrations you can use a `Lottie
+<https://github.com/airbnb/lottie-android>`_ view in your ``OnboardingIllustrationAdapter`` implementation.
+
+You can find more details `here <customization-guide.html>`_.
+
 Bottom navigation bar
 ^^^^^^^^^^^^^^^^^^^^^
 
