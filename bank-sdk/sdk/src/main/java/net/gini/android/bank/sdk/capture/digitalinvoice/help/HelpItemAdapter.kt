@@ -20,7 +20,7 @@ class HelpItemAdapter(private val context: Context): RecyclerView.Adapter<HelpIt
     override fun onBindViewHolder(holder: HelpViewHolder, position: Int) {
         holder.iconImageView.setImageDrawable(ContextCompat.getDrawable(context, tipList[position].drawableResource))
         holder.helpTextView.text =  context.getString(tipList[position].textResource)
-        holder.helpTitleTextView.text =  context.getString(tipList[position].titleTextResource)
+        holder.helpTitleTextView.text =  "${position + 1}. " + context.getString(tipList[position].titleTextResource)
     }
 
     override fun getItemCount(): Int {

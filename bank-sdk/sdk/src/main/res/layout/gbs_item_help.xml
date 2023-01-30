@@ -7,8 +7,8 @@
 
     <ImageView
         android:id="@+id/gbs_help_icon"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:src="@drawable/gbs_help_edit_icon"
         android:layout_marginStart="@dimen/large_24"
         android:layout_marginTop="@dimen/xlarge"
@@ -32,6 +32,7 @@
         style="@style/GiniCaptureTheme.Typography.Body2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:textColor="@color/Dark_06"
         android:layout_marginTop="@dimen/medium"
         android:layout_marginBottom="@dimen/large"
         android:layout_marginEnd="@dimen/large"
