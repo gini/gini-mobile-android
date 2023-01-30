@@ -130,9 +130,19 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setInputHandlers()
+        setupImageIllustrationAdapter()
         setupOnboardingBottomNavigationBar()
     }
 
+
+    private fun setupImageIllustrationAdapter() {
+        if (GiniCapture.hasInstance()) {
+            binding.digitalInvoiceImageContainer.injectedViewAdapter =
+                GiniBank.digitalInvoiceOnboardingIllustrationAdapter
+
+            GiniBank.digitalInvoiceOnboardingIllustrationAdapter.onVisible()
+        }
+    }
 
     private fun setupOnboardingBottomNavigationBar() {
         if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled) {
@@ -140,7 +150,8 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
             binding.doneButton.visibility = View.INVISIBLE
             binding.doneButton.isEnabled = false
 
-            binding.gbsInjectedNavigationBarContainerBottom.injectedViewAdapter = GiniBank.digitalInvoiceOnboardingNavigationBarBottomAdapter
+            binding.gbsInjectedNavigationBarContainerBottom.injectedViewAdapter =
+                GiniBank.digitalInvoiceOnboardingNavigationBarBottomAdapter
             GiniBank.digitalInvoiceOnboardingNavigationBarBottomAdapter.setGetStartedButtonClickListener {
                 presenter?.dismisOnboarding(false)
             }
@@ -154,6 +165,7 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
      */
     override fun onDestroyView() {
         listener = null
+        GiniBank.digitalInvoiceOnboardingIllustrationAdapter.onHidden()
         super.onDestroyView()
     }
 
