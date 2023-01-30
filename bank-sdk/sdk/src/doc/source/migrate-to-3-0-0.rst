@@ -27,3 +27,39 @@ describes what has changed.
 Please be aware that for the Gini Bank SDK you need to use the ``CaptureConfiguration`` instead of the Gini Capture SDK's
 ``GiniCapture.Builder``. The configuration names are the same so you can easily map them to the
 ``CaptureConfiguration``. This applies also to the new configuration options added in 3.0.0.
+
+
+Migrate the Return Assistant
+-----------------------------------
+
+Onboarding
+~~~~~~~~~~
+
+The new onboarding screen uses the global UI customization options. You can discard the old screen specific
+customizations.
+
+`Here <customization-guide.html#onboarding-screen>`_ you can find the detailed description on how to customize this screen.
+
+Breaking Changes
+++++++++++++++++
+
+Old UI is replaced with new UI.
+
+New Features
+++++++++++++
+
+Custom illustration view
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+By implementing the ``OnboardingIllustrationAdapter`` interface and passing it to ``GiniBank.digitalInvoiceOnboardingIllustrationAdapter`` you can inject any custom view for the illustration.
+
+For example if you need to show animated illustrations you can use a `Lottie
+<https://github.com/airbnb/lottie-android>`_ view in your ``OnboardingIllustrationAdapter`` implementation.
+
+You can find more details `here <customization-guide.html>`_.
+
+Bottom navigation bar
+^^^^^^^^^^^^^^^^^^^^^
+
+You can show a bottom navigation bar by passing true to ``GiniCapture`` ``setBottomNavigationBarEnabled``. There is a default implementation, but you can also use
+your own by implementing the ``DigitalInvoiceOnboardingNavigationBarBottomAdapter`` interface and passing it to ``GiniBank``.
