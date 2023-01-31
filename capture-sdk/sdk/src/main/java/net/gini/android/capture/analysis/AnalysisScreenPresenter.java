@@ -334,6 +334,9 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                     public Void apply(final AnalysisInteractor.ResultHolder resultHolder,
                                       final Throwable throwable) {
                         stopScanAnimation();
+                        if (isStopped()) {
+                            return null;
+                        }
                         if (throwable != null) {
                             handleAnalysisError(throwable);
                             return null;
