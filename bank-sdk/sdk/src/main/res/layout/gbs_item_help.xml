@@ -7,8 +7,8 @@
 
     <ImageView
         android:id="@+id/gbs_help_icon"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="@dimen/gbs_digital_invoice_help_icon_width"
+        android:layout_height="@dimen/gbs_digital_invoice_help_icon_height"
         android:src="@drawable/gbs_help_edit_icon"
         android:layout_marginStart="@dimen/large_24"
         android:layout_marginTop="@dimen/xlarge"
