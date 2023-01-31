@@ -11,6 +11,8 @@
         <item name="colorOnSurface">?attr/colorOnBackground</item>
         <item name="colorSurfaceInverse">@color/Dark_03</item>
         <item name="colorOnSurfaceInverse">@color/Light_02</item>
+        <item name="colorSurfaceVariant">@color/Light_01</item>
+        <item name="colorOnSurfaceVariant">?attr/colorOnBackground</item>
         <item name="android:windowLightStatusBar">true</item>
         <item name="colorAccent">?attr/colorPrimary</item>
         <item name="pageItemBackground">@color/Light_01</item>
@@ -30,6 +32,18 @@
         <item name="textAppearanceButton">@style/GiniCaptureTheme.Typography.Button</item>
         <item name="textAppearanceCaption">@style/GiniCaptureTheme.Typography.Caption1</item>
         <item name="textAppearanceOverline">@style/GiniCaptureTheme.Typography.Overline</item>
+        <item name="textAppearanceDisplaySmall">?attr/textAppearanceHeadline1</item>
+        <item name="textAppearanceHeadlineLarge">?attr/textAppearanceHeadline2</item>
+        <item name="textAppearanceHeadlineMedium">?attr/textAppearanceHeadline3</item>
+        <item name="textAppearanceHeadlineSmall">?attr/textAppearanceHeadline4</item>
+        <item name="textAppearanceTitleLarge">?attr/textAppearanceHeadline5</item>
+        <item name="textAppearanceTitleMedium">?attr/textAppearanceSubtitle1</item>
+        <item name="textAppearanceTitleSmall">?attr/textAppearanceSubtitle2</item>
+        <item name="textAppearanceBodyLarge">?attr/textAppearanceBody1</item>
+        <item name="textAppearanceBodyMedium">?attr/textAppearanceBody2</item>
+        <item name="textAppearanceBodySmall">?attr/textAppearanceCaption</item>
+        <item name="textAppearanceLabelLarge">?attr/textAppearanceButton</item>
+        <item name="textAppearanceLabelMedium">?attr/textAppearanceOverline</item>
     </style>
 
     <style name="GiniCaptureTheme" parent="Root.GiniCaptureTheme"/>
