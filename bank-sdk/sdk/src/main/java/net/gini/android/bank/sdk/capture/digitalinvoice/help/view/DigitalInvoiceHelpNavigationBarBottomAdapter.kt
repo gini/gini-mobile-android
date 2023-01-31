@@ -6,17 +6,32 @@ import android.view.ViewGroup
 import net.gini.android.bank.sdk.databinding.GbsHelpNavigationBarBottomBinding
 import net.gini.android.capture.view.InjectedViewAdapter
 
+
+/**
+ * Implement this interface to add back navigation to a custom view on bottom navigation bar
+ * and set it as the {@link GiniBank digitalInvoiceHelpNavigationBarBottomAdapter}.
+ */
 interface DigitalInvoiceHelpNavigationBarBottomAdapter: InjectedViewAdapter {
 
-    fun setOnBackButtonClickListener(click: View.OnClickListener)
+    /**
+     * Sets a click listener on back button
+     *
+     * @param listener the click listener for the button
+     */
+    fun setOnBackButtonClickListener(listener: View.OnClickListener)
 
 }
 
+
+/**
+ * Internal use only.
+ *
+ */
 class DefaultDigitalInvoiceHelpNavigationBarBottomAdapter: DigitalInvoiceHelpNavigationBarBottomAdapter {
     var viewBinding: GbsHelpNavigationBarBottomBinding? = null
 
-    override fun setOnBackButtonClickListener(click: View.OnClickListener) {
-        viewBinding?.gbsGoBack?.setOnClickListener(click)
+    override fun setOnBackButtonClickListener(listener: View.OnClickListener) {
+        viewBinding?.gbsGoBack?.setOnClickListener(listener)
     }
 
     override fun onCreateView(container: ViewGroup): View {

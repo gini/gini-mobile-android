@@ -10,6 +10,10 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import net.gini.android.bank.sdk.R
 
+/**
+ * Internal use only.
+ *
+ */
 class HelpItemAdapter(private val context: Context): RecyclerView.Adapter<HelpItemAdapter.HelpViewHolder>() {
 
     private var tipList: MutableList<HelpItem> = mutableListOf(HelpItem.DIGITAL_INVOICE, HelpItem.EDIT, HelpItem.SHOP)
