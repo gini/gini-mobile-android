@@ -2,6 +2,7 @@ package net.gini.android.bank.sdk.capture.digitalinvoice
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
@@ -12,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import kotlinx.coroutines.CoroutineScope
+import net.gini.android.bank.sdk.capture.digitalinvoice.help.HelpActivity
 import net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
@@ -217,7 +219,10 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
     }
 
     override fun payButtonClicked() {
-        presenter?.pay()
+
+        // TODO: REMOVE THIS AFTER CODE REVIEW AND UI TEST IS DONE
+        activity?.startActivity(Intent(activity, HelpActivity::class.java))
+//        presenter?.pay()
     }
 
     override fun skipButtonClicked() {
