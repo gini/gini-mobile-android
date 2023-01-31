@@ -17,7 +17,7 @@ interface HelpNavigationBarBottomAdapter: InjectedViewAdapter {
      *
      * @param listener the click listener for the button
      */
-    fun setOnBackButtonClickListener(click: View.OnClickListener)
+    fun setOnBackButtonClickListener(listener: View.OnClickListener)
 
 }
 
@@ -28,8 +28,8 @@ interface HelpNavigationBarBottomAdapter: InjectedViewAdapter {
 class DefaultHelpNavigationBarBottomAdapter: HelpNavigationBarBottomAdapter {
     var viewBinding: GbsHelpNavigationBarBottomBinding? = null
 
-    override fun setOnBackButtonClickListener(click: View.OnClickListener) {
-        viewBinding?.gbsGoBack?.setOnClickListener(click)
+    override fun setOnBackButtonClickListener(listener: View.OnClickListener) {
+        viewBinding?.gbsGoBack?.setOnClickListener(listener)
     }
 
     override fun onCreateView(container: ViewGroup): View {
