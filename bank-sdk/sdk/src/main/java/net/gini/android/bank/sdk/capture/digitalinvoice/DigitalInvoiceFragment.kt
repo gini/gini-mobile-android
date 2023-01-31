@@ -219,10 +219,7 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
     }
 
     override fun payButtonClicked() {
-
-        // TODO: REMOVE THIS AFTER CODE REVIEW AND UI TEST IS DONE
-        activity?.startActivity(Intent(activity, HelpActivity::class.java))
-//        presenter?.pay()
+        presenter?.pay()
     }
 
     override fun skipButtonClicked() {
