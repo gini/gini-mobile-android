@@ -6,13 +6,13 @@ import android.view.ViewGroup
 import net.gini.android.bank.sdk.databinding.GbsHelpNavigationBarBottomBinding
 import net.gini.android.capture.view.InjectedViewAdapter
 
-interface HelpNavigationBarBottomAdapter: InjectedViewAdapter {
+interface DigitalInvoiceHelpNavigationBarBottomAdapter: InjectedViewAdapter {
 
     fun setOnBackButtonClickListener(click: View.OnClickListener)
 
 }
 
-class DefaultHelpNavigationBarBottomAdapter: HelpNavigationBarBottomAdapter {
+class DefaultDigitalInvoiceHelpNavigationBarBottomAdapter: DigitalInvoiceHelpNavigationBarBottomAdapter {
     var viewBinding: GbsHelpNavigationBarBottomBinding? = null
 
     override fun setOnBackButtonClickListener(click: View.OnClickListener) {

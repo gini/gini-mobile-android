@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.R
-import net.gini.android.bank.sdk.capture.digitalinvoice.help.view.HelpNavigationBarBottomAdapter
+import net.gini.android.bank.sdk.capture.digitalinvoice.help.view.DigitalInvoiceHelpNavigationBarBottomAdapter
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.internal.util.ActivityHelper
 import net.gini.android.capture.view.InjectedViewContainer
@@ -29,7 +29,7 @@ class HelpActivity : AppCompatActivity() {
 
         setupHelpList()
         setupTopBarNavigation()
-        setupNBottomNavigationBar()
+        setupBottomNavigationBar()
         handleOnBackPressed()
     }
 
@@ -63,11 +63,11 @@ class HelpActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupNBottomNavigationBar() {
+    private fun setupBottomNavigationBar() {
         if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled) {
             val injectedViewContainer =
-                findViewById<InjectedViewContainer<HelpNavigationBarBottomAdapter>>(R.id.gbs_injected_navigation_bar_container_bottom)
-            val adapter = GiniBank.helpNavigationBarBottomAdapter
+                findViewById<InjectedViewContainer<DigitalInvoiceHelpNavigationBarBottomAdapter>>(R.id.gbs_injected_navigation_bar_container_bottom)
+            val adapter = GiniBank.digitalInvoiceHelpNavigationBarBottomAdapter
             injectedViewContainer.injectedViewAdapter = adapter
             adapter.setOnBackButtonClickListener() { v: View? -> onBackPressed() }
         }
