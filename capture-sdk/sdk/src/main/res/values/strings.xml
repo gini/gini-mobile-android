@@ -5,13 +5,12 @@
     </plurals>
     <string name="gc_title_camera">Aufnahme</string>
     <string name="gc_title_onboarding"/>
-    <string name="gc_title_review">Foto überprüfen</string>
+    <string name="gc_title_review">Übersicht</string>
     <string name="gc_title_help">Hilfe</string>
     <string name="gc_title_photo_tips">Tipps</string>
     <string name="gc_title_supported_formats">Formate</string>
     <string name="gc_title_file_import">Importieren</string>
     <string name="gc_title_analysis">Übersicht</string>
-    <string name="gc_title_multi_page_review">Fotos überprüfen</string>
     <string name="gc_title_no_results">Keine Ergebnisse</string>
     <string name="gc_show_onboarding">Hilfe</string>
 
@@ -186,7 +185,6 @@
     <string name="gc_retrieving_invoice">Rechnung wird übermittelt</string>
     <string name="gc_payment_details_visible">Sind alle Zahlungsinformationen gut lesbar?</string>
     <string name="gc_pages">Seite</string>
-    <string name="gc_review">Übersicht</string>
     <string name="gc_process_documents">Verarbeiten</string>
     <string name="gc_continue">Verarbeiten</string>
     <string name="gc_camera_access">Kamerazugriff</string>

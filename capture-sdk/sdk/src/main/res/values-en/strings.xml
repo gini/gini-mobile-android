@@ -2,13 +2,12 @@
 <resources>
     <string name="gc_title_camera">Scan</string>
     <string name="gc_title_onboarding"/>
-    <string name="gc_title_review">Check photo quality</string>
+    <string name="gc_title_review">Review</string>
     <string name="gc_title_help">Help</string>
     <string name="gc_title_analysis">Review</string>
     <string name="gc_title_photo_tips">Tips</string>
     <string name="gc_title_supported_formats">Supported formats</string>
     <string name="gc_title_file_import">How to import</string>
-    <string name="gc_title_multi_page_review">Check photo quality</string>
     <string name="gc_title_no_results">No results</string>
     <string name="gc_show_onboarding">Help</string>
 
@@ -166,7 +165,6 @@
     <string name="gc_retrieving_invoice">Retrieving invoice</string>
     <string name="gc_payment_details_visible">Make sure the payment details are visible</string>
     <string name="gc_pages">Pages</string>
-    <string name="gc_review">Review</string>
     <string name="gc_process_documents">Process</string>
     <string name="gc_continue">Continue</string>
     <string name="gc_unknown_qr_code_description">This code does not contain any payment details. Please use another QR-code or take an image of your invoice.</string>
