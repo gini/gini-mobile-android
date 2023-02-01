@@ -30,7 +30,7 @@ Please be aware that for the Gini Bank SDK you need to use the ``CaptureConfigur
 
 
 Migrate the Return Assistant
------------------------------------
+----------------------------
 
 Onboarding
 ~~~~~~~~~~
@@ -63,3 +63,17 @@ Bottom navigation bar
 
 You can show a bottom navigation bar by passing true to ``GiniCapture`` ``setBottomNavigationBarEnabled``. There is a default implementation, but you can also use
 your own by implementing the ``DigitalInvoiceOnboardingNavigationBarBottomAdapter`` interface and passing it to ``GiniBank``.
+
+Digital Invoice Help
+~~~~~~~~~~~~~~~~~~~~
+
+The new help screen for digital invoice uses the global UI customization options.
+
+Features
+++++++++
+
+Bottom navigation bar
+^^^^^^^^^^^^^^^^^^^^^
+
+You can show a bottom navigation bar by passing true to ``GiniCapture`` ``setBottomNavigationBarEnabled``. There is a default implementation, but you can also use
+your own by implementing the ``DigitalInvoiceHelpNavigationBarBottomAdapter`` interface and passing it to ``GiniBank``.
