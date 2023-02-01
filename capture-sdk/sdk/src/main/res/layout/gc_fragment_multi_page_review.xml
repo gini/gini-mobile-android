@@ -34,7 +34,6 @@
             android:layout_marginBottom="@dimen/large"
             android:text="@string/gc_payment_details_visible"
             android:textColor="@color/Dark_06"
-            android:textSize="@dimen/text_min"
             app:layout_constraintBottom_toTopOf="@+id/gc_view_pager_wrapper"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
