@@ -89,5 +89,6 @@
     <string name="gbs_help_edit_text">Mit einem Klick auf “Bearbeiten” neben dem entsprechenden Artikel haben Sie anschließend die Möglichkeit die Beschreibung, Anzahl und Preis zu bearbeiten. Bitte beachten Sie, dass der Preis pro Stück die Mehrwertsteuer bereits enthält.</string>
     <string name="gbs_help_online_shops_title">Welche Onlineshops werden unterstützt?</string>
     <string name="gbs_help_online_shops_text">Wir bieten die Funktion moment für die fünf größten Onlineshops im Markt an. Weitere Shops werden in naher Zukunft hinzukommen.</string>
+    <string name="gbs_articles">Artikel</string>
 
 </resources>

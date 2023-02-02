@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/line_item"
+    android:background="?attr/colorSurface"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginStart="@dimen/large"
@@ -12,7 +13,7 @@
     android:focusable="true">
 
     <TextView
-        android:id="@+id/edit_button"
+        android:id="@+id/gbs_edit_button"
         style="@style/GiniCaptureTheme.Typography.Body1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -24,11 +25,11 @@
         android:text="@string/gbs_digital_invoice_line_item_edit"
         android:textColor="@color/Accent_01"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/description" />
+        app:layout_constraintTop_toTopOf="@+id/gbs_description" />
 
 
     <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/enable_switch"
+        android:id="@+id/gbs_enable_switch"
         style="@style/GiniCaptureTheme.DigitalInvoice.Switch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -43,44 +44,44 @@
 
 
     <TextView
-        android:id="@+id/description"
+        android:id="@+id/gbs_description"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/large_24"
         android:layout_marginTop="@dimen/gbs_digital_invoice_line_item_description_margin_top"
         android:layout_marginEnd="@dimen/large"
-        android:layout_toStartOf="@id/edit_button"
+        android:layout_toStartOf="@id/gbs_edit_button"
         android:lineSpacingExtra="5sp"
         android:textAppearance="@style/GiniCaptureTheme.Typography.Body1"
-        app:layout_constraintEnd_toStartOf="@+id/edit_button"
-        app:layout_constraintStart_toEndOf="@+id/enable_switch"
+        app:layout_constraintEnd_toStartOf="@+id/gbs_edit_button"
+        app:layout_constraintStart_toEndOf="@+id/gbs_enable_switch"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Nike Sportswear Air Max 97 - Sneaker Low" />
 
 
     <TextView
-        android:id="@+id/gross_price_fractional_part"
+        android:id="@+id/gbs_gross_price_fractional_part"
         style="@style/GiniCaptureTheme.Typography.Body1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        app:layout_constraintBottom_toBottomOf="@+id/per_unit"
+        app:layout_constraintBottom_toBottomOf="@+id/gbs_per_unit"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/per_unit"
+        app:layout_constraintTop_toTopOf="@+id/gbs_per_unit"
         tools:text=".48" />
 
     <TextView
-        android:id="@+id/gross_price_integral_part"
+        android:id="@+id/gbs_gross_price_integral_part"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:textAppearance="@style/GiniCaptureTheme.Typography.Body1"
-        app:layout_constraintBottom_toBottomOf="@+id/per_unit"
-        app:layout_constraintEnd_toStartOf="@+id/gross_price_fractional_part"
-        app:layout_constraintTop_toBottomOf="@id/description"
+        app:layout_constraintBottom_toBottomOf="@+id/gbs_per_unit"
+        app:layout_constraintEnd_toStartOf="@+id/gbs_gross_price_fractional_part"
+        app:layout_constraintTop_toBottomOf="@id/gbs_description"
         tools:text="€76" />
 
     <TextView
-        android:id="@+id/per_unit"
+        android:id="@+id/gbs_per_unit"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -94,20 +95,20 @@
         android:text="@string/gbs_digital_invoice_line_item_quantity"
         android:textAppearance="@style/GiniCaptureTheme.Typography.Body1"
         android:textColor="@color/Dark_06"
-        app:layout_constraintBottom_toTopOf="@+id/materialDivider"
-        app:layout_constraintEnd_toStartOf="@+id/gross_price_integral_part"
-        app:layout_constraintStart_toStartOf="@+id/description"
-        app:layout_constraintTop_toBottomOf="@+id/description"
+        app:layout_constraintBottom_toTopOf="@+id/gbs_materialDivider"
+        app:layout_constraintEnd_toStartOf="@+id/gbs_gross_price_integral_part"
+        app:layout_constraintStart_toStartOf="@+id/gbs_description"
+        app:layout_constraintTop_toBottomOf="@+id/gbs_description"
         tools:text="$99 per unit" />
 
     <com.google.android.material.divider.MaterialDivider
-        android:id="@+id/materialDivider"
+        android:id="@+id/gbs_materialDivider"
         android:layout_width="0dp"
         android:layout_height="1dp"
         app:dividerColor="?attr/dividerColor"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/description" />
+        app:layout_constraintStart_toStartOf="@+id/gbs_description" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

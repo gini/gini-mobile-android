@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorOnSurfaceInverse"
+    android:background="?attr/backgroundColor"
     tools:context="net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceFragment">
 
     <net.gini.android.capture.view.InjectedViewContainer
@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/large"
         android:layout_marginTop="@dimen/large_24"
-        android:text="Article"
+        android:text="@string/gbs_articles"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/gbs_top_bar_navigation" />
 
@@ -98,6 +98,7 @@
             android:layout_marginBottom="@dimen/large_24"
             android:text="@string/gbs_proceed"
             app:cornerRadius="@dimen/small"
+            android:id="@+id/gbs_pay"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/gross_price_total_fractional_part"
             app:layout_constraintStart_toStartOf="@+id/total_label"

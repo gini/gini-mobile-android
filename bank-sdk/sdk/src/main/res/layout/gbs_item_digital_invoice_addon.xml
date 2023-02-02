@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@id/gbs_addon_price_total_integral_part"
         android:layout_alignParentEnd="true"
-        style="@style/GiniCaptureTheme.Typography.Body1"
+        android:textAppearance="@style/GiniCaptureTheme.Typography.Body1"
         app:layout_constraintBaseline_toBaselineOf="@+id/gbs_addon_price_total_integral_part"
         app:layout_constraintStart_toStartOf="parent"
         tools:text="Discount:" />

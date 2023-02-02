@@ -1,11 +1,8 @@
 package net.gini.android.bank.sdk
 
-import android.content.ClipDescription
 import android.content.Context
 import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 import net.gini.android.bank.api.GiniBankAPI
 import net.gini.android.bank.api.models.ResolvePaymentInput
 import net.gini.android.bank.api.models.ResolvedPayment
@@ -20,6 +17,8 @@ import net.gini.android.bank.sdk.GiniBank.startCaptureFlowForIntent
 import net.gini.android.bank.sdk.capture.CaptureConfiguration
 import net.gini.android.bank.sdk.capture.CaptureImportInput
 import net.gini.android.bank.sdk.capture.applyConfiguration
+import net.gini.android.bank.sdk.capture.digitalinvoice.help.view.DefaultDigitalInvoiceHelpNavigationBarBottomAdapter
+import net.gini.android.bank.sdk.capture.digitalinvoice.help.view.DigitalInvoiceHelpNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.capture.digitalinvoice.view.DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.capture.digitalinvoice.view.DigitalInvoiceOnboardingNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.capture.util.getImportFileCallback
@@ -60,14 +59,17 @@ object GiniBank {
     private var captureConfiguration: CaptureConfiguration? = null
     private var giniApi: GiniBankAPI? = null
 
+
+    /**
+     * Bottom navigation bar adapters. Could be changed to custom ones.
+     */
+    var digitalInvoiceOnboardingNavigationBarBottomAdapter: DigitalInvoiceOnboardingNavigationBarBottomAdapter = DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter()
+    var digitalInvoiceHelpNavigationBarBottomAdapter: DigitalInvoiceHelpNavigationBarBottomAdapter = DefaultDigitalInvoiceHelpNavigationBarBottomAdapter()
+
     var digitalInvoiceOnboardingIllustrationAdapter: OnboardingIllustrationAdapter = ImageOnboardingIllustrationAdapter(R.drawable.gbs_digital_invoice_list_image,
         R.string.gbs_digital_invoice_illustration)
 
-    var digitalInvoiceOnboardingNavigationBarBottomAdapter: DigitalInvoiceOnboardingNavigationBarBottomAdapter =
-        DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter()
-
-    var digitalInvoiceTopNavigationBarAdapter: NavigationBarTopAdapter = DefaultNavigationBarTopAdapter()
-
+    var digitalInvoiceNavigationTopBarAdapter: NavigationBarTopAdapter = DefaultNavigationBarTopAdapter()
 
     internal fun getCaptureConfiguration() = captureConfiguration
 
@@ -115,13 +117,13 @@ object GiniBank {
         captureConfiguration = null
         giniCapture = null
 
-        digitalInvoiceOnboardingNavigationBarBottomAdapter =
-            DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter()
+        digitalInvoiceOnboardingNavigationBarBottomAdapter = DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter()
+        digitalInvoiceHelpNavigationBarBottomAdapter = DefaultDigitalInvoiceHelpNavigationBarBottomAdapter()
 
         digitalInvoiceOnboardingIllustrationAdapter = ImageOnboardingIllustrationAdapter(R.drawable.gbs_digital_invoice_list_image,
         R.string.gbs_digital_invoice_illustration)
 
-        digitalInvoiceTopNavigationBarAdapter = DefaultNavigationBarTopAdapter()
+        digitalInvoiceNavigationTopBarAdapter = DefaultNavigationBarTopAdapter()
     }
 
     /**
