@@ -14,7 +14,8 @@
     <string name="gbs_digital_invoice_items">Artikel</string>
     <string name="gbs_digital_invoice_what_is_this_button">Was ist das?</string>
     <string name="gbs_digital_invoice_line_item_edit">Bearbeiten</string>
-    <string name="gbs_digital_invoice_line_item_quantity">%1$dx</string>
+    <string name="gbs_digital_invoice_line_item_quantity">%1$s per unit</string>
+    <string name="gbs_digital_invoice_line_item_index">Artikel %1$d/%2$d</string>
 
     <string name="gbs_digital_invoice_line_item_index">Artikel %1$d/%2$d</string>
     <string name="gbs_digital_invoice_footer_notice">Bitte überprüfe vor der Zahlung, ob alles in Ordnung ist und füge eventuell fehlende Artikel hinzu.</string>
@@ -73,13 +74,19 @@
     <string name="gbs_return_assistant_help_section_3_body">Sollte der Preis mal nicht perfekt ausgelesen worden sein, können Sie diesen einfach manuell korrigieren. Der Gesamtpreis aktualisiert sich automatisch.</string>
     <string name="gbs_return_assistant_help_section_3_title">Preis korrigieren</string>
     <string name="gbs_return_assistant_help_back_button_title">Zurück</string>
-    <string name="gbs_digital_invoice_illustration">Digital invoice illustration</string>
 
+    <string name="gbs_digital_invoice_illustration">Digital invoice illustration</string>
     <string name="gbs_help_invoice_title">Wie funktioniert die Digitale Rechnung?</string>
     <string name="gbs_help_invoice_text">Wir lesen alle Artikel aus der Rechnung aus und listen diese für Sie auf. Falls Sie einige Artikel zurücksenden oder die Rechnung nur teilweise bezahlen möchten, wählen Sie einfach die Artikel ab, die Sie zurücksenden und wir berechnen den zu zahlenden Betrag für Sie neu.</string>
     <string name="gbs_help_edit_title">Wie kann ich Artikel bearbeiten?</string>
     <string name="gbs_help_edit_text">Mit einem Klick auf “Bearbeiten” neben dem entsprechenden Artikel haben Sie anschließend die Möglichkeit die Beschreibung, Anzahl und Preis zu bearbeiten. Bitte beachten Sie, dass der Preis pro Stück die Mehrwertsteuer bereits enthält.</string>
     <string name="gbs_help_online_shops_title">Welche Onlineshops werden unterstützt?</string>
     <string name="gbs_help_online_shops_text">Wir bieten die Funktion moment für die fünf größten Onlineshops im Markt an. Weitere Shops werden in naher Zukunft hinzukommen.</string>
+
+    <string name="gbs_proceed">Weiter</string>
+    <string name="gbs_edit_article">Artikel bearbeiten</string>
+    <string name="gbs_name">Name</string>
+    <string name="gbs_unit_price">Einzelpreis</string>
+    <string name="gbs_quantity">Anzahl</string>
 
 </resources>

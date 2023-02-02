@@ -88,11 +88,6 @@ internal class LineItemsAdapter(private val listener: LineItemsAdapterListener) 
         val layoutInflater = LayoutInflater.from(parent.context)
         val viewHolder =
             ViewHolder.forViewTypeId(viewTypeId, layoutInflater, parent)
-        if (viewHolder is ViewHolder.FooterViewHolder) {
-            viewHolder.binding.payButton.setOnClickListener(footerButtonClickListener)
-            viewHolder.binding.skipButton.setOnClickListener(footerSkipButtonClickListener)
-            viewHolder.binding.addButton.setOnClickListener(footerAddButtonClickListener)
-        }
 
         if (viewHolder is ViewHolder.HeaderViewHolder) {
             viewHolder.binding.headerButton2.setOnClickListener(footerSkipButtonClickListener)
@@ -114,7 +109,6 @@ internal class LineItemsAdapter(private val listener: LineItemsAdapterListener) 
     override fun getItemViewType(position: Int): Int {
        return when (position) {
             0 -> if (isInaccurateExtraction) Header.id else LineItem.id
-            footerPosition() -> Footer.id
             in addonsRange() -> Addon.id
             else -> LineItem.id
         }
@@ -138,11 +132,6 @@ internal class LineItemsAdapter(private val listener: LineItemsAdapterListener) 
                 val enabled = footerDetails?.buttonEnabled ?: true
                 addons.getOrNull(index)?.let {
                     viewHolder.bind(Pair(it, enabled), null)
-                }
-            }
-            is ViewHolder.FooterViewHolder -> {
-                footerDetails?.also {
-                    viewHolder.bind(it)
                 }
             }
         }
@@ -210,7 +199,6 @@ internal sealed class ViewType {
             1 -> Header
             2 -> LineItem
             3 -> Addon
-            4 -> Footer
             else -> throw IllegalStateException("Unknow adapter view type id: $viewTypeId")
         }
     }
@@ -374,29 +362,21 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
             } else {
                 disable()
             }
-            val articleIndex = (dataIndex ?: 0) + 1
-            binding.itemIndexLabel.text = binding.itemIndexLabel.resources.getString(
-                R.string.gbs_digital_invoice_line_item_index,
-                articleIndex,
-                allData?.size ?: 0
-            )
             binding.enableSwitch.isChecked = data.selected
 
-            binding.removeButton.isVisible = data.addedByUser
             binding.enableSwitch.isInvisible = data.addedByUser
 
 
             data.lineItem.let { li ->
-                binding.description.text = li.description
-                binding.quantity.text = binding.quantity.resources.getString(
-                    R.string.gbs_digital_invoice_line_item_quantity,
-                    li.quantity
-                )
+                binding.description.text = "${li.quantity}x ${li.description}"
                 DigitalInvoice.lineItemTotalGrossPriceIntegralAndFractionalParts(li)
                     .let { (integral, fractional) ->
                         binding.grossPriceIntegralPart.text = integral
-                        @SuppressLint("SetTextI18n")
                         binding.grossPriceFractionalPart.text = fractional
+                        binding.perUnit.text = binding.perUnit.resources.getString(
+                            R.string.gbs_digital_invoice_line_item_quantity,
+                            integral
+                        )
                     }
             }
             itemView.setOnClickListener {
@@ -405,11 +385,11 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
                 }
             }
 
-            binding.removeButton.setOnClickListener {
+            /*binding.removeButton.setOnClickListener {
                 allData?.getOrNull(dataIndex ?: -1)?.let {
                     listener?.removeLineItem(it)
                 }
-            }
+            }*/
 
             binding.enableSwitch.setOnCheckedChangeListener { _, isChecked ->
                 allData?.getOrNull(dataIndex ?: -1)?.let {
@@ -432,56 +412,25 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
             binding.enableSwitch.setOnCheckedChangeListener(null)
         }
 
-        fun enable() {
+        private fun enable() {
+            val alpha = 1.0f
             itemView.isEnabled = true
-            binding.strokeBackgroundView.background = ContextCompat.getDrawable(
-                itemView.context,
-                R.drawable.gbs_digital_invoice_line_item_stroke_background
-            )
-            binding.description.setTextColor(
-                ContextCompat.getColor(
-                    itemView.context,
-                    R.color.gbs_digital_invoice_line_item_description_text
-                )
-            )
             binding.editButton.isEnabled = true
-
-            binding.quantity.setTextColor(
-                ContextCompat.getColor(
-                    itemView.context,
-                    R.color.gbs_digital_invoice_line_item_quantity_text
-                )
-            )
-            binding.grossPriceIntegralPart.setTextColor(
-                ContextCompat.getColor(
-                    itemView.context,
-                    R.color.gbs_digital_invoice_line_item_gross_price_text
-                )
-            )
-            binding.grossPriceFractionalPart.setTextColor(
-                ContextCompat.getColor(
-                    itemView.context,
-                    R.color.gbs_digital_invoice_line_item_gross_price_text
-                )
-            )
+            binding.description.alpha = alpha
+            binding.perUnit.alpha = alpha
+            binding.grossPriceIntegralPart.alpha = alpha
+            binding.grossPriceFractionalPart.alpha = alpha
         }
 
 
-        fun disable() {
+        private fun disable() {
+            val alpha = 0.5f
             itemView.isEnabled = false
-            val disabledColor = ContextCompat.getColor(
-                itemView.context,
-                R.color.gbs_digital_invoice_line_item_disabled
-            )
-            binding.strokeBackgroundView.background = ContextCompat.getDrawable(
-                itemView.context,
-                R.drawable.gbs_digital_invoice_line_item_stroke_background_disabled
-            )
-            binding.description.setTextColor(disabledColor)
+            binding.description.alpha = alpha
             binding.editButton.isEnabled = false
-            binding.quantity.setTextColor(disabledColor)
-            binding.grossPriceIntegralPart.setTextColor(disabledColor)
-            binding.grossPriceFractionalPart.setTextColor(disabledColor)
+            binding.perUnit.alpha = alpha
+            binding.grossPriceIntegralPart.alpha = alpha
+            binding.grossPriceFractionalPart.alpha = alpha
         }
     }
 
@@ -494,7 +443,7 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
         ViewHolder<Pair<DigitalInvoiceAddon, Boolean>>(binding.root, Addon) {
         private val addonName = binding.gbsAddonName
         private val priceIntegralPart: TextView = binding.gbsAddonPriceTotalIntegralPart
-        private val priceFractionalPart: TextView = binding.gbsAddonPriceTotalFractionalPart
+        private val fractionalPart: TextView = binding.gbsAddonPriceTotalFractionalPart
 
         override fun bind(
             data: Pair<DigitalInvoiceAddon, Boolean>,
@@ -506,8 +455,7 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
             DigitalInvoice.addonPriceIntegralAndFractionalParts(data.first)
                 .let { (integral, fractional) ->
                     priceIntegralPart.text = integral
-                    @SuppressLint("SetTextI18n")
-                    priceFractionalPart.text = fractional
+                    fractionalPart.text = fractional
                 }
 
             when (data.second) {
@@ -522,7 +470,6 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
                         R.color.gbs_digital_invoice_addon_price_text
                     )
                     priceIntegralPart.setTextColor(enabledColor)
-                    priceFractionalPart.setTextColor(enabledColor)
                 }
 
                 else -> {
@@ -532,7 +479,6 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
                     )
                     addonName.setTextColor(disabledColor)
                     priceIntegralPart.setTextColor(disabledColor)
-                    priceFractionalPart.setTextColor(disabledColor)
                 }
             }
         }
@@ -554,25 +500,8 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
             allData: List<DigitalInvoiceScreenContract.FooterDetails>?,
             dataIndex: Int?
         ) {
-            binding.skipButton.isEnabled = data.buttonEnabled
-            binding.skipButton.isVisible = data.inaccurateExtraction
-            binding.payButton.isEnabled = data.buttonEnabled
-            binding.payButton.text = if (data.buttonEnabled) {
-                if (data.count > 0) {
-                    binding.payButton.resources.getString(
-                        R.string.gbs_digital_invoice_pay,
-                        data.count,
-                        data.total
-                    )
-                } else {
-                    binding.payButton.resources.getString(R.string.gbs_digital_invoice_pay_other_charges)
-                }
-            } else {
-                binding.payButton.resources.getString(R.string.gbs_digital_invoice_pay_disabled)
-            }
             val (integral, fractional) = data.totalGrossPriceIntegralAndFractionalParts
             binding.grossPriceTotalIntegralPart.text = integral
-            binding.grossPriceTotalFractionalPart.text = fractional
         }
 
         override fun unbind() {
@@ -605,13 +534,9 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
                         false
                     )
                 )
-                Footer -> FooterViewHolder(
-                    GbsItemDigitalInvoiceFooterBinding.inflate(
-                        layoutInflater,
-                        parent,
-                        false
-                    )
-                )
+                else -> {
+                    FooterViewHolder(GbsItemDigitalInvoiceFooterBinding.inflate(layoutInflater, parent, false))
+                }
             }
     }
 }

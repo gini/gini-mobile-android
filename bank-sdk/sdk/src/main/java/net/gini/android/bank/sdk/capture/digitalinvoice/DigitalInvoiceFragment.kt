@@ -308,7 +308,9 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
     }
 
     override fun updateFooterDetails(data: DigitalInvoiceScreenContract.FooterDetails) {
-        lineItemsAdapter.footerDetails = data
+        val (integral, fractional) = data.totalGrossPriceIntegralAndFractionalParts
+        binding.grossPriceTotalIntegralPart.text = integral
+        binding.grossPriceTotalFractionalPart.text = fractional
     }
 
     /**

@@ -83,6 +83,15 @@ internal class DigitalInvoice(
             }
         }
 
+        fun lineItemTotalGrossPriceIntegralAndFractionalPartsWithoutCurrency(lineItem: LineItem): Pair<String, String> {
+            return lineItem.run {
+                Pair(
+                    priceIntegralPartWithCurrencySymbol(totalGrossPrice, null),
+                    totalGrossPrice.fractionalPart(FRACTION_FORMAT)
+                )
+            }
+        }
+
         fun addonPriceIntegralAndFractionalParts(addon: DigitalInvoiceAddon): Pair<String, String> {
             return addon.run {
                 Pair(
@@ -98,6 +107,7 @@ internal class DigitalInvoice(
                 price.integralPartWithCurrency(c, INTEGRAL_FORMAT)
             } ?: price.integralPart(INTEGRAL_FORMAT)
     }
+
 
     private fun lineItemsFromCompoundExtractions(compoundExtractions: Map<String, GiniCaptureCompoundExtraction>): List<LineItem> =
         compoundExtractions["lineItems"]?.run {
