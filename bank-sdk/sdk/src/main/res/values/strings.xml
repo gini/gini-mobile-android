@@ -75,7 +75,12 @@
     <string name="gbs_return_assistant_help_section_3_title">Preis korrigieren</string>
     <string name="gbs_return_assistant_help_back_button_title">Zurück</string>
 
+
     <string name="gbs_digital_invoice_illustration">Digital invoice illustration</string>
+    <string name="gbs_digital_invoice_help_invoice_icon_content_description">Wie funktioniert die Digitale Rechnung icon</string>
+    <string name="gbs_digital_invoice_help_edit_icon_content_description">Wie kann ich Artikel bearbeiten icon</string>
+    <string name="gbs_digital_invoice_help_shop_icon_content_description">Welche Onlineshops werden unterstützt icon</string>
+
     <string name="gbs_help_invoice_title">Wie funktioniert die Digitale Rechnung?</string>
     <string name="gbs_help_invoice_text">Wir lesen alle Artikel aus der Rechnung aus und listen diese für Sie auf. Falls Sie einige Artikel zurücksenden oder die Rechnung nur teilweise bezahlen möchten, wählen Sie einfach die Artikel ab, die Sie zurücksenden und wir berechnen den zu zahlenden Betrag für Sie neu.</string>
     <string name="gbs_help_edit_title">Wie kann ich Artikel bearbeiten?</string>
