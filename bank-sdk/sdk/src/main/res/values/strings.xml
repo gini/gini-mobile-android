@@ -11,7 +11,7 @@
     <string name="gbs_digital_invoice_items">Artikel</string>
     <string name="gbs_digital_invoice_what_is_this_button">Was ist das?</string>
     <string name="gbs_digital_invoice_line_item_edit">Bearbeiten</string>
-    <string name="gbs_digital_invoice_line_item_quantity">%1$dx</string>
+    <string name="gbs_digital_invoice_line_item_quantity">%1$s per unit</string>
     <string name="gbs_digital_invoice_line_item_index">Artikel %1$d/%2$d</string>
 
     <string name="gbs_digital_invoice_footer_notice">Bitte überprüfe vor der Zahlung, ob alles in Ordnung ist und füge eventuell fehlende Artikel hinzu.</string>
@@ -73,5 +73,10 @@
     <string name="gbs_return_assistant_help_section_3_body">Sollte der Preis mal nicht perfekt ausgelesen worden sein, können Sie diesen einfach manuell korrigieren. Der Gesamtpreis aktualisiert sich automatisch.</string>
     <string name="gbs_return_assistant_help_section_3_title">Preis korrigieren</string>
     <string name="gbs_return_assistant_help_back_button_title">Zurück</string>
+    <string name="gbs_proceed">Weiter</string>
+    <string name="gbs_edit_article">Artikel bearbeiten</string>
+    <string name="gbs_name">Name</string>
+    <string name="gbs_unit_price">Einzelpreis</string>
+    <string name="gbs_quantity">Anzahl</string>
 
 </resources>

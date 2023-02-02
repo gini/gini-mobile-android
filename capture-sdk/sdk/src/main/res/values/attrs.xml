@@ -7,5 +7,7 @@
 
     <attr name="pageItemBackground" format="reference|color"/>
     <attr name="errorScreenSubtitle" format="reference|color"/>
-
+    <attr name="switchTrack" format="reference|color"/>
+    <attr name="textInputLayout" format="reference|color"/>
+    <attr name="bottomSheetItemTitle" format="reference|color"/>
 </resources>

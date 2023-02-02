@@ -13,6 +13,9 @@
         <item name="colorOnSurfaceInverse">@color/Dark_02</item>
         <item name="pageItemBackground">@color/Dark_01</item>
         <item name="errorScreenSubtitle">@color/Dark_06</item>
+        <item name="switchTrack">@color/Dark_03</item>
+        <item name="textInputLayout">@color/Dark_04</item>
+        <item name="bottomSheetItemTitle">@color/Light_05</item>
         <item name="android:windowLightStatusBar">false</item>
     </style>
 
