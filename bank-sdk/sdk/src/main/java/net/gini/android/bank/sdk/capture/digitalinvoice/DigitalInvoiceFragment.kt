@@ -2,6 +2,7 @@ package net.gini.android.bank.sdk.capture.digitalinvoice
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
@@ -12,6 +13,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import kotlinx.coroutines.CoroutineScope
+import net.gini.android.bank.sdk.GiniBank
+import net.gini.android.bank.sdk.R
 import net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
@@ -19,6 +22,9 @@ import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.bank.sdk.capture.util.autoCleared
 import net.gini.android.bank.sdk.capture.util.parentFragmentManagerOrNull
 import net.gini.android.bank.sdk.databinding.GbsFragmentDigitalInvoiceBinding
+import net.gini.android.capture.GiniCapture
+import net.gini.android.capture.help.HelpActivity
+import net.gini.android.capture.view.NavButtonType
 
 
 /**
@@ -189,7 +195,29 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
         super.onViewCreated(view, savedInstanceState)
         initRecyclerView()
         setInputHandlers()
+        initTopNavigationBar()
         presenter?.onViewCreated()
+    }
+
+
+    private fun initTopNavigationBar() {
+        if (GiniCapture.hasInstance()) {
+            binding.gbsTopBarNavigation.injectedViewAdapter = GiniBank.digitalInvoiceTopNavigationBarAdapter
+            GiniBank.digitalInvoiceTopNavigationBarAdapter.setTitle(getString(R.string.gbs_digital_invoice_onboarding_text_1))
+
+            GiniBank.digitalInvoiceTopNavigationBarAdapter.setMenuResource(R.menu.gbs_menu_digital_invoice)
+            GiniBank.digitalInvoiceTopNavigationBarAdapter.setOnMenuItemClickListener {
+                if (it.itemId == R.id.help) {
+                    startActivity(Intent(requireContext(), HelpActivity::class.java))
+                }
+                true
+            }
+
+            GiniBank.digitalInvoiceTopNavigationBarAdapter.setNavButtonType(NavButtonType.BACK)
+            GiniBank.digitalInvoiceTopNavigationBarAdapter.setOnNavButtonClickListener {
+                activity?.finish()
+            }
+        }
     }
 
     private fun initListener() {
