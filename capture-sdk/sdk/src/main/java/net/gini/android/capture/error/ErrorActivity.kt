@@ -53,7 +53,7 @@ class ErrorActivity : AppCompatActivity(),
             topBarContainer.injectedViewAdapter = GiniCapture.getInstance().navigationBarTopAdapter
 
             topBarContainer.injectedViewAdapter?.apply {
-                setTitle(getString(R.string.gc_error_screen_title))
+                setTitle(getString(R.string.gc_title_error))
 
                 if (!GiniCapture.getInstance().isBottomNavigationBarEnabled) {
                     setNavButtonType(NavButtonType.BACK)
