@@ -139,3 +139,15 @@ that you need to also pass in the ``CompoundExtraction`` map to ``DocumentTaskMa
     final Task<Document> sendFeedback = documentTaskManager.sendFeedbackForExtractions(document, 
             specificExtractionFeedback, compoundExtractionFeedback);
     sendFeedback.waitForCompletion();
+
+Digital Invoice Help Screen Customization
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can show back navigation button on bottom navigation bar. You can pass your custom ``DigitalInvoiceHelpNavigationBarBottomAdapter`` implementation to
+``GiniBank``:
+
+.. code-block:: java
+
+    CustomDigitalInvoiceHelpNavigationBarBottomAdapter customDigitalInvoiceHelpNavigationBarBottomAdapter = new CustomDigitalInvoiceHelpNavigationBarBottomAdapter();
+
+    GiniBank.digitalInvoiceHelpNavigationBarBottomAdapter = customDigitalInvoiceHelpNavigationBarBottomAdapter
