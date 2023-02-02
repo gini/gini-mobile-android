@@ -117,5 +117,7 @@
     <dimen name="gbs_digital_invoice_line_item_details_price_padding">24dp</dimen>
     <dimen name="gbs_digital_invoice_line_item_remove_margin_top">10dp</dimen>
 
+    <dimen name="gbs_digital_invoice_help_icon_height">40dp</dimen>
+    <dimen name="gbs_digital_invoice_help_icon_width">40dp</dimen>
 
 </resources>
