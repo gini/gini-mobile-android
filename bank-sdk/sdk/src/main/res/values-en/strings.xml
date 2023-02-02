@@ -73,6 +73,7 @@
     <string name="gbs_digital_invoice_header_button_1">OK</string>
     <string name="gbs_digital_invoice_header_button_2">Skip</string>
     <string name="gbs_digital_invoice_footer_skip">Skip feature</string>
+    <string name="gbs_digital_invoice_illustration">Digital invoice illustration</string>
     <string name="gbs_proceed">Proceed</string>
     <string name="gbs_edit_article">Edit Article</string>
     <string name="gbs_name">Name</string>

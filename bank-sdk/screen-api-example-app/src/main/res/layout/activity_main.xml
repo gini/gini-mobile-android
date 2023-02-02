@@ -38,6 +38,24 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/gbs_textView4" />
 
+    <TextView
+        android:id="@+id/gbs_textView5"
+        style="@style/GiniCaptureTheme.Typography.Body1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="Custom onboarding illustration"
+        app:layout_constraintStart_toStartOf="@+id/gbs_textView3"
+        app:layout_constraintTop_toBottomOf="@+id/gbs_textView4" />
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/gbs_enable_custom_illustration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/gbs_textView5"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/gbs_textView5" />
+
     <Button
         android:id="@+id/button_start_scanner"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
