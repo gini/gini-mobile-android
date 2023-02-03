@@ -15,6 +15,7 @@ import net.gini.android.capture.document.ImageDocument
 import net.gini.android.capture.document.ImageMultiPageDocument
 import net.gini.android.capture.internal.camera.photo.Photo
 import net.gini.android.capture.internal.util.AndroidHelper
+import net.gini.android.capture.onClick
 import net.gini.android.capture.review.RotatableImageViewContainer
 
 class PreviewPagesAdapter(
@@ -30,11 +31,11 @@ class PreviewPagesAdapter(
 
         init {
 
-            mDeletePage?.setOnClickListener {
+            mDeletePage?.onClick {
                 previewFragmentListener.onDeleteDocument(multiPageDocument.documents[absoluteAdapterPosition])
             }
 
-            mImageViewContainer?.setOnClickListener {
+            mImageViewContainer?.onClick {
                 previewFragmentListener.onPageClicked(multiPageDocument.documents[absoluteAdapterPosition])
             }
         }
