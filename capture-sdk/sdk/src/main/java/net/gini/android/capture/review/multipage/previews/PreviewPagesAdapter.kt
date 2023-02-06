@@ -1,21 +1,17 @@
 package net.gini.android.capture.review.multipage.previews
 
-import android.content.res.Configuration
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import net.gini.android.capture.AsyncCallback
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.R
-import net.gini.android.capture.document.GiniCaptureDocumentError
 import net.gini.android.capture.document.ImageDocument
 import net.gini.android.capture.document.ImageMultiPageDocument
 import net.gini.android.capture.internal.camera.photo.Photo
-import net.gini.android.capture.internal.util.AndroidHelper
-import net.gini.android.capture.onClick
+import net.gini.android.capture.internal.ui.setIntervalClickListener
 import net.gini.android.capture.review.RotatableImageViewContainer
 
 class PreviewPagesAdapter(
@@ -31,11 +27,11 @@ class PreviewPagesAdapter(
 
         init {
 
-            mDeletePage?.onClick {
+            mDeletePage?.setIntervalClickListener {
                 previewFragmentListener.onDeleteDocument(multiPageDocument.documents[absoluteAdapterPosition])
             }
 
-            mImageViewContainer?.onClick {
+            mImageViewContainer?.setIntervalClickListener {
                 previewFragmentListener.onPageClicked(multiPageDocument.documents[absoluteAdapterPosition])
             }
         }
