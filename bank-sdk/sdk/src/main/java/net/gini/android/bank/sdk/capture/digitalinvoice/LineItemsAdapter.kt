@@ -68,7 +68,7 @@ internal class LineItemsAdapter(private val listener: LineItemsAdapterListener) 
         }
     var isInaccurateExtraction: Boolean = false
 
-    var footerDetails: DigitalInvoiceScreenContract.FooterDetails? = null
+    private var footerDetails: DigitalInvoiceScreenContract.FooterDetails? = null
         set(value) {
             field = value
             notifyDataSetChanged()
@@ -359,11 +359,14 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
                     .let { (integral, fractional) ->
                         binding.gbsGrossPriceIntegralPart.text = integral
                         binding.gbsGrossPriceFractionalPart.text = fractional
-                        binding.gbsPerUnit.text = binding.gbsPerUnit.resources.getString(
-                            R.string.gbs_digital_invoice_line_item_quantity,
-                            integral
-                        )
                     }
+
+                DigitalInvoice.lineItemUnitPriceIntegralAndFractionalParts(li).let {(integral, fractional) ->
+                    binding.gbsPerUnit.text = binding.gbsPerUnit.resources.getString(
+                        R.string.gbs_digital_invoice_line_item_quantity,
+                        "$integral$fractional"
+                    )
+                }
             }
             itemView.setOnClickListener {
                 allData?.getOrNull(dataIndex ?: -1)?.let {

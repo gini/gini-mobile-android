@@ -340,6 +340,7 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
         val (integral, fractional) = data.totalGrossPriceIntegralAndFractionalParts
         binding.grossPriceTotalIntegralPart.text = integral
         binding.grossPriceTotalFractionalPart.text = fractional
+        binding.gbsPay.isEnabled = data.buttonEnabled
     }
 
     /**

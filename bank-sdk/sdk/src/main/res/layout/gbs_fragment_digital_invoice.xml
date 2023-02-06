@@ -26,19 +26,21 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/gbs_top_bar_navigation" />
 
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/line_items"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginTop="@dimen/small"
         android:background="?attr/colorSurface"
         android:scrollbars="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/gbs_bottom_wrapper"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/gbs_article_txt"
         tools:itemCount="5"
         tools:listitem="@layout/gbs_item_digital_invoice_line_item" />
-
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/gbs_bottom_wrapper"
