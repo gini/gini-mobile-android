@@ -100,13 +100,13 @@
                 app:layout_constraintTop_toTopOf="@+id/gross_price_total_integral_part" />
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/gbs_pay"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/large_24"
                 android:layout_marginBottom="@dimen/large_24"
                 android:text="@string/gbs_proceed"
                 app:cornerRadius="@dimen/small"
-                android:id="@+id/gbs_pay"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/gross_price_total_fractional_part"
                 app:layout_constraintStart_toStartOf="@+id/total_label"
@@ -115,5 +115,13 @@
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <net.gini.android.capture.view.InjectedViewContainer
+        android:id="@+id/gbs_bottom_bar_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

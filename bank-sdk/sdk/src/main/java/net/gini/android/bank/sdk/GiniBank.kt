@@ -19,7 +19,9 @@ import net.gini.android.bank.sdk.capture.CaptureImportInput
 import net.gini.android.bank.sdk.capture.applyConfiguration
 import net.gini.android.bank.sdk.capture.digitalinvoice.help.view.DefaultDigitalInvoiceHelpNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.capture.digitalinvoice.help.view.DigitalInvoiceHelpNavigationBarBottomAdapter
+import net.gini.android.bank.sdk.capture.digitalinvoice.view.DefaultDigitalInvoiceNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.capture.digitalinvoice.view.DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter
+import net.gini.android.bank.sdk.capture.digitalinvoice.view.DigitalInvoiceNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.capture.digitalinvoice.view.DigitalInvoiceOnboardingNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.capture.util.getImportFileCallback
 import net.gini.android.bank.sdk.error.AmountParsingException
@@ -70,6 +72,8 @@ object GiniBank {
         R.string.gbs_digital_invoice_illustration)
 
     var digitalInvoiceNavigationTopBarAdapter: NavigationBarTopAdapter = DefaultNavigationBarTopAdapter()
+
+    var digitalInvoiceNavigationBarBottomAdapter: DigitalInvoiceNavigationBarBottomAdapter = DefaultDigitalInvoiceNavigationBarBottomAdapter()
 
     internal fun getCaptureConfiguration() = captureConfiguration
 
@@ -124,6 +128,8 @@ object GiniBank {
         R.string.gbs_digital_invoice_illustration)
 
         digitalInvoiceNavigationTopBarAdapter = DefaultNavigationBarTopAdapter()
+
+        digitalInvoiceNavigationBarBottomAdapter = DefaultDigitalInvoiceNavigationBarBottomAdapter()
     }
 
     /**

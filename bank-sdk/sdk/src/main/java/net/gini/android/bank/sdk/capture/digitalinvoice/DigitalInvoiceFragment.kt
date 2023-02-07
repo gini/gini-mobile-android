@@ -46,8 +46,8 @@ private const val TAG_WHAT_IS_THIS_DIALOG = "TAG_WHAT_IS_THIS_DIALOG"
  * - "amountToPay" is updated to contain the sum of the selected line items' prices,
  * - the line items are updated according to the user's modifications.
  *
- * Before showing the `DigitalInvoiceFragment` you should validate the compound extractions 
- * using the [LineItemsValidator]. These extractions are returned in the [AnalysisFragmentListener.onExtractionsAvailable()] 
+ * Before showing the `DigitalInvoiceFragment` you should validate the compound extractions
+ * using the [LineItemsValidator]. These extractions are returned in the [AnalysisFragmentListener.onExtractionsAvailable()]
  * listener method.
  *
  * Include the `DigitalInvoiceFragment` into your layout by using the [DigitalInvoiceFragment.createInstance()] factory method to create
@@ -196,13 +196,15 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
         initRecyclerView()
         setInputHandlers()
         initTopNavigationBar()
+        initBottomBar()
         presenter?.onViewCreated()
     }
 
 
     private fun initTopNavigationBar() {
-        if (GiniCapture.hasInstance()) {
-            binding.gbsTopBarNavigation.injectedViewAdapter = GiniBank.digitalInvoiceNavigationTopBarAdapter
+        if (GiniCapture.hasInstance() && !GiniCapture.getInstance().isBottomNavigationBarEnabled) {
+            binding.gbsTopBarNavigation.injectedViewAdapter =
+                GiniBank.digitalInvoiceNavigationTopBarAdapter
             GiniBank.digitalInvoiceNavigationTopBarAdapter.setTitle(getString(R.string.gbs_digital_invoice_onboarding_text_1))
 
             GiniBank.digitalInvoiceNavigationTopBarAdapter.setMenuResource(R.menu.gbs_menu_digital_invoice)
@@ -216,6 +218,30 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
             GiniBank.digitalInvoiceNavigationTopBarAdapter.setNavButtonType(NavButtonType.BACK)
             GiniBank.digitalInvoiceNavigationTopBarAdapter.setOnNavButtonClickListener {
                 activity?.finish()
+            }
+        }
+    }
+
+    private fun initBottomBar() {
+        if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled) {
+
+            binding.gbsBottomWrapper.visibility = View.INVISIBLE
+            binding.gbsPay.isEnabled = false
+
+            binding.gbsBottomBarNavigation?.injectedViewAdapter =
+                GiniBank.digitalInvoiceNavigationBarBottomAdapter
+            GiniBank.digitalInvoiceNavigationBarBottomAdapter.setHelpIconResource(R.drawable.gbs_menu_question_circle_info)
+
+            GiniBank.digitalInvoiceNavigationBarBottomAdapter.setOnHelpClickListener {
+                startActivity(Intent(requireContext(), HelpActivity::class.java))
+            }
+
+            GiniBank.digitalInvoiceNavigationBarBottomAdapter.setOnBackClickListener {
+                activity?.finish()
+            }
+
+            GiniBank.digitalInvoiceNavigationBarBottomAdapter.setOnPayClickListener {
+                presenter?.pay()
             }
         }
     }
@@ -341,6 +367,12 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
         binding.grossPriceTotalIntegralPart.text = integral
         binding.grossPriceTotalFractionalPart.text = fractional
         binding.gbsPay.isEnabled = data.buttonEnabled
+
+        if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled)
+            binding.gbsBottomBarNavigation?.injectedViewAdapter?.let { _ ->
+                GiniBank.digitalInvoiceNavigationBarBottomAdapter.setGrossPriceTotal(integral, fractional)
+                GiniBank.digitalInvoiceNavigationBarBottomAdapter.setPayButtonEnabled(data.buttonEnabled)
+            }
     }
 
     /**
