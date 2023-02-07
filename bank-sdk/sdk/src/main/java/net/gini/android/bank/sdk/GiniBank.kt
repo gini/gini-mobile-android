@@ -32,6 +32,8 @@ import net.gini.android.capture.onboarding.view.OnboardingIllustrationAdapter
 import net.gini.android.capture.requirements.GiniCaptureRequirements
 import net.gini.android.capture.requirements.RequirementsReport
 import net.gini.android.capture.util.CancellationToken
+import net.gini.android.capture.view.DefaultNavigationBarTopAdapter
+import net.gini.android.capture.view.NavigationBarTopAdapter
 import net.gini.android.core.api.Resource
 import net.gini.android.core.api.models.PaymentRequest
 
@@ -66,6 +68,8 @@ object GiniBank {
 
     var digitalInvoiceOnboardingIllustrationAdapter: OnboardingIllustrationAdapter = ImageOnboardingIllustrationAdapter(R.drawable.gbs_digital_invoice_list_image,
         R.string.gbs_digital_invoice_illustration)
+
+    var digitalInvoiceNavigationTopBarAdapter: NavigationBarTopAdapter = DefaultNavigationBarTopAdapter()
 
     internal fun getCaptureConfiguration() = captureConfiguration
 
@@ -118,6 +122,8 @@ object GiniBank {
 
         digitalInvoiceOnboardingIllustrationAdapter = ImageOnboardingIllustrationAdapter(R.drawable.gbs_digital_invoice_list_image,
         R.string.gbs_digital_invoice_illustration)
+
+        digitalInvoiceNavigationTopBarAdapter = DefaultNavigationBarTopAdapter()
     }
 
     /**

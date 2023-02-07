@@ -7,9 +7,11 @@
     <string name="gbs_select_from_camera_roll">Eigenes Bild auswählen</string>
 
     <string name="gbs_help_item_return_assistant_title">Retourenassistent</string>
+
     <string name="gbs_title_digital_invoice">Digitale Rechnung</string>
 
     <string name="gbs_title_line_item_details" />
+
     <string name="gbs_digital_invoice_scan_success">Scan war erfolgreich!\nDu kannst nun die Artikel abwählen, die du zurückschicken willst.</string>
     <string name="gbs_digital_invoice_items">Artikel</string>
     <string name="gbs_digital_invoice_what_is_this_button">Was ist das?</string>
@@ -17,7 +19,6 @@
     <string name="gbs_digital_invoice_line_item_quantity">%1$s per unit</string>
     <string name="gbs_digital_invoice_line_item_index">Artikel %1$d/%2$d</string>
 
-    <string name="gbs_digital_invoice_line_item_index">Artikel %1$d/%2$d</string>
     <string name="gbs_digital_invoice_footer_notice">Bitte überprüfe vor der Zahlung, ob alles in Ordnung ist und füge eventuell fehlende Artikel hinzu.</string>
     <string name="gbs_digital_invoice_pay">Bezahlen %1$d/%2$d</string>
     <string name="gbs_digital_invoice_pay_other_charges">Bezahlen</string>
@@ -28,6 +29,7 @@
     <string name="gbs_digital_invoice_what_is_this_dialog_positive_response">Ja, das ist hilfreich</string>
 
     <string name="gbs_digital_invoice_what_is_this_dialog_negative_response">Nein, nicht mehr angezeigen</string>
+
     <string name="gbs_digital_invoice_line_item_details_description_label">Artikelname</string>
     <string name="gbs_digital_invoice_line_item_details_quantity_label">Anzahl</string>
     <string name="gbs_digital_invoice_line_item_details_gross_price_label">Artikelpreis</string>
@@ -75,11 +77,15 @@
     <string name="gbs_return_assistant_help_section_3_title">Preis korrigieren</string>
     <string name="gbs_return_assistant_help_back_button_title">Zurück</string>
 
-
     <string name="gbs_digital_invoice_illustration">Digital invoice illustration</string>
     <string name="gbs_digital_invoice_help_invoice_icon_content_description">Wie funktioniert die Digitale Rechnung icon</string>
     <string name="gbs_digital_invoice_help_edit_icon_content_description">Wie kann ich Artikel bearbeiten icon</string>
     <string name="gbs_digital_invoice_help_shop_icon_content_description">Welche Onlineshops werden unterstützt icon</string>
+    <string name="gbs_proceed">Weiter</string>
+    <string name="gbs_edit_article">Artikel bearbeiten</string>
+    <string name="gbs_name">Name</string>
+    <string name="gbs_unit_price">Einzelpreis</string>
+    <string name="gbs_quantity">Anzahl</string>
 
     <string name="gbs_help_invoice_title">Wie funktioniert die Digitale Rechnung?</string>
     <string name="gbs_help_invoice_text">Wir lesen alle Artikel aus der Rechnung aus und listen diese für Sie auf. Falls Sie einige Artikel zurücksenden oder die Rechnung nur teilweise bezahlen möchten, wählen Sie einfach die Artikel ab, die Sie zurücksenden und wir berechnen den zu zahlenden Betrag für Sie neu.</string>
@@ -93,5 +99,6 @@
     <string name="gbs_name">Name</string>
     <string name="gbs_unit_price">Einzelpreis</string>
     <string name="gbs_quantity">Anzahl</string>
+    <string name="gbs_articles">Artikel</string>
 
 </resources>

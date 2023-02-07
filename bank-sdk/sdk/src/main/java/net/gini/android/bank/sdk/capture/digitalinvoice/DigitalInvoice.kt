@@ -83,11 +83,11 @@ internal class DigitalInvoice(
             }
         }
 
-        fun lineItemTotalGrossPriceIntegralAndFractionalPartsWithoutCurrency(lineItem: LineItem): Pair<String, String> {
+        fun lineItemUnitPriceIntegralAndFractionalParts(lineItem: LineItem): Pair<String, String> {
             return lineItem.run {
                 Pair(
-                    priceIntegralPartWithCurrencySymbol(totalGrossPrice, null),
-                    totalGrossPrice.fractionalPart(FRACTION_FORMAT)
+                    priceIntegralPartWithCurrencySymbol(grossPrice, null),
+                    grossPrice.fractionalPart(FRACTION_FORMAT)
                 )
             }
         }
