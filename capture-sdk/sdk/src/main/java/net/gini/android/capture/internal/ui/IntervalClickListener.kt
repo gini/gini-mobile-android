@@ -8,6 +8,9 @@ class IntervalClickListener(
 ) : View.OnClickListener {
 
     private val interval = 500L
+    private var isEnabled = true
+    private val enable =
+        Runnable { isEnabled = true }
 
     override fun onClick(view: View) {
         if (isEnabled) {
@@ -16,8 +19,4 @@ class IntervalClickListener(
             click.onClick(view)
         }
     }
-
-    var isEnabled = true
-    private val enable =
-        Runnable { isEnabled = true }
 }
