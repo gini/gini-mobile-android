@@ -20,24 +20,27 @@
         style="@style/GiniCaptureTheme.Typography.Subtitle2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/large_24"
         android:layout_marginTop="@dimen/large_24"
         android:text="@string/gbs_articles"
         app:layout_constraintStart_toStartOf="@+id/line_items"
         app:layout_constraintTop_toBottomOf="@+id/gbs_top_bar_navigation" />
 
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/line_items"
         android:layout_width="@dimen/gc_tablet_width"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginTop="@dimen/small"
-        android:background="?attr/colorSurface"
+        android:background="?attr/backgroundColor"
         android:scrollbars="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/gbs_bottom_wrapper"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/gbs_article_txt"
-        tools:itemCount="5"
+        app:layout_constraintVertical_bias="0.0"
+        tools:itemCount="25"
         tools:listitem="@layout/gbs_item_digital_invoice_line_item" />
-
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/gbs_bottom_wrapper"
