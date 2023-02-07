@@ -15,7 +15,6 @@
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_marginEnd="@dimen/large"
-        android:background="@android:color/transparent"
         android:clickable="false"
         android:focusable="false"
         android:gravity="top"
@@ -23,7 +22,7 @@
         android:paddingStart="5dp"
         android:paddingEnd="5dp"
         android:text="@string/gbs_digital_invoice_line_item_edit"
-        android:textColor="@color/Accent_01"
+        android:textColor="@color/gbs_procced_button_color"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/gbs_description" />
 
