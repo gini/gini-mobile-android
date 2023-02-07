@@ -52,6 +52,7 @@
         app:layout_constraintTop_toTopOf="@+id/gross_price_total_integral_part" />
 
     <com.google.android.material.button.MaterialButton
+        style="@style/GiniCaptureTheme.Widget.Button.UnelevatedButton"
         android:id="@+id/gbs_pay"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -60,7 +61,6 @@
         android:layout_marginEnd="@dimen/large"
         android:layout_marginBottom="@dimen/large_24"
         android:text="@string/gbs_proceed"
-        app:backgroundTint="@color/gbs_procced_button_color"
         app:cornerRadius="@dimen/small"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/gbs_help_btn"
