@@ -101,7 +101,6 @@
             android:layout_marginBottom="@dimen/large_24"
             android:text="@string/gbs_proceed"
             android:id="@+id/gbs_pay"
-            app:backgroundTint="@color/gbs_procced_button_color"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/gross_price_total_fractional_part"
             app:layout_constraintStart_toStartOf="@+id/total_label"
