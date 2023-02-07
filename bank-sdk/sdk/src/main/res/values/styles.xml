@@ -360,6 +360,12 @@
         <item name="trackTint">@color/gbs_switch_track_color</item>
     </style>
 
+    <style name="GiniCaptureTheme.DigitalInvoice.Edit.BottomSheetDialog" parent="Root.GiniCaptureTheme.BottomSheetDialog">
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowSoftInputMode">adjustResize|stateAlwaysVisible</item>
+    </style>
+
     <style name="GiniCaptureTheme.DigitalInvoice.Title.TextStyle" parent="Root.GiniCaptureTheme.DigitalInvoice.Title.TextStyle" />
 
     <style name="GiniCaptureTheme.DigitalInvoice.SelectedAndTotalItems.TextStyle" parent="Root.GiniCaptureTheme.DigitalInvoice.SelectedAndTotalItems.TextStyle" />

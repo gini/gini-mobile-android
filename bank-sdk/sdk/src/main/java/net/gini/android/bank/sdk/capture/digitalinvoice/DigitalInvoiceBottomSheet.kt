@@ -1,26 +1,22 @@
 package net.gini.android.bank.sdk.capture.digitalinvoice
 
+import android.app.ActionBar
 import android.app.Activity
-import android.content.Context
-import android.content.Intent
-import android.content.res.ColorStateList
-import android.database.DataSetObserver
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.AdapterView.OnItemSelectedListener
+import android.view.WindowManager
 import android.widget.ArrayAdapter
 import androidx.core.content.ContextCompat
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.capture.digitalinvoice.details.*
-import net.gini.android.bank.sdk.capture.digitalinvoice.details.LineItemDetailsScreenPresenter
 import net.gini.android.bank.sdk.databinding.GbsEditItemBottomSheetBinding
 import net.gini.android.capture.AmountCurrency
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
-import net.gini.android.core.api.Utils
 
 private const val EXTRA_IN_SELECTABLE_LINE_ITEM = "EXTRA_IN_SELECTABLE_LINE_ITEM"
 
@@ -37,13 +33,14 @@ class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItemDetailsSc
         super.onCreate(savedInstanceState)
         arguments?.let {
             selectableLineItem = it.getParcelable(EXTRA_IN_SELECTABLE_LINE_ITEM)
-
             activity?.let { activity ->
                 createPresenter(activity)
                 initListener()
             }
         }
     }
+
+    override fun getTheme(): Int = R.style.GiniCaptureTheme_DigitalInvoice_Edit_BottomSheetDialog
 
     private fun createPresenter(activity: Activity) = LineItemDetailsScreenPresenter(
         activity, this,
@@ -67,6 +64,12 @@ class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItemDetailsSc
         savedInstanceState: Bundle?
     ): View {
         binding = GbsEditItemBottomSheetBinding.inflate(inflater, container, false)
+        dialog?.setOnShowListener {
+            val bottomSheetInternal = (it as? BottomSheetDialog)?.findViewById<View>(R.id.design_bottom_sheet)
+            bottomSheetInternal?.let {
+                BottomSheetBehavior.from(bottomSheetInternal).state = BottomSheetBehavior.STATE_EXPANDED
+            }
+        }
         return binding.root
     }
 
