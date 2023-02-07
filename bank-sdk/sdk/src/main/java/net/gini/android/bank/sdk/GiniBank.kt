@@ -69,8 +69,6 @@ object GiniBank {
     var digitalInvoiceOnboardingIllustrationAdapter: OnboardingIllustrationAdapter = ImageOnboardingIllustrationAdapter(R.drawable.gbs_digital_invoice_list_image,
         R.string.gbs_digital_invoice_illustration)
 
-    var digitalInvoiceNavigationTopBarAdapter: NavigationBarTopAdapter = DefaultNavigationBarTopAdapter()
-
     internal fun getCaptureConfiguration() = captureConfiguration
 
     /**
@@ -123,7 +121,6 @@ object GiniBank {
         digitalInvoiceOnboardingIllustrationAdapter = ImageOnboardingIllustrationAdapter(R.drawable.gbs_digital_invoice_list_image,
         R.string.gbs_digital_invoice_illustration)
 
-        digitalInvoiceNavigationTopBarAdapter = DefaultNavigationBarTopAdapter()
     }
 
     /**
