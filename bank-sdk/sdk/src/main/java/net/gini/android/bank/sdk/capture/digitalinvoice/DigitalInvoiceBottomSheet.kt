@@ -1,14 +1,18 @@
 package net.gini.android.bank.sdk.capture.digitalinvoice
 
-import android.app.ActionBar
 import android.app.Activity
+import android.content.Context
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
+import android.widget.EditText
+import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -20,14 +24,18 @@ import net.gini.android.capture.network.model.GiniCaptureReturnReason
 
 private const val EXTRA_IN_SELECTABLE_LINE_ITEM = "EXTRA_IN_SELECTABLE_LINE_ITEM"
 
-
 class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItemDetailsScreenContract.View,
     LineItemDetailsFragmentInterface {
-
 
     private lateinit var binding: GbsEditItemBottomSheetBinding
     private var selectableLineItem: SelectableLineItem? = null
     private var quantity: Int = 1
+    private val editorListener = TextView.OnEditorActionListener { v, actionId, event ->
+        view?.clearFocus()
+        val inputMethodManager = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(view?.windowToken, 0)
+        true
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -115,9 +123,13 @@ class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItemDetailsSc
             presenter?.setDescription(it)
         }
 
+        binding.gbsArticleNameEditTxt.setOnEditorActionListener(editorListener)
+
         binding.gbsUnitPriceEditTxt.doAfterTextChanged {
             presenter?.setGrossPrice(it)
         }
+
+        binding.gbsUnitPriceEditTxt.setOnEditorActionListener(editorListener)
 
         binding.gbsQuantityEditTxt.doAfterTextChanged {
             presenter?.setQuantity(
@@ -136,6 +148,8 @@ class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItemDetailsSc
         }
 
         binding.gbsAddQuantity.setOnClickListener {
+            if (quantity == QUANTITY_LIMIT) return@setOnClickListener
+
             quantity += 1
             binding.gbsQuantityEditTxt.setText("$quantity")
         }
@@ -202,7 +216,7 @@ class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItemDetailsSc
                 binding.gbsDropDownSelectionValue.setTextColor(
                     ContextCompat.getColor(
                         requireContext(),
-                        R.color.Accent_01
+                        R.color.Light_01
                     )
                 )
             } else {
@@ -211,17 +225,6 @@ class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItemDetailsSc
                 binding.gbsDropDownSelectionValue.setTextAppearance(R.style.Root_GiniCaptureTheme_Typography_Subtitle1)
             }
         }
-    }
-
-
-    companion object {
-        fun newInstance(selectableLineItem: SelectableLineItem) =
-            DigitalInvoiceBottomSheet().apply {
-                val args = Bundle()
-                args.putParcelable(EXTRA_IN_SELECTABLE_LINE_ITEM, selectableLineItem)
-                this.arguments = args
-                return this
-            }
     }
 
     override var listener: LineItemDetailsFragmentListener?
@@ -272,5 +275,17 @@ class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItemDetailsSc
 
     override fun setPresenter(presenter: LineItemDetailsScreenContract.Presenter) {
         this.presenter = presenter
+    }
+
+    companion object {
+        const val QUANTITY_LIMIT = 1000
+
+        fun newInstance(selectableLineItem: SelectableLineItem) =
+            DigitalInvoiceBottomSheet().apply {
+                val args = Bundle()
+                args.putParcelable(EXTRA_IN_SELECTABLE_LINE_ITEM, selectableLineItem)
+                this.arguments = args
+                return this
+            }
     }
 }
