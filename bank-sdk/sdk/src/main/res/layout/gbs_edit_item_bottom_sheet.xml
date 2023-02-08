@@ -64,7 +64,7 @@
             android:layout_marginStart="@dimen/large"
             android:layout_marginTop="@dimen/medium"
             android:text="@string/gbs_name"
-            android:textColor="?attr/bottomSheetItemTitle"
+            android:textColor="?attr/gbsBottomSheetItemTitle"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -115,7 +115,7 @@
             android:layout_marginStart="@dimen/large"
             android:layout_marginTop="@dimen/medium"
             android:text="@string/gbs_unit_price"
-            android:textColor="?attr/bottomSheetItemTitle"
+            android:textColor="?attr/gbsBottomSheetItemTitle"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -157,7 +157,7 @@
             style="@style/GiniCaptureTheme.Typography.Subtitle1"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
-            android:background="?attr/textInputLayout"
+            android:background="?attr/gbsTextInputLayout"
             android:gravity="center_vertical|end"
             android:paddingTop="@dimen/small"
             android:paddingBottom="@dimen/small"
@@ -210,7 +210,7 @@
             android:layout_marginStart="@dimen/large"
             android:layout_marginTop="@dimen/medium"
             android:text="@string/gbs_quantity"
-            android:textColor="?attr/bottomSheetItemTitle"
+            android:textColor="?attr/gbsBottomSheetItemTitle"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

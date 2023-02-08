@@ -4,4 +4,8 @@
         <attr name="switchTrack" format="color" />
         <attr name="colorSurface" format="color" />
     </declare-styleable>
+
+    <attr name="gbsSwitchTrack" format="reference|color"/>
+    <attr name="gbsTextInputLayout" format="reference|color"/>
+    <attr name="gbsBottomSheetItemTitle" format="reference|color"/>
 </resources>

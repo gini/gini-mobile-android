@@ -54,7 +54,9 @@ import net.gini.android.capture.internal.qrcode.PaymentQRCodeReader;
 import net.gini.android.capture.internal.qrcode.QRCodeDetectorTask;
 import net.gini.android.capture.internal.qrcode.QRCodeDetectorTaskMLKit;
 import net.gini.android.capture.internal.storage.ImageDiskStore;
+import net.gini.android.capture.internal.ui.ClickListenerExtKt;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
+import net.gini.android.capture.internal.ui.IntervalClickListener;
 import net.gini.android.capture.internal.ui.ViewStubSafeInflater;
 import net.gini.android.capture.internal.util.ApplicationHelper;
 import net.gini.android.capture.internal.util.ContextHelper;
@@ -749,16 +751,16 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     }
 
     private void setInputHandlers() {
-        mButtonCameraTrigger.setOnClickListener(v -> onCameraTriggerClicked());
+        ClickListenerExtKt.setIntervalClickListener(mButtonCameraTrigger, v -> onCameraTriggerClicked());
 
-        mButtonCameraFlash.setOnClickListener(v -> {
+        ClickListenerExtKt.setIntervalClickListener(mButtonCameraFlash, v -> {
             mIsFlashEnabled = !mCameraController.isFlashEnabled();
             updateCameraFlashState();
         });
 
-        mButtonImportDocument.setOnClickListener(view -> showFileChooser());
+        ClickListenerExtKt.setIntervalClickListener(mButtonImportDocument, v -> showFileChooser());
 
-        mPhotoThumbnail.setOnClickListener(v -> {
+        ClickListenerExtKt.setIntervalClickListener(mPhotoThumbnail, v -> {
             if (mFragment.getActivity() != null)
                 (mFragment.getActivity()).finish();
         });
