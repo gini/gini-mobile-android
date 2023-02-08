@@ -5,8 +5,13 @@
             android:innerRadius="0dp"
             android:shape="ring"
             android:thickness="4dp"
-            android:useLevel="false">
-            <solid android:color="#4D121212"/>
+            android:useLevel="false"
+            android:tint="#4dffffff"
+            android:tintMode="multiply">
+            <!-- Using the multiply tint mode and the white-->
+            <!-- tint color with the alpha value we can -->
+            <!-- change the alpha value of the solid color.-->
+            <solid android:color="?attr/colorOnBackground" />
         </shape>
     </item>
 </layer-list>

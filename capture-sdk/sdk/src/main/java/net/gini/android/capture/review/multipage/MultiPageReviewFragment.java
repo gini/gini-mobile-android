@@ -475,7 +475,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
             if (this.getActivity() == null)
                 return;
 
-            mTopAdapterInjectedViewContainer.getInjectedViewAdapter().setTitle(getString(R.string.gc_review));
+            mTopAdapterInjectedViewContainer.getInjectedViewAdapter().setTitle(getString(R.string.gc_title_review));
 
             mTopAdapterInjectedViewContainer.getInjectedViewAdapter().setNavButtonType(NavButtonType.CLOSE);
 
