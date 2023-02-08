@@ -12,6 +12,7 @@ import net.gini.android.capture.R;
 import net.gini.android.capture.document.ImageMultiPageDocument;
 import net.gini.android.capture.help.PhotoTipsAdapter;
 import net.gini.android.capture.help.SupportedFormatsAdapter;
+import net.gini.android.capture.internal.ui.ClickListenerExtKt;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.view.InjectedViewContainer;
 import net.gini.android.capture.view.NavButtonType;
@@ -69,13 +70,18 @@ class NoResultsFragmentImpl {
         final View view = inflater.inflate(R.layout.gc_fragment_noresults, container, false);
         final View retakeImagesButton = view.findViewById(R.id.gc_button_no_results_retake_images);
         if (shouldAllowRetakeImages()) {
-            retakeImagesButton.setOnClickListener(view12 -> mListener.onBackToCameraPressed());
+            ClickListenerExtKt.setIntervalClickListener(retakeImagesButton, v -> {
+                mListener.onBackToCameraPressed();
+            });
         } else {
             retakeImagesButton.setVisibility(GONE);
         }
 
+
         final View enterManuallyButton = view.findViewById(R.id.gc_button_no_results_enter_manually);
-        enterManuallyButton.setOnClickListener(view1 -> mListener.onEnterManuallyPressed());
+        ClickListenerExtKt.setIntervalClickListener(enterManuallyButton, v -> {
+            mListener.onEnterManuallyPressed();
+        });
 
         bindViews(view);
         setTopBarInjectedViewContainer();

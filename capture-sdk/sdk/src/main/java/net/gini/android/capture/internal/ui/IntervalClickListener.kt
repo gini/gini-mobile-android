@@ -4,7 +4,7 @@ import android.view.View
 
 
 class IntervalClickListener(
-    private val click: View.OnClickListener
+    private val click: View.OnClickListener?
 ) : View.OnClickListener {
 
     private val interval = 500L
@@ -16,7 +16,7 @@ class IntervalClickListener(
         if (isEnabled) {
             isEnabled = false
             view.postDelayed(enable, interval)
-            click.onClick(view)
+            click?.onClick(view)
         }
     }
 }

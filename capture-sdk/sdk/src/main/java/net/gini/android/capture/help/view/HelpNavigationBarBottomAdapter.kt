@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import net.gini.android.capture.databinding.GcHelpNavigationBarBottomBinding
+import net.gini.android.capture.internal.ui.setIntervalClickListener
 import net.gini.android.capture.view.InjectedViewAdapter
 
 /**
@@ -28,7 +29,7 @@ internal class DefaultHelpNavigationBarBottomAdapter: HelpNavigationBarBottomAda
     var binding: GcHelpNavigationBarBottomBinding? = null
 
     override fun setOnBackClickListener(listener: View.OnClickListener?) {
-       binding?.gcGoBack?.setOnClickListener(listener)
+       binding?.gcGoBack?.setIntervalClickListener(listener)
     }
 
     override fun onCreateView(container: ViewGroup): View {

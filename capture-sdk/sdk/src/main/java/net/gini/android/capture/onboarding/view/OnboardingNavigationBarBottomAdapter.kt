@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import net.gini.android.capture.R
 import net.gini.android.capture.databinding.GcOnboardingNavigationBarBottomBinding
+import net.gini.android.capture.internal.ui.setIntervalClickListener
 import net.gini.android.capture.view.InjectedViewAdapter
 
 /**
@@ -65,15 +66,15 @@ internal class DefaultOnboardingNavigationBarBottomAdapter : OnboardingNavigatio
     var viewBinding: GcOnboardingNavigationBarBottomBinding? = null
 
     override fun setOnSkipButtonClickListener(listener: View.OnClickListener?) {
-        viewBinding?.gcSkip?.setOnClickListener(listener)
+        viewBinding?.gcSkip?.setIntervalClickListener(listener)
     }
 
     override fun setOnNextButtonClickListener(listener: View.OnClickListener?) {
-        viewBinding?.gcNext?.setOnClickListener(listener)
+        viewBinding?.gcNext?.setIntervalClickListener(listener)
     }
 
     override fun setOnGetStartedButtonClickListener(listener: View.OnClickListener?) {
-        viewBinding?.gcGetStarted?.setOnClickListener(listener)
+        viewBinding?.gcGetStarted?.setIntervalClickListener(listener)
     }
 
     override fun showButtons(vararg buttons: OnboardingNavigationBarBottomButton) {

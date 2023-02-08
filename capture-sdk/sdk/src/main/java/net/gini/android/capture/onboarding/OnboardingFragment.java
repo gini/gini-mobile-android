@@ -25,6 +25,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager.widget.ViewPager;
 
 import net.gini.android.capture.R;
+import net.gini.android.capture.internal.ui.ClickListenerExtKt;
 import net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomAdapter;
 import net.gini.android.capture.view.InjectedViewContainer;
 
@@ -186,9 +187,9 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
     }
 
     private void addInputHandlers() {
-        buttonNext.setOnClickListener(v -> mPresenter.showNextPage());
-        buttonSkip.setOnClickListener(v -> mPresenter.skip());
-        buttonGetStarted.setOnClickListener(v -> mPresenter.showNextPage());
+        ClickListenerExtKt.setIntervalClickListener(buttonNext, v -> mPresenter.showNextPage());
+        ClickListenerExtKt.setIntervalClickListener(buttonSkip, v -> mPresenter.skip());
+        ClickListenerExtKt.setIntervalClickListener(buttonGetStarted, v -> mPresenter.showNextPage());
     }
 
     @Override
