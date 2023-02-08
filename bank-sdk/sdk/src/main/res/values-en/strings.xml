@@ -11,7 +11,7 @@
     <string name="gbs_digital_invoice_items">Items</string>
     <string name="gbs_digital_invoice_what_is_this_button">What is this?</string>
     <string name="gbs_digital_invoice_line_item_edit">Edit</string>
-    <string name="gbs_digital_invoice_line_item_quantity">%1$dx</string>
+    <string name="gbs_digital_invoice_line_item_quantity">%1$s per unit</string>
     <string name="gbs_digital_invoice_line_item_index">Article %1$d/%2$d</string>
     <string name="gbs_digital_invoice_footer_notice">Please double check if the amount is correct and add further articles if necessary.</string>
     <string name="gbs_digital_invoice_pay">Pay %1$d/%2$d</string>
@@ -83,7 +83,12 @@
     <string name="gbs_help_edit_text">By clicking an article, you are able to edit its description, quantity and price per item. Please note that the price per item needs to include tax.</string>
     <string name="gbs_help_online_shops_title">Which online shops are supported?</string>
     <string name="gbs_help_online_shops_text">We are currently focused on the top five online merchants in the market. More retailers will be added in the future.</string>
-    
+
     <string name="gbs_digital_invoice_illustration">Digital invoice illustration</string>
+    <string name="gbs_proceed">Proceed</string>
+    <string name="gbs_edit_article">Edit Article</string>
+    <string name="gbs_name">Name</string>
+    <string name="gbs_quantity">Quantity</string>
+    <string name="gbs_articles">Articles</string>
 
 </resources>

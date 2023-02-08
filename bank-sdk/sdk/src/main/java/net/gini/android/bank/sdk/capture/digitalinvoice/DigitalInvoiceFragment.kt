@@ -13,6 +13,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import kotlinx.coroutines.CoroutineScope
+import net.gini.android.bank.sdk.GiniBank
+import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.capture.digitalinvoice.help.HelpActivity
 import net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
@@ -21,6 +23,8 @@ import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.bank.sdk.capture.util.autoCleared
 import net.gini.android.bank.sdk.capture.util.parentFragmentManagerOrNull
 import net.gini.android.bank.sdk.databinding.GbsFragmentDigitalInvoiceBinding
+import net.gini.android.capture.GiniCapture
+import net.gini.android.capture.view.NavButtonType
 
 
 /**
@@ -191,7 +195,31 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
         super.onViewCreated(view, savedInstanceState)
         initRecyclerView()
         setInputHandlers()
+        initTopNavigationBar()
         presenter?.onViewCreated()
+    }
+
+
+    private fun initTopNavigationBar() {
+        if (GiniCapture.hasInstance()) {
+            val topBarAdapter = GiniCapture.getInstance().navigationBarTopAdapter
+
+            binding.gbsTopBarNavigation.injectedViewAdapter = topBarAdapter
+            topBarAdapter.setTitle(getString(R.string.gbs_digital_invoice_onboarding_text_1))
+
+            topBarAdapter.setMenuResource(R.menu.gbs_menu_digital_invoice)
+            topBarAdapter.setOnMenuItemClickListener {
+                if (it.itemId == R.id.help) {
+                    startActivity(Intent(requireContext(), HelpActivity::class.java))
+                }
+                true
+            }
+
+            topBarAdapter.setNavButtonType(NavButtonType.BACK)
+            topBarAdapter.setOnNavButtonClickListener {
+                activity?.finish()
+            }
+        }
     }
 
     private fun initListener() {
@@ -216,6 +244,9 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
     }
 
     private fun setInputHandlers() {
+        binding.gbsPay.setOnClickListener {
+            payButtonClicked()
+        }
     }
 
     override fun payButtonClicked() {
@@ -308,7 +339,10 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
     }
 
     override fun updateFooterDetails(data: DigitalInvoiceScreenContract.FooterDetails) {
-        lineItemsAdapter.footerDetails = data
+        val (integral, fractional) = data.totalGrossPriceIntegralAndFractionalParts
+        binding.grossPriceTotalIntegralPart.text = integral
+        binding.grossPriceTotalFractionalPart.text = fractional
+        binding.gbsPay.isEnabled = data.buttonEnabled
     }
 
     /**

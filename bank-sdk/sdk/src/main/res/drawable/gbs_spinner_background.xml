@@ -1,0 +1,7 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <layer-list>
+            <item android:drawable="@drawable/gbs_drop_down_arrow" android:gravity="end" android:right="5dp" />
+        </layer-list>
+    </item>
+</selector>

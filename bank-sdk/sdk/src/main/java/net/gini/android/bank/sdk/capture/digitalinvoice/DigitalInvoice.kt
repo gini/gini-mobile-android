@@ -1,6 +1,7 @@
 package net.gini.android.bank.sdk.capture.digitalinvoice
 
 import androidx.annotation.VisibleForTesting
+import net.gini.android.capture.AmountCurrency
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.text.DecimalFormat
@@ -46,6 +47,7 @@ internal class DigitalInvoice(
         get() = _selectableLineItems
 
     private var _addons: List<DigitalInvoiceAddon>
+
     val addons
         get() = _addons
 
@@ -69,6 +71,15 @@ internal class DigitalInvoice(
             DigitalInvoiceAddon.createFromOrNull(extraction)
         }
 
+        if (_addons.isEmpty())
+            _addons = listOf(
+                DigitalInvoiceAddon(
+                    BigDecimal.ZERO,
+                    Currency.getInstance(AmountCurrency.EUR.name),
+                    AddonExtraction.OTHER_CHARGES
+                )
+            )
+
         amountToPay =
             extractions["amountToPay"]?.let { parsePriceString(it.value).first } ?: BigDecimal.ZERO
     }
@@ -79,6 +90,15 @@ internal class DigitalInvoice(
                 Pair(
                     priceIntegralPartWithCurrencySymbol(totalGrossPrice, currency),
                     totalGrossPrice.fractionalPart(FRACTION_FORMAT)
+                )
+            }
+        }
+
+        fun lineItemUnitPriceIntegralAndFractionalParts(lineItem: LineItem): Pair<String, String> {
+            return lineItem.run {
+                Pair(
+                    priceIntegralPartWithCurrencySymbol(grossPrice, currency),
+                    grossPrice.fractionalPart(FRACTION_FORMAT)
                 )
             }
         }
@@ -98,6 +118,7 @@ internal class DigitalInvoice(
                 price.integralPartWithCurrency(c, INTEGRAL_FORMAT)
             } ?: price.integralPart(INTEGRAL_FORMAT)
     }
+
 
     private fun lineItemsFromCompoundExtractions(compoundExtractions: Map<String, GiniCaptureCompoundExtraction>): List<LineItem> =
         compoundExtractions["lineItems"]?.run {

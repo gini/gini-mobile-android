@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="gbsSwitchTrack" format="reference|color"/>
+    <attr name="gbsTextInputLayout" format="reference|color"/>
+    <attr name="gbsBottomSheetItemTitle" format="reference|color"/>
+</resources>

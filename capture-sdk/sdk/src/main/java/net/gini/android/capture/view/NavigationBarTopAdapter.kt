@@ -76,7 +76,13 @@ enum class NavButtonType {
  *
  * Copyright (c) 2022 Gini GmbH.
  */
-internal class DefaultNavigationBarTopAdapter : NavigationBarTopAdapter {
+
+/**
+ * Internal use only
+ *
+ * @suppress
+ */
+class DefaultNavigationBarTopAdapter : NavigationBarTopAdapter {
 
     var viewBinding: GcNavigationBarTopBinding? = null
 
