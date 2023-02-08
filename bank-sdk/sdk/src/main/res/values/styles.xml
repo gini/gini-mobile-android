@@ -117,6 +117,9 @@
         </item>
     </style>
 
+    <style name="GiniCaptureTheme.DigitalInvoice.CurrencyItem" parent="Root.GiniCaptureTheme">
+        <item name="colorSurface">@color/Light_01</item>
+    </style>
 
     <style name="Root.GiniCaptureTheme.DigitalInvoice.LineItemDetails.InputField.Style" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
         <item name="materialThemeOverlay">

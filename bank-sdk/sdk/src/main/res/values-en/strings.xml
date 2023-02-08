@@ -90,6 +90,7 @@
     <string name="gbs_proceed">Proceed</string>
     <string name="gbs_edit_article">Edit Article</string>
     <string name="gbs_name">Name</string>
+    <string name="gbs_unit_price">Unit price</string>
     <string name="gbs_quantity">Quantity</string>
     <string name="gbs_articles">Articles</string>
 
