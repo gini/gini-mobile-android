@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="GiniCaptureTheme" parent="Root.GiniCaptureTheme">
+    <style name="Root.GiniCaptureTheme.Night" parent="Root.GiniCaptureTheme">
         <item name="colorPrimary">@color/Accent_01</item>
         <item name="colorPrimaryDark">@color/Dark_01</item>
         <item name="colorOnPrimary">@color/Light_01</item>
@@ -15,5 +15,7 @@
         <item name="errorScreenSubtitle">@color/Dark_06</item>
         <item name="android:windowLightStatusBar">false</item>
     </style>
+
+    <style name="GiniCaptureTheme" parent="Root.GiniCaptureTheme.Night"/>
 
 </resources>
