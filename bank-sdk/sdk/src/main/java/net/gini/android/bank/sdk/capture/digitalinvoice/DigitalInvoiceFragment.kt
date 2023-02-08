@@ -230,7 +230,7 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
 
             binding.gbsBottomBarNavigation?.injectedViewAdapter =
                 GiniBank.digitalInvoiceNavigationBarBottomAdapter
-            GiniBank.digitalInvoiceNavigationBarBottomAdapter.setHelpIconResource(R.drawable.gbs_menu_question_circle_info)
+            GiniBank.digitalInvoiceNavigationBarBottomAdapter.setHelpButtonResource(R.drawable.gbs_menu_question_circle_info)
 
             GiniBank.digitalInvoiceNavigationBarBottomAdapter.setOnHelpClickListener {
                 startActivity(Intent(requireContext(), HelpActivity::class.java))

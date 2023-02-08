@@ -16,7 +16,7 @@ interface DigitalInvoiceNavigationBarBottomAdapter : InjectedViewAdapter {
 
     fun setOnPayClickListener(listener: OnClickListener)
 
-    fun setHelpIconResource(@DrawableRes drawable: Int)
+    fun setHelpButtonResource(@DrawableRes drawable: Int)
 
     fun setPayButtonEnabled(enabled: Boolean)
 
@@ -40,7 +40,7 @@ class DefaultDigitalInvoiceNavigationBarBottomAdapter: DigitalInvoiceNavigationB
         binding?.gbsPay?.setOnClickListener(listener)
     }
 
-    override fun setHelpIconResource(drawable: Int) {
+    override fun setHelpButtonResource(drawable: Int) {
         binding?.gbsHelpBtn?.setImageResource(drawable)
     }
 
