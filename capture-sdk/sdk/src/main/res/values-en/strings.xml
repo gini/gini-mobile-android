@@ -10,6 +10,7 @@
     <string name="gc_title_file_import">How to import</string>
     <string name="gc_title_multi_page_review">Check photo quality</string>
     <string name="gc_title_no_results">No results</string>
+    <string name="gc_title_error">Error</string>
     <string name="gc_show_onboarding">Help</string>
 
     <string name="gc_camera_error_no_permission">We need access to your camera to enable you to capture your invoices</string>
@@ -171,7 +172,6 @@
     <string name="gc_continue">Continue</string>
     <string name="gc_unknown_qr_code_description">This code does not contain any payment details. Please use another QR-code or take an image of your invoice.</string>
     <string name="gc_camera_access">Camera access</string>
-    <string name="gc_error_screen_title">Error</string>
     <string name="gc_scan">Scan</string>
     <string name="gc_take_a_picture">Take a picture</string>
     <string name="gc_flash_button">Flash</string>

@@ -13,6 +13,7 @@
     <string name="gc_title_analysis">Übersicht</string>
     <string name="gc_title_multi_page_review">Fotos überprüfen</string>
     <string name="gc_title_no_results">Keine Ergebnisse</string>
+    <string name="gc_title_error">Fehler</string>
     <string name="gc_show_onboarding">Hilfe</string>
 
     <string name="gc_camera_error_no_permission">Bitte gestatte Zugriff auf deine Kamera, um Dokumente fotografieren zu können.</string>
@@ -191,7 +192,6 @@
     <string name="gc_continue">Verarbeiten</string>
     <string name="gc_camera_access">Kamerazugriff</string>
     <string name="gc_unknown_qr_code_description">Dieser Code enthält keine Zahlungsinformationen. Bitte anderen QR-Code oder Rechnung abfotografieren.</string>
-    <string name="gc_error_screen_title">Fehler</string>
     <string name="gc_scan">Aufnahme</string>
     <string name="gc_take_a_picture">Photo schießen</string>
     <string name="gc_flash_button">Blitz</string>
