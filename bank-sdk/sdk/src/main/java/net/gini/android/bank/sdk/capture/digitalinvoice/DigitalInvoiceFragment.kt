@@ -203,20 +203,21 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
 
     private fun initTopNavigationBar() {
         if (GiniCapture.hasInstance() && !GiniCapture.getInstance().isBottomNavigationBarEnabled) {
-            binding.gbsTopBarNavigation.injectedViewAdapter =
-                GiniBank.digitalInvoiceNavigationTopBarAdapter
-            GiniBank.digitalInvoiceNavigationTopBarAdapter.setTitle(getString(R.string.gbs_digital_invoice_onboarding_text_1))
+            val topBarAdapter = GiniCapture.getInstance().navigationBarTopAdapter
 
-            GiniBank.digitalInvoiceNavigationTopBarAdapter.setMenuResource(R.menu.gbs_menu_digital_invoice)
-            GiniBank.digitalInvoiceNavigationTopBarAdapter.setOnMenuItemClickListener {
+            binding.gbsTopBarNavigation.injectedViewAdapter = topBarAdapter
+            topBarAdapter.setTitle(getString(R.string.gbs_digital_invoice_onboarding_text_1))
+
+            topBarAdapter.setMenuResource(R.menu.gbs_menu_digital_invoice)
+            topBarAdapter.setOnMenuItemClickListener {
                 if (it.itemId == R.id.help) {
                     startActivity(Intent(requireContext(), HelpActivity::class.java))
                 }
                 true
             }
 
-            GiniBank.digitalInvoiceNavigationTopBarAdapter.setNavButtonType(NavButtonType.BACK)
-            GiniBank.digitalInvoiceNavigationTopBarAdapter.setOnNavButtonClickListener {
+            topBarAdapter.setNavButtonType(NavButtonType.BACK)
+            topBarAdapter.setOnNavButtonClickListener {
                 activity?.finish()
             }
         }

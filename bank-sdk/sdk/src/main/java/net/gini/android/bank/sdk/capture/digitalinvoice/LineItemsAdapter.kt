@@ -21,7 +21,6 @@ import java.util.Collections.emptyList
 import net.gini.android.bank.sdk.capture.digitalinvoice.ViewType.*
 import net.gini.android.bank.sdk.capture.digitalinvoice.ViewType.LineItem
 import net.gini.android.bank.sdk.databinding.GbsItemDigitalInvoiceAddonBinding
-import net.gini.android.bank.sdk.databinding.GbsItemDigitalInvoiceFooterBinding
 import net.gini.android.bank.sdk.databinding.GbsItemDigitalInvoiceHeaderBinding
 import net.gini.android.bank.sdk.databinding.GbsItemDigitalInvoiceLineItemBinding
 
@@ -404,6 +403,7 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
             val alpha = 1.0f
             itemView.isEnabled = true
             binding.gbsEditButton.isEnabled = true
+            binding.gbsEditButton.alpha = alpha
             binding.gbsDescription.alpha = alpha
             binding.gbsPerUnit.alpha = alpha
             binding.gbsGrossPriceFractionalPart.alpha = alpha
@@ -416,6 +416,7 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
             itemView.isEnabled = false
             binding.gbsDescription.alpha = alpha
             binding.gbsEditButton.isEnabled = false
+            binding.gbsEditButton.alpha = alpha
             binding.gbsPerUnit.alpha = alpha
             binding.gbsGrossPriceIntegralPart.alpha = alpha
             binding.gbsGrossPriceFractionalPart.alpha = alpha
