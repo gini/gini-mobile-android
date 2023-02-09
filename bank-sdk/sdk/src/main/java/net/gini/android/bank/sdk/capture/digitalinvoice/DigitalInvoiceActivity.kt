@@ -9,11 +9,6 @@ import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
-import net.gini.android.capture.camera.CameraActivity
-import net.gini.android.capture.internal.util.ActivityHelper.enableHomeAsUp
-import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
-import net.gini.android.capture.network.model.GiniCaptureReturnReason
-import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.capture.CaptureResult
 import net.gini.android.bank.sdk.capture.digitalinvoice.details.LineItemDetailsActivity
@@ -23,6 +18,11 @@ import net.gini.android.bank.sdk.capture.digitalinvoice.info.DigitalInvoiceInfoF
 import net.gini.android.bank.sdk.capture.digitalinvoice.onboarding.DigitalInvoiceOnboardingFragment
 import net.gini.android.bank.sdk.capture.digitalinvoice.onboarding.DigitalInvoiceOnboardingFragmentListener
 import net.gini.android.bank.sdk.capture.internalParseResult
+import net.gini.android.capture.camera.CameraActivity
+import net.gini.android.capture.internal.util.ActivityHelper.enableHomeAsUp
+import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
+import net.gini.android.capture.network.model.GiniCaptureReturnReason
+import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 
 /**
  * Created by Alpar Szotyori on 05.12.2019.
@@ -216,10 +216,6 @@ internal class DigitalInvoiceActivity : AppCompatActivity(), DigitalInvoiceFragm
     override fun onEditLineItem(selectableLineItem: SelectableLineItem) {
         val bottomSheet = DigitalInvoiceBottomSheet.newInstance(selectableLineItem)
         bottomSheet.show(supportFragmentManager, bottomSheet.tag)
-        /*startActivityForResult(
-            LineItemDetailsActivity.createIntent(this, selectableLineItem, returnReasons),
-            EDIT_LINE_ITEM_REQUEST
-        )*/
     }
 
     fun resultFromBottomSheet(selectableLineItem: SelectableLineItem) {

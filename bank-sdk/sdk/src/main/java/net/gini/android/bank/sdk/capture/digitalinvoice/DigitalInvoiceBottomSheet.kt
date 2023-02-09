@@ -3,15 +3,12 @@ package net.gini.android.bank.sdk.capture.digitalinvoice
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -23,7 +20,6 @@ import net.gini.android.bank.sdk.capture.util.hideKeyboard
 import net.gini.android.bank.sdk.databinding.GbsEditItemBottomSheetBinding
 import net.gini.android.capture.AmountCurrency
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
-import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 
 private const val EXTRA_IN_SELECTABLE_LINE_ITEM = "EXTRA_IN_SELECTABLE_LINE_ITEM"
 
