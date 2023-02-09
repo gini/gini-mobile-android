@@ -3,6 +3,7 @@ package net.gini.android.bank.sdk.capture.digitalinvoice
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -140,7 +141,17 @@ class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItemDetailsSc
             )
         }
 
-        binding.gbsDropDownArrow.visibility = if (GiniBank.multipleCurrenciesEnabled) View.VISIBLE else View.INVISIBLE
+        if (GiniBank.multipleCurrenciesEnabled) {
+            binding.gbsDropDownArrow.visibility = View.VISIBLE
+        } else {
+            binding.gbsDropDownArrow.visibility = View.GONE
+
+            // Setting large margin to currency label if arrow is hidden to align with + button on UI
+            val param = (binding.gbsDropDownSelectionValue.layoutParams as ViewGroup.MarginLayoutParams).apply {
+                setMargins(0,0, resources.getDimension(R.dimen.large).toInt(),0)
+            }
+            binding.gbsDropDownSelectionValue.layoutParams = param
+        }
     }
 
     private fun setupInputHandlers() {
@@ -230,7 +241,7 @@ class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItemDetailsSc
 
     private fun setUpDropDown() {
         val currenciesList = AmountCurrency.values().map { it.name }
-        binding.gbsCurrenciesDropDown.setAdapter(ExtractionsAdapter(requireActivity(),
+        binding.gbsCurrenciesDropDown.setAdapter(CurrencyAdapter(requireActivity(),
             R.layout.gbs_item_currency_dropdown,
             if (GiniBank.multipleCurrenciesEnabled) currenciesList else listOf(currenciesList[0]), selectedCurrency))
     }
@@ -297,7 +308,7 @@ class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItemDetailsSc
             }
     }
 
-    private class ExtractionsAdapter( private val mContext: Context,
+    private class CurrencyAdapter( private val mContext: Context,
                                       private val viewResourceId: Int,
                                       private val items: List<String>,
                                       private var selectedCurrency: String) : ArrayAdapter<String?>(mContext, viewResourceId, items) {
@@ -312,9 +323,9 @@ class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItemDetailsSc
             val typedArray = mContext.theme.obtainStyledAttributes(R.styleable.CurrencyStyle)
 
             if (items[position] == selectedCurrency) {
-                convertView.setBackgroundColor(typedArray.getColor(R.styleable.CurrencyStyle_switchTrack, R.color.Light_01))
+                convertView.setBackgroundColor(typedArray.getColor(R.styleable.CurrencyStyle_gbsCurrencyPickerItemSelectedColor, R.color.Light_01))
             } else {
-                convertView.setBackgroundColor(typedArray.getColor(R.styleable.CurrencyStyle_colorSurface, R.color.Light_01))
+                convertView.setBackgroundColor(typedArray.getColor(R.styleable.CurrencyStyle_gbsCurrencyPickerItemBackgroundColor, R.color.Light_01))
             }
 
             return convertView

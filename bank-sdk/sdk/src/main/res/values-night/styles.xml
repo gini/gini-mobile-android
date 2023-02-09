@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="GiniCaptureTheme.DigitalInvoice.CurrencyItem" parent="Root.GiniCaptureTheme">
-        <item name="colorSurface">@color/Dark_04</item>
-    </style>
-
     <style name="GiniCaptureTheme" parent="Root.GiniCaptureTheme.Night">
         <item name="gbsSwitchTrack">@color/Dark_03</item>
         <item name="gbsTextInputLayout">@color/Dark_04</item>
         <item name="gbsBottomSheetItemTitle">@color/Light_05</item>
+        <item name="gbsCurrencyPickerItemBackgroundColor">@color/Dark_03</item>
+        <item name="gbsCurrencyPickerItemSelectedColor">@color/Dark_04</item>
     </style>
-
 </resources>

@@ -4,5 +4,5 @@
     <corners
         android:topLeftRadius="@dimen/small"
         android:topRightRadius="@dimen/small" />
-    <solid android:color="?attr/gbsTextInputLayout"/>
+    <solid android:color="?attr/gbsCurrencyPickerItemBackgroundColor"/>
 </shape>

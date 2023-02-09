@@ -364,7 +364,7 @@
     </style>
 
 
-    <style name="GiniCaptureTheme.DigitalInvoice.Edit.BottomSheetDialog" parent="Root.GiniCaptureTheme.BottomSheetDialog">
+    <style name="GiniCaptureTheme.DigitalInvoice.Edit.BottomSheetDialog" parent="GiniCaptureTheme.BottomSheetDialog">
         <item name="android:windowIsFloating">false</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowSoftInputMode">adjustResize|stateAlwaysVisible</item>
@@ -374,6 +374,8 @@
         <item name="gbsSwitchTrack">@color/Light_03</item>
         <item name="gbsTextInputLayout">@color/Light_03</item>
         <item name="gbsBottomSheetItemTitle">@color/Dark_06</item>
+        <item name="gbsCurrencyPickerItemBackgroundColor">@color/Light_03</item>
+        <item name="gbsCurrencyPickerItemSelectedColor">@color/Light_02</item>
     </style>
 
     <style name="GiniCaptureTheme.DigitalInvoice.Title.TextStyle" parent="Root.GiniCaptureTheme.DigitalInvoice.Title.TextStyle" />

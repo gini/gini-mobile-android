@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="CurrencyStyle">
-        <attr name="switchTrack" format="color" />
+        <attr name="gbsCurrencyPickerItemBackgroundColor" format="reference|color"/>
+        <attr name="gbsCurrencyPickerItemSelectedColor" format="reference|color"/>
         <attr name="colorSurface" format="color" />
     </declare-styleable>
 
