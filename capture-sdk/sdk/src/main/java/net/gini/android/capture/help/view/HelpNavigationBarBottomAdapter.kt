@@ -19,7 +19,7 @@ interface HelpNavigationBarBottomAdapter : InjectedViewAdapter {
      *  Set a listener for the back navigation button.
      * </p>
      */
-    fun setOnBackClickListener(listener: IntervalClickListener?)
+    fun setOnBackClickListener(listener: View.OnClickListener?)
 }
 
 /**
@@ -29,7 +29,7 @@ internal class DefaultHelpNavigationBarBottomAdapter: HelpNavigationBarBottomAda
 
     var binding: GcHelpNavigationBarBottomBinding? = null
 
-    override fun setOnBackClickListener(listener: IntervalClickListener?) {
+    override fun setOnBackClickListener(listener: View.OnClickListener?) {
        binding?.gcGoBack?.setOnClickListener(listener)
     }
 

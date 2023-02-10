@@ -24,21 +24,21 @@ interface OnboardingNavigationBarBottomAdapter : InjectedViewAdapter {
      *
      * @param listener the click listener for the button
      */
-    fun setOnSkipButtonClickListener(listener: IntervalClickListener?)
+    fun setOnSkipButtonClickListener(listener: View.OnClickListener?)
 
     /**
      * Set the click listener for the next button.
      *
      * @param listener the click listener for the button
      */
-    fun setOnNextButtonClickListener(listener: IntervalClickListener?)
+    fun setOnNextButtonClickListener(listener: View.OnClickListener?)
 
     /**
      * Set the click listener for the "get started" button.
      *
      * @param listener the click listener for the button
      */
-    fun setOnGetStartedButtonClickListener(listener: IntervalClickListener?)
+    fun setOnGetStartedButtonClickListener(listener: View.OnClickListener?)
 
     /**
      * Called when the displayed buttons have to change. Show only the buttons that are in the list.
@@ -66,15 +66,15 @@ internal class DefaultOnboardingNavigationBarBottomAdapter : OnboardingNavigatio
 
     var viewBinding: GcOnboardingNavigationBarBottomBinding? = null
 
-    override fun setOnSkipButtonClickListener(listener: IntervalClickListener?) {
+    override fun setOnSkipButtonClickListener(listener: View.OnClickListener?) {
         viewBinding?.gcSkip?.setOnClickListener(listener)
     }
 
-    override fun setOnNextButtonClickListener(listener: IntervalClickListener?) {
+    override fun setOnNextButtonClickListener(listener: View.OnClickListener?) {
         viewBinding?.gcNext?.setOnClickListener(listener)
     }
 
-    override fun setOnGetStartedButtonClickListener(listener: IntervalClickListener?) {
+    override fun setOnGetStartedButtonClickListener(listener: View.OnClickListener?) {
         viewBinding?.gcGetStarted?.setOnClickListener(listener)
     }
 

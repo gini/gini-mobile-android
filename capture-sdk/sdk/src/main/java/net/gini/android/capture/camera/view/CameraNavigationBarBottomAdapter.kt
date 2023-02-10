@@ -10,9 +10,9 @@ import net.gini.android.capture.view.InjectedViewAdapter
 
 interface CameraNavigationBarBottomAdapter: InjectedViewAdapter {
 
-    fun setOnBackButtonClickListener(click: IntervalClickListener?)
+    fun setOnBackButtonClickListener(click: View.OnClickListener?)
 
-    fun setOnHelpButtonClickListener(click: IntervalClickListener?)
+    fun setOnHelpButtonClickListener(click: View.OnClickListener?)
 
     fun setBackButtonVisibility(visibility: Int)
 
@@ -22,11 +22,11 @@ class DefaultCameraNavigationBarBottomAdapter: CameraNavigationBarBottomAdapter 
     var viewBinding: GcCameraBottomBarBinding? = null
 
 
-    override fun setOnBackButtonClickListener(click: IntervalClickListener?) {
+    override fun setOnBackButtonClickListener(click: View.OnClickListener?) {
         viewBinding?.gcGoBack?.setOnClickListener(click)
     }
 
-    override fun setOnHelpButtonClickListener(click: IntervalClickListener?) {
+    override fun setOnHelpButtonClickListener(click: View.OnClickListener?) {
         viewBinding?.gcHelp?.setOnClickListener(click)
     }
 

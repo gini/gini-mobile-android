@@ -18,7 +18,7 @@ interface DigitalInvoiceOnboardingNavigationBarBottomAdapter: InjectedViewAdapte
      *
      * @param listener the click listener for the button
      */
-    fun setGetStartedButtonClickListener(listener: IntervalClickListener)
+    fun setGetStartedButtonClickListener(listener: View.OnClickListener?)
 }
 
 class DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter: DigitalInvoiceOnboardingNavigationBarBottomAdapter {
@@ -26,8 +26,8 @@ class DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter: DigitalInvoiceO
     var viewBinding: GbsDigitalInvoiceOnboardingNavigationBarBottomBinding? = null
 
 
-    override fun setGetStartedButtonClickListener(listener: IntervalClickListener) {
-        viewBinding?.gbsBarBottomNextButton?.setIntervalClickListener(listener)
+    override fun setGetStartedButtonClickListener(listener: View.OnClickListener?) {
+        viewBinding?.gbsBarBottomNextButton?.setOnClickListener(listener)
     }
 
     override fun onCreateView(container: ViewGroup): View {

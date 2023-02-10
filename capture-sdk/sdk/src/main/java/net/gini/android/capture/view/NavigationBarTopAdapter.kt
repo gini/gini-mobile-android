@@ -13,10 +13,6 @@ import com.google.android.material.appbar.MaterialToolbar
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.R
 import net.gini.android.capture.databinding.GcNavigationBarTopBinding
-import net.gini.android.capture.internal.ui.IntervalClickListener
-import net.gini.android.capture.internal.ui.IntervalToolbarMenuItemIntervalClickListener
-import net.gini.android.capture.internal.ui.setOnMenuItemIntervalClickListener
-import net.gini.android.capture.internal.util.ContextHelper
 import net.gini.android.capture.view.NavButtonType.BACK
 import net.gini.android.capture.view.NavButtonType.CLOSE
 
@@ -35,7 +31,7 @@ interface NavigationBarTopAdapter : InjectedViewAdapter {
      *
      * @param listener the click listener for the button
      */
-    fun setOnNavButtonClickListener(listener: IntervalClickListener?)
+    fun setOnNavButtonClickListener(listener: View.OnClickListener?)
 
     /**
      * Set the navigation bar title.
@@ -56,7 +52,7 @@ interface NavigationBarTopAdapter : InjectedViewAdapter {
     fun setMenuResource(@MenuRes menu: Int)
 
 
-    fun setOnMenuItemClickListener(menuItem: IntervalToolbarMenuItemIntervalClickListener)
+    fun setOnMenuItemClickListener(menuItem: Toolbar.OnMenuItemClickListener)
 }
 
 /**
@@ -89,7 +85,7 @@ class DefaultNavigationBarTopAdapter : NavigationBarTopAdapter {
 
     var viewBinding: GcNavigationBarTopBinding? = null
 
-    override fun setOnNavButtonClickListener(listener: IntervalClickListener?) {
+    override fun setOnNavButtonClickListener(listener: View.OnClickListener?) {
         if (GiniCapture.hasInstance()
             && GiniCapture.getInstance().isBottomNavigationBarEnabled
         ) {
@@ -142,7 +138,7 @@ class DefaultNavigationBarTopAdapter : NavigationBarTopAdapter {
     override fun setMenuResource(menu: Int) {
         viewBinding?.gcNavigationBar?.inflateMenu(menu) }
 
-    override fun setOnMenuItemClickListener(menuItem: IntervalToolbarMenuItemIntervalClickListener) {
+    override fun setOnMenuItemClickListener(menuItem: Toolbar.OnMenuItemClickListener) {
         viewBinding?.gcNavigationBar?.setOnMenuItemClickListener(menuItem)
     }
 

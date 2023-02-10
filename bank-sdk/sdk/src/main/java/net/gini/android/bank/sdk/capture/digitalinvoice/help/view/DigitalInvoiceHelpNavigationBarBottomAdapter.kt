@@ -20,7 +20,7 @@ interface DigitalInvoiceHelpNavigationBarBottomAdapter: InjectedViewAdapter {
      *
      * @param listener the click listener for the button
      */
-    fun setOnBackButtonClickListener(listener: IntervalClickListener?)
+    fun setOnBackButtonClickListener(listener: View.OnClickListener?)
 
 }
 
@@ -32,7 +32,7 @@ interface DigitalInvoiceHelpNavigationBarBottomAdapter: InjectedViewAdapter {
 class DefaultDigitalInvoiceHelpNavigationBarBottomAdapter: DigitalInvoiceHelpNavigationBarBottomAdapter {
     var viewBinding: GbsHelpNavigationBarBottomBinding? = null
 
-    override fun setOnBackButtonClickListener(listener: IntervalClickListener?) {
+    override fun setOnBackButtonClickListener(listener: View.OnClickListener?) {
         viewBinding?.gbsGoBack?.setOnClickListener(listener)
     }
 
