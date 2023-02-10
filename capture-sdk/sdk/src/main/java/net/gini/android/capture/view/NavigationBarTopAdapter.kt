@@ -13,6 +13,7 @@ import com.google.android.material.appbar.MaterialToolbar
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.R
 import net.gini.android.capture.databinding.GcNavigationBarTopBinding
+import net.gini.android.capture.internal.ui.setOnMenuItemIntervalClickListener
 import net.gini.android.capture.internal.util.ContextHelper
 import net.gini.android.capture.view.NavButtonType.BACK
 import net.gini.android.capture.view.NavButtonType.CLOSE
@@ -90,7 +91,7 @@ class DefaultNavigationBarTopAdapter : NavigationBarTopAdapter {
         if (GiniCapture.hasInstance()
             && GiniCapture.getInstance().isBottomNavigationBarEnabled
         ) {
-            viewBinding?.gcNavigationBar?.setOnMenuItemClickListener {
+            viewBinding?.gcNavigationBar?.setOnMenuItemIntervalClickListener {
                 listener?.onClick(viewBinding?.root)
                 true
             }
