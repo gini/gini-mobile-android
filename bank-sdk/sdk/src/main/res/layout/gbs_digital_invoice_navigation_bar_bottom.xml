@@ -87,7 +87,7 @@
         android:id="@+id/gbs_back_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="@dimen/medium"
         android:background="@android:color/transparent"
         android:contentDescription="@string/gc_back_button_description"
         android:padding="@dimen/medium"
