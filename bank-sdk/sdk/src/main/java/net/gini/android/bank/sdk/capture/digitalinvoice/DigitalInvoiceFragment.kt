@@ -207,6 +207,7 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
 
             binding.gbsTopBarNavigation.injectedViewAdapter = topBarAdapter
             topBarAdapter.setTitle(getString(R.string.gbs_digital_invoice_onboarding_text_1))
+            topBarAdapter.setNavButtonType(NavButtonType.BACK)
 
             if (!GiniCapture.getInstance().isBottomNavigationBarEnabled) {
                 topBarAdapter.setMenuResource(R.menu.gbs_menu_digital_invoice)
@@ -216,9 +217,6 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
                     }
                     true
                 }
-                topBarAdapter.setNavButtonType(NavButtonType.BACK)
-            } else {
-                topBarAdapter.setNavButtonType(NavButtonType.CLOSE)
             }
 
             topBarAdapter.setOnNavButtonClickListener {
