@@ -24,8 +24,9 @@
         style="@style/GiniCaptureTheme.Typography.Headline5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/large"
         app:layout_constraintBottom_toBottomOf="@+id/gross_price_total_integral_part"
-        app:layout_constraintEnd_toEndOf="@+id/gbs_pay"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/gross_price_total_integral_part"
         tools:text=".99" />
 
@@ -45,10 +46,11 @@
         style="@style/GiniCaptureTheme.Typography.Body1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/large"
         android:text="@string/gbs_digital_invoice_footer_total_label"
         app:layout_constraintBottom_toBottomOf="@id/gross_price_total_integral_part"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
-        app:layout_constraintStart_toStartOf="@+id/gbs_pay"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/gross_price_total_integral_part" />
 
     <com.google.android.material.button.MaterialButton
@@ -85,14 +87,14 @@
         android:id="@+id/gbs_back_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/medium"
+        android:layout_marginStart="8dp"
         android:background="@android:color/transparent"
-        android:padding="@dimen/medium"
-        app:tint="?attr/colorOnBackground"
         android:contentDescription="@string/gc_back_button_description"
+        android:padding="@dimen/medium"
         app:layout_constraintBottom_toBottomOf="@+id/gbs_pay"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/gbs_pay"
-        app:srcCompat="@drawable/gc_action_bar_back" />
+        app:srcCompat="@drawable/gc_action_bar_back"
+        app:tint="?attr/colorOnBackground" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
