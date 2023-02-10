@@ -25,7 +25,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="@+id/gross_price_total_integral_part"
-        app:layout_constraintEnd_toEndOf="@+id/gbs_help_btn"
+        app:layout_constraintEnd_toEndOf="@+id/gbs_pay"
         app:layout_constraintTop_toTopOf="@+id/gross_price_total_integral_part"
         tools:text=".99" />
 
@@ -48,7 +48,7 @@
         android:text="@string/gbs_digital_invoice_footer_total_label"
         app:layout_constraintBottom_toBottomOf="@id/gross_price_total_integral_part"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
-        app:layout_constraintStart_toStartOf="@+id/gbs_back_btn"
+        app:layout_constraintStart_toStartOf="@+id/gbs_pay"
         app:layout_constraintTop_toTopOf="@+id/gross_price_total_integral_part" />
 
     <com.google.android.material.button.MaterialButton
