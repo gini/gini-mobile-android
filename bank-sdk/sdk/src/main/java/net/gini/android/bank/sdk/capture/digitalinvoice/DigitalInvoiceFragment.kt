@@ -24,6 +24,8 @@ import net.gini.android.bank.sdk.capture.util.autoCleared
 import net.gini.android.bank.sdk.capture.util.parentFragmentManagerOrNull
 import net.gini.android.bank.sdk.databinding.GbsFragmentDigitalInvoiceBinding
 import net.gini.android.capture.GiniCapture
+import net.gini.android.capture.internal.ui.IntervalClickListener
+import net.gini.android.capture.internal.ui.IntervalToolbarMenuItemIntervalClickListener
 import net.gini.android.capture.view.NavButtonType
 
 
@@ -208,17 +210,17 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
             topBarAdapter.setTitle(getString(R.string.gbs_digital_invoice_onboarding_text_1))
 
             topBarAdapter.setMenuResource(R.menu.gbs_menu_digital_invoice)
-            topBarAdapter.setOnMenuItemClickListener {
+            topBarAdapter.setOnMenuItemClickListener(IntervalToolbarMenuItemIntervalClickListener {
                 if (it.itemId == R.id.help) {
                     startActivity(Intent(requireContext(), HelpActivity::class.java))
                 }
                 true
-            }
+            })
 
             topBarAdapter.setNavButtonType(NavButtonType.BACK)
-            topBarAdapter.setOnNavButtonClickListener {
+            topBarAdapter.setOnNavButtonClickListener(IntervalClickListener {
                 activity?.finish()
-            }
+            })
         }
     }
 

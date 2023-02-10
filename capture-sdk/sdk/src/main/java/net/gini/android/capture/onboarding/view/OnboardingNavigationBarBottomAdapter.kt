@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import net.gini.android.capture.R
 import net.gini.android.capture.databinding.GcOnboardingNavigationBarBottomBinding
+import net.gini.android.capture.internal.ui.IntervalClickListener
 import net.gini.android.capture.internal.ui.setIntervalClickListener
 import net.gini.android.capture.view.InjectedViewAdapter
 
@@ -23,21 +24,21 @@ interface OnboardingNavigationBarBottomAdapter : InjectedViewAdapter {
      *
      * @param listener the click listener for the button
      */
-    fun setOnSkipButtonClickListener(listener: View.OnClickListener?)
+    fun setOnSkipButtonClickListener(listener: IntervalClickListener?)
 
     /**
      * Set the click listener for the next button.
      *
      * @param listener the click listener for the button
      */
-    fun setOnNextButtonClickListener(listener: View.OnClickListener?)
+    fun setOnNextButtonClickListener(listener: IntervalClickListener?)
 
     /**
      * Set the click listener for the "get started" button.
      *
      * @param listener the click listener for the button
      */
-    fun setOnGetStartedButtonClickListener(listener: View.OnClickListener?)
+    fun setOnGetStartedButtonClickListener(listener: IntervalClickListener?)
 
     /**
      * Called when the displayed buttons have to change. Show only the buttons that are in the list.
@@ -65,16 +66,16 @@ internal class DefaultOnboardingNavigationBarBottomAdapter : OnboardingNavigatio
 
     var viewBinding: GcOnboardingNavigationBarBottomBinding? = null
 
-    override fun setOnSkipButtonClickListener(listener: View.OnClickListener?) {
-        viewBinding?.gcSkip?.setIntervalClickListener(listener)
+    override fun setOnSkipButtonClickListener(listener: IntervalClickListener?) {
+        viewBinding?.gcSkip?.setOnClickListener(listener)
     }
 
-    override fun setOnNextButtonClickListener(listener: View.OnClickListener?) {
-        viewBinding?.gcNext?.setIntervalClickListener(listener)
+    override fun setOnNextButtonClickListener(listener: IntervalClickListener?) {
+        viewBinding?.gcNext?.setOnClickListener(listener)
     }
 
-    override fun setOnGetStartedButtonClickListener(listener: View.OnClickListener?) {
-        viewBinding?.gcGetStarted?.setIntervalClickListener(listener)
+    override fun setOnGetStartedButtonClickListener(listener: IntervalClickListener?) {
+        viewBinding?.gcGetStarted?.setOnClickListener(listener)
     }
 
     override fun showButtons(vararg buttons: OnboardingNavigationBarBottomButton) {

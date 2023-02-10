@@ -31,6 +31,7 @@ import net.gini.android.capture.internal.network.NetworkRequestResult;
 import net.gini.android.capture.internal.network.NetworkRequestsManager;
 import net.gini.android.capture.internal.ui.ClickListenerExtKt;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
+import net.gini.android.capture.internal.ui.IntervalClickListener;
 import net.gini.android.capture.internal.util.AlertDialogHelperCompat;
 import net.gini.android.capture.internal.util.FileImportHelper;
 import net.gini.android.capture.error.ErrorType;
@@ -400,12 +401,12 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
 
             hideViewsIfBottomBarEnabled();
 
-            mReviewNavigationBarBottomAdapter.getInjectedViewAdapter().setOnAddPageButtonClickListener(v -> mListener.onReturnToCameraScreenToAddPages());
+            mReviewNavigationBarBottomAdapter.getInjectedViewAdapter().setOnAddPageButtonClickListener(new IntervalClickListener(v -> mListener.onReturnToCameraScreenToAddPages()));
 
             boolean isMultiPage = GiniCapture.getInstance().isMultiPageEnabled();
 
             mReviewNavigationBarBottomAdapter.getInjectedViewAdapter().setAddPageButtonVisibility(isMultiPage ? View.VISIBLE : View.GONE);
-            mReviewNavigationBarBottomAdapter.getInjectedViewAdapter().setOnContinueButtonClickListener(v -> onNextButtonClicked());
+            mReviewNavigationBarBottomAdapter.getInjectedViewAdapter().setOnContinueButtonClickListener(new IntervalClickListener(v -> onNextButtonClicked()));
 
         }
 
@@ -475,11 +476,11 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
 
             mTopAdapterInjectedViewContainer.getInjectedViewAdapter().setNavButtonType(NavButtonType.CLOSE);
 
-            mTopAdapterInjectedViewContainer.getInjectedViewAdapter().setOnNavButtonClickListener(v -> {
+            mTopAdapterInjectedViewContainer.getInjectedViewAdapter().setOnNavButtonClickListener(new IntervalClickListener(v -> {
                 if (MultiPageReviewFragment.this.getActivity() != null) {
                     MultiPageReviewFragment.this.getActivity().onBackPressed();
                 }
-            });
+            }));
 
         }
     }

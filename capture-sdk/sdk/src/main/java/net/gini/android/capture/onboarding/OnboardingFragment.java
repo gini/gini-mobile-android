@@ -26,6 +26,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import net.gini.android.capture.R;
 import net.gini.android.capture.internal.ui.ClickListenerExtKt;
+import net.gini.android.capture.internal.ui.IntervalClickListener;
 import net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomAdapter;
 import net.gini.android.capture.view.InjectedViewContainer;
 
@@ -263,9 +264,9 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
     public void setNavigationBarBottomAdapter(@NonNull OnboardingNavigationBarBottomAdapter adapter) {
         injectedNavigationBarBottomContainer.setInjectedViewAdapter(adapter); // view.setNavigationBarBottomAdapter()
 
-        adapter.setOnNextButtonClickListener(v -> mPresenter.showNextPage());
-        adapter.setOnSkipButtonClickListener(v -> mPresenter.skip());
-        adapter.setOnGetStartedButtonClickListener(v -> mPresenter.showNextPage());
+        adapter.setOnNextButtonClickListener(new IntervalClickListener(v -> mPresenter.showNextPage()));
+        adapter.setOnSkipButtonClickListener(new IntervalClickListener(v -> mPresenter.skip()));
+        adapter.setOnGetStartedButtonClickListener(new IntervalClickListener(v -> mPresenter.showNextPage()));
     }
 
     static class PageIndicators {

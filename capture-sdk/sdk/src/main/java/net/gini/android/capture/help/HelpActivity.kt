@@ -12,6 +12,7 @@ import net.gini.android.capture.R
 import net.gini.android.capture.help.HelpItem.Custom
 import net.gini.android.capture.help.HelpItem.PhotoTips
 import net.gini.android.capture.help.view.HelpNavigationBarBottomAdapter
+import net.gini.android.capture.internal.ui.IntervalClickListener
 import net.gini.android.capture.internal.util.ActivityHelper
 import net.gini.android.capture.view.InjectedViewContainer
 import net.gini.android.capture.view.NavButtonType
@@ -117,9 +118,9 @@ class HelpActivity : AppCompatActivity() {
             topBarAdapter?.setNavButtonType(NavButtonType.BACK)
             topBarAdapter?.setTitle(getString(R.string.gc_title_help))
 
-            topBarAdapter?.setOnNavButtonClickListener {
+            topBarAdapter?.setOnNavButtonClickListener(IntervalClickListener {
                 onBackPressed()
-            }
+            })
         }
     }
 
@@ -131,9 +132,9 @@ class HelpActivity : AppCompatActivity() {
             injectedViewContainer?.injectedViewAdapter = GiniCapture.getInstance().helpNavigationBarBottomAdapter
 
             val helpNavigationBarBottomAdapter = injectedViewContainer?.injectedViewAdapter
-            helpNavigationBarBottomAdapter?.setOnBackClickListener {
+            helpNavigationBarBottomAdapter?.setOnBackClickListener(IntervalClickListener {
                 onBackPressed()
-            }
+            })
         }
     }
 
