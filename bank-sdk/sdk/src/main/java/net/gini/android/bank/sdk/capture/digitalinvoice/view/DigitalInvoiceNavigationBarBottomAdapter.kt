@@ -16,11 +16,9 @@ interface DigitalInvoiceNavigationBarBottomAdapter : InjectedViewAdapter {
 
     fun setOnPayClickListener(listener: OnClickListener)
 
-    fun setHelpButtonResource(@DrawableRes drawable: Int)
-
     fun setPayButtonEnabled(enabled: Boolean)
 
-    fun setGrossPriceTotal(integral: String, fractional: String)
+    fun setGrossPriceTotal(integralPartWithCurrencySymbol: String, fractionalPart: String)
 
 }
 
@@ -40,17 +38,13 @@ class DefaultDigitalInvoiceNavigationBarBottomAdapter: DigitalInvoiceNavigationB
         binding?.gbsPay?.setOnClickListener(listener)
     }
 
-    override fun setHelpButtonResource(drawable: Int) {
-        binding?.gbsHelpBtn?.setImageResource(drawable)
-    }
-
     override fun setPayButtonEnabled(enabled: Boolean) {
         binding?.gbsPay?.isEnabled = enabled
     }
 
-    override fun setGrossPriceTotal(integral: String, fractional: String) {
-        binding?.grossPriceTotalIntegralPart?.text = integral
-        binding?.grossPriceTotalFractionalPart?.text = fractional
+    override fun setGrossPriceTotal(integralPartWithCurrencySymbol: String, fractionalPart: String) {
+        binding?.grossPriceTotalIntegralPart?.text = integralPartWithCurrencySymbol
+        binding?.grossPriceTotalFractionalPart?.text = fractionalPart
     }
 
     override fun onCreateView(container: ViewGroup): View {

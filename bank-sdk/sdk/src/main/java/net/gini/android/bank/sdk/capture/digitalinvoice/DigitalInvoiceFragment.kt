@@ -229,9 +229,8 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
             binding.gbsBottomWrapper.visibility = View.INVISIBLE
             binding.gbsPay.isEnabled = false
 
-            binding.gbsBottomBarNavigation?.injectedViewAdapter =
+            binding.gbsBottomBarNavigation.injectedViewAdapter =
                 GiniBank.digitalInvoiceNavigationBarBottomAdapter
-            GiniBank.digitalInvoiceNavigationBarBottomAdapter.setHelpButtonResource(R.drawable.gbs_menu_question_circle_info)
 
             GiniBank.digitalInvoiceNavigationBarBottomAdapter.setOnHelpClickListener {
                 startActivity(Intent(requireContext(), HelpActivity::class.java))
