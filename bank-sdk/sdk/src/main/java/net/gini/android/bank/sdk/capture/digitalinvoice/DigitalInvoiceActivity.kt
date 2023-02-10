@@ -17,6 +17,7 @@ import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.capture.CaptureResult
 import net.gini.android.bank.sdk.capture.digitalinvoice.details.LineItemDetailsActivity
+import net.gini.android.bank.sdk.capture.digitalinvoice.details.LineItemDetailsFragmentListener
 import net.gini.android.bank.sdk.capture.digitalinvoice.info.DigitalInvoiceInfoFragment
 import net.gini.android.bank.sdk.capture.digitalinvoice.info.DigitalInvoiceInfoFragmentListener
 import net.gini.android.bank.sdk.capture.digitalinvoice.onboarding.DigitalInvoiceOnboardingFragment
@@ -76,7 +77,7 @@ private const val TAG_INFO = "TAG_INFO"
  * - **Back button:** via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named {@code gbs_action_bar_back}
  */
 internal class DigitalInvoiceActivity : AppCompatActivity(), DigitalInvoiceFragmentListener,
-    DigitalInvoiceInfoFragmentListener, DigitalInvoiceOnboardingFragmentListener {
+    DigitalInvoiceInfoFragmentListener, DigitalInvoiceOnboardingFragmentListener, LineItemDetailsFragmentListener {
 
     private var fragment: DigitalInvoiceFragment? = null
     private lateinit var extractions: Map<String, GiniCaptureSpecificExtraction>
@@ -215,10 +216,16 @@ internal class DigitalInvoiceActivity : AppCompatActivity(), DigitalInvoiceFragm
      * @suppress
      */
     override fun onEditLineItem(selectableLineItem: SelectableLineItem) {
-        startActivityForResult(
+        val bottomSheet = DigitalInvoiceBottomSheet.newInstance(selectableLineItem)
+        bottomSheet.show(supportFragmentManager, bottomSheet.tag)
+        /*startActivityForResult(
             LineItemDetailsActivity.createIntent(this, selectableLineItem, returnReasons),
             EDIT_LINE_ITEM_REQUEST
-        )
+        )*/
+    }
+
+    fun resultFromBottomSheet(selectableLineItem: SelectableLineItem) {
+        fragment?.updateLineItem(selectableLineItem)
     }
 
     override fun onAddLineItem(selectableLineItem: SelectableLineItem) {
@@ -268,6 +275,9 @@ internal class DigitalInvoiceActivity : AppCompatActivity(), DigitalInvoiceFragm
                 }
             }
         }
+    }
+    override fun onSave(selectableLineItem: SelectableLineItem) {
+        fragment?.updateLineItem(selectableLineItem)
     }
 }
 

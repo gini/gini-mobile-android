@@ -11,7 +11,6 @@ import static net.gini.android.capture.tracking.EventTrackingHelper.trackCameraS
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Camera;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,10 +28,8 @@ import net.gini.android.capture.GiniCaptureCoordinator;
 import net.gini.android.capture.GiniCaptureError;
 import net.gini.android.capture.R;
 import net.gini.android.capture.analysis.AnalysisActivity;
-import net.gini.android.capture.camera.view.CameraNavigationBarBottomAdapter;
 import net.gini.android.capture.document.GiniCaptureMultiPageDocument;
 import net.gini.android.capture.help.HelpActivity;
-import net.gini.android.capture.internal.util.AndroidHelper;
 import net.gini.android.capture.internal.util.ContextHelper;
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction;
 import net.gini.android.capture.network.model.GiniCaptureReturnReason;
@@ -41,8 +38,6 @@ import net.gini.android.capture.onboarding.OnboardingActivity;
 import net.gini.android.capture.review.ReviewActivity;
 import net.gini.android.capture.review.multipage.MultiPageReviewActivity;
 import net.gini.android.capture.tracking.CameraScreenEvent;
-import net.gini.android.capture.view.InjectedViewContainer;
-
 import java.util.Map;
 
 /**
@@ -632,13 +627,6 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode,
             final Intent data) {
-        if (resultCode == RESULT_ENTER_MANUALLY) {
-            setResult(resultCode, data);
-            finish();
-            clearMemory();
-
-            return;
-        }
 
         switch (requestCode) {
             case REVIEW_DOCUMENT_REQUEST:

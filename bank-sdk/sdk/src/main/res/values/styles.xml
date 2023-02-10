@@ -355,7 +355,16 @@
         <item name="rippleColor">?attr/colorAccent</item>
     </style>
 
-    <style name="Root.GiniCaptureTheme.DigitalInvoice.Switch" parent="Widget.MaterialComponents.CompoundButton.Switch" />
+    <style name="Root.GiniCaptureTheme.DigitalInvoice.Switch" parent="Widget.MaterialComponents.CompoundButton.Switch">
+        <item name="thumbTint">@color/gbs_switch_thumb_color</item>
+        <item name="trackTint">@color/gbs_switch_track_color</item>
+    </style>
+
+    <style name="GiniCaptureTheme" parent="Root.GiniCaptureTheme">
+        <item name="gbsSwitchTrack">@color/Light_03</item>
+        <item name="gbsTextInputLayout">@color/Light_03</item>
+        <item name="gbsBottomSheetItemTitle">@color/Dark_06</item>
+    </style>
 
     <style name="GiniCaptureTheme.DigitalInvoice.Title.TextStyle" parent="Root.GiniCaptureTheme.DigitalInvoice.Title.TextStyle" />
 

@@ -36,7 +36,7 @@
             android:layout_centerVertical="true"
             android:layout_toStartOf="@id/gc_error_header"
             android:layout_marginEnd="@dimen/large_24"
-            android:contentDescription="@string/gc_error_screen_title"
+            android:contentDescription="@string/gc_title_error"
             android:src="@drawable/gc_alert_triangle_icon"/>
 
         <TextView
