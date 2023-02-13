@@ -1,12 +1,8 @@
 package net.gini.android.capture.review.multipage;
 
 import static net.gini.android.capture.GiniCaptureError.ErrorCode.MISSING_GINI_CAPTURE_INSTANCE;
-import static net.gini.android.capture.document.GiniCaptureDocumentError.ErrorCode.FILE_VALIDATION_FAILED;
-import static net.gini.android.capture.document.GiniCaptureDocumentError.ErrorCode.UPLOAD_FAILED;
 import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
 import static net.gini.android.capture.internal.util.FileImportHelper.showAlertIfOpenWithDocumentAndAppIsDefault;
-import static net.gini.android.capture.review.multipage.previews.PreviewFragment.ErrorButtonAction.DELETE;
-import static net.gini.android.capture.review.multipage.previews.PreviewFragment.ErrorButtonAction.RETRY;
 import static net.gini.android.capture.review.multipage.thumbnails.ThumbnailsAdapter.getNewPositionAfterDeletion;
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackReviewScreenEvent;
 
@@ -33,7 +29,9 @@ import net.gini.android.capture.document.ImageMultiPageDocument;
 import net.gini.android.capture.error.ErrorActivity;
 import net.gini.android.capture.internal.network.NetworkRequestResult;
 import net.gini.android.capture.internal.network.NetworkRequestsManager;
+import net.gini.android.capture.internal.ui.ClickListenerExtKt;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
+import net.gini.android.capture.internal.ui.IntervalClickListener;
 import net.gini.android.capture.internal.util.AlertDialogHelperCompat;
 import net.gini.android.capture.internal.util.FileImportHelper;
 import net.gini.android.capture.error.ErrorType;
@@ -41,7 +39,6 @@ import net.gini.android.capture.internal.network.FailureException;
 import net.gini.android.capture.review.multipage.previews.MiddlePageManager;
 import net.gini.android.capture.review.multipage.previews.PreviewFragmentListener;
 import net.gini.android.capture.review.multipage.previews.PreviewPagesAdapter;
-import net.gini.android.capture.review.multipage.previews.PreviewsAdapterListener;
 import net.gini.android.capture.review.multipage.view.ReviewNavigationBarBottomAdapter;
 import net.gini.android.capture.review.zoom.ZoomInPreviewActivity;
 import net.gini.android.capture.tracking.ReviewScreenEvent;
@@ -404,12 +401,12 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
 
             hideViewsIfBottomBarEnabled();
 
-            mReviewNavigationBarBottomAdapter.getInjectedViewAdapter().setOnAddPageButtonClickListener(v -> mListener.onReturnToCameraScreenToAddPages());
+            mReviewNavigationBarBottomAdapter.getInjectedViewAdapter().setOnAddPageButtonClickListener(new IntervalClickListener(v -> mListener.onReturnToCameraScreenToAddPages()));
 
             boolean isMultiPage = GiniCapture.getInstance().isMultiPageEnabled();
 
             mReviewNavigationBarBottomAdapter.getInjectedViewAdapter().setAddPageButtonVisibility(isMultiPage ? View.VISIBLE : View.GONE);
-            mReviewNavigationBarBottomAdapter.getInjectedViewAdapter().setOnContinueButtonClickListener(v -> onNextButtonClicked());
+            mReviewNavigationBarBottomAdapter.getInjectedViewAdapter().setOnContinueButtonClickListener(new IntervalClickListener(v -> onNextButtonClicked()));
 
         }
 
@@ -475,27 +472,27 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
             if (this.getActivity() == null)
                 return;
 
-            mTopAdapterInjectedViewContainer.getInjectedViewAdapter().setTitle(getString(R.string.gc_review));
+            mTopAdapterInjectedViewContainer.getInjectedViewAdapter().setTitle(getString(R.string.gc_title_review));
 
             mTopAdapterInjectedViewContainer.getInjectedViewAdapter().setNavButtonType(NavButtonType.CLOSE);
 
-            mTopAdapterInjectedViewContainer.getInjectedViewAdapter().setOnNavButtonClickListener(v -> {
+            mTopAdapterInjectedViewContainer.getInjectedViewAdapter().setOnNavButtonClickListener(new IntervalClickListener(v -> {
                 if (MultiPageReviewFragment.this.getActivity() != null) {
                     MultiPageReviewFragment.this.getActivity().onBackPressed();
                 }
-            });
+            }));
 
         }
     }
 
     private void setInputHandlers() {
-        mButtonNext.setOnClickListener(v -> onNextButtonClicked());
+        ClickListenerExtKt.setIntervalClickListener(mButtonNext, v -> onNextButtonClicked());
 
         if (GiniCapture.hasInstance() && !GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
             mAddPages.setVisibility(GiniCapture.getInstance().isMultiPageEnabled() ? View.VISIBLE : View.GONE);
         }
 
-        mAddPages.setOnClickListener(v -> mListener.onReturnToCameraScreenToAddPages());
+        ClickListenerExtKt.setIntervalClickListener(mAddPages, v -> mListener.onReturnToCameraScreenToAddPages());
     }
 
 

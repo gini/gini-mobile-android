@@ -20,6 +20,7 @@ import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.R;
 import net.gini.android.capture.camera.CameraActivity;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
+import net.gini.android.capture.internal.ui.IntervalClickListener;
 import net.gini.android.capture.internal.util.Size;
 import net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomAdapter;
 import net.gini.android.capture.view.CustomLoadingIndicatorAdapter;
@@ -238,10 +239,10 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
             topAdapterInjectedViewContainer.getInjectedViewAdapter().setNavButtonType(NavButtonType.CLOSE);
             topAdapterInjectedViewContainer.getInjectedViewAdapter().setTitle(mFragment.getActivity().getResources().getString(R.string.gc_title_analysis));
 
-            topAdapterInjectedViewContainer.getInjectedViewAdapter().setOnNavButtonClickListener(v -> {
+            topAdapterInjectedViewContainer.getInjectedViewAdapter().setOnNavButtonClickListener(new IntervalClickListener(v -> {
                 mFragment.getActivity().setResult(Activity.RESULT_CANCELED);
                 mFragment.getActivity().finish();
-            });
+            }));
         }
     }
 

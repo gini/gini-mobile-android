@@ -8,6 +8,7 @@
         <activity
             android:name="net.gini.android.capture.error.ErrorActivity"
             android:exported="false"
+            android:label="@string/gc_title_error"
             android:theme="@style/GiniCaptureTheme"/>
         <activity
             android:name="net.gini.android.capture.camera.CameraActivity"
@@ -27,6 +28,7 @@
         <activity
             android:name="net.gini.android.capture.noresults.NoResultsActivity"
             android:exported="false"
+            android:label="@string/gc_title_no_results"
             android:theme="@style/GiniCaptureTheme" />
         <activity
             android:name="net.gini.android.capture.onboarding.OnboardingActivity"
@@ -60,7 +62,7 @@
         <activity
             android:name="net.gini.android.capture.review.multipage.MultiPageReviewActivity"
             android:exported="false"
-            android:label="@string/gc_title_multi_page_review"
+            android:label="@string/gc_title_review"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:theme="@style/GiniCaptureTheme" />
         <activity

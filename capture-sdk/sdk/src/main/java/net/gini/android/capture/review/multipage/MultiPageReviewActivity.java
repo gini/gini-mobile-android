@@ -206,6 +206,7 @@ public class MultiPageReviewActivity extends AppCompatActivity implements
     }
 
 
+
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode,
                                     final Intent data) {
@@ -224,10 +225,11 @@ public class MultiPageReviewActivity extends AppCompatActivity implements
                 if (GiniCapture.hasInstance()) {
                     GiniCapture.getInstance().internal().getImageMultiPageDocumentMemoryStore().clear();
                 }
-                startActivity(CameraActivity.createIntent(MultiPageReviewActivity.this, false));
+                setResult(resultCode);
+                finish();
             }
             if (resultCode == RESULT_ENTER_MANUALLY) {
-                setResult(resultCode, data);
+                setResult(RESULT_ENTER_MANUALLY, data);
             }
             finish();
         }

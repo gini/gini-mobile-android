@@ -13,6 +13,7 @@ import net.gini.android.capture.document.ImageMultiPageDocument
 import net.gini.android.capture.internal.ui.FragmentImplCallback
 import net.gini.android.capture.internal.util.ActivityHelper
 import net.gini.android.capture.ImageRetakeOptionsListener
+import net.gini.android.capture.internal.ui.setIntervalClickListener
 
 /**
  * Main logic implementation for error handling UI presented by {@link ErrorActivity}.
@@ -47,13 +48,13 @@ class ErrorFragmentImpl(
         retakeImagesButton = view.findViewById(R.id.gc_button_error_retake_images)
 
         if (shouldAllowRetakeImages()) {
-            retakeImagesButton.setOnClickListener { view12: View? -> imageRetakeOptionsListener?.onBackToCameraPressed() }
+            retakeImagesButton.setIntervalClickListener { imageRetakeOptionsListener?.onBackToCameraPressed() }
         } else {
             retakeImagesButton.visibility = View.GONE
         }
 
         val enterManuallyButton = view.findViewById<View>(R.id.gc_button_error_enter_manually)
-        enterManuallyButton.setOnClickListener { view1: View? -> imageRetakeOptionsListener?.onEnterManuallyPressed() }
+        enterManuallyButton.setIntervalClickListener { imageRetakeOptionsListener?.onEnterManuallyPressed() }
 
         customError?.let {
             view.findViewById<TextView>(R.id.gc_error_header).text = it

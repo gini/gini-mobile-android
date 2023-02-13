@@ -4,6 +4,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import net.gini.android.capture.databinding.GcHelpNavigationBarBottomBinding
+import net.gini.android.capture.internal.ui.IntervalClickListener
+import net.gini.android.capture.internal.ui.setIntervalClickListener
 import net.gini.android.capture.view.InjectedViewAdapter
 
 /**

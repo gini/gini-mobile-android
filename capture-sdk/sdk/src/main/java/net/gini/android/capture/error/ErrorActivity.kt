@@ -17,6 +17,7 @@ import net.gini.android.capture.noresults.NoResultsActivity
 import net.gini.android.capture.noresults.NoResultsActivity.EXTRA_IN_DOCUMENT
 import net.gini.android.capture.ImageRetakeOptionsListener
 import net.gini.android.capture.error.view.ErrorNavigationBarBottomAdapter
+import net.gini.android.capture.internal.ui.IntervalClickListener
 import net.gini.android.capture.view.InjectedViewContainer
 import net.gini.android.capture.view.NavButtonType
 import net.gini.android.capture.view.NavigationBarTopAdapter
@@ -53,13 +54,13 @@ class ErrorActivity : AppCompatActivity(),
             topBarContainer.injectedViewAdapter = GiniCapture.getInstance().navigationBarTopAdapter
 
             topBarContainer.injectedViewAdapter?.apply {
-                setTitle(getString(R.string.gc_error_screen_title))
+                setTitle(getString(R.string.gc_title_error))
 
                 if (!GiniCapture.getInstance().isBottomNavigationBarEnabled) {
                     setNavButtonType(NavButtonType.BACK)
-                    setOnNavButtonClickListener {
+                    setOnNavButtonClickListener(IntervalClickListener {
                         onBackPressed()
-                    }
+                    })
                 }
             }
         }
@@ -70,9 +71,9 @@ class ErrorActivity : AppCompatActivity(),
             val bottomBarContainer = findViewById<InjectedViewContainer<ErrorNavigationBarBottomAdapter>>(R.id.gc_injected_navigation_bar_container_bottom)
             bottomBarContainer.injectedViewAdapter = GiniCapture.getInstance().errorNavigationBarBottomAdapter
             bottomBarContainer.injectedViewAdapter?.apply {
-                setOnBackButtonClickListener() {
+                setOnBackButtonClickListener(IntervalClickListener {
                     onBackPressed()
-                }
+                })
             }
         }
     }
