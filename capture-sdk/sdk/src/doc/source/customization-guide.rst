@@ -180,6 +180,15 @@ Help Screen
     src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FMcDZrQPr6IgkzCQtN3lqAe%2FAndroid-Gini-Capture-SDK-3.0.0-UI-Customisation%3Fnode-id%3D9%253A4645%26t%3DHtNbZnDsRjA5FeBu-1"
     allowfullscreen></iframe>
 
+No Results Screen
+----
+
+.. raw:: html
+
+    <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
+    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FMcDZrQPr6IgkzCQtN3lqAe%2FAndroid-Gini-Capture-SDK-3.0.0-UI-Customisation%3Fnode-id%3D10%253A2540%26t%3DRrYhEBagMqQ9uksD-1"
+    allowfullscreen></iframe>
+
 Error Screen
 ----
 
