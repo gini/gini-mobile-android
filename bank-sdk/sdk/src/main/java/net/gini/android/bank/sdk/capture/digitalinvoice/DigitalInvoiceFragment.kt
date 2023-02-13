@@ -221,7 +221,7 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
 
             topBarAdapter.setOnNavButtonClickListener {
                 activity?.finish()
-            })
+            }
         }
     }
 
