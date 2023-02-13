@@ -25,6 +25,8 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager.widget.ViewPager;
 
 import net.gini.android.capture.R;
+import net.gini.android.capture.internal.ui.ClickListenerExtKt;
+import net.gini.android.capture.internal.ui.IntervalClickListener;
 import net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomAdapter;
 import net.gini.android.capture.view.InjectedViewContainer;
 
@@ -186,9 +188,9 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
     }
 
     private void addInputHandlers() {
-        buttonNext.setOnClickListener(v -> mPresenter.showNextPage());
-        buttonSkip.setOnClickListener(v -> mPresenter.skip());
-        buttonGetStarted.setOnClickListener(v -> mPresenter.showNextPage());
+        ClickListenerExtKt.setIntervalClickListener(buttonNext, v -> mPresenter.showNextPage());
+        ClickListenerExtKt.setIntervalClickListener(buttonSkip, v -> mPresenter.skip());
+        ClickListenerExtKt.setIntervalClickListener(buttonGetStarted, v -> mPresenter.showNextPage());
     }
 
     @Override
@@ -262,9 +264,9 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
     public void setNavigationBarBottomAdapter(@NonNull OnboardingNavigationBarBottomAdapter adapter) {
         injectedNavigationBarBottomContainer.setInjectedViewAdapter(adapter); // view.setNavigationBarBottomAdapter()
 
-        adapter.setOnNextButtonClickListener(v -> mPresenter.showNextPage());
-        adapter.setOnSkipButtonClickListener(v -> mPresenter.skip());
-        adapter.setOnGetStartedButtonClickListener(v -> mPresenter.showNextPage());
+        adapter.setOnNextButtonClickListener(new IntervalClickListener(v -> mPresenter.showNextPage()));
+        adapter.setOnSkipButtonClickListener(new IntervalClickListener(v -> mPresenter.skip()));
+        adapter.setOnGetStartedButtonClickListener(new IntervalClickListener(v -> mPresenter.showNextPage()));
     }
 
     static class PageIndicators {

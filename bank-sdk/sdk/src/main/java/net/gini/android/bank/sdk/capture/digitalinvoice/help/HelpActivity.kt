@@ -10,6 +10,7 @@ import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.capture.digitalinvoice.help.view.DigitalInvoiceHelpNavigationBarBottomAdapter
 import net.gini.android.capture.GiniCapture
+import net.gini.android.capture.internal.ui.IntervalClickListener
 import net.gini.android.capture.internal.util.ActivityHelper
 import net.gini.android.capture.view.InjectedViewContainer
 import net.gini.android.capture.view.NavButtonType
@@ -52,18 +53,20 @@ class HelpActivity : AppCompatActivity() {
     }
 
     private fun setupTopBarNavigation() {
-        val topBarInjectedViewContainer = findViewById<InjectedViewContainer<NavigationBarTopAdapter>>(R.id.gbs_injected_navigation_bar_container_top)
+        val topBarInjectedViewContainer =
+            findViewById<InjectedViewContainer<NavigationBarTopAdapter>>(R.id.gbs_injected_navigation_bar_container_top)
         if (GiniCapture.hasInstance()) {
 
-            topBarInjectedViewContainer.injectedViewAdapter = GiniCapture.getInstance().navigationBarTopAdapter
+            topBarInjectedViewContainer.injectedViewAdapter =
+                GiniCapture.getInstance().navigationBarTopAdapter
 
             val topBarAdapter = topBarInjectedViewContainer?.injectedViewAdapter
             topBarAdapter?.setNavButtonType(NavButtonType.BACK)
             topBarAdapter?.setTitle(getString(net.gini.android.capture.R.string.gc_title_help))
 
-            topBarAdapter?.setOnNavButtonClickListener {
+            topBarAdapter?.setOnNavButtonClickListener(IntervalClickListener {
                 onBackPressed()
-            }
+            })
         }
     }
 
@@ -73,7 +76,9 @@ class HelpActivity : AppCompatActivity() {
                 findViewById<InjectedViewContainer<DigitalInvoiceHelpNavigationBarBottomAdapter>>(R.id.gbs_injected_navigation_bar_container_bottom)
             val adapter = GiniBank.digitalInvoiceHelpNavigationBarBottomAdapter
             injectedViewContainer.injectedViewAdapter = adapter
-            adapter.setOnBackButtonClickListener() { v: View? -> onBackPressed() }
+            adapter.setOnBackButtonClickListener(IntervalClickListener {
+                onBackPressed()
+            })
         }
     }
 }
