@@ -1,53 +1,13 @@
 package net.gini.android.bank.sdk.capture.util
 
-import android.R
-import android.content.res.ColorStateList
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
-import androidx.annotation.ColorInt
-import androidx.annotation.IntRange
-import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.ColorUtils
-import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import java.math.BigDecimal
 import java.text.DecimalFormat
-import java.text.DecimalFormatSymbols
 import java.text.NumberFormat
-
-internal fun TextInputEditText.setTextIfDifferent(text: String) {
-    if (this.text.toString() != text) {
-        this.setText(text)
-    }
-}
-
-internal fun String.isNumber(): Boolean {
-    val separator = DecimalFormatSymbols.getInstance().decimalSeparator
-    return try {
-        this.filter { it.isDigit() || it == separator }
-            .map { if (it == separator) "." else it.toString() }
-            .joinToString(separator = "") { it }
-            .toDouble()
-        true
-    } catch (_: Throwable) {
-        false
-    }
-}
-
-internal fun String.toBackendFormat(): String {
-    val separator = DecimalFormatSymbols.getInstance().decimalSeparator
-    return this.filter { it.isDigit() || it == separator }
-        .map { if (it == separator) "." else it.toString() }
-        .joinToString(separator = "") { it }
-        .toDouble()
-        .toString()
-}
 
 internal val amountWatcher = object : TextWatcher {
 
@@ -83,10 +43,6 @@ internal val amountWatcher = object : TextWatcher {
 
 }
 
-internal fun String.adjustToLocalDecimalSeparation(): String {
-    return this.replace('.', DecimalFormatSymbols.getInstance().decimalSeparator)
-}
-
 internal fun currencyFormatterWithoutSymbol(): NumberFormat =
     NumberFormat.getCurrencyInstance().apply {
         (this as? DecimalFormat)?.apply {
@@ -95,36 +51,6 @@ internal fun currencyFormatterWithoutSymbol(): NumberFormat =
             }
         }
     }
-
-internal fun Button.setBackgroundTint(@ColorInt color: Int, @IntRange(from = 0x0, to = 0xFF) nonEnabledAlpha: Int = 100) {
-    backgroundTintList = ColorStateList(
-        arrayOf(
-            intArrayOf(R.attr.state_enabled),
-            intArrayOf()
-        ),
-        intArrayOf(
-            color,
-            ColorUtils.setAlphaComponent(color, nonEnabledAlpha)
-        )
-    )
-}
-
-internal fun Button.setTextColorTint(@ColorInt color: Int, @IntRange(from = 0x0, to = 0xFF) nonEnabledAlpha: Int = 200) {
-    setTextColor(
-        ColorStateList(
-        arrayOf(
-            intArrayOf(R.attr.state_enabled),
-            intArrayOf()
-        ),
-        intArrayOf(
-            color,
-            ColorUtils.setAlphaComponent(color, nonEnabledAlpha)
-        )
-    )
-    )
-}
-
-private fun String.nonEmpty() = if (isEmpty()) " " else this
 
 internal fun View.hideKeyboard() {
     ContextCompat.getSystemService(context, InputMethodManager::class.java)?.let { imm ->
