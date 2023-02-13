@@ -1,6 +1,8 @@
 package net.gini.android.bank.sdk.capture.digitalinvoice
 
 import android.app.Activity
+import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -30,8 +32,8 @@ class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItemDetailsSc
     private var selectableLineItem: SelectableLineItem? = null
     private var quantity: Int = 1
     private val editorListener = TextView.OnEditorActionListener { v, actionId, event ->
-        view?.clearFocus()
-        view?.hideKeyboard()
+        v.clearFocus()
+        v.hideKeyboard()
         true
     }
 
@@ -48,7 +50,29 @@ class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItemDetailsSc
         }
     }
 
-    override fun getTheme(): Int = R.style.GiniCaptureTheme_DigitalInvoice_Edit_BottomSheetDialog
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        if (resources.getBoolean(R.bool.gc_is_tablet)) {
+            activity?.let {
+                binding = GbsEditItemBottomSheetBinding.inflate(it.layoutInflater, null, false)
+
+                val builder = AlertDialog.Builder(context)
+                builder.setView(binding.root)
+                setUpBindings()
+
+                return builder.create()
+            }
+        }
+
+       return super.onCreateDialog(savedInstanceState)
+    }
+
+    override fun getTheme(): Int {
+        if (resources.getBoolean(R.bool.gc_is_tablet)) {
+            return super.getTheme()
+        }
+        return R.style.GiniCaptureTheme_DigitalInvoice_Edit_BottomSheetDialog
+
+    }
 
     private fun createPresenter(activity: Activity) = LineItemDetailsScreenPresenter(
         activity, this,
@@ -69,7 +93,11 @@ class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItemDetailsSc
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
+        if (resources.getBoolean(R.bool.gc_is_tablet)) {
+            return super.onCreateView(inflater, container, savedInstanceState)
+        }
+
         binding = GbsEditItemBottomSheetBinding.inflate(inflater, container, false)
         dialog?.setOnShowListener {
             val bottomSheetInternal = (it as? BottomSheetDialog)?.findViewById<View>(R.id.design_bottom_sheet)
@@ -77,17 +105,14 @@ class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItemDetailsSc
                 BottomSheetBehavior.from(bottomSheetInternal).state = BottomSheetBehavior.STATE_EXPANDED
             }
         }
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        selectableLineItem?.let {
-            bindUI(it.lineItem)
-            setupInputHandlers()
-            manageFocuses()
-        }
+        setUpBindings()
     }
 
     /**
@@ -240,6 +265,14 @@ class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItemDetailsSc
         binding.gbsCurrenciesDropDown.setAdapter(CurrencyAdapter(requireActivity(),
             R.layout.gbs_item_currency_dropdown,
             if (GiniBank.multipleCurrenciesEnabled) currenciesList else listOf(currenciesList[0]), selectedCurrency))
+    }
+
+    private fun setUpBindings() {
+        selectableLineItem?.let {
+            bindUI(it.lineItem)
+            setupInputHandlers()
+            manageFocuses()
+        }
     }
 
     override var listener: LineItemDetailsFragmentListener?
