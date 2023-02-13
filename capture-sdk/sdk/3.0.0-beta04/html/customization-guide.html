@@ -1,0 +1,447 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Customization Guide &mdash; Gini Capture SDK for Android 2.0 documentation</title>
+  
+
+  
+  
+
+  
+  <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,400italic,600italic|Source+Code+Pro|Roboto+Slab:400,700" rel="stylesheet" type="text/css" />
+
+  
+  
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:'./',
+        VERSION:'2.0',
+        COLLAPSE_INDEX:false,
+        FILE_SUFFIX:'.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/language_data.js"></script>
+
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+    <script type="text/javascript">
+        jQuery(function () {
+            SphinxRtdTheme.StickyNav.enable();
+        });
+    </script>
+  
+
+  
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Gini Capture SDK for Android 2.0 documentation" href="index.html"/>
+        <link rel="next" title="Migrate to 2.0.0" href="migrate-to-2-0-0.html"/>
+        <link rel="prev" title="Features" href="features.html"/> 
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="index.html" id="gini-logo">
+          <img src="_static/logo.png" />
+        </a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="getting-started.html#requirements">Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting-started.html#installation">Installation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="integration.html">Integration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="integration.html#android-manifest">Android Manifest</a></li>
+<li class="toctree-l2"><a class="reference internal" href="integration.html#requirements-check">Requirements Check</a></li>
+<li class="toctree-l2"><a class="reference internal" href="integration.html#configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="integration.html#tablet-support">Tablet Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="integration.html#networking">Networking</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#default-implementation">Default Implementation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#custom-implementation">Custom Implementation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#sending-feedback">Sending Feedback</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="integration.html#capturing-documents">Capturing documents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="features.html">Features</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="features.html#document-capture">Document Capture</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="features.html#custom-ui-elements">Custom UI Elements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features.html#onboarding">Onboarding</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features.html#single-page">Single Page</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features.html#multi-page">Multi-Page</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features.html#camera">Camera</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#qr-code-scanning">QR Code Scanning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#only-qr-code-scanning">Only QR Code Scanning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#document-import">Document Import</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="features.html#android-manifest">Android Manifest</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features.html#intercepting-the-imported-document">Intercepting the imported document</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#file-import-open-with">File Import (Open With)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="features.html#registering-pdf-and-image-file-types">Registering pdf and image file types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features.html#handling-imported-files">Handling Imported Files</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#help-screen-customization">Help Screen Customization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#analysis-screen-customization">Analysis Screen Customization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#error-screen-customization">Error Screen Customization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#no-results-screen-customization">No Results Screen Customization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#event-tracking">Event Tracking</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="features.html#events">Events</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#error-logging">Error Logging</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Customization Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#overview-of-ui-customization-options">Overview of UI Customization Options</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#styles">Styles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#colors">Colors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#images">Images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#typography">Typography</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#text">Text</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ui-elements">UI Elements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dark-mode">Dark mode</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#onboarding-screen">Onboarding Screen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#camera-screen">Camera Screen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#review-screen">Review Screen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#analysis-screen">Analysis Screen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#help-screen">Help Screen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#error-screen">Error Screen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#clear-defaults-dialog">Clear Defaults Dialog</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#file-type">1.1 File Type</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#positive-button-title">2. Positive Button Title</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#negative-button-title">3. Negative Button Title</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="migrate-to-2-0-0.html">Migrate to 2.0.0</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="migrate-to-2-0-0.html#default-networking-implementation">Default Networking Implementation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-2-0-0.html#ginicapturedefaultnetworkservice-builder">GiniCaptureDefaultNetworkService.Builder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-2-0-0.html#sessionmanager">SessionManager</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="migrate-to-3-0-0.html">Migrate to 3.0.0</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="migrate-to-3-0-0.html#migrate-from-component-api">Migrate from Component API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrate-to-3-0-0.html#migrate-from-screen-api">Migrate from Screen API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrate-to-3-0-0.html#overview-of-new-ui-customization-options">Overview of New UI Customization Options</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#styles">Styles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#colors">Colors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#images">Images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#typography">Typography</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#text">Text</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#ui-elements">UI Elements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#dark-mode">Dark mode</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="migrate-to-3-0-0.html#migrate-to-the-new-ui">Migrate to the new UI</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#onboarding">Onboarding</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#camera">Camera</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#qr-code-scanning">QR code scanning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#review">Review</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#help">Help</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#analysis">Analysis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#error">Error</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#no-results">No results</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">Reference Docs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="license.html#licenses-and-acknowledgements-for-incorporated-software">Licenses and Acknowledgements for Incorporated Software</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="license.html#apache-commons-imaging">Apache Commons Imaging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license.html#touchimageview">TouchImageView</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license.html#simple-logging-facade-for-java-slf4j">Simple Logging Facade for Java (SLF4J)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license.html#jersey-repackaged-jsr166e">Jersey Repackaged JSR166e</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Gini Capture SDK for Android</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Customization Guide</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="customization-guide">
+<h1>Customization Guide<a class="headerlink" href="#customization-guide" title="Permalink to this headline">¶</a></h1>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><a class="reference internal" href="#overview-of-ui-customization-options" id="id5">Overview of UI Customization Options</a></li>
+<li><a class="reference internal" href="#onboarding-screen" id="id6">Onboarding Screen</a></li>
+<li><a class="reference internal" href="#camera-screen" id="id7">Camera Screen</a></li>
+<li><a class="reference internal" href="#review-screen" id="id8">Review Screen</a></li>
+<li><a class="reference internal" href="#analysis-screen" id="id9">Analysis Screen</a></li>
+<li><a class="reference internal" href="#help-screen" id="id10">Help Screen</a></li>
+<li><a class="reference internal" href="#error-screen" id="id11">Error Screen</a></li>
+<li><a class="reference internal" href="#clear-defaults-dialog" id="id12">Clear Defaults Dialog</a></li>
+</ul>
+</div>
+<p>UI customization is provided mostly via overriding of app resources: theme, styles, dimensions, strings,
+colors, texts, etc.</p>
+<p>We provide global customization options which are applied on all screens consistently. Screen specific customizations
+are only needed for images and texts.</p>
+<div class="section" id="overview-of-ui-customization-options">
+<h2><a class="toc-backref" href="#id5">Overview of UI Customization Options</a><a class="headerlink" href="#overview-of-ui-customization-options" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="styles">
+<h3>Styles<a class="headerlink" href="#styles" title="Permalink to this headline">¶</a></h3>
+<p>We leverage the power of Material Design to configure a theme for the SDK with a global color palette and typography
+that is applied on all the screens.</p>
+<p>Using global styles for the various widgets we enable you to customize them in a single place. They are then
+consistently applied on all screens.</p>
+<div class="section" id="theme">
+<h4>Theme<a class="headerlink" href="#theme" title="Permalink to this headline">¶</a></h4>
+<p>The theme style is based on Material Design v2 and is named <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme</span></code>. To override the theme in your
+application use <code class="docutils literal notranslate"><span class="pre">Root.GiniCaptureTheme</span></code> as the parent:</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;style</span> <span class="na">name=</span><span class="s">&quot;GiniCaptureTheme&quot;</span> <span class="na">parent=</span><span class="s">&quot;Root.GiniCaptureTheme&quot;</span><span class="nt">&gt;</span>
+  (...)
+<span class="nt">&lt;/style&gt;</span>
+</pre></div>
+</div>
+<p>You can view the theme <a class="reference external" href="https://github.com/gini/gini-mobile-android/blob/main/capture-sdk/sdk/src/main/res/values/styles.xml">here</a></p>
+</div>
+<div class="section" id="widgets">
+<h4>Widgets<a class="headerlink" href="#widgets" title="Permalink to this headline">¶</a></h4>
+<p>The style of buttons and other widgets is based on Material Design v2. To override them in your application use the
+root style as the parent, for example:</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;style</span> <span class="na">name=</span><span class="s">&quot;GiniCaptureTheme.Widget.Button.OutlinedButton&quot;</span> <span class="na">parent=</span><span class="s">&quot;Root.GiniCaptureTheme.Widget.Button.OutlinedButton&quot;</span><span class="nt">&gt;</span>
+  (...)
+<span class="nt">&lt;/style&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="colors">
+<h3>Colors<a class="headerlink" href="#colors" title="Permalink to this headline">¶</a></h3>
+<p>We are providing a global color palette which you are free to override. The custom colors will be then applied on all screens.</p>
+<p>You can find the names of the colors <a class="reference external" href="https://github.com/gini/gini-mobile-android/blob/main/capture-sdk/sdk/src/main/res/values/colors.xml">here</a>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you have overridden the <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme</span></code> then the theme colors you have set there will override the color
+palette customization.</p>
+</div>
+<p>You can view our color palette here:</p>
+<iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
+src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FMcDZrQPr6IgkzCQtN3lqAe%2FAndroid-Gini-Capture-SDK-3.0.0-UI-Customisation%3Fnode-id%3D40%253A491%26t%3DNoWz8V7m9GX9SNwS-1"
+allowfullscreen></iframe></div>
+<div class="section" id="images">
+<h3>Images<a class="headerlink" href="#images" title="Permalink to this headline">¶</a></h3>
+<p>Customizing of images is done via overriding of drawable resources. You can find the drawable
+resource names in the <a class="reference internal" href="migrate-to-3-0-0.html#migrate-to-the-new-ui"><span class="std std-ref">screen-by-screen UI customization section</span></a>.</p>
+<p>We are using mostly vector drawables. Unfortunately due to the limitations of vector drawables some images had to be
+added as PNGs.</p>
+<p>If you use vector drawables please add them to the <cite>drawable-anydpi</cite> folder so that they also override any density
+specific PNGs.</p>
+</div>
+<div class="section" id="typography">
+<h3>Typography<a class="headerlink" href="#typography" title="Permalink to this headline">¶</a></h3>
+<p>We provide a global typography based on text appearance styles from Material Design v2. To override them in your
+application use the root style as the parent, for example:</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;style</span> <span class="na">name=</span><span class="s">&quot;GiniCaptureTheme.Typography.Body1&quot;</span> <span class="na">parent=</span><span class="s">&quot;Root.GiniCaptureTheme.Typography.Body1&quot;</span><span class="nt">&gt;</span>
+    (...)
+<span class="nt">&lt;/style&gt;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you have overriden the <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme</span></code> then the text appearances you have set there will override the
+typography customization. Same applies to overriden widget styles where you have set a custom text appearance.</p>
+</div>
+<p>You can find all the typography styles <a class="reference external" href="https://github.com/gini/gini-mobile-android/blob/main/capture-sdk/sdk/src/main/res/values/typography.xml">here</a>.</p>
+<p>You can preview our typography here:</p>
+<iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
+src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FMcDZrQPr6IgkzCQtN3lqAe%2FAndroid-Gini-Capture-SDK-3.0.0-UI-Customisation%3Fnode-id%3D40%253A492%26t%3DNoWz8V7m9GX9SNwS-1"
+allowfullscreen></iframe></div>
+<div class="section" id="text">
+<h3>Text<a class="headerlink" href="#text" title="Permalink to this headline">¶</a></h3>
+<p>Text customization is done via overriding of string resources.</p>
+<p>You can find all the string resources <a class="reference external" href="https://github.com/gini/gini-mobile-android/blob/main/capture-sdk/sdk/src/main/res/values/strings.xml">here</a>.</p>
+</div>
+<div class="section" id="ui-elements">
+<h3>UI Elements<a class="headerlink" href="#ui-elements" title="Permalink to this headline">¶</a></h3>
+<p>Certain elements of the UI can be fully customized via UI injection.</p>
+<p>UI injection utilizes view adapter interfaces which you can implement and pass to <code class="docutils literal notranslate"><span class="pre">GiniCapture</span></code> when configuring the
+SDK. These interfaces declare the contract the injected view has to fulfill and allow the SDK to ask for your view
+instance when needed.</p>
+<p>The most important injectable UI element is the top navigation bar. You may also show the navigation bar on the bottom
+using your own custom view. You can find more details <a class="reference external" href="features.html#custom-ui-elements">here</a>.</p>
+</div>
+<div class="section" id="dark-mode">
+<h3>Dark mode<a class="headerlink" href="#dark-mode" title="Permalink to this headline">¶</a></h3>
+<p>To customize resources for dark mode add them to resource folders containing the <code class="docutils literal notranslate"><span class="pre">-night</span></code> resource qualifier.</p>
+</div>
+</div>
+<div class="section" id="onboarding-screen">
+<h2><a class="toc-backref" href="#id6">Onboarding Screen</a><a class="headerlink" href="#onboarding-screen" title="Permalink to this headline">¶</a></h2>
+<iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
+src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FMcDZrQPr6IgkzCQtN3lqAe%2FAndroid-Gini-Capture-SDK-3.0.0-UI-Customisation%3Fnode-id%3D40%253A584%26t%3DNoWz8V7m9GX9SNwS-1"
+allowfullscreen></iframe></div>
+<div class="section" id="camera-screen">
+<h2><a class="toc-backref" href="#id7">Camera Screen</a><a class="headerlink" href="#camera-screen" title="Permalink to this headline">¶</a></h2>
+<iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
+src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FMcDZrQPr6IgkzCQtN3lqAe%2FAndroid-Gini-Capture-SDK-3.0.0-UI-Customisation%3Fnode-id%3D92%253A3712%26t%3Dc3jMrBwHYOfKgDHC-1"
+allowfullscreen></iframe></div>
+<div class="section" id="review-screen">
+<h2><a class="toc-backref" href="#id8">Review Screen</a><a class="headerlink" href="#review-screen" title="Permalink to this headline">¶</a></h2>
+<iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
+src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FMcDZrQPr6IgkzCQtN3lqAe%2FAndroid-Gini-Capture-SDK-3.0.0-UI-Customisation%3Fnode-id%3D143%253A4156%26t%3DbxRb1PoNfoS2K8LX-1"
+allowfullscreen></iframe></div>
+<div class="section" id="analysis-screen">
+<h2><a class="toc-backref" href="#id9">Analysis Screen</a><a class="headerlink" href="#analysis-screen" title="Permalink to this headline">¶</a></h2>
+<p>TODO</p>
+</div>
+<div class="section" id="help-screen">
+<h2><a class="toc-backref" href="#id10">Help Screen</a><a class="headerlink" href="#help-screen" title="Permalink to this headline">¶</a></h2>
+<iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
+src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FMcDZrQPr6IgkzCQtN3lqAe%2FAndroid-Gini-Capture-SDK-3.0.0-UI-Customisation%3Fnode-id%3D9%253A4645%26t%3DHtNbZnDsRjA5FeBu-1"
+allowfullscreen></iframe></div>
+<div class="section" id="error-screen">
+<h2><a class="toc-backref" href="#id11">Error Screen</a><a class="headerlink" href="#error-screen" title="Permalink to this headline">¶</a></h2>
+<iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
+src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FMcDZrQPr6IgkzCQtN3lqAe%2FAndroid-Gini-Capture-SDK-3.0.0-UI-Customisation%3Fnode-id%3D9%253A5075%26t%3DQkcPe6W16KvhSI1a-1"
+allowfullscreen></iframe></div>
+<div class="section" id="clear-defaults-dialog">
+<h2><a class="toc-backref" href="#id12">Clear Defaults Dialog</a><a class="headerlink" href="#clear-defaults-dialog" title="Permalink to this headline">¶</a></h2>
+<p>TODO</p>
+<img src="_static/customization/Clear Defaults Dialog.png" usemap="#clear-defaults-map" width="324" height="576">
+
+<map id="clear-defaults-map" name="clear-defaults-map">
+    <area shape="rect" alt="" title="Message" coords="236,139,260,166" href="customization-guide.html#clear-defaults-1" target="" />
+    <area shape="rect" alt="" title="File Type" coords="265,223,299,257" href="customization-guide.html#clear-defaults-1-1" target="" />
+    <area shape="rect" alt="" title="Positive Button Title" coords="73,329,106,362" href="customization-guide.html#clear-defaults-2" target="" />
+    <area shape="rect" alt="" title="Negative Button Title" coords="74,369,105,400" href="customization-guide.html#clear-defaults-3" target="" />
+    <!-- Created by Online Image Map Editor (http://www.maschek.hu/imagemap/index) -->
+</map><p>Via the string resource named <code class="docutils literal notranslate"><span class="pre">gc_file_import_default_app_dialog_message</span></code>.</p>
+<div class="section" id="file-type">
+<span id="clear-defaults-1-1"></span><h3>1.1 File Type<a class="headerlink" href="#file-type" title="Permalink to this headline">¶</a></h3>
+<ul>
+<li><p class="first"><strong>PDF</strong></p>
+<p>Via the string resources named <code class="docutils literal notranslate"><span class="pre">gc_file_import_default_app_dialog_pdf_file_type</span></code>.</p>
+</li>
+<li><p class="first"><strong>Image</strong></p>
+<p>Via the string resources named <code class="docutils literal notranslate"><span class="pre">gc_file_import_default_app_dialog_image_file_type</span></code>.</p>
+</li>
+<li><p class="first"><strong>Document (Other)</strong></p>
+<p>Via the string resources named <code class="docutils literal notranslate"><span class="pre">gc_file_import_default_app_dialog_document_file_type</span></code>.</p>
+</li>
+</ul>
+</div>
+<div class="section" id="positive-button-title">
+<span id="clear-defaults-2"></span><h3>2. Positive Button Title<a class="headerlink" href="#positive-button-title" title="Permalink to this headline">¶</a></h3>
+<p>Via the string resources named <code class="docutils literal notranslate"><span class="pre">gc_file_import_default_app_dialog_positive_button</span></code>.</p>
+</div>
+<div class="section" id="negative-button-title">
+<span id="clear-defaults-3"></span><h3>3. Negative Button Title<a class="headerlink" href="#negative-button-title" title="Permalink to this headline">¶</a></h3>
+<p>Via the string resources named <code class="docutils literal notranslate"><span class="pre">gc_file_import_default_app_dialog_negative_button</span></code>.</p>
+<p><span class="xref std std-ref">Back to screenshot.</span></p>
+</div>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="migrate-to-2-0-0.html" class="btn btn-neutral float-right" title="Migrate to 2.0.0">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="features.html" class="btn btn-neutral" title="Features"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+    </p>
+  </div>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  
+</body>
+</html>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>net.gini.android.capture.review</title>
+    <link href="../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script>var pathToRoot = "../../";</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../styles/style.css" rel="Stylesheet">
+<link href="../../styles/jetbrains-mono.css" rel="Stylesheet">
+<link href="../../styles/main.css" rel="Stylesheet">
+<link href="../../styles/prism.css" rel="Stylesheet">
+<link href="../../styles/logo-styles.css" rel="Stylesheet">
+<script type="text/javascript" src="../../scripts/clipboard.js" async="async"></script>
+<script type="text/javascript" src="../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../scripts/symbol-parameters-wrapper_deferred.js" defer="defer"></script>
+</head>
+<body>
+<div class="navigation-wrapper" id="navigation-wrapper">
+    <div id="leftToggler"><span class="icon-toggler"></span></div>
+    <div class="library-name">
+            <a href="../../index.html">
+                    <span>sdk</span>
+            </a>
+    </div>
+    <div>
+    </div>
+    <div class="pull-right d-flex">
+        <button id="theme-toggle-button"><span id="theme-toggle"></span></button>
+        <div id="searchBar"></div>
+    </div>
+</div>
+<div id="container">
+    <div id="leftColumn">
+        <div id="sideMenu"></div>
+    </div>
+    <div id="main">
+<div class="main-content" id="content" pageIds="sdk::net.gini.android.capture.review////PointingToDeclaration//532391635">
+  <div class="breadcrumbs"><a href="../../index.html">sdk</a><span class="delimiter">/</span><span class="current">net.gini.android.capture.review</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span><span>Package-level</span></span> <span><span>declarations</span></span></h1>
+    <div class="platform-hinted UnderCoverText" data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:sdk:dokkaHtml/release"><p class="paragraph">Contains the Activity and Fragments used for the Review Screen.</p><h2 class=""> Screen API</h2><p class="paragraph">The preferred way of adding network calls to the Gini Capture SDK is by creating a  <a href="../net.gini.android.capture/-gini-capture/index.html">net.gini.android.capture.GiniCapture</a> instance with a  <a href="../net.gini.android.capture.network/-gini-capture-network-service/index.html">net.gini.android.capture.network.GiniCaptureNetworkService</a> and a net.gini.android.capture.network.GiniCaptureNetworkApi implementation.</p><h2 class=""> Component API</h2><p class="paragraph">To use the Component API you have to include the <a href="-review-fragment-compat/index.html">net.gini.android.capture.review.ReviewFragmentCompat</a>  in an Activity in your app (a dedicated Activity is recommended). To receive events from the Fragments  your Activity must implement the <a href="-review-fragment-listener/index.html">net.gini.android.capture.review.ReviewFragmentListener</a> interface.</p></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="Types">Types</button></div>
+    <div class="tabs-section-body">
+      <h2 class="">Types</h2>
+      <div class="table" data-togglable="Types"><a data-name="-442738214%2FClasslikes%2F532391635" anchor-label="ReviewActivity" id="-442738214%2FClasslikes%2F532391635" data-filterable-set=":capture-sdk:sdk:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:sdk:dokkaHtml/release" data-filterable-set=":capture-sdk:sdk:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="-review-activity/index.html"><span>Review</span><wbr></wbr><span><span>Activity</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-442738214%2FClasslikes%2F532391635"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:sdk:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">public </span><span class="token keyword">class </span><a href="-review-activity/index.html">ReviewActivity</a><span class="token keyword"> extends </span><a href="https://developer.android.com/reference/kotlin/androidx/appcompat/app/AppCompatActivity.html">AppCompatActivity</a><span class="token keyword"> implements </span><a href="-review-fragment-listener/index.html">ReviewFragmentListener</a><span class="token punctuation">, </span><a href="-review-fragment-interface/index.html">ReviewFragmentInterface</a></div><div class="brief "><h3 class="">Screen API</h3> When you use the Screen API, the <code class="lang-kotlin">ReviewActivity</code> displays the photographed or imported image and allows the user to review it by checking the sharpness, quality and orientation of the image.</div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-804652457%2FClasslikes%2F532391635" anchor-label="ReviewFragmentCompat" id="-804652457%2FClasslikes%2F532391635" data-filterable-set=":capture-sdk:sdk:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:sdk:dokkaHtml/release" data-filterable-set=":capture-sdk:sdk:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="-review-fragment-compat/index.html"><span>Review</span><wbr></wbr><span>Fragment</span><wbr></wbr><span><span>Compat</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-804652457%2FClasslikes%2F532391635"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:sdk:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">public </span><span class="token keyword">class </span><a href="-review-fragment-compat/index.html">ReviewFragmentCompat</a><span class="token keyword"> extends </span><a href="https://developer.android.com/reference/kotlin/androidx/fragment/app/Fragment.html">Fragment</a><span class="token keyword"> implements </span><span data-unresolved-link="net.gini.android.capture.internal.ui/FragmentImplCallback///PointingToDeclaration/">FragmentImplCallback</span><span class="token punctuation">, </span><a href="-review-fragment-interface/index.html">ReviewFragmentInterface</a></div><div class="brief "><strong>Note:</strong> Your Activity hosting this Fragment must extend the  and use an AppCompat Theme.</div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-408588112%2FClasslikes%2F532391635" anchor-label="ReviewFragmentInterface" id="-408588112%2FClasslikes%2F532391635" data-filterable-set=":capture-sdk:sdk:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:sdk:dokkaHtml/release" data-filterable-set=":capture-sdk:sdk:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="-review-fragment-interface/index.html"><span>Review</span><wbr></wbr><span>Fragment</span><wbr></wbr><span><span>Interface</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-408588112%2FClasslikes%2F532391635"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:sdk:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">public </span><span class="token keyword">interface </span><a href="-review-fragment-interface/index.html">ReviewFragmentInterface</a></div><div class="brief ">Methods which Review Fragment must implement.</div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-227996827%2FClasslikes%2F532391635" anchor-label="ReviewFragmentListener" id="-227996827%2FClasslikes%2F532391635" data-filterable-set=":capture-sdk:sdk:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:sdk:dokkaHtml/release" data-filterable-set=":capture-sdk:sdk:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="-review-fragment-listener/index.html"><span>Review</span><wbr></wbr><span>Fragment</span><wbr></wbr><span><span>Listener</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-227996827%2FClasslikes%2F532391635"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:sdk:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">public </span><span class="token keyword">interface </span><a href="-review-fragment-listener/index.html">ReviewFragmentListener</a></div><div class="brief ">Interface used by <a href="-review-fragment-compat/index.html">ReviewFragmentCompat</a> to dispatch events to the hosting Activity.</div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-429052420%2FClasslikes%2F532391635" anchor-label="RotatableImageViewContainer" id="-429052420%2FClasslikes%2F532391635" data-filterable-set=":capture-sdk:sdk:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:sdk:dokkaHtml/release" data-filterable-set=":capture-sdk:sdk:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="-rotatable-image-view-container/index.html"><span>Rotatable</span><wbr></wbr><span>Image</span><wbr></wbr><span>View</span><wbr></wbr><span><span>Container</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-429052420%2FClasslikes%2F532391635"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:sdk:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">public </span><span class="token keyword">class </span><a href="-rotatable-image-view-container/index.html">RotatableImageViewContainer</a><span class="token keyword"> extends </span><a href="https://developer.android.com/reference/kotlin/android/widget/FrameLayout.html">FrameLayout</a></div><div class="brief ">Internal use only.</div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="591475685%2FClasslikes%2F532391635" anchor-label="RotatableTouchImageViewContainer" id="591475685%2FClasslikes%2F532391635" data-filterable-set=":capture-sdk:sdk:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:sdk:dokkaHtml/release" data-filterable-set=":capture-sdk:sdk:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="-rotatable-touch-image-view-container/index.html"><span>Rotatable</span><wbr></wbr><span>Touch</span><wbr></wbr><span>Image</span><wbr></wbr><span>View</span><wbr></wbr><span><span>Container</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="591475685%2FClasslikes%2F532391635"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:sdk:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">public </span><span class="token keyword">class </span><a href="-rotatable-touch-image-view-container/index.html">RotatableTouchImageViewContainer</a><span class="token keyword"> extends </span><a href="-rotatable-image-view-container/index.html">RotatableImageViewContainer</a></div><div class="brief ">Internal use only.</div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2023 Copyright</span><span
+                class="pull-right"><span>Generated by </span><a
+                href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+    </div>
+</div>
+</body>
+</html>
