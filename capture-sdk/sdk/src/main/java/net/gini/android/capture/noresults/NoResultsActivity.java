@@ -12,6 +12,7 @@ import net.gini.android.capture.ImageRetakeOptionsListener;
 import net.gini.android.capture.R;
 import net.gini.android.capture.analysis.AnalysisActivity;
 import net.gini.android.capture.camera.CameraActivity;
+import net.gini.android.capture.internal.ui.IntervalClickListener;
 import net.gini.android.capture.noresults.view.NoResultsNavigationBarBottomAdapter;
 import net.gini.android.capture.review.ReviewActivity;
 import net.gini.android.capture.view.InjectedViewContainer;
@@ -171,9 +172,7 @@ public class NoResultsActivity extends AppCompatActivity implements ImageRetakeO
             NoResultsNavigationBarBottomAdapter adapter = GiniCapture.getInstance().getNoResultsNavigationBarBottomAdapter();
             injectedViewContainer.setInjectedViewAdapter(adapter);
 
-            adapter.setOnBackButtonClickListener(v -> {
-                onBackPressed();
-            });
+            adapter.setOnBackButtonClickListener(new IntervalClickListener(v -> onBackPressed()));
         }
     }
 

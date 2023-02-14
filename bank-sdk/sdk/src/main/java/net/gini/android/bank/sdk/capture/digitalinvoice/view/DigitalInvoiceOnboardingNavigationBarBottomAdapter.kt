@@ -4,6 +4,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import net.gini.android.bank.sdk.databinding.GbsDigitalInvoiceOnboardingNavigationBarBottomBinding
+import net.gini.android.capture.internal.ui.IntervalClickListener
+import net.gini.android.capture.internal.ui.setIntervalClickListener
 import net.gini.android.capture.view.InjectedViewAdapter
 
 /**
@@ -16,7 +18,7 @@ interface DigitalInvoiceOnboardingNavigationBarBottomAdapter: InjectedViewAdapte
      *
      * @param listener the click listener for the button
      */
-    fun setGetStartedButtonClickListener(listener: View.OnClickListener)
+    fun setGetStartedButtonClickListener(listener: View.OnClickListener?)
 }
 
 class DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter: DigitalInvoiceOnboardingNavigationBarBottomAdapter {
@@ -24,7 +26,7 @@ class DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter: DigitalInvoiceO
     var viewBinding: GbsDigitalInvoiceOnboardingNavigationBarBottomBinding? = null
 
 
-    override fun setGetStartedButtonClickListener(listener: View.OnClickListener) {
+    override fun setGetStartedButtonClickListener(listener: View.OnClickListener?) {
         viewBinding?.gbsBarBottomNextButton?.setOnClickListener(listener)
     }
 

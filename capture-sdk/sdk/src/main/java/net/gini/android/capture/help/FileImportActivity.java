@@ -24,6 +24,7 @@ import net.gini.android.capture.R;
 import net.gini.android.capture.analysis.AnalysisActivity;
 import net.gini.android.capture.camera.CameraActivity;
 import net.gini.android.capture.help.view.HelpNavigationBarBottomAdapter;
+import net.gini.android.capture.internal.ui.IntervalClickListener;
 import net.gini.android.capture.noresults.NoResultsActivity;
 import net.gini.android.capture.review.ReviewActivity;
 import net.gini.android.capture.view.InjectedViewContainer;
@@ -189,9 +190,9 @@ public class FileImportActivity extends AppCompatActivity {
 
             HelpNavigationBarBottomAdapter helpNavigationBarBottomAdapter = injectedViewContainer.getInjectedViewAdapter();
             assert helpNavigationBarBottomAdapter != null;
-            helpNavigationBarBottomAdapter.setOnBackClickListener(v -> {
+            helpNavigationBarBottomAdapter.setOnBackClickListener(new IntervalClickListener(v -> {
                 onBackPressed();
-            });
+            }));
         }
     }
 
@@ -206,7 +207,7 @@ public class FileImportActivity extends AppCompatActivity {
             topBarAdapter.setNavButtonType(NavButtonType.BACK);
             topBarAdapter.setTitle(getString(R.string.gc_title_file_import));
 
-            topBarAdapter.setOnNavButtonClickListener(v -> onBackPressed());
+            topBarAdapter.setOnNavButtonClickListener(new IntervalClickListener(v -> onBackPressed()));
         }
     }
 

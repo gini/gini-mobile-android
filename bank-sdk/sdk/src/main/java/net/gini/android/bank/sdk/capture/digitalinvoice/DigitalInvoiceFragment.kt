@@ -24,6 +24,8 @@ import net.gini.android.bank.sdk.capture.util.autoCleared
 import net.gini.android.bank.sdk.capture.util.parentFragmentManagerOrNull
 import net.gini.android.bank.sdk.databinding.GbsFragmentDigitalInvoiceBinding
 import net.gini.android.capture.GiniCapture
+import net.gini.android.capture.internal.ui.IntervalClickListener
+import net.gini.android.capture.internal.ui.IntervalToolbarMenuItemIntervalClickListener
 import net.gini.android.capture.view.NavButtonType
 
 
@@ -46,8 +48,8 @@ private const val TAG_WHAT_IS_THIS_DIALOG = "TAG_WHAT_IS_THIS_DIALOG"
  * - "amountToPay" is updated to contain the sum of the selected line items' prices,
  * - the line items are updated according to the user's modifications.
  *
- * Before showing the `DigitalInvoiceFragment` you should validate the compound extractions 
- * using the [LineItemsValidator]. These extractions are returned in the [AnalysisFragmentListener.onExtractionsAvailable()] 
+ * Before showing the `DigitalInvoiceFragment` you should validate the compound extractions
+ * using the [LineItemsValidator]. These extractions are returned in the [AnalysisFragmentListener.onExtractionsAvailable()]
  * listener method.
  *
  * Include the `DigitalInvoiceFragment` into your layout by using the [DigitalInvoiceFragment.createInstance()] factory method to create
@@ -196,6 +198,7 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
         initRecyclerView()
         setInputHandlers()
         initTopNavigationBar()
+        initBottomBar()
         presenter?.onViewCreated()
     }
 
@@ -206,18 +209,41 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
 
             binding.gbsTopBarNavigation.injectedViewAdapter = topBarAdapter
             topBarAdapter.setTitle(getString(R.string.gbs_digital_invoice_onboarding_text_1))
+            topBarAdapter.setNavButtonType(NavButtonType.BACK)
 
             topBarAdapter.setMenuResource(R.menu.gbs_menu_digital_invoice)
-            topBarAdapter.setOnMenuItemClickListener {
+            topBarAdapter.setOnMenuItemClickListener(IntervalToolbarMenuItemIntervalClickListener {
                 if (it.itemId == R.id.help) {
                     startActivity(Intent(requireContext(), HelpActivity::class.java))
                 }
                 true
-            }
+            })
 
-            topBarAdapter.setNavButtonType(NavButtonType.BACK)
             topBarAdapter.setOnNavButtonClickListener {
                 activity?.finish()
+            }
+        }
+    }
+
+    private fun initBottomBar() {
+        if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled) {
+
+            binding.gbsBottomWrapper.visibility = View.INVISIBLE
+            binding.gbsPay.isEnabled = false
+
+            binding.gbsBottomBarNavigation.injectedViewAdapter =
+                GiniBank.digitalInvoiceNavigationBarBottomAdapter
+
+            GiniBank.digitalInvoiceNavigationBarBottomAdapter.setOnHelpClickListener {
+                startActivity(Intent(requireContext(), HelpActivity::class.java))
+            }
+
+            GiniBank.digitalInvoiceNavigationBarBottomAdapter.setOnBackClickListener {
+                activity?.finish()
+            }
+
+            GiniBank.digitalInvoiceNavigationBarBottomAdapter.setOnPayClickListener {
+                presenter?.pay()
             }
         }
     }
@@ -343,6 +369,12 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
         binding.grossPriceTotalIntegralPart.text = integral
         binding.grossPriceTotalFractionalPart.text = fractional
         binding.gbsPay.isEnabled = data.buttonEnabled
+
+        if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled)
+            binding.gbsBottomBarNavigation?.injectedViewAdapter?.let { _ ->
+                GiniBank.digitalInvoiceNavigationBarBottomAdapter.setGrossPriceTotal(integral, fractional)
+                GiniBank.digitalInvoiceNavigationBarBottomAdapter.setPayButtonEnabled(data.buttonEnabled)
+            }
     }
 
     /**

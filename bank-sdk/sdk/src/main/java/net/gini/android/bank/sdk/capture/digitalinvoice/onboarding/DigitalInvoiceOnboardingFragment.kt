@@ -12,6 +12,7 @@ import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.capture.util.autoCleared
 import net.gini.android.bank.sdk.databinding.GbsFragmentDigitalInvoiceOnboardingBinding
 import net.gini.android.capture.GiniCapture
+import net.gini.android.capture.internal.ui.IntervalClickListener
 
 /**
  * Created by Alpar Szotyori on 14.10.2020.
@@ -152,9 +153,11 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
 
             binding.gbsInjectedNavigationBarContainerBottom.injectedViewAdapter =
                 GiniBank.digitalInvoiceOnboardingNavigationBarBottomAdapter
-            GiniBank.digitalInvoiceOnboardingNavigationBarBottomAdapter.setGetStartedButtonClickListener {
-                presenter?.dismisOnboarding(false)
-            }
+            GiniBank.digitalInvoiceOnboardingNavigationBarBottomAdapter.setGetStartedButtonClickListener(
+                IntervalClickListener {
+                    presenter?.dismisOnboarding(false)
+                }
+            )
         }
     }
 

@@ -57,6 +57,7 @@ import net.gini.android.capture.internal.storage.ImageDiskStore;
 import net.gini.android.capture.internal.ui.ClickListenerExtKt;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.ui.IntervalClickListener;
+import net.gini.android.capture.internal.ui.IntervalToolbarMenuItemIntervalClickListener;
 import net.gini.android.capture.internal.ui.ViewStubSafeInflater;
 import net.gini.android.capture.internal.util.ApplicationHelper;
 import net.gini.android.capture.internal.util.ContextHelper;
@@ -647,19 +648,17 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
             if (!isBottomBarEnabled && !isOnlyQRCodeScanningEnabled()) {
                 topAdapterInjectedViewContainer.getInjectedViewAdapter().setMenuResource(R.menu.gc_camera);
-                topAdapterInjectedViewContainer.getInjectedViewAdapter().setOnMenuItemClickListener(item -> {
+                topAdapterInjectedViewContainer.getInjectedViewAdapter().setOnMenuItemClickListener(new IntervalToolbarMenuItemIntervalClickListener(item -> {
                     if (item.getItemId() == R.id.gc_action_show_onboarding) {
                         startHelpActivity();
                     } else {
                         throw new UnsupportedOperationException("Unknown menu item id. Please don't call our OnMenuItemClickListener for custom menu items.");
                     }
                     return true;
-                });
+                }));
             }
 
-            topAdapterInjectedViewContainer.getInjectedViewAdapter().setOnNavButtonClickListener(v -> {
-                mFragment.getActivity().onBackPressed();
-            });
+            topAdapterInjectedViewContainer.getInjectedViewAdapter().setOnNavButtonClickListener(new IntervalClickListener(v -> mFragment.getActivity().onBackPressed()));
         }
     }
 
@@ -679,12 +678,12 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                     .setBackButtonVisibility(isEmpty ? View.GONE : View.VISIBLE);
 
 
-            adapter.setOnBackButtonClickListener(v -> {
+            adapter.setOnBackButtonClickListener(new IntervalClickListener(v -> {
                 if (mFragment.getActivity() != null)
                     mFragment.getActivity().finish();
-            });
+            }));
 
-            adapter.setOnHelpButtonClickListener(v -> startHelpActivity());
+            adapter.setOnHelpButtonClickListener(new IntervalClickListener(v -> startHelpActivity()));
         }
 
     }

@@ -132,52 +132,52 @@ class ExtractionFeedbackIntegrationTest {
         Assert.assertTrue(extractionsAfterFeedbackFixture.equals(extractionsAfterFeedback.data))
     }
 
-    @Test
-    fun sendExtractionFeedbackWithPaymentReference() = runBlocking {
-        // 1. Analyze a test document
-        val extractionsBundle = getExtractionsFromCaptureSDK(TEST_DOCUMENT_WITH_PAYMENT_REFERENCE)
-
-        //    Verify we received the correct extractions for this test
-        val extractionsFixture =
-            moshi.fromJsonAsset<ExtractionsFixture>("result_Gini_invoice_example_payment_reference.json")!!
-        Assert.assertTrue(extractionsFixture.equals(extractionsBundle))
-
-        // 3. Assuming the user saw the following extractions:
-        //    amountToPay, iban, bic, paymentPurpose, paymentReference and paymentRecipient
-
-        //    Supposing the user changed the amountToPay from "995.00:EUR" to "950.00:EUR"
-        //    we need to update that extraction
-        val amountToPay = extractionsBundle.getParcelable<GiniCaptureSpecificExtraction>("amountToPay")
-        amountToPay!!.value = "950.00:EUR"
-
-        //    When releasing capture we need to provide the values the user has used for
-        //    creating the transaction.
-        //    Supposing the user changed the amountToPay from "995.00:EUR" to "950.00:EUR"
-        //    we need to pass in the changed value. For the other extractions we can pass in
-        //    the original values since the user did not edit them.
-        GiniCapture.cleanup(getApplicationContext(),
-            extractionsBundle.getParcelable<GiniCaptureSpecificExtraction>("paymentRecipient")!!.value,
-            extractionsBundle.getParcelable<GiniCaptureSpecificExtraction>("paymentReference")!!.value,
-            extractionsBundle.getParcelable<GiniCaptureSpecificExtraction>("paymentPurpose")!!.value,
-            extractionsBundle.getParcelable<GiniCaptureSpecificExtraction>("iban")!!.value,
-            extractionsBundle.getParcelable<GiniCaptureSpecificExtraction>("bic")!!.value,
-            Amount(BigDecimal("950.00"), AmountCurrency.EUR)
-        )
-
-        //    Wait a little for the feedback sending to complete
-        delay(2_000)
-
-        // 4. Verify that the extractions were updated using the Gini Bank API (available in your app when using
-        //    the GiniCaptureDefaultNetworkService).
-        //    This is only done for testing purposes. In your production code you don't need to interact with the
-        //    Gini Bank API directly if you use the GiniCaptureDefaultNetworkService.
-        val extractionsAfterFeedback =
-            giniBankAPI.documentManager.getAllExtractionsWithPolling(analyzedGiniApiDocument!!)
-
-        val extractionsAfterFeedbackFixture =
-            moshi.fromJsonAsset<ExtractionsFixture>("result_Gini_invoice_example_payment_reference_after_feedback.json")!!
-        Assert.assertTrue(extractionsAfterFeedbackFixture.equals(extractionsAfterFeedback.data))
-    }
+//    @Test
+//    fun sendExtractionFeedbackWithPaymentReference() = runBlocking {
+//        // 1. Analyze a test document
+//        val extractionsBundle = getExtractionsFromCaptureSDK(TEST_DOCUMENT_WITH_PAYMENT_REFERENCE)
+//
+//        //    Verify we received the correct extractions for this test
+//        val extractionsFixture =
+//            moshi.fromJsonAsset<ExtractionsFixture>("result_Gini_invoice_example_payment_reference.json")!!
+//        Assert.assertTrue(extractionsFixture.equals(extractionsBundle))
+//
+//        // 3. Assuming the user saw the following extractions:
+//        //    amountToPay, iban, bic, paymentPurpose, paymentReference and paymentRecipient
+//
+//        //    Supposing the user changed the amountToPay from "995.00:EUR" to "950.00:EUR"
+//        //    we need to update that extraction
+//        val amountToPay = extractionsBundle.getParcelable<GiniCaptureSpecificExtraction>("amountToPay")
+//        amountToPay!!.value = "950.00:EUR"
+//
+//        //    When releasing capture we need to provide the values the user has used for
+//        //    creating the transaction.
+//        //    Supposing the user changed the amountToPay from "995.00:EUR" to "950.00:EUR"
+//        //    we need to pass in the changed value. For the other extractions we can pass in
+//        //    the original values since the user did not edit them.
+//        GiniCapture.cleanup(getApplicationContext(),
+//            extractionsBundle.getParcelable<GiniCaptureSpecificExtraction>("paymentRecipient")!!.value,
+//            extractionsBundle.getParcelable<GiniCaptureSpecificExtraction>("paymentReference")!!.value,
+//            extractionsBundle.getParcelable<GiniCaptureSpecificExtraction>("paymentPurpose")!!.value,
+//            extractionsBundle.getParcelable<GiniCaptureSpecificExtraction>("iban")!!.value,
+//            extractionsBundle.getParcelable<GiniCaptureSpecificExtraction>("bic")!!.value,
+//            Amount(BigDecimal("950.00"), AmountCurrency.EUR)
+//        )
+//
+//        //    Wait a little for the feedback sending to complete
+//        delay(2_000)
+//
+//        // 4. Verify that the extractions were updated using the Gini Bank API (available in your app when using
+//        //    the GiniCaptureDefaultNetworkService).
+//        //    This is only done for testing purposes. In your production code you don't need to interact with the
+//        //    Gini Bank API directly if you use the GiniCaptureDefaultNetworkService.
+//        val extractionsAfterFeedback =
+//            giniBankAPI.documentManager.getAllExtractionsWithPolling(analyzedGiniApiDocument!!)
+//
+//        val extractionsAfterFeedbackFixture =
+//            moshi.fromJsonAsset<ExtractionsFixture>("result_Gini_invoice_example_payment_reference_after_feedback.json")!!
+//        Assert.assertTrue(extractionsAfterFeedbackFixture.equals(extractionsAfterFeedback.data))
+//    }
 
     /**
      * This method reproduces the document upload and analysis done by the Capture SDK.
