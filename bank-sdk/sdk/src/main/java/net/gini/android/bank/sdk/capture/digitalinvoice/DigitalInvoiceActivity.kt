@@ -11,7 +11,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.capture.CaptureResult
-import net.gini.android.bank.sdk.capture.digitalinvoice.details.LineItemDetailsActivity
 import net.gini.android.bank.sdk.capture.digitalinvoice.details.LineItemDetailsFragmentListener
 import net.gini.android.bank.sdk.capture.digitalinvoice.info.DigitalInvoiceInfoFragment
 import net.gini.android.bank.sdk.capture.digitalinvoice.info.DigitalInvoiceInfoFragmentListener
@@ -222,12 +221,7 @@ internal class DigitalInvoiceActivity : AppCompatActivity(), DigitalInvoiceFragm
         fragment?.updateLineItem(selectableLineItem)
     }
 
-    override fun onAddLineItem(selectableLineItem: SelectableLineItem) {
-        startActivityForResult(
-            LineItemDetailsActivity.createIntent(this, selectableLineItem, returnReasons),
-            EDIT_LINE_ITEM_REQUEST
-        )
-    }
+    override fun onAddLineItem(selectableLineItem: SelectableLineItem) {}
 
     /**
      * Internal use only.
@@ -249,27 +243,6 @@ internal class DigitalInvoiceActivity : AppCompatActivity(), DigitalInvoiceFragm
         finish()
     }
 
-    /**
-     * Internal use only.
-     *
-     * @suppress
-     */
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            EDIT_LINE_ITEM_REQUEST -> {
-                when (resultCode) {
-                    Activity.RESULT_OK -> {
-                        data?.getParcelableExtra<SelectableLineItem>(
-                            LineItemDetailsActivity.EXTRA_OUT_SELECTABLE_LINE_ITEM
-                        )?.let {
-                            fragment?.updateLineItem(it)
-                        }
-                    }
-                }
-            }
-        }
-    }
     override fun onSave(selectableLineItem: SelectableLineItem) {
         fragment?.updateLineItem(selectableLineItem)
     }
