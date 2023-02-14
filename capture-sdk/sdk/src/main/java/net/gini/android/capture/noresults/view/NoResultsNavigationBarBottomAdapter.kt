@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import net.gini.android.capture.databinding.GcNoResultsNavigationBarBottomBinding
+import net.gini.android.capture.internal.ui.IntervalClickListener
 import net.gini.android.capture.view.InjectedViewAdapter
 
 /**
@@ -12,7 +13,7 @@ import net.gini.android.capture.view.InjectedViewAdapter
  */
 interface NoResultsNavigationBarBottomAdapter: InjectedViewAdapter {
 
-    fun setOnBackButtonClickListener(click: View.OnClickListener)
+    fun setOnBackButtonClickListener(click: View.OnClickListener?)
 
 }
 
@@ -22,7 +23,7 @@ interface NoResultsNavigationBarBottomAdapter: InjectedViewAdapter {
 class DefaultNoResultsNavigationBarBottomAdapter: NoResultsNavigationBarBottomAdapter {
     var viewBinding: GcNoResultsNavigationBarBottomBinding? = null
 
-    override fun setOnBackButtonClickListener(click: View.OnClickListener) {
+    override fun setOnBackButtonClickListener(click: View.OnClickListener?) {
         viewBinding?.gcGoBack?.setOnClickListener(click)
     }
 

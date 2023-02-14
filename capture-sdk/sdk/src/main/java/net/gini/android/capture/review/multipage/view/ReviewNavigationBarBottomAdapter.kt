@@ -5,14 +5,15 @@ import android.view.View
 import android.view.ViewGroup
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.databinding.GcReviewNavigationBarBottomBinding
+import net.gini.android.capture.internal.ui.IntervalClickListener
 import net.gini.android.capture.view.InjectedViewAdapter
 import net.gini.android.capture.view.OnButtonLoadingIndicatorAdapter
 
 interface ReviewNavigationBarBottomAdapter : InjectedViewAdapter {
 
-    fun setOnContinueButtonClickListener(clickListener: View.OnClickListener)
+    fun setOnContinueButtonClickListener(clickListener: View.OnClickListener?)
 
-    fun setOnAddPageButtonClickListener(clickListener: View.OnClickListener)
+    fun setOnAddPageButtonClickListener(clickListener: View.OnClickListener?)
 
     fun setAddPageButtonVisibility(visibility: Int)
 
@@ -28,11 +29,11 @@ class DefaultReviewNavigationBarBottomAdapter : ReviewNavigationBarBottomAdapter
     private var viewBinding: GcReviewNavigationBarBottomBinding? = null
     private var customLoadingIndicatorAdapter: OnButtonLoadingIndicatorAdapter? = null
 
-    override fun setOnContinueButtonClickListener(clickListener: View.OnClickListener) {
+    override fun setOnContinueButtonClickListener(clickListener: View.OnClickListener?) {
         this.viewBinding?.gcContinue?.setOnClickListener(clickListener)
     }
 
-    override fun setOnAddPageButtonClickListener(clickListener: View.OnClickListener) {
+    override fun setOnAddPageButtonClickListener(clickListener: View.OnClickListener?) {
         this.viewBinding?.gcAddPagesWrapper?.setOnClickListener(clickListener)
     }
 
