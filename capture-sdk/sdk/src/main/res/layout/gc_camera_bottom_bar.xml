@@ -42,6 +42,7 @@
         android:padding="@dimen/medium"
         android:src="@drawable/gc_help_icon"
         android:background="@android:color/transparent"
+        android:contentDescription="@string/gc_help"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
