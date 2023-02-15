@@ -66,9 +66,9 @@
     <string name="gc_noresults_header">Leider konnten keine Informationen aus dem Dokument ausgelesen werden.</string>
     <string name="gc_noresults_headline">Tipps für beste Ergebnisse:</string>
     <string name="gc_noresults_retake_images">Foto Wiederholen</string>
-    <string name="gc_noresults_enter_manually">Manuell Eingeben</string>
+    <string name="gc_noresults_enter_manually">Manuell Ausfüllen</string>
 
-    <string name="gc_error_back_to_camera">Back to camera</string>
+    <string name="gc_error_back_to_camera">Neues Photo</string>
     <string name="gc_error_enter_manually">Manuell Ausfüllen</string>
     <string name="gc_error_upload_title">Upload des Dokuments fehlgeschlagen</string>
     <string name="gc_error_upload_text">Das Dokument konnte nicht angenommen werden. Bitte überprüfen Sie, ob das Bild scharf ist, das Dokument Zahlungsinformationen enthält und im richtigen Dateiformathochgeladen wird.</string>
