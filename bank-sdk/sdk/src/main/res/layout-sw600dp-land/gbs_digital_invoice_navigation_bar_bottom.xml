@@ -84,6 +84,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/large"
         android:background="@android:color/transparent"
+        android:contentDescription="@string/gc_back_button_description"
         android:padding="@dimen/medium"
         app:tint="?attr/colorOnBackground"
         app:layout_constraintBottom_toBottomOf="@+id/gbs_pay"
