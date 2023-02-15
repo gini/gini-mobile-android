@@ -67,7 +67,7 @@
     <string name="gc_error_server_text">Upload failed due to a server error. Please try again later.</string>
     <string name="gc_error_auth_title">There has been an authentication error</string>
     <string name="gc_error_auth_text">Upload failed due to authentication error. Please try again later.</string>
-    <string name="gc_error_unexpected_title">Oh something went wrong</string>
+    <string name="gc_error_unexpected_title">An unknown error occurred.</string>
     <string name="gc_error_unexpected_text">It seems something went wrong. Please try again later.</string>
     <string name="gc_error_file_import_generic_title">The document could not be opened. Please try a different document.</string>
     <string name="gc_error_file_import_generic_text"></string>
