@@ -81,7 +81,7 @@
             style="@style/GiniCaptureTheme.Widget.Button.OutlinedButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/gc_noresults_enter_manually" />
+            android:text="@string/gc_error_enter_manually" />
 
         <Button
             android:id="@+id/gc_button_error_retake_images"
@@ -89,6 +89,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/medium"
-            android:text="@string/gc_noresults_retake_images" />
+            android:text="@string/gc_error_back_to_camera" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -59,6 +59,7 @@
     <string name="gc_noresults_enter_manually">Enter Manually</string>
 
     <string name="gc_error_back_to_camera">Back to camera</string>
+    <string name="gc_error_enter_manually">Enter Manually</string>
     <string name="gc_error_upload_title">There was a problem with the upload</string>
     <string name="gc_error_upload_text">The document couldn’t be accepted. Please check if the image is sharp, the document contains payment information and has the right file type.</string>
     <string name="gc_error_connection_title">There was a problem connecting to the internet</string>
