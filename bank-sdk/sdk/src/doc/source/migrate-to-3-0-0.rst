@@ -85,6 +85,11 @@ Digital Invoice Screen
 
 The new digital invoice screen for digital invoice uses the global UI customization options.
 
+Changes
++++++++
+
+We removed the ability for users to manually add additional line items.
+
 Features
 ++++++++
 
