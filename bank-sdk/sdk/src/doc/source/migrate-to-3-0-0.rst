@@ -80,19 +80,3 @@ your own by implementing the ``DigitalInvoiceHelpNavigationBarBottomAdapter`` in
 
 You can find more details `here <capture-features.html#digital-invoice-help-screen-customization>`_.
 
-
-Digital Invoice Screen
-~~~~~~~~~~~~~~~~~~~~
-
-The new digital invoice screen for digital invoice uses the global UI customization options.
-
-Features
-++++++++
-
-Bottom navigation bar
-^^^^^^^^^^^^^^^^^^^^^
-
-You can show an invoice bottom navigation bar by passing true to ``GiniCapture`` ``setBottomNavigationBarEnabled``. There is a default implementation, but you can also use
-your own by implementing the ``DigitalInvoiceNavigationBarBottomAdapter`` interface and passing it to ``GiniBank``.
-
-You can find more details `here <capture-features.html#digital-invoice-screen-customization>`_.

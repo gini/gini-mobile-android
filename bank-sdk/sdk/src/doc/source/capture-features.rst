@@ -151,15 +151,3 @@ You can show back navigation button on bottom navigation bar. You can pass your 
     CustomDigitalInvoiceHelpNavigationBarBottomAdapter customDigitalInvoiceHelpNavigationBarBottomAdapter = new CustomDigitalInvoiceHelpNavigationBarBottomAdapter();
 
     GiniBank.digitalInvoiceHelpNavigationBarBottomAdapter = customDigitalInvoiceHelpNavigationBarBottomAdapter
-
-Digital Invoice Screen Customization
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-You can show invoice bottom navigation bar. You can pass your custom ``DigitalInvoiceNavigationBarBottomAdapter`` implementation to
-``GiniBank``:
-
-.. code-block:: java
-
-    CustomDigitalInvoiceNavigationBarBottomAdapter customDigitalInvoiceNavigationBarBottomAdapter = new CustomDigitalInvoiceNavigationBarBottomAdapter();
-
-    GiniBank.digitalInvoiceNavigationBarBottomAdapter = customDigitalInvoiceNavigationBarBottomAdapter;
