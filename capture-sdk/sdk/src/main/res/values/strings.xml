@@ -71,7 +71,7 @@
     <string name="gc_error_back_to_camera">Neues Photo</string>
     <string name="gc_error_enter_manually">Manuell Ausfüllen</string>
     <string name="gc_error_upload_title">Upload des Dokuments fehlgeschlagen</string>
-    <string name="gc_error_upload_text">Das Dokument konnte nicht angenommen werden. Bitte überprüfen Sie, ob das Bild scharf ist, das Dokument Zahlungsinformationen enthält und im richtigen Dateiformathochgeladen wird.</string>
+    <string name="gc_error_upload_text">Das Dokument konnte nicht angenommen werden. Bitte überprüfen Sie, ob das Bild scharf ist, das Dokument Zahlungsinformationen enthält und im richtigen Dateiformat hochgeladen wird.</string>
     <string name="gc_error_connection_title">Überprüfen Sie Ihre Internetverbindung</string>
     <string name="gc_error_connection_text">Es konnte keine Verbindung zum Internet hergestellt werden. Bitte überprüfen Sie Ihre Netzwerkverbindung und wiederholen Sie den Vorgang</string>
     <string name="gc_error_server_title">Dienst nicht verfügbar</string>
