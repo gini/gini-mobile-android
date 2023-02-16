@@ -32,6 +32,8 @@ Please be aware that for the Gini Bank SDK you need to use the ``CaptureConfigur
 Migrate the Return Assistant
 ----------------------------
 
+TODO: Review this section after all migration info has been added.
+
 Onboarding
 ~~~~~~~~~~
 
