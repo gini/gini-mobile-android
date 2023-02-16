@@ -77,7 +77,7 @@
     <string name="gc_error_server_text">Upload des Dokuments ist fehlgeschlagen aufgrund eines Serverfehlers. Bitte versuchen Sie es später noch einmal.</string>
     <string name="gc_error_auth_title">Authentifizierung fehlgeschlagen</string>
     <string name="gc_error_auth_text">Upload des Dokuments ist fehlgeschlagen aufgrund eines Fehlers bei der Authentifizierung. Bitte versuchen Sie es später noch einmal.</string>
-    <string name="gc_error_unexpected_title">Oh hier ist etwas schiefgelaufen</string>
+    <string name="gc_error_unexpected_title">Ein unbekannter Fehler ist aufgetreten.</string>
     <string name="gc_error_unexpected_text">Es scheint hier ist etwas schiefgelaufen. Bitte versuchen Sie es später noch einmal.</string>
     <string name="gc_error_file_import_generic_title">Ihre Datei konnte nicht geöffnet werden. Bitte versuchen sie es mit einer anderen Datei.</string>
     <string name="gc_error_file_import_generic_text"></string>
