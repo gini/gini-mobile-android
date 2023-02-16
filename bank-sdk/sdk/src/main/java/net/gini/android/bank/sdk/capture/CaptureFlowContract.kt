@@ -110,6 +110,7 @@ internal fun internalParseResult(resultCode: Int, result: Intent?): CaptureResul
     return when(resultCode) {
         Activity.RESULT_OK -> handleOKResult(result)
         CameraActivity.RESULT_ERROR -> handleErrorResult(result)
+        CameraActivity.RESULT_ENTER_MANUALLY -> CaptureResult.EnterManually
         else -> CaptureResult.Cancel
     }
 }
