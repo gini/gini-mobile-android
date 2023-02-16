@@ -13,7 +13,7 @@
     <string name="gc_title_analysis">Übersicht</string>
     <string name="gc_title_no_results">Keine Ergebnisse</string>
     <string name="gc_title_error">Fehler</string>
-    <string name="gc_show_onboarding">Hilfe</string>
+    <string name="gc_help">Hilfe</string>
 
     <string name="gc_camera_error_no_permission">Bitte gestatte Zugriff auf deine Kamera, um Dokumente fotografieren zu können.</string>
     <string name="gc_camera_error_no_permission_button_title">Zugriff erlauben</string>
@@ -66,11 +66,12 @@
     <string name="gc_noresults_header">Leider konnten keine Informationen aus dem Dokument ausgelesen werden.</string>
     <string name="gc_noresults_headline">Tipps für beste Ergebnisse:</string>
     <string name="gc_noresults_retake_images">Foto Wiederholen</string>
-    <string name="gc_noresults_enter_manually">Manuell Eingeben</string>
+    <string name="gc_noresults_enter_manually">Manuell Ausfüllen</string>
 
-    <string name="gc_error_back_to_camera">Back to camera</string>
+    <string name="gc_error_back_to_camera">Neues Photo</string>
+    <string name="gc_error_enter_manually">Manuell Ausfüllen</string>
     <string name="gc_error_upload_title">Upload des Dokuments fehlgeschlagen</string>
-    <string name="gc_error_upload_text">Das Dokument konnte nicht angenommen werden. Bitte überprüfen Sie, ob das Bild scharf ist, das Dokument Zahlungsinformationen enthält und im richtigen Dateiformathochgeladen wird.</string>
+    <string name="gc_error_upload_text">Das Dokument konnte nicht angenommen werden. Bitte überprüfen Sie, ob das Bild scharf ist, das Dokument Zahlungsinformationen enthält und im richtigen Dateiformat hochgeladen wird.</string>
     <string name="gc_error_connection_title">Überprüfen Sie Ihre Internetverbindung</string>
     <string name="gc_error_connection_text">Es konnte keine Verbindung zum Internet hergestellt werden. Bitte überprüfen Sie Ihre Netzwerkverbindung und wiederholen Sie den Vorgang</string>
     <string name="gc_error_server_title">Dienst nicht verfügbar</string>
