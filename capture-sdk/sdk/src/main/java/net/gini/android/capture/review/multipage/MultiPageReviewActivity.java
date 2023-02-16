@@ -189,6 +189,7 @@ public class MultiPageReviewActivity extends AppCompatActivity implements
     public void onReturnToCameraScreenForFirstPage() {
         Intent intent = CameraActivity.createIntent(this, false);
         startActivity(intent);
+        finish();
     }
 
 
