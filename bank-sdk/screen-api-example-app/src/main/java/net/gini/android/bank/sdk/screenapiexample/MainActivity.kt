@@ -240,6 +240,9 @@ class MainActivity : AppCompatActivity() {
             }
             CaptureResult.Cancel -> {
             }
+            CaptureResult.EnterManually -> {
+                Toast.makeText(this, "Scan exited for manual enter mode", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
