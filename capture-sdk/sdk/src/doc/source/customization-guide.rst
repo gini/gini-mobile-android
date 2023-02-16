@@ -62,7 +62,7 @@ Colors
 
 We are providing a global color palette which you are free to override. The custom colors will be then applied on all screens.
 
-You can find the names of the colors `here <https://github.com/gini/gini-mobile-android/blob/main/capture-sdk/sdk/src/main/res/values/colors.xml>`_.
+You can find the names of the color resources in the color palette below.
 
 .. note::
 
