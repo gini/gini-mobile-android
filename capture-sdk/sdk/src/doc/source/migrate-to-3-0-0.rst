@@ -2,7 +2,7 @@ Migrate to 3.0.0
 ================
 
 ..
-  Audience: Android dev who has integrated 1.0.0
+  Audience: Android dev who has integrated 2.0.0
   Purpose: Describe what is new in 3.0.0 and how to migrate from 2.0.0 to 3.0.0
   Content type: Procedural - How-To
 
@@ -162,15 +162,6 @@ Migrate to the new UI
 Onboarding
 ~~~~~~~~~~
 
-Old and new UI:
-
-.. image:: _static/migration/onboarding-old.png
-   :alt: Screenshot of the old onboarding UI
-   :width: 48%
-.. image:: _static/migration/onboarding-new.png
-   :alt: Screenshot of the new onboarding UI
-   :width: 48%
-|
 The new onboarding screen uses the global UI customization options. You can discard the old screen specific
 customizations.
 
