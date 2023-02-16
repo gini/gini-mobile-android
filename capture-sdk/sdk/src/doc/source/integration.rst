@@ -288,6 +288,10 @@ The ``CameraActivity`` can return with the following result codes:
    An error occured and the details are available in the ``EXTRA_OUT_ERROR`` result extra. It contains a parcelable extra
    of type ``GiniCaptureError`` detailing what went wrong.
 
+* CameraActivity.RESULT_ENTER_MANUALLY
+
+   The document analysis finished with no results or an error and the user clicked the "Enter manually" button.
+
 The following example shows how to launch the Gini Capture SDK and how to handle the results:
 
 .. code-block:: java
