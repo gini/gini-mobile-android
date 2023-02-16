@@ -120,7 +120,7 @@ class DefaultNavigationBarTopAdapter : NavigationBarTopAdapter {
                     viewBinding?.root?.context?.let { context ->
                         viewBinding?.gcNavigationBar?.navigationIcon =
                             ContextCompat.getDrawable(context, R.drawable.gc_action_bar_back)
-                        viewBinding?.gcNavigationBar?.navigationContentDescription = context.getString(R.string.gc_close)
+                        viewBinding?.gcNavigationBar?.navigationContentDescription = context.getString(R.string.gc_back_button_description)
 
                     }
                 }
