@@ -119,17 +119,37 @@ Text
 
 Text customization is done via overriding of string resources.
 
-UI Elements
-~~~~~~~~~~~
+Custom UI Elements
+~~~~~~~~~~~~~~~~~~
 
-Certain elements of the UI can be fully customized via UI injection.
+Certain elements of the UI can be fully customized via UI injection. It utilizes view adapter interfaces which you
+can implement and pass to ``GiniCapture`` when configuring the SDK. These interfaces declare the contract the injected
+view has to fulfill and allow the SDK to ask for your view instance when needed.
 
-UI injection utilizes view adapter interfaces which you can implement and pass to ``GiniCapture`` when configuring the
-SDK. These interfaces declare the contract the injected view has to fulfill and allow the SDK to ask for your view
-instance when needed.
+Top Navigation Bar
+++++++++++++++++++
 
-The most important injectable UI element is the top navigation bar. You may also show the navigation bar on the bottom
-using your own custom view. You can find more details `here <features.html#custom-ui-elements>`_.
+To inject your own navigation bar view implement the ``NavigationBarTopAdapter`` and pass it to
+``GiniCapture.newInstance().setNavigationBarTopAdapter()``. Your view will then be displayed on all screens as the top
+navigation bar.
+
+Bottom Navigation Bar
++++++++++++++++++++++
+
+You can opt to show a bottom navigation bar. To enable it pass ``true`` to
+``GiniCapture.newInstance().setBottomNavigationBarEnabled()``.
+
+.. note::
+
+    The top navigation bar will still be used, but its functionality will be limited to showing the screen's title and
+    an optional close button. Please inject a custom top navigation bar if your design requires it even if you have
+    enabled the bottom navigation bar.
+
+Each screen has a slightly different bottom navigation bar because they contain screen specific call-to-action buttons.
+
+To inject your own views implement each screen's view adapter interface (e.g., ``OnboardingNavigationBarBottomAdapter``)
+and pass it to ``GiniCapture`` (e.g., ``GiniCapture.newInstance().setOnboardingNavigationBarBottomAdapter()``). Your
+view will then be displayed on the relevant screen.
 
 Dark mode
 ~~~~~~~~~
@@ -139,22 +159,93 @@ To customize resources for dark mode add them to resource folders containing the
 Onboarding Screen
 ----
 
+UI Customization
+~~~~~~~~~~~~~~~~
+
 .. raw:: html
 
     <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
     src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FMcDZrQPr6IgkzCQtN3lqAe%2FAndroid-Gini-Capture-SDK-3.0.0-UI-Customisation%3Fnode-id%3D40%253A584%26t%3DNoWz8V7m9GX9SNwS-1"
     allowfullscreen></iframe>
 
+Bottom Navigation Bar
+~~~~~~~~~~~~~~~~~~~~~
+
+You can inject your own view for the bottom navigation bar, if you set
+``GiniCapture.newInstance().setBottomNavigationBarEnabled()`` to ``true`` and pass a custom
+``OnboardingNavigationBarBottomAdapter`` implementation to ``GiniCapture.Builder``:
+
+.. code-block:: java
+
+    OnboardingNavigationBarBottomAdapter customOnboardingNavigationBarBottomAdapter = new CustomOnboardingNavigationBarBottomAdapter();
+
+    GiniCapture.newInstance()
+            .setOnboardingNavigationBarBottomAdapter(customOnboardingNavigationBarBottomAdapter)
+            .build();
+
+Custom Onboarding Pages
+~~~~~~~~~~~~~~~~~~~~~~~
+
+If you wish to show different onboarding pages then pass a list of ``OnboardingPage`` objects to
+``GiniCapture.Builder.setCustomOnboardingPages()``.
+
+Custom Illustration Views
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can inject your own views for the illustrations. For example if you need to animate the illustrations on the
+onboarding pages implement the ``OnboardingIllustrationAdapter`` interface to inject a view that can animate images
+(e.g., `Lottie <https://github.com/airbnb/lottie-android>`_) and pass it to the relevant onboarding illustration adapter
+setters (e.g., ``setOnboardingAlignCornersIllustrationAdapter()``) when building the ``GiniCapture`` instance. The
+`reference documentation
+<https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/dokka/sdk/net.gini.android.capture/-gini-capture/-builder/index.html>`_
+of ``GiniCapture.Builder`` lists all the setters.
+
 Camera Screen
 ----
+
+UI Customization
+~~~~~~~~~~~~~~~~
+
 .. raw:: html
 
     <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
     src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FMcDZrQPr6IgkzCQtN3lqAe%2FAndroid-Gini-Capture-SDK-3.0.0-UI-Customisation%3Fnode-id%3D92%253A3712%26t%3Dc3jMrBwHYOfKgDHC-1"
     allowfullscreen></iframe>
 
+Bottom Navigation Bar
+~~~~~~~~~~~~~~~~~~~~~
+
+You can inject your own view for the bottom navigation bar, if you set
+``GiniCapture.newInstance().setBottomNavigationBarEnabled()`` to ``true`` and pass a custom
+``CameraNavigationBarBottomAdapter`` implementation to ``GiniCapture.Builder``:
+
+.. code-block:: java
+
+    CameraNavigationBarBottomAdapter customCameraNavigationBarBottomAdapter = new CustomCameraNavigationBarBottomAdapter();
+
+    GiniCapture.newInstance()
+            .setCameraNavigationBarBottomAdapter(customCameraNavigationBarBottomAdapter)
+            .build();
+
+Custom Loading Indicator
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+There is a default loading indicator which shows that image is being processed. You can show your own activity indicator
+by implementing the ``CustomLoadingIndicatorAdapter`` interface and passing it to ``GiniCapture``:
+
+.. code-block:: java
+
+    CustomLoadingIndicatorAdapter customLoadingIndicatorAdapter = new MyCustomLoadingIndicatorAdapter();
+
+    GiniCapture.newInstance()
+            .setLoadingIndicatorAdapter(customLoadingIndicatorAdapter)
+            .build();
+
 Review Screen
 ----
+
+UI Customization
+~~~~~~~~~~~~~~~~
 
 .. raw:: html
 
@@ -162,8 +253,41 @@ Review Screen
     src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FMcDZrQPr6IgkzCQtN3lqAe%2FAndroid-Gini-Capture-SDK-3.0.0-UI-Customisation%3Fnode-id%3D143%253A4156%26t%3DbxRb1PoNfoS2K8LX-1"
     allowfullscreen></iframe>
 
+Bottom Navigation Bar
+~~~~~~~~~~~~~~~~~~~~~
+
+You can inject your own view for the bottom navigation bar, if you set
+``GiniCapture.newInstance().setBottomNavigationBarEnabled()`` to ``true`` and pass a custom
+``CameraNavigationBarBottomAdapter`` implementation to ``GiniCapture.Builder``:
+
+.. code-block:: java
+
+    ReviewNavigationBarBottomAdapter customReviewNavigationBarBottomAdapter = new CustomReviewNavigationBarBottomAdapter();
+
+    GiniCapture.newInstance()
+            .setReviewBottomBarNavigationAdapter(customReviewNavigationBarBottomAdapter)
+            .build();
+
+Custom "Process" Button Loading Indicator 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+There is a default loading indicator on the "Process" button which shows that the upload is in progress. You can show
+your own activity indicator by implementing the ``OnButtonLoadingIndicatorAdapter`` interface and passing it to
+``GiniCapture``:
+
+.. code-block:: java
+
+    OnButtonLoadingIndicatorAdapter customOnButtonLoadingIndicatorAdapter = new CustomOnButtonLoadingIndicatorAdapter();
+
+    GiniCapture.newInstance()
+            .setOnButtonLoadingIndicatorAdapter(customOnButtonLoadingIndicatorAdapter)
+            .build();
+
 Analysis Screen
 ----
+
+UI Customization
+~~~~~~~~~~~~~~~~
 
 .. raw:: html
 
@@ -171,8 +295,29 @@ Analysis Screen
     src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FMcDZrQPr6IgkzCQtN3lqAe%2FAndroid-Gini-Capture-SDK-3.0.0-UI-Customisation%3Fnode-id%3D7%253A18496%26t%3DRrYhEBagMqQ9uksD-1"
     allowfullscreen></iframe>
 
+.. note::
+
+    This screen does not show a bottom navigation bar even if the value passed to ``GiniCapture.newInstance().setBottomNavigationBarEnabled()`` is ``true``.
+
+Custom Loading Indicator
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can show a customized activity indicator on this screen. You can pass your custom ``CustomLoadingIndicatorAdapter`` implementation to
+``GiniCapture.Builder`` :
+
+.. code-block:: java
+
+    CustomLoadingIndicatorAdapter customLoadingIndicatorAdapter = new MyCustomLoadingIndicatorAdapter();
+
+    GiniCapture.newInstance()
+            .setLoadingIndicatorAdapter(customLoadingIndicatorAdapter)
+            .build();
+
 Help Screen
 ----
+
+UI Customization
+~~~~~~~~~~~~~~~~
 
 .. raw:: html
 
@@ -180,8 +325,44 @@ Help Screen
     src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FMcDZrQPr6IgkzCQtN3lqAe%2FAndroid-Gini-Capture-SDK-3.0.0-UI-Customisation%3Fnode-id%3D9%253A4645%26t%3DHtNbZnDsRjA5FeBu-1"
     allowfullscreen></iframe>
 
+Bottom Navigation Bar
+~~~~~~~~~~~~~~~~~~~~~
+
+You can inject your own view for the bottom navigation bar. You can pass your custom ``HelpNavigationBarBottomAdapter`` implementation to
+``GiniCapture.Builder``:
+
+.. code-block:: java
+
+    HelpNavigationBarBottomAdapter customHelpNavigationBarBottomAdapter = new CustomHelpNavigationBarBottomAdapter();
+
+    GiniCapture.newInstance()
+            .setHelpNavigationBarBottomAdapter(customHelpNavigationBarBottomAdapter)
+            .build();
+
+Custom Help Screens
+~~~~~~~~~~~~~~~~~~~
+
+You can show your own help screens. They will be appended to the list on the main help screen.
+
+You can pass the title and activity for each screen to the
+``GiniCapture.Builder`` using a list of ``HelpItem.Custom`` objects:
+
+.. code-block:: java
+
+    List<HelpItem.Custom> customHelpItems = new ArrayList<>();
+
+    customHelpItems.add(new HelpItem.Custom(R.string.custom_help_screen_title,
+            new Intent((Context) this, CustomHelpActivity.class)));
+
+    GiniCapture.newInstance()
+            .setCustomHelpItems(customHelpItems)
+            .build();
+
 No Results Screen
 ----
+
+UI Customization
+~~~~~~~~~~~~~~~~
 
 .. raw:: html
 
@@ -189,11 +370,42 @@ No Results Screen
     src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FMcDZrQPr6IgkzCQtN3lqAe%2FAndroid-Gini-Capture-SDK-3.0.0-UI-Customisation%3Fnode-id%3D10%253A2540%26t%3DRrYhEBagMqQ9uksD-1"
     allowfullscreen></iframe>
 
+Bottom Navigation Bar
+~~~~~~~~~~~~~~~~~~~~~
+
+You can inject your own view for the bottom navigation bar. You can pass your custom ``HelpNavigationBarBottomAdapter`` implementation to
+``GiniCapture.Builder``:
+
+.. code-block:: java
+
+    NoResultsNavigationBarBottomAdapter customNoResultsNavigationBarBottomAdapter = new CustomNoResultsNavigationBarBottomAdapter();
+
+    GiniCapture.newInstance()
+            .setNoResultsNavigationBarBottomAdapter(customNoResultsNavigationBarBottomAdapter)
+            .build();
+
 Error Screen
 ----
+
+UI Customization
+~~~~~~~~~~~~~~~~
 
 .. raw:: html
 
     <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
     src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FMcDZrQPr6IgkzCQtN3lqAe%2FAndroid-Gini-Capture-SDK-3.0.0-UI-Customisation%3Fnode-id%3D9%253A5075%26t%3DQkcPe6W16KvhSI1a-1"
     allowfullscreen></iframe>
+
+Bottom Navigation Bar
+~~~~~~~~~~~~~~~~~~~~~
+
+You can inject your own view for the bottom navigation bar. You can pass your custom ``HelpNavigationBarBottomAdapter`` implementation to
+``GiniCapture.Builder``:
+
+.. code-block:: java
+
+    ErrorNavigationBarBottomAdapter customErrorNavigationBarBottomAdapter = new CustomErrorNavigationBarBottomAdapter();
+
+    GiniCapture.newInstance()
+            .setErrorNavigationBarBottomAdapter(customNoResultsNavigationBarBottomAdapter)
+            .build();

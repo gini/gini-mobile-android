@@ -27,38 +27,6 @@ Document Capture
 This is the core feature of the Gini Capture SDK. It enables your app to capture documents with the camera and prepares
 them to be analyzed by the Gini Bank API.
 
-Custom UI Elements
-~~~~~~~~~~~~~~~~~~
-
-Certain elements of the UI can now be fully customized via UI injection. It utilizes view adapter interfaces which you
-can implement and pass to ``GiniCapture`` when configuring the SDK. These interfaces declare the contract the injected
-view has to fulfill and allow the SDK to ask for your view instance when needed.
-
-Top Navigation Bar
-++++++++++++++++++
-
-To inject your own navigation bar view implement the ``NavigationBarTopAdapter`` and pass it to
-``GiniCapture.newInstance().setNavigationBarTopAdapter()``. Your view will then be displayed on all screens as the top
-navigation bar.
-
-Bottom Navigation Bar
-+++++++++++++++++++++
-
-You can opt to show a bottom navigation bar. To enable it pass ``true`` to
-``GiniCapture.newInstance().setBottomNavigationBarEnabled()``.
-
-.. note::
-
-    The top navigation bar will still be used, but its functionality will be limited to showing the screen's title and
-    an optional close button. Please inject a custom top navigation bar if your design requires it even if you have
-    enabled the bottom navigation bar.
-
-Each screen has a slightly different bottom navigation bar because they contain screen specific call-to-action buttons.
-
-To inject your own views implement each screen's view adapter interface (e.g., ``OnboardingNavigationBarBottomAdapter``)
-and pass it to ``GiniCapture`` (e.g., ``GiniCapture.newInstance().setOnboardingNavigationBarBottomAdapter()``). Your
-view will then be displayed on the relevant screen.
-
 Onboarding
 ~~~~~~~~~~
 
@@ -70,22 +38,9 @@ You can customize the onboarding in the following ways:
    By default the onboarding is shown at first run. To disable this pass ``false`` to
    ``GiniCapture.Builder.setShouldShowOnboardingAtFirstRun()``.
 
-* Customize the onboarding pages:
-   If you wish to show different onboarding pages then pass a list of ``OnboardingPage`` objects to
-   ``GiniCapture.Builder.setCustomOnboardingPages()``.
-
 * Force show the onboarding:
    If you wish to show the onboarding after the first run then pass ``true`` to
    ``GiniCapture.Builder.setShouldShowOnboarding()``.
-
-* Animate illustrations by injecting custom views:
-   If you need to animate the illustrations on the onboarding pages implement the ``OnboardingIllustrationAdapter``
-   interface to inject a view that can animate images (e.g., `Lottie <https://github.com/airbnb/lottie-android>`_) and
-   pass it to the relevant onboarding illustration adapter setters (e.g.,
-   ``setOnboardingAlignCornersIllustrationAdapter()``) when building the ``GiniCapture`` instance. The `reference
-   documentation
-   <https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/dokka/sdk/net.gini.android.capture/-gini-capture/-builder/index.html>`_
-   of ``GiniCapture.Builder`` lists all the setters.
 
 Single Page
 ~~~~~~~~~~~
@@ -110,7 +65,7 @@ Camera
    Flash is on by default, and you can turn it off by passing ``false`` to ``GiniCapture.Builder.setFlashOnByDefault()``.
 
 QR Code Scanning
-----------------
+~~~~~~~~~~~~~~~~
 
 By using the Google Mobile Vision API the SDK can read payment data from QR Codes. We support the `BezahlCode
 <http://www.bezahlcode.de/>`_ , `EPC069-12
@@ -139,9 +94,9 @@ To enable this feature simply pass ``true`` to ``GiniCapture.Builder.setQRCodeSc
 
 
 Only QR Code Scanning
-----------------
+~~~~~~~~~~~~~~~~~~~~~
 
-The app supports QR code only scanning mode. To enable this feature simply pass ``true`` to ``GiniCapture.Builder.setOnlyQRCodeScanning``.
+The SDK supports QR code only scanning mode. To enable this feature simply pass ``true`` to ``GiniCapture.Builder.setOnlyQRCodeScanning()``.
 Enabling this feature removes all UI elements related to taking pictures from the Camera screen and leaves only QR code-related UI elements.
 
 .. note::
@@ -363,143 +318,6 @@ callback.
                 .setPositiveButton("OK", (dialogInterface, i) -> finish())
                 .show();
     }
-
-If scanning of multi-page documents is enabled then either the multi-page review screen or the analysis screen will be
-launched. PDFs cannot be reviewed by the user and in that case the analysis screen is launched directly. You should not
-expect the review screen to be launched every time.
-
-When multi-page is disabled then the difference is only that the single-page review screen will be used instead.
-
-Help Screen Customization
--------------------------
-
-You can show your own help screens in the Gini Capture SDK. These screens could be shown from a list on the main Help screen opened from the Camera screen
-navigation bars.
-You can pass the title and activity for each screen to the
-``GiniCapture.Builder`` using a list of ``HelpItem.Custom`` objects:
-
-.. code-block:: java
-
-    List<HelpItem.Custom> customHelpItems = new ArrayList<>();
-
-    customHelpItems.add(new HelpItem.Custom(R.string.custom_help_screen_title,
-            new Intent((Context) this, CustomHelpActivity.class)));
-
-    GiniCapture.newInstance()
-            .setCustomHelpItems(customHelpItems)
-            .build();
-
-You can also disable the supported formats help screen by passing ``false`` to
-``GiniCapture.Builder.setSupportedFormatsHelpScreenEnabled()``.
-
-Furthermore you can show back navigation button on bottom navigation bar. You can pass your custom ``HelpNavigationBarBottomAdapter`` implementation to
-``GiniCapture.Builder``:
-
-.. code-block:: java
-
-    CustomHelpNavigationBarBottomAdapter customHelpNavigationBarBottomAdapter = new CustomHelpNavigationBarBottomAdapter();
-
-    GiniCapture.newInstance()
-            .setHelpNavigationBarBottomAdapter(customHelpNavigationBarBottomAdapter)
-            .build();
-
-Analysis Screen Customization
------------------------------
-
-.. note::
-
-    This screen does not show a bottom navigation bar even if the value passed to ``GiniCapture.newInstance().setBottomNavigationBarEnabled()`` is ``true``
-
-You can show customized activity indicator on this screen. You can pass your custom ``CustomLoadingIndicatorAdapter`` implementation to
-``GiniCapture.Builder`` :
-
-.. code-block:: java
-
-    CustomLottiLoadingIndicatorAdapter customLottiLoadingIndicatorAdapter = new CustomLottiLoadingIndicatorAdapter(getResources().getIdentifier("custom_loading", "raw", this.getPackageName()));
-
-    GiniCapture.newInstance()
-            .setLoadingIndicatorAdapter(customLottiLoadingIndicatorAdapter)
-            .build();
-
-Error Screen Customization
---------------------------
-
-You can show custom back navigation button on bottom navigation bar. You can pass your custom ``ErrorNavigationBarBottomAdapter`` implementation to
-``GiniCapture.Builder``:
-
-.. code-block:: java
-
-    CustomErrorNavigationBarBottomAdapter customErrorNavigationBarBottomAdapter = new CustomErrorNavigationBarBottomAdapter();
-
-    GiniCapture.newInstance()
-            .setErrorNavigationBarBottomAdapter(customErrorNavigationBarBottomAdapter)
-            .build();
-
-You can show your own UI if an error occured and the user chooses to enter details manually. For this you must handle ``CameraActivity.RESULT_ENTER_MANUALLY``
-result code, which is returned by the SDK when the user clicks the "Enter manually" button on the error screen, in your main activity.
-
-.. code-block:: java
-
-    @Override
-    protected void onActivityResult(final int requestCode, final int resultCode,
-                                    final Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == REQUEST_SCAN) {
-             (...)
-             if (resultCode == CameraActivity.RESULT_ENTER_MANUALLY) {
-                 handleEnterManuallyAction();
-             }
-             return;
-
-            switch (resultCode) {
-                case CameraActivity.RESULT_ENTER_MANUALLY:
-                    handleEnterManuallyAction();
-                    break;
-                (...)
-            }
-            (...)
-        }
-
-No Results Screen Customization
--------------------------------
-
-You can show custom back navigation button on bottom navigation bar. You can pass your custom ``NoResultsNavigationBarBottomAdapter`` implementation to
-``GiniCapture.Builder``:
-
-.. code-block:: java
-
-    CustomNoResultsNavigationBarBottomAdapter customNoResultsNavigationBarBottomAdapter = new CustomNoResultsNavigationBarBottomAdapter();
-
-    GiniCapture.newInstance()
-            .setNoResultsNavigationBarBottomAdapter(customNoResultsNavigationBarBottomAdapter)
-            .build();
-
-You can show your own UI if the document analysis returned with no result and the user chooses to enter details manually. For this you must handle ``CameraActivity.RESULT_ENTER_MANUALLY``
-result code, which is returned by the SDK when the user clicks the "Enter manually" button on the no results screen, in your main activity.
-
-.. code-block:: java
-
-    @Override
-    protected void onActivityResult(final int requestCode, final int resultCode,
-                                    final Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == REQUEST_SCAN) {
-             (...)
-             if (resultCode == CameraActivity.RESULT_ENTER_MANUALLY) {
-                 handleEnterManuallyAction();
-             }
-             return;
-
-            switch (resultCode) {
-                case CameraActivity.RESULT_ENTER_MANUALLY:
-                    handleEnterManuallyAction();
-                    break;
-                (...)
-            }
-            (...)
-        }
 
 Event Tracking
 --------------
