@@ -12,7 +12,7 @@ such as the document sender or the payment relevant information (amount to pay, 
 provides a secure channel for sharing payment related information between clients. 
 
 .. note::
-   The documentation for the 1.x.x version can be found `here <https://developer.gini.net/gini-mobile-android/bank-sdk/sdk/1.11.4/html/index.html>`_.
+   The documentation for the 2.x.x version can be found `here <https://developer.gini.net/gini-mobile-android/bank-sdk/sdk/2.0.3/html/index.html>`_.
 
 Table of contents
 -----------------
