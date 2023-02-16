@@ -19,7 +19,9 @@ import net.gini.android.bank.sdk.capture.CaptureImportInput
 import net.gini.android.bank.sdk.capture.applyConfiguration
 import net.gini.android.bank.sdk.capture.digitalinvoice.help.view.DefaultDigitalInvoiceHelpNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.capture.digitalinvoice.help.view.DigitalInvoiceHelpNavigationBarBottomAdapter
+import net.gini.android.bank.sdk.capture.digitalinvoice.view.DefaultDigitalInvoiceNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.capture.digitalinvoice.view.DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter
+import net.gini.android.bank.sdk.capture.digitalinvoice.view.DigitalInvoiceNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.capture.digitalinvoice.view.DigitalInvoiceOnboardingNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.capture.util.getImportFileCallback
 import net.gini.android.bank.sdk.error.AmountParsingException
@@ -59,6 +61,8 @@ object GiniBank {
     private var captureConfiguration: CaptureConfiguration? = null
     private var giniApi: GiniBankAPI? = null
 
+    // TODO: remove this after QA process
+    var multipleCurrenciesEnabled = false
 
     /**
      * Bottom navigation bar adapters. Could be changed to custom ones.
@@ -68,6 +72,8 @@ object GiniBank {
 
     var digitalInvoiceOnboardingIllustrationAdapter: OnboardingIllustrationAdapter = ImageOnboardingIllustrationAdapter(R.drawable.gbs_digital_invoice_list_image,
         R.string.gbs_digital_invoice_illustration)
+
+    var digitalInvoiceNavigationBarBottomAdapter: DigitalInvoiceNavigationBarBottomAdapter = DefaultDigitalInvoiceNavigationBarBottomAdapter()
 
     internal fun getCaptureConfiguration() = captureConfiguration
 
@@ -121,6 +127,7 @@ object GiniBank {
         digitalInvoiceOnboardingIllustrationAdapter = ImageOnboardingIllustrationAdapter(R.drawable.gbs_digital_invoice_list_image,
         R.string.gbs_digital_invoice_illustration)
 
+        digitalInvoiceNavigationBarBottomAdapter = DefaultDigitalInvoiceNavigationBarBottomAdapter()
     }
 
     /**

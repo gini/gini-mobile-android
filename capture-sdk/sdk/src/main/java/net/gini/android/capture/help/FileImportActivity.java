@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -207,7 +208,10 @@ public class FileImportActivity extends AppCompatActivity {
             topBarAdapter.setNavButtonType(NavButtonType.BACK);
             topBarAdapter.setTitle(getString(R.string.gc_title_file_import));
 
-            topBarAdapter.setOnNavButtonClickListener(new IntervalClickListener(v -> onBackPressed()));
+            topBarAdapter.setOnNavButtonClickListener(
+                    new IntervalClickListener(v ->
+                    onBackPressed())
+            );
         }
     }
 
@@ -220,9 +224,13 @@ public class FileImportActivity extends AppCompatActivity {
         Snackbar.SnackbarLayout snackBarLayout = (Snackbar.SnackbarLayout) snackbar.getView();
 
         int bottomPadding = GiniCapture.getInstance().isBottomNavigationBarEnabled()
-                ? (int) getResources().getDimension(R.dimen.xxxlarge) : 0;
+                ? (int) getResources().getDimension(R.dimen.xxxxxlarge) : 0;
 
-        snackBarLayout.setPadding((int)getResources().getDimension(R.dimen.medium), 0, (int)getResources().getDimension(R.dimen.medium), bottomPadding);
+        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) snackBarLayout.getLayoutParams();
+
+        params.setMargins((int)getResources().getDimension(R.dimen.medium), 0, (int)getResources().getDimension(R.dimen.medium), bottomPadding);
+
+        snackbar.getView().setLayoutParams(params);
 
         View view = getLayoutInflater().inflate(R.layout.gc_snackbar_info, null);
 

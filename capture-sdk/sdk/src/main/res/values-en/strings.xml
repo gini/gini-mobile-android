@@ -10,7 +10,7 @@
     <string name="gc_title_file_import">How to import</string>
     <string name="gc_title_no_results">No results</string>
     <string name="gc_title_error">Error</string>
-    <string name="gc_show_onboarding">Help</string>
+    <string name="gc_help">Help</string>
 
     <string name="gc_camera_error_no_permission">We need access to your camera to enable you to capture your invoices</string>
     <string name="gc_camera_error_no_permission_button_title">Give Access</string>
@@ -58,7 +58,8 @@
     <string name="gc_noresults_retake_images">Retake Images</string>
     <string name="gc_noresults_enter_manually">Enter Manually</string>
 
-    <string name="gc_error_back_to_camera">Back to camera</string>
+    <string name="gc_error_back_to_camera">Back To Camera</string>
+    <string name="gc_error_enter_manually">Enter Manually</string>
     <string name="gc_error_upload_title">There was a problem with the upload</string>
     <string name="gc_error_upload_text">The document couldn’t be accepted. Please check if the image is sharp, the document contains payment information and has the right file type.</string>
     <string name="gc_error_connection_title">There was a problem connecting to the internet</string>
@@ -67,7 +68,7 @@
     <string name="gc_error_server_text">Upload failed due to a server error. Please try again later.</string>
     <string name="gc_error_auth_title">There has been an authentication error</string>
     <string name="gc_error_auth_text">Upload failed due to authentication error. Please try again later.</string>
-    <string name="gc_error_unexpected_title">Oh something went wrong</string>
+    <string name="gc_error_unexpected_title">An unknown error occurred.</string>
     <string name="gc_error_unexpected_text">It seems something went wrong. Please try again later.</string>
     <string name="gc_error_file_import_generic_title">The document could not be opened. Please try a different document.</string>
     <string name="gc_error_file_import_generic_text"></string>

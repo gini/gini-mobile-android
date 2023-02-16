@@ -52,13 +52,13 @@
     <TextView
         android:id="@+id/gc_error_textview"
         style="@style/GiniCaptureTheme.Typography.Body2"
-        android:layout_width="@dimen/gc_tablet_width"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="@dimen/xxxlarge"
+        android:layout_marginTop="@dimen/large_24"
         android:textColor="@color/Dark_06"
         android:text="@string/gc_error_upload_text"
-        android:layout_marginStart="@dimen/large_24"
-        android:layout_marginEnd="@dimen/large_24"
+        android:layout_marginStart="@dimen/xxlarge"
+        android:layout_marginEnd="@dimen/xxlarge"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toTopOf="@id/gc_error_button_container"
@@ -81,7 +81,7 @@
             style="@style/GiniCaptureTheme.Widget.Button.OutlinedButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/gc_noresults_enter_manually" />
+            android:text="@string/gc_error_enter_manually" />
 
         <Button
             android:id="@+id/gc_button_error_retake_images"
@@ -89,6 +89,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/medium"
-            android:text="@string/gc_noresults_retake_images" />
+            android:text="@string/gc_error_back_to_camera" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

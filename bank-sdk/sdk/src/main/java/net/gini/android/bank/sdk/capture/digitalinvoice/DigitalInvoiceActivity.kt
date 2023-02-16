@@ -6,25 +6,23 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.WindowManager
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
-import net.gini.android.capture.camera.CameraActivity
-import net.gini.android.capture.internal.util.ActivityHelper.enableHomeAsUp
-import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
-import net.gini.android.capture.network.model.GiniCaptureReturnReason
-import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.capture.CaptureResult
-import net.gini.android.bank.sdk.capture.digitalinvoice.details.LineItemDetailsActivity
 import net.gini.android.bank.sdk.capture.digitalinvoice.details.LineItemDetailsFragmentListener
 import net.gini.android.bank.sdk.capture.digitalinvoice.info.DigitalInvoiceInfoFragment
 import net.gini.android.bank.sdk.capture.digitalinvoice.info.DigitalInvoiceInfoFragmentListener
 import net.gini.android.bank.sdk.capture.digitalinvoice.onboarding.DigitalInvoiceOnboardingFragment
 import net.gini.android.bank.sdk.capture.digitalinvoice.onboarding.DigitalInvoiceOnboardingFragmentListener
 import net.gini.android.bank.sdk.capture.internalParseResult
-import net.gini.android.capture.view.InjectedViewContainer
-import net.gini.android.capture.help.view.HelpNavigationBarBottomAdapter
+import net.gini.android.capture.camera.CameraActivity
+import net.gini.android.capture.internal.util.ActivityHelper.enableHomeAsUp
+import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
+import net.gini.android.capture.network.model.GiniCaptureReturnReason
+import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 
 /**
  * Created by Alpar Szotyori on 05.12.2019.
@@ -99,6 +97,10 @@ internal class DigitalInvoiceActivity : AppCompatActivity(), DigitalInvoiceFragm
             retainFragment()
         }
         enableHomeAsUp(this)
+
+        if (resources.getBoolean(R.bool.gc_is_tablet)) {
+            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
+        }
     }
 
 
@@ -218,22 +220,13 @@ internal class DigitalInvoiceActivity : AppCompatActivity(), DigitalInvoiceFragm
     override fun onEditLineItem(selectableLineItem: SelectableLineItem) {
         val bottomSheet = DigitalInvoiceBottomSheet.newInstance(selectableLineItem)
         bottomSheet.show(supportFragmentManager, bottomSheet.tag)
-        /*startActivityForResult(
-            LineItemDetailsActivity.createIntent(this, selectableLineItem, returnReasons),
-            EDIT_LINE_ITEM_REQUEST
-        )*/
     }
 
     fun resultFromBottomSheet(selectableLineItem: SelectableLineItem) {
         fragment?.updateLineItem(selectableLineItem)
     }
 
-    override fun onAddLineItem(selectableLineItem: SelectableLineItem) {
-        startActivityForResult(
-            LineItemDetailsActivity.createIntent(this, selectableLineItem, returnReasons),
-            EDIT_LINE_ITEM_REQUEST
-        )
-    }
+    override fun onAddLineItem(selectableLineItem: SelectableLineItem) {}
 
     /**
      * Internal use only.
@@ -255,27 +248,6 @@ internal class DigitalInvoiceActivity : AppCompatActivity(), DigitalInvoiceFragm
         finish()
     }
 
-    /**
-     * Internal use only.
-     *
-     * @suppress
-     */
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            EDIT_LINE_ITEM_REQUEST -> {
-                when (resultCode) {
-                    Activity.RESULT_OK -> {
-                        data?.getParcelableExtra<SelectableLineItem>(
-                            LineItemDetailsActivity.EXTRA_OUT_SELECTABLE_LINE_ITEM
-                        )?.let {
-                            fragment?.updateLineItem(it)
-                        }
-                    }
-                }
-            }
-        }
-    }
     override fun onSave(selectableLineItem: SelectableLineItem) {
         fragment?.updateLineItem(selectableLineItem)
     }
