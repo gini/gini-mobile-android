@@ -103,6 +103,29 @@ Enabling this feature removes all UI elements related to taking pictures from th
 
     To use this feature ``setQRCodeScanningEnabled`` must be set to ``true`` otherwise ``setOnlyQRCodeScanning`` will be ignored.
 
+Help
+~~~~
+
+The SDK includes help screens to aid users in getting the best results.
+
+Disable Supported Formats Help Screen
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can disable the supported formats help screen by passing ``false`` to
+``GiniCapture.Builder.setSupportedFormatsHelpScreenEnabled()``.
+
+No Results
+~~~~~~~~~~
+
+In case analysis finished without results, the SDK shows a no results screen with helpful tips and allows the user to
+either retake the image or exit the SDK to enter the information manually.
+
+Error
+~~~~~
+
+The SDK shows an error screen, if an error was encountered during analysis. The screen shows error details and allows
+the user to either return to the camera or exit the SDK to enter the information manually.
+
 Document Import
 ---------------
 
