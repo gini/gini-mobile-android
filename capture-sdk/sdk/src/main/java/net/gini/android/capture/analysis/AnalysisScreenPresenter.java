@@ -282,38 +282,34 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
 
     @VisibleForTesting
     void analyzeDocument() {
-        if (MimeType.APPLICATION_PDF.asString().equals(mMultiPageDocument.getMimeType())) {
-            showAlertIfOpenWithDocumentAndAppIsDefault(mMultiPageDocument,
-                    new FileImportHelper.ShowAlertCallback() {
-                        @Override
-                        public void showAlertDialog(@NonNull final String message,
-                                                    @NonNull final String positiveButtonTitle,
-                                                    @NonNull final DialogInterface.OnClickListener
-                                                            positiveButtonClickListener,
-                                                    @Nullable final String negativeButtonTitle,
-                                                    @Nullable final DialogInterface.OnClickListener
-                                                            negativeButtonClickListener,
-                                                    @Nullable final DialogInterface.OnCancelListener cancelListener) {
-                            getView().showAlertDialog(message, positiveButtonTitle,
-                                    positiveButtonClickListener, negativeButtonTitle,
-                                    negativeButtonClickListener, cancelListener);
+        showAlertIfOpenWithDocumentAndAppIsDefault(mMultiPageDocument,
+                new FileImportHelper.ShowAlertCallback() {
+                    @Override
+                    public void showAlertDialog(@NonNull final String message,
+                                                @NonNull final String positiveButtonTitle,
+                                                @NonNull final DialogInterface.OnClickListener
+                                                        positiveButtonClickListener,
+                                                @Nullable final String negativeButtonTitle,
+                                                @Nullable final DialogInterface.OnClickListener
+                                                        negativeButtonClickListener,
+                                                @Nullable final DialogInterface.OnCancelListener cancelListener) {
+                        getView().showAlertDialog(message, positiveButtonTitle,
+                                positiveButtonClickListener, negativeButtonTitle,
+                                negativeButtonClickListener, cancelListener);
+                    }
+                })
+                .handle(new CompletableFuture.BiFun<Void, Throwable, Void>() {
+                    @Override
+                    public Void apply(final Void aVoid, final Throwable throwable) {
+                        if (throwable != null) {
+                            getAnalysisFragmentListenerOrNoOp()
+                                    .onDefaultPDFAppAlertDialogCancelled();
+                        } else {
+                            showErrorIfAvailableAndAnalyzeDocument();
                         }
-                    })
-                    .handle(new CompletableFuture.BiFun<Void, Throwable, Void>() {
-                        @Override
-                        public Void apply(final Void aVoid, final Throwable throwable) {
-                            if (throwable != null) {
-                                getAnalysisFragmentListenerOrNoOp()
-                                        .onDefaultPDFAppAlertDialogCancelled();
-                            } else {
-                                showErrorIfAvailableAndAnalyzeDocument();
-                            }
-                            return null;
-                        }
-                    });
-        } else {
-            showErrorIfAvailableAndAnalyzeDocument();
-        }
+                        return null;
+                    }
+                });
     }
 
     @VisibleForTesting
