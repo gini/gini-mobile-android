@@ -21,7 +21,7 @@ Migrate the Invoice Capture Feature
 -----------------------------------
 
 The capture feature uses our `Gini Capture SDK <https://github.com/gini/gini-mobile-android/tree/main/capture-sdk>`_ and
-its `migration guide <https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/html/migrate-to-2-0-0.html>`_
+its :root_html_path_capture_sdk:`migration guide <migrate-to-3-0-0.html>`
 describes what has changed.
 
 Please be aware that for the Gini Bank SDK you need to use the ``CaptureConfiguration`` instead of the Gini Capture SDK's

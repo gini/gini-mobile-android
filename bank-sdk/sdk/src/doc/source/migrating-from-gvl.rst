@@ -14,7 +14,7 @@ recommend upgrading to Kotlin to avoid the overhead incurred by the non-Java idi
 Gini Capture SDK
 ----------------
 
-The `Gini Capture SDK <https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/html>`_ supersedes the Gini Vision Library.
+The :root_html_path_capture_sdk:`Gini Capture SDK <index.html>` supersedes the Gini Vision Library.
 
 This migration guide will often refer to the Gini Capture SDK because it is used to fulfill the same functionality as
 the Gini Vision Library did.
@@ -349,6 +349,5 @@ You need to rename the assets first:
 * rename ``gv_`` prefixes to ``gc_``,
 * replace ``GiniVision`` in theme and style names with ``GiniCapture``.
 
-After that you need to follow the Gini Capture SDK's `migration guide
-<https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/html/migrate-to-2-0-0.html#overview-of-new-ui-customization-options>`_
+After that you need to follow the Gini Capture SDK's :root_html_path_capture_sdk:`migration guide <migrate-to-2-0-0.html#overview-of-new-ui-customization-options>`
 to migrate to the new customization options.

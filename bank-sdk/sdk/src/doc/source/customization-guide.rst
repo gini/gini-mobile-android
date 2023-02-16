@@ -7,9 +7,9 @@ Although all `resources of the Gini Bank SDK
 changing the resources listed in this customization guide.
 
 The capture related screens are provided by the `Gini Capture SDK
-<https://github.com/gini/gini-mobile-android/tree/main/capture-sdk>`_. Please consult the `customization guide
-<https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/html/customization-guide.html>`_ for the Gini Capture
-SDK to view a screen based overview of the customizable resources.
+<https://github.com/gini/gini-mobile-android/tree/main/capture-sdk>`_. Please consult the
+:root_html_path_capture_sdk:`customization guide <customization-guide.html>` for the Gini Capture SDK to view a screen
+based overview of the customizable resources.
 
 .. note::
   

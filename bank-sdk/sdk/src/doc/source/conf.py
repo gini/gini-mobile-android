@@ -281,11 +281,14 @@ else:
     capture_sdk_version_path = "/"
 
 root_dokka_path = "https://developer.gini.net/gini-mobile-android/bank-sdk/sdk%(version_path)sdokka/" % {"version_path" : version_path}
-root_dokka_path_capture_sdk = "https://developer.gini.net/gini-mobile-android/capture-sdk/sdk%(capture_sdk_version_path)sdokka/" % {"capture_sdk_version_path" : capture_sdk_version_path}
+root_capture_sdk_path = "https://developer.gini.net/gini-mobile-android/capture-sdk/sdk%(capture_sdk_version_path)s" % {"capture_sdk_version_path" : capture_sdk_version_path}
+root_html_path_capture_sdk = "%(root_capture_sdk_path)shtml/" % {"root_capture_sdk_path" : root_capture_sdk_path}
+root_dokka_path_capture_sdk = "%(root_capture_sdk_path)sdokka/" % {"root_capture_sdk_path" : root_capture_sdk_path}
 root_dokka_path_capture_sdk_default_network = "https://developer.gini.net/gini-mobile-android/capture-sdk/default_network%(capture_sdk_version_path)sdokka/" % {"capture_sdk_version_path" : capture_sdk_version_path}
 
 extlinks = {
     "root_dokka_path": (root_dokka_path + "%s", "%s"),
+    "root_html_path_capture_sdk": (root_html_path_capture_sdk + "%s", "%s"),
     "root_dokka_path_capture_sdk": (root_dokka_path_capture_sdk + "%s", "%s"),
     "root_dokka_path_capture_sdk_default_network": (root_dokka_path_capture_sdk_default_network + "%s", "%s"),
 }
