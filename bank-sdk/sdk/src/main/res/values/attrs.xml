@@ -4,9 +4,9 @@
         <attr name="gbsCurrencyPickerItemBackgroundColor" format="reference|color"/>
         <attr name="gbsCurrencyPickerItemSelectedColor" format="reference|color"/>
         <attr name="colorSurface" format="color" />
+        <attr name="gbsBottomSheetItemTitle" format="reference|color"/>
     </declare-styleable>
 
     <attr name="gbsSwitchTrack" format="reference|color"/>
     <attr name="gbsTextInputLayout" format="reference|color"/>
-    <attr name="gbsBottomSheetItemTitle" format="reference|color"/>
 </resources>

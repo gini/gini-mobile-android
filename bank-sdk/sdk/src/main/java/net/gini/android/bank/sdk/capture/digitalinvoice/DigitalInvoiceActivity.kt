@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.WindowManager
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
@@ -96,6 +97,10 @@ internal class DigitalInvoiceActivity : AppCompatActivity(), DigitalInvoiceFragm
             retainFragment()
         }
         enableHomeAsUp(this)
+
+        if (resources.getBoolean(R.bool.gc_is_tablet)) {
+            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
+        }
     }
 
 

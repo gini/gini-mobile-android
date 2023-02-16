@@ -166,6 +166,10 @@ class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItemDetailsSc
             binding.gbsDropDownArrow.visibility = View.VISIBLE
         } else {
             binding.gbsDropDownArrow.visibility = View.GONE
+            context?.let {
+                val typedArray = it.obtainStyledAttributes(R.styleable.CurrencyStyle)
+                binding.gbsDropDownSelectionValue.setTextColor(typedArray.getColor(R.styleable.CurrencyStyle_gbsBottomSheetItemTitle, R.color.Light_01))
+            }
 
             // Setting large margin to currency label if arrow is hidden to align with + button on UI
             val param = (binding.gbsDropDownSelectionValue.layoutParams as ViewGroup.MarginLayoutParams).apply {
