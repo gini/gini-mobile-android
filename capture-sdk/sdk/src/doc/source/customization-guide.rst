@@ -196,9 +196,8 @@ You can inject your own views for the illustrations. For example if you need to 
 onboarding pages implement the ``OnboardingIllustrationAdapter`` interface to inject a view that can animate images
 (e.g., `Lottie <https://github.com/airbnb/lottie-android>`_) and pass it to the relevant onboarding illustration adapter
 setters (e.g., ``setOnboardingAlignCornersIllustrationAdapter()``) when building the ``GiniCapture`` instance. The
-`reference documentation
-<https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/dokka/sdk/net.gini.android.capture/-gini-capture/-builder/index.html>`_
-of ``GiniCapture.Builder`` lists all the setters.
+:root_dokka_path:`reference documentation <sdk/net.gini.android.capture/-gini-capture/-builder/index.html>` of
+``GiniCapture.Builder`` lists all the setters.
 
 Camera Screen
 ----
