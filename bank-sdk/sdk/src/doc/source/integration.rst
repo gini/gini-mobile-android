@@ -298,6 +298,9 @@ The following example shows how to launch the capture flow and how to handle the
             CaptureResult.Cancel -> {
                 handleCancellation()
             }
+            CaptureResult.EnterManually -> {
+                handleEnterManually()
+            }
         }
     }
 
