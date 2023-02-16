@@ -106,9 +106,7 @@ application use the root style as the parent, for example:
   If you have overriden the ``GiniCaptureTheme`` then the text appearances you have set there will override the
   typography customization. Same applies to overriden widget styles where you have set a custom text appearance.
 
-You can find all the typography styles `here <https://github.com/gini/gini-mobile-android/blob/main/capture-sdk/sdk/src/main/res/values/typography.xml>`_.
-
-You can preview our typography here:
+You can preview our typography along with their style resource names below:
 
 .. raw:: html
 
@@ -120,8 +118,6 @@ Text
 ~~~~
 
 Text customization is done via overriding of string resources.
-
-You can find all the string resources `here <https://github.com/gini/gini-mobile-android/blob/main/capture-sdk/sdk/src/main/res/values/strings.xml>`_.
 
 UI Elements
 ~~~~~~~~~~~
