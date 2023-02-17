@@ -120,7 +120,7 @@ class NoResultsFragmentImpl {
             recyclerView.setAdapter(new SupportedFormatsAdapter());
             return;
         }
-        recyclerView.setAdapter(new PhotoTipsAdapter(view.getContext()));
+        recyclerView.setAdapter(new PhotoTipsAdapter(view.getContext(), true));
     }
 
     private void setTopBarInjectedViewContainer() {

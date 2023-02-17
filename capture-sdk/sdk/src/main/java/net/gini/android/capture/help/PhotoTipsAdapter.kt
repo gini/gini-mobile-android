@@ -19,11 +19,21 @@ import net.gini.android.capture.internal.util.FeatureConfiguration
  */
 const val PHOTO_TIPS_HEADER = 1
 const val PHOTO_TIPS = 2
-class PhotoTipsAdapter(private val context: Context): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+class PhotoTipsAdapter(
+    private val context: Context,
+    private val showHeader: Boolean
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     //set null to position 0 to serve as placeholder for the header
-    private var tipList: MutableList<AnalysisHint?> = mutableListOf(null,
-        AnalysisHint.LIGHTING, AnalysisHint.FLAT, AnalysisHint.ALIGN, AnalysisHint.PARALLEL, AnalysisHint.MULTIPAGE)
+    private var tipList: MutableList<AnalysisHint?> = mutableListOf(
+        null,
+        AnalysisHint.LIGHTING,
+        AnalysisHint.FLAT,
+        AnalysisHint.ALIGN,
+        AnalysisHint.PARALLEL,
+        AnalysisHint.MULTIPAGE
+    )
 
     init {
         setupItems()
@@ -47,6 +57,11 @@ class PhotoTipsAdapter(private val context: Context): RecyclerView.Adapter<Recyc
 
         if (holder is PhotoTipsHeaderViewHolder) {
             holder.usefulTips.text = context.getString(R.string.gc_useful_tips)
+            holder.usefulTips.apply {
+                visibility = if (showHeader)
+                    View.VISIBLE
+                else View.GONE
+            }
         }
 
         if (holder is PhotoTipsViewHolder) {
@@ -89,7 +104,7 @@ class PhotoTipsAdapter(private val context: Context): RecyclerView.Adapter<Recyc
         val separatorView: View = itemView.findViewById(R.id.gc_divider)
     }
 
-    inner class PhotoTipsHeaderViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
+    inner class PhotoTipsHeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val usefulTips: TextView = itemView.findViewById(R.id.gc_useful_tips);
     }
 }
