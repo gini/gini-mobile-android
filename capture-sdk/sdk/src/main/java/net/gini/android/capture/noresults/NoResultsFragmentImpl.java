@@ -115,16 +115,11 @@ class NoResultsFragmentImpl {
 
     private void setUpList(View view) {
         final RecyclerView recyclerView = view.findViewById(R.id.gc_no_results_recyclerview);
-        final TextView usefulTips = view.findViewById(R.id.gc_useful_tips);
-
         recyclerView.setLayoutManager(new LinearLayoutManager(mFragment.getActivity()));
         if (mDocument.getType() == Document.Type.PDF || mDocument.getType() == Document.Type.PDF_MULTI_PAGE) {
             recyclerView.setAdapter(new SupportedFormatsAdapter());
-            usefulTips.setText(view.getContext().getString(R.string.gc_supported_formats));
             return;
         }
-
-        usefulTips.setText(view.getContext().getString(R.string.gc_useful_tips));
         recyclerView.setAdapter(new PhotoTipsAdapter(view.getContext()));
     }
 
