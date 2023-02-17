@@ -542,7 +542,9 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
         // Remove the injected view adapter to prevent interacting with it
         // while it might be used in another activity/fragment (it is injected here again in onResume)
-        mLoadingIndicator.setInjectedViewAdapter(null);
+        if (mLoadingIndicator != null) {
+            mLoadingIndicator.setInjectedViewAdapter(null);
+        }
 
         if (mPaymentQRCodePopup != null) {
             mPaymentQRCodePopup.hide();
