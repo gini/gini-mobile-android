@@ -54,7 +54,29 @@ Migrate from Screen API
 The new public API is based on the Screen API, so you only need to use the new UI customization options and follow the
 :ref:`screen-by-screen UI customization section<Migrate to the new UI>` to adapt the look of the new UI.
 
-TODO: Add info about feedback sending changes
+Migrate Cleanup Step and Feedback Sending
+-----------------------------------------
+
+We simplified the feedback sending logic. When you clean up the Gini Bank SDK you only need to pass the values the
+user has used (and potentially corrected) to ``GiniBank.releaseCapture()``. All values except the one for the amount are
+passed in as strings. Amount needs to be passed in as ``BigDecimal`` and its currency as an ``Enum`` value.
+
+You don't have to call any additional methods to send the extraction feedback.
+
+Default Networking Implementation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You don't need to interact with the ``GiniCaptureDefaultNetworkApi`` anymore. The ``GiniBank.releaseCapture()`` method
+will take care of sending the feedback.
+
+Custom Networking Implementation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You only need to implement the ``GiniCaptureNetworkService`` from now on. We removed the ``GiniCaptureNetworkApi`` and
+moved the ``sendFeedback()`` method to the ``GiniCaptureNetworkService``. 
+
+``GiniCaptureNetworkService.sendFeedback()`` will be called when you pass the values the user has used (and potentially
+corrected) to ``GiniBank.releaseCapture()``.
 
 Overview of New UI Customization Options
 ----------------------------------------
