@@ -12,12 +12,14 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:fillViewport="true"
         app:layout_constraintBottom_toTopOf="@+id/done_button"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_gravity="center_vertical"
+            android:layout_height="wrap_content">
 
             <TextView
                 android:id="@+id/onboarding_text_1"
@@ -54,21 +56,17 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginStart="@dimen/xxxlarge"
                 android:layout_marginEnd="@dimen/xxxlarge"
+                android:layout_marginBottom="@dimen/xxxlarge"
                 android:gravity="center"
                 android:lineSpacingExtra="5sp"
                 android:text="@string/gbs_digital_invoice_onboarding_text_2"
                 android:textColor="@color/Dark_06"
                 android:translationY="-2.62sp"
-                app:layout_constraintBottom_toTopOf="@+id/gbs_guideline_onboarding"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent" />
 
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/gbs_guideline_onboarding"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layout_constraintGuide_percent="0.85" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
