@@ -4,30 +4,49 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import net.gini.android.capture.databinding.GcCameraBottomBarBinding
-import net.gini.android.capture.internal.ui.IntervalClickListener
-import net.gini.android.capture.internal.ui.setIntervalClickListener
 import net.gini.android.capture.view.InjectedViewAdapter
 
+/**
+ * Adapter for injecting a custom bottom navigation bar on the camera screen.
+ */
 interface CameraNavigationBarBottomAdapter: InjectedViewAdapter {
 
-    fun setOnBackButtonClickListener(click: View.OnClickListener?)
+    /**
+     * Set the click listener for the back button.
+     *
+     * @param listener the click listener for the button
+     */
+    fun setOnBackButtonClickListener(listener: View.OnClickListener?)
 
-    fun setOnHelpButtonClickListener(click: View.OnClickListener?)
+    /**
+     * Set the click listener for the help button.
+     *
+     * @param listener the click listener for the button
+     */
+    fun setOnHelpButtonClickListener(listener: View.OnClickListener?)
 
+    /**
+     * Set back button visibility.
+     *
+     * @param visibility one of the view visibility values: [View.VISIBLE], [View.INVISIBLE], or [View.GONE]
+     */
     fun setBackButtonVisibility(visibility: Int)
 
 }
 
+/**
+ * Internal use only.
+ */
 class DefaultCameraNavigationBarBottomAdapter: CameraNavigationBarBottomAdapter {
     var viewBinding: GcCameraBottomBarBinding? = null
 
 
-    override fun setOnBackButtonClickListener(click: View.OnClickListener?) {
-        viewBinding?.gcGoBack?.setOnClickListener(click)
+    override fun setOnBackButtonClickListener(listener: View.OnClickListener?) {
+        viewBinding?.gcGoBack?.setOnClickListener(listener)
     }
 
-    override fun setOnHelpButtonClickListener(click: View.OnClickListener?) {
-        viewBinding?.gcHelp?.setOnClickListener(click)
+    override fun setOnHelpButtonClickListener(listener: View.OnClickListener?) {
+        viewBinding?.gcHelp?.setOnClickListener(listener)
     }
 
     override fun setBackButtonVisibility(visibility: Int) {

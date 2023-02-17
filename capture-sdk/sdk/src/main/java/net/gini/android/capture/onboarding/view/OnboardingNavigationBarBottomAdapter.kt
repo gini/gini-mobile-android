@@ -57,11 +57,6 @@ enum class OnboardingNavigationBarBottomButton {
     GET_STARTED
 }
 
-/**
- * Created by Alpár Szotyori on 13.05.22.
- *
- * Copyright (c) 2022 Gini GmbH.
- */
 internal class DefaultOnboardingNavigationBarBottomAdapter : OnboardingNavigationBarBottomAdapter {
 
     var viewBinding: GcOnboardingNavigationBarBottomBinding? = null

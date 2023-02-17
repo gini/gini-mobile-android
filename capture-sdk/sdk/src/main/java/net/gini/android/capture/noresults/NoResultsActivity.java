@@ -29,57 +29,7 @@ import static net.gini.android.capture.internal.util.ActivityHelper.interceptOnB
 /**
  * Internal use only.
  *
- * <h3>Screen API</h3>
- *
- * <p>
- * When you use the Screen API, the {@code NoResultsFragmentCompat} displays hints that show how to
- * best take a picture of a document.
- * </p>
- *
- * <h3>Customizing the No Results Screen</h3>
- *
- * <p>
- *   Customizing the look of the No Results Screen is done via overriding of app resources.
- * </p>
- * <p>
- *     The following items are customizable:
- *     <ul>
- *         <li>
- *             <b>Header icon:</b> via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named
- *             {@code gc_alert_triangle_icon.png}
- *         </li>
- *         <li>
- *             <b>Header and tip title text style:</b> via overriding the style named {@code @style/GiniCaptureTheme.Typography.Body2}
- *         </li>
- *         <li>
- *             <b>Tip text style:</b> via overriding the style named {@code GiniCaptureTheme.Typography.Subtitle1}
- *         </li>
- *         <li>
- *             <b>Tip image - Good lighting:</b> via vector asset xml file
- *             named {@code gc_photo_tip_lighting.xml}
- *         </li>
- *         <li>
- *             <b>Tip image - Document should be flat:</b> via vector asset xml file
- *             named {@code gc_photo_tip_flat.xml}
- *         </li>
- *         <li>
- *             <b>Tip image - Device should be parallel to document:</b> via ivia vector asset xml file
- *             named {@code gc_photo_tip_parallel.xml}
- *         </li>
- *         <li>
- *             <b>Tip image - Document should be aligned with corner guides:</b> via vector asset xml file
- *             named {@code gc_photo_tip_align.xml}
- *         </li>
- *         <li>
- *             <b>Tip image - It's now possible to analyse an invoice with multiple pages:</b> via vector asset xml file
- *             named {@code gc_photo_tip_multipage.xml}
- *         </li>
- *     </ul>
- * </p>
- *
- * <p>
- *     <b>Important:</b> All overriden styles must have their respective {@code Root.} prefixed style as their parent. Ex.: the parent of {@code GiniCaptureTheme.Onboarding.Message.TextStyle} must be {@code Root.GiniCaptureTheme.Onboarding.Message.TextStyle}.
- * </p>
+ * The {@code NoResultsActivity} displays hints that show how to best use the SDK.
  */
 public class NoResultsActivity extends AppCompatActivity implements ImageRetakeOptionsListener {
 

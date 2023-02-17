@@ -21,6 +21,8 @@ import androidx.annotation.NonNull;
  */
 
 /**
+ * Internal use only.
+ *
  * Interface used by the {@link MultiPageReviewFragment} to dispatch events to the hosting
  * Activity.
  */

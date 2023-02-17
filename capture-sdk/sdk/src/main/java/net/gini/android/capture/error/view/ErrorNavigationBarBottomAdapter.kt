@@ -4,8 +4,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import net.gini.android.capture.databinding.GcErrorNavigationBarBottomBinding
-import net.gini.android.capture.databinding.GcNoResultsNavigationBarBottomBinding
-import net.gini.android.capture.internal.ui.IntervalClickListener
 import net.gini.android.capture.view.InjectedViewAdapter
 
 /**
@@ -13,7 +11,13 @@ import net.gini.android.capture.view.InjectedViewAdapter
  * and pass it to the {@link GiniCapture.Builder#setErrorNavigationBarBottomAdapter(ErrorNavigationBarBottomAdapter)}.
  */
 interface ErrorNavigationBarBottomAdapter: InjectedViewAdapter {
-    fun setOnBackButtonClickListener(click: View.OnClickListener?)
+
+    /**
+     * Set the click listener for the back button.
+     *
+     * @param listener the click listener for the button
+     */
+    fun setOnBackButtonClickListener(listener: View.OnClickListener?)
 }
 
 /**
@@ -22,8 +26,8 @@ interface ErrorNavigationBarBottomAdapter: InjectedViewAdapter {
 class DefaultErrorNavigationBarBottomAdapter: ErrorNavigationBarBottomAdapter {
     var viewBinding: GcErrorNavigationBarBottomBinding? = null
 
-    override fun setOnBackButtonClickListener(click: View.OnClickListener?) {
-        viewBinding?.gcGoBack?.setOnClickListener(click)
+    override fun setOnBackButtonClickListener(listener: View.OnClickListener?) {
+        viewBinding?.gcGoBack?.setOnClickListener(listener)
     }
 
     override fun onCreateView(container: ViewGroup): View {

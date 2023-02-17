@@ -11,6 +11,8 @@ import androidx.annotation.DrawableRes;
 import androidx.annotation.StringRes;
 
 /**
+ * Internal use only.
+ *
  * Custom enum class to gather all resources needed to show a hint during analysis
  */
 public enum AnalysisHint {

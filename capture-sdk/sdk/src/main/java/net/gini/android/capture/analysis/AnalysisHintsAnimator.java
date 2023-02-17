@@ -25,7 +25,7 @@ import androidx.core.view.ViewPropertyAnimatorListenerAdapter;
  */
 
 /**
- * Internal use only
+ * Internal use only.
  */
 class AnalysisHintsAnimator {
 

@@ -9,18 +9,47 @@ import net.gini.android.capture.internal.ui.IntervalClickListener
 import net.gini.android.capture.view.InjectedViewAdapter
 import net.gini.android.capture.view.OnButtonLoadingIndicatorAdapter
 
+/**
+ * Adapter for injecting a custom bottom navigation bar on the review screen.
+ */
 interface ReviewNavigationBarBottomAdapter : InjectedViewAdapter {
 
+    /**
+     * Set the click listener for the continue button.
+     *
+     * @param clickListener the click listener for the button
+     */
     fun setOnContinueButtonClickListener(clickListener: View.OnClickListener?)
 
+    /**
+     * Set the click listener for the "add page" button.
+     *
+     * @param clickListener the click listener for the button
+     */
     fun setOnAddPageButtonClickListener(clickListener: View.OnClickListener?)
 
+    /**
+     * Set "add page" button visibility.
+     *
+     * @param visibility one of the view visibility values: [View.VISIBLE], [View.INVISIBLE], or [View.GONE]
+     */
     fun setAddPageButtonVisibility(visibility: Int)
 
+    /**
+     * Set the enabled state of the continue button.
+     *
+     * @param clickListener the click listener for the button
+     */
     fun setContinueButtonEnabled(enabled: Boolean)
 
+    /**
+     * Called when the loading indicator needs to be shown.
+     */
     fun showLoadingIndicator()
 
+    /**
+     * Called when the loading indicator needs to be hidden.
+     */
     fun hideLoadingIndicator()
 }
 

@@ -17,24 +17,7 @@ import androidx.annotation.VisibleForTesting;
 import androidx.fragment.app.Fragment;
 
 /**
- * <p> <b>Note:</b> Your Activity hosting this Fragment must extend the {@link
- * androidx.appcompat.app.AppCompatActivity} and use an AppCompat Theme.
- *
- * <p> Include the {@code ReviewFragmentCompat} into your layout by using the {@link
- * ReviewFragmentCompat#createInstance(Document)} factory method to create an instance and display
- * it using the {@link androidx.fragment.app.FragmentManager}.
- *
- * <p> A {@link ReviewFragmentListener} instance must be available until the {@code
- * ReviewFragmentCompat} is attached to an activity. Failing to do so will throw an exception. The
- * listener instance can be provided either implicitly by making the hosting Activity implement the
- * {@link ReviewFragmentListener} interface or explicitly by setting the listener using {@link
- * ReviewFragmentCompat#setListener(ReviewFragmentListener)}.
- *
- * <p> Your Activity is automatically set as the listener in {@link ReviewFragmentCompat#onCreate(Bundle)}.
- *
- * <h3>Customizing the Review Screen</h3>
- *
- * See the {@link ReviewActivity} for details.
+ * Internal use only.
  */
 public class ReviewFragmentCompat extends Fragment implements FragmentImplCallback,
         ReviewFragmentInterface {

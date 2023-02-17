@@ -40,9 +40,8 @@ import static net.gini.android.capture.noresults.NoResultsActivity.NO_RESULT_CAN
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
 
 /**
- * Internal use only
+ * Internal use only.
  */
-
 public class AnalysisActivity extends AppCompatActivity implements
         AnalysisFragmentListener, AnalysisFragmentInterface {
 

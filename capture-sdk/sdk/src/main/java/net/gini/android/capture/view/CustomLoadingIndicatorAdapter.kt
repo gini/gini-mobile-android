@@ -10,7 +10,7 @@ import androidx.core.view.setPadding
 import net.gini.android.capture.R
 
 /**
- * Adapter for injecting a custom progress/loading animation
+ * Adapter for injecting a custom progress/loading animation.
  */
 interface CustomLoadingIndicatorAdapter : InjectedViewAdapter {
     /**

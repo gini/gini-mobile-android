@@ -32,6 +32,9 @@ import androidx.transition.TransitionSet;
  * Copyright (c) 2018 Gini GmbH.
  */
 
+/**
+ * Internal use only.
+ */
 public class ImageStack extends RelativeLayout {
 
     private static final long BADGE_TRANSITION_DURATION_MS = 600;
