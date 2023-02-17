@@ -46,7 +46,7 @@ interface LineItemDetailsScreenContract {
      * @suppress
      */
     abstract class Presenter(activity: Activity, view: View) :
-            GiniCaptureBasePresenter<View>(activity, view), LineItemDetailsFragmentInterface {
+            GiniCaptureBasePresenter<View>(activity, view), LineItemDetailsInterface {
 
         abstract fun selectLineItem()
         abstract fun deselectLineItem()

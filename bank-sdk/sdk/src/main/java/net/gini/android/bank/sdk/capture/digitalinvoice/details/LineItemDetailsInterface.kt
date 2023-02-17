@@ -7,14 +7,14 @@ package net.gini.android.bank.sdk.capture.digitalinvoice.details
  */
 
 /**
- * Public API of the [LineItemDetailsFragment].
+ * Public API of the [DigitalInvoiceBottomSheet].
  *
  */
-interface LineItemDetailsFragmentInterface {
+interface LineItemDetailsInterface {
 
     /**
      * Set a listener for events in the Line Item Details Screen.
      */
-    var listener: LineItemDetailsFragmentListener?
+    var listener: LineItemDetailsListener?
 
 }
