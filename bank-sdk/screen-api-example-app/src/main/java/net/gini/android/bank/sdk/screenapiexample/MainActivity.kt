@@ -234,11 +234,27 @@ class MainActivity : AppCompatActivity() {
                             Toast.LENGTH_LONG
                         ).show()
                 }
+                if (isIntentActionViewOrSend(intent)) {
+                    finish()
+                }
             }
             CaptureResult.Empty -> {
-                noExtractionsLauncher.launch(Unit)
+                if (isIntentActionViewOrSend(intent)) {
+                    finish()
+                } else {
+                    noExtractionsLauncher.launch(Unit)
+                }
             }
             CaptureResult.Cancel -> {
+                if (isIntentActionViewOrSend(intent)) {
+                    finish()
+                }
+            }
+            CaptureResult.EnterManually -> {
+                Toast.makeText(this, "Scan exited for manual enter mode", Toast.LENGTH_SHORT).show()
+                if (isIntentActionViewOrSend(intent)) {
+                    finish()
+                }
             }
         }
     }
