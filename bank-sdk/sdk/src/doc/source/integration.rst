@@ -65,17 +65,17 @@ Configuration
 Configuration and interaction is done using ``CaptureConfiguration``. To set the configuration use the
 ``GiniBank.setCaptureConfiguration()`` static method.
 
-.. important::
+You must call ``GiniBank.releaseCapture()`` after the user has seen (and potentially corrected) the extractions. You
+need to pass the updated extraction values to ``releaseCapture()``. If the SDK didn't return any extractions you can
+pass in empty strings.
 
-    The configuration is immutable and make sure to call ``GiniBank.releaseCapture()`` before setting a new
-    configuration.
-
-You should call ``GiniBank.releaseCapture()`` after the SDK returned control to your application and your app has
-sent feedback to the Gini Bank API and is not using the capture feature anymore.
+Failing to call ``GiniBank.releaseCapture()`` will throw an ``IllegalStateException`` when
+``GiniBank.setCaptureConfiguration()`` is called again.
 
 To view all the configuration options see the documentation of :root_dokka_path:`CaptureConfiguration <sdk/net.gini.android.bank.sdk.capture/-capture-configuration/index.html>`.
 
-Information about the configurable features are available on the `Capture Features <capture-features.html>`_ page.
+Information about the configurable features are available on the `Capture Features <capture-features.html>`_ page and UI
+customization options can be viewed in the `Customization Guide <customization-guide.html>`_.
 
 Tablet Support
 ~~~~~~~~~~~~~~
@@ -107,14 +107,18 @@ Bank API. You may also implement your own networking layer.
     You should have received Gini Bank API client credentials from us. Please get in touch with us in case you don’t have
     them. Without credentials you won't be able to use the Gini Bank API.
 
+We provide the ``GiniCaptureNetworkService`` interface which is used to upload, analyze and delete documents. See the
+:root_dokka_path:`reference documentation <sdk/net.gini.android.capture.network/-gini-capture-network-service/index.html>`
+for details.
+
 Default Implementation
 ^^^^^^^^^^^^^^^^^^^^^^
 
 The capture feature is not aware of any networking implementations and requires you to set them in the
 ``CaptureConfiguration``. 
 
-The default networking implementations are the ``GiniCaptureDefaultNetworkService`` and
-``GiniCaptureDefaultNetworkApi``. We provide you with two helper methods to create them with the minimal configuration:
+The default networking implementations is ``GiniCaptureDefaultNetworkService``. We provide you with a helper method
+to create it with minimal configuration:
 
 .. code-block:: java
 
@@ -125,21 +129,10 @@ The default networking implementations are the ``GiniCaptureDefaultNetworkServic
         emailDomain = myEmailDomain,
         documentMetadata = myDocumentMetadata
     )
-    
-    val networkApi = getDefaultNetworkApi(networkService)
-    
-    GiniBank.setCaptureConfiguration(
-        CaptureConfiguration(
-            networkService = networkService,
-            networkApi = networkApi
-        )
-    )
 
 For all configuration options of the default networking implementation see the documentation of
 :root_dokka_path_capture_sdk_default_network:`GiniCaptureDefaultNetworkService.Builder
-<default-network/net.gini.android.capture.network/-gini-capture-default-network-service/-builder/index.html>`
-and :root_dokka_path_capture_sdk_default_network:`GiniCaptureDefaultNetworkApi.Builder
-<default-network/net.gini.android.capture.network/-gini-capture-default-network-api/-builder/index.html>`.
+<default-network/net.gini.android.capture.network/-gini-capture-default-network-service/-builder/index.html>`.
 
 Retrieve the Analyzed Document
 ++++++++++++++++++++++++++++++
@@ -153,99 +146,16 @@ extractions came from an EPS QR Code.
 
 .. note::
 
-    Make sure to call it before calling ``GiniCaptureDefaultNetworkService.cleanup()`` or ``GiniBank.releaseCapture()``.
-    Otherwise the analyzed document won't be available anymore.
+    Make sure to call it before calling ``GiniBank.releaseCapture()``. Otherwise the analyzed document won't be
+    available anymore.
 
 Custom Implementation
 ^^^^^^^^^^^^^^^^^^^^^
 
-You can also provide your own networking by implementing the ``GiniCaptureNetworkService`` and the
-``GiniCaptureNetworkApi`` interfaces:
-
-* ``GiniCaptureNetworkService``
-   This interface is used to upload, analyze and delete documents. See the :root_dokka_path_capture_sdk:`reference documentation <sdk/net.gini.android.capture.network/-gini-capture-network-service/index.html>`
-   for details.
-
-* ``GiniCaptureNetworkApi``
-   This interface is used to declare network tasks which should be called by you outside of the Gini Capture SDK (e.g.,
-   for sending feedback after the user saw and potentielly corrected the extractions).  See the :root_dokka_path_capture_sdk:`reference documentation <sdk/net.gini.android.capture.network/-gini-capture-network-api/index.html>`
-   for details.
+You can also provide your own networking by implementing the ``GiniCaptureNetworkService`` interface.
 
 You may also use the `Gini Bank API Library <https://github.com/gini/gini-mobile-android/tree/main/bank-api-library>`_
-for Android or implement communication with the Gini Bank API yourself.
-
-Sending Feedback
-^^^^^^^^^^^^^^^^
-
-Your app should send feedback for the extractions the Gini Bank API delivered. Feedback should be sent *only* for the
-extractions the user has seen and accepted (or corrected).
-
-For addition information about feedback see the `Gini Bank API documentation
-<https://pay-api.gini.net/documentation/#send-feedback-and-get-even-better-extractions-next-time>`_.
-
-Default Implementation
-++++++++++++++++++++++
-
-The example below shows how to correct extractions and send feedback using the default networking implementation:
-
-.. note::
-
-    We also provide a sample test case `here
-    <https://github.com/gini/gini-mobile-android/blob/main/bank-sdk/sdk/src/androidTest/java/net/gini/android/bank/sdk/ExtractionFeedbackIntegrationTest.kt>`_
-    to verify that extraction feedback sending works. You may use it along with the example pdf and json files as a
-    starting point to write your own test case.
-
-    The sample test case is based on the Bank API documentation's `recommended steps
-    <https://pay-api.gini.net/documentation/#test-example>`_ for testing extraction feedback sending.
-
-.. code-block:: java
-
-   val networkApi: GiniCaptureDefaultNetworkApi // Provided
-
-   val extractions: Map<String, GiniCaptureSpecificExtraction> // Provided
-
-   // Modify the amount to pay extraction's value.
-   GiniCaptureSpecificExtraction amountToPay = extractions["amountToPay"];
-   amountToPay.value = "31.00:EUR"
-
-   // You should send feedback only for extractions the user has seen and accepted.
-   // In this example only the amountToPay was wrong and we can reuse the other extractions.
-    val feedback = mapOf<String, GiniCaptureSpecificExtraction>(
-        "iban" to mExtractions["iban"],
-        "amountToPay" to amountTopay,
-        "bic" to mExtractions["bic"],
-        "senderName" to mExtractions["sencerName"]
-    )
-
-    networkApi.sendFeedback(feedback, object : GiniCaptureNetworkCallback<Void, Error> {
-        override fun failure(error: Error) {
-            // Handle the error.
-        }
-
-        override fun success(result: Void?) {
-            // Feedback sent successfully.
-        }
-
-        override fun cancelled() {
-            // Handle cancellation.
-        }
-    })
-
-Custom Implementation
-+++++++++++++++++++++
-
-If you use your own networking implementation and directly communicate with the Gini Bank API then see `this section
-<https://pay-api.gini.net/documentation/#submitting-feedback-on-extractions>`_ in its documentation on how to send
-feedback.
-
-In case you use the Gini Bank API Library then consult its `documentation
-<https://developer.gini.net/gini-mobile-android/bank-api-library/library/>`_ for details.
-
-.. note::
-
-    The Bank API documentation provides `recommended steps <https://pay-api.gini.net/documentation/#test-example>`_ for
-    testing extraction feedback sending. You may use it along with the example pdf and json files as a starting point to
-    write a test case for verifying that feedback sending works. 
+for Android or implement communication with the `Gini Bank API <https://pay-api.gini.net/documentation/>`_ yourself.
 
 Capture Flow
 ~~~~~~~~~~~~
@@ -255,7 +165,10 @@ To use the capture flow you only need to:
 #. Request camera access,
 #. Configure the capture feature using the ``CaptureConfiguration``,
 #. Register an activity result handler with the ``CaptureFlowContract()``,
-#. Start the capture flow.
+#. Launch the SDK with ``GiniBank.startCaptureFlow()``,
+#. Handle the extraction results,
+#. Cleanup the SDK by calling ``GiniBank.releaseCapture()`` while also providing the required extraction feedback to
+   improve the future extraction accuracy.
 
 The following diagram shows the interaction between your app and the SDK:
 
@@ -291,15 +204,31 @@ The following example shows how to launch the capture flow and how to handle the
                         handleFileImportError(fileImportError)
                     }
                 }
+                GiniBank.releaseCapture(
+                    this, "",
+                    "", "", "", "", Amount.EMPTY
+                )
             }
             CaptureResult.Empty -> {
                 handleNoExtractions()
+                GiniBank.releaseCapture(
+                    this, "",
+                    "", "", "", "", Amount.EMPTY
+                )
             }
             CaptureResult.Cancel -> {
                 handleCancellation()
+                GiniBank.releaseCapture(
+                    this, "",
+                    "", "", "", "", Amount.EMPTY
+                )
             }
             CaptureResult.EnterManually -> {
                 handleEnterManually()
+                GiniBank.releaseCapture(
+                    this, "",
+                    "", "", "", "", Amount.EMPTY
+                )
             }
         }
     }
@@ -314,24 +243,33 @@ The following example shows how to launch the capture flow and how to handle the
             return
         }
         
-        // Instantiate the networking implementations.
+        // Instantiate the networking implementation.
         val networkService: GiniCaptureNetworkService  = ...
-        val networkApi: GiniCaptureNetworkApi = ...
-
-        // Cleanup to make sure everything is reset.
-        GiniBank.releaseCapture(this)
 
         // Configure the capture feature.
         GiniBank.setCaptureConfiguration(
             CaptureConfiguration(
                 networkService = networkService,
-                networkApi = networkApi,
                 ...
             )
         )
                 
         // Launch and wait for the result.
         GiniBank.startCaptureFlow(captureLauncher)
+    }
+
+    void stopGiniBankSDK() {
+        // After the user has seen and potentially corrected the extractions
+        // cleanup the SDK while passing in the final extraction values 
+        // which will be used as feedback to improve the future extraction accuracy:
+        GiniBank.releaseCapture(this,
+                paymentRecipient,
+                paymentReference,
+                paymentPurpose,
+                iban,
+                bic,
+                amount
+            )
     }
 
 Handling Payment Requests
