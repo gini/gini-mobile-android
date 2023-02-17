@@ -34,7 +34,7 @@ consistently applied on all screens.
 Theme
 +++++
 
-The theme style is based on Material Design v2 and is named ``GiniCaptureTheme``. To override the theme in your
+The theme style is based on Material Design v3 and is named ``GiniCaptureTheme``. To override the theme in your
 application use ``Root.GiniCaptureTheme`` as the parent:
 
 .. code-block:: xml
@@ -42,8 +42,6 @@ application use ``Root.GiniCaptureTheme`` as the parent:
     <style name="GiniCaptureTheme" parent="Root.GiniCaptureTheme">
       (...)
     </style>
-
-You can view the theme `here <https://github.com/gini/gini-mobile-android/blob/main/capture-sdk/sdk/src/main/res/values/styles.xml>`_
 
 Widgets
 +++++++
@@ -81,7 +79,7 @@ Images
 ~~~~~~
 
 Customizing of images is done via overriding of drawable resources. You can find the drawable
-resource names in the :ref:`screen-by-screen UI customization section<Migrate to the new UI>`.
+resource names in the :ref:`screen-by-screen UI customization section<screen-customization>`.
 
 We are using mostly vector drawables. Unfortunately due to the limitations of vector drawables some images had to be
 added as PNGs.
@@ -155,6 +153,8 @@ Dark mode
 ~~~~~~~~~
 
 To customize resources for dark mode add them to resource folders containing the ``-night`` resource qualifier.
+
+.. _screen-customization:
 
 Onboarding Screen
 ----
@@ -372,7 +372,7 @@ UI Customization
 Bottom Navigation Bar
 ~~~~~~~~~~~~~~~~~~~~~
 
-You can inject your own view for the bottom navigation bar. You can pass your custom ``HelpNavigationBarBottomAdapter`` implementation to
+You can inject your own view for the bottom navigation bar. You can pass your custom ``NoResultsNavigationBarBottomAdapter`` implementation to
 ``GiniCapture.Builder``:
 
 .. code-block:: java
@@ -398,7 +398,7 @@ UI Customization
 Bottom Navigation Bar
 ~~~~~~~~~~~~~~~~~~~~~
 
-You can inject your own view for the bottom navigation bar. You can pass your custom ``HelpNavigationBarBottomAdapter`` implementation to
+You can inject your own view for the bottom navigation bar. You can pass your custom ``ErrorNavigationBarBottomAdapter`` implementation to
 ``GiniCapture.Builder``:
 
 .. code-block:: java
@@ -406,5 +406,5 @@ You can inject your own view for the bottom navigation bar. You can pass your cu
     ErrorNavigationBarBottomAdapter customErrorNavigationBarBottomAdapter = new CustomErrorNavigationBarBottomAdapter();
 
     GiniCapture.newInstance()
-            .setErrorNavigationBarBottomAdapter(customNoResultsNavigationBarBottomAdapter)
+            .setErrorNavigationBarBottomAdapter(customErrorNavigationBarBottomAdapter)
             .build();

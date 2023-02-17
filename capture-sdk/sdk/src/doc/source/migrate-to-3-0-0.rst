@@ -147,7 +147,7 @@ SDK. These interfaces declare the contract the injected view has to fulfill and 
 instance when needed.
 
 The most important injectable UI element is the top navigation bar. You may also show the navigation bar on the bottom
-using your own custom view. You can find more details `here <features.html#custom-ui-elements>`_.
+using your own custom view. You can find more details `here <customization-guide.html#custom-ui-elements>`_.
 
 Dark mode
 ~~~~~~~~~
@@ -261,12 +261,12 @@ QR Code Scanner
 The new UI for the QR code scanner uses the global UI customization options. You can discard the old screen specific
 customizations.
 
-`Here <customization-guide.html#camera-screen>`_ you can find the detailed description on how to customize it.
+In the `camera screen customisation guide <customization-guide.html#camera-screen>`_ you can find the detailed description on how to customize it.
 
 Breaking Changes
 ++++++++++++++++
 
-QR code scanning UI and functionality are changed. Scanning and processing happens automatically. You can find more
+QR code scanning UI and functionality have changed. Scanning and processing happens automatically now. You can find more
 details `here <features.html#qr-code-scanning>`_.
 
 New Features
@@ -289,7 +289,7 @@ New Features
 Custom "Process" Button Loading Indicator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-There is a default implementation of loading indicator on ``Process`` button that indicates document upload is in progress, but you can show your own indicator
+There is a default implementation of loading indicator on the "Process" button that indicates document upload is in progress, but you can show your own indicator
 by implementing the ``CustomLoadingIndicatorAdapter`` interface and passing it to ``GiniCapture``.
 
 You can find more details `here <customization-guide.html#custom-process-button-loading-indicator>`_.
@@ -305,7 +305,7 @@ You can find more details `here <customization-guide.html#id5>`_.
 Breaking Changes
 ++++++++++++++++
 
-Re-ordering and rotation of the images are not supported anymore. The Gini Pay API can automatically correct rotation during processing.
+Re-ordering and rotation of the images are not supported anymore. The Gini API can automatically correct rotation during processing.
 If processing of images fails, then the user is redirected to the error screen.
 
 Help Screen
