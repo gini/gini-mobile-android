@@ -32,7 +32,7 @@ class Amount(
         /**
          * Creates thread safe static instance of Amount class.
          */
-        @JvmStatic
+        @JvmField
         val EMPTY = Amount(BigDecimal.valueOf(0), AmountCurrency.EUR)
     }
 }
