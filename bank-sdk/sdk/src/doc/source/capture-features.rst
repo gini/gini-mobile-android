@@ -102,28 +102,3 @@ The extractions related to the return assistant are stored in the ``compoundExtr
 ``CaptureResult``. See the Gini Bank API's `documentation
 <https://pay-api.gini.net/documentation/#return-assistant-extractions>`_ to learn about the return assistant's compound
 extractions.
-
-Digital Invoice Help Screen Customization
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-You can show back navigation button on bottom navigation bar. You can pass your custom ``DigitalInvoiceHelpNavigationBarBottomAdapter`` implementation to
-``GiniBank``:
-
-.. code-block:: java
-
-    CustomDigitalInvoiceHelpNavigationBarBottomAdapter customDigitalInvoiceHelpNavigationBarBottomAdapter = new CustomDigitalInvoiceHelpNavigationBarBottomAdapter();
-
-    GiniBank.digitalInvoiceHelpNavigationBarBottomAdapter = customDigitalInvoiceHelpNavigationBarBottomAdapter
-
-
-Digital Invoice Screen Customization
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-You can show invoice bottom navigation bar. You can pass your custom ``DigitalInvoiceNavigationBarBottomAdapter`` implementation to
-``GiniBank``:
-
-.. code-block:: java
-
-    CustomDigitalInvoiceNavigationBarBottomAdapter customDigitalInvoiceNavigationBarBottomAdapter = new CustomDigitalInvoiceNavigationBarBottomAdapter();
-
-    GiniBank.digitalInvoiceNavigationBarBottomAdapter = customDigitalInvoiceNavigationBarBottomAdapter;

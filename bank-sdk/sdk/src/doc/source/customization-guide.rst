@@ -478,10 +478,36 @@ You can inject your own view for the bottom navigation bar, if you set
 
 .. TODO: Show how to customize the updated UI.
 
+.. TODO: Adapt the section below to follow the same pattern as the other screens.
+.. Digital Invoice Help Screen Customization
+.. +++++++++++++++++++++++++++++++++++++++++
+
+.. You can show back navigation button on bottom navigation bar. You can pass your custom ``DigitalInvoiceHelpNavigationBarBottomAdapter`` implementation to
+.. ``GiniBank``:
+
+.. .. code-block:: java
+
+..     CustomDigitalInvoiceHelpNavigationBarBottomAdapter customDigitalInvoiceHelpNavigationBarBottomAdapter = new CustomDigitalInvoiceHelpNavigationBarBottomAdapter();
+
+..     GiniBank.digitalInvoiceHelpNavigationBarBottomAdapter = customDigitalInvoiceHelpNavigationBarBottomAdapter
+
 .. Digital Invoice Screen
 .. ~~~~~~~~~~~~~~~~~~~~~~
 
 .. TODO: Show how to customize the updated UI.
+
+.. TODO: Adapt the section below to follow the same pattern as the other screens.
+.. Digital Invoice Screen Customization
+.. ++++++++++++++++++++++++++++++++++++
+
+.. You can show invoice bottom navigation bar. You can pass your custom ``DigitalInvoiceNavigationBarBottomAdapter`` implementation to
+.. ``GiniBank``:
+
+.. .. code-block:: java
+
+..     CustomDigitalInvoiceNavigationBarBottomAdapter customDigitalInvoiceNavigationBarBottomAdapter = new CustomDigitalInvoiceNavigationBarBottomAdapter();
+
+..     GiniBank.digitalInvoiceNavigationBarBottomAdapter = customDigitalInvoiceNavigationBarBottomAdapter;
 
 .. Return Reason Picker
 .. ~~~~~~~~~~~~~~~~~~~~
