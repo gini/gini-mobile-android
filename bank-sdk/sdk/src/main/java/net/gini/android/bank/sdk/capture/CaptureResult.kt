@@ -36,6 +36,11 @@ sealed class CaptureResult {
      * Capture flow returned an error.
      */
     class Error(val value: ResultError) : CaptureResult()
+
+    /**
+     * User decided to enter data manually after the scanning resulted in no results or an error.
+     */
+    object EnterManually: CaptureResult()
 }
 
 sealed class ResultError {
