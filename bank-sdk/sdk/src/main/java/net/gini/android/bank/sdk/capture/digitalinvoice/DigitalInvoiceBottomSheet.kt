@@ -28,7 +28,7 @@ private const val EXTRA_IN_SELECTABLE_LINE_ITEM = "EXTRA_IN_SELECTABLE_LINE_ITEM
 /**
  * Internal use only.
  */
-class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItemDetailsScreenContract.View,
+internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItemDetailsScreenContract.View,
     LineItemDetailsInterface {
 
     private lateinit var binding: GbsEditItemBottomSheetBinding

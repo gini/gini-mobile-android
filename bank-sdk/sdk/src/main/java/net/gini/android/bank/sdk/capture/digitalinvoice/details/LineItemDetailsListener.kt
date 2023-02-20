@@ -11,7 +11,7 @@ import net.gini.android.bank.sdk.capture.digitalinvoice.SelectableLineItem
 /**
  * Interface used by the [DigitalInvoiceActivity] to dispatch events to it's fragment.
  */
-interface LineItemDetailsListener {
+internal interface LineItemDetailsListener {
 
     /**
      * Called when the user presses the save button.
