@@ -115,12 +115,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#file-import-open-with">File Import (Open With)</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#return-assistant">Return Assistant</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#sending-feedback">Sending Feedback</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#digital-invoice-help-screen-customization">Digital Invoice Help Screen Customization</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#digital-invoice-screen-customization">Digital Invoice Screen Customization</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="#return-assistant">Return Assistant</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="customization-guide.html">Customization Guide</a><ul>
@@ -354,56 +349,6 @@ additional charges that might be present on the invoice.</p>
 <p>The extractions related to the return assistant are stored in the <code class="docutils literal notranslate"><span class="pre">compoundExtractions</span></code> field of the
 <code class="docutils literal notranslate"><span class="pre">CaptureResult</span></code>. See the Gini Bank API’s <a class="reference external" href="https://pay-api.gini.net/documentation/#return-assistant-extractions">documentation</a> to learn about the return assistant’s compound
 extractions.</p>
-<div class="section" id="sending-feedback">
-<h3>Sending Feedback<a class="headerlink" href="#sending-feedback" title="Permalink to this headline">¶</a></h3>
-<p>Your app should send feedback for the extractions related to the return assistant. These extractions are found in the
-<code class="docutils literal notranslate"><span class="pre">compoundExtractions</span></code> field of the <code class="docutils literal notranslate"><span class="pre">CaptureResult</span></code>.</p>
-<div class="section" id="default-networking-implementation">
-<h4>Default Networking Implementation<a class="headerlink" href="#default-networking-implementation" title="Permalink to this headline">¶</a></h4>
-<p>If you use the <code class="docutils literal notranslate"><span class="pre">GiniCaptureDefaultNetworkService</span></code> and the <code class="docutils literal notranslate"><span class="pre">GiniCaptureDefaultNetworkApi</span></code> then sending feedback for
-the return assistant extractions is done by the <code class="docutils literal notranslate"><span class="pre">GiniCaptureDefaultNetworkApi</span></code> when you send feedback for the payment
-data extractions as described in the <a class="reference external" href="integration.html#sending-feedback">Sending Feedback</a> section.</p>
-</div>
-<div class="section" id="custom-networking-implementation">
-<h4>Custom Networking Implementation<a class="headerlink" href="#custom-networking-implementation" title="Permalink to this headline">¶</a></h4>
-<p>If you use your own networking implementation and directly communicate with the Gini Bank API then see <a class="reference external" href="https://pay-api.gini.net/documentation/#submitting-feedback-on-extractions">this section</a> in its documentation on how to send
-feedback for the compound extractions.</p>
-<p>In case you use the Gini Bank API Library then sending compound extraction feedback is very similar to how it’s shown in
-its <a class="reference external" href="https://developer.gini.net/gini-mobile-android/bank-api-library/library/">documentation</a>. The only difference is
-that you need to also pass in the <code class="docutils literal notranslate"><span class="pre">CompoundExtraction</span></code> map to <code class="docutils literal notranslate"><span class="pre">DocumentTaskManager.sendFeebackForExtractions()</span></code>:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// Extractions seen and accepted by the user (including user modifications)</span>
-<span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span> <span class="n">SpecificExtraction</span><span class="o">&gt;</span> <span class="n">specificExtractionFeedback</span><span class="p">;</span>
-
-<span class="c1">// Return assistant extractions as returned by the CaptureResult or DigitalInvoiceFragmentListener</span>
-<span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span> <span class="n">CompoundExtraction</span><span class="o">&gt;</span> <span class="n">compoundExtractionFeedback</span><span class="p">;</span>
-
-<span class="kd">final</span> <span class="n">Task</span><span class="o">&lt;</span><span class="n">Document</span><span class="o">&gt;</span> <span class="n">sendFeedback</span> <span class="o">=</span> <span class="n">documentTaskManager</span><span class="p">.</span><span class="na">sendFeedbackForExtractions</span><span class="p">(</span><span class="n">document</span><span class="p">,</span>
-        <span class="n">specificExtractionFeedback</span><span class="p">,</span> <span class="n">compoundExtractionFeedback</span><span class="p">);</span>
-<span class="n">sendFeedback</span><span class="p">.</span><span class="na">waitForCompletion</span><span class="p">();</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="section" id="digital-invoice-help-screen-customization">
-<h3>Digital Invoice Help Screen Customization<a class="headerlink" href="#digital-invoice-help-screen-customization" title="Permalink to this headline">¶</a></h3>
-<p>You can show back navigation button on bottom navigation bar. You can pass your custom <code class="docutils literal notranslate"><span class="pre">DigitalInvoiceHelpNavigationBarBottomAdapter</span></code> implementation to
-<code class="docutils literal notranslate"><span class="pre">GiniBank</span></code>:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">CustomDigitalInvoiceHelpNavigationBarBottomAdapter</span> <span class="n">customDigitalInvoiceHelpNavigationBarBottomAdapter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CustomDigitalInvoiceHelpNavigationBarBottomAdapter</span><span class="p">();</span>
-
-<span class="n">GiniBank</span><span class="p">.</span><span class="na">digitalInvoiceHelpNavigationBarBottomAdapter</span> <span class="o">=</span> <span class="n">customDigitalInvoiceHelpNavigationBarBottomAdapter</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="digital-invoice-screen-customization">
-<h3>Digital Invoice Screen Customization<a class="headerlink" href="#digital-invoice-screen-customization" title="Permalink to this headline">¶</a></h3>
-<p>You can show invoice bottom navigation bar. You can pass your custom <code class="docutils literal notranslate"><span class="pre">DigitalInvoiceNavigationBarBottomAdapter</span></code> implementation to
-<code class="docutils literal notranslate"><span class="pre">GiniBank</span></code>:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">CustomDigitalInvoiceNavigationBarBottomAdapter</span> <span class="n">customDigitalInvoiceNavigationBarBottomAdapter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CustomDigitalInvoiceNavigationBarBottomAdapter</span><span class="p">();</span>
-
-<span class="n">GiniBank</span><span class="p">.</span><span class="na">digitalInvoiceNavigationBarBottomAdapter</span> <span class="o">=</span> <span class="n">customDigitalInvoiceNavigationBarBottomAdapter</span><span class="p">;</span>
-</pre></div>
-</div>
-</div>
 </div>
 </div>
 
