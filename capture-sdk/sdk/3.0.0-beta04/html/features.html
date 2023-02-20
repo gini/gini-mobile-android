@@ -98,7 +98,6 @@
 <li class="toctree-l2"><a class="reference internal" href="integration.html#networking">Networking</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="integration.html#default-implementation">Default Implementation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="integration.html#custom-implementation">Custom Implementation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="integration.html#sending-feedback">Sending Feedback</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="integration.html#capturing-documents">Capturing documents</a></li>
@@ -106,15 +105,18 @@
 </li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Features</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#document-capture">Document Capture</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#custom-ui-elements">Custom UI Elements</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#onboarding">Onboarding</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#single-page">Single Page</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#multi-page">Multi-Page</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#camera">Camera</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#qr-code-scanning">QR Code Scanning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#only-qr-code-scanning">Only QR Code Scanning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#help">Help</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#disable-supported-formats-help-screen">Disable Supported Formats Help Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#no-results">No Results</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#error">Error</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#qr-code-scanning">QR Code Scanning</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#only-qr-code-scanning">Only QR Code Scanning</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#document-import">Document Import</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#android-manifest">Android Manifest</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#intercepting-the-imported-document">Intercepting the imported document</a></li>
@@ -125,10 +127,6 @@
 <li class="toctree-l3"><a class="reference internal" href="#handling-imported-files">Handling Imported Files</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#help-screen-customization">Help Screen Customization</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#analysis-screen-customization">Analysis Screen Customization</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#error-screen-customization">Error Screen Customization</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#no-results-screen-customization">No Results Screen Customization</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#event-tracking">Event Tracking</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#events">Events</a></li>
 </ul>
@@ -143,20 +141,48 @@
 <li class="toctree-l3"><a class="reference internal" href="customization-guide.html#images">Images</a></li>
 <li class="toctree-l3"><a class="reference internal" href="customization-guide.html#typography">Typography</a></li>
 <li class="toctree-l3"><a class="reference internal" href="customization-guide.html#text">Text</a></li>
-<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#ui-elements">UI Elements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#custom-ui-elements">Custom UI Elements</a></li>
 <li class="toctree-l3"><a class="reference internal" href="customization-guide.html#dark-mode">Dark mode</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#onboarding-screen">Onboarding Screen</a></li>
-<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#camera-screen">Camera Screen</a></li>
-<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#review-screen">Review Screen</a></li>
-<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#analysis-screen">Analysis Screen</a></li>
-<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#help-screen">Help Screen</a></li>
-<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#error-screen">Error Screen</a></li>
-<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#clear-defaults-dialog">Clear Defaults Dialog</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#file-type">1.1 File Type</a></li>
-<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#positive-button-title">2. Positive Button Title</a></li>
-<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#negative-button-title">3. Negative Button Title</a></li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#onboarding-screen">Onboarding Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#ui-customization">UI Customization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id1">Bottom Navigation Bar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#custom-onboarding-pages">Custom Onboarding Pages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#custom-illustration-views">Custom Illustration Views</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#camera-screen">Camera Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id2">UI Customization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id3">Bottom Navigation Bar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#custom-loading-indicator">Custom Loading Indicator</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#review-screen">Review Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id4">UI Customization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id5">Bottom Navigation Bar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#custom-process-button-loading-indicator">Custom “Process” Button Loading Indicator</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#analysis-screen">Analysis Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id6">UI Customization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id7">Custom Loading Indicator</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#help-screen">Help Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id8">UI Customization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id9">Bottom Navigation Bar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#custom-help-screens">Custom Help Screens</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#no-results-screen">No Results Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id10">UI Customization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id11">Bottom Navigation Bar</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#error-screen">Error Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id12">UI Customization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id13">Bottom Navigation Bar</a></li>
 </ul>
 </li>
 </ul>
@@ -172,6 +198,11 @@
 <li class="toctree-l1"><a class="reference internal" href="migrate-to-3-0-0.html">Migrate to 3.0.0</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="migrate-to-3-0-0.html#migrate-from-component-api">Migrate from Component API</a></li>
 <li class="toctree-l2"><a class="reference internal" href="migrate-to-3-0-0.html#migrate-from-screen-api">Migrate from Screen API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrate-to-3-0-0.html#migrate-cleanup-step-and-feedback-sending">Migrate Cleanup Step and Feedback Sending</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#default-networking-implementation">Default Networking Implementation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#custom-networking-implementation">Custom Networking Implementation</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="migrate-to-3-0-0.html#overview-of-new-ui-customization-options">Overview of New UI Customization Options</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#styles">Styles</a></li>
 <li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#colors">Colors</a></li>
@@ -183,14 +214,14 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="migrate-to-3-0-0.html#migrate-to-the-new-ui">Migrate to the new UI</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#onboarding">Onboarding</a></li>
-<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#camera">Camera</a></li>
-<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#qr-code-scanning">QR code scanning</a></li>
-<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#review">Review</a></li>
-<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#help">Help</a></li>
-<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#analysis">Analysis</a></li>
-<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#error">Error</a></li>
-<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#no-results">No results</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#onboarding-screen">Onboarding Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#camera-screen">Camera Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#qr-code-scanner">QR Code Scanner</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#review-screen">Review Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#help-screen">Help Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#analysis-screen">Analysis Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#error-screen">Error Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#no-results-screen">No Results Screen</a></li>
 </ul>
 </li>
 </ul>
@@ -253,33 +284,6 @@ in touch with us in case you are not sure which features your contract includes.
 <h2>Document Capture<a class="headerlink" href="#document-capture" title="Permalink to this headline">¶</a></h2>
 <p>This is the core feature of the Gini Capture SDK. It enables your app to capture documents with the camera and prepares
 them to be analyzed by the Gini Bank API.</p>
-<div class="section" id="custom-ui-elements">
-<h3>Custom UI Elements<a class="headerlink" href="#custom-ui-elements" title="Permalink to this headline">¶</a></h3>
-<p>Certain elements of the UI can now be fully customized via UI injection. It utilizes view adapter interfaces which you
-can implement and pass to <code class="docutils literal notranslate"><span class="pre">GiniCapture</span></code> when configuring the SDK. These interfaces declare the contract the injected
-view has to fulfill and allow the SDK to ask for your view instance when needed.</p>
-<div class="section" id="top-navigation-bar">
-<h4>Top Navigation Bar<a class="headerlink" href="#top-navigation-bar" title="Permalink to this headline">¶</a></h4>
-<p>To inject your own navigation bar view implement the <code class="docutils literal notranslate"><span class="pre">NavigationBarTopAdapter</span></code> and pass it to
-<code class="docutils literal notranslate"><span class="pre">GiniCapture.newInstance().setNavigationBarTopAdapter()</span></code>. Your view will then be displayed on all screens as the top
-navigation bar.</p>
-</div>
-<div class="section" id="bottom-navigation-bar">
-<h4>Bottom Navigation Bar<a class="headerlink" href="#bottom-navigation-bar" title="Permalink to this headline">¶</a></h4>
-<p>You can opt to show a bottom navigation bar. To enable it pass <code class="docutils literal notranslate"><span class="pre">true</span></code> to
-<code class="docutils literal notranslate"><span class="pre">GiniCapture.newInstance().setBottomNavigationBarEnabled()</span></code>.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The top navigation bar will still be used, but its functionality will be limited to showing the screen’s title and
-an optional close button. Please inject a custom top navigation bar if your design requires it even if you have
-enabled the bottom navigation bar.</p>
-</div>
-<p>Each screen has a slightly different bottom navigation bar because they contain screen specific call-to-action buttons.</p>
-<p>To inject your own views implement each screen’s view adapter interface (e.g., <code class="docutils literal notranslate"><span class="pre">OnboardingNavigationBarBottomAdapter</span></code>)
-and pass it to <code class="docutils literal notranslate"><span class="pre">GiniCapture</span></code> (e.g., <code class="docutils literal notranslate"><span class="pre">GiniCapture.newInstance().setOnboardingNavigationBarBottomAdapter()</span></code>). Your
-view will then be displayed on the relevant screen.</p>
-</div>
-</div>
 <div class="section" id="onboarding">
 <h3>Onboarding<a class="headerlink" href="#onboarding" title="Permalink to this headline">¶</a></h3>
 <p>The onboarding feature presents essential information to the user on how to best capture documents.</p>
@@ -292,25 +296,9 @@ view will then be displayed on the relevant screen.</p>
 </dl>
 </li>
 <li><dl class="first docutils">
-<dt>Customize the onboarding pages:</dt>
-<dd>If you wish to show different onboarding pages then pass a list of <code class="docutils literal notranslate"><span class="pre">OnboardingPage</span></code> objects to
-<code class="docutils literal notranslate"><span class="pre">GiniCapture.Builder.setCustomOnboardingPages()</span></code>.</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
 <dt>Force show the onboarding:</dt>
 <dd>If you wish to show the onboarding after the first run then pass <code class="docutils literal notranslate"><span class="pre">true</span></code> to
 <code class="docutils literal notranslate"><span class="pre">GiniCapture.Builder.setShouldShowOnboarding()</span></code>.</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt>Animate illustrations by injecting custom views:</dt>
-<dd>If you need to animate the illustrations on the onboarding pages implement the <code class="docutils literal notranslate"><span class="pre">OnboardingIllustrationAdapter</span></code>
-interface to inject a view that can animate images (e.g., <a class="reference external" href="https://github.com/airbnb/lottie-android">Lottie</a>) and
-pass it to the relevant onboarding illustration adapter setters (e.g.,
-<code class="docutils literal notranslate"><span class="pre">setOnboardingAlignCornersIllustrationAdapter()</span></code>) when building the <code class="docutils literal notranslate"><span class="pre">GiniCapture</span></code> instance. The <a class="reference external" href="https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/dokka/sdk/net.gini.android.capture/-gini-capture/-builder/index.html">reference
-documentation</a>
-of <code class="docutils literal notranslate"><span class="pre">GiniCapture.Builder</span></code> lists all the setters.</dd>
 </dl>
 </li>
 </ul>
@@ -340,9 +328,8 @@ this.</p>
 </li>
 </ul>
 </div>
-</div>
 <div class="section" id="qr-code-scanning">
-<h2>QR Code Scanning<a class="headerlink" href="#qr-code-scanning" title="Permalink to this headline">¶</a></h2>
+<h3>QR Code Scanning<a class="headerlink" href="#qr-code-scanning" title="Permalink to this headline">¶</a></h3>
 <p>By using the Google Mobile Vision API the SDK can read payment data from QR Codes. We support the <a class="reference external" href="http://www.bezahlcode.de/">BezahlCode</a> , <a class="reference external" href="https://www.europeanpaymentscouncil.eu/document-library/guidance-documents/quick-response-code-guidelines-enable-data-capture-initiation">EPC069-12</a>
 (<a class="reference external" href="https://www.stuzza.at/de/zahlungsverkehr/qr-code.html">Stuzza (AT)</a> and <a class="reference external" href="https://www.girocode.de/rechnungsempfaenger/">GiroCode (DE)</a>) and <a class="reference external" href="https://eservice.stuzza.at/de/eps-ueberweisung-dokumentation/category/5-dokumentation.html">EPS</a> formats.</p>
 <p>When a supported QR code is detected with valid payment data, white camera frame will turn into the green color with proper message that QR code is detected.</p>
@@ -361,12 +348,32 @@ until the next time the camera screen starts.</p>
 </div>
 </div>
 <div class="section" id="only-qr-code-scanning">
-<h2>Only QR Code Scanning<a class="headerlink" href="#only-qr-code-scanning" title="Permalink to this headline">¶</a></h2>
-<p>The app supports QR code only scanning mode. To enable this feature simply pass <code class="docutils literal notranslate"><span class="pre">true</span></code> to <code class="docutils literal notranslate"><span class="pre">GiniCapture.Builder.setOnlyQRCodeScanning</span></code>.
+<h3>Only QR Code Scanning<a class="headerlink" href="#only-qr-code-scanning" title="Permalink to this headline">¶</a></h3>
+<p>The SDK supports QR code only scanning mode. To enable this feature simply pass <code class="docutils literal notranslate"><span class="pre">true</span></code> to <code class="docutils literal notranslate"><span class="pre">GiniCapture.Builder.setOnlyQRCodeScanning()</span></code>.
 Enabling this feature removes all UI elements related to taking pictures from the Camera screen and leaves only QR code-related UI elements.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">To use this feature <code class="docutils literal notranslate"><span class="pre">setQRCodeScanningEnabled</span></code> must be set to <code class="docutils literal notranslate"><span class="pre">true</span></code> otherwise <code class="docutils literal notranslate"><span class="pre">setOnlyQRCodeScanning</span></code> will be ignored.</p>
+</div>
+</div>
+<div class="section" id="help">
+<h3>Help<a class="headerlink" href="#help" title="Permalink to this headline">¶</a></h3>
+<p>The SDK includes help screens to aid users in getting the best results.</p>
+</div>
+<div class="section" id="disable-supported-formats-help-screen">
+<h3>Disable Supported Formats Help Screen<a class="headerlink" href="#disable-supported-formats-help-screen" title="Permalink to this headline">¶</a></h3>
+<p>You can disable the supported formats help screen by passing <code class="docutils literal notranslate"><span class="pre">false</span></code> to
+<code class="docutils literal notranslate"><span class="pre">GiniCapture.Builder.setSupportedFormatsHelpScreenEnabled()</span></code>.</p>
+</div>
+<div class="section" id="no-results">
+<h3>No Results<a class="headerlink" href="#no-results" title="Permalink to this headline">¶</a></h3>
+<p>In case analysis finished without results, the SDK shows a no results screen with helpful tips and allows the user to
+either retake the image or exit the SDK to enter the information manually.</p>
+</div>
+<div class="section" id="error">
+<h3>Error<a class="headerlink" href="#error" title="Permalink to this headline">¶</a></h3>
+<p>The SDK shows an error screen, if an error was encountered during analysis. The screen shows error details and allows
+the user to either return to the camera or exit the SDK to enter the information manually.</p>
 </div>
 </div>
 <div class="section" id="document-import">
@@ -560,126 +567,6 @@ callback.</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>If scanning of multi-page documents is enabled then either the multi-page review screen or the analysis screen will be
-launched. PDFs cannot be reviewed by the user and in that case the analysis screen is launched directly. You should not
-expect the review screen to be launched every time.</p>
-<p>When multi-page is disabled then the difference is only that the single-page review screen will be used instead.</p>
-</div>
-</div>
-<div class="section" id="help-screen-customization">
-<h2>Help Screen Customization<a class="headerlink" href="#help-screen-customization" title="Permalink to this headline">¶</a></h2>
-<p>You can show your own help screens in the Gini Capture SDK. These screens could be shown from a list on the main Help screen opened from the Camera screen
-navigation bars.
-You can pass the title and activity for each screen to the
-<code class="docutils literal notranslate"><span class="pre">GiniCapture.Builder</span></code> using a list of <code class="docutils literal notranslate"><span class="pre">HelpItem.Custom</span></code> objects:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">List</span><span class="o">&lt;</span><span class="n">HelpItem</span><span class="p">.</span><span class="na">Custom</span><span class="o">&gt;</span> <span class="n">customHelpItems</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">();</span>
-
-<span class="n">customHelpItems</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="k">new</span> <span class="n">HelpItem</span><span class="p">.</span><span class="na">Custom</span><span class="p">(</span><span class="n">R</span><span class="p">.</span><span class="na">string</span><span class="p">.</span><span class="na">custom_help_screen_title</span><span class="p">,</span>
-        <span class="k">new</span> <span class="n">Intent</span><span class="p">((</span><span class="n">Context</span><span class="p">)</span> <span class="k">this</span><span class="p">,</span> <span class="n">CustomHelpActivity</span><span class="p">.</span><span class="na">class</span><span class="p">)));</span>
-
-<span class="n">GiniCapture</span><span class="p">.</span><span class="na">newInstance</span><span class="p">()</span>
-        <span class="p">.</span><span class="na">setCustomHelpItems</span><span class="p">(</span><span class="n">customHelpItems</span><span class="p">)</span>
-        <span class="p">.</span><span class="na">build</span><span class="p">();</span>
-</pre></div>
-</div>
-<p>You can also disable the supported formats help screen by passing <code class="docutils literal notranslate"><span class="pre">false</span></code> to
-<code class="docutils literal notranslate"><span class="pre">GiniCapture.Builder.setSupportedFormatsHelpScreenEnabled()</span></code>.</p>
-<p>Furthermore you can show back navigation button on bottom navigation bar. You can pass your custom <code class="docutils literal notranslate"><span class="pre">HelpNavigationBarBottomAdapter</span></code> implementation to
-<code class="docutils literal notranslate"><span class="pre">GiniCapture.Builder</span></code>:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">CustomHelpNavigationBarBottomAdapter</span> <span class="n">customHelpNavigationBarBottomAdapter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CustomHelpNavigationBarBottomAdapter</span><span class="p">();</span>
-
-<span class="n">GiniCapture</span><span class="p">.</span><span class="na">newInstance</span><span class="p">()</span>
-        <span class="p">.</span><span class="na">setHelpNavigationBarBottomAdapter</span><span class="p">(</span><span class="n">customHelpNavigationBarBottomAdapter</span><span class="p">)</span>
-        <span class="p">.</span><span class="na">build</span><span class="p">();</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="analysis-screen-customization">
-<h2>Analysis Screen Customization<a class="headerlink" href="#analysis-screen-customization" title="Permalink to this headline">¶</a></h2>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">This screen does not show a bottom navigation bar even if the value passed to <code class="docutils literal notranslate"><span class="pre">GiniCapture.newInstance().setBottomNavigationBarEnabled()</span></code> is <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
-</div>
-<p>You can show customized activity indicator on this screen. You can pass your custom <code class="docutils literal notranslate"><span class="pre">CustomLoadingIndicatorAdapter</span></code> implementation to
-<code class="docutils literal notranslate"><span class="pre">GiniCapture.Builder</span></code> :</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">CustomLottiLoadingIndicatorAdapter</span> <span class="n">customLottiLoadingIndicatorAdapter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CustomLottiLoadingIndicatorAdapter</span><span class="p">(</span><span class="n">getResources</span><span class="p">().</span><span class="na">getIdentifier</span><span class="p">(</span><span class="s">&quot;custom_loading&quot;</span><span class="p">,</span> <span class="s">&quot;raw&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="na">getPackageName</span><span class="p">()));</span>
-
-<span class="n">GiniCapture</span><span class="p">.</span><span class="na">newInstance</span><span class="p">()</span>
-        <span class="p">.</span><span class="na">setLoadingIndicatorAdapter</span><span class="p">(</span><span class="n">customLottiLoadingIndicatorAdapter</span><span class="p">)</span>
-        <span class="p">.</span><span class="na">build</span><span class="p">();</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="error-screen-customization">
-<h2>Error Screen Customization<a class="headerlink" href="#error-screen-customization" title="Permalink to this headline">¶</a></h2>
-<p>You can show custom back navigation button on bottom navigation bar. You can pass your custom <code class="docutils literal notranslate"><span class="pre">ErrorNavigationBarBottomAdapter</span></code> implementation to
-<code class="docutils literal notranslate"><span class="pre">GiniCapture.Builder</span></code>:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">CustomErrorNavigationBarBottomAdapter</span> <span class="n">customErrorNavigationBarBottomAdapter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CustomErrorNavigationBarBottomAdapter</span><span class="p">();</span>
-
-<span class="n">GiniCapture</span><span class="p">.</span><span class="na">newInstance</span><span class="p">()</span>
-        <span class="p">.</span><span class="na">setErrorNavigationBarBottomAdapter</span><span class="p">(</span><span class="n">customErrorNavigationBarBottomAdapter</span><span class="p">)</span>
-        <span class="p">.</span><span class="na">build</span><span class="p">();</span>
-</pre></div>
-</div>
-<p>You can show your own UI if an error occured and the user chooses to enter details manually. For this you must handle <code class="docutils literal notranslate"><span class="pre">CameraActivity.RESULT_ENTER_MANUALLY</span></code>
-result code, which is returned by the SDK when the user clicks the “Enter manually” button on the error screen, in your main activity.</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="nd">@Override</span>
-<span class="kd">protected</span> <span class="kt">void</span> <span class="nf">onActivityResult</span><span class="p">(</span><span class="kd">final</span> <span class="kt">int</span> <span class="n">requestCode</span><span class="p">,</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">resultCode</span><span class="p">,</span>
-                                <span class="kd">final</span> <span class="n">Intent</span> <span class="n">data</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">super</span><span class="p">.</span><span class="na">onActivityResult</span><span class="p">(</span><span class="n">requestCode</span><span class="p">,</span> <span class="n">resultCode</span><span class="p">,</span> <span class="n">data</span><span class="p">);</span>
-
-    <span class="k">if</span> <span class="p">(</span><span class="n">requestCode</span> <span class="o">==</span> <span class="n">REQUEST_SCAN</span><span class="p">)</span> <span class="p">{</span>
-         <span class="p">(...)</span>
-         <span class="k">if</span> <span class="p">(</span><span class="n">resultCode</span> <span class="o">==</span> <span class="n">CameraActivity</span><span class="p">.</span><span class="na">RESULT_ENTER_MANUALLY</span><span class="p">)</span> <span class="p">{</span>
-             <span class="n">handleEnterManuallyAction</span><span class="p">();</span>
-         <span class="p">}</span>
-         <span class="k">return</span><span class="p">;</span>
-
-        <span class="k">switch</span> <span class="p">(</span><span class="n">resultCode</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">case</span> <span class="n">CameraActivity</span><span class="p">.</span><span class="na">RESULT_ENTER_MANUALLY</span><span class="p">:</span>
-                <span class="n">handleEnterManuallyAction</span><span class="p">();</span>
-                <span class="k">break</span><span class="p">;</span>
-            <span class="p">(...)</span>
-        <span class="p">}</span>
-        <span class="p">(...)</span>
-    <span class="p">}</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="no-results-screen-customization">
-<h2>No Results Screen Customization<a class="headerlink" href="#no-results-screen-customization" title="Permalink to this headline">¶</a></h2>
-<p>You can show custom back navigation button on bottom navigation bar. You can pass your custom <code class="docutils literal notranslate"><span class="pre">NoResultsNavigationBarBottomAdapter</span></code> implementation to
-<code class="docutils literal notranslate"><span class="pre">GiniCapture.Builder</span></code>:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">CustomNoResultsNavigationBarBottomAdapter</span> <span class="n">customNoResultsNavigationBarBottomAdapter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CustomNoResultsNavigationBarBottomAdapter</span><span class="p">();</span>
-
-<span class="n">GiniCapture</span><span class="p">.</span><span class="na">newInstance</span><span class="p">()</span>
-        <span class="p">.</span><span class="na">setNoResultsNavigationBarBottomAdapter</span><span class="p">(</span><span class="n">customNoResultsNavigationBarBottomAdapter</span><span class="p">)</span>
-        <span class="p">.</span><span class="na">build</span><span class="p">();</span>
-</pre></div>
-</div>
-<p>You can show your own UI if the document analysis returned with no result and the user chooses to enter details manually. For this you must handle <code class="docutils literal notranslate"><span class="pre">CameraActivity.RESULT_ENTER_MANUALLY</span></code>
-result code, which is returned by the SDK when the user clicks the “Enter manually” button on the no results screen, in your main activity.</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="nd">@Override</span>
-<span class="kd">protected</span> <span class="kt">void</span> <span class="nf">onActivityResult</span><span class="p">(</span><span class="kd">final</span> <span class="kt">int</span> <span class="n">requestCode</span><span class="p">,</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">resultCode</span><span class="p">,</span>
-                                <span class="kd">final</span> <span class="n">Intent</span> <span class="n">data</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">super</span><span class="p">.</span><span class="na">onActivityResult</span><span class="p">(</span><span class="n">requestCode</span><span class="p">,</span> <span class="n">resultCode</span><span class="p">,</span> <span class="n">data</span><span class="p">);</span>
-
-    <span class="k">if</span> <span class="p">(</span><span class="n">requestCode</span> <span class="o">==</span> <span class="n">REQUEST_SCAN</span><span class="p">)</span> <span class="p">{</span>
-         <span class="p">(...)</span>
-         <span class="k">if</span> <span class="p">(</span><span class="n">resultCode</span> <span class="o">==</span> <span class="n">CameraActivity</span><span class="p">.</span><span class="na">RESULT_ENTER_MANUALLY</span><span class="p">)</span> <span class="p">{</span>
-             <span class="n">handleEnterManuallyAction</span><span class="p">();</span>
-         <span class="p">}</span>
-         <span class="k">return</span><span class="p">;</span>
-
-        <span class="k">switch</span> <span class="p">(</span><span class="n">resultCode</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">case</span> <span class="n">CameraActivity</span><span class="p">.</span><span class="na">RESULT_ENTER_MANUALLY</span><span class="p">:</span>
-                <span class="n">handleEnterManuallyAction</span><span class="p">();</span>
-                <span class="k">break</span><span class="p">;</span>
-            <span class="p">(...)</span>
-        <span class="p">}</span>
-        <span class="p">(...)</span>
-    <span class="p">}</span>
-</pre></div>
 </div>
 </div>
 <div class="section" id="event-tracking">

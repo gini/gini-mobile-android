@@ -104,7 +104,6 @@
 <li class="toctree-l2"><a class="reference internal" href="integration.html#networking">Networking</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="integration.html#default-implementation">Default Implementation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="integration.html#custom-implementation">Custom Implementation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="integration.html#sending-feedback">Sending Feedback</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="integration.html#capturing-documents">Capturing documents</a></li>
@@ -112,15 +111,18 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="features.html">Features</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="features.html#document-capture">Document Capture</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="features.html#custom-ui-elements">Custom UI Elements</a></li>
 <li class="toctree-l3"><a class="reference internal" href="features.html#onboarding">Onboarding</a></li>
 <li class="toctree-l3"><a class="reference internal" href="features.html#single-page">Single Page</a></li>
 <li class="toctree-l3"><a class="reference internal" href="features.html#multi-page">Multi-Page</a></li>
 <li class="toctree-l3"><a class="reference internal" href="features.html#camera">Camera</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features.html#qr-code-scanning">QR Code Scanning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features.html#only-qr-code-scanning">Only QR Code Scanning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features.html#help">Help</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features.html#disable-supported-formats-help-screen">Disable Supported Formats Help Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features.html#no-results">No Results</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features.html#error">Error</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="features.html#qr-code-scanning">QR Code Scanning</a></li>
-<li class="toctree-l2"><a class="reference internal" href="features.html#only-qr-code-scanning">Only QR Code Scanning</a></li>
 <li class="toctree-l2"><a class="reference internal" href="features.html#document-import">Document Import</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="features.html#android-manifest">Android Manifest</a></li>
 <li class="toctree-l3"><a class="reference internal" href="features.html#intercepting-the-imported-document">Intercepting the imported document</a></li>
@@ -131,10 +133,6 @@
 <li class="toctree-l3"><a class="reference internal" href="features.html#handling-imported-files">Handling Imported Files</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="features.html#help-screen-customization">Help Screen Customization</a></li>
-<li class="toctree-l2"><a class="reference internal" href="features.html#analysis-screen-customization">Analysis Screen Customization</a></li>
-<li class="toctree-l2"><a class="reference internal" href="features.html#error-screen-customization">Error Screen Customization</a></li>
-<li class="toctree-l2"><a class="reference internal" href="features.html#no-results-screen-customization">No Results Screen Customization</a></li>
 <li class="toctree-l2"><a class="reference internal" href="features.html#event-tracking">Event Tracking</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="features.html#events">Events</a></li>
 </ul>
@@ -149,20 +147,48 @@
 <li class="toctree-l3"><a class="reference internal" href="customization-guide.html#images">Images</a></li>
 <li class="toctree-l3"><a class="reference internal" href="customization-guide.html#typography">Typography</a></li>
 <li class="toctree-l3"><a class="reference internal" href="customization-guide.html#text">Text</a></li>
-<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#ui-elements">UI Elements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#custom-ui-elements">Custom UI Elements</a></li>
 <li class="toctree-l3"><a class="reference internal" href="customization-guide.html#dark-mode">Dark mode</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#onboarding-screen">Onboarding Screen</a></li>
-<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#camera-screen">Camera Screen</a></li>
-<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#review-screen">Review Screen</a></li>
-<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#analysis-screen">Analysis Screen</a></li>
-<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#help-screen">Help Screen</a></li>
-<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#error-screen">Error Screen</a></li>
-<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#clear-defaults-dialog">Clear Defaults Dialog</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#file-type">1.1 File Type</a></li>
-<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#positive-button-title">2. Positive Button Title</a></li>
-<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#negative-button-title">3. Negative Button Title</a></li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#onboarding-screen">Onboarding Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#ui-customization">UI Customization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id1">Bottom Navigation Bar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#custom-onboarding-pages">Custom Onboarding Pages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#custom-illustration-views">Custom Illustration Views</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#camera-screen">Camera Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id2">UI Customization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id3">Bottom Navigation Bar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#custom-loading-indicator">Custom Loading Indicator</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#review-screen">Review Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id4">UI Customization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id5">Bottom Navigation Bar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#custom-process-button-loading-indicator">Custom “Process” Button Loading Indicator</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#analysis-screen">Analysis Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id6">UI Customization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id7">Custom Loading Indicator</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#help-screen">Help Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id8">UI Customization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id9">Bottom Navigation Bar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#custom-help-screens">Custom Help Screens</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#no-results-screen">No Results Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id10">UI Customization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id11">Bottom Navigation Bar</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#error-screen">Error Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id12">UI Customization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id13">Bottom Navigation Bar</a></li>
 </ul>
 </li>
 </ul>
@@ -178,6 +204,11 @@
 <li class="toctree-l1"><a class="reference internal" href="migrate-to-3-0-0.html">Migrate to 3.0.0</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="migrate-to-3-0-0.html#migrate-from-component-api">Migrate from Component API</a></li>
 <li class="toctree-l2"><a class="reference internal" href="migrate-to-3-0-0.html#migrate-from-screen-api">Migrate from Screen API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrate-to-3-0-0.html#migrate-cleanup-step-and-feedback-sending">Migrate Cleanup Step and Feedback Sending</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#default-networking-implementation">Default Networking Implementation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#custom-networking-implementation">Custom Networking Implementation</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="migrate-to-3-0-0.html#overview-of-new-ui-customization-options">Overview of New UI Customization Options</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#styles">Styles</a></li>
 <li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#colors">Colors</a></li>
@@ -189,14 +220,14 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="migrate-to-3-0-0.html#migrate-to-the-new-ui">Migrate to the new UI</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#onboarding">Onboarding</a></li>
-<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#camera">Camera</a></li>
-<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#qr-code-scanning">QR code scanning</a></li>
-<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#review">Review</a></li>
-<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#help">Help</a></li>
-<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#analysis">Analysis</a></li>
-<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#error">Error</a></li>
-<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#no-results">No results</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#onboarding-screen">Onboarding Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#camera-screen">Camera Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#qr-code-scanner">QR Code Scanner</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#review-screen">Review Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#help-screen">Help Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#analysis-screen">Analysis Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#error-screen">Error Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#no-results-screen">No Results Screen</a></li>
 </ul>
 </li>
 </ul>
