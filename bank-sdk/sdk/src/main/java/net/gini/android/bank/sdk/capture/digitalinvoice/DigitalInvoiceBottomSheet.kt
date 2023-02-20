@@ -25,8 +25,11 @@ import net.gini.android.capture.network.model.GiniCaptureReturnReason
 
 private const val EXTRA_IN_SELECTABLE_LINE_ITEM = "EXTRA_IN_SELECTABLE_LINE_ITEM"
 
-class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItemDetailsScreenContract.View,
-    LineItemDetailsFragmentInterface {
+/**
+ * Internal use only.
+ */
+internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItemDetailsScreenContract.View,
+    LineItemDetailsInterface {
 
     private lateinit var binding: GbsEditItemBottomSheetBinding
     private var selectableLineItem: SelectableLineItem? = null
@@ -80,8 +83,8 @@ class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItemDetailsSc
     )
 
     private fun initListener() {
-        if (activity is LineItemDetailsFragmentListener) {
-            listener = activity as LineItemDetailsFragmentListener?
+        if (activity is LineItemDetailsListener) {
+            listener = activity as LineItemDetailsListener?
         } else checkNotNull(listener) {
             ("LineItemDetailsFragmentListener not set. "
                     + "You can set it with LineItemDetailsFragmentListener#setListener() or "
@@ -279,7 +282,7 @@ class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItemDetailsSc
         }
     }
 
-    override var listener: LineItemDetailsFragmentListener?
+    override var listener: LineItemDetailsListener?
         get() = this.presenter?.listener
         set(value) {
             this.presenter?.listener = value
