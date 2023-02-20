@@ -4,6 +4,7 @@
         <item name="gbsSwitchTrack">@color/Dark_03</item>
         <item name="gbsTextInputLayout">@color/Dark_04</item>
         <item name="gbsBottomSheetItemTitle">@color/Light_05</item>
+        <item name="gbsCurrencyPickerItemBackgroundColor">@color/Dark_03</item>
+        <item name="gbsCurrencyPickerItemSelectedColor">@color/Dark_04</item>
     </style>
-
 </resources>

@@ -2,7 +2,6 @@ package net.gini.android.bank.sdk.capture.digitalinvoice
 
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
-import net.gini.android.bank.sdk.capture.digitalinvoice.details.LineItemDetailsFragment
 import net.gini.android.bank.sdk.capture.digitalinvoice.onboarding.DigitalInvoiceOnboardingFragment
 
 /**

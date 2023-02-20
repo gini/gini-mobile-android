@@ -117,6 +117,9 @@
         </item>
     </style>
 
+    <style name="GiniCaptureTheme.DigitalInvoice.CurrencyItem" parent="Root.GiniCaptureTheme">
+        <item name="colorSurface">@color/Light_01</item>
+    </style>
 
     <style name="Root.GiniCaptureTheme.DigitalInvoice.LineItemDetails.InputField.Style" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
         <item name="materialThemeOverlay">
@@ -360,10 +363,19 @@
         <item name="trackTint">@color/gbs_switch_track_color</item>
     </style>
 
+
+    <style name="GiniCaptureTheme.DigitalInvoice.Edit.BottomSheetDialog" parent="GiniCaptureTheme.BottomSheetDialog">
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowSoftInputMode">adjustResize|stateAlwaysVisible</item>
+    </style>
+
     <style name="GiniCaptureTheme" parent="Root.GiniCaptureTheme">
         <item name="gbsSwitchTrack">@color/Light_03</item>
         <item name="gbsTextInputLayout">@color/Light_03</item>
         <item name="gbsBottomSheetItemTitle">@color/Dark_06</item>
+        <item name="gbsCurrencyPickerItemBackgroundColor">@color/Light_03</item>
+        <item name="gbsCurrencyPickerItemSelectedColor">@color/Light_02</item>
     </style>
 
     <style name="GiniCaptureTheme.DigitalInvoice.Title.TextStyle" parent="Root.GiniCaptureTheme.DigitalInvoice.Title.TextStyle" />

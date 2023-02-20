@@ -1,6 +1,5 @@
 package net.gini.android.bank.sdk.capture.digitalinvoice
 
-import net.gini.android.bank.sdk.capture.digitalinvoice.details.LineItemDetailsFragment
 import net.gini.android.bank.sdk.capture.digitalinvoice.details.LineItemDetailsFragmentListener
 
 /**

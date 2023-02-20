@@ -28,6 +28,7 @@
     <dimen name="gbs_digital_invoice_header_corners_collapsed">10dp</dimen>
     <dimen name="gbs_digital_invoice_header_collapsed_height">52dp</dimen>
     <dimen name="gbs_digital_invoice_header_collapsed_width">96dp</dimen>
+    <dimen name="gbs_digital_invoice_edit_sheet_field_height">56dp</dimen>
 
     <dimen name="gbs_digital_invoice_line_item_horizontal_margin">16dp</dimen>
     <dimen name="gbs_digital_invoice_line_item_vertical_margin">16dp</dimen>

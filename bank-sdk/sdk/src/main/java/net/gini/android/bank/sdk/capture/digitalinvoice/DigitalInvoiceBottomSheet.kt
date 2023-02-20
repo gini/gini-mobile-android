@@ -1,48 +1,77 @@
 package net.gini.android.bank.sdk.capture.digitalinvoice
 
 import android.app.Activity
+import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Context
-import android.content.Intent
-import android.content.res.ColorStateList
-import android.database.DataSetObserver
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
+import android.widget.TextView
 import androidx.core.content.ContextCompat
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.capture.digitalinvoice.details.*
-import net.gini.android.bank.sdk.capture.digitalinvoice.details.LineItemDetailsScreenPresenter
+import net.gini.android.bank.sdk.capture.util.amountWatcher
+import net.gini.android.bank.sdk.capture.util.hideKeyboard
 import net.gini.android.bank.sdk.databinding.GbsEditItemBottomSheetBinding
 import net.gini.android.capture.AmountCurrency
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
-import net.gini.android.core.api.Utils
 
 private const val EXTRA_IN_SELECTABLE_LINE_ITEM = "EXTRA_IN_SELECTABLE_LINE_ITEM"
-
 
 class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItemDetailsScreenContract.View,
     LineItemDetailsFragmentInterface {
 
-
     private lateinit var binding: GbsEditItemBottomSheetBinding
     private var selectableLineItem: SelectableLineItem? = null
     private var quantity: Int = 1
+    private val editorListener = TextView.OnEditorActionListener { v, actionId, event ->
+        v.clearFocus()
+        v.hideKeyboard()
+        true
+    }
+
+    private var selectedCurrency = "EUR"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             selectableLineItem = it.getParcelable(EXTRA_IN_SELECTABLE_LINE_ITEM)
-
             activity?.let { activity ->
                 createPresenter(activity)
                 initListener()
             }
         }
+    }
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        if (resources.getBoolean(R.bool.gc_is_tablet)) {
+            activity?.let {
+                binding = GbsEditItemBottomSheetBinding.inflate(it.layoutInflater, null, false)
+
+                val builder = AlertDialog.Builder(context)
+                builder.setView(binding.root)
+                setUpBindings()
+
+                return builder.create()
+            }
+        }
+
+       return super.onCreateDialog(savedInstanceState)
+    }
+
+    override fun getTheme(): Int {
+        if (resources.getBoolean(R.bool.gc_is_tablet)) {
+            return super.getTheme()
+        }
+        return R.style.GiniCaptureTheme_DigitalInvoice_Edit_BottomSheetDialog
+
     }
 
     private fun createPresenter(activity: Activity) = LineItemDetailsScreenPresenter(
@@ -60,24 +89,30 @@ class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItemDetailsSc
         }
     }
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
+        if (resources.getBoolean(R.bool.gc_is_tablet)) {
+            return super.onCreateView(inflater, container, savedInstanceState)
+        }
+
         binding = GbsEditItemBottomSheetBinding.inflate(inflater, container, false)
+        dialog?.setOnShowListener {
+            val bottomSheetInternal = (it as? BottomSheetDialog)?.findViewById<View>(R.id.design_bottom_sheet)
+            bottomSheetInternal?.let {
+                BottomSheetBehavior.from(bottomSheetInternal).state = BottomSheetBehavior.STATE_EXPANDED
+            }
+        }
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        selectableLineItem?.let {
-            bindUI(it.lineItem)
-            setupInputHandlers()
-            manageFocuses()
-        }
+        setUpBindings()
     }
 
     /**
@@ -101,20 +136,21 @@ class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItemDetailsSc
     }
 
     private fun bindUI(lineItem: LineItem) {
-        val spinnerAdapter = ArrayAdapter<AmountCurrency>(
-            requireContext(), android.R.layout.simple_spinner_dropdown_item,
-            AmountCurrency.values()
-        )
-        binding.gbsCurrenciesDropDown.setAdapter(spinnerAdapter)
         binding.gbsDropDownSelectionValue.text = lineItem.currency?.currencyCode
 
         binding.gbsArticleNameEditTxt.doAfterTextChanged {
             presenter?.setDescription(it)
         }
 
+        binding.gbsArticleNameEditTxt.setOnEditorActionListener(editorListener)
+
+        binding.gbsUnitPriceEditTxt.addTextChangedListener(amountWatcher)
+
         binding.gbsUnitPriceEditTxt.doAfterTextChanged {
             presenter?.setGrossPrice(it)
         }
+
+        binding.gbsUnitPriceEditTxt.setOnEditorActionListener(editorListener)
 
         binding.gbsQuantityEditTxt.doAfterTextChanged {
             presenter?.setQuantity(
@@ -125,6 +161,22 @@ class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItemDetailsSc
                 }
             )
         }
+
+        if (GiniBank.multipleCurrenciesEnabled) {
+            binding.gbsDropDownArrow.visibility = View.VISIBLE
+        } else {
+            binding.gbsDropDownArrow.visibility = View.GONE
+            context?.let {
+                val typedArray = it.obtainStyledAttributes(R.styleable.CurrencyStyle)
+                binding.gbsDropDownSelectionValue.setTextColor(typedArray.getColor(R.styleable.CurrencyStyle_gbsBottomSheetItemTitle, R.color.Light_01))
+            }
+
+            // Setting large margin to currency label if arrow is hidden to align with + button on UI
+            val param = (binding.gbsDropDownSelectionValue.layoutParams as ViewGroup.MarginLayoutParams).apply {
+                setMargins(0,0, resources.getDimension(R.dimen.large).toInt(),0)
+            }
+            binding.gbsDropDownSelectionValue.layoutParams = param
+        }
     }
 
     private fun setupInputHandlers() {
@@ -133,6 +185,8 @@ class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItemDetailsSc
         }
 
         binding.gbsAddQuantity.setOnClickListener {
+            if (quantity == QUANTITY_LIMIT) return@setOnClickListener
+
             quantity += 1
             binding.gbsQuantityEditTxt.setText("$quantity")
         }
@@ -147,16 +201,22 @@ class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItemDetailsSc
 
         binding.gbsCurrenciesDropDown.setOnItemClickListener { _, _, _, _ ->
             binding.gbsDropDownSelectionValue.text = binding.gbsCurrenciesDropDown.text
+            selectedCurrency = binding.gbsDropDownSelectionValue.text.toString()
         }
 
-
         binding.gbsDropDownSelectionValue.setOnClickListener {
+            if (!GiniBank.multipleCurrenciesEnabled) return@setOnClickListener
+
+            setUpDropDown()
             if (binding.gbsCurrenciesDropDown.isPopupShowing)
                 binding.gbsCurrenciesDropDown.dismissDropDown()
             else binding.gbsCurrenciesDropDown.showDropDown()
         }
 
         binding.gbsDropDownArrow.setOnClickListener {
+            if (!GiniBank.multipleCurrenciesEnabled) return@setOnClickListener
+
+            setUpDropDown()
             if (binding.gbsCurrenciesDropDown.isPopupShowing)
                 binding.gbsCurrenciesDropDown.dismissDropDown()
             else binding.gbsCurrenciesDropDown.showDropDown()
@@ -196,12 +256,6 @@ class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItemDetailsSc
                     )
                 )
                 binding.gbsUnitPriceDivider.visibility = View.VISIBLE
-                binding.gbsDropDownSelectionValue.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.Accent_01
-                    )
-                )
             } else {
                 binding.gbsUnitPriceDivider.visibility = View.INVISIBLE
                 binding.gbsUnitPriceTxt.setTextAppearance(R.style.Root_GiniCaptureTheme_Typography_Body2)
@@ -210,15 +264,19 @@ class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItemDetailsSc
         }
     }
 
+    private fun setUpDropDown() {
+        val currenciesList = AmountCurrency.values().map { it.name }
+        binding.gbsCurrenciesDropDown.setAdapter(CurrencyAdapter(requireActivity(),
+            R.layout.gbs_item_currency_dropdown,
+            if (GiniBank.multipleCurrenciesEnabled) currenciesList else listOf(currenciesList[0]), selectedCurrency))
+    }
 
-    companion object {
-        fun newInstance(selectableLineItem: SelectableLineItem) =
-            DigitalInvoiceBottomSheet().apply {
-                val args = Bundle()
-                args.putParcelable(EXTRA_IN_SELECTABLE_LINE_ITEM, selectableLineItem)
-                this.arguments = args
-                return this
-            }
+    private fun setUpBindings() {
+        selectableLineItem?.let {
+            bindUI(it.lineItem)
+            setupInputHandlers()
+            manageFocuses()
+        }
     }
 
     override var listener: LineItemDetailsFragmentListener?
@@ -269,5 +327,41 @@ class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItemDetailsSc
 
     override fun setPresenter(presenter: LineItemDetailsScreenContract.Presenter) {
         this.presenter = presenter
+    }
+
+    companion object {
+        const val QUANTITY_LIMIT = 1000
+
+        fun newInstance(selectableLineItem: SelectableLineItem) =
+            DigitalInvoiceBottomSheet().apply {
+                val args = Bundle()
+                args.putParcelable(EXTRA_IN_SELECTABLE_LINE_ITEM, selectableLineItem)
+                this.arguments = args
+                return this
+            }
+    }
+
+    private class CurrencyAdapter( private val mContext: Context,
+                                      private val viewResourceId: Int,
+                                      private val items: List<String>,
+                                      private var selectedCurrency: String) : ArrayAdapter<String?>(mContext, viewResourceId, items) {
+
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+            var convertView = convertView
+            if (convertView == null) {
+                convertView = LayoutInflater.from(mContext).inflate(viewResourceId, parent, false)
+            }
+            convertView!!.findViewById<TextView>(R.id.gbs_currency_textview).text = items[position]
+
+            val typedArray = mContext.theme.obtainStyledAttributes(R.styleable.CurrencyStyle)
+
+            if (items[position] == selectedCurrency) {
+                convertView.setBackgroundColor(typedArray.getColor(R.styleable.CurrencyStyle_gbsCurrencyPickerItemSelectedColor, R.color.Light_01))
+            } else {
+                convertView.setBackgroundColor(typedArray.getColor(R.styleable.CurrencyStyle_gbsCurrencyPickerItemBackgroundColor, R.color.Light_01))
+            }
+
+            return convertView
+        }
     }
 }

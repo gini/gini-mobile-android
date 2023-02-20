@@ -77,8 +77,10 @@
     <string name="gbs_digital_invoice_help_invoice_icon_content_description">How does a digital invoice work icon</string>
     <string name="gbs_digital_invoice_help_edit_icon_content_description">How can I edit an article icon</string>
     <string name="gbs_digital_invoice_help_shop_icon_content_description">Which online shops are supported icon</string>
+
     <string name="gbs_help_invoice_title">How does a digital invoice work?</string>
     <string name="gbs_help_invoice_text">We extracted all articles from your invoice and listed them for you. In case you want to return an ordered article or just partly pay your invoice, you simply deselect the article and the new total will be calculated automatically.</string>
+    
     <string name="gbs_help_edit_title">How can I edit an article?</string>
     <string name="gbs_help_edit_text">By clicking an article, you are able to edit its description, quantity and price per item. Please note that the price per item needs to include tax.</string>
     <string name="gbs_help_online_shops_title">Which online shops are supported?</string>
@@ -88,6 +90,7 @@
     <string name="gbs_proceed">Proceed</string>
     <string name="gbs_edit_article">Edit Article</string>
     <string name="gbs_name">Name</string>
+    <string name="gbs_unit_price">Unit price</string>
     <string name="gbs_quantity">Quantity</string>
     <string name="gbs_articles">Articles</string>
 

@@ -81,6 +81,9 @@ class MainActivity : AppCompatActivity() {
                     )
                 )
 
+        // TODO: remove after QA process
+        GiniBank.multipleCurrenciesEnabled = binding.gbsEnableMultipleCurrencies.isChecked
+
         GiniBank.setCaptureConfiguration(
             CaptureConfiguration(
                 networkService = networkService,
