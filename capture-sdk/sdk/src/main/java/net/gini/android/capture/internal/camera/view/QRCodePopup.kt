@@ -3,6 +3,7 @@ package net.gini.android.capture.internal.camera.view
 import android.content.res.ColorStateList
 import android.os.Handler
 import android.os.Looper
+import android.view.HapticFeedbackConstants
 import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
@@ -94,6 +95,7 @@ internal class QRCodePopup<T> @JvmOverloads constructor(
         fragmentImplCallback.view?.removeCallbacks(hideRunnable)
     }
 
+
     private fun showViews() {
 
         supportedBackgroundView?.visibility = if (supported) View.VISIBLE else View.GONE
@@ -113,7 +115,9 @@ internal class QRCodePopup<T> @JvmOverloads constructor(
                     R.color.Success_05
                 )
             )
+            performHapticFeedback(HapticFeedbackConstants.CONFIRM)
         } else {
+            performHapticFeedback(HapticFeedbackConstants.REJECT)
             mUnknownQRCodeWrapper.visibility = View.VISIBLE
             qrImageFrame.imageTintList = ColorStateList.valueOf(
                 ContextCompat.getColor(
@@ -147,6 +151,10 @@ internal class QRCodePopup<T> @JvmOverloads constructor(
         supportedBackgroundView?.visibility = View.GONE
         mUnknownQRCodeWrapper.visibility = View.GONE
         isShown = false
+    }
+
+    private fun performHapticFeedback(constant: Int) {
+        popupView.performHapticFeedback(constant)
     }
 
 }
