@@ -15,9 +15,9 @@ import net.gini.android.capture.view.InjectedViewAdapter
 interface HelpNavigationBarBottomAdapter : InjectedViewAdapter {
 
     /**
-     * <p>
-     *  Set a listener for the back navigation button.
-     * </p>
+     * Set the click listener for the back button.
+     *
+     * @param listener the click listener for the button
      */
     fun setOnBackClickListener(listener: View.OnClickListener?)
 }

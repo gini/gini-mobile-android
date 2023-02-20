@@ -9,6 +9,8 @@ package net.gini.android.capture.review.multipage;
 import androidx.annotation.NonNull;
 
 /**
+ * Internal use only.
+ *
  * Methods which the Multi-Page Review Fragment must implement.
  */
 public interface MultiPageReviewFragmentInterface {

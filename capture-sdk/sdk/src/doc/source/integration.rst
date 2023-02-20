@@ -54,16 +54,21 @@ Configuration
 Configuration and interaction is done using the ``GiniCapture`` singleton.
 
 To configure and create a new instance use the ``GiniCapture.Builder`` returned by ``GiniCapture.newInstance()``. The
-builder creates a new ``GiniCapture`` singleton which you will need to destroy later with ``GiniCapture.getInstance().cleanup()``.
+builder creates a new ``GiniCapture`` singleton which you will need to destroy later with ``GiniCapture.cleanup()``.
 This will also free up any used resources.
 
-You should call ``cleanup()`` after the SDK returned control to your application and your app has sent feedback to the
-Gini Bank API and is not using the SDK anymore.
+You must call ``GiniCapture.cleanup()`` after the user has seen (and potentially corrected) the extractions. You
+need to pass the updated extraction values to ``cleanup()``. If the SDK didn't return any extractions you can
+pass in empty strings.
+
+Failing to call ``GiniCapture.cleanup()`` will throw an ``IllegalStateException`` when
+``GiniCapture.newInstance()`` is called again.
 
 To view all the configuration options see the documentation of :root_dokka_path:`GiniCapture.Builder
 <sdk/net.gini.android.capture/-gini-capture/-builder/index.html?query=public%20class%20Builder>`.
 
-Information about the configurable features are available on the `Features <features.html>`_ page.
+Information about the configurable features are available on the `Features <features.html>`_ page and UI customization
+options can be viewed in the `Customization Guide <customization-guide.html>`_.
 
 Tablet Support
 ---------------
@@ -95,18 +100,9 @@ networking implementation of your own choosing.
     You should have received Gini Bank API client credentials from us. Please get in touch with us in case you don’t have
     them. Without credentials you won't be able to use the Gini Bank API.
 
-We provide two interfaces which need to be implemented to enable the SDK to analyze documents and retrieve extractions:
-
-* ``GiniCaptureNetworkService``
-   This interface is used to upload, analyze and delete documents. See the 
-   :root_dokka_path:`reference documentation <sdk/net.gini.android.capture.network/-gini-capture-network-service/index.html>`
-   for details.
-
-* ``GiniCaptureNetworkApi``
-   This interface is used to declare network tasks which should be called by you outside of the Gini Capture SDK (e.g.,
-   for sending feedback after the user saw and potentielly corrected the extractions).  See the
-   :root_dokka_path:`reference documentation
-   <sdk/net.gini.android.capture.network/-gini-capture-network-api/index.html>` for details.
+We provide the ``GiniCaptureNetworkService`` interface which is used to upload, analyze and delete documents. See the
+:root_dokka_path:`reference documentation <sdk/net.gini.android.capture.network/-gini-capture-network-service/index.html>`
+for details.
 
 Default Implementation
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -123,8 +119,8 @@ To use it add the ``gini-capture-network-lib`` dependency to your app's ``build.
         implementation 'net.gini.android:gini-capture-sdk-default-network:3.0.0-beta04'
     }
 
-For the Gini Capture SDK to be aware of the default implementations create the instances and pass
-them to the builder of ``GiniCapture``:
+For the Gini Capture SDK to be aware of the default implementation create an instance and pass
+it to the builder of ``GiniCapture``:
 
 .. code-block:: java
 
@@ -133,19 +129,12 @@ them to the builder of ``GiniCapture``:
             .setClientCredentials(myClientId, myClientSecret, myEmailDomain)
             .build();
 
-    GiniCaptureDefaultNetworkApi networkApi = 
-        GiniCaptureDefaultNetworkApi.builder()
-            .withGiniCaptureDefaultNetworkService(networkService)
-            .build();
-
     GiniCapture.newInstance()
         .setGiniCaptureNetworkService(networkService)
-        .setGiniCaptureNetworkApi(networkApi)
         .build();
 
-Both default implementations follow the builder pattern. See the documentation of
+The default implementation follows the builder pattern. See the documentation of
 :root_dokka_path_default_network_library:`GiniCaptureDefaultNetworkService.Builder <default-network/net.gini.android.capture.network/-gini-capture-default-network-service/-builder/index.html>`
-and :root_dokka_path_default_network_library:`GiniCaptureDefaultNetworkApi.Builder <default-network/net.gini.android.capture.network/-gini-capture-default-network-api/-builder/index.html>`
 for configuration options.
 
 Retrieve the Analyzed Document
@@ -160,95 +149,16 @@ extractions came from an EPS QR Code.
 
 .. note::
 
-    Make sure to call it before calling ``GiniCaptureDefaultNetworkService.cleanup()`` or ``GiniCapture.cleanup()``.
-    Otherwise the analyzed document won't be available anymore.
-
+    Make sure to call it before calling ``GiniCapture.cleanup()``. Otherwise the analyzed document won't be available anymore.
 
 Custom Implementation
 ~~~~~~~~~~~~~~~~~~~~~
 
-You can also provide your own networking by implementing the ``GiniCaptureNetworkService`` and the
-``GiniCaptureNetworkApi`` interfaces. Pass your instances to the builder of ``GiniCapture`` as shown
-above.
+You can also provide your own networking by implementing the ``GiniCaptureNetworkService`` interface. Pass your
+instances to the builder of ``GiniCapture`` as shown above.
 
-You may also use the `Gini Bank API Library <https://github.com/gini/gini-mobile-android/bank-api-library>`_ for Android or implement
-communication with the Gini Bank API yourself.
-
-Sending Feedback
-~~~~~~~~~~~~~~~~
-
-Your app should send feedback for the extractions the Gini Bank API delivered. Feedback should be sent *only* for the
-extractions the user has seen and accepted (or corrected).
-
-For additional information about feedback see the `Gini Bank API documentation
-<https://pay-api.gini.net/documentation/#send-feedback-and-get-even-better-extractions-next-time>`_.
-
-Default Implementation
-^^^^^^^^^^^^^^^^^^^^^^
-
-The example below shows how to correct extractions and send feedback using the default networking implementation:
-
-.. note::
-
-    We also provide a sample test case `here
-    <https://github.com/gini/gini-mobile-android/blob/main/capture-sdk/default-network/src/androidTest/java/net/gini/android/capture/network/ExtractionFeedbackIntegrationTest.kt>`_
-    to verify that extraction feedback sending works. You may use it along with the example pdf and json files as a
-    starting point to write your own test case.
-
-    The sample test case is based on the Bank API documentation's `recommended steps
-    <https://pay-api.gini.net/documentation/#test-example>`_ for testing extraction feedback sending.
-
-.. code-block:: java
-
-   GiniCaptureDefaultNetworkApi networkApi; // Provided
-
-   Map<String, GiniCaptureSpecificExtraction> extractions; // Provided
-
-   // Modify the amount to pay extraction's value.
-   GiniCaptureSpecificExtraction amountToPay = extractions.get("amountToPay");
-   amountToPay.setValue("31:00");
-
-   // You should send feedback only for extractions the user has seen and accepted.
-   // In this example only the amountToPay was wrong and we can reuse the other extractions.
-   Map<String, GiniCaptureSpecificExtraction> feedback = new HashMap<String, GiniCaptureSpecificExtraction>();
-   feedback.put("iban", extractions.get("iban"));
-   feedback.put("amountToPay", amountToPay);
-   feedback.put("bic", extractions.get("bic"));
-   feedback.put("senderName", extractions.get("senderName"));
-
-   networkApi.sendFeedback(feedback, new GiniCaptureNetworkCallback<Void, Error>() {
-            @Override
-            public void failure(Error error) {
-                // Handle the error.
-            }
-
-            @Override
-            public void success(Void result) {
-                // Feedback sent successfully.
-            }
-
-            @Override
-            public void cancelled() {
-                // Handle cancellation.
-            }
-        });
-
-Custom Implementation
-^^^^^^^^^^^^^^^^^^^^^
-
-If you use your own networking implementation and directly communicate with the Gini Bank API then see `this section
-<https://pay-api.gini.net/documentation/#submitting-feedback-on-extractions>`_ in its documentation on how to send
-feedback.
-
-In case you use the Gini Bank API Library then see `this section
-<https://developer.gini.net/gini-mobile-android/bank-api-library/library/html/guides/common-tasks.html#sending-feedback>`_ in its documentation
-for details.
-
-.. note::
-
-    The Bank API documentation provides `recommended steps <https://pay-api.gini.net/documentation/#test-example>`_ for
-    testing extraction feedback sending. You may use it along with the example pdf and json files as a starting point to
-    write a test case for verifying that feedback sending works. 
+You may also use the `Gini Bank API Library <https://github.com/gini/gini-mobile-android/tree/main/bank-api-library>`_ for Android
+or implement communication with the `Gini Bank API <https://pay-api.gini.net/documentation/>`_ yourself.
 
 Capturing documents
 -------------------
@@ -258,7 +168,9 @@ To launch the Gini Capture SDK you only need to:
 #. Request camera access,
 #. Configure a new instance of ``GiniCapture``,
 #. Launch the ``CameraActivity``,
-#. Handle the result.
+#. Handle the extraction results,
+#. Cleanup the SDK by calling ``GiniCapture.cleanup()`` while also providing the required extraction feedback to improve
+   the future extraction accuracy.
 
 The following diagram shows the interaction between your app and the SDK:
 
@@ -274,19 +186,23 @@ The following diagram shows the interaction between your app and the SDK:
 
 The ``CameraActivity`` can return with the following result codes:
 
-* Activity.RESULT_OK
+* ``Activity.RESULT_OK``
 
    Document was analyzed and the extractions are available in the ``EXTRA_OUT_EXTRACTIONS`` result extra. It contains a
    ``Bundle`` with the extraction labels as keys and ``GiniCaptureSpecificExtraction`` parcelables as values.
 
-* Activity.RESULT_CANCELED
+* ``Activity.RESULT_CANCELED``
    
    User has canceled the Gini Capture SDK.
 
-* CameraActivity.RESULT_ERROR
+* ``CameraActivity.RESULT_ERROR``
 
    An error occured and the details are available in the ``EXTRA_OUT_ERROR`` result extra. It contains a parcelable extra
    of type ``GiniCaptureError`` detailing what went wrong.
+
+* ``CameraActivity.RESULT_ENTER_MANUALLY``
+
+   The document analysis finished with no results or an error and the user clicked the "Enter manually" button.
 
 The following example shows how to launch the Gini Capture SDK and how to handle the results:
 
@@ -304,15 +220,10 @@ The following example shows how to launch the Gini Capture SDK and how to handle
         
         // Instantiate the networking implementations.
         GiniCaptureNetworkService networkService = ...
-        GiniCaptureNetworkApi networkApi = ...
-
-        // Cleanup GiniCapture to make sure everything is reset.
-        GiniCapture.cleanup((Context) this);
         
         // Configure GiniCapture and create a new singleton instance.
         GiniCapture.newInstance()
                 .setGiniCaptureNetworkService(networkService)
-                .setGiniCaptureNetworkApi(networkApi)
                 ...
                 .build();
                 
@@ -329,6 +240,8 @@ The following example shows how to launch the Gini Capture SDK and how to handle
         if (requestCode == GINI_CAPTURE_REQUEST) {
             switch (resultCode) {
                 case Activity.RESULT_CANCELED:
+                    GiniCapture.cleanup(this, "", "",
+                                "", "","", Amount.EMPTY);
                     break;
 
                 case Activity.RESULT_OK:
@@ -353,8 +266,29 @@ The following example shows how to launch the Gini Capture SDK and how to handle
                     if (error != null) {
                         handleError(error);
                     }
+                    GiniCapture.cleanup(this, "", "",
+                            "", "","", Amount.EMPTY);
+                    break;
 
+                case CameraActivity.RESULT_ENTER_MANUALLY:
+                    handleEnterManually();
+                    GiniCapture.cleanup(this, "", "",
+                            "", "","", Amount.EMPTY);
                     break;
             }
         }
+    }
+
+    void stopGiniCaptureSDK() {
+        // After the user has seen and potentially corrected the extractions
+        // cleanup the SDK while passing in the final extraction values 
+        // which will be used as feedback to improve the future extraction accuracy:
+        GiniCapture.cleanup((Context) this,
+                paymentRecipient,
+                paymentReference,
+                paymentPurpose,
+                iban,
+                bic,
+                amount
+            )
     }

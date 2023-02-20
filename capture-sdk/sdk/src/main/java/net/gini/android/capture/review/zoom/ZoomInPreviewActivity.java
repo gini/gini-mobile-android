@@ -15,6 +15,9 @@ import net.gini.android.capture.view.InjectedViewContainer;
 import net.gini.android.capture.view.NavButtonType;
 import net.gini.android.capture.view.NavigationBarTopAdapter;
 
+/**
+ * Internal use only.
+ */
 public class ZoomInPreviewActivity extends AppCompatActivity {
 
     private static final String ARGS_DOCUMENT = "GC_ARGS_DOCUMENT";

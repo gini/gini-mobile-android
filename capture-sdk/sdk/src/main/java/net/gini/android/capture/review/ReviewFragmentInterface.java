@@ -3,6 +3,8 @@ package net.gini.android.capture.review;
 import androidx.annotation.NonNull;
 
 /**
+ * Internal use only.
+ *
  * Methods which Review Fragment must implement.
  */
 public interface ReviewFragmentInterface {

@@ -1,772 +1,494 @@
 Customization Guide
 ===================
 
-Customization of the Views is provided via overriding of app resources: dimensions, strings, colors, texts, etc.
-Although all `resources of the Gini Bank SDK
-<https://github.com/gini/gini-mobile-android/tree/main/bank-sdk/sdk/src/main/res>`_ can be overridden we recommend only
-changing the resources listed in this customization guide.
-
-The capture related screens are provided by the `Gini Capture SDK
-<https://github.com/gini/gini-mobile-android/tree/main/capture-sdk>`_. Please consult the `customization guide
-<https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/html/customization-guide.html>`_ for the Gini Capture
-SDK to view a screen based overview of the customizable resources.
-
-.. note::
-  
-    When you override styles please make sure that you use the parent style with the ``Root.`` prefix. This ensures 
-    that your custom style items are merged with the default ones.
-
+..
+  Headers:
+  h1 =====
+  h2 -----
+  h3 ~~~~~
+  h4 +++++
+  h5 ^^^^^
 
 .. contents::
-   :depth: 2
+   :depth: 1
    :local:
 
+UI customization is provided mostly via overriding of app resources: theme, styles, dimensions, strings,
+colors, texts, etc.
 
-Return Assistant
-----------------
+We provide global customization options which are applied on all screens consistently. Screen specific customizations
+are only needed for images and texts.
 
-.. _onboarding:
+.. note::
+
+    Please note that capture related screens are provided by the :root_html_path_capture_sdk:`Gini Capture SDK
+    <index.html>`. In the following we will often refer to resources provided by the Gini Capture SDK.
+
+Overview of UI Customization Options
+------------------------------------
+
+Styles
+~~~~~
+
+We leverage the power of Material Design to configure a theme for the SDK with a global color palette and typography
+that is applied on all the screens. 
+
+Using global styles for the various widgets we enable you to customize them in a single place. They are then
+consistently applied on all screens.
+
+Theme
++++++
+
+The theme style is based on Material Design v3 and is named ``GiniCaptureTheme``. To override the theme in your
+application use ``Root.GiniCaptureTheme`` as the parent:
+
+.. code-block:: xml
+
+    <style name="GiniCaptureTheme" parent="Root.GiniCaptureTheme">
+      (...)
+    </style>
+
+Widgets
++++++++
+
+The style of buttons and other widgets is based on Material Design v2. To override them in your application use the
+root style as the parent, for example:
+
+.. code-block:: xml
+
+    <style name="GiniCaptureTheme.Widget.Button.OutlinedButton" parent="Root.GiniCaptureTheme.Widget.Button.OutlinedButton">
+      (...)
+    </style>
+
+Colors
+~~~~~~
+
+We are providing a global color palette which you are free to override. The custom colors will be then applied on all screens.
+
+You can find the names of the color resources in the color palette below.
+
+.. note::
+
+    If you have overridden the ``GiniCaptureTheme`` then the theme colors you have set there will override the color
+    palette customization.
+
+You can view our color palette here:
+
+.. raw:: html
+
+    <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
+    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FMcDZrQPr6IgkzCQtN3lqAe%2FAndroid-Gini-Capture-SDK-3.0.0-UI-Customisation%3Fnode-id%3D40%253A491%26t%3DNoWz8V7m9GX9SNwS-1"
+    allowfullscreen></iframe>
+
+Images
+~~~~~~
+
+Customizing of images is done via overriding of drawable resources. You can find the drawable
+resource names in the :ref:`screen-by-screen UI customization section<screen-customization>`.
+
+We are using mostly vector drawables. Unfortunately due to the limitations of vector drawables some images had to be
+added as PNGs.
+
+If you use vector drawables please add them to the `drawable-anydpi` folder so that they also override any density
+specific PNGs.
+
+Typography
+~~~~~~~~~~
+
+We provide a global typography based on text appearance styles from Material Design v2. To override them in your
+application use the root style as the parent, for example:
+
+.. code-block:: xml
+
+    <style name="GiniCaptureTheme.Typography.Body1" parent="Root.GiniCaptureTheme.Typography.Body1">
+        (...)
+    </style>
+
+.. note::
+
+  If you have overriden the ``GiniCaptureTheme`` then the text appearances you have set there will override the
+  typography customization. Same applies to overriden widget styles where you have set a custom text appearance.
+
+You can preview our typography along with their style resource names below:
+
+.. raw:: html
+
+    <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
+    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FMcDZrQPr6IgkzCQtN3lqAe%2FAndroid-Gini-Capture-SDK-3.0.0-UI-Customisation%3Fnode-id%3D40%253A492%26t%3DNoWz8V7m9GX9SNwS-1"
+    allowfullscreen></iframe>
+
+Text
+~~~~
+
+Text customization is done via overriding of string resources.
+
+Custom UI Elements
+~~~~~~~~~~~~~~~~~~
+
+Certain elements of the UI can be fully customized via UI injection. It utilizes view adapter interfaces which you
+can implement and pass to ``GiniBank`` when configuring the SDK. These interfaces declare the contract the injected
+view has to fulfill and allow the SDK to ask for your view instance when needed.
+
+Top Navigation Bar
+++++++++++++++++++
+
+To inject your own navigation bar view implement the ``NavigationBarTopAdapter`` and pass it to
+``GiniBank.setCaptureConfiguration(CaptureConfiguration(navigationBarTopAdapter = ))``. Your view will then be displayed
+on all screens as the top navigation bar.
+
+Bottom Navigation Bar
++++++++++++++++++++++
+
+You can opt to show a bottom navigation bar. To enable it pass ``true`` to
+``GiniBank.setCaptureConfiguration(CaptureConfiguration(bottomNavigationBarEnabled = ))``.
+
+.. note::
+
+    The top navigation bar will still be used, but its functionality will be limited to showing the screen's title and
+    an optional close button. Please inject a custom top navigation bar if your design requires it even if you have
+    enabled the bottom navigation bar.
+
+Each screen has a slightly different bottom navigation bar because they contain screen specific call-to-action buttons.
+
+To inject your own views implement each screen's view adapter interface (e.g., ``OnboardingNavigationBarBottomAdapter``)
+and pass it to ``GiniBank`` (e.g., ``GiniBank.setCaptureConfiguration(CaptureConfiguration(onboardingNavigationBarBottomAdapter = ))``). Your
+view will then be displayed on the relevant screen.
+
+Dark mode
+~~~~~~~~~
+
+To customize resources for dark mode add them to resource folders containing the ``-night`` resource qualifier.
+
+.. _screen-customization:
 
 Onboarding Screen
-~~~~~~~~~~~~~~~~~
+----
 
-.. figure:: _static/customization/Return-Assistant-Onboarding.png
-   :figwidth: 324
+UI Customization
+~~~~~~~~~~~~~~~~
 
-1. Action Bar
-^^^^^^^^^^^^^
+.. raw:: html
 
-All Action Bar customizations except the title are global to all Activities.
+    <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
+    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FMcDZrQPr6IgkzCQtN3lqAe%2FAndroid-Gini-Capture-SDK-3.0.0-UI-Customisation%3Fnode-id%3D40%253A584%26t%3DNoWz8V7m9GX9SNwS-1"
+    allowfullscreen></iframe>
 
-- **Title**
-
-  Via the string resource named ``gbs_title_digital_invoice``.
-
-- **Title Color**
-
-  Via the color resource named ``gc_action_bar_title``.
-
-- **Back Button Icon**
-
-  Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named ``gc_action_bar_back``.
-  Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
-
-- **Help Button**
-
-  - **Icon**
-
-    Via the vector drawable named ``gbs_menu_question_circle_info``.
-    Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
-
-  - **Icon Tint Color**
-
-    Via the color resource named ``gbs_digital_invoice_help_icon_tint``.
-
-  - **Title**
-
-    Via the string resource named ``gbs_digital_invoice_help_info``.
-
-- **Background Color**
-
-  Via the color resource named ``gc_action_bar``.
-
-- **Status Bar Background Color**
-
-  Via the color resource named ``gc_status_bar``.
-
-  If you use a light background color, then you should set the ``gc_light_status_bar`` boolean
-  resource to ``true``. This will cause the status bar contents to be drawn with a dark color.
-
-:ref:`Back to screenshot. <onboarding>`
-
-2. Background Color
-^^^^^^^^^^^^^^^^^^^
-
-- **Color**
-
-  Via the color resource named ``gbs_digital_invoice_onboarding_fragment_background``.
-
-:ref:`Back to screenshot. <onboarding>`
-
-3. Title
-^^^^^^^^
-
-- **Text**
-
-  Via the string resource named ``gbs_digital_invoice_onboarding_text_1``.
-
-- **Text Style**
-
-  Via overriding the style named ``GiniCaptureTheme.DigitalInvoice.Onboarding.Title.TextStyle`` (with
-  parent style ``Root.GiniCaptureTheme.DigitalInvoice.Onboarding.Title.TextStyle``).
-
-:ref:`Back to screenshot. <onboarding>`
-
-4. Illustration
-^^^^^^^^^^^^^^^
-
-- **Image**
-
-  Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named ``gbs_digital_invoice_list_image.png``.
-  Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
-
-:ref:`Back to screenshot. <onboarding>`
-
-5. Message
-^^^^^^^^^^
-
-- **Text**
-
-  Via the string resource named ``gbs_digital_invoice_onboarding_text_2``.
-
-- **Text Style**
-
-  Via overriding the style named ``GiniCaptureTheme.DigitalInvoice.Onboarding.TextStyle`` (with
-  parent style ``Root.GiniCaptureTheme.DigitalInvoice.Onboarding.TextStyle``).
-
-:ref:`Back to screenshot. <onboarding>`
-
-6. "Done" Button
-^^^^^^^^^^^^^^^^^^^^
-
-- **Title**
-
-  Via the string resource named ``gbs_digital_invoice_onboarding_done_button_title``.
-
-- **Button Style**
-
-  Via overriding the style named ``GiniCaptureTheme.DigitalInvoice.Onboarding.Done.Button`` (with
-  parent style ``Root.GiniCaptureTheme.DigitalInvoice.Onboarding.Done.Button``).
-
-:ref:`Back to screenshot. <onboarding>`
-
-7. "Don't Show Again" Button
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-- **Title**
-
-  Via the string resource named ``gbs_digital_invoice_onboarding_do_not_show_button_title``.
-
-- **Button Style**
-
-  Via overriding the style named ``GiniCaptureTheme.DigitalInvoice.Onboarding.Dismiss.Button`` (with
-  parent style ``Root.GiniCaptureTheme.DigitalInvoice.Onboarding.Dismiss.Button``).
-
-:ref:`Back to screenshot. <onboarding>`
-
-.. _info-box:
-
-Info Box
-~~~~~~~~
-
-.. figure:: _static/customization/Digital-Invoice-Check-Items-Info-Box.png
-   :figwidth: 324
-
-1. Background
-^^^^^^^^^^^^^
-
-- **Color**
-
-  Via the color resource named ``gbs_digital_invoice_header_background``.
-
-:ref:`Back to screenshot. <info-box>`
-
-2. Title and Message
-^^^^^^^^^^^^^^^^^^^^
-
-- **Title**
-
-  Via the string resource named ``gbs_digital_header_title``.
-
-- **Title Text Style**
-
-  Via overriding the style named ``GiniCaptureTheme.DigitalInvoice.Header.TextStyle`` (with
-  parent style ``Root.GiniCaptureTheme.DigitalInvoice.Header.TextStyle``).
-
-- **Message**
-
-  Via the string resource named ``gbs_digital_header_text_1``.
-
-- **Message Text Style**
-
-  Via overriding the style named ``GiniCaptureTheme.DigitalInvoice.Header.TextStyle`` (with
-  parent style ``Root.GiniCaptureTheme.DigitalInvoice.Header.TextStyle``).
-
-:ref:`Back to screenshot. <info-box>`
-
-3. Expand/Collapse Button
-^^^^^^^^^^^^^^^^^^^^^^^^^
-
-- **Icon**
-
-  Via a vector drawable named ``gbs_digital_header_arrow_up``.
-
-- **Icon Tint Color**
-
-  Via the color resource named ``gbs_digital_invoice_header_collapse_tint``.
-
-:ref:`Back to screenshot. <info-box>`
-
-4. Illustration
-^^^^^^^^^^^^^^^
-
-- **Image**
-
-  Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named ``gbs_digital_header_image.png``.
-  Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
-
-:ref:`Back to screenshot. <info-box>`
-
-5. Bottom Message
-^^^^^^^^^^^^^^^^^
-
-- **Text**
-
-  Via the string resource named ``gbs_digital_header_text_2``.
-
-- **Text Style**
-
-  Via overriding the style named ``GiniCaptureTheme.DigitalInvoice.Header.TextStyle`` (with
-  parent style ``Root.GiniCaptureTheme.DigitalInvoice.Header.TextStyle``).
-
-:ref:`Back to screenshot. <info-box>`
-
-6. "OK" Button
-^^^^^^^^^^^^^^
-
-- **Title**
-
-  Via the string resource named ``gbs_digital_invoice_header_button_1``.
-
-- **Button Style**
-
-  Via overriding the style named ``GiniCaptureTheme.DigitalInvoice.Header.Button1`` (with
-  parent style ``Root.GiniCaptureTheme.DigitalInvoice.Header.Button1``).
-
-:ref:`Back to screenshot. <info-box>`
-
-7. "Skip" Button
-^^^^^^^^^^^^^^^^
-
-- **Title**
-
-  Via the string resource named ``gbs_digital_invoice_header_button_2``.
-
-- **Button Style**
-
-  Via overriding the style named ``GiniCaptureTheme.DigitalInvoice.Header.Button2`` (with
-  parent style ``Root.GiniCaptureTheme.DigitalInvoice.Header.Button2``).
-
-:ref:`Back to screenshot. <info-box>`
-
-.. _digital-invoice:
-
-Digital Invoice Screen
-~~~~~~~~~~~~~~~~~~~~~~
-
-.. figure:: _static/customization/Digital-Invoice-Screen.png
-   :figwidth: 324
-
-1. Background
-^^^^^^^^^^^^^
-
-- **Color**
-
-  Via the color resource named ``gbs_digital_invoice_fragment_background``.
-
-:ref:`Back to screenshot. <digital-invoice>`
-
-2. Line Item Index
-^^^^^^^^^^^^^^^^^^
-
-- **Text**
-
-  Via the string resource named ``gbs_digital_invoice_line_item_index``.
-  
-  Please include two decimal format arguments:
-
-  - Current Index: ``%1$d``
-  - Total Count: ``%2$d``
-
-- **Text Style**
-
-  Via overriding the style named ``GiniCaptureTheme.DigitalInvoice.LineItem.Index.TextStyle`` (with
-  parent style ``Root.GiniCaptureTheme.DigitalInvoice.LineItem.Index.TextStyle``).
-
-:ref:`Back to screenshot. <digital-invoice>`
-
-3. Line Item Edit Button
-^^^^^^^^^^^^^^^^^^^^^^^^
-
-- **Title**
-
-  Via the string resource named ``gbs_digital_invoice_header_button_2``.
-
-- **Icon**
-
-  Via a vector drawable named ``gbs_edit_icon``.
-
-- **Icon Tint Color**
-
-  Via the color resource named ``gbs_digital_invoice_edit_button``.
-
-- **Button Style**
-
-  Via overriding the style named ``GiniCaptureTheme.DigitalInvoice.LineItem.Edit.TextStyle`` (with
-  parent style ``Root.GiniCaptureTheme.DigitalInvoice.LineItem.Edit.TextStyle``).
-
-:ref:`Back to screenshot. <digital-invoice>`
-
-4. Line Item Card
-^^^^^^^^^^^^^^^^^
-
-- **Border Stroke Color**
-
-  Via the color resource named ``gbs_digital_invoice_line_item_stroke``.
-
-- **Toggle Switch Style**
-
-  Via overriding the style named ``GiniCaptureTheme.DigitalInvoice.Switch`` (with
-  parent style ``Root.GiniCaptureTheme.DigitalInvoice.Switch``).
-
-- **Description Text Style**
-
-  Via overriding the style named ``GiniCaptureTheme.DigitalInvoice.LineItem.Description.TextStyle`` (with
-  parent style ``Root.GiniCaptureTheme.DigitalInvoice.LineItem.Description.TextStyle``).
-
-- **Quantity Text Style**
-
-  Via overriding the style named ``GiniCaptureTheme.DigitalInvoice.LineItem.Quantity.TextStyle`` (with
-  parent style ``Root.GiniCaptureTheme.DigitalInvoice.LineItem.Quantity.TextStyle``).
-
-- **Price Text Style - Integral Part**
-
-  Via overriding the style named ``GiniCaptureTheme.DigitalInvoice.LineItem.GrossPrice.Integral.TextStyle`` (with
-  parent style ``Root.GiniCaptureTheme.DigitalInvoice.LineItem.GrossPrice.Integral.TextStyle``).
-
-- **Price Text Style - Fractional Part**
-
-  Via overriding the style named ``GiniCaptureTheme.DigitalInvoice.LineItem.GrossPrice.Fractional.TextStyle`` (with
-  parent style ``Root.GiniCaptureTheme.DigitalInvoice.LineItem.GrossPrice.Fractional.TextStyle``).
-
-- **Delete Button (shown only for manually added line items)**
-
-  - **Icon**
-
-    Via a vector drawable named ``gbs_digital_invoice_remove``.
-
-  - **Style** 
-
-    Via overriding the style named ``GiniCaptureTheme.DigitalInvoice.Remove.Button`` (with
-    parent style ``Root.GiniCaptureTheme.DigitalInvoice.Remove.Button``).
-
-- **Disabled State Color**
-
-  Via the color resource named ``gbs_digital_invoice_line_item_disabled``.
-
-:ref:`Back to screenshot. <digital-invoice>`
-
-5. Additional Costs
-^^^^^^^^^^^^^^^^^^^
-
-- **Name Text Style**
-
-  Via overriding the style named ``GiniCaptureTheme.DigitalInvoice.Addon.Name.TextStyle`` (with
-  parent style ``Root.GiniCaptureTheme.DigitalInvoice.Addon.Name.TextStyle``).
-
-- **Price Text Style - Integral Part**
-
-  Via overriding the style named ``GiniCaptureTheme.DigitalInvoice.Addon.Price.Integral.TextStyle`` (with
-  parent style ``Root.GiniCaptureTheme.DigitalInvoice.Addon.Price.Integral.TextStyle``).
-
-- **Price Text Style - Fractional Part**
-
-  Via overriding the style named ``GiniCaptureTheme.DigitalInvoice.Addon.Price.Fractional.TextStyle`` (with
-  parent style ``Root.GiniCaptureTheme.DigitalInvoice.Addon.Price.Fractional.TextStyle``).
-
-:ref:`Back to screenshot. <digital-invoice>`
-
-6. "Add Article" Button
-^^^^^^^^^^^^^^^^^^^^^^^
-
-- **Title**
-
-  Via the string resource named ``gbs_digital_invoice_footer_add``.
-
-- **Button Style**
-
-  Via overriding the style named ``GiniCaptureTheme.DigitalInvoice.Add.Button`` (with
-  parent style ``Root.GiniCaptureTheme.DigitalInvoice.Add.Button``).
-
-:ref:`Back to screenshot. <digital-invoice>`
-
-7. Total Price
-^^^^^^^^^^^^^^
-
-- **Total Price Label Text**
-
-  Via the string resource named ``gbs_digital_invoice_footer_total_label``.
-
-- **Total Price Label Text Style**
-
-  Via overriding the style named ``GiniCaptureTheme.DigitalInvoice.TotalGrossPrice.Label.TextStyle`` (with
-  parent style ``Root.GiniCaptureTheme.DigitalInvoice.TotalGrossPrice.Label.TextStyle``).
-
-- **Explanation Text**
-
-  Via the string resource named ``gbs_digital_invoice_footer_total_expl``.
-
-- **Explanation Text Style**
-
-  Via overriding the style named ``GiniCaptureTheme.DigitalInvoice.TotalGrossPrice.Expl.TextStyle`` (with
-  parent style ``Root.GiniCaptureTheme.DigitalInvoice.TotalGrossPrice.Expl.TextStyle``).
-
-- **Total Price Text Style - Integral Part**
-
-  Via overriding the style named ``GiniCaptureTheme.DigitalInvoice.TotalGrossPrice.Integral.TextStyle`` (with
-  parent style ``Root.GiniCaptureTheme.DigitalInvoice.TotalGrossPrice.Integral.TextStyle``).
-
-- **Total Price Text Style - Fractional Part**
-
-  Via overriding the style named ``GiniCaptureTheme.DigitalInvoice.TotalGrossPrice.Fractional.TextStyle`` (with
-  parent style ``Root.GiniCaptureTheme.DigitalInvoice.TotalGrossPrice.Fractional.TextStyle``).
-
-:ref:`Back to screenshot. <digital-invoice>`
-
-8. Bottom Notice
-^^^^^^^^^^^^^^^^
-
-- **Text**
-
-  Via the string resource named ``gbs_digital_invoice_footer_notice``.
-
-- **Text Style**
-
-  Via overriding the style named ``GiniCaptureTheme.DigitalInvoice.Footer.Notice.TextStyle`` (with
-  parent style ``Root.GiniCaptureTheme.DigitalInvoice.Footer.Notice.TextStyle``).
-
-:ref:`Back to screenshot. <digital-invoice>`
-
-9. "Pay" Button
-^^^^^^^^^^^^^^^^^^^^^^^
-
-- **Title (pay at least one line item)**
-
-  Via the string resource named ``gbs_digital_invoice_pay``.
-  
-  Please include two decimal format arguments:
-
-  - Selected Items Count: ``%1$d``
-  - Total Count: ``%2$d``
-
-- **Title (pay only for other charges)**
-
-  Via the string resource named ``gbs_digital_invoice_pay_other_charges``.
-
-- **Title (disabled)**
-
-  Via the string resource named ``gbs_digital_invoice_pay_disabled``.
-
-- **Button Style**
-
-  Via overriding the style named ``GiniCaptureTheme.DigitalInvoice.Pay.Button`` (with
-  parent style ``Root.GiniCaptureTheme.DigitalInvoice.Pay.Button``).
-
-:ref:`Back to screenshot. <digital-invoice>`
-
-10. "Skip" Button
-^^^^^^^^^^^^^^^^^^^^^^^
-
-- **Title**
-
-  Via the string resource named ``gbs_digital_invoice_footer_skip``.
-
-- **Button Style**
-
-  Via overriding the style named ``GiniCaptureTheme.DigitalInvoice.Skip.Button`` (with
-  parent style ``Root.GiniCaptureTheme.DigitalInvoice.Skip.Button``).
-
-:ref:`Back to screenshot. <digital-invoice>`
-
-.. _return-reason-picker:
-
-Return Reason Picker
-~~~~~~~~~~~~~~~~~~~~
-
-.. figure:: _static/customization/Digital-Invoice-Return-Reason-Picker.png
-   :figwidth: 324
-
-1. Title
-^^^^^^^^
-
-- **Text**
-
-  Via the string resource named ``gbs_digital_invoice_return_reason_dialog_title``.
-
-- **Text Style**
-
-  Via overriding the style named ``GiniCaptureTheme.DigitalInvoice.ReturnReasonDialog.Title.TextStyle`` (with
-  parent style ``Root.GiniCaptureTheme.DigitalInvoice.ReturnReasonDialog.Title.TextStyle``).
-
-- **Divider Color**
-
-  Via the color resource named ``gbs_digital_invoice_return_reason_dialog_divider``.
-
-:ref:`Back to screenshot. <return-reason-picker>`
-
-2. Return Reason Item
-^^^^^^^^^^^^^^^^^^^^^
-
-- **Text Style**
-
-  Via overriding the style named ``GiniCaptureTheme.DigitalInvoice.ReturnReasonDialog.Item.TextStyle`` (with
-  parent style ``Root.GiniCaptureTheme.DigitalInvoice.ReturnReasonDialog.Item.TextStyle``).
-
-:ref:`Back to screenshot. <dreturn-reason-picker>`
-
-.. _info-screen:
-
-Info Screen
-~~~~~~~~~~~
-
-.. figure:: _static/customization/Digital-Invoice-Info-Screen.png
-   :figwidth: 324
-
-1. Background
-^^^^^^^^^^^^^
-
-- **Color**
-
-  Via the color resource named ``gbs_digital_invoice_onboarding_fragment_background``.
-
-:ref:`Back to screenshot. <info-screen>`
-
-2. Title
-^^^^^^^^
-
-- **Text**
-
-  Via the string resource named ``gbs_digital_invoice_info_text_1``.
-
-- **Text Style**
-
-  Via overriding the style named ``GiniCaptureTheme.DigitalInvoice.Info.Title.TextStyle`` (with
-  parent style ``Root.GiniCaptureTheme.DigitalInvoice.Info.Title.TextStyle``).
-
-:ref:`Back to screenshot. <info-screen>`
-
-3. Illustration
-^^^^^^^^^^^^^^^
-
-- **Image**
-
-  Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named ``gbs_digital_invoice_list_image.png``.
-  Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
-
-:ref:`Back to screenshot. <info-screen>`
-
-4. Message
-^^^^^^^^^^
-
-- **Text**
-
-  Via the string resource named ``gbs_digital_invoice_info_text_2``.
-
-- **Text Style**
-
-  Via overriding the style named ``GiniCaptureTheme.DigitalInvoice.Info.TextStyle`` (with
-  parent style ``Root.GiniCaptureTheme.DigitalInvoice.Info.TextStyle``).
-
-:ref:`Back to screenshot. <info-screen>`
-
-5. "Close" Button
-^^^^^^^^^^^^^^^^^
-
-- **Title**
-
-  Via the string resource named ``gbs_digital_invoice_info_close_button_title``.
-
-- **Button Style**
-
-  Via overriding the style named ``GiniCaptureTheme.DigitalInvoice.Info.Button`` (with
-  parent style ``Root.GiniCaptureTheme.DigitalInvoice.Info.Button``).
-
-:ref:`Back to screenshot. <info-screen>`
-
-.. _edit-line-item:
-
-Edit Line Item Screen
+Bottom Navigation Bar
 ~~~~~~~~~~~~~~~~~~~~~
 
-.. figure:: _static/customization/Digital-Invoice-Edit-Line-Item.png
-   :figwidth: 324
+You can inject your own view for the bottom navigation bar, if you set
+``GiniBank.setCaptureConfiguration(CaptureConfiguration(bottomNavigationBarEnabled = ))`` to ``true`` and pass a custom
+``OnboardingNavigationBarBottomAdapter`` implementation to ``GiniBank``:
 
-1. Action Bar
-^^^^^^^^^^^^^
+.. code-block:: java
 
-All Action Bar customizations except the title are global to all Activities.
+    let customOnboardingNavigationBarBottomAdapter:OnboardingNavigationBarBottomAdapter = CustomOnboardingNavigationBarBottomAdapter();
 
-- **Title**
+    GiniBank.setCaptureConfiguration(
+        CaptureConfiguration(
+            onboardingNavigationBarBottomAdapter = customOnboardingNavigationBarBottomAdapter
+        )
+    )
 
-  Via the string resource named ``gbs_title_line_item_details``.
+Custom Onboarding Pages
+~~~~~~~~~~~~~~~~~~~~~~~
 
-- **Title Color**
+If you wish to show different onboarding pages then pass a list of ``OnboardingPage`` objects to
+``GiniBank.setCaptureConfiguration(CaptureConfiguration(onboardingPages = ))``.
 
-  Via the color resource named ``gc_action_bar_title``.
+Custom Illustration Views
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
-- **Back Button Icon**
+You can inject your own views for the illustrations. For example if you need to animate the illustrations on the
+onboarding pages implement the ``OnboardingIllustrationAdapter`` interface to inject a view that can animate images
+(e.g., `Lottie <https://github.com/airbnb/lottie-android>`_) and pass it to the relevant onboarding illustration adapter
+setters (e.g., ``onboardingAlignCornersIllustrationAdapter``) when configuring ``GiniBank``. The
+:root_dokka_path:`reference documentation <sdk/net.gini.android.bank.sdk.capture/-capture-configuration/index.html>` of
+``CaptureConfiguration`` lists all the setters.
 
-  Via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named ``gc_action_bar_back``.
-  Or via a vector drawable added to the ``drawable-anydpi`` resource folder.
+Camera Screen
+----
 
-- **Background Color**
+UI Customization
+~~~~~~~~~~~~~~~~
 
-  Via the color resource named ``gc_action_bar``.
+.. raw:: html
 
-- **Status Bar Background Color**
+    <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
+    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FMcDZrQPr6IgkzCQtN3lqAe%2FAndroid-Gini-Capture-SDK-3.0.0-UI-Customisation%3Fnode-id%3D92%253A3712%26t%3Dc3jMrBwHYOfKgDHC-1"
+    allowfullscreen></iframe>
 
-  Via the color resource named ``gc_status_bar``.
+Bottom Navigation Bar
+~~~~~~~~~~~~~~~~~~~~~
 
-  If you use a light background color, then you should set the ``gc_light_status_bar`` boolean
-  resource to ``true``. This will cause the status bar contents to be drawn with a dark color.
+.. note::
 
-:ref:`Back to screenshot. <edit-line-item>`
+    Will be available in 3.0.0-beta05.
 
-2. Background
-^^^^^^^^^^^^^
+You can inject your own view for the bottom navigation bar, if you set
+``GiniBank.setCaptureConfiguration(CaptureConfiguration(bottomNavigationBarEnabled = ))`` to ``true`` and pass a custom
+``CameraNavigationBarBottomAdapter`` implementation to ``GiniBank``:
 
-- **Color**
+.. code-block:: java
 
-  Via the color resource named ``gbs_digital_invoice_line_item_details_background``.
+    let customCameraNavigationBarBottomAdapter:CameraNavigationBarBottomAdapter = CustomCameraNavigationBarBottomAdapter();
 
-:ref:`Back to screenshot. <edit-line-item>`
+    GiniBank.setCaptureConfiguration(
+        CaptureConfiguration(
+            cameraNavigationBarBottomAdapter = customCameraNavigationBarBottomAdapter
+        )
+    )
 
-3. Toggle Switch
-^^^^^^^^^^^^^^^^
+Custom Loading Indicator
+~~~~~~~~~~~~~~~~~~~~~~~~
 
-- **Label Text**
+There is a default loading indicator which shows that image is being processed. You can show your own activity indicator
+by implementing the ``CustomLoadingIndicatorAdapter`` interface and passing it to ``GiniBank``:
 
-  Via the plural string resource named ``gbs_digital_invoice_line_item_details_selected_line_items`` and the additional string resource for selected
-  state named ``gbs_digital_invoice_line_item_details_selected``.
+.. code-block:: java
 
-  Please include two format arguments in the plural strings:
+    let myCustomLoadingIndicatorAdapter:CustomLoadingIndicatorAdapter = MyCustomLoadingIndicatorAdapter();
 
-  - Quantity decimal: ``%1$d``
-  - Suffix string: ``%2$s``
+    GiniBank.setCaptureConfiguration(
+        CaptureConfiguration(
+            customLoadingIndicatorAdapter = myCustomLoadingIndicatorAdapter
+        )
+    )
 
-  Example:
+Review Screen
+----
 
-  .. code-block:: xml
+UI Customization
+~~~~~~~~~~~~~~~~
 
-    <plurals name="gbs_digital_invoice_line_item_details_selected_line_items">
-        <item quantity="other">%1$d Artikel %2$s</item>
-    </plurals>
-    <string name="gbs_digital_invoice_line_item_details_selected">ausgewählt</string>
+.. raw:: html
 
-- **Label Text Style**
+    <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
+    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FMcDZrQPr6IgkzCQtN3lqAe%2FAndroid-Gini-Capture-SDK-3.0.0-UI-Customisation%3Fnode-id%3D143%253A4156%26t%3DbxRb1PoNfoS2K8LX-1"
+    allowfullscreen></iframe>
 
-  Via overriding the style named ``GiniCaptureTheme.DigitalInvoice.LineItemDetails.Checkbox.TextStyle`` (with
-  parent style ``Root.GiniCaptureTheme.DigitalInvoice.LineItemDetails.Checkbox.TextStyle``).
+Bottom Navigation Bar
+~~~~~~~~~~~~~~~~~~~~~
 
-- **Toggle Switch Style**
+.. note::
 
-  Via overriding the style named ``GiniCaptureTheme.DigitalInvoice.Switch`` (with
-  parent style ``Root.GiniCaptureTheme.DigitalInvoice.Switch``).
+    Will be available in 3.0.0-beta05.
 
-:ref:`Back to screenshot. <edit-line-item>`
+You can inject your own view for the bottom navigation bar, if you set
+``GiniBank.setCaptureConfiguration(CaptureConfiguration(bottomNavigationBarEnabled = ))`` to ``true`` and pass a custom
+``ReviewNavigationBarBottomAdapter`` implementation to ``GiniBank``:
 
-4. 5. 6. Input Fields: Description, Quantity, Price
-^^^^^^^^^^^^^^^^^^^^
+.. code-block:: java
 
-- **Description Label Text**
+    let customReviewNavigationBarBottomAdapter:ReviewNavigationBarBottomAdapter = CustomReviewNavigationBarBottomAdapter();
 
-  Via the string resource named ``gbs_digital_invoice_line_item_details_description_label``.
+    GiniBank.setCaptureConfiguration(
+        CaptureConfiguration(
+            reviewNavigationBarBottomAdapter = customReviewNavigationBarBottomAdapter
+        )
+    )
 
-- **Quantity Label Text**
+Custom "Process" Button Loading Indicator 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  Via the string resource named ``gbs_digital_invoice_line_item_details_quantity_label``.
+There is a default loading indicator on the "Process" button which shows that the upload is in progress. You can show
+your own activity indicator by implementing the ``OnButtonLoadingIndicatorAdapter`` interface and passing it to
+``GiniBank``:
 
-- **Price Label Text**
+.. note::
 
-  Via the string resource named ``gbs_digital_invoice_line_item_details_gross_price_label``.
+    Will be available in 3.0.0-beta05.
 
-- **Label Text Style**
+.. code-block:: java
 
-  Via overriding the style named ``GiniCaptureTheme.DigitalInvoice.LineItemDetails.InputField.Hint.TextStyle`` (with
-  parent style ``Root.GiniCaptureTheme.DigitalInvoice.LineItemDetails.InputField.Hint.TextStyle``).
+    let customOnButtonLoadingIndicatorAdapter:OnButtonLoadingIndicatorAdapter = CustomOnButtonLoadingIndicatorAdapter();
 
-- **Input Field Style**
+    GiniBank.setCaptureConfiguration(
+        CaptureConfiguration(
+            onButtonLoadingIndicatorAdapter = customOnButtonLoadingIndicatorAdapter
+        )
+    )
 
-  Via overriding the style named ``GiniCaptureTheme.DigitalInvoice.LineItemDetails.InputField.Style`` (with
-  parent style ``Root.GiniCaptureTheme.DigitalInvoice.LineItemDetails.InputField.Style``).
+Analysis Screen
+----
 
-- **Input Field Text Style**
+UI Customization
+~~~~~~~~~~~~~~~~
 
-  Via overriding the style named ``GiniCaptureTheme.DigitalInvoice.LineItemDetails.InputField.TextStyle`` (with
-  parent style ``Root.GiniCaptureTheme.DigitalInvoice.LineItemDetails.InputField.TextStyle``).
+.. raw:: html
 
-- **Input Field Cursor Color**
+    <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
+    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FMcDZrQPr6IgkzCQtN3lqAe%2FAndroid-Gini-Capture-SDK-3.0.0-UI-Customisation%3Fnode-id%3D7%253A18496%26t%3DRrYhEBagMqQ9uksD-1"
+    allowfullscreen></iframe>
 
-  Via the color resource named ``gbs_digital_invoice_line_item_details_input_field_cursor``.
+.. note::
 
-- **Input Field Text Selection Highlight Color**
+    This screen does not show a bottom navigation bar even if the value passed to ``GiniBank.setCaptureConfiguration(CaptureConfiguration(bottomNavigationBarEnabled = ))`` is ``true``.
 
-  Via the color resource named ``gbs_digital_invoice_line_item_details_input_field_selection_highlight``.
+Custom Loading Indicator
+~~~~~~~~~~~~~~~~~~~~~~~~
 
-:ref:`Back to screenshot. <edit-line-item>`
+You can show a customized activity indicator on this screen. You can pass your custom ``CustomLoadingIndicatorAdapter`` implementation to
+``GiniBank`` :
 
-7. Multiplication Symbol
-^^^^^^^^^^^^^^^^^^^^^^^^
+.. code-block:: java
 
-- **Color**
+    let myCustomOnButtonLoadingIndicatorAdapter:CustomLoadingIndicatorAdapter = MyCustomLoadingIndicatorAdapter();
 
-  Via the color resource named ``gbs_digital_invoice_line_item_details_multiplication_symbol``.
+    GiniBank.setCaptureConfiguration(
+        CaptureConfiguration(
+            customLoadingIndicatorAdapter = myCustomOnButtonLoadingIndicatorAdapter
+        )
+    )
 
-:ref:`Back to screenshot. <edit-line-item>`
+Help Screen
+----
 
-8. Total Price
-^^^^^^^^^^^^^^
+UI Customization
+~~~~~~~~~~~~~~~~
 
-- **Total Price Label Text**
+.. raw:: html
 
-  Via the string resource named ``gbs_digital_invoice_line_item_details_total_label``.
+    <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
+    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FMcDZrQPr6IgkzCQtN3lqAe%2FAndroid-Gini-Capture-SDK-3.0.0-UI-Customisation%3Fnode-id%3D9%253A4645%26t%3DHtNbZnDsRjA5FeBu-1"
+    allowfullscreen></iframe>
 
-- **Total Price Label Text Style**
+Bottom Navigation Bar
+~~~~~~~~~~~~~~~~~~~~~
 
-  Via overriding the style named ``GiniCaptureTheme.DigitalInvoice.LineItemDetails.Total.TextStyle`` (with
-  parent style ``Root.GiniCaptureTheme.DigitalInvoice.LineItemDetails.Total.TextStyle``).
+.. note::
 
-- **Total Price Info Text**
+    Will be available in 3.0.0-beta05.
 
-  Via the string resource named ``gbs_digital_invoice_line_item_total_info_label``.
+You can inject your own view for the bottom navigation bar, if you set
+``GiniBank.setCaptureConfiguration(CaptureConfiguration(bottomNavigationBarEnabled = ))`` to ``true`` and pass a custom
+``HelpNavigationBarBottomAdapter`` implementation to ``GiniBank``:
 
-- **Total Price Info Text Style**
+.. code-block:: java
 
-  Via overriding the style named ``GiniCaptureTheme.DigitalInvoice.LineItemDetails.Total.Info.TextStyle`` (with
-  parent style ``Root.GiniCaptureTheme.DigitalInvoice.LineItemDetails.Total.Info.TextStyle``).
+    let customHelpNavigationBarBottomAdapter:HelpNavigationBarBottomAdapter = CustomHelpNavigationBarBottomAdapter();
 
-- **Total Price Text Style - Integral Part**
+    GiniBank.setCaptureConfiguration(
+        CaptureConfiguration(
+            helpNavigationBarBottomAdapter = customHelpNavigationBarBottomAdapter
+        )
+    )
 
-  Via overriding the style named ``GiniCaptureTheme.DigitalInvoice.TotalGrossPrice.Integral.TextStyle`` (with
-  parent style ``Root.GiniCaptureTheme.DigitalInvoice.TotalGrossPrice.Integral.TextStyle``).
+Custom Help Screens
+~~~~~~~~~~~~~~~~~~~
 
-- **Total Price Text Style - Fractional Part**
+You can show your own help screens. They will be appended to the list on the main help screen.
 
-  Via overriding the style named ``GiniCaptureTheme.DigitalInvoice.TotalGrossPrice.Fractional.TextStyle`` (with
-  parent style ``Root.GiniCaptureTheme.DigitalInvoice.TotalGrossPrice.Fractional.TextStyle``).
+You can pass the title and activity for each screen to ``GiniBank`` using a list of ``HelpItem.Custom`` objects:
 
-:ref:`Back to screenshot. <edit-line-item>`
+.. code-block:: java
 
-9. "Save" Button
-^^^^^^^^^^^^^^^^^
+    val customHelpItems: MutableList<HelpItem.Custom> = ArrayList()
 
-- **Title**
+    customHelpItems.add(
+        HelpItem.Custom(
+            R.string.custom_help_screen_title,
+            Intent(this, CustomHelpActivity::class.java)
+        )
+    )
+    
+    GiniBank.setCaptureConfiguration(
+        CaptureConfiguration(
+            customHelpItems = customHelpItems
+        )
+    )
 
-  Via the string resource named ``gbs_digital_invoice_line_item_details_save``.
+No Results Screen
+----
 
-- **Button Style**
+UI Customization
+~~~~~~~~~~~~~~~~
 
-  Via overriding the style named ``GiniCaptureTheme.DigitalInvoice.LineItemDetails.Save.Button`` (with
-  parent style ``Root.GiniCaptureTheme.DigitalInvoice.LineItemDetails.Save.Button``).
+.. raw:: html
 
-:ref:`Back to screenshot. <edit-line-item>`
+    <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
+    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FMcDZrQPr6IgkzCQtN3lqAe%2FAndroid-Gini-Capture-SDK-3.0.0-UI-Customisation%3Fnode-id%3D10%253A2540%26t%3DRrYhEBagMqQ9uksD-1"
+    allowfullscreen></iframe>
+
+Bottom Navigation Bar
+~~~~~~~~~~~~~~~~~~~~~
+
+.. note::
+
+    Will be available in 3.0.0-beta05.
+
+You can inject your own view for the bottom navigation bar, if you set
+``GiniBank.setCaptureConfiguration(CaptureConfiguration(bottomNavigationBarEnabled = ))`` to ``true`` and pass a custom
+``NoResultsNavigationBarBottomAdapter`` implementation to ``GiniBank``:
+
+.. code-block:: java
+
+    let customNoResultsNavigationBarBottomAdapter:NoResultsNavigationBarBottomAdapter = CustomNoResultsNavigationBarBottomAdapter();
+
+    GiniBank.setCaptureConfiguration(
+        CaptureConfiguration(
+            noResultsNavigationBarBottomAdapter = customNoResultsNavigationBarBottomAdapter
+        )
+    )
+
+Error Screen
+----
+
+UI Customization
+~~~~~~~~~~~~~~~~
+
+.. raw:: html
+
+    <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
+    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FMcDZrQPr6IgkzCQtN3lqAe%2FAndroid-Gini-Capture-SDK-3.0.0-UI-Customisation%3Fnode-id%3D9%253A5075%26t%3DQkcPe6W16KvhSI1a-1"
+    allowfullscreen></iframe>
+
+Bottom Navigation Bar
+~~~~~~~~~~~~~~~~~~~~~
+
+.. note::
+
+    Will be available in 3.0.0-beta05.
+
+You can inject your own view for the bottom navigation bar, if you set
+``GiniBank.setCaptureConfiguration(CaptureConfiguration(bottomNavigationBarEnabled = ))`` to ``true`` and pass a custom
+``NoResultsNavigationBarBottomAdapter`` implementation to ``GiniBank``:
+
+.. code-block:: java
+
+    let customErrorNavigationBarBottomAdapter:ErrorNavigationBarBottomAdapter = CustomErrorNavigationBarBottomAdapter();
+
+    GiniBank.setCaptureConfiguration(
+        CaptureConfiguration(
+            errorNavigationBarBottomAdapter = customErrorNavigationBarBottomAdapter
+        )
+    )
+
+.. Return Assistant
+.. ----------------
+
+
+.. Onboarding Screen
+.. ~~~~~~~~~~~~~~~~~
+
+.. TODO: Show how to customize the updated UI.
+
+.. Help Screen
+.. ~~~~~~~~~~~
+
+.. TODO: Show how to customize the updated UI.
+
+.. Digital Invoice Screen
+.. ~~~~~~~~~~~~~~~~~~~~~~
+
+.. TODO: Show how to customize the updated UI.
+
+.. Return Reason Picker
+.. ~~~~~~~~~~~~~~~~~~~~
+
+.. TODO: Show how to customize the updated UI.
+
+.. Edit Line Item Screen
+.. ~~~~~~~~~~~~~~~~~~~~~
+
+.. TODO: Show how to customize the updated UI.

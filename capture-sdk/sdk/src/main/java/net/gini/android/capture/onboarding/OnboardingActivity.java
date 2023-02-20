@@ -19,16 +19,7 @@ import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AppCompatActivity;
 
 /**
- * <p>The {@code OnboardingActivity} displays important advice for correctly photographing a document.
- *
- * <p>It is started by the {@link CameraActivity} when the latter is
- * launched for the first time. You may disable this behavior - we highly recommend keeping it - by
- * passing {@code false} to {@link GiniCapture.Builder#setShouldShowOnboardingAtFirstRun(boolean)}
- * when creating a {@link GiniCapture} instance.
- *
- * <p> You can change the number of displayed pages and their content (image and short text) by
- * setting an {@code ArrayList} containing {@link OnboardingPage} objects when building a {@link
- * GiniCapture} instance with {@link GiniCapture.Builder#setCustomOnboardingPages(ArrayList)}.
+ * Internal use only.
  */
 public class OnboardingActivity extends AppCompatActivity implements OnboardingFragmentListener {
 

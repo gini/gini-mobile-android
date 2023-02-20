@@ -1092,6 +1092,12 @@ public class GiniCapture {
             return navigationBarBottomAdapter;
         }
 
+        /**
+         * Set an adapter implementation to show a custom bottom navigation bar on the help screen.
+         *
+         * @param adapter a {@link HelpNavigationBarBottomAdapter} interface implementation
+         * @return the {@link Builder} instance
+         */
         public Builder setHelpNavigationBarBottomAdapter(@NonNull final HelpNavigationBarBottomAdapter adapter) {
             helpNavigationBarBottomAdapter = adapter;
             return this;
@@ -1102,6 +1108,12 @@ public class GiniCapture {
             return helpNavigationBarBottomAdapter;
         }
 
+        /**
+         * Set an adapter implementation to show a custom bottom navigation bar on the camera screen.
+         *
+         * @param adapter a {@link CameraNavigationBarBottomAdapter} interface implementation
+         * @return the {@link Builder} instance
+         */
         public Builder setCameraNavigationBarBottomAdapter(@NonNull final CameraNavigationBarBottomAdapter adapter) {
             cameraNavigationBarBottomAdapter = adapter;
             return this;
@@ -1111,6 +1123,12 @@ public class GiniCapture {
             return cameraNavigationBarBottomAdapter;
         }
 
+        /**
+         * Set an adapter implementation to show a custom bottom navigation bar on the no results screen.
+         *
+         * @param adapter a {@link NoResultsNavigationBarBottomAdapter} interface implementation
+         * @return the {@link Builder} instance
+         */
         public Builder setNoResultsNavigationBarBottomAdapter(@NonNull final NoResultsNavigationBarBottomAdapter adapter) {
             noResultsNavigationBarBottomAdapter = adapter;
             return this;
@@ -1124,6 +1142,12 @@ public class GiniCapture {
             return errorNavigationBarBottomAdapter;
         }
 
+        /**
+         * Set an adapter implementation to show a custom bottom navigation bar on the error screen.
+         *
+         * @param adapter an {@link ErrorNavigationBarBottomAdapter} interface implementation
+         * @return the {@link Builder} instance
+         */
         public void setErrorNavigationBarBottomAdapter(@NonNull final ErrorNavigationBarBottomAdapter adapter) {
             this.errorNavigationBarBottomAdapter = adapter;
         }
@@ -1234,6 +1258,12 @@ public class GiniCapture {
             return this;
         }
 
+        /**
+         * Set an adapter implementation to show a custom bottom navigation bar on the review screen.
+         *
+         * @param adapter a {@link ReviewNavigationBarBottomAdapter} interface implementation
+         * @return the {@link Builder} instance
+         */
         public Builder setReviewBottomBarNavigationAdapter(@NonNull final ReviewNavigationBarBottomAdapter adapter) {
             reviewNavigationBarBottomAdapter = adapter;
             return this;

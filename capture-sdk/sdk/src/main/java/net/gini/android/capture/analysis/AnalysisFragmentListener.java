@@ -13,9 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * <p>
- * Interface used by {@link AnalysisFragmentCompat} to dispatch events to the hosting Activity.
- * </p>
+ * Internal use only.
  */
 public interface AnalysisFragmentListener {
     /**
