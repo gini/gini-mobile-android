@@ -5,7 +5,7 @@ Requirements
 ------------
 
 * Android 5.0+ (API Level 21+)
-* Gini Capture SDK's `requirements <https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/html/getting-started.html#requirements>`_.
+* Gini Capture SDK's :root_html_path_capture_sdk:`requirements <getting-started.html#requirements>`.
 
 The Gini Bank SDK uses our `Gini Capture SDK <https://github.com/gini/gini-mobile-android/tree/main/capture-sdk>`_ to capture
 invoices with the camera or by importing them from the device or other apps.

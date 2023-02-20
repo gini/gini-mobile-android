@@ -5,7 +5,7 @@ Features from the Gini Capture SDK
 ----------------------------------
 
 The capture feature uses our `Gini Capture SDK <https://github.com/gini/gini-mobile-android/tree/main/capture-sdk>`_. All features
-listed in its `documentation <https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/html/features.html>`_ can be used here
+listed in its :root_html_path_capture_sdk:`documentation <features.html>` can be used here
 as well.
 
 An important difference is in how you configure the capture features. In the Gini Bank SDK you need to use the
@@ -15,9 +15,8 @@ so you can easily map them to the ``CaptureConfiguration``.
 File Import (Open With)
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Another difference is related to the `file import
-<https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/html/features.html#file-import-open-with>`_ (or "open with")
-feature which allows importing of files from other apps via Android's "open with" or "share" functionality.
+Another difference is related to the :root_html_path_capture_sdk:`file import <features.html#file-import-open-with>` (or
+"open with") feature which allows importing of files from other apps via Android's "open with" or "share" functionality.
 
 To handle imported files using the Gini Bank SDK you need to register an activity result handler with the
 ``CaptureFlowImportContract()`` and then pass the incoming intent to
@@ -151,3 +150,16 @@ You can show back navigation button on bottom navigation bar. You can pass your 
     CustomDigitalInvoiceHelpNavigationBarBottomAdapter customDigitalInvoiceHelpNavigationBarBottomAdapter = new CustomDigitalInvoiceHelpNavigationBarBottomAdapter();
 
     GiniBank.digitalInvoiceHelpNavigationBarBottomAdapter = customDigitalInvoiceHelpNavigationBarBottomAdapter
+
+
+Digital Invoice Screen Customization
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can show invoice bottom navigation bar. You can pass your custom ``DigitalInvoiceNavigationBarBottomAdapter`` implementation to
+``GiniBank``:
+
+.. code-block:: java
+
+    CustomDigitalInvoiceNavigationBarBottomAdapter customDigitalInvoiceNavigationBarBottomAdapter = new CustomDigitalInvoiceNavigationBarBottomAdapter();
+
+    GiniBank.digitalInvoiceNavigationBarBottomAdapter = customDigitalInvoiceNavigationBarBottomAdapter;
