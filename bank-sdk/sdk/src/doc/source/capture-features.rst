@@ -103,42 +103,6 @@ The extractions related to the return assistant are stored in the ``compoundExtr
 <https://pay-api.gini.net/documentation/#return-assistant-extractions>`_ to learn about the return assistant's compound
 extractions.
 
-Sending Feedback
-~~~~~~~~~~~~~~~~
-
-Your app should send feedback for the extractions related to the return assistant. These extractions are found in the
-``compoundExtractions`` field of the ``CaptureResult``.
-
-Default Networking Implementation
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-If you use the ``GiniCaptureDefaultNetworkService`` and the ``GiniCaptureDefaultNetworkApi`` then sending feedback for
-the return assistant extractions is done by the ``GiniCaptureDefaultNetworkApi`` when you send feedback for the payment
-data extractions as described in the `Sending Feedback <integration.html#sending-feedback>`_ section.
-
-Custom Networking Implementation
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-If you use your own networking implementation and directly communicate with the Gini Bank API then see `this section
-<https://pay-api.gini.net/documentation/#submitting-feedback-on-extractions>`_ in its documentation on how to send
-feedback for the compound extractions.
-
-In case you use the Gini Bank API Library then sending compound extraction feedback is very similar to how it's shown in
-its `documentation <https://developer.gini.net/gini-mobile-android/bank-api-library/library/>`_. The only difference is
-that you need to also pass in the ``CompoundExtraction`` map to ``DocumentTaskManager.sendFeebackForExtractions()``:
-
-.. code-block:: java
-
-    // Extractions seen and accepted by the user (including user modifications)
-    Map<String, SpecificExtraction> specificExtractionFeedback;
-
-    // Return assistant extractions as returned by the CaptureResult or DigitalInvoiceFragmentListener
-    Map<String, CompoundExtraction> compoundExtractionFeedback;
-
-    final Task<Document> sendFeedback = documentTaskManager.sendFeedbackForExtractions(document, 
-            specificExtractionFeedback, compoundExtractionFeedback);
-    sendFeedback.waitForCompletion();
-
 Digital Invoice Help Screen Customization
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
