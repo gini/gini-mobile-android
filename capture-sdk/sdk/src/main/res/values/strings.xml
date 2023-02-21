@@ -196,4 +196,5 @@
     <string name="gc_flash_button">Blitz</string>
     <string name="gc_delete_page">Seite löschen</string>
     <string name="gc_document_page">Dokumentenseite</string>
+    <string name="gc_useful_tips">Nützliche Tipps</string>
 </resources>
