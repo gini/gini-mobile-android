@@ -445,11 +445,6 @@ public class MainActivity extends AppCompatActivity {
                             || epsPaymentAvailable(extractionsBundle)
                             || compoundExtractionsBundle != null) {
                         startExtractionsActivity(extractionsBundle, compoundExtractionsBundle);
-                    } else {
-                        // Show a special screen, if no Pay5 extractions were found to give
-                        // the user some hints and tips
-                        // for using the Gini Capture SDK
-                        startNoExtractionsActivity();
                     }
                     break;
                 case CameraActivity.RESULT_ERROR:
@@ -468,12 +463,6 @@ public class MainActivity extends AppCompatActivity {
             }
             if (isIntentActionViewOrSend(getIntent())) {
                 finish();
-            }
-        } else if (requestCode == REQUEST_NO_EXTRACTIONS) {
-            // The NoExtractionsActivity has a button for taking another picture which causes the activity to finish
-            // and return the result code seen below
-            if (resultCode == NoExtractionsActivity.RESULT_START_GINI_CAPTURE) {
-                startGiniCaptureSdk();
             }
         }
     }
@@ -494,11 +483,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return false;
-    }
-
-    private void startNoExtractionsActivity() {
-        final Intent intent = new Intent(this, NoExtractionsActivity.class);
-        startActivityForResult(intent, REQUEST_NO_EXTRACTIONS);
     }
 
     private void startExtractionsActivity(@NonNull final Bundle extractionsBundle, @Nullable final Bundle compoundExtractionsBundle) {
