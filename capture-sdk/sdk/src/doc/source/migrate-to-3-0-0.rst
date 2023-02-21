@@ -181,6 +181,10 @@ To customize resource for dark mode add them to resource folders containing the 
 Migrate to the new UI
 ---------------------
 
+Back Buttons
+~~~~~~~~~~~~~~~~~
+We have removed ``setBackButtonsEnabled``. We will not support this option anymore. 
+
 Onboarding Screen
 ~~~~~~~~~~~~~~~~~
 
