@@ -83,7 +83,7 @@ public class PhotoTipsActivity extends AppCompatActivity {
     private void setupTipList() {
         final RecyclerView recyclerView = findViewById(R.id.gc_tips_recycleview);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new PhotoTipsAdapter(this));
+        recyclerView.setAdapter(new PhotoTipsAdapter(this, false));
     }
 
     @Override

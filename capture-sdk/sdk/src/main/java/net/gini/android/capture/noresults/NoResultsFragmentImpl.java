@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
@@ -115,14 +116,11 @@ class NoResultsFragmentImpl {
     private void setUpList(View view) {
         final RecyclerView recyclerView = view.findViewById(R.id.gc_no_results_recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(mFragment.getActivity()));
-
         if (mDocument.getType() == Document.Type.PDF || mDocument.getType() == Document.Type.PDF_MULTI_PAGE) {
             recyclerView.setAdapter(new SupportedFormatsAdapter());
-
             return;
         }
-
-        recyclerView.setAdapter(new PhotoTipsAdapter(view.getContext()));
+        recyclerView.setAdapter(new PhotoTipsAdapter(view.getContext(), true));
     }
 
     private void setTopBarInjectedViewContainer() {
