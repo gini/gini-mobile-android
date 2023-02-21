@@ -517,9 +517,12 @@ You can find more details `here <integration.html#capturing-documents>`_.
 .. +++++++
 
 .. We removed the ability for users to manually add additional line items.
+.. We changed the UI for editing line items: it's presented on top of the main UI and not as a new screen.
 
 .. Features
 .. ++++++++
+
+.. Easier currency and amount input when editing a line item.
 
 .. Bottom navigation bar
 .. ^^^^^^^^^^^^^^^^^^^^^
