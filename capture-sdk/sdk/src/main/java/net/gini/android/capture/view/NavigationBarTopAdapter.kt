@@ -67,7 +67,12 @@ enum class NavButtonType {
     /**
      * Navigation button is used as a close button.
      */
-    CLOSE
+    CLOSE,
+
+    /**
+     * Used when no button is shown on the top bar.
+     */
+    NONE
 }
 
 /**
@@ -103,40 +108,41 @@ class DefaultNavigationBarTopAdapter : NavigationBarTopAdapter {
     }
 
     override fun setNavButtonType(navButtonType: NavButtonType) {
-        if (GiniCapture.hasInstance()
-            && GiniCapture.getInstance().isBottomNavigationBarEnabled
-        ) {
             when (navButtonType) {
-                BACK -> {
-                    // Not used when bottom navigation bar is enabled
+
+                NavButtonType.NONE -> {
+                    //Used when we don't want to show any button in bar top adapter
                 }
-                CLOSE -> {
-                    viewBinding?.gcNavigationBar?.inflateMenu(R.menu.gc_navigation_bar_top_close)
-                }
-            }
-        } else {
-            when (navButtonType) {
+
                 BACK -> {
                     viewBinding?.root?.context?.let { context ->
                         viewBinding?.gcNavigationBar?.navigationIcon =
                             ContextCompat.getDrawable(context, R.drawable.gc_action_bar_back)
-                        viewBinding?.gcNavigationBar?.navigationContentDescription = context.getString(R.string.gc_back_button_description)
+                        viewBinding?.gcNavigationBar?.navigationContentDescription =
+                            context.getString(R.string.gc_back_button_description)
 
                     }
                 }
                 CLOSE -> {
-                    viewBinding?.root?.context?.let { context ->
-                        viewBinding?.gcNavigationBar?.navigationIcon =
-                            ContextCompat.getDrawable(context, R.drawable.gc_close)
-                        viewBinding?.gcNavigationBar?.navigationContentDescription = context.getString(R.string.gc_close)
+                    if (GiniCapture.hasInstance()
+                        && GiniCapture.getInstance().isBottomNavigationBarEnabled
+                    ) {
+                        viewBinding?.gcNavigationBar?.inflateMenu(R.menu.gc_navigation_bar_top_close)
+                    } else {
+                        viewBinding?.root?.context?.let { context ->
+                            viewBinding?.gcNavigationBar?.navigationIcon =
+                                ContextCompat.getDrawable(context, R.drawable.gc_close)
+                            viewBinding?.gcNavigationBar?.navigationContentDescription =
+                                context.getString(R.string.gc_close)
+                        }
                     }
                 }
             }
-        }
     }
 
     override fun setMenuResource(menu: Int) {
-        viewBinding?.gcNavigationBar?.inflateMenu(menu) }
+        viewBinding?.gcNavigationBar?.inflateMenu(menu)
+    }
 
     override fun setOnMenuItemClickListener(menuItem: Toolbar.OnMenuItemClickListener) {
         viewBinding?.gcNavigationBar?.setOnMenuItemClickListener(menuItem)
