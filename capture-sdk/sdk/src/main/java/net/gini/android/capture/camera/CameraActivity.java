@@ -130,7 +130,6 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
             retainFragment();
         }
         showOnboardingIfRequested();
-        setupHomeButton();
         handleOnBackPressed();
         setTitleOnTablets();
     }
@@ -146,12 +145,6 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
                 trackCameraScreenEvent(CameraScreenEvent.EXIT);
             }
         });
-    }
-
-    private void setupHomeButton() {
-        if (GiniCapture.hasInstance() && GiniCapture.getInstance().areBackButtonsEnabled()) {
-            enableHomeAsUp(this);
-        }
     }
 
     private void restoreSavedState(@Nullable final Bundle savedInstanceState) {

@@ -37,16 +37,10 @@ public class SupportedFormatsActivity extends AppCompatActivity {
         }
         setUpFormatsList();
         forcePortraitOrientationOnPhones(this);
-        setupHomeButton();
         setupBottomBarNavigation();
         setupTopBarNavigation();
     }
 
-    private void setupHomeButton() {
-        if (GiniCapture.hasInstance() && GiniCapture.getInstance().areBackButtonsEnabled()) {
-            enableHomeAsUp(this);
-        }
-    }
 
     private void setupTopBarNavigation() {
         InjectedViewContainer<NavigationBarTopAdapter> topBarInjectedViewContainer = findViewById(R.id.gc_injected_navigation_bar_container_top);

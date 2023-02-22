@@ -38,16 +38,8 @@ class HelpActivity : AppCompatActivity() {
             launchHelpScreen((mRecyclerView.adapter as HelpItemsAdapter?)!!.items[0])
             finish()
         }
-
-        setupHomeButton()
         setupBottomBarNavigation()
         setupTopBarNavigation()
-    }
-
-    private fun setupHomeButton() {
-        if (GiniCapture.hasInstance() && GiniCapture.getInstance().areBackButtonsEnabled()) {
-            ActivityHelper.enableHomeAsUp(this)
-        }
     }
 
     private fun setupTopBarNavigation() {

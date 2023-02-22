@@ -40,16 +40,9 @@ public class PhotoTipsActivity extends AppCompatActivity {
         setContentView(R.layout.gc_activity_photo_tips);
 
         forcePortraitOrientationOnPhones(this);
-        setupHomeButton();
         setupTipList();
         setupBottomBarNavigation();
         setupTopBarNavigation();
-    }
-
-    private void setupHomeButton() {
-        if (GiniCapture.hasInstance() && GiniCapture.getInstance().areBackButtonsEnabled()) {
-            enableHomeAsUp(this);
-        }
     }
 
     private void setupBottomBarNavigation() {
