@@ -331,8 +331,6 @@ public class MainActivity extends AppCompatActivity {
 
         // Uncomment to turn off the camera flash by default
 //        builder.setFlashOnByDefault(false);
-        // Uncomment to disable back buttons (except in the review and analysis screens)
-//        builder.setBackButtonsEnabled(false);
         // Uncomment to add an extra page to the Onboarding pages
 //                builder.setCustomOnboardingPages(getOnboardingPages());
         // Uncomment to disable automatically showing the OnboardingActivity the

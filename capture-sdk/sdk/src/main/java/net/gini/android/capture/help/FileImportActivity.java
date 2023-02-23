@@ -62,16 +62,9 @@ public class FileImportActivity extends AppCompatActivity {
             section1ImageView.setImageDrawable(section1Illustration);
         }
 
-        setupHomeButton();
         waitForHalfSecondAndShowSnackBar();
         setupBottomBarNavigation();
         setupTopBarNavigation();
-    }
-
-    private void setupHomeButton() {
-        if (GiniCapture.hasInstance() && GiniCapture.getInstance().areBackButtonsEnabled()) {
-            enableHomeAsUp(this);
-        }
     }
 
     private void waitForHalfSecondAndShowSnackBar() {

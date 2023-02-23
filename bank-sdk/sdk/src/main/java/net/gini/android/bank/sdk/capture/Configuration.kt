@@ -95,14 +95,6 @@ data class CaptureConfiguration(
     val flashOnByDefault: Boolean = true,
 
     /**
-     * Screen API only
-     *
-     * Enable/disable back buttons in all Activities except [ReviewActivity] and
-     * [AnalysisActivity], which always show back buttons.
-     */
-    val backButtonsEnabled: Boolean = true,
-
-    /**
      * Enable/disable the return assistant feature.
      */
     val returnAssistantEnabled: Boolean = true,
@@ -219,7 +211,6 @@ internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfig
         .setOnlyQRCodeScanning(configuration.onlyQRCodeScanningEnabled)
         .setSupportedFormatsHelpScreenEnabled(configuration.supportedFormatsHelpScreenEnabled)
         .setFlashButtonEnabled(configuration.flashButtonEnabled)
-        .setBackButtonsEnabled(configuration.backButtonsEnabled)
         .setFlashOnByDefault(configuration.flashOnByDefault)
         .setCustomHelpItems(configuration.customHelpItems)
         .setGiniErrorLoggerIsOn(configuration.giniErrorLoggerIsOn)
