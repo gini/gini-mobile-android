@@ -35,8 +35,6 @@ class MainActivity : AppCompatActivity() {
         registerForActivityResult(CaptureFlowContract(), ::onCaptureResult)
     private val captureImportLauncher =
         registerForActivityResult(CaptureFlowImportContract(), ::onCaptureResult)
-    private val noExtractionsLauncher =
-        registerForActivityResult(NoExtractionContract(), ::onStartAgainResult)
     private var cancellationToken: CancellationToken? =
         null // should be kept across configuration changes
     private val networkService: GiniCaptureDefaultNetworkService by inject()
@@ -248,8 +246,6 @@ class MainActivity : AppCompatActivity() {
                 )
                 if (isIntentActionViewOrSend(intent)) {
                     finish()
-                } else {
-                    noExtractionsLauncher.launch(Unit)
                 }
             }
             CaptureResult.Cancel -> {
