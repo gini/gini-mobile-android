@@ -107,32 +107,30 @@ class DefaultNavigationBarTopAdapter : NavigationBarTopAdapter {
     }
 
     override fun setNavButtonType(navButtonType: NavButtonType) {
-        if (GiniCapture.hasInstance()
-            && GiniCapture.getInstance().isBottomNavigationBarEnabled
-        ) {
-            when (navButtonType) {
-                NONE, BACK -> {
-                    // Not used when bottom navigation bar is enabled
-                }
-                CLOSE -> {
-                    viewBinding?.gcNavigationBar?.inflateMenu(R.menu.gc_navigation_bar_top_close)
+        when (navButtonType) {
+            NONE -> {
+                //Used when bottom bar navigation is enabled
+            }
+            BACK -> {
+                viewBinding?.root?.context?.let { context ->
+                    viewBinding?.gcNavigationBar?.navigationIcon =
+                        ContextCompat.getDrawable(context, R.drawable.gc_action_bar_back)
+                    viewBinding?.gcNavigationBar?.navigationContentDescription =
+                        context.getString(R.string.gc_back_button_description)
+
                 }
             }
-        } else {
-            when (navButtonType) {
-                BACK -> {
-                    viewBinding?.root?.context?.let { context ->
-                        viewBinding?.gcNavigationBar?.navigationIcon =
-                            ContextCompat.getDrawable(context, R.drawable.gc_action_bar_back)
-                        viewBinding?.gcNavigationBar?.navigationContentDescription = context.getString(R.string.gc_back_button_description)
-
-                    }
-                }
-                CLOSE -> {
+            CLOSE -> {
+                if (GiniCapture.hasInstance()
+                    && GiniCapture.getInstance().isBottomNavigationBarEnabled
+                ) {
+                    viewBinding?.gcNavigationBar?.inflateMenu(R.menu.gc_navigation_bar_top_close)
+                } else {
                     viewBinding?.root?.context?.let { context ->
                         viewBinding?.gcNavigationBar?.navigationIcon =
                             ContextCompat.getDrawable(context, R.drawable.gc_close)
-                        viewBinding?.gcNavigationBar?.navigationContentDescription = context.getString(R.string.gc_close)
+                        viewBinding?.gcNavigationBar?.navigationContentDescription =
+                            context.getString(R.string.gc_close)
                     }
                 }
             }
