@@ -15,6 +15,7 @@
         android:paddingTop="@dimen/large"
         android:paddingEnd="@dimen/large"
         android:paddingBottom="@dimen/large"
+        android:textColor="?attr/gbsReturnDialogTitle"
         android:text="@string/gbs_digital_invoice_return_reason_dialog_title"
         style="@style/GiniCaptureTheme.Typography.Subtitle1" />
 

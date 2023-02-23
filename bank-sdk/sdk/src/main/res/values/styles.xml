@@ -376,6 +376,7 @@
         <item name="gbsBottomSheetItemTitle">@color/Dark_06</item>
         <item name="gbsCurrencyPickerItemBackgroundColor">@color/Light_03</item>
         <item name="gbsCurrencyPickerItemSelectedColor">@color/Light_02</item>
+        <item name="gbsReturnDialogTitle">@color/Dark_04</item>
     </style>
 
     <style name="GiniCaptureTheme.DigitalInvoice.Title.TextStyle" parent="Root.GiniCaptureTheme.DigitalInvoice.Title.TextStyle" />

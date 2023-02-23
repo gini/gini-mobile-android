@@ -9,4 +9,5 @@
 
     <attr name="gbsSwitchTrack" format="reference|color"/>
     <attr name="gbsTextInputLayout" format="reference|color"/>
+    <attr name="gbsReturnDialogTitle" format="reference|color"/>
 </resources>
