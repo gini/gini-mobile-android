@@ -7,49 +7,63 @@
     android:layout_height="match_parent"
     android:background="?attr/backgroundColor">
 
-    <net.gini.android.capture.view.InjectedViewContainer
-        android:id="@+id/gc_injected_icon_container"
-        android:layout_width="wrap_content"
-        android:layout_height="260dp"
-        app:layout_constraintBottom_toTopOf="@id/gc_title"
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.6" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <TextView
-        android:id="@+id/gc_title"
-        style="@style/GiniCaptureTheme.Typography.Headline6"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/medium"
-        android:layout_marginEnd="@dimen/medium"
-        android:layout_marginBottom="@dimen/medium"
-        android:gravity="center"
-        app:layout_constraintBottom_toTopOf="@id/gc_message"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:text="Within the frame" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical">
 
-    <TextView
-        android:id="@+id/gc_message"
-        style="@style/GiniCaptureTheme.Typography.Body1"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/xxxlarge"
-        android:layout_marginEnd="@dimen/xxxlarge"
-        android:textColor="@color/Dark_06"
-        android:gravity="center"
-        app:layout_constraintBottom_toBottomOf="@id/gc_bottom_guide"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:text="Ensure that the document is flat, and positioned within the frame" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/gc_bottom_guide"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.72" />
+            <net.gini.android.capture.view.InjectedViewContainer
+                android:id="@+id/gc_injected_icon_container"
+                android:layout_width="wrap_content"
+                android:layout_height="260dp"
+                android:layout_marginTop="@dimen/xlarge"
+                android:layout_marginBottom="@dimen/xlarge"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/gc_title"
+                style="@style/GiniCaptureTheme.Typography.Headline6"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/medium"
+                android:layout_marginEnd="@dimen/medium"
+                android:gravity="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/gc_injected_icon_container"
+                tools:text="Within the frame" />
+
+            <TextView
+                android:id="@+id/gc_message"
+                style="@style/GiniCaptureTheme.Typography.Body1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/xxxlarge"
+                android:layout_marginTop="@dimen/large"
+                android:layout_marginEnd="@dimen/xxxlarge"
+                android:gravity="center"
+                android:textColor="@color/Dark_06"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/gc_title"
+                tools:text="Ensure that the document is flat, and positioned within the frame" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
