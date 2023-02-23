@@ -185,6 +185,10 @@ To customize resource for dark mode add them to resource folders containing the 
 Migrate to the new UI
 ---------------------
 
+Back Buttons
+~~~~~~~~~~~~~~~~~
+We have removed ``setBackButtonsEnabled``. We will not support this option anymore.
+
 Onboarding Screen
 ~~~~~~~~~~~~~~~~~
 
@@ -517,9 +521,12 @@ You can find more details `here <integration.html#capturing-documents>`_.
 .. +++++++
 
 .. We removed the ability for users to manually add additional line items.
+.. We changed the UI for editing line items: it's presented on top of the main UI and not as a new screen.
 
 .. Features
 .. ++++++++
+
+.. Easier currency and amount input when editing a line item.
 
 .. Bottom navigation bar
 .. ^^^^^^^^^^^^^^^^^^^^^

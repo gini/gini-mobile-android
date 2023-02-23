@@ -36,13 +36,6 @@ public class OnboardingActivity extends AppCompatActivity implements OnboardingF
             return;
         }
         initFragment();
-        setupHomeButton();
-    }
-
-    private void setupHomeButton() {
-        if (GiniCapture.hasInstance() && GiniCapture.getInstance().areBackButtonsEnabled()) {
-            enableHomeAsUp(this);
-        }
     }
 
     @Override
