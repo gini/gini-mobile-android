@@ -23,88 +23,7 @@ import static net.gini.android.capture.internal.util.ActivityHelper.enableHomeAs
 import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
 
 /**
- * <h3>Screen API</h3>
- *
- * <p>
- * On the Photo Tips Screen users can get information about how to take better pictures.
- * </p>
- * <p>
- * This Activity is launched by the {@link HelpActivity}.
- * </p>
- *
- * <h3>Customizing the Photo Tips Screen</h3>
- *
- * <p>
- * Customizing the look of the Photo Tips Screen is done via overriding of app resources.
- * </p>
- * <p>
- * The following items are customizable:
- *     <ul>
- *         <li>
- *             <b>Background color:</b> via the color resource named {@code gc_photo_tips_activity_background}.
- *         </li>
- *         <li>
- *             <b>Header text style:</b> via overriding the style named {@code GiniCaptureTheme.Help.PhotoTips.Header.TextStyle}
- *         </li>
- *         <li>
- *             <b>Tip text style:</b> via overriding the style named {@code GiniCaptureTheme.Help.PhotoTips.Tip.TextStyle}
- *         </li>
- *         <li>
- *             <b>Tip image - Good lighting:</b> via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi
- *             named
- *             {@code gc_photo_tip_lighting.png}
- *         </li>
- *         <li>
- *             <b>Tip image - Document should be flat:</b> via images for mdpi, hdpi, xhdpi, xxhdpi,
- *             xxxhdpi
- *             named {@code gc_photo_tip_flat.png}
- *         </li>
- *         <li>
- *             <b>Tip image - Device should be parallel to document:</b> via images for mdpi, hdpi,
- *             xhdpi,xxhdpi, xxxhdpi named {@code gc_photo_tip_parallel.png}
- *         </li>
- *         <li>
- *             <b>Tip image - Document should be aligned with corner guides:</b> via
- *             images for mdpi, hdpi, xhdpi,xxhdpi, xxxhdpi named {@code gc_photo_tip_align.png}
- *         </li>
- *         <li>
- *             <b>Button color:</b> via the color resource named {@code gc_photo_tips_button}
- *         </li>
- *         <li>
- *             <b>Button text color:</b> via the color resource named {@code gc_photo_tips_button_text}
- *         </li>
- *     </ul>
- * </p>
- *
- * <p>
- *     <b>Important:</b> All overriden styles must have their respective {@code Root.} prefixed style as their parent. Ex.: the parent of {@code GiniCaptureTheme.Onboarding.Message.TextStyle} must be {@code Root.GiniCaptureTheme.Onboarding.Message.TextStyle}.
- * </p>
- *
- * <h3>Customizing the Action Bar</h3>
- *
- * <p>
- * Customizing the Action Bar is done via overriding of app resources and each one - except the
- * title string resource - is global to all Activities ({@link CameraActivity}, {@link
- * NoResultsActivity}, {@link HelpActivity}, {@link ReviewActivity}, {@link AnalysisActivity}).
- * </p>
- * <p>
- * The following items are customizable:
- * <ul>
- * <li>
- * <b>Background color:</b> via the color resource named {@code gc_action_bar} (highly recommended
- * for Android 5+: customize the status bar color via {@code gc_status_bar})
- * </li>
- * <li>
- * <b>Title:</b> via the string resource name {@code gc_title_photo_tips}
- * </li>
- * <li>
- * <b>Title color:</b> via the color resource named {@code gc_action_bar_title}
- * </li>
- * <li><b>Back button:</b> via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named
- * {@code gc_action_bar_back}
- * </li>
- * </ul>
- * </p>
+ * Internal use only.
  */
 public class PhotoTipsActivity extends AppCompatActivity {
 
@@ -121,16 +40,9 @@ public class PhotoTipsActivity extends AppCompatActivity {
         setContentView(R.layout.gc_activity_photo_tips);
 
         forcePortraitOrientationOnPhones(this);
-        setupHomeButton();
         setupTipList();
         setupBottomBarNavigation();
         setupTopBarNavigation();
-    }
-
-    private void setupHomeButton() {
-        if (GiniCapture.hasInstance() && GiniCapture.getInstance().areBackButtonsEnabled()) {
-            enableHomeAsUp(this);
-        }
     }
 
     private void setupBottomBarNavigation() {
@@ -164,7 +76,7 @@ public class PhotoTipsActivity extends AppCompatActivity {
     private void setupTipList() {
         final RecyclerView recyclerView = findViewById(R.id.gc_tips_recycleview);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new PhotoTipsAdapter(this));
+        recyclerView.setAdapter(new PhotoTipsAdapter(this, false));
     }
 
     @Override

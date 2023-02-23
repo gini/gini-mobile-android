@@ -6,25 +6,23 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.WindowManager
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
-import net.gini.android.capture.camera.CameraActivity
-import net.gini.android.capture.internal.util.ActivityHelper.enableHomeAsUp
-import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
-import net.gini.android.capture.network.model.GiniCaptureReturnReason
-import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.capture.CaptureResult
-import net.gini.android.bank.sdk.capture.digitalinvoice.details.LineItemDetailsActivity
-import net.gini.android.bank.sdk.capture.digitalinvoice.details.LineItemDetailsFragmentListener
+import net.gini.android.bank.sdk.capture.digitalinvoice.details.LineItemDetailsListener
 import net.gini.android.bank.sdk.capture.digitalinvoice.info.DigitalInvoiceInfoFragment
 import net.gini.android.bank.sdk.capture.digitalinvoice.info.DigitalInvoiceInfoFragmentListener
 import net.gini.android.bank.sdk.capture.digitalinvoice.onboarding.DigitalInvoiceOnboardingFragment
 import net.gini.android.bank.sdk.capture.digitalinvoice.onboarding.DigitalInvoiceOnboardingFragmentListener
 import net.gini.android.bank.sdk.capture.internalParseResult
-import net.gini.android.capture.view.InjectedViewContainer
-import net.gini.android.capture.help.view.HelpNavigationBarBottomAdapter
+import net.gini.android.capture.camera.CameraActivity
+import net.gini.android.capture.internal.util.ActivityHelper.enableHomeAsUp
+import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
+import net.gini.android.capture.network.model.GiniCaptureReturnReason
+import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 
 /**
  * Created by Alpar Szotyori on 05.12.2019.
@@ -33,8 +31,6 @@ import net.gini.android.capture.help.view.HelpNavigationBarBottomAdapter
  */
 
 private const val RETURN_ASSISTANT_FRAGMENT = "RETURN_ASSISTANT_FRAGMENT"
-
-private const val EDIT_LINE_ITEM_REQUEST = 1
 
 private const val EXTRA_IN_EXTRACTIONS = "EXTRA_IN_EXTRACTIONS"
 
@@ -45,6 +41,8 @@ private const val TAG_ONBOARDING = "TAG_ONBOARDING"
 private const val TAG_INFO = "TAG_INFO"
 
 /**
+ * Internal use only.
+ *
  * When you use the Screen API, the `DigitalInvoiceActivity` displays the line items extracted from an invoice document and their total
  * price. The user can deselect line items which should not be paid for and also edit the quantity, price or description of each line item.
  * The total price is always updated to include only the selected line items.
@@ -65,19 +63,9 @@ private const val TAG_INFO = "TAG_INFO"
  *
  * **Important:** All overriden styles must have their respective `Root.` prefixed style as their parent. Ex.: the parent of
  * `GiniCaptureTheme.Snackbar.Error.TextStyle` must be `Root.GiniCaptureTheme.Snackbar.Error.TextStyle`.
- *
- * ### Customizing the Action Bar
- *
- * Customizing the Action Bar is also done via overriding of app resources and each one - except the title string resource - is global to
- * all Activities.
- *
- * The following items are customizable:
- * - **Background color:** via the color resource named `gbs_action_bar` (highly recommended for Android 5+: customize the status bar color
- * via `gbs_status_bar`)
- * - **Back button:** via images for mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi named {@code gbs_action_bar_back}
  */
 internal class DigitalInvoiceActivity : AppCompatActivity(), DigitalInvoiceFragmentListener,
-    DigitalInvoiceInfoFragmentListener, DigitalInvoiceOnboardingFragmentListener, LineItemDetailsFragmentListener {
+    DigitalInvoiceInfoFragmentListener, DigitalInvoiceOnboardingFragmentListener, LineItemDetailsListener {
 
     private var fragment: DigitalInvoiceFragment? = null
     private lateinit var extractions: Map<String, GiniCaptureSpecificExtraction>
@@ -99,6 +87,10 @@ internal class DigitalInvoiceActivity : AppCompatActivity(), DigitalInvoiceFragm
             retainFragment()
         }
         enableHomeAsUp(this)
+
+        if (resources.getBoolean(R.bool.gc_is_tablet)) {
+            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
+        }
     }
 
 
@@ -218,22 +210,13 @@ internal class DigitalInvoiceActivity : AppCompatActivity(), DigitalInvoiceFragm
     override fun onEditLineItem(selectableLineItem: SelectableLineItem) {
         val bottomSheet = DigitalInvoiceBottomSheet.newInstance(selectableLineItem)
         bottomSheet.show(supportFragmentManager, bottomSheet.tag)
-        /*startActivityForResult(
-            LineItemDetailsActivity.createIntent(this, selectableLineItem, returnReasons),
-            EDIT_LINE_ITEM_REQUEST
-        )*/
     }
 
     fun resultFromBottomSheet(selectableLineItem: SelectableLineItem) {
         fragment?.updateLineItem(selectableLineItem)
     }
 
-    override fun onAddLineItem(selectableLineItem: SelectableLineItem) {
-        startActivityForResult(
-            LineItemDetailsActivity.createIntent(this, selectableLineItem, returnReasons),
-            EDIT_LINE_ITEM_REQUEST
-        )
-    }
+    override fun onAddLineItem(selectableLineItem: SelectableLineItem) {}
 
     /**
      * Internal use only.
@@ -255,27 +238,6 @@ internal class DigitalInvoiceActivity : AppCompatActivity(), DigitalInvoiceFragm
         finish()
     }
 
-    /**
-     * Internal use only.
-     *
-     * @suppress
-     */
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            EDIT_LINE_ITEM_REQUEST -> {
-                when (resultCode) {
-                    Activity.RESULT_OK -> {
-                        data?.getParcelableExtra<SelectableLineItem>(
-                            LineItemDetailsActivity.EXTRA_OUT_SELECTABLE_LINE_ITEM
-                        )?.let {
-                            fragment?.updateLineItem(it)
-                        }
-                    }
-                }
-            }
-        }
-    }
     override fun onSave(selectableLineItem: SelectableLineItem) {
         fragment?.updateLineItem(selectableLineItem)
     }

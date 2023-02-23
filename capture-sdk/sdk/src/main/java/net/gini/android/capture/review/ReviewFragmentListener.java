@@ -8,6 +8,8 @@ import net.gini.android.capture.GiniCaptureError;
 import net.gini.android.capture.analysis.AnalysisActivity;
 
 /**
+ * Internal use only.
+ *
  * Interface used by {@link ReviewFragmentCompat} to dispatch
  * events to the hosting Activity.
  */

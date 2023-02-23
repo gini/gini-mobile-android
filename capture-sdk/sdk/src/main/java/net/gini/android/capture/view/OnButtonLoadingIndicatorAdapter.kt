@@ -8,10 +8,19 @@ import android.widget.ProgressBar
 import androidx.core.content.ContextCompat
 import net.gini.android.capture.R
 
+/**
+ * Adapter for injecting a custom loading indicator which will be shown on buttons.
+ */
 interface OnButtonLoadingIndicatorAdapter : InjectedViewAdapter {
 
+    /**
+     * Called when the loading indicator needs to be shown.
+     */
     fun onVisible()
 
+    /**
+     * Called when the loading indicator needs to be hidden.
+     */
     fun onHidden()
 }
 

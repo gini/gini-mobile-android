@@ -112,7 +112,6 @@ public class GiniCapture {
     private boolean mShouldShowOnboarding;
     private final boolean mIsSupportedFormatsHelpScreenEnabled;
     private final boolean mFlashButtonEnabled;
-    private final boolean mBackButtonsEnabled;
     private final boolean mIsFlashOnByDefault;
     private final EventTracker mEventTracker;
     private final List<HelpItem.Custom> mCustomHelpItems;
@@ -287,7 +286,6 @@ public class GiniCapture {
         mMultiPageEnabled = builder.isMultiPageEnabled();
         mIsSupportedFormatsHelpScreenEnabled = builder.isSupportedFormatsHelpScreenEnabled();
         mFlashButtonEnabled = builder.isFlashButtonEnabled();
-        mBackButtonsEnabled = builder.areBackButtonsEnabled();
         mIsFlashOnByDefault = builder.isFlashOnByDefault();
         mEventTracker = builder.getEventTracker();
         mCustomHelpItems = builder.getCustomHelpItems();
@@ -449,21 +447,6 @@ public class GiniCapture {
      */
     public boolean isFlashButtonEnabled() {
         return mFlashButtonEnabled;
-    }
-
-    /**
-     * Screen API only
-     *
-     * <p> Find out whether back buttons in all Activities have been enabled.
-     * {@link ReviewActivity} and {@link AnalysisActivity} are not affected and always show back
-     * buttons.
-     *
-     * <p> Enabled by default.
-     *
-     * @return {@code true} if the back buttons were enabled
-     */
-    public boolean areBackButtonsEnabled() {
-        return mBackButtonsEnabled;
     }
 
     /**
@@ -678,7 +661,7 @@ public class GiniCapture {
         private boolean mMultiPageEnabled;
         private boolean mIsSupportedFormatsHelpScreenEnabled = true;
         private boolean mFlashButtonEnabled;
-        private boolean mBackButtonsEnabled = true;
+        
         private boolean mIsFlashOnByDefault = true;
 
         private EventTracker mEventTracker = new EventTracker() {
@@ -944,26 +927,6 @@ public class GiniCapture {
         }
 
         /**
-         * Screen API only
-         *
-         * <p> Enable/disable back buttons in all Activities except {@link ReviewActivity} and
-         * {@link AnalysisActivity}, which always show back buttons.
-         *
-         * <p> Enabled by default.
-         *
-         * @param enabled {@code true} to show back buttons
-         * @return the {@link Builder} instance
-         */
-        public Builder setBackButtonsEnabled(final boolean enabled) {
-            mBackButtonsEnabled = enabled;
-            return this;
-        }
-
-        boolean areBackButtonsEnabled() {
-            return mBackButtonsEnabled;
-        }
-
-        /**
          * Set whether the camera flash is on or off by default.
          *
          * <p> If not changed, then flash is on by default.
@@ -1092,6 +1055,12 @@ public class GiniCapture {
             return navigationBarBottomAdapter;
         }
 
+        /**
+         * Set an adapter implementation to show a custom bottom navigation bar on the help screen.
+         *
+         * @param adapter a {@link HelpNavigationBarBottomAdapter} interface implementation
+         * @return the {@link Builder} instance
+         */
         public Builder setHelpNavigationBarBottomAdapter(@NonNull final HelpNavigationBarBottomAdapter adapter) {
             helpNavigationBarBottomAdapter = adapter;
             return this;
@@ -1102,6 +1071,12 @@ public class GiniCapture {
             return helpNavigationBarBottomAdapter;
         }
 
+        /**
+         * Set an adapter implementation to show a custom bottom navigation bar on the camera screen.
+         *
+         * @param adapter a {@link CameraNavigationBarBottomAdapter} interface implementation
+         * @return the {@link Builder} instance
+         */
         public Builder setCameraNavigationBarBottomAdapter(@NonNull final CameraNavigationBarBottomAdapter adapter) {
             cameraNavigationBarBottomAdapter = adapter;
             return this;
@@ -1111,6 +1086,12 @@ public class GiniCapture {
             return cameraNavigationBarBottomAdapter;
         }
 
+        /**
+         * Set an adapter implementation to show a custom bottom navigation bar on the no results screen.
+         *
+         * @param adapter a {@link NoResultsNavigationBarBottomAdapter} interface implementation
+         * @return the {@link Builder} instance
+         */
         public Builder setNoResultsNavigationBarBottomAdapter(@NonNull final NoResultsNavigationBarBottomAdapter adapter) {
             noResultsNavigationBarBottomAdapter = adapter;
             return this;
@@ -1124,6 +1105,12 @@ public class GiniCapture {
             return errorNavigationBarBottomAdapter;
         }
 
+        /**
+         * Set an adapter implementation to show a custom bottom navigation bar on the error screen.
+         *
+         * @param adapter an {@link ErrorNavigationBarBottomAdapter} interface implementation
+         * @return the {@link Builder} instance
+         */
         public void setErrorNavigationBarBottomAdapter(@NonNull final ErrorNavigationBarBottomAdapter adapter) {
             this.errorNavigationBarBottomAdapter = adapter;
         }
@@ -1234,6 +1221,12 @@ public class GiniCapture {
             return this;
         }
 
+        /**
+         * Set an adapter implementation to show a custom bottom navigation bar on the review screen.
+         *
+         * @param adapter a {@link ReviewNavigationBarBottomAdapter} interface implementation
+         * @return the {@link Builder} instance
+         */
         public Builder setReviewBottomBarNavigationAdapter(@NonNull final ReviewNavigationBarBottomAdapter adapter) {
             reviewNavigationBarBottomAdapter = adapter;
             return this;

@@ -5,9 +5,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 
 /**
- * <p>
- * Methods which Analysis Fragment must implement.
- * </p>
+ * Internal use only.
  */
 public interface AnalysisFragmentInterface {
 

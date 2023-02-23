@@ -35,8 +35,6 @@ class MainActivity : AppCompatActivity() {
         registerForActivityResult(CaptureFlowContract(), ::onCaptureResult)
     private val captureImportLauncher =
         registerForActivityResult(CaptureFlowImportContract(), ::onCaptureResult)
-    private val noExtractionsLauncher =
-        registerForActivityResult(NoExtractionContract(), ::onStartAgainResult)
     private var cancellationToken: CancellationToken? =
         null // should be kept across configuration changes
     private val networkService: GiniCaptureDefaultNetworkService by inject()
@@ -64,10 +62,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun configureGiniCapture() {
-        GiniBank.releaseCapture(
-            this, "",
-            "", "", "", "", Amount.EMPTY
-        )
         val useCustomOnboardingPages = false
         val useCustomLoadingIndicator = false
 
@@ -80,6 +74,9 @@ class MainActivity : AppCompatActivity() {
                         this.packageName
                     )
                 )
+
+        // TODO: remove after QA process
+        GiniBank.multipleCurrenciesEnabled = binding.gbsEnableMultipleCurrencies.isChecked
 
         GiniBank.setCaptureConfiguration(
             CaptureConfiguration(
@@ -234,11 +231,41 @@ class MainActivity : AppCompatActivity() {
                             Toast.LENGTH_LONG
                         ).show()
                 }
+                GiniBank.releaseCapture(
+                    this, "",
+                    "", "", "", "", Amount.EMPTY
+                )
+                if (isIntentActionViewOrSend(intent)) {
+                    finish()
+                }
             }
             CaptureResult.Empty -> {
-                noExtractionsLauncher.launch(Unit)
+                GiniBank.releaseCapture(
+                    this, "",
+                    "", "", "", "", Amount.EMPTY
+                )
+                if (isIntentActionViewOrSend(intent)) {
+                    finish()
+                }
             }
             CaptureResult.Cancel -> {
+                GiniBank.releaseCapture(
+                    this, "",
+                    "", "", "", "", Amount.EMPTY
+                )
+                if (isIntentActionViewOrSend(intent)) {
+                    finish()
+                }
+            }
+            CaptureResult.EnterManually -> {
+                GiniBank.releaseCapture(
+                    this, "",
+                    "", "", "", "", Amount.EMPTY
+                )
+                Toast.makeText(this, "Scan exited for manual enter mode", Toast.LENGTH_SHORT).show()
+                if (isIntentActionViewOrSend(intent)) {
+                    finish()
+                }
             }
         }
     }

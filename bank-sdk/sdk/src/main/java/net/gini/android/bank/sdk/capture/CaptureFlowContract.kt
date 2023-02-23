@@ -107,18 +107,15 @@ internal class CaptureImportContract : ActivityResultContract<Intent, CaptureRes
 }
 
 internal fun internalParseResult(resultCode: Int, result: Intent?): CaptureResult {
-    if (resultCode != Activity.RESULT_OK) {
-        val captureError: GiniCaptureError? = result?.getParcelableExtra(CameraActivity.EXTRA_OUT_ERROR)
-        val importError: FileImportValidator.Error? = result?.getStringExtra(EXTRA_OUT_IMPORT_ERROR)?.let {FileImportValidator.Error.valueOf(it)}
-        val importErrorMessage: String? = result?.getStringExtra(EXTRA_OUT_ERROR_MESSAGE)
-        return if (captureError != null) {
-            CaptureResult.Error(ResultError.Capture(captureError))
-        } else if (importError != null || importErrorMessage != null) {
-            CaptureResult.Error(ResultError.FileImport(importError, importErrorMessage))
-        } else {
-            CaptureResult.Cancel
-        }
+    return when(resultCode) {
+        Activity.RESULT_OK -> handleOKResult(result)
+        CameraActivity.RESULT_ERROR -> handleErrorResult(result)
+        CameraActivity.RESULT_ENTER_MANUALLY -> CaptureResult.EnterManually
+        else -> CaptureResult.Cancel
     }
+}
+
+internal fun handleOKResult(result: Intent?): CaptureResult {
     val specificExtractionsBundle: Bundle? = result?.getBundleExtra(CameraActivity.EXTRA_OUT_EXTRACTIONS)
     val compoundExtractionsBundle: Bundle? = result?.getBundleExtra(CameraActivity.EXTRA_OUT_COMPOUND_EXTRACTIONS)
     val returnReasons: List<GiniCaptureReturnReason>? = result?.getParcelableArrayListExtra(CameraActivity.EXTRA_OUT_RETURN_REASONS)
@@ -141,6 +138,19 @@ internal fun internalParseResult(resultCode: Int, result: Intent?): CaptureResul
                 ?.associate { it } ?: emptyMap(),
             returnReasons = returnReasons ?: emptyList()
         )
+    }
+}
+
+internal fun handleErrorResult(result: Intent?): CaptureResult {
+    val captureError: GiniCaptureError? = result?.getParcelableExtra(CameraActivity.EXTRA_OUT_ERROR)
+    val importError: FileImportValidator.Error? = result?.getStringExtra(EXTRA_OUT_IMPORT_ERROR)?.let {FileImportValidator.Error.valueOf(it)}
+    val importErrorMessage: String? = result?.getStringExtra(EXTRA_OUT_ERROR_MESSAGE)
+    return if (captureError != null) {
+        CaptureResult.Error(ResultError.Capture(captureError))
+    } else if (importError != null || importErrorMessage != null) {
+        CaptureResult.Error(ResultError.FileImport(importError, importErrorMessage))
+    } else {
+        CaptureResult.Cancel
     }
 }
 

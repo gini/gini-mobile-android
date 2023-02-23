@@ -2,7 +2,7 @@ Migrate to 3.0.0
 ================
 
 ..
-  Audience: Android dev who has integrated 1.0.0
+  Audience: Android dev who has integrated 2.0.0
   Purpose: Describe what is new in 3.0.0 and how to migrate from 2.0.0 to 3.0.0
   Content type: Procedural - How-To
 
@@ -50,6 +50,30 @@ Migrate from Screen API
 The new public API is based on the Screen API, so you only need to use the new UI customization options and follow the
 :ref:`screen-by-screen UI customization section<Migrate to the new UI>` to adapt the look of the new UI.
 
+Migrate Cleanup Step and Feedback Sending
+-----------------------------------------
+
+We simplified the feedback sending logic. When you clean up the Gini Capture SDK you only need to pass the values the
+user has used (and potentially corrected) to ``GiniCapture.cleanup()``. All values except the one for the amount are
+passed in as strings. Amount needs to be passed in as ``BigDecimal`` and its currency as an ``Enum`` value.
+
+You don't have to call any additional methods to send the extraction feedback.
+
+Default Networking Implementation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You don't need to interact with the ``GiniCaptureDefaultNetworkApi`` anymore. The ``GiniCapture.cleanup()`` method
+will take care of sending the feedback.
+
+Custom Networking Implementation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You only need to implement the ``GiniCaptureNetworkService`` from now on. We removed the ``GiniCaptureNetworkApi`` and
+moved the ``sendFeedback()`` method to the ``GiniCaptureNetworkService``. 
+
+``GiniCaptureNetworkService.sendFeedback()`` will be called when you pass the values the user has used (and potentially
+corrected) to ``GiniCapture.cleanup()``.
+
 Overview of New UI Customization Options
 ----------------------------------------
 
@@ -94,7 +118,7 @@ Colors
 
 We introduced a global color palette which you are free to override. The custom colors will then be applied on all screens.
 
-You can find the names of the colors `here <https://github.com/gini/gini-mobile-android/blob/main/capture-sdk/sdk/src/main/res/values/colors.xml>`_.
+You can find the names of the color resources in the color palette `here <customization-guide.html#colors>`_.
 
 .. note::
 
@@ -129,14 +153,12 @@ root style as the parent, for example:
   If you have overridden the ``GiniCaptureTheme`` then the text appearances you have set there will override the
   typography customization. The same applies to overridden widget styles where you have set a custom text appearance.
 
-You can find all the typography styles `here <https://github.com/gini/gini-mobile-android/blob/main/capture-sdk/sdk/src/main/res/values/typography.xml>`_.
+You can find all the typography style names `here <customization-guide.html#typography>`_.
 
 Text
 ~~~~
 
 Text customization is done the same way as before via string resources.
-
-You can find all the string resources `here <https://github.com/gini/gini-mobile-android/blob/main/capture-sdk/sdk/src/main/res/values/strings.xml>`_.
 
 UI Elements
 ~~~~~~~~~~~
@@ -149,7 +171,7 @@ SDK. These interfaces declare the contract the injected view has to fulfill and 
 instance when needed.
 
 The most important injectable UI element is the top navigation bar. You may also show the navigation bar on the bottom
-using your own custom view. You can find more details `here <features.html#custom-ui-elements>`_.
+using your own custom view. You can find more details `here <customization-guide.html#custom-ui-elements>`_.
 
 Dark mode
 ~~~~~~~~~
@@ -159,18 +181,13 @@ To customize resource for dark mode add them to resource folders containing the 
 Migrate to the new UI
 ---------------------
 
-Onboarding
-~~~~~~~~~~
+Back Buttons
+~~~~~~~~~~~~~~~~~
+We have removed ``setBackButtonsEnabled``. We will not support this option anymore. 
 
-Old and new UI:
+Onboarding Screen
+~~~~~~~~~~~~~~~~~
 
-.. image:: _static/migration/onboarding-old.png
-   :alt: Screenshot of the old onboarding UI
-   :width: 48%
-.. image:: _static/migration/onboarding-new.png
-   :alt: Screenshot of the new onboarding UI
-   :width: 48%
-|
 The new onboarding screen uses the global UI customization options. You can discard the old screen specific
 customizations.
 
@@ -222,86 +239,129 @@ By implementing the ``OnboardingIllustrationAdapter`` interface and passing it t
 For example if you need to show animated illustrations you can use a `Lottie
 <https://github.com/airbnb/lottie-android>`_ view in your ``OnboardingIllustrationAdapter`` implementation.
 
-You can find more details `here <customization-guide.html>`_.
+You can find more details `here <customization-guide.html#custom-illustration-views>`_.
 
-Camera
+Bottom Navigation Bar
+^^^^^^^^^^^^^^^^^^^^^
+
+You can show a bottom navigation bar by passing true to ``GiniCapture`` ``setBottomNavigationBarEnabled``. There is a default implementation, but you can also use
+your own by implementing the ``OnboardingNavigationBarBottomAdapter`` interface and passing it to ``GiniCapture``.
+
+You can find more details `here <customization-guide.html#id1>`_.
+
+Camera Screen
 ~~~~~
+
+The new camera screen uses the global UI customization options. You can discard the old screen specific
+customizations.
+
+`Here <customization-guide.html#camera-screen>`_ you can find the detailed description on how to customize this screen.
 
 New Features
 ++++++++++++
 
 We implemented image cropping. Parts of the image that appears outside the white camera frame will be cut out from the final image.
 
-Bottom navigation bar
+Bottom Navigation Bar
 ^^^^^^^^^^^^^^^^^^^^^
 
 You can show a bottom navigation bar by passing true to ``GiniCapture`` ``setBottomNavigationBarEnabled``. There is a default implementation, but you can also use
 your own by implementing the ``CameraNavigationBarBottomAdapter`` interface and passing it to ``GiniCapture``.
 
-Custom activity indicator view
+You can find more details `here <customization-guide.html#id3>`_.
+
+Custom Loading Indicator View
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 There is a default implementation of indicator which indicates that image is in the cropping process, but you can show your own activity indicator
 by implementing the ``CustomLoadingIndicatorAdapter`` interface and passing it to ``GiniCapture``.
+
+You can find more details `here <customization-guide.html#custom-loading-indicator>`_.
 
 Breaking Changes
 ++++++++++++++++
 
 We removed the tooltip popups that were shown on first launch.
 
-QR code scanning
+QR Code Scanner
 ~~~~~
+
+The new UI for the QR code scanner uses the global UI customization options. You can discard the old screen specific
+customizations.
+
+In the `camera screen customisation guide <customization-guide.html#camera-screen>`_ you can find the detailed description on how to customize it.
 
 Breaking Changes
 ++++++++++++++++
 
-QR code scanning UI and functionality are changed. Scanning and processing happens automatically. You can find more details `here <features.html#qr-code-scanning>`_.
-
-Review
-~~~~~
+QR code scanning UI and functionality have changed. Scanning and processing happens automatically now. You can find more
+details `here <features.html#qr-code-scanning>`_.
 
 New Features
 ++++++++++++
 
-Custom loading indicator on the ``Process`` button
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The SDK can be launched to only scan QR codes. To enable this feature simply pass ``true`` to ``GiniCapture.Builder.setOnlyQRCodeScanning()``. You can find more
+details `here <features.html#only-qr-code-scanning>`_.
 
-There is a default implementation of loading indicator on ``Process`` button that indicates document upload is in progress, but you can show your own indicator
+Review Screen
+~~~~~
+
+The new review screen uses the global UI customization options. You can discard the old screen specific
+customizations.
+
+`Here <customization-guide.html#review-screen>`_ you can find the detailed description on how to customize this screen.
+
+New Features
+++++++++++++
+
+Custom "Process" Button Loading Indicator
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+There is a default implementation of loading indicator on the "Process" button that indicates document upload is in progress, but you can show your own indicator
 by implementing the ``CustomLoadingIndicatorAdapter`` interface and passing it to ``GiniCapture``.
 
-Bottom navigation bar
+You can find more details `here <customization-guide.html#custom-process-button-loading-indicator>`_.
+
+Bottom Navigation Bar
 ^^^^^^^^^^^^^^^^^^^^^
 
 You can show a bottom navigation bar by passing true to ``GiniCapture`` ``setBottomNavigationBarEnabled``. There is a default implementation, but you can also use
 your own by implementing the ``ReviewNavigationBarBottomAdapter`` interface and passing it to ``GiniCapture``.
 
+You can find more details `here <customization-guide.html#id5>`_.
 
 Breaking Changes
 ++++++++++++++++
 
-Re-ordering and rotation of the images are not supported anymore. The Gini Pay API can automatically correct rotation during processing.
-If processing of images fails user is redirected to the Error screen.
+Re-ordering and rotation of the images are not supported anymore. The Gini API can automatically correct rotation during processing.
+If processing of images fails, then the user is redirected to the error screen.
 
-Help
+Help Screen
 ~~~~~
 
-The new help screen uses the global UI customization options.
+The new help screen uses the global UI customization options. You can discard the old screen specific
+customizations.
+
+`Here <customization-guide.html#help-screen>`_ you can find the detailed description on how to customize this screen.
 
 New Features
 ++++++++++++
 
-Bottom navigation bar
+Bottom Navigation Bar
 ^^^^^^^^^^^^^^^^^^^^^
 
 You can show a bottom navigation bar by passing true to ``GiniCapture`` ``setBottomNavigationBarEnabled``. There is a default implementation, but you can also use
 your own by implementing the ``HelpNavigationBarBottomAdapter`` interface and passing it to ``GiniCapture``.
 
-You can find more details `here <features.html#help-screen-customization>`_ and `here <features.html#bottom-navigation-bar>`_.
+You can find more details `here <customization-guide.html#id9>`_.
 
-Analysis
+Analysis Screen
 ~~~~~~~~
 
-The new analysis screen uses the global UI customization options.
+The new analysis screen uses the global UI customization options. You can discard the old screen specific
+customizations.
+
+`Here <customization-guide.html#analysis-screen>`_ you can find the detailed description on how to customize this screen.
 
 Breaking Changes
 ++++++++++++++++
@@ -311,18 +371,20 @@ The new analysis screen does not show the page count of PDF files and preview im
 New Features
 ++++++++++++
 
-Custom activity indicator view
+Custom Loading Indicator View
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 There is a default implementation for indicating that document analysis is in progress, but you can show your own activity indicator
 by implementing the ``CustomLoadingIndicatorAdapter`` interface and passing it to ``GiniCapture``.
 
-You can find more details `here <features.html#analysis-screen-customization>`_.
+You can find more details `here <customization-guide.html#id7>`_.
 
-Error
+Error Screen
 ~~~~~
 
-The new error screen uses the global UI customization options.
+The new analysis screen uses the global UI customization options.
+
+`Here <customization-guide.html#error-screen>`_ you can find the detailed description on how to customize this screen.
 
 Breaking Changes
 ++++++++++++++++
@@ -337,25 +399,28 @@ New UI
 
 The new error screen gives options to retake photos or enter details manually and displays errors with more detailed description.
 
-Bottom navigation bar
+Bottom Navigation Bar
 ^^^^^^^^^^^^^^^^^^^^^
 
 You can show a bottom navigation bar by passing true to ``GiniCapture`` ``setBottomNavigationBarEnabled``. There is a default implementation, but you can also use
 your own by implementing the ``ErrorNavigationBarBottomAdapter`` interface and passing it to ``GiniCapture``.
 
-You can find more details `here <features.html#error-screen-customization>`_.
+You can find more details `here <customization-guide.html#id13>`_.
 
-Option to enter details manually
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Enter Details Manually Button
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-You can show your own UI for data input if an error occured and the user clicks the "Enter manually" button on the error screen.
+Users can now click an "Enter manually" button on the error screen which will exit the SDK with ``CameraActivity.RESULT_ENTER_MANUALLY`` as the result code.
 
-You can find more details `here <features.html#error-screen-customization>`_.
+You can find more details `here <integration.html#capturing-documents>`_.
 
-No results
+No Results Screen
 ~~~~~~~~~~
 
-The new no results screen uses the global UI customization options.
+The new no results screen uses the global UI customization options. You can discard the old screen specific
+customizations.
+
+`Here <customization-guide.html#no-results-screen>`_ you can find the detailed description on how to customize this screen.
 
 New Features
 ++++++++++++
@@ -365,17 +430,17 @@ New UI
 
 The new no results screen gives options to enter document details manually.
 
-Bottom navigation bar
+Bottom Navigation Bar
 ^^^^^^^^^^^^^^^^^^^^^
 
 You can show a bottom navigation bar by passing true to ``GiniCapture`` ``setBottomNavigationBarEnabled``. There is a default implementation, but you can also use
 your own by implementing the ``NoResultsNavigationBarBottomAdapter`` interface and passing it to ``GiniCapture``.
 
-You can find more details `here <features.html#no-results-screen-customization>`_.
+You can find more details `here <customization-guide.html#id11>`_.
 
-Option to enter details manually
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Enter Details Manually Button
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-You can show your own UI if the document analysis returned with no result and the user clicks the "Enter manually" button.
+Users can now click an "Enter manually" button on the no results screen which will exit the SDK with ``CameraActivity.RESULT_ENTER_MANUALLY`` as the result code.
 
-You can find more details `here <features.html#no-results-screen-customization>`_.
+You can find more details `here <integration.html#capturing-documents>`_.

@@ -5,7 +5,7 @@ Features from the Gini Capture SDK
 ----------------------------------
 
 The capture feature uses our `Gini Capture SDK <https://github.com/gini/gini-mobile-android/tree/main/capture-sdk>`_. All features
-listed in its `documentation <https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/html/features.html>`_ can be used here
+listed in its :root_html_path_capture_sdk:`documentation <features.html>` can be used here
 as well.
 
 An important difference is in how you configure the capture features. In the Gini Bank SDK you need to use the
@@ -15,9 +15,8 @@ so you can easily map them to the ``CaptureConfiguration``.
 File Import (Open With)
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Another difference is related to the `file import
-<https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/html/features.html#file-import-open-with>`_ (or "open with")
-feature which allows importing of files from other apps via Android's "open with" or "share" functionality.
+Another difference is related to the :root_html_path_capture_sdk:`file import <features.html#file-import-open-with>` (or
+"open with") feature which allows importing of files from other apps via Android's "open with" or "share" functionality.
 
 To handle imported files using the Gini Bank SDK you need to register an activity result handler with the
 ``CaptureFlowImportContract()`` and then pass the incoming intent to
@@ -103,64 +102,3 @@ The extractions related to the return assistant are stored in the ``compoundExtr
 ``CaptureResult``. See the Gini Bank API's `documentation
 <https://pay-api.gini.net/documentation/#return-assistant-extractions>`_ to learn about the return assistant's compound
 extractions.
-
-Sending Feedback
-~~~~~~~~~~~~~~~~
-
-Your app should send feedback for the extractions related to the return assistant. These extractions are found in the
-``compoundExtractions`` field of the ``CaptureResult``.
-
-Default Networking Implementation
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-If you use the ``GiniCaptureDefaultNetworkService`` and the ``GiniCaptureDefaultNetworkApi`` then sending feedback for
-the return assistant extractions is done by the ``GiniCaptureDefaultNetworkApi`` when you send feedback for the payment
-data extractions as described in the `Sending Feedback <integration.html#sending-feedback>`_ section.
-
-Custom Networking Implementation
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-If you use your own networking implementation and directly communicate with the Gini Bank API then see `this section
-<https://pay-api.gini.net/documentation/#submitting-feedback-on-extractions>`_ in its documentation on how to send
-feedback for the compound extractions.
-
-In case you use the Gini Bank API Library then sending compound extraction feedback is very similar to how it's shown in
-its `documentation <https://developer.gini.net/gini-mobile-android/bank-api-library/library/>`_. The only difference is
-that you need to also pass in the ``CompoundExtraction`` map to ``DocumentTaskManager.sendFeebackForExtractions()``:
-
-.. code-block:: java
-
-    // Extractions seen and accepted by the user (including user modifications)
-    Map<String, SpecificExtraction> specificExtractionFeedback;
-
-    // Return assistant extractions as returned by the CaptureResult or DigitalInvoiceFragmentListener
-    Map<String, CompoundExtraction> compoundExtractionFeedback;
-
-    final Task<Document> sendFeedback = documentTaskManager.sendFeedbackForExtractions(document, 
-            specificExtractionFeedback, compoundExtractionFeedback);
-    sendFeedback.waitForCompletion();
-
-Digital Invoice Help Screen Customization
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-You can show back navigation button on bottom navigation bar. You can pass your custom ``DigitalInvoiceHelpNavigationBarBottomAdapter`` implementation to
-``GiniBank``:
-
-.. code-block:: java
-
-    CustomDigitalInvoiceHelpNavigationBarBottomAdapter customDigitalInvoiceHelpNavigationBarBottomAdapter = new CustomDigitalInvoiceHelpNavigationBarBottomAdapter();
-
-    GiniBank.digitalInvoiceHelpNavigationBarBottomAdapter = customDigitalInvoiceHelpNavigationBarBottomAdapter
-
-
-Digital Invoice Screen Customization
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-You can show invoice bottom navigation bar. You can pass your custom ``DigitalInvoiceNavigationBarBottomAdapter`` implementation to
-``GiniBank``:
-
-.. code-block:: java
-
-    CustomDigitalInvoiceNavigationBarBottomAdapter customDigitalInvoiceNavigationBarBottomAdapter = new CustomDigitalInvoiceNavigationBarBottomAdapter();
-
-    GiniBank.digitalInvoiceNavigationBarBottomAdapter = customDigitalInvoiceNavigationBarBottomAdapter;

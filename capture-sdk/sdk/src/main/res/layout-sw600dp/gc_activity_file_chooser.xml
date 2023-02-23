@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/gc_layout_root"
+    android:layout_width="@dimen/gc_tablet_width"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    tools:context="net.gini.android.capture.internal.fileimport.FileChooserActivity">
+
+    <Space
+        android:id="@+id/gc_space"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/gc_file_providers"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/gc_space"
+        android:background="?attr/colorSurface"
+        android:minHeight="180dp" />
+
+</RelativeLayout>

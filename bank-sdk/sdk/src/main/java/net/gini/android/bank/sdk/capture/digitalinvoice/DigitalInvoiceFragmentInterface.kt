@@ -1,7 +1,6 @@
 package net.gini.android.bank.sdk.capture.digitalinvoice
 
-import net.gini.android.bank.sdk.capture.digitalinvoice.details.LineItemDetailsFragment
-import net.gini.android.bank.sdk.capture.digitalinvoice.details.LineItemDetailsFragmentListener
+import net.gini.android.bank.sdk.capture.digitalinvoice.details.LineItemDetailsListener
 
 /**
  * Created by Alpar Szotyori on 05.12.2019.
@@ -22,7 +21,7 @@ interface DigitalInvoiceFragmentInterface {
 
     /**
      * Call this method when the modified selectable line item was returned by the
-     * [LineItemDetailsFragmentListener.onSave] method.
+     * [LineItemDetailsListener.onSave] method.
      *
      * @param selectableLineItem the [SelectableLineItem] which was updated in the [LineItemDetailsFragment]
      */

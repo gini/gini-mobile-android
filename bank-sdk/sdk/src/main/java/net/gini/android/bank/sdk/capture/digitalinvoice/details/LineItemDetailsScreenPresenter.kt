@@ -39,7 +39,7 @@ internal class LineItemDetailsScreenPresenter(
 ) :
     Presenter(activity, view) {
 
-    override var listener: LineItemDetailsFragmentListener? = null
+    override var listener: LineItemDetailsListener? = null
 
     private val originalLineItem: SelectableLineItem = selectableLineItem.copy()
 
