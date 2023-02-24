@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import net.gini.android.capture.Document
+import net.gini.android.capture.GiniCapture
+import net.gini.android.capture.GiniCaptureError
 import net.gini.android.capture.internal.ui.FragmentImplCallback
 import net.gini.android.capture.internal.util.AlertDialogHelperCompat
 
@@ -30,14 +32,25 @@ import net.gini.android.capture.internal.util.AlertDialogHelperCompat
  */
 class ErrorFragmentCompat : Fragment(), FragmentImplCallback {
 
-    private lateinit  var fragmentImpl: ErrorFragmentImpl
+    private lateinit var fragmentImpl: ErrorFragmentImpl
+    private var errorListener: ErrorFragmentListener? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         fragmentImpl = ErrorFragmentHelper.createFragmentImpl(this, arguments)
-        activity?.let { ErrorFragmentHelper.setListener(fragmentImpl, it) }
+        activity?.let {
+            ErrorFragmentHelper.setListener(fragmentImpl, it)
+            if (it is ErrorFragmentListener) errorListener = it
+        }
         fragmentImpl.onCreate(savedInstanceState)
+
+        if (!GiniCapture.hasInstance()) {
+            errorListener?.onError(GiniCaptureError(
+                GiniCaptureError.ErrorCode.MISSING_GINI_CAPTURE_INSTANCE,
+                "Missing GiniCapture instance. It was not created or there was an application process restart."
+            ))
+        }
     }
 
     override fun onCreateView(
