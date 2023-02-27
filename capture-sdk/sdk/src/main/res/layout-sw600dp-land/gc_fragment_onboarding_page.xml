@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/large"
         android:layout_marginEnd="@dimen/large"
-        android:layout_marginBottom="@dimen/medium"
+        android:layout_marginBottom="@dimen/large"
         android:gravity="center"
         app:layout_constraintBottom_toTopOf="@id/gc_message"
         app:layout_constraintEnd_toEndOf="parent"
