@@ -6,18 +6,20 @@ import android.os.Bundle
 import android.view.*
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import java.util.*
-import net.gini.android.capture.GiniCapture
-import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
+import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.screenapiexample.databinding.ActivityExtractionsBinding
 import net.gini.android.capture.Amount
 import net.gini.android.capture.AmountCurrency
+import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.network.GiniCaptureDefaultNetworkService
+import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import org.koin.android.ext.android.inject
 import java.math.BigDecimal
+import java.util.*
 
 /**
  * Displays the Pay5 extractions: paymentRecipient, iban, bic, amount and paymentReference.
@@ -39,6 +41,20 @@ class ExtractionsActivity : AppCompatActivity() {
         readExtras()
         showAnalyzedDocumentId()
         setUpRecyclerView(binding)
+        handleBackPressed()
+    }
+
+    private fun handleBackPressed() {
+        onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Clean up GiniBank and pass in empty extraction feedback to signal that the user cancelled without
+                // accepting any of them
+                GiniBank.releaseCapture(applicationContext,"", "",
+                    "", "", "", Amount.EMPTY)
+                isEnabled = false
+                onBackPressed()
+            }
+        })
     }
 
     private fun showAnalyzedDocumentId() {
@@ -54,7 +70,7 @@ class ExtractionsActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         R.id.feedback -> {
-            sendFeedback(binding)
+            sendFeedbackAndClose(binding)
             true
         }
         else -> super.onOptionsItemSelected(item)
@@ -80,7 +96,7 @@ class ExtractionsActivity : AppCompatActivity() {
 
     private fun <T> getSortedExtractions(extractions: Map<String, T>): List<T> = extractions.toSortedMap().values.toList()
 
-    private fun sendFeedback(binding: ActivityExtractionsBinding) {
+    private fun sendFeedbackAndClose(binding: ActivityExtractionsBinding) {
         // An example for sending feedback where we change the amount or add one if it is missing
         // Feedback should be sent only for the user visible fields. Non-visible fields should be filtered out.
         // In a real application the user input should be used as the new value.
@@ -105,10 +121,11 @@ class ExtractionsActivity : AppCompatActivity() {
         }
         mExtractionsAdapter?.notifyDataSetChanged()
 
-        GiniCapture.cleanup(applicationContext, paymentRecipient, paymentReference, paymentPurpose, iban, bic, Amount(
+        GiniBank.releaseCapture(applicationContext, paymentRecipient, paymentReference, paymentPurpose, iban, bic, Amount(
             BigDecimal(amount!!.value), AmountCurrency.EUR)
         )
 
+        finish()
     }
 
     private fun showProgressIndicator(binding: ActivityExtractionsBinding) {
