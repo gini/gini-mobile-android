@@ -45,12 +45,7 @@ class ErrorFragmentCompat : Fragment(), FragmentImplCallback {
         }
         fragmentImpl.onCreate(savedInstanceState)
 
-        if (!GiniCapture.hasInstance()) {
-            errorListener?.onError(GiniCaptureError(
-                GiniCaptureError.ErrorCode.MISSING_GINI_CAPTURE_INSTANCE,
-                "Missing GiniCapture instance. It was not created or there was an application process restart."
-            ))
-        }
+        checkGiniCaptureInstance()
     }
 
     override fun onCreateView(
@@ -72,6 +67,15 @@ class ErrorFragmentCompat : Fragment(), FragmentImplCallback {
         activity?.let {
             AlertDialogHelperCompat.showAlertDialog(it, message, positiveButtonTitle,
                 positiveButtonClickListener, negativeButtonTitle, negativeButtonClickListener, cancelListener)
+        }
+    }
+
+    private fun checkGiniCaptureInstance() {
+        if (!GiniCapture.hasInstance()) {
+            errorListener?.onError(GiniCaptureError(
+                GiniCaptureError.ErrorCode.MISSING_GINI_CAPTURE_INSTANCE,
+                "Missing GiniCapture instance. It was not created or there was an application process restart."
+            ))
         }
     }
 
