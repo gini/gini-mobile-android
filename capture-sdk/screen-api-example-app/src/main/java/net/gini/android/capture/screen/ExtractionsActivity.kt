@@ -84,7 +84,7 @@ class ExtractionsActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.feedback -> {
-                sendFeedback(binding)
+                sendFeedbackAndClose(binding)
                 true
             }
             R.id.view_picture -> {
@@ -191,7 +191,7 @@ class ExtractionsActivity : AppCompatActivity() {
 
     private fun <T> getSortedExtractions(extractions: Map<String, T>): List<T> = extractions.toSortedMap().values.toList()
 
-    private fun sendFeedback(binding: ActivityExtractionsBinding) {
+    private fun sendFeedbackAndClose(binding: ActivityExtractionsBinding) {
         // An example for sending feedback where we change the amount or add one if it is missing
         // Feedback should be sent only for the user visible fields. Non-visible fields should be filtered out.
         // In a real application the user input should be used as the new value.
@@ -219,6 +219,8 @@ class ExtractionsActivity : AppCompatActivity() {
         GiniCapture.cleanup(applicationContext, paymentRecipient, paymentReference, paymentPurpose, iban, bic, Amount(
             BigDecimal(amount!!.value), AmountCurrency.EUR)
         )
+
+        finish()
     }
 
     private fun legacySendFeedback() {
