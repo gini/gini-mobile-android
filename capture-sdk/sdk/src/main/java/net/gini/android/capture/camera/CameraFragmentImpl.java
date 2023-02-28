@@ -637,7 +637,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             if (isOnlyQRCodeScanningEnabled()) {
                 topAdapterInjectedViewContainer.getInjectedViewAdapter().setNavButtonType(NavButtonType.CLOSE);
             } else if (mMultiPageDocument != null && !mMultiPageDocument.getDocuments().isEmpty()) {
-                topAdapterInjectedViewContainer.getInjectedViewAdapter().setNavButtonType(NavButtonType.BACK);
+                topAdapterInjectedViewContainer.getInjectedViewAdapter().setNavButtonType(isBottomBarEnabled ? NavButtonType.NONE : NavButtonType.BACK);
             } else {
                 topAdapterInjectedViewContainer.getInjectedViewAdapter().setNavButtonType(NavButtonType.CLOSE);
             }

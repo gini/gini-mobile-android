@@ -209,7 +209,11 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
 
             binding.gbsTopBarNavigation.injectedViewAdapter = topBarAdapter
             topBarAdapter.setTitle(getString(R.string.gbs_digital_invoice_onboarding_text_1))
-            topBarAdapter.setNavButtonType(NavButtonType.BACK)
+
+            val navType = if (GiniCapture.getInstance().isBottomNavigationBarEnabled)
+                NavButtonType.NONE else NavButtonType.BACK
+
+            topBarAdapter.setNavButtonType(navType)
 
             topBarAdapter.setMenuResource(R.menu.gbs_menu_digital_invoice)
             topBarAdapter.setOnMenuItemClickListener(IntervalToolbarMenuItemIntervalClickListener {

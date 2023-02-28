@@ -93,7 +93,7 @@ public class FileImportActivity extends AppCompatActivity {
 
             NavigationBarTopAdapter topBarAdapter = topBarInjectedViewContainer.getInjectedViewAdapter();
             assert topBarAdapter != null;
-            topBarAdapter.setNavButtonType(NavButtonType.BACK);
+            topBarAdapter.setNavButtonType(GiniCapture.getInstance().isBottomNavigationBarEnabled() ? NavButtonType.NONE : NavButtonType.BACK);
             topBarAdapter.setTitle(getString(R.string.gc_title_file_import));
 
             topBarAdapter.setOnNavButtonClickListener(

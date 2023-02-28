@@ -61,7 +61,11 @@ class HelpActivity : AppCompatActivity() {
                 GiniCapture.getInstance().navigationBarTopAdapter
 
             val topBarAdapter = topBarInjectedViewContainer?.injectedViewAdapter
-            topBarAdapter?.setNavButtonType(NavButtonType.BACK)
+
+            val navType = if (GiniCapture.getInstance().isBottomNavigationBarEnabled)
+                NavButtonType.NONE else NavButtonType.BACK
+            topBarAdapter?.setNavButtonType(navType)
+
             topBarAdapter?.setTitle(getString(net.gini.android.capture.R.string.gc_title_help))
 
             topBarAdapter?.setOnNavButtonClickListener(IntervalClickListener {
