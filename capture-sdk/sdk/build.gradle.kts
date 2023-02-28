@@ -92,7 +92,6 @@ dependencies {
     implementation(libs.mlkit.barcodescanning)
     implementation(libs.apachecommons.imaging)
     implementation(libs.completableFuture)
-    implementation(libs.photoview)
 
     implementation(libs.androidx.camera.camera2)
     implementation(libs.androidx.camera.lifecycle)
