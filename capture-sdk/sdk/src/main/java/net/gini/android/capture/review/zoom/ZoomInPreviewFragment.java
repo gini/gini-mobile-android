@@ -11,6 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.github.chrisbanes.photoview.PhotoView;
+
 import net.gini.android.capture.AsyncCallback;
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
@@ -25,7 +27,7 @@ public class ZoomInPreviewFragment extends Fragment {
     private static final String ARGS_DOCUMENT = "GC_ARGS_DOCUMENT";
     private ImageDocument mImageDocument;
 
-    private RotatableTouchImageViewContainer mRotatableTouchImageViewContainer;
+    private PhotoView mRotatableTouchImageViewContainer;
 
     public static ZoomInPreviewFragment newInstance(ImageDocument imageDocument) {
 
@@ -72,7 +74,7 @@ public class ZoomInPreviewFragment extends Fragment {
                         @Override
                         public void onSuccess(final Photo result) {
 
-                            mRotatableTouchImageViewContainer.getImageView().setImageBitmap(
+                            mRotatableTouchImageViewContainer.setImageBitmap(
                                     result.getBitmapPreview());
                             mRotatableTouchImageViewContainer.setRotation(mImageDocument.getRotationForDisplay());
                         }
