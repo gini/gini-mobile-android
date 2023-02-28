@@ -210,29 +210,18 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
             binding.gbsTopBarNavigation.injectedViewAdapter = topBarAdapter
             topBarAdapter.setTitle(getString(R.string.gbs_digital_invoice_onboarding_text_1))
 
-            val isBottomBarEnabled = GiniCapture.getInstance().isBottomNavigationBarEnabled
+            topBarAdapter.setNavButtonType(NavButtonType.CLOSE)
 
-            val navType = if (isBottomBarEnabled)
-                NavButtonType.CLOSE else NavButtonType.BACK
-
-            topBarAdapter.setNavButtonType(navType)
-
-            val menuResource = if (isBottomBarEnabled)
-                R.menu.gc_navigation_bar_top_close else R.menu.gbs_menu_digital_invoice
-
-            if (!isBottomBarEnabled)
+            if (!GiniCapture.getInstance().isBottomNavigationBarEnabled) {
                 topBarAdapter.setMenuResource(R.menu.gbs_menu_digital_invoice)
-
-            topBarAdapter.setOnMenuItemClickListener(
-                IntervalToolbarMenuItemIntervalClickListener {
-                    if (it.itemId == R.id.help) {
-                        startActivity(Intent(requireContext(), HelpActivity::class.java))
-                    }
-                    if (it.itemId == R.id.gc_action_close) {
-                        activity?.finish()
-                    }
-                    true
-                })
+                topBarAdapter.setOnMenuItemClickListener(
+                    IntervalToolbarMenuItemIntervalClickListener {
+                        if (it.itemId == R.id.help) {
+                            startActivity(Intent(requireContext(), HelpActivity::class.java))
+                        }
+                        true
+                    })
+            }
 
             topBarAdapter.setOnNavButtonClickListener {
                 activity?.finish()
