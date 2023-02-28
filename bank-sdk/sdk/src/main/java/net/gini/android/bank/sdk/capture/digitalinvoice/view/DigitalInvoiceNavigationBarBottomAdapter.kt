@@ -14,13 +14,6 @@ import net.gini.android.capture.view.InjectedViewAdapter
 interface DigitalInvoiceNavigationBarBottomAdapter : InjectedViewAdapter {
 
     /**
-     * Set the click listener for the back button.
-     *
-     * @param listener the click listener for the button
-     */
-    fun setOnBackClickListener(listener: OnClickListener)
-
-    /**
      * Set the click listener for the help button.
      *
      * @param listener the click listener for the button
@@ -59,10 +52,6 @@ interface DigitalInvoiceNavigationBarBottomAdapter : InjectedViewAdapter {
 class DefaultDigitalInvoiceNavigationBarBottomAdapter: DigitalInvoiceNavigationBarBottomAdapter {
 
     private var binding: GbsDigitalInvoiceNavigationBarBottomBinding? = null
-
-    override fun setOnBackClickListener(listener: OnClickListener) {
-        binding?.gbsBackBtn?.setOnClickListener(listener)
-    }
 
     override fun setOnHelpClickListener(listener: OnClickListener) {
         binding?.gbsHelpBtn?.setOnClickListener(listener)

@@ -210,18 +210,29 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
             binding.gbsTopBarNavigation.injectedViewAdapter = topBarAdapter
             topBarAdapter.setTitle(getString(R.string.gbs_digital_invoice_onboarding_text_1))
 
-            val navType = if (GiniCapture.getInstance().isBottomNavigationBarEnabled)
-                NavButtonType.NONE else NavButtonType.BACK
+            val isBottomBarEnabled = GiniCapture.getInstance().isBottomNavigationBarEnabled
+
+            val navType = if (isBottomBarEnabled)
+                NavButtonType.CLOSE else NavButtonType.BACK
 
             topBarAdapter.setNavButtonType(navType)
 
-            topBarAdapter.setMenuResource(R.menu.gbs_menu_digital_invoice)
-            topBarAdapter.setOnMenuItemClickListener(IntervalToolbarMenuItemIntervalClickListener {
-                if (it.itemId == R.id.help) {
-                    startActivity(Intent(requireContext(), HelpActivity::class.java))
-                }
-                true
-            })
+            val menuResource = if (isBottomBarEnabled)
+                R.menu.gc_navigation_bar_top_close else R.menu.gbs_menu_digital_invoice
+
+            if (!isBottomBarEnabled)
+                topBarAdapter.setMenuResource(R.menu.gbs_menu_digital_invoice)
+
+            topBarAdapter.setOnMenuItemClickListener(
+                IntervalToolbarMenuItemIntervalClickListener {
+                    if (it.itemId == R.id.help) {
+                        startActivity(Intent(requireContext(), HelpActivity::class.java))
+                    }
+                    if (it.itemId == R.id.gc_action_close) {
+                        activity?.finish()
+                    }
+                    true
+                })
 
             topBarAdapter.setOnNavButtonClickListener {
                 activity?.finish()
@@ -372,7 +383,10 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
 
         if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled)
             binding.gbsBottomBarNavigation?.injectedViewAdapter?.let { _ ->
-                GiniBank.digitalInvoiceNavigationBarBottomAdapter.setGrossPriceTotal(integral, fractional)
+                GiniBank.digitalInvoiceNavigationBarBottomAdapter.setGrossPriceTotal(
+                    integral,
+                    fractional
+                )
                 GiniBank.digitalInvoiceNavigationBarBottomAdapter.setPayButtonEnabled(data.buttonEnabled)
             }
     }

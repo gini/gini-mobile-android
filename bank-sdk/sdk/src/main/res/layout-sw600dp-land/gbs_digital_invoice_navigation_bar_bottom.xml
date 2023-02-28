@@ -87,6 +87,8 @@
         android:contentDescription="@string/gc_back_button_description"
         android:padding="@dimen/medium"
         app:tint="?attr/colorOnBackground"
+        android:visibility="invisible"
+        android:enabled="false"
         app:layout_constraintBottom_toBottomOf="@+id/gbs_pay"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/gbs_pay"
