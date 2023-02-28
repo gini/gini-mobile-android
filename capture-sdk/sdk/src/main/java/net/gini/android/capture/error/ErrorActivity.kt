@@ -61,7 +61,7 @@ class ErrorActivity : AppCompatActivity(),
                     setOnNavButtonClickListener(IntervalClickListener {
                         onBackPressed()
                     })
-                }
+                } else setNavButtonType(NavButtonType.NONE)
             }
         }
     }

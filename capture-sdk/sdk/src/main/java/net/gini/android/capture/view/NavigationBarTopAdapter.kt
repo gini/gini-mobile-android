@@ -13,8 +13,7 @@ import com.google.android.material.appbar.MaterialToolbar
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.R
 import net.gini.android.capture.databinding.GcNavigationBarTopBinding
-import net.gini.android.capture.view.NavButtonType.BACK
-import net.gini.android.capture.view.NavButtonType.CLOSE
+import net.gini.android.capture.view.NavButtonType.*
 
 /**
  * Created by Alpár Szotyori on 13.05.22.
@@ -67,7 +66,12 @@ enum class NavButtonType {
     /**
      * Navigation button is used as a close button.
      */
-    CLOSE
+    CLOSE,
+
+    /**
+     * Used when no button is shown on the top bar.
+     */
+    NONE
 }
 
 /**
@@ -103,32 +107,30 @@ class DefaultNavigationBarTopAdapter : NavigationBarTopAdapter {
     }
 
     override fun setNavButtonType(navButtonType: NavButtonType) {
-        if (GiniCapture.hasInstance()
-            && GiniCapture.getInstance().isBottomNavigationBarEnabled
-        ) {
-            when (navButtonType) {
-                BACK -> {
-                    // Not used when bottom navigation bar is enabled
-                }
-                CLOSE -> {
-                    viewBinding?.gcNavigationBar?.inflateMenu(R.menu.gc_navigation_bar_top_close)
+        when (navButtonType) {
+            NONE -> {
+                //Used when bottom bar navigation is enabled
+            }
+            BACK -> {
+                viewBinding?.root?.context?.let { context ->
+                    viewBinding?.gcNavigationBar?.navigationIcon =
+                        ContextCompat.getDrawable(context, R.drawable.gc_action_bar_back)
+                    viewBinding?.gcNavigationBar?.navigationContentDescription =
+                        context.getString(R.string.gc_back_button_description)
+
                 }
             }
-        } else {
-            when (navButtonType) {
-                BACK -> {
-                    viewBinding?.root?.context?.let { context ->
-                        viewBinding?.gcNavigationBar?.navigationIcon =
-                            ContextCompat.getDrawable(context, R.drawable.gc_action_bar_back)
-                        viewBinding?.gcNavigationBar?.navigationContentDescription = context.getString(R.string.gc_back_button_description)
-
-                    }
-                }
-                CLOSE -> {
+            CLOSE -> {
+                if (GiniCapture.hasInstance()
+                    && GiniCapture.getInstance().isBottomNavigationBarEnabled
+                ) {
+                    viewBinding?.gcNavigationBar?.inflateMenu(R.menu.gc_navigation_bar_top_close)
+                } else {
                     viewBinding?.root?.context?.let { context ->
                         viewBinding?.gcNavigationBar?.navigationIcon =
                             ContextCompat.getDrawable(context, R.drawable.gc_close)
-                        viewBinding?.gcNavigationBar?.navigationContentDescription = context.getString(R.string.gc_close)
+                        viewBinding?.gcNavigationBar?.navigationContentDescription =
+                            context.getString(R.string.gc_close)
                     }
                 }
             }
@@ -136,7 +138,8 @@ class DefaultNavigationBarTopAdapter : NavigationBarTopAdapter {
     }
 
     override fun setMenuResource(menu: Int) {
-        viewBinding?.gcNavigationBar?.inflateMenu(menu) }
+        viewBinding?.gcNavigationBar?.inflateMenu(menu)
+    }
 
     override fun setOnMenuItemClickListener(menuItem: Toolbar.OnMenuItemClickListener) {
         viewBinding?.gcNavigationBar?.setOnMenuItemClickListener(menuItem)

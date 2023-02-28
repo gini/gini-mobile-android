@@ -139,7 +139,7 @@ class NoResultsFragmentImpl {
                 return;
             }
 
-            topAdapterInjectedViewContainer.getInjectedViewAdapter().setNavButtonType(NavButtonType.BACK);
+            topAdapterInjectedViewContainer.getInjectedViewAdapter().setNavButtonType(GiniCapture.getInstance().isBottomNavigationBarEnabled() ? NavButtonType.NONE : NavButtonType.BACK);
             topAdapterInjectedViewContainer.getInjectedViewAdapter().setOnNavButtonClickListener(new IntervalClickListener(view -> mFragment.getActivity().onBackPressed()));
         }
     }
