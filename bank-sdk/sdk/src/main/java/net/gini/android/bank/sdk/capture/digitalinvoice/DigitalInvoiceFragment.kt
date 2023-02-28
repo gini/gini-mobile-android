@@ -238,10 +238,6 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
                 startActivity(Intent(requireContext(), HelpActivity::class.java))
             }
 
-            GiniBank.digitalInvoiceNavigationBarBottomAdapter.setOnBackClickListener {
-                activity?.finish()
-            }
-
             GiniBank.digitalInvoiceNavigationBarBottomAdapter.setOnPayClickListener {
                 presenter?.pay()
             }
