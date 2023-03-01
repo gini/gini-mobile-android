@@ -1,0 +1,651 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Migrate to 3.0.0 &mdash; Gini Bank SDK for Android 2.0 documentation</title>
+  
+
+  
+  
+
+  
+  <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,400italic,600italic|Source+Code+Pro|Roboto+Slab:400,700" rel="stylesheet" type="text/css" />
+
+  
+  
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:'./',
+        VERSION:'2.0',
+        COLLAPSE_INDEX:false,
+        FILE_SUFFIX:'.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/language_data.js"></script>
+
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+    <script type="text/javascript">
+        jQuery(function () {
+            SphinxRtdTheme.StickyNav.enable();
+        });
+    </script>
+  
+
+  
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Gini Bank SDK for Android 2.0 documentation" href="index.html"/>
+        <link rel="next" title="Reference Doc" href="reference.html"/>
+        <link rel="prev" title="Migrate to 2.0.0" href="migrate-to-2-0-0.html"/> 
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="index.html" id="gini-logo">
+          <img src="_static/logo_flat.png" />
+        </a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="getting-started.html#requirements">Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting-started.html#installation">Installation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="integration.html">Integration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="integration.html#capturing-invoices">Capturing Invoices</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#android-manifest">Android Manifest</a></li>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#requirements-check">Requirements Check</a></li>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#configuration">Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#tablet-support">Tablet Support</a></li>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#networking">Networking</a></li>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#capture-flow">Capture Flow</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="integration.html#handling-payment-requests">Handling Payment Requests</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#id1">Networking</a></li>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#id3">Android Manifest</a></li>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#package-name">Package Name</a></li>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#receive-payment-requests">Receive Payment Requests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#testing">Testing</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="capture-features.html">Invoice Capture Features</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="capture-features.html#features-from-the-gini-capture-sdk">Features from the Gini Capture SDK</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="capture-features.html#file-import-open-with">File Import (Open With)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="capture-features.html#return-assistant">Return Assistant</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="customization-guide.html">Customization Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#overview-of-ui-customization-options">Overview of UI Customization Options</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#styles">Styles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#colors">Colors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#images">Images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#typography">Typography</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#text">Text</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#custom-ui-elements">Custom UI Elements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#dark-mode">Dark mode</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#onboarding-screen">Onboarding Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#ui-customization">UI Customization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id1">Bottom Navigation Bar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#custom-onboarding-pages">Custom Onboarding Pages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#custom-illustration-views">Custom Illustration Views</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#camera-screen">Camera Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id2">UI Customization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id3">Bottom Navigation Bar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#custom-loading-indicator">Custom Loading Indicator</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#review-screen">Review Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id4">UI Customization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id5">Bottom Navigation Bar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#custom-process-button-loading-indicator">Custom “Process” Button Loading Indicator</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#analysis-screen">Analysis Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id6">UI Customization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id7">Custom Loading Indicator</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#help-screen">Help Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id8">UI Customization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id9">Bottom Navigation Bar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#custom-help-screens">Custom Help Screens</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#no-results-screen">No Results Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id10">UI Customization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id11">Bottom Navigation Bar</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#error-screen">Error Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id12">UI Customization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id13">Bottom Navigation Bar</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="migrating-from-gvl.html">Migrating from the Gini Vision Library</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#kotlin">Kotlin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#gini-capture-sdk">Gini Capture SDK</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#gini-bank-api-library">Gini Bank API Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#requirements">Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#screen-api">Screen API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#component-api">Component API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#open-with">Open With</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="migrating-from-gvl.html#id2">Screen API</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#networking">Networking</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="migrating-from-gvl.html#default">Default</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrating-from-gvl.html#custom">Custom</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#event-tracking">Event Tracking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#customization">Customization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="migrate-to-2-0-0.html">Migrate to 2.0.0</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Migrate to 3.0.0</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#migrate-from-component-api">Migrate from Component API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#migrate-from-screen-api">Migrate from Screen API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#migrate-cleanup-step-and-feedback-sending">Migrate Cleanup Step and Feedback Sending</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#default-networking-implementation">Default Networking Implementation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#custom-networking-implementation">Custom Networking Implementation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#overview-of-new-ui-customization-options">Overview of New UI Customization Options</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#styles">Styles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#colors">Colors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#images">Images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#typography">Typography</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#text">Text</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ui-elements">UI Elements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dark-mode">Dark mode</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#migrate-to-the-new-ui">Migrate to the new UI</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#back-buttons">Back Buttons</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#onboarding-screen">Onboarding Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#camera-screen">Camera Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#qr-code-scanner">QR Code Scanner</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#review-screen">Review Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#help-screen">Help Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#analysis-screen">Analysis Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#error-screen">Error Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#no-results-screen">No Results Screen</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">Reference Doc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Gini Bank SDK for Android</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Migrate to 3.0.0</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="migrate-to-3-0-0">
+<h1>Migrate to 3.0.0<a class="headerlink" href="#migrate-to-3-0-0" title="Permalink to this headline">¶</a></h1>
+<p>In version 3.0.0 we modernised our UI and added support for light and dark modes. In addition we simplified how the UI
+is customised. We also unified the public API of the SDK and introduced an easier way to customise certain parts of the
+UI.</p>
+<p>The capture feature is provided by the <a class="reference external" href="https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/3.0.0-beta05/html/index.html">Gini Capture SDK</a>. In the following we
+will often refer to resources provided by the Gini Capture SDK.</p>
+<div class="section" id="migrate-from-component-api">
+<h2>Migrate from Component API<a class="headerlink" href="#migrate-from-component-api" title="Permalink to this headline">¶</a></h2>
+<p>The Component API allowed more UI customization options at the cost of a more difficult integration and maintenance. It
+was based on fragments, and you had to manage navigation between them and also update the navigation whenever we introduced
+breaking changes.</p>
+<p>Maintaining the Component API along with the simpler Screen API required an increasing amount of effort as we added new
+features. We decided therefore to unify both APIs and introduce the ability to inject fully custom UI elements.</p>
+<p>The major benefit of the Component API was the ability to use a custom navigation bar (toolbar or action bar). Via
+UI injection that is still possible with the new public API.</p>
+<p>The following steps will help you migrate to the new public API:</p>
+<ul class="simple">
+<li>Configure the SDK the same way as before by using <code class="docutils literal notranslate"><span class="pre">GiniBank</span></code>.</li>
+<li>If you used a custom navigation bar, then you can use the new ability to inject fully custom UI elements. For this you
+need to implement the <code class="docutils literal notranslate"><span class="pre">NavigationBarTopAdapter</span></code> interface and pass it to
+<code class="docutils literal notranslate"><span class="pre">GiniBank.setCaptureConfiguration(CaptureConfiguration(navigationBarTopAdapter</span> <span class="pre">=</span> <span class="pre">))</span></code>. The <code class="docutils literal notranslate"><span class="pre">NavigationBarTopAdapter</span></code> interface declares the
+contract your view has to fulfill and allows the SDK to ask for your view instance when needed.</li>
+<li>Use the <code class="docutils literal notranslate"><span class="pre">CaptureFlowContract</span></code> and <code class="docutils literal notranslate"><span class="pre">GiniBank.startCaptureFlow()</span></code> to launch the SDK instead of <code class="docutils literal notranslate"><span class="pre">CameraFragmentCompat</span></code>.</li>
+<li>Handle the result of the <code class="docutils literal notranslate"><span class="pre">CaptureFlowContract</span></code> by implementing an <code class="docutils literal notranslate"><span class="pre">ActivityResultCallback&lt;CaptureResult&gt;</span></code> to
+receive the extracted information (or other results like errors or cancellation).</li>
+<li>Remove all code related to interacting with the SDK’s fragments. From now on the entry point is
+<code class="docutils literal notranslate"><span class="pre">GiniBank.startCaptureFlow()</span></code> and customization happens through <code class="docutils literal notranslate"><span class="pre">GiniBank</span></code> and via overriding of resources.</li>
+<li>Use the new UI customization options and follow the <a class="reference internal" href="#migrate-to-the-new-ui"><span class="std std-ref">screen-by-screen UI customization section</span></a> to adapt the look of the new UI.</li>
+</ul>
+</div>
+<div class="section" id="migrate-from-screen-api">
+<h2>Migrate from Screen API<a class="headerlink" href="#migrate-from-screen-api" title="Permalink to this headline">¶</a></h2>
+<p>The new public API is based on the Screen API, so you only need to use the new UI customization options and follow the
+<a class="reference internal" href="#migrate-to-the-new-ui"><span class="std std-ref">screen-by-screen UI customization section</span></a> to adapt the look of the new UI.</p>
+</div>
+<div class="section" id="migrate-cleanup-step-and-feedback-sending">
+<h2>Migrate Cleanup Step and Feedback Sending<a class="headerlink" href="#migrate-cleanup-step-and-feedback-sending" title="Permalink to this headline">¶</a></h2>
+<p>We simplified the feedback sending logic. When you clean up the Gini Bank SDK you only need to pass the values the
+user has used (and potentially corrected) to <code class="docutils literal notranslate"><span class="pre">GiniBank.releaseCapture()</span></code>. All values except the one for the amount are
+passed in as strings. Amount needs to be passed in as <code class="docutils literal notranslate"><span class="pre">BigDecimal</span></code> and its currency as an <code class="docutils literal notranslate"><span class="pre">Enum</span></code> value.</p>
+<p>You don’t have to call any additional methods to send the extraction feedback.</p>
+<div class="section" id="default-networking-implementation">
+<h3>Default Networking Implementation<a class="headerlink" href="#default-networking-implementation" title="Permalink to this headline">¶</a></h3>
+<p>You don’t need to interact with the <code class="docutils literal notranslate"><span class="pre">GiniCaptureDefaultNetworkApi</span></code> anymore. The <code class="docutils literal notranslate"><span class="pre">GiniBank.releaseCapture()</span></code> method
+will take care of sending the feedback.</p>
+</div>
+<div class="section" id="custom-networking-implementation">
+<h3>Custom Networking Implementation<a class="headerlink" href="#custom-networking-implementation" title="Permalink to this headline">¶</a></h3>
+<p>You only need to implement the <code class="docutils literal notranslate"><span class="pre">GiniCaptureNetworkService</span></code> from now on. We removed the <code class="docutils literal notranslate"><span class="pre">GiniCaptureNetworkApi</span></code> and
+moved the <code class="docutils literal notranslate"><span class="pre">sendFeedback()</span></code> method to the <code class="docutils literal notranslate"><span class="pre">GiniCaptureNetworkService</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">GiniCaptureNetworkService.sendFeedback()</span></code> will be called when you pass the values the user has used (and potentially
+corrected) to <code class="docutils literal notranslate"><span class="pre">GiniBank.releaseCapture()</span></code>.</p>
+</div>
+</div>
+<div class="section" id="overview-of-new-ui-customization-options">
+<h2>Overview of New UI Customization Options<a class="headerlink" href="#overview-of-new-ui-customization-options" title="Permalink to this headline">¶</a></h2>
+<p>To simplify UI customization we introduced global customization options. There is no need to customize each screen
+separately anymore.</p>
+<div class="section" id="styles">
+<h3>Styles<a class="headerlink" href="#styles" title="Permalink to this headline">¶</a></h3>
+<p>We leverage the power of Material Design to configure a theme for the SDK with a global color palette and typography
+that is applied on all the screens.</p>
+<p>Using global styles for the various widgets, we enable you to customize them in a single place. They are then
+consistently applied on all screens.</p>
+<div class="section" id="theme">
+<h4>Theme<a class="headerlink" href="#theme" title="Permalink to this headline">¶</a></h4>
+<p>The theme style is based on Material Design v2 and is named <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme</span></code>. To override the theme in your
+application use <code class="docutils literal notranslate"><span class="pre">Root.GiniCaptureTheme</span></code> as the parent:</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;style</span> <span class="na">name=</span><span class="s">&quot;GiniCaptureTheme&quot;</span> <span class="na">parent=</span><span class="s">&quot;Root.GiniCaptureTheme&quot;</span><span class="nt">&gt;</span>
+  (...)
+<span class="nt">&lt;/style&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="widgets">
+<h4>Widgets<a class="headerlink" href="#widgets" title="Permalink to this headline">¶</a></h4>
+<p>The style of buttons and other widgets is based on Material Design v3. To override them in your application use the
+root style as the parent, for example:</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;style</span> <span class="na">name=</span><span class="s">&quot;GiniCaptureTheme.Widget.Button.OutlinedButton&quot;</span> <span class="na">parent=</span><span class="s">&quot;Root.GiniCaptureTheme.Widget.Button.OutlinedButton&quot;</span><span class="nt">&gt;</span>
+  (...)
+<span class="nt">&lt;/style&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="colors">
+<h3>Colors<a class="headerlink" href="#colors" title="Permalink to this headline">¶</a></h3>
+<p>We introduced a global color palette which you are free to override. The custom colors will then be applied on all screens.</p>
+<p>You can find the names of the color resources in the color palette <a class="reference external" href="customization-guide.html#colors">here</a>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you have overridden the <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme</span></code> then the theme colors you have set there will override the color
+palette customization.</p>
+</div>
+</div>
+<div class="section" id="images">
+<h3>Images<a class="headerlink" href="#images" title="Permalink to this headline">¶</a></h3>
+<p>Customizing images is done the same way as before via overriding of drawable resources. You can find the drawable
+resource names in the <a class="reference internal" href="#migrate-to-the-new-ui"><span class="std std-ref">screen-by-screen UI customization section</span></a>.</p>
+<p>We replaced most drawables with vector drawables. Unfortunately due to the limitations of vector drawables some images
+had to be added as PNGs.</p>
+<p>If you use vector drawables please add them to the <cite>drawable-anydpi</cite> folder so that they also override any density specific PNGs.</p>
+</div>
+<div class="section" id="typography">
+<h3>Typography<a class="headerlink" href="#typography" title="Permalink to this headline">¶</a></h3>
+<p>We introduced a global typography based on text appearance styles from Material Design v3. To override them in your application use the
+root style as the parent, for example:</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;style</span> <span class="na">name=</span><span class="s">&quot;GiniCaptureTheme.Typography.Body1&quot;</span> <span class="na">parent=</span><span class="s">&quot;Root.GiniCaptureTheme.Typography.Body1&quot;</span><span class="nt">&gt;</span>
+    (...)
+<span class="nt">&lt;/style&gt;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you have overridden the <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme</span></code> then the text appearances you have set there will override the
+typography customization. The same applies to overridden widget styles where you have set a custom text appearance.</p>
+</div>
+<p>You can find all the typography style names <a class="reference external" href="customization-guide.html#typography">here</a>.</p>
+</div>
+<div class="section" id="text">
+<h3>Text<a class="headerlink" href="#text" title="Permalink to this headline">¶</a></h3>
+<p>Text customization is done the same way as before via string resources.</p>
+</div>
+<div class="section" id="ui-elements">
+<h3>UI Elements<a class="headerlink" href="#ui-elements" title="Permalink to this headline">¶</a></h3>
+<p>Certain elements of the UI can now be fully customized via UI injection. This allowed us to drop the Component API while
+still allowing in-depth customization for certain parts of the UI.</p>
+<p>UI injection utilizes view adapter interfaces which you can implement and pass to <code class="docutils literal notranslate"><span class="pre">GiniBank</span></code> when configuring the
+SDK. These interfaces declare the contract the injected view has to fulfill and allow the SDK to ask for your view
+instance when needed.</p>
+<p>The most important injectable UI element is the top navigation bar. You may also show the navigation bar on the bottom
+using your own custom view. You can find more details <a class="reference external" href="customization-guide.html#custom-ui-elements">here</a>.</p>
+</div>
+<div class="section" id="dark-mode">
+<h3>Dark mode<a class="headerlink" href="#dark-mode" title="Permalink to this headline">¶</a></h3>
+<p>To customize resource for dark mode add them to resource folders containing the <code class="docutils literal notranslate"><span class="pre">-night</span></code> resource qualifier.</p>
+</div>
+</div>
+<div class="section" id="migrate-to-the-new-ui">
+<h2>Migrate to the new UI<a class="headerlink" href="#migrate-to-the-new-ui" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="back-buttons">
+<h3>Back Buttons<a class="headerlink" href="#back-buttons" title="Permalink to this headline">¶</a></h3>
+<p>We have removed <code class="docutils literal notranslate"><span class="pre">setBackButtonsEnabled</span></code>. We will not support this option anymore.</p>
+</div>
+<div class="section" id="onboarding-screen">
+<h3>Onboarding Screen<a class="headerlink" href="#onboarding-screen" title="Permalink to this headline">¶</a></h3>
+<p>The new onboarding screen uses the global UI customization options. You can discard the old screen specific
+customizations.</p>
+<p>Images and text are onboarding page specific and need to be customized for each page.</p>
+<p><a class="reference external" href="customization-guide.html#onboarding-screen">Here</a> you can find the detailed description on how to customize this screen.</p>
+<div class="section" id="breaking-changes">
+<h4>Breaking Changes<a class="headerlink" href="#breaking-changes" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="setting-custom-onboarding-pages">
+<h5>Setting Custom Onboarding Pages<a class="headerlink" href="#setting-custom-onboarding-pages" title="Permalink to this headline">¶</a></h5>
+<p>The <code class="docutils literal notranslate"><span class="pre">OnboardingPage</span></code> class was changed to also allow setting a title for the page and inject a view for the
+illustration.</p>
+<p>You can use the <code class="docutils literal notranslate"><span class="pre">ImageOnboardingIllustrationAdapter</span></code> to display drawable resources.</p>
+<p>If you are setting custom onboarding pages, then you have to create the <code class="docutils literal notranslate"><span class="pre">OnboardingPage</span></code> as shown in the example
+below:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">val</span> <span class="n">page1</span> <span class="o">=</span> <span class="n">OnboardingPage</span><span class="p">(</span>
+    <span class="n">R</span><span class="p">.</span><span class="na">string</span><span class="p">.</span><span class="na">your_title_page_1</span><span class="p">,</span>
+    <span class="n">R</span><span class="p">.</span><span class="na">string</span><span class="p">.</span><span class="na">your_message_page_1</span><span class="p">,</span>
+    <span class="n">ImageOnboardingIllustrationAdapter</span><span class="p">(</span><span class="n">R</span><span class="p">.</span><span class="na">drawable</span><span class="p">.</span><span class="na">your_illustration_page_1</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">val</span> <span class="n">page2</span> <span class="o">=</span> <span class="n">OnboardingPage</span><span class="p">(</span>
+    <span class="n">R</span><span class="p">.</span><span class="na">string</span><span class="p">.</span><span class="na">your_title_page_2</span><span class="p">,</span>
+    <span class="n">R</span><span class="p">.</span><span class="na">string</span><span class="p">.</span><span class="na">your_message_page_2</span><span class="p">,</span>
+    <span class="n">ImageOnboardingIllustrationAdapter</span><span class="p">(</span><span class="n">R</span><span class="p">.</span><span class="na">drawable</span><span class="p">.</span><span class="na">your_illustration_page_2</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">GiniBank</span><span class="p">.</span><span class="na">setCaptureConfiguration</span><span class="p">(</span>
+    <span class="n">CaptureConfiguration</span><span class="p">(</span>
+        <span class="n">onboardingPages</span> <span class="o">=</span> <span class="n">arrayListOf</span><span class="p">(</span><span class="n">page1</span><span class="p">,</span> <span class="n">page2</span><span class="p">)</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="new-features">
+<h4>New Features<a class="headerlink" href="#new-features" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="custom-illustration-views">
+<h5>Custom Illustration Views<a class="headerlink" href="#custom-illustration-views" title="Permalink to this headline">¶</a></h5>
+<p>By implementing the <code class="docutils literal notranslate"><span class="pre">OnboardingIllustrationAdapter</span></code> interface and passing it to either <code class="docutils literal notranslate"><span class="pre">GiniBank</span></code> or the
+<code class="docutils literal notranslate"><span class="pre">OnboardingPage</span></code> constructor you can inject any custom view for the illustration.</p>
+<p>For example if you need to show animated illustrations you can use a <a class="reference external" href="https://github.com/airbnb/lottie-android">Lottie</a> view in your <code class="docutils literal notranslate"><span class="pre">OnboardingIllustrationAdapter</span></code> implementation.</p>
+<p>You can find more details <a class="reference external" href="customization-guide.html#custom-illustration-views">here</a>.</p>
+</div>
+<div class="section" id="bottom-navigation-bar">
+<h5>Bottom Navigation Bar<a class="headerlink" href="#bottom-navigation-bar" title="Permalink to this headline">¶</a></h5>
+<p>You can show a bottom navigation bar by passing <code class="docutils literal notranslate"><span class="pre">true</span></code> to
+<code class="docutils literal notranslate"><span class="pre">GiniBank.setCaptureConfiguration(CaptureConfiguration(bottomNavigationBarEnabled</span> <span class="pre">=</span> <span class="pre">))</span></code>. There is a default
+implementation, but you can also use your own by implementing the <code class="docutils literal notranslate"><span class="pre">OnboardingNavigationBarBottomAdapter</span></code> interface and
+passing it to <code class="docutils literal notranslate"><span class="pre">GiniBank</span></code>.</p>
+<p>You can find more details <a class="reference external" href="customization-guide.html#id1">here</a>.</p>
+</div>
+</div>
+</div>
+<div class="section" id="camera-screen">
+<h3>Camera Screen<a class="headerlink" href="#camera-screen" title="Permalink to this headline">¶</a></h3>
+<p>The new camera screen uses the global UI customization options. You can discard the old screen specific
+customizations.</p>
+<p><a class="reference external" href="customization-guide.html#camera-screen">Here</a> you can find the detailed description on how to customize this screen.</p>
+<div class="section" id="id7">
+<h4>New Features<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h4>
+<p>We implemented image cropping. Parts of the image that appears outside the white camera frame will be cut out from the final image.</p>
+<div class="section" id="id8">
+<h5>Bottom Navigation Bar<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h5>
+<p>You can show a bottom navigation bar by passing <code class="docutils literal notranslate"><span class="pre">true</span></code> to <code class="docutils literal notranslate"><span class="pre">GiniBank.setCaptureConfiguration(CaptureConfiguration(bottomNavigationBarEnabled</span> <span class="pre">=</span> <span class="pre">))</span></code>. There is a default implementation, but you can also use
+your own by implementing the <code class="docutils literal notranslate"><span class="pre">CameraNavigationBarBottomAdapter</span></code> interface and passing it to <code class="docutils literal notranslate"><span class="pre">GiniBank</span></code>.</p>
+<p>You can find more details <a class="reference external" href="customization-guide.html#id3">here</a>.</p>
+</div>
+<div class="section" id="custom-loading-indicator-view">
+<h5>Custom Loading Indicator View<a class="headerlink" href="#custom-loading-indicator-view" title="Permalink to this headline">¶</a></h5>
+<p>There is a default implementation of indicator which indicates that image is in the cropping process, but you can show your own activity indicator
+by implementing the <code class="docutils literal notranslate"><span class="pre">CustomLoadingIndicatorAdapter</span></code> interface and passing it to <code class="docutils literal notranslate"><span class="pre">GiniBank</span></code>.</p>
+<p>You can find more details <a class="reference external" href="customization-guide.html#custom-loading-indicator">here</a>.</p>
+</div>
+</div>
+<div class="section" id="id11">
+<h4>Breaking Changes<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h4>
+<p>We removed the tooltip popups that were shown on first launch.</p>
+</div>
+</div>
+<div class="section" id="qr-code-scanner">
+<h3>QR Code Scanner<a class="headerlink" href="#qr-code-scanner" title="Permalink to this headline">¶</a></h3>
+<p>The new UI for the QR code scanner uses the global UI customization options. You can discard the old screen specific
+customizations.</p>
+<p>In the <a class="reference external" href="customization-guide.html#camera-screen">camera screen customisation guide</a> you can find the detailed description on how to customize it.</p>
+<div class="section" id="id12">
+<h4>Breaking Changes<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h4>
+<p>QR code scanning UI and functionality have changed. Scanning and processing happens automatically now.</p>
+</div>
+<div class="section" id="id13">
+<h4>New Features<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h4>
+<p>The SDK can be launched to only scan QR codes. To enable this feature simply pass <code class="docutils literal notranslate"><span class="pre">true</span></code> to <code class="docutils literal notranslate"><span class="pre">GiniBank.setCaptureConfiguration(CaptureConfiguration(onlyQRCodeScanningEnabled</span> <span class="pre">=</span> <span class="pre">))</span></code>.</p>
+</div>
+</div>
+<div class="section" id="review-screen">
+<h3>Review Screen<a class="headerlink" href="#review-screen" title="Permalink to this headline">¶</a></h3>
+<p>The new review screen uses the global UI customization options. You can discard the old screen specific
+customizations.</p>
+<p><a class="reference external" href="customization-guide.html#review-screen">Here</a> you can find the detailed description on how to customize this screen.</p>
+<div class="section" id="id15">
+<h4>New Features<a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="custom-process-button-loading-indicator">
+<h5>Custom “Process” Button Loading Indicator<a class="headerlink" href="#custom-process-button-loading-indicator" title="Permalink to this headline">¶</a></h5>
+<p>There is a default implementation of loading indicator on the “Process” button that indicates document upload is in progress, but you can show your own indicator
+by implementing the <code class="docutils literal notranslate"><span class="pre">CustomLoadingIndicatorAdapter</span></code> interface and passing it to <code class="docutils literal notranslate"><span class="pre">GiniBank</span></code>.</p>
+<p>You can find more details <a class="reference external" href="customization-guide.html#custom-process-button-loading-indicator">here</a>.</p>
+</div>
+<div class="section" id="id17">
+<h5>Bottom Navigation Bar<a class="headerlink" href="#id17" title="Permalink to this headline">¶</a></h5>
+<p>You can show a bottom navigation bar by passing <code class="docutils literal notranslate"><span class="pre">true</span></code> to
+<code class="docutils literal notranslate"><span class="pre">GiniBank.setCaptureConfiguration(CaptureConfiguration(bottomNavigationBarEnabled</span> <span class="pre">=</span> <span class="pre">))</span></code>. There is a default
+implementation, but you can also use your own by implementing the <code class="docutils literal notranslate"><span class="pre">ReviewNavigationBarBottomAdapter</span></code> interface and
+passing it to <code class="docutils literal notranslate"><span class="pre">GiniCapture</span></code>.</p>
+<p>You can find more details <a class="reference external" href="customization-guide.html#id5">here</a>.</p>
+</div>
+</div>
+<div class="section" id="id19">
+<h4>Breaking Changes<a class="headerlink" href="#id19" title="Permalink to this headline">¶</a></h4>
+<p>Re-ordering and rotation of the images are not supported anymore. The Gini API can automatically correct rotation during processing.
+If processing of images fails, then the user is redirected to the error screen.</p>
+</div>
+</div>
+<div class="section" id="help-screen">
+<h3>Help Screen<a class="headerlink" href="#help-screen" title="Permalink to this headline">¶</a></h3>
+<p>The new help screen uses the global UI customization options. You can discard the old screen specific
+customizations.</p>
+<p><a class="reference external" href="customization-guide.html#help-screen">Here</a> you can find the detailed description on how to customize this screen.</p>
+<div class="section" id="id21">
+<h4>New Features<a class="headerlink" href="#id21" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="id22">
+<h5>Bottom Navigation Bar<a class="headerlink" href="#id22" title="Permalink to this headline">¶</a></h5>
+<p>You can show a bottom navigation bar by passing <code class="docutils literal notranslate"><span class="pre">true</span></code> to
+<code class="docutils literal notranslate"><span class="pre">GiniBank.setCaptureConfiguration(CaptureConfiguration(bottomNavigationBarEnabled</span> <span class="pre">=</span> <span class="pre">))</span></code>. There is a default implementation, but you can also use
+your own by implementing the <code class="docutils literal notranslate"><span class="pre">HelpNavigationBarBottomAdapter</span></code> interface and passing it to <code class="docutils literal notranslate"><span class="pre">GiniBank</span></code>.</p>
+<p>You can find more details <a class="reference external" href="customization-guide.html#id9">here</a>.</p>
+</div>
+</div>
+</div>
+<div class="section" id="analysis-screen">
+<h3>Analysis Screen<a class="headerlink" href="#analysis-screen" title="Permalink to this headline">¶</a></h3>
+<p>The new analysis screen uses the global UI customization options. You can discard the old screen specific
+customizations.</p>
+<p><a class="reference external" href="customization-guide.html#analysis-screen">Here</a> you can find the detailed description on how to customize this screen.</p>
+<div class="section" id="id25">
+<h4>Breaking Changes<a class="headerlink" href="#id25" title="Permalink to this headline">¶</a></h4>
+<p>The new analysis screen does not show the page count of PDF files and preview image for photo documents.</p>
+</div>
+<div class="section" id="id26">
+<h4>New Features<a class="headerlink" href="#id26" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="id27">
+<h5>Custom Loading Indicator View<a class="headerlink" href="#id27" title="Permalink to this headline">¶</a></h5>
+<p>There is a default implementation for indicating that document analysis is in progress, but you can show your own activity indicator
+by implementing the <code class="docutils literal notranslate"><span class="pre">CustomLoadingIndicatorAdapter</span></code> interface and passing it to <code class="docutils literal notranslate"><span class="pre">GiniBank</span></code>.</p>
+<p>You can find more details <a class="reference external" href="customization-guide.html#id7">here</a>.</p>
+</div>
+</div>
+</div>
+<div class="section" id="error-screen">
+<h3>Error Screen<a class="headerlink" href="#error-screen" title="Permalink to this headline">¶</a></h3>
+<p>The new analysis screen uses the global UI customization options.</p>
+<p><a class="reference external" href="customization-guide.html#error-screen">Here</a> you can find the detailed description on how to customize this screen.</p>
+<div class="section" id="id30">
+<h4>Breaking Changes<a class="headerlink" href="#id30" title="Permalink to this headline">¶</a></h4>
+<p>Showing errors during usage of the SDK was changed from snackbar to a whole new screen.</p>
+</div>
+<div class="section" id="id31">
+<h4>New Features<a class="headerlink" href="#id31" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="new-ui">
+<h5>New UI<a class="headerlink" href="#new-ui" title="Permalink to this headline">¶</a></h5>
+<p>The new error screen gives options to retake photos or enter details manually and displays errors with more detailed description.</p>
+</div>
+<div class="section" id="id32">
+<h5>Bottom Navigation Bar<a class="headerlink" href="#id32" title="Permalink to this headline">¶</a></h5>
+<p>You can show a bottom navigation bar by passing <code class="docutils literal notranslate"><span class="pre">true</span></code> to
+<code class="docutils literal notranslate"><span class="pre">GiniBank.setCaptureConfiguration(CaptureConfiguration(bottomNavigationBarEnabled</span> <span class="pre">=</span> <span class="pre">))</span></code>. There is a default implementation, but you can also use
+your own by implementing the <code class="docutils literal notranslate"><span class="pre">ErrorNavigationBarBottomAdapter</span></code> interface and passing it to <code class="docutils literal notranslate"><span class="pre">GiniBank</span></code>.</p>
+<p>You can find more details <a class="reference external" href="customization-guide.html#id13">here</a>.</p>
+</div>
+<div class="section" id="enter-details-manually-button">
+<h5>Enter Details Manually Button<a class="headerlink" href="#enter-details-manually-button" title="Permalink to this headline">¶</a></h5>
+<p>Users can now click an “Enter manually” button on the error screen which will exit the SDK with <code class="docutils literal notranslate"><span class="pre">CaptureResult.EnterManually</span></code>.</p>
+<p>You can find more details <a class="reference external" href="integration.html#capturing-documents">here</a>.</p>
+</div>
+</div>
+</div>
+<div class="section" id="no-results-screen">
+<h3>No Results Screen<a class="headerlink" href="#no-results-screen" title="Permalink to this headline">¶</a></h3>
+<p>The new no results screen uses the global UI customization options. You can discard the old screen specific
+customizations.</p>
+<p><a class="reference external" href="customization-guide.html#no-results-screen">Here</a> you can find the detailed description on how to customize this screen.</p>
+<div class="section" id="id36">
+<h4>New Features<a class="headerlink" href="#id36" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="id37">
+<h5>New UI<a class="headerlink" href="#id37" title="Permalink to this headline">¶</a></h5>
+<p>The new no results screen gives options to enter document details manually.</p>
+</div>
+<div class="section" id="id38">
+<h5>Bottom Navigation Bar<a class="headerlink" href="#id38" title="Permalink to this headline">¶</a></h5>
+<p>You can show a bottom navigation bar by passing <code class="docutils literal notranslate"><span class="pre">true</span></code> to
+<code class="docutils literal notranslate"><span class="pre">GiniBank.setCaptureConfiguration(CaptureConfiguration(bottomNavigationBarEnabled</span> <span class="pre">=</span> <span class="pre">))</span></code>. There is a default implementation, but you can also use
+your own by implementing the <code class="docutils literal notranslate"><span class="pre">NoResultsNavigationBarBottomAdapter</span></code> interface and passing it to <code class="docutils literal notranslate"><span class="pre">GiniBank</span></code>.</p>
+<p>You can find more details <a class="reference external" href="customization-guide.html#id11">here</a>.</p>
+</div>
+<div class="section" id="id40">
+<h5>Enter Details Manually Button<a class="headerlink" href="#id40" title="Permalink to this headline">¶</a></h5>
+<p>Users can now click an “Enter manually” button on the no results screen which will exit the SDK with <code class="docutils literal notranslate"><span class="pre">CaptureResult.EnterManually</span></code>.</p>
+<p>You can find more details <a class="reference external" href="integration.html#capturing-documents">here</a>.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="reference.html" class="btn btn-neutral float-right" title="Reference Doc">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="migrate-to-2-0-0.html" class="btn btn-neutral" title="Migrate to 2.0.0"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+    </p>
+  </div>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  
+</body>
+</html>
