@@ -766,12 +766,18 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     private void showIndicator() {
         if (GiniCapture.hasInstance() && !GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
             isOnButtonLoadingIndicatorActive = true;
+            if (injectedLoadingIndicatorContainer == null) {
+                return;
+            }
             injectedLoadingIndicatorContainer.modifyAdapterIfOwned(injectedViewAdapter -> {
                 injectedViewAdapter.onVisible();
                 return Unit.INSTANCE;
             });
         } else {
             isBottomNavigationBarLoadingIndicatorActive = true;
+            if (mReviewNavigationBarBottomAdapter == null) {
+                return;
+            }
             mReviewNavigationBarBottomAdapter.modifyAdapterIfOwned(injectedViewAdapter -> {
                 injectedViewAdapter.showLoadingIndicator();
                 return Unit.INSTANCE;
@@ -782,12 +788,18 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     private void hideIndicator() {
         if (GiniCapture.hasInstance() && !GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
             isOnButtonLoadingIndicatorActive = false;
+            if (injectedLoadingIndicatorContainer == null) {
+                return;
+            }
             injectedLoadingIndicatorContainer.modifyAdapterIfOwned(injectedViewAdapter -> {
                 injectedViewAdapter.onHidden();
                 return Unit.INSTANCE;
             });
         } else {
             isBottomNavigationBarLoadingIndicatorActive = false;
+            if (mReviewNavigationBarBottomAdapter == null) {
+                return;
+            }
             mReviewNavigationBarBottomAdapter.modifyAdapterIfOwned(injectedViewAdapter -> {
                 injectedViewAdapter.hideLoadingIndicator();
                 return Unit.INSTANCE;

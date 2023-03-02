@@ -37,16 +37,16 @@ class DefaultOnButtonLoadingIndicatorAdapter: OnButtonLoadingIndicatorAdapter {
     }
 
     override fun onCreateView(container: ViewGroup): View {
-        val binding = ProgressBar(container.context).apply {
+        val progressBar = ProgressBar(container.context).apply {
             layoutParams =
                 ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             indeterminateTintMode = PorterDuff.Mode.SRC_IN
             isIndeterminate = true
             indeterminateTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.Accent_01))
         }
-        progressBar = binding
+        this.progressBar = progressBar
 
-        return binding
+        return progressBar
     }
 
     override fun onDestroy() {}
