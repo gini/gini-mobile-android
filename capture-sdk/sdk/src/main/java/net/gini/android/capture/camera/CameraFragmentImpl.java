@@ -707,23 +707,17 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private void setmIsTakingPicture(boolean mIsTakingPicture) {
         this.mIsTakingPicture = mIsTakingPicture;
-        if (mFragment.getActivity() == null || mFragment.getActivity().getWindow() == null) {
-            return;
-        }
 
         if (mIsTakingPicture) {
-            mFragment.getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-
-            return;
+            disableInteraction();
+        } else {
+            enableInteraction();
         }
-
-        mFragment.getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
     }
 
     private void startHelpActivity() {
 
-        if (mFragment.getActivity() == null)
+        if (mFragment.getActivity() == null || mIsTakingPicture)
             return;
 
         final Intent intent = new Intent(mFragment.getActivity(), HelpActivity.class);
