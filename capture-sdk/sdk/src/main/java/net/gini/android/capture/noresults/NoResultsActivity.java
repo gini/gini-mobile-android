@@ -117,12 +117,13 @@ public class NoResultsActivity extends AppCompatActivity implements ImageRetakeO
 
     private void setupNoResultsBottomNavigationBar() {
         if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
-            InjectedViewContainer<NoResultsNavigationBarBottomAdapter> injectedViewContainer =
-                    findViewById(R.id.gc_injected_navigation_bar_container_bottom);
-            NoResultsNavigationBarBottomAdapter adapter = GiniCapture.getInstance().getNoResultsNavigationBarBottomAdapter();
-            injectedViewContainer.setInjectedViewAdapter(adapter);
-
-            adapter.setOnBackButtonClickListener(new IntervalClickListener(v -> onBackPressed()));
+            // TODO: will be removed
+//            InjectedViewContainer<NoResultsNavigationBarBottomAdapter> injectedViewContainer =
+//                    findViewById(R.id.gc_injected_navigation_bar_container_bottom);
+//            NoResultsNavigationBarBottomAdapter adapter = GiniCapture.getInstance().getNoResultsNavigationBarBottomAdapter();
+//            injectedViewContainer.setInjectedViewAdapter(adapter);
+//
+//            adapter.setOnBackButtonClickListener(new IntervalClickListener(v -> onBackPressed()));
         }
     }
 

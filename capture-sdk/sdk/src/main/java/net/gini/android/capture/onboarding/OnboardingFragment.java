@@ -28,6 +28,9 @@ import net.gini.android.capture.R;
 import net.gini.android.capture.internal.ui.ClickListenerExtKt;
 import net.gini.android.capture.internal.ui.IntervalClickListener;
 import net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomAdapter;
+import net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomButton;
+import net.gini.android.capture.view.InjectedViewAdapterHolder;
+import net.gini.android.capture.view.InjectedViewAdapterInstance;
 import net.gini.android.capture.view.InjectedViewContainer;
 
 import org.slf4j.Logger;
@@ -35,6 +38,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import kotlin.Unit;
 
 /**
  * Internal use only.
@@ -59,6 +64,7 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
     private Button buttonSkip;
     private Button buttonGetStarted;
     private Group groupNextAndSkipButtons;
+    private OnboardingNavigationBarBottomButton[] navigationBarBottomButtons = new OnboardingNavigationBarBottomButton[]{};
 
     /**
      * <p>
@@ -240,10 +246,11 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
 
     @Override
     public void showGetStartedButtonInNavigationBarBottom() {
-        final OnboardingNavigationBarBottomAdapter injectedViewAdapter = injectedNavigationBarBottomContainer.getInjectedViewAdapter();
-        if (injectedViewAdapter != null) {
-            injectedViewAdapter.showButtons(GET_STARTED);
-        }
+        navigationBarBottomButtons = new OnboardingNavigationBarBottomButton[]{GET_STARTED};
+        injectedNavigationBarBottomContainer.modifyAdapterIfOwned(adapter -> {
+            adapter.showButtons(navigationBarBottomButtons);
+            return Unit.INSTANCE;
+        });
     }
 
     @Override
@@ -254,19 +261,21 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
 
     @Override
     public void showSkipAndNextButtonsInNavigationBarBottom() {
-        final OnboardingNavigationBarBottomAdapter injectedViewAdapter = injectedNavigationBarBottomContainer.getInjectedViewAdapter();
-        if (injectedViewAdapter != null) {
-            injectedViewAdapter.showButtons(SKIP, NEXT);
-        }
+        navigationBarBottomButtons = new OnboardingNavigationBarBottomButton[]{SKIP, NEXT};
+        injectedNavigationBarBottomContainer.modifyAdapterIfOwned(adapter -> {
+            adapter.showButtons(navigationBarBottomButtons);
+            return Unit.INSTANCE;
+        });
     }
 
     @Override
-    public void setNavigationBarBottomAdapter(@NonNull OnboardingNavigationBarBottomAdapter adapter) {
-        injectedNavigationBarBottomContainer.setInjectedViewAdapter(adapter); // view.setNavigationBarBottomAdapter()
-
-        adapter.setOnNextButtonClickListener(new IntervalClickListener(v -> mPresenter.showNextPage()));
-        adapter.setOnSkipButtonClickListener(new IntervalClickListener(v -> mPresenter.skip()));
-        adapter.setOnGetStartedButtonClickListener(new IntervalClickListener(v -> mPresenter.showNextPage()));
+    public void setNavigationBarBottomAdapterInstance(@NonNull InjectedViewAdapterInstance<OnboardingNavigationBarBottomAdapter> adapterInstance) {
+        injectedNavigationBarBottomContainer.setInjectedViewAdapterHolder(new InjectedViewAdapterHolder<>(adapterInstance, injectedViewAdapter -> {
+            injectedViewAdapter.setOnNextButtonClickListener(new IntervalClickListener(v -> mPresenter.showNextPage()));
+            injectedViewAdapter.setOnSkipButtonClickListener(new IntervalClickListener(v -> mPresenter.skip()));
+            injectedViewAdapter.setOnGetStartedButtonClickListener(new IntervalClickListener(v -> mPresenter.showNextPage()));
+            injectedViewAdapter.showButtons(navigationBarBottomButtons);
+        }));
     }
 
     static class PageIndicators {

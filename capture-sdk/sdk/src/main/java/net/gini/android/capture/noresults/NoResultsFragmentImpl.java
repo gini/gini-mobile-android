@@ -16,6 +16,7 @@ import net.gini.android.capture.help.SupportedFormatsAdapter;
 import net.gini.android.capture.internal.ui.ClickListenerExtKt;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.ui.IntervalClickListener;
+import net.gini.android.capture.view.InjectedViewAdapterHolder;
 import net.gini.android.capture.view.InjectedViewContainer;
 import net.gini.android.capture.view.NavButtonType;
 import net.gini.android.capture.view.NavigationBarTopAdapter;
@@ -125,22 +126,22 @@ class NoResultsFragmentImpl {
 
     private void setTopBarInjectedViewContainer() {
         if (GiniCapture.hasInstance()) {
-            topAdapterInjectedViewContainer.setInjectedViewAdapter(GiniCapture.getInstance().getNavigationBarTopAdapter());
+            topAdapterInjectedViewContainer.setInjectedViewAdapterHolder(new InjectedViewAdapterHolder<>(
+                    GiniCapture.getInstance().internal().getNavigationBarTopAdapterInstance(),
+                    injectedViewAdapter -> {
+                        if (mFragment.getActivity() == null)
+                            return;
 
-            if (topAdapterInjectedViewContainer.getInjectedViewAdapter() == null)
-                return;
+                        injectedViewAdapter.setTitle(mFragment.getActivity().getResources().getString(R.string.gc_title_no_results));
 
-            if (mFragment.getActivity() == null)
-                return;
+                        if (GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
+                            return;
+                        }
 
-            topAdapterInjectedViewContainer.getInjectedViewAdapter().setTitle(mFragment.getActivity().getResources().getString(R.string.gc_title_no_results));
-
-            if (GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
-                return;
-            }
-
-            topAdapterInjectedViewContainer.getInjectedViewAdapter().setNavButtonType(GiniCapture.getInstance().isBottomNavigationBarEnabled() ? NavButtonType.NONE : NavButtonType.BACK);
-            topAdapterInjectedViewContainer.getInjectedViewAdapter().setOnNavButtonClickListener(new IntervalClickListener(view -> mFragment.getActivity().onBackPressed()));
+                        injectedViewAdapter.setNavButtonType(GiniCapture.getInstance().isBottomNavigationBarEnabled() ? NavButtonType.NONE : NavButtonType.BACK);
+                        injectedViewAdapter.setOnNavButtonClickListener(new IntervalClickListener(view -> mFragment.getActivity().onBackPressed()));
+                    })
+            );
         }
     }
 

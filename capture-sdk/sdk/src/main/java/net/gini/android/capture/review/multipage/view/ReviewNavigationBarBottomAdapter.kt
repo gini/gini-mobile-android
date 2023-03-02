@@ -5,8 +5,9 @@ import android.view.View
 import android.view.ViewGroup
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.databinding.GcReviewNavigationBarBottomBinding
-import net.gini.android.capture.internal.ui.IntervalClickListener
 import net.gini.android.capture.view.InjectedViewAdapter
+import net.gini.android.capture.view.InjectedViewAdapterHolder
+import net.gini.android.capture.view.InjectedViewAdapterInstance
 import net.gini.android.capture.view.OnButtonLoadingIndicatorAdapter
 
 /**
@@ -56,7 +57,6 @@ interface ReviewNavigationBarBottomAdapter : InjectedViewAdapter {
 class DefaultReviewNavigationBarBottomAdapter : ReviewNavigationBarBottomAdapter {
 
     private var viewBinding: GcReviewNavigationBarBottomBinding? = null
-    private var customLoadingIndicatorAdapter: OnButtonLoadingIndicatorAdapter? = null
 
     override fun setOnContinueButtonClickListener(clickListener: View.OnClickListener?) {
         this.viewBinding?.gcContinue?.setOnClickListener(clickListener)
@@ -75,11 +75,15 @@ class DefaultReviewNavigationBarBottomAdapter : ReviewNavigationBarBottomAdapter
     }
 
     override fun hideLoadingIndicator() {
-        this.customLoadingIndicatorAdapter?.onHidden()
+        viewBinding?.gcInjectedLoadingIndicatorContainer?.modifyAdapterIfOwned {
+            (it as OnButtonLoadingIndicatorAdapter).onHidden()
+        }
     }
 
     override fun showLoadingIndicator() {
-        this.customLoadingIndicatorAdapter?.onVisible()
+        viewBinding?.gcInjectedLoadingIndicatorContainer?.modifyAdapterIfOwned {
+            (it as OnButtonLoadingIndicatorAdapter).onVisible()
+        }
     }
 
 
@@ -90,8 +94,9 @@ class DefaultReviewNavigationBarBottomAdapter : ReviewNavigationBarBottomAdapter
         this.viewBinding = viewBinding
 
         if (GiniCapture.hasInstance()) {
-            this.customLoadingIndicatorAdapter = GiniCapture.getInstance().onButtonLoadingIndicatorAdapter
-            viewBinding.gcInjectedLoadingIndicatorContainer.injectedViewAdapter = this.customLoadingIndicatorAdapter
+            viewBinding.gcInjectedLoadingIndicatorContainer.injectedViewAdapterHolder = InjectedViewAdapterHolder(
+                GiniCapture.getInstance().internal().onButtonLoadingIndicatorAdapterInstance
+            ) {}
         }
 
         return viewBinding.root

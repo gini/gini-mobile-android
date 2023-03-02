@@ -26,26 +26,27 @@ interface OnButtonLoadingIndicatorAdapter : InjectedViewAdapter {
 
 class DefaultOnButtonLoadingIndicatorAdapter: OnButtonLoadingIndicatorAdapter {
 
-    private lateinit var progressBar: ProgressBar
+    private var progressBar: ProgressBar? = null
 
     override fun onVisible() {
-        progressBar.visibility = View.VISIBLE
+        progressBar?.visibility = View.VISIBLE
     }
 
     override fun onHidden() {
-        progressBar.visibility = View.GONE
+        progressBar?.visibility = View.GONE
     }
 
     override fun onCreateView(container: ViewGroup): View {
-        progressBar = ProgressBar(container.context).apply {
+        val binding = ProgressBar(container.context).apply {
             layoutParams =
                 ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             indeterminateTintMode = PorterDuff.Mode.SRC_IN
             isIndeterminate = true
             indeterminateTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.Accent_01))
         }
+        progressBar = binding
 
-        return progressBar
+        return binding
     }
 
     override fun onDestroy() {}

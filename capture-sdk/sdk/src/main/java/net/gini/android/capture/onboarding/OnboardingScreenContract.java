@@ -5,8 +5,7 @@ import android.app.Activity;
 import net.gini.android.capture.GiniCaptureBasePresenter;
 import net.gini.android.capture.GiniCaptureBaseView;
 import net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomAdapter;
-import net.gini.android.capture.view.DefaultNavigationBarTopAdapter;
-import net.gini.android.capture.view.NavigationBarTopAdapter;
+import net.gini.android.capture.view.InjectedViewAdapterInstance;
 
 import java.util.List;
 
@@ -36,7 +35,7 @@ interface OnboardingScreenContract {
         void showSkipAndNextButtons();
         void showSkipAndNextButtonsInNavigationBarBottom();
 
-        void setNavigationBarBottomAdapter(@NonNull final OnboardingNavigationBarBottomAdapter adapter);
+        void setNavigationBarBottomAdapterInstance(@NonNull final InjectedViewAdapterInstance<OnboardingNavigationBarBottomAdapter> adapterInstance);
 
         void hideButtons();
     }

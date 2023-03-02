@@ -134,7 +134,7 @@ internal class QRCodePopup<T> @JvmOverloads constructor(
 
         qrCheckImage.visibility = View.GONE
         qrImageFrame.visibility = View.INVISIBLE
-        loadingIndicatorContainer?.injectedViewAdapter?.onVisible()
+        loadingIndicatorContainer?.modifyAdapterIfOwned { it.onVisible() }
         mInvoiceTxt.visibility = View.VISIBLE
         supportedBackgroundView?.visibility = View.VISIBLE
     }
@@ -146,7 +146,7 @@ internal class QRCodePopup<T> @JvmOverloads constructor(
         qrImageFrame.visibility = View.VISIBLE
         qrImageFrame.imageTintList =
             ColorStateList.valueOf(ContextCompat.getColor(popupView.context, R.color.Light_01))
-        loadingIndicatorContainer?.injectedViewAdapter?.onHidden()
+        loadingIndicatorContainer?.modifyAdapterIfOwned { it.onHidden() }
         mInvoiceTxt.visibility = View.GONE
         supportedBackgroundView?.visibility = View.GONE
         mUnknownQRCodeWrapper.visibility = View.GONE

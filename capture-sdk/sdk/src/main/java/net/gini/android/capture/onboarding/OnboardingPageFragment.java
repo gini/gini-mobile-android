@@ -9,6 +9,8 @@ import android.widget.TextView;
 
 import net.gini.android.capture.R;
 import net.gini.android.capture.onboarding.view.OnboardingIllustrationAdapter;
+import net.gini.android.capture.view.InjectedViewAdapterHolder;
+import net.gini.android.capture.view.InjectedViewAdapterInstance;
 import net.gini.android.capture.view.InjectedViewContainer;
 
 import androidx.annotation.NonNull;
@@ -119,7 +121,10 @@ public class OnboardingPageFragment extends Fragment implements OnboardingPageCo
 
     @Override
     public void showImage(@NonNull OnboardingIllustrationAdapter illustrationAdapter) {
-        injectedIconContainer.setInjectedViewAdapter(illustrationAdapter);
+        injectedIconContainer.setInjectedViewAdapterHolder(new InjectedViewAdapterHolder<>(
+                // We can create our local instance because onboarding illustrations are not shown on multiple screens
+                new InjectedViewAdapterInstance<>(illustrationAdapter), injectedViewAdapter -> {
+        }));
     }
 
     @Override
