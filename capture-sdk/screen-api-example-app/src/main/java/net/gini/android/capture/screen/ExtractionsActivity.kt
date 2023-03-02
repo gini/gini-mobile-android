@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -58,6 +59,20 @@ class ExtractionsActivity : AppCompatActivity() {
         readExtras()
         showAnalyzedDocumentId()
         setUpRecyclerView(binding)
+        handleBackPressed()
+    }
+
+    private fun handleBackPressed() {
+        onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Clean up GiniCapture and pass in empty extraction feedback to signal that the user cancelled without
+                // accepting any of them
+                GiniCapture.cleanup(applicationContext,"", "",
+                    "", "", "", Amount.EMPTY)
+                isEnabled = false
+                onBackPressed()
+            }
+        })
     }
 
     private fun showAnalyzedDocumentId() {
@@ -84,7 +99,7 @@ class ExtractionsActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.feedback -> {
-                sendFeedback(binding)
+                sendFeedbackAndClose(binding)
                 true
             }
             R.id.view_picture -> {
@@ -191,7 +206,7 @@ class ExtractionsActivity : AppCompatActivity() {
 
     private fun <T> getSortedExtractions(extractions: Map<String, T>): List<T> = extractions.toSortedMap().values.toList()
 
-    private fun sendFeedback(binding: ActivityExtractionsBinding) {
+    private fun sendFeedbackAndClose(binding: ActivityExtractionsBinding) {
         // An example for sending feedback where we change the amount or add one if it is missing
         // Feedback should be sent only for the user visible fields. Non-visible fields should be filtered out.
         // In a real application the user input should be used as the new value.
@@ -219,6 +234,8 @@ class ExtractionsActivity : AppCompatActivity() {
         GiniCapture.cleanup(applicationContext, paymentRecipient, paymentReference, paymentPurpose, iban, bic, Amount(
             BigDecimal(amount!!.value), AmountCurrency.EUR)
         )
+
+        finish()
     }
 
     private fun legacySendFeedback() {
