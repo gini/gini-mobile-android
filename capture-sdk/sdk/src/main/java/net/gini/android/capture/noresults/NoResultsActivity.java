@@ -8,6 +8,7 @@ import android.view.MenuItem;
 
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
+import net.gini.android.capture.GiniCaptureError;
 import net.gini.android.capture.ImageRetakeOptionsListener;
 import net.gini.android.capture.R;
 import net.gini.android.capture.analysis.AnalysisActivity;
@@ -18,6 +19,7 @@ import net.gini.android.capture.review.ReviewActivity;
 import net.gini.android.capture.view.InjectedViewContainer;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,7 +33,7 @@ import static net.gini.android.capture.internal.util.ActivityHelper.interceptOnB
  *
  * The {@code NoResultsActivity} displays hints that show how to best use the SDK.
  */
-public class NoResultsActivity extends AppCompatActivity implements ImageRetakeOptionsListener {
+public class NoResultsActivity extends AppCompatActivity implements ImageRetakeOptionsListener, NoResultsFragmentListener {
 
     /**
      * Internal use only.
@@ -46,6 +48,9 @@ public class NoResultsActivity extends AppCompatActivity implements ImageRetakeO
      * @suppress
      */
     public static final String NO_RESULT_CANCEL_KEY = "GC_NO_RESULT_CANCEL";
+
+    private static final String EXTRA_OUT_ERROR = "GC_EXTRA_OUT_ERROR";
+    private static final int RESULT_ERROR = RESULT_FIRST_USER + 1;
 
     private Document mDocument;
 
@@ -133,5 +138,13 @@ public class NoResultsActivity extends AppCompatActivity implements ImageRetakeO
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onError(@NonNull GiniCaptureError error) {
+        Intent noResultsIntent = new Intent();
+        noResultsIntent.putExtra(EXTRA_OUT_ERROR, true);
+        setResult(RESULT_ERROR, noResultsIntent);
+        finish();
     }
 }
