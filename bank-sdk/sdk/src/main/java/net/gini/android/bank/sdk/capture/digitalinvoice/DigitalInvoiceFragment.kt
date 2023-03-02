@@ -16,6 +16,7 @@ import kotlinx.coroutines.CoroutineScope
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.capture.digitalinvoice.help.HelpActivity
+import net.gini.android.bank.sdk.capture.digitalinvoice.view.DigitalInvoiceNavigationBarBottomAdapter
 import net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
@@ -26,6 +27,7 @@ import net.gini.android.bank.sdk.databinding.GbsFragmentDigitalInvoiceBinding
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.internal.ui.IntervalClickListener
 import net.gini.android.capture.internal.ui.IntervalToolbarMenuItemIntervalClickListener
+import net.gini.android.capture.view.InjectedViewAdapterHolder
 import net.gini.android.capture.view.NavButtonType
 
 
@@ -205,26 +207,26 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
 
     private fun initTopNavigationBar() {
         if (GiniCapture.hasInstance()) {
-            val topBarAdapter = GiniCapture.getInstance().navigationBarTopAdapter
+            binding.gbsTopBarNavigation.injectedViewAdapterHolder = InjectedViewAdapterHolder(
+                GiniCapture.getInstance().internal().navigationBarTopAdapterInstance
+            ) { injectedViewAdapter ->
+                injectedViewAdapter.setTitle(getString(R.string.gbs_digital_invoice_onboarding_text_1))
 
-            binding.gbsTopBarNavigation.injectedViewAdapter = topBarAdapter
-            topBarAdapter.setTitle(getString(R.string.gbs_digital_invoice_onboarding_text_1))
+                injectedViewAdapter.setNavButtonType(NavButtonType.CLOSE)
 
-            val navType = if (GiniCapture.getInstance().isBottomNavigationBarEnabled)
-                NavButtonType.NONE else NavButtonType.BACK
-
-            topBarAdapter.setNavButtonType(navType)
-
-            topBarAdapter.setMenuResource(R.menu.gbs_menu_digital_invoice)
-            topBarAdapter.setOnMenuItemClickListener(IntervalToolbarMenuItemIntervalClickListener {
-                if (it.itemId == R.id.help) {
-                    startActivity(Intent(requireContext(), HelpActivity::class.java))
+                if (!GiniCapture.getInstance().isBottomNavigationBarEnabled) {
+                    injectedViewAdapter.setMenuResource(R.menu.gbs_menu_digital_invoice)
+                    injectedViewAdapter.setOnMenuItemClickListener(IntervalToolbarMenuItemIntervalClickListener {
+                        if (it.itemId == R.id.help) {
+                            startActivity(Intent(requireContext(), HelpActivity::class.java))
+                        }
+                        true
+                    })
                 }
-                true
-            })
 
-            topBarAdapter.setOnNavButtonClickListener {
-                activity?.finish()
+                injectedViewAdapter.setOnNavButtonClickListener {
+                    activity?.finish()
+                }
             }
         }
     }
@@ -235,20 +237,20 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
             binding.gbsBottomWrapper.visibility = View.INVISIBLE
             binding.gbsPay.isEnabled = false
 
-            binding.gbsBottomBarNavigation.injectedViewAdapter =
-                GiniBank.digitalInvoiceNavigationBarBottomAdapter
+            binding.gbsBottomBarNavigation.injectedViewAdapterHolder =
+                InjectedViewAdapterHolder(GiniBank.digitalInvoiceNavigationBarBottomAdapterInstance) { injectedViewAdapter ->
+                    injectedViewAdapter.setOnHelpClickListener {
+                        startActivity(Intent(requireContext(), HelpActivity::class.java))
+                    }
 
-            GiniBank.digitalInvoiceNavigationBarBottomAdapter.setOnHelpClickListener {
-                startActivity(Intent(requireContext(), HelpActivity::class.java))
-            }
+                    injectedViewAdapter.setOnBackClickListener {
+                        activity?.finish()
+                    }
 
-            GiniBank.digitalInvoiceNavigationBarBottomAdapter.setOnBackClickListener {
-                activity?.finish()
-            }
-
-            GiniBank.digitalInvoiceNavigationBarBottomAdapter.setOnPayClickListener {
-                presenter?.pay()
-            }
+                    injectedViewAdapter.setOnPayClickListener {
+                        presenter?.pay()
+                    }
+                }
         }
     }
 
@@ -374,11 +376,14 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
         binding.grossPriceTotalFractionalPart.text = fractional
         binding.gbsPay.isEnabled = data.buttonEnabled
 
-        if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled)
-            binding.gbsBottomBarNavigation?.injectedViewAdapter?.let { _ ->
-                GiniBank.digitalInvoiceNavigationBarBottomAdapter.setGrossPriceTotal(integral, fractional)
-                GiniBank.digitalInvoiceNavigationBarBottomAdapter.setPayButtonEnabled(data.buttonEnabled)
+        if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled) {
+            binding.gbsBottomBarNavigation.modifyAdapterIfOwned {
+                (it as DigitalInvoiceNavigationBarBottomAdapter).apply {
+                    setGrossPriceTotal(integral, fractional)
+                    setPayButtonEnabled(data.buttonEnabled)
+                }
             }
+        }
     }
 
     /**
