@@ -12,6 +12,7 @@ import net.gini.android.bank.sdk.capture.digitalinvoice.help.view.DigitalInvoice
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.internal.ui.IntervalClickListener
 import net.gini.android.capture.internal.util.ActivityHelper
+import net.gini.android.capture.view.InjectedViewAdapterHolder
 import net.gini.android.capture.view.InjectedViewContainer
 import net.gini.android.capture.view.NavButtonType
 import net.gini.android.capture.view.NavigationBarTopAdapter
@@ -57,20 +58,19 @@ class HelpActivity : AppCompatActivity() {
             findViewById<InjectedViewContainer<NavigationBarTopAdapter>>(R.id.gbs_injected_navigation_bar_container_top)
         if (GiniCapture.hasInstance()) {
 
-            topBarInjectedViewContainer.injectedViewAdapter =
-                GiniCapture.getInstance().navigationBarTopAdapter
+            topBarInjectedViewContainer.injectedViewAdapterHolder = InjectedViewAdapterHolder(
+                GiniCapture.getInstance().internal().navigationBarTopAdapterInstance
+            ) { injectedAdapterView ->
+                val navType = if (GiniCapture.getInstance().isBottomNavigationBarEnabled)
+                    NavButtonType.NONE else NavButtonType.BACK
+                injectedAdapterView.setNavButtonType(navType)
 
-            val topBarAdapter = topBarInjectedViewContainer?.injectedViewAdapter
+                injectedAdapterView.setTitle(getString(net.gini.android.capture.R.string.gc_title_help))
 
-            val navType = if (GiniCapture.getInstance().isBottomNavigationBarEnabled)
-                NavButtonType.NONE else NavButtonType.BACK
-            topBarAdapter?.setNavButtonType(navType)
-
-            topBarAdapter?.setTitle(getString(net.gini.android.capture.R.string.gc_title_help))
-
-            topBarAdapter?.setOnNavButtonClickListener(IntervalClickListener {
-                onBackPressed()
-            })
+                injectedAdapterView.setOnNavButtonClickListener(IntervalClickListener {
+                    onBackPressed()
+                })
+            }
         }
     }
 
@@ -78,11 +78,12 @@ class HelpActivity : AppCompatActivity() {
         if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled) {
             val injectedViewContainer =
                 findViewById<InjectedViewContainer<DigitalInvoiceHelpNavigationBarBottomAdapter>>(R.id.gbs_injected_navigation_bar_container_bottom)
-            val adapter = GiniBank.digitalInvoiceHelpNavigationBarBottomAdapter
-            injectedViewContainer.injectedViewAdapter = adapter
-            adapter.setOnBackButtonClickListener(IntervalClickListener {
-                onBackPressed()
-            })
+            injectedViewContainer.injectedViewAdapterHolder =
+                InjectedViewAdapterHolder(GiniBank.digitalInvoiceHelpNavigationBarBottomAdapterInstance) { injectedViewAdapter ->
+                    injectedViewAdapter.setOnBackButtonClickListener(IntervalClickListener {
+                        onBackPressed()
+                    })
+                }
         }
     }
 }

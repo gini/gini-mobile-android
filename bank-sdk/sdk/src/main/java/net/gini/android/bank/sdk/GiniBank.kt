@@ -35,6 +35,7 @@ import net.gini.android.capture.requirements.GiniCaptureRequirements
 import net.gini.android.capture.requirements.RequirementsReport
 import net.gini.android.capture.util.CancellationToken
 import net.gini.android.capture.view.DefaultNavigationBarTopAdapter
+import net.gini.android.capture.view.InjectedViewAdapterInstance
 import net.gini.android.capture.view.NavigationBarTopAdapter
 import net.gini.android.core.api.Resource
 import net.gini.android.core.api.models.PaymentRequest
@@ -67,13 +68,37 @@ object GiniBank {
     /**
      * Bottom navigation bar adapters. Could be changed to custom ones.
      */
-    var digitalInvoiceOnboardingNavigationBarBottomAdapter: DigitalInvoiceOnboardingNavigationBarBottomAdapter = DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter()
-    var digitalInvoiceHelpNavigationBarBottomAdapter: DigitalInvoiceHelpNavigationBarBottomAdapter = DefaultDigitalInvoiceHelpNavigationBarBottomAdapter()
+    internal var digitalInvoiceOnboardingNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<DigitalInvoiceOnboardingNavigationBarBottomAdapter> =
+        InjectedViewAdapterInstance(DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter())
+    var digitalInvoiceOnboardingNavigationBarBottomAdapter: DigitalInvoiceOnboardingNavigationBarBottomAdapter
+        set(value) {
+            digitalInvoiceOnboardingNavigationBarBottomAdapterInstance = InjectedViewAdapterInstance(value)
+        }
+        get() = digitalInvoiceOnboardingNavigationBarBottomAdapterInstance.viewAdapter
 
-    var digitalInvoiceOnboardingIllustrationAdapter: OnboardingIllustrationAdapter = ImageOnboardingIllustrationAdapter(R.drawable.gbs_digital_invoice_list_image,
-        R.string.gbs_digital_invoice_illustration)
+    internal var digitalInvoiceHelpNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<DigitalInvoiceHelpNavigationBarBottomAdapter> =
+        InjectedViewAdapterInstance(DefaultDigitalInvoiceHelpNavigationBarBottomAdapter())
+    var digitalInvoiceHelpNavigationBarBottomAdapter: DigitalInvoiceHelpNavigationBarBottomAdapter
+        set(value) {
+            digitalInvoiceHelpNavigationBarBottomAdapterInstance = InjectedViewAdapterInstance(value)
+        }
+        get() = digitalInvoiceHelpNavigationBarBottomAdapterInstance.viewAdapter
 
-    var digitalInvoiceNavigationBarBottomAdapter: DigitalInvoiceNavigationBarBottomAdapter = DefaultDigitalInvoiceNavigationBarBottomAdapter()
+    internal var digitalInvoiceOnboardingIllustrationAdapterInstance: InjectedViewAdapterInstance<OnboardingIllustrationAdapter> =
+        InjectedViewAdapterInstance(ImageOnboardingIllustrationAdapter(R.drawable.gbs_digital_invoice_list_image, R.string.gbs_digital_invoice_illustration))
+    var digitalInvoiceOnboardingIllustrationAdapter: OnboardingIllustrationAdapter
+        set(value) {
+            digitalInvoiceOnboardingIllustrationAdapterInstance = InjectedViewAdapterInstance(value)
+        }
+        get() = digitalInvoiceOnboardingIllustrationAdapterInstance.viewAdapter
+
+    internal var digitalInvoiceNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<DigitalInvoiceNavigationBarBottomAdapter> =
+        InjectedViewAdapterInstance(DefaultDigitalInvoiceNavigationBarBottomAdapter())
+    var digitalInvoiceNavigationBarBottomAdapter: DigitalInvoiceNavigationBarBottomAdapter
+        set(value) {
+            digitalInvoiceNavigationBarBottomAdapterInstance = InjectedViewAdapterInstance(value)
+        }
+        get() = digitalInvoiceNavigationBarBottomAdapterInstance.viewAdapter
 
     internal fun getCaptureConfiguration() = captureConfiguration
 

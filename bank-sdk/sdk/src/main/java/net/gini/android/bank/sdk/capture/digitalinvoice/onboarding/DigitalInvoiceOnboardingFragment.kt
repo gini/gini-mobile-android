@@ -13,6 +13,8 @@ import net.gini.android.bank.sdk.capture.util.autoCleared
 import net.gini.android.bank.sdk.databinding.GbsFragmentDigitalInvoiceOnboardingBinding
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.internal.ui.IntervalClickListener
+import net.gini.android.capture.onboarding.view.OnboardingIllustrationAdapter
+import net.gini.android.capture.view.InjectedViewAdapterHolder
 
 /**
  * Created by Alpar Szotyori on 14.10.2020.
@@ -109,6 +111,7 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
      */
     override fun onStart() {
         super.onStart()
+        binding.digitalInvoiceImageContainer.modifyAdapterIfOwned { (it as OnboardingIllustrationAdapter).onVisible() }
         presenter?.start()
     }
 
@@ -119,6 +122,7 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
      */
     override fun onStop() {
         super.onStop()
+        binding.digitalInvoiceImageContainer.modifyAdapterIfOwned { (it as OnboardingIllustrationAdapter).onHidden() }
         presenter?.stop()
     }
 
@@ -138,10 +142,8 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
 
     private fun setupImageIllustrationAdapter() {
         if (GiniCapture.hasInstance()) {
-            binding.digitalInvoiceImageContainer.injectedViewAdapter =
-                GiniBank.digitalInvoiceOnboardingIllustrationAdapter
-
-            GiniBank.digitalInvoiceOnboardingIllustrationAdapter.onVisible()
+            binding.digitalInvoiceImageContainer.injectedViewAdapterHolder =
+                InjectedViewAdapterHolder(GiniBank.digitalInvoiceOnboardingIllustrationAdapterInstance) { it.onVisible() }
         }
     }
 
@@ -151,13 +153,16 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
             binding.doneButton.visibility = View.INVISIBLE
             binding.doneButton.isEnabled = false
 
-            binding.gbsInjectedNavigationBarContainerBottom.injectedViewAdapter =
-                GiniBank.digitalInvoiceOnboardingNavigationBarBottomAdapter
-            GiniBank.digitalInvoiceOnboardingNavigationBarBottomAdapter.setGetStartedButtonClickListener(
-                IntervalClickListener {
-                    presenter?.dismisOnboarding(false)
+            binding.gbsInjectedNavigationBarContainerBottom.injectedViewAdapterHolder =
+                InjectedViewAdapterHolder(
+                    GiniBank.digitalInvoiceOnboardingNavigationBarBottomAdapterInstance
+                ) { injectedViewAdapter ->
+                    injectedViewAdapter.setGetStartedButtonClickListener(
+                        IntervalClickListener {
+                            presenter?.dismisOnboarding(false)
+                        }
+                    )
                 }
-            )
         }
     }
 
@@ -168,7 +173,6 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
      */
     override fun onDestroyView() {
         listener = null
-        GiniBank.digitalInvoiceOnboardingIllustrationAdapter.onHidden()
         super.onDestroyView()
     }
 

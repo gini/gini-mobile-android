@@ -14,6 +14,7 @@ import net.gini.android.capture.help.view.HelpNavigationBarBottomAdapter;
 import net.gini.android.capture.internal.ui.IntervalClickListener;
 import net.gini.android.capture.noresults.NoResultsActivity;
 import net.gini.android.capture.review.ReviewActivity;
+import net.gini.android.capture.view.InjectedViewAdapterHolder;
 import net.gini.android.capture.view.InjectedViewContainer;
 import net.gini.android.capture.view.NavButtonType;
 import net.gini.android.capture.view.NavigationBarTopAdapter;
@@ -45,29 +46,27 @@ public class SupportedFormatsActivity extends AppCompatActivity {
     private void setupTopBarNavigation() {
         InjectedViewContainer<NavigationBarTopAdapter> topBarInjectedViewContainer = findViewById(R.id.gc_injected_navigation_bar_container_top);
         if (GiniCapture.hasInstance()) {
+            topBarInjectedViewContainer.setInjectedViewAdapterHolder(new InjectedViewAdapterHolder<>(
+                    GiniCapture.getInstance().internal().getNavigationBarTopAdapterInstance(),
+                    injectedViewAdapter -> {
+                        injectedViewAdapter.setNavButtonType(GiniCapture.getInstance().isBottomNavigationBarEnabled() ? NavButtonType.NONE : NavButtonType.BACK);
+                        injectedViewAdapter.setTitle(getString(R.string.gc_title_supported_formats));
 
-            topBarInjectedViewContainer.setInjectedViewAdapter(GiniCapture.getInstance().getNavigationBarTopAdapter());
-
-            NavigationBarTopAdapter topBarAdapter = topBarInjectedViewContainer.getInjectedViewAdapter();
-            assert topBarAdapter != null;
-            topBarAdapter.setNavButtonType(GiniCapture.getInstance().isBottomNavigationBarEnabled() ? NavButtonType.NONE : NavButtonType.BACK);
-            topBarAdapter.setTitle(getString(R.string.gc_title_supported_formats));
-
-            topBarAdapter.setOnNavButtonClickListener(new IntervalClickListener(v -> onBackPressed()));
+                        injectedViewAdapter.setOnNavButtonClickListener(new IntervalClickListener(v -> onBackPressed()));
+                    }));
         }
     }
 
     private void setupBottomBarNavigation() {
         InjectedViewContainer<HelpNavigationBarBottomAdapter> injectedViewContainer = findViewById(R.id.gc_injected_navigation_bar_container_bottom);
         if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
-
-            injectedViewContainer.setInjectedViewAdapter(GiniCapture.getInstance().getHelpNavigationBarBottomAdapter());
-
-            HelpNavigationBarBottomAdapter helpNavigationBarBottomAdapter = injectedViewContainer.getInjectedViewAdapter();
-            assert helpNavigationBarBottomAdapter != null;
-            helpNavigationBarBottomAdapter.setOnBackClickListener(new IntervalClickListener(v -> {
-                onBackPressed();
-            }));
+            injectedViewContainer.setInjectedViewAdapterHolder(new InjectedViewAdapterHolder<>(
+                    GiniCapture.getInstance().internal().getHelpNavigationBarBottomAdapterInstance(),
+                    injectedViewAdapter -> {
+                        injectedViewAdapter.setOnBackClickListener(new IntervalClickListener(v -> {
+                            onBackPressed();
+                        }));
+                    }));
         }
     }
 

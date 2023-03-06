@@ -7,8 +7,6 @@ import static java.util.Collections.emptyMap;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
-import android.widget.Toast;
 
 import net.gini.android.capture.analysis.AnalysisActivity;
 import net.gini.android.capture.camera.view.CameraNavigationBarBottomAdapter;
@@ -38,13 +36,13 @@ import net.gini.android.capture.review.multipage.view.ReviewNavigationBarBottomA
 import net.gini.android.capture.view.CustomLoadingIndicatorAdapter;
 import net.gini.android.capture.view.DefaultLoadingIndicatorAdapter;
 import net.gini.android.capture.view.DefaultOnButtonLoadingIndicatorAdapter;
+import net.gini.android.capture.view.InjectedViewAdapterInstance;
 import net.gini.android.capture.view.NavigationBarTopAdapter;
 import net.gini.android.capture.view.DefaultNavigationBarTopAdapter;
 import net.gini.android.capture.network.GiniCaptureNetworkService;
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction;
 import net.gini.android.capture.onboarding.OnboardingPage;
 import net.gini.android.capture.review.ReviewActivity;
-import net.gini.android.capture.review.multipage.MultiPageReviewFragment;
 import net.gini.android.capture.tracking.AnalysisScreenEvent;
 import net.gini.android.capture.tracking.CameraScreenEvent;
 import net.gini.android.capture.tracking.Event;
@@ -55,7 +53,6 @@ import net.gini.android.capture.util.CancellationToken;
 import net.gini.android.capture.view.OnButtonLoadingIndicatorAdapter;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.TestOnly;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,8 +60,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -117,20 +112,20 @@ public class GiniCapture {
     private final List<HelpItem.Custom> mCustomHelpItems;
     private final ErrorLogger mErrorLogger;
     private final int mImportedFileSizeBytesLimit;
-    private final NavigationBarTopAdapter navigationBarTopAdapter;
-    private final OnboardingNavigationBarBottomAdapter onboardingNavigationBarBottomAdapter;
-    private final HelpNavigationBarBottomAdapter helpNavigationBarBottomAdapter;
-    private final CameraNavigationBarBottomAdapter cameraNavigationBarBottomAdapter;
+    private final InjectedViewAdapterInstance<NavigationBarTopAdapter> navigationBarTopAdapterInstance;
+    private final InjectedViewAdapterInstance<OnboardingNavigationBarBottomAdapter> onboardingNavigationBarBottomAdapterInstance;
+    private final InjectedViewAdapterInstance<HelpNavigationBarBottomAdapter> helpNavigationBarBottomAdapterInstance;
+    private final InjectedViewAdapterInstance<CameraNavigationBarBottomAdapter> cameraNavigationBarBottomAdapterInstance;
     private final NoResultsNavigationBarBottomAdapter noResultsNavigationBarBottomAdapter;
     private final ErrorNavigationBarBottomAdapter errorNavigationBarBottomAdapter;
     private final boolean isBottomNavigationBarEnabled;
-    private final OnboardingIllustrationAdapter onboardingAlignCornersIllustrationAdapter;
-    private final OnboardingIllustrationAdapter onboardingLightingIllustrationAdapter;
-    private final OnboardingIllustrationAdapter onboardingMultiPageIllustrationAdapter;
-    private final OnboardingIllustrationAdapter onboardingQRCodeIllustrationAdapter;
-    private final CustomLoadingIndicatorAdapter loadingIndicatorAdapter;
-    private final ReviewNavigationBarBottomAdapter reviewNavigationBarBottomAdapter;
-    private final OnButtonLoadingIndicatorAdapter onButtonLoadingIndicatorAdapter;
+    private final InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingAlignCornersIllustrationAdapterInstance;
+    private final InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingLightingIllustrationAdapterInstance;
+    private final InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingMultiPageIllustrationAdapterInstance;
+    private final InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingQRCodeIllustrationAdapterInstance;
+    private final InjectedViewAdapterInstance<CustomLoadingIndicatorAdapter> loadingIndicatorAdapterInstance;
+    private final InjectedViewAdapterInstance<ReviewNavigationBarBottomAdapter> reviewNavigationBarBottomAdapterInstance;
+    private final InjectedViewAdapterInstance<OnButtonLoadingIndicatorAdapter> onButtonLoadingIndicatorAdapterInstance;
 
     /**
      * Retrieve the current instance.
@@ -293,20 +288,20 @@ public class GiniCapture {
                 builder.getGiniCaptureNetworkService(),
                 builder.getCustomErrorLoggerListener());
         mImportedFileSizeBytesLimit = builder.getImportedFileSizeBytesLimit();
-        navigationBarTopAdapter = builder.getNavigationBarTopAdapter();
-        onboardingNavigationBarBottomAdapter = builder.getOnboardingNavigationBarBottomAdapter();
-        helpNavigationBarBottomAdapter = builder.getHelpNavigationBarBottomAdapter();
+        navigationBarTopAdapterInstance = builder.getNavigationBarTopAdapterInstance();
+        onboardingNavigationBarBottomAdapterInstance = builder.getOnboardingNavigationBarBottomAdapterInstance();
+        helpNavigationBarBottomAdapterInstance = builder.getHelpNavigationBarBottomAdapterInstance();
         isBottomNavigationBarEnabled = builder.isBottomNavigationBarEnabled();
-        onboardingAlignCornersIllustrationAdapter = builder.getOnboardingAlignCornersIllustrationAdapter();
-        onboardingLightingIllustrationAdapter = builder.getOnboardingLightingIllustrationAdapter();
-        onboardingMultiPageIllustrationAdapter = builder.getOnboardingMultiPageIllustrationAdapter();
-        onboardingQRCodeIllustrationAdapter = builder.getOnboardingQRCodeIllustrationAdapter();
-        cameraNavigationBarBottomAdapter = builder.getCameraNavigationBarBottomAdapter();
+        onboardingAlignCornersIllustrationAdapterInstance = builder.getOnboardingAlignCornersIllustrationAdapterInstance();
+        onboardingLightingIllustrationAdapterInstance = builder.getOnboardingLightingIllustrationAdapterInstance();
+        onboardingMultiPageIllustrationAdapterInstance = builder.getOnboardingMultiPageIllustrationAdapterInstance();
+        onboardingQRCodeIllustrationAdapterInstance = builder.getOnboardingQRCodeIllustrationAdapterInstance();
+        cameraNavigationBarBottomAdapterInstance = builder.getCameraNavigationBarBottomAdapterInstance();
         noResultsNavigationBarBottomAdapter = builder.getNoResultsNavigationBarBottomAdapter();
         errorNavigationBarBottomAdapter = builder.getErrorNavigationBarBottomAdapter();
-        loadingIndicatorAdapter = builder.getLoadingIndicatorAdapter();
-        reviewNavigationBarBottomAdapter = builder.getReviewNavigationBarBottomAdapter();
-        onButtonLoadingIndicatorAdapter = builder.getOnButtonLoadingIndicatorAdapter();
+        loadingIndicatorAdapterInstance = builder.getLoadingIndicatorAdapterInstance();
+        reviewNavigationBarBottomAdapterInstance = builder.getReviewNavigationBarBottomAdapterInstance();
+        onButtonLoadingIndicatorAdapterInstance = builder.getOnButtonLoadingIndicatorAdapterInstance();
     }
 
     /**
@@ -568,22 +563,22 @@ public class GiniCapture {
 
     @NonNull
     public NavigationBarTopAdapter getNavigationBarTopAdapter() {
-        return navigationBarTopAdapter;
+        return navigationBarTopAdapterInstance.getViewAdapter();
     }
 
     @NonNull
     public OnboardingNavigationBarBottomAdapter getOnboardingNavigationBarBottomAdapter() {
-        return onboardingNavigationBarBottomAdapter;
+        return onboardingNavigationBarBottomAdapterInstance.getViewAdapter();
     }
 
     @NonNull
     public HelpNavigationBarBottomAdapter getHelpNavigationBarBottomAdapter() {
-        return helpNavigationBarBottomAdapter;
+        return helpNavigationBarBottomAdapterInstance.getViewAdapter();
     }
 
     @NonNull
     public CameraNavigationBarBottomAdapter getCameraNavigationBarBottomAdapter() {
-        return cameraNavigationBarBottomAdapter;
+        return cameraNavigationBarBottomAdapterInstance.getViewAdapter();
     }
 
     @NonNull
@@ -602,37 +597,49 @@ public class GiniCapture {
 
     @Nullable
     public OnboardingIllustrationAdapter getOnboardingAlignCornersIllustrationAdapter() {
-        return onboardingAlignCornersIllustrationAdapter;
+        if (onboardingAlignCornersIllustrationAdapterInstance == null) {
+            return null;
+        }
+        return onboardingAlignCornersIllustrationAdapterInstance.getViewAdapter();
     }
 
     @Nullable
     public OnboardingIllustrationAdapter getOnboardingLightingIllustrationAdapter() {
-        return onboardingLightingIllustrationAdapter;
+        if (onboardingLightingIllustrationAdapterInstance == null) {
+            return null;
+        }
+        return onboardingLightingIllustrationAdapterInstance.getViewAdapter();
     }
 
     @Nullable
     public OnboardingIllustrationAdapter getOnboardingMultiPageIllustrationAdapter() {
-        return onboardingMultiPageIllustrationAdapter;
+        if (onboardingMultiPageIllustrationAdapterInstance == null) {
+            return null;
+        }
+        return onboardingMultiPageIllustrationAdapterInstance.getViewAdapter();
     }
 
     @Nullable
     public OnboardingIllustrationAdapter getOnboardingQRCodeIllustrationAdapter() {
-        return onboardingQRCodeIllustrationAdapter;
+        if (onboardingQRCodeIllustrationAdapterInstance == null) {
+            return null;
+        }
+        return onboardingQRCodeIllustrationAdapterInstance.getViewAdapter();
     }
 
     @Nullable
-    public CustomLoadingIndicatorAdapter getloadingIndicatorAdapter() {
-        return loadingIndicatorAdapter;
+    public CustomLoadingIndicatorAdapter getLoadingIndicatorAdapter() {
+        return loadingIndicatorAdapterInstance.getViewAdapter();
     }
 
     @NonNull
     public ReviewNavigationBarBottomAdapter getReviewNavigationBarBottomAdapter() {
-        return reviewNavigationBarBottomAdapter;
+        return reviewNavigationBarBottomAdapterInstance.getViewAdapter();
     }
 
     @Nullable
     public OnButtonLoadingIndicatorAdapter getOnButtonLoadingIndicatorAdapter() {
-        return onButtonLoadingIndicatorAdapter;
+        return onButtonLoadingIndicatorAdapterInstance.getViewAdapter();
     }
 
     /**
@@ -685,21 +692,21 @@ public class GiniCapture {
         private boolean mGiniErrorLoggerIsOn = true;
         private ErrorLoggerListener mCustomErrorLoggerListener;
         private int mImportedFileSizeBytesLimit = FILE_SIZE_LIMIT;
-        private NavigationBarTopAdapter navigationBarTopAdapter = new DefaultNavigationBarTopAdapter();
-        private OnboardingNavigationBarBottomAdapter navigationBarBottomAdapter = new DefaultOnboardingNavigationBarBottomAdapter();
-        private HelpNavigationBarBottomAdapter helpNavigationBarBottomAdapter = new DefaultHelpNavigationBarBottomAdapter();
-        private CameraNavigationBarBottomAdapter cameraNavigationBarBottomAdapter = new DefaultCameraNavigationBarBottomAdapter();
+        private InjectedViewAdapterInstance<NavigationBarTopAdapter> navigationBarTopAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultNavigationBarTopAdapter());
+        private InjectedViewAdapterInstance<OnboardingNavigationBarBottomAdapter> navigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultOnboardingNavigationBarBottomAdapter());
+        private InjectedViewAdapterInstance<HelpNavigationBarBottomAdapter> helpNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultHelpNavigationBarBottomAdapter());
+        private InjectedViewAdapterInstance<CameraNavigationBarBottomAdapter> cameraNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultCameraNavigationBarBottomAdapter());
         private NoResultsNavigationBarBottomAdapter noResultsNavigationBarBottomAdapter = new DefaultNoResultsNavigationBarBottomAdapter();
         private ErrorNavigationBarBottomAdapter errorNavigationBarBottomAdapter = new DefaultErrorNavigationBarBottomAdapter();
         private boolean isBottomNavigationBarEnabled = false;
-        private OnboardingIllustrationAdapter onboardingAlignCornersIllustrationAdapter;
-        private OnboardingIllustrationAdapter onboardingLightingIllustrationAdapter;
-        private OnboardingIllustrationAdapter onboardingMultiPageIllustrationAdapter;
-        private OnboardingIllustrationAdapter onboardingQRCodeIllustrationAdapter;
-        private CustomLoadingIndicatorAdapter loadingIndicatorAdapter = new DefaultLoadingIndicatorAdapter();
-        private ReviewNavigationBarBottomAdapter reviewNavigationBarBottomAdapter = new DefaultReviewNavigationBarBottomAdapter();
+        private InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingAlignCornersIllustrationAdapterInstance;
+        private InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingLightingIllustrationAdapterInstance;
+        private InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingMultiPageIllustrationAdapterInstance;
+        private InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingQRCodeIllustrationAdapterInstance;
+        private InjectedViewAdapterInstance<CustomLoadingIndicatorAdapter> loadingIndicatorAdapter = new InjectedViewAdapterInstance<>(new DefaultLoadingIndicatorAdapter());
+        private InjectedViewAdapterInstance<ReviewNavigationBarBottomAdapter> reviewNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultReviewNavigationBarBottomAdapter());
 
-        private OnButtonLoadingIndicatorAdapter onButtonLoadingIndicatorAdapter = new DefaultOnButtonLoadingIndicatorAdapter();
+        private InjectedViewAdapterInstance<OnButtonLoadingIndicatorAdapter> onButtonLoadingIndicatorAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultOnButtonLoadingIndicatorAdapter());
 
         /**
          * Create a new {@link GiniCapture} instance.
@@ -1030,13 +1037,13 @@ public class GiniCapture {
          * @return the {@link Builder} instance
          */
         public Builder setNavigationBarTopAdapter(@NonNull final NavigationBarTopAdapter adapter) {
-            navigationBarTopAdapter = adapter;
+            navigationBarTopAdapterInstance = new InjectedViewAdapterInstance<>(adapter);
             return this;
         }
 
         @NonNull
-        private NavigationBarTopAdapter getNavigationBarTopAdapter() {
-            return navigationBarTopAdapter;
+        private InjectedViewAdapterInstance<NavigationBarTopAdapter> getNavigationBarTopAdapterInstance() {
+            return navigationBarTopAdapterInstance;
         }
 
         /**
@@ -1046,13 +1053,13 @@ public class GiniCapture {
          * @return the {@link Builder} instance
          */
         public Builder setOnboardingNavigationBarBottomAdapter(@NonNull final OnboardingNavigationBarBottomAdapter adapter) {
-            navigationBarBottomAdapter = adapter;
+            navigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(adapter);
             return this;
         }
 
         @NonNull
-        private OnboardingNavigationBarBottomAdapter getOnboardingNavigationBarBottomAdapter() {
-            return navigationBarBottomAdapter;
+        private InjectedViewAdapterInstance<OnboardingNavigationBarBottomAdapter> getOnboardingNavigationBarBottomAdapterInstance() {
+            return navigationBarBottomAdapterInstance;
         }
 
         /**
@@ -1062,13 +1069,13 @@ public class GiniCapture {
          * @return the {@link Builder} instance
          */
         public Builder setHelpNavigationBarBottomAdapter(@NonNull final HelpNavigationBarBottomAdapter adapter) {
-            helpNavigationBarBottomAdapter = adapter;
+            helpNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(adapter);
             return this;
         }
 
         @NonNull
-        private HelpNavigationBarBottomAdapter getHelpNavigationBarBottomAdapter() {
-            return helpNavigationBarBottomAdapter;
+        private InjectedViewAdapterInstance<HelpNavigationBarBottomAdapter> getHelpNavigationBarBottomAdapterInstance() {
+            return helpNavigationBarBottomAdapterInstance;
         }
 
         /**
@@ -1078,12 +1085,12 @@ public class GiniCapture {
          * @return the {@link Builder} instance
          */
         public Builder setCameraNavigationBarBottomAdapter(@NonNull final CameraNavigationBarBottomAdapter adapter) {
-            cameraNavigationBarBottomAdapter = adapter;
+            cameraNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(adapter);
             return this;
         }
 
-        public CameraNavigationBarBottomAdapter getCameraNavigationBarBottomAdapter() {
-            return cameraNavigationBarBottomAdapter;
+        private InjectedViewAdapterInstance<CameraNavigationBarBottomAdapter> getCameraNavigationBarBottomAdapterInstance() {
+            return cameraNavigationBarBottomAdapterInstance;
         }
 
         /**
@@ -1132,8 +1139,8 @@ public class GiniCapture {
         }
 
         @NonNull
-        private OnboardingIllustrationAdapter getOnboardingAlignCornersIllustrationAdapter() {
-            return onboardingAlignCornersIllustrationAdapter;
+        private InjectedViewAdapterInstance<OnboardingIllustrationAdapter> getOnboardingAlignCornersIllustrationAdapterInstance() {
+            return onboardingAlignCornersIllustrationAdapterInstance;
         }
 
         /**
@@ -1143,13 +1150,13 @@ public class GiniCapture {
          * @return the {@link Builder} instance
          */
         public Builder setOnboardingAlignCornersIllustrationAdapter(@NonNull final OnboardingIllustrationAdapter adapter) {
-            onboardingAlignCornersIllustrationAdapter = adapter;
+            onboardingAlignCornersIllustrationAdapterInstance = new InjectedViewAdapterInstance<>(adapter);
             return this;
         }
 
         @NonNull
-        private OnboardingIllustrationAdapter getOnboardingLightingIllustrationAdapter() {
-            return onboardingLightingIllustrationAdapter;
+        private InjectedViewAdapterInstance<OnboardingIllustrationAdapter> getOnboardingLightingIllustrationAdapterInstance() {
+            return onboardingLightingIllustrationAdapterInstance;
         }
 
         /**
@@ -1159,13 +1166,13 @@ public class GiniCapture {
          * @return the {@link Builder} instance
          */
         public Builder setOnboardingLightingIllustrationAdapter(@NonNull final OnboardingIllustrationAdapter adapter) {
-            onboardingLightingIllustrationAdapter = adapter;
+            onboardingLightingIllustrationAdapterInstance = new InjectedViewAdapterInstance<>(adapter);
             return this;
         }
 
         @NonNull
-        private OnboardingIllustrationAdapter getOnboardingMultiPageIllustrationAdapter() {
-            return onboardingMultiPageIllustrationAdapter;
+        private InjectedViewAdapterInstance<OnboardingIllustrationAdapter> getOnboardingMultiPageIllustrationAdapterInstance() {
+            return onboardingMultiPageIllustrationAdapterInstance;
         }
 
         /**
@@ -1175,13 +1182,13 @@ public class GiniCapture {
          * @return the {@link Builder} instance
          */
         public Builder setOnboardingMultiPageIllustrationAdapter(@NonNull final OnboardingIllustrationAdapter adapter) {
-            onboardingMultiPageIllustrationAdapter = adapter;
+            onboardingMultiPageIllustrationAdapterInstance = new InjectedViewAdapterInstance<>(adapter);
             return this;
         }
 
         @NonNull
-        private OnboardingIllustrationAdapter getOnboardingQRCodeIllustrationAdapter() {
-            return onboardingQRCodeIllustrationAdapter;
+        private InjectedViewAdapterInstance<OnboardingIllustrationAdapter> getOnboardingQRCodeIllustrationAdapterInstance() {
+            return onboardingQRCodeIllustrationAdapterInstance;
         }
 
         /**
@@ -1191,12 +1198,12 @@ public class GiniCapture {
          * @return the {@link Builder} instance
          */
         public Builder setOnboardingQRCodeIllustrationAdapter(@NonNull final OnboardingIllustrationAdapter adapter) {
-            onboardingQRCodeIllustrationAdapter = adapter;
+            onboardingQRCodeIllustrationAdapterInstance = new InjectedViewAdapterInstance<>(adapter);
             return this;
         }
 
         @NonNull
-        private CustomLoadingIndicatorAdapter getLoadingIndicatorAdapter() {
+        private InjectedViewAdapterInstance<CustomLoadingIndicatorAdapter> getLoadingIndicatorAdapterInstance() {
             return loadingIndicatorAdapter;
         }
 
@@ -1207,17 +1214,17 @@ public class GiniCapture {
          * @return the {@link Builder} instance
          */
         public Builder setLoadingIndicatorAdapter(@NonNull final CustomLoadingIndicatorAdapter adapter) {
-            loadingIndicatorAdapter = adapter;
+            loadingIndicatorAdapter = new InjectedViewAdapterInstance<>(adapter);
             return this;
         }
 
         @NonNull
-        private OnButtonLoadingIndicatorAdapter getOnButtonLoadingIndicatorAdapter() {
-            return onButtonLoadingIndicatorAdapter;
+        private InjectedViewAdapterInstance<OnButtonLoadingIndicatorAdapter> getOnButtonLoadingIndicatorAdapterInstance() {
+            return onButtonLoadingIndicatorAdapterInstance;
         }
 
         public Builder setOnButtonLoadingIndicatorAdapter(@NonNull final OnButtonLoadingIndicatorAdapter adapter) {
-            onButtonLoadingIndicatorAdapter = adapter;
+            onButtonLoadingIndicatorAdapterInstance = new InjectedViewAdapterInstance<>(adapter);
             return this;
         }
 
@@ -1228,12 +1235,12 @@ public class GiniCapture {
          * @return the {@link Builder} instance
          */
         public Builder setReviewBottomBarNavigationAdapter(@NonNull final ReviewNavigationBarBottomAdapter adapter) {
-            reviewNavigationBarBottomAdapter = adapter;
+            reviewNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(adapter);
             return this;
         }
 
-        private ReviewNavigationBarBottomAdapter getReviewNavigationBarBottomAdapter() {
-            return reviewNavigationBarBottomAdapter;
+        private InjectedViewAdapterInstance<ReviewNavigationBarBottomAdapter> getReviewNavigationBarBottomAdapterInstance() {
+            return reviewNavigationBarBottomAdapterInstance;
         }
     }
 
@@ -1306,6 +1313,34 @@ public class GiniCapture {
 
         public Map<String, GiniCaptureCompoundExtraction> getCompoundExtractions() {
             return mCompoundExtractions;
+        }
+
+        public InjectedViewAdapterInstance<NavigationBarTopAdapter> getNavigationBarTopAdapterInstance() {
+            return mGiniCapture.navigationBarTopAdapterInstance;
+        }
+
+        public InjectedViewAdapterInstance<CameraNavigationBarBottomAdapter> getCameraNavigationBarBottomAdapterInstance() {
+            return mGiniCapture.cameraNavigationBarBottomAdapterInstance;
+        }
+
+        public InjectedViewAdapterInstance<HelpNavigationBarBottomAdapter> getHelpNavigationBarBottomAdapterInstance() {
+            return mGiniCapture.helpNavigationBarBottomAdapterInstance;
+        }
+
+        public InjectedViewAdapterInstance<CustomLoadingIndicatorAdapter> getLoadingIndicatorAdapterInstance() {
+            return mGiniCapture.loadingIndicatorAdapterInstance;
+        }
+
+        public InjectedViewAdapterInstance<OnboardingNavigationBarBottomAdapter> getOnboardingNavigationBarBottomAdapterInstance() {
+            return mGiniCapture.onboardingNavigationBarBottomAdapterInstance;
+        }
+
+        public InjectedViewAdapterInstance<ReviewNavigationBarBottomAdapter> getReviewNavigationBarBottomAdapterInstance() {
+            return mGiniCapture.reviewNavigationBarBottomAdapterInstance;
+        }
+
+        public InjectedViewAdapterInstance<OnButtonLoadingIndicatorAdapter> getOnButtonLoadingIndicatorAdapterInstance() {
+            return mGiniCapture.onButtonLoadingIndicatorAdapterInstance;
         }
     }
 

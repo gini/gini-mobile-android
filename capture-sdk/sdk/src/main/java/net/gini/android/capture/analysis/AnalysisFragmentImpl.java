@@ -12,18 +12,16 @@ import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.R;
-import net.gini.android.capture.camera.CameraActivity;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.ui.IntervalClickListener;
 import net.gini.android.capture.internal.util.Size;
-import net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomAdapter;
 import net.gini.android.capture.view.CustomLoadingIndicatorAdapter;
+import net.gini.android.capture.view.InjectedViewAdapterHolder;
 import net.gini.android.capture.view.InjectedViewContainer;
 import net.gini.android.capture.view.NavButtonType;
 import net.gini.android.capture.view.NavigationBarTopAdapter;
@@ -38,6 +36,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import jersey.repackaged.jsr166e.CompletableFuture;
+import kotlin.Unit;
 
 import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
 
@@ -56,6 +55,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     private AnalysisHintsAnimator mHintsAnimator;
     private InjectedViewContainer<NavigationBarTopAdapter> topAdapterInjectedViewContainer;
     private InjectedViewContainer<CustomLoadingIndicatorAdapter> injectedLoadingIndicatorContainer;
+    private boolean isScanAnimationActive;
 
     AnalysisFragmentImpl(final FragmentImplCallback fragment,
             @NonNull final Document document,
@@ -98,17 +98,20 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     @Override
     void showScanAnimation() {
         mAnalysisMessageTextView.setVisibility(View.VISIBLE);
-
-        if (injectedLoadingIndicatorContainer.getInjectedViewAdapter() != null) {
-            injectedLoadingIndicatorContainer.getInjectedViewAdapter().onVisible();
-        }
+        isScanAnimationActive = true;
+        injectedLoadingIndicatorContainer.modifyAdapterIfOwned(adapter -> {
+            adapter.onVisible();
+            return Unit.INSTANCE;
+        });
     }
 
     @Override
     void hideScanAnimation() {
-        if (injectedLoadingIndicatorContainer.getInjectedViewAdapter() != null) {
-            injectedLoadingIndicatorContainer.getInjectedViewAdapter().onHidden();
-        }
+        isScanAnimationActive = false;
+        injectedLoadingIndicatorContainer.modifyAdapterIfOwned(adapter -> {
+            adapter.onHidden();
+            return Unit.INSTANCE;
+        });
         mAnalysisMessageTextView.setVisibility(View.GONE);
     }
 
@@ -228,27 +231,32 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
 
     private void setTopBarInjectedViewContainer() {
         if (GiniCapture.hasInstance()) {
-            topAdapterInjectedViewContainer.setInjectedViewAdapter(GiniCapture.getInstance().getNavigationBarTopAdapter());
+            topAdapterInjectedViewContainer.setInjectedViewAdapterHolder(new InjectedViewAdapterHolder<>(GiniCapture.getInstance().internal().getNavigationBarTopAdapterInstance(), injectedViewAdapter -> {
+                if (mFragment.getActivity() == null)
+                    return;
 
-            if (topAdapterInjectedViewContainer.getInjectedViewAdapter() == null)
-                return;
+                injectedViewAdapter.setNavButtonType(NavButtonType.CLOSE);
+                injectedViewAdapter.setTitle(mFragment.getActivity().getResources().getString(R.string.gc_title_analysis));
 
-            if (mFragment.getActivity() == null)
-                return;
-
-            topAdapterInjectedViewContainer.getInjectedViewAdapter().setNavButtonType(NavButtonType.CLOSE);
-            topAdapterInjectedViewContainer.getInjectedViewAdapter().setTitle(mFragment.getActivity().getResources().getString(R.string.gc_title_analysis));
-
-            topAdapterInjectedViewContainer.getInjectedViewAdapter().setOnNavButtonClickListener(new IntervalClickListener(v -> {
-                mFragment.getActivity().setResult(Activity.RESULT_CANCELED);
-                mFragment.getActivity().finish();
+                injectedViewAdapter.setOnNavButtonClickListener(new IntervalClickListener(v -> {
+                    mFragment.getActivity().setResult(Activity.RESULT_CANCELED);
+                    mFragment.getActivity().finish();
+                }));
             }));
         }
     }
 
     private void setLoadingIndicatorViewContainer() {
         if (GiniCapture.hasInstance()) {
-            injectedLoadingIndicatorContainer.setInjectedViewAdapter(GiniCapture.getInstance().getloadingIndicatorAdapter());
+            injectedLoadingIndicatorContainer.setInjectedViewAdapterHolder(new InjectedViewAdapterHolder<>(
+                    GiniCapture.getInstance().internal().getLoadingIndicatorAdapterInstance(),
+                    injectedViewAdapter -> {
+                        if (isScanAnimationActive) {
+                            injectedViewAdapter.onVisible();
+                        } else {
+                            injectedViewAdapter.onHidden();
+                        }
+                    }));
         }
     }
 

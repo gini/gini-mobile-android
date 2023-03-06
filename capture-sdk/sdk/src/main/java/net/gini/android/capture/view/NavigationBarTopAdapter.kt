@@ -94,7 +94,7 @@ class DefaultNavigationBarTopAdapter : NavigationBarTopAdapter {
             && GiniCapture.getInstance().isBottomNavigationBarEnabled
         ) {
             viewBinding?.gcNavigationBar?.setOnMenuItemClickListener {
-                listener?.onClick(viewBinding!!.root)
+                listener?.onClick(viewBinding?.root)
                 true
             }
         } else {
@@ -124,6 +124,7 @@ class DefaultNavigationBarTopAdapter : NavigationBarTopAdapter {
                 if (GiniCapture.hasInstance()
                     && GiniCapture.getInstance().isBottomNavigationBarEnabled
                 ) {
+                    viewBinding?.gcNavigationBar?.menu?.clear()
                     viewBinding?.gcNavigationBar?.inflateMenu(R.menu.gc_navigation_bar_top_close)
                 } else {
                     viewBinding?.root?.context?.let { context ->
@@ -138,6 +139,7 @@ class DefaultNavigationBarTopAdapter : NavigationBarTopAdapter {
     }
 
     override fun setMenuResource(menu: Int) {
+        viewBinding?.gcNavigationBar?.menu?.clear()
         viewBinding?.gcNavigationBar?.inflateMenu(menu)
     }
 
@@ -146,7 +148,6 @@ class DefaultNavigationBarTopAdapter : NavigationBarTopAdapter {
     }
 
     override fun onCreateView(container: ViewGroup): View {
-
         val binding = GcNavigationBarTopBinding
             .inflate(LayoutInflater.from(container.context), container, false)
         viewBinding = binding

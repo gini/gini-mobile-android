@@ -18,7 +18,9 @@ class IntervalClickListener(
     override var enabled: Runnable =
         Runnable { isEnabled = true }
 
-    override fun onClick(view: View) {
+    override fun onClick(view: View?) {
+        if (view == null) return;
+
         if (isEnabled) {
             isEnabled = false
             view.postDelayed(enabled, interval)
