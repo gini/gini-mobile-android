@@ -375,7 +375,7 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
         if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled) {
             binding.gbsBottomBarNavigation.modifyAdapterIfOwned {
                 (it as DigitalInvoiceNavigationBarBottomAdapter).apply {
-                    setGrossPriceTotal(integral, fractional)
+                    setTotalPrice(integral + fractional)
                     setPayButtonEnabled(data.buttonEnabled)
                 }
             }

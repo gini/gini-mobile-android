@@ -4,7 +4,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
-import androidx.annotation.DrawableRes
 import net.gini.android.bank.sdk.databinding.GbsDigitalInvoiceNavigationBarBottomBinding
 import net.gini.android.capture.view.InjectedViewAdapter
 
@@ -35,12 +34,11 @@ interface DigitalInvoiceNavigationBarBottomAdapter : InjectedViewAdapter {
     fun setPayButtonEnabled(enabled: Boolean)
 
     /**
-     * Set the gross price total.
+     * Set the total price.
      *
-     * @param integralPartWithCurrencySymbol integral with currency symbol
-     * @param fractionalPart fractional part
+     * @param priceWithCurrencySymbol price string with currency symbol
      */
-    fun setGrossPriceTotal(integralPartWithCurrencySymbol: String, fractionalPart: String)
+    fun setTotalPrice(priceWithCurrencySymbol: String)
 
 }
 
@@ -65,9 +63,8 @@ class DefaultDigitalInvoiceNavigationBarBottomAdapter: DigitalInvoiceNavigationB
         binding?.gbsPay?.isEnabled = enabled
     }
 
-    override fun setGrossPriceTotal(integralPartWithCurrencySymbol: String, fractionalPart: String) {
-        binding?.grossPriceTotalIntegralPart?.text = integralPartWithCurrencySymbol
-        binding?.grossPriceTotalFractionalPart?.text = fractionalPart
+    override fun setTotalPrice(priceWithCurrencySymbol: String) {
+        binding?.grossPriceTotal?.text = priceWithCurrencySymbol
     }
 
     override fun onCreateView(container: ViewGroup): View {
