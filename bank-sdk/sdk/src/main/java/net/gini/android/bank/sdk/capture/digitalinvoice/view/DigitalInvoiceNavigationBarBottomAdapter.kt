@@ -20,18 +20,18 @@ interface DigitalInvoiceNavigationBarBottomAdapter : InjectedViewAdapter {
     fun setOnHelpClickListener(listener: OnClickListener)
 
     /**
-     * Set the click listener for the pay button.
+     * Set the click listener for the proceed button.
      *
      * @param listener the click listener for the button
      */
-    fun setOnPayClickListener(listener: OnClickListener)
+    fun setOnProceedClickListener(listener: OnClickListener)
 
     /**
-     * Enable or disable pay button.
+     * Enable or disable the proceed button.
      *
      * @param enabled for enabling or disabling the button
      */
-    fun setPayButtonEnabled(enabled: Boolean)
+    fun setProceedButtonEnabled(enabled: Boolean)
 
     /**
      * Set the total price.
@@ -55,11 +55,11 @@ class DefaultDigitalInvoiceNavigationBarBottomAdapter: DigitalInvoiceNavigationB
         binding?.gbsHelpBtn?.setOnClickListener(listener)
     }
 
-    override fun setOnPayClickListener(listener: OnClickListener) {
+    override fun setOnProceedClickListener(listener: OnClickListener) {
         binding?.gbsPay?.setOnClickListener(listener)
     }
 
-    override fun setPayButtonEnabled(enabled: Boolean) {
+    override fun setProceedButtonEnabled(enabled: Boolean) {
         binding?.gbsPay?.isEnabled = enabled
     }
 

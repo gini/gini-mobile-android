@@ -243,7 +243,7 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
                         startActivity(Intent(requireContext(), HelpActivity::class.java))
                     }
 
-                    injectedViewAdapter.setOnPayClickListener {
+                    injectedViewAdapter.setOnProceedClickListener {
                         presenter?.pay()
                     }
                 }
@@ -376,7 +376,7 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
             binding.gbsBottomBarNavigation.modifyAdapterIfOwned {
                 (it as DigitalInvoiceNavigationBarBottomAdapter).apply {
                     setTotalPrice(integral + fractional)
-                    setPayButtonEnabled(data.buttonEnabled)
+                    setProceedButtonEnabled(data.buttonEnabled)
                 }
             }
         }
