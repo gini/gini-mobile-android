@@ -43,6 +43,7 @@ import net.gini.android.capture.review.multipage.view.ReviewNavigationBarBottomA
 import net.gini.android.capture.review.zoom.ZoomInPreviewActivity;
 import net.gini.android.capture.tracking.ReviewScreenEvent;
 import net.gini.android.capture.tracking.ReviewScreenEvent.UPLOAD_ERROR_DETAILS_MAP_KEY;
+import net.gini.android.capture.view.InjectedViewAdapterHolder;
 import net.gini.android.capture.view.InjectedViewContainer;
 import net.gini.android.capture.view.NavButtonType;
 import net.gini.android.capture.view.NavigationBarTopAdapter;
@@ -68,6 +69,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.tabs.TabLayout;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
+import kotlin.Unit;
 
 /**
  * Created by Alpar Szotyori on 07.05.2018.
@@ -106,6 +108,9 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     private SnapHelper mSnapHelper;
     private MiddlePageManager mSnapManager;
     private boolean mInstanceStateSaved;
+    private boolean isOnButtonLoadingIndicatorActive;
+    private boolean isBottomNavigationBarContinueButtonEnabled;
+    private boolean isBottomNavigationBarLoadingIndicatorActive;
 
     public static MultiPageReviewFragment newInstance() {
 
@@ -378,7 +383,14 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
 
     private void setInjectedLoadingIndicatorContainer() {
         if (GiniCapture.hasInstance() && !GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
-            injectedLoadingIndicatorContainer.setInjectedViewAdapter(GiniCapture.getInstance().getOnButtonLoadingIndicatorAdapter());
+            injectedLoadingIndicatorContainer.setInjectedViewAdapterHolder(new InjectedViewAdapterHolder<>(
+                    GiniCapture.getInstance().internal().getOnButtonLoadingIndicatorAdapterInstance(), injectedViewAdapter -> {
+                        if (isOnButtonLoadingIndicatorActive) {
+                            injectedViewAdapter.onVisible();
+                        } else {
+                            injectedViewAdapter.onHidden();
+                        }
+            }));
         }
     }
 
@@ -393,23 +405,26 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
 
             mReviewNavigationBarBottomAdapter.setLayoutParams(params);
 
-            mReviewNavigationBarBottomAdapter.setInjectedViewAdapter(GiniCapture.getInstance().getReviewNavigationBarBottomAdapter());
-
-            if (mReviewNavigationBarBottomAdapter.getInjectedViewAdapter() == null) {
-                return;
-            }
-
             hideViewsIfBottomBarEnabled();
 
-            mReviewNavigationBarBottomAdapter.getInjectedViewAdapter().setOnAddPageButtonClickListener(new IntervalClickListener(v -> mListener.onReturnToCameraScreenToAddPages()));
+            mReviewNavigationBarBottomAdapter.setInjectedViewAdapterHolder(new InjectedViewAdapterHolder<>(
+                    GiniCapture.getInstance().internal().getReviewNavigationBarBottomAdapterInstance(),
+                    injectedViewAdapter -> {
+                        injectedViewAdapter.setOnAddPageButtonClickListener(new IntervalClickListener(v -> mListener.onReturnToCameraScreenToAddPages()));
 
-            boolean isMultiPage = GiniCapture.getInstance().isMultiPageEnabled();
+                        boolean isMultiPage = GiniCapture.getInstance().isMultiPageEnabled();
 
-            mReviewNavigationBarBottomAdapter.getInjectedViewAdapter().setAddPageButtonVisibility(isMultiPage ? View.VISIBLE : View.GONE);
-            mReviewNavigationBarBottomAdapter.getInjectedViewAdapter().setOnContinueButtonClickListener(new IntervalClickListener(v -> onNextButtonClicked()));
+                        injectedViewAdapter.setAddPageButtonVisibility(isMultiPage ? View.VISIBLE : View.GONE);
+                        injectedViewAdapter.setOnContinueButtonClickListener(new IntervalClickListener(v -> onNextButtonClicked()));
 
+                        injectedViewAdapter.setContinueButtonEnabled(isBottomNavigationBarContinueButtonEnabled);
+                        if (isBottomNavigationBarLoadingIndicatorActive) {
+                            injectedViewAdapter.showLoadingIndicator();
+                        } else {
+                            injectedViewAdapter.hideLoadingIndicator();
+                        }
+                    }));
         }
-
     }
 
     private void hideViewsIfBottomBarEnabled() {
@@ -464,24 +479,19 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
 
     private void setupTopNavigationBar() {
         if (GiniCapture.hasInstance()) {
-            mTopAdapterInjectedViewContainer.setInjectedViewAdapter(GiniCapture.getInstance().getNavigationBarTopAdapter());
+            mTopAdapterInjectedViewContainer.setInjectedViewAdapterHolder(new InjectedViewAdapterHolder<>(
+                    GiniCapture.getInstance().internal().getNavigationBarTopAdapterInstance(),
+                    injectedViewAdapter -> {
+                        injectedViewAdapter.setTitle(getString(R.string.gc_title_review));
 
-            if (mTopAdapterInjectedViewContainer.getInjectedViewAdapter() == null)
-                return;
+                        injectedViewAdapter.setNavButtonType(NavButtonType.CLOSE);
 
-            if (this.getActivity() == null)
-                return;
-
-            mTopAdapterInjectedViewContainer.getInjectedViewAdapter().setTitle(getString(R.string.gc_title_review));
-
-            mTopAdapterInjectedViewContainer.getInjectedViewAdapter().setNavButtonType(NavButtonType.CLOSE);
-
-            mTopAdapterInjectedViewContainer.getInjectedViewAdapter().setOnNavButtonClickListener(new IntervalClickListener(v -> {
-                if (MultiPageReviewFragment.this.getActivity() != null) {
-                    MultiPageReviewFragment.this.getActivity().onBackPressed();
-                }
-            }));
-
+                        injectedViewAdapter.setOnNavButtonClickListener(new IntervalClickListener(v -> {
+                            if (getActivity() != null) {
+                                getActivity().onBackPressed();
+                            }
+                        }));
+                    }));
         }
     }
 
@@ -617,10 +627,12 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
             } else {
                 mButtonNext.animate().alpha(0.5f).start();
             }
-        } else if (mReviewNavigationBarBottomAdapter != null
-                && mReviewNavigationBarBottomAdapter.getInjectedViewAdapter() != null) {
-            mReviewNavigationBarBottomAdapter.getInjectedViewAdapter()
-                    .setContinueButtonEnabled(enabled);
+        } else {
+            isBottomNavigationBarContinueButtonEnabled = enabled;
+            mReviewNavigationBarBottomAdapter.modifyAdapterIfOwned(injectedViewAdapter -> {
+                injectedViewAdapter.setContinueButtonEnabled(enabled);
+                return Unit.INSTANCE;
+            });
         }
     }
 
@@ -752,18 +764,46 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     }
 
     private void showIndicator() {
-        if (injectedLoadingIndicatorContainer != null && injectedLoadingIndicatorContainer.getInjectedViewAdapter() != null)
-            injectedLoadingIndicatorContainer.getInjectedViewAdapter().onVisible();
-        else if (mReviewNavigationBarBottomAdapter != null && mReviewNavigationBarBottomAdapter.getInjectedViewAdapter() != null) {
-            mReviewNavigationBarBottomAdapter.getInjectedViewAdapter().showLoadingIndicator();
+        if (GiniCapture.hasInstance() && !GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
+            isOnButtonLoadingIndicatorActive = true;
+            if (injectedLoadingIndicatorContainer == null) {
+                return;
+            }
+            injectedLoadingIndicatorContainer.modifyAdapterIfOwned(injectedViewAdapter -> {
+                injectedViewAdapter.onVisible();
+                return Unit.INSTANCE;
+            });
+        } else {
+            isBottomNavigationBarLoadingIndicatorActive = true;
+            if (mReviewNavigationBarBottomAdapter == null) {
+                return;
+            }
+            mReviewNavigationBarBottomAdapter.modifyAdapterIfOwned(injectedViewAdapter -> {
+                injectedViewAdapter.showLoadingIndicator();
+                return Unit.INSTANCE;
+            });
         }
     }
 
     private void hideIndicator() {
-        if (injectedLoadingIndicatorContainer != null && injectedLoadingIndicatorContainer.getInjectedViewAdapter() != null)
-            injectedLoadingIndicatorContainer.getInjectedViewAdapter().onHidden();
-        else if (mReviewNavigationBarBottomAdapter != null && mReviewNavigationBarBottomAdapter.getInjectedViewAdapter() != null) {
-            mReviewNavigationBarBottomAdapter.getInjectedViewAdapter().hideLoadingIndicator();
+        if (GiniCapture.hasInstance() && !GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
+            isOnButtonLoadingIndicatorActive = false;
+            if (injectedLoadingIndicatorContainer == null) {
+                return;
+            }
+            injectedLoadingIndicatorContainer.modifyAdapterIfOwned(injectedViewAdapter -> {
+                injectedViewAdapter.onHidden();
+                return Unit.INSTANCE;
+            });
+        } else {
+            isBottomNavigationBarLoadingIndicatorActive = false;
+            if (mReviewNavigationBarBottomAdapter == null) {
+                return;
+            }
+            mReviewNavigationBarBottomAdapter.modifyAdapterIfOwned(injectedViewAdapter -> {
+                injectedViewAdapter.hideLoadingIndicator();
+                return Unit.INSTANCE;
+            });
         }
     }
 

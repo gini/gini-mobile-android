@@ -80,6 +80,7 @@ import net.gini.android.capture.tracking.CameraScreenEvent;
 import net.gini.android.capture.util.IntentHelper;
 import net.gini.android.capture.util.UriHelper;
 import net.gini.android.capture.view.CustomLoadingIndicatorAdapter;
+import net.gini.android.capture.view.InjectedViewAdapterHolder;
 import net.gini.android.capture.view.InjectedViewContainer;
 import net.gini.android.capture.view.NavButtonType;
 import net.gini.android.capture.view.NavigationBarTopAdapter;
@@ -101,6 +102,8 @@ import androidx.constraintlayout.widget.Group;
 import androidx.core.content.ContextCompat;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
@@ -309,7 +312,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         final View view = inflater.inflate(R.layout.gc_fragment_camera, container, false);
 
         bindViews(view);
-        setCustomLoadingIndicator(view);
+        setCustomLoadingIndicator();
         setInputHandlers();
 
         initMultiPageDocument();
@@ -416,9 +419,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
      */
     public void onResume() {
         initMultiPageDocument();
-
-        //We need this to enforce inflation again
-        setCustomLoadingIndicator(mFragment.getView());
     }
 
     private void initMultiPageDocument() {
@@ -438,10 +438,28 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                     setShouldScrollToLastPage(false);
                 }
 
+                topAdapterInjectedViewContainer.modifyAdapterIfOwned(injectedViewAdapter -> {
+                    final boolean isBottomNavigationBarEnabled = GiniCapture.getInstance().isBottomNavigationBarEnabled();
+                    injectedViewAdapter.setNavButtonType(isBottomNavigationBarEnabled ? NavButtonType.NONE : NavButtonType.BACK);
+                    return Unit.INSTANCE;
+                });
+                mBottomInjectedContainer.modifyAdapterIfOwned(injectedViewAdapter -> {
+                    injectedViewAdapter.setBackButtonVisibility(View.VISIBLE);
+                    return Unit.INSTANCE;
+                });
             } else {
                 mInMultiPageState = false;
                 mMultiPageDocument = null;
                 mPhotoThumbnail.removeImage();
+
+                topAdapterInjectedViewContainer.modifyAdapterIfOwned(injectedViewAdapter -> {
+                    injectedViewAdapter.setNavButtonType(NavButtonType.CLOSE);
+                    return Unit.INSTANCE;
+                });
+                mBottomInjectedContainer.modifyAdapterIfOwned(injectedViewAdapter -> {
+                    injectedViewAdapter.setBackButtonVisibility(View.GONE);
+                    return Unit.INSTANCE;
+                });
             }
         }
     }
@@ -542,12 +560,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     void onStop() {
         closeCamera();
 
-        // Remove the injected view adapter to prevent interacting with it
-        // while it might be used in another activity/fragment (it is injected here again in onResume)
-        if (mLoadingIndicator != null) {
-            mLoadingIndicator.setInjectedViewAdapter(null);
-        }
-
         if (mPaymentQRCodePopup != null) {
             mPaymentQRCodePopup.hide();
         }
@@ -620,87 +632,77 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         mImageFrame = view.findViewById(R.id.gc_camera_frame);
         mCameraFrameWrapper = view.findViewById(R.id.gc_camera_frame_wrapper);
         mPaneWrapper = view.findViewById(R.id.gc_pane_wrapper);
+        mLoadingIndicator = view.findViewById(R.id.gc_injected_loading_indicator);
     }
 
     private void setTopBarInjectedViewContainer() {
         if (GiniCapture.hasInstance()) {
-            topAdapterInjectedViewContainer.setInjectedViewAdapter(GiniCapture.getInstance().getNavigationBarTopAdapter());
+            topAdapterInjectedViewContainer.setInjectedViewAdapterHolder(new InjectedViewAdapterHolder<>(GiniCapture.getInstance().internal().getNavigationBarTopAdapterInstance(), injectedViewAdapter -> {
+                if (mFragment.getActivity() == null)
+                    return;
 
-            if (topAdapterInjectedViewContainer.getInjectedViewAdapter() == null)
-                return;
+                boolean isBottomBarEnabled = GiniCapture.getInstance().isBottomNavigationBarEnabled();
 
-            if (mFragment.getActivity() == null)
-                return;
+                if (isOnlyQRCodeScanningEnabled()) {
+                    injectedViewAdapter.setNavButtonType(NavButtonType.CLOSE);
+                } else if (mMultiPageDocument != null && !mMultiPageDocument.getDocuments().isEmpty()) {
+                    injectedViewAdapter.setNavButtonType(isBottomBarEnabled ? NavButtonType.NONE : NavButtonType.BACK);
+                } else {
+                    injectedViewAdapter.setNavButtonType(NavButtonType.CLOSE);
+                }
 
-            boolean isBottomBarEnabled = GiniCapture.getInstance().isBottomNavigationBarEnabled();
+                if (!isOnlyQRCodeScanningEnabled()) {
+                    injectedViewAdapter.setTitle(ContextHelper.isTablet(mFragment.getActivity()) ? mFragment.getActivity().getResources().getString(R.string.gc_camera_title) :
+                            mFragment.getActivity().getResources().getString(R.string.gc_title_camera));
+                } else {
+                    injectedViewAdapter.setTitle(mFragment.getActivity().getString(R.string.gc_scan));
+                }
 
-            if (isOnlyQRCodeScanningEnabled()) {
-                topAdapterInjectedViewContainer.getInjectedViewAdapter().setNavButtonType(NavButtonType.CLOSE);
-            } else if (mMultiPageDocument != null && !mMultiPageDocument.getDocuments().isEmpty()) {
-                topAdapterInjectedViewContainer.getInjectedViewAdapter().setNavButtonType(isBottomBarEnabled ? NavButtonType.NONE : NavButtonType.BACK);
-            } else {
-                topAdapterInjectedViewContainer.getInjectedViewAdapter().setNavButtonType(NavButtonType.CLOSE);
-            }
+                if (!isBottomBarEnabled && !isOnlyQRCodeScanningEnabled()) {
+                    injectedViewAdapter.setMenuResource(R.menu.gc_camera);
+                    injectedViewAdapter.setOnMenuItemClickListener(new IntervalToolbarMenuItemIntervalClickListener(item -> {
+                        if (item.getItemId() == R.id.gc_action_show_onboarding) {
+                            startHelpActivity();
+                        } else {
+                            throw new UnsupportedOperationException("Unknown menu item id. Please don't call our OnMenuItemClickListener for custom menu items.");
+                        }
+                        return true;
+                    }));
+                }
 
-            if (!isOnlyQRCodeScanningEnabled()) {
-                topAdapterInjectedViewContainer.getInjectedViewAdapter().setTitle(ContextHelper.isTablet(mFragment.getActivity()) ? mFragment.getActivity().getResources().getString(R.string.gc_camera_title) :
-                        mFragment.getActivity().getResources().getString(R.string.gc_title_camera));
-            } else {
-                topAdapterInjectedViewContainer.getInjectedViewAdapter()
-                        .setTitle(mFragment.getActivity().getString(R.string.gc_scan));
-            }
+                injectedViewAdapter.setOnNavButtonClickListener(new IntervalClickListener(v -> mFragment.getActivity().onBackPressed()));
+            }));
 
-            if (!isBottomBarEnabled && !isOnlyQRCodeScanningEnabled()) {
-                topAdapterInjectedViewContainer.getInjectedViewAdapter().setMenuResource(R.menu.gc_camera);
-                topAdapterInjectedViewContainer.getInjectedViewAdapter().setOnMenuItemClickListener(new IntervalToolbarMenuItemIntervalClickListener(item -> {
-                    if (item.getItemId() == R.id.gc_action_show_onboarding) {
-                        startHelpActivity();
-                    } else {
-                        throw new UnsupportedOperationException("Unknown menu item id. Please don't call our OnMenuItemClickListener for custom menu items.");
-                    }
-                    return true;
-                }));
-            }
-
-            topAdapterInjectedViewContainer.getInjectedViewAdapter().setOnNavButtonClickListener(new IntervalClickListener(v -> mFragment.getActivity().onBackPressed()));
         }
     }
 
 
     private void setBottomInjectedViewContainer() {
         if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled() && !isOnlyQRCodeScanningEnabled()) {
-            CameraNavigationBarBottomAdapter adapter = GiniCapture.getInstance().getCameraNavigationBarBottomAdapter();
+            mBottomInjectedContainer.setInjectedViewAdapterHolder(new InjectedViewAdapterHolder<>(
+                    GiniCapture.getInstance().internal().getCameraNavigationBarBottomAdapterInstance(),
+                    injectedViewAdapter -> {
+                        boolean isEmpty = mMultiPageDocument == null || mMultiPageDocument.getDocuments().isEmpty();
+                        injectedViewAdapter.setBackButtonVisibility(isEmpty ? View.GONE : View.VISIBLE);
 
-            mBottomInjectedContainer.setInjectedViewAdapter(adapter);
+                        injectedViewAdapter.setOnBackButtonClickListener(new IntervalClickListener(v -> {
+                            if (mFragment.getActivity() != null)
+                                mFragment.getActivity().finish();
+                        }));
 
-            if (mBottomInjectedContainer.getInjectedViewAdapter() == null)
-                return;
-
-            boolean isEmpty = mMultiPageDocument == null || mMultiPageDocument.getDocuments().isEmpty();
-
-            mBottomInjectedContainer.getInjectedViewAdapter()
-                    .setBackButtonVisibility(isEmpty ? View.GONE : View.VISIBLE);
-
-
-            adapter.setOnBackButtonClickListener(new IntervalClickListener(v -> {
-                if (mFragment.getActivity() != null)
-                    mFragment.getActivity().finish();
-            }));
-
-            adapter.setOnHelpButtonClickListener(new IntervalClickListener(v -> startHelpActivity()));
+                        injectedViewAdapter.setOnHelpButtonClickListener(new IntervalClickListener(v -> startHelpActivity()));
+                    }));
         }
-
     }
 
-    private void setCustomLoadingIndicator(View view) {
-        if (GiniCapture.hasInstance() && view != null) {
-            mLoadingIndicator = view.findViewById(R.id.gc_injected_loading_indicator);
-            mLoadingIndicator.invalidate();
-            mLoadingIndicator.setInjectedViewAdapter(null);
-            mLoadingIndicator.setInjectedViewAdapter(GiniCapture.getInstance().getloadingIndicatorAdapter());
+    private void setCustomLoadingIndicator() {
+        if (GiniCapture.hasInstance()) {
+//            mLoadingIndicator.invalidate();
+            mLoadingIndicator.setInjectedViewAdapterHolder(new InjectedViewAdapterHolder<>(GiniCapture.getInstance().internal().getLoadingIndicatorAdapterInstance(), injectedViewAdapter -> {}));
+//            mLoadingIndicator.setInjectedViewAdapter(GiniCapture.getInstance().getloadingIndicatorAdapter());
 
-            if (mLoadingIndicator.getInjectedViewAdapter() != null)
-                mLoadingIndicator.getInjectedViewAdapter().onHidden();
+//            if (mLoadingIndicator.getInjectedViewAdapter() != null)
+//                mLoadingIndicator.getInjectedViewAdapter().onHidden();
         }
     }
 
@@ -1137,25 +1139,31 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     @Override
     public void showActivityIndicatorAndDisableInteraction() {
-        if (mLoadingIndicator.getInjectedViewAdapter() == null
+        if (mLoadingIndicator.getInjectedViewAdapterHolder() == null
                 || mActivityIndicatorBackground == null) {
             return;
         }
         mActivityIndicatorBackground.setVisibility(View.VISIBLE);
         mActivityIndicatorBackground.setClickable(true);
-        mLoadingIndicator.getInjectedViewAdapter().onVisible();
+        mLoadingIndicator.modifyAdapterIfOwned(adapter -> {
+            adapter.onVisible();
+            return Unit.INSTANCE;
+        });
         disableInteraction();
     }
 
     @Override
     public void hideActivityIndicatorAndEnableInteraction() {
-        if (mLoadingIndicator.getInjectedViewAdapter() == null
+        if (mLoadingIndicator.getInjectedViewAdapterHolder() == null
                 || mActivityIndicatorBackground == null) {
             return;
         }
         mActivityIndicatorBackground.setVisibility(View.INVISIBLE);
         mActivityIndicatorBackground.setClickable(false);
-        mLoadingIndicator.getInjectedViewAdapter().onHidden();
+        mLoadingIndicator.modifyAdapterIfOwned(adapter -> {
+            adapter.onHidden();
+            return Unit.INSTANCE;
+        });
         enableInteraction();
     }
 

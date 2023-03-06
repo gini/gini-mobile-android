@@ -3,7 +3,6 @@ package net.gini.android.capture.help
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -14,6 +13,7 @@ import net.gini.android.capture.help.HelpItem.PhotoTips
 import net.gini.android.capture.help.view.HelpNavigationBarBottomAdapter
 import net.gini.android.capture.internal.ui.IntervalClickListener
 import net.gini.android.capture.internal.util.ActivityHelper
+import net.gini.android.capture.view.InjectedViewAdapterHolder
 import net.gini.android.capture.view.InjectedViewContainer
 import net.gini.android.capture.view.NavButtonType
 import net.gini.android.capture.view.NavigationBarTopAdapter
@@ -43,35 +43,36 @@ class HelpActivity : AppCompatActivity() {
     }
 
     private fun setupTopBarNavigation() {
-        val topBarInjectedViewContainer = findViewById<InjectedViewContainer<NavigationBarTopAdapter>>(R.id.gc_injected_navigation_bar_container_top)
+        val topBarInjectedViewContainer =
+            findViewById<InjectedViewContainer<NavigationBarTopAdapter>>(R.id.gc_injected_navigation_bar_container_top)
         if (GiniCapture.hasInstance()) {
-
-            topBarInjectedViewContainer.injectedViewAdapter = GiniCapture.getInstance().navigationBarTopAdapter
-
-            val topBarAdapter = topBarInjectedViewContainer?.injectedViewAdapter
-
-            val navType = if (GiniCapture.getInstance().isBottomNavigationBarEnabled)
-                NavButtonType.NONE else NavButtonType.BACK
-            topBarAdapter?.setNavButtonType(navType)
-
-            topBarAdapter?.setTitle(getString(R.string.gc_title_help))
-            topBarAdapter?.setOnNavButtonClickListener(IntervalClickListener {
-                onBackPressed()
-            })
+            topBarInjectedViewContainer.injectedViewAdapterHolder =
+                InjectedViewAdapterHolder(
+                    GiniCapture.getInstance().internal().navigationBarTopAdapterInstance
+                ) { injectedViewAdapter ->
+                    val navType = if (GiniCapture.getInstance().isBottomNavigationBarEnabled)
+                        NavButtonType.NONE else NavButtonType.BACK
+                    injectedViewAdapter.setNavButtonType(navType)
+                    injectedViewAdapter.setTitle(getString(R.string.gc_title_help))
+                    injectedViewAdapter.setOnNavButtonClickListener(IntervalClickListener {
+                        onBackPressed()
+                    })
+                }
         }
     }
 
 
     private fun setupBottomBarNavigation() {
-        val injectedViewContainer: InjectedViewContainer<HelpNavigationBarBottomAdapter>? = findViewById(R.id.gc_injected_navigation_bar_container_bottom)
+        val injectedViewContainer: InjectedViewContainer<HelpNavigationBarBottomAdapter>? =
+            findViewById(R.id.gc_injected_navigation_bar_container_bottom)
         if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled) {
-
-            injectedViewContainer?.injectedViewAdapter = GiniCapture.getInstance().helpNavigationBarBottomAdapter
-
-            val helpNavigationBarBottomAdapter = injectedViewContainer?.injectedViewAdapter
-            helpNavigationBarBottomAdapter?.setOnBackClickListener(IntervalClickListener {
-                onBackPressed()
-            })
+            injectedViewContainer?.injectedViewAdapterHolder = InjectedViewAdapterHolder(
+                GiniCapture.getInstance().internal().helpNavigationBarBottomAdapterInstance
+            ) { injectedViewAdapter ->
+                injectedViewAdapter.setOnBackClickListener(IntervalClickListener {
+                    onBackPressed()
+                })
+            }
         }
     }
 

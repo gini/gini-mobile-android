@@ -263,7 +263,7 @@ class OnboardingScreenPresenterTest {
         presenter.start()
 
         // Then
-        verify(mView).setNavigationBarBottomAdapter(eq(GiniCapture.getInstance().onboardingNavigationBarBottomAdapter))
+        verify(mView).setNavigationBarBottomAdapterInstance(eq(GiniCapture.getInstance().internal().onboardingNavigationBarBottomAdapterInstance))
     }
 
     @Test
@@ -280,7 +280,7 @@ class OnboardingScreenPresenterTest {
         presenter.start()
 
         // Then
-        verify(mView).setNavigationBarBottomAdapter(eq(customOnboardingNavigationBarBottomAdapter))
+        verify(mView).setNavigationBarBottomAdapterInstance(eq(GiniCapture.getInstance().internal().onboardingNavigationBarBottomAdapterInstance))
     }
 
     @Test

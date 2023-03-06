@@ -7,17 +7,15 @@ import android.os.Parcelable
 import android.view.MenuItem
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
-import net.gini.android.capture.Document
-import net.gini.android.capture.GiniCapture
-import net.gini.android.capture.R
+import net.gini.android.capture.*
 import net.gini.android.capture.camera.CameraActivity.RESULT_CAMERA_SCREEN
 import net.gini.android.capture.camera.CameraActivity.RESULT_ENTER_MANUALLY
+import net.gini.android.capture.error.view.ErrorNavigationBarBottomAdapter
+import net.gini.android.capture.internal.ui.IntervalClickListener
 import net.gini.android.capture.internal.util.ActivityHelper
 import net.gini.android.capture.noresults.NoResultsActivity
 import net.gini.android.capture.noresults.NoResultsActivity.EXTRA_IN_DOCUMENT
-import net.gini.android.capture.ImageRetakeOptionsListener
-import net.gini.android.capture.error.view.ErrorNavigationBarBottomAdapter
-import net.gini.android.capture.internal.ui.IntervalClickListener
+import net.gini.android.capture.view.InjectedViewAdapterHolder
 import net.gini.android.capture.view.InjectedViewContainer
 import net.gini.android.capture.view.NavButtonType
 import net.gini.android.capture.view.NavigationBarTopAdapter
@@ -26,7 +24,7 @@ import net.gini.android.capture.view.NavigationBarTopAdapter
  * Internal use only
  */
 class ErrorActivity : AppCompatActivity(),
-    ImageRetakeOptionsListener {
+    ImageRetakeOptionsListener, ErrorFragmentListener {
 
     private var mDocument: Document? = null
     private var mErrorType: ErrorType? = null
@@ -51,30 +49,33 @@ class ErrorActivity : AppCompatActivity(),
         val topBarContainer =
             findViewById<InjectedViewContainer<NavigationBarTopAdapter>>(R.id.gc_injected_navigation_bar_container_top)
         if (GiniCapture.hasInstance()) {
-            topBarContainer.injectedViewAdapter = GiniCapture.getInstance().navigationBarTopAdapter
+            topBarContainer.injectedViewAdapterHolder = InjectedViewAdapterHolder(GiniCapture.getInstance().internal().navigationBarTopAdapterInstance) { injectedViewAdapter ->
+                injectedViewAdapter.apply {
+                    setTitle(getString(R.string.gc_title_error))
 
-            topBarContainer.injectedViewAdapter?.apply {
-                setTitle(getString(R.string.gc_title_error))
-
-                if (!GiniCapture.getInstance().isBottomNavigationBarEnabled) {
-                    setNavButtonType(NavButtonType.BACK)
-                    setOnNavButtonClickListener(IntervalClickListener {
-                        onBackPressed()
-                    })
-                } else setNavButtonType(NavButtonType.NONE)
+                    if (!GiniCapture.getInstance().isBottomNavigationBarEnabled) {
+                        setNavButtonType(NavButtonType.BACK)
+                        setOnNavButtonClickListener(IntervalClickListener {
+                            onBackPressed()
+                        })
+                    } else {
+                        setNavButtonType(NavButtonType.NONE)
+                    }
+                }
             }
         }
     }
 
     private fun setBottomBarInjectedContainer() {
         if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled) {
-            val bottomBarContainer = findViewById<InjectedViewContainer<ErrorNavigationBarBottomAdapter>>(R.id.gc_injected_navigation_bar_container_bottom)
-            bottomBarContainer.injectedViewAdapter = GiniCapture.getInstance().errorNavigationBarBottomAdapter
-            bottomBarContainer.injectedViewAdapter?.apply {
-                setOnBackButtonClickListener(IntervalClickListener {
-                    onBackPressed()
-                })
-            }
+            // TODO: remove later
+//            val bottomBarContainer = findViewById<InjectedViewContainer<ErrorNavigationBarBottomAdapter>>(R.id.gc_injected_navigation_bar_container_bottom)
+//            bottomBarContainer.injectedViewAdapter = GiniCapture.getInstance().errorNavigationBarBottomAdapter
+//            bottomBarContainer.injectedViewAdapter?.apply {
+//                setOnBackButtonClickListener(IntervalClickListener {
+//                    onBackPressed()
+//                })
+//            }
         }
     }
 
@@ -129,6 +130,13 @@ class ErrorActivity : AppCompatActivity(),
         isActivityShown = false
     }
 
+    override fun onError(error: GiniCaptureError) {
+        val result = Intent()
+        result.putExtra(EXTRA_OUT_ERROR, error)
+        setResult(RESULT_ERROR, result)
+        finish()
+    }
+
     companion object {
         /**
          * Internal use only.
@@ -141,7 +149,11 @@ class ErrorActivity : AppCompatActivity(),
 
         const val EXTRA_IN_ERROR = "GC_EXTRA_IN_ERROR"
 
+        const val EXTRA_OUT_ERROR = "GC_EXTRA_OUT_ERROR"
+
         const val EXTRA_ERROR_STRING = "GC_EXTRA_ERROR_STRING"
+
+        const val RESULT_ERROR = RESULT_FIRST_USER + 1
 
         var isActivityShown: Boolean = false
 

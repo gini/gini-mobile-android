@@ -7,11 +7,7 @@ import android.app.Activity;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.GiniCaptureError;
 import net.gini.android.capture.internal.util.FeatureConfiguration;
-import net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomAdapter;
 import net.gini.android.capture.tracking.OnboardingScreenEvent;
-import net.gini.android.capture.view.DefaultNavigationBarTopAdapter;
-import net.gini.android.capture.view.NavButtonType;
-import net.gini.android.capture.view.NavigationBarTopAdapter;
 
 import java.util.List;
 
@@ -125,8 +121,8 @@ class OnboardingScreenPresenter extends OnboardingScreenContract.Presenter {
 
     private void setupNavigationBarBottom() {
         if (GiniCapture.hasInstance()) {
-            final OnboardingNavigationBarBottomAdapter navigationBarBottomAdapter = GiniCapture.getInstance().getOnboardingNavigationBarBottomAdapter();
-            getView().setNavigationBarBottomAdapter(navigationBarBottomAdapter);
+            getView().setNavigationBarBottomAdapterInstance(
+                    GiniCapture.getInstance().internal().getOnboardingNavigationBarBottomAdapterInstance());
             getView().hideButtons();
         }
     }
