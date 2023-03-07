@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -706,9 +707,19 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         }
     }
 
+    private void setmIsTakingPicture(boolean mIsTakingPicture) {
+        this.mIsTakingPicture = mIsTakingPicture;
+
+        if (mIsTakingPicture) {
+            disableInteraction();
+        } else {
+            enableInteraction();
+        }
+    }
+
     private void startHelpActivity() {
 
-        if (mFragment.getActivity() == null)
+        if (mFragment.getActivity() == null || mIsTakingPicture)
             return;
 
         final Intent intent = new Intent(mFragment.getActivity(), HelpActivity.class);
@@ -786,7 +797,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             LOG.info("Already taking a picture");
             return;
         }
-        mIsTakingPicture = true;
+        setmIsTakingPicture(true);
         mCameraController.takePicture()
                 .handle((CompletableFuture.BiFun<Photo, Throwable, Void>) (photo, throwable) -> {
                     mUIExecutor.runOnUiThread(() -> {
@@ -1267,7 +1278,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             handleError(GiniCaptureError.ErrorCode.CAMERA_SHOT_FAILED, "Failed to take picture",
                     throwable);
             mCameraController.startPreview();
-            mIsTakingPicture = false;
+            setmIsTakingPicture(false);
         } else {
             if (photo != null) {
                 LOG.info("Picture taken");
@@ -1285,14 +1296,14 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                                                 "Failed to take picture: could not save picture to disk",
                                                 null);
                                         mCameraController.startPreview();
-                                        mIsTakingPicture = false;
+                                        setmIsTakingPicture(false);
                                         return;
                                     }
                                     mMultiPageDocument.addDocument(document);
                                     mPhotoThumbnail.setImage(new PhotoThumbnail.ThumbnailBitmap(result.getBitmapPreview(),
                                             document.getRotationForDisplay()));
                                     mPhotoThumbnail.setImageCount(mMultiPageDocument.getDocuments().size());
-                                    /*mIsTakingPicture = false;
+                                    /*setmIsTakingPicture(false);
                                     mCameraController.startPreview();*/
 
                                     mListener.onProceedToMultiPageReviewScreen(mMultiPageDocument, shouldScrollToLastPage());
@@ -1305,7 +1316,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                                                     "Failed to take picture: could not save picture to disk",
                                                     null);
                                             mCameraController.startPreview();
-                                            mIsTakingPicture = false;
+                                            setmIsTakingPicture(false);
                                             return;
                                         }
                                         mInMultiPageState = true;
@@ -1320,13 +1331,13 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                                                         document.getRotationForDisplay()));
                                         mPhotoThumbnail.setImageCount(mMultiPageDocument.getDocuments().size());
                                         mListener.onProceedToMultiPageReviewScreen(mMultiPageDocument, shouldScrollToLastPage());
-                                        mIsTakingPicture = false;
+                                        setmIsTakingPicture(false);
                                     } else {
                                         final ImageDocument document =
                                                 DocumentFactory.newImageDocumentFromPhoto(
                                                         result);
                                         mListener.onDocumentAvailable(document);
-                                        mIsTakingPicture = false;
+                                        setmIsTakingPicture(false);
                                     }
                                     mCameraController.startPreview();
                                 }
@@ -1338,14 +1349,14 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                                 handleError(GiniCaptureError.ErrorCode.CAMERA_SHOT_FAILED,
                                         "Failed to take picture: picture compression failed", null);
                                 mCameraController.startPreview();
-                                mIsTakingPicture = false;
+                                setmIsTakingPicture(false);
                             }
                         });
             } else {
                 handleError(GiniCaptureError.ErrorCode.CAMERA_SHOT_FAILED,
                         "Failed to take picture: no picture from the camera", null);
                 mCameraController.startPreview();
-                mIsTakingPicture = false;
+                setmIsTakingPicture(false);
             }
         }
     }
