@@ -1234,12 +1234,14 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         if (mCameraPreview == null
                 || mButtonImportDocumentWrapper == null
                 || mButtonCameraFlashWrapper == null
+                || mPhotoThumbnail == null
                 || mButtonCameraTrigger == null) {
             return;
         }
         mCameraPreview.setEnabled(true);
         mButtonImportDocumentWrapper.setEnabled(true);
         mButtonCameraFlashWrapper.setEnabled(true);
+        mPhotoThumbnail.setEnabled(true);
         mButtonCameraTrigger.setEnabled(true);
     }
 
@@ -1247,12 +1249,14 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         if (mCameraPreview == null
                 || mButtonImportDocumentWrapper == null
                 || mButtonCameraFlashWrapper == null
+                || mPhotoThumbnail == null
                 || mButtonCameraTrigger == null) {
             return;
         }
         mCameraPreview.setEnabled(false);
         mButtonImportDocumentWrapper.setEnabled(false);
         mButtonCameraFlashWrapper.setEnabled(false);
+        mPhotoThumbnail.setEnabled(false);
         mButtonCameraTrigger.setEnabled(false);
     }
 
@@ -1454,6 +1458,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         if (mImportDocumentButtonEnabled) {
             showImportDocumentButtonAnimated();
         }
+        showPaneAnimated();
     }
 
     private void showPhotoThumbnailAnimated() {
@@ -1461,14 +1466,17 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     }
 
     private void showImportDocumentButtonAnimated() {
-        mImportButtonGroup.animate().alpha(1.0f);
-        mButtonImportDocument.setEnabled(true);
-        mImportButtonGroup.setEnabled(true);
+        mButtonImportDocumentWrapper.animate().alpha(1.0f);
+        mButtonImportDocumentWrapper.setEnabled(true);
     }
 
     private void showFlashButtonAnimated() {
-        mCameraFlashButtonGroup.animate().alpha(1.0f);
-        mCameraFlashButtonGroup.setEnabled(true);
+        mButtonCameraFlashWrapper.animate().alpha(1.0f);
+        mButtonCameraFlashWrapper.setEnabled(true);
+    }
+
+    private void showPaneAnimated() {
+        mPaneWrapper.animate().alpha(1.0f);
     }
 
     @Override
@@ -1488,6 +1496,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             hideImportDocumentButtonAnimated();
         }
         hideFlashButtonAnimated();
+        hidePaneAnimated();
     }
 
     private void hidePhotoThumbnailAnimated() {
@@ -1495,9 +1504,12 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     }
 
     private void hideImportDocumentButtonAnimated() {
-        mImportButtonGroup.animate().alpha(0.0f);
-        mButtonImportDocument.setEnabled(false);
-        mImportButtonGroup.setEnabled(false);
+        mButtonImportDocumentWrapper.animate().alpha(0.0f);
+        mButtonImportDocumentWrapper.setEnabled(false);
+    }
+
+    private void hidePaneAnimated() {
+        mPaneWrapper.animate().alpha(0.0f);
     }
 
     private void showNoPermissionView() {
@@ -1569,8 +1581,8 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     }
 
     private void hideFlashButtonAnimated() {
-        mCameraFlashButtonGroup.animate().alpha(0.0f);
-        mCameraFlashButtonGroup.setEnabled(false);
+        mButtonCameraFlashWrapper.animate().alpha(0.0f);
+        mButtonCameraFlashWrapper.setEnabled(false);
     }
 
     private void startApplicationDetailsSettings() {

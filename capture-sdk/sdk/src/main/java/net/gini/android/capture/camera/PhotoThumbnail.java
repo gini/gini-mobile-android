@@ -69,6 +69,12 @@ public class PhotoThumbnail extends ConstraintLayout {
         this.clickListener = clickListener;
     }
 
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        thumbnail.setEnabled(enabled);
+    }
+
     private void addClickListener(@NonNull final View view) {
         final boolean clickable = clickListener != null;
         view.setClickable(clickable);
