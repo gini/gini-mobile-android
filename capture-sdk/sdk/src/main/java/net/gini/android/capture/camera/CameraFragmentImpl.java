@@ -312,6 +312,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         final View view = inflater.inflate(R.layout.gc_fragment_camera, container, false);
 
         bindViews(view);
+        preventPaneClickThrough();
         setCustomLoadingIndicator();
         setInputHandlers();
 
@@ -634,6 +635,11 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         mCameraFrameWrapper = view.findViewById(R.id.gc_camera_frame_wrapper);
         mPaneWrapper = view.findViewById(R.id.gc_pane_wrapper);
         mLoadingIndicator = view.findViewById(R.id.gc_injected_loading_indicator);
+    }
+
+    private void preventPaneClickThrough() {
+        mPaneWrapper.setEnabled(false);
+        mPaneWrapper.setOnClickListener(v -> {});
     }
 
     private void setTopBarInjectedViewContainer() {
