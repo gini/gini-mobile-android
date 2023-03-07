@@ -170,13 +170,13 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
         } else {
             binding.gbsDropDownArrow.visibility = View.GONE
             context?.let {
-                val typedArray = it.obtainStyledAttributes(R.styleable.CurrencyStyle)
-                binding.gbsDropDownSelectionValue.setTextColor(typedArray.getColor(R.styleable.CurrencyStyle_gbsBottomSheetItemTitle, R.color.Light_01))
+                val typedArray = it.obtainStyledAttributes(R.styleable.GBSCurrencyStyle)
+                binding.gbsDropDownSelectionValue.setTextColor(typedArray.getColor(R.styleable.GBSCurrencyStyle_gbsBottomSheetItemTitle, R.color.gc_light_01))
             }
 
             // Setting large margin to currency label if arrow is hidden to align with + button on UI
             val param = (binding.gbsDropDownSelectionValue.layoutParams as ViewGroup.MarginLayoutParams).apply {
-                setMargins(0,0, resources.getDimension(R.dimen.large).toInt(),0)
+                setMargins(0,0, resources.getDimension(R.dimen.gc_large).toInt(),0)
             }
             binding.gbsDropDownSelectionValue.layoutParams = param
         }
@@ -240,7 +240,7 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
                 binding.gbsNameTxt.setTextColor(
                     ContextCompat.getColor(
                         requireContext(),
-                        R.color.Accent_01
+                        R.color.gc_accent_01
                     )
                 )
                 binding.gbsArticleNameDivider.visibility = View.VISIBLE
@@ -255,7 +255,7 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
                 binding.gbsUnitPriceTxt.setTextColor(
                     ContextCompat.getColor(
                         requireContext(),
-                        R.color.Accent_01
+                        R.color.gc_accent_01
                     )
                 )
                 binding.gbsUnitPriceDivider.visibility = View.VISIBLE
@@ -356,12 +356,12 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
             }
             convertView!!.findViewById<TextView>(R.id.gbs_currency_textview).text = items[position]
 
-            val typedArray = mContext.theme.obtainStyledAttributes(R.styleable.CurrencyStyle)
+            val typedArray = mContext.theme.obtainStyledAttributes(R.styleable.GBSCurrencyStyle)
 
             if (items[position] == selectedCurrency) {
-                convertView.setBackgroundColor(typedArray.getColor(R.styleable.CurrencyStyle_gbsCurrencyPickerItemSelectedColor, R.color.Light_01))
+                convertView.setBackgroundColor(typedArray.getColor(R.styleable.GBSCurrencyStyle_gbsCurrencyPickerItemSelectedColor, R.color.gc_light_01))
             } else {
-                convertView.setBackgroundColor(typedArray.getColor(R.styleable.CurrencyStyle_gbsCurrencyPickerItemBackgroundColor, R.color.Light_01))
+                convertView.setBackgroundColor(typedArray.getColor(R.styleable.GBSCurrencyStyle_gbsCurrencyPickerItemBackgroundColor, R.color.gc_light_01))
             }
 
             return convertView

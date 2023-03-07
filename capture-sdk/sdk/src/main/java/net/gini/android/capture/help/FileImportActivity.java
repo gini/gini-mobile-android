@@ -7,36 +7,25 @@ import android.os.Handler;
 import android.os.Looper;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.ContextCompat;
 
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.R;
-import net.gini.android.capture.analysis.AnalysisActivity;
-import net.gini.android.capture.camera.CameraActivity;
 import net.gini.android.capture.help.view.HelpNavigationBarBottomAdapter;
 import net.gini.android.capture.internal.ui.IntervalClickListener;
-import net.gini.android.capture.noresults.NoResultsActivity;
-import net.gini.android.capture.review.ReviewActivity;
 import net.gini.android.capture.view.InjectedViewAdapterHolder;
 import net.gini.android.capture.view.InjectedViewContainer;
 import net.gini.android.capture.view.NavButtonType;
 import net.gini.android.capture.view.NavigationBarTopAdapter;
 
-import static net.gini.android.capture.internal.util.ActivityHelper.enableHomeAsUp;
 import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
 
-import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.snackbar.Snackbar;
 
 /**
@@ -108,11 +97,11 @@ public class FileImportActivity extends AppCompatActivity {
         Snackbar.SnackbarLayout snackBarLayout = (Snackbar.SnackbarLayout) snackbar.getView();
 
         int bottomPadding = GiniCapture.getInstance().isBottomNavigationBarEnabled()
-                ? (int) getResources().getDimension(R.dimen.xxxxxlarge) : 0;
+                ? (int) getResources().getDimension(R.dimen.gc_large_96) : 0;
 
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) snackBarLayout.getLayoutParams();
 
-        params.setMargins((int)getResources().getDimension(R.dimen.medium), 0, (int)getResources().getDimension(R.dimen.medium), bottomPadding);
+        params.setMargins((int)getResources().getDimension(R.dimen.gc_medium), 0, (int)getResources().getDimension(R.dimen.gc_medium), bottomPadding);
 
         snackbar.getView().setLayoutParams(params);
 

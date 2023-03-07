@@ -2,17 +2,17 @@
 <resources>
 
     <style name="Root.GiniCaptureTheme.Night" parent="Root.GiniCaptureTheme">
-        <item name="colorPrimary">@color/Accent_01</item>
-        <item name="colorPrimaryDark">@color/Dark_01</item>
-        <item name="colorOnPrimary">@color/Light_01</item>
-        <item name="colorSurface">@color/Dark_02</item>
-        <item name="backgroundColor">@color/Dark_01</item>
-        <item name="colorOnBackground">@color/Light_01</item>
-        <item name="dividerColor">@color/Dark_03</item>
-        <item name="colorSurfaceInverse">@color/Light_04</item>
-        <item name="colorOnSurfaceInverse">@color/Dark_02</item>
-        <item name="pageItemBackground">@color/Dark_01</item>
-        <item name="errorScreenSubtitle">@color/Dark_06</item>
+        <item name="colorPrimary">@color/gc_accent_01</item>
+        <item name="colorPrimaryDark">@color/gc_dark_01</item>
+        <item name="colorOnPrimary">@color/gc_light_01</item>
+        <item name="colorSurface">@color/gc_dark_02</item>
+        <item name="backgroundColor">@color/gc_dark_01</item>
+        <item name="colorOnBackground">@color/gc_light_01</item>
+        <item name="dividerColor">@color/gc_dark_03</item>
+        <item name="colorSurfaceInverse">@color/gc_light_04</item>
+        <item name="colorOnSurfaceInverse">@color/gc_dark_02</item>
+        <item name="gcPageItemBackground">@color/gc_dark_01</item>
+        <item name="gcErrorScreenSubtitle">@color/gc_dark_06</item>
         <item name="android:windowLightStatusBar">false</item>
     </style>
 

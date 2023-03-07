@@ -42,7 +42,7 @@ class DefaultOnButtonLoadingIndicatorAdapter: OnButtonLoadingIndicatorAdapter {
                 ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             indeterminateTintMode = PorterDuff.Mode.SRC_IN
             isIndeterminate = true
-            indeterminateTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.Accent_01))
+            indeterminateTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.gc_accent_01))
         }
         this.progressBar = progressBar
 

@@ -20,7 +20,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:alpha="0.15"
-        android:background="@color/Error_01"
+        android:background="@color/gc_error_01"
         app:layout_constraintBottom_toBottomOf="@id/gc_no_results_header_layout"
         app:layout_constraintEnd_toEndOf="@id/gc_no_results_header_layout"
         app:layout_constraintStart_toStartOf="@id/gc_no_results_header_layout"
@@ -34,17 +34,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="@dimen/large"
-        android:minHeight="@dimen/xxxlarge"
-        android:paddingStart="@dimen/large_24"
-        android:paddingEnd="@dimen/large_24">
+        android:layout_marginTop="@dimen/gc_large"
+        android:minHeight="@dimen/gc_large_64"
+        android:paddingStart="@dimen/gc_large_24"
+        android:paddingEnd="@dimen/gc_large_24">
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_toStartOf="@id/gc_no_results_header"
-            android:layout_marginEnd="@dimen/large_24"
+            android:layout_marginEnd="@dimen/gc_large_24"
             android:src="@drawable/gc_alert_triangle_icon"/>
 
         <TextView
@@ -63,8 +63,8 @@
         style="@style/GiniCaptureTheme.Typography.Subtitle2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/large"
-        android:layout_marginTop="@dimen/large"
+        android:layout_marginStart="@dimen/gc_large"
+        android:layout_marginTop="@dimen/gc_large"
         app:layout_constraintStart_toStartOf="@+id/gc_no_results_recyclerview"
         app:layout_constraintTop_toBottomOf="@+id/view3"
         tools:text="@string/gc_useful_tips" />
@@ -73,8 +73,8 @@
         android:id="@+id/gc_no_results_recyclerview"
         android:layout_width="@dimen/gc_tablet_width"
         android:layout_height="0dp"
-        android:layout_marginTop="@dimen/medium"
-        android:layout_marginBottom="@dimen/medium"
+        android:layout_marginTop="@dimen/gc_medium"
+        android:layout_marginBottom="@dimen/gc_medium"
         android:overScrollMode="never"
         app:layout_constraintBottom_toTopOf="@id/gc_no_results_button_container"
         app:layout_constraintEnd_toEndOf="parent"
@@ -89,9 +89,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginStart="@dimen/xxlarge"
-        android:layout_marginEnd="@dimen/xxlarge"
-        android:layout_marginBottom="@dimen/large_24">
+        android:layout_marginStart="@dimen/gc_large_48"
+        android:layout_marginEnd="@dimen/gc_large_48"
+        android:layout_marginBottom="@dimen/gc_large_24">
 
         <Button
             android:id="@+id/gc_button_no_results_enter_manually"
@@ -105,7 +105,7 @@
             style="@style/GiniCaptureTheme.Widget.Button.UnelevatedButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/medium"
+            android:layout_marginTop="@dimen/gc_medium"
             android:text="@string/gc_noresults_retake_images" />
     </LinearLayout>
 

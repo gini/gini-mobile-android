@@ -14,7 +14,7 @@
         app:layout_constraintTop_toTopOf="@id/gc_error_header_layout"
         app:layout_constraintBottom_toBottomOf="@id/gc_error_header_layout"
         android:alpha="0.15"
-        android:background="@color/Error_01"/>
+        android:background="@color/gc_error_01"/>
 
     <RelativeLayout
         android:id="@+id/gc_error_header_layout"
@@ -24,10 +24,10 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="@dimen/large_24"
-        android:minHeight="@dimen/xxxlarge"
-        android:paddingStart="@dimen/large_24"
-        android:paddingEnd="@dimen/large_24">
+        android:layout_marginTop="@dimen/gc_large_24"
+        android:minHeight="@dimen/gc_large_64"
+        android:paddingStart="@dimen/gc_large_24"
+        android:paddingEnd="@dimen/gc_large_24">
 
         <ImageView
             android:id="@+id/gc_error_header_icon"
@@ -42,7 +42,7 @@
             style="@style/GiniCaptureTheme.Typography.Body2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/large_24"
+            android:layout_marginStart="@dimen/gc_large_24"
             android:layout_centerVertical="true"
             android:layout_toEndOf="@id/gc_error_header_icon"
             android:gravity="center_vertical"
@@ -54,11 +54,11 @@
         style="@style/GiniCaptureTheme.Typography.Body2"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="@dimen/large"
-        android:textColor="?attr/errorScreenSubtitle"
+        android:layout_marginTop="@dimen/gc_large"
+        android:textColor="?attr/gcErrorScreenSubtitle"
         android:text="@string/gc_error_upload_text"
-        android:layout_marginStart="@dimen/large_24"
-        android:layout_marginEnd="@dimen/large_24"
+        android:layout_marginStart="@dimen/gc_large_24"
+        android:layout_marginEnd="@dimen/gc_large_24"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toTopOf="@id/gc_error_button_container"
@@ -72,9 +72,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginStart="@dimen/large_24"
-        android:layout_marginEnd="@dimen/large_24"
-        android:layout_marginBottom="@dimen/large_24">
+        android:layout_marginStart="@dimen/gc_large_24"
+        android:layout_marginEnd="@dimen/gc_large_24"
+        android:layout_marginBottom="@dimen/gc_large_24">
 
         <Button
             android:id="@+id/gc_button_error_enter_manually"
@@ -88,7 +88,7 @@
             style="@style/GiniCaptureTheme.Widget.Button.UnelevatedButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/medium"
+            android:layout_marginTop="@dimen/gc_medium"
             android:text="@string/gc_error_back_to_camera" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

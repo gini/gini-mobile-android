@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center_horizontal"
-    android:paddingStart="@dimen/large"
-    android:paddingEnd="@dimen/large"
+    android:paddingStart="@dimen/gc_large"
+    android:paddingEnd="@dimen/gc_large"
     android:orientation="horizontal">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -18,7 +18,7 @@
             android:id="@+id/gc_image_container"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:background="?attr/pageItemBackground"
+            android:background="?attr/gcPageItemBackground"
             app:layout_constraintBottom_toBottomOf="@+id/gc_image_selected_rect"
             app:layout_constraintEnd_toEndOf="@+id/gc_image_selected_rect"
             app:layout_constraintStart_toStartOf="@+id/gc_image_selected_rect"
@@ -43,11 +43,11 @@
             android:id="@+id/gc_button_delete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/large_24"
-            android:layout_marginEnd="@dimen/large_24"
+            android:layout_marginTop="@dimen/gc_large_24"
+            android:layout_marginEnd="@dimen/gc_large_24"
             android:background="@android:color/transparent"
             android:src="@drawable/gc_delete"
-            android:padding="@dimen/small"
+            android:padding="@dimen/gc_small"
             android:contentDescription="@string/gc_delete_page"
             app:layout_constraintEnd_toEndOf="@+id/gc_image_selected_rect"
             app:layout_constraintTop_toTopOf="@+id/gc_image_selected_rect" />

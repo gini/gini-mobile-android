@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="GiniCaptureTheme" parent="Root.GiniCaptureTheme.Night">
-        <item name="gbsSwitchTrack">@color/Dark_03</item>
-        <item name="gbsTextInputLayout">@color/Dark_04</item>
-        <item name="gbsBottomSheetItemTitle">@color/Light_05</item>
-        <item name="gbsCurrencyPickerItemBackgroundColor">@color/Dark_03</item>
-        <item name="gbsCurrencyPickerItemSelectedColor">@color/Dark_04</item>
-        <item name="gbsReturnDialogTitle">@color/Light_04</item>
+        <item name="gbsSwitchTrack">@color/gc_dark_03</item>
+        <item name="gbsTextInputLayout">@color/gc_dark_04</item>
+        <item name="gbsBottomSheetItemTitle">@color/gc_light_05</item>
+        <item name="gbsCurrencyPickerItemBackgroundColor">@color/gc_dark_03</item>
+        <item name="gbsCurrencyPickerItemSelectedColor">@color/gc_dark_04</item>
+        <item name="gbsReturnDialogTitle">@color/gc_light_04</item>
     </style>
 </resources>

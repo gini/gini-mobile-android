@@ -20,8 +20,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginEnd="@dimen/large"
-        android:layout_marginTop="@dimen/large"
+        android:layout_marginEnd="@dimen/gc_large"
+        android:layout_marginTop="@dimen/gc_large"
         android:gravity="center_vertical"
         android:maxWidth="@dimen/gc_photo_tips_tip_text_max_width"
         android:text="@string/gc_photo_tip_flatten_the_page_title"
@@ -39,7 +39,7 @@
         android:gravity="center_vertical"
         android:maxWidth="@dimen/gc_photo_tips_tip_text_max_width"
         android:text="@string/gc_photo_tip_flat"
-        android:textColor="@color/Dark_06"
+        android:textColor="@color/gc_dark_06"
         app:layout_constraintEnd_toEndOf="@+id/gc_tip_title"
         app:layout_constraintStart_toStartOf="@+id/gc_tip_title"
         app:layout_constraintTop_toBottomOf="@+id/gc_tip_title" />
@@ -56,7 +56,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/gc_help_item_divider_height"
         android:layout_marginStart="@dimen/gc_photo_tips_tip_icon_size_width"
-        android:layout_marginTop="@dimen/large"
+        android:layout_marginTop="@dimen/gc_large"
         app:layout_constraintTop_toBottomOf="@id/gc_tip_text"
         android:background="?attr/dividerColor" />
 

@@ -4,15 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/colorSurface"
-    android:minHeight="@dimen/xxxlarge">
+    android:minHeight="@dimen/gc_large_64">
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/gbs_bar_bottom_next_button"
         style="@style/GiniCaptureTheme.Widget.Button.UnelevatedButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/large"
-        android:layout_marginBottom="@dimen/large"
+        android:layout_marginTop="@dimen/gc_large"
+        android:layout_marginBottom="@dimen/gc_large"
         android:text="@string/gbs_digital_invoice_onboarding_done_button_title"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

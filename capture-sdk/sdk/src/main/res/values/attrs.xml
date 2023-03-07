@@ -5,6 +5,6 @@
         <attr name="gcCustomFont" format="string" />
     </declare-styleable>
 
-    <attr name="pageItemBackground" format="reference|color"/>
-    <attr name="errorScreenSubtitle" format="reference|color"/>
+    <attr name="gcPageItemBackground" format="reference|color"/>
+    <attr name="gcErrorScreenSubtitle" format="reference|color"/>
 </resources>

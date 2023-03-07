@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:background="?attr/gbsCurrencyPickerItemBackgroundColor"
-    android:layout_height="@dimen/xxlarge">
+    android:layout_height="@dimen/gc_large_48">
 
     <TextView
         android:id="@+id/gbs_currency_textview"
@@ -11,6 +11,6 @@
         android:background="@android:color/transparent"
         style="@style/GiniCaptureTheme.Typography.Subtitle1"
         android:gravity="center_vertical"
-        android:layout_marginStart="@dimen/large"
+        android:layout_marginStart="@dimen/gc_large"
         android:layout_height="match_parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

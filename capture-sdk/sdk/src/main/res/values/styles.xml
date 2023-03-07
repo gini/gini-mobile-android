@@ -1,22 +1,22 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <style name="Root.GiniCaptureTheme" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/Accent_01</item>
-        <item name="colorPrimaryDark">@color/Light_02</item>
-        <item name="colorOnPrimary">@color/Light_01</item>
-        <item name="backgroundColor">@color/Light_02</item>
-        <item name="colorOnBackground">@color/Dark_02</item>
-        <item name="dividerColor">@color/Light_02</item>
-        <item name="colorSurface">@color/Light_01</item>
+        <item name="colorPrimary">@color/gc_accent_01</item>
+        <item name="colorPrimaryDark">@color/gc_light_02</item>
+        <item name="colorOnPrimary">@color/gc_light_01</item>
+        <item name="backgroundColor">@color/gc_light_02</item>
+        <item name="colorOnBackground">@color/gc_dark_02</item>
+        <item name="dividerColor">@color/gc_light_02</item>
+        <item name="colorSurface">@color/gc_light_01</item>
         <item name="colorOnSurface">?attr/colorOnBackground</item>
-        <item name="colorSurfaceInverse">@color/Dark_03</item>
-        <item name="colorOnSurfaceInverse">@color/Light_02</item>
-        <item name="colorSurfaceVariant">@color/Light_01</item>
+        <item name="colorSurfaceInverse">@color/gc_dark_03</item>
+        <item name="colorOnSurfaceInverse">@color/gc_light_02</item>
+        <item name="colorSurfaceVariant">@color/gc_light_01</item>
         <item name="colorOnSurfaceVariant">?attr/colorOnBackground</item>
         <item name="android:windowLightStatusBar">true</item>
         <item name="colorAccent">?attr/colorPrimary</item>
-        <item name="pageItemBackground">@color/Light_01</item>
-        <item name="errorScreenSubtitle">@color/Dark_05</item>
+        <item name="gcPageItemBackground">@color/gc_light_01</item>
+        <item name="gcErrorScreenSubtitle">@color/gc_dark_05</item>
         <item name="alertDialogTheme">@style/GiniCaptureTheme.ThemeOverlay.Dialog.Alert</item>
         <item name="toolbarStyle">@style/Widget.MaterialComponents.Toolbar.Surface</item>
         <item name="textAppearanceHeadline1">@style/GiniCaptureTheme.Typography.Headline1</item>

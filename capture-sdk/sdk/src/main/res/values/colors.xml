@@ -57,11 +57,11 @@
     <color name="gc_analysis_overlay">#b2000000</color>
     <color name="gc_analysis_pdf_info_background">#007C99</color>
     <color name="gc_analysis_pdf_info_text">#ffffff</color>
-    <color name="gc_analysis_analysing_message">@color/Light_01</color>
-    <color name="gc_analysis_hint_headline">@color/Dark_02</color>
-    <color name="gc_analysis_hint">@color/Dark_05</color>
-    <color name="gc_analysis_hint_headline_night">@color/Light_02</color>
-    <color name="gc_analysis_hint_night">@color/Dark_06</color>
+    <color name="gc_analysis_analysing_message">@color/gc_light_01</color>
+    <color name="gc_analysis_hint_headline">@color/gc_dark_02</color>
+    <color name="gc_analysis_hint">@color/gc_dark_05</color>
+    <color name="gc_analysis_hint_headline_night">@color/gc_light_02</color>
+    <color name="gc_analysis_hint_night">@color/gc_dark_06</color>
 
     <color name="gc_snackbar_error_text">#85000a</color>
     <color name="gc_snackbar_error_button_title">#fff</color>
@@ -120,41 +120,41 @@
     <color name="gc_multi_page_review_page_indicator_background">#82000000</color>
 
 
-    <color name="Accent_01">#007BFF</color>
-    <color name="Accent_02">#3193FD</color>
-    <color name="Accent_03">#62ACFB</color>
-    <color name="Accent_04">#93C4F9</color>
-    <color name="Accent_05">#C4DDF7</color>
+    <color name="gc_accent_01">#007BFF</color>
+    <color name="gc_accent_02">#3193FD</color>
+    <color name="gc_accent_03">#62ACFB</color>
+    <color name="gc_accent_04">#93C4F9</color>
+    <color name="gc_accent_05">#C4DDF7</color>
 
-    <color name="Dark_01">#000000</color>
-    <color name="Dark_02">#121212</color>
-    <color name="Dark_03">#313131</color>
-    <color name="Dark_04">#4A4A4A</color>
-    <color name="Dark_05">#626262</color>
-    <color name="Dark_06">#7A7A7A</color>
+    <color name="gc_dark_01">#000000</color>
+    <color name="gc_dark_02">#121212</color>
+    <color name="gc_dark_03">#313131</color>
+    <color name="gc_dark_04">#4A4A4A</color>
+    <color name="gc_dark_05">#626262</color>
+    <color name="gc_dark_06">#7A7A7A</color>
 
-    <color name="Light_01">#FFFFFF</color>
-    <color name="Light_02">#F2F2F2</color>
-    <color name="Light_03">#E5E5E5</color>
-    <color name="Light_04">#D9D9D9</color>
-    <color name="Light_05">#CCCCCC</color>
-    <color name="Light_06">#BFBFBF</color>
+    <color name="gc_light_01">#FFFFFF</color>
+    <color name="gc_light_02">#F2F2F2</color>
+    <color name="gc_light_03">#E5E5E5</color>
+    <color name="gc_light_04">#D9D9D9</color>
+    <color name="gc_light_05">#CCCCCC</color>
+    <color name="gc_light_06">#BFBFBF</color>
 
-    <color name="Success_01">#09B523</color>
-    <color name="Success_02">#32D74B</color>
-    <color name="Success_03">#D0ECD4</color>
-    <color name="Success_04">#DEEEE1</color>
-    <color name="Success_05">#048016</color>
+    <color name="gc_success_01">#09B523</color>
+    <color name="gc_success_02">#32D74B</color>
+    <color name="gc_success_03">#D0ECD4</color>
+    <color name="gc_success_04">#DEEEE1</color>
+    <color name="gc_success_05">#048016</color>
 
 
-    <color name="Error_01">#D9190E</color>
-    <color name="Error_02">#FF453A</color>
-    <color name="Error_03">#ECD0D0</color>
-    <color name="Error_04">#EEDEDE</color>
-    <color name="Error_05">#830801</color>
+    <color name="gc_error_01">#D9190E</color>
+    <color name="gc_error_02">#FF453A</color>
+    <color name="gc_error_03">#ECD0D0</color>
+    <color name="gc_error_04">#EEDEDE</color>
+    <color name="gc_error_05">#830801</color>
 
-    <color name="Warning_01">#D9A00E</color>
-    <color name="Warning_02">#FFC73A</color>
-    <color name="Warning_03">#ECE4D0</color>
-    <color name="Warning_04">#EEEADE</color>
+    <color name="gc_warning_01">#D9A00E</color>
+    <color name="gc_warning_02">#FFC73A</color>
+    <color name="gc_warning_03">#ECE4D0</color>
+    <color name="gc_warning_04">#EEEADE</color>
 </resources>

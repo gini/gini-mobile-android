@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/Dark_01">
+    android:background="@color/gc_dark_01">
 
 
     <androidx.fragment.app.FragmentContainerView
@@ -20,8 +20,8 @@
         android:id="@+id/gc_action_close"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/large_24"
-        android:layout_marginTop="@dimen/xlarge"
+        android:layout_marginStart="@dimen/gc_large_24"
+        android:layout_marginTop="@dimen/gc_large_32"
         android:background="@android:color/transparent"
         android:src="@drawable/gc_close_round_btn"
         android:contentDescription="@string/gc_close"

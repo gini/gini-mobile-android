@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="CurrencyStyle">
+    <declare-styleable name="GBSCurrencyStyle">
         <attr name="gbsCurrencyPickerItemBackgroundColor" format="reference|color"/>
         <attr name="gbsCurrencyPickerItemSelectedColor" format="reference|color"/>
         <attr name="colorSurface" format="color" />

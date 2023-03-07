@@ -1,18 +1,13 @@
 <resources>
-    <dimen name="small">4dp</dimen>
-    <dimen name="medium">8dp</dimen>
-    <dimen name="large">16dp</dimen>
-    <dimen name="large_24">24dp</dimen> <!-- TODO improve this use xlarge and shift the others -->
-    <dimen name="xlarge">32dp</dimen>
-    <dimen name="xxlarge">48dp</dimen>
-    <dimen name="xxxlarge">64dp</dimen>
-    <dimen name="xxxxlarge">80dp</dimen>
-    <dimen name="xxxxxlarge">96dp</dimen>
-
-    <dimen name="text_small">8sp</dimen>
-    <dimen name="text_min">12sp</dimen>
-    <dimen name="text_medium">16sp</dimen>
-    <dimen name="text_large">24sp</dimen>
+    <dimen name="gc_small">4dp</dimen>
+    <dimen name="gc_medium">8dp</dimen>
+    <dimen name="gc_large">16dp</dimen>
+    <dimen name="gc_large_24">24dp</dimen>
+    <dimen name="gc_large_32">32dp</dimen>
+    <dimen name="gc_large_48">48dp</dimen>
+    <dimen name="gc_large_64">64dp</dimen>
+    <dimen name="gc_large_80">80dp</dimen>
+    <dimen name="gc_large_96">96dp</dimen>
 
     <dimen name="gc_review_bottom_bar_height">80dp</dimen>
     <dimen name="gc_review_bottom_bar_button_width">150dp</dimen>

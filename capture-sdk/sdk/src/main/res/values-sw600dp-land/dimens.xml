@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <dimen name="small">4dp</dimen>
-    <dimen name="medium">8dp</dimen>
-    <dimen name="large">16dp</dimen>
-    <dimen name="large_24">24dp</dimen> <!-- TODO improve this use xlarge and shift the others -->
-    <dimen name="xlarge">32dp</dimen>
-    <dimen name="xxlarge">64dp</dimen>
-    <dimen name="xxxlarge">80dp</dimen>
-    <dimen name="xxxxlarge">96dp</dimen>
-    <dimen name="xxxxxlarge">96dp</dimen>
+    <dimen name="gc_small">4dp</dimen>
+    <dimen name="gc_medium">8dp</dimen>
+    <dimen name="gc_large">16dp</dimen>
+    <dimen name="gc_large_24">24dp</dimen>
+    <dimen name="gc_large_32">32dp</dimen>
+    <dimen name="gc_large_48">64dp</dimen>
+    <dimen name="gc_large_64">80dp</dimen>
+    <dimen name="gc_large_80">96dp</dimen>
+    <dimen name="gc_large_96">96dp</dimen>
 
     <dimen name="gc_camera_upload_hint_container_width">348dp</dimen>
     <dimen name="gc_camera_upload_hint_container_top_margin">-16dp</dimen>

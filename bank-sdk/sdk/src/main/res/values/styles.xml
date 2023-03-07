@@ -118,7 +118,7 @@
     </style>
 
     <style name="GiniCaptureTheme.DigitalInvoice.CurrencyItem" parent="Root.GiniCaptureTheme">
-        <item name="colorSurface">@color/Light_01</item>
+        <item name="colorSurface">@color/gc_light_01</item>
     </style>
 
     <style name="Root.GiniCaptureTheme.DigitalInvoice.LineItemDetails.InputField.Style" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
@@ -371,12 +371,12 @@
     </style>
 
     <style name="GiniCaptureTheme" parent="Root.GiniCaptureTheme">
-        <item name="gbsSwitchTrack">@color/Light_03</item>
-        <item name="gbsTextInputLayout">@color/Light_03</item>
-        <item name="gbsBottomSheetItemTitle">@color/Dark_06</item>
-        <item name="gbsCurrencyPickerItemBackgroundColor">@color/Light_03</item>
-        <item name="gbsCurrencyPickerItemSelectedColor">@color/Light_02</item>
-        <item name="gbsReturnDialogTitle">@color/Dark_04</item>
+        <item name="gbsSwitchTrack">@color/gc_light_03</item>
+        <item name="gbsTextInputLayout">@color/gc_light_03</item>
+        <item name="gbsBottomSheetItemTitle">@color/gc_dark_06</item>
+        <item name="gbsCurrencyPickerItemBackgroundColor">@color/gc_light_03</item>
+        <item name="gbsCurrencyPickerItemSelectedColor">@color/gc_light_02</item>
+        <item name="gbsReturnDialogTitle">@color/gc_dark_04</item>
     </style>
 
     <style name="GiniCaptureTheme.DigitalInvoice.Title.TextStyle" parent="Root.GiniCaptureTheme.DigitalInvoice.Title.TextStyle" />
