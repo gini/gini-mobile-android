@@ -19,7 +19,7 @@ public enum AnalysisHint {
     FLAT(R.drawable.gc_photo_tip_flat, R.string.gc_photo_tip_flat, R.string.gc_photo_tip_flatten_the_page_title),
     ALIGN(R.drawable.gc_photo_tip_align, R.string.gc_photo_tip_align, R.string.gc_photo_tip_align_title),
     PARALLEL(R.drawable.gc_photo_tip_parallel, R.string.gc_photo_tip_parallel, R.string.gc_photo_tip_parallel_title),
-    LIGHTING(R.drawable.gc_photo_tip_lighting, R.string.gc_photo_tip_lighting, R.string.gc_photo_tip_good_lightning_title),
+    LIGHTING(R.drawable.gc_photo_tip_lighting, R.string.gc_photo_tip_lighting, R.string.gc_photo_tip_good_lighting_title),
     MULTIPAGE(R.drawable.gc_photo_tip_multipage, R.string.gc_photo_tip_multipage, R.string.gc_photo_tip_multiple_pages_title);
 
     public int getDrawableResource() {

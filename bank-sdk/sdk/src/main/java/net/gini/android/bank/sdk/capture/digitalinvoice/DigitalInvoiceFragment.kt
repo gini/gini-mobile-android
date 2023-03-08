@@ -25,7 +25,6 @@ import net.gini.android.bank.sdk.capture.util.autoCleared
 import net.gini.android.bank.sdk.capture.util.parentFragmentManagerOrNull
 import net.gini.android.bank.sdk.databinding.GbsFragmentDigitalInvoiceBinding
 import net.gini.android.capture.GiniCapture
-import net.gini.android.capture.internal.ui.IntervalClickListener
 import net.gini.android.capture.internal.ui.IntervalToolbarMenuItemIntervalClickListener
 import net.gini.android.capture.view.InjectedViewAdapterHolder
 import net.gini.android.capture.view.NavButtonType
@@ -89,6 +88,7 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
     private var compoundExtractions: Map<String, GiniCaptureCompoundExtraction> = emptyMap()
     private var returnReasons: List<GiniCaptureReturnReason> = emptyList()
     private var isInaccurateExtraction: Boolean = false
+    private var footerDetails: DigitalInvoiceScreenContract.FooterDetails? = null
 
     companion object {
 
@@ -243,12 +243,14 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
                         startActivity(Intent(requireContext(), HelpActivity::class.java))
                     }
 
-                    injectedViewAdapter.setOnBackClickListener {
-                        activity?.finish()
+                    injectedViewAdapter.setOnProceedClickListener {
+                        presenter?.pay()
                     }
 
-                    injectedViewAdapter.setOnPayClickListener {
-                        presenter?.pay()
+                    footerDetails?.let {
+                        val (integral, fractional) = it.totalGrossPriceIntegralAndFractionalParts
+                        injectedViewAdapter.setTotalPrice(integral + fractional)
+                        injectedViewAdapter.setProceedButtonEnabled(it.buttonEnabled)
                     }
                 }
         }
@@ -379,11 +381,13 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
         if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled) {
             binding.gbsBottomBarNavigation.modifyAdapterIfOwned {
                 (it as DigitalInvoiceNavigationBarBottomAdapter).apply {
-                    setGrossPriceTotal(integral, fractional)
-                    setPayButtonEnabled(data.buttonEnabled)
+                    setTotalPrice(integral + fractional)
+                    setProceedButtonEnabled(data.buttonEnabled)
                 }
             }
         }
+
+        this.footerDetails = data
     }
 
     /**

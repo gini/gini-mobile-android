@@ -20,25 +20,14 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/gross_price_total_fractional_part"
+        android:id="@+id/gross_price_total"
         style="@style/GiniCaptureTheme.Typography.Headline5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@+id/gross_price_total_integral_part"
-        app:layout_constraintEnd_toEndOf="@+id/gbs_pay"
-        app:layout_constraintTop_toTopOf="@+id/gross_price_total_integral_part"
-        tools:text=".99" />
-
-    <TextView
-        android:id="@+id/gross_price_total_integral_part"
-        style="@style/GiniCaptureTheme.Typography.Headline5"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
         android:layout_marginTop="@dimen/gc_large_24"
-        app:layout_constraintEnd_toStartOf="@+id/gross_price_total_fractional_part"
+        app:layout_constraintEnd_toEndOf="@+id/gbs_pay"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="€242" />
-
+        tools:text="€242.99" />
 
     <TextView
         android:id="@+id/total_label"
@@ -46,10 +35,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/gbs_digital_invoice_footer_total_label"
-        app:layout_constraintBottom_toBottomOf="@id/gross_price_total_integral_part"
+        app:layout_constraintBottom_toBottomOf="@id/gross_price_total"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
         app:layout_constraintStart_toStartOf="@+id/gbs_pay"
-        app:layout_constraintTop_toTopOf="@+id/gross_price_total_integral_part" />
+        app:layout_constraintTop_toTopOf="@+id/gross_price_total" />
 
     <com.google.android.material.button.MaterialButton
         style="@style/GiniCaptureTheme.Widget.Button.UnelevatedButton"
@@ -62,8 +51,8 @@
         app:cornerRadius="@dimen/gc_small"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/gbs_help_btn"
-        app:layout_constraintStart_toEndOf="@+id/gbs_back_btn"
-        app:layout_constraintTop_toBottomOf="@+id/gross_price_total_integral_part" />
+        app:layout_constraintStart_toEndOf="@+id/gbs_placeholder"
+        app:layout_constraintTop_toBottomOf="@+id/gross_price_total" />
 
     <ImageButton
         android:id="@+id/gbs_help_btn"
@@ -78,15 +67,11 @@
         app:layout_constraintTop_toTopOf="@+id/gbs_pay"
         app:srcCompat="@drawable/gbs_menu_question_circle_info" />
 
-    <ImageButton
-        android:id="@+id/gbs_back_btn"
+    <Space
+        android:id="@+id/gbs_placeholder"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/gc_large"
-        android:background="@android:color/transparent"
-        android:contentDescription="@string/gc_back_button_description"
-        android:padding="@dimen/gc_medium"
-        app:tint="?attr/colorOnBackground"
+        android:layout_marginStart="@dimen/gc_large_48"
         app:layout_constraintBottom_toBottomOf="@+id/gbs_pay"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/gbs_pay"
