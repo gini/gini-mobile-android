@@ -58,7 +58,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            app:constraint_referenced_ids="gc_flash_button_container"
+            app:constraint_referenced_ids="gc_flash_group_wrapper"
             tools:visibility="gone" />
 
         <androidx.constraintlayout.widget.Group
@@ -66,7 +66,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            app:constraint_referenced_ids="gc_document_import_button_container"
+            app:constraint_referenced_ids="gc_button_import_wrapper"
             tools:visibility="gone" />
 
         <View
@@ -96,14 +96,14 @@
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/gc_flash_button_container"
+            android:id="@+id/gc_flash_group_wrapper"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_alignTop="@id/gc_button_camera_trigger"
             android:layout_alignBottom="@id/gc_button_camera_trigger"
             android:layout_marginTop="@dimen/xlarge"
             android:layout_toStartOf="@id/gc_button_camera_trigger"
-            android:layout_toEndOf="@id/gc_document_import_button_container"
+            android:layout_toEndOf="@id/gc_button_import_wrapper"
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="@+id/gc_button_camera_trigger"
             app:layout_constraintStart_toStartOf="@+id/gc_button_camera_trigger"
@@ -111,7 +111,7 @@
 
             <ImageButton
                 android:id="@+id/gc_button_camera_flash"
-                android:layout_width="wrap_content"
+                android:layout_width="@dimen/xxlarge"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/small"
                 android:background="@null"
@@ -153,7 +153,7 @@
 
 
         <LinearLayout
-            android:id="@+id/gc_document_import_button_container"
+            android:id="@+id/gc_button_import_wrapper"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignTop="@id/gc_button_camera_trigger"
@@ -165,13 +165,13 @@
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="@+id/gc_button_camera_trigger"
             app:layout_constraintStart_toStartOf="@+id/gc_button_camera_trigger"
-            app:layout_constraintTop_toBottomOf="@+id/gc_flash_button_container"
+            app:layout_constraintTop_toBottomOf="@+id/gc_flash_group_wrapper"
             tools:visibility="visible">
 
             <ImageButton
                 android:id="@+id/gc_button_import_document"
-                android:layout_width="@dimen/gc_camera_upload_button_size"
-                android:layout_height="@dimen/gc_camera_upload_button_size"
+                android:layout_width="@dimen/xxlarge"
+                android:layout_height="wrap_content"
                 android:background="@null"
                 android:clickable="false"
                 android:scaleType="centerInside"
