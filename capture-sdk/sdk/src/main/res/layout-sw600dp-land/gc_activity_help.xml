@@ -34,7 +34,7 @@
 
             <Space
                 android:layout_width="wrap_content"
-                android:layout_height="@dimen/xxlarge" />
+                android:layout_height="@dimen/gc_large_48" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/gc_help_items"
@@ -46,7 +46,7 @@
 
             <Space
                 android:layout_width="wrap_content"
-                android:layout_height="@dimen/large" />
+                android:layout_height="@dimen/gc_large" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

@@ -26,7 +26,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/gc_navigation_top_bar"
         app:layout_constraintWidth_percent="@dimen/gc_analysis_preview_width_percentage"
-        android:background="@color/Dark_01"
+        android:background="@color/gc_dark_01"
         android:alpha="@dimen/gc_analysis_preview_alpha">
 
         <ImageView
@@ -88,8 +88,8 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="@dimen/gc_analysis_hint_container_bottom_margin_portrait"
         android:background="@drawable/gc_analysis_tips_background"
-        android:paddingTop="@dimen/medium"
-        android:paddingBottom="@dimen/large"
+        android:paddingTop="@dimen/gc_medium"
+        android:paddingBottom="@dimen/gc_large"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -100,7 +100,7 @@
             android:layout_width="@dimen/gc_analysis_hint_icon_size"
             android:layout_height="@dimen/gc_analysis_hint_icon_size"
             android:layout_gravity="center_vertical"
-            android:layout_marginStart="@dimen/large_24"
+            android:layout_marginStart="@dimen/gc_large_24"
             android:scaleType="center"
             tools:src="@drawable/gc_photo_tip_lighting" />
 
@@ -108,8 +108,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginStart="@dimen/large"
-            android:layout_marginEnd="@dimen/large"
+            android:layout_marginStart="@dimen/gc_large"
+            android:layout_marginEnd="@dimen/gc_large"
             android:orientation="vertical">
 
             <TextView
@@ -123,7 +123,7 @@
             <TextView
                 android:id="@+id/gc_analysis_hint_text"
                 style="@style/GiniCaptureTheme.Typography.Body2"
-                android:textColor="@color/Dark_06"
+                android:textColor="@color/gc_dark_06"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:text="Gute Lichtverhältnisse beim Aufnehmen des Fotos beschleunigen die Analyse." />

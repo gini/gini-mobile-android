@@ -12,7 +12,7 @@
         android:id="@+id/gc_onboarding_viewpager"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="@dimen/xlarge"
+        android:layout_marginBottom="@dimen/gc_large_32"
         android:contentDescription="@string/gc_onboarding_viewpager_content_description"
         app:layout_constraintBottom_toTopOf="@+id/gc_layout_page_indicators"
         app:layout_constraintEnd_toEndOf="parent"
@@ -25,12 +25,12 @@
         android:id="@+id/gc_layout_page_indicators"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/xlarge"
+        android:layout_marginBottom="@dimen/gc_large_32"
         android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@id/gc_skip"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_goneMarginBottom="@dimen/xlarge">
+        app:layout_goneMarginBottom="@dimen/gc_large_32">
 
         <!--         These views are created during runtime. Kept here only for visualization during development. -->
         <!--        <ImageView-->
@@ -52,9 +52,9 @@
         style="@style/GiniCaptureTheme.Widget.Button.OutlinedButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/xxxlarge"
-        android:layout_marginEnd="@dimen/medium"
-        android:layout_marginBottom="@dimen/xlarge"
+        android:layout_marginStart="@dimen/gc_large_64"
+        android:layout_marginEnd="@dimen/gc_medium"
+        android:layout_marginBottom="@dimen/gc_large_32"
         android:text="@string/gc_skip"
         app:layout_constraintBottom_toTopOf="@id/gc_injected_navigation_bar_container_bottom"
         app:layout_constraintEnd_toStartOf="@id/gc_next"
@@ -68,7 +68,7 @@
         style="@style/GiniCaptureTheme.Widget.Button.UnelevatedButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/xxxlarge"
+        android:layout_marginEnd="@dimen/gc_large_64"
         android:text="@string/gc_next"
         app:layout_constraintBottom_toBottomOf="@id/gc_skip"
         app:layout_constraintEnd_toEndOf="parent"

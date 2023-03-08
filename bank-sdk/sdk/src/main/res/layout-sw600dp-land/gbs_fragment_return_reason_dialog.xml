@@ -10,10 +10,10 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="@dimen/large"
-        android:paddingTop="@dimen/large"
-        android:paddingEnd="@dimen/large"
-        android:paddingBottom="@dimen/large"
+        android:paddingStart="@dimen/gc_large"
+        android:paddingTop="@dimen/gc_large"
+        android:paddingEnd="@dimen/gc_large"
+        android:paddingBottom="@dimen/gc_large"
         android:text="@string/gbs_digital_invoice_return_reason_dialog_title"
         android:textColor="?attr/gbsReturnDialogTitle"
         style="@style/GiniCaptureTheme.Typography.Subtitle1" />

@@ -21,7 +21,7 @@
         android:layout_width="@dimen/gc_tablet_width"
         android:layout_height="0dp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="@dimen/xxlarge"
+        android:layout_marginTop="@dimen/gc_large_48"
         app:layout_constraintBottom_toTopOf="@+id/gc_injected_navigation_bar_container_bottom"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

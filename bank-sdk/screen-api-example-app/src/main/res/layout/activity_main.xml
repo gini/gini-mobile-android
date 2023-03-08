@@ -79,7 +79,7 @@
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/xxxlarge"
+        android:layout_marginBottom="@dimen/gc_large_64"
         android:text="@string/start_gini_capture_sdk"
         android:textColor="?attr/colorPrimary"
         app:layout_constraintBottom_toBottomOf="parent"

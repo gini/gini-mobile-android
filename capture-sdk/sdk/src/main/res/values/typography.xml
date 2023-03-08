@@ -63,7 +63,7 @@
 
     <style name="Root.GiniCaptureTheme.Typography.Overline" parent="TextAppearance.MaterialComponents.Overline">
         <item name="android:textSize">10sp</item>
-        <item name="android:textColor">@color/Dark_06</item>
+        <item name="android:textColor">@color/gc_dark_06</item>
     </style>
 
     <style name="GiniCaptureTheme.Typography.Headline1" parent="Root.GiniCaptureTheme.Typography.Headline1"/>

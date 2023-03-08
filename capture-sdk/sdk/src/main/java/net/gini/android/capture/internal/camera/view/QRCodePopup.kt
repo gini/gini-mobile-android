@@ -6,19 +6,12 @@ import android.os.Looper
 import android.view.HapticFeedbackConstants
 import android.view.View
 import android.widget.ImageView
-import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.Group
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.ViewPropertyAnimatorCompat
-import androidx.core.view.ViewPropertyAnimatorListener
-import androidx.core.view.ViewPropertyAnimatorListenerAdapter
 import net.gini.android.capture.R
 import net.gini.android.capture.internal.ui.FragmentImplCallback
 import net.gini.android.capture.view.CustomLoadingIndicatorAdapter
-import net.gini.android.capture.view.InjectedViewAdapter
 import net.gini.android.capture.view.InjectedViewContainer
 
 /**
@@ -108,11 +101,11 @@ internal class QRCodePopup<T> @JvmOverloads constructor(
                 R.drawable.gc_qr_code_detected_background
             )
             qrCheckImage.visibility = View.VISIBLE
-            qrStatusTxt.setTextColor(ContextCompat.getColor(popupView.context, R.color.Light_01))
+            qrStatusTxt.setTextColor(ContextCompat.getColor(popupView.context, R.color.gc_light_01))
             qrImageFrame.imageTintList = ColorStateList.valueOf(
                 ContextCompat.getColor(
                     popupView.context,
-                    R.color.Success_05
+                    R.color.gc_success_05
                 )
             )
             performHapticFeedback(HapticFeedbackConstants.CONFIRM)
@@ -122,7 +115,7 @@ internal class QRCodePopup<T> @JvmOverloads constructor(
             qrImageFrame.imageTintList = ColorStateList.valueOf(
                 ContextCompat.getColor(
                     popupView.context,
-                    R.color.Warning_02
+                    R.color.gc_warning_02
                 )
             )
         }
@@ -145,7 +138,7 @@ internal class QRCodePopup<T> @JvmOverloads constructor(
         qrCheckImage.visibility = View.GONE
         qrImageFrame.visibility = View.VISIBLE
         qrImageFrame.imageTintList =
-            ColorStateList.valueOf(ContextCompat.getColor(popupView.context, R.color.Light_01))
+            ColorStateList.valueOf(ContextCompat.getColor(popupView.context, R.color.gc_light_01))
         loadingIndicatorContainer?.modifyAdapterIfOwned { it.onHidden() }
         mInvoiceTxt.visibility = View.GONE
         supportedBackgroundView?.visibility = View.GONE

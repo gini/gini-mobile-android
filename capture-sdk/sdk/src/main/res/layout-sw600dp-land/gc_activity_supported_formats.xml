@@ -32,7 +32,7 @@
 
             <Space
                 android:layout_width="wrap_content"
-                android:layout_height="@dimen/xxlarge" />
+                android:layout_height="@dimen/gc_large_48" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/gc_formats_list"
@@ -44,7 +44,7 @@
 
             <Space
                 android:layout_width="wrap_content"
-                android:layout_height="@dimen/large" />
+                android:layout_height="@dimen/gc_large" />
 
         </LinearLayout>
 

@@ -6,9 +6,9 @@
     android:layout_height="wrap_content"
     android:background="?attr/selectableItemBackground"
     android:gravity="center_vertical"
-    android:paddingStart="@dimen/large"
-    android:paddingTop="@dimen/large"
-    android:paddingEnd="@dimen/large"
-    android:paddingBottom="@dimen/large"
+    android:paddingStart="@dimen/gc_large"
+    android:paddingTop="@dimen/gc_large"
+    android:paddingEnd="@dimen/gc_large"
+    android:paddingBottom="@dimen/gc_large"
     style="@style/GiniCaptureTheme.Typography.Subtitle1"
     tools:text="Doesn't fit" />

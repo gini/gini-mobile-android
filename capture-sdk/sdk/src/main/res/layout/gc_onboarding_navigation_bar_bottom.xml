@@ -5,16 +5,16 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/colorSurface"
-    android:padding="@dimen/large">
+    android:padding="@dimen/gc_large">
 
     <Button
         android:id="@+id/gc_skip"
         style="@style/GiniCaptureTheme.Widget.Button.OutlinedButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/xxxlarge"
-        android:layout_marginEnd="@dimen/medium"
-        android:layout_marginBottom="@dimen/xxlarge"
+        android:layout_marginStart="@dimen/gc_large_64"
+        android:layout_marginEnd="@dimen/gc_medium"
+        android:layout_marginBottom="@dimen/gc_large_48"
         android:text="@string/gc_skip"
         android:visibility="invisible"
         tools:visibility="visible"
@@ -30,7 +30,7 @@
         style="@style/GiniCaptureTheme.Widget.Button.UnelevatedButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/xxxlarge"
+        android:layout_marginEnd="@dimen/gc_large_64"
         android:text="@string/gc_next"
         android:visibility="invisible"
         tools:visibility="visible"
