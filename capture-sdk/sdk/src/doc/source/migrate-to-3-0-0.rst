@@ -415,7 +415,7 @@ Users can now click an "Enter manually" button on the error screen which will ex
 You can find more details `here <integration.html#capturing-documents>`_.
 
 No Results Screen
-~~~~~~~~~~
+~~~~~~~~~~~~~~~~~
 
 The new no results screen uses the global UI customization options. You can discard the old screen specific
 customizations.
@@ -429,12 +429,6 @@ New UI
 ^^^^^^
 
 The new no results screen gives options to enter document details manually.
-
-Bottom Navigation Bar
-^^^^^^^^^^^^^^^^^^^^^
-
-You can show a bottom navigation bar by passing true to ``GiniCapture`` ``setBottomNavigationBarEnabled``. There is a default implementation, but you can also use
-your own by implementing the ``NoResultsNavigationBarBottomAdapter`` interface and passing it to ``GiniCapture``.
 
 You can find more details `here <customization-guide.html#id11>`_.
 

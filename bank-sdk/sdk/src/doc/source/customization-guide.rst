@@ -399,7 +399,7 @@ You can pass the title and activity for each screen to ``GiniBank`` using a list
     )
 
 No Results Screen
-----
+-----------------
 
 UI Customization
 ~~~~~~~~~~~~~~~~
@@ -410,29 +410,8 @@ UI Customization
     src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FMcDZrQPr6IgkzCQtN3lqAe%2FAndroid-Gini-Capture-SDK-3.0.0-UI-Customisation%3Fnode-id%3D10%253A2540%26t%3DRrYhEBagMqQ9uksD-1"
     allowfullscreen></iframe>
 
-Bottom Navigation Bar
-~~~~~~~~~~~~~~~~~~~~~
-
-.. note::
-
-    Will be available in 3.0.0-beta05.
-
-You can inject your own view for the bottom navigation bar, if you set
-``GiniBank.setCaptureConfiguration(CaptureConfiguration(bottomNavigationBarEnabled = ))`` to ``true`` and pass a custom
-``NoResultsNavigationBarBottomAdapter`` implementation to ``GiniBank``:
-
-.. code-block:: java
-
-    let customNoResultsNavigationBarBottomAdapter:NoResultsNavigationBarBottomAdapter = CustomNoResultsNavigationBarBottomAdapter();
-
-    GiniBank.setCaptureConfiguration(
-        CaptureConfiguration(
-            noResultsNavigationBarBottomAdapter = customNoResultsNavigationBarBottomAdapter
-        )
-    )
-
 Error Screen
-----
+------------
 
 UI Customization
 ~~~~~~~~~~~~~~~~
