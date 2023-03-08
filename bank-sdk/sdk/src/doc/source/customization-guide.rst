@@ -422,27 +422,6 @@ UI Customization
     src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FMcDZrQPr6IgkzCQtN3lqAe%2FAndroid-Gini-Capture-SDK-3.0.0-UI-Customisation%3Fnode-id%3D9%253A5075%26t%3DQkcPe6W16KvhSI1a-1"
     allowfullscreen></iframe>
 
-Bottom Navigation Bar
-~~~~~~~~~~~~~~~~~~~~~
-
-.. note::
-
-    Will be available in 3.0.0-beta05.
-
-You can inject your own view for the bottom navigation bar, if you set
-``GiniBank.setCaptureConfiguration(CaptureConfiguration(bottomNavigationBarEnabled = ))`` to ``true`` and pass a custom
-``NoResultsNavigationBarBottomAdapter`` implementation to ``GiniBank``:
-
-.. code-block:: java
-
-    let customErrorNavigationBarBottomAdapter:ErrorNavigationBarBottomAdapter = CustomErrorNavigationBarBottomAdapter();
-
-    GiniBank.setCaptureConfiguration(
-        CaptureConfiguration(
-            errorNavigationBarBottomAdapter = customErrorNavigationBarBottomAdapter
-        )
-    )
-
 .. Return Assistant
 .. ----------------
 

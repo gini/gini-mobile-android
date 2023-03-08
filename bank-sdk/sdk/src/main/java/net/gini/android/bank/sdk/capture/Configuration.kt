@@ -4,7 +4,6 @@ import net.gini.android.capture.DocumentImportEnabledFileTypes
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.camera.CameraActivity
 import net.gini.android.capture.camera.view.CameraNavigationBarBottomAdapter
-import net.gini.android.capture.error.view.ErrorNavigationBarBottomAdapter
 import net.gini.android.capture.help.HelpItem
 import net.gini.android.capture.help.view.HelpNavigationBarBottomAdapter
 import net.gini.android.capture.internal.util.FileImportValidator.FILE_SIZE_LIMIT
@@ -185,11 +184,6 @@ data class CaptureConfiguration(
      * Set an adapter implementation to show a custom bottom navigation bar on the help screen.
      */
     val helpNavigationBarBottomAdapter: HelpNavigationBarBottomAdapter? = null,
-
-    /**
-     * Set an adapter implementation to show a custom bottom navigation bar on the error screen.
-     */
-    val errorNavigationBarBottomAdapter: ErrorNavigationBarBottomAdapter? = null
 )
 
 internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfiguration): GiniCapture.Builder {
@@ -227,6 +221,5 @@ internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfig
             configuration.cameraNavigationBarBottomAdapter?.let { setCameraNavigationBarBottomAdapter(it) }
             configuration.reviewNavigationBarBottomAdapter?.let { setReviewBottomBarNavigationAdapter(it) }
             configuration.helpNavigationBarBottomAdapter?.let { setHelpNavigationBarBottomAdapter(it) }
-            configuration.errorNavigationBarBottomAdapter?.let { setErrorNavigationBarBottomAdapter(it) }
         }
 }

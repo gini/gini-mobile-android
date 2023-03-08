@@ -4,7 +4,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
-import androidx.annotation.DrawableRes
 import net.gini.android.bank.sdk.databinding.GbsDigitalInvoiceNavigationBarBottomBinding
 import net.gini.android.capture.view.InjectedViewAdapter
 
@@ -14,13 +13,6 @@ import net.gini.android.capture.view.InjectedViewAdapter
 interface DigitalInvoiceNavigationBarBottomAdapter : InjectedViewAdapter {
 
     /**
-     * Set the click listener for the back button.
-     *
-     * @param listener the click listener for the button
-     */
-    fun setOnBackClickListener(listener: OnClickListener)
-
-    /**
      * Set the click listener for the help button.
      *
      * @param listener the click listener for the button
@@ -28,26 +20,25 @@ interface DigitalInvoiceNavigationBarBottomAdapter : InjectedViewAdapter {
     fun setOnHelpClickListener(listener: OnClickListener)
 
     /**
-     * Set the click listener for the pay button.
+     * Set the click listener for the proceed button.
      *
      * @param listener the click listener for the button
      */
-    fun setOnPayClickListener(listener: OnClickListener)
+    fun setOnProceedClickListener(listener: OnClickListener)
 
     /**
-     * Enable or disable pay button.
+     * Enable or disable the proceed button.
      *
      * @param enabled for enabling or disabling the button
      */
-    fun setPayButtonEnabled(enabled: Boolean)
+    fun setProceedButtonEnabled(enabled: Boolean)
 
     /**
-     * Set the gross price total.
+     * Set the total price.
      *
-     * @param integralPartWithCurrencySymbol integral with currency symbol
-     * @param fractionalPart fractional part
+     * @param priceWithCurrencySymbol price string with currency symbol
      */
-    fun setGrossPriceTotal(integralPartWithCurrencySymbol: String, fractionalPart: String)
+    fun setTotalPrice(priceWithCurrencySymbol: String)
 
 }
 
@@ -60,25 +51,20 @@ class DefaultDigitalInvoiceNavigationBarBottomAdapter: DigitalInvoiceNavigationB
 
     private var binding: GbsDigitalInvoiceNavigationBarBottomBinding? = null
 
-    override fun setOnBackClickListener(listener: OnClickListener) {
-        binding?.gbsBackBtn?.setOnClickListener(listener)
-    }
-
     override fun setOnHelpClickListener(listener: OnClickListener) {
         binding?.gbsHelpBtn?.setOnClickListener(listener)
     }
 
-    override fun setOnPayClickListener(listener: OnClickListener) {
+    override fun setOnProceedClickListener(listener: OnClickListener) {
         binding?.gbsPay?.setOnClickListener(listener)
     }
 
-    override fun setPayButtonEnabled(enabled: Boolean) {
+    override fun setProceedButtonEnabled(enabled: Boolean) {
         binding?.gbsPay?.isEnabled = enabled
     }
 
-    override fun setGrossPriceTotal(integralPartWithCurrencySymbol: String, fractionalPart: String) {
-        binding?.grossPriceTotalIntegralPart?.text = integralPartWithCurrencySymbol
-        binding?.grossPriceTotalFractionalPart?.text = fractionalPart
+    override fun setTotalPrice(priceWithCurrencySymbol: String) {
+        binding?.grossPriceTotal?.text = priceWithCurrencySymbol
     }
 
     override fun onCreateView(container: ViewGroup): View {

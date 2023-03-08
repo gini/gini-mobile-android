@@ -166,7 +166,7 @@
     <string name="gc_onboarding_page_indicator_active_content_description">Aktive Seitenanzeige für Seite %1$d.</string>
     <string name="gc_onboarding_page_indicator_inactive_content_description">Inaktive Seitenanzeige für Seite %1$d.</string>
 
-    <string name="gc_photo_tip_good_lightning_title">Gute Lichtverhältnisse</string>
+    <string name="gc_photo_tip_good_lighting_title">Gute Lichtverhältnisse</string>
     <string name="gc_photo_tip_flatten_the_page_title">Flach ausrichten</string>
     <string name="gc_photo_tip_parallel_title">Parallel</string>
     <string name="gc_photo_tip_align_title">Im Rahmen positionieren</string>
