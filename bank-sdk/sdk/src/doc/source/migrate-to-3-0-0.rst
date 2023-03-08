@@ -432,13 +432,6 @@ New UI
 
 The new no results screen gives options to enter document details manually.
 
-Bottom Navigation Bar
-^^^^^^^^^^^^^^^^^^^^^
-
-You can show a bottom navigation bar by passing ``true`` to
-``GiniBank.setCaptureConfiguration(CaptureConfiguration(bottomNavigationBarEnabled = ))``. There is a default implementation, but you can also use
-your own by implementing the ``NoResultsNavigationBarBottomAdapter`` interface and passing it to ``GiniBank``.
-
 You can find more details `here <customization-guide.html#id11>`_.
 
 Enter Details Manually Button

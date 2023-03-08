@@ -9,7 +9,6 @@ import net.gini.android.capture.help.view.HelpNavigationBarBottomAdapter
 import net.gini.android.capture.internal.util.FileImportValidator.FILE_SIZE_LIMIT
 import net.gini.android.capture.logging.ErrorLoggerListener
 import net.gini.android.capture.network.GiniCaptureNetworkService
-import net.gini.android.capture.noresults.view.NoResultsNavigationBarBottomAdapter
 import net.gini.android.capture.onboarding.OnboardingPage
 import net.gini.android.capture.onboarding.view.OnboardingIllustrationAdapter
 import net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomAdapter
@@ -185,11 +184,6 @@ data class CaptureConfiguration(
      * Set an adapter implementation to show a custom bottom navigation bar on the help screen.
      */
     val helpNavigationBarBottomAdapter: HelpNavigationBarBottomAdapter? = null,
-
-    /**
-     * Set an adapter implementation to show a custom bottom navigation bar on the no results screen.
-     */
-    val noResultsNavigationBarBottomAdapter: NoResultsNavigationBarBottomAdapter? = null,
 )
 
 internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfiguration): GiniCapture.Builder {
@@ -227,6 +221,5 @@ internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfig
             configuration.cameraNavigationBarBottomAdapter?.let { setCameraNavigationBarBottomAdapter(it) }
             configuration.reviewNavigationBarBottomAdapter?.let { setReviewBottomBarNavigationAdapter(it) }
             configuration.helpNavigationBarBottomAdapter?.let { setHelpNavigationBarBottomAdapter(it) }
-            configuration.noResultsNavigationBarBottomAdapter?.let { setNoResultsNavigationBarBottomAdapter(it) }
         }
 }

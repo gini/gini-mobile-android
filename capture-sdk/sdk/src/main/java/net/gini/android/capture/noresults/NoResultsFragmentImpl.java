@@ -134,11 +134,7 @@ class NoResultsFragmentImpl {
 
                         injectedViewAdapter.setTitle(mFragment.getActivity().getResources().getString(R.string.gc_title_no_results));
 
-                        if (GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
-                            return;
-                        }
-
-                        injectedViewAdapter.setNavButtonType(GiniCapture.getInstance().isBottomNavigationBarEnabled() ? NavButtonType.NONE : NavButtonType.BACK);
+                        injectedViewAdapter.setNavButtonType(NavButtonType.CLOSE);
                         injectedViewAdapter.setOnNavButtonClickListener(new IntervalClickListener(view -> mFragment.getActivity().onBackPressed()));
                     })
             );
