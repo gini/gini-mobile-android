@@ -7,12 +7,9 @@ import static java.util.Collections.emptyMap;
 
 import android.content.Context;
 import android.content.Intent;
-
 import net.gini.android.capture.analysis.AnalysisActivity;
 import net.gini.android.capture.camera.view.CameraNavigationBarBottomAdapter;
 import net.gini.android.capture.camera.view.DefaultCameraNavigationBarBottomAdapter;
-import net.gini.android.capture.error.view.DefaultErrorNavigationBarBottomAdapter;
-import net.gini.android.capture.error.view.ErrorNavigationBarBottomAdapter;
 import net.gini.android.capture.help.HelpItem;
 import net.gini.android.capture.help.view.DefaultHelpNavigationBarBottomAdapter;
 import net.gini.android.capture.help.view.HelpNavigationBarBottomAdapter;
@@ -117,7 +114,6 @@ public class GiniCapture {
     private final InjectedViewAdapterInstance<HelpNavigationBarBottomAdapter> helpNavigationBarBottomAdapterInstance;
     private final InjectedViewAdapterInstance<CameraNavigationBarBottomAdapter> cameraNavigationBarBottomAdapterInstance;
     private final NoResultsNavigationBarBottomAdapter noResultsNavigationBarBottomAdapter;
-    private final ErrorNavigationBarBottomAdapter errorNavigationBarBottomAdapter;
     private final boolean isBottomNavigationBarEnabled;
     private final InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingAlignCornersIllustrationAdapterInstance;
     private final InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingLightingIllustrationAdapterInstance;
@@ -298,7 +294,6 @@ public class GiniCapture {
         onboardingQRCodeIllustrationAdapterInstance = builder.getOnboardingQRCodeIllustrationAdapterInstance();
         cameraNavigationBarBottomAdapterInstance = builder.getCameraNavigationBarBottomAdapterInstance();
         noResultsNavigationBarBottomAdapter = builder.getNoResultsNavigationBarBottomAdapter();
-        errorNavigationBarBottomAdapter = builder.getErrorNavigationBarBottomAdapter();
         loadingIndicatorAdapterInstance = builder.getLoadingIndicatorAdapterInstance();
         reviewNavigationBarBottomAdapterInstance = builder.getReviewNavigationBarBottomAdapterInstance();
         onButtonLoadingIndicatorAdapterInstance = builder.getOnButtonLoadingIndicatorAdapterInstance();
@@ -586,11 +581,6 @@ public class GiniCapture {
         return noResultsNavigationBarBottomAdapter;
     }
 
-    @NonNull
-    public ErrorNavigationBarBottomAdapter getErrorNavigationBarBottomAdapter() {
-        return errorNavigationBarBottomAdapter;
-    }
-
     public boolean isBottomNavigationBarEnabled() {
         return isBottomNavigationBarEnabled;
     }
@@ -697,7 +687,6 @@ public class GiniCapture {
         private InjectedViewAdapterInstance<HelpNavigationBarBottomAdapter> helpNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultHelpNavigationBarBottomAdapter());
         private InjectedViewAdapterInstance<CameraNavigationBarBottomAdapter> cameraNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultCameraNavigationBarBottomAdapter());
         private NoResultsNavigationBarBottomAdapter noResultsNavigationBarBottomAdapter = new DefaultNoResultsNavigationBarBottomAdapter();
-        private ErrorNavigationBarBottomAdapter errorNavigationBarBottomAdapter = new DefaultErrorNavigationBarBottomAdapter();
         private boolean isBottomNavigationBarEnabled = false;
         private InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingAlignCornersIllustrationAdapterInstance;
         private InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingLightingIllustrationAdapterInstance;
@@ -1106,20 +1095,6 @@ public class GiniCapture {
 
         public NoResultsNavigationBarBottomAdapter getNoResultsNavigationBarBottomAdapter() {
             return noResultsNavigationBarBottomAdapter;
-        }
-
-        public ErrorNavigationBarBottomAdapter getErrorNavigationBarBottomAdapter() {
-            return errorNavigationBarBottomAdapter;
-        }
-
-        /**
-         * Set an adapter implementation to show a custom bottom navigation bar on the error screen.
-         *
-         * @param adapter an {@link ErrorNavigationBarBottomAdapter} interface implementation
-         * @return the {@link Builder} instance
-         */
-        public void setErrorNavigationBarBottomAdapter(@NonNull final ErrorNavigationBarBottomAdapter adapter) {
-            this.errorNavigationBarBottomAdapter = adapter;
         }
 
         /**
