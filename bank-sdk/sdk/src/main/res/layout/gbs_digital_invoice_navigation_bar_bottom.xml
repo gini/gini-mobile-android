@@ -49,12 +49,13 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/gc_large_24"
         android:layout_marginEnd="@dimen/gc_large"
+        android:layout_marginStart="@dimen/gc_large"
         android:layout_marginBottom="@dimen/gc_large_24"
         android:text="@string/gbs_proceed"
         app:cornerRadius="@dimen/gc_small"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/gbs_help_btn"
-        app:layout_constraintStart_toEndOf="@+id/total_label"
+        app:layout_constraintStart_toEndOf="@+id/gbs_placeholder"
         app:layout_constraintTop_toBottomOf="@+id/gross_price_total" />
 
     <ImageButton
@@ -70,5 +71,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/gbs_pay"
         app:srcCompat="@drawable/gbs_menu_question_circle_info" />
+
+    <Space
+        android:id="@+id/gbs_placeholder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/gc_large_48"
+        app:layout_constraintBottom_toBottomOf="@+id/gbs_pay"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/gbs_pay" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
