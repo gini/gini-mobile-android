@@ -139,5 +139,6 @@
     <dimen name="gc_give_permission_button_width">120dp</dimen>
     <dimen name="gc_unknown_banner_width">330dp</dimen>
     <dimen name="gc_unelevated_button_height">55dp</dimen>
+    <dimen name="gc_snackbar_text_height">60dp</dimen>
 
 </resources>
