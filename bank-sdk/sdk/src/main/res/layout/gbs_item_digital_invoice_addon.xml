@@ -15,6 +15,7 @@
         android:layout_alignParentEnd="true"
         android:layout_marginStart="@dimen/gc_large_24"
         android:layout_marginTop="@dimen/gc_large"
+        android:textColor="?attr/gbsAddonTextColor"
         android:textAppearance="@style/GiniCaptureTheme.Typography.Body1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
