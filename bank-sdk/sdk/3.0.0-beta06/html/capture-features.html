@@ -1,0 +1,385 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Invoice Capture Features &mdash; Gini Bank SDK for Android 2.0 documentation</title>
+  
+
+  
+  
+
+  
+  <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,400italic,600italic|Source+Code+Pro|Roboto+Slab:400,700" rel="stylesheet" type="text/css" />
+
+  
+  
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:'./',
+        VERSION:'2.0',
+        COLLAPSE_INDEX:false,
+        FILE_SUFFIX:'.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/language_data.js"></script>
+
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+    <script type="text/javascript">
+        jQuery(function () {
+            SphinxRtdTheme.StickyNav.enable();
+        });
+    </script>
+  
+
+  
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Gini Bank SDK for Android 2.0 documentation" href="index.html"/>
+        <link rel="next" title="Customization Guide" href="customization-guide.html"/>
+        <link rel="prev" title="Integration" href="integration.html"/> 
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="index.html" id="gini-logo">
+          <img src="_static/logo_flat.png" />
+        </a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="getting-started.html#requirements">Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting-started.html#installation">Installation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="integration.html">Integration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="integration.html#capturing-invoices">Capturing Invoices</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#android-manifest">Android Manifest</a></li>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#requirements-check">Requirements Check</a></li>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#configuration">Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#tablet-support">Tablet Support</a></li>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#networking">Networking</a></li>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#capture-flow">Capture Flow</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="integration.html#handling-payment-requests">Handling Payment Requests</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#id1">Networking</a></li>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#id3">Android Manifest</a></li>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#package-name">Package Name</a></li>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#receive-payment-requests">Receive Payment Requests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#testing">Testing</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Invoice Capture Features</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#features-from-the-gini-capture-sdk">Features from the Gini Capture SDK</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#file-import-open-with">File Import (Open With)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#return-assistant">Return Assistant</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="customization-guide.html">Customization Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#overview-of-ui-customization-options">Overview of UI Customization Options</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#styles">Styles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#colors">Colors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#images">Images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#typography">Typography</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#text">Text</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#custom-ui-elements">Custom UI Elements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#dark-mode">Dark mode</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#onboarding-screen">Onboarding Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#ui-customization">UI Customization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id1">Bottom Navigation Bar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#custom-onboarding-pages">Custom Onboarding Pages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#custom-illustration-views">Custom Illustration Views</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#camera-screen">Camera Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id2">UI Customization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id3">Bottom Navigation Bar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#custom-loading-indicator">Custom Loading Indicator</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#review-screen">Review Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id4">UI Customization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id5">Bottom Navigation Bar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#custom-process-button-loading-indicator">Custom “Process” Button Loading Indicator</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#analysis-screen">Analysis Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id6">UI Customization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id7">Custom Loading Indicator</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#help-screen">Help Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id8">UI Customization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id9">Bottom Navigation Bar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#custom-help-screens">Custom Help Screens</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#no-results-screen">No Results Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id10">UI Customization</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#error-screen">Error Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id11">UI Customization</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="migrating-from-gvl.html">Migrating from the Gini Vision Library</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#kotlin">Kotlin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#gini-capture-sdk">Gini Capture SDK</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#gini-bank-api-library">Gini Bank API Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#requirements">Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#screen-api">Screen API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#component-api">Component API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#open-with">Open With</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="migrating-from-gvl.html#id2">Screen API</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#networking">Networking</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="migrating-from-gvl.html#default">Default</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrating-from-gvl.html#custom">Custom</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#event-tracking">Event Tracking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#customization">Customization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="migrate-to-2-0-0.html">Migrate to 2.0.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="migrate-to-3-0-0.html">Migrate to 3.0.0</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="migrate-to-3-0-0.html#migrate-from-component-api">Migrate from Component API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrate-to-3-0-0.html#migrate-from-screen-api">Migrate from Screen API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrate-to-3-0-0.html#migrate-cleanup-step-and-feedback-sending">Migrate Cleanup Step and Feedback Sending</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#default-networking-implementation">Default Networking Implementation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#custom-networking-implementation">Custom Networking Implementation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="migrate-to-3-0-0.html#overview-of-new-ui-customization-options">Overview of New UI Customization Options</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#styles">Styles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#colors">Colors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#images">Images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#typography">Typography</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#text">Text</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#ui-elements">UI Elements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#dark-mode">Dark mode</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="migrate-to-3-0-0.html#migrate-to-the-new-ui">Migrate to the new UI</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#back-buttons">Back Buttons</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#onboarding-screen">Onboarding Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#camera-screen">Camera Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#qr-code-scanner">QR Code Scanner</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#review-screen">Review Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#help-screen">Help Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#analysis-screen">Analysis Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#error-screen">Error Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#no-results-screen">No Results Screen</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">Reference Doc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Gini Bank SDK for Android</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Invoice Capture Features</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="invoice-capture-features">
+<h1>Invoice Capture Features<a class="headerlink" href="#invoice-capture-features" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="features-from-the-gini-capture-sdk">
+<h2>Features from the Gini Capture SDK<a class="headerlink" href="#features-from-the-gini-capture-sdk" title="Permalink to this headline">¶</a></h2>
+<p>The capture feature uses our <a class="reference external" href="https://github.com/gini/gini-mobile-android/tree/main/capture-sdk">Gini Capture SDK</a>. All features
+listed in its <a class="reference external" href="https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/3.0.0-beta06/html/features.html">documentation</a> can be used here
+as well.</p>
+<p>An important difference is in how you configure the capture features. In the Gini Bank SDK you need to use the
+<code class="docutils literal notranslate"><span class="pre">CaptureConfiguration</span></code> instead of the Gini Capture SDK’s <code class="docutils literal notranslate"><span class="pre">GiniCapture.Builder</span></code>. The configuration names are the same
+so you can easily map them to the <code class="docutils literal notranslate"><span class="pre">CaptureConfiguration</span></code>.</p>
+<div class="section" id="file-import-open-with">
+<h3>File Import (Open With)<a class="headerlink" href="#file-import-open-with" title="Permalink to this headline">¶</a></h3>
+<p>Another difference is related to the <a class="reference external" href="https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/3.0.0-beta06/html/features.html#file-import-open-with">file import</a> (or
+“open with”) feature which allows importing of files from other apps via Android’s “open with” or “share” functionality.</p>
+<p>To handle imported files using the Gini Bank SDK you need to register an activity result handler with the
+<code class="docutils literal notranslate"><span class="pre">CaptureFlowImportContract()</span></code> and then pass the incoming intent to
+<code class="docutils literal notranslate"><span class="pre">GiniBank.startCaptureFlowForIntent()</span></code>:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// Use the androidx&#39;s Activity Result API to register a handler for the capture result.</span>
+<span class="n">val</span> <span class="n">captureImportLauncher</span> <span class="o">=</span> <span class="n">registerForActivityResult</span><span class="p">(</span><span class="n">CaptureFlowImportContract</span><span class="p">())</span> <span class="p">{</span> <span class="n">result</span><span class="p">:</span> <span class="n">CaptureResult</span> <span class="o">-&gt;</span>
+    <span class="n">when</span> <span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">is</span> <span class="n">CaptureResult</span><span class="p">.</span><span class="na">Success</span> <span class="o">-&gt;</span> <span class="p">{</span>
+            <span class="n">handleExtractions</span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="na">specificExtractions</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="n">is</span> <span class="n">CaptureResult</span><span class="p">.</span><span class="na">Error</span> <span class="o">-&gt;</span> <span class="p">{</span>
+            <span class="n">when</span> <span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="na">value</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">is</span> <span class="n">ResultError</span><span class="p">.</span><span class="na">Capture</span> <span class="o">-&gt;</span> <span class="p">{</span>
+                    <span class="n">val</span> <span class="n">captureError</span><span class="p">:</span> <span class="n">GiniCaptureError</span> <span class="o">=</span> <span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="na">value</span> <span class="n">as</span> <span class="n">ResultError</span><span class="p">.</span><span class="na">Capture</span><span class="p">).</span><span class="na">giniCaptureError</span>
+                    <span class="n">handleCaptureError</span><span class="p">(</span><span class="n">captureError</span><span class="p">)</span>
+                <span class="p">}</span>
+                <span class="n">is</span> <span class="n">ResultError</span><span class="p">.</span><span class="na">FileImport</span> <span class="o">-&gt;</span> <span class="p">{</span>
+                    <span class="n">val</span> <span class="n">fileImportError</span> <span class="o">=</span> <span class="n">result</span><span class="p">.</span><span class="na">value</span> <span class="n">as</span> <span class="n">ResultError</span><span class="p">.</span><span class="na">FileImport</span>
+                    <span class="nf">handleFileImportError</span><span class="p">(</span><span class="n">fileImportError</span><span class="p">)</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="n">CaptureResult</span><span class="p">.</span><span class="na">Empty</span> <span class="o">-&gt;</span> <span class="p">{</span>
+            <span class="n">handleNoExtractions</span><span class="p">()</span>
+        <span class="p">}</span>
+        <span class="n">CaptureResult</span><span class="p">.</span><span class="na">Cancel</span> <span class="o">-&gt;</span> <span class="p">{</span>
+            <span class="n">handleCancellation</span><span class="p">()</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">fun</span> <span class="nf">handleFileImportError</span><span class="p">(</span><span class="n">exception</span><span class="p">:</span> <span class="n">ImportedFileValidationException</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="n">message</span> <span class="o">=</span> <span class="p">...</span>
+    <span class="n">exception</span><span class="p">.</span><span class="na">validationError</span><span class="o">?</span><span class="p">.</span><span class="na">let</span> <span class="p">{</span> <span class="n">validationError</span> <span class="o">-&gt;</span>
+        <span class="c1">// Get the default message</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="n">getString</span><span class="p">(</span><span class="n">validationError</span><span class="p">.</span><span class="na">textResource</span><span class="p">)</span>
+        <span class="c1">// Or use custom messages</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="n">when</span> <span class="p">(</span><span class="n">validationError</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">FileImportValidator</span><span class="p">.</span><span class="na">Error</span><span class="p">.</span><span class="na">TYPE_NOT_SUPPORTED</span> <span class="o">-&gt;</span> <span class="p">...</span>
+            <span class="n">FileImportValidator</span><span class="p">.</span><span class="na">Error</span><span class="p">.</span><span class="na">SIZE_TOO_LARGE</span> <span class="o">-&gt;</span> <span class="p">...</span>
+            <span class="n">FileImportValidator</span><span class="p">.</span><span class="na">Error</span><span class="p">.</span><span class="na">TOO_MANY_PDF_PAGES</span> <span class="o">-&gt;</span> <span class="p">...</span>
+            <span class="n">FileImportValidator</span><span class="p">.</span><span class="na">Error</span><span class="p">.</span><span class="na">PASSWORD_PROTECTED_PDF</span> <span class="o">-&gt;</span> <span class="p">...</span>
+            <span class="n">FileImportValidator</span><span class="p">.</span><span class="na">Error</span><span class="p">.</span><span class="na">TOO_MANY_DOCUMENT_PAGES</span> <span class="o">-&gt;</span> <span class="p">...</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">AlertDialog</span><span class="p">.</span><span class="na">Builder</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+        <span class="p">.</span><span class="na">setMessage</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="p">.</span><span class="na">setPositiveButton</span><span class="p">(</span><span class="s">&quot;OK&quot;</span><span class="p">)</span> <span class="p">{</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="n">finish</span><span class="p">()</span> <span class="p">}</span>
+        <span class="p">.</span><span class="na">show</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="n">fun</span> <span class="nf">startGiniBankSDKForImportedFile</span><span class="p">(</span><span class="n">importedFileIntent</span><span class="p">:</span> <span class="n">Intent</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Configure capture first</span>
+    <span class="n">configureCapture</span><span class="p">();</span>
+
+    <span class="n">fileImportCancellationToken</span> <span class="o">=</span>
+        <span class="n">GiniBank</span><span class="p">.</span><span class="na">startCaptureFlowForIntent</span><span class="p">(</span><span class="n">captureImportLauncher</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="n">importedFileIntent</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="return-assistant">
+<h2>Return Assistant<a class="headerlink" href="#return-assistant" title="Permalink to this headline">¶</a></h2>
+<p>The return assistant feature allows your users to view and edit payable items in an invoice. The total amount is
+updated to be the sum of only those items which the user opts to pay.</p>
+<p>To enable this feature simply set <code class="docutils literal notranslate"><span class="pre">returnAssistantEnabled</span></code> to <code class="docutils literal notranslate"><span class="pre">true</span></code> in the <code class="docutils literal notranslate"><span class="pre">CaptureConfiguration</span></code>:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">CaptureConfiguration</span><span class="p">(</span><span class="n">returnAssistantEnabled</span> <span class="o">=</span> <span class="kc">true</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The Gini Bank SDK will
+show the return assistant automatically if the invoice contained payable items and will update the extractions returned
+to your app according to the user’s changes.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">amountToPay</span></code> extraction is updated to be the sum of items the user decided to pay. It includes discounts and
+additional charges that might be present on the invoice.</p>
+<p>The extractions related to the return assistant are stored in the <code class="docutils literal notranslate"><span class="pre">compoundExtractions</span></code> field of the
+<code class="docutils literal notranslate"><span class="pre">CaptureResult</span></code>. See the Gini Bank API’s <a class="reference external" href="https://pay-api.gini.net/documentation/#return-assistant-extractions">documentation</a> to learn about the return assistant’s compound
+extractions.</p>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="customization-guide.html" class="btn btn-neutral float-right" title="Customization Guide">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="integration.html" class="btn btn-neutral" title="Integration"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+    </p>
+  </div>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  
+</body>
+</html>
