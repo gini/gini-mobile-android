@@ -1,19 +1,17 @@
 package net.gini.android.capture.help;
 
-import android.graphics.Color;
+import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.ContextCompat;
+import com.google.android.material.snackbar.Snackbar;
 
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.R;
@@ -24,9 +22,12 @@ import net.gini.android.capture.view.InjectedViewContainer;
 import net.gini.android.capture.view.NavButtonType;
 import net.gini.android.capture.view.NavigationBarTopAdapter;
 
-import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
+import androidx.annotation.ColorInt;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 
-import com.google.android.material.snackbar.Snackbar;
+import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
 
 /**
  * Internal use only.
@@ -91,32 +92,26 @@ public class FileImportActivity extends AppCompatActivity {
     private void showCustomSnackBar() {
         ConstraintLayout constraintLayout = findViewById(R.id.gc_file_import_constraint_layout);
 
-        Snackbar snackbar = Snackbar.make(constraintLayout, "", Snackbar.LENGTH_INDEFINITE);
-        snackbar.getView().setBackgroundColor(Color.TRANSPARENT);
+        Snackbar snackbar = Snackbar.make(constraintLayout, getString(R.string.gc_snackbar_illustrations), Snackbar.LENGTH_INDEFINITE);
+        snackbar.setTextMaxLines(5);
+
+        TypedValue typedValue = new TypedValue();
+        Resources.Theme theme = getTheme();
+        theme.resolveAttribute(R.attr.colorAccent, typedValue, true);
+        @ColorInt int color = typedValue.data;
+
+        snackbar.setAction(getString(R.string.gc_snackbar_dismiss), v -> snackbar.dismiss());
+        snackbar.setActionTextColor(color); // snackbar action text color
 
         Snackbar.SnackbarLayout snackBarLayout = (Snackbar.SnackbarLayout) snackbar.getView();
 
         int bottomPadding = GiniCapture.getInstance().isBottomNavigationBarEnabled()
-                ? (int) getResources().getDimension(R.dimen.gc_large_96) : 0;
-
+                ? (int) getResources().getDimension(R.dimen.gc_large_96) : (int) getResources().getDimension(R.dimen.gc_large);
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) snackBarLayout.getLayoutParams();
-
-        params.setMargins((int)getResources().getDimension(R.dimen.gc_medium), 0, (int)getResources().getDimension(R.dimen.gc_medium), bottomPadding);
-
+        params.setMargins((int)getResources().getDimension(R.dimen.gc_large), 0, (int)getResources().getDimension(R.dimen.gc_large), bottomPadding);
         snackbar.getView().setLayoutParams(params);
-
-        View view = getLayoutInflater().inflate(R.layout.gc_snackbar_info, null);
-
-        TextView dismissTxt = view.findViewById(R.id.gc_snackbar_dismiss);
-        dismissTxt.setOnClickListener(v -> {
-            if (snackbar.isShown())
-                snackbar.dismiss();
-        });
-
-        snackBarLayout.addView(view, 0);
-
+        snackbar.getView().setMinimumHeight((int)getResources().getDimension(R.dimen.gc_snackbar_text_height));
         snackbar.show();
-
     }
 
     @Override
