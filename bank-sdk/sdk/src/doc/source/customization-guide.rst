@@ -221,10 +221,6 @@ UI Customization
 Bottom Navigation Bar
 ~~~~~~~~~~~~~~~~~~~~~
 
-.. note::
-
-    Will be available in 3.0.0-beta05.
-
 You can inject your own view for the bottom navigation bar, if you set
 ``GiniBank.setCaptureConfiguration(CaptureConfiguration(bottomNavigationBarEnabled = ))`` to ``true`` and pass a custom
 ``CameraNavigationBarBottomAdapter`` implementation to ``GiniBank``:
@@ -270,10 +266,6 @@ UI Customization
 Bottom Navigation Bar
 ~~~~~~~~~~~~~~~~~~~~~
 
-.. note::
-
-    Will be available in 3.0.0-beta05.
-
 You can inject your own view for the bottom navigation bar, if you set
 ``GiniBank.setCaptureConfiguration(CaptureConfiguration(bottomNavigationBarEnabled = ))`` to ``true`` and pass a custom
 ``ReviewNavigationBarBottomAdapter`` implementation to ``GiniBank``:
@@ -294,10 +286,6 @@ Custom "Process" Button Loading Indicator
 There is a default loading indicator on the "Process" button which shows that the upload is in progress. You can show
 your own activity indicator by implementing the ``OnButtonLoadingIndicatorAdapter`` interface and passing it to
 ``GiniBank``:
-
-.. note::
-
-    Will be available in 3.0.0-beta05.
 
 .. code-block:: java
 
@@ -355,10 +343,6 @@ UI Customization
 
 Bottom Navigation Bar
 ~~~~~~~~~~~~~~~~~~~~~
-
-.. note::
-
-    Will be available in 3.0.0-beta05.
 
 You can inject your own view for the bottom navigation bar, if you set
 ``GiniBank.setCaptureConfiguration(CaptureConfiguration(bottomNavigationBarEnabled = ))`` to ``true`` and pass a custom
