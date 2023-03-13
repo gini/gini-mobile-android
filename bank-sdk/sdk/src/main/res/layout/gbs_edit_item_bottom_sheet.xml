@@ -56,6 +56,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/gbs_article_name_wrapper"
                 android:layout_width="0dp"
+                android:minHeight="@dimen/gbs_digital_invoice_edit_sheet_field_height"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/gc_large_32"
                 android:background="@drawable/gbs_top_corners_radius"
@@ -107,6 +108,7 @@
                 android:id="@+id/gbs_unit_wrapper"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:minHeight="@dimen/gbs_digital_invoice_edit_sheet_field_height"
                 android:layout_marginTop="@dimen/gc_medium"
                 android:background="@drawable/gbs_top_corners_radius"
                 android:clipToOutline="true"
@@ -200,6 +202,7 @@
                 android:id="@+id/gbs_quantity_wrapper"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:minHeight="@dimen/gbs_digital_invoice_edit_sheet_field_height"
                 android:layout_marginTop="@dimen/gc_medium"
                 android:layout_marginBottom="@dimen/gc_large_24"
                 android:background="@drawable/gbs_top_corners_radius"
