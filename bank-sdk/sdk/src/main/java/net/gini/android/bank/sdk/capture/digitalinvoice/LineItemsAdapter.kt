@@ -440,7 +440,7 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
             dataIndex: Int?
         ) {
             @SuppressLint("SetTextI18n")
-            addonName.text = "${itemView.context.getString(data.first.nameStringRes)}:"
+            addonName.text = "${itemView.context.getString(data.first.nameStringRes)}"
             DigitalInvoice.addonPriceIntegralAndFractionalParts(data.first)
                 .let { (integral, fractional) ->
                     priceIntegralPart.text = integral
