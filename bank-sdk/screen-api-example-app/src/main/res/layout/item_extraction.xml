@@ -16,11 +16,15 @@
         android:textStyle="bold"
         tools:text="paymentRecipient" />
 
-    <TextView
+    <EditText
         android:id="@+id/text_value"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="18sp"
+        android:maxLines="1"
+        android:textColor="@drawable/edittext_selector"
+        android:inputType="text"
+        android:background="@null"
         tools:text="Hello@World and stuff and foo and bar and whatchamacallit" />
 
 </LinearLayout>
