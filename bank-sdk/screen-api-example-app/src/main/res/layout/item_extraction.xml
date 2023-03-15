@@ -22,6 +22,7 @@
         android:layout_height="wrap_content"
         android:textSize="18sp"
         android:maxLines="1"
+        android:textColorHint="@color/gc_dark_06"
         android:textColor="@drawable/edittext_selector"
         android:inputType="text"
         android:background="@null"

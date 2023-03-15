@@ -27,8 +27,7 @@ import java.util.*
 /**
  * Displays the Pay5 extractions: paymentRecipient, iban, bic, amount and paymentReference.
  *
- * A menu item is added to send feedback. The amount is changed to 10.00:EUR or an amount of
- * 10.00:EUR is added, if missing.
+ * A menu item is added to send feedback. An amount of 10.00:EUR is added, if missing.
  */
 class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsAdapterInterface {
     private lateinit var binding: ActivityExtractionsBinding
@@ -36,6 +35,8 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
     private var mExtractions: MutableMap<String, GiniCaptureSpecificExtraction> = hashMapOf()
     private lateinit var mExtractionsAdapter: ExtractionsAdapter
     private val defaultNetworkService: GiniCaptureDefaultNetworkService by inject()
+    private val editableSpecificExtractions = hashMapOf("paymentRecipient" to "companyname", "paymentReference" to "reference" ,
+        "paymentPurpose" to "text", "iban" to "iban", "bic" to "bic", "amountToPay" to "amount")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -97,7 +98,16 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
         binding.recyclerviewExtractions.apply {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(this@ExtractionsActivity)
-            adapter = ExtractionsAdapter(getSortedExtractions(mExtractions), this@ExtractionsActivity).also {
+
+            editableSpecificExtractions.forEach {
+                if (!mExtractions.containsKey(it.key)) {
+                    mExtractions[it.key] = GiniCaptureSpecificExtraction(
+                        it.key, "",
+                        it.value, null, emptyList())
+                }
+            }
+
+            adapter = ExtractionsAdapter(getSortedExtractions(mExtractions), this@ExtractionsActivity, editableSpecificExtractions.keys.toList()).also {
                 mExtractionsAdapter = it
             }
             setOnTouchListener { _, _ ->
@@ -161,8 +171,10 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
     }
 }
 
-private class ExtractionsAdapter(var extractions: List<GiniCaptureSpecificExtraction>, var listener: ExtractionsAdapterInterface? = null) : RecyclerView.Adapter<ExtractionsViewHolder>() {
-    private val editableSpecificExtractions = listOf("paymentRecipient", "paymentReference", "paymentPurpose", "iban", "bic", "amountToPay")
+private class ExtractionsAdapter(var extractions: List<GiniCaptureSpecificExtraction>,
+                                 var listener: ExtractionsAdapterInterface? = null,
+                                 val editableSpecificExtractions : List<String>) : RecyclerView.Adapter<ExtractionsViewHolder>() {
+
     interface ExtractionsAdapterInterface {
         fun valueChanged(key: String, value: String)
     }
@@ -180,6 +192,7 @@ private class ExtractionsAdapter(var extractions: List<GiniCaptureSpecificExtrac
         extractions.getOrNull(position)?.run {
             holder.mTextName.text = name
             holder.mTextValue.setText(value)
+            holder.mTextValue.hint = if (value.isEmpty()) name else ""
             holder.mTextValue.isEnabled = name in editableSpecificExtractions
         }
     }
