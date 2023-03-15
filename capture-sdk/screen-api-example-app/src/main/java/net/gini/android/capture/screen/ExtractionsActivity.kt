@@ -206,9 +206,7 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapterImpl.Extracti
         binding.recyclerviewExtractions.apply {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(this@ExtractionsActivity)
-            mExtractions.remove("bic")
-            mExtractions.remove("amountToPay")
-
+            
             editableSpecificExtractions.forEach {
                 if (!mExtractions.containsKey(it.key)) {
                     mExtractions[it.key] = GiniCaptureSpecificExtraction(
