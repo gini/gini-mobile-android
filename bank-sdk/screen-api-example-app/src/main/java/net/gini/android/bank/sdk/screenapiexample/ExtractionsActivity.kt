@@ -8,7 +8,6 @@ import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
@@ -27,7 +26,7 @@ import java.util.*
 /**
  * Displays the Pay5 extractions: paymentRecipient, iban, bic, amount and paymentReference.
  *
- * A menu item is added to send feedback. An amount of 10.00:EUR is added, if missing.
+ * A menu item is added to send feedback.
  */
 class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsAdapterInterface {
     private lateinit var binding: ActivityExtractionsBinding
@@ -123,29 +122,25 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
     private fun <T> getSortedExtractions(extractions: Map<String, T>): List<T> = extractions.toSortedMap().values.toList()
 
     private fun sendFeedbackAndClose(binding: ActivityExtractionsBinding) {
-        // An example for sending feedback where we change the amount or add one if it is missing
         // Feedback should be sent only for the user visible fields. Non-visible fields should be filtered out.
         // In a real application the user input should be used as the new value.
 
-        val amount = mExtractions["amountToPay"]
+        var amount = mExtractions["amountToPay"]?.value ?: ""
         val paymentRecipient = mExtractions["paymentRecipient"]?.value ?: ""
         val paymentReference = mExtractions["paymentReference"]?.value ?: ""
         val paymentPurpose = mExtractions["paymentPurpose"]?.value ?: ""
         val iban = mExtractions["iban"]?.value ?: ""
         val bic = mExtractions["bic"]?.value ?: ""
 
-        if (amount == null) { // Amount was missing, let's add it
-            val extraction = GiniCaptureSpecificExtraction(
-                "amountToPay", "10.00",
-                "amount", null, emptyList())
-            mExtractions["amountToPay"] = extraction
+        if (amount.isEmpty()) {
+            amount = Amount.EMPTY.amountToPay()
+            mExtractions["amountToPay"]?.value = amount
             mExtractionsAdapter?.extractions = getSortedExtractions(mExtractions)
-            Toast.makeText(this, "Added amount of 10.00", Toast.LENGTH_SHORT).show()
         }
         mExtractionsAdapter?.notifyDataSetChanged()
 
         GiniBank.releaseCapture(applicationContext, paymentRecipient, paymentReference, paymentPurpose, iban, bic, Amount(
-            BigDecimal(amount!!.value.removeSuffix(":EUR")), AmountCurrency.EUR)
+            BigDecimal(amount.removeSuffix(":EUR")), AmountCurrency.EUR)
         )
 
         finish()
