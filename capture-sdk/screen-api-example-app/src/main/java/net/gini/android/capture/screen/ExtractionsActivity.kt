@@ -7,11 +7,13 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
+import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import net.gini.android.capture.Amount
@@ -33,10 +35,9 @@ import java.util.*
 /**
  * Displays the Pay5 extractions: paymentRecipient, iban, bic, amount and paymentReference.
  *
- * A menu item is added to send feedback. The amount is changed to 10.00:EUR or an amount of
- * 10.00:EUR is added, if missing.
+ * A menu item is added to send feedback.
  */
-class ExtractionsActivity : AppCompatActivity() {
+class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapterImpl.ExtractionsAdapterInterface {
     private lateinit var binding: ActivityExtractionsBinding
 
     private var mExtractions: MutableMap<String, GiniCaptureSpecificExtraction> = HashMap()
@@ -44,6 +45,10 @@ class ExtractionsActivity : AppCompatActivity() {
     private val mLegacyExtractions: MutableMap<String, SpecificExtraction> = HashMap()
     private var mExtractionsAdapter: ExtractionsAdapter<Any>? = null
     private lateinit var defaultNetworkService: GiniCaptureDefaultNetworkService
+
+    // {extraction name} to it's {entity name}
+    private val editableSpecificExtractions = hashMapOf("paymentRecipient" to "companyname", "paymentReference" to "reference" ,
+        "paymentPurpose" to "text", "iban" to "iban", "bic" to "bic", "amountToPay" to "amount")
 
     companion object {
         private val LOG = LoggerFactory.getLogger(ExtractionsActivity::class.java)
@@ -60,6 +65,12 @@ class ExtractionsActivity : AppCompatActivity() {
         showAnalyzedDocumentId()
         setUpRecyclerView(binding)
         handleBackPressed()
+    }
+
+    override fun valueChanged(key: String, newValue: String) {
+        mExtractions[key]?.apply {
+            value = newValue
+        }
     }
 
     private fun handleBackPressed() {
@@ -195,9 +206,20 @@ class ExtractionsActivity : AppCompatActivity() {
         binding.recyclerviewExtractions.apply {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(this@ExtractionsActivity)
+            mExtractions.remove("bic")
+            mExtractions.remove("amountToPay")
+
+            editableSpecificExtractions.forEach {
+                if (!mExtractions.containsKey(it.key)) {
+                    mExtractions[it.key] = GiniCaptureSpecificExtraction(
+                        it.key, "",
+                        it.value, null, emptyList())
+                }
+            }
+
             adapter = when {
                 mExtractions.isNotEmpty() -> ExtractionsAdapterImpl(getSortedExtractions(mExtractions),
-                        getSortedExtractions(mCompoundExtractions))
+                        getSortedExtractions(mCompoundExtractions), editableSpecificExtractions.keys.toList(), this@ExtractionsActivity)
                 mLegacyExtractions.isNotEmpty() -> LegacyExtractionsAdapter(getSortedExtractions(mLegacyExtractions))
                 else -> null
             }
@@ -207,32 +229,25 @@ class ExtractionsActivity : AppCompatActivity() {
     private fun <T> getSortedExtractions(extractions: Map<String, T>): List<T> = extractions.toSortedMap().values.toList()
 
     private fun sendFeedbackAndClose(binding: ActivityExtractionsBinding) {
-        // An example for sending feedback where we change the amount or add one if it is missing
         // Feedback should be sent only for the user visible fields. Non-visible fields should be filtered out.
         // In a real application the user input should be used as the new value.
 
-        val amount = mExtractions["amountToPay"]
+        var amount = mExtractions["amountToPay"]?.value ?: ""
         val paymentRecipient = mExtractions["paymentRecipient"]?.value ?: ""
         val paymentReference = mExtractions["paymentReference"]?.value ?: ""
         val paymentPurpose = mExtractions["paymentPurpose"]?.value ?: ""
         val iban = mExtractions["iban"]?.value ?: ""
         val bic = mExtractions["bic"]?.value ?: ""
 
-        if (amount != null) { // Let's assume the amount was wrong and change it
-            amount.value = "10.00"
-            Toast.makeText(this, "Amount changed to 10.00", Toast.LENGTH_SHORT).show()
-        } else { // Amount was missing, let's add it
-            val extraction = GiniCaptureSpecificExtraction(
-                    "amountToPay", "10.00",
-                    "amount", null, emptyList())
-            mExtractions["amountToPay"] = extraction
+        if (amount.isEmpty()) {
+            amount = Amount.EMPTY.amountToPay()
+            mExtractions["amountToPay"]?.value = amount
             mExtractionsAdapter?.extractions = getSortedExtractions(mExtractions)
-            Toast.makeText(this, "Added amount of 10.00", Toast.LENGTH_SHORT).show()
         }
         mExtractionsAdapter?.notifyDataSetChanged()
 
         GiniCapture.cleanup(applicationContext, paymentRecipient, paymentReference, paymentPurpose, iban, bic, Amount(
-            BigDecimal(amount!!.value), AmountCurrency.EUR)
+            BigDecimal(amount.removeSuffix(":EUR")), AmountCurrency.EUR)
         )
 
         finish()
@@ -307,80 +322,91 @@ class ExtractionsActivity : AppCompatActivity() {
         binding.recyclerviewExtractions.animate().alpha(1.0f)
         binding.layoutProgress.visibility = View.GONE
     }
+}
 
-    private abstract class ExtractionsAdapter<T> :
-            RecyclerView.Adapter<ExtractionsViewHolder>() {
-        abstract var extractions: List<T>
-        abstract var compoundExtractions: List<GiniCaptureCompoundExtraction>
+private abstract class ExtractionsAdapter<T> :
+    RecyclerView.Adapter<ExtractionsViewHolder>() {
+    abstract var extractions: List<T>
+    abstract var compoundExtractions: List<GiniCaptureCompoundExtraction>
+    abstract var editableSpecificExtractions : List<String>
+}
+
+private class ExtractionsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    var mTextName: TextView
+    var mTextValue: EditText
+
+    init {
+        mTextName = itemView.findViewById(R.id.text_name) as TextView
+        mTextValue = itemView.findViewById(R.id.text_value) as EditText
+    }
+}
+
+private class ExtractionsAdapterImpl(
+    override var extractions: List<GiniCaptureSpecificExtraction>,
+    override var compoundExtractions: List<GiniCaptureCompoundExtraction>,
+    override var editableSpecificExtractions: List<String>,
+    var listener: ExtractionsAdapterInterface?
+) : ExtractionsAdapter<GiniCaptureSpecificExtraction>() {
+
+    interface ExtractionsAdapterInterface {
+        fun valueChanged(key: String, value: String)
+    }
+    override fun onCreateViewHolder(parent: ViewGroup,
+                                    viewType: Int): ExtractionsViewHolder {
+        val holder = ExtractionsViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_extraction, parent, false))
+        holder.mTextValue.addTextChangedListener {
+            listener?.valueChanged(holder.mTextName.text.toString(), it.toString())
+        }
+
+        return holder
     }
 
-    private class ExtractionsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var mTextName: TextView
-        var mTextValue: TextView
-
-        init {
-            mTextName = itemView.findViewById(R.id.text_name) as TextView
-            mTextValue = itemView.findViewById(R.id.text_value) as TextView
-        }
-    }
-
-    private class ExtractionsAdapterImpl(
-            override var extractions: List<GiniCaptureSpecificExtraction>,
-            override var compoundExtractions: List<GiniCaptureCompoundExtraction>
-    ) : ExtractionsAdapter<GiniCaptureSpecificExtraction>() {
-
-        override fun onCreateViewHolder(parent: ViewGroup,
-                                        viewType: Int): ExtractionsViewHolder {
-            val layoutInflater = LayoutInflater.from(parent.context)
-            return ExtractionsViewHolder(
-                    layoutInflater.inflate(R.layout.item_extraction, parent, false))
-        }
-
-        override fun onBindViewHolder(holder: ExtractionsViewHolder,
-                                      position: Int) {
-            extractions.getOrNull(position)?.run {
-                holder.mTextName.text = name
-                holder.mTextValue.text = value
-            } ?: compoundExtractions.getOrNull(position - extractions.size)?.run {
-                holder.mTextName.text = name
-                holder.mTextValue.text = StringBuilder().apply {
-                    specificExtractionMaps.forEach { extractionMap ->
-                        extractionMap.forEach { (name, extraction) ->
-                            append("${name}: ${extraction.value}\n")
-                        }
-                        append("\n")
+    override fun onBindViewHolder(holder: ExtractionsViewHolder,
+                                  position: Int) {
+        extractions.getOrNull(position)?.run {
+            holder.mTextName.text = name
+            holder.mTextValue.setText(value)
+            holder.mTextValue.hint = if (value.isEmpty()) name else ""
+            holder.mTextValue.isEnabled = name in editableSpecificExtractions
+        } ?: compoundExtractions.getOrNull(position - extractions.size)?.run {
+            holder.mTextName.text = name
+            holder.mTextValue.isEnabled = false
+            holder.mTextValue.setText(StringBuilder().apply {
+                specificExtractionMaps.forEach { extractionMap ->
+                    extractionMap.forEach { (name, extraction) ->
+                        append("${name}: ${extraction.value}\n")
                     }
+                    append("\n")
                 }
-            }
+            })
         }
-
-        override fun getItemCount(): Int {
-            return extractions.size + compoundExtractions.size
-        }
-
     }
 
-    private class LegacyExtractionsAdapter(
-            override var extractions: List<SpecificExtraction>,
-            override var compoundExtractions: List<GiniCaptureCompoundExtraction> = emptyList()
-    ) : ExtractionsAdapter<SpecificExtraction>() {
+    override fun getItemCount(): Int {
+        return extractions.size + compoundExtractions.size
+    }
 
-        override fun onCreateViewHolder(parent: ViewGroup,
-                                        viewType: Int): ExtractionsViewHolder {
-            val layoutInflater = LayoutInflater.from(parent.context)
-            return ExtractionsViewHolder(
-                    layoutInflater.inflate(R.layout.item_extraction, parent, false))
-        }
+}
 
-        override fun onBindViewHolder(holder: ExtractionsViewHolder,
-                                      position: Int) {
-            holder.mTextName.text = extractions[position].name
-            holder.mTextValue.text = extractions[position].value
-        }
+private class LegacyExtractionsAdapter(
+    override var extractions: List<SpecificExtraction>,
+    override var compoundExtractions: List<GiniCaptureCompoundExtraction> = emptyList()
+) : ExtractionsAdapter<SpecificExtraction>() {
+    override var editableSpecificExtractions: List<String> = listOf()
+    override fun onCreateViewHolder(parent: ViewGroup,
+                                    viewType: Int): ExtractionsViewHolder {
+        val layoutInflater = LayoutInflater.from(parent.context)
+        return ExtractionsViewHolder(
+            layoutInflater.inflate(R.layout.item_extraction, parent, false))
+    }
 
-        override fun getItemCount(): Int {
-            return extractions.size
-        }
+    override fun onBindViewHolder(holder: ExtractionsViewHolder,
+                                  position: Int) {
+        holder.mTextName.text = extractions[position].name
+        holder.mTextValue.setText(extractions[position].value)
+    }
 
+    override fun getItemCount(): Int {
+        return extractions.size
     }
 }
