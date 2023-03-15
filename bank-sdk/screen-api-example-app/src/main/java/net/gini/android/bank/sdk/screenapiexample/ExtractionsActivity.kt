@@ -35,6 +35,8 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
     private var mExtractions: MutableMap<String, GiniCaptureSpecificExtraction> = hashMapOf()
     private lateinit var mExtractionsAdapter: ExtractionsAdapter
     private val defaultNetworkService: GiniCaptureDefaultNetworkService by inject()
+
+    // {extraction name} to it's {entity name}
     private val editableSpecificExtractions = hashMapOf("paymentRecipient" to "companyname", "paymentReference" to "reference" ,
         "paymentPurpose" to "text", "iban" to "iban", "bic" to "bic", "amountToPay" to "amount")
 
