@@ -14,11 +14,17 @@
         android:layout_marginBottom="5dp"
         android:textStyle="bold"
         android:textColor="@color/colorPrimary"/>
-    <TextView
+
+    <EditText
         android:id="@+id/text_value"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="18sp"
-        android:text="Hello@World and stuff and foo and bar and whatchamacallit"/>
+        android:maxLines="1"
+        android:textColorHint="@color/gc_dark_06"
+        android:textColor="@drawable/edittext_selector"
+        android:inputType="text"
+        android:background="@null"
+        android:text="Hello@World and stuff and foo and bar and whatchamacallit" />
 
 </LinearLayout>

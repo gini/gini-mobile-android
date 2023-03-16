@@ -7,5 +7,6 @@
         <item name="gbsCurrencyPickerItemBackgroundColor">@color/gc_dark_03</item>
         <item name="gbsCurrencyPickerItemSelectedColor">@color/gc_dark_04</item>
         <item name="gbsReturnDialogTitle">@color/gc_light_04</item>
+        <item name="gbsAddonTextColor">@color/gc_light_06</item>
     </style>
 </resources>
