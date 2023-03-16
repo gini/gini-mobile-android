@@ -6,26 +6,21 @@
     android:orientation="vertical"
     android:padding="10dp">
 
-    <TextView
-        android:id="@+id/text_name"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/text_input_layout"
+        style="?attr/textInputOutlinedStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:textColor="?attr/colorPrimary"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        tools:text="paymentRecipient" />
-
-    <EditText
-        android:id="@+id/text_value"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:maxLines="1"
-        android:textColorHint="@color/gc_dark_06"
-        android:textColor="@drawable/edittext_selector"
-        android:inputType="text"
-        android:background="@null"
-        tools:text="Hello@World and stuff and foo and bar and whatchamacallit" />
+        tools:hint="Hint">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/text_value"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:textColor="@drawable/edittext_selector"
+            android:inputType="text"
+            android:maxLines="1"
+            tools:text="Hello@World and stuff and foo and bar and whatchamacallit"/>
+    </com.google.android.material.textfield.TextInputLayout>
 
 </LinearLayout>

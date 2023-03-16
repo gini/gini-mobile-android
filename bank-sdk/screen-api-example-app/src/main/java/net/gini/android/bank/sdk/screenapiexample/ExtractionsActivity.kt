@@ -13,6 +13,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.screenapiexample.databinding.ActivityExtractionsBinding
 import net.gini.android.capture.Amount
@@ -179,7 +181,7 @@ private class ExtractionsAdapter(var extractions: List<GiniCaptureSpecificExtrac
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ExtractionsViewHolder {
         val holder = ExtractionsViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_extraction, parent, false))
         holder.mTextValue.addTextChangedListener {
-            listener?.valueChanged(holder.mTextName.text.toString(), it.toString())
+            listener?.valueChanged(holder.mTextInputLayout.hint.toString(), it.toString())
         }
 
         return holder
@@ -187,9 +189,8 @@ private class ExtractionsAdapter(var extractions: List<GiniCaptureSpecificExtrac
 
     override fun onBindViewHolder(holder: ExtractionsViewHolder, position: Int) {
         extractions.getOrNull(position)?.run {
-            holder.mTextName.text = name
             holder.mTextValue.setText(value)
-            holder.mTextValue.hint = if (value.isEmpty()) name else ""
+            holder.mTextInputLayout.hint = name
             holder.mTextValue.isEnabled = name in editableSpecificExtractions
         }
     }
@@ -198,6 +199,6 @@ private class ExtractionsAdapter(var extractions: List<GiniCaptureSpecificExtrac
 }
 
 private class ExtractionsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    var mTextName: TextView = itemView.findViewById<View>(R.id.text_name) as TextView
-    var mTextValue: EditText = itemView.findViewById<View>(R.id.text_value) as EditText
+    var mTextInputLayout: TextInputLayout = itemView.findViewById(R.id.text_input_layout)
+    var mTextValue: TextInputEditText = itemView.findViewById(R.id.text_value)
 }
