@@ -1,5 +1,6 @@
 package net.gini.android.capture.screen
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,8 +8,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.TextView
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
@@ -16,6 +16,8 @@ import androidx.core.content.FileProvider
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import net.gini.android.capture.Amount
 import net.gini.android.capture.AmountCurrency
 import net.gini.android.capture.GiniCapture
@@ -221,6 +223,11 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapterImpl.Extracti
                 mLegacyExtractions.isNotEmpty() -> LegacyExtractionsAdapter(getSortedExtractions(mLegacyExtractions))
                 else -> null
             }
+            setOnTouchListener { _, _ ->
+                performClick()
+                val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+                inputMethodManager.hideSoftInputFromWindow(windowToken, 0)
+            }
         }
     }
 
@@ -330,13 +337,8 @@ private abstract class ExtractionsAdapter<T> :
 }
 
 private class ExtractionsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    var mTextName: TextView
-    var mTextValue: EditText
-
-    init {
-        mTextName = itemView.findViewById(R.id.text_name) as TextView
-        mTextValue = itemView.findViewById(R.id.text_value) as EditText
-    }
+    var mTextInputLayout: TextInputLayout = itemView.findViewById(R.id.text_input_layout)
+    var mTextValue: TextInputEditText = itemView.findViewById(R.id.text_value)
 }
 
 private class ExtractionsAdapterImpl(
@@ -353,7 +355,7 @@ private class ExtractionsAdapterImpl(
                                     viewType: Int): ExtractionsViewHolder {
         val holder = ExtractionsViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_extraction, parent, false))
         holder.mTextValue.addTextChangedListener {
-            listener?.valueChanged(holder.mTextName.text.toString(), it.toString())
+            listener?.valueChanged(holder.mTextInputLayout.hint.toString(), it.toString())
         }
 
         return holder
@@ -362,12 +364,11 @@ private class ExtractionsAdapterImpl(
     override fun onBindViewHolder(holder: ExtractionsViewHolder,
                                   position: Int) {
         extractions.getOrNull(position)?.run {
-            holder.mTextName.text = name
             holder.mTextValue.setText(value)
-            holder.mTextValue.hint = if (value.isEmpty()) name else ""
+            holder.mTextInputLayout.hint = name
             holder.mTextValue.isEnabled = name in editableSpecificExtractions
         } ?: compoundExtractions.getOrNull(position - extractions.size)?.run {
-            holder.mTextName.text = name
+            holder.mTextInputLayout.hint = name
             holder.mTextValue.isEnabled = false
             holder.mTextValue.setText(StringBuilder().apply {
                 specificExtractionMaps.forEach { extractionMap ->
@@ -400,7 +401,7 @@ private class LegacyExtractionsAdapter(
 
     override fun onBindViewHolder(holder: ExtractionsViewHolder,
                                   position: Int) {
-        holder.mTextName.text = extractions[position].name
+        holder.mTextInputLayout.hint = extractions[position].name
         holder.mTextValue.setText(extractions[position].value)
     }
 
