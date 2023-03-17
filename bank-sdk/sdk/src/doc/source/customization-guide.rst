@@ -77,7 +77,7 @@ You can view our color palette here:
 .. raw:: html
 
     <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
-    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FMcDZrQPr6IgkzCQtN3lqAe%2FAndroid-Gini-Capture-SDK-3.0.0-UI-Customisation%3Fnode-id%3D40%253A491%26t%3DNoWz8V7m9GX9SNwS-1"
+    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FeKNQAA5NTzyNPiqx5klpNl%2FAndroid-Gini-Bank-SDK-3.0.0-UI-Customisation%3Fnode-id%3D40%253A491%26t%3D4vTqGwtUlQ4NXBqp-1"
     allowfullscreen></iframe>
 
 Images
@@ -114,7 +114,7 @@ You can preview our typography along with their style resource names below:
 .. raw:: html
 
     <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
-    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FMcDZrQPr6IgkzCQtN3lqAe%2FAndroid-Gini-Capture-SDK-3.0.0-UI-Customisation%3Fnode-id%3D40%253A492%26t%3DNoWz8V7m9GX9SNwS-1"
+    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FeKNQAA5NTzyNPiqx5klpNl%2FAndroid-Gini-Bank-SDK-3.0.0-UI-Customisation%3Fnode-id%3D40%253A492%26t%3D4vTqGwtUlQ4NXBqp-1"
     allowfullscreen></iframe>
 
 Text
@@ -170,7 +170,7 @@ UI Customization
 .. raw:: html
 
     <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
-    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FMcDZrQPr6IgkzCQtN3lqAe%2FAndroid-Gini-Capture-SDK-3.0.0-UI-Customisation%3Fnode-id%3D40%253A584%26t%3DNoWz8V7m9GX9SNwS-1"
+    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FeKNQAA5NTzyNPiqx5klpNl%2FAndroid-Gini-Bank-SDK-3.0.0-UI-Customisation%3Fnode-id%3D40%253A584%26t%3D4vTqGwtUlQ4NXBqp-1"
     allowfullscreen></iframe>
 
 Bottom Navigation Bar
@@ -215,7 +215,7 @@ UI Customization
 .. raw:: html
 
     <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
-    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FMcDZrQPr6IgkzCQtN3lqAe%2FAndroid-Gini-Capture-SDK-3.0.0-UI-Customisation%3Fnode-id%3D92%253A3712%26t%3Dc3jMrBwHYOfKgDHC-1"
+    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FeKNQAA5NTzyNPiqx5klpNl%2FAndroid-Gini-Bank-SDK-3.0.0-UI-Customisation%3Fnode-id%3D92%253A3712%26t%3D4vTqGwtUlQ4NXBqp-1"
     allowfullscreen></iframe>
 
 Bottom Navigation Bar
@@ -260,7 +260,7 @@ UI Customization
 .. raw:: html
 
     <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
-    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FMcDZrQPr6IgkzCQtN3lqAe%2FAndroid-Gini-Capture-SDK-3.0.0-UI-Customisation%3Fnode-id%3D143%253A4156%26t%3DbxRb1PoNfoS2K8LX-1"
+    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FeKNQAA5NTzyNPiqx5klpNl%2FAndroid-Gini-Bank-SDK-3.0.0-UI-Customisation%3Fnode-id%3D143%253A4156%26t%3D4vTqGwtUlQ4NXBqp-1"
     allowfullscreen></iframe>
 
 Bottom Navigation Bar
@@ -306,7 +306,7 @@ UI Customization
 .. raw:: html
 
     <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
-    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FMcDZrQPr6IgkzCQtN3lqAe%2FAndroid-Gini-Capture-SDK-3.0.0-UI-Customisation%3Fnode-id%3D7%253A18496%26t%3DRrYhEBagMqQ9uksD-1"
+    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FeKNQAA5NTzyNPiqx5klpNl%2FAndroid-Gini-Bank-SDK-3.0.0-UI-Customisation%3Fnode-id%3D7%253A18496%26t%3D4vTqGwtUlQ4NXBqp-1"
     allowfullscreen></iframe>
 
 .. note::
@@ -338,7 +338,7 @@ UI Customization
 .. raw:: html
 
     <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
-    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FMcDZrQPr6IgkzCQtN3lqAe%2FAndroid-Gini-Capture-SDK-3.0.0-UI-Customisation%3Fnode-id%3D9%253A4645%26t%3DHtNbZnDsRjA5FeBu-1"
+    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FeKNQAA5NTzyNPiqx5klpNl%2FAndroid-Gini-Bank-SDK-3.0.0-UI-Customisation%3Fnode-id%3D9%253A4645%26t%3D4vTqGwtUlQ4NXBqp-1"
     allowfullscreen></iframe>
 
 Bottom Navigation Bar
@@ -391,7 +391,7 @@ UI Customization
 .. raw:: html
 
     <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
-    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FMcDZrQPr6IgkzCQtN3lqAe%2FAndroid-Gini-Capture-SDK-3.0.0-UI-Customisation%3Fnode-id%3D10%253A2540%26t%3DRrYhEBagMqQ9uksD-1"
+    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FeKNQAA5NTzyNPiqx5klpNl%2FAndroid-Gini-Bank-SDK-3.0.0-UI-Customisation%3Fnode-id%3D10%253A2540%26t%3D4vTqGwtUlQ4NXBqp-1"
     allowfullscreen></iframe>
 
 Error Screen
@@ -403,7 +403,7 @@ UI Customization
 .. raw:: html
 
     <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
-    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FMcDZrQPr6IgkzCQtN3lqAe%2FAndroid-Gini-Capture-SDK-3.0.0-UI-Customisation%3Fnode-id%3D9%253A5075%26t%3DQkcPe6W16KvhSI1a-1"
+    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FeKNQAA5NTzyNPiqx5klpNl%2FAndroid-Gini-Bank-SDK-3.0.0-UI-Customisation%3Fnode-id%3D9%253A5075%26t%3D4vTqGwtUlQ4NXBqp-1"
     allowfullscreen></iframe>
 
 .. Return Assistant
