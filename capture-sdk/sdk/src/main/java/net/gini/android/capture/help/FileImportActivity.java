@@ -69,7 +69,7 @@ public class FileImportActivity extends AppCompatActivity {
                     GiniCapture.getInstance().internal().getNavigationBarTopAdapterInstance(),
                     injectedViewAdapter -> {
                         injectedViewAdapter.setNavButtonType(GiniCapture.getInstance().isBottomNavigationBarEnabled() ? NavButtonType.NONE : NavButtonType.BACK);
-                        injectedViewAdapter.setTitle(getString(R.string.gc_title_supported_formats));
+                        injectedViewAdapter.setTitle(getString(R.string.gc_title_file_import));
 
                         injectedViewAdapter.setOnNavButtonClickListener(new IntervalClickListener(v -> onBackPressed()));
                     }));
