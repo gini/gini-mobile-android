@@ -67,24 +67,24 @@
 
     <!-- Widgets -->
 
-    <style name="Root.GiniCaptureTheme.Widget.Button.OutlinedButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
+    <style name="Root.GiniCaptureTheme.Widget.Button.OutlinedButton" parent="Widget.Material3.Button.OutlinedButton">
         <item name="cornerRadius">4dp</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:autoSizeTextType">uniform</item>
         <item name="android:autoSizeMaxTextSize">14sp</item>
         <item name="android:minHeight">55dp</item>
-        <item name="cornerRadius">4dp</item>
+        <item name="android:textColor">?attr/colorOnBackground</item>
+        <item name="strokeColor">@color/gc_light_03</item>
     </style>
-
+ˇ
     <style name="GiniCaptureTheme.Widget.Button.OutlinedButton" parent="Root.GiniCaptureTheme.Widget.Button.OutlinedButton"/>
 
-    <style name="Root.GiniCaptureTheme.Widget.Button.UnelevatedButton" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+    <style name="Root.GiniCaptureTheme.Widget.Button.UnelevatedButton" parent="Widget.Material3.Button.UnelevatedButton">
         <item name="cornerRadius">4dp</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:autoSizeTextType">uniform</item>
         <item name="android:autoSizeMaxTextSize">14sp</item>
         <item name="android:minHeight">@dimen/gc_unelevated_button_height</item>
-        <item name="cornerRadius">4dp</item>
     </style>
     <style name="GiniCaptureTheme.Widget.Button.UnelevatedButton" parent="Root.GiniCaptureTheme.Widget.Button.UnelevatedButton"/>
 

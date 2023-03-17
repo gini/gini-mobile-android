@@ -18,4 +18,12 @@
 
     <style name="GiniCaptureTheme" parent="Root.GiniCaptureTheme.Night"/>
 
+    <!-- Widgets -->
+
+    <style name="Root.GiniCaptureTheme.Widget.Button.OutlinedButton.Night" parent="Root.GiniCaptureTheme.Widget.Button.OutlinedButton">
+        <item name="strokeColor">@color/gc_dark_04</item>
+    </style>
+
+    <style name="GiniCaptureTheme.Widget.Button.OutlinedButton" parent="Root.GiniCaptureTheme.Widget.Button.OutlinedButton.Night"/>
+
 </resources>
