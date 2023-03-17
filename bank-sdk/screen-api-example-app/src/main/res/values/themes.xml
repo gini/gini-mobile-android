@@ -8,6 +8,13 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <!--Example of customizing the GiniCaptureTheme -->
+<!--    <style name="GiniCaptureTheme" parent="Root.GiniCaptureTheme">-->
+<!--        <item name="colorPrimary">@color/gc_error_02</item>-->
+<!--        <item name="gbsSwitchTrack">@color/gc_error_03</item>-->
+<!--        <item name="gcPageItemBackground">@color/gc_warning_01</item>-->
+<!--    </style>-->
+
     <!--Example of customizing the Onboarding Screen text style-->
 <!--    <style name="GiniCaptureTheme.Onboarding.Message.TextStyle" parent="Root.GiniCaptureTheme.Onboarding.Message.TextStyle">-->
 <!--        <item name="android:gravity">start</item>-->

@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <style name="Root.GiniCaptureTheme" parent="Root.GiniCaptureTheme.Internal">
+        <item name="gbsSwitchTrack">@color/gc_light_03</item>
+        <item name="gbsTextInputLayout">@color/gc_light_03</item>
+        <item name="gbsBottomSheetItemTitle">@color/gc_dark_06</item>
+        <item name="gbsCurrencyPickerItemBackgroundColor">@color/gc_light_03</item>
+        <item name="gbsCurrencyPickerItemSelectedColor">@color/gc_light_02</item>
+        <item name="gbsReturnDialogTitle">@color/gc_dark_04</item>
+        <item name="gbsAddonTextColor">@color/gc_dark_06</item>
+    </style>
+
     <style name="Root.GiniCaptureTheme.DigitalInvoice.Title.TextStyle" parent="TextAppearance.AppCompat">
         <item name="android:fontFamily">sans-serif-medium</item>
         <item name="android:textColor">@color/gbs_digital_invoice_title_text</item>
@@ -368,16 +378,6 @@
         <item name="android:windowIsFloating">false</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowSoftInputMode">adjustResize|stateAlwaysVisible</item>
-    </style>
-
-    <style name="GiniCaptureTheme" parent="Root.GiniCaptureTheme">
-        <item name="gbsSwitchTrack">@color/gc_light_03</item>
-        <item name="gbsTextInputLayout">@color/gc_light_03</item>
-        <item name="gbsBottomSheetItemTitle">@color/gc_dark_06</item>
-        <item name="gbsCurrencyPickerItemBackgroundColor">@color/gc_light_03</item>
-        <item name="gbsCurrencyPickerItemSelectedColor">@color/gc_light_02</item>
-        <item name="gbsReturnDialogTitle">@color/gc_dark_04</item>
-        <item name="gbsAddonTextColor">@color/gc_dark_06</item>
     </style>
 
     <style name="GiniCaptureTheme.DigitalInvoice.Title.TextStyle" parent="Root.GiniCaptureTheme.DigitalInvoice.Title.TextStyle" />

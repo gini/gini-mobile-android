@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="GiniCaptureTheme" parent="Root.GiniCaptureTheme.Night">
+    <style name="Root.GiniCaptureTheme.Night" parent="Root.GiniCaptureTheme.Internal.Night">
         <item name="gbsSwitchTrack">@color/gc_dark_03</item>
         <item name="gbsTextInputLayout">@color/gc_dark_04</item>
         <item name="gbsBottomSheetItemTitle">@color/gc_light_05</item>

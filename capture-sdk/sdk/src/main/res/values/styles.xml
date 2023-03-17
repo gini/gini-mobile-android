@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="Root.GiniCaptureTheme" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Root.GiniCaptureTheme.Internal" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">@color/gc_accent_01</item>
         <item name="colorPrimaryDark">@color/gc_light_02</item>
         <item name="colorOnPrimary">@color/gc_light_01</item>
@@ -46,6 +46,7 @@
         <item name="textAppearanceLabelMedium">?attr/textAppearanceOverline</item>
     </style>
 
+    <style name="Root.GiniCaptureTheme" parent="Root.GiniCaptureTheme.Internal"/>
     <style name="GiniCaptureTheme" parent="Root.GiniCaptureTheme"/>
 
     <style name="GiniCaptureTheme.ThemeOverlay.Dialog.Alert" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
