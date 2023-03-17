@@ -89,7 +89,12 @@ To enable this feature simply set ``returnAssistantEnabled`` to ``true`` in the 
 
 .. code-block:: java
 
-    CaptureConfiguration(returnAssistantEnabled = true)
+    GiniBank.setCaptureConfiguration(
+        CaptureConfiguration(
+            returnAssistantEnabled = true,
+            ...
+        )
+    )
 
 The Gini Bank SDK will
 show the return assistant automatically if the invoice contained payable items and will update the extractions returned
