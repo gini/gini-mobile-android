@@ -92,20 +92,10 @@ internal class LineItemsAdapter(private val listener: LineItemsAdapterListener) 
 
 
     override fun getItemCount(): Int =
-        lineItems.size + addons.size + if (isInaccurateExtraction) 2 else 1
-
-    private fun footerPosition() =
-        lineItems.size + addons.size + if (isInaccurateExtraction) 1 else 0
-
-    private fun addonsRange() =
-        (lineItems.size + if (isInaccurateExtraction) 1 else 0)..(lineItems.size + addons.size + if (isInaccurateExtraction) 1 else 0)
+        lineItems.size + addons.size
 
     override fun getItemViewType(position: Int): Int {
-       return when (position) {
-            0 -> if (isInaccurateExtraction) Header.id else LineItem.id
-            in addonsRange() -> Addon.id
-            else -> LineItem.id
-        }
+       return if (position < lineItems.size) LineItem.id else Addon.id
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder<*>, position: Int) {
@@ -115,18 +105,19 @@ internal class LineItemsAdapter(private val listener: LineItemsAdapterListener) 
                 viewHolder.bind(footerDetails?.buttonEnabled ?: false)
             }
             is ViewHolder.LineItemViewHolder -> {
-                val index = if (isInaccurateExtraction) position - 1 else position
-                lineItems.getOrNull(index)?.let {
+                lineItems.getOrNull(position)?.let {
                     viewHolder.listener = listener
-                    viewHolder.bind(it, lineItems, index)
+                    viewHolder.bind(it, lineItems, position)
                 }
             }
             is ViewHolder.AddonViewHolder -> {
-                val index = if (isInaccurateExtraction) position - 1 - lineItems.size else position - lineItems.size
+                val index = position - lineItems.size - 1
                 val enabled = footerDetails?.buttonEnabled ?: true
                 addons.getOrNull(index)?.let {
                     viewHolder.bind(Pair(it, enabled), null)
                 }
+
+
             }
         }
     }
