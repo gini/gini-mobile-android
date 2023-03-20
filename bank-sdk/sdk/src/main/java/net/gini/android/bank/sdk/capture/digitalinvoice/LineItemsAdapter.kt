@@ -105,9 +105,10 @@ internal class LineItemsAdapter(private val listener: LineItemsAdapterListener) 
                 viewHolder.bind(footerDetails?.buttonEnabled ?: false)
             }
             is ViewHolder.LineItemViewHolder -> {
-                lineItems.getOrNull(position)?.let {
+                val index = position - 1
+                lineItems.getOrNull(index)?.let {
                     viewHolder.listener = listener
-                    viewHolder.bind(it, lineItems, position)
+                    viewHolder.bind(it, lineItems, index)
                 }
             }
             is ViewHolder.AddonViewHolder -> {
