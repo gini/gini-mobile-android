@@ -15,7 +15,7 @@ sealed class DefaultPages(val onboardingPage: OnboardingPage) {
             R.string.gc_onboarding_align_corners_message,
             ImageOnboardingIllustrationAdapter(
                 R.drawable.gc_onboarding_align_corners,
-                R.string.gc_onboarding_align_corners_illustration_content_description
+                R.string.gc_onboarding_align_corners_title
             )
         )
     )
@@ -26,7 +26,7 @@ sealed class DefaultPages(val onboardingPage: OnboardingPage) {
             R.string.gc_onboarding_lighting_message,
             ImageOnboardingIllustrationAdapter(
                 R.drawable.gc_onboarding_lighting,
-                R.string.gc_onboarding_lighting_title_illustration_content_description
+                R.string.gc_onboarding_lighting_title
             )
         )
     )
@@ -37,7 +37,7 @@ sealed class DefaultPages(val onboardingPage: OnboardingPage) {
             R.string.gc_onboarding_multipage_message,
             ImageOnboardingIllustrationAdapter(
                 R.drawable.gc_onboarding_multipage,
-                R.string.gc_onboarding_multipage_illustration_content_description
+                R.string.gc_onboarding_multipage_title
             )
         )
     )
@@ -48,7 +48,7 @@ sealed class DefaultPages(val onboardingPage: OnboardingPage) {
             R.string.gc_onboarding_qr_code_message,
             ImageOnboardingIllustrationAdapter(
                 R.drawable.gc_onboarding_qr_code,
-                R.string.gc_onboarding_qr_code_illustration_content_description)
+                R.string.gc_onboarding_qr_code_title)
         )
     )
 

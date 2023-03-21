@@ -29,16 +29,12 @@
     <string name="gc_unsupported_qrcode_detected_popup_message_1">Dieser QR-Code enthält keine Bezahlinformationen.</string>
     <string name="gc_unsupported_qrcode_detected_popup_message_2">X</string>
 
-    <string name="gc_onboarding_align_corners_illustration_content_description">Flat paper within the frame illustration</string>
     <string name="gc_onboarding_align_corners_title">Dokument flach ausrichten</string>
     <string name="gc_onboarding_align_corners_message">Das Dokument sollte flach liegen und sich im Rahmen befinden</string>
-    <string name="gc_onboarding_lighting_title_illustration_content_description">Good lighting illustration</string>
     <string name="gc_onboarding_lighting_title">Gute Lichtverhältnisse</string>
     <string name="gc_onboarding_lighting_message">Gutes Licht führt zu besseren Ergebnisse als mit Blitz</string>
-    <string name="gc_onboarding_multipage_illustration_content_description">Add multiple pages illustration</string>
     <string name="gc_onboarding_multipage_title">Mehrere Seiten</string>
     <string name="gc_onboarding_multipage_message">Es ist möglich mehrer Seiten eines Dokuments zu Scannen</string>
-    <string name="gc_onboarding_qr_code_illustration_content_description">QR codes supported illustration</string>
     <string name="gc_onboarding_qr_code_title">QR Codes scannen</string>
     <string name="gc_onboarding_qr_code_message">QR Codes werden automatisch erkannt und analysiert</string>
 
