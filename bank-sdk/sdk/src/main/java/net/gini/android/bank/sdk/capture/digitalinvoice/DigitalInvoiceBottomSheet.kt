@@ -165,7 +165,7 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
             )
         }
 
-        if (GiniBank.multipleCurrenciesEnabled) {
+        if (MULTIPLE_CURRENCIES_ENABLED) {
             binding.gbsDropDownArrow.visibility = View.VISIBLE
         } else {
             binding.gbsDropDownArrow.visibility = View.GONE
@@ -208,7 +208,7 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
         }
 
         binding.gbsDropDownSelectionValue.setOnClickListener {
-            if (!GiniBank.multipleCurrenciesEnabled) return@setOnClickListener
+            if (!MULTIPLE_CURRENCIES_ENABLED) return@setOnClickListener
 
             setUpDropDown()
             if (binding.gbsCurrenciesDropDown.isPopupShowing)
@@ -217,7 +217,7 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
         }
 
         binding.gbsDropDownArrow.setOnClickListener {
-            if (!GiniBank.multipleCurrenciesEnabled) return@setOnClickListener
+            if (!MULTIPLE_CURRENCIES_ENABLED) return@setOnClickListener
 
             setUpDropDown()
             if (binding.gbsCurrenciesDropDown.isPopupShowing)
@@ -271,7 +271,7 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
         val currenciesList = AmountCurrency.values().map { it.name }
         binding.gbsCurrenciesDropDown.setAdapter(CurrencyAdapter(requireActivity(),
             R.layout.gbs_item_currency_dropdown,
-            if (GiniBank.multipleCurrenciesEnabled) currenciesList else listOf(currenciesList[0]), selectedCurrency))
+            if (MULTIPLE_CURRENCIES_ENABLED) currenciesList else listOf(selectedCurrency), selectedCurrency))
     }
 
     private fun setUpBindings() {
@@ -334,6 +334,7 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
 
     companion object {
         const val QUANTITY_LIMIT = 1000
+        const val MULTIPLE_CURRENCIES_ENABLED = false
 
         fun newInstance(selectableLineItem: SelectableLineItem) =
             DigitalInvoiceBottomSheet().apply {

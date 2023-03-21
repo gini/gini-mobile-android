@@ -62,9 +62,6 @@ object GiniBank {
     private var captureConfiguration: CaptureConfiguration? = null
     private var giniApi: GiniBankAPI? = null
 
-    // TODO: remove this after QA process
-    var multipleCurrenciesEnabled = false
-
     /**
      * Bottom navigation bar adapters. Could be changed to custom ones.
      */
