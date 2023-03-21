@@ -478,21 +478,24 @@ For example if you need to show animated illustrations you can use a `Lottie
 You can find more details `here <customization-guide.html#custom-illustration-view>`_.
 
 
-.. Digital Invoice Help
-.. ~~~~~~~~~~~~~~~~~~~~
+Digital Invoice Help Screen
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. The new help screen for digital invoice uses the global UI customization options.
+The new help screen uses the global UI customization options. You can discard the old screen specific
+customizations.
 
-.. Features
-.. ++++++++
+New Features
+++++++++++++
 
-.. Bottom navigation bar
-.. ^^^^^^^^^^^^^^^^^^^^^
+Bottom navigation bar
+^^^^^^^^^^^^^^^^^^^^^
 
-.. You can show a bottom navigation bar by passing true to ``GiniCapture`` ``setBottomNavigationBarEnabled``. There is a default implementation, but you can also use
-.. your own by implementing the ``DigitalInvoiceHelpNavigationBarBottomAdapter`` interface and passing it to ``GiniBank``.
+You can show a bottom navigation bar by passing true to
+``GiniBank.setCaptureConfiguration(CaptureConfiguration(bottomNavigationBarEnabled = ))``. There is a default
+implementation, but you can also use your own by implementing the ``DigitalInvoiceHelpNavigationBarBottomAdapter``
+interface and passing it to ``GiniBank``.
 
-.. You can find more details `here <capture-features.html#digital-invoice-help-screen-customization>`_.
+You can find more details `here <customization-guide.html#id16>`_.
 
 .. Digital Invoice Screen
 .. ~~~~~~~~~~~~~~~~~~~~
