@@ -447,25 +447,31 @@ onboarding page implement the ``OnboardingIllustrationAdapter`` interface to inj
 
     GiniBank.digitalInvoiceOnboardingIllustrationAdapter = customIllustration
 
-.. TODO: Show how to customize the updated UI.
+Digital Invoice Help Screen
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. Help Screen
-.. ~~~~~~~~~~~
+UI Customization
+++++++++++++++++
 
-.. TODO: Show how to customize the updated UI.
+.. raw:: html
 
-.. TODO: Adapt the section below to follow the same pattern as the other screens.
-.. Digital Invoice Help Screen Customization
-.. +++++++++++++++++++++++++++++++++++++++++
+    <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
+    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FeKNQAA5NTzyNPiqx5klpNl%2FAndroid-Gini-Bank-SDK-3.0.0-UI-Customisation%3Fnode-id%3D3513%253A5595%26t%3DnJuN0jMpLvY3MUvk-1"
+    allowfullscreen></iframe>
 
-.. You can show back navigation button on bottom navigation bar. You can pass your custom ``DigitalInvoiceHelpNavigationBarBottomAdapter`` implementation to
-.. ``GiniBank``:
+Bottom Navigation Bar
++++++++++++++++++++++
 
-.. .. code-block:: java
+You can inject your own view for the bottom navigation bar, if you set
+``GiniBank.setCaptureConfiguration(CaptureConfiguration(bottomNavigationBarEnabled = ))`` to ``true`` and pass a custom
+``DigitalInvoiceOnboardingNavigationBarBottomAdapter`` implementation to ``GiniBank``:
 
-..     CustomDigitalInvoiceHelpNavigationBarBottomAdapter customDigitalInvoiceHelpNavigationBarBottomAdapter = new CustomDigitalInvoiceHelpNavigationBarBottomAdapter();
+.. code-block:: java
 
-..     GiniBank.digitalInvoiceHelpNavigationBarBottomAdapter = customDigitalInvoiceHelpNavigationBarBottomAdapter
+    let customBottomNavigationBar: DigitalInvoiceHelpNavigationBarBottomAdapter = CustomDigitalInvoiceHelpNavigationBarBottomAdapter();
+
+    GiniBank.digitalInvoiceHelpNavigationBarBottomAdapter = customBottomNavigationBar
+
 
 .. Digital Invoice Screen
 .. ~~~~~~~~~~~~~~~~~~~~~~

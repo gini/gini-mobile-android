@@ -442,61 +442,60 @@ Users can now click an "Enter manually" button on the no results screen which wi
 You can find more details `here <integration.html#capturing-documents>`_.
 
 
-.. @Adnan, @Lenci: Please uncomment everything below when adding return assistant migration info. 
-.. To not confuse clients I temporarily commented it out until we have added all infos.
+Migrate the Return Assistant
+----------------------------
 
-.. (TODO) Migrate the Return Assistant
-.. ----------------------------
+Digital Invoice Onboarding Screen
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. TODO: Review this section after all migration info has been added.
+The new onboarding screen uses the global UI customization options. You can discard the old screen specific
+customizations.
 
-.. Onboarding
-.. ~~~~~~~~~~
+`Here <customization-guide.html#digital-invoice-onboarding-screen>`_ you can find the detailed description on how to customize this screen.
 
-.. The new onboarding screen uses the global UI customization options. You can discard the old screen specific
-.. customizations.
+New Features
+++++++++++++
 
-.. `Here <customization-guide.html#onboarding-screen>`_ you can find the detailed description on how to customize this screen.
+Bottom navigation bar
+^^^^^^^^^^^^^^^^^^^^^
 
-.. Breaking Changes
-.. ++++++++++++++++
+You can show a bottom navigation bar by passing true to
+``GiniBank.setCaptureConfiguration(CaptureConfiguration(bottomNavigationBarEnabled = ))``. There is a default
+implementation, but you can also use your own by implementing the ``DigitalInvoiceOnboardingNavigationBarBottomAdapter``
+interface and passing it to ``GiniBank``.
 
-.. Old UI is replaced with new UI.
+You can find more details `here <customization-guide.html#id13>`_.
 
-.. New Features
-.. ++++++++++++
+Custom Illustration View
+^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. Custom illustration view
-.. ^^^^^^^^^^^^^^^^^^^^^^^^^
+By implementing the ``OnboardingIllustrationAdapter`` interface and passing it to
+``GiniBank.digitalInvoiceOnboardingIllustrationAdapter`` you can inject any custom view for the illustration.
 
-.. By implementing the ``OnboardingIllustrationAdapter`` interface and passing it to ``GiniBank.digitalInvoiceOnboardingIllustrationAdapter`` you can inject any custom view for the illustration.
+For example if you need to show animated illustrations you can use a `Lottie
+<https://github.com/airbnb/lottie-android>`_ view in your ``OnboardingIllustrationAdapter`` implementation.
 
-.. For example if you need to show animated illustrations you can use a `Lottie
-.. <https://github.com/airbnb/lottie-android>`_ view in your ``OnboardingIllustrationAdapter`` implementation.
+You can find more details `here <customization-guide.html#custom-illustration-view>`_.
 
-.. You can find more details `here <customization-guide.html>`_.
 
-.. Bottom navigation bar
-.. ^^^^^^^^^^^^^^^^^^^^^
+Digital Invoice Help Screen
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. You can show a bottom navigation bar by passing true to ``GiniCapture`` ``setBottomNavigationBarEnabled``. There is a default implementation, but you can also use
-.. your own by implementing the ``DigitalInvoiceOnboardingNavigationBarBottomAdapter`` interface and passing it to ``GiniBank``.
+The new help screen uses the global UI customization options. You can discard the old screen specific
+customizations.
 
-.. Digital Invoice Help
-.. ~~~~~~~~~~~~~~~~~~~~
+New Features
+++++++++++++
 
-.. The new help screen for digital invoice uses the global UI customization options.
+Bottom navigation bar
+^^^^^^^^^^^^^^^^^^^^^
 
-.. Features
-.. ++++++++
+You can show a bottom navigation bar by passing true to
+``GiniBank.setCaptureConfiguration(CaptureConfiguration(bottomNavigationBarEnabled = ))``. There is a default
+implementation, but you can also use your own by implementing the ``DigitalInvoiceHelpNavigationBarBottomAdapter``
+interface and passing it to ``GiniBank``.
 
-.. Bottom navigation bar
-.. ^^^^^^^^^^^^^^^^^^^^^
-
-.. You can show a bottom navigation bar by passing true to ``GiniCapture`` ``setBottomNavigationBarEnabled``. There is a default implementation, but you can also use
-.. your own by implementing the ``DigitalInvoiceHelpNavigationBarBottomAdapter`` interface and passing it to ``GiniBank``.
-
-.. You can find more details `here <capture-features.html#digital-invoice-help-screen-customization>`_.
+You can find more details `here <customization-guide.html#id16>`_.
 
 .. Digital Invoice Screen
 .. ~~~~~~~~~~~~~~~~~~~~
