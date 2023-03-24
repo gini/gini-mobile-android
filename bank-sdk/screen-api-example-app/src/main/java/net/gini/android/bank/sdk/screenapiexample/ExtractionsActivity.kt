@@ -112,8 +112,7 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
 
         var amount = mExtractions["amountToPay"]?.value ?: ""
         if (amount.isEmpty()) {
-            amount = Amount.EMPTY.amountToPay()
-            mExtractions["amountToPay"]?.value = amount
+            mExtractions["amountToPay"]?.value = "0.0:EUR"
             mExtractionsAdapter.extractions = getSortedExtractions(mExtractions)
         }
 
