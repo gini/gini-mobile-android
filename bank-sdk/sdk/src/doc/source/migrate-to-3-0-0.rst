@@ -484,6 +484,8 @@ Digital Invoice Help Screen
 The new help screen uses the global UI customization options. You can discard the old screen specific
 customizations.
 
+`Here <customization-guide.html#digital-invoice-help-screen>`_ you can find the detailed description on how to customize this screen.
+
 New Features
 ++++++++++++
 
@@ -497,26 +499,46 @@ interface and passing it to ``GiniBank``.
 
 You can find more details `here <customization-guide.html#id16>`_.
 
-.. Digital Invoice Screen
-.. ~~~~~~~~~~~~~~~~~~~~
+Digital Invoice Overview Screen
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. The new digital invoice screen for digital invoice uses the global UI customization options.
+The new digital invoice overview screen uses the global UI customization options. You can discard the old screen
+specific customizations.
 
-.. Changes
-.. +++++++
+`Here <customization-guide.html#digital-invoice-overview-screen>`_ you can find the detailed description on how to customize this screen.
 
-.. We removed the ability for users to manually add additional line items.
-.. We changed the UI for editing line items: it's presented on top of the main UI and not as a new screen.
+Breaking Changes
+++++++++++++++++
 
-.. Features
-.. ++++++++
+We removed the ability for users to manually add additional line items. We also removed the info box.
 
-.. Easier currency and amount input when editing a line item.
+New Features
+++++++++++++
 
-.. Bottom navigation bar
-.. ^^^^^^^^^^^^^^^^^^^^^
+Bottom navigation bar
+^^^^^^^^^^^^^^^^^^^^^
 
-.. You can show an invoice bottom navigation bar by passing true to ``GiniCapture`` ``setBottomNavigationBarEnabled``. There is a default implementation, but you can also use
-.. your own by implementing the ``DigitalInvoiceNavigationBarBottomAdapter`` interface and passing it to ``GiniBank``.
+You can show a bottom navigation bar by passing true to
+``GiniBank.setCaptureConfiguration(CaptureConfiguration(bottomNavigationBarEnabled = ))``. There is a default
+implementation, but you can also use your own by implementing the ``DigitalInvoiceNavigationBarBottomAdapter`` interface
+and passing it to ``GiniBank``.
 
-.. You can find more details `here <capture-features.html#digital-invoice-screen-customization>`_.
+You can find more details `here <customization-guide.html#id18>`_.
+
+Digital Invoice Edit Line Item Screen
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The new edit line item screen uses the global UI customization options and is presented as a bottom sheet on phones and
+as a dialog on tablets. You can discard the old screen specific customizations.
+
+`Here <customization-guide.html#digital-invoice-edit-line-item-screen>`_ you can find the detailed description on how to customize this screen.
+
+Breaking Changes
+++++++++++++++++
+
+We removed the ability to deselect the line item from this screen.
+
+New Features
+++++++++++++
+
+Easier currency and amount input when editing a line item.
