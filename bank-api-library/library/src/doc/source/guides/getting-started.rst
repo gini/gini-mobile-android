@@ -13,7 +13,7 @@ build.gradle:
 .. code-block:: groovy
 
     dependencies {
-        implementation 'net.gini.android:gini-bank-api-lib:3.0.0-beta06'
+        implementation 'net.gini.android:gini-bank-api-lib:3.0.0-beta07'
     }
 
 Integrating the Gini Bank API Library
