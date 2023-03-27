@@ -143,6 +143,7 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
                     "Feedback successful",
                     Toast.LENGTH_LONG
                 ).show()
+                finish()
             }
 
             override fun cancelled() {
