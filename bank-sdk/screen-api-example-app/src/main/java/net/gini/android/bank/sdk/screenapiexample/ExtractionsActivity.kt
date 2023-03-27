@@ -114,9 +114,9 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
         if (amount.isEmpty()) {
             mExtractions["amountToPay"]?.value = "0.0:EUR"
             mExtractionsAdapter.extractions = getSortedExtractions(mExtractions)
+            mExtractionsAdapter.notifyDataSetChanged()
         }
 
-        mExtractionsAdapter.notifyDataSetChanged()
         showProgressIndicator(binding)
         val giniCaptureNetworkApi = GiniCapture.getInstance().giniCaptureNetworkApi
         if (giniCaptureNetworkApi == null) {
