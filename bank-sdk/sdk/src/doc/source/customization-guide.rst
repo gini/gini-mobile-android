@@ -499,7 +499,7 @@ You can inject your own view for the bottom navigation bar, if you set
     GiniBank.digitalInvoiceNavigationBarBottomAdapter = customBottomNavigationBar
 
 
-Digital Invoice Edit Line Item Screen
+Digital Invoice Edit Article Screen
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 UI Customization

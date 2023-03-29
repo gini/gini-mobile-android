@@ -510,7 +510,7 @@ specific customizations.
 Breaking Changes
 ++++++++++++++++
 
-We removed the ability for users to manually add additional line items. We also removed the info box.
+We removed the ability for users to manually add additional articles. We also removed the info box.
 
 New Features
 ++++++++++++
@@ -525,20 +525,20 @@ and passing it to ``GiniBank``.
 
 You can find more details `here <customization-guide.html#id18>`_.
 
-Digital Invoice Edit Line Item Screen
+Digital Invoice Edit Article Screen
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The new edit line item screen uses the global UI customization options and is presented as a bottom sheet on phones and
+The new edit article screen uses the global UI customization options and is presented as a bottom sheet on phones and
 as a dialog on tablets. You can discard the old screen specific customizations.
 
-`Here <customization-guide.html#digital-invoice-edit-line-item-screen>`_ you can find the detailed description on how to customize this screen.
+`Here <customization-guide.html#digital-invoice-edit-article-screen>`_ you can find the detailed description on how to customize this screen.
 
 Breaking Changes
 ++++++++++++++++
 
-We removed the ability to deselect the line item from this screen.
+We removed the ability to deselect the article from this screen.
 
 New Features
 ++++++++++++
 
-Easier currency and amount input when editing a line item.
+Easier currency and amount input when editing an article.
