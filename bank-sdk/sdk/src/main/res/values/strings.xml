@@ -32,6 +32,8 @@
 
     <string name="gbs_digital_invoice_line_item_details_description_label">Artikelname</string>
     <string name="gbs_digital_invoice_line_item_details_quantity_label">Anzahl</string>
+    <string name="gbs_digital_invoice_line_item_details_quantity_decrease_content_description">Anzahl verringern</string>
+    <string name="gbs_digital_invoice_line_item_details_quantity_increase_content_description">Anzahl erhöhen</string>
     <string name="gbs_digital_invoice_line_item_details_gross_price_label">Artikelpreis</string>
     <string name="gbs_digital_invoice_line_item_details_total_label">Gesamt</string>
     <string name="gbs_digital_invoice_line_item_details_save">Speichern</string>

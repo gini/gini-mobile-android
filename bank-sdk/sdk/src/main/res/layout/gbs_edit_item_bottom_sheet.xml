@@ -263,6 +263,7 @@
                     app:layout_constraintBottom_toBottomOf="@+id/gbs_add_quantity"
                     app:layout_constraintEnd_toStartOf="@+id/gbs_add_quantity"
                     app:layout_constraintTop_toTopOf="@+id/gbs_add_quantity"
+                    android:contentDescription="@string/gbs_digital_invoice_line_item_details_quantity_decrease_content_description"
                     app:srcCompat="@drawable/gbs_remove_quantity" />
 
                 <ImageButton
@@ -275,6 +276,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
+                    android:contentDescription="@string/gbs_digital_invoice_line_item_details_quantity_increase_content_description"
                     app:srcCompat="@drawable/gbs_add_quantity" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
