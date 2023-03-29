@@ -4,12 +4,11 @@ import android.animation.Animator
 import android.animation.AnimatorSet
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
-import android.app.ActionBar.LayoutParams
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
-import androidx.core.content.ContextCompat
 import android.widget.TextView
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
@@ -51,7 +50,7 @@ internal interface LineItemsAdapterListener {
  *
  * @suppress
  */
-internal class LineItemsAdapter(private val listener: LineItemsAdapterListener) :
+internal class LineItemsAdapter(private val listener: LineItemsAdapterListener, private val context: Context) :
     RecyclerView.Adapter<ViewHolder<*>>() {
 
 
@@ -117,7 +116,9 @@ internal class LineItemsAdapter(private val listener: LineItemsAdapterListener) 
                     viewHolder.bind(Pair(it, enabled), null)
                 }
 
-
+                // Adding padding for the last addon item, so the item looks full height without modifying the layout file
+                val bottomPadding =  if (position == (lineItems.size + addons.size - 1)) context.resources.getDimension(R.dimen.gc_large).toInt() else 0
+                viewHolder.itemView.setPadding(0, 0, 0, bottomPadding)
             }
         }
     }
