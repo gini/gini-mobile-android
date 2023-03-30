@@ -473,30 +473,40 @@ You can inject your own view for the bottom navigation bar, if you set
     GiniBank.digitalInvoiceHelpNavigationBarBottomAdapter = customBottomNavigationBar
 
 
-.. Digital Invoice Screen
-.. ~~~~~~~~~~~~~~~~~~~~~~
+Digital Invoice Overview Screen
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. TODO: Show how to customize the updated UI.
+UI Customization
+++++++++++++++++
 
-.. TODO: Adapt the section below to follow the same pattern as the other screens.
-.. Digital Invoice Screen Customization
-.. ++++++++++++++++++++++++++++++++++++
+.. raw:: html
 
-.. You can show invoice bottom navigation bar. You can pass your custom ``DigitalInvoiceNavigationBarBottomAdapter`` implementation to
-.. ``GiniBank``:
+    <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
+    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FeKNQAA5NTzyNPiqx5klpNl%2FAndroid-Gini-Bank-SDK-3.0.0-UI-Customisation%3Fnode-id%3D3688%253A6085%26t%3Do7qSi1gMOKNs7dpF-1"
+    allowfullscreen></iframe>
 
-.. .. code-block:: java
+Bottom Navigation Bar
++++++++++++++++++++++
 
-..     CustomDigitalInvoiceNavigationBarBottomAdapter customDigitalInvoiceNavigationBarBottomAdapter = new CustomDigitalInvoiceNavigationBarBottomAdapter();
+You can inject your own view for the bottom navigation bar, if you set
+``GiniBank.setCaptureConfiguration(CaptureConfiguration(bottomNavigationBarEnabled = ))`` to ``true`` and pass a custom
+``DigitalInvoiceNavigationBarBottomAdapter`` implementation to ``GiniBank``:
 
-..     GiniBank.digitalInvoiceNavigationBarBottomAdapter = customDigitalInvoiceNavigationBarBottomAdapter;
+.. code-block:: java
 
-.. Return Reason Picker
-.. ~~~~~~~~~~~~~~~~~~~~
+    let customBottomNavigationBar: DigitalInvoiceNavigationBarBottomAdapter = CustomDigitalInvoiceNavigationBarBottomAdapter();
 
-.. TODO: Show how to customize the updated UI.
+    GiniBank.digitalInvoiceNavigationBarBottomAdapter = customBottomNavigationBar
 
-.. Edit Line Item Screen
-.. ~~~~~~~~~~~~~~~~~~~~~
 
-.. TODO: Show how to customize the updated UI.
+Digital Invoice Edit Article Screen
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+UI Customization
+++++++++++++++++
+
+.. raw:: html
+
+    <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
+    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FeKNQAA5NTzyNPiqx5klpNl%2FAndroid-Gini-Bank-SDK-3.0.0-UI-Customisation%3Fnode-id%3D3688%253A7453%26t%3Do7qSi1gMOKNs7dpF-1"
+    allowfullscreen></iframe>
