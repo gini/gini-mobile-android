@@ -117,7 +117,7 @@ internal class LineItemsAdapter(private val listener: LineItemsAdapterListener, 
                 }
 
                 // Adding padding for the last addon item, so the item looks full height without modifying the layout file
-                val bottomPadding =  if (position == (lineItems.size + addons.size - 1)) context.resources.getDimension(R.dimen.gc_large).toInt() else 0
+                val bottomPadding =  if (position == (itemCount - 1)) context.resources.getDimension(R.dimen.gc_large).toInt() else 0
                 viewHolder.itemView.setPadding(0, 0, 0, bottomPadding)
             }
         }
@@ -126,15 +126,7 @@ internal class LineItemsAdapter(private val listener: LineItemsAdapterListener, 
     override fun onViewRecycled(viewHolder: ViewHolder<*>) {
         viewHolder.unbind()
     }
-}
-
-@JvmSynthetic
-internal fun addonForPosition(
-    position: Int,
-    addons: List<DigitalInvoiceAddon>,
-    lineItems: List<SelectableLineItem>
-): DigitalInvoiceAddon? =
-    addons.getOrNull(position - lineItems.size - 1)
+ }
 
 /**
  * Internal use only.
