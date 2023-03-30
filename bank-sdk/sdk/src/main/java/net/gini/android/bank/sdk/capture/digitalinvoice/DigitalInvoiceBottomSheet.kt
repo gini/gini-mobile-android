@@ -14,7 +14,6 @@ import androidx.core.content.ContextCompat
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.capture.digitalinvoice.details.*
 import net.gini.android.bank.sdk.capture.util.amountWatcher
@@ -142,7 +141,9 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
         binding.gbsDropDownSelectionValue.text = lineItem.currency?.currencyCode
 
         binding.gbsArticleNameEditTxt.doAfterTextChanged {
-            presenter?.setDescription(it)
+            if ( binding.gbsNameErrorTextView.visibility != View.INVISIBLE) {
+                binding.gbsNameErrorTextView.visibility = View.INVISIBLE
+            }
         }
 
         binding.gbsArticleNameEditTxt.setOnEditorActionListener(editorListener)
@@ -150,7 +151,9 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
         binding.gbsUnitPriceEditTxt.addTextChangedListener(amountWatcher)
 
         binding.gbsUnitPriceEditTxt.doAfterTextChanged {
-            presenter?.setGrossPrice(it)
+            if (binding.gbsPriceErrorTextView.visibility != View.INVISIBLE) {
+                binding.gbsPriceErrorTextView.visibility = View.INVISIBLE
+            }
         }
 
         binding.gbsUnitPriceEditTxt.setOnEditorActionListener(editorListener)
@@ -229,9 +232,34 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
             if (selectableLineItem == null)
                 return@setOnClickListener
 
+            if (!validateLineItemValues()) {
+                return@setOnClickListener
+            }
+
             presenter?.save()
             this.dismiss()
         }
+    }
+
+    private fun validateLineItemValues(): Boolean {
+        var fieldsAreValid = true
+        var editedName = binding.gbsArticleNameEditTxt.text.toString()
+        var editedPrice = binding.gbsUnitPriceEditTxt.text.toString().toBigDecimalOrNull()
+
+        if (editedPrice == null || editedPrice == 0.toBigDecimal()) {
+            binding.gbsPriceErrorTextView.visibility = View.VISIBLE
+            fieldsAreValid = false
+        }
+
+        if (editedName.isNullOrBlank()) {
+            binding.gbsNameErrorTextView.visibility = View.VISIBLE
+            fieldsAreValid = false
+        }
+
+        presenter?.setDescription(editedName)
+        presenter?.setGrossPrice(editedPrice.toString())
+
+        return fieldsAreValid
     }
 
     private fun manageFocuses() {

@@ -105,6 +105,18 @@
                     app:layout_constraintStart_toStartOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <TextView
+                android:id="@+id/gbs_name_error_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/gbs_article_name_wrapper"
+                app:layout_constraintStart_toStartOf="@id/gbs_article_name_wrapper"
+                android:layout_marginStart="@dimen/gc_medium"
+                android:layout_marginTop="@dimen/gc_small"
+                android:visibility="invisible"
+                android:textColor="@color/gc_error_01"
+                android:text="@string/gbs_digital_invoice_name_validation_error"/>
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/gbs_unit_wrapper"
                 android:layout_width="0dp"
@@ -115,7 +127,7 @@
                 android:clipToOutline="true"
                 app:layout_constraintEnd_toEndOf="@+id/gbs_save"
                 app:layout_constraintStart_toStartOf="@+id/gbs_close_bottom_sheet"
-                app:layout_constraintTop_toBottomOf="@+id/gbs_article_name_wrapper">
+                app:layout_constraintTop_toBottomOf="@+id/gbs_name_error_textView">
 
 
                 <TextView
@@ -199,6 +211,18 @@
                     app:srcCompat="@drawable/gbs_drop_down_arrow" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <TextView
+                android:id="@+id/gbs_price_error_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/gbs_unit_wrapper"
+                app:layout_constraintStart_toStartOf="@id/gbs_unit_wrapper"
+                android:layout_marginStart="@dimen/gc_medium"
+                android:layout_marginTop="@dimen/gc_small"
+                android:visibility="invisible"
+                android:textColor="@color/gc_error_01"
+                android:text="@string/gbs_digital_invoice_price_validation_error"/>
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/gbs_quantity_wrapper"
                 android:layout_width="0dp"
@@ -211,7 +235,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/gbs_save"
                 app:layout_constraintStart_toStartOf="@+id/gbs_close_bottom_sheet"
-                app:layout_constraintTop_toBottomOf="@+id/gbs_unit_wrapper">
+                app:layout_constraintTop_toBottomOf="@+id/gbs_price_error_textView">
 
 
                 <TextView

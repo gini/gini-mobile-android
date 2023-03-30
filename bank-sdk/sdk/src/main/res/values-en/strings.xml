@@ -73,6 +73,8 @@
     <string name="gbs_digital_invoice_header_button_1">OK</string>
     <string name="gbs_digital_invoice_header_button_2">Skip</string>
     <string name="gbs_digital_invoice_footer_skip">Skip feature</string>
+    <string name="gbs_digital_invoice_name_validation_error">Please enter the article name.</string>
+    <string name="gbs_digital_invoice_price_validation_error">Please enter the article price.</string>
 
     <string name="gbs_help_invoice_title">How does a digital invoice work?</string>
     <string name="gbs_help_invoice_text">We extracted all articles from your invoice and listed them for you. In case you want to return an ordered article or just partly pay your invoice, you simply deselect the article and the new total will be calculated automatically.</string>

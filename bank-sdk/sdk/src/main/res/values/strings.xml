@@ -67,6 +67,8 @@
     <string name="gbs_digital_invoice_onboarding_text_2">Wählen Sie die Artikel ab, die Sie zurücksenden wollen, wir berechnen den neuen Preis für Sie. </string>
     <string name="gbs_digital_invoice_onboarding_done_button_title">Los geht’s</string>
     <string name="gbs_digital_invoice_onboarding_do_not_show_button_title">Bitte nicht mehr anzeigen</string>
+    <string name="gbs_digital_invoice_name_validation_error">Bitte geben Sie den Artikelnamen ein.</string>
+    <string name="gbs_digital_invoice_price_validation_error">Bitte geben Sie den Artikelpreis ein.</string>
 
     <string name="gbs_return_assistant_help_title">Der neue Retourenassistent</string>
     <string name="gbs_return_assistant_help_section_1_body_1">Nachdem Sie eine Rechnung abfotografiert haben, können Sie nun Rechnungsposten abwählen die Sie nicht möchten. Sie bezahlen nur für die Dinge die Sie behalten und können den Rest retournieren.</string>
