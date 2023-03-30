@@ -65,7 +65,7 @@
         android:layout_marginEnd="@dimen/gc_medium"
         android:padding="@dimen/gc_medium"
         app:tint="?attr/colorOnBackground"
-        android:contentDescription="@string/gc_title_help"
+        android:contentDescription="@string/gbs_digital_invoice_help_info"
         android:background="@android:color/transparent"
         app:layout_constraintBottom_toBottomOf="@+id/gbs_pay"
         app:layout_constraintEnd_toEndOf="parent"

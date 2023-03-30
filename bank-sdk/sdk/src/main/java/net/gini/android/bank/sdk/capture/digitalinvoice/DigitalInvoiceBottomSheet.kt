@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
+import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -169,9 +170,8 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
             binding.gbsDropDownArrow.visibility = View.VISIBLE
         } else {
             binding.gbsDropDownArrow.visibility = View.GONE
-            context?.let {
-                val typedArray = it.obtainStyledAttributes(R.styleable.GBSCurrencyStyle)
-                binding.gbsDropDownSelectionValue.setTextColor(typedArray.getColor(R.styleable.GBSCurrencyStyle_gbsBottomSheetItemTitle, R.color.gc_light_01))
+            getBottomSheetItemTitleColor()?.let {
+                binding.gbsDropDownSelectionValue.setTextColor(it)
             }
 
             // Setting large margin to currency label if arrow is hidden to align with + button on UI
@@ -246,7 +246,9 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
                 binding.gbsArticleNameDivider.visibility = View.VISIBLE
             } else {
                 binding.gbsArticleNameDivider.visibility = View.INVISIBLE
-                binding.gbsNameTxt.setTextAppearance(R.style.Root_GiniCaptureTheme_Typography_Body2)
+                getBottomSheetItemTitleColor()?.let {
+                    binding.gbsNameTxt.setTextColor(it)
+                }
             }
         }
 
@@ -261,7 +263,9 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
                 binding.gbsUnitPriceDivider.visibility = View.VISIBLE
             } else {
                 binding.gbsUnitPriceDivider.visibility = View.INVISIBLE
-                binding.gbsUnitPriceTxt.setTextAppearance(R.style.Root_GiniCaptureTheme_Typography_Body2)
+                getBottomSheetItemTitleColor()?.let {
+                    binding.gbsUnitPriceTxt.setTextColor(it)
+                }
                 binding.gbsDropDownSelectionValue.setTextAppearance(R.style.Root_GiniCaptureTheme_Typography_Subtitle1)
             }
         }
@@ -330,6 +334,15 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
 
     override fun setPresenter(presenter: LineItemDetailsScreenContract.Presenter) {
         this.presenter = presenter
+    }
+
+    @ColorInt
+    private fun getBottomSheetItemTitleColor() : Int? {
+        return context?.let {
+            val typedArray = it.obtainStyledAttributes(R.styleable.GBSCurrencyStyle)
+            typedArray.getColor(R.styleable.GBSCurrencyStyle_gbsBottomSheetItemTitle, R.color.gc_light_01)
+        }
+
     }
 
     companion object {
