@@ -142,7 +142,7 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
         binding.gbsDropDownSelectionValue.text = lineItem.currency?.currencyCode
 
         binding.gbsArticleNameEditTxt.doAfterTextChanged {
-            if ( binding.gbsNameErrorTextView.visibility != View.INVISIBLE) {
+            if (binding.gbsNameErrorTextView.visibility != View.INVISIBLE) {
                 binding.gbsNameErrorTextView.visibility = View.INVISIBLE
             }
         }
