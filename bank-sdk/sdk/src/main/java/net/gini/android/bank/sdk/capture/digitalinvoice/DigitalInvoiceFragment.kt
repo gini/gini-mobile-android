@@ -267,7 +267,7 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
     }
 
     private fun initRecyclerView() {
-        lineItemsAdapter = LineItemsAdapter(this)
+        lineItemsAdapter = LineItemsAdapter(this, requireContext())
         activity?.let {
             binding.lineItems.apply {
                 layoutManager = LinearLayoutManager(it)
