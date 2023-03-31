@@ -19,6 +19,8 @@
     <string name="gbs_digital_invoice_pay_disabled">Pay</string>
     <string name="gbs_digital_invoice_line_item_details_description_label">Item Name</string>
     <string name="gbs_digital_invoice_line_item_details_quantity_label">Quantity</string>
+    <string name="gbs_digital_invoice_line_item_details_quantity_decrease_content_description">Decrease quantity</string>
+    <string name="gbs_digital_invoice_line_item_details_quantity_increase_content_description">Increase quantity</string>
     <string name="gbs_digital_invoice_line_item_details_gross_price_label">Item price</string>
     <string name="gbs_digital_invoice_line_item_details_total_label">Total</string>
     <string name="gbs_digital_invoice_line_item_details_save">Save</string>
