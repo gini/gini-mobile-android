@@ -94,11 +94,6 @@ public class AnalysisActivity extends AppCompatActivity implements
     private AnalysisFragmentCompat mFragment;
 
     @Override
-    public void hideError() {
-        mFragment.hideError();
-    }
-
-    @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gc_activity_analysis);
@@ -143,17 +138,6 @@ public class AnalysisActivity extends AppCompatActivity implements
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void showError(@NonNull final String message, @NonNull final String buttonTitle,
-                          @NonNull final View.OnClickListener onClickListener) {
-        mFragment.showError(message, buttonTitle, onClickListener);
-    }
-
-    @Override
-    public void showError(@NonNull final String message, final int duration) {
-        mFragment.showError(message, duration);
     }
 
     @VisibleForTesting

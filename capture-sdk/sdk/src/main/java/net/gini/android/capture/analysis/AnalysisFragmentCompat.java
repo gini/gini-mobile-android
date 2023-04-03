@@ -25,11 +25,6 @@ public class AnalysisFragmentCompat extends Fragment implements FragmentImplCall
     private AnalysisFragmentImpl mFragmentImpl;
     private AnalysisFragmentListener mListener;
 
-    @Override
-    public void hideError() {
-        mFragmentImpl.hideError();
-    }
-
     /**
      * Internal use only.
      *
@@ -93,17 +88,6 @@ public class AnalysisFragmentCompat extends Fragment implements FragmentImplCall
     public void onStop() {
         super.onStop();
         mFragmentImpl.onStop();
-    }
-
-    @Override
-    public void showError(@NonNull final String message, @NonNull final String buttonTitle,
-            @NonNull final View.OnClickListener onClickListener) {
-        mFragmentImpl.showError(message, buttonTitle, onClickListener);
-    }
-
-    @Override
-    public void showError(@NonNull final String message, final int duration) {
-        mFragmentImpl.showError(message, duration);
     }
 
     @Override

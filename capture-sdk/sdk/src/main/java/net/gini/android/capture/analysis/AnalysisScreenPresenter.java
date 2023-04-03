@@ -173,18 +173,6 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
         ParcelableMemoryCache.getInstance().removeEntriesWithTag(PARCELABLE_MEMORY_CACHE_TAG);
     }
 
-
-    // TODO: check if these methods should do something or could be deleted from the interface
-    @Override
-    public void hideError() {}
-
-    @Override
-    public void showError(@NonNull String message, int duration) {}
-
-    @Override
-    public void showError(@NonNull final String message, @NonNull final String buttonTitle,
-                          @NonNull final View.OnClickListener onClickListener) {}
-
     private void startScanAnimation() {
         getView().showScanAnimation();
     }
