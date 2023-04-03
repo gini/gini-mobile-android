@@ -107,3 +107,20 @@ The extractions related to the return assistant are stored in the ``compoundExtr
 ``CaptureResult``. See the Gini Bank API's `documentation
 <https://pay-api.gini.net/documentation/#return-assistant-extractions>`_ to learn about the return assistant's compound
 extractions.
+
+Accessibility
+-------------
+
+The SDK conforms to the following accessibility features:
+
+- UI is zoomable using Android's screen magnification feature.
+- TalkBack screen reader support: all non-textual UI elements (e.g., icons and images) have content descriptions.
+- Touchable elements (e.g., buttons and switches) have a minimum size of 48dp x 48dp.
+- Font sizes can be increased in Android's accessibility settings.
+- Default color palette has sufficient color contrast.
+- Color contrast can be increased in Android's accessibility settings.
+
+.. warning::
+
+    When customizing the SDK's UI you can override accessibility conformance by changing colors, images and injecting
+    custom UI elements. We strongly advise you to make your customizations accessibility friendly.
