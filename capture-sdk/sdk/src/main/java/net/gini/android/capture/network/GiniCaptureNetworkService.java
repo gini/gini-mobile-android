@@ -11,7 +11,6 @@ import net.gini.android.capture.logging.ErrorLog;
 import net.gini.android.capture.logging.ErrorLoggerListener;
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction;
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
-import net.gini.android.capture.review.ReviewFragmentListener;
 import net.gini.android.capture.util.CancellationToken;
 
 import java.util.LinkedHashMap;
@@ -38,9 +37,6 @@ import java.util.Map;
  * {@link GiniCapture.Builder#setGiniCaptureNetworkService(GiniCaptureNetworkService)} when creating a
  * {@link GiniCapture} instance.
  *
- * <p> When an instance of this interface is available document analysis related methods in the
- * {@link ReviewFragmentListener} and the {@link AnalysisFragmentListener} won't be invoked. Otherwise
- * the Gini Capture SDK falls back to invoking those methods.
  */
 public interface GiniCaptureNetworkService extends ErrorLoggerListener {
 

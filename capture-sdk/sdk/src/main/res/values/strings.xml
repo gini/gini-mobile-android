@@ -1,8 +1,4 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <plurals name="gc_analysis_pdf_pages">
-        <item quantity="one">%d Seite</item>
-        <item quantity="other">%d Seiten</item>
-    </plurals>
     <string name="gc_title_camera">Aufnahme</string>
     <string name="gc_title_onboarding"/>
     <string name="gc_title_review">Übersicht</string>
@@ -23,12 +19,6 @@
     <string name="gc_document_error_multi_page_limit_review_pages_button">Seitenübersicht</string>
     <string name="gc_document_error_multi_page_limit_cancel_button">Abbrechen</string>
 
-    <string name="gc_qrcode_detected_popup_message_1">QR verwenden?</string>
-    <string name="gc_qrcode_detected_popup_message_2">Hier geht’s weiter.</string>
-
-    <string name="gc_unsupported_qrcode_detected_popup_message_1">Dieser QR-Code enthält keine Bezahlinformationen.</string>
-    <string name="gc_unsupported_qrcode_detected_popup_message_2">X</string>
-
     <string name="gc_onboarding_align_corners_title">Dokument flach ausrichten</string>
     <string name="gc_onboarding_align_corners_message">Das Dokument sollte flach liegen und sich im Rahmen befinden</string>
     <string name="gc_onboarding_lighting_title">Gute Lichtverhältnisse</string>
@@ -38,18 +28,10 @@
     <string name="gc_onboarding_qr_code_title">QR Codes scannen</string>
     <string name="gc_onboarding_qr_code_message">QR Codes werden automatisch erkannt und analysiert</string>
 
-    <string name="gc_review_bottom_panel_text">Dokument vollständig, scharf und in Leserichtung fotografiert?\n\nDoppeltippen um Schärfe zu prüfen.</string>
-    <string name="gc_multi_page_review_page_indicator" tools:ignore="PluralsCandidate">%1$d von %2$d</string>
-    <string name="gc_multi_page_review_reorder_pages_tip"><![CDATA[Stimmt die Seitenreihenfolge? Mit Drag & Drop verschieben.]]></string>
-    <string name="gc_multi_page_review_add_pages_subtitle">Seiten hinzufügen</string>
-    <string name="gc_multi_page_review_image_preview_error">Vorschaubild ist leider nicht verfügbar.</string>
-    <string name="gc_multi_page_review_delete_invalid_document">Löschen</string>
     <string name="gc_multi_page_review_file_import_delete_last_page_dialog_message">Möchten Sie das letzte Bild löschen?</string>
     <string name="gc_multi_page_review_file_import_delete_last_page_dialog_positive_button">Löschen</string>
 
     <string name="gc_multi_page_review_file_import_delete_last_page_dialog_negative_button">Abbrechen</string>
-    <string name="gc_document_analysis_error">Ein Fehler ist aufgetreten.</string>
-    <string name="gc_document_analysis_error_retry">Wiederholen</string>
 
     <string name="gc_analysis_activity_indicator_message">Dokument wird analysiert</string>
     <string name="gc_pdf_analysis_activity_indicator_message">%s\nwird analysiert</string>
@@ -89,9 +71,6 @@
     <string name="gc_error_file_custom_validation_title"></string>
     <string name="gc_error_file_custom_validation_text"></string>
 
-    <string name="gc_document_import_hint_text">Es können jetzt auch ganz einfach Dateien hochgeladen werden.</string>
-    <string name="gc_qr_code_scanner_hint_text">Haben Sie schon den QR-Codeleser ausprobiert?</string>
-
     <string name="gc_document_import_error">Ihre Datei konnte nicht geöffnet werden. Bitte versuchen sie es mit einer anderen Datei.</string>
     <string name="gc_storage_permission_denied">Nur mit Datei-Zugriff können gespeicherte Rechnungen hochgeladen werden.</string>
     <string name="gc_storage_permission_denied_positive_button">Zugriff erteilen</string>
@@ -100,8 +79,6 @@
     <string name="gc_storage_permission_rationale_positive_button">Zugriff erteilen</string>
 
     <string name="gc_storage_permission_rationale_negative_button">Abbrechen</string>
-    <string name="gc_analysis_pdf_default_title">PDF Dokument</string>
-    <string name="gc_analysis_hint_headline">Für schnellere Ergebnisse, bitte:</string>
 
     <string name="gc_document_import_invalid_document">Leider kann diese Datei nicht bearbeitet werden.</string>
     <string name="gc_document_import_error_type_not_supported">Nur Dateien vom Format jpg, png, gif oder pdf können analysiert werden.</string>
@@ -110,7 +87,6 @@
     <string name="gc_document_import_error_password_protected_pdf">Passwortgeschützte Dokumente können nicht analysiert werden.</string>
     <string name="gc_document_error_too_many_pages">Das Dokument darf nicht mehr als 10 Seiten haben.</string>
 
-    <string name="gc_document_import_pick_another_document">Auswahl ändern</string>
     <string name="gc_document_import_close_error">Abbrechen</string>
 
     <string name="gc_file_chooser_fotos_section_header">Fotos</string>
@@ -118,9 +94,6 @@
     <string name="gc_help_item_photo_tips_title">Tipps für beste Ergebnisse</string>
     <string name="gc_help_item_file_import_guide_title">Dokumente von anderen Apps importieren</string>
     <string name="gc_help_item_supported_formats_title">Unterstützte Formate</string>
-
-    <string name="gc_photo_tips_headline">Zur Erkennung aller Daten bitte folgende Tipps beim Abfotografieren beachten:</string>
-    <string name="gc_photo_tips_camera_button">Zur Kamera</string>
 
     <string name="gc_supported_format_printed_invoices">Computer-generierte Rechnung und Überweisungsträger</string>
     <string name="gc_supported_format_single_page_as_jpeg_png_gif">1-seitige Fotos im Format jpeg, png oder gif</string>
@@ -131,19 +104,11 @@
     <string name="gc_supported_format_section_header">Unterstützte Formate:</string>
     <string name="gc_unsupported_format_section_header">Nicht unterstützte Formate:</string>
 
-    <string name="gc_file_import_header"><![CDATA[Digitale Rechnungen können nun noch komfortabler beglichen werden: Senden Sie einfach Ihre Rechnung als PDF direkt an Ihre <Partner App Name>. Diese wird automatisch für die Überweisung analysiert.]]></string>
     <string name="gc_file_import_section_1_title">1. Rechnung auswählen</string>
     <string name="gc_file_import_section_1_body">Bitte die PDF-Rechnung in der Email-App, PDF-Ordner oder einer anderen App auswählen. Um das Dokument nun an die Banking App zu senden, sollte die “Teilen mit” Funktion benitzt werden, welche mit einem Rechteck und einem Pfeil nach oben zeigend darstellt wird.</string>
 
     <string name="gc_file_import_section_2_title">2. Aus der App importieren</string>
     <string name="gc_file_import_section_2_body">Nun die Banking App aus der Liste auswählen, um das Dokument zum Analysieren weiterzuleiten.</string>
-
-
-    <string name="gc_file_import_section_3_title"><![CDATA[Wählen Sie die <Partner App Name> als Ziel aus]]></string>
-    <string name="gc_file_import_section_3_body"><![CDATA[Beim Aktivieren dieser Funktionen werden Apps angezeigt, an die eine PDF-Datei weitergeleitet werden kann. Bitte wählen Sie die <Partner App Name> aus der Liste aus, um den Analyse- und Überweisungsprozess zu starten.]]></string>
-    <string name="gc_file_import_section_3_body_2"><![CDATA[Bitte verwenden Sie die Option “NUR DIESMAL” um zu vermeiden, dass die <Partner App Name> alle PDFs standardmäßig öffnet.]]></string>
-    <string name="gc_file_import_section_3_clear_app_defaults_title">Einstellung für Standard-App löschen</string>
-    <string name="gc_file_import_section_3_clear_app_defaults_body"><![CDATA[Wenn Sie merken, dass <Partner App Name> alle PDFs standardmäßig öffnet, müssen Sie die Einstellung “Standardmäßig öffnen” für die App zurücksetzen:\n\n1. Öffnen Sie die App “Einstellungen”.\n\n2. Tippen Sie auf “Apps & Benachrichtigungen.”\n\n3. Tippen Sie auf <Partner App Name>. Wenn Sie die App nicht sehen, tippen Sie zuerst auf “Alle Apps anzeigen” oder “App-Info”.\n\n4. Tippen Sie auf “Erweitert” > “Standardmäßig öffnen” > “Aktionen auf Standard zurücksetzen”. Wenn Sie die Option “Erweitert” nicht sehen, tippen Sie auf “Standardmäßig öffnen” > “Aktionen auf Standard zurücksetzen”.\n\nWenn Sie anschließend ein PDF öffnen, werden Sie wieder gefragt, welche App verwendet werden soll.]]></string>
 
     <string name="gc_file_import_default_app_dialog_message">Die App öffnet standardmäßig alle %1$s. Um diese Einstellung zurückzusetzen, drücken Sie auf “Auf Standard zurücksetzen” und befolgen Sie die folgende Anleitung:\n\nTippen Sie auf “Erweitert” > “Standardmäßig öffnen” > “Aktionen auf Standard zurücksetzen”. Wenn Sie die Option “Erweitert” nicht sehen, tippen Sie auf “Standardmäßig öffnen” > “Aktionen auf Standard zurücksetzen”.</string>
     <string name="gc_file_import_default_app_dialog_positive_button">Auf Standard zurücksetzen</string>

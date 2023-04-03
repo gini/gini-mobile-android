@@ -3,7 +3,6 @@ package net.gini.android.capture.review.multipage;
 import static net.gini.android.capture.GiniCaptureError.ErrorCode.MISSING_GINI_CAPTURE_INSTANCE;
 import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
 import static net.gini.android.capture.internal.util.FileImportHelper.showAlertIfOpenWithDocumentAndAppIsDefault;
-import static net.gini.android.capture.review.multipage.thumbnails.ThumbnailsAdapter.getNewPositionAfterDeletion;
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackReviewScreenEvent;
 
 import android.app.Activity;
@@ -538,7 +537,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
         deleteDocument(document);
 
         final int nrOfDocuments = mMultiPageDocument.getDocuments().size();
-        final int newPosition = getNewPositionAfterDeletion(deletedPosition, nrOfDocuments);
+        final int newPosition = PreviewPagesAdapter.getNewPositionAfterDeletion(deletedPosition, nrOfDocuments);
 
         mPreviewPagesAdapter.notifyItemRemoved(deletedPosition);
         mTabIndicator.removeTabAt(deletedPosition);

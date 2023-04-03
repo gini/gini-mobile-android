@@ -24,7 +24,7 @@
         android:id="@+id/gc_forward_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/gc_help_item_forward_icon_margin"
+        android:layout_marginEnd="@dimen/gc_medium_12"
         android:src="@drawable/gc_forward_icon"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/gc_camera_activity_background"
+    android:background="@android:color/transparent"
     tools:context="net.gini.android.capture.camera.CameraActivity"
     android:id="@+id/gc_root">
 
