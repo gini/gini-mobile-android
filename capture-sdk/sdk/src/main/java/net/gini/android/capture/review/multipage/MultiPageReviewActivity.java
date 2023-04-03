@@ -22,12 +22,7 @@ import net.gini.android.capture.R;
 import net.gini.android.capture.analysis.AnalysisActivity;
 import net.gini.android.capture.camera.CameraActivity;
 import net.gini.android.capture.document.GiniCaptureMultiPageDocument;
-import net.gini.android.capture.onboarding.OnboardingActivity;
-import net.gini.android.capture.review.ReviewActivity;
 import net.gini.android.capture.tracking.ReviewScreenEvent;
-import net.gini.android.capture.view.InjectedViewContainer;
-import net.gini.android.capture.view.NavButtonType;
-import net.gini.android.capture.view.NavigationBarTopAdapter;
 
 import java.util.List;
 
@@ -187,8 +182,7 @@ public class MultiPageReviewActivity extends AppCompatActivity implements
 
     @Override
     public void onReturnToCameraScreenForFirstPage() {
-        Intent intent = CameraActivity.createIntent(this, false);
-        startActivity(intent);
+        setResult(RESULT_CAMERA_SCREEN);
         finish();
     }
 
