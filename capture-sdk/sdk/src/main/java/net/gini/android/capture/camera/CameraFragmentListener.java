@@ -24,12 +24,12 @@ import java.util.Map;
 interface CameraFragmentListener {
     /**
      * <p>
-     * Called when the user has taken an image with the camera or has imported a document that passed the Gini Capture SDK's validation and any custom checks that were implemented.
+     * Called when the user has imported a document that passed the Gini Capture SDK's validation and any custom checks that were implemented.
      * </p>
      *
      * @param document the image taken by the camera or the validated imported document
      */
-    void onDocumentAvailable(@NonNull Document document);
+    void onImportedDocumentAvailable(@NonNull Document document);
 
 
     /**

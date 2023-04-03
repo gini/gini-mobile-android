@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import net.gini.android.capture.Document;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.util.AlertDialogHelperCompat;
-import net.gini.android.capture.review.ReviewFragmentListener;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;

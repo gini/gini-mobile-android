@@ -680,7 +680,7 @@ public class CameraScreenTest {
         final AtomicBoolean isDocumentAvailable = new AtomicBoolean();
         CameraFragmentHostActivityNotListener.sListener = new CameraFragmentListener() {
             @Override
-            public void onDocumentAvailable(@NonNull final Document document) {
+            public void onImportedDocumentAvailable(@NonNull final Document document) {
                 isDocumentAvailable.set(true);
             }
 

@@ -137,7 +137,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private static final CameraFragmentListener NO_OP_LISTENER = new CameraFragmentListener() {
         @Override
-        public void onDocumentAvailable(@NonNull final Document document) {
+        public void onImportedDocumentAvailable(@NonNull final Document document) {
         }
 
         @Override
@@ -1060,7 +1060,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                             addToMultiPageDocumentMemoryStore(multiPageDocument);
                             mListener.onProceedToMultiPageReviewScreen(multiPageDocument, shouldScrollToLastPage());
                         } else {
-                            mListener.onDocumentAvailable(document);
+                            mListener.onImportedDocumentAvailable(document);
                         }
                     }
 
@@ -1343,10 +1343,22 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                                         mListener.onProceedToMultiPageReviewScreen(mMultiPageDocument, shouldScrollToLastPage());
                                         setmIsTakingPicture(false);
                                     } else {
-                                        final ImageDocument document =
-                                                DocumentFactory.newImageDocumentFromPhoto(
-                                                        result);
-                                        mListener.onDocumentAvailable(document);
+                                        final ImageDocument document = createSavedDocument(result);
+                                        if (document == null) {
+                                            handleError(GiniCaptureError.ErrorCode.CAMERA_SHOT_FAILED,
+                                                    "Failed to take picture: could not save picture to disk",
+                                                    null);
+                                            mCameraController.startPreview();
+                                            setmIsTakingPicture(false);
+                                            return;
+                                        }
+                                        final ImageMultiPageDocument multiPageDocument = new ImageMultiPageDocument(
+                                                Document.Source.newCameraSource(), ImportMethod.NONE);
+                                        GiniCapture.getInstance().internal()
+                                                .getImageMultiPageDocumentMemoryStore()
+                                                .setMultiPageDocument(multiPageDocument);
+                                        multiPageDocument.addDocument(document);
+                                        mListener.onProceedToMultiPageReviewScreen(multiPageDocument, false);
                                         setmIsTakingPicture(false);
                                     }
                                     mCameraController.startPreview();

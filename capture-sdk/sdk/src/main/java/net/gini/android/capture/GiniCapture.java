@@ -37,7 +37,6 @@ import net.gini.android.capture.view.DefaultNavigationBarTopAdapter;
 import net.gini.android.capture.network.GiniCaptureNetworkService;
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction;
 import net.gini.android.capture.onboarding.OnboardingPage;
-import net.gini.android.capture.review.ReviewActivity;
 import net.gini.android.capture.tracking.AnalysisScreenEvent;
 import net.gini.android.capture.tracking.CameraScreenEvent;
 import net.gini.android.capture.tracking.Event;
@@ -447,9 +446,7 @@ public class GiniCapture {
     }
 
     /**
-     * Screen API
-     *
-     * <p> If you have enabled the multi-page feature and your application receives one or multiple
+     * When your application receives one or multiple
      * files from another application you can use this method to create an Intent for launching the
      * Gini Capture SDK.
      *
@@ -470,36 +467,6 @@ public class GiniCapture {
                                                           @NonNull final Context context,
                                                           @NonNull final AsyncCallback<Intent, ImportedFileValidationException> callback) {
         return mGiniCaptureFileImport.createIntentForImportedFiles(intent, context, callback);
-    }
-
-    /**
-     * Screen API
-     *
-     * <p> When your application receives a file from another application you can use this method to
-     * create an Intent for launching the Gini Capture SDK.
-     *
-     * <p> Start the Intent with {@link android.app.Activity#startActivityForResult(Intent, int)} to
-     * receive the extractions or a {@link GiniCaptureError} in case there was an error.
-     *
-     * @param intent                the Intent your app received
-     * @param context               Android context
-     * @param reviewActivityClass   (optional) the class of your application's {@link
-     *                              ReviewActivity} subclass
-     * @param analysisActivityClass (optional) the class of your application's {@link
-     *                              AnalysisActivity} subclass
-     * @return an Intent for launching the Gini Capture SDK
-     * @throws ImportedFileValidationException if the file didn't pass validation
-     * @throws IllegalArgumentException        if the Intent's data is not valid or the mime type is
-     *                                         not supported
-     **/
-    @NonNull
-    public static Intent createIntentForImportedFile(@NonNull final Intent intent,
-                                                     @NonNull final Context context,
-                                                     @Nullable final Class<? extends ReviewActivity> reviewActivityClass,
-                                                     @Nullable final Class<? extends AnalysisActivity> analysisActivityClass)
-            throws ImportedFileValidationException {
-        return GiniCaptureFileImport.createIntentForImportedFile(intent, context,
-                reviewActivityClass, analysisActivityClass);
     }
 
     /**

@@ -11,14 +11,10 @@ import net.gini.android.capture.GiniCaptureCoordinator;
 import net.gini.android.capture.GiniCaptureError;
 import net.gini.android.capture.R;
 import net.gini.android.capture.camera.CameraActivity;
-import net.gini.android.capture.network.GiniCaptureNetworkService;
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction;
 import net.gini.android.capture.network.model.GiniCaptureReturnReason;
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
 import net.gini.android.capture.noresults.NoResultsActivity;
-import net.gini.android.capture.onboarding.OnboardingActivity;
-import net.gini.android.capture.review.ReviewActivity;
-import net.gini.android.capture.review.multipage.MultiPageReviewActivity;
 import net.gini.android.capture.tracking.AnalysisScreenEvent;
 
 import java.util.ArrayList;

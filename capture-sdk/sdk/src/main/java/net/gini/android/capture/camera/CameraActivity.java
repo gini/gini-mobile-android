@@ -1,10 +1,8 @@
 package net.gini.android.capture.camera;
 
-import static net.gini.android.capture.internal.util.ActivityHelper.enableHomeAsUp;
 import static net.gini.android.capture.internal.util.ActivityHelper.interceptOnBackPressed;
 import static net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboarding;
 import static net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboardingAtFirstRun;
-import static net.gini.android.capture.review.ReviewActivity.EXTRA_IN_ANALYSIS_ACTIVITY;
 import static net.gini.android.capture.review.multipage.MultiPageReviewActivity.RESULT_SCROLL_TO_LAST_PAGE;
 import static net.gini.android.capture.review.multipage.MultiPageReviewActivity.SHOULD_SCROLL_TO_LAST_PAGE;
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackCameraScreenEvent;
@@ -35,7 +33,6 @@ import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction;
 import net.gini.android.capture.network.model.GiniCaptureReturnReason;
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
 import net.gini.android.capture.onboarding.OnboardingActivity;
-import net.gini.android.capture.review.ReviewActivity;
 import net.gini.android.capture.review.multipage.MultiPageReviewActivity;
 import net.gini.android.capture.tracking.CameraScreenEvent;
 import java.util.Map;
@@ -277,13 +274,9 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
     }
 
     @Override
-    public void onDocumentAvailable(@NonNull final Document document) {
+    public void onImportedDocumentAvailable(@NonNull final Document document) {
         mDocument = document;
-        if (mDocument.isReviewable()) {
-            startReviewActivity(document);
-        } else {
-            startAnalysisActivity(document);
-        }
+        startAnalysisActivity(document);
     }
 
     @Override
@@ -318,16 +311,7 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
         callback.documentAccepted();
     }
 
-    // TODO: can be deleted
-    private void startReviewActivity(@NonNull final Document document) {
-        final Intent reviewIntent = new Intent(this, ReviewActivity.class);
-        reviewIntent.putExtra(ReviewActivity.EXTRA_IN_DOCUMENT, document);
-        reviewIntent.putExtra(EXTRA_IN_ANALYSIS_ACTIVITY, new Intent(this, AnalysisActivity.class));
-        reviewIntent.setExtrasClassLoader(CameraActivity.class.getClassLoader());
-        startActivityForResult(reviewIntent, REVIEW_DOCUMENT_REQUEST);
-    }
-
-    private void startAnalysisActivity(@NonNull final Document document) {
+     private void startAnalysisActivity(@NonNull final Document document) {
         final Intent analysisIntent = new Intent(this, AnalysisActivity.class);
         analysisIntent.putExtra(AnalysisActivity.EXTRA_IN_DOCUMENT, document);
         analysisIntent.setExtrasClassLoader(CameraActivity.class.getClassLoader());
