@@ -1,26 +1,19 @@
 package net.gini.android.bank.sdk.capture.digitalinvoice
 
-import android.animation.Animator
-import android.animation.AnimatorSet
-import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.TextView
 import androidx.core.view.isInvisible
-import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
-import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.RecyclerView
 import net.gini.android.bank.sdk.R
 import java.util.Collections.emptyList
 import net.gini.android.bank.sdk.capture.digitalinvoice.ViewType.*
 import net.gini.android.bank.sdk.capture.digitalinvoice.ViewType.LineItem
 import net.gini.android.bank.sdk.databinding.GbsItemDigitalInvoiceAddonBinding
-import net.gini.android.bank.sdk.databinding.GbsItemDigitalInvoiceHeaderBinding
 import net.gini.android.bank.sdk.databinding.GbsItemDigitalInvoiceLineItemBinding
 
 /**
@@ -38,11 +31,7 @@ internal interface LineItemsAdapterListener {
     fun onLineItemClicked(lineItem: SelectableLineItem)
     fun onLineItemSelected(lineItem: SelectableLineItem)
     fun onLineItemDeselected(lineItem: SelectableLineItem)
-    fun removeLineItem(lineItem: SelectableLineItem)
-    fun onWhatIsThisButtonClicked()
     fun payButtonClicked()
-    fun skipButtonClicked()
-    fun addNewArticle()
 }
 
 /**
@@ -72,21 +61,9 @@ internal class LineItemsAdapter(private val listener: LineItemsAdapterListener, 
             notifyDataSetChanged()
         }
 
-    private val footerSkipButtonClickListener = View.OnClickListener {
-        listener.skipButtonClicked()
-    }
-
-
     override fun onCreateViewHolder(parent: ViewGroup, viewTypeId: Int): ViewHolder<*> {
         val layoutInflater = LayoutInflater.from(parent.context)
-        val viewHolder =
-            ViewHolder.forViewTypeId(viewTypeId, layoutInflater, parent)
-
-        if (viewHolder is ViewHolder.HeaderViewHolder) {
-            viewHolder.binding.headerButton2.setOnClickListener(footerSkipButtonClickListener)
-        }
-
-        return viewHolder
+        return ViewHolder.forViewTypeId(viewTypeId, layoutInflater, parent)
     }
 
 
@@ -99,10 +76,6 @@ internal class LineItemsAdapter(private val listener: LineItemsAdapterListener, 
 
     override fun onBindViewHolder(viewHolder: ViewHolder<*>, position: Int) {
         when (viewHolder) {
-            is ViewHolder.HeaderViewHolder -> {
-                viewHolder.listener = listener
-                viewHolder.bind(footerDetails?.buttonEnabled ?: false)
-            }
             is ViewHolder.LineItemViewHolder -> {
                 lineItems.getOrNull(position)?.let {
                     viewHolder.listener = listener
@@ -141,7 +114,7 @@ internal sealed class ViewType {
      *
      * @suppress
      */
-    internal object Header : ViewType() {
+    internal object LineItem : ViewType() {
         override val id: Int = 1
     }
 
@@ -150,24 +123,14 @@ internal sealed class ViewType {
      *
      * @suppress
      */
-    internal object LineItem : ViewType() {
-        override val id: Int = 2
-    }
-
-    /**
-     * Internal use only.
-     *
-     * @suppress
-     */
     internal object Addon : ViewType() {
-        override val id: Int = 3
+        override val id: Int = 2
     }
 
     internal companion object {
         fun from(viewTypeId: Int): ViewType = when (viewTypeId) {
-            1 -> Header
-            2 -> LineItem
-            3 -> Addon
+            1 -> LineItem
+            2 -> Addon
             else -> throw IllegalStateException("Unknow adapter view type id: $viewTypeId")
         }
     }
@@ -184,133 +147,6 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
     internal abstract fun bind(data: T, allData: List<T>? = null, dataIndex: Int? = null)
 
     internal abstract fun unbind()
-
-    /**
-     * Internal use only.
-     *
-     * @suppress
-     */
-    internal class HeaderViewHolder(
-        val binding: GbsItemDigitalInvoiceHeaderBinding
-    ) :
-        ViewHolder<Boolean>(binding.root, Header) {
-        internal var listener: LineItemsAdapterListener? = null
-        private val collapsedHeight =
-            binding.root.resources.getDimensionPixelSize(R.dimen.gbs_digital_invoice_header_collapsed_height)
-        private val collapsedWidth =
-            binding.root.resources.getDimensionPixelSize(R.dimen.gbs_digital_invoice_header_collapsed_width)
-        private val collapsedMarginRight =
-            binding.root.resources.getDimensionPixelSize(R.dimen.gbs_digital_invoice_header_title_collapsed_margin)
-
-        private val collapsedCardRadius =
-            binding.root.resources.getDimensionPixelSize(R.dimen.gbs_digital_invoice_header_corners_collapsed)
-                .toFloat()
-
-        private val expandedCardRadius =
-            binding.root.resources.getDimensionPixelSize(R.dimen.gbs_digital_invoice_header_corners_expanded)
-                .toFloat()
-
-        private var expandedHeight: Int = -1
-        private var expandedWidth: Int = -1
-
-        private var animatorSet: AnimatorSet? = null
-
-        private val toggleClickListener = View.OnClickListener {
-            animateView()
-        }
-
-        override fun bind(data: Boolean, allData: List<Boolean>?, dataIndex: Int?) {
-            binding.headerButton2.isEnabled = data
-            binding.collapseButton.setOnClickListener(toggleClickListener)
-            binding.headerButton1.setOnClickListener(toggleClickListener)
-            binding.headerTitle.setOnClickListener(toggleClickListener)
-        }
-
-        override fun unbind() {
-        }
-
-        private fun animateView() {
-            animatorSet?.cancel()
-            if (expandedHeight == -1) {
-                expandedHeight = binding.headerBackgroundView.height
-                expandedWidth = binding.headerBackgroundView.width
-            }
-
-            val isExpandingAnimation = binding.headerBackgroundView.height <= collapsedHeight
-            val wDiff = (expandedWidth - collapsedWidth).toFloat()
-            val hDiff = (expandedHeight - collapsedHeight).toFloat()
-            val cornerDiff = collapsedCardRadius - expandedCardRadius
-
-            val animator = ValueAnimator.ofFloat(0f, 1f)
-                .setDuration(300)
-
-            animator.addListener(object : Animator.AnimatorListener {
-                override fun onAnimationStart(animation: Animator) {
-                    if (!isExpandingAnimation) {
-                        binding.headerText1.isVisible = false
-                        binding.headerText2.isVisible = false
-                        binding.headerImage.isVisible = false
-                        binding.containerButtons.isVisible = false
-                    }
-                }
-
-                override fun onAnimationEnd(animation: Animator) {
-                    if (isExpandingAnimation) {
-                        binding.headerText1.isVisible = true
-                        binding.headerText2.isVisible = true
-                        binding.headerImage.isVisible = true
-                        binding.containerButtons.isVisible = true
-                    }
-                }
-
-                override fun onAnimationCancel(animation: Animator) {
-                }
-
-                override fun onAnimationRepeat(animation: Animator) {
-                }
-
-            })
-
-            animator.addUpdateListener(object : ValueAnimator.AnimatorUpdateListener {
-                override fun onAnimationUpdate(animation: ValueAnimator) {
-                    val updateVal = (animation?.animatedValue as? Float)?.let {
-                        if (!isExpandingAnimation) 1 - it else it
-                    } ?: return
-
-                    val backgroundLp = binding.headerBackgroundView.layoutParams
-                    val containerLp = binding.headerContent.layoutParams
-
-                    backgroundLp.width = collapsedWidth + (updateVal * wDiff).toInt()
-                    containerLp.width = collapsedWidth + (updateVal * wDiff).toInt()
-                    backgroundLp.height = collapsedHeight + (updateVal * hDiff).toInt()
-                    containerLp.height = collapsedHeight + (updateVal * hDiff).toInt()
-                    binding.headerTitle.updatePadding(right = ((1f - updateVal) * collapsedMarginRight).toInt())
-
-                    binding.collapseButton.alpha = 0.7f + updateVal * 0.3f
-                    binding.collapseButton.rotation = 180f - updateVal * 180f
-                    binding.collapseButton.alpha = 0.7f + updateVal * 0.3f
-                    binding.collapseButton.scaleX = 0.8f + updateVal * 0.2f
-                    binding.collapseButton.scaleY = 0.8f + updateVal * 0.2f
-
-                    binding.headerTitle.alpha = 0.7f + updateVal * 0.3f
-                    binding.headerTitle.scaleX = 1.25f - updateVal * 0.25f
-                    binding.headerTitle.scaleY = 1.25f - updateVal * 0.25f
-
-                    binding.headerBackgroundView.radius =
-                        collapsedCardRadius - updateVal * cornerDiff
-
-                    binding.headerBackgroundView.layoutParams = backgroundLp
-                    binding.headerContent.layoutParams = containerLp
-                }
-            })
-
-            animatorSet = AnimatorSet()
-            animatorSet?.interpolator = AccelerateDecelerateInterpolator()
-            animatorSet?.play(animator)
-            animatorSet?.start()
-
-        }
-    }
 
     /**
      * Internal use only.
@@ -441,13 +277,6 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
             viewTypeId: Int, layoutInflater: LayoutInflater, parent: ViewGroup
         ) =
             when (ViewType.from(viewTypeId)) {
-                Header -> HeaderViewHolder(
-                    GbsItemDigitalInvoiceHeaderBinding.inflate(
-                        layoutInflater,
-                        parent,
-                        false
-                    )
-                )
                 LineItem -> LineItemViewHolder(
                     GbsItemDigitalInvoiceLineItemBinding.inflate(
                         layoutInflater,

@@ -25,15 +25,6 @@ interface DigitalInvoiceFragmentListener {
     fun onEditLineItem(selectableLineItem: SelectableLineItem)
 
     /**
-     * Called when the user tapped on add button to add new line item.
-     *
-     * You should show the [LineItemDetailsFragment] with the selectable line item.
-     *
-     * @param selectableLineItem - the [SelectableLineItem] to be added
-     */
-    fun onAddLineItem(selectableLineItem: SelectableLineItem)
-
-    /**
      * Called when the user presses the buy button.
      *
      * The extractions were updated to contain the user's modifications:

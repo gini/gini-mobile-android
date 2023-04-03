@@ -13,8 +13,6 @@ import androidx.fragment.app.commit
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.capture.CaptureResult
 import net.gini.android.bank.sdk.capture.digitalinvoice.details.LineItemDetailsListener
-import net.gini.android.bank.sdk.capture.digitalinvoice.info.DigitalInvoiceInfoFragment
-import net.gini.android.bank.sdk.capture.digitalinvoice.info.DigitalInvoiceInfoFragmentListener
 import net.gini.android.bank.sdk.capture.digitalinvoice.onboarding.DigitalInvoiceOnboardingFragment
 import net.gini.android.bank.sdk.capture.digitalinvoice.onboarding.DigitalInvoiceOnboardingFragmentListener
 import net.gini.android.bank.sdk.capture.internalParseResult
@@ -65,7 +63,7 @@ private const val TAG_INFO = "TAG_INFO"
  * `GiniCaptureTheme.Snackbar.Error.TextStyle` must be `Root.GiniCaptureTheme.Snackbar.Error.TextStyle`.
  */
 internal class DigitalInvoiceActivity : AppCompatActivity(), DigitalInvoiceFragmentListener,
-    DigitalInvoiceInfoFragmentListener, DigitalInvoiceOnboardingFragmentListener, LineItemDetailsListener {
+    DigitalInvoiceOnboardingFragmentListener, LineItemDetailsListener {
 
     private var fragment: DigitalInvoiceFragment? = null
     private lateinit var extractions: Map<String, GiniCaptureSpecificExtraction>
@@ -91,33 +89,6 @@ internal class DigitalInvoiceActivity : AppCompatActivity(), DigitalInvoiceFragm
         if (resources.getBoolean(R.bool.gc_is_tablet)) {
             window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
         }
-    }
-
-
-    /**
-     * Internal use only.
-     *
-     * @suppress
-     */
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) {
-            onBackPressed()
-            return true
-        }
-
-        if (item.itemId == R.id.help) {
-            showInfo()
-            return true
-        }
-
-        return super.onOptionsItemSelected(item)
-    }
-
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        super.onCreateOptionsMenu(menu)
-        menuInflater.inflate(R.menu.gbs_menu_digital_invoice, menu)
-        return true
     }
 
     private fun readExtras() {
@@ -163,27 +134,6 @@ internal class DigitalInvoiceActivity : AppCompatActivity(), DigitalInvoiceFragm
         ) as DigitalInvoiceFragment?
     }
 
-    private fun showInfo() {
-        if (supportFragmentManager.findFragmentByTag(TAG_INFO) != null) {
-            return
-        }
-        supportFragmentManager.commit {
-            val infoFragment = DigitalInvoiceInfoFragment.createInstance().apply {
-                listener = this@DigitalInvoiceActivity
-            }
-            add(R.id.fragment_digital_invoice, infoFragment, TAG_INFO)
-        }
-    }
-
-    override fun onCloseInfo() {
-        (supportFragmentManager.findFragmentByTag(TAG_INFO) as? DigitalInvoiceInfoFragment)?.let { infoFragment ->
-            infoFragment.listener = null
-            supportFragmentManager.commit {
-                remove(infoFragment)
-            }
-        }
-    }
-
     override fun showOnboarding() {
         supportFragmentManager.commit {
             val onboardingFragment = DigitalInvoiceOnboardingFragment.createInstance().apply {
@@ -215,8 +165,6 @@ internal class DigitalInvoiceActivity : AppCompatActivity(), DigitalInvoiceFragm
     fun resultFromBottomSheet(selectableLineItem: SelectableLineItem) {
         fragment?.updateLineItem(selectableLineItem)
     }
-
-    override fun onAddLineItem(selectableLineItem: SelectableLineItem) {}
 
     /**
      * Internal use only.
