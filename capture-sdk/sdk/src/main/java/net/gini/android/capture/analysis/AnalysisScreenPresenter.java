@@ -460,20 +460,11 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                 final Throwable reviewScreenAnalysisError = GiniCapture.getInstance().internal().getReviewScreenAnalysisError();
                 if (reviewScreenAnalysisError != null) {
                     errorDetails.put(ERROR_DETAILS_MAP_KEY.ERROR_OBJECT, reviewScreenAnalysisError);
+                    trackAnalysisScreenEvent(AnalysisScreenEvent.ERROR, errorDetails);
                 }
             }
 
-            trackAnalysisScreenEvent(AnalysisScreenEvent.ERROR, errorDetails);
-            showError(mDocumentAnalysisErrorMessage,
-                    getActivity().getString(
-                            R.string.gc_document_analysis_error_retry),
-                    new View.OnClickListener() {
-                        @Override
-                        public void onClick(final View v) {
-                            trackAnalysisScreenEvent(AnalysisScreenEvent.RETRY);
-                            doAnalyzeDocument();
-                        }
-                    });
+            ErrorActivity.startErrorActivity(getActivity(), mDocumentAnalysisErrorMessage, mMultiPageDocument);
         } else {
             doAnalyzeDocument();
         }
