@@ -97,7 +97,8 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     private PreviewPagesAdapter mPreviewPagesAdapter;
     private RecyclerView mRecyclerView;
     private Button mButtonNext;
-    private LinearLayout mAddPages;
+    private LinearLayout mAddPagesWrapperLayout;
+    private Button mAddPagesButton;
     private TabLayout mTabIndicator;
     private ConstraintLayout mProcessDocumentsWrapper;
     private InjectedViewContainer<NavigationBarTopAdapter> mTopAdapterInjectedViewContainer;
@@ -374,7 +375,8 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
         mButtonNext = view.findViewById(R.id.gc_button_next);
         mTabIndicator = view.findViewById(R.id.gc_tab_indicator);
         mTopAdapterInjectedViewContainer = view.findViewById(R.id.gc_navigation_top_bar);
-        mAddPages = view.findViewById(R.id.gc_add_pages_wrapper);
+        mAddPagesWrapperLayout = view.findViewById(R.id.gc_add_pages_wrapper);
+        mAddPagesButton = view.findViewById(R.id.gc_add_page_button);
         mRecyclerView = view.findViewById(R.id.gc_pager_recycler_view);
         injectedLoadingIndicatorContainer = view.findViewById(R.id.gc_injected_loading_indicator_container);
         mProcessDocumentsWrapper = view.findViewById(R.id.gc_process_documents_wrapper);
@@ -499,10 +501,11 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
         ClickListenerExtKt.setIntervalClickListener(mButtonNext, v -> onNextButtonClicked());
 
         if (GiniCapture.hasInstance() && !GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
-            mAddPages.setVisibility(GiniCapture.getInstance().isMultiPageEnabled() ? View.VISIBLE : View.GONE);
+            mAddPagesWrapperLayout.setVisibility(GiniCapture.getInstance().isMultiPageEnabled() ? View.VISIBLE : View.GONE);
+            mAddPagesButton.setVisibility(GiniCapture.getInstance().isMultiPageEnabled() ? View.VISIBLE : View.GONE);
         }
 
-        ClickListenerExtKt.setIntervalClickListener(mAddPages, v -> mListener.onReturnToCameraScreenToAddPages());
+        ClickListenerExtKt.setIntervalClickListener(mAddPagesButton, v -> mListener.onReturnToCameraScreenToAddPages());
     }
 
 
