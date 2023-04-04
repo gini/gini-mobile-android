@@ -191,6 +191,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     ImageButton mButtonCameraTrigger;
     private ImageButton mButtonCameraFlash;
     private ViewGroup mButtonCameraFlashWrapper;
+    private Button mButtonCameraFlashTrigger;
     private Group mCameraFlashButtonGroup;
     private TextView mCameraFlashButtonSubtitle;
     private ConstraintLayout mLayoutNoPermission;
@@ -621,6 +622,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         mButtonCameraTrigger = view.findViewById(R.id.gc_button_camera_trigger);
         mButtonCameraFlash = view.findViewById(R.id.gc_button_camera_flash);
         mButtonCameraFlashWrapper = view.findViewById(R.id.gc_flash_group_wrapper);
+        mButtonCameraFlashTrigger = view.findViewById(R.id.gc_button_flash);
         mCameraFlashButtonGroup = view.findViewById(R.id.gc_camera_flash_button_group);
         mCameraFlashButtonSubtitle = view.findViewById(R.id.gc_camera_flash_button_subtitle);
         final ViewStub stubNoPermission = view.findViewById(R.id.gc_stub_camera_no_permission);
@@ -777,7 +779,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private void setInputHandlers() {
         ClickListenerExtKt.setIntervalClickListener(mButtonCameraTrigger, v -> onCameraTriggerClicked());
 
-        ClickListenerExtKt.setIntervalClickListener(mButtonCameraFlashWrapper, v -> {
+        ClickListenerExtKt.setIntervalClickListener(mButtonCameraFlashTrigger, v -> {
             mIsFlashEnabled = !mCameraController.isFlashEnabled();
             updateCameraFlashState();
         });
@@ -1234,34 +1236,33 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private void enableInteraction() {
         if (mCameraPreview == null
-                || mButtonImportDocumentWrapper == null
-                || mButtonCameraFlashWrapper == null
+                || mButtonImportDocument == null
+                || mButtonCameraFlashTrigger == null
                 || mPhotoThumbnail == null
                 || mButtonCameraTrigger == null) {
             return;
         }
         mCameraPreview.setEnabled(true);
         mButtonImportDocument.setEnabled(true);
-        mButtonCameraFlashWrapper.setEnabled(true);
+        mButtonCameraFlashTrigger.setEnabled(true);
         mPhotoThumbnail.setEnabled(true);
         mButtonCameraTrigger.setEnabled(true);
     }
 
     private void disableInteraction() {
         if (mCameraPreview == null
-                || mButtonImportDocumentWrapper == null
-                || mButtonCameraFlashWrapper == null
+                || mButtonImportDocument == null
+                || mButtonCameraFlashTrigger == null
                 || mPhotoThumbnail == null
                 || mButtonCameraTrigger == null) {
             return;
         }
         mCameraPreview.setEnabled(false);
         mButtonImportDocument.setEnabled(false);
-        mButtonCameraFlashWrapper.setEnabled(false);
+        mButtonCameraFlashTrigger.setEnabled(false);
         mPhotoThumbnail.setEnabled(false);
         mButtonCameraTrigger.setEnabled(false);
     }
-
 
     private void showGenericInvalidFileError(ErrorType errorType) {
         final Activity activity = mFragment.getActivity();
@@ -1474,7 +1475,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private void showFlashButtonAnimated() {
         mButtonCameraFlashWrapper.animate().alpha(1.0f);
-        mButtonCameraFlashWrapper.setEnabled(true);
+        mButtonCameraFlashTrigger.setEnabled(true);
     }
 
     private void showPaneAnimated() {
@@ -1584,7 +1585,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private void hideFlashButtonAnimated() {
         mButtonCameraFlashWrapper.animate().alpha(0.0f);
-        mButtonCameraFlashWrapper.setEnabled(false);
+        mButtonCameraFlashTrigger.setEnabled(false);
     }
 
     private void startApplicationDetailsSettings() {

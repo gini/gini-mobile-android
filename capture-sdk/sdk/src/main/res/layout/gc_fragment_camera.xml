@@ -89,7 +89,7 @@
             android:layout_height="wrap_content"
             android:visibility="gone"
             tools:visibility="gone"
-            app:constraint_referenced_ids="gc_flash_group_wrapper" />
+            app:constraint_referenced_ids="gc_flash_group_wrapper, gc_button_flash" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/gc_flash_group_wrapper"
@@ -131,6 +131,16 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <Button
+            android:id="@+id/gc_button_flash"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/gc_flash_button"
+            app:layout_constraintTop_toTopOf="@id/gc_flash_group_wrapper"
+            app:layout_constraintBottom_toBottomOf="@id/gc_flash_group_wrapper"
+            app:layout_constraintStart_toStartOf="@id/gc_flash_group_wrapper"
+            app:layout_constraintEnd_toEndOf="@id/gc_flash_group_wrapper" />
 
         <net.gini.android.capture.camera.PhotoThumbnail
             android:id="@+id/gc_photo_thumbnail"
