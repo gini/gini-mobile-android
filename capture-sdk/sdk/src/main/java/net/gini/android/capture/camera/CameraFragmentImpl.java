@@ -862,6 +862,14 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         final int flashSubtitleRes = mIsFlashEnabled ? R.string.gc_camera_flash_on_subtitle
                 : R.string.gc_camera_flash_off_subtitle;
         mCameraFlashButtonSubtitle.setText(flashSubtitleRes);
+
+        final Activity activity = mFragment.getActivity();
+        if (activity == null) {
+            return;
+        }
+
+        final int flashButtonContentDescription = mIsFlashEnabled ? R.string.gc_turn_flash_off_content_description : R.string.gc_turn_flash_on_content_description;
+        mButtonCameraFlashTrigger.setContentDescription(activity.getString(flashButtonContentDescription));
     }
 
     @VisibleForTesting
