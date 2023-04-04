@@ -8,9 +8,6 @@ import android.view.MenuItem;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.GiniCaptureError;
 import net.gini.android.capture.R;
-import net.gini.android.capture.analysis.AnalysisActivity;
-import net.gini.android.capture.camera.CameraActivity;
-import net.gini.android.capture.review.ReviewActivity;
 
 import java.util.ArrayList;
 

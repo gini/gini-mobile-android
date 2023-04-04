@@ -287,18 +287,6 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
         presenter?.pay()
     }
 
-    override fun skipButtonClicked() {
-        presenter?.skip()
-    }
-
-    override fun addNewArticle() {
-        presenter?.addNewArticle()
-    }
-
-    override fun removeLineItem(lineItem: SelectableLineItem) {
-        presenter?.removeLineItem(lineItem)
-    }
-
     /**
      * Internal use only.
      *
@@ -472,24 +460,6 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
      */
     override fun onLineItemDeselected(lineItem: SelectableLineItem) {
         presenter?.deselectLineItem(lineItem)
-    }
-
-    /**
-     * Internal use only.
-     *
-     * @suppress
-     */
-    override fun onWhatIsThisButtonClicked() {
-        parentFragmentManagerOrNull()?.let { fragmentManager ->
-            WhatIsThisDialog.createInstance().run {
-                callback = { isHelpful ->
-                    if (isHelpful != null) {
-                        presenter?.userFeedbackReceived(isHelpful)
-                    }
-                }
-                show(fragmentManager, TAG_WHAT_IS_THIS_DIALOG)
-            }
-        }
     }
 
     override fun updateLineItem(selectableLineItem: SelectableLineItem) {

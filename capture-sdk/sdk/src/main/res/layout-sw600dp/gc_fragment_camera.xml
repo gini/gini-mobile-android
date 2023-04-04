@@ -182,7 +182,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:paddingBottom="@dimen/gc_camera_upload_button_subtitle_bottom_padding"
+                android:paddingBottom="@dimen/gc_small"
                 android:text="@string/gc_camera_document_import_subtitle"
                 android:textColor="@color/gc_light_01" />
 

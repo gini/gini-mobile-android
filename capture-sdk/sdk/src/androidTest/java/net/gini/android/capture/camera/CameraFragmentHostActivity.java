@@ -25,7 +25,7 @@ public class CameraFragmentHostActivity extends CameraFragmentHostActivityNotLis
     }
 
     @Override
-    public void onDocumentAvailable(@NonNull final Document document) {
+    public void onProceedToAnalysisScreen(@NonNull final Document document) {
         hasDocument = true;
     }
 

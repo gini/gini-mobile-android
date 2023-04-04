@@ -173,18 +173,6 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
         ParcelableMemoryCache.getInstance().removeEntriesWithTag(PARCELABLE_MEMORY_CACHE_TAG);
     }
 
-
-    // TODO: check if these methods should do something or could be deleted from the interface
-    @Override
-    public void hideError() {}
-
-    @Override
-    public void showError(@NonNull String message, int duration) {}
-
-    @Override
-    public void showError(@NonNull final String message, @NonNull final String buttonTitle,
-                          @NonNull final View.OnClickListener onClickListener) {}
-
     private void startScanAnimation() {
         getView().showScanAnimation();
     }
@@ -472,20 +460,11 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                 final Throwable reviewScreenAnalysisError = GiniCapture.getInstance().internal().getReviewScreenAnalysisError();
                 if (reviewScreenAnalysisError != null) {
                     errorDetails.put(ERROR_DETAILS_MAP_KEY.ERROR_OBJECT, reviewScreenAnalysisError);
+                    trackAnalysisScreenEvent(AnalysisScreenEvent.ERROR, errorDetails);
                 }
             }
 
-            trackAnalysisScreenEvent(AnalysisScreenEvent.ERROR, errorDetails);
-            showError(mDocumentAnalysisErrorMessage,
-                    getActivity().getString(
-                            R.string.gc_document_analysis_error_retry),
-                    new View.OnClickListener() {
-                        @Override
-                        public void onClick(final View v) {
-                            trackAnalysisScreenEvent(AnalysisScreenEvent.RETRY);
-                            doAnalyzeDocument();
-                        }
-                    });
+            ErrorActivity.startErrorActivity(getActivity(), mDocumentAnalysisErrorMessage, mMultiPageDocument);
         } else {
             doAnalyzeDocument();
         }

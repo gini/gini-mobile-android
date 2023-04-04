@@ -47,11 +47,7 @@ interface DigitalInvoiceScreenContract {
         abstract fun selectLineItem(lineItem: SelectableLineItem)
         abstract fun deselectLineItem(lineItem: SelectableLineItem)
         abstract fun editLineItem(lineItem: SelectableLineItem)
-        abstract fun removeLineItem(lineItem: SelectableLineItem)
-        abstract fun userFeedbackReceived(helpful: Boolean)
         abstract fun pay()
-        abstract fun skip()
-        abstract fun addNewArticle()
         abstract fun onViewCreated()
         abstract fun saveState(outState: Bundle)
     }

@@ -47,8 +47,14 @@ The following steps will help you migrate to the new public API:
 Migrate from Screen API
 -----------------------
 
-The new public API is based on the Screen API, so you only need to use the new UI customization options and follow the
-:ref:`screen-by-screen UI customization section<Migrate to the new UI>` to adapt the look of the new UI.
+The new public API is based on the Screen API, so you most likely only need to use the new UI customization options and
+follow the :ref:`screen-by-screen UI customization section<Migrate to the new UI>` to adapt the look of the new UI.
+
+Migrate File Import ("open with")
+---------------------------------
+
+If you are using the ``GiniCapture.createIntentForImportedFile()`` then you need to replace it with
+``GiniCapture.getInstance().createIntentForImportedFiles()``.
 
 Migrate Cleanup Step and Feedback Sending
 -----------------------------------------

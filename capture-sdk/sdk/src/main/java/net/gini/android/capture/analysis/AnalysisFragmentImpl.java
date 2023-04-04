@@ -75,22 +75,6 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     }
 
     @Override
-    public void hideError() {
-        getPresenter().hideError();
-    }
-
-    @Override
-    public void showError(@NonNull final String message, final int duration) {
-        getPresenter().showError(message, duration);
-    }
-
-    @Override
-    public void showError(@NonNull final String message, @NonNull final String buttonTitle,
-            @NonNull final View.OnClickListener onClickListener) {
-        getPresenter().showError(message, buttonTitle, onClickListener);
-    }
-
-    @Override
     public void setListener(@NonNull final AnalysisFragmentListener listener) {
         getPresenter().setListener(listener);
     }

@@ -16,7 +16,6 @@ import net.gini.android.capture.*
 import net.gini.android.capture.document.*
 import net.gini.android.capture.internal.document.DocumentRenderer
 import net.gini.android.capture.internal.document.ImageMultiPageDocumentMemoryStore
-import net.gini.android.capture.internal.ui.ErrorSnackbar
 import net.gini.android.capture.internal.util.FileImportHelper.ShowAlertCallback
 import net.gini.android.capture.internal.util.Size
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction

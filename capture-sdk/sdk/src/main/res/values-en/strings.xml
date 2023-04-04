@@ -18,10 +18,6 @@
     <string name="gc_camera_document_import_subtitle">Files</string>
     <string name="gc_document_error_multi_page_limit_review_pages_button">Overview of pages</string>
     <string name="gc_document_error_multi_page_limit_cancel_button">Cancel</string>
-    <string name="gc_qrcode_detected_popup_message_1">Use QR code?</string>
-    <string name="gc_qrcode_detected_popup_message_2">Continue</string>
-    <string name="gc_unsupported_qrcode_detected_popup_message_1">This QR Code does not contain any payment information.</string>
-    <string name="gc_unsupported_qrcode_detected_popup_message_2">X</string>
     <string name="gc_onboarding_align_corners_title">Flat paper within the frame</string>
     <string name="gc_onboarding_align_corners_message">Ensure that the document is flat, and positioned within the frame</string>
     <string name="gc_onboarding_lighting_title">Good lighting</string>
@@ -30,17 +26,9 @@
     <string name="gc_onboarding_multipage_message">It’s now possible to analyse an invoice with multiple pages</string>
     <string name="gc_onboarding_qr_code_title">QR codes supported</string>
     <string name="gc_onboarding_qr_code_message">Besides invoices, QR codes are also supported</string>
-    <string name="gc_review_bottom_panel_text">Is the document complete, in focus and in the correct orientation?\n\nDouble-tap to check the focus.</string>
-    <string name="gc_multi_page_review_page_indicator">%1$d of %2$d</string>
-    <string name="gc_multi_page_review_reorder_pages_tip"><![CDATA[Is the page order correct? Reorder by drag & drop.]]></string>
-    <string name="gc_multi_page_review_add_pages_subtitle">Add a page</string>
-    <string name="gc_multi_page_review_image_preview_error">A preview is not available.</string>
-    <string name="gc_multi_page_review_delete_invalid_document">Delete</string>
     <string name="gc_multi_page_review_file_import_delete_last_page_dialog_message">Do you want to delete the last photo?</string>
     <string name="gc_multi_page_review_file_import_delete_last_page_dialog_positive_button">Delete</string>
     <string name="gc_multi_page_review_file_import_delete_last_page_dialog_negative_button">Cancel</string>
-    <string name="gc_document_analysis_error">An error has occurred.</string>
-    <string name="gc_document_analysis_error_retry">Retry</string>
     <string name="gc_analysis_activity_indicator_message">Analyzing documents</string>
     <string name="gc_pdf_analysis_activity_indicator_message">Analyzing\n%s</string>
     <string name="gc_photo_tip_align">Capture the entire page within the frame shown on the camera screen</string>
@@ -79,8 +67,6 @@
     <string name="gc_error_file_custom_validation_title"></string>
     <string name="gc_error_file_custom_validation_text"></string>
 
-    <string name="gc_document_import_hint_text">Now documents can be conveniently uploaded for analysis.</string>
-    <string name="gc_qr_code_scanner_hint_text">Have you checked out the QR code scanner yet?</string>
     <string name="gc_document_import_error">The document could not be opened. Please try a different document.</string>
     <string name="gc_storage_permission_denied">Permission to access files is required to upload saved invoices.</string>
     <string name="gc_storage_permission_denied_positive_button">Grant permission</string>
@@ -88,27 +74,18 @@
     <string name="gc_storage_permission_rationale">Permission to access files is required to analyse saved photos or PDFs.</string>
     <string name="gc_storage_permission_rationale_positive_button">Grant permission</string>
     <string name="gc_storage_permission_rationale_negative_button">Cancel</string>
-    <string name="gc_analysis_pdf_default_title">PDF Document</string>
-    <plurals name="gc_analysis_pdf_pages">
-        <item quantity="one">%d page</item>
-        <item quantity="other">%d pages</item>
-    </plurals>
-    <string name="gc_analysis_hint_headline">For faster results, please:</string>
     <string name="gc_document_import_invalid_document">Unfortunately, this Document could not be processed.</string>
     <string name="gc_document_import_error_type_not_supported">Only files of the formats jpg, png, gif or pdf can be analysed.</string>
     <string name="gc_document_import_error_size_too_large">This file is too large.</string>
     <string name="gc_document_import_error_too_many_pdf_pages">The document can only have a maximum of 10 pages.</string>
     <string name="gc_document_import_error_password_protected_pdf">Password protected documents cannot be analysed.</string>
     <string name="gc_document_error_too_many_pages">The document can only have a maximum of 10 pages.</string>
-    <string name="gc_document_import_pick_another_document">Change selection</string>
     <string name="gc_document_import_close_error">Cancel</string>
     <string name="gc_file_chooser_fotos_section_header">Photos</string>
     <string name="gc_file_chooser_pdfs_section_header">PDF</string>
     <string name="gc_help_item_photo_tips_title">Tips for best results from photos</string>
     <string name="gc_help_item_file_import_guide_title">Import documents from other apps</string>
     <string name="gc_help_item_supported_formats_title">Supported formats</string>
-    <string name="gc_photo_tips_headline">For best extraction results, please apply the following tips for photos:</string>
-    <string name="gc_photo_tips_camera_button">To the camera</string>
     <string name="gc_supported_format_printed_invoices">Computer-generated invoices and remittance slips</string>
     <string name="gc_supported_format_single_page_as_jpeg_png_gif">1-sided photos of format jpeg, png or gif</string>
     <string name="gc_supported_format_pdf">PDF documents of up to 10 pages</string>
@@ -117,16 +94,10 @@
     <string name="gc_unsupported_format_photos_of_screens">Photos of monitors or screens</string>
     <string name="gc_supported_format_section_header">Supported formats</string>
     <string name="gc_unsupported_format_section_header">Not supported formats</string>
-    <string name="gc_file_import_header"><![CDATA[Paying digital invoices has now become even more convenient. Send a PDF invoice directly to <Partner App Name>. The document will automatically be analysed for payment transfer.]]></string>
     <string name="gc_file_import_section_1_title">1. Select an invoice</string>
     <string name="gc_file_import_section_1_body">To do so, please select a PDF invoice from within your email app, PDF viewer or other app on your smarthpone. To redirect the file to GiniVision, use the “Share” function, represented as a square with the arrow pointing up.</string>
     <string name="gc_file_import_section_2_title">2. Import to app</string>
     <string name="gc_file_import_section_2_body">Please select your Banking App from the list to start the analysis and transfer process.</string>
-    <string name="gc_file_import_section_3_title"><![CDATA[Select the <Partner App name> as the destination]]></string>
-    <string name="gc_file_import_section_3_body"><![CDATA[When using this function, apps are shown to which you can send the PDF document. Please select the <Partner App Name> from the list, to start the analysis and payment process.]]></string>
-    <string name="gc_file_import_section_3_body_2"><![CDATA[Please use the option \"JUST ONCE\" to prevent the <Partner App Name> from opening every PDF by default.]]></string>
-    <string name="gc_file_import_section_3_clear_app_defaults_title">Clear app defaults</string>
-    <string name="gc_file_import_section_3_clear_app_defaults_body"><![CDATA[In case you notice that <Partner App Name> opens every PDF by default, then you need to clear the app\'s “Open by default” settings:\n\n1. Open the Settings app.\n\n2. Tap “Apps & notifications”.\n\n3. Tap <Partner App Name>. If you don\'t see it, first tap “See all apps” or “App info”.\n\n4. Tap “Advanced” > “Open by default” > “Clear defaults”. If you don\'t see “Advanced”, tap “Open by default” > “Clear defaults”\n\nAfter clearing the default, when you open a PDF again, your device will ask you which app to use.]]></string>
 
     <string name="gc_file_import_default_app_dialog_message">The app opens every %1$s by default. To clear this setting tap on “Clear defaults” and follow these steps:\n\nTap “Advanced” > “Open by default” > “Clear defaults”. If you don\'t see “Advanced”, tap “Open by default” > “Clear defaults”.</string>
     <string name="gc_file_import_default_app_dialog_positive_button">Clear defaults</string>

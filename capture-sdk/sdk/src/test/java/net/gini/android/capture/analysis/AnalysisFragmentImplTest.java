@@ -33,7 +33,6 @@ import net.gini.android.capture.document.DocumentFactory;
 import net.gini.android.capture.document.ImageDocument;
 import net.gini.android.capture.internal.camera.photo.Photo;
 import net.gini.android.capture.internal.camera.photo.PhotoFactory;
-import net.gini.android.capture.internal.ui.ErrorSnackbar;
 import net.gini.android.capture.internal.util.Size;
 import net.gini.android.capture.network.GiniCaptureNetworkService;
 import net.gini.android.capture.test.FragmentImplFactory;
@@ -67,7 +66,6 @@ import jersey.repackaged.jsr166e.CompletableFuture;
 @Config(shadows = {
         AnalysisFragmentImplTest.DialogShadow.class,
         AnalysisFragmentImplTest.AnalysisHintsAnimatorShadow.class,
-        AnalysisFragmentImplTest.ErrorSnackbarShadow.class,
         AnalysisFragmentImplTest.DefaultLoadingIndicatorAdapterShadow.class
 })
 public class AnalysisFragmentImplTest {
@@ -77,7 +75,6 @@ public class AnalysisFragmentImplTest {
         AnalysisFragmentCompatFake.sFragmentImplFactory = null;
         DialogShadow.cleanup();
         AnalysisHintsAnimatorShadow.cleanup();
-        ErrorSnackbarShadow.cleanup();
         DefaultLoadingIndicatorAdapterShadow.cleanup();
         GiniCaptureHelper.setGiniCaptureInstance(null);
     }
@@ -99,18 +96,11 @@ public class AnalysisFragmentImplTest {
                         public void perform(final AnalysisFragmentHostActivity activity) {
                             final AnalysisFragmentImpl analysisFragment =
                                     analysisFragmentImplRef.get();
-                            analysisFragment.hideError();
-                            analysisFragment.showError("Message", 1000);
-                            analysisFragment.showError("Message", "ButtonTitle",
-                                    mock(View.OnClickListener.class));
                             analysisFragment.setListener(mock(AnalysisFragmentListener.class));
                         }
                     });
 
             // Then
-            verify(presenter).hideError();
-            verify(presenter).showError(anyString(), anyInt());
-            verify(presenter).showError(anyString(), anyString(), any(View.OnClickListener.class));
             verify(presenter).setListener(any(AnalysisFragmentListener.class));
         }
     }
@@ -568,21 +558,6 @@ public class AnalysisFragmentImplTest {
         @Implementation
         public void show() {
             showCalled = true;
-        }
-    }
-
-    @Implements(ErrorSnackbar.class)
-    public static class ErrorSnackbarShadow extends ShadowViewGroup {
-
-        static boolean hideCalled;
-
-        static void cleanup() {
-            hideCalled = false;
-        }
-
-        @Implementation
-        public void hide() {
-            hideCalled = true;
         }
     }
 

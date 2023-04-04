@@ -81,4 +81,18 @@ class PreviewPagesAdapter(
     override fun getItemCount(): Int {
         return multiPageDocument.documents.size
     }
+
+    companion object {
+        @JvmStatic
+        fun getNewPositionAfterDeletion(deletedPosition: Int, newSize: Int): Int {
+            val newPosition = if (deletedPosition == newSize) {
+                // Last item was removed, highlight the new last item
+                Math.max(0, deletedPosition - 1)
+            } else {
+                // Non-last item deletion moves the right neighbour to the same position
+                deletedPosition
+            }
+            return newPosition
+        }
+    }
 }

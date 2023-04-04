@@ -184,27 +184,11 @@ object GiniBank {
     ): CancellationToken {
         giniCapture.let { capture ->
             check(capture != null) { "Capture feature is not configured. Call setCaptureConfiguration before starting the flow." }
-            if (capture.isMultiPageEnabled) {
-                return capture.createIntentForImportedFiles(
-                    intent,
-                    context,
-                    getImportFileCallback(resultLauncher)
-                )
-            } else {
-                try {
-                    val captureIntent =
-                        GiniCapture.createIntentForImportedFile(intent, context, null, null)
-                    resultLauncher.launch(CaptureImportInput.Forward(captureIntent))
-                } catch (exception: ImportedFileValidationException) {
-                    resultLauncher.launch(
-                        CaptureImportInput.Error(
-                            exception.validationError,
-                            exception.message
-                        )
-                    )
-                }
-                return CancellationToken {}
-            }
+            return capture.createIntentForImportedFiles(
+                intent,
+                context,
+                getImportFileCallback(resultLauncher)
+            )
         }
     }
 

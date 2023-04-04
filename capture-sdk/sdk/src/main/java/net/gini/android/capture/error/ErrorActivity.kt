@@ -139,7 +139,7 @@ class ErrorActivity : AppCompatActivity(),
         var isActivityShown: Boolean = false
 
         @JvmStatic
-        fun startErrorActivity(context: Activity, errorType: ErrorType?, document: Parcelable?) {
+        fun startErrorActivity(context: Activity, errorType: ErrorType, document: Parcelable?) {
 
             //Error activity is already shown don't start new one
             if (isActivityShown)
@@ -149,6 +149,21 @@ class ErrorActivity : AppCompatActivity(),
 
             val intent = Intent(context, ErrorActivity::class.java)
             intent.putExtra(EXTRA_IN_ERROR, errorType)
+            intent.putExtra(EXTRA_IN_DOCUMENT, document)
+            context.startActivityForResult(intent, ERROR_SCREEN_REQUEST)
+        }
+
+        @JvmStatic
+        fun startErrorActivity(context: Activity, errorMessage: String, document: Parcelable?) {
+
+            //Error activity is already shown don't start new one
+            if (isActivityShown)
+                return
+
+            isActivityShown = true
+
+            val intent = Intent(context, ErrorActivity::class.java)
+            intent.putExtra(EXTRA_ERROR_STRING, errorMessage)
             intent.putExtra(EXTRA_IN_DOCUMENT, document)
             context.startActivityForResult(intent, ERROR_SCREEN_REQUEST)
         }

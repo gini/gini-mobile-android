@@ -48,7 +48,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/gc_large_24"
-        android:layout_marginTop="@dimen/gbs_digital_invoice_line_item_description_margin_top"
+        android:layout_marginTop="@dimen/gc_large"
         android:layout_marginEnd="@dimen/gc_large"
         android:layout_toStartOf="@id/gbs_edit_button"
         android:lineSpacingExtra="5sp"

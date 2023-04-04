@@ -178,11 +178,12 @@
                 android:src="@drawable/gc_document_import_icon" />
 
             <TextView
-                style="@style/GiniCaptureTheme.Camera.DocumentImportSubtitle.TextStyle"
+                style="@style/GiniCaptureTheme.Typography.Subtitle2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:paddingBottom="@dimen/gc_camera_upload_button_subtitle_bottom_padding"
+                android:textColor="@color/gc_light_01"
+                android:paddingBottom="@dimen/gc_small"
                 android:text="@string/gc_camera_document_import_subtitle" />
 
         </LinearLayout>
