@@ -137,7 +137,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private static final CameraFragmentListener NO_OP_LISTENER = new CameraFragmentListener() {
         @Override
-        public void onImportedDocumentAvailable(@NonNull final Document document) {
+        public void onProceedToAnalysisScreen(@NonNull final Document document) {
         }
 
         @Override
@@ -1000,7 +1000,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                 return;
             }
 
-            if (isMultiPageEnabled() && isImage(data, activity)) {
+            if (isImage(data, activity)) {
                 handleMultiPageDocumentAndCallListener(activity, data,
                         Collections.singletonList(uri));
             } else {
@@ -1060,7 +1060,18 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                             addToMultiPageDocumentMemoryStore(multiPageDocument);
                             mListener.onProceedToMultiPageReviewScreen(multiPageDocument, shouldScrollToLastPage());
                         } else {
-                            mListener.onImportedDocumentAvailable(document);
+                            if (document.isReviewable()) {
+                                if (document.getType() == Document.Type.IMAGE &&
+                                    document instanceof ImageDocument) {
+                                    final ImageMultiPageDocument multiPageDocument = new ImageMultiPageDocument(
+                                            document.getSource(), document.getImportMethod());
+                                    addToMultiPageDocumentMemoryStore(multiPageDocument);
+                                    multiPageDocument.addDocument(((ImageDocument) document));
+                                    mListener.onProceedToMultiPageReviewScreen(multiPageDocument, false);
+                                }
+                            } else {
+                                mListener.onProceedToAnalysisScreen(document);
+                            }
                         }
                     }
 

@@ -96,7 +96,6 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
 
     private boolean mOnboardingShown;
     private GiniCaptureCoordinator mGiniCaptureCoordinator;
-    private Document mDocument;
     private boolean mAddPages;
 
     private CameraFragment mFragment;
@@ -210,12 +209,6 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        clearMemory();
-    }
-
     private void createGiniCaptureCoordinator() {
         mGiniCaptureCoordinator = GiniCaptureCoordinator.createInstance(this);
         mGiniCaptureCoordinator
@@ -274,8 +267,7 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
     }
 
     @Override
-    public void onImportedDocumentAvailable(@NonNull final Document document) {
-        mDocument = document;
+    public void onProceedToAnalysisScreen(@NonNull final Document document) {
         startAnalysisActivity(document);
     }
 
@@ -354,14 +346,12 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
                 // so we need to return the result to the client if result is not retake images from No Results
 
                 if (resultCode == RESULT_CAMERA_SCREEN) {
-                    clearMemory();
                     super.onActivityResult(requestCode, resultCode, data);
                     break;
                 }
 
                 setResult(resultCode, data);
                 finish();
-                clearMemory();
                 break;
             case ONBOARDING_REQUEST:
                 mOnboardingShown = false;
@@ -404,7 +394,4 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
         mFragment.showError(message, duration);
     }
 
-    private void clearMemory() {
-        mDocument = null; // NOPMD
-    }
 }

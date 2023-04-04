@@ -29,7 +29,7 @@ interface CameraFragmentListener {
      *
      * @param document the image taken by the camera or the validated imported document
      */
-    void onImportedDocumentAvailable(@NonNull Document document);
+    void onProceedToAnalysisScreen(@NonNull Document document);
 
 
     /**
