@@ -5,12 +5,8 @@ import android.view.MenuItem;
 
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.R;
-import net.gini.android.capture.analysis.AnalysisActivity;
-import net.gini.android.capture.camera.CameraActivity;
 import net.gini.android.capture.help.view.HelpNavigationBarBottomAdapter;
 import net.gini.android.capture.internal.ui.IntervalClickListener;
-import net.gini.android.capture.noresults.NoResultsActivity;
-import net.gini.android.capture.review.ReviewActivity;
 import net.gini.android.capture.view.InjectedViewAdapterHolder;
 import net.gini.android.capture.view.InjectedViewContainer;
 import net.gini.android.capture.view.NavButtonType;

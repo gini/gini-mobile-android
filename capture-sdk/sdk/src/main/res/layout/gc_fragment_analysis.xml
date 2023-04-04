@@ -84,11 +84,11 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="@dimen/gc_analysis_hint_container_bottom_margin"
-        android:layout_marginStart="@dimen/gc_analysis_hint_container_horizontal_margin"
-        android:layout_marginEnd="@dimen/gc_analysis_hint_container_horizontal_margin"
+        android:layout_marginBottom="@dimen/gc_large_32"
+        android:layout_marginStart="@dimen/gc_large"
+        android:layout_marginEnd="@dimen/gc_large"
         android:background="@drawable/gc_analysis_tips_background"
-        android:minHeight="@dimen/gc_analysis_hint_container_mini_height"
+        android:minHeight="@dimen/gc_analysis_hint_container_min_height"
         android:paddingTop="@dimen/gc_medium"
         android:paddingBottom="@dimen/gc_large"
         android:visibility="invisible"
@@ -101,7 +101,7 @@
             android:layout_width="@dimen/gc_analysis_hint_icon_size"
             android:layout_height="@dimen/gc_analysis_hint_icon_size"
             android:layout_gravity="center_vertical"
-            android:layout_marginStart="@dimen/gc_analysis_hint_icon_margin"
+            android:layout_marginStart="@dimen/gc_large_24"
             android:scaleType="center"
             tools:src="@drawable/gc_analysis_tips_background" />
 
@@ -109,8 +109,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginStart="@dimen/gc_analysis_hint_container_horizontal_margin"
-            android:layout_marginEnd="@dimen/gc_analysis_hint_headline_horizontal_margin"
+            android:layout_marginStart="@dimen/gc_large"
+            android:layout_marginEnd="@dimen/gc_large"
             android:orientation="vertical">
 
             <TextView

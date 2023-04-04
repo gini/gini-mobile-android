@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/gc_large_24"
         android:layout_marginTop="@dimen/gc_large_24"
-        android:layout_marginBottom="@dimen/gc_supported_formats_item_header_bottom_margin"
+        android:layout_marginBottom="@dimen/gc_small"
         android:textColor="?attr/colorOnSurface"
         tools:text="Folgende Formate werden unterstützt:" />
 

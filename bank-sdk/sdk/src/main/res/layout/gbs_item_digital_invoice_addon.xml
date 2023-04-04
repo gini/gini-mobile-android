@@ -9,15 +9,17 @@
 
     <TextView
         android:id="@+id/gbs_addon_name"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@id/gbs_addon_price_total_integral_part"
         android:layout_alignParentEnd="true"
         android:layout_marginStart="@dimen/gc_large_24"
+        android:layout_marginEnd="@dimen/gc_large"
         android:layout_marginTop="@dimen/gc_large"
         android:textAppearance="@style/GiniCaptureTheme.Typography.Body1"
         android:textColor="?attr/gbsAddonTextColor"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/gbs_addon_price_total_integral_part"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Discount" />

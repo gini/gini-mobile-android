@@ -16,11 +16,6 @@
             android:label="@string/gc_title_camera"
             android:theme="@style/GiniCaptureTheme" />
         <activity
-            android:name="net.gini.android.capture.review.ReviewActivity"
-            android:exported="false"
-            android:label="@string/gc_title_review"
-            android:theme="@style/GiniCaptureTheme" />
-        <activity
             android:name="net.gini.android.capture.analysis.AnalysisActivity"
             android:exported="false"
             android:label="@string/gc_title_analysis"

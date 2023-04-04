@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <dimen name="gbs_digital_invoice_info_text_2_vertical_margin_bottom">72dp</dimen>
-    <dimen name="gbs_digital_invoice_onboarding_text_2_vertical_margin_bottom">32dp</dimen>
-</resources>

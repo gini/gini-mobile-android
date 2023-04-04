@@ -154,42 +154,26 @@ public class MainActivity extends AppCompatActivity {
     private void doStartGiniCaptureSdkForImportedFile(final Intent importedFileIntent) {
         // Configure the Gini Capture SDK
         configureGiniCapture();
-        if (GiniCapture.hasInstance() && GiniCapture.getInstance().isMultiPageEnabled()) {
-            mFileImportCancellationToken = GiniCapture.getInstance().createIntentForImportedFiles(
-                    importedFileIntent, this,
-                    new AsyncCallback<Intent, ImportedFileValidationException>() {
-                        @Override
-                        public void onSuccess(final Intent result) {
-                            mFileImportCancellationToken = null;
-                            startActivityForResult(result, REQUEST_SCAN);
-                        }
+        mFileImportCancellationToken = GiniCapture.getInstance().createIntentForImportedFiles(
+                importedFileIntent, this,
+                new AsyncCallback<Intent, ImportedFileValidationException>() {
+                    @Override
+                    public void onSuccess(final Intent result) {
+                        mFileImportCancellationToken = null;
+                        startActivityForResult(result, REQUEST_SCAN);
+                    }
 
-                        @Override
-                        public void onError(final ImportedFileValidationException exception) {
-                            mFileImportCancellationToken = null;
-                            handleFileImportError(exception);
-                        }
+                    @Override
+                    public void onError(final ImportedFileValidationException exception) {
+                        mFileImportCancellationToken = null;
+                        handleFileImportError(exception);
+                    }
 
-                        @Override
-                        public void onCancelled() {
-                            mFileImportCancellationToken = null;
-                        }
-                    });
-        } else {
-            try {
-                final Intent giniCaptureIntent =
-                        GiniCapture.createIntentForImportedFile(
-                                importedFileIntent,
-                                this,
-                                null,
-                                null);
-                startActivityForResult(giniCaptureIntent, REQUEST_SCAN);
-
-            } catch (final ImportedFileValidationException e) {
-                e.printStackTrace();
-                handleFileImportError(e);
-            }
-        }
+                    @Override
+                    public void onCancelled() {
+                        mFileImportCancellationToken = null;
+                    }
+                });
     }
 
     private void handleFileImportError(final ImportedFileValidationException exception) {
