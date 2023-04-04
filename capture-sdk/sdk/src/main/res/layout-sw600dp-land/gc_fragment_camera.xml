@@ -83,7 +83,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            app:constraint_referenced_ids="gc_flash_group_wrapper"
+            app:constraint_referenced_ids="gc_flash_group_wrapper, gc_button_flash"
             tools:visibility="gone" />
 
 
@@ -92,7 +92,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            app:constraint_referenced_ids="gc_button_import_wrapper"
+            app:constraint_referenced_ids="gc_button_import_wrapper, gc_button_import"
             tools:visibility="gone" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -138,6 +138,16 @@
                 app:layout_constraintTop_toBottomOf="@id/gc_button_camera_flash" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <Button
+            android:id="@+id/gc_button_flash"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@android:color/transparent"
+            app:layout_constraintTop_toTopOf="@id/gc_flash_group_wrapper"
+            app:layout_constraintBottom_toBottomOf="@id/gc_flash_group_wrapper"
+            app:layout_constraintStart_toStartOf="@id/gc_flash_group_wrapper"
+            app:layout_constraintEnd_toEndOf="@id/gc_flash_group_wrapper" />
 
         <net.gini.android.capture.camera.PhotoThumbnail
             android:id="@+id/gc_photo_thumbnail"
@@ -187,6 +197,17 @@
                 android:text="@string/gc_camera_document_import_subtitle" />
 
         </LinearLayout>
+
+        <Button
+            android:id="@+id/gc_button_import"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/gc_camera_document_import_subtitle"
+            app:layout_constraintTop_toTopOf="@id/gc_button_import_wrapper"
+            app:layout_constraintBottom_toBottomOf="@id/gc_button_import_wrapper"
+            app:layout_constraintStart_toStartOf="@id/gc_button_import_wrapper"
+            app:layout_constraintEnd_toEndOf="@id/gc_button_import_wrapper" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

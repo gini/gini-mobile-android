@@ -88,8 +88,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            app:constraint_referenced_ids="gc_flash_group_wrapper"
-            tools:visibility="gone" />
+            tools:visibility="gone"
+            app:constraint_referenced_ids="gc_flash_group_wrapper, gc_button_flash" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/gc_flash_group_wrapper"
@@ -131,6 +131,15 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <Button
+            android:id="@+id/gc_button_flash"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@android:color/transparent"
+            app:layout_constraintTop_toTopOf="@id/gc_flash_group_wrapper"
+            app:layout_constraintBottom_toBottomOf="@id/gc_flash_group_wrapper"
+            app:layout_constraintStart_toStartOf="@id/gc_flash_group_wrapper"
+            app:layout_constraintEnd_toEndOf="@id/gc_flash_group_wrapper" />
 
         <net.gini.android.capture.camera.PhotoThumbnail
             android:id="@+id/gc_photo_thumbnail"
@@ -148,10 +157,10 @@
         <androidx.constraintlayout.widget.Group
             android:id="@+id/gc_document_import_button_group"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:visibility="gone"
-            app:constraint_referenced_ids="gc_button_import_wrapper"
-            tools:visibility="gone" />
+            tools:visibility="gone"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="gc_button_import_wrapper, gc_button_import" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/gc_button_import_wrapper"
@@ -162,7 +171,6 @@
             app:layout_constraintEnd_toStartOf="@+id/gc_flash_group_wrapper"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/gc_button_camera_trigger">
-
 
             <ImageButton
                 android:id="@+id/gc_button_import_document"
@@ -191,6 +199,16 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <Button
+            android:id="@+id/gc_button_import"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/gc_camera_document_import_subtitle"
+            app:layout_constraintTop_toTopOf="@id/gc_button_import_wrapper"
+            app:layout_constraintBottom_toBottomOf="@id/gc_button_import_wrapper"
+            app:layout_constraintStart_toStartOf="@id/gc_button_import_wrapper"
+            app:layout_constraintEnd_toEndOf="@id/gc_button_import_wrapper" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

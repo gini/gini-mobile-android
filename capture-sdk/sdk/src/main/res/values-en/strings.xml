@@ -128,6 +128,8 @@
     <string name="gc_photos_of_monitors_or_screens">Photos of monitors or screens</string>
     <string name="gc_camera_flash_on_subtitle">On</string>
     <string name="gc_camera_flash_off_subtitle">Off</string>
+    <string name="gc_turn_flash_on_content_description">Turn on flash</string>
+    <string name="gc_turn_flash_off_content_description">Turn off flash</string>
     <string name="gc_camera_title">Scan an invoice or a QR code</string>
     <string name="gc_qr_code_detected">QR code detected</string>
     <string name="gc_unknown_qr_code">Unknown QR code</string>

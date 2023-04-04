@@ -63,8 +63,18 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:text="@string/gc_pages" />
-
         </LinearLayout>
+
+        <Button
+            android:id="@+id/gc_add_page_button"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:contentDescription="@string/gc_multi_page_review_add_pages_subtitle"
+            android:background="@android:color/transparent"
+            app:layout_constraintStart_toStartOf="@id/gc_add_pages_wrapper"
+            app:layout_constraintTop_toTopOf="@id/gc_add_pages_wrapper"
+            app:layout_constraintBottom_toBottomOf="@id/gc_add_pages_wrapper"
+            app:layout_constraintEnd_toEndOf="@id/gc_add_pages_wrapper"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
