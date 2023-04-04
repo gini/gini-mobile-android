@@ -26,6 +26,7 @@
     <string name="gc_onboarding_multipage_message">It’s now possible to analyse an invoice with multiple pages</string>
     <string name="gc_onboarding_qr_code_title">QR codes supported</string>
     <string name="gc_onboarding_qr_code_message">Besides invoices, QR codes are also supported</string>
+    <string name="gc_multi_page_review_add_pages_subtitle">Add a page</string>
     <string name="gc_multi_page_review_file_import_delete_last_page_dialog_message">Do you want to delete the last photo?</string>
     <string name="gc_multi_page_review_file_import_delete_last_page_dialog_positive_button">Delete</string>
     <string name="gc_multi_page_review_file_import_delete_last_page_dialog_negative_button">Cancel</string>
