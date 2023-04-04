@@ -24,6 +24,8 @@
     <string name="gbs_digital_invoice_onboarding_text_1">Digitale Rechnung</string>
     <string name="gbs_digital_invoice_onboarding_text_2">Wählen Sie die Artikel ab, die Sie zurücksenden wollen, wir berechnen den neuen Preis für Sie. </string>
     <string name="gbs_digital_invoice_onboarding_done_button_title">Los geht’s</string>
+    <string name="gbs_digital_invoice_name_validation_error">Bitte geben Sie den Artikelnamen ein.</string>
+    <string name="gbs_digital_invoice_price_validation_error">Bitte geben Sie den Artikelpreis ein.</string>
 
     <string name="gbs_proceed">Weiter</string>
     <string name="gbs_edit_article">Artikel bearbeiten</string>

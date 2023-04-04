@@ -30,6 +30,8 @@
     <string name="gbs_name">Name</string>
     <string name="gbs_unit_price">Unit price</string>
     <string name="gbs_quantity">Quantity</string>
+    <string name="gbs_digital_invoice_name_validation_error">Please enter the article name.</string>
+    <string name="gbs_digital_invoice_price_validation_error">Please enter the article price.</string>
 
     <string name="gbs_help_invoice_title">How does a digital invoice work?</string>
     <string name="gbs_help_invoice_text">We extracted all articles from your invoice and listed them for you. In case you want to return an ordered article or just partly pay your invoice, you simply deselect the article and the new total will be calculated automatically.</string>
