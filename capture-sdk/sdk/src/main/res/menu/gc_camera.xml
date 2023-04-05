@@ -4,7 +4,8 @@
     <item
         android:id="@+id/gc_action_show_onboarding"
         android:icon="@drawable/gc_help_icon"
-        android:title="@string/gc_help"
+        android:title="@string/gc_help_button_content_description"
+        android:contentDescription="@string/gc_help_button_content_description"
         app:iconTint="?attr/colorOnBackground"
         app:showAsAction="always" />
 </menu>

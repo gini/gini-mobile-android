@@ -11,6 +11,7 @@
     <string name="gc_title_no_results">No results</string>
     <string name="gc_title_error">Error</string>
     <string name="gc_help">Help</string>
+    <string name="gc_help_button_content_description">Help button</string>
 
     <string name="gc_camera_error_no_permission">We need access to your camera to enable you to capture your invoices</string>
     <string name="gc_camera_error_no_permission_button_title">Give Access</string>
