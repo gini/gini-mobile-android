@@ -243,21 +243,23 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
 
     private fun validateLineItemValues(): Boolean {
         var fieldsAreValid = true
-        var editedName = binding.gbsArticleNameEditTxt.text.toString()
-        var editedPrice = binding.gbsUnitPriceEditTxt.text.toString().toBigDecimalOrNull()
 
-        if (editedPrice == null || editedPrice == 0.toBigDecimal()) {
-            binding.gbsPriceErrorTextView.visibility = View.VISIBLE
-            fieldsAreValid = false
-        }
+        val editedName = binding.gbsArticleNameEditTxt.text.toString()
 
-        if (editedName.isNullOrBlank()) {
+        if (presenter?.validateLineItemName(editedName) == false) {
             binding.gbsNameErrorTextView.visibility = View.VISIBLE
             fieldsAreValid = false
         }
 
+        val editedPrice = binding.gbsUnitPriceEditTxt.text.toString()
+
+        if (presenter?.validateLineItemGrossPrice(editedPrice) == false) {
+            binding.gbsPriceErrorTextView.visibility = View.VISIBLE
+            fieldsAreValid = false
+        }
+
         presenter?.setDescription(editedName)
-        presenter?.setGrossPrice(editedPrice.toString())
+        presenter?.setGrossPrice(editedPrice)
 
         return fieldsAreValid
     }

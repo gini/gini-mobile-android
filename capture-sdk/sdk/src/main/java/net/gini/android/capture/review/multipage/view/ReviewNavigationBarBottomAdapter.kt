@@ -67,6 +67,7 @@ class DefaultReviewNavigationBarBottomAdapter : ReviewNavigationBarBottomAdapter
     }
 
     override fun setAddPageButtonVisibility(visibility: Int) {
+        this.viewBinding?.gcAddPagesWrapper?.visibility = visibility
         this.viewBinding?.gcAddPageButton?.visibility = visibility
     }
 

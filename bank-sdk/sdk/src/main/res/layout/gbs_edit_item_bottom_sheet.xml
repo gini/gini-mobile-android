@@ -107,6 +107,7 @@
 
             <TextView
                 android:id="@+id/gbs_name_error_textView"
+                style="@style/GiniCaptureTheme.Typography.Caption1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toBottomOf="@id/gbs_article_name_wrapper"
@@ -214,6 +215,7 @@
 
             <TextView
                 android:id="@+id/gbs_price_error_textView"
+                style="@style/GiniCaptureTheme.Typography.Caption1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toBottomOf="@id/gbs_unit_wrapper"
