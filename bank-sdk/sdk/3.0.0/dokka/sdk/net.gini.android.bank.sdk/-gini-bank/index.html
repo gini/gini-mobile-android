@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>GiniBank</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script>var pathToRoot = "../../../";</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/jetbrains-mono.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer="defer"></script>
+</head>
+<body>
+<div class="navigation-wrapper" id="navigation-wrapper">
+    <div id="leftToggler"><span class="icon-toggler"></span></div>
+    <div class="library-name">
+            <a href="../../../index.html">
+                    <span>sdk</span>
+            </a>
+    </div>
+    <div>
+    </div>
+    <div class="pull-right d-flex">
+        <button id="theme-toggle-button"><span id="theme-toggle"></span></button>
+        <div id="searchBar"></div>
+    </div>
+</div>
+<div id="container">
+    <div id="leftColumn">
+        <div id="sideMenu"></div>
+    </div>
+    <div id="main">
+<div class="main-content" id="content" pageIds="sdk::net.gini.android.bank.sdk/GiniBank///PointingToDeclaration//-1647097541">
+  <div class="breadcrumbs"><a href="../../../index.html">sdk</a><span class="delimiter">/</span><a href="../index.html">net.gini.android.bank.sdk</a><span class="delimiter">/</span><span class="current">GiniBank</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Gini</span><wbr></wbr><span><span>Bank</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">public </span><span class="token keyword">class </span><a href="index.html">GiniBank</a></div><p class="paragraph">Api for interacting with Capture and Payment features.</p><p class="paragraph">The Capture feature is a layer of abstraction above Gini Capture SDK and the Return Assistant feature. Capture feature can be used with:</p><ul><li><p class="paragraph">the Screen API by calling <a href="start-capture-flow.html">startCaptureFlow</a> or <a href="start-capture-flow-for-intent.html">startCaptureFlowForIntent</a>.</p></li></ul><p class="paragraph">To use capture features, they need to be configured with <a href="set-capture-configuration.html">setCaptureConfiguration</a>. Note that configuration is immutable. <a href="release-capture.html">releaseCapture</a> needs to be called before passing a new configuration.</p><p class="paragraph">To use the pay feature, first <a href="set-gini-api.html">setGiniApi</a> needs to be called. The flow for this feature would be:</p><ul><li><p class="paragraph"><span data-unresolved-link="net.gini.android.bank.sdk.pay//getRequestId/#android.content.Intent/PointingToDeclaration/">getRequestId</span> to extract the id from the <a href="https://developer.android.com/reference/kotlin/android/content/Intent.html">Intent</a></p></li><li><p class="paragraph"><a href="get-payment-request.html">getPaymentRequest</a> to get payment details set by the business app.</p></li><li><p class="paragraph"><a href="resolve-payment-request.html">resolvePaymentRequest</a> to mark the <a href="../../net.gini.android.core.api.models/-payment-request/index.html">PaymentRequest</a> as paid.</p></li><li><p class="paragraph"><a href="return-to-payment-initiator-app.html">returnToPaymentInitiatorApp</a> to return to the app that started the flow.</p></li></ul></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="Functions">Functions</button><button class="section-tab" data-togglable="Properties">Properties</button></div>
+    <div class="tabs-section-body">
+      <h2 class="">Functions</h2>
+      <div class="table" data-togglable="Functions"><a data-name="-499350234%2FFunctions%2F-1647097541" anchor-label="checkCaptureRequirements" id="-499350234%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="check-capture-requirements.html"><span>check</span><wbr></wbr><span>Capture</span><wbr></wbr><span><span>Requirements</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-499350234%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="../../net.gini.android.capture.requirements/-requirements-report/index.html">RequirementsReport</a> <a href="check-capture-requirements.html"><span class="token function">checkCaptureRequirements</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/android/content/Context.html">Context</a> context</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Checks hardware requirements for Capture feature. Requirements are not enforced, but are recommended to be checked before using.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-1526880550%2FFunctions%2F-1647097541" anchor-label="getDigitalInvoiceHelpNavigationBarBottomAdapter" id="-1526880550%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-digital-invoice-help-navigation-bar-bottom-adapter.html"><span>get</span><wbr></wbr><span>Digital</span><wbr></wbr><span>Invoice</span><wbr></wbr><span>Help</span><wbr></wbr><span>Navigation</span><wbr></wbr><span>Bar</span><wbr></wbr><span>Bottom</span><wbr></wbr><span><span>Adapter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1526880550%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="../../net.gini.android.bank.sdk.capture.digitalinvoice.help.view/-digital-invoice-help-navigation-bar-bottom-adapter/index.html">DigitalInvoiceHelpNavigationBarBottomAdapter</a> <a href="get-digital-invoice-help-navigation-bar-bottom-adapter.html"><span class="token function">getDigitalInvoiceHelpNavigationBarBottomAdapter</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="41932123%2FFunctions%2F-1647097541" anchor-label="getDigitalInvoiceNavigationBarBottomAdapter" id="41932123%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-digital-invoice-navigation-bar-bottom-adapter.html"><span>get</span><wbr></wbr><span>Digital</span><wbr></wbr><span>Invoice</span><wbr></wbr><span>Navigation</span><wbr></wbr><span>Bar</span><wbr></wbr><span>Bottom</span><wbr></wbr><span><span>Adapter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="41932123%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="../../net.gini.android.bank.sdk.capture.digitalinvoice.view/-digital-invoice-navigation-bar-bottom-adapter/index.html">DigitalInvoiceNavigationBarBottomAdapter</a> <a href="get-digital-invoice-navigation-bar-bottom-adapter.html"><span class="token function">getDigitalInvoiceNavigationBarBottomAdapter</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-185872874%2FFunctions%2F-1647097541" anchor-label="getDigitalInvoiceOnboardingIllustrationAdapter" id="-185872874%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-digital-invoice-onboarding-illustration-adapter.html"><span>get</span><wbr></wbr><span>Digital</span><wbr></wbr><span>Invoice</span><wbr></wbr><span>Onboarding</span><wbr></wbr><span>Illustration</span><wbr></wbr><span><span>Adapter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-185872874%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="../../net.gini.android.capture.onboarding.view/-onboarding-illustration-adapter/index.html">OnboardingIllustrationAdapter</a> <a href="get-digital-invoice-onboarding-illustration-adapter.html"><span class="token function">getDigitalInvoiceOnboardingIllustrationAdapter</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-1044797568%2FFunctions%2F-1647097541" anchor-label="getDigitalInvoiceOnboardingNavigationBarBottomAdapter" id="-1044797568%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-digital-invoice-onboarding-navigation-bar-bottom-adapter.html"><span>get</span><wbr></wbr><span>Digital</span><wbr></wbr><span>Invoice</span><wbr></wbr><span>Onboarding</span><wbr></wbr><span>Navigation</span><wbr></wbr><span>Bar</span><wbr></wbr><span>Bottom</span><wbr></wbr><span><span>Adapter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1044797568%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="../../net.gini.android.bank.sdk.capture.digitalinvoice.view/-digital-invoice-onboarding-navigation-bar-bottom-adapter/index.html">DigitalInvoiceOnboardingNavigationBarBottomAdapter</a> <a href="get-digital-invoice-onboarding-navigation-bar-bottom-adapter.html"><span class="token function">getDigitalInvoiceOnboardingNavigationBarBottomAdapter</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="1693735913%2FFunctions%2F-1647097541" anchor-label="getEnableReturnReasons" id="1693735913%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-enable-return-reasons.html"><span>get</span><wbr></wbr><span>Enable</span><wbr></wbr><span>Return</span><wbr></wbr><span><span>Reasons</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1693735913%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/Boolean.html">Boolean</a> <a href="get-enable-return-reasons.html"><span class="token function">getEnableReturnReasons</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Shows the return reasons dialog in the return assistant, if enabled.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="977535640%2FFunctions%2F-1647097541" anchor-label="getPaymentRequest" id="977535640%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-payment-request.html"><span>get</span><wbr></wbr><span>Payment</span><wbr></wbr><span><span>Request</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="977535640%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="../../net.gini.android.core.api.models/-payment-request/index.html">PaymentRequest</a> <a href="get-payment-request.html"><span class="token function">getPaymentRequest</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> id</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Get the payment details for the request created by a business. The id is sent in an <a href="https://developer.android.com/reference/kotlin/android/content/Intent.html">Intent</a>. Use <span data-unresolved-link="net.gini.android.bank.sdk.pay//getRequestId/#android.content.Intent/PointingToDeclaration/">getRequestId</span> for extracting the id from the <a href="https://developer.android.com/reference/kotlin/android/content/Intent.html">Intent</a>.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-1300245964%2FFunctions%2F-1647097541" anchor-label="releaseCapture" id="-1300245964%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="release-capture.html"><span>release</span><wbr></wbr><span><span>Capture</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1300245964%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html">Unit</a> <a href="release-capture.html"><span class="token function">releaseCapture</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/android/content/Context.html">Context</a> context<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> paymentRecipient<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> paymentReference<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> paymentPurpose<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> iban<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> bic<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="../../net.gini.android.capture/-amount/index.html">Amount</a> amount</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Frees up resources used by Capture.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="1700349593%2FFunctions%2F-1647097541" anchor-label="releaseGiniApi" id="1700349593%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="release-gini-api.html"><span>release</span><wbr></wbr><span>Gini</span><wbr></wbr><span><span>Api</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1700349593%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html">Unit</a> <a href="release-gini-api.html"><span class="token function">releaseGiniApi</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Clears the reference to giniApi set by <a href="set-gini-api.html">setGiniApi</a>.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="1955510718%2FFunctions%2F-1647097541" anchor-label="resolvePaymentRequest" id="1955510718%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="resolve-payment-request.html"><span>resolve</span><wbr></wbr><span>Payment</span><wbr></wbr><span><span>Request</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1955510718%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="../../net.gini.android.bank.api.models/-resolved-payment/index.html">ResolvedPayment</a> <a href="resolve-payment-request.html"><span class="token function">resolvePaymentRequest</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> requestId<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="../../net.gini.android.bank.api.models/-resolve-payment-input/index.html">ResolvePaymentInput</a> resolvePaymentInput</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Marks the a <a href="../../net.gini.android.core.api.models/-payment-request/index.html">PaymentRequest</a> as paid.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="240883205%2FFunctions%2F-1647097541" anchor-label="returnToPaymentInitiatorApp" id="240883205%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="return-to-payment-initiator-app.html"><span>return</span><wbr></wbr><span>To</span><wbr></wbr><span>Payment</span><wbr></wbr><span>Initiator</span><wbr></wbr><span><span>App</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="240883205%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html">Unit</a> <a href="return-to-payment-initiator-app.html"><span class="token function">returnToPaymentInitiatorApp</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/android/content/Context.html">Context</a> context<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="../../net.gini.android.bank.api.models/-resolved-payment/index.html">ResolvedPayment</a> resolvedPayment</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Starts the app that started the payment flow.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-849654694%2FFunctions%2F-1647097541" anchor-label="setCaptureConfiguration" id="-849654694%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="set-capture-configuration.html"><span>set</span><wbr></wbr><span>Capture</span><wbr></wbr><span><span>Configuration</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-849654694%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html">Unit</a> <a href="set-capture-configuration.html"><span class="token function">setCaptureConfiguration</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword"></span><a href="../../net.gini.android.bank.sdk.capture/-capture-configuration/index.html">CaptureConfiguration</a> captureConfiguration</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets configuration for Capture feature. Note that configuration is immutable. <a href="release-capture.html">releaseCapture</a> needs to be called before passing a new configuration.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-1298343213%2FFunctions%2F-1647097541" anchor-label="setDigitalInvoiceHelpNavigationBarBottomAdapter" id="-1298343213%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="set-digital-invoice-help-navigation-bar-bottom-adapter.html"><span>set</span><wbr></wbr><span>Digital</span><wbr></wbr><span>Invoice</span><wbr></wbr><span>Help</span><wbr></wbr><span>Navigation</span><wbr></wbr><span>Bar</span><wbr></wbr><span>Bottom</span><wbr></wbr><span><span>Adapter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1298343213%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html">Unit</a> <a href="set-digital-invoice-help-navigation-bar-bottom-adapter.html"><span class="token function">setDigitalInvoiceHelpNavigationBarBottomAdapter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword"></span><a href="../../net.gini.android.bank.sdk.capture.digitalinvoice.help.view/-digital-invoice-help-navigation-bar-bottom-adapter/index.html">DigitalInvoiceHelpNavigationBarBottomAdapter</a> digitalInvoiceHelpNavigationBarBottomAdapter</span></span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-401920074%2FFunctions%2F-1647097541" anchor-label="setDigitalInvoiceNavigationBarBottomAdapter" id="-401920074%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="set-digital-invoice-navigation-bar-bottom-adapter.html"><span>set</span><wbr></wbr><span>Digital</span><wbr></wbr><span>Invoice</span><wbr></wbr><span>Navigation</span><wbr></wbr><span>Bar</span><wbr></wbr><span>Bottom</span><wbr></wbr><span><span>Adapter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-401920074%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html">Unit</a> <a href="set-digital-invoice-navigation-bar-bottom-adapter.html"><span class="token function">setDigitalInvoiceNavigationBarBottomAdapter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword"></span><a href="../../net.gini.android.bank.sdk.capture.digitalinvoice.view/-digital-invoice-navigation-bar-bottom-adapter/index.html">DigitalInvoiceNavigationBarBottomAdapter</a> digitalInvoiceNavigationBarBottomAdapter</span></span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-727001925%2FFunctions%2F-1647097541" anchor-label="setDigitalInvoiceOnboardingIllustrationAdapter" id="-727001925%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="set-digital-invoice-onboarding-illustration-adapter.html"><span>set</span><wbr></wbr><span>Digital</span><wbr></wbr><span>Invoice</span><wbr></wbr><span>Onboarding</span><wbr></wbr><span>Illustration</span><wbr></wbr><span><span>Adapter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-727001925%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html">Unit</a> <a href="set-digital-invoice-onboarding-illustration-adapter.html"><span class="token function">setDigitalInvoiceOnboardingIllustrationAdapter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword"></span><a href="../../net.gini.android.capture.onboarding.view/-onboarding-illustration-adapter/index.html">OnboardingIllustrationAdapter</a> digitalInvoiceOnboardingIllustrationAdapter</span></span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-729060736%2FFunctions%2F-1647097541" anchor-label="setDigitalInvoiceOnboardingNavigationBarBottomAdapter" id="-729060736%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="set-digital-invoice-onboarding-navigation-bar-bottom-adapter.html"><span>set</span><wbr></wbr><span>Digital</span><wbr></wbr><span>Invoice</span><wbr></wbr><span>Onboarding</span><wbr></wbr><span>Navigation</span><wbr></wbr><span>Bar</span><wbr></wbr><span>Bottom</span><wbr></wbr><span><span>Adapter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-729060736%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html">Unit</a> <a href="set-digital-invoice-onboarding-navigation-bar-bottom-adapter.html"><span class="token function">setDigitalInvoiceOnboardingNavigationBarBottomAdapter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword"></span><a href="../../net.gini.android.bank.sdk.capture.digitalinvoice.view/-digital-invoice-onboarding-navigation-bar-bottom-adapter/index.html">DigitalInvoiceOnboardingNavigationBarBottomAdapter</a> digitalInvoiceOnboardingNavigationBarBottomAdapter</span></span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-757318278%2FFunctions%2F-1647097541" anchor-label="setEnableReturnReasons" id="-757318278%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="set-enable-return-reasons.html"><span>set</span><wbr></wbr><span>Enable</span><wbr></wbr><span>Return</span><wbr></wbr><span><span>Reasons</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-757318278%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html">Unit</a> <a href="set-enable-return-reasons.html"><span class="token function">setEnableReturnReasons</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/Boolean.html">Boolean</a> enableReturnReasons</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Shows the return reasons dialog in the return assistant, if enabled.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="1893718228%2FFunctions%2F-1647097541" anchor-label="setGiniApi" id="1893718228%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="set-gini-api.html"><span>set</span><wbr></wbr><span>Gini</span><wbr></wbr><span><span>Api</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1893718228%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html">Unit</a> <a href="set-gini-api.html"><span class="token function">setGiniApi</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword"></span><a href="../../net.gini.android.bank.api/-gini-bank-a-p-i/index.html">GiniBankAPI</a> giniApi</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Set the <a href="../../net.gini.android.bank.api/-gini-bank-a-p-i/index.html">GiniBankAPI</a> instance to be used for the Pay feature.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="290314009%2FFunctions%2F-1647097541" anchor-label="startCaptureFlow" id="290314009%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="start-capture-flow.html"><span>start</span><wbr></wbr><span>Capture</span><wbr></wbr><span><span>Flow</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="290314009%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html">Unit</a> <a href="start-capture-flow.html"><span class="token function">startCaptureFlow</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/androidx/activity/result/ActivityResultLauncher.html">ActivityResultLauncher</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator">&gt;</span> resultLauncher</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Screen API for starting the capture flow.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="430290260%2FFunctions%2F-1647097541" anchor-label="startCaptureFlowForIntent" id="430290260%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="start-capture-flow-for-intent.html"><span>start</span><wbr></wbr><span>Capture</span><wbr></wbr><span>Flow</span><wbr></wbr><span>For</span><wbr></wbr><span><span>Intent</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="430290260%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><span data-unresolved-link="net.gini.android.capture.util/CancellationToken///PointingToDeclaration/">CancellationToken</span> <a href="start-capture-flow-for-intent.html"><span class="token function">startCaptureFlowForIntent</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/androidx/activity/result/ActivityResultLauncher.html">ActivityResultLauncher</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="../../net.gini.android.bank.sdk.capture/-capture-import-input/index.html">CaptureImportInput</a><span class="token operator">&gt;</span> resultLauncher<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/android/content/Context.html">Context</a> context<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/android/content/Intent.html">Intent</a> intent</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Screen API for starting the capture flow when a pdf or image document was shared from another app.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <h2 class="">Properties</h2>
+      <div class="table" data-togglable="Properties"><a data-name="-1378785164%2FProperties%2F-1647097541" anchor-label="digitalInvoiceHelpNavigationBarBottomAdapter" id="-1378785164%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#-1378785164%2FProperties%2F-1647097541"><span>digital</span><wbr></wbr><span>Invoice</span><wbr></wbr><span>Help</span><wbr></wbr><span>Navigation</span><wbr></wbr><span>Bar</span><wbr></wbr><span>Bottom</span><wbr></wbr><span><span>Adapter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1378785164%2FProperties%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="-1378785164%2FProperties%2F-1647097541" anchor-label="digitalInvoiceHelpNavigationBarBottomAdapter" id="-1378785164%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword"></span><a href="../../net.gini.android.bank.sdk.capture.digitalinvoice.help.view/-digital-invoice-help-navigation-bar-bottom-adapter/index.html">DigitalInvoiceHelpNavigationBarBottomAdapter</a> <a href="index.html#-1378785164%2FProperties%2F-1647097541">digitalInvoiceHelpNavigationBarBottomAdapter</a></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-61312011%2FProperties%2F-1647097541" anchor-label="digitalInvoiceNavigationBarBottomAdapter" id="-61312011%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#-61312011%2FProperties%2F-1647097541"><span>digital</span><wbr></wbr><span>Invoice</span><wbr></wbr><span>Navigation</span><wbr></wbr><span>Bar</span><wbr></wbr><span>Bottom</span><wbr></wbr><span><span>Adapter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-61312011%2FProperties%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="-61312011%2FProperties%2F-1647097541" anchor-label="digitalInvoiceNavigationBarBottomAdapter" id="-61312011%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword"></span><a href="../../net.gini.android.bank.sdk.capture.digitalinvoice.view/-digital-invoice-navigation-bar-bottom-adapter/index.html">DigitalInvoiceNavigationBarBottomAdapter</a> <a href="index.html#-61312011%2FProperties%2F-1647097541">digitalInvoiceNavigationBarBottomAdapter</a></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-735284932%2FProperties%2F-1647097541" anchor-label="digitalInvoiceOnboardingIllustrationAdapter" id="-735284932%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#-735284932%2FProperties%2F-1647097541"><span>digital</span><wbr></wbr><span>Invoice</span><wbr></wbr><span>Onboarding</span><wbr></wbr><span>Illustration</span><wbr></wbr><span><span>Adapter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-735284932%2FProperties%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="-735284932%2FProperties%2F-1647097541" anchor-label="digitalInvoiceOnboardingIllustrationAdapter" id="-735284932%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword"></span><a href="../../net.gini.android.capture.onboarding.view/-onboarding-illustration-adapter/index.html">OnboardingIllustrationAdapter</a> <a href="index.html#-735284932%2FProperties%2F-1647097541">digitalInvoiceOnboardingIllustrationAdapter</a></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="91770266%2FProperties%2F-1647097541" anchor-label="digitalInvoiceOnboardingNavigationBarBottomAdapter" id="91770266%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#91770266%2FProperties%2F-1647097541"><span>digital</span><wbr></wbr><span>Invoice</span><wbr></wbr><span>Onboarding</span><wbr></wbr><span>Navigation</span><wbr></wbr><span>Bar</span><wbr></wbr><span>Bottom</span><wbr></wbr><span><span>Adapter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="91770266%2FProperties%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="91770266%2FProperties%2F-1647097541" anchor-label="digitalInvoiceOnboardingNavigationBarBottomAdapter" id="91770266%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword"></span><a href="../../net.gini.android.bank.sdk.capture.digitalinvoice.view/-digital-invoice-onboarding-navigation-bar-bottom-adapter/index.html">DigitalInvoiceOnboardingNavigationBarBottomAdapter</a> <a href="index.html#91770266%2FProperties%2F-1647097541">digitalInvoiceOnboardingNavigationBarBottomAdapter</a></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-786919153%2FProperties%2F-1647097541" anchor-label="enableReturnReasons" id="-786919153%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#-786919153%2FProperties%2F-1647097541"><span>enable</span><wbr></wbr><span>Return</span><wbr></wbr><span><span>Reasons</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-786919153%2FProperties%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="-786919153%2FProperties%2F-1647097541" anchor-label="enableReturnReasons" id="-786919153%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/Boolean.html">Boolean</a> <a href="index.html#-786919153%2FProperties%2F-1647097541">enableReturnReasons</a></div><div class="brief "><a data-name="-786919153%2FProperties%2F-1647097541" anchor-label="enableReturnReasons" id="-786919153%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><p class="paragraph">Shows the return reasons dialog in the return assistant, if enabled.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="1455472922%2FProperties%2F-1647097541" anchor-label="INSTANCE" id="1455472922%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#1455472922%2FProperties%2F-1647097541"><span><span>INSTANCE</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1455472922%2FProperties%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="1455472922%2FProperties%2F-1647097541" anchor-label="INSTANCE" id="1455472922%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword">static </span><a href="index.html">GiniBank</a> <a href="index.html#1455472922%2FProperties%2F-1647097541">INSTANCE</a></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2023 Copyright</span><span
+                class="pull-right"><span>Generated by </span><a
+                href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+    </div>
+</div>
+</body>
+</html>
