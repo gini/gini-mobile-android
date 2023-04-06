@@ -4,9 +4,12 @@ on:
   push:
     paths:
       - 'capture-sdk/**'
+    branches:
+      - '**'
     tags-ignore:
       - '**'
   pull_request:
+    types: [opened, edited, reopened]
     paths:
       - 'capture-sdk/**'
 

@@ -1,44 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_view"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="?attr/backgroundColor">
 
-    <View
-        android:id="@+id/gc_background"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:alpha="@string/gc_onboarding_page_fragment_background_alpha"
-        android:background="@color/gc_onboarding_page_fragment_background" />
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:orientation="vertical"
-        android:paddingBottom="@dimen/gc_onboarding_vertical_margin">
-
-        <ImageView
-            android:id="@+id/gc_image_onboarding"
-            android:layout_width="@dimen/gc_onboarding_illustration_size"
-            android:layout_height="@dimen/gc_onboarding_illustration_size"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="@dimen/gc_onboarding_illustration_vertical_margin"
-            tools:src="@drawable/gc_onboarding_flat" />
-
-        <!--suppress AndroidDomInspection -->
-        <net.gini.android.capture.internal.ui.CustomFontTextView
-            android:id="@+id/gc_text_message"
-            style="@style/GiniCaptureTheme.Onboarding.Message.TextStyle"
-            android:layout_width="wrap_content"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginEnd="@dimen/gc_onboarding_message_horizontal_margin"
-            android:layout_marginLeft="@dimen/gc_onboarding_message_horizontal_margin"
-            android:layout_marginRight="@dimen/gc_onboarding_message_horizontal_margin"
-            android:layout_marginStart="@dimen/gc_onboarding_message_horizontal_margin"
-            android:maxWidth="@dimen/gc_onboarding_message_max_width"
-            tools:text="Dokument flach\nauf eine einfarbige\nFläche legen" />
-    </LinearLayout>
+            android:layout_gravity="center_vertical">
 
-</RelativeLayout>
+
+            <net.gini.android.capture.view.InjectedViewContainer
+                android:id="@+id/gc_injected_icon_container"
+                android:layout_width="wrap_content"
+                android:layout_height="260dp"
+                android:layout_marginTop="@dimen/gc_large_32"
+                android:layout_marginBottom="@dimen/gc_large_32"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/gc_title"
+                style="@style/GiniCaptureTheme.Typography.Headline6"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/gc_medium"
+                android:layout_marginEnd="@dimen/gc_medium"
+                android:gravity="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/gc_injected_icon_container"
+                tools:text="Within the frame" />
+
+            <TextView
+                android:id="@+id/gc_message"
+                style="@style/GiniCaptureTheme.Typography.Body1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/gc_large_64"
+                android:layout_marginTop="@dimen/gc_large"
+                android:layout_marginEnd="@dimen/gc_large_64"
+                android:gravity="center"
+                android:textColor="@color/gc_dark_06"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/gc_title"
+                tools:text="Ensure that the document is flat, and positioned within the frame" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

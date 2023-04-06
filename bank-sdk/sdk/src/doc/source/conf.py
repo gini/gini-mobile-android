@@ -30,7 +30,7 @@ import gini_sphinx_theme
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx.ext.todo', 'sphinx.ext.extlinks']
+extensions = ['sphinx.ext.todo', 'sphinx.ext.autosectionlabel', 'sphinx.ext.extlinks']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -281,11 +281,14 @@ else:
     capture_sdk_version_path = "/"
 
 root_dokka_path = "https://developer.gini.net/gini-mobile-android/bank-sdk/sdk%(version_path)sdokka/" % {"version_path" : version_path}
-root_dokka_path_capture_sdk = "https://developer.gini.net/gini-mobile-android/capture-sdk/sdk%(capture_sdk_version_path)sdokka/" % {"capture_sdk_version_path" : capture_sdk_version_path}
-root_dokka_path_capture_sdk_default_network = "https://developer.gini.net/gini-mobile-android/capture-sdk/default-network%(capture_sdk_version_path)sdokka/" % {"capture_sdk_version_path" : capture_sdk_version_path}
+root_capture_sdk_path = "https://developer.gini.net/gini-mobile-android/capture-sdk/sdk%(capture_sdk_version_path)s" % {"capture_sdk_version_path" : capture_sdk_version_path}
+root_html_path_capture_sdk = "%(root_capture_sdk_path)shtml/" % {"root_capture_sdk_path" : root_capture_sdk_path}
+root_dokka_path_capture_sdk = "%(root_capture_sdk_path)sdokka/" % {"root_capture_sdk_path" : root_capture_sdk_path}
+root_dokka_path_capture_sdk_default_network = "https://developer.gini.net/gini-mobile-android/capture-sdk/default_network%(capture_sdk_version_path)sdokka/" % {"capture_sdk_version_path" : capture_sdk_version_path}
 
 extlinks = {
     "root_dokka_path": (root_dokka_path + "%s", "%s"),
+    "root_html_path_capture_sdk": (root_html_path_capture_sdk + "%s", "%s"),
     "root_dokka_path_capture_sdk": (root_dokka_path_capture_sdk + "%s", "%s"),
     "root_dokka_path_capture_sdk_default_network": (root_dokka_path_capture_sdk_default_network + "%s", "%s"),
 }

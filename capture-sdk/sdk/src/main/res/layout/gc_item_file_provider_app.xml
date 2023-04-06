@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     android:minWidth="72dp"
     android:orientation="vertical"
+    android:background="?attr/colorSurface"
     android:padding="16dp">
 
     <ImageView
@@ -21,11 +22,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="4dp"
-        android:fontFamily="sans-serif-condensed"
         android:textAlignment="center"
         android:gravity="center"
-        android:textColor="@android:color/black"
-        android:textSize="12sp"
+        style="@style/GiniCaptureTheme.Typography.Caption1"
         tools:text="TextView" />
 
 </LinearLayout>

@@ -4,11 +4,12 @@ import android.app.Activity;
 
 import net.gini.android.capture.GiniCaptureBasePresenter;
 import net.gini.android.capture.GiniCaptureBaseView;
+import net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomAdapter;
+import net.gini.android.capture.view.InjectedViewAdapterInstance;
 
 import java.util.List;
 
 import androidx.annotation.NonNull;
-import jersey.repackaged.jsr166e.CompletableFuture;
 
 /**
  * Created by Alpar Szotyori on 20.05.2019.
@@ -17,27 +18,26 @@ import jersey.repackaged.jsr166e.CompletableFuture;
  */
 interface OnboardingScreenContract {
 
-    abstract class View implements GiniCaptureBaseView<Presenter>, OnboardingFragmentInterface {
-
-        private Presenter mPresenter;
+    interface View extends GiniCaptureBaseView<Presenter>, OnboardingFragmentInterface {
 
         @Override
-        public void setPresenter(@NonNull final Presenter presenter) {
-            mPresenter = presenter;
-        }
+        void setPresenter(@NonNull final Presenter presenter);
 
-        public Presenter getPresenter() {
-            return mPresenter;
-        }
+        void showPages(@NonNull final List<OnboardingPage> pages);
 
-        abstract void showPages(@NonNull final List<OnboardingPage> pages,
-                final boolean showEmptyLastPage);
+        void scrollToPage(final int pageIndex);
 
-        abstract void scrollToPage(final int pageIndex);
+        void activatePageIndicatorForPage(final int pageIndex);
 
-        abstract void activatePageIndicatorForPage(final int pageIndex);
+        void showGetStartedButton();
+        void showGetStartedButtonInNavigationBarBottom();
 
-        abstract CompletableFuture<Void> slideOutViews();
+        void showSkipAndNextButtons();
+        void showSkipAndNextButtonsInNavigationBarBottom();
+
+        void setNavigationBarBottomAdapterInstance(@NonNull final InjectedViewAdapterInstance<OnboardingNavigationBarBottomAdapter> adapterInstance);
+
+        void hideButtons();
     }
 
     abstract class Presenter extends GiniCaptureBasePresenter<View> implements
@@ -51,11 +51,10 @@ interface OnboardingScreenContract {
 
         abstract void setCustomPages(@NonNull final List<OnboardingPage> pages);
 
-        abstract void addEmptyLastPage();
+        abstract void onScrolledToPage(final int pageIndex);
 
         abstract void showNextPage();
 
-        abstract void onScrolledToPage(final int pageIndex);
-
+        abstract void skip();
     }
 }

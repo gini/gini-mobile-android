@@ -7,18 +7,66 @@
     android:padding="16dp"
     tools:context="net.gini.android.bank.sdk.screenapiexample.MainActivity">
 
+    <TextView
+        android:id="@+id/gbs_textView3"
+        style="@style/GiniCaptureTheme.Typography.Headline6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="Configuration options"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/gbs_textView4"
+        style="@style/GiniCaptureTheme.Typography.Body1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="Bottom navigation bar"
+        app:layout_constraintStart_toStartOf="@+id/gbs_textView3"
+        app:layout_constraintTop_toBottomOf="@+id/gbs_textView3" />
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/gbs_enable_bottom_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/gbs_textView4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/gbs_textView4" />
+
+    <TextView
+        android:id="@+id/gbs_textView5"
+        style="@style/GiniCaptureTheme.Typography.Body1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="Custom onboarding illustration"
+        app:layout_constraintStart_toStartOf="@+id/gbs_textView3"
+        app:layout_constraintTop_toBottomOf="@+id/gbs_textView4" />
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/gbs_enable_custom_illustration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/gbs_textView5"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/gbs_textView5" />
+
     <Button
         android:id="@+id/button_start_scanner"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="@dimen/gc_large_64"
         android:text="@string/start_gini_capture_sdk"
         android:textColor="?attr/colorPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/text_gini_bank_version"

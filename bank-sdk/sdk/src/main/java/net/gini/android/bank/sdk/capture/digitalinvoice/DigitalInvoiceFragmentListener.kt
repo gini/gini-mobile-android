@@ -2,7 +2,6 @@ package net.gini.android.bank.sdk.capture.digitalinvoice
 
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
-import net.gini.android.bank.sdk.capture.digitalinvoice.details.LineItemDetailsFragment
 import net.gini.android.bank.sdk.capture.digitalinvoice.onboarding.DigitalInvoiceOnboardingFragment
 
 /**
@@ -24,15 +23,6 @@ interface DigitalInvoiceFragmentListener {
      * @param selectableLineItem - the [SelectableLineItem] to be edited
      */
     fun onEditLineItem(selectableLineItem: SelectableLineItem)
-
-    /**
-     * Called when the user tapped on add button to add new line item.
-     *
-     * You should show the [LineItemDetailsFragment] with the selectable line item.
-     *
-     * @param selectableLineItem - the [SelectableLineItem] to be added
-     */
-    fun onAddLineItem(selectableLineItem: SelectableLineItem)
 
     /**
      * Called when the user presses the buy button.

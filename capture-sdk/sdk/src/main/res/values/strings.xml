@@ -1,67 +1,76 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <plurals name="gc_analysis_pdf_pages">
-        <item quantity="one">%d Seite</item>
-        <item quantity="other">%d Seiten</item>
-    </plurals>
-    <string name="gc_title_camera">Dokument fotografieren</string>
-    <string name="gc_title_onboarding">Anleitung</string>
-    <string name="gc_title_review">Foto überprüfen</string>
+    <string name="gc_title_camera">Aufnahme</string>
+    <string name="gc_title_onboarding"/>
+    <string name="gc_title_review">Übersicht</string>
     <string name="gc_title_help">Hilfe</string>
-    <string name="gc_title_photo_tips">Tipps für Fotos</string>
-    <string name="gc_title_supported_formats">Unterstützte Formate</string>
-    <string name="gc_title_file_import">Dokumente aus anderen Apps öffnen</string>
-    <string name="gc_title_analysis" />
-    <string name="gc_title_multi_page_review">Fotos überprüfen</string>
-    <string name="gc_show_onboarding">Hilfe</string>
+    <string name="gc_title_photo_tips">Tipps</string>
+    <string name="gc_title_supported_formats">Formate</string>
+    <string name="gc_title_file_import">Importieren</string>
+    <string name="gc_title_analysis">Übersicht</string>
+    <string name="gc_title_no_results">Keine Ergebnisse</string>
+    <string name="gc_title_error">Fehler</string>
+    <string name="gc_help">Hilfe</string>
 
-    <string name="gc_camera_error_no_permission">Um Dokumente zu fotografieren, erlaube Gini Pay den Zugriff auf die Kamera.</string>
+    <string name="gc_camera_error_no_permission">Bitte gestatte Zugriff auf deine Kamera, um Dokumente fotografieren zu können.</string>
     <string name="gc_camera_error_no_permission_button_title">Zugriff erlauben</string>
     <string name="gc_camera_image_stack_subtitle">Seiten</string>
-    <string name="gc_camera_document_import_subtitle">Importieren</string>
+    <string name="gc_camera_document_import_subtitle">Dateien</string>
 
     <string name="gc_document_error_multi_page_limit_review_pages_button">Seitenübersicht</string>
     <string name="gc_document_error_multi_page_limit_cancel_button">Abbrechen</string>
 
-    <string name="gc_qrcode_detected_popup_message_1">QR verwenden?</string>
-    <string name="gc_qrcode_detected_popup_message_2">Hier geht’s weiter.</string>
+    <string name="gc_onboarding_align_corners_title">Dokument flach ausrichten</string>
+    <string name="gc_onboarding_align_corners_message">Das Dokument sollte flach liegen und sich im Rahmen befinden</string>
+    <string name="gc_onboarding_lighting_title">Gute Lichtverhältnisse</string>
+    <string name="gc_onboarding_lighting_message">Gutes Licht führt zu besseren Ergebnisse als mit Blitz</string>
+    <string name="gc_onboarding_multipage_title">Mehrere Seiten</string>
+    <string name="gc_onboarding_multipage_message">Es ist möglich mehrer Seiten eines Dokuments zu Scannen</string>
+    <string name="gc_onboarding_qr_code_title">QR Codes scannen</string>
+    <string name="gc_onboarding_qr_code_message">QR Codes werden automatisch erkannt und analysiert</string>
 
-    <string name="gc_unsupported_qrcode_detected_popup_message_1">Dieser QR-Code enthält keine Bezahlinformationen.</string>
-    <string name="gc_unsupported_qrcode_detected_popup_message_2">X</string>
-
-    <string name="gc_onboarding_lighting">Beim Abfotografieren der Rechnung oder des Überweisungsträgers auf gute Beleuchtung achten</string>
-    <string name="gc_onboarding_flat">Seite glatt streichen</string>
-    <string name="gc_onboarding_parallel">Gerät parallel über die Seite halten</string>
-    <string name="gc_onboarding_align">Seite vollständig in den angezeigten Rahmen einpassen</string>
-
-    <string name="gc_onboarding_multi_page">Jetzt ist es möglich, eine Rechnung mit mehreren Seiten zu analysieren!</string>
-
-    <string name="gc_review_bottom_panel_text">Dokument vollständig, scharf und in Leserichtung fotografiert?\n\nDoppeltippen um Schärfe zu prüfen.</string>
-    <string name="gc_multi_page_review_page_indicator" tools:ignore="PluralsCandidate">%1$d von %2$d</string>
-    <string name="gc_multi_page_review_reorder_pages_tip"><![CDATA[Stimmt die Seitenreihenfolge? Mit Drag & Drop verschieben.]]></string>
     <string name="gc_multi_page_review_add_pages_subtitle">Seiten hinzufügen</string>
-    <string name="gc_multi_page_review_image_preview_error">Vorschaubild ist leider nicht verfügbar.</string>
-    <string name="gc_multi_page_review_delete_invalid_document">Löschen</string>
     <string name="gc_multi_page_review_file_import_delete_last_page_dialog_message">Möchten Sie das letzte Bild löschen?</string>
     <string name="gc_multi_page_review_file_import_delete_last_page_dialog_positive_button">Löschen</string>
 
     <string name="gc_multi_page_review_file_import_delete_last_page_dialog_negative_button">Abbrechen</string>
-    <string name="gc_document_analysis_error">Ein Fehler ist aufgetreten.</string>
-    <string name="gc_document_analysis_error_retry">Wiederholen</string>
 
     <string name="gc_analysis_activity_indicator_message">Dokument wird analysiert</string>
-    <string name="gc_photo_tip_align">Seite vollständig in den angezeigten Rahmen einpassen</string>
-    <string name="gc_photo_tip_multipage">Jetzt ist es möglich, eine Rechnung mit mehreren Seiten zu analysieren</string>
-    <string name="gc_photo_tip_lighting">Auf gute Beleuchtung achten</string>
-    <string name="gc_photo_tip_parallel">Gerät parallel über die Seite halten</string>
+    <string name="gc_pdf_analysis_activity_indicator_message">%s\nwird analysiert</string>
+    <string name="gc_photo_tip_align">Das gesamte Dokumente sollte sich im Rahmen befinden</string>
+    <string name="gc_photo_tip_multipage">Es ist nun möglich mehrere Seiten eines Dokuments zu scannen</string>
+    <string name="gc_photo_tip_lighting">Gutes Licht führt zu besseren Ergebnissen als mit Blitz</string>
+    <string name="gc_photo_tip_parallel">Das Handy sollte parallel über dem Dokument gehalten werden</string>
 
-    <string name="gc_photo_tip_flat">Seite glatt streichen</string>
-    <string name="gc_noresults_header">Es konnten keine Daten ausgelesen werden. Bitte Aufnahme wiederholen.</string>
+    <string name="gc_photo_tip_flat">Flach gestrichene Dokumente erleichtern die Auswertung</string>
+    <string name="gc_noresults_header">Leider konnten keine Informationen aus dem Dokument ausgelesen werden.</string>
     <string name="gc_noresults_headline">Tipps für beste Ergebnisse:</string>
+    <string name="gc_noresults_retake_images">Foto Wiederholen</string>
+    <string name="gc_noresults_enter_manually">Manuell Ausfüllen</string>
 
-    <string name="gc_noresults_back_button">Zur Kamera</string>
-
-    <string name="gc_document_import_hint_text">Es können jetzt auch ganz einfach Dateien hochgeladen werden.</string>
-    <string name="gc_qr_code_scanner_hint_text">Haben Sie schon den QR-Codeleser ausprobiert?</string>
+    <string name="gc_error_back_to_camera">Neues Photo</string>
+    <string name="gc_error_enter_manually">Manuell Ausfüllen</string>
+    <string name="gc_error_upload_title">Upload des Dokuments fehlgeschlagen</string>
+    <string name="gc_error_upload_text">Das Dokument konnte nicht angenommen werden. Bitte überprüfen Sie, ob das Bild scharf ist, das Dokument Zahlungsinformationen enthält und im richtigen Dateiformat hochgeladen wird.</string>
+    <string name="gc_error_connection_title">Überprüfen Sie Ihre Internetverbindung</string>
+    <string name="gc_error_connection_text">Es konnte keine Verbindung zum Internet hergestellt werden. Bitte überprüfen Sie Ihre Netzwerkverbindung und wiederholen Sie den Vorgang</string>
+    <string name="gc_error_server_title">Dienst nicht verfügbar</string>
+    <string name="gc_error_server_text">Upload des Dokuments ist fehlgeschlagen aufgrund eines Serverfehlers. Bitte versuchen Sie es später noch einmal.</string>
+    <string name="gc_error_auth_title">Authentifizierung fehlgeschlagen</string>
+    <string name="gc_error_auth_text">Upload des Dokuments ist fehlgeschlagen aufgrund eines Fehlers bei der Authentifizierung. Bitte versuchen Sie es später noch einmal.</string>
+    <string name="gc_error_unexpected_title">Ein unbekannter Fehler ist aufgetreten.</string>
+    <string name="gc_error_unexpected_text">Es scheint hier ist etwas schiefgelaufen. Bitte versuchen Sie es später noch einmal.</string>
+    <string name="gc_error_file_import_generic_title">Ihre Datei konnte nicht geöffnet werden. Bitte versuchen sie es mit einer anderen Datei.</string>
+    <string name="gc_error_file_import_generic_text"></string>
+    <string name="gc_error_file_import_size_title">Diese Datei ist leider zu groß.</string>
+    <string name="gc_error_file_import_size_text"></string>
+    <string name="gc_error_file_import_page_count_title">Das Dokument darf nicht mehr als 10 Seiten haben.</string>
+    <string name="gc_error_file_import_page_count_text"></string>
+    <string name="gc_error_file_import_unsupported_title">Nur Dateien vom Format jpg, png, gif oder pdf können analysiert werden.</string>
+    <string name="gc_error_file_import_unsupported_text"></string>
+    <string name="gc_error_file_import_password_title">Passwortgeschützte Dokumente können nicht analysiert werden.</string>
+    <string name="gc_error_file_import_password_text"></string>
+    <string name="gc_error_file_custom_validation_title"></string>
+    <string name="gc_error_file_custom_validation_text"></string>
 
     <string name="gc_document_import_error">Ihre Datei konnte nicht geöffnet werden. Bitte versuchen sie es mit einer anderen Datei.</string>
     <string name="gc_storage_permission_denied">Nur mit Datei-Zugriff können gespeicherte Rechnungen hochgeladen werden.</string>
@@ -71,8 +80,6 @@
     <string name="gc_storage_permission_rationale_positive_button">Zugriff erteilen</string>
 
     <string name="gc_storage_permission_rationale_negative_button">Abbrechen</string>
-    <string name="gc_analysis_pdf_default_title">PDF Dokument</string>
-    <string name="gc_analysis_hint_headline">Für schnellere Ergebnisse, bitte:</string>
 
     <string name="gc_document_import_invalid_document">Leider kann diese Datei nicht bearbeitet werden.</string>
     <string name="gc_document_import_error_type_not_supported">Nur Dateien vom Format jpg, png, gif oder pdf können analysiert werden.</string>
@@ -81,37 +88,28 @@
     <string name="gc_document_import_error_password_protected_pdf">Passwortgeschützte Dokumente können nicht analysiert werden.</string>
     <string name="gc_document_error_too_many_pages">Das Dokument darf nicht mehr als 10 Seiten haben.</string>
 
-    <string name="gc_document_import_pick_another_document">Auswahl ändern</string>
     <string name="gc_document_import_close_error">Abbrechen</string>
 
     <string name="gc_file_chooser_fotos_section_header">Fotos</string>
     <string name="gc_file_chooser_pdfs_section_header">PDF</string>
-    <string name="gc_help_item_photo_tips_title">Tipps für beste Ergebnisse aus Fotos</string>
-    <string name="gc_help_item_file_import_guide_title">Dokumente aus anderen Apps öffnen</string>
+    <string name="gc_help_item_photo_tips_title">Tipps für beste Ergebnisse</string>
+    <string name="gc_help_item_file_import_guide_title">Dokumente von anderen Apps importieren</string>
     <string name="gc_help_item_supported_formats_title">Unterstützte Formate</string>
 
-    <string name="gc_photo_tips_headline">Zur Erkennung aller Daten bitte folgende Tipps beim Abfotografieren beachten:</string>
-    <string name="gc_photo_tips_camera_button">Zur Kamera</string>
-
-    <string name="gc_supported_format_printed_invoices">Computer-erstellte Überweisungsträger und Rechnungen</string>
-    <string name="gc_supported_format_single_page_as_jpeg_png_gif">Einseitige Bilder im jpeg, png oder gif Format</string>
+    <string name="gc_supported_format_printed_invoices">Computer-generierte Rechnung und Überweisungsträger</string>
+    <string name="gc_supported_format_single_page_as_jpeg_png_gif">1-seitige Fotos im Format jpeg, png oder gif</string>
     <string name="gc_supported_format_pdf">PDF Dokumente von bis zu 10 Seiten</string>
     <string name="gc_supported_format_qr_code">QR Codes</string>
     <string name="gc_unsupported_format_handwriting">Handschrift</string>
     <string name="gc_unsupported_format_photos_of_screens">Fotos von Bildschirmen</string>
-    <string name="gc_supported_format_section_header">Folgende Formate werden unterstützt:</string>
-    <string name="gc_unsupported_format_section_header">Was nicht analysiert wird:</string>
+    <string name="gc_supported_format_section_header">Unterstützte Formate:</string>
+    <string name="gc_unsupported_format_section_header">Nicht unterstützte Formate:</string>
 
-    <string name="gc_file_import_header"><![CDATA[Digitale Rechnungen können nun noch komfortabler beglichen werden: Senden Sie einfach Ihre Rechnung als PDF direkt an Ihre <Partner App Name>. Diese wird automatisch für die Überweisung analysiert.]]></string>
-    <string name="gc_file_import_section_1_title">Wählen Sie bitte eine Rechnung aus</string>
-    <string name="gc_file_import_section_1_body">Bitte wählen Sie hierfür auf Ihrem Smartphone die Rechnung als PDF innerhalb einer Email-App, eines PDF-Viewers oder einer anderen App aus.</string>
-    <string name="gc_file_import_section_2_title">Aktivieren Sie die Senden-Funktion</string>
-    <string name="gc_file_import_section_2_body"><![CDATA[Um die Datei an die <Partner App Name> weiterzuleiten, verwenden Sie eine Funktion wie “Öffnen mit...”, “Datei senden...”, oder “Teilen”. Die “Teilen”-Funktion wird oft grafisch als drei Punkte, die mit zwei Linien verbunden sind, dargestellt.\n\nDiese Funktionen können üblicherweise entweder im Overflow-Menü (drei Punkte oben rechts) oder in einer Funktionsleiste am unteren App-Rand gefunden werden. In manchen Email-Apps wird die Funktion in der Nähe des PDF-Anhangs vor dem Öffnen der Datei angezeigt.]]></string>
-    <string name="gc_file_import_section_3_title"><![CDATA[Wählen Sie die <Partner App Name> als Ziel aus]]></string>
-    <string name="gc_file_import_section_3_body"><![CDATA[Beim Aktivieren dieser Funktionen werden Apps angezeigt, an die eine PDF-Datei weitergeleitet werden kann. Bitte wählen Sie die <Partner App Name> aus der Liste aus, um den Analyse- und Überweisungsprozess zu starten.]]></string>
-    <string name="gc_file_import_section_3_body_2"><![CDATA[Bitte verwenden Sie die Option “NUR DIESMAL” um zu vermeiden, dass die <Partner App Name> alle PDFs standardmäßig öffnet.]]></string>
-    <string name="gc_file_import_section_3_clear_app_defaults_title">Einstellung für Standard-App löschen</string>
-    <string name="gc_file_import_section_3_clear_app_defaults_body"><![CDATA[Wenn Sie merken, dass <Partner App Name> alle PDFs standardmäßig öffnet, müssen Sie die Einstellung “Standardmäßig öffnen” für die App zurücksetzen:\n\n1. Öffnen Sie die App “Einstellungen”.\n\n2. Tippen Sie auf “Apps & Benachrichtigungen.”\n\n3. Tippen Sie auf <Partner App Name>. Wenn Sie die App nicht sehen, tippen Sie zuerst auf “Alle Apps anzeigen” oder “App-Info”.\n\n4. Tippen Sie auf “Erweitert” > “Standardmäßig öffnen” > “Aktionen auf Standard zurücksetzen”. Wenn Sie die Option “Erweitert” nicht sehen, tippen Sie auf “Standardmäßig öffnen” > “Aktionen auf Standard zurücksetzen”.\n\nWenn Sie anschließend ein PDF öffnen, werden Sie wieder gefragt, welche App verwendet werden soll.]]></string>
+    <string name="gc_file_import_section_1_title">1. Rechnung auswählen</string>
+    <string name="gc_file_import_section_1_body">Bitte die PDF-Rechnung in der Email-App, PDF-Ordner oder einer anderen App auswählen. Um das Dokument nun an die Banking App zu senden, sollte die “Teilen mit” Funktion benitzt werden, welche mit einem Rechteck und einem Pfeil nach oben zeigend darstellt wird.</string>
+
+    <string name="gc_file_import_section_2_title">2. Aus der App importieren</string>
+    <string name="gc_file_import_section_2_body">Nun die Banking App aus der Liste auswählen, um das Dokument zum Analysieren weiterzuleiten.</string>
 
     <string name="gc_file_import_default_app_dialog_message">Die App öffnet standardmäßig alle %1$s. Um diese Einstellung zurückzusetzen, drücken Sie auf “Auf Standard zurücksetzen” und befolgen Sie die folgende Anleitung:\n\nTippen Sie auf “Erweitert” > “Standardmäßig öffnen” > “Aktionen auf Standard zurücksetzen”. Wenn Sie die Option “Erweitert” nicht sehen, tippen Sie auf “Standardmäßig öffnen” > “Aktionen auf Standard zurücksetzen”.</string>
     <string name="gc_file_import_default_app_dialog_positive_button">Auf Standard zurücksetzen</string>
@@ -120,4 +118,47 @@
     <string name="gc_file_import_default_app_dialog_image_file_type">Bilder</string>
     <string name="gc_file_import_default_app_dialog_document_file_type">Dokumente</string>
 
+    <string name="gc_close">Schließen</string>
+    <string name="gc_skip">Überspringen</string>
+    <string name="gc_skip_two_lines">Über-\nspringen</string>
+    <string name="gc_next">Weiter</string>
+    <string name="gc_tip">Tipp:\u0020</string>
+    <string name="gc_get_started">Los geht`s</string>
+    <string name="gc_onboarding_viewpager_content_description">Onboarding</string>
+    <string name="gc_onboarding_page_indicator_active_content_description">Aktive Seitenanzeige für Seite %1$d.</string>
+    <string name="gc_onboarding_page_indicator_inactive_content_description">Inaktive Seitenanzeige für Seite %1$d.</string>
+
+    <string name="gc_photo_tip_good_lighting_title">Gute Lichtverhältnisse</string>
+    <string name="gc_photo_tip_flatten_the_page_title">Flach ausrichten</string>
+    <string name="gc_photo_tip_parallel_title">Parallel</string>
+    <string name="gc_photo_tip_align_title">Im Rahmen positionieren</string>
+    <string name="gc_photo_tip_multiple_pages_title">Mehrere Seiten</string>
+
+    <string name="gc_back_button_description">Zurück</string>
+
+    <string name="gc_snackbar_illustrations">Dies sind nur Illustrationen, die vom Original abweichen können.</string>
+    <string name="gc_snackbar_dismiss">Schließen</string>
+    <string name="gc_first_illustration_description">Aktivieren Sie die Teilen-Funktion. Dazu wählen Sie eine Datei aus und verwenden anschließend die Teilen-Funktion, dargestellt als Viereck mit hoch-zeigendem Pfeil.</string>
+    <string name="gc_second_illustration_description">Banking App auswählen. Wählen Sie nun die gewünschte App aus mit der das Dokument geteilt werden soll.</string>
+    <string name="gc_photos_of_monitors_or_screens">Monitoraufnahmen und Screenshots</string>
+    <string name="gc_camera_flash_on_subtitle">An</string>
+    <string name="gc_camera_flash_off_subtitle">Aus</string>
+    <string name="gc_turn_flash_on_content_description">Blitz einschalten</string>
+    <string name="gc_turn_flash_off_content_description">Blitz ausschalten</string>
+    <string name="gc_camera_title">Rechnung oder QR Code scannen</string>
+    <string name="gc_qr_code_detected">QR Code erkannt</string>
+    <string name="gc_unknown_qr_code">QR Code ohne Zahlinformationen</string>
+    <string name="gc_retrieving_invoice">Rechnung wird übermittelt</string>
+    <string name="gc_payment_details_visible">Sind alle Zahlungsinformationen gut lesbar?</string>
+    <string name="gc_pages">Seite</string>
+    <string name="gc_process_documents">Verarbeiten</string>
+    <string name="gc_continue">Verarbeiten</string>
+    <string name="gc_camera_access">Kamerazugriff</string>
+    <string name="gc_unknown_qr_code_description">Dieser Code enthält keine Zahlungsinformationen. Bitte anderen QR-Code oder Rechnung abfotografieren.</string>
+    <string name="gc_scan">Aufnahme</string>
+    <string name="gc_take_a_picture">Photo schießen</string>
+    <string name="gc_flash_button">Blitz</string>
+    <string name="gc_delete_page">Seite löschen</string>
+    <string name="gc_document_page">Dokumentenseite</string>
+    <string name="gc_useful_tips">Nützliche Tipps</string>
 </resources>

@@ -3,13 +3,15 @@ package net.gini.android.capture.example.shared;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 
+import androidx.appcompat.app.AlertDialog;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.DexterError;
@@ -89,7 +91,7 @@ public class RuntimePermissionHandler {
     }
 
     private void showCameraPermissionDeniedDialog(final Listener listener) {
-        final AlertDialog alertDialog = new AlertDialog.Builder(mActivity)
+        final AlertDialog alertDialog = new MaterialAlertDialogBuilder(mActivity)
                 .setMessage(mCameraPermissionDeniedMessage)
                 .setPositiveButton(mGrantAccessButtonTitle, new DialogInterface.OnClickListener() {
                     @Override
@@ -117,7 +119,7 @@ public class RuntimePermissionHandler {
 
     private void showCameraPermissionRationale(final PermissionToken token) {
         final AlertDialog
-                alertDialog = new AlertDialog.Builder(mActivity)
+                alertDialog = new MaterialAlertDialogBuilder(mActivity)
                 .setMessage(mCameraPermissionRationale)
                 .setPositiveButton(mGrantAccessButtonTitle,
                         new DialogInterface.OnClickListener() {
@@ -172,7 +174,7 @@ public class RuntimePermissionHandler {
     }
 
     private void showStoragePermissionDeniedDialog(final Listener listener) {
-        final AlertDialog alertDialog = new AlertDialog.Builder(mActivity)
+        final AlertDialog alertDialog = new MaterialAlertDialogBuilder(mActivity)
                 .setMessage(mStoragePermissionDeniedMessage)
                 .setPositiveButton(mGrantAccessButtonTitle,
                         new DialogInterface.OnClickListener() {
@@ -198,7 +200,7 @@ public class RuntimePermissionHandler {
     }
 
     private void showStoragePermissionRationale(final PermissionToken token) {
-        final AlertDialog alertDialog = new AlertDialog.Builder(mActivity)
+        final AlertDialog alertDialog = new MaterialAlertDialogBuilder(mActivity)
                 .setMessage(mStoragePermissionRationale)
                 .setPositiveButton(mGrantAccessButtonTitle,
                         new DialogInterface.OnClickListener() {

@@ -3,30 +3,30 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/gbs_digital_invoice_return_reason_dialog_background"
+    android:background="?attr/colorSurface"
     android:orientation="vertical">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="@dimen/gbs_digital_invoice_return_reason_dialog_item_horizontal_padding"
-        android:paddingTop="@dimen/gbs_digital_invoice_return_reason_dialog_item_vertical_padding"
-        android:paddingEnd="@dimen/gbs_digital_invoice_return_reason_dialog_item_horizontal_padding"
-        android:paddingBottom="@dimen/gbs_digital_invoice_return_reason_dialog_item_vertical_padding"
+        android:paddingStart="@dimen/gc_large"
+        android:paddingTop="@dimen/gc_large"
+        android:paddingEnd="@dimen/gc_large"
+        android:paddingBottom="@dimen/gc_large"
         android:text="@string/gbs_digital_invoice_return_reason_dialog_title"
-        android:textAppearance="@style/GiniCaptureTheme.DigitalInvoice.ReturnReasonDialog.Title.TextStyle" />
+        android:textColor="?attr/gbsReturnDialogTitle"
+        style="@style/GiniCaptureTheme.Typography.Subtitle1" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/gbs_digital_invoice_return_reason_dialog_divider" />
+        android:background="?attr/dividerColor" />
 
     <ListView
         android:id="@+id/gbs_return_reasons_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:divider="@color/gbs_digital_invoice_return_reason_dialog_divider"
+        android:divider="?attr/dividerColor"
         android:dividerHeight="1dp"
         tools:listitem="@layout/gbs_item_return_reason" />
-
 </LinearLayout>

@@ -1,11 +1,18 @@
 package net.gini.android.capture.internal.camera.view
 
+import android.content.res.ColorStateList
+import android.os.Handler
+import android.os.Looper
+import android.view.HapticFeedbackConstants
 import android.view.View
-import androidx.core.view.ViewCompat
-import androidx.core.view.ViewPropertyAnimatorCompat
-import androidx.core.view.ViewPropertyAnimatorListener
-import androidx.core.view.ViewPropertyAnimatorListenerAdapter
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
+import net.gini.android.capture.R
 import net.gini.android.capture.internal.ui.FragmentImplCallback
+import net.gini.android.capture.view.CustomLoadingIndicatorAdapter
+import net.gini.android.capture.view.InjectedViewContainer
 
 /**
  * Internal use only.
@@ -13,16 +20,39 @@ import net.gini.android.capture.internal.ui.FragmentImplCallback
  * @suppress
  */
 internal class QRCodePopup<T> @JvmOverloads constructor(
-        private val fragmentImplCallback: FragmentImplCallback,
-        private val popupView: View,
-        private val animationDuration: Long,
-        private val hideDelayMs: Long,
-        private val showAgainDelayMs: Long,
-        private val onClicked: (T?) -> Unit = {}) {
+    private val fragmentImplCallback: FragmentImplCallback,
+    private val popupView: View,
+    private val supportedBackgroundView: View? = null,
+    private val loadingIndicatorContainer: InjectedViewContainer<CustomLoadingIndicatorAdapter>?,
+    private val hideDelayMs: Long,
+    private val supported: Boolean,
+    private var onClicked: ((T?) -> Unit)? = {},
+    private val onHide: (() -> Unit)? = null
+) {
 
-    private var animation: ViewPropertyAnimatorCompat? = null
+    private var qrStatusTxt: TextView = popupView.findViewById(R.id.gc_qr_code_status)
+    private var qrImageFrame: ImageView = popupView.findViewById(R.id.gc_camera_frame)
+    private var qrCheckImage: ImageView = popupView.findViewById(R.id.gc_qr_code_check)
+    private var mInvoiceTxt: TextView = popupView.findViewById(R.id.gc_retrieving_invoice)
+    private var mUnknownQRCodeWrapper: ConstraintLayout =
+        popupView.findViewById(R.id.gc_unknown_qr_wrapper);
+
     private val hideRunnable: Runnable = Runnable {
-        hide()
+
+        if (qrCodeContent != null) {
+            onClicked?.let { it(qrCodeContent) }
+        }
+
+        //Wait for a second to reset the QR Code content value
+        Handler(Looper.getMainLooper()).postDelayed({
+            onHide?.invoke()
+        }, 1000)
+
+        if (supported) {
+            progressViews()
+        } else {
+            hide()
+        }
     }
 
     var qrCodeContent: T? = null
@@ -31,86 +61,93 @@ internal class QRCodePopup<T> @JvmOverloads constructor(
     var isShown = false
         private set
 
-    init {
-        popupView.setOnClickListener {
-            onClicked(qrCodeContent)
-            hide()
-        }
-    }
+    fun show(qrCodeContent: T) {
 
-    @JvmOverloads
-    fun show(qrCodeContent: T, startDelay: Long = 0) {
-        if (this.qrCodeContent != null && qrCodeContent != this.qrCodeContent) {
-            hide(object : ViewPropertyAnimatorListenerAdapter() {
-                override fun onAnimationEnd(view: View) {
-                    show(showAgainDelayMs)
-                }
-            })
-        } else {
-            show(startDelay)
+        if (isShown) {
+            return
         }
-
+        show()
         this.qrCodeContent = qrCodeContent
     }
 
-    private fun show(startDelay: Long = 0) {
-        if (popupView.alpha != 0f) {
+    private fun show() {
+        if (qrStatusTxt.visibility == View.VISIBLE) {
             fragmentImplCallback.view?.removeCallbacks(hideRunnable)
             fragmentImplCallback.view?.postDelayed(hideRunnable, hideDelayMs)
             return
         }
-
-        clearQRCodeDetectedPopUpAnimation()
-        popupView.visibility = View.VISIBLE
-        animation = ViewCompat.animate(popupView)
-                .alpha(1.0f)
-                .setStartDelay(startDelay)
-                .setDuration(animationDuration)
-                .setListener(object : ViewPropertyAnimatorListenerAdapter() {
-                    override fun onAnimationEnd(view: View) {
-                        isShown = true
-                    }
-                })
-                .apply {
-                    start()
-                }
-
+        isShown = true
+        showViews()
         fragmentImplCallback.view?.removeCallbacks(hideRunnable)
         fragmentImplCallback.view?.postDelayed(hideRunnable, hideDelayMs)
     }
 
-    @JvmOverloads
-    fun hide(animatorListener: ViewPropertyAnimatorListener? = null) {
+    fun hide() {
         qrCodeContent = null
-
-        if (popupView.alpha != 1f) {
-            animatorListener?.onAnimationEnd(popupView)
-            return
-        }
-        clearQRCodeDetectedPopUpAnimation()
-        animation = ViewCompat.animate(popupView)
-                .alpha(0.0f)
-                .setDuration(animationDuration)
-                .setListener(object : ViewPropertyAnimatorListenerAdapter() {
-                    override fun onAnimationEnd(view: View) {
-                        popupView.visibility = View.GONE
-                        isShown = false
-                        animatorListener?.onAnimationEnd(view)
-                    }
-                })
-                .apply {
-                    start()
-                }
-
+        hideViews()
         fragmentImplCallback.view?.removeCallbacks(hideRunnable)
     }
 
-    private fun clearQRCodeDetectedPopUpAnimation() {
-        animation?.apply {
-            cancel()
-            popupView.clearAnimation()
-            setListener(null)
+
+    private fun showViews() {
+
+        supportedBackgroundView?.visibility = if (supported) View.VISIBLE else View.GONE
+
+        if (supported) {
+            qrStatusTxt.visibility = View.VISIBLE
+            qrStatusTxt.text = popupView.context.getString(R.string.gc_qr_code_detected)
+            qrStatusTxt.background = ContextCompat.getDrawable(
+                popupView.context,
+                R.drawable.gc_qr_code_detected_background
+            )
+            qrCheckImage.visibility = View.VISIBLE
+            qrStatusTxt.setTextColor(ContextCompat.getColor(popupView.context, R.color.gc_light_01))
+            qrImageFrame.imageTintList = ColorStateList.valueOf(
+                ContextCompat.getColor(
+                    popupView.context,
+                    R.color.gc_success_05
+                )
+            )
+            performHapticFeedback(HapticFeedbackConstants.CONFIRM)
+        } else {
+            performHapticFeedback(HapticFeedbackConstants.REJECT)
+            mUnknownQRCodeWrapper.visibility = View.VISIBLE
+            qrImageFrame.imageTintList = ColorStateList.valueOf(
+                ContextCompat.getColor(
+                    popupView.context,
+                    R.color.gc_warning_02
+                )
+            )
         }
-        fragmentImplCallback.view?.removeCallbacks(hideRunnable)
+
+        isShown = true
     }
+
+    private fun progressViews() {
+
+        qrCheckImage.visibility = View.GONE
+        qrImageFrame.visibility = View.INVISIBLE
+        loadingIndicatorContainer?.modifyAdapterIfOwned { it.onVisible() }
+        mInvoiceTxt.visibility = View.VISIBLE
+        supportedBackgroundView?.visibility = View.VISIBLE
+    }
+
+    private fun hideViews() {
+
+        qrStatusTxt.visibility = View.GONE
+        qrCheckImage.visibility = View.GONE
+        qrImageFrame.visibility = View.VISIBLE
+        qrImageFrame.imageTintList =
+            ColorStateList.valueOf(ContextCompat.getColor(popupView.context, R.color.gc_light_01))
+        loadingIndicatorContainer?.modifyAdapterIfOwned { it.onHidden() }
+        mInvoiceTxt.visibility = View.GONE
+        supportedBackgroundView?.visibility = View.GONE
+        mUnknownQRCodeWrapper.visibility = View.GONE
+        isShown = false
+    }
+
+    private fun performHapticFeedback(constant: Int) {
+        popupView.performHapticFeedback(constant)
+    }
+
 }

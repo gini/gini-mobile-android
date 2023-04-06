@@ -4,19 +4,22 @@ import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import net.gini.android.core.api.GiniApiType;
+import net.gini.android.capture.Amount;
+import net.gini.android.capture.BuildConfig;
+import net.gini.android.capture.onboarding.DefaultPages;
 import net.gini.android.capture.AsyncCallback;
 import net.gini.android.capture.DocumentImportEnabledFileTypes;
 import net.gini.android.capture.GiniCapture;
@@ -26,16 +29,14 @@ import net.gini.android.capture.ImportedFileValidationException;
 import net.gini.android.capture.camera.CameraActivity;
 import net.gini.android.capture.example.shared.BaseExampleApp;
 import net.gini.android.capture.example.shared.RuntimePermissionHandler;
-import net.gini.android.capture.help.FileImportActivity;
 import net.gini.android.capture.help.HelpItem;
-import net.gini.android.capture.help.PhotoTipsActivity;
 import net.gini.android.capture.logging.ErrorLog;
 import net.gini.android.capture.logging.ErrorLoggerListener;
-import net.gini.android.capture.onboarding.DefaultPagesPhone;
 import net.gini.android.capture.onboarding.OnboardingPage;
 import net.gini.android.capture.requirements.GiniCaptureRequirements;
 import net.gini.android.capture.requirements.RequirementReport;
 import net.gini.android.capture.requirements.RequirementsReport;
+import net.gini.android.capture.review.multipage.view.DefaultReviewNavigationBarBottomAdapter;
 import net.gini.android.capture.tracking.AnalysisScreenEvent;
 import net.gini.android.capture.tracking.CameraScreenEvent;
 import net.gini.android.capture.tracking.Event;
@@ -43,6 +44,7 @@ import net.gini.android.capture.tracking.EventTracker;
 import net.gini.android.capture.tracking.OnboardingScreenEvent;
 import net.gini.android.capture.tracking.ReviewScreenEvent;
 import net.gini.android.capture.util.CancellationToken;
+import net.gini.android.capture.view.DefaultLoadingIndicatorAdapter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,6 +75,11 @@ public class MainActivity extends AppCompatActivity {
     private RuntimePermissionHandler mRuntimePermissionHandler;
     private TextView mTextGiniCaptureSdkVersion;
     private TextView mTextAppVersion;
+    private SwitchMaterial bottomNavBarSwitch;
+    private SwitchMaterial animatedOnboardingIllustrationsSwitch;
+    private SwitchMaterial customLoadingAnimationSwitch;
+    private SwitchMaterial onlyQRCodeSwitch;
+    private SwitchMaterial disableCameraPermission;
     private CancellationToken mFileImportCancellationToken;
 
     @Override
@@ -147,42 +154,26 @@ public class MainActivity extends AppCompatActivity {
     private void doStartGiniCaptureSdkForImportedFile(final Intent importedFileIntent) {
         // Configure the Gini Capture SDK
         configureGiniCapture();
-        if (GiniCapture.hasInstance() && GiniCapture.getInstance().isMultiPageEnabled()) {
-            mFileImportCancellationToken = GiniCapture.getInstance().createIntentForImportedFiles(
-                    importedFileIntent, this,
-                    new AsyncCallback<Intent, ImportedFileValidationException>() {
-                        @Override
-                        public void onSuccess(final Intent result) {
-                            mFileImportCancellationToken = null;
-                            startActivityForResult(result, REQUEST_SCAN);
-                        }
+        mFileImportCancellationToken = GiniCapture.getInstance().createIntentForImportedFiles(
+                importedFileIntent, this,
+                new AsyncCallback<Intent, ImportedFileValidationException>() {
+                    @Override
+                    public void onSuccess(final Intent result) {
+                        mFileImportCancellationToken = null;
+                        startActivityForResult(result, REQUEST_SCAN);
+                    }
 
-                        @Override
-                        public void onError(final ImportedFileValidationException exception) {
-                            mFileImportCancellationToken = null;
-                            handleFileImportError(exception);
-                        }
+                    @Override
+                    public void onError(final ImportedFileValidationException exception) {
+                        mFileImportCancellationToken = null;
+                        handleFileImportError(exception);
+                    }
 
-                        @Override
-                        public void onCancelled() {
-                            mFileImportCancellationToken = null;
-                        }
-                    });
-        } else {
-            try {
-                final Intent giniCaptureIntent =
-                        GiniCapture.createIntentForImportedFile(
-                                importedFileIntent,
-                                this,
-                                null,
-                                null);
-                startActivityForResult(giniCaptureIntent, REQUEST_SCAN);
-
-            } catch (final ImportedFileValidationException e) {
-                e.printStackTrace();
-                handleFileImportError(e);
-            }
-        }
+                    @Override
+                    public void onCancelled() {
+                        mFileImportCancellationToken = null;
+                    }
+                });
     }
 
     private void handleFileImportError(final ImportedFileValidationException exception) {
@@ -190,12 +181,12 @@ public class MainActivity extends AppCompatActivity {
         if (exception.getValidationError() != null) {
             message = getString(exception.getValidationError().getTextResource());
         }
-        new AlertDialog.Builder(this)
+        new MaterialAlertDialogBuilder(this)
                 .setMessage(message)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(final DialogInterface dialogInterface,
-                            final int i) {
+                                        final int i) {
                         finish();
                     }
                 })
@@ -213,7 +204,7 @@ public class MainActivity extends AppCompatActivity {
     private void showVersions() {
         mTextGiniCaptureSdkVersion.setText(
                 "Gini Capture SDK v" + net.gini.android.capture.BuildConfig.VERSION_NAME);
-        mTextAppVersion.setText("v" + BuildConfig.VERSION_NAME);
+        mTextAppVersion.setText("Screen API Example App v" + BuildConfig.VERSION_NAME);
     }
 
     private void setGiniCaptureSdkDebugging() {
@@ -224,9 +215,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void addInputHandlers() {
-        mButtonStartScanner.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
+        mButtonStartScanner.setOnClickListener(v -> {
+            if (disableCameraPermission.isChecked()) {
+                doStartGiniCaptureSdk();
+            } else {
                 startGiniCaptureSdk();
             }
         });
@@ -241,7 +233,6 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void permissionDenied() {
-
             }
         });
     }
@@ -299,19 +290,21 @@ public class MainActivity extends AppCompatActivity {
 
     private void configureGiniCapture() {
         final BaseExampleApp app = (BaseExampleApp) getApplication();
-        GiniCapture.cleanup(this);
+
         app.clearGiniCaptureNetworkInstances();
         final GiniCapture.Builder builder = GiniCapture.newInstance()
                 .setGiniCaptureNetworkService(
                         app.getGiniCaptureNetworkService("ScreenAPI")
-                ).setGiniCaptureNetworkApi(app.getGiniCaptureNetworkApi());
-        builder.setDocumentImportEnabledFileTypes(DocumentImportEnabledFileTypes.PDF_AND_IMAGES)
+                )
+                .setDocumentImportEnabledFileTypes(DocumentImportEnabledFileTypes.PDF_AND_IMAGES)
                 .setFileImportEnabled(true)
                 .setQRCodeScanningEnabled(true)
                 .setMultiPageEnabled(true);
         builder.setFlashButtonEnabled(true);
         builder.setEventTracker(new GiniCaptureEventTracker());
         builder.setCustomErrorLoggerListener(new CustomErrorLoggerListener());
+        builder.setReviewBottomBarNavigationAdapter(new DefaultReviewNavigationBarBottomAdapter());
+        builder.setLoadingIndicatorAdapter(new DefaultLoadingIndicatorAdapter());
         // Uncomment to disable sending errors to Gini
 //        builder.setGiniErrorLoggerIsOn(false);
 
@@ -322,8 +315,6 @@ public class MainActivity extends AppCompatActivity {
 
         // Uncomment to turn off the camera flash by default
 //        builder.setFlashOnByDefault(false);
-        // Uncomment to disable back buttons (except in the review and analysis screens)
-//        builder.setBackButtonsEnabled(false);
         // Uncomment to add an extra page to the Onboarding pages
 //                builder.setCustomOnboardingPages(getOnboardingPages());
         // Uncomment to disable automatically showing the OnboardingActivity the
@@ -334,6 +325,21 @@ public class MainActivity extends AppCompatActivity {
 //                builder.setShouldShowOnboarding(true);
         // Uncomment to remove the Supported Formats help screen
 //                builder.setSupportedFormatsHelpScreenEnabled(false);
+
+        builder.setBottomNavigationBarEnabled(bottomNavBarSwitch.isChecked());
+        if (animatedOnboardingIllustrationsSwitch.isChecked()) {
+            builder.setOnboardingAlignCornersIllustrationAdapter(new CustomOnboardingIllustrationAdapter(getResources().getIdentifier("floating_document", "raw", this.getPackageName())));
+            builder.setOnboardingLightingIllustrationAdapter(new CustomOnboardingIllustrationAdapter(getResources().getIdentifier("lighting", "raw", this.getPackageName())));
+            builder.setOnboardingMultiPageIllustrationAdapter(new CustomOnboardingIllustrationAdapter(getResources().getIdentifier("multipage", "raw", this.getPackageName())));
+            builder.setOnboardingQRCodeIllustrationAdapter(new CustomOnboardingIllustrationAdapter(getResources().getIdentifier("scan_qr_code", "raw", this.getPackageName())));
+        }
+
+        if (customLoadingAnimationSwitch.isChecked()) {
+            builder.setLoadingIndicatorAdapter(new CustomLottiLoadingIndicatorAdapter(getResources().getIdentifier("custom_loading", "raw", this.getPackageName())));
+        }
+
+        builder.setOnlyQRCodeScanning(onlyQRCodeSwitch.isChecked());
+
         builder.build();
     }
 
@@ -361,29 +367,47 @@ public class MainActivity extends AppCompatActivity {
         mButtonStartScanner = (Button) findViewById(R.id.button_start_scanner);
         mTextGiniCaptureSdkVersion = (TextView) findViewById(R.id.text_gini_capture_version);
         mTextAppVersion = (TextView) findViewById(R.id.text_app_version);
+        bottomNavBarSwitch = findViewById(R.id.bottom_navbar_switch);
+        animatedOnboardingIllustrationsSwitch = findViewById(R.id.animated_onboarding_illustrations_switch);
+        customLoadingAnimationSwitch = findViewById(R.id.custom_loading_indicator_switch);
+        onlyQRCodeSwitch = findViewById(R.id.gc_only_qr_code_scanning);
+        disableCameraPermission = findViewById(R.id.gc_disable_camera_permision);
     }
 
-    private ArrayList<OnboardingPage> getOnboardingPages() {
+    private ArrayList<OnboardingPage> getOnboardingPages(final boolean isMultiPageEnabled, final boolean isQRCodeScanningEnabled) {
         // Adding a custom page to the default pages
-        final ArrayList<OnboardingPage> pages = DefaultPagesPhone.asArrayList();
-        pages.add(new OnboardingPage(R.string.additional_onboarding_page,
-                R.drawable.additional_onboarding_illustration));
+        final ArrayList<OnboardingPage> pages = DefaultPages.asArrayList(isMultiPageEnabled, isQRCodeScanningEnabled);
+        pages.add(new OnboardingPage(R.string.additional_onboarding_page_title, R.string.additional_onboarding_page_message, null));
         return pages;
     }
 
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode,
-            final Intent data) {
+                                    final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_SCAN) {
             if (data == null) {
+                GiniCapture.cleanup(this, "", "",
+                        "", "","", Amount.EMPTY);
+
                 if (isIntentActionViewOrSend(getIntent())) {
                     finish();
+                }
+
+                if (resultCode == CameraActivity.RESULT_ENTER_MANUALLY) {
+                    handleEnterManuallyAction();
                 }
                 return;
             }
             switch (resultCode) {
+                case CameraActivity.RESULT_ENTER_MANUALLY:
+                    GiniCapture.cleanup(this, "", "",
+                            "", "","", Amount.EMPTY);
+                    handleEnterManuallyAction();
+                    break;
                 case RESULT_CANCELED:
+                    GiniCapture.cleanup(this, "", "",
+                            "", "","", Amount.EMPTY);
                     break;
                 case RESULT_OK:
                     // Retrieve the extractions
@@ -403,11 +427,6 @@ public class MainActivity extends AppCompatActivity {
                             || epsPaymentAvailable(extractionsBundle)
                             || compoundExtractionsBundle != null) {
                         startExtractionsActivity(extractionsBundle, compoundExtractionsBundle);
-                    } else {
-                        // Show a special screen, if no Pay5 extractions were found to give
-                        // the user some hints and tips
-                        // for using the Gini Capture SDK
-                        startNoExtractionsActivity();
                     }
                     break;
                 case CameraActivity.RESULT_ERROR:
@@ -420,16 +439,12 @@ public class MainActivity extends AppCompatActivity {
                                         + error.getMessage(),
                                 Toast.LENGTH_LONG).show();
                     }
+                    GiniCapture.cleanup(this, "", "",
+                            "", "","", Amount.EMPTY);
                     break;
             }
             if (isIntentActionViewOrSend(getIntent())) {
                 finish();
-            }
-        } else if (requestCode == REQUEST_NO_EXTRACTIONS) {
-            // The NoExtractionsActivity has a button for taking another picture which causes the activity to finish
-            // and return the result code seen below
-            if (resultCode == NoExtractionsActivity.RESULT_START_GINI_CAPTURE) {
-                startGiniCaptureSdk();
             }
         }
     }
@@ -450,11 +465,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return false;
-    }
-
-    private void startNoExtractionsActivity() {
-        final Intent intent = new Intent(this, NoExtractionsActivity.class);
-        startActivityForResult(intent, REQUEST_NO_EXTRACTIONS);
     }
 
     private void startExtractionsActivity(@NonNull final Bundle extractionsBundle, @Nullable final Bundle compoundExtractionsBundle) {
@@ -481,6 +491,10 @@ public class MainActivity extends AppCompatActivity {
         final ch.qos.logback.classic.Logger root =
                 (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
         root.addAppender(logcatAppender);
+    }
+
+    private void handleEnterManuallyAction() {
+        Toast.makeText(this, "Scan exited for manual enter mode", Toast.LENGTH_SHORT).show();
     }
 
     private static class GiniCaptureEventTracker implements EventTracker {

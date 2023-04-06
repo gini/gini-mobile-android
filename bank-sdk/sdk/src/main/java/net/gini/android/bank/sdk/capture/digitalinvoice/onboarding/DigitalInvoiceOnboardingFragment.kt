@@ -7,9 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.transition.TransitionInflater
+import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.capture.util.autoCleared
 import net.gini.android.bank.sdk.databinding.GbsFragmentDigitalInvoiceOnboardingBinding
+import net.gini.android.capture.GiniCapture
+import net.gini.android.capture.internal.ui.IntervalClickListener
+import net.gini.android.capture.onboarding.view.OnboardingIllustrationAdapter
+import net.gini.android.capture.view.InjectedViewAdapterHolder
 
 /**
  * Created by Alpar Szotyori on 14.10.2020.
@@ -18,8 +23,6 @@ import net.gini.android.bank.sdk.databinding.GbsFragmentDigitalInvoiceOnboarding
  */
 
 /**
- * When you use the Component API the `DigitalInvoiceOnboardingFragment` displays information about the return assistant to the user.
- *
  * You should show the `DigitalInvoiceOnboardingFragment` when the
  * [DigitalInvoiceFragmentListener.showOnboarding()] is called.
  *
@@ -108,6 +111,7 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
      */
     override fun onStart() {
         super.onStart()
+        binding.digitalInvoiceImageContainer.modifyAdapterIfOwned { (it as OnboardingIllustrationAdapter).onVisible() }
         presenter?.start()
     }
 
@@ -118,6 +122,7 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
      */
     override fun onStop() {
         super.onStop()
+        binding.digitalInvoiceImageContainer.modifyAdapterIfOwned { (it as OnboardingIllustrationAdapter).onHidden() }
         presenter?.stop()
     }
 
@@ -130,6 +135,35 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setInputHandlers()
+        setupImageIllustrationAdapter()
+        setupOnboardingBottomNavigationBar()
+    }
+
+
+    private fun setupImageIllustrationAdapter() {
+        if (GiniCapture.hasInstance()) {
+            binding.digitalInvoiceImageContainer.injectedViewAdapterHolder =
+                InjectedViewAdapterHolder(GiniBank.digitalInvoiceOnboardingIllustrationAdapterInstance) { it.onVisible() }
+        }
+    }
+
+    private fun setupOnboardingBottomNavigationBar() {
+        if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled) {
+
+            binding.doneButton.visibility = View.INVISIBLE
+            binding.doneButton.isEnabled = false
+
+            binding.gbsInjectedNavigationBarContainerBottom.injectedViewAdapterHolder =
+                InjectedViewAdapterHolder(
+                    GiniBank.digitalInvoiceOnboardingNavigationBarBottomAdapterInstance
+                ) { injectedViewAdapter ->
+                    injectedViewAdapter.setGetStartedButtonClickListener(
+                        IntervalClickListener {
+                            presenter?.dismisOnboarding(false)
+                        }
+                    )
+                }
+        }
     }
 
     /**
@@ -145,10 +179,6 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
     private fun setInputHandlers() {
         binding.doneButton.setOnClickListener {
             presenter?.dismisOnboarding(false)
-        }
-
-        binding.doNotShowButton.setOnClickListener {
-            presenter?.dismisOnboarding(true)
         }
     }
 }

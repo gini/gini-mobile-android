@@ -4,7 +4,6 @@ import static com.google.common.truth.Truth.assertThat;
 
 import static net.gini.android.capture.analysis.BitmapMatcher.withBitmap;
 import static net.gini.android.capture.analysis.RotationMatcher.withRotation;
-import static net.gini.android.capture.test.BackgroundColorMatcher.hasBackgroundColor;
 import static net.gini.android.capture.test.Helpers.getTestJpeg;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -16,7 +15,6 @@ import static org.mockito.Mockito.verify;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
@@ -25,18 +23,20 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.view.View;
 
 import net.gini.android.capture.Document;
+import net.gini.android.capture.GiniCapture;
+import net.gini.android.capture.GiniCaptureHelper;
 import net.gini.android.capture.R;
 import net.gini.android.capture.document.DocumentFactory;
 import net.gini.android.capture.document.ImageDocument;
 import net.gini.android.capture.internal.camera.photo.Photo;
 import net.gini.android.capture.internal.camera.photo.PhotoFactory;
-import net.gini.android.capture.internal.ui.ErrorSnackbar;
 import net.gini.android.capture.internal.util.Size;
+import net.gini.android.capture.network.GiniCaptureNetworkService;
 import net.gini.android.capture.test.FragmentImplFactory;
+import net.gini.android.capture.view.DefaultLoadingIndicatorAdapter;
 
 import org.junit.After;
 import org.junit.Test;
@@ -66,7 +66,7 @@ import jersey.repackaged.jsr166e.CompletableFuture;
 @Config(shadows = {
         AnalysisFragmentImplTest.DialogShadow.class,
         AnalysisFragmentImplTest.AnalysisHintsAnimatorShadow.class,
-        AnalysisFragmentImplTest.ErrorSnackbarShadow.class
+        AnalysisFragmentImplTest.DefaultLoadingIndicatorAdapterShadow.class
 })
 public class AnalysisFragmentImplTest {
 
@@ -75,7 +75,8 @@ public class AnalysisFragmentImplTest {
         AnalysisFragmentCompatFake.sFragmentImplFactory = null;
         DialogShadow.cleanup();
         AnalysisHintsAnimatorShadow.cleanup();
-        ErrorSnackbarShadow.cleanup();
+        DefaultLoadingIndicatorAdapterShadow.cleanup();
+        GiniCaptureHelper.setGiniCaptureInstance(null);
     }
 
     @Test
@@ -95,18 +96,11 @@ public class AnalysisFragmentImplTest {
                         public void perform(final AnalysisFragmentHostActivity activity) {
                             final AnalysisFragmentImpl analysisFragment =
                                     analysisFragmentImplRef.get();
-                            analysisFragment.hideError();
-                            analysisFragment.showError("Message", 1000);
-                            analysisFragment.showError("Message", "ButtonTitle",
-                                    mock(View.OnClickListener.class));
                             analysisFragment.setListener(mock(AnalysisFragmentListener.class));
                         }
                     });
 
             // Then
-            verify(presenter).hideError();
-            verify(presenter).showError(anyString(), anyInt());
-            verify(presenter).showError(anyString(), anyString(), any(View.OnClickListener.class));
             verify(presenter).setListener(any(AnalysisFragmentListener.class));
         }
     }
@@ -146,14 +140,16 @@ public class AnalysisFragmentImplTest {
     @Test
     public void should_notShowScanAnimation_byDefault() throws Exception {
         // Given
+        GiniCapture.newInstance()
+                .setGiniCaptureNetworkService(mock(GiniCaptureNetworkService.class))
+                .build();
+
         final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
                 new AtomicReference<>();
 
         try (final ActivityScenario<AnalysisFragmentHostActivity> scenario = launchHostActivity(
                 analysisFragmentImplRef)) {
             // Then
-            onView(withId(R.id.gc_progress_activity)).check(matches(
-                    withEffectiveVisibility(ViewMatchers.Visibility.GONE)));
             onView(withId(R.id.gc_analysis_message)).check(matches(
                     withEffectiveVisibility(ViewMatchers.Visibility.GONE)));
         }
@@ -168,6 +164,10 @@ public class AnalysisFragmentImplTest {
     @Test
     public void should_showScanAnimation_whenRequested() throws Exception {
         // Given
+        GiniCapture.newInstance()
+                .setGiniCaptureNetworkService(mock(GiniCaptureNetworkService.class))
+                .build();
+
         final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
                 new AtomicReference<>();
 
@@ -177,17 +177,19 @@ public class AnalysisFragmentImplTest {
             // When
             scenario.onActivity(
                     new ActivityScenario.ActivityAction<AnalysisFragmentHostActivity>() {
+
                         @Override
                         public void perform(final AnalysisFragmentHostActivity activity) {
+
                             final AnalysisFragmentImpl analysisFragment =
                                     analysisFragmentImplRef.get();
+
                             analysisFragment.showScanAnimation();
                         }
                     });
 
             // Then
-            onView(withId(R.id.gc_progress_activity)).check(matches(
-                    withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
+            assertThat(DefaultLoadingIndicatorAdapterShadow.isOnVisibleCalled).isTrue();
             onView(withId(R.id.gc_analysis_message)).check(matches(
                     withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
         }
@@ -196,6 +198,10 @@ public class AnalysisFragmentImplTest {
     @Test
     public void should_hideScanAnimation_whenRequested() throws Exception {
         // Given
+        GiniCapture.newInstance()
+                .setGiniCaptureNetworkService(mock(GiniCaptureNetworkService.class))
+                .build();
+
         final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
                 new AtomicReference<>();
 
@@ -215,8 +221,7 @@ public class AnalysisFragmentImplTest {
                     });
 
             // Then
-            onView(withId(R.id.gc_progress_activity)).check(matches(
-                    withEffectiveVisibility(ViewMatchers.Visibility.GONE)));
+            assertThat(DefaultLoadingIndicatorAdapterShadow.isOnHiddenCalled).isTrue();
             onView(withId(R.id.gc_analysis_message)).check(matches(
                     withEffectiveVisibility(ViewMatchers.Visibility.GONE)));
         }
@@ -255,35 +260,6 @@ public class AnalysisFragmentImplTest {
     }
 
     @Test
-    public void should_showPdfInfoPanel() throws Exception {
-        // Given
-        final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
-                new AtomicReference<>();
-
-        try (final ActivityScenario<AnalysisFragmentHostActivity> scenario = launchHostActivity(
-                analysisFragmentImplRef)) {
-
-            // When
-            scenario.onActivity(
-                    new ActivityScenario.ActivityAction<AnalysisFragmentHostActivity>() {
-                        @Override
-                        public void perform(final AnalysisFragmentHostActivity activity) {
-                            final AnalysisFragmentImpl analysisFragment =
-                                    analysisFragmentImplRef.get();
-                            analysisFragment.showPdfInfoPanel();
-                        }
-                    });
-
-            // Then
-            onView(withId(R.id.gc_pdf_info)).check(matches(
-                    withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
-            onView(withId(R.id.gc_analysis_overlay)).check(
-                    matches(hasBackgroundColor(Color.TRANSPARENT)));
-            onView(withId(R.id.gc_analysis_message)).check(matches(withText("")));
-        }
-    }
-
-    @Test
     public void should_showPdfTitle() throws Exception {
         // Given
         final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
@@ -299,69 +275,13 @@ public class AnalysisFragmentImplTest {
                         public void perform(final AnalysisFragmentHostActivity activity) {
                             final AnalysisFragmentImpl analysisFragment =
                                     analysisFragmentImplRef.get();
-                            analysisFragment.showPdfInfoPanel();
                             analysisFragment.showPdfTitle("PdfTitle");
                         }
                     });
 
             // Then
-            onView(withId(R.id.gc_pdf_filename)).check(matches(
-                    withText("PdfTitle")));
-        }
-    }
-
-    @Test
-    public void should_showPdfPageCount() throws Exception {
-        // Given
-        final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
-                new AtomicReference<>();
-
-        try (final ActivityScenario<AnalysisFragmentHostActivity> scenario = launchHostActivity(
-                analysisFragmentImplRef)) {
-
-            // When
-            scenario.onActivity(
-                    new ActivityScenario.ActivityAction<AnalysisFragmentHostActivity>() {
-                        @Override
-                        public void perform(final AnalysisFragmentHostActivity activity) {
-                            final AnalysisFragmentImpl analysisFragment =
-                                    analysisFragmentImplRef.get();
-                            analysisFragment.showPdfInfoPanel();
-                            analysisFragment.showPdfPageCount("42");
-                        }
-                    });
-
-            // Then
-            onView(withId(R.id.gc_pdf_page_count)).check(matches(
-                    withText("42")));
-        }
-    }
-
-    @Test
-    public void should_hidePdfPageCount() throws Exception {
-        // Given
-        final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
-                new AtomicReference<>();
-
-        try (final ActivityScenario<AnalysisFragmentHostActivity> scenario = launchHostActivity(
-                analysisFragmentImplRef)) {
-
-            // When
-            scenario.onActivity(
-                    new ActivityScenario.ActivityAction<AnalysisFragmentHostActivity>() {
-                        @Override
-                        public void perform(final AnalysisFragmentHostActivity activity) {
-                            final AnalysisFragmentImpl analysisFragment =
-                                    analysisFragmentImplRef.get();
-                            analysisFragment.showPdfInfoPanel();
-                            analysisFragment.showPdfPageCount("42");
-                            analysisFragment.hidePdfPageCount();
-                        }
-                    });
-
-            // Then
-            onView(withId(R.id.gc_pdf_page_count)).check(matches(
-                    withEffectiveVisibility(ViewMatchers.Visibility.GONE)));
+            onView(withId(R.id.gc_analysis_message)).check(matches(
+                    withText("Analyzing\nPdfTitle")));
         }
     }
 
@@ -481,60 +401,6 @@ public class AnalysisFragmentImplTest {
 
             // Then
             assertThat(DialogShadow.showCalled).isTrue();
-        }
-    }
-
-    @Test
-    public void should_showErrorSnackbar() throws Exception {
-        // Given
-        final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
-                new AtomicReference<>();
-
-        try (final ActivityScenario<AnalysisFragmentHostActivity> scenario = launchHostActivity(
-                analysisFragmentImplRef)) {
-
-            // When
-            scenario.onActivity(
-                    new ActivityScenario.ActivityAction<AnalysisFragmentHostActivity>() {
-                        @Override
-                        public void perform(final AnalysisFragmentHostActivity activity) {
-                            final AnalysisFragmentImpl analysisFragment =
-                                    analysisFragmentImplRef.get();
-                            analysisFragment.showErrorSnackbar("Message", 1000,
-                                    "ButtonTitle", mock(View.OnClickListener.class));
-                        }
-                    });
-
-            // Then
-            onView(withText("Message")).check(matches(isCompletelyDisplayed()));
-            onView(withText("ButtonTitle")).check(matches(isCompletelyDisplayed()));
-        }
-    }
-
-    @Test
-    public void should_hideErrorSnackbar() throws Exception {
-        // Given
-        final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
-                new AtomicReference<>();
-
-        try (final ActivityScenario<AnalysisFragmentHostActivity> scenario = launchHostActivity(
-                analysisFragmentImplRef)) {
-
-            // When
-            scenario.onActivity(
-                    new ActivityScenario.ActivityAction<AnalysisFragmentHostActivity>() {
-                        @Override
-                        public void perform(final AnalysisFragmentHostActivity activity) {
-                            final AnalysisFragmentImpl analysisFragment =
-                                    analysisFragmentImplRef.get();
-                            analysisFragment.showErrorSnackbar("Message", 1000,
-                                    "ButtonTitle", mock(View.OnClickListener.class));
-                            analysisFragment.hideErrorSnackbar();
-                        }
-                    });
-
-            // Then
-            assertThat(ErrorSnackbarShadow.hideCalled).isTrue();
         }
     }
 
@@ -695,18 +561,20 @@ public class AnalysisFragmentImplTest {
         }
     }
 
-    @Implements(ErrorSnackbar.class)
-    public static class ErrorSnackbarShadow extends ShadowViewGroup {
-
-        static boolean hideCalled;
+    @Implements(DefaultLoadingIndicatorAdapter.class)
+    public static class DefaultLoadingIndicatorAdapterShadow {
+        static boolean isOnVisibleCalled;
+        static boolean isOnHiddenCalled;
 
         static void cleanup() {
-            hideCalled = false;
+            isOnVisibleCalled = false;
+            isOnHiddenCalled = false;
         }
 
         @Implementation
-        public void hide() {
-            hideCalled = true;
-        }
+        public void onVisible() { isOnVisibleCalled = true; }
+
+        @Implementation
+        public void onHidden() { isOnHiddenCalled = true; }
     }
 }

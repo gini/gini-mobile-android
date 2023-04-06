@@ -15,31 +15,35 @@ import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.capture.*
 import net.gini.android.bank.sdk.screenapiexample.databinding.ActivityMainBinding
 import net.gini.android.bank.sdk.screenapiexample.util.PermissionHandler
+import net.gini.android.capture.Amount
 import net.gini.android.capture.DocumentImportEnabledFileTypes
 import net.gini.android.capture.GiniCaptureDebug
 import net.gini.android.capture.help.HelpItem
-import net.gini.android.capture.network.GiniCaptureDefaultNetworkApi
 import net.gini.android.capture.network.GiniCaptureDefaultNetworkService
 import net.gini.android.capture.requirements.RequirementsReport
 import net.gini.android.capture.util.CancellationToken
+import net.gini.android.capture.view.DefaultLoadingIndicatorAdapter
 import org.koin.android.ext.android.inject
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityMainBinding
     private val permissionHandler = PermissionHandler(this)
-    private val captureLauncher = registerForActivityResult(CaptureFlowContract(), ::onCaptureResult)
-    private val captureImportLauncher = registerForActivityResult(CaptureFlowImportContract(), ::onCaptureResult)
-    private val noExtractionsLauncher = registerForActivityResult(NoExtractionContract(), ::onStartAgainResult)
-    private var cancellationToken: CancellationToken? = null // should be kept across configuration changes
+    private val captureLauncher =
+        registerForActivityResult(CaptureFlowContract(), ::onCaptureResult)
+    private val captureImportLauncher =
+        registerForActivityResult(CaptureFlowImportContract(), ::onCaptureResult)
+    private var cancellationToken: CancellationToken? =
+        null // should be kept across configuration changes
     private val networkService: GiniCaptureDefaultNetworkService by inject()
-    private val networkApi: GiniCaptureDefaultNetworkApi by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val binding = ActivityMainBinding.inflate(layoutInflater)
+        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         showVersions(binding)
         setViewListeners(binding)
         setGiniCaptureSdkDebugging()
@@ -58,11 +62,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun configureGiniCapture() {
-        GiniBank.releaseCapture(this)
+        val useCustomOnboardingPages = false
+        val useCustomLoadingIndicator = false
+
+        if (binding.gbsEnableCustomIllustration.isChecked)
+            GiniBank.digitalInvoiceOnboardingIllustrationAdapter =
+                CustomOnboardingIllustrationAdapter(
+                    this.resources.getIdentifier(
+                        "ai_animation",
+                        "raw",
+                        this.packageName
+                    )
+                )
+
         GiniBank.setCaptureConfiguration(
             CaptureConfiguration(
                 networkService = networkService,
-                networkApi = networkApi,
                 documentImportEnabledFileTypes = DocumentImportEnabledFileTypes.PDF_AND_IMAGES,
                 fileImportEnabled = true,
                 qrCodeScanningEnabled = true,
@@ -75,7 +90,63 @@ class MainActivity : AppCompatActivity() {
                         Intent(this, CustomHelpActivity::class.java)
                     )
                 ),
-                importedFileSizeBytesLimit = 5 * 1024 * 1024
+                importedFileSizeBytesLimit = 5 * 1024 * 1024,
+                bottomNavigationBarEnabled = binding.gbsEnableBottomBar.isChecked,
+                onboardingAlignCornersIllustrationAdapter = if (useCustomOnboardingPages) {
+                    CustomOnboardingIllustrationAdapter(
+                        resources.getIdentifier(
+                            "floating_document",
+                            "raw",
+                            this.packageName
+                        )
+                    )
+                } else {
+                    null
+                },
+                onboardingLightingIllustrationAdapter = if (useCustomOnboardingPages) {
+                    CustomOnboardingIllustrationAdapter(
+                        resources.getIdentifier(
+                            "lighting",
+                            "raw",
+                            this.packageName
+                        )
+                    )
+                } else {
+                    null
+                },
+                onboardingMultiPageIllustrationAdapter = if (useCustomOnboardingPages) {
+                    CustomOnboardingIllustrationAdapter(
+                        resources.getIdentifier(
+                            "multipage",
+                            "raw",
+                            this.packageName
+                        )
+                    )
+                } else {
+                    null
+                },
+                onboardingQRCodeIllustrationAdapter = if (useCustomOnboardingPages) {
+                    CustomOnboardingIllustrationAdapter(
+                        resources.getIdentifier(
+                            "scan_qr_code",
+                            "raw",
+                            this.packageName
+                        )
+                    )
+                } else {
+                    null
+                },
+                customLoadingIndicatorAdapter = if (useCustomLoadingIndicator) {
+                    CustomLottiLoadingIndicatorAdapter(
+                        resources.getIdentifier(
+                            "custom_loading",
+                            "raw",
+                            this.packageName
+                        )
+                    )
+                } else {
+                    DefaultLoadingIndicatorAdapter()
+                }
             )
         )
     }
@@ -121,7 +192,11 @@ class MainActivity : AppCompatActivity() {
                 configureGiniCapture()
 
                 if (intent != null) {
-                    cancellationToken = GiniBank.startCaptureFlowForIntent(captureImportLauncher, this@MainActivity, intent)
+                    cancellationToken = GiniBank.startCaptureFlowForIntent(
+                        captureImportLauncher,
+                        this@MainActivity,
+                        intent
+                    )
                 } else {
                     GiniBank.startCaptureFlow(captureLauncher)
                 }
@@ -153,11 +228,41 @@ class MainActivity : AppCompatActivity() {
                             Toast.LENGTH_LONG
                         ).show()
                 }
+                GiniBank.releaseCapture(
+                    this, "",
+                    "", "", "", "", Amount.EMPTY
+                )
+                if (isIntentActionViewOrSend(intent)) {
+                    finish()
+                }
             }
             CaptureResult.Empty -> {
-                noExtractionsLauncher.launch(Unit)
+                GiniBank.releaseCapture(
+                    this, "",
+                    "", "", "", "", Amount.EMPTY
+                )
+                if (isIntentActionViewOrSend(intent)) {
+                    finish()
+                }
             }
             CaptureResult.Cancel -> {
+                GiniBank.releaseCapture(
+                    this, "",
+                    "", "", "", "", Amount.EMPTY
+                )
+                if (isIntentActionViewOrSend(intent)) {
+                    finish()
+                }
+            }
+            CaptureResult.EnterManually -> {
+                GiniBank.releaseCapture(
+                    this, "",
+                    "", "", "", "", Amount.EMPTY
+                )
+                Toast.makeText(this, "Scan exited for manual enter mode", Toast.LENGTH_SHORT).show()
+                if (isIntentActionViewOrSend(intent)) {
+                    finish()
+                }
             }
         }
     }
@@ -186,7 +291,8 @@ class MainActivity : AppCompatActivity() {
 
     @SuppressLint("SetTextI18n")
     private fun showVersions(binding: ActivityMainBinding) {
-        binding.textGiniBankVersion.text = "Gini Bank SDK v${net.gini.android.bank.sdk.BuildConfig.VERSION_NAME}"
+        binding.textGiniBankVersion.text =
+            "Gini Bank SDK v${net.gini.android.bank.sdk.BuildConfig.VERSION_NAME}"
         binding.textAppVersion.text = "v${BuildConfig.VERSION_NAME}"
     }
 

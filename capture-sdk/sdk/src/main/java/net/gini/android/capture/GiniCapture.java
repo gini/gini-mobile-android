@@ -2,11 +2,17 @@ package net.gini.android.capture;
 
 import static net.gini.android.capture.internal.util.FileImportValidator.FILE_SIZE_LIMIT;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
+
 import android.content.Context;
 import android.content.Intent;
-
 import net.gini.android.capture.analysis.AnalysisActivity;
+import net.gini.android.capture.camera.view.CameraNavigationBarBottomAdapter;
+import net.gini.android.capture.camera.view.DefaultCameraNavigationBarBottomAdapter;
 import net.gini.android.capture.help.HelpItem;
+import net.gini.android.capture.help.view.DefaultHelpNavigationBarBottomAdapter;
+import net.gini.android.capture.help.view.HelpNavigationBarBottomAdapter;
 import net.gini.android.capture.internal.cache.DocumentDataMemoryCache;
 import net.gini.android.capture.internal.cache.PhotoMemoryCache;
 import net.gini.android.capture.internal.document.ImageMultiPageDocumentMemoryStore;
@@ -14,12 +20,23 @@ import net.gini.android.capture.internal.network.NetworkRequestsManager;
 import net.gini.android.capture.internal.storage.ImageDiskStore;
 import net.gini.android.capture.logging.ErrorLogger;
 import net.gini.android.capture.logging.ErrorLoggerListener;
-import net.gini.android.capture.network.GiniCaptureNetworkApi;
+import net.gini.android.capture.network.Error;
+import net.gini.android.capture.network.GiniCaptureNetworkCallback;
+import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
+import net.gini.android.capture.onboarding.view.DefaultOnboardingNavigationBarBottomAdapter;
+import net.gini.android.capture.onboarding.view.OnboardingIllustrationAdapter;
+import net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomAdapter;
+import net.gini.android.capture.review.multipage.view.DefaultReviewNavigationBarBottomAdapter;
+import net.gini.android.capture.review.multipage.view.ReviewNavigationBarBottomAdapter;
+import net.gini.android.capture.view.CustomLoadingIndicatorAdapter;
+import net.gini.android.capture.view.DefaultLoadingIndicatorAdapter;
+import net.gini.android.capture.view.DefaultOnButtonLoadingIndicatorAdapter;
+import net.gini.android.capture.view.InjectedViewAdapterInstance;
+import net.gini.android.capture.view.NavigationBarTopAdapter;
+import net.gini.android.capture.view.DefaultNavigationBarTopAdapter;
 import net.gini.android.capture.network.GiniCaptureNetworkService;
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction;
 import net.gini.android.capture.onboarding.OnboardingPage;
-import net.gini.android.capture.review.ReviewActivity;
-import net.gini.android.capture.review.multipage.MultiPageReviewFragment;
 import net.gini.android.capture.tracking.AnalysisScreenEvent;
 import net.gini.android.capture.tracking.CameraScreenEvent;
 import net.gini.android.capture.tracking.Event;
@@ -27,14 +44,16 @@ import net.gini.android.capture.tracking.EventTracker;
 import net.gini.android.capture.tracking.OnboardingScreenEvent;
 import net.gini.android.capture.tracking.ReviewScreenEvent;
 import net.gini.android.capture.util.CancellationToken;
+import net.gini.android.capture.view.OnButtonLoadingIndicatorAdapter;
 
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -42,7 +61,7 @@ import androidx.annotation.VisibleForTesting;
 
 /**
  * Created by Alpar Szotyori on 22.02.2018.
- *
+ * <p>
  * Copyright (c) 2018 Gini GmbH.
  */
 
@@ -55,9 +74,9 @@ import androidx.annotation.VisibleForTesting;
  *
  * <p> To create and configure a singleton instance use the {@link #newInstance()} method and the
  * returned {@link Builder}. If an instance is already available you need to call {@link
- * #cleanup(Context)} before creating a new instance. Failing to do so will throw an exception.
+ * #cleanup(Context, String, String, String, String, String, Amount)} before creating a new instance. Failing to do so will throw an exception.
  *
- * <p> After you are done using the Gini Capture SDK use the {@link #cleanup(Context)} method.
+ * <p> After you are done using the Gini Capture SDK use the {@link #cleanup(Context, String, String, String, String, String, Amount)} method.
  * This will free up resources used by the library.
  */
 public class GiniCapture {
@@ -65,7 +84,6 @@ public class GiniCapture {
     private static final Logger LOG = LoggerFactory.getLogger(GiniCapture.class);
     private static GiniCapture sInstance;
     private final GiniCaptureNetworkService mGiniCaptureNetworkService;
-    private final GiniCaptureNetworkApi mGiniCaptureNetworkApi;
     private final NetworkRequestsManager mNetworkRequestsManager;
     private final DocumentDataMemoryCache mDocumentDataMemoryCache;
     private final PhotoMemoryCache mPhotoMemoryCache;
@@ -76,24 +94,35 @@ public class GiniCapture {
     private final DocumentImportEnabledFileTypes mDocumentImportEnabledFileTypes;
     private final boolean mFileImportEnabled;
     private final boolean mQRCodeScanningEnabled;
+    private final boolean mIsOnlyQRCodeScanning;
     private final ArrayList<OnboardingPage> mCustomOnboardingPages; // NOPMD - Bundle req. ArrayList
     private final boolean mShouldShowOnboardingAtFirstRun;
     private final boolean mMultiPageEnabled;
     private boolean mShouldShowOnboarding;
     private final boolean mIsSupportedFormatsHelpScreenEnabled;
     private final boolean mFlashButtonEnabled;
-    private final boolean mBackButtonsEnabled;
     private final boolean mIsFlashOnByDefault;
     private final EventTracker mEventTracker;
     private final List<HelpItem.Custom> mCustomHelpItems;
     private final ErrorLogger mErrorLogger;
     private final int mImportedFileSizeBytesLimit;
+    private final InjectedViewAdapterInstance<NavigationBarTopAdapter> navigationBarTopAdapterInstance;
+    private final InjectedViewAdapterInstance<OnboardingNavigationBarBottomAdapter> onboardingNavigationBarBottomAdapterInstance;
+    private final InjectedViewAdapterInstance<HelpNavigationBarBottomAdapter> helpNavigationBarBottomAdapterInstance;
+    private final InjectedViewAdapterInstance<CameraNavigationBarBottomAdapter> cameraNavigationBarBottomAdapterInstance;
+    private final boolean isBottomNavigationBarEnabled;
+    private final InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingAlignCornersIllustrationAdapterInstance;
+    private final InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingLightingIllustrationAdapterInstance;
+    private final InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingMultiPageIllustrationAdapterInstance;
+    private final InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingQRCodeIllustrationAdapterInstance;
+    private final InjectedViewAdapterInstance<CustomLoadingIndicatorAdapter> loadingIndicatorAdapterInstance;
+    private final InjectedViewAdapterInstance<ReviewNavigationBarBottomAdapter> reviewNavigationBarBottomAdapterInstance;
+    private final InjectedViewAdapterInstance<OnButtonLoadingIndicatorAdapter> onButtonLoadingIndicatorAdapterInstance;
 
     /**
      * Retrieve the current instance.
      *
      * @return {@link GiniCapture} instance
-     *
      * @throws IllegalStateException when there is no instance
      */
     @NonNull
@@ -122,8 +151,7 @@ public class GiniCapture {
      * Configure and create a new instance using the returned {@link Builder}.
      *
      * @return a new {@link Builder}
-     *
-     * @throws IllegalStateException when an instance already exists. Call {@link #cleanup(Context)}
+     * @throws IllegalStateException when an instance already exists. Call {@link #cleanup(Context, String, String, String, String, String, Amount)}
      *                               before trying to create a new instance
      */
     @NonNull
@@ -139,21 +167,85 @@ public class GiniCapture {
      * Destroys the {@link GiniCapture} instance and frees up used resources.
      *
      * @param context Android context
+     * @param paymentRecipient payment receiver.
+     * @param paymentReference ID based on Client ID (Kundennummer) and invoice ID (Rechnungsnummer).
+     * @param paymentPurpose statement what this payment is for.
+     * @param iban international bank account.
+     * @param bic bank identification code.
+     * @param amount accepts extracted amount and currency.
      */
-    public static synchronized void cleanup(@NonNull final Context context) {
-        if (sInstance != null) {
-            sInstance.mDocumentDataMemoryCache.clear();
-            sInstance.mPhotoMemoryCache.clear();
-            if (sInstance.mNetworkRequestsManager != null) {
-                sInstance.mNetworkRequestsManager.cleanup();
-            }
-            if (sInstance.mGiniCaptureNetworkApi != null) {
-                sInstance.mGiniCaptureNetworkApi.setUpdatedCompoundExtractions(Collections.<String, GiniCaptureCompoundExtraction>emptyMap());
-            }
-            sInstance.mImageMultiPageDocumentMemoryStore.clear();
-            sInstance.internal().setReviewScreenAnalysisError(null);
-            sInstance = null; // NOPMD
+    public static synchronized void cleanup(@NonNull final Context context,
+                                            @NonNull final String paymentRecipient,
+                                            @NonNull final String paymentReference,
+                                            @NonNull final String paymentPurpose,
+                                            @NonNull final String iban,
+                                            @NonNull final String bic,
+                                            @NonNull final Amount amount) {
+
+        if (sInstance == null) {
+            return;
         }
+
+        Map<String, GiniCaptureSpecificExtraction> extractionMap = new HashMap<>();
+
+        extractionMap.put("amountToPay", new GiniCaptureSpecificExtraction("amountToPay", amount.amountToPay(),
+                "amount", null, emptyList()));
+
+        extractionMap.put("paymentRecipient", new GiniCaptureSpecificExtraction("paymentRecipient", paymentRecipient,
+                "companyname", null, emptyList()));
+
+        extractionMap.put("paymentReference", new GiniCaptureSpecificExtraction("paymentReference", paymentReference,
+                "reference", null, emptyList()));
+
+        extractionMap.put("paymentPurpose", new GiniCaptureSpecificExtraction("paymentPurpose", paymentPurpose,
+                "reference", null, emptyList()));
+
+        extractionMap.put("iban", new GiniCaptureSpecificExtraction("iban", iban,
+                "iban", null, emptyList()));
+
+        extractionMap.put("bic", new GiniCaptureSpecificExtraction("bic", bic,
+                "bic", null, emptyList()));
+
+
+        // Test fails here if for some reason mGiniCaptureNetworkService is null
+        // Added null checking to fix test fail -> or figure out something else
+        final GiniCapture oldInstance = sInstance;
+        if (oldInstance.mGiniCaptureNetworkService != null)
+            oldInstance.mGiniCaptureNetworkService.sendFeedback(extractionMap,
+                    oldInstance.mInternal.getCompoundExtractions(), new GiniCaptureNetworkCallback<Void, Error>() {
+                        @Override
+                        public void failure(Error error) {
+                            if (oldInstance.mNetworkRequestsManager != null) {
+                                oldInstance.mNetworkRequestsManager.cleanup();
+                            }
+                        }
+
+                        @Override
+                        public void success(Void result) {
+                            if (oldInstance.mNetworkRequestsManager != null) {
+                                oldInstance.mNetworkRequestsManager.cleanup();
+                            }
+                        }
+
+                        @Override
+                        public void cancelled() {
+                            if (oldInstance.mNetworkRequestsManager != null) {
+                                oldInstance.mNetworkRequestsManager.cleanup();
+                            }
+                        }
+                    });
+
+        doActualCleanUp(context);
+    }
+
+
+    private static void doActualCleanUp(Context context) {
+        sInstance.mDocumentDataMemoryCache.clear();
+        sInstance.mPhotoMemoryCache.clear();
+        sInstance.mInternal.setUpdatedCompoundExtractions(emptyMap());
+        sInstance.mImageMultiPageDocumentMemoryStore.clear();
+        sInstance.internal().setReviewScreenAnalysisError(null);
+        sInstance = null; // NOPMD
         ImageDiskStore.clear(context);
     }
 
@@ -163,10 +255,10 @@ public class GiniCapture {
 
     private GiniCapture(@NonNull final Builder builder) {
         mGiniCaptureNetworkService = builder.getGiniCaptureNetworkService();
-        mGiniCaptureNetworkApi = builder.getGiniCaptureNetworkApi();
         mDocumentImportEnabledFileTypes = builder.getDocumentImportEnabledFileTypes();
         mFileImportEnabled = builder.isFileImportEnabled();
         mQRCodeScanningEnabled = builder.isQRCodeScanningEnabled();
+        mIsOnlyQRCodeScanning = builder.isOnlyQRCodeScanningEnabled();
         mCustomOnboardingPages = builder.getOnboardingPages();
         mShouldShowOnboardingAtFirstRun = builder.shouldShowOnboardingAtFirstRun();
         mShouldShowOnboarding = builder.shouldShowOnboarding();
@@ -181,7 +273,6 @@ public class GiniCapture {
         mMultiPageEnabled = builder.isMultiPageEnabled();
         mIsSupportedFormatsHelpScreenEnabled = builder.isSupportedFormatsHelpScreenEnabled();
         mFlashButtonEnabled = builder.isFlashButtonEnabled();
-        mBackButtonsEnabled = builder.areBackButtonsEnabled();
         mIsFlashOnByDefault = builder.isFlashOnByDefault();
         mEventTracker = builder.getEventTracker();
         mCustomHelpItems = builder.getCustomHelpItems();
@@ -189,6 +280,18 @@ public class GiniCapture {
                 builder.getGiniCaptureNetworkService(),
                 builder.getCustomErrorLoggerListener());
         mImportedFileSizeBytesLimit = builder.getImportedFileSizeBytesLimit();
+        navigationBarTopAdapterInstance = builder.getNavigationBarTopAdapterInstance();
+        onboardingNavigationBarBottomAdapterInstance = builder.getOnboardingNavigationBarBottomAdapterInstance();
+        helpNavigationBarBottomAdapterInstance = builder.getHelpNavigationBarBottomAdapterInstance();
+        isBottomNavigationBarEnabled = builder.isBottomNavigationBarEnabled();
+        onboardingAlignCornersIllustrationAdapterInstance = builder.getOnboardingAlignCornersIllustrationAdapterInstance();
+        onboardingLightingIllustrationAdapterInstance = builder.getOnboardingLightingIllustrationAdapterInstance();
+        onboardingMultiPageIllustrationAdapterInstance = builder.getOnboardingMultiPageIllustrationAdapterInstance();
+        onboardingQRCodeIllustrationAdapterInstance = builder.getOnboardingQRCodeIllustrationAdapterInstance();
+        cameraNavigationBarBottomAdapterInstance = builder.getCameraNavigationBarBottomAdapterInstance();
+        loadingIndicatorAdapterInstance = builder.getLoadingIndicatorAdapterInstance();
+        reviewNavigationBarBottomAdapterInstance = builder.getReviewNavigationBarBottomAdapterInstance();
+        onButtonLoadingIndicatorAdapterInstance = builder.getOnButtonLoadingIndicatorAdapterInstance();
     }
 
     /**
@@ -199,16 +302,6 @@ public class GiniCapture {
     @NonNull
     public Internal internal() {
         return mInternal;
-    }
-
-    /**
-     * Retrieve the {@link GiniCaptureNetworkApi} instance, if available.
-     *
-     * @return {@link GiniCaptureNetworkApi} instance or {@code null}
-     */
-    @Nullable
-    public GiniCaptureNetworkApi getGiniCaptureNetworkApi() {
-        return mGiniCaptureNetworkApi;
     }
 
     /**
@@ -243,6 +336,18 @@ public class GiniCapture {
      */
     public boolean isQRCodeScanningEnabled() {
         return mQRCodeScanningEnabled;
+    }
+
+
+    /**
+     * Find out whether only QRCode scanning has been enabled.
+     *
+     * <p> Disabled by default.
+     *
+     * @return {@code true} if only QRCode scanning was enabled
+     */
+    public boolean isOnlyQRCodeScanning() {
+        return mIsOnlyQRCodeScanning;
     }
 
     /**
@@ -330,21 +435,6 @@ public class GiniCapture {
     }
 
     /**
-     * Screen API only
-     *
-     * <p> Find out whether back buttons in all Activities have been enabled.
-     * {@link ReviewActivity} and {@link AnalysisActivity} are not affected and always show back
-     * buttons.
-     *
-     * <p> Enabled by default.
-     *
-     * @return {@code true} if the back buttons were enabled
-     */
-    public boolean areBackButtonsEnabled() {
-        return mBackButtonsEnabled;
-    }
-
-    /**
      * Find out whether the camera flash is on or off by default.
      *
      * <p> If not changed, then flash is on by default.
@@ -356,9 +446,7 @@ public class GiniCapture {
     }
 
     /**
-     * Screen API
-     *
-     * <p> If you have enabled the multi-page feature and your application receives one or multiple
+     * When your application receives one or multiple
      * files from another application you can use this method to create an Intent for launching the
      * Gini Capture SDK.
      *
@@ -372,102 +460,13 @@ public class GiniCapture {
      * @param intent   the Intent your app received
      * @param context  Android context
      * @param callback A {@link AsyncCallback} implementation
-     *
      * @return a {@link CancellationToken} for cancelling the import process
      */
     @NonNull
     public CancellationToken createIntentForImportedFiles(@NonNull final Intent intent,
-            @NonNull final Context context,
-            @NonNull final AsyncCallback<Intent, ImportedFileValidationException> callback) {
+                                                          @NonNull final Context context,
+                                                          @NonNull final AsyncCallback<Intent, ImportedFileValidationException> callback) {
         return mGiniCaptureFileImport.createIntentForImportedFiles(intent, context, callback);
-    }
-
-    /**
-     * Component API
-     *
-     * <p> If you have enabled the multi-page feature and your application receives one or multiple
-     * files from another application you can use this method to create a Document for launching the
-     * Gini Capture SDK's {@link MultiPageReviewFragment} or the Analysis Fragment.
-     *
-     * <p> Importing the files is executed on a secondary thread as it can take several seconds for
-     * the process to complete. The callback methods are invoked on the main thread.
-     *
-     * <p> If the Document can be reviewed ({@link Document#isReviewable()}) launch the {@link
-     * MultiPageReviewFragment}.
-     *
-     * <p> If the Document cannot be reviewed you must launch the Analysis Fragment ({@link
-     * net.gini.android.capture.analysis.AnalysisFragmentCompat}).
-     *
-     * @param intent   the Intent your app received
-     * @param context  Android context
-     * @param callback A {@link AsyncCallback} implementation
-     *
-     * @return a {@link CancellationToken} for cancelling the import process
-     */
-    @NonNull
-    public CancellationToken createDocumentForImportedFiles(@NonNull final Intent intent,
-            @NonNull final Context context,
-            @NonNull final AsyncCallback<Document, ImportedFileValidationException> callback) {
-        return mGiniCaptureFileImport.createDocumentForImportedFiles(intent, context, callback);
-    }
-
-    /**
-     * Screen API
-     *
-     * <p> When your application receives a file from another application you can use this method to
-     * create an Intent for launching the Gini Capture SDK.
-     *
-     * <p> Start the Intent with {@link android.app.Activity#startActivityForResult(Intent, int)} to
-     * receive the extractions or a {@link GiniCaptureError} in case there was an error.
-     *
-     * @param intent                the Intent your app received
-     * @param context               Android context
-     * @param reviewActivityClass   (optional) the class of your application's {@link
-     *                              ReviewActivity} subclass
-     * @param analysisActivityClass (optional) the class of your application's {@link
-     *                              AnalysisActivity} subclass
-     *
-     * @return an Intent for launching the Gini Capture SDK
-     *
-     * @throws ImportedFileValidationException if the file didn't pass validation
-     * @throws IllegalArgumentException        if the Intent's data is not valid or the mime type is
-     *                                         not supported
-     **/
-    @NonNull
-    public static Intent createIntentForImportedFile(@NonNull final Intent intent,
-            @NonNull final Context context,
-            @Nullable final Class<? extends ReviewActivity> reviewActivityClass,
-            @Nullable final Class<? extends AnalysisActivity> analysisActivityClass)
-            throws ImportedFileValidationException {
-        return GiniCaptureFileImport.createIntentForImportedFile(intent, context,
-                reviewActivityClass, analysisActivityClass);
-    }
-
-    /**
-     * Component API
-     *
-     * <p> When your application receives a file from another application you can use this method to
-     * create a Document for launching the Gini Capture SDK's Review Fragment or Analysis
-     * Fragment.
-     *
-     * <p> If the Document can be reviewed ({@link Document#isReviewable()}) launch the
-     * Review Fragment ({@link net.gini.android.capture.review.ReviewFragmentCompat}).
-     *
-     * <p> If the Document cannot be reviewed you must launch the Analysis Fragment ({@link
-     * net.gini.android.capture.analysis.AnalysisFragmentCompat}).
-     *
-     * @param intent  the Intent your app received
-     * @param context Android context
-     *
-     * @return a Document for launching the Gini Capture SDK's Review Fragment or
-     * Analysis Fragment
-     *
-     * @throws ImportedFileValidationException if the file didn't pass validation
-     */
-    @NonNull
-    public static Document createDocumentForImportedFile(@NonNull final Intent intent,
-            @NonNull final Context context) throws ImportedFileValidationException {
-        return GiniCaptureFileImport.createDocumentForImportedFile(intent, context);
     }
 
     /**
@@ -516,7 +515,80 @@ public class GiniCapture {
     }
 
     @NonNull
-    ErrorLogger getErrorLogger() { return mErrorLogger; }
+    ErrorLogger getErrorLogger() {
+        return mErrorLogger;
+    }
+
+    @NonNull
+    public NavigationBarTopAdapter getNavigationBarTopAdapter() {
+        return navigationBarTopAdapterInstance.getViewAdapter();
+    }
+
+    @NonNull
+    public OnboardingNavigationBarBottomAdapter getOnboardingNavigationBarBottomAdapter() {
+        return onboardingNavigationBarBottomAdapterInstance.getViewAdapter();
+    }
+
+    @NonNull
+    public HelpNavigationBarBottomAdapter getHelpNavigationBarBottomAdapter() {
+        return helpNavigationBarBottomAdapterInstance.getViewAdapter();
+    }
+
+    @NonNull
+    public CameraNavigationBarBottomAdapter getCameraNavigationBarBottomAdapter() {
+        return cameraNavigationBarBottomAdapterInstance.getViewAdapter();
+    }
+
+    public boolean isBottomNavigationBarEnabled() {
+        return isBottomNavigationBarEnabled;
+    }
+
+    @Nullable
+    public OnboardingIllustrationAdapter getOnboardingAlignCornersIllustrationAdapter() {
+        if (onboardingAlignCornersIllustrationAdapterInstance == null) {
+            return null;
+        }
+        return onboardingAlignCornersIllustrationAdapterInstance.getViewAdapter();
+    }
+
+    @Nullable
+    public OnboardingIllustrationAdapter getOnboardingLightingIllustrationAdapter() {
+        if (onboardingLightingIllustrationAdapterInstance == null) {
+            return null;
+        }
+        return onboardingLightingIllustrationAdapterInstance.getViewAdapter();
+    }
+
+    @Nullable
+    public OnboardingIllustrationAdapter getOnboardingMultiPageIllustrationAdapter() {
+        if (onboardingMultiPageIllustrationAdapterInstance == null) {
+            return null;
+        }
+        return onboardingMultiPageIllustrationAdapterInstance.getViewAdapter();
+    }
+
+    @Nullable
+    public OnboardingIllustrationAdapter getOnboardingQRCodeIllustrationAdapter() {
+        if (onboardingQRCodeIllustrationAdapterInstance == null) {
+            return null;
+        }
+        return onboardingQRCodeIllustrationAdapterInstance.getViewAdapter();
+    }
+
+    @Nullable
+    public CustomLoadingIndicatorAdapter getLoadingIndicatorAdapter() {
+        return loadingIndicatorAdapterInstance.getViewAdapter();
+    }
+
+    @NonNull
+    public ReviewNavigationBarBottomAdapter getReviewNavigationBarBottomAdapter() {
+        return reviewNavigationBarBottomAdapterInstance.getViewAdapter();
+    }
+
+    @Nullable
+    public OnButtonLoadingIndicatorAdapter getOnButtonLoadingIndicatorAdapter() {
+        return onButtonLoadingIndicatorAdapterInstance.getViewAdapter();
+    }
 
     /**
      * The size limit in bytes for imported files.
@@ -533,19 +605,20 @@ public class GiniCapture {
     public static class Builder {
 
         private GiniCaptureNetworkService mGiniCaptureNetworkService;
-        private GiniCaptureNetworkApi mGiniCaptureNetworkApi;
         private DocumentImportEnabledFileTypes mDocumentImportEnabledFileTypes =
                 DocumentImportEnabledFileTypes.NONE;
         private boolean mFileImportEnabled;
         private boolean mQRCodeScanningEnabled;
+        private boolean mOnlyQRCodeScanningEnabled;
         private ArrayList<OnboardingPage> mOnboardingPages; // NOPMD - ArrayList required (Bundle)
         private boolean mShouldShowOnboardingAtFirstRun = true;
         private boolean mShouldShowOnboarding;
         private boolean mMultiPageEnabled;
         private boolean mIsSupportedFormatsHelpScreenEnabled = true;
         private boolean mFlashButtonEnabled;
-        private boolean mBackButtonsEnabled = true;
+        
         private boolean mIsFlashOnByDefault = true;
+
         private EventTracker mEventTracker = new EventTracker() {
             @Override
             public void onOnboardingScreenEvent(@NotNull final Event<OnboardingScreenEvent> event) {
@@ -567,6 +640,19 @@ public class GiniCapture {
         private boolean mGiniErrorLoggerIsOn = true;
         private ErrorLoggerListener mCustomErrorLoggerListener;
         private int mImportedFileSizeBytesLimit = FILE_SIZE_LIMIT;
+        private InjectedViewAdapterInstance<NavigationBarTopAdapter> navigationBarTopAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultNavigationBarTopAdapter());
+        private InjectedViewAdapterInstance<OnboardingNavigationBarBottomAdapter> navigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultOnboardingNavigationBarBottomAdapter());
+        private InjectedViewAdapterInstance<HelpNavigationBarBottomAdapter> helpNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultHelpNavigationBarBottomAdapter());
+        private InjectedViewAdapterInstance<CameraNavigationBarBottomAdapter> cameraNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultCameraNavigationBarBottomAdapter());
+        private boolean isBottomNavigationBarEnabled = false;
+        private InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingAlignCornersIllustrationAdapterInstance;
+        private InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingLightingIllustrationAdapterInstance;
+        private InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingMultiPageIllustrationAdapterInstance;
+        private InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingQRCodeIllustrationAdapterInstance;
+        private InjectedViewAdapterInstance<CustomLoadingIndicatorAdapter> loadingIndicatorAdapter = new InjectedViewAdapterInstance<>(new DefaultLoadingIndicatorAdapter());
+        private InjectedViewAdapterInstance<ReviewNavigationBarBottomAdapter> reviewNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultReviewNavigationBarBottomAdapter());
+
+        private InjectedViewAdapterInstance<OnButtonLoadingIndicatorAdapter> onButtonLoadingIndicatorAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultOnButtonLoadingIndicatorAdapter());
 
         /**
          * Create a new {@link GiniCapture} instance.
@@ -583,12 +669,6 @@ public class GiniCapture {
                         + "You may provide a GiniCaptureNetworkService instance with "
                         + "GiniCapture.newInstance().setGiniCaptureNetworkService()");
             }
-            if (mGiniCaptureNetworkApi == null) {
-                LOG.warn("GiniCaptureNetworkApi instance not set. "
-                        + "Relying on client to perform network calls."
-                        + "You may provide a GiniCaptureNetworkApi instance with "
-                        + "GiniCapture.newInstance().setGiniCaptureNetworkApi()");
-            }
         }
 
         /**
@@ -601,7 +681,6 @@ public class GiniCapture {
          * <p> Default value is {@code true}.
          *
          * @param shouldShowOnboardingAtFirstRun whether to show the onboarding on first run or not
-         *
          * @return the {@link Builder} instance
          */
         @NonNull
@@ -615,7 +694,6 @@ public class GiniCapture {
          * Set custom pages to be shown in the Onboarding Screen.
          *
          * @param onboardingPages an {@link ArrayList} of {@link OnboardingPage}s
-         *
          * @return the {@link Builder} instance
          */
         @NonNull
@@ -634,7 +712,6 @@ public class GiniCapture {
          * <p> Default value is {@code false}.
          *
          * @param shouldShowOnboarding whether to show the onboarding on every launch
-         *
          * @return the {@link Builder} instance
          */
         @NonNull
@@ -653,7 +730,6 @@ public class GiniCapture {
          * <p> Disabled by default.
          *
          * @param multiPageEnabled {@code true} to enable multi-page
-         *
          * @return the {@link Builder} instance
          */
         public Builder setMultiPageEnabled(final boolean multiPageEnabled) {
@@ -680,33 +756,12 @@ public class GiniCapture {
          * request document related network calls (e.g. upload, analysis or deletion).
          *
          * @param giniCaptureNetworkService a {@link GiniCaptureNetworkService} instance
-         *
          * @return the {@link Builder} instance
          */
         @NonNull
         public Builder setGiniCaptureNetworkService(
                 @NonNull final GiniCaptureNetworkService giniCaptureNetworkService) {
             mGiniCaptureNetworkService = giniCaptureNetworkService;
-            return this;
-        }
-
-        @Nullable
-        GiniCaptureNetworkApi getGiniCaptureNetworkApi() {
-            return mGiniCaptureNetworkApi;
-        }
-
-        /**
-         * Set the {@link GiniCaptureNetworkApi} instance which clients can use to request network
-         * calls (e.g. for sending feedback).
-         *
-         * @param giniCaptureNetworkApi a {@link GiniCaptureNetworkApi} instance
-         *
-         * @return the {@link Builder} instance
-         */
-        @NonNull
-        public Builder setGiniCaptureNetworkApi(
-                @NonNull final GiniCaptureNetworkApi giniCaptureNetworkApi) {
-            mGiniCaptureNetworkApi = giniCaptureNetworkApi;
             return this;
         }
 
@@ -722,7 +777,6 @@ public class GiniCapture {
          * <p> Disabled by default.
          *
          * @param documentImportEnabledFileTypes file types to be enabled for document import
-         *
          * @return the {@link Builder} instance
          */
         @NonNull
@@ -742,7 +796,6 @@ public class GiniCapture {
          * <p> Disabled by default.
          *
          * @param fileImportEnabled {@code true} to enable file import
-         *
          * @return the {@link Builder} instance
          */
         @NonNull
@@ -761,12 +814,30 @@ public class GiniCapture {
          * <p> Disabled by default.
          *
          * @param qrCodeScanningEnabled {@code true} to enable QRCode scanning
-         *
          * @return the {@link Builder} instance
          */
         @NonNull
         public Builder setQRCodeScanningEnabled(final boolean qrCodeScanningEnabled) {
             mQRCodeScanningEnabled = qrCodeScanningEnabled;
+            return this;
+        }
+
+
+        boolean isOnlyQRCodeScanningEnabled() {
+            return mOnlyQRCodeScanningEnabled;
+        }
+
+
+        /**
+         * Enable/disable only the QRCode scanning feature.
+         *
+         * <p> Disabled by default.
+         *
+         * @param onlyQRCodeScanningEnabled {@code true} to enable only QRCode scanning
+         * @return the {@link Builder} instance
+         */
+        public Builder setOnlyQRCodeScanning(final boolean onlyQRCodeScanningEnabled) {
+            mOnlyQRCodeScanningEnabled = onlyQRCodeScanningEnabled;
             return this;
         }
 
@@ -780,7 +851,6 @@ public class GiniCapture {
          * <p> Enabled by default.
          *
          * @param enabled {@code true} to show the Supported Formats help screen
-         *
          * @return the {@link Builder} instance
          */
         public Builder setSupportedFormatsHelpScreenEnabled(final boolean enabled) {
@@ -798,7 +868,6 @@ public class GiniCapture {
          * <p> Disabled by default.
          *
          * @param enabled {@code true} to show the flash button
-         *
          * @return the {@link Builder} instance
          */
         public Builder setFlashButtonEnabled(final boolean enabled) {
@@ -811,33 +880,11 @@ public class GiniCapture {
         }
 
         /**
-         * Screen API only
-         *
-         * <p> Enable/disable back buttons in all Activities except {@link ReviewActivity} and
-         * {@link AnalysisActivity}, which always show back buttons.
-         *
-         * <p> Enabled by default.
-         *
-         * @param enabled {@code true} to show back buttons
-         *
-         * @return the {@link Builder} instance
-         */
-        public Builder setBackButtonsEnabled(final boolean enabled) {
-            mBackButtonsEnabled = enabled;
-            return this;
-        }
-
-        boolean areBackButtonsEnabled() {
-            return mBackButtonsEnabled;
-        }
-
-        /**
          * Set whether the camera flash is on or off by default.
          *
          * <p> If not changed, then flash is on by default.
          *
          * @param flashOn {@code true} to turn the flash on
-         *
          * @return the {@link Builder} instance
          */
         public Builder setFlashOnByDefault(final boolean flashOn) {
@@ -854,7 +901,6 @@ public class GiniCapture {
          * which can occur during the usage of the Gini Capture SDK.
          *
          * @param eventTracker an {@link EventTracker} instance
-         *
          * @return the {@link Builder} instance
          */
         public Builder setEventTracker(@NonNull final EventTracker eventTracker) {
@@ -875,7 +921,6 @@ public class GiniCapture {
          * Set custom help items to be shown in the Help Screen.
          *
          * @param customHelpItems an {@link List} of {@link HelpItem.Custom} objects
-         *
          * @return the {@link Builder} instance
          */
         public Builder setCustomHelpItems(@NonNull final List<HelpItem.Custom> customHelpItems) {
@@ -930,6 +975,190 @@ public class GiniCapture {
         public int getImportedFileSizeBytesLimit() {
             return mImportedFileSizeBytesLimit;
         }
+
+        /**
+         * Set an adapter implementation to show a custom top navigation bar.
+         *
+         * @param adapter a {@link NavigationBarTopAdapter} interface implementation
+         * @return the {@link Builder} instance
+         */
+        public Builder setNavigationBarTopAdapter(@NonNull final NavigationBarTopAdapter adapter) {
+            navigationBarTopAdapterInstance = new InjectedViewAdapterInstance<>(adapter);
+            return this;
+        }
+
+        @NonNull
+        private InjectedViewAdapterInstance<NavigationBarTopAdapter> getNavigationBarTopAdapterInstance() {
+            return navigationBarTopAdapterInstance;
+        }
+
+        /**
+         * Set an adapter implementation to show a custom bottom navigation bar on the onboarding screen.
+         *
+         * @param adapter an {@link OnboardingNavigationBarBottomAdapter} interface implementation
+         * @return the {@link Builder} instance
+         */
+        public Builder setOnboardingNavigationBarBottomAdapter(@NonNull final OnboardingNavigationBarBottomAdapter adapter) {
+            navigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(adapter);
+            return this;
+        }
+
+        @NonNull
+        private InjectedViewAdapterInstance<OnboardingNavigationBarBottomAdapter> getOnboardingNavigationBarBottomAdapterInstance() {
+            return navigationBarBottomAdapterInstance;
+        }
+
+        /**
+         * Set an adapter implementation to show a custom bottom navigation bar on the help screen.
+         *
+         * @param adapter a {@link HelpNavigationBarBottomAdapter} interface implementation
+         * @return the {@link Builder} instance
+         */
+        public Builder setHelpNavigationBarBottomAdapter(@NonNull final HelpNavigationBarBottomAdapter adapter) {
+            helpNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(adapter);
+            return this;
+        }
+
+        @NonNull
+        private InjectedViewAdapterInstance<HelpNavigationBarBottomAdapter> getHelpNavigationBarBottomAdapterInstance() {
+            return helpNavigationBarBottomAdapterInstance;
+        }
+
+        /**
+         * Set an adapter implementation to show a custom bottom navigation bar on the camera screen.
+         *
+         * @param adapter a {@link CameraNavigationBarBottomAdapter} interface implementation
+         * @return the {@link Builder} instance
+         */
+        public Builder setCameraNavigationBarBottomAdapter(@NonNull final CameraNavigationBarBottomAdapter adapter) {
+            cameraNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(adapter);
+            return this;
+        }
+
+        private InjectedViewAdapterInstance<CameraNavigationBarBottomAdapter> getCameraNavigationBarBottomAdapterInstance() {
+            return cameraNavigationBarBottomAdapterInstance;
+        }
+
+        /**
+         * Enable/disable the bottom navigation bar.
+         * <p>
+         * Disabled by default.
+         *
+         * @return the {@link Builder} instance
+         */
+        public Builder setBottomNavigationBarEnabled(final Boolean enabled) {
+            isBottomNavigationBarEnabled = enabled;
+            return this;
+        }
+
+        private boolean isBottomNavigationBarEnabled() {
+            return isBottomNavigationBarEnabled;
+        }
+
+        @NonNull
+        private InjectedViewAdapterInstance<OnboardingIllustrationAdapter> getOnboardingAlignCornersIllustrationAdapterInstance() {
+            return onboardingAlignCornersIllustrationAdapterInstance;
+        }
+
+        /**
+         * Set an adapter implementation to show a custom illustration on the "align corners" onboarding page.
+         *
+         * @param adapter an {@link OnboardingIllustrationAdapter} interface implementation
+         * @return the {@link Builder} instance
+         */
+        public Builder setOnboardingAlignCornersIllustrationAdapter(@NonNull final OnboardingIllustrationAdapter adapter) {
+            onboardingAlignCornersIllustrationAdapterInstance = new InjectedViewAdapterInstance<>(adapter);
+            return this;
+        }
+
+        @NonNull
+        private InjectedViewAdapterInstance<OnboardingIllustrationAdapter> getOnboardingLightingIllustrationAdapterInstance() {
+            return onboardingLightingIllustrationAdapterInstance;
+        }
+
+        /**
+         * Set an adapter implementation to show a custom illustration on the "lighting" onboarding page.
+         *
+         * @param adapter an {@link OnboardingIllustrationAdapter} interface implementation
+         * @return the {@link Builder} instance
+         */
+        public Builder setOnboardingLightingIllustrationAdapter(@NonNull final OnboardingIllustrationAdapter adapter) {
+            onboardingLightingIllustrationAdapterInstance = new InjectedViewAdapterInstance<>(adapter);
+            return this;
+        }
+
+        @NonNull
+        private InjectedViewAdapterInstance<OnboardingIllustrationAdapter> getOnboardingMultiPageIllustrationAdapterInstance() {
+            return onboardingMultiPageIllustrationAdapterInstance;
+        }
+
+        /**
+         * Set an adapter implementation to show a custom illustration on the "multi-page" onboarding page.
+         *
+         * @param adapter an {@link OnboardingIllustrationAdapter} interface implementation
+         * @return the {@link Builder} instance
+         */
+        public Builder setOnboardingMultiPageIllustrationAdapter(@NonNull final OnboardingIllustrationAdapter adapter) {
+            onboardingMultiPageIllustrationAdapterInstance = new InjectedViewAdapterInstance<>(adapter);
+            return this;
+        }
+
+        @NonNull
+        private InjectedViewAdapterInstance<OnboardingIllustrationAdapter> getOnboardingQRCodeIllustrationAdapterInstance() {
+            return onboardingQRCodeIllustrationAdapterInstance;
+        }
+
+        /**
+         * Set an adapter implementation to show a custom illustration on the "QR code" onboarding page.
+         *
+         * @param adapter an {@link OnboardingIllustrationAdapter} interface implementation
+         * @return the {@link Builder} instance
+         */
+        public Builder setOnboardingQRCodeIllustrationAdapter(@NonNull final OnboardingIllustrationAdapter adapter) {
+            onboardingQRCodeIllustrationAdapterInstance = new InjectedViewAdapterInstance<>(adapter);
+            return this;
+        }
+
+        @NonNull
+        private InjectedViewAdapterInstance<CustomLoadingIndicatorAdapter> getLoadingIndicatorAdapterInstance() {
+            return loadingIndicatorAdapter;
+        }
+
+        /**
+         * Set an adapter implementation to show a custom loading indicator.
+         *
+         * @param adapter an {@link CustomLoadingIndicatorAdapter} interface implementation
+         * @return the {@link Builder} instance
+         */
+        public Builder setLoadingIndicatorAdapter(@NonNull final CustomLoadingIndicatorAdapter adapter) {
+            loadingIndicatorAdapter = new InjectedViewAdapterInstance<>(adapter);
+            return this;
+        }
+
+        @NonNull
+        private InjectedViewAdapterInstance<OnButtonLoadingIndicatorAdapter> getOnButtonLoadingIndicatorAdapterInstance() {
+            return onButtonLoadingIndicatorAdapterInstance;
+        }
+
+        public Builder setOnButtonLoadingIndicatorAdapter(@NonNull final OnButtonLoadingIndicatorAdapter adapter) {
+            onButtonLoadingIndicatorAdapterInstance = new InjectedViewAdapterInstance<>(adapter);
+            return this;
+        }
+
+        /**
+         * Set an adapter implementation to show a custom bottom navigation bar on the review screen.
+         *
+         * @param adapter a {@link ReviewNavigationBarBottomAdapter} interface implementation
+         * @return the {@link Builder} instance
+         */
+        public Builder setReviewBottomBarNavigationAdapter(@NonNull final ReviewNavigationBarBottomAdapter adapter) {
+            reviewNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(adapter);
+            return this;
+        }
+
+        private InjectedViewAdapterInstance<ReviewNavigationBarBottomAdapter> getReviewNavigationBarBottomAdapterInstance() {
+            return reviewNavigationBarBottomAdapterInstance;
+        }
     }
 
     /**
@@ -942,6 +1171,8 @@ public class GiniCapture {
         private final GiniCapture mGiniCapture;
 
         private Throwable mReviewScreenAnalysisError;
+
+        private Map<String, GiniCaptureCompoundExtraction> mCompoundExtractions = new HashMap<>();
 
         public Internal(@NonNull final GiniCapture giniCapture) {
             mGiniCapture = giniCapture;
@@ -990,6 +1221,43 @@ public class GiniCapture {
 
         public ErrorLogger getErrorLogger() {
             return mGiniCapture.getErrorLogger();
+        }
+
+
+        public void setUpdatedCompoundExtractions(@NonNull final Map<String, GiniCaptureCompoundExtraction> compoundExtractions) {
+            mCompoundExtractions = compoundExtractions;
+        }
+
+        public Map<String, GiniCaptureCompoundExtraction> getCompoundExtractions() {
+            return mCompoundExtractions;
+        }
+
+        public InjectedViewAdapterInstance<NavigationBarTopAdapter> getNavigationBarTopAdapterInstance() {
+            return mGiniCapture.navigationBarTopAdapterInstance;
+        }
+
+        public InjectedViewAdapterInstance<CameraNavigationBarBottomAdapter> getCameraNavigationBarBottomAdapterInstance() {
+            return mGiniCapture.cameraNavigationBarBottomAdapterInstance;
+        }
+
+        public InjectedViewAdapterInstance<HelpNavigationBarBottomAdapter> getHelpNavigationBarBottomAdapterInstance() {
+            return mGiniCapture.helpNavigationBarBottomAdapterInstance;
+        }
+
+        public InjectedViewAdapterInstance<CustomLoadingIndicatorAdapter> getLoadingIndicatorAdapterInstance() {
+            return mGiniCapture.loadingIndicatorAdapterInstance;
+        }
+
+        public InjectedViewAdapterInstance<OnboardingNavigationBarBottomAdapter> getOnboardingNavigationBarBottomAdapterInstance() {
+            return mGiniCapture.onboardingNavigationBarBottomAdapterInstance;
+        }
+
+        public InjectedViewAdapterInstance<ReviewNavigationBarBottomAdapter> getReviewNavigationBarBottomAdapterInstance() {
+            return mGiniCapture.reviewNavigationBarBottomAdapterInstance;
+        }
+
+        public InjectedViewAdapterInstance<OnButtonLoadingIndicatorAdapter> getOnButtonLoadingIndicatorAdapterInstance() {
+            return mGiniCapture.onButtonLoadingIndicatorAdapterInstance;
         }
     }
 

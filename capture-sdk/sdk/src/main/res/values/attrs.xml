@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- CustomFont* view attributes -->
-    <declare-styleable name="CustomFont">
-        <attr name="gcCustomFont" format="string" />
-    </declare-styleable>
+    <attr name="gcPageItemBackground" format="reference|color"/>
+    <attr name="gcErrorScreenSubtitle" format="reference|color"/>
 </resources>

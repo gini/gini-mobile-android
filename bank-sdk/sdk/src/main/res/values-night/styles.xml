@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Root.GiniCaptureTheme.Night" parent="Root.GiniCaptureTheme.Internal.Night">
+        <item name="gbsSwitchTrack">@color/gc_dark_03</item>
+        <item name="gbsTextInputLayout">@color/gc_dark_04</item>
+        <item name="gbsBottomSheetItemTitle">@color/gc_light_05</item>
+        <item name="gbsCurrencyPickerItemBackgroundColor">@color/gc_dark_03</item>
+        <item name="gbsCurrencyPickerItemSelectedColor">@color/gc_dark_04</item>
+        <item name="gbsReturnDialogTitle">@color/gc_light_04</item>
+        <item name="gbsAddonTextColor">@color/gc_light_06</item>
+    </style>
+</resources>

@@ -4,8 +4,8 @@ import android.app.Activity;
 
 import net.gini.android.capture.GiniCaptureBasePresenter;
 import net.gini.android.capture.GiniCaptureBaseView;
+import net.gini.android.capture.onboarding.view.OnboardingIllustrationAdapter;
 
-import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 
@@ -16,24 +16,18 @@ import androidx.annotation.StringRes;
  */
 interface OnboardingPageContract {
 
-    abstract class View implements GiniCaptureBaseView<Presenter> {
-
-        private Presenter mPresenter;
+    interface View extends GiniCaptureBaseView<Presenter> {
 
         @Override
-        public void setPresenter(@NonNull final Presenter presenter) {
-            mPresenter = presenter;
-        }
+        void setPresenter(@NonNull final Presenter presenter);
 
-        public Presenter getPresenter() {
-            return mPresenter;
-        }
+        void showImage(@NonNull final OnboardingIllustrationAdapter illustrationAdapter);
 
-        abstract void showImage(@DrawableRes final int imageResId, final boolean rotated);
+        void showTitle(@StringRes final int titleResId);
+        void showMessage(@StringRes final int messageResId);
 
-        abstract void showText(@StringRes final int textResId);
-
-        abstract void showTransparentBackground();
+        void onPause();
+        void onResume();
     }
 
     abstract class Presenter extends GiniCaptureBasePresenter<View> {
@@ -45,6 +39,9 @@ interface OnboardingPageContract {
         }
 
         abstract void setPage(@NonNull final OnboardingPage page);
+
+        abstract void onPageIsVisible();
+        abstract void onPageIsHidden();
     }
 
 }

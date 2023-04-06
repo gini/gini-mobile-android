@@ -17,18 +17,26 @@ import net.gini.android.bank.sdk.GiniBank.startCaptureFlowForIntent
 import net.gini.android.bank.sdk.capture.CaptureConfiguration
 import net.gini.android.bank.sdk.capture.CaptureImportInput
 import net.gini.android.bank.sdk.capture.applyConfiguration
+import net.gini.android.bank.sdk.capture.digitalinvoice.help.view.DefaultDigitalInvoiceHelpNavigationBarBottomAdapter
+import net.gini.android.bank.sdk.capture.digitalinvoice.help.view.DigitalInvoiceHelpNavigationBarBottomAdapter
+import net.gini.android.bank.sdk.capture.digitalinvoice.view.DefaultDigitalInvoiceNavigationBarBottomAdapter
+import net.gini.android.bank.sdk.capture.digitalinvoice.view.DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter
+import net.gini.android.bank.sdk.capture.digitalinvoice.view.DigitalInvoiceNavigationBarBottomAdapter
+import net.gini.android.bank.sdk.capture.digitalinvoice.view.DigitalInvoiceOnboardingNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.capture.util.getImportFileCallback
 import net.gini.android.bank.sdk.error.AmountParsingException
 import net.gini.android.bank.sdk.pay.getBusinessIntent
 import net.gini.android.bank.sdk.pay.getRequestId
 import net.gini.android.bank.sdk.util.parseAmountToBackendFormat
-import net.gini.android.capture.AsyncCallback
-import net.gini.android.capture.Document
-import net.gini.android.capture.GiniCapture
-import net.gini.android.capture.ImportedFileValidationException
+import net.gini.android.capture.*
+import net.gini.android.capture.onboarding.view.ImageOnboardingIllustrationAdapter
+import net.gini.android.capture.onboarding.view.OnboardingIllustrationAdapter
 import net.gini.android.capture.requirements.GiniCaptureRequirements
 import net.gini.android.capture.requirements.RequirementsReport
 import net.gini.android.capture.util.CancellationToken
+import net.gini.android.capture.view.DefaultNavigationBarTopAdapter
+import net.gini.android.capture.view.InjectedViewAdapterInstance
+import net.gini.android.capture.view.NavigationBarTopAdapter
 import net.gini.android.core.api.Resource
 import net.gini.android.core.api.models.PaymentRequest
 
@@ -38,8 +46,6 @@ import net.gini.android.core.api.models.PaymentRequest
  * The Capture feature is a layer of abstraction above Gini Capture SDK and the Return Assistant feature.
  * Capture feature can be used with:
  *  - the Screen API by calling [startCaptureFlow] or [startCaptureFlowForIntent].
- *  - the Component API by building everything around the provided fragments.
- * See example apps for more details about usage of Screen and Component APIs.
  *
  * To use capture features, they need to be configured with [setCaptureConfiguration].
  * Note that configuration is immutable. [releaseCapture] needs to be called before passing a new configuration.
@@ -55,6 +61,41 @@ object GiniBank {
     private var giniCapture: GiniCapture? = null
     private var captureConfiguration: CaptureConfiguration? = null
     private var giniApi: GiniBankAPI? = null
+
+    /**
+     * Bottom navigation bar adapters. Could be changed to custom ones.
+     */
+    internal var digitalInvoiceOnboardingNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<DigitalInvoiceOnboardingNavigationBarBottomAdapter> =
+        InjectedViewAdapterInstance(DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter())
+    var digitalInvoiceOnboardingNavigationBarBottomAdapter: DigitalInvoiceOnboardingNavigationBarBottomAdapter
+        set(value) {
+            digitalInvoiceOnboardingNavigationBarBottomAdapterInstance = InjectedViewAdapterInstance(value)
+        }
+        get() = digitalInvoiceOnboardingNavigationBarBottomAdapterInstance.viewAdapter
+
+    internal var digitalInvoiceHelpNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<DigitalInvoiceHelpNavigationBarBottomAdapter> =
+        InjectedViewAdapterInstance(DefaultDigitalInvoiceHelpNavigationBarBottomAdapter())
+    var digitalInvoiceHelpNavigationBarBottomAdapter: DigitalInvoiceHelpNavigationBarBottomAdapter
+        set(value) {
+            digitalInvoiceHelpNavigationBarBottomAdapterInstance = InjectedViewAdapterInstance(value)
+        }
+        get() = digitalInvoiceHelpNavigationBarBottomAdapterInstance.viewAdapter
+
+    internal var digitalInvoiceOnboardingIllustrationAdapterInstance: InjectedViewAdapterInstance<OnboardingIllustrationAdapter> =
+        InjectedViewAdapterInstance(ImageOnboardingIllustrationAdapter(R.drawable.gbs_digital_invoice_list_image, R.string.gbs_digital_invoice_onboarding_text_1))
+    var digitalInvoiceOnboardingIllustrationAdapter: OnboardingIllustrationAdapter
+        set(value) {
+            digitalInvoiceOnboardingIllustrationAdapterInstance = InjectedViewAdapterInstance(value)
+        }
+        get() = digitalInvoiceOnboardingIllustrationAdapterInstance.viewAdapter
+
+    internal var digitalInvoiceNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<DigitalInvoiceNavigationBarBottomAdapter> =
+        InjectedViewAdapterInstance(DefaultDigitalInvoiceNavigationBarBottomAdapter())
+    var digitalInvoiceNavigationBarBottomAdapter: DigitalInvoiceNavigationBarBottomAdapter
+        set(value) {
+            digitalInvoiceNavigationBarBottomAdapterInstance = InjectedViewAdapterInstance(value)
+        }
+        get() = digitalInvoiceNavigationBarBottomAdapterInstance.viewAdapter
 
     internal fun getCaptureConfiguration() = captureConfiguration
 
@@ -81,17 +122,42 @@ object GiniBank {
     /**
      *  Frees up resources used by Capture.
      */
-    fun releaseCapture(context: Context) {
-        GiniCapture.cleanup(context)
+    fun releaseCapture(
+        context: Context,
+        paymentRecipient: String,
+        paymentReference: String,
+        paymentPurpose: String,
+        iban: String,
+        bic: String,
+        amount: Amount
+    ) {
+        GiniCapture.cleanup(
+            context,
+            paymentRecipient,
+            paymentReference,
+            paymentPurpose,
+            iban,
+            bic,
+            amount
+        )
         captureConfiguration = null
         giniCapture = null
+
+        digitalInvoiceOnboardingNavigationBarBottomAdapter = DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter()
+        digitalInvoiceHelpNavigationBarBottomAdapter = DefaultDigitalInvoiceHelpNavigationBarBottomAdapter()
+
+        digitalInvoiceOnboardingIllustrationAdapter = ImageOnboardingIllustrationAdapter(R.drawable.gbs_digital_invoice_list_image,
+        R.string.gbs_digital_invoice_onboarding_text_1)
+
+        digitalInvoiceNavigationBarBottomAdapter = DefaultDigitalInvoiceNavigationBarBottomAdapter()
     }
 
     /**
      *  Checks hardware requirements for Capture feature.
      *  Requirements are not enforced, but are recommended to be checked before using.
      */
-    fun checkCaptureRequirements(context: Context): RequirementsReport = GiniCaptureRequirements.checkRequirements(context)
+    fun checkCaptureRequirements(context: Context): RequirementsReport =
+        GiniCaptureRequirements.checkRequirements(context)
 
     /**
      * Screen API for starting the capture flow.
@@ -111,41 +177,18 @@ object GiniBank {
      *
      * @throws IllegalStateException if the capture feature was not configured.
      */
-    fun startCaptureFlowForIntent(resultLauncher: ActivityResultLauncher<CaptureImportInput>, context: Context, intent: Intent): CancellationToken {
+    fun startCaptureFlowForIntent(
+        resultLauncher: ActivityResultLauncher<CaptureImportInput>,
+        context: Context,
+        intent: Intent
+    ): CancellationToken {
         giniCapture.let { capture ->
             check(capture != null) { "Capture feature is not configured. Call setCaptureConfiguration before starting the flow." }
-            if (capture.isMultiPageEnabled) {
-                return capture.createIntentForImportedFiles(intent, context, getImportFileCallback(resultLauncher))
-            } else {
-                try {
-                    val captureIntent = GiniCapture.createIntentForImportedFile(intent, context, null, null)
-                    resultLauncher.launch(CaptureImportInput.Forward(captureIntent))
-                } catch (exception: ImportedFileValidationException) {
-                    resultLauncher.launch(CaptureImportInput.Error(exception.validationError, exception.message))
-                }
-                return CancellationToken {}
-            }
-        }
-    }
-
-    /**
-     * Component API
-     *
-     * Creates an [Document] for a pdf or image that was shared from another app.
-     *
-     * Importing the files is executed on a secondary thread as it can take several seconds for
-     * the process to complete. The callback methods are invoked on the main thread.
-     *
-     * @param intent the Intent your app received
-     * @param context Android context
-     * @param callback A [AsyncCallback} implementation
-     *
-     * @return a {@link CancellationToken} for cancelling the import process
-     */
-    fun createDocumentForImportedFiles(intent: Intent, context: Context, callback: AsyncCallback<Document, ImportedFileValidationException>) {
-        giniCapture.let { capture ->
-            check(capture != null) { "Capture feature is not configured. Call setCaptureConfiguration before creating the document." }
-            capture.createDocumentForImportedFiles(intent, context, callback)
+            return capture.createIntentForImportedFiles(
+                intent,
+                context,
+                getImportFileCallback(resultLauncher)
+            )
         }
     }
 
@@ -174,9 +217,12 @@ object GiniBank {
     suspend fun getPaymentRequest(id: String): PaymentRequest {
         val api = giniApi
         check(api != null) { "Gini Api is not set" }
-        return when(val paymentRequestResource = api.documentManager.getPaymentRequest(id)) {
+        return when (val paymentRequestResource = api.documentManager.getPaymentRequest(id)) {
             is Resource.Cancelled -> throw Exception("Cancelled")
-            is Resource.Error -> throw Exception(paymentRequestResource.message, paymentRequestResource.exception)
+            is Resource.Error -> throw Exception(
+                paymentRequestResource.message,
+                paymentRequestResource.exception
+            )
             is Resource.Success -> paymentRequestResource.data
         }
     }
@@ -193,7 +239,10 @@ object GiniBank {
      * @throws Throwable This method makes a network call which may fail, the resulting throwable is not caught and a type is not guaranteed.
      * @throws AmountParsingException If the amount string could not be parsed
      */
-    suspend fun resolvePaymentRequest(requestId: String, resolvePaymentInput: ResolvePaymentInput): ResolvedPayment {
+    suspend fun resolvePaymentRequest(
+        requestId: String,
+        resolvePaymentInput: ResolvePaymentInput
+    ): ResolvedPayment {
         val api = giniApi
         check(api != null) { "Gini Api is not set" }
         return when (val resolvedPaymentResource = api.documentManager.resolvePaymentRequest(
@@ -201,7 +250,10 @@ object GiniBank {
             resolvePaymentInput.copy(amount = resolvePaymentInput.parseAmountToBackendFormat())
         )) {
             is Resource.Cancelled -> throw Exception("Cancelled")
-            is Resource.Error -> throw Exception(resolvedPaymentResource.message, resolvedPaymentResource.exception)
+            is Resource.Error -> throw Exception(
+                resolvedPaymentResource.message,
+                resolvedPaymentResource.exception
+            )
             is Resource.Success -> resolvedPaymentResource.data
         }
     }

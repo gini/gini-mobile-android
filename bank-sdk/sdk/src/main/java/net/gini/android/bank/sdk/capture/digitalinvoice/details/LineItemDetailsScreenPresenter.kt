@@ -12,6 +12,7 @@ import java.text.DecimalFormat
 import java.text.ParseException
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.bank.sdk.R
+import java.text.NumberFormat
 import java.util.*
 
 /**
@@ -21,7 +22,7 @@ import java.util.*
  */
 
 @JvmSynthetic
-internal val GROSS_PRICE_FORMAT = DecimalFormat("#,##0.00").apply { isParseBigDecimal = true }
+internal val GROSS_PRICE_FORMAT_PATTERN = "#,##0.00"
 
 internal const val MIN_QUANTITY = 1
 internal const val MAX_QUANTITY = 99_999
@@ -35,11 +36,13 @@ internal class LineItemDetailsScreenPresenter(
     activity: Activity, view: View,
     var selectableLineItem: SelectableLineItem,
     val returnReasons: List<GiniCaptureReturnReason> = emptyList(),
-    private val grossPriceFormat: DecimalFormat = GROSS_PRICE_FORMAT
+    private val grossPriceFormat: DecimalFormat = DecimalFormat(GROSS_PRICE_FORMAT_PATTERN).apply {
+        isParseBigDecimal = true
+    }
 ) :
     Presenter(activity, view) {
 
-    override var listener: LineItemDetailsFragmentListener? = null
+    override var listener: LineItemDetailsListener? = null
 
     private val originalLineItem: SelectableLineItem = selectableLineItem.copy()
 
@@ -147,11 +150,6 @@ internal class LineItemDetailsScreenPresenter(
     }
 
     override fun save() {
-        if (selectableLineItem.addedByUser && selectableLineItem.lineItem.description.isBlank()) {
-            selectableLineItem = selectableLineItem.copy(
-                lineItem = selectableLineItem.lineItem.copy(description = activity.getString(R.string.gbs_digital_invoice_line_item_description_additional))
-            )
-        }
         when {
             selectableLineItem.lineItem.id.isBlank() -> {
                 val lineItem = selectableLineItem.lineItem.copy(UUID.randomUUID().toString())
@@ -167,6 +165,20 @@ internal class LineItemDetailsScreenPresenter(
         val quantity = inputFieldText.toIntOrNull()
         if (quantity == null || (selectableLineItem.lineItem.quantity != quantity)) {
             view.showQuantity(selectableLineItem.lineItem.quantity)
+        }
+    }
+
+
+    override fun validateLineItemName(name: String): Boolean {
+        return name.isNotBlank()
+    }
+
+    override fun validateLineItemGrossPrice(displayedGrossPrice: String): Boolean {
+        return try {
+            val grossPrice = grossPriceFormat.parse(displayedGrossPrice) as BigDecimal
+            return grossPrice.stripTrailingZeros() != BigDecimal.ZERO
+        } catch (_: ParseException) {
+            false
         }
     }
 

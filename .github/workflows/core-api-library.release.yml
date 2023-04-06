@@ -4,10 +4,11 @@ on:
   push:
     tags:
       - 'core-api-library;[0-9]+.[0-9]+.[0-9]+'
+      - 'core-api-library;[0-9]+.[0-9]+.[0-9]+-beta[0-9][0-9]'
 
 jobs:
   check:
-    uses: gini/gini-mobile-android/.github/workflows/core-api-library.check.yml@main
+    uses: gini/gini-mobile-android/.github/workflows/core-api-library.check.yml@new-ui
 
   release:
     needs: check

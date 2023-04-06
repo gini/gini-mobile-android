@@ -1,97 +1,168 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/black"
+    android:background="?attr/backgroundColor"
     tools:context=".review.multipage.MultiPageReviewActivity">
 
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/gc_view_pager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/gc_thumbnails_panel" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/gc_main_views_wrapper"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/gc_injected_navigation_bar_container_bottom"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-    <net.gini.android.capture.internal.ui.CustomFontTextView
-        android:id="@+id/gc_page_indicator"
-        style="@style/GiniCaptureTheme.Review.MultiPage.PageIndicator.TextStyle"
-        android:layout_width="wrap_content"
+
+        <net.gini.android.capture.view.InjectedViewContainer
+            android:id="@+id/gc_navigation_top_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/gc_payment_visible_txt"
+            style="@style/GiniCaptureTheme.Typography.Caption1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/gc_large"
+            android:text="@string/gc_payment_details_visible"
+            android:textColor="@color/gc_dark_06"
+            app:layout_constraintBottom_toTopOf="@+id/gc_view_pager_wrapper"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/gc_view_pager_wrapper"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_above="@+id/gc_thumbnails_panel"
+            android:layout_marginTop="@dimen/gc_large_64"
+            android:layout_marginBottom="@dimen/gc_large_24"
+            app:layout_constraintBottom_toTopOf="@+id/gc_tab_indicator"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/gc_navigation_top_bar">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/gc_pager_recycler_view"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/gc_large_24"
+                android:paddingEnd="@dimen/gc_large_24"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/gc_tab_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/gc_large"
+            android:layout_gravity="bottom|center"
+            android:layout_marginBottom="@dimen/gc_large_32"
+            android:backgroundTint="@android:color/transparent"
+            app:layout_constraintBottom_toTopOf="@+id/gc_process_documents_wrapper"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:tabBackground="@drawable/gc_tab_selector"
+            app:tabGravity="center"
+            app:tabIndicatorHeight="0dp"
+            app:tabMode="fixed"
+            app:tabPaddingEnd="@dimen/gc_medium"
+            app:tabSelectedTextColor="@android:color/transparent"
+            app:tabTextColor="@android:color/transparent" />
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/gc_process_documents_wrapper"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/gc_large_32"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <net.gini.android.capture.view.InjectedViewContainer
+                android:id="@+id/gc_injected_loading_indicator_container"
+                android:layout_width="@dimen/gc_unelevated_button_height"
+                android:layout_height="0dp"
+                android:layout_gravity="center"
+                android:layout_margin="@dimen/gc_medium"
+                app:layout_constraintBottom_toBottomOf="@+id/gc_button_next"
+                app:layout_constraintEnd_toEndOf="@+id/gc_button_next"
+                app:layout_constraintStart_toStartOf="@+id/gc_button_next"
+                app:layout_constraintTop_toTopOf="@+id/gc_button_next" />
+
+            <Button
+                android:id="@+id/gc_button_next"
+                style="@style/GiniCaptureTheme.Widget.Button.UnelevatedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/gc_process_documents"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <LinearLayout
+                android:id="@+id/gc_add_pages_wrapper"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/gc_large_24"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="@+id/gc_button_next"
+                app:layout_constraintStart_toEndOf="@+id/gc_button_next"
+                app:layout_constraintTop_toTopOf="@+id/gc_button_next">
+
+                <ImageView
+                    android:id="@+id/gc_add_page"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    app:srcCompat="@drawable/gc_add_page" />
+
+                <TextView
+                    android:id="@+id/gc_pages_txt"
+                    style="@style/GiniCaptureTheme.Typography.Subtitle2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="@string/gc_pages" />
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/gc_add_page_button"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:contentDescription="@string/gc_multi_page_review_add_pages_subtitle"
+                android:background="@android:color/transparent"
+                app:layout_constraintStart_toStartOf="@id/gc_add_pages_wrapper"
+                app:layout_constraintTop_toTopOf="@id/gc_add_pages_wrapper"
+                app:layout_constraintBottom_toBottomOf="@id/gc_add_pages_wrapper"
+                app:layout_constraintEnd_toEndOf="@id/gc_add_pages_wrapper"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <net.gini.android.capture.view.InjectedViewContainer
+        android:id="@+id/gc_injected_navigation_bar_container_bottom"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/gc_thumbnails_panel"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="@dimen/gc_multi_page_review_page_indicator_bottom_margin"
-        android:background="@drawable/gc_page_indicator_background"
-        android:gravity="center"
-        android:paddingBottom="4dp"
-        android:paddingEnd="8dp"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:paddingStart="8dp"
-        android:paddingTop="4dp"
-        tools:text="2 von 4" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
-    <ImageButton
-        android:id="@+id/gc_button_next"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/gc_thumbnails_panel"
-        android:layout_alignParentEnd="true"
-        android:layout_marginBottom="@dimen/gc_fab_vertical_margin"
-        android:layout_marginEnd="@dimen/gc_fab_horizontal_margin"
-        android:background="@drawable/gc_review_fab_background"
-        android:src="@drawable/gc_review_fab_checkmark" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/gc_thumbnails_panel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/gc_reorder_pages_tip"
-        android:background="@color/gc_multi_page_review_thumbnails_panel_background"
-        android:clipToPadding="false"
-        android:paddingEnd="@dimen/gc_multi_page_review_thumbnail_cards_container_horizontal_padding"
-        android:paddingLeft="@dimen/gc_multi_page_review_thumbnail_cards_container_horizontal_padding"
-        android:paddingRight="@dimen/gc_multi_page_review_thumbnail_cards_container_horizontal_padding"
-        android:paddingStart="@dimen/gc_multi_page_review_thumbnail_cards_container_horizontal_padding" />
-
-    <net.gini.android.capture.internal.ui.CustomFontTextView
-        android:id="@+id/gc_reorder_pages_tip"
-        style="@style/GiniCaptureTheme.Review.MultiPage.ReorderPagesTip.TextStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/gc_toolbar"
-        android:layout_centerHorizontal="true"
-        android:background="@color/gc_multi_page_review_thumbnails_panel_background"
-        android:gravity="center"
-        tools:text="@string/gc_multi_page_review_reorder_pages_tip" />
-
-    <LinearLayout
-        android:id="@+id/gc_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/gc_multi_page_review_bottom_toolbar_height"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:background="@color/gc_multi_page_review_thumbnails_panel_background"
-        android:orientation="horizontal">
-
-        <ImageButton
-            android:id="@+id/gc_button_rotate"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_weight="1"
-            android:background="@drawable/gc_toolbar_button_background"
-            app:srcCompat="@drawable/gc_rotate_icon" />
-
-        <ImageButton
-            android:id="@+id/gc_button_delete"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_weight="1"
-            android:background="@drawable/gc_toolbar_button_background"
-            app:srcCompat="@drawable/gc_delete_icon" />
-
-    </LinearLayout>
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

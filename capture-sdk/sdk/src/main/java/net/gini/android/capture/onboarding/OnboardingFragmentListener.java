@@ -5,11 +5,15 @@ import net.gini.android.capture.GiniCaptureError;
 import androidx.annotation.NonNull;
 
 /**
+ * Internal use only.
+ *
  * <p>
- * Interface used by {@link OnboardingFragmentCompat} to dispatch events to the hosting Activity.
+ * Interface used by {@link OnboardingFragment} to dispatch events to the hosting Activity.
  * </p>
+ *
+ * @suppress
  */
-public interface OnboardingFragmentListener {
+interface OnboardingFragmentListener {
     /**
      * <p>
      *     Called when the user has left the last page - either by swiping or tapping on the Next button - and you should

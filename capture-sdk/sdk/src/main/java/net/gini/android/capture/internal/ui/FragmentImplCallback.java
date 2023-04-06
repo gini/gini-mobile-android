@@ -7,6 +7,7 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 /**
  * Internal use only.
@@ -20,6 +21,9 @@ public interface FragmentImplCallback {
 
     @Nullable
     View getView();
+
+    @Nullable
+    Fragment getParentFragment();
 
     void startActivity(Intent intent);
 

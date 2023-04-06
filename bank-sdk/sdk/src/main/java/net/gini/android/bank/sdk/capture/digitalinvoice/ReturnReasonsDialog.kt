@@ -7,12 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlin.collections.ArrayList
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.capture.util.autoCleared
 import net.gini.android.bank.sdk.databinding.GbsFragmentReturnReasonDialogBinding
+import net.gini.android.capture.internal.util.ContextHelper
 
 /**
  * Created by Alpar Szotyori on 22.01.2020.
@@ -88,5 +90,16 @@ internal class ReturnReasonDialog : BottomSheetDialogFragment() {
 
     override fun onCancel(dialog: DialogInterface) {
         callback?.invoke(null)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        view?.let {
+            if (ContextHelper.isTablet(requireContext())) {
+                val mBehavior = BottomSheetBehavior.from(it.parent as View)
+                mBehavior.maxWidth = resources.getDimension(R.dimen.gc_tablet_width).toInt()
+                mBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+            }
+        }
     }
 }

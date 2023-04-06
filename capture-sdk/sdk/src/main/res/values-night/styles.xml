@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Root.GiniCaptureTheme.Internal.Night" parent="Root.GiniCaptureTheme.Internal">
+        <item name="colorPrimary">@color/gc_accent_01</item>
+        <item name="colorPrimaryDark">@color/gc_dark_01</item>
+        <item name="colorOnPrimary">@color/gc_light_01</item>
+        <item name="colorSurface">@color/gc_dark_02</item>
+        <item name="backgroundColor">@color/gc_dark_01</item>
+        <item name="colorOnBackground">@color/gc_light_01</item>
+        <item name="dividerColor">@color/gc_dark_03</item>
+        <item name="colorSurfaceInverse">@color/gc_light_04</item>
+        <item name="colorOnSurfaceInverse">@color/gc_dark_02</item>
+        <item name="gcPageItemBackground">@color/gc_dark_01</item>
+        <item name="gcErrorScreenSubtitle">@color/gc_dark_06</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+
+    <style name="Root.GiniCaptureTheme.Night" parent="Root.GiniCaptureTheme.Internal.Night"/>
+    <style name="GiniCaptureTheme" parent="Root.GiniCaptureTheme.Night"/>
+
+    <!-- Widgets -->
+
+    <style name="Root.GiniCaptureTheme.Widget.Button.OutlinedButton.Night" parent="Root.GiniCaptureTheme.Widget.Button.OutlinedButton">
+        <item name="strokeColor">@color/gc_dark_04</item>
+    </style>
+
+    <style name="GiniCaptureTheme.Widget.Button.OutlinedButton" parent="Root.GiniCaptureTheme.Widget.Button.OutlinedButton.Night"/>
+
+</resources>

@@ -104,29 +104,7 @@ internal class DigitalInvoiceScreenPresenter(
         listener?.onEditLineItem(lineItem)
     }
 
-    override fun addNewArticle() {
-        listener?.onAddLineItem(
-            SelectableLineItem(
-                addedByUser = true,
-                lineItem = digitalInvoice.newLineItem()
-            )
-        )
-    }
-
-    override fun removeLineItem(lineItem: SelectableLineItem) {
-        digitalInvoice.removeLineItem(lineItem)
-        updateView()
-    }
-
-    override fun userFeedbackReceived(helpful: Boolean) {
-        // TODO
-    }
-
     override fun pay() {
-        skipOrPay()
-    }
-
-    override fun skip() {
         skipOrPay()
     }
 
@@ -134,7 +112,7 @@ internal class DigitalInvoiceScreenPresenter(
         digitalInvoice.updateLineItemExtractionsWithReviewedLineItems()
         digitalInvoice.updateAmountToPayExtractionWithTotalPrice()
         if (GiniCapture.hasInstance()) {
-            GiniCapture.getInstance().giniCaptureNetworkApi?.setUpdatedCompoundExtractions(
+            GiniCapture.getInstance().internal().setUpdatedCompoundExtractions(
                 digitalInvoice.compoundExtractions
             )
         }

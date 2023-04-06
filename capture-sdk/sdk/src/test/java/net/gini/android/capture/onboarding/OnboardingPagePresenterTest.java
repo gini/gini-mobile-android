@@ -37,7 +37,7 @@ public class OnboardingPagePresenterTest {
     @Test
     public void should_showImage_onStart() throws Exception {
         // Given
-        final OnboardingPage page = DefaultPagesPhone.ALIGN.getPage();
+        final OnboardingPage page = new DefaultPages.Page1().getOnboardingPage();
 
         final OnboardingPagePresenter presenter = createPresenter(page);
 
@@ -45,7 +45,7 @@ public class OnboardingPagePresenterTest {
         presenter.start();
 
         // Then
-        verify(mView).showImage(page.getImageResId(), false);
+        verify(mView).showImage(page.getIllustrationAdapter());
     }
 
     @NonNull
@@ -69,7 +69,7 @@ public class OnboardingPagePresenterTest {
     @Test
     public void should_notShowImage_whenNotAvailable() throws Exception {
         // Given
-        final OnboardingPage page = new OnboardingPage(R.string.gc_onboarding_align, 0);
+        final OnboardingPage page = new OnboardingPage(R.string.gc_onboarding_align_corners_title, R.string.gc_onboarding_align_corners_message, null);
 
         final OnboardingPagePresenter presenter = createPresenter(page);
 
@@ -77,28 +77,13 @@ public class OnboardingPagePresenterTest {
         presenter.start();
 
         // Then
-        verify(mView, never()).showImage(page.getImageResId(), false);
+        verify(mView, never()).showImage(page.getIllustrationAdapter());
     }
 
     @Test
-    public void should_showRotatedImage_inLandscape_whenRequested() throws Exception {
+    public void should_showTitle_onStart() throws Exception {
         // Given
-        final OnboardingPage page = new OnboardingPage(R.string.gc_onboarding_align,
-                R.drawable.gc_onboarding_align, true, true);
-
-        final OnboardingPagePresenter presenter = createPresenter(page, false);
-
-        // When
-        presenter.start();
-
-        // Then
-        verify(mView).showImage(page.getImageResId(), true);
-    }
-
-    @Test
-    public void should_showText_onStart() throws Exception {
-        // Given
-        final OnboardingPage page = DefaultPagesPhone.ALIGN.getPage();
+        final OnboardingPage page = new DefaultPages.Page1().getOnboardingPage();
 
         final OnboardingPagePresenter presenter = createPresenter(page);
 
@@ -106,13 +91,13 @@ public class OnboardingPagePresenterTest {
         presenter.start();
 
         // Then
-        verify(mView).showText(page.getTextResId());
+        verify(mView).showTitle(page.getTitleResId());
     }
 
     @Test
-    public void should_notShowText_whenNotAvailable() throws Exception {
+    public void should_showMessage_onStart() throws Exception {
         // Given
-        final OnboardingPage page = new OnboardingPage(0, R.drawable.gc_onboarding_align);
+        final OnboardingPage page = new DefaultPages.Page1().getOnboardingPage();
 
         final OnboardingPagePresenter presenter = createPresenter(page);
 
@@ -120,34 +105,6 @@ public class OnboardingPagePresenterTest {
         presenter.start();
 
         // Then
-        verify(mView, never()).showText(page.getTextResId());
-    }
-
-    @Test
-    public void should_showTransparentBackground_whenRequested() throws Exception {
-        // Given
-        final OnboardingPage page = new OnboardingPage(R.string.gc_onboarding_align, R.drawable.gc_onboarding_align,true);
-
-        final OnboardingPagePresenter presenter = createPresenter(page);
-
-        // When
-        presenter.start();
-
-        // Then
-        verify(mView).showTransparentBackground();
-    }
-
-    @Test
-    public void should_notShowTransparentBackground_whenNotRequested() throws Exception {
-        // Given
-        final OnboardingPage page = new OnboardingPage(R.string.gc_onboarding_align, R.drawable.gc_onboarding_align,false);
-
-        final OnboardingPagePresenter presenter = createPresenter(page);
-
-        // When
-        presenter.start();
-
-        // Then
-        verify(mView, never()).showTransparentBackground();
+        verify(mView).showMessage(page.getMessageResId());
     }
 }

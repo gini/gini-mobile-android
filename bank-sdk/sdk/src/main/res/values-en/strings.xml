@@ -1,79 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="gbs_title_return_assistant_help">Return Assistant</string>
-    <string name="gbs_select_from_camera_roll">Select photo from camera roll</string>
-    <string name="gbs_help_item_return_assistant_title">Return Assistant</string>
-
     <string name="gbs_title_digital_invoice">Digital Invoice</string>
-    <string name="gbs_title_line_item_details" />
 
-    <string name="gbs_digital_invoice_scan_success">Scan successful!\nYou can now deselect items you would like to return.</string>
-    <string name="gbs_digital_invoice_items">Items</string>
-    <string name="gbs_digital_invoice_what_is_this_button">What is this?</string>
     <string name="gbs_digital_invoice_line_item_edit">Edit</string>
-    <string name="gbs_digital_invoice_line_item_quantity">%1$dx</string>
-    <string name="gbs_digital_invoice_line_item_index">Article %1$d/%2$d</string>
-    <string name="gbs_digital_invoice_footer_notice">Please double check if the amount is correct and add further articles if necessary.</string>
-    <string name="gbs_digital_invoice_pay">Pay %1$d/%2$d</string>
-    <string name="gbs_digital_invoice_pay_other_charges">Pay</string>
-    <string name="gbs_digital_invoice_pay_disabled">Pay</string>
-    <string name="gbs_digital_invoice_line_item_details_description_label">Item Name</string>
-    <string name="gbs_digital_invoice_line_item_details_quantity_label">Quantity</string>
-    <string name="gbs_digital_invoice_line_item_details_gross_price_label">Item price</string>
-    <string name="gbs_digital_invoice_line_item_details_total_label">Total</string>
-    <string name="gbs_digital_invoice_line_item_details_save">Save</string>
-    <plurals name="gbs_digital_invoice_line_item_details_selected_line_items">
-        <item quantity="one">%1$d item %2$s</item>
-        <item quantity="other">%1$d items %2$s</item>
-    </plurals>
-    <string name="gbs_digital_invoice_line_item_details_selected">selected</string>
-    <string name="gbs_digital_invoice_line_item_description_additional">Additional</string>
-
-    <string name="gbs_digital_invoice_help_info">Help</string>
-
-    <string name="gbs_digital_header_title">Info</string>
-    <string name="gbs_digital_header_text_1">This new feature may contain some bugs. Please double check the articles and the total amount. If necessay you can edit them.</string>
-    <string name="gbs_digital_header_text_2">If you don’t like to use this feature, you can simply skip it.</string>
-    <string name="gbs_digital_header_button_1">OK</string>
-    <string name="gbs_digital_header_button_2">Skip</string>
-
-    <string name="gbs_digital_invoice_footer_total_label">Total</string>
-    <string name="gbs_digital_invoice_footer_add">Add article</string>
+    <string name="gbs_digital_invoice_line_item_quantity">%1$s per unit</string>
 
     <string name="gbs_digital_invoice_return_reason_dialog_title">Your reasons to return this item</string>
-    <string name="gbs_digital_invoice_what_is_this_dialog_title">What is this?</string>
-    <string name="gbs_digital_invoice_what_is_this_dialog_message">We extracted the detailed items from your invoice to help you calculate the amount to pay in case you want to return some goods or simply not fully-paying it.</string>
-    <string name="gbs_digital_invoice_what_is_this_dialog_positive_response">Yes, that\'s helpful</string>
-    <string name="gbs_digital_invoice_what_is_this_dialog_negative_response">No, I don\'t want to see it again</string>
+
+    <string name="gbs_digital_invoice_line_item_details_quantity_decrease_content_description">Decrease quantity</string>
+    <string name="gbs_digital_invoice_line_item_details_quantity_increase_content_description">Increase quantity</string>
+    <string name="gbs_digital_invoice_line_item_details_save">Save</string>
+
+    <string name="gbs_digital_invoice_footer_total_label">Total</string>
 
     <string name="gbs_digital_invoice_addon_discount">Discount</string>
     <string name="gbs_digital_invoice_addon_giftcard">Giftcard</string>
     <string name="gbs_digital_invoice_addon_other_discounts">Other discounts</string>
     <string name="gbs_digital_invoice_addon_other_charges">Other charges</string>
     <string name="gbs_digital_invoice_addon_shipment">Shipment</string>
-    <string name="gbs_digital_invoice_onboarding_text_1">Your new return assistant!</string>
-    <string name="gbs_digital_invoice_onboarding_text_2">Deselect article that you want to return and pay only for what you keep!</string>
-    <string name="gbs_digital_invoice_onboarding_done_button_title">Next</string>
-    <string name="gbs_digital_invoice_onboarding_do_not_show_button_title">Don’t show anymore</string>
 
-    <string name="gbs_return_assistant_help_title">The new Return Assistant</string>
-    <string name="gbs_return_assistant_help_section_1_body_1">You can now deselect invoice items that you do not want. You only pay for the things you keep and can return the rest. </string>
-    <string name="gbs_return_assistant_help_section_1_body_2">By clicking on the Edit button of any invoice item, you can change the quantity and correct the price.</string>
-    <string name="gbs_return_assistant_help_section_2_title">Change the quantity</string>
-    <string name="gbs_return_assistant_help_section_2_body">For example, if you want to keep a lower number than you ordered, just change the quantity. The total price will be updated automatically.</string>
-    <string name="gbs_return_assistant_help_section_3_body">If the price has not been read out perfectly, you can simply correct it manually. The total price is updated automatically. </string>
-    <string name="gbs_return_assistant_help_section_3_title">Fix the price</string>
-    <string name="gbs_return_assistant_help_back_button_title">Back</string>
-    <string name="gbs_digital_invoice_footer_total_expl">Incl. shipping, discount and so on.</string>
+    <string name="gbs_digital_invoice_help_info">Help</string>
 
-    <string name="gbs_digital_invoice_info_close_button_title">Close</string>
-    <string name="gbs_digital_invoice_info_text_1">What is it?</string>
-    <string name="gbs_digital_invoice_info_text_2">We extracted the articles from your invoice. Simply deselect articles if you want to return them. The new total will be calculated for you.</string>
-    <string name="gbs_digital_invoice_line_item_total_info_label">Incl. tax</string>
-    <string name="gbs_digital_invoice_header_button_1">OK</string>
-    <string name="gbs_digital_invoice_header_button_2">Skip</string>
-    <string name="gbs_digital_invoice_footer_skip">Skip feature</string>
+    <string name="gbs_digital_invoice_onboarding_text_1">Digital invoice</string>
+    <string name="gbs_digital_invoice_onboarding_text_2">Deselect the products you want to return and we will recalculate the price for you.</string>
+    <string name="gbs_digital_invoice_onboarding_done_button_title">Get Started</string>
 
+    <string name="gbs_proceed">Proceed</string>
+    <string name="gbs_edit_article">Edit Article</string>
+    <string name="gbs_name">Name</string>
+    <string name="gbs_unit_price">Unit price</string>
+    <string name="gbs_quantity">Quantity</string>
+    <string name="gbs_digital_invoice_name_validation_error">Please enter the article name.</string>
+    <string name="gbs_digital_invoice_price_validation_error">Please enter the article price.</string>
 
-
+    <string name="gbs_help_invoice_title">How does a digital invoice work?</string>
+    <string name="gbs_help_invoice_text">We extracted all articles from your invoice and listed them for you. In case you want to return an ordered article or just partly pay your invoice, you simply deselect the article and the new total will be calculated automatically.</string>
+    <string name="gbs_help_edit_title">How can I edit an article?</string>
+    <string name="gbs_help_edit_text">By clicking an article, you are able to edit its description, quantity and price per item. Please note that the price per item needs to include tax.</string>
+    <string name="gbs_help_online_shops_title">Which online shops are supported?</string>
+    <string name="gbs_help_online_shops_text">We are currently focused on the top five online merchants in the market. More retailers will be added in the future.</string>
+    <string name="gbs_articles">Articles</string>
 </resources>

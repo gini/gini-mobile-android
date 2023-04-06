@@ -9,12 +9,12 @@ Kotlin
 ------
 
 We switched to Kotlin as our primary development language. The Gini Bank SDK is still usable from Java, but we
-recommend to upgrade to Kotlin to avoid the overhead incurred by the non-Java idiomatic style when using it with Java.
+recommend upgrading to Kotlin to avoid the overhead incurred by the non-Java idiomatic style when using it with Java.
 
 Gini Capture SDK
 ----------------
 
-The `Gini Capture SDK <https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/html>`_ supersedes the Gini Vision Library.
+The :root_html_path_capture_sdk:`Gini Capture SDK <index.html>` supersedes the Gini Vision Library.
 
 This migration guide will often refer to the Gini Capture SDK because it is used to fulfill the same functionality as
 the Gini Vision Library did.
@@ -97,7 +97,9 @@ This is how you need to use it with the Gini Bank SDK:
 Screen API
 ----------
 
-Launching the Screen API is done using the Android Result API. We provide the ``CaptureFlowContract()`` and you only need
+We unified the Screen API and Component API into one public API. The new public API is based on the Screen API.
+
+Launching the SDK is done using the Android Result API. We provide the ``CaptureFlowContract()`` and you only need
 to set an ``ActivityResultCallback<CaptureResult>`` to handle the result.
 
 This is how it was used in the Gini Vision Library:
@@ -157,23 +159,21 @@ This is how you need to use it with the Gini Bank SDK:
 Component API
 -------------
 
-For the Component API you will interact with the Gini Capture SDK directly.
+The Component API allowed more UI customization options for the cost of a more difficult integration and maintenance. It
+was based on fragments, and you had to manage navigation between them and also update the navigation whenever we introduced
+breaking changes.
 
-The most important changes compared to the Gini Vision Library are:
+Maintaining the Component API along with the simpler Screen API required an increasing amount of effort as we added new
+features. We decided therefore to unify both APIs and introduce the ability to inject fully custom UI elements.
 
-* deprecated code was removed,
-* support for native activities and fragments was dropped,
-* package was renamed from ``net.gini.android.vision.*`` to ``net.gini.android.capture.*``,
-* ``GiniVision`` in class or interface names was renamed to ``GiniCapture``.
+The following steps will help you migrate to the new public API:
 
-If you are already using Jetpack, then migrating the Component API should be fairly straight forward. In case you are
-using native activities and fragments, then please first switch to using the Jetpack ``AppCompatActivity``.
-
-Apply the following steps to migrate:
-
-* rename imported packages: replace ``net.gini.android.vision`` with ``net.gini.android.capture``,
-* remove deprecated fragment listener methods,
-* rename class names: replace ``GiniVision`` with ``GiniCapture``.
+* If you used a custom navigation bar, then you can use the new ability to inject fully custom UI elements. For this you
+  need to implement the ``NavigationBarTopAdapter`` interface and pass it to
+  ``CaptureConfiguration``. The ``NavigationBarTopAdapter`` interface declares the
+  contract your view has to fulfill and allows the SDK to ask for your view instance when needed.
+* Launch the SDK and handle results as described above in the Screen API section.
+* Remove all code related to interacting with the SDK's fragments. From now on the entry point is the one described in the Screen API section above.
 
 Open With
 ---------
@@ -240,70 +240,6 @@ This is how you need to use it with the Gini Bank SDK:
                 (...)
             }
         }
-    }
-
-Component API
-~~~~~~~~~~~~~
-
-When using the Component API we provide a helper method to create a Gini Capture SDK ``Document`` which can be passed to
-the review or analysis fragment.
-
-This is how it was used in the Gini Vision Library:
-
-.. code-block:: java
-
-    private var fileImportCancellationToken: CancellationToken? = null
-
-    fun launchGiniVisionForIntent(intent: Intent) {
-        fileImportCancellationToken = GiniVision.getInstance().createDocumentForImportedFiles(intent, this,
-            object : AsyncCallback<Document, ImportedFileValidationException> {
-                override fun onSuccess(result: Document) {
-                    fileImportCancellationToken = null
-                    if (result.isReviewable()) {
-                        launchMultiPageReviewScreen();
-                    } else {
-                        launchAnalysisScreen(result);
-                    }
-                }
-
-                override fun onError(exception: ImportedFileValidationException) {
-                    fileImportCancellationToken = null
-                    handleFileImportError(exception)
-                }
-
-                override fun onCancelled() {
-                    fileImportCancellationToken = null
-                }
-            }) 
-    }   
-
-This is how you need to use it with the Gini Bank SDK:
-
-.. code-block:: java
-
-    private var fileImportCancellationToken: CancellationToken? = null
-
-    fun launchGiniVisionForIntent(intent: Intent) {
-        fileImportCancellationToken = GiniBank.createDocumentForImportedFiles(intent, this,
-            object : AsyncCallback<Document, ImportedFileValidationException> {
-                override fun onSuccess(result: Document) {
-                    fileImportCancellationToken = null
-                    if (result.isReviewable()) {
-                        launchMultiPageReviewScreen();
-                    } else {
-                        launchAnalysisScreen(result);
-                    }
-                }
-
-                override fun onError(exception: ImportedFileValidationException) {
-                    fileImportCancellationToken = null
-                    handleFileImportError(exception)
-                }
-
-                override fun onCancelled() {
-                    fileImportCancellationToken = null
-                }
-            }) 
     }
 
 Networking
@@ -407,7 +343,11 @@ This is how you need to use it with the Gini Bank SDK:
 Customization
 -------------
 
-Customization is done the same way via overriding of app resources. You only need to rename the assets:
+Customization is done the same way via overriding of app resources.
 
+You need to rename the assets first:
 * rename ``gv_`` prefixes to ``gc_``,
 * replace ``GiniVision`` in theme and style names with ``GiniCapture``.
+
+After that you need to follow the Gini Capture SDK's :root_html_path_capture_sdk:`migration guide <migrate-to-2-0-0.html#overview-of-new-ui-customization-options>`
+to migrate to the new customization options.

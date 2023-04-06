@@ -57,7 +57,9 @@ internal class CaptureFlowActivity : AppCompatActivity(), CaptureFlowImportContr
             }
             CaptureResult.Empty -> setEmptyResult()
             is CaptureResult.Error -> setErrorResult(result)
+            CaptureResult.EnterManually -> setEnterManuallyResult()
             CaptureResult.Cancel -> finish()
+
         }
     }
 
@@ -88,6 +90,11 @@ internal class CaptureFlowActivity : AppCompatActivity(), CaptureFlowImportContr
 
     private fun setEmptyResult() {
         setResult(RESULT_OK)
+        finish()
+    }
+
+    private fun setEnterManuallyResult() {
+        setResult(CameraActivity.RESULT_ENTER_MANUALLY)
         finish()
     }
 }

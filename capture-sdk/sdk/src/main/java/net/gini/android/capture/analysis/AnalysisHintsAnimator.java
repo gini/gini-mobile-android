@@ -22,7 +22,10 @@ import androidx.core.view.ViewPropertyAnimatorListenerAdapter;
  * Created by Alpar Szotyori on 09.05.2019.
  *
  * Copyright (c) 2019 Gini GmbH.
- *
+ */
+
+/**
+ * Internal use only.
  */
 class AnalysisHintsAnimator {
 
@@ -37,10 +40,8 @@ class AnalysisHintsAnimator {
     private final TextView mHintHeadlineTextView;
     private final Handler mHandler = new Handler(Looper.getMainLooper());
     private int mContainerViewHeight;
-    private ViewPropertyAnimatorCompat mHintHeadlineAnimation;
     private ViewPropertyAnimatorCompat mHintAnimation;
     private List<AnalysisHint> mHints;
-    private Runnable mHintStartRunnable;
     private Runnable mHintCycleRunnable;
 
     public AnalysisHintsAnimator(
@@ -68,45 +69,7 @@ class AnalysisHintsAnimator {
                 mHintAnimation.start();
             }
         };
-        mHintStartRunnable = new Runnable() {
-            @Override
-            public void run() {
-                if (TextUtils.isEmpty(mHintHeadlineTextView.getText())) {
-                    mHintHeadlineAnimation = getHintHeadlineSlideDownAnimation();
-                    mHintHeadlineAnimation.start();
-                }
-                mHandler.post(mHintCycleRunnable);
-            }
-        };
-        mHandler.postDelayed(mHintStartRunnable, HINT_START_DELAY);
-    }
-
-    private ViewPropertyAnimatorCompat getHintHeadlineSlideDownAnimation() {
-        return ViewCompat.animate(mHintHeadlineTextView)
-                .translationY(mContainerViewHeight)
-                .setDuration(HINT_ANIMATION_DURATION)
-                .setListener(new ViewPropertyAnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(final View view) {
-                        startShowHeadlineAnimation();
-                    }
-                });
-    }
-
-    private void startShowHeadlineAnimation() {
-        showHeadlineText();
-        mHintHeadlineAnimation = getHintHeadlineSlideUpAnimation();
-        mHintHeadlineAnimation.start();
-    }
-
-    private void showHeadlineText() {
-        mHintHeadlineTextView.setText(R.string.gc_analysis_hint_headline);
-    }
-
-    private ViewPropertyAnimatorCompat getHintHeadlineSlideUpAnimation() {
-        return ViewCompat.animate(mHintHeadlineTextView)
-                .translationY(0)
-                .setDuration(HINT_ANIMATION_DURATION);
+        mHandler.postDelayed(mHintCycleRunnable, HINT_START_DELAY);
     }
 
     @NonNull
@@ -124,6 +87,9 @@ class AnalysisHintsAnimator {
 
     private void startNextHintSlideUpAnimation() {
         setNextHint();
+        if (!TextUtils.isEmpty(mHintHeadlineTextView.getText())) {
+            mHintContainer.setVisibility(View.VISIBLE);
+        }
         mHintAnimation = getSlideUpAnimation();
         mHintAnimation.start();
     }
@@ -146,6 +112,7 @@ class AnalysisHintsAnimator {
         mHintImageView.setImageDrawable(
                 ContextCompat.getDrawable(mContext, nextHint.getDrawableResource()));
         mHintTextView.setText(nextHint.getTextResource());
+        mHintHeadlineTextView.setText(mContext.getString(R.string.gc_tip) + mContext.getString(nextHint.getTitleTextResource()));
     }
 
     private AnalysisHint getNextHint() {
@@ -159,17 +126,11 @@ class AnalysisHintsAnimator {
     }
 
     public void stop() {
-        mHandler.removeCallbacks(mHintStartRunnable);
         mHandler.removeCallbacks(mHintCycleRunnable);
         if (mHintAnimation != null) {
             mHintAnimation.cancel();
             mHintContainer.clearAnimation();
             mHintAnimation.setListener(null);
-        }
-        if (mHintHeadlineAnimation != null) {
-            mHintHeadlineAnimation.cancel();
-            mHintHeadlineTextView.clearAnimation();
-            mHintHeadlineAnimation.setListener(null);
         }
     }
 }

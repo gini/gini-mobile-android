@@ -9,7 +9,7 @@ import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.GiniCaptureError;
 import net.gini.android.capture.analysis.AnalysisActivity;
 import net.gini.android.capture.analysis.AnalysisFragmentCompat;
-import net.gini.android.capture.camera.CameraFragmentCompat;
+import net.gini.android.capture.camera.CameraFragment;
 import net.gini.android.capture.document.GiniCaptureMultiPageDocument;
 
 import androidx.annotation.NonNull;
@@ -21,6 +21,8 @@ import androidx.annotation.NonNull;
  */
 
 /**
+ * Internal use only.
+ *
  * Interface used by the {@link MultiPageReviewFragment} to dispatch events to the hosting
  * Activity.
  */
@@ -49,17 +51,20 @@ public interface MultiPageReviewFragmentListener {
      * simply finish the Activity.
      *
      * <p> If you use one Activity to host all the Gini Capture fragments, then you should display the
-     * {@link CameraFragmentCompat} again.
+     * {@link CameraFragment} again.
      */
-    void onReturnToCameraScreen();
+    void onReturnToCameraScreenToAddPages();
+
+    /**
+     * Called when user deletes the last taken or imported image from {@link MultiPageReviewFragment}
+     */
+    void onReturnToCameraScreenForFirstPage();
 
     /**
      * Called when the user deleted all the pages of a document received from another app.
-     * This means the {@link MultiPageReviewFragment} was launched after a document had been created
-     * using {@link GiniCapture#createDocumentForImportedFiles(Intent, Context, AsyncCallback)}.
      *
      * <p> At this point you should finish Gini Capture by closing the {@link MultiPageReviewFragment} and
-     * cleaning up using {@link GiniCapture#cleanup(Context)}.
+     * cleaning up using {@link GiniCapture#cleanup(Context, String, String, String, String, String, net.gini.android.capture.Amount)}.
      */
     void onImportedDocumentReviewCancelled();
 

@@ -10,7 +10,7 @@ import net.gini.android.capture.test.FragmentHostActivity;
  */
 
 public class CameraFragmentHostActivityNotListener extends
-        FragmentHostActivity<CameraFragmentCompatFake> {
+        FragmentHostActivity<CameraFragmentFake> {
 
     static CameraFragmentListener sListener;
 
@@ -22,8 +22,8 @@ public class CameraFragmentHostActivityNotListener extends
     }
 
     @Override
-    protected CameraFragmentCompatFake createFragment() {
-        return CameraFragmentCompatFake.createInstance();
+    protected CameraFragmentFake createFragment() {
+        return CameraFragmentFake.createInstance();
     }
 
 }

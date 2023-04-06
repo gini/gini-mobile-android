@@ -8,11 +8,15 @@ package net.gini.android.capture.internal.network;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import net.gini.android.capture.AsyncCallback;
 import net.gini.android.capture.GiniCaptureDebug;
 import net.gini.android.capture.document.GiniCaptureDocument;
 import net.gini.android.capture.document.GiniCaptureMultiPageDocument;
 import net.gini.android.capture.document.ImageDocument;
+import net.gini.android.capture.error.ErrorType;
 import net.gini.android.capture.internal.cache.DocumentDataMemoryCache;
 import net.gini.android.capture.logging.ErrorLog;
 import net.gini.android.capture.logging.ErrorLogger;
@@ -33,8 +37,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CancellationException;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import jersey.repackaged.jsr166e.CompletableFuture;
 
 /**
@@ -96,8 +98,8 @@ public class NetworkRequestsManager {
                                         LOG.error("Document upload failed for {}: {}",
                                                 document.getId(),
                                                 error.getMessage());
-                                        future.completeExceptionally(
-                                                new RuntimeException(error.getMessage(), error.getCause()));
+                                        ErrorType errorType = ErrorType.typeFromError(error);
+                                        future.completeExceptionally(new FailureException(errorType));
                                     }
 
                                     @Override
@@ -157,7 +159,8 @@ public class NetworkRequestsManager {
     }
 
     public static boolean isCancellation(@NonNull final Throwable throwable) {
-        return throwable instanceof CancellationException;
+        return throwable instanceof CancellationException ||
+                (throwable.getCause() != null && throwable.getCause() instanceof CancellationException);
     }
 
     public CompletableFuture<NetworkRequestResult<GiniCaptureDocument>> delete(
@@ -267,9 +270,8 @@ public class NetworkRequestsManager {
                                         "Document deletion failed for {}: {}",
                                         document.getId(),
                                         error.getMessage());
-                                future.completeExceptionally(
-                                        new RuntimeException(
-                                                error.getMessage(), error.getCause()));
+                                ErrorType errorType = ErrorType.typeFromError(error);
+                                future.completeExceptionally(new FailureException(errorType));
                             }
 
                             @Override
@@ -382,8 +384,8 @@ public class NetworkRequestsManager {
                             public void failure(final Error error) {
                                 LOG.error("Document analysis failed for {}: {}",
                                         multiPageDocument.getId(), error.getMessage());
-                                future.completeExceptionally(
-                                        new RuntimeException(error.getMessage(), error.getCause()));
+                                ErrorType errorType = ErrorType.typeFromError(error);
+                                future.completeExceptionally(new FailureException(errorType));
                             }
 
                             @Override

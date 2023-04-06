@@ -4,9 +4,12 @@ on:
   push:
     paths:
       - 'health-api-library/**'
+    branches:
+      - '**'
     tags-ignore:
       - '**'
   pull_request:
+    types: [opened, edited, reopened]
     paths:
       - 'health-api-library/**'
 

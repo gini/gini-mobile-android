@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="GBSCurrencyStyle">
+        <attr name="gbsCurrencyPickerItemBackgroundColor" format="reference|color"/>
+        <attr name="gbsCurrencyPickerItemSelectedColor" format="reference|color"/>
+        <attr name="colorSurface" format="color" />
+        <attr name="gbsBottomSheetItemTitle" format="reference|color"/>
+    </declare-styleable>
+
+    <attr name="gbsSwitchTrack" format="reference|color"/>
+    <attr name="gbsTextInputLayout" format="reference|color"/>
+    <attr name="gbsReturnDialogTitle" format="reference|color"/>
+    <attr name="gbsAddonTextColor" format="reference|color"/>
+</resources>

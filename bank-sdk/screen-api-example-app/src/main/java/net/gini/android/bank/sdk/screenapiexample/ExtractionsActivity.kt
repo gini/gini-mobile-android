@@ -6,27 +6,29 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.InputMethodManager
-import android.widget.Toast
+import android.widget.EditText
+import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
-import net.gini.android.capture.GiniCapture
-import net.gini.android.capture.network.Error
-import net.gini.android.capture.network.GiniCaptureNetworkCallback
-import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
+import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.screenapiexample.databinding.ActivityExtractionsBinding
+import net.gini.android.capture.Amount
+import net.gini.android.capture.AmountCurrency
 import net.gini.android.capture.network.GiniCaptureDefaultNetworkService
+import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import org.koin.android.ext.android.inject
-import androidx.core.widget.addTextChangedListener
-
+import java.math.BigDecimal
+import java.util.*
 
 /**
  * Displays the Pay5 extractions: paymentRecipient, iban, bic, amount and paymentReference.
  *
- * A menu item is added to send feedback. The amount is changed to 10.00:EUR or an amount of
- * 10.00:EUR is added, if missing.
+ * A menu item is added to send feedback.
  */
 class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsAdapterInterface {
     private lateinit var binding: ActivityExtractionsBinding
@@ -46,6 +48,20 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
         readExtras()
         showAnalyzedDocumentId()
         setUpRecyclerView(binding)
+        handleBackPressed()
+    }
+
+    private fun handleBackPressed() {
+        onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Clean up GiniBank and pass in empty extraction feedback to signal that the user cancelled without
+                // accepting any of them
+                GiniBank.releaseCapture(applicationContext,"", "",
+                    "", "", "", Amount.EMPTY)
+                isEnabled = false
+                onBackPressed()
+            }
+        })
     }
 
     private fun showAnalyzedDocumentId() {
@@ -61,7 +77,7 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         R.id.feedback -> {
-            sendFeedback(binding)
+            sendFeedbackAndClose(binding)
             true
         }
         else -> super.onOptionsItemSelected(item)
@@ -85,6 +101,7 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
         binding.recyclerviewExtractions.apply {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(this@ExtractionsActivity)
+
             editableSpecificExtractions.forEach {
                 if (!mExtractions.containsKey(it.key)) {
                     mExtractions[it.key] = GiniCaptureSpecificExtraction(
@@ -106,50 +123,29 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
 
     private fun <T> getSortedExtractions(extractions: Map<String, T>): List<T> = extractions.toSortedMap().values.toList()
 
-    private fun sendFeedback(binding: ActivityExtractionsBinding) {
+    private fun sendFeedbackAndClose(binding: ActivityExtractionsBinding) {
         // Feedback should be sent only for the user visible fields. Non-visible fields should be filtered out.
         // In a real application the user input should be used as the new value.
 
         var amount = mExtractions["amountToPay"]?.value ?: ""
+        val paymentRecipient = mExtractions["paymentRecipient"]?.value ?: ""
+        val paymentReference = mExtractions["paymentReference"]?.value ?: ""
+        val paymentPurpose = mExtractions["paymentPurpose"]?.value ?: ""
+        val iban = mExtractions["iban"]?.value ?: ""
+        val bic = mExtractions["bic"]?.value ?: ""
+
         if (amount.isEmpty()) {
-            mExtractions["amountToPay"]?.value = "0.0:EUR"
-            mExtractionsAdapter.extractions = getSortedExtractions(mExtractions)
-            mExtractionsAdapter.notifyDataSetChanged()
+            amount = Amount.EMPTY.amountToPay()
+            mExtractions["amountToPay"]?.value = amount
+            mExtractionsAdapter?.extractions = getSortedExtractions(mExtractions)
         }
+        mExtractionsAdapter?.notifyDataSetChanged()
 
-        showProgressIndicator(binding)
-        val giniCaptureNetworkApi = GiniCapture.getInstance().giniCaptureNetworkApi
-        if (giniCaptureNetworkApi == null) {
-            Toast.makeText(
-                this, "Feedback not sent: missing GiniCaptureNetworkApi implementation.",
-                Toast.LENGTH_SHORT
-            ).show()
-            return
-        }
-        giniCaptureNetworkApi.sendFeedback(mExtractions, object : GiniCaptureNetworkCallback<Void, Error> {
-            override fun failure(error: Error) {
-                hideProgressIndicator(binding)
-                Toast.makeText(
-                    this@ExtractionsActivity,
-                    "Feedback error:\n" + error.message,
-                    Toast.LENGTH_LONG
-                ).show()
-            }
+        GiniBank.releaseCapture(applicationContext, paymentRecipient, paymentReference, paymentPurpose, iban, bic, Amount(
+            BigDecimal(amount.removeSuffix(":EUR")), AmountCurrency.EUR)
+        )
 
-            override fun success(result: Void?) {
-                hideProgressIndicator(binding)
-                Toast.makeText(
-                    this@ExtractionsActivity,
-                    "Feedback successful",
-                    Toast.LENGTH_LONG
-                ).show()
-                finish()
-            }
-
-            override fun cancelled() {
-                hideProgressIndicator(binding)
-            }
-        })
+        finish()
     }
 
     private fun showProgressIndicator(binding: ActivityExtractionsBinding) {

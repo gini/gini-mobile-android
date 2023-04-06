@@ -25,6 +25,75 @@ The reference documentation is part of the source code (kdoc or javadoc) and is 
 
 The integration guides are created using [Sphinx](https://www.sphinx-doc.org/en/master/) and can be found in each releasable sub-module's `src/doc` folder. Not all releasable sub-module's have an integration guide. For example the `core-api-library` doesn't have one as it is not meant to be used directly by our clients.
 
+## How to build the documentation
+
+Both the reference documentation and the guides can be built using fastlane with the following command:
+
+```
+$ bundle exec fastlane build_documentation project_id:<project-id> module_id:<module-id>
+```
+
+Where `<project-id>` is the name of the project folder (e.g., `capture-sdk` or `bank-api-library`) and `<module-id>` is the name of the sub-module in the project folder (e.g., `sdk` or `default-network`).
+
+The built documentation can be then found under `<project-id>/<module-id>/build/docs`. The `dokka` subfolder contains the static website for the reference documentation and the `html` subfolder contains the static website for the guides.
+
+For example the following command builds the reference documentation and guides for Capture SDK:
+
+```
+$ bundle exec fastlane build_documentation project_id:capture-sdk module_id:sdk
+```
+
+The following commands open the reference documentation and the guides in the browser:
+
+```
+$ open capture-sdk/sdk/build/docs/dokka/index.html
+$ open capture-sdk/sdk/build/docs/html/index.html
+```
+
+### Build only the reference documentation
+
+The reference documentation can be built using Gradle with the following command:
+
+```
+$ ./gradlew <project-id>:<module-id>:dokkaHtmlSiblingCollector
+```
+
+Where `<project-id>` is the name of the project folder (e.g., `capture-sdk` or `bank-api-library`) and `<module-id>` is the name of the sub-module in the project folder (e.g., `sdk` or `default-network`).
+
+The built documentation can be then found under `<project-id>/<module-id>/build/docs/dokka`.
+
+For example this command builds the reference documentation for the Capture SDK:
+
+```
+$ ./gradlew capture-sdk:sdk:dokkaHtmlSiblingCollector
+```
+
+With the following command you can open the reference documentation in the browser:
+
+```
+$ open capture-sdk/sdk/build/docs/dokka/index.html
+```
+
+### Build only the guides
+
+The guides are built using Sphinx and a makefile. The makefile is found in each releasable sub-module's `src/doc` folder.
+
+You must use Python 2.x to build the guides. It won't work with Python 3.x. We have good experience using [pyenv](https://github.com/pyenv/pyenv) to easily switch to Python 2.x whenever we want to build the guides.
+
+For example the following commands show how to build the guides for the Capture SDK:
+
+```
+$ cd capture-sdk/sdk/src/doc/
+$ pyenv local 2.7.18
+$ make html
+```
+
+The built guides will be found under `build/html` in the same location, and you can open them in the browser with the following command:
+
+```
+$ open build/html/index.html
+```
+
 # Example Apps
 
 All SDKs have accompanying example apps. These can be found as sub-modules under the SDK's module. The example apps serve as a tool for us during development as well as an aid for our clients.

@@ -12,7 +12,13 @@ import net.gini.android.bank.sdk.R
  * Copyright (c) 2020 Gini GmbH.
  */
 
-internal enum class AddonExtraction(
+/**
+ * Internal use only.
+ *
+ * @suppress
+ */
+
+enum class AddonExtraction(
     val extractionName: String,
     @StringRes val addonNameStringRes: Int
 ) {
@@ -30,7 +36,12 @@ internal enum class AddonExtraction(
     }
 }
 
-class DigitalInvoiceAddon private constructor(
+/**
+ * Internal use only.
+ *
+ * @suppress
+ */
+class DigitalInvoiceAddon constructor(
     val price: BigDecimal,
     val currency: Currency?,
     private val addonExtraction: AddonExtraction

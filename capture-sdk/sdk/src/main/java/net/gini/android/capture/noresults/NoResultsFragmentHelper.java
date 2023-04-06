@@ -4,10 +4,15 @@ import android.content.Context;
 import android.os.Bundle;
 
 import net.gini.android.capture.Document;
+import net.gini.android.capture.ImageRetakeOptionsListener;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 
 import androidx.annotation.NonNull;
 
+/**
+ * Helper class for setting arguments to analysis fragment.
+ * Internal use only.
+ */
 final class NoResultsFragmentHelper {
 
     private static final String ARGS_DOCUMENT = "GC_ARGS_DOCUMENT";
@@ -31,8 +36,8 @@ final class NoResultsFragmentHelper {
 
     public static void setListener(@NonNull final NoResultsFragmentImpl fragmentImpl,
             @NonNull final Context context) {
-        if (context instanceof NoResultsFragmentListener) {
-            fragmentImpl.setListener((NoResultsFragmentListener) context);
+        if (context instanceof ImageRetakeOptionsListener) {
+            fragmentImpl.setListener((ImageRetakeOptionsListener) context);
         } else {
             throw new IllegalStateException(
                     "Hosting activity must implement NoResultsFragmentListener.");

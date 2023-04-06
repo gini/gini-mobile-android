@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/backgroundColor">
+
+    <net.gini.android.capture.view.InjectedViewContainer
+        android:id="@+id/gc_injected_icon_container"
+        android:layout_width="wrap_content"
+        android:layout_height="260dp"
+        app:layout_constraintBottom_toTopOf="@id/gc_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.6" />
+
+    <TextView
+        android:id="@+id/gc_title"
+        style="@style/GiniCaptureTheme.Typography.Headline6"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/gc_large"
+        android:layout_marginEnd="@dimen/gc_large"
+        android:layout_marginBottom="@dimen/gc_large"
+        android:gravity="center"
+        app:layout_constraintBottom_toTopOf="@id/gc_message"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="Within the frame" />
+
+    <TextView
+        android:id="@+id/gc_message"
+        style="@style/GiniCaptureTheme.Typography.Body1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/gc_large_64"
+        android:layout_marginEnd="@dimen/gc_large_64"
+        android:textColor="@color/gc_dark_06"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="Ensure that the document is flat, and positioned within the frame" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

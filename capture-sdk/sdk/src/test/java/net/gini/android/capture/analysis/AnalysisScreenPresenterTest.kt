@@ -16,7 +16,6 @@ import net.gini.android.capture.*
 import net.gini.android.capture.document.*
 import net.gini.android.capture.internal.document.DocumentRenderer
 import net.gini.android.capture.internal.document.ImageMultiPageDocumentMemoryStore
-import net.gini.android.capture.internal.ui.ErrorSnackbar
 import net.gini.android.capture.internal.util.FileImportHelper.ShowAlertCallback
 import net.gini.android.capture.internal.util.Size
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
@@ -47,6 +46,7 @@ class AnalysisScreenPresenterTest {
 
     @Mock
     private lateinit var mView: AnalysisScreenContract.View
+
     @Before
     @Throws(Exception::class)
     fun setUp() {
@@ -58,6 +58,8 @@ class AnalysisScreenPresenterTest {
     fun tearDown() {
         GiniCaptureHelper.setGiniCaptureInstance(null)
     }
+
+    // TODO: test navigation to Error screen instead of the snackbbar (when it is implemented)
 
     @Test
     @Throws(Exception::class)
@@ -138,9 +140,17 @@ class AnalysisScreenPresenterTest {
     }
 
     private fun createGiniCaptureInstance(): GiniCapture {
-        GiniCapture.cleanup(InstrumentationRegistry.getInstrumentation().targetContext)
+        if (GiniCapture.hasInstance())
+            GiniCapture.cleanup(
+                InstrumentationRegistry.getInstrumentation().targetContext,
+                "",
+                "",
+                "",
+                "",
+                "",
+                Amount.EMPTY
+            )
         GiniCapture.newInstance()
-            .setGiniCaptureNetworkApi(mock())
             .setGiniCaptureNetworkService(mock())
             .build()
         return GiniCapture.getInstance()
@@ -204,53 +214,6 @@ class AnalysisScreenPresenterTest {
         val nrOfPairwiseComparisons = (nrOfComparisons / 2.0 * (nrOfComparisons + 1)).toInt()
         val samePositionCountIfSameOrder = nrOfPairwiseComparisons * hints1.size
         Truth.assertThat(countSamePosition).isLessThan(samePositionCountIfSameOrder)
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun should_hideError() {
-        // Given
-        val presenter = createPresenterWithEmptyImageDocument()
-
-        // When
-        presenter.hideError()
-
-        // Then
-        verify(mView).hideErrorSnackbar()
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun should_showError() {
-        // Given
-        val presenter = createPresenterWithEmptyImageDocument()
-
-        // When
-        val message = "Error message"
-        val duration = 1000
-        presenter.showError(message, duration)
-
-        // Then
-        verify(mView).showErrorSnackbar(message, duration, null, null)
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun should_showError_withButtonTitle_andOnClickListener() {
-        // Given
-        val presenter = createPresenterWithEmptyImageDocument()
-
-        // When
-        val message = "Error message"
-        val buttonTitle = "Retry"
-        val onClickListener = View.OnClickListener { }
-        presenter.showError(message, buttonTitle, onClickListener)
-
-        // Then
-        verify(mView).showErrorSnackbar(
-            message, ErrorSnackbar.LENGTH_INDEFINITE, buttonTitle,
-            onClickListener
-        )
     }
 
     @Test
@@ -364,9 +327,7 @@ class AnalysisScreenPresenterTest {
         presenter.start()
 
         // Then
-        verify(mView).showPdfInfoPanel()
         verify(mView).showPdfTitle(pdfFilename)
-        verify(mView).showPdfPageCount(pdfPageCountString)
     }
 
     @Test
@@ -384,9 +345,7 @@ class AnalysisScreenPresenterTest {
         presenter.start()
 
         // Then
-        verify(mView).showPdfInfoPanel()
         verify(mView).showPdfTitle(pdfFilename)
-        verify(mView).hidePdfPageCount()
     }
 
     @Test
@@ -404,28 +363,7 @@ class AnalysisScreenPresenterTest {
         presenter.start()
 
         // Then
-        verify(mView).showPdfInfoPanel()
         verify(mView).showPdfTitle(pdfFilename)
-        verify(mView).hidePdfPageCount()
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun should_showDocument_afterDocumentWasLoaded() {
-        // Given
-        val imageDocument: ImageDocument = ImageDocumentFake()
-        whenever(mView.pdfPreviewSize).thenReturn(Size(1024, 768))
-        val bitmap = mock<Bitmap>()
-        val rotationForDisplay = 90
-        val presenter = spy(
-            createPresenter(imageDocument, bitmap = bitmap, rotationForDisplay = rotationForDisplay)
-        )
-
-        // When
-        presenter.start()
-
-        // Then
-        verify(mView).showBitmap(bitmap, rotationForDisplay)
     }
 
     @Test
@@ -440,51 +378,6 @@ class AnalysisScreenPresenterTest {
 
         // Then
         verify(presenter).analyzeDocument()
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun should_showError_ifAvailable_beforeAnalysis() {
-        // Given
-        val imageDocument: ImageDocument = ImageDocumentFake()
-        val errorMessage = "Something went wrong"
-        val presenter = spy(
-            createPresenter(imageDocument, documentAnalysisErrorMessage = errorMessage)
-        )
-
-        // When
-        presenter.start()
-
-        // Then
-        verify(mView).showErrorSnackbar(
-            eq(errorMessage),
-            anyInt(),
-            anyOrNull(),
-            any()
-        )
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun should_analyzeDocument_afterTappingRetry_onErrorSnackbar() {
-        // Given
-        val imageDocument: ImageDocument = ImageDocumentFake()
-        val errorMessage = "Something went wrong"
-        val presenter = spy(createPresenter(imageDocument, documentAnalysisErrorMessage = errorMessage))
-
-        // When
-        presenter.start()
-        val onClickListenerCaptor = argumentCaptor<View.OnClickListener>()
-        verify(mView).showErrorSnackbar(
-            eq(errorMessage),
-            anyInt(),
-            anyOrNull(),
-            onClickListenerCaptor.capture()
-        )
-        onClickListenerCaptor.firstValue.onClick(mock())
-
-        // Then
-        verify(presenter).doAnalyzeDocument()
     }
 
     @Test
@@ -514,7 +407,8 @@ class AnalysisScreenPresenterTest {
                 AnalysisInteractor.Result.SUCCESS_NO_EXTRACTIONS
             )
         )
-        val presenter = createPresenterWithAnalysisFuture(imageDocument, analysisFuture = analysisFuture)
+        val presenter =
+            createPresenterWithAnalysisFuture(imageDocument, analysisFuture = analysisFuture)
 
         // When
         presenter.start()
@@ -531,25 +425,10 @@ class AnalysisScreenPresenterTest {
         val analysisInteractor = mock<AnalysisInteractor> {
             on { analyzeMultiPageDocument(any()) } doReturn analysisFuture
         }
-        return createPresenter(document, giniCapture = giniCapture, analysisInteractor = analysisInteractor)
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun should_showError_whenAnalysisFailed() {
-        // Given
-        whenever(mActivity.getString(anyInt())).thenReturn("A String")
-        val imageDocument: ImageDocument = ImageDocumentFake()
-        val analysisFuture = CompletableFuture<AnalysisInteractor.ResultHolder>()
-        analysisFuture.completeExceptionally(RuntimeException())
-        val presenter = createPresenterWithAnalysisFuture(imageDocument, analysisFuture = analysisFuture)
-
-        // When
-        presenter.start()
-
-        // Then
-        verify(mView).showErrorSnackbar(
-            any(), anyInt(), any(), any()
+        return createPresenter(
+            document,
+            giniCapture = giniCapture,
+            analysisInteractor = analysisInteractor
         )
     }
 
@@ -565,7 +444,8 @@ class AnalysisScreenPresenterTest {
                 AnalysisInteractor.Result.SUCCESS_NO_EXTRACTIONS
             )
         )
-        val presenter = createPresenterWithAnalysisFuture(imageDocument, analysisFuture = analysisFuture)
+        val presenter =
+            createPresenterWithAnalysisFuture(imageDocument, analysisFuture = analysisFuture)
         val listener = mock<AnalysisFragmentListener>()
         presenter.setListener(listener)
 
@@ -598,7 +478,8 @@ class AnalysisScreenPresenterTest {
                 extractions, compoundExtraction, returnReasons
             )
         )
-        val presenter = createPresenterWithAnalysisFuture(imageDocument, analysisFuture = analysisFuture)
+        val presenter =
+            createPresenterWithAnalysisFuture(imageDocument, analysisFuture = analysisFuture)
         val listener = mock<AnalysisFragmentListener>()
         presenter.setListener(listener)
 
@@ -701,7 +582,8 @@ class AnalysisScreenPresenterTest {
         future.completeExceptionally(CancellationException())
         doReturn(future)
             .whenever(presenter)
-            .showAlertIfOpenWithDocumentAndAppIsDefault(any(), any()
+            .showAlertIfOpenWithDocumentAndAppIsDefault(
+                any(), any()
             )
         val listener = mock<AnalysisFragmentListener>()
         presenter.setListener(listener)
@@ -773,7 +655,8 @@ class AnalysisScreenPresenterTest {
         whenever(internal.imageMultiPageDocumentMemoryStore).thenReturn(memoryStore)
         val giniCapture = mock<GiniCapture>()
         whenever(giniCapture.internal()).thenReturn(internal)
-        val presenter = createPresenterWithAnalysisFuture(imageDocument,
+        val presenter = createPresenterWithAnalysisFuture(
+            imageDocument,
             giniCapture = giniCapture, analysisFuture = analysisFuture
         )
 
@@ -903,55 +786,6 @@ class AnalysisScreenPresenterTest {
         errorDetails[AnalysisScreenEvent.ERROR_DETAILS_MAP_KEY.ERROR_OBJECT] = exception
         verify(eventTracker)
             .onAnalysisScreenEvent(Event(AnalysisScreenEvent.ERROR, errorDetails))
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun should_triggerRetryEvent_forError_fromReviewScreen_whenRetry_wasClicked() {
-        // Given
-        val imageDocument: ImageDocument = ImageDocumentFake()
-        val eventTracker = spy<EventTracker>()
-        GiniCapture.Builder().setEventTracker(eventTracker).build()
-        val errorMessage = "Something went wrong"
-        val presenter = createPresenter(
-            imageDocument,
-            giniCapture = GiniCapture.getInstance(),
-            documentAnalysisErrorMessage = errorMessage
-        )
-
-        // When
-        presenter.start()
-        val onClickListenerCaptor = argumentCaptor<View.OnClickListener>()
-        verify(mView).showErrorSnackbar(any(), anyInt(), anyOrNull(), onClickListenerCaptor.capture())
-        onClickListenerCaptor.firstValue.onClick(mock())
-
-        // Then
-        verify(eventTracker).onAnalysisScreenEvent(Event(AnalysisScreenEvent.RETRY))
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun should_triggerRetryEvent_forAnalysisError_whenRetry_wasClicked() {
-        // Given
-        whenever(mActivity.getString(anyInt())).thenReturn("A String")
-        val imageDocument: ImageDocument = ImageDocumentFake()
-        val analysisFuture = CompletableFuture<AnalysisInteractor.ResultHolder>()
-        analysisFuture.completeExceptionally(RuntimeException("error message"))
-        val eventTracker = spy<EventTracker>()
-        GiniCapture.Builder().setEventTracker(eventTracker).build()
-        val presenter = createPresenterWithAnalysisFuture(
-            imageDocument,
-            giniCapture = GiniCapture.getInstance(), analysisFuture = analysisFuture
-        )
-
-        // When
-        presenter.start()
-        val onClickListenerCaptor = argumentCaptor<View.OnClickListener>()
-        verify(mView).showErrorSnackbar(any(), anyInt(), any(), onClickListenerCaptor.capture())
-        onClickListenerCaptor.firstValue.onClick(mock())
-
-        // Then
-        verify(eventTracker).onAnalysisScreenEvent(Event(AnalysisScreenEvent.RETRY))
     }
 
     @Test

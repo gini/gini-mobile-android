@@ -5,7 +5,7 @@ Features from the Gini Capture SDK
 ----------------------------------
 
 The capture feature uses our `Gini Capture SDK <https://github.com/gini/gini-mobile-android/tree/main/capture-sdk>`_. All features
-listed in its `documentation <https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/html/features.html>`_ can be used here
+listed in its :root_html_path_capture_sdk:`documentation <features.html>` can be used here
 as well.
 
 An important difference is in how you configure the capture features. In the Gini Bank SDK you need to use the
@@ -15,12 +15,8 @@ so you can easily map them to the ``CaptureConfiguration``.
 File Import (Open With)
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Another difference is related to the `file import
-<https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/html/features.html#file-import-open-with>`_ (or "open with")
-feature which allows importing of files from other apps via Android's "open with" or "share" functionality.
-
-Screen API
-^^^^^^^^^^
+Another difference is related to the :root_html_path_capture_sdk:`file import <features.html#file-import-open-with>` (or
+"open with") feature which allows importing of files from other apps via Android's "open with" or "share" functionality.
 
 To handle imported files using the Gini Bank SDK you need to register an activity result handler with the
 ``CaptureFlowImportContract()`` and then pass the incoming intent to
@@ -83,39 +79,6 @@ To handle imported files using the Gini Bank SDK you need to register an activit
             GiniBank.startCaptureFlowForIntent(captureImportLauncher, this, importedFileIntent)
     }
 
-Component API
-^^^^^^^^^^^^^
-
-When using the Component API you need to create a ``Document`` from the intent using
-``GiniBank.createDocumentForImportedFiles()`` and then continue either to the ``ReviewFragmentCompat``,
-``MultiPageReviewFragment`` or ``AnalysisFragmentCompat``:
-
-.. code-block:: java
-
-    fun startGiniBankSDKForImportedFile(importedFileIntent: Intent) {
-        GiniBank.createDocumentForImportedFiles(importedFileIntent, this, object : AsyncCallback<Document, ImportedFileValidationException> {
-            override fun onSuccess(result: Document) {
-                if (result.isReviewable) {
-                    // If you have enabled capturing documents with multiple pages:
-                    launchMultiPageReviewScreen()
-                    // OR if you didn't:
-                    launchSinglePageReviewScreen()
-                } else {
-                    launchAnalysisScreen(result)
-                }
-                finish()
-            }
-
-            override fun onError(exception: ImportedFileValidationException) {
-                handleFileImportError(exception)
-            }
-
-            override fun onCancelled() {
-                // Handle cancellation.
-            }
-        })
-    }
-
 Return Assistant
 ----------------
 
@@ -126,12 +89,14 @@ To enable this feature simply set ``returnAssistantEnabled`` to ``true`` in the 
 
 .. code-block:: java
 
-    CaptureConfiguration(returnAssistantEnabled = true)
+    GiniBank.setCaptureConfiguration(
+        CaptureConfiguration(
+            returnAssistantEnabled = true,
+            ...
+        )
+    )
 
-Screen API
-~~~~~~~~~~~
-
-When integrating using the Screen API it is enough to enable the return assistant feature. The Gini Bank SDK will
+The Gini Bank SDK will
 show the return assistant automatically if the invoice contained payable items and will update the extractions returned
 to your app according to the user's changes.
 
@@ -143,139 +108,19 @@ The extractions related to the return assistant are stored in the ``compoundExtr
 <https://pay-api.gini.net/documentation/#return-assistant-extractions>`_ to learn about the return assistant's compound
 extractions.
 
-Component API
-~~~~~~~~~~~~~
+Accessibility
+-------------
 
-Using the Component API is more challenging. You need to manage three additional fragments: ``DigitalInvoiceFragment``,
-``DigitalInvoiceOnboardingFragment`` and ``LineItemDetailsFragment``.
+The SDK conforms to the following accessibility features:
 
-.. note::
+- UI is zoomable using Android's screen magnification feature.
+- TalkBack screen reader support: all non-textual UI elements (e.g., icons and images) have content descriptions.
+- Touchable elements (e.g., buttons and switches) have a minimum size of 48dp x 48dp.
+- Font sizes can be increased in Android's accessibility settings.
+- Default color palette has sufficient color contrast.
+- Color contrast can be increased in Android's accessibility settings.
 
-   See the Component API example app's `digitalinvoice package
-   <https://github.com/gini/gini-mobile-android/tree/main/bank-sdk/component-api-example-app/src/main/java/net/gini/pay/appcomponentapi/digitalinvoice>`_
-   for a sample integration.
+.. warning::
 
-The following diagram extends the one found in the Gini Capture SDK's `Component API guide
-<https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/html/integration.html#component-api>`_. It shows the possible flows
-through the SDK based on the listener method invocations. For brevity each fragment's listener is shown next to it. In
-your integration you will provide the listener implementations and handle the listener method calls. You should navigate
-to the appropriate fragment based on this diagram.
-
-The part related to the return assistant is in the lower right corner:
-
-.. image:: _static/capture-features/Return-Assistant-Component-API.png
-   :alt: Diagram of possible flows through the SDK with the Component API fragments and their listeners including the return assistant.
-   :width: 100%
-
-DigitalInvoiceFragment
-^^^^^^^^^^^^^^^^^^^^^^
-
-This is the entry point for the return assistant. It displays the line items extracted from an invoice and their total
-price. The user can deselect line items which should not be paid for and also edit the quantity, price or description of
-each line item. The total price is always updated to include only the selected line items.
-
-The returned extractions in the ``DigitalInvoiceFragmentListener.onPayInvoice()`` are updated to include the user's
-modifications:
-
-* ``amountToPay`` in the specific extractions is updated to contain the sum of the selected line items' prices.
-* The line items in the compound extractions are also updated according to the user's modifications.
-
-Before showing the ``DigitalInvoiceFragment`` you should validate the compound extractions 
-using the ``LineItemsValidator``. These extractions are returned in the ``AnalysisFragmentListener.onExtractionsAvailable()]``
-listener method:
-
-.. code-block:: java
-
-    override fun onExtractionsAvailable(
-        extractions: Map<String, GiniCaptureSpecificExtraction>,
-        compoundExtractions: Map<String, GiniCaptureCompoundExtraction>,
-        returnReasons: List<GiniCaptureReturnReason>
-    ) {
-        try {
-            // Check whether the compound extractions contain valid line items or not
-            LineItemsValidator.validate(compoundExtractions)
-
-            // At this point there are valid line items and you can start the return assistant
-            val fragment = DigitalInvoiceFragment.createInstance(extractions, compoundExtractions, returnReasons)
-            startReturnAssistant(fragment)
-
-        } catch (notUsed: DigitalInvoiceException) {
-            // There were no valid line items and you can proceed directly to handling the extractions 
-            // without the return assistant
-            handleExtractions(extractions)
-        }
-    }
-
-A ``DigitalInvoiceFragmentListener`` instance must be available before the ``DigitalInvoiceFragment`` is attached to an
-Activity. Failing to do so will throw an exception. The listener instance can be provided either implicitly by making
-the hosting Activity implement the ``DigitalInvoiceFragmentListener`` interface or explicitly by setting the listener
-using the ``DigitalInvoiceFragment.listener`` property.
-
-DigitalInvoiceOnboardingFragment
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-This fragment shows the onboarding screen related to the return assistant. It displays information about the return
-assistant to the user.
-
-You should show the ``DigitalInvoiceOnboardingFragment`` when the ``DigitalInvoiceFragmentListener.showOnboarding()`` is
-called.
-
-A ``DigitalInvoiceOnboardingFragmentListener`` instance must be available before the
-``DigitalInvoiceOnboardingFragment`` is attached to an activity. Failing to do so will throw an exception. The listener
-instance can be provided either implicitly by making the host Activity implement the
-``DigitalInvoiceOnboardingFragmentListener`` interface or explicitly by setting the listener using the
-``DigitalInvoiceOnboardingFragment.listener`` property.
-
-LineItemDetailsFragment
-^^^^^^^^^^^^^^^^^^^^^^^
-
-This fragment allows the user to edit the details of a line item: description, quantity and price. It also allows the
-user to deselect the line item.
-
-The returned line item in the ``LineItemDetailsFragmentListener.onSave()`` listener method is updated to contain the
-user's modifications.
-
-You should show the LineItemDetailsFragment when the ``DigitalInvoiceFragmentListener.onEditLineItem()`` is called.
-
-A ``LineItemDetailsFragmentListener`` instance must be available before the ``LineItemDetailsFragment`` is attached to
-an activity. Failing to do so will throw an exception. The listener instance can be provided either implicitly by making
-the host Activity implement the ``LineItemDetailsFragmentListener`` interface or explicitly by setting the listener
-using the ``LineItemDetailsFragment.listener`` property.
-
-Sending Feedback
-~~~~~~~~~~~~~~~~
-
-Your app should send feedback for the extractions related to the return assistant. These extractions are found in the
-``compoundExtractions`` field of the ``CaptureResult`` if you are using the Screen API and in the
-``compoundExtractions`` parameter of the ``DigitalInvoiceFragmentListener.onPayInvoice()`` listener method if you use
-the Component API.
-
-Default Networking Implementation
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-If you use the ``GiniCaptureDefaultNetworkService`` and the ``GiniCaptureDefaultNetworkApi`` then sending feedback for
-the return assistant extractions is done by the ``GiniCaptureDefaultNetworkApi`` when you send feedback for the payment
-data extractions as described in the `Sending Feedback <integration.html#sending-feedback>`_ section.
-
-Custom Networking Implementation
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-If you use your own networking implementation and directly communicate with the Gini Bank API then see `this section
-<https://pay-api.gini.net/documentation/#submitting-feedback-on-extractions>`_ in its documentation on how to send
-feedback for the compound extractions.
-
-In case you use the Gini Bank API Library then sending compound extraction feedback is very similar to how it's shown in
-its `documentation <https://developer.gini.net/gini-mobile-android/bank-api-library/library/>`_. The only difference is
-that you need to also pass in the ``CompoundExtraction`` map to ``DocumentTaskManager.sendFeebackForExtractions()``:
-
-.. code-block:: java
-
-    // Extractions seen and accepted by the user (including user modifications)
-    Map<String, SpecificExtraction> specificExtractionFeedback;
-
-    // Return assistant extractions as returned by the CaptureResult or DigitalInvoiceFragmentListener
-    Map<String, CompoundExtraction> compoundExtractionFeedback;
-
-    final Task<Document> sendFeedback = documentTaskManager.sendFeedbackForExtractions(document, 
-            specificExtractionFeedback, compoundExtractionFeedback);
-    sendFeedback.waitForCompletion();
+    When customizing the SDK's UI you can override accessibility conformance by changing colors, images and injecting
+    custom UI elements. We strongly advise you to make your customizations accessibility friendly.

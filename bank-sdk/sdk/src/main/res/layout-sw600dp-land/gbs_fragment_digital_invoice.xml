@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/backgroundColor"
+    tools:context="net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceFragment">
+
+    <net.gini.android.capture.view.InjectedViewContainer
+        android:id="@+id/gbs_top_bar_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/gbs_article_txt"
+        style="@style/GiniCaptureTheme.Typography.Subtitle2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/gc_large_24"
+        android:layout_marginTop="@dimen/gc_large_24"
+        android:text="@string/gbs_articles"
+        app:layout_constraintStart_toStartOf="@+id/line_items"
+        app:layout_constraintTop_toBottomOf="@+id/gbs_top_bar_navigation" />
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/line_items"
+        android:layout_width="@dimen/gc_tablet_width"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/gc_small"
+        android:background="?attr/backgroundColor"
+        android:scrollbars="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/gbs_bottom_wrapper"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/gbs_article_txt"
+        app:layout_constraintVertical_bias="0.0"
+        tools:itemCount="25"
+        tools:listitem="@layout/gbs_item_digital_invoice_line_item" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/gbs_bottom_wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorSurface"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            app:dividerColor="?attr/dividerColor"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="@dimen/gc_tablet_width"
+            android:layout_height="match_parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <TextView
+                android:id="@+id/gross_price_total_fractional_part"
+                style="@style/GiniCaptureTheme.Typography.Headline5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/gc_large_24"
+                app:layout_constraintBottom_toBottomOf="@+id/gross_price_total_integral_part"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/gross_price_total_integral_part"
+                tools:text=".99" />
+
+            <TextView
+                android:id="@+id/gross_price_total_integral_part"
+                style="@style/GiniCaptureTheme.Typography.Headline5"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/gc_large_24"
+                app:layout_constraintEnd_toStartOf="@+id/gross_price_total_fractional_part"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="€242" />
+
+
+            <TextView
+                android:id="@+id/total_label"
+                style="@style/GiniCaptureTheme.Typography.Body1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/gc_large_24"
+                android:text="@string/gbs_digital_invoice_footer_total_label"
+                app:layout_constraintBottom_toBottomOf="@id/gross_price_total_integral_part"
+                app:layout_constraintHorizontal_chainStyle="spread_inside"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/gross_price_total_integral_part" />
+
+            <com.google.android.material.button.MaterialButton
+                style="@style/GiniCaptureTheme.Widget.Button.UnelevatedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/gc_large_24"
+                android:layout_marginBottom="@dimen/gc_large_24"
+                android:text="@string/gbs_proceed"
+                android:id="@+id/gbs_pay"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/gross_price_total_fractional_part"
+                app:layout_constraintStart_toStartOf="@+id/total_label"
+                app:layout_constraintTop_toBottomOf="@+id/gross_price_total_integral_part" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <net.gini.android.capture.view.InjectedViewContainer
+        android:id="@+id/gbs_bottom_bar_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

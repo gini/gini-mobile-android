@@ -4,9 +4,12 @@ on:
   push:
     paths:
       - 'health-sdk/**'
+    branches:
+      - '**'
     tags-ignore:
       - '**'
   pull_request:
+    types: [opened, edited, reopened]
     paths:
       - 'health-sdk/**'
 

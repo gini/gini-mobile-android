@@ -2,6 +2,7 @@ package net.gini.android.bank.sdk.capture.digitalinvoice
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
@@ -12,6 +13,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import kotlinx.coroutines.CoroutineScope
+import net.gini.android.bank.sdk.GiniBank
+import net.gini.android.bank.sdk.R
+import net.gini.android.bank.sdk.capture.digitalinvoice.help.HelpActivity
+import net.gini.android.bank.sdk.capture.digitalinvoice.view.DigitalInvoiceNavigationBarBottomAdapter
 import net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
@@ -19,6 +24,10 @@ import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.bank.sdk.capture.util.autoCleared
 import net.gini.android.bank.sdk.capture.util.parentFragmentManagerOrNull
 import net.gini.android.bank.sdk.databinding.GbsFragmentDigitalInvoiceBinding
+import net.gini.android.capture.GiniCapture
+import net.gini.android.capture.internal.ui.IntervalToolbarMenuItemIntervalClickListener
+import net.gini.android.capture.view.InjectedViewAdapterHolder
+import net.gini.android.capture.view.NavButtonType
 
 
 /**
@@ -36,16 +45,12 @@ private const val TAG_RETURN_REASON_DIALOG = "TAG_RETURN_REASON_DIALOG"
 private const val TAG_WHAT_IS_THIS_DIALOG = "TAG_WHAT_IS_THIS_DIALOG"
 
 /**
- * When you use the Component API the `DigitalInvoiceFragment` displays the line items extracted from an invoice document and their total
- * price. The user can deselect line items which should not be paid for and also edit the quantity, price or description of each line item. The
- * total price is always updated to include only the selected line items.
- *
- * The returned extractions in the [DigitalInvoiceFragmentListener.onPayInvoice()] are updated to include the user's midifications:
+ * The returned extractions in the [DigitalInvoiceFragmentListener.onPayInvoice()] are updated to include the user's modifications:
  * - "amountToPay" is updated to contain the sum of the selected line items' prices,
  * - the line items are updated according to the user's modifications.
  *
- * Before showing the `DigitalInvoiceFragment` you should validate the compound extractions 
- * using the [LineItemsValidator]. These extractions are returned in the [AnalysisFragmentListener.onExtractionsAvailable()] 
+ * Before showing the `DigitalInvoiceFragment` you should validate the compound extractions
+ * using the [LineItemsValidator]. These extractions are returned in the [AnalysisFragmentListener.onExtractionsAvailable()]
  * listener method.
  *
  * Include the `DigitalInvoiceFragment` into your layout by using the [DigitalInvoiceFragment.createInstance()] factory method to create
@@ -83,6 +88,7 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
     private var compoundExtractions: Map<String, GiniCaptureCompoundExtraction> = emptyMap()
     private var returnReasons: List<GiniCaptureReturnReason> = emptyList()
     private var isInaccurateExtraction: Boolean = false
+    private var footerDetails: DigitalInvoiceScreenContract.FooterDetails? = null
 
     companion object {
 
@@ -193,7 +199,61 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
         super.onViewCreated(view, savedInstanceState)
         initRecyclerView()
         setInputHandlers()
+        initTopNavigationBar()
+        initBottomBar()
         presenter?.onViewCreated()
+    }
+
+
+    private fun initTopNavigationBar() {
+        if (GiniCapture.hasInstance()) {
+            binding.gbsTopBarNavigation.injectedViewAdapterHolder = InjectedViewAdapterHolder(
+                GiniCapture.getInstance().internal().navigationBarTopAdapterInstance
+            ) { injectedViewAdapter ->
+                injectedViewAdapter.setTitle(getString(R.string.gbs_digital_invoice_onboarding_text_1))
+
+                injectedViewAdapter.setNavButtonType(NavButtonType.CLOSE)
+
+                if (!GiniCapture.getInstance().isBottomNavigationBarEnabled) {
+                    injectedViewAdapter.setMenuResource(R.menu.gbs_menu_digital_invoice)
+                    injectedViewAdapter.setOnMenuItemClickListener(IntervalToolbarMenuItemIntervalClickListener {
+                        if (it.itemId == R.id.help) {
+                            startActivity(Intent(requireContext(), HelpActivity::class.java))
+                        }
+                        true
+                    })
+                }
+
+                injectedViewAdapter.setOnNavButtonClickListener {
+                    activity?.finish()
+                }
+            }
+        }
+    }
+
+    private fun initBottomBar() {
+        if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled) {
+
+            binding.gbsBottomWrapper.visibility = View.INVISIBLE
+            binding.gbsPay.isEnabled = false
+
+            binding.gbsBottomBarNavigation.injectedViewAdapterHolder =
+                InjectedViewAdapterHolder(GiniBank.digitalInvoiceNavigationBarBottomAdapterInstance) { injectedViewAdapter ->
+                    injectedViewAdapter.setOnHelpClickListener {
+                        startActivity(Intent(requireContext(), HelpActivity::class.java))
+                    }
+
+                    injectedViewAdapter.setOnProceedClickListener {
+                        presenter?.pay()
+                    }
+
+                    footerDetails?.let {
+                        val (integral, fractional) = it.totalGrossPriceIntegralAndFractionalParts
+                        injectedViewAdapter.setTotalPrice(integral + fractional)
+                        injectedViewAdapter.setProceedButtonEnabled(it.buttonEnabled)
+                    }
+                }
+        }
     }
 
     private fun initListener() {
@@ -207,7 +267,7 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
     }
 
     private fun initRecyclerView() {
-        lineItemsAdapter = LineItemsAdapter(this)
+        lineItemsAdapter = LineItemsAdapter(this, requireContext())
         activity?.let {
             binding.lineItems.apply {
                 layoutManager = LinearLayoutManager(it)
@@ -218,22 +278,13 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
     }
 
     private fun setInputHandlers() {
+        binding.gbsPay.setOnClickListener {
+            payButtonClicked()
+        }
     }
 
     override fun payButtonClicked() {
         presenter?.pay()
-    }
-
-    override fun skipButtonClicked() {
-        presenter?.skip()
-    }
-
-    override fun addNewArticle() {
-        presenter?.addNewArticle()
-    }
-
-    override fun removeLineItem(lineItem: SelectableLineItem) {
-        presenter?.removeLineItem(lineItem)
     }
 
     /**
@@ -310,7 +361,21 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
     }
 
     override fun updateFooterDetails(data: DigitalInvoiceScreenContract.FooterDetails) {
-        lineItemsAdapter.footerDetails = data
+        val (integral, fractional) = data.totalGrossPriceIntegralAndFractionalParts
+        binding.grossPriceTotalIntegralPart.text = integral
+        binding.grossPriceTotalFractionalPart.text = fractional
+        binding.gbsPay.isEnabled = data.buttonEnabled
+
+        if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled) {
+            binding.gbsBottomBarNavigation.modifyAdapterIfOwned {
+                (it as DigitalInvoiceNavigationBarBottomAdapter).apply {
+                    setTotalPrice(integral + fractional)
+                    setProceedButtonEnabled(data.buttonEnabled)
+                }
+            }
+        }
+
+        this.footerDetails = data
     }
 
     /**
@@ -395,24 +460,6 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
      */
     override fun onLineItemDeselected(lineItem: SelectableLineItem) {
         presenter?.deselectLineItem(lineItem)
-    }
-
-    /**
-     * Internal use only.
-     *
-     * @suppress
-     */
-    override fun onWhatIsThisButtonClicked() {
-        parentFragmentManagerOrNull()?.let { fragmentManager ->
-            WhatIsThisDialog.createInstance().run {
-                callback = { isHelpful ->
-                    if (isHelpful != null) {
-                        presenter?.userFeedbackReceived(isHelpful)
-                    }
-                }
-                show(fragmentManager, TAG_WHAT_IS_THIS_DIALOG)
-            }
-        }
     }
 
     override fun updateLineItem(selectableLineItem: SelectableLineItem) {

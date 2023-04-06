@@ -6,8 +6,6 @@ import net.gini.android.bank.api.GiniBankAPI;
 import net.gini.android.bank.api.GiniBankAPIBuilder;
 import net.gini.android.capture.network.GiniCaptureDefaultNetworkService;
 import net.gini.android.core.api.DocumentMetadata;
-import net.gini.android.capture.network.GiniCaptureDefaultNetworkApi;
-import net.gini.android.capture.network.GiniCaptureNetworkApi;
 import net.gini.android.capture.network.GiniCaptureNetworkService;
 
 import org.slf4j.Logger;
@@ -35,7 +33,6 @@ public abstract class BaseExampleApp extends MultiDexApplication {
     private GiniBankAPI mGiniApi;
     private SingleDocumentAnalyzer mSingleDocumentAnalyzer;
     private GiniCaptureNetworkService mGiniCaptureNetworkService;
-    private GiniCaptureNetworkApi mGiniCaptureNetworkApi;
 
     public SingleDocumentAnalyzer getSingleDocumentAnalyzer() {
         if (mSingleDocumentAnalyzer == null) {
@@ -93,29 +90,10 @@ public abstract class BaseExampleApp extends MultiDexApplication {
         return mGiniCaptureNetworkService;
     }
 
-    @NonNull
-    public GiniCaptureNetworkApi getGiniCaptureNetworkApi() {
-        if (mGiniCaptureNetworkApi == null) {
-            if (mGiniCaptureNetworkService instanceof GiniCaptureDefaultNetworkService) {
-                mGiniCaptureNetworkApi = GiniCaptureDefaultNetworkApi.builder()
-                        .withGiniCaptureDefaultNetworkService(
-                                (GiniCaptureDefaultNetworkService) mGiniCaptureNetworkService)
-                        .build();
-            } else {
-                throw new UnsupportedOperationException("No network api class for "
-                        + mGiniCaptureNetworkService.getClass().getName());
-            }
-        }
-        return mGiniCaptureNetworkApi;
-    }
-
     public void clearGiniCaptureNetworkInstances() {
         if (mGiniCaptureNetworkService != null) {
             mGiniCaptureNetworkService.cleanup();
             mGiniCaptureNetworkService = null;
-        }
-        if (mGiniCaptureNetworkApi != null) {
-            mGiniCaptureNetworkApi = null;
         }
     }
 }

@@ -20,11 +20,11 @@
 #           java-version: '11'
 #           cache: 'gradle'
 
-#       - name: setup ruby
-#         uses: ruby/setup-ruby@v1
-#         with:
-#           ruby-version: '3.2.0'
-#           bundler-cache: true
+#      - name: setup ruby
+#        uses: ruby/setup-ruby@v1
+#        with:
+#          ruby-version: '3.2.0'
+#          bundler-cache: true
 
 #       - name: "publish to gini's maven snapshots repo at https://repo.gini.net/nexus/content/repositories/snapshots"
 #         uses: maierj/fastlane-action@v3.0.0

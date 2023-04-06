@@ -5,6 +5,6 @@
         android:id="@+id/help"
         android:icon="@drawable/gbs_menu_question_circle_info"
         android:title="@string/gbs_digital_invoice_help_info"
-        app:iconTint="@color/gbs_digital_invoice_help_icon_tint"
+        app:iconTint="?attr/colorOnBackground"
         app:showAsAction="always" />
 </menu>

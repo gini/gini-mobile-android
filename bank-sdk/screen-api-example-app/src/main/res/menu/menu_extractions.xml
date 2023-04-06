@@ -3,6 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/feedback"
-        android:title="Send Feedback and close"
+        android:title="Send Feedback and Close"
         app:showAsAction="always" />
 </menu>
