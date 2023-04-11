@@ -100,6 +100,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#custom-implementation">Custom Implementation</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#cleanup-and-sending-feedback">Cleanup and Sending Feedback</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#capturing-documents">Capturing documents</a></li>
 </ul>
 </li>
@@ -401,6 +402,31 @@ instances to the builder of <code class="docutils literal notranslate"><span cla
 <p>You may also use the <a class="reference external" href="https://github.com/gini/gini-mobile-android/tree/main/bank-api-library">Gini Bank API Library</a> for Android
 or implement communication with the <a class="reference external" href="https://pay-api.gini.net/documentation/">Gini Bank API</a> yourself.</p>
 </div>
+</div>
+<div class="section" id="cleanup-and-sending-feedback">
+<h2>Cleanup and Sending Feedback<a class="headerlink" href="#cleanup-and-sending-feedback" title="Permalink to this headline">¶</a></h2>
+<p>Your app should clean up the SDK and provide feedback for the extractions the Gini Bank API delivered. Feedback should
+be sent only for the extractions the user has seen and accepted (or corrected).</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">stopGiniCaptureSDK</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// After the user has seen and potentially corrected the extractions</span>
+    <span class="c1">// cleanup the SDK while passing in the final extraction values</span>
+    <span class="c1">// which will be used as feedback to improve the future extraction accuracy:</span>
+    <span class="n">GiniCapture</span><span class="p">.</span><span class="na">cleanup</span><span class="p">((</span><span class="n">Context</span><span class="p">)</span> <span class="k">this</span><span class="p">,</span>
+            <span class="n">paymentRecipient</span><span class="p">,</span>
+            <span class="n">paymentReference</span><span class="p">,</span>
+            <span class="n">paymentPurpose</span><span class="p">,</span>
+            <span class="n">iban</span><span class="p">,</span>
+            <span class="n">bic</span><span class="p">,</span>
+            <span class="n">amount</span>
+        <span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>We provide a sample test case <a class="reference external" href="https://github.com/gini/gini-mobile-android/blob/capture-sdk%3B3.0.0/capture-sdk/default-network/src/androidTest/java/net/gini/android/capture/network/ExtractionFeedbackIntegrationTest.kt">here</a>
+to verify that extraction feedback sending works. You may use it along with the example pdf and json files as a starting
+point to write your own test case.</p>
+<p>The sample test case is based on the Bank API documentation’s <a class="reference external" href="https://pay-api.gini.net/documentation/#test-example">recommended steps</a> for testing extraction feedback sending.</p>
+<p>For additional information about feedback see the <a class="reference external" href="https://pay-api.gini.net/documentation/#send-feedback-and-get-even-better-extractions-next-time">Gini Bank API documentation</a>.</p>
 </div>
 <div class="section" id="capturing-documents">
 <h2>Capturing documents<a class="headerlink" href="#capturing-documents" title="Permalink to this headline">¶</a></h2>
