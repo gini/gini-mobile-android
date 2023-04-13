@@ -142,17 +142,17 @@ jobs:
           name: bank-sdk-screen-api-example-app
           path: bank-sdk/screen-api-example-app/build/outputs/apk
 
-     - name: build component api example app
-       run: >
-         ./gradlew bank-sdk:component-api-example-app:assembleDebug
-         -PclientId="gini-mobile-test"
-         -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
+      - name: build component api example app
+        run: >
+          ./gradlew bank-sdk:component-api-example-app:assembleDebug
+          -PclientId="gini-mobile-test"
+          -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
 
-     - name: archive component api example app
-       uses: actions/upload-artifact@v3
-       with:
-         name: bank-sdk-component-api-example-app
-         path: bank-sdk/component-api-example-app/build/outputs/apk
+      - name: archive component api example app
+        uses: actions/upload-artifact@v3
+        with:
+          name: bank-sdk-component-api-example-app
+          path: bank-sdk/component-api-example-app/build/outputs/apk
 
   android-lint:
     runs-on: ubuntu-latest
