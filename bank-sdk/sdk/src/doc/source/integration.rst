@@ -157,6 +157,39 @@ You can also provide your own networking by implementing the ``GiniCaptureNetwor
 You may also use the `Gini Bank API Library <https://github.com/gini/gini-mobile-android/tree/main/bank-api-library>`_
 for Android or implement communication with the `Gini Bank API <https://pay-api.gini.net/documentation/>`_ yourself.
 
+Cleanup and Sending Feedback
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Your app should clean up the SDK by releasing the capture singleton and providing feedback for the extractions the Gini
+Bank API delivered. Feedback should be sent only for the extractions the user has seen and accepted (or corrected).
+
+.. code-block:: java
+
+    fun stopGiniBankSDK() {
+        // After the user has seen and potentially corrected the extractions
+        // cleanup the SDK while passing in the final extraction values 
+        // which will be used as feedback to improve the future extraction accuracy:
+        GiniBank.releaseCapture(this,
+                paymentRecipient,
+                paymentReference,
+                paymentPurpose,
+                iban,
+                bic,
+                amount
+            )
+    }
+
+We provide a sample test case `here
+<https://github.com/gini/gini-mobile-android/blob/bank-sdk%3B3.0.0/bank-sdk/sdk/src/androidTest/java/net/gini/android/bank/sdk/ExtractionFeedbackIntegrationTest.kt>`_
+to verify that extraction feedback sending works. You may use it along with the example pdf and json files as a starting
+point to write your own test case.
+
+The sample test case is based on the Bank API documentation's `recommended steps
+<https://pay-api.gini.net/documentation/#test-example>`_ for testing extraction feedback sending.
+
+For additional information about feedback see the `Gini Bank API documentation
+<https://pay-api.gini.net/documentation/#send-feedback-and-get-even-better-extractions-next-time>`_.
+
 Capture Flow
 ~~~~~~~~~~~~
 
@@ -168,7 +201,10 @@ To use the capture flow you only need to:
 #. Launch the SDK with ``GiniBank.startCaptureFlow()``,
 #. Handle the extraction results,
 #. Cleanup the SDK by calling ``GiniBank.releaseCapture()`` while also providing the required extraction feedback to
-   improve the future extraction accuracy.
+   improve the future extraction accuracy. You don't need to implement any extra steps, just follow the recommendations below:
+    * Please provide values for all necessary fields, including those that were not extracted.
+    * Provide the final data approved by the user (and not the initially extracted only).
+    * Do cleanup after TAN verification.
 
 The following diagram shows the interaction between your app and the SDK:
 
@@ -258,7 +294,7 @@ The following example shows how to launch the capture flow and how to handle the
         GiniBank.startCaptureFlow(captureLauncher)
     }
 
-    void stopGiniBankSDK() {
+    fun stopGiniBankSDK() {
         // After the user has seen and potentially corrected the extractions
         // cleanup the SDK while passing in the final extraction values 
         // which will be used as feedback to improve the future extraction accuracy:

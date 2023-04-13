@@ -5,6 +5,7 @@
         android:id="@+id/gc_action_close"
         android:icon="@drawable/gc_close"
         app:iconTint="?attr/colorOnBackground"
-        android:title="@string/gc_close"
+        android:title="@string/gc_menu_item_close_button_content_description"
+        android:contentDescription="@string/gc_menu_item_close_button_content_description"
         app:showAsAction="always" />
 </menu>

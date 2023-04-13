@@ -161,4 +161,6 @@
     <string name="gc_delete_page">Seite löschen</string>
     <string name="gc_document_page">Dokumentenseite</string>
     <string name="gc_useful_tips">Nützliche Tipps</string>
+    <string name="gc_menu_item_help_button_content_description">Hilfe, Schaltfläche</string>
+    <string name="gc_menu_item_close_button_content_description">Schließen, Schaltfläche</string>
 </resources>
