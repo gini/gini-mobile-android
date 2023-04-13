@@ -115,6 +115,7 @@
                 android:layout_marginStart="@dimen/gc_medium"
                 android:layout_marginTop="@dimen/gc_small"
                 android:visibility="invisible"
+                android:textSize="@dimen/gc_medium_12"
                 android:textColor="@color/gc_error_01"
                 android:text="@string/gbs_digital_invoice_name_validation_error"/>
 
@@ -223,6 +224,7 @@
                 android:layout_marginStart="@dimen/gc_medium"
                 android:layout_marginTop="@dimen/gc_small"
                 android:visibility="invisible"
+                android:textSize="@dimen/gc_medium_12"
                 android:textColor="@color/gc_error_01"
                 android:text="@string/gbs_digital_invoice_price_validation_error"/>
 
