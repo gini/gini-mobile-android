@@ -8,9 +8,12 @@ on:
       - 'bank-api-library/**'
       - 'core-api-library/**'
       - 'gradle/**'
+    branches:
+      - '**'
     tags-ignore:
       - '**'
   pull_request:
+    types: [opened, edited, reopened]
     paths:
       - 'bank-sdk/**'
       - 'capture-sdk/**'
@@ -27,10 +30,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: setup java
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '11'
@@ -41,7 +44,7 @@ jobs:
 
       - name: archive unit test results
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: bank-sdk-unit-test-results
           path: bank-sdk/sdk/build/reports/tests
@@ -53,7 +56,7 @@ jobs:
 #
 #      - name: archive unit test coverage report
 #        if: always()
-#        uses: actions/upload-artifact@v2
+#        uses: actions/upload-artifact@v3
 #        with:
 #          name: bank-sdk-unit-test-coverage
 #          path: bank-sdk/sdk/build/jacoco/jacocoHtml
@@ -62,23 +65,23 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: setup java
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '11'
           cache: 'gradle'
 
       - name: avd cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         id: avd-cache
         with:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-          key: avd-x86_64-31
+          key: avd-x86_64-31-${{ github.ref_name }}
 
       - name: create avd and generate snapshot for caching
         if: steps.avd-cache.outputs.cache-hit != 'true'
@@ -101,6 +104,7 @@ jobs:
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           script: >
+            adb uninstall net.gini.android.bank.sdk.test ;
             ./gradlew bank-sdk:sdk:connectedCheck
             -PtestClientId="gini-mobile-test"
             -PtestClientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
@@ -109,7 +113,7 @@ jobs:
 
       - name: archive instrumented test results
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: capture-sdk-default-network-instrumented-test-results
           path: capture-sdk/default-network/build/outputs/androidTest-results/connected
@@ -118,9 +122,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '11'
@@ -133,30 +137,30 @@ jobs:
           -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
 
       - name: archive screen api example app
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: bank-sdk-screen-api-example-app
           path: bank-sdk/screen-api-example-app/build/outputs/apk
 
-      - name: build component api example app
-        run: >
-          ./gradlew bank-sdk:component-api-example-app:assembleDebug
-          -PclientId="gini-mobile-test"
-          -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
+     - name: build component api example app
+       run: >
+         ./gradlew bank-sdk:component-api-example-app:assembleDebug
+         -PclientId="gini-mobile-test"
+         -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
 
-      - name: archive component api example app
-        uses: actions/upload-artifact@v2
-        with:
-          name: bank-sdk-component-api-example-app
-          path: bank-sdk/component-api-example-app/build/outputs/apk
+     - name: archive component api example app
+       uses: actions/upload-artifact@v3
+       with:
+         name: bank-sdk-component-api-example-app
+         path: bank-sdk/component-api-example-app/build/outputs/apk
 
   android-lint:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '11'
@@ -166,7 +170,7 @@ jobs:
         run: ./gradlew bank-sdk:sdk:lint
 
       - name: archive android lint report
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: bank-sdk-android-lint-report
           path: bank-sdk/sdk/build/reports/lint-results*.html
@@ -175,9 +179,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '11'
@@ -187,7 +191,7 @@ jobs:
         run: ./gradlew bank-sdk:sdk:detekt
 
       - name: archive detekt report
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: bank-sdk-detekt-report
           path: bank-sdk/sdk/build/reports/detekt/*.html
@@ -196,9 +200,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '11'
@@ -208,7 +212,7 @@ jobs:
         run: ./gradlew bank-sdk:sdk:ktlintCheck
 
       - name: archive ktlint report
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: bank-sdk-ktlint-report
           path: bank-sdk/sdk/build/reports/ktlint/**/*.html
