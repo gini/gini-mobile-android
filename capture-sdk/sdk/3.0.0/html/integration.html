@@ -431,13 +431,25 @@ point to write your own test case.</p>
 <div class="section" id="capturing-documents">
 <h2>Capturing documents<a class="headerlink" href="#capturing-documents" title="Permalink to this headline">¶</a></h2>
 <p>To launch the Gini Capture SDK you only need to:</p>
-<ol class="arabic simple">
-<li>Request camera access,</li>
-<li>Configure a new instance of <code class="docutils literal notranslate"><span class="pre">GiniCapture</span></code>,</li>
-<li>Launch the <code class="docutils literal notranslate"><span class="pre">CameraActivity</span></code>,</li>
-<li>Handle the extraction results,</li>
-<li>Cleanup the SDK by calling <code class="docutils literal notranslate"><span class="pre">GiniCapture.cleanup()</span></code> while also providing the required extraction feedback to improve
-the future extraction accuracy.</li>
+<ol class="arabic">
+<li><p class="first">Request camera access,</p>
+</li>
+<li><p class="first">Configure a new instance of <code class="docutils literal notranslate"><span class="pre">GiniCapture</span></code>,</p>
+</li>
+<li><p class="first">Launch the <code class="docutils literal notranslate"><span class="pre">CameraActivity</span></code>,</p>
+</li>
+<li><p class="first">Handle the extraction results,</p>
+</li>
+<li><p class="first">Cleanup the SDK by calling <code class="docutils literal notranslate"><span class="pre">GiniCapture.cleanup()</span></code> while also providing the required extraction feedback to improve
+the future extraction accuracy. You don’t need to implement any extra steps, just follow the recommendations below:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Please provide values for all necessary fields, including those that were not extracted.</li>
+<li>Provide the final data approved by the user (and not the initially extracted only).</li>
+<li>Do cleanup after TAN verification.</li>
+</ul>
+</div></blockquote>
+</li>
 </ol>
 <p>The following diagram shows the interaction between your app and the SDK:</p>
 <div class="figure">

@@ -203,7 +203,10 @@ To launch the Gini Capture SDK you only need to:
 #. Launch the ``CameraActivity``,
 #. Handle the extraction results,
 #. Cleanup the SDK by calling ``GiniCapture.cleanup()`` while also providing the required extraction feedback to improve
-   the future extraction accuracy.
+   the future extraction accuracy. You don't need to implement any extra steps, just follow the recommendations below:
+    * Please provide values for all necessary fields, including those that were not extracted.
+    * Provide the final data approved by the user (and not the initially extracted only).
+    * Do cleanup after TAN verification.
 
 The following diagram shows the interaction between your app and the SDK:
 
