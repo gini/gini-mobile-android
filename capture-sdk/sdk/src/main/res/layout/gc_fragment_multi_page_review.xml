@@ -35,12 +35,13 @@
             android:layout_marginEnd="@dimen/gc_large_24"
             android:layout_marginBottom="@dimen/gc_large"
             android:layout_marginTop="@dimen/gc_large_24"
+            android:gravity="center"
             android:text="@string/gc_payment_details_visible"
             android:textColor="@color/gc_dark_06"
             app:layout_constraintBottom_toTopOf="@+id/gc_view_pager_wrapper"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/gc_navigation_top_bar" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/gc_view_pager_wrapper"
