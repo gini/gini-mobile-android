@@ -136,10 +136,7 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
 
         if (amount.isEmpty()) {
             amount = Amount.EMPTY.amountToPay()
-            mExtractions["amountToPay"]?.value = amount
-            mExtractionsAdapter?.extractions = getSortedExtractions(mExtractions)
         }
-        mExtractionsAdapter?.notifyDataSetChanged()
 
         GiniBank.releaseCapture(applicationContext, paymentRecipient, paymentReference, paymentPurpose, iban, bic, Amount(
             BigDecimal(amount.removeSuffix(":EUR")), AmountCurrency.EUR)
