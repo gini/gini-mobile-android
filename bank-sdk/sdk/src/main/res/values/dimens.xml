@@ -3,4 +3,7 @@
     <dimen name="gbs_digital_invoice_edit_sheet_field_height">56dp</dimen>
     <dimen name="gbs_digital_invoice_help_icon_height">40dp</dimen>
     <dimen name="gbs_digital_invoice_help_icon_width">40dp</dimen>
+    <dimen name="gbs_digital_invoice_item_edit_error_text_min_size">3sp</dimen>
+    <dimen name="gbs_digital_invoice_item_edit_error_text_max_size">15sp</dimen>
+    <dimen name="gbs_digital_invoice_item_edit_error_text_granularity">1sp</dimen>
 </resources>

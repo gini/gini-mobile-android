@@ -105,25 +105,31 @@
                     app:layout_constraintStart_toStartOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/gbs_name_error_textView"
                 style="@style/GiniCaptureTheme.Typography.Caption1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/gbs_article_name_wrapper"
-                app:layout_constraintStart_toStartOf="@id/gbs_article_name_wrapper"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/gc_large_24"
                 android:layout_marginStart="@dimen/gc_medium"
                 android:layout_marginTop="@dimen/gc_small"
-                android:visibility="invisible"
+                app:autoSizeTextType="uniform"
+                app:autoSizeMinTextSize="@dimen/gbs_digital_invoice_item_edit_error_text_min_size"
+                app:autoSizeMaxTextSize="@dimen/gbs_digital_invoice_item_edit_error_text_max_size"
+                app:autoSizeStepGranularity="@dimen/gbs_digital_invoice_item_edit_error_text_granularity"
+                android:maxLines="1"
+                android:lines="1"
+                android:text="@string/gbs_digital_invoice_name_validation_error"
                 android:textColor="@color/gc_error_01"
-                android:text="@string/gbs_digital_invoice_name_validation_error"/>
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/gbs_unit_wrapper"
+                app:layout_constraintStart_toStartOf="@id/gbs_article_name_wrapper"
+                app:layout_constraintTop_toBottomOf="@id/gbs_article_name_wrapper" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/gbs_unit_wrapper"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:minHeight="@dimen/gbs_digital_invoice_edit_sheet_field_height"
-                android:layout_marginTop="@dimen/gc_medium"
                 android:background="@drawable/gbs_top_corners_radius"
                 android:clipToOutline="true"
                 app:layout_constraintEnd_toEndOf="@+id/gbs_save"
@@ -213,25 +219,31 @@
                     app:srcCompat="@drawable/gbs_drop_down_arrow" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/gbs_price_error_textView"
                 style="@style/GiniCaptureTheme.Typography.Caption1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/gbs_unit_wrapper"
-                app:layout_constraintStart_toStartOf="@id/gbs_unit_wrapper"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/gc_large_24"
                 android:layout_marginStart="@dimen/gc_medium"
                 android:layout_marginTop="@dimen/gc_small"
-                android:visibility="invisible"
+                app:autoSizeTextType="uniform"
+                app:autoSizeMinTextSize="@dimen/gbs_digital_invoice_item_edit_error_text_min_size"
+                app:autoSizeMaxTextSize="@dimen/gbs_digital_invoice_item_edit_error_text_max_size"
+                app:autoSizeStepGranularity="@dimen/gbs_digital_invoice_item_edit_error_text_granularity"
+                android:maxLines="1"
+                android:lines="1"
+                android:text="@string/gbs_digital_invoice_price_validation_error"
                 android:textColor="@color/gc_error_01"
-                android:text="@string/gbs_digital_invoice_price_validation_error"/>
+                app:layout_constraintEnd_toEndOf="@id/gbs_unit_wrapper"
+                app:layout_constraintBottom_toTopOf="@id/gbs_quantity_wrapper"
+                app:layout_constraintStart_toStartOf="@id/gbs_unit_wrapper"
+                app:layout_constraintTop_toBottomOf="@id/gbs_unit_wrapper" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/gbs_quantity_wrapper"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:minHeight="@dimen/gbs_digital_invoice_edit_sheet_field_height"
-                android:layout_marginTop="@dimen/gc_medium"
                 android:layout_marginBottom="@dimen/gc_large_24"
                 android:background="@drawable/gbs_top_corners_radius"
                 android:clipToOutline="true"
