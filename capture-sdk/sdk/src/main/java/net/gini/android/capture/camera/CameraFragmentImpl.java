@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import net.gini.android.capture.AsyncCallback;
 import net.gini.android.capture.Document;
@@ -202,6 +203,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private ImageView mImageFrame;
     private ViewStubSafeInflater mViewStubInflater;
     private ConstraintLayout mPaneWrapper;
+    private TextView mScanTextView;
     private boolean mIsTakingPicture;
 
     private boolean mImportDocumentButtonEnabled;
@@ -482,6 +484,8 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                 } else {
                     LOG.warn(
                             "QRCode detector dependencies are not yet available. QRCode detection is disabled.");
+                    Toast.makeText(mFragment.getActivity(), "QR code reader disabled, try again!", Toast.LENGTH_LONG).show();
+                    mScanTextView.setText(mFragment.getActivity().getResources().getString(R.string.gc_scan));
                 }
             }
 
@@ -639,6 +643,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         mCameraFrameWrapper = view.findViewById(R.id.gc_camera_frame_wrapper);
         mPaneWrapper = view.findViewById(R.id.gc_pane_wrapper);
         mLoadingIndicator = view.findViewById(R.id.gc_injected_loading_indicator);
+        mScanTextView = view.findViewById(R.id.gc_camera_title);
     }
 
     private void preventPaneClickThrough() {
