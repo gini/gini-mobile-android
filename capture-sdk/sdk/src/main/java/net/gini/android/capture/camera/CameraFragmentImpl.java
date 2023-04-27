@@ -51,6 +51,10 @@ import net.gini.android.capture.internal.fileimport.FileChooserActivity;
 import net.gini.android.capture.internal.network.AnalysisNetworkRequestResult;
 import net.gini.android.capture.internal.network.FailureException;
 import net.gini.android.capture.internal.network.NetworkRequestsManager;
+import net.gini.android.capture.internal.ocr.IBANFilter;
+import net.gini.android.capture.internal.ocr.OCR;
+import net.gini.android.capture.internal.ocr.OCRText;
+import net.gini.android.capture.internal.ocr.OCRView;
 import net.gini.android.capture.internal.qrcode.PaymentQRCodeData;
 import net.gini.android.capture.internal.qrcode.PaymentQRCodeReader;
 import net.gini.android.capture.internal.qrcode.QRCodeDetectorTask;
@@ -221,6 +225,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private InjectedViewContainer<NavigationBarTopAdapter> topAdapterInjectedViewContainer;
     private InjectedViewContainer<CustomLoadingIndicatorAdapter> mLoadingIndicator;
     private InjectedViewContainer<CameraNavigationBarBottomAdapter> mBottomInjectedContainer;
+    private OCRView mOCRView;
 
     CameraFragmentImpl(@NonNull final FragmentImplCallback fragment) {
         mFragment = fragment;
@@ -350,8 +355,12 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             return;
         }
         mCameraPreview = mCameraController.getPreviewView(activity);
+
+        mOCRView = new OCRView(activity);
+
         if (mCameraPreview.getParent() == null) {
             mCameraPreviewContainer.addView(mCameraPreview);
+            mCameraPreviewContainer.addView(mOCRView);
         }
     }
 
@@ -1684,6 +1693,9 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         }
     }
 
+    private OCR ocr = new OCR();
+    private IBANFilter ibanFilter = new IBANFilter();
+
     @VisibleForTesting
     void initCameraController(final Activity activity) {
         if (mCameraController == null) {
@@ -1694,6 +1706,21 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             mCameraController.setPreviewCallback(new CameraInterface.PreviewCallback() {
                 @Override
                 public void onPreviewFrame(@NonNull Image image, @NonNull Size imageSize, int rotation, @NonNull CameraInterface.PreviewFrameCallback previewFrameCallback) {
+                    ocr.processImage(image, rotation, (text) -> {
+                        if (text == null) return Unit.INSTANCE;
+
+                        mOCRView.setCameraPreviewSize(new Size(mCameraPreview.getWidth(), mCameraPreview.getHeight()));
+                        mOCRView.setImageSizeAndRotation(imageSize, rotation);
+                        final OCRText ibans = ibanFilter.process(text);
+                        mOCRView.setText(ibans);
+
+//                        if (!ibans.getElements().isEmpty()) {
+//                            onCameraTriggerClicked();
+//                        }
+
+                        previewFrameCallback.onReleaseFrame();
+                        return Unit.INSTANCE;
+                    });
                     if (mPaymentQRCodeReader == null) {
                         return;
                     }

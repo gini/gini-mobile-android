@@ -14,8 +14,10 @@ import androidx.annotation.Nullable;
 
 /**
  * Checks that an IBAN string conforms to the IBAN standard.
+ *
+ * Internal use only.
  */
-class IBANValidator {
+public class IBANValidator {
 
     private static final Map<String, Integer> COUNTRY_IBAN_MAP = new HashMap<>(); // NOPMD
 
@@ -87,7 +89,7 @@ class IBANValidator {
 
     private final Pattern mPattern;
 
-    IBANValidator() {
+    public IBANValidator() {
         mPattern = Pattern.compile("^[A-Z0-9]+$");
     }
 
@@ -97,7 +99,7 @@ class IBANValidator {
      * @param iban an IBAN string
      * @throws IllegalIBANException if the IBAN was not valid
      */
-    void validate(@Nullable final String iban) throws IllegalIBANException {
+    public void validate(@Nullable final String iban) throws IllegalIBANException {
         if (TextUtils.isEmpty(iban)) {
             throw new IllegalIBANException(IBANError.EMPTY);
         }
@@ -196,8 +198,10 @@ class IBANValidator {
     /**
      * Exception containing an {@link IBANError} for information about the reason why an
      * IBAN was not valid.
+     *
+     * Internal use only.
      */
-    static class IllegalIBANException extends RuntimeException {
+    public static class IllegalIBANException extends RuntimeException {
 
         private final IBANError mIBANError;
 

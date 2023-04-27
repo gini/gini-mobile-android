@@ -122,6 +122,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.cardview)
     implementation(libs.mlkit.barcodescanning)
+    implementation(libs.mlkit.textrecognition)
     implementation(libs.apachecommons.imaging)
     implementation(libs.completableFuture)
 
