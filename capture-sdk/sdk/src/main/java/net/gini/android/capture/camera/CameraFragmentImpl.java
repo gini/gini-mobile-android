@@ -238,7 +238,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     public void onQRCodeReaderFail() {
         LOG.warn(
                 "QRCode detector dependencies are not yet available. QRCode detection is disabled.");
-        Toast.makeText(mFragment.getActivity(), "QR scanner disabled, try agagin", Toast.LENGTH_LONG).show();
+        Toast.makeText(mFragment.getActivity(), mFragment.getActivity().getResources().getString(R.string.gc_qr_scanner_error), Toast.LENGTH_LONG).show();
 
         if (!ContextHelper.isTablet(mFragment.getActivity())) {
             mScanTextView.setText(mFragment.getActivity().getResources().getString(R.string.gc_camera_title_no_qr));

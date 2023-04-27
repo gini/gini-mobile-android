@@ -135,6 +135,7 @@
     <string name="gc_camera_title">Scan an invoice or a QR code</string>
     <string name="gc_camera_title_no_qr">Scan an invoice</string>
     <string name="gc_camera_title_qr_only">Scan a QR code</string>
+    <string name="gc_qr_scanner_error">QR code reader failed to initialize. Please try again!</string>
     <string name="gc_qr_code_detected">QR code detected</string>
     <string name="gc_unknown_qr_code">Unknown QR code</string>
     <string name="gc_retrieving_invoice">Retrieving invoice</string>
