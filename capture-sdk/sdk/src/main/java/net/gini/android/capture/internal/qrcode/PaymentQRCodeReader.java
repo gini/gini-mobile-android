@@ -38,6 +38,10 @@ public class PaymentQRCodeReader {
         @Override
         public void onNonPaymentQRCodeDetected(@NonNull final String qrCodeContent) {
         }
+
+        @Override
+        public void onQRCodeReaderFail() {
+        }
     };
 
     /**
@@ -71,6 +75,13 @@ public class PaymentQRCodeReader {
                         mListener.onNonPaymentQRCodeDetected(qrCodeContent);
                     }
                 }
+            }
+
+            @Override
+            public void onQRCodeScannerError(Exception e) {
+
+                //TODO: check content of exception if there will be more use cases in the future
+                mListener.onQRCodeReaderFail();
             }
         });
     }
@@ -135,6 +146,12 @@ public class PaymentQRCodeReader {
          * @param qrCodeContent the content of the QRCode
          */
         void onNonPaymentQRCodeDetected(@NonNull final String qrCodeContent);
+
+        /**
+         * Called when the reader encounters an exception
+         *
+         */
+        void onQRCodeReaderFail();
     }
 
     /**

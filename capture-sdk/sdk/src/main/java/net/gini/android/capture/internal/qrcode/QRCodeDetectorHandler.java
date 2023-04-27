@@ -56,34 +56,42 @@ class QRCodeDetectorHandler extends Handler {
     }
 
     private void detectInImageObject(@NonNull final MessageDataForImage imageData) {
-        final List<String> qrCodes = mQRCodeDetectorTask.detect(imageData.image,
-                imageData.imageSize, imageData.rotation);
-        if (!qrCodes.isEmpty()) {
+        try {
+            final List<String> qrCodes = mQRCodeDetectorTask.detect(imageData.image,
+                    imageData.imageSize, imageData.rotation);
+            if (!qrCodes.isEmpty()) {
+                mUIExecutor.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mListener.onQRCodesDetected(qrCodes);
+                    }
+                });
+            }
             mUIExecutor.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    mListener.onQRCodesDetected(qrCodes);
+                    imageData.callback.onDetectionFinished();
                 }
             });
+        } catch (Exception e) {
+            mListener.onQRCodeScannerError(e);
         }
-        mUIExecutor.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                imageData.callback.onDetectionFinished();
-            }
-        });
     }
 
     private void detectInImageBytes(@NonNull final MessageDataForByteArray imageData) {
-        final List<String> qrCodes = mQRCodeDetectorTask.detect(imageData.imageBytes,
-                imageData.imageSize, imageData.rotation);
-        if (!qrCodes.isEmpty()) {
-            mUIExecutor.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    mListener.onQRCodesDetected(qrCodes);
-                }
-            });
+        try {
+            final List<String> qrCodes = mQRCodeDetectorTask.detect(imageData.imageBytes,
+                    imageData.imageSize, imageData.rotation);
+            if (!qrCodes.isEmpty()) {
+                mUIExecutor.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mListener.onQRCodesDetected(qrCodes);
+                    }
+                });
+            }
+        } catch (Exception e) {
+            mListener.onQRCodeScannerError(e);
         }
     }
 

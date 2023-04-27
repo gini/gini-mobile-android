@@ -25,11 +25,11 @@ public interface QRCodeDetectorTask {
 
     @NonNull
     List<String> detect(@NonNull final Image image, @NonNull final Size imageSize,
-                        final int rotation);
+                        final int rotation) throws Exception;
 
     @NonNull
     List<String> detect(@NonNull final byte[] image, @NonNull final Size imageSize,
-                        final int rotation);
+                        final int rotation) throws Exception;
 
     void checkAvailability(@NonNull final Callback callback);
 

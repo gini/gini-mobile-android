@@ -234,6 +234,11 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         handleQRCodeDetected(null, qrCodeContent);
     }
 
+    @Override
+    public void onQRCodeReaderFail() {
+        Toast.makeText(mFragment.getActivity(), "QR scanner disabled, try agagin", Toast.LENGTH_LONG).show();
+    }
+
     private void handleQRCodeDetected(@Nullable final PaymentQRCodeData paymentQRCodeData,
                                       @NonNull final String qrCodeContent) {
 

@@ -3,6 +3,7 @@ package net.gini.android.capture.internal.qrcode;
 import android.media.Image;
 
 import androidx.annotation.NonNull;
+import kotlin.jvm.Throws;
 
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
@@ -52,14 +53,14 @@ public class QRCodeDetectorTaskMLKit implements QRCodeDetectorTask {
     @NonNull
     @Override
     public List<String> detect(@NonNull final Image image, @NonNull final Size imageSize,
-                               final int rotation) {
+                               final int rotation) throws Exception {
         final InputImage inputImage = InputImage.fromMediaImage(image, rotation);
         return doDetection(inputImage);
     }
 
     @NonNull
     @Override
-    public List<String> detect(@NonNull byte[] image, @NonNull Size imageSize, int rotation) {
+    public List<String> detect(@NonNull byte[] image, @NonNull Size imageSize, int rotation) throws Exception {
         // Reduce width and height by 1 to pass this check in the InputImage constructor: byteBuffer.limit() > width * height
         final InputImage inputImage = InputImage.fromByteArray(image,
                 imageSize.width - 1, imageSize.height - 1, rotation, InputImage.IMAGE_FORMAT_NV21);
@@ -76,7 +77,7 @@ public class QRCodeDetectorTaskMLKit implements QRCodeDetectorTask {
         mBarcodeScanner.close();
     }
 
-    private List<String> doDetection(@NonNull final InputImage inputImage) {
+    private List<String> doDetection(@NonNull final InputImage inputImage) throws Exception {
             final Task<List<Barcode>> processingTask = mBarcodeScanner.process(inputImage);
 
             try {
@@ -93,12 +94,14 @@ public class QRCodeDetectorTaskMLKit implements QRCodeDetectorTask {
                 return barcodesToStrings(barcodes);
             } catch (ExecutionException | InterruptedException e) {
                 LOG.error("QRCode detection failed", e);
+                throw e;
             } catch (CancellationException e) {
                 LOG.error("QRCode detection cancelled");
+                throw e;
             } catch (Exception e) {
                 LOG.error("QRCode detection failed with unknown exception" ,e);
+                throw e;
             }
-            return Collections.emptyList();
     }
 
     private List<String> barcodesToStrings(final List<Barcode> barcodes) {
