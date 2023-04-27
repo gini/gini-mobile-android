@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCaptureError;
 import net.gini.android.capture.document.GiniCaptureMultiPageDocument;
+import net.gini.android.capture.document.QRCodeDocument;
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
 
 import java.util.Map;
@@ -30,8 +31,7 @@ public class CameraFragmentHostActivity extends CameraFragmentHostActivityNotLis
     }
 
     @Override
-    public void onProceedToMultiPageReviewScreen(
-            @NonNull final GiniCaptureMultiPageDocument multiPageDocument) {
+    public void onProceedToMultiPageReviewScreen(@NonNull GiniCaptureMultiPageDocument multiPageDocument, boolean shouldScrollToLastPage) {
 
     }
 
@@ -49,6 +49,11 @@ public class CameraFragmentHostActivity extends CameraFragmentHostActivityNotLis
     @Override
     public void onExtractionsAvailable(
             @NonNull final Map<String, GiniCaptureSpecificExtraction> extractions) {
+
+    }
+
+    @Override
+    public void noExtractionsFromQRCode(@NonNull QRCodeDocument qrCodeDocument) {
 
     }
 }

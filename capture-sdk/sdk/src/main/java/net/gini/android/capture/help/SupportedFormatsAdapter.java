@@ -35,14 +35,24 @@ public class SupportedFormatsAdapter extends
         RecyclerView.Adapter<SupportedFormatsAdapter.FormatItemViewHolder> {
 
     private final List<Enum> mItems;
+    private Boolean isQRDocument;
 
-    public SupportedFormatsAdapter() {
+    public SupportedFormatsAdapter(Boolean isQrCodeDocument) {
+        isQRDocument = isQrCodeDocument;
         mItems = setUpItems();
     }
 
     private List<Enum> setUpItems() {
         final ArrayList<Enum> items = new ArrayList<>();
         items.add(SectionHeader.SUPPORTED_FORMATS);
+        if (isQRDocument) {
+            items.add(SupportedFormat.QR_BEZAHL);
+            items.add(SupportedFormat.QR_EPS);
+            items.add(SupportedFormat.QR_STUZZA);
+            items.add(SupportedFormat.QR_GIROCODE);
+            return items;
+        }
+
         items.add(SupportedFormat.PRINTED_INVOICES);
         if (isFileImportEnabled()
                 || getDocumentImportEnabledFileTypes()
@@ -158,7 +168,12 @@ public class SupportedFormatsAdapter extends
         SINGLE_PAGE_AS_JPEG_PNG_GIF(R.string.gc_supported_format_single_page_as_jpeg_png_gif),
         PDF(R.string.gc_supported_format_pdf),
         QR_CODE(R.string.gc_supported_format_qr_code),
-        PHOTOS_OF_MONITORS(R.string.gc_photos_of_monitors_or_screens);
+        PHOTOS_OF_MONITORS(R.string.gc_photos_of_monitors_or_screens),
+        // QR Code formats
+        QR_BEZAHL(R.string.gc_supported_format_qr_type_bezahl),
+        QR_EPS(R.string.gc_supported_format_qr_type_eps),
+        QR_STUZZA(R.string.gc_supported_format_qr_type_stuzza),
+        QR_GIROCODE(R.string.gc_supported_format_qr_type_girocode);
 
         @DrawableRes
         private final int mSupportedIcon;
