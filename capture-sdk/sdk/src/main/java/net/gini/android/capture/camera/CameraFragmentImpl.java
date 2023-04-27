@@ -236,7 +236,16 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     @Override
     public void onQRCodeReaderFail() {
+        LOG.warn(
+                "QRCode detector dependencies are not yet available. QRCode detection is disabled.");
         Toast.makeText(mFragment.getActivity(), "QR scanner disabled, try agagin", Toast.LENGTH_LONG).show();
+
+        if (!ContextHelper.isTablet(mFragment.getActivity())) {
+            mScanTextView.setText(mFragment.getActivity().getResources().getString(R.string.gc_camera_title_no_qr));
+        } else {
+            mFragment.getActivity().runOnUiThread(() -> topAdapterInjectedViewContainer.getInjectedViewAdapterHolder().
+                    getViewAdapterInstance().getViewAdapter().setTitle(mFragment.getActivity().getResources().getString(isOnlyQRCodeScanningEnabled() ? R.string.gc_scan : R.string.gc_camera_title_no_qr)));
+        }
     }
 
     private void handleQRCodeDetected(@Nullable final PaymentQRCodeData paymentQRCodeData,
@@ -489,8 +498,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                 } else {
                     LOG.warn(
                             "QRCode detector dependencies are not yet available. QRCode detection is disabled.");
-                    Toast.makeText(mFragment.getActivity(), "QR code reader disabled, try again!", Toast.LENGTH_LONG).show();
-                    mScanTextView.setText(mFragment.getActivity().getResources().getString(R.string.gc_scan));
                 }
             }
 
@@ -648,7 +655,10 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         mCameraFrameWrapper = view.findViewById(R.id.gc_camera_frame_wrapper);
         mPaneWrapper = view.findViewById(R.id.gc_pane_wrapper);
         mLoadingIndicator = view.findViewById(R.id.gc_injected_loading_indicator);
-        mScanTextView = view.findViewById(R.id.gc_camera_title);
+
+        if (!ContextHelper.isTablet(mFragment.getActivity())) {
+            mScanTextView = view.findViewById(R.id.gc_camera_title);
+        }
     }
 
     private void preventPaneClickThrough() {
@@ -676,7 +686,8 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                     injectedViewAdapter.setTitle(ContextHelper.isTablet(mFragment.getActivity()) ? mFragment.getActivity().getResources().getString(R.string.gc_camera_title) :
                             mFragment.getActivity().getResources().getString(R.string.gc_title_camera));
                 } else {
-                    injectedViewAdapter.setTitle(mFragment.getActivity().getString(R.string.gc_scan));
+                    injectedViewAdapter.setTitle(ContextHelper.isTablet(mFragment.getActivity()) ? mFragment.getActivity().getResources().getString(R.string.gc_camera_title_qr_only) :
+                            mFragment.getActivity().getResources().getString(R.string.gc_title_camera));
                 }
 
                 if (!isBottomBarEnabled && !isOnlyQRCodeScanningEnabled()) {
