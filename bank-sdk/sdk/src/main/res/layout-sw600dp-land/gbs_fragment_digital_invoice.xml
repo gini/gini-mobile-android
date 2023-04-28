@@ -20,12 +20,11 @@
         style="@style/GiniCaptureTheme.Typography.Subtitle2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/gc_large_24"
+        android:layout_marginStart="@dimen/gc_large"
         android:layout_marginTop="@dimen/gc_large_24"
         android:text="@string/gbs_articles"
         app:layout_constraintStart_toStartOf="@+id/line_items"
         app:layout_constraintTop_toBottomOf="@+id/gbs_top_bar_navigation" />
-
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/line_items"
@@ -66,38 +65,37 @@
             app:layout_constraintStart_toStartOf="parent">
 
             <TextView
-                android:id="@+id/gross_price_total_fractional_part"
-                style="@style/GiniCaptureTheme.Typography.Headline5"
+                android:id="@+id/total_label"
+                style="@style/GiniCaptureTheme.Typography.Body1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/gc_large_24"
-                app:layout_constraintBottom_toBottomOf="@+id/gross_price_total_integral_part"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/gross_price_total_integral_part"
-                tools:text=".99" />
+                android:layout_marginStart="@dimen/gc_large"
+                android:layout_marginTop="@dimen/gc_large_24"
+                android:text="@string/gbs_digital_invoice_footer_total_label"
+                app:layout_constraintHorizontal_chainStyle="spread_inside"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/gross_price_total_integral_part"
                 style="@style/GiniCaptureTheme.Typography.Headline5"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginTop="@dimen/gc_large_24"
-                app:layout_constraintEnd_toStartOf="@+id/gross_price_total_fractional_part"
-                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="@dimen/gc_small"
+                app:layout_constraintTop_toBottomOf="@id/total_label"
+                app:layout_constraintStart_toStartOf="@id/total_label"
                 tools:text="€242" />
 
-
             <TextView
-                android:id="@+id/total_label"
-                style="@style/GiniCaptureTheme.Typography.Body1"
+                android:id="@+id/gross_price_total_fractional_part"
+                style="@style/GiniCaptureTheme.Typography.Headline5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/gc_large_24"
-                android:text="@string/gbs_digital_invoice_footer_total_label"
-                app:layout_constraintBottom_toBottomOf="@id/gross_price_total_integral_part"
-                app:layout_constraintHorizontal_chainStyle="spread_inside"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/gross_price_total_integral_part" />
+                android:layout_marginEnd="@dimen/gc_large_24"
+                app:layout_constraintBottom_toBottomOf="@+id/gross_price_total_integral_part"
+                app:layout_constraintTop_toTopOf="@+id/gross_price_total_integral_part"
+                app:layout_constraintStart_toEndOf="@id/gross_price_total_integral_part"
+                tools:text=".99" />
 
             <com.google.android.material.button.MaterialButton
                 style="@style/GiniCaptureTheme.Widget.Button.UnelevatedButton"
@@ -105,11 +103,12 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/gc_large_24"
                 android:layout_marginBottom="@dimen/gc_large_24"
+                android:layout_marginEnd="@dimen/gc_large"
                 android:text="@string/gbs_proceed"
                 android:id="@+id/gbs_pay"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/gross_price_total_fractional_part"
                 app:layout_constraintStart_toStartOf="@+id/total_label"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/gross_price_total_integral_part" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
