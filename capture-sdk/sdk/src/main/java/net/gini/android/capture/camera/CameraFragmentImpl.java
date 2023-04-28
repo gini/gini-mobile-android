@@ -683,10 +683,10 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
                 if (!isOnlyQRCodeScanningEnabled()) {
                     injectedViewAdapter.setTitle(ContextHelper.isTablet(mFragment.getActivity()) ?
-                            GiniCapture.getInstance().isQRCodeScanningEnabled() ? mFragment.getActivity().getResources().getString(R.string.gc_camera_title) : mFragment.getActivity().getResources().getString(R.string.gc_camera_title_no_qr) :
+                            GiniCapture.getInstance().isQRCodeScanningEnabled() ? mFragment.getActivity().getResources().getString(R.string.gc_camera_info_label_invoice_and_qr) : mFragment.getActivity().getResources().getString(R.string.gc_camera_info_label_only_invoice) :
                             mFragment.getActivity().getResources().getString(R.string.gc_title_camera));
                 } else {
-                    injectedViewAdapter.setTitle(ContextHelper.isTablet(mFragment.getActivity()) ? mFragment.getActivity().getResources().getString(R.string.gc_camera_title_qr_only) :
+                    injectedViewAdapter.setTitle(ContextHelper.isTablet(mFragment.getActivity()) ? mFragment.getActivity().getResources().getString(R.string.gc_camera_info_label_only_qr) :
                             mFragment.getActivity().getResources().getString(R.string.gc_title_camera));
                 }
 
@@ -1651,10 +1651,10 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private void setQRDisabledTexts() {
         if (!ContextHelper.isTablet(mFragment.getActivity())) {
-            mScanTextView.setText(mFragment.getActivity().getResources().getString(R.string.gc_camera_title_no_qr));
+            mScanTextView.setText(mFragment.getActivity().getResources().getString(R.string.gc_camera_info_label_only_invoice));
         } else {
             mFragment.getActivity().runOnUiThread(() -> topAdapterInjectedViewContainer.getInjectedViewAdapterHolder().
-                    getViewAdapterInstance().getViewAdapter().setTitle(mFragment.getActivity().getResources().getString(isOnlyQRCodeScanningEnabled() ? R.string.gc_scan : R.string.gc_camera_title_no_qr)));
+                    getViewAdapterInstance().getViewAdapter().setTitle(mFragment.getActivity().getResources().getString(isOnlyQRCodeScanningEnabled() ? R.string.gc_scan : R.string.gc_camera_info_label_only_invoice)));
         }
     }
 

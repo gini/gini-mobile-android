@@ -145,10 +145,10 @@
     <string name="gc_camera_flash_off_subtitle">Aus</string>
     <string name="gc_turn_flash_on_content_description">Blitz einschalten</string>
     <string name="gc_turn_flash_off_content_description">Blitz ausschalten</string>
-    <string name="gc_camera_title">Rechnung oder QR Code scannen</string>
-    <string name="gc_camera_title_no_qr">Rechnung scannen</string>
+    <string name="gc_camera_info_label_invoice_and_qr">Rechnung oder QR Code scannen</string>
+    <string name="gc_camera_info_label_only_invoice">Rechnung scannen</string>
+    <string name="gc_camera_info_label_only_qr">QR Code scannen</string>
     <string name="gc_qr_scanner_error">QR-Code-Lesegerät konnte nicht initialisiert werden. Bitte versuche es erneut!</string>
-    <string name="gc_camera_title_qr_only">QR Code scannen</string>
     <string name="gc_qr_code_detected">QR Code erkannt</string>
     <string name="gc_unknown_qr_code">QR Code ohne Zahlinformationen</string>
     <string name="gc_retrieving_invoice">Rechnung wird übermittelt</string>
