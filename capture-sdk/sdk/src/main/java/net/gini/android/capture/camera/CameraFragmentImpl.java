@@ -683,7 +683,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
                 if (!isOnlyQRCodeScanningEnabled()) {
                     injectedViewAdapter.setTitle(ContextHelper.isTablet(mFragment.getActivity()) ?
-                            GiniCapture.getInstance().isQRCodeScanningEnabled() ? mFragment.getActivity().getResources().getString(R.string.gc_camera_title) : mFragment.getActivity().getResources().getString(R.string.gc_title_camera) :
+                            GiniCapture.getInstance().isQRCodeScanningEnabled() ? mFragment.getActivity().getResources().getString(R.string.gc_camera_title) : mFragment.getActivity().getResources().getString(R.string.gc_camera_title_no_qr) :
                             mFragment.getActivity().getResources().getString(R.string.gc_title_camera));
                 } else {
                     injectedViewAdapter.setTitle(ContextHelper.isTablet(mFragment.getActivity()) ? mFragment.getActivity().getResources().getString(R.string.gc_camera_title_qr_only) :
