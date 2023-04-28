@@ -361,6 +361,7 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
             case REVIEW_DOCUMENT_REQUEST:
             case ANALYSE_DOCUMENT_REQUEST:
             case MULTI_PAGE_REVIEW_REQUEST:
+            case NO_RESULT_REQUEST:
                 // The first CameraActivity instance is invisible to the user
                 // after we navigate to the review or analysis activity.
                 // Once we get a result it means we are back at the first CameraActivity instance
