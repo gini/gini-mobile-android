@@ -47,6 +47,7 @@ class NoResultsFragmentImpl {
     private final FragmentImplCallback mFragment;
     private final Document mDocument;
     private ImageRetakeOptionsListener mListener;
+    private TextView mTitleTextView;
 
     private InjectedViewContainer<NavigationBarTopAdapter> topAdapterInjectedViewContainer;
 
@@ -80,13 +81,17 @@ class NoResultsFragmentImpl {
             retakeImagesButton.setVisibility(GONE);
         }
 
-
         final View enterManuallyButton = view.findViewById(R.id.gc_button_no_results_enter_manually);
         ClickListenerExtKt.setIntervalClickListener(enterManuallyButton, v -> {
             mListener.onEnterManuallyPressed();
         });
 
         bindViews(view);
+
+        if (mDocument.getType() == Document.Type.QRCode || mDocument.getType() == Document.Type.QR_CODE_MULTI_PAGE) {
+            mTitleTextView.setText(mFragment.getActivity().getResources().getString(R.string.gc_noresults_header_qr));
+        }
+
         setTopBarInjectedViewContainer();
         setUpList(view);
 
@@ -117,11 +122,19 @@ class NoResultsFragmentImpl {
     private void setUpList(View view) {
         final RecyclerView recyclerView = view.findViewById(R.id.gc_no_results_recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(mFragment.getActivity()));
-        if (mDocument.getType() == Document.Type.PDF || mDocument.getType() == Document.Type.PDF_MULTI_PAGE) {
-            recyclerView.setAdapter(new SupportedFormatsAdapter());
-            return;
+
+        switch (mDocument.getType()) {
+            case PDF:
+            case PDF_MULTI_PAGE:
+                recyclerView.setAdapter(new SupportedFormatsAdapter(false));
+                break;
+            case IMAGE:
+            case IMAGE_MULTI_PAGE:
+                recyclerView.setAdapter(new PhotoTipsAdapter(view.getContext(), true));
+                break;
+            default:
+                recyclerView.setAdapter(new SupportedFormatsAdapter(true));
         }
-        recyclerView.setAdapter(new PhotoTipsAdapter(view.getContext(), true));
     }
 
     private void setTopBarInjectedViewContainer() {
@@ -143,5 +156,6 @@ class NoResultsFragmentImpl {
 
     private void bindViews(@NonNull final View view) {
         topAdapterInjectedViewContainer = view.findViewById(R.id.gc_navigation_top_bar);
+        mTitleTextView = view.findViewById(R.id.gc_no_results_header);
     }
 }

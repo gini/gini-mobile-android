@@ -1,5 +1,6 @@
 package net.gini.android.capture.camera;
 
+import static net.gini.android.capture.analysis.AnalysisActivity.RESULT_NO_EXTRACTIONS;
 import static net.gini.android.capture.internal.util.ActivityHelper.interceptOnBackPressed;
 import static net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboarding;
 import static net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboardingAtFirstRun;
@@ -20,18 +21,19 @@ import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AppCompatActivity;
 
 import net.gini.android.capture.Document;
-import net.gini.android.capture.DocumentImportEnabledFileTypes;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.GiniCaptureCoordinator;
 import net.gini.android.capture.GiniCaptureError;
 import net.gini.android.capture.R;
 import net.gini.android.capture.analysis.AnalysisActivity;
 import net.gini.android.capture.document.GiniCaptureMultiPageDocument;
+import net.gini.android.capture.document.QRCodeDocument;
 import net.gini.android.capture.help.HelpActivity;
 import net.gini.android.capture.internal.util.ContextHelper;
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction;
 import net.gini.android.capture.network.model.GiniCaptureReturnReason;
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
+import net.gini.android.capture.noresults.NoResultsActivity;
 import net.gini.android.capture.onboarding.OnboardingActivity;
 import net.gini.android.capture.review.multipage.MultiPageReviewActivity;
 import net.gini.android.capture.tracking.CameraScreenEvent;
@@ -99,6 +101,13 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
     private boolean mAddPages;
 
     private CameraFragment mFragment;
+
+    /**
+     * Internal use only.
+     *
+     * @suppress
+     */
+    private static final int NO_RESULT_REQUEST = 999;
 
     /**
      * Internal use only.
@@ -333,6 +342,18 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
     }
 
     @Override
+    public void noExtractionsFromQRCode(QRCodeDocument qrCodeDocument) {
+        final Intent noResultsActivity = new Intent(this, NoResultsActivity.class);
+        noResultsActivity.putExtra(NoResultsActivity.EXTRA_IN_DOCUMENT, qrCodeDocument);
+        noResultsActivity.setExtrasClassLoader(CameraActivity.class.getClassLoader());
+        startActivityForResult(noResultsActivity, NO_RESULT_REQUEST);
+        setResult(RESULT_NO_EXTRACTIONS);
+        if (GiniCapture.hasInstance()) {
+            GiniCapture.getInstance().internal().getImageMultiPageDocumentMemoryStore().clear();
+        }
+    }
+
+    @Override
     protected void onActivityResult(final int requestCode, final int resultCode,
             final Intent data) {
 
@@ -340,6 +361,7 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
             case REVIEW_DOCUMENT_REQUEST:
             case ANALYSE_DOCUMENT_REQUEST:
             case MULTI_PAGE_REVIEW_REQUEST:
+            case NO_RESULT_REQUEST:
                 // The first CameraActivity instance is invisible to the user
                 // after we navigate to the review or analysis activity.
                 // Once we get a result it means we are back at the first CameraActivity instance
