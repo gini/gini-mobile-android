@@ -67,14 +67,9 @@ class QRCodeDetectorHandler extends Handler {
                     }
                 });
             }
-            mUIExecutor.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    imageData.callback.onDetectionFinished();
-                }
-            });
+            mUIExecutor.runOnUiThread(() -> imageData.callback.onDetectionFinished());
         } catch (Exception e) {
-            mListener.onQRCodeScannerError(e);
+            mUIExecutor.runOnUiThread(() -> mListener.onQRCodeScannerError(e));
         }
     }
 
@@ -83,15 +78,10 @@ class QRCodeDetectorHandler extends Handler {
             final List<String> qrCodes = mQRCodeDetectorTask.detect(imageData.imageBytes,
                     imageData.imageSize, imageData.rotation);
             if (!qrCodes.isEmpty()) {
-                mUIExecutor.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mListener.onQRCodesDetected(qrCodes);
-                    }
-                });
+                mUIExecutor.runOnUiThread(() -> mListener.onQRCodesDetected(qrCodes));
             }
         } catch (Exception e) {
-            mListener.onQRCodeScannerError(e);
+            mUIExecutor.runOnUiThread(() -> mListener.onQRCodeScannerError(e));
         }
     }
 
