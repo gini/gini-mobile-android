@@ -12,6 +12,7 @@
     app:layout_constraintStart_toStartOf="parent">
 
     <com.google.android.material.divider.MaterialDivider
+        android:id="@+id/gbs_bottom_divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         app:dividerColor="?attr/dividerColor"
@@ -24,19 +25,20 @@
         style="@style/GiniCaptureTheme.Typography.Body1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/gc_large"
+        android:layout_marginEnd="@dimen/gc_large_24"
+        android:layout_marginStart="@dimen/gc_large_24"
         android:layout_marginTop="@dimen/gc_large_24"
         android:text="@string/gbs_digital_invoice_footer_total_label"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/gbs_bottom_divider" />
 
     <TextView
         android:id="@+id/gross_price_total"
         style="@style/GiniCaptureTheme.Typography.Headline5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/gc_large"
+        android:layout_marginEnd="@dimen/gc_large_24"
         android:layout_marginTop="@dimen/gc_small"
         app:layout_constraintStart_toStartOf="@id/total_label"
         app:layout_constraintTop_toBottomOf="@id/total_label"

@@ -12,6 +12,7 @@
     app:layout_constraintStart_toStartOf="parent">
 
     <com.google.android.material.divider.MaterialDivider
+        android:id="@+id/gbs_bottom_divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         app:dividerColor="?attr/dividerColor"
@@ -28,7 +29,7 @@
         android:text="@string/gbs_digital_invoice_footer_total_label"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
         app:layout_constraintStart_toStartOf="@+id/gbs_pay"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/gbs_bottom_divider" />
 
     <TextView
         android:id="@+id/gross_price_total"
