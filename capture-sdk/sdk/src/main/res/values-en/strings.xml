@@ -135,7 +135,7 @@
     <string name="gc_camera_info_label_invoice_and_qr">Scan an invoice or a QR code</string>
     <string name="gc_camera_info_label_only_invoice">Scan an invoice</string>
     <string name="gc_camera_info_label_only_qr">Scan a QR code</string>
-    <string name="gc_qr_scanner_error">QR code reader failed to initialize. Please try again!</string>
+    <string name="gc_qr_scanner_error">Scanning QR codes is temporarily disabled. Please try again later.</string>
     <string name="gc_qr_code_detected">QR code detected</string>
     <string name="gc_unknown_qr_code">Unknown QR code</string>
     <string name="gc_retrieving_invoice">Retrieving invoice</string>
