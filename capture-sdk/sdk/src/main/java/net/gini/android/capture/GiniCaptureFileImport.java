@@ -65,7 +65,8 @@ public final class GiniCaptureFileImport {
             @NonNull final Class<? extends AnalysisActivity> analysisActivityClass)
             throws ImportedFileValidationException {
         final Document document = createDocumentForImportedFile(intent, context);
-        return createIntentForSingleDocument(context, reviewActivityClass, analysisActivityClass,
+        return createIntentForSingleDocument(context, reviewActivityClass == null ? ReviewActivity.class : reviewActivityClass,
+                analysisActivityClass == null ? AnalysisActivity.class : analysisActivityClass,
                 document);
     }
 
