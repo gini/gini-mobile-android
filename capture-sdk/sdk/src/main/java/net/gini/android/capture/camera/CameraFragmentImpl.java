@@ -240,12 +240,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                 "QRCode detector dependencies are not yet available. QRCode detection is disabled.");
         Toast.makeText(mFragment.getActivity(), mFragment.getActivity().getResources().getString(R.string.gc_qr_scanner_error), Toast.LENGTH_LONG).show();
 
-        if (!ContextHelper.isTablet(mFragment.getActivity())) {
-            mScanTextView.setText(mFragment.getActivity().getResources().getString(R.string.gc_camera_title_no_qr));
-        } else {
-            mFragment.getActivity().runOnUiThread(() -> topAdapterInjectedViewContainer.getInjectedViewAdapterHolder().
-                    getViewAdapterInstance().getViewAdapter().setTitle(mFragment.getActivity().getResources().getString(isOnlyQRCodeScanningEnabled() ? R.string.gc_scan : R.string.gc_camera_title_no_qr)));
-        }
+        setQRDisabledTexts();
     }
 
     private void handleQRCodeDetected(@Nullable final PaymentQRCodeData paymentQRCodeData,
@@ -311,7 +306,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         if (savedInstanceState != null) {
             restoreSavedState(savedInstanceState);
         }
-
     }
 
     private void initFlashState() {
@@ -340,6 +334,11 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         setBottomInjectedViewContainer();
         createPopups();
         initOnlyQRScanning();
+
+        if (!GiniCapture.getInstance().isQRCodeScanningEnabled()) {
+            setQRDisabledTexts();
+        }
+
         return view;
     }
 
@@ -683,7 +682,8 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                 }
 
                 if (!isOnlyQRCodeScanningEnabled()) {
-                    injectedViewAdapter.setTitle(ContextHelper.isTablet(mFragment.getActivity()) ? mFragment.getActivity().getResources().getString(R.string.gc_camera_title) :
+                    injectedViewAdapter.setTitle(ContextHelper.isTablet(mFragment.getActivity()) ?
+                            GiniCapture.getInstance().isQRCodeScanningEnabled() ? mFragment.getActivity().getResources().getString(R.string.gc_camera_title) : mFragment.getActivity().getResources().getString(R.string.gc_title_camera) :
                             mFragment.getActivity().getResources().getString(R.string.gc_title_camera));
                 } else {
                     injectedViewAdapter.setTitle(ContextHelper.isTablet(mFragment.getActivity()) ? mFragment.getActivity().getResources().getString(R.string.gc_camera_title_qr_only) :
@@ -1647,6 +1647,15 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             return;
         }
         ApplicationHelper.startApplicationDetailsSettings(activity);
+    }
+
+    private void setQRDisabledTexts() {
+        if (!ContextHelper.isTablet(mFragment.getActivity())) {
+            mScanTextView.setText(mFragment.getActivity().getResources().getString(R.string.gc_camera_title_no_qr));
+        } else {
+            mFragment.getActivity().runOnUiThread(() -> topAdapterInjectedViewContainer.getInjectedViewAdapterHolder().
+                    getViewAdapterInstance().getViewAdapter().setTitle(mFragment.getActivity().getResources().getString(isOnlyQRCodeScanningEnabled() ? R.string.gc_scan : R.string.gc_camera_title_no_qr)));
+        }
     }
 
     @VisibleForTesting
