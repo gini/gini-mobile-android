@@ -40,6 +40,7 @@
     <string name="gc_photo_tip_flat">A flat paper helps to receive better results</string>
 
     <string name="gc_noresults_header">Could not retrieve any information from your documents.</string>
+    <string name="gc_noresults_header_qr">The QR code does not contain payment information.</string>
     <string name="gc_noresults_headline">Tips for best results:</string>
     <string name="gc_noresults_retake_images">Retake Images</string>
     <string name="gc_noresults_enter_manually">Enter Manually</string>

@@ -69,7 +69,7 @@ public class SupportedFormatsActivity extends AppCompatActivity {
     private void setUpFormatsList() {
         final RecyclerView recyclerView = findViewById(R.id.gc_formats_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new SupportedFormatsAdapter());
+        recyclerView.setAdapter(new SupportedFormatsAdapter(false));
     }
 
     @Override

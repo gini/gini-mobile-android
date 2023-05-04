@@ -43,6 +43,7 @@
 
     <string name="gc_photo_tip_flat">Flach gestrichene Dokumente erleichtern die Auswertung</string>
     <string name="gc_noresults_header">Leider konnten keine Informationen aus dem Dokument ausgelesen werden.</string>
+    <string name="gc_noresults_header_qr">Der QR-Code enthält keine Zahlungsinformationen.</string>
     <string name="gc_noresults_headline">Tipps für beste Ergebnisse:</string>
     <string name="gc_noresults_retake_images">Foto Wiederholen</string>
     <string name="gc_noresults_enter_manually">Manuell Ausfüllen</string>
@@ -100,6 +101,10 @@
     <string name="gc_supported_format_single_page_as_jpeg_png_gif">1-seitige Fotos im Format jpeg, png oder gif</string>
     <string name="gc_supported_format_pdf">PDF Dokumente von bis zu 10 Seiten</string>
     <string name="gc_supported_format_qr_code">QR Codes</string>
+    <string name="gc_supported_format_qr_type_bezahl" translatable="false">BezahlCode</string>
+    <string name="gc_supported_format_qr_type_eps" translatable="false">eps Überweisung</string>
+    <string name="gc_supported_format_qr_type_stuzza" translatable="false">Stuzza (AT)</string>
+    <string name="gc_supported_format_qr_type_girocode" translatable="false">Girocode (DE)</string>
     <string name="gc_unsupported_format_handwriting">Handschrift</string>
     <string name="gc_unsupported_format_photos_of_screens">Fotos von Bildschirmen</string>
     <string name="gc_supported_format_section_header">Unterstützte Formate:</string>

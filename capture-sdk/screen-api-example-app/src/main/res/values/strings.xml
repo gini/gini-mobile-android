@@ -36,7 +36,7 @@
     <string name="custom_loading_indicator_switch_label">Custom loading indicator animation</string>
     <string name="gc_only_qr_code_scanning">QR code scanning only</string>
     <string name="gc_qr_code_scanning">QR code scanning</string>
-    <string name="gc_disable_camera_permission">Disable camera permission</string>
+    <string name="gc_disable_camera_permission">Do not request camera permission</string>
 
     <!-- String customization examples -->
 

@@ -161,6 +161,10 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                 @NonNull final Map<String, GiniCaptureSpecificExtraction> extractions) {
 
         }
+
+        @Override
+        public void noExtractionsFromQRCode(QRCodeDocument qrCodeDocument) {
+        }
     };
 
     private static final int REQ_CODE_CHOOSE_FILE = 1;
@@ -944,6 +948,10 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                             } else if (requestResult != null) {
                                 mPaymentQRCodePopup.hide();
                                 mQRCodeAnalysisCompleted = true;
+                                if (requestResult.getAnalysisResult().getExtractions().isEmpty()) {
+                                    mListener.noExtractionsFromQRCode(qrCodeDocument);
+                                    return null;
+                                }
                                 mListener.onExtractionsAvailable(
                                         requestResult.getAnalysisResult().getExtractions());
                             }

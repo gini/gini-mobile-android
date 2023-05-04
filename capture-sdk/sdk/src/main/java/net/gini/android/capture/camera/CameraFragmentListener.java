@@ -99,6 +99,13 @@ interface CameraFragmentListener {
 
     /**
      * <p>
+     *     Called when when QR code scanning returns empty extractions
+     * </p>
+     */
+    void noExtractionsFromQRCode(@NonNull QRCodeDocument qrCodeDocument);
+
+    /**
+     * <p>
      *     Callback to inform the Gini Capture SDK about the outcome of the custom imported document checks.
      * </p>
      */
