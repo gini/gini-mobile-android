@@ -36,6 +36,12 @@ interface QRCodeDetector {
          * @param qrCodes list of QRCode content strings
          */
         void onQRCodesDetected(@NonNull final List<String> qrCodes);
+
+        /**
+         * Called when QRCode scanner failed to initialize or other exception occured
+         *
+         */
+        void onQRCodeScannerError(Exception e);
     }
 
     interface Callback {

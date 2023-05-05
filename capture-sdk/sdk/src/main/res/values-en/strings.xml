@@ -133,7 +133,10 @@
     <string name="gc_camera_flash_off_subtitle">Off</string>
     <string name="gc_turn_flash_on_content_description">Turn on flash</string>
     <string name="gc_turn_flash_off_content_description">Turn off flash</string>
-    <string name="gc_camera_title">Scan an invoice or a QR code</string>
+    <string name="gc_camera_info_label_invoice_and_qr">Scan an invoice or a QR code</string>
+    <string name="gc_camera_info_label_only_invoice">Scan an invoice</string>
+    <string name="gc_camera_info_label_only_qr">Scan a QR code</string>
+    <string name="gc_qr_scanner_error">Scanning QR codes is temporarily disabled. Please try again later.</string>
     <string name="gc_qr_code_detected">QR code detected</string>
     <string name="gc_unknown_qr_code">Unknown QR code</string>
     <string name="gc_retrieving_invoice">Retrieving invoice</string>

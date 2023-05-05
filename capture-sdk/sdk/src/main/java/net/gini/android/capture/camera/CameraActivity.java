@@ -161,7 +161,7 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
 
     private void setTitleOnTablets() {
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(ContextHelper.isTablet(this) ? getString(R.string.gc_camera_title) : getString(R.string.gc_title_camera));
+            getSupportActionBar().setTitle(ContextHelper.isTablet(this) ? getString(R.string.gc_camera_info_label_invoice_and_qr) : getString(R.string.gc_title_camera));
         }
     }
 

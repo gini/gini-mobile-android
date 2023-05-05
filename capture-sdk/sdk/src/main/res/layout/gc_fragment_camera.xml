@@ -65,7 +65,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/gc_large"
             android:paddingTop="@dimen/gc_large"
-            android:text="@string/gc_camera_title"
+            android:text="@string/gc_camera_info_label_invoice_and_qr"
             android:textColor="@color/gc_light_01"
             app:layout_constraintBottom_toTopOf="@id/gc_button_camera_trigger"
             app:layout_constraintEnd_toEndOf="parent"

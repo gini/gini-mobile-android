@@ -59,12 +59,22 @@
                 app:switchPadding="8dp" />
 
             <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/gc_qr_code_scanning_enabled"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/gc_qr_code_scanning"
+                android:checked="true"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/custom_loading_indicator_switch"
+                app:switchPadding="8dp" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/gc_only_qr_code_scanning"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/gc_only_qr_code_scanning"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/custom_loading_indicator_switch"
+                app:layout_constraintTop_toBottomOf="@+id/gc_qr_code_scanning_enabled"
                 app:switchPadding="8dp" />
 
             <com.google.android.material.switchmaterial.SwitchMaterial

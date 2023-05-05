@@ -83,7 +83,11 @@ class QRCodeDetectorImpl implements QRCodeDetector {
                 }
                 mListener.onQRCodesDetected(qrCodes);
             }
+
+            @Override
+            public void onQRCodeScannerError(Exception e) {
+                mListener.onQRCodeScannerError(e);
+            }
         });
     }
-
 }
