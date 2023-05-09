@@ -19,6 +19,7 @@ import net.gini.android.capture.network.GiniCaptureNetworkService;
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction;
 import net.gini.android.capture.onboarding.OnboardingPage;
 import net.gini.android.capture.review.ReviewActivity;
+import net.gini.android.capture.review.multipage.MultiPageReviewActivity;
 import net.gini.android.capture.review.multipage.MultiPageReviewFragment;
 import net.gini.android.capture.tracking.AnalysisScreenEvent;
 import net.gini.android.capture.tracking.CameraScreenEvent;
@@ -440,7 +441,7 @@ public class GiniCapture {
             @Nullable final Class<? extends AnalysisActivity> analysisActivityClass)
             throws ImportedFileValidationException {
         return GiniCaptureFileImport.createIntentForImportedFile(intent, context,
-                reviewActivityClass, analysisActivityClass);
+                reviewActivityClass == null ? ReviewActivity.class : reviewActivityClass, analysisActivityClass == null ? AnalysisActivity.class : analysisActivityClass);
     }
 
     /**

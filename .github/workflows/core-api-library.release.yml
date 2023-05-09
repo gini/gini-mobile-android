@@ -7,7 +7,7 @@ on:
 
 jobs:
   check:
-    uses: gini/gini-mobile-android/.github/workflows/core-api-library.check.yml@main
+    uses: gini/gini-mobile-android/.github/workflows/core-api-library.check.yml@2.x.x
 
   release:
     needs: check
