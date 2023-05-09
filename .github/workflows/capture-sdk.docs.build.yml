@@ -4,9 +4,12 @@ on:
   push:
     paths:
       - 'capture-sdk/**'
+    branches:
+      - '**'
     tags-ignore:
       - '**'
   pull_request:
+    types: [opened, edited, reopened]
     paths:
       - 'capture-sdk/**'
 
@@ -15,22 +18,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: setup java
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '11'
           cache: 'gradle'
 
       - name: setup python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: '2.7.x'
 
+      - name: setup ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2.0'
+          bundler-cache: true
+
       - name: build sdk documentation
-        uses: maierj/fastlane-action@v2.0.1
+        uses: maierj/fastlane-action@v3.0.0
         with:
           lane: 'build_documentation'
           options: >
@@ -40,13 +49,13 @@ jobs:
             }
 
       - name: archive sdk documentation
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: capture-sdk-documentation
           path: capture-sdk/sdk/build/docs
 
       - name: build default network library documentation
-        uses: maierj/fastlane-action@v2.0.1
+        uses: maierj/fastlane-action@v3.0.0
         with:
           lane: 'build_documentation'
           options: >
@@ -56,7 +65,7 @@ jobs:
             }
 
       - name: archive default network library documentation
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: capture-sdk-default-network-documentation
           path: capture-sdk/default-network/build/docs
