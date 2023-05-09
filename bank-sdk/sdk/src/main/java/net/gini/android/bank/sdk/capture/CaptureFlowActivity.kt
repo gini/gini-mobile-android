@@ -69,6 +69,7 @@ internal class CaptureFlowActivity : AppCompatActivity(), CaptureFlowImportContr
             CaptureResult.Empty -> setEmptyResult()
             is CaptureResult.Error -> setErrorResult(result)
             CaptureResult.Cancel -> finish()
+            CaptureResult.EnterManually -> setEnterManuallyResult()
         }
     }
 
