@@ -61,6 +61,7 @@ internal class DocumentPageAdapter(private val giniHealth: GiniHealth) :
                         imageView.isVisible = true
                         imageView.setImageBitmap(BitmapFactory.decodeByteArray(imageResult.value, 0, imageResult.value.size))
                     }
+                    else -> {}
                 }
             }
         }

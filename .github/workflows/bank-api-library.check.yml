@@ -6,9 +6,12 @@ on:
       - 'bank-api-library/**'
       - 'core-api-library/**'
       - 'gradle/**'
+    branches:
+      - '**'  
     tags-ignore:
       - '**'
   pull_request:
+    types: [opened, edited, reopened]
     paths:
       - 'bank-api-library/**'
       - 'core-api-library/**'
@@ -42,7 +45,7 @@ jobs:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-          key: avd-x86_64-${{ matrix.api-level }}
+          key: avd-x86_64-${{ matrix.api-level }}-${{ github.ref_name }}
 
       - name: create avd and generate snapshot for caching
         if: steps.avd-cache.outputs.cache-hit != 'true'
@@ -65,6 +68,7 @@ jobs:
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           script: >
+            adb uninstall net.gini.android.bank.api.test ;
             ./gradlew bank-api-library:library:connectedCheck
             -PtestClientId="gini-mobile-test"
             -PtestClientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"

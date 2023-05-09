@@ -30,7 +30,7 @@ internal class UserPreferences(context: Context) {
 
         userPreference.value?.let { value ->
             when (value) {
-                is String, String is T -> userPreference.value = sharedPreferences.getString(userPreference.id, "") as T
+                is String, (String is T) -> userPreference.value = sharedPreferences.getString(userPreference.id, "") as T
                 else -> throw IllegalArgumentException("Unknown user preference value type.")
             }
         }

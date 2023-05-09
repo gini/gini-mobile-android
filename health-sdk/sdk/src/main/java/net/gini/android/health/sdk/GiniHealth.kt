@@ -131,6 +131,7 @@ class GiniHealth(
                 is ResultWrapper.Error -> {
                     _paymentFlow.value = ResultWrapper.Error(Throwable("Failed to get document"))
                 }
+                else -> {}
             }
         }
     }
