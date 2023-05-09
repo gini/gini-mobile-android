@@ -1,8 +1,22 @@
 Integration
 ===========
 
+..
+  Audience: Android dev who integrates for the first time
+  Purpose: Describe what app configuration is needed, which preconditions have to be met, how to configure the SDK and how to run it.
+  Content type: Getting started
+
+  Headers:
+  h1 =====
+  h2 -----
+  h3 ~~~~~
+  h4 ^^^^^
+
 Android Manifest
 ----------------
+
+Permissions
+~~~~~~~~~~~
 
 The Gini Capture SDK uses the camera therefore the camera permission is required:
 
@@ -18,6 +32,17 @@ The Gini Capture SDK uses the camera therefore the camera permission is required
 .. note::
 
     Make sure you request the camera permission before starting the SDK.
+
+Predictive Back Gesture
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Starting from Android 13 apps should apply changes to support `predictive back gestures
+<https://developer.android.com/guide/navigation/predictive-back-gesture>`_. The Gini Capture SDK already contains the
+necessary changes.
+
+Once your app is ready to support it (by targeting Android 13 and `enabling it in the Android Manifest
+<https://developer.android.com/guide/navigation/predictive-back-gesture#opt-predictive>`_), then no further changes are
+required from you.
 
 Requirements Check
 ------------------
