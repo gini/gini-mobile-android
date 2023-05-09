@@ -5,6 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:paddingStart="@dimen/gc_large"
     android:background="?attr/colorSurface">
 
     <TextView
@@ -13,27 +14,24 @@
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@id/gbs_addon_price_total_integral_part"
         android:layout_alignParentEnd="true"
-        android:layout_marginStart="@dimen/gc_large_24"
         android:layout_marginEnd="@dimen/gc_large"
         android:layout_marginTop="@dimen/gc_large"
         android:textAppearance="@style/GiniCaptureTheme.Typography.Body1"
         android:textColor="?attr/gbsAddonTextColor"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/gbs_addon_price_total_integral_part"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Discount" />
 
     <TextView
         android:id="@+id/gbs_addon_price_total_integral_part"
         style="@style/GiniCaptureTheme.Typography.Body1"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_toStartOf="@+id/gbs_addon_price_total_fractional_part"
-        app:layout_constraintBottom_toBottomOf="@+id/gbs_addon_name"
-        app:layout_constraintEnd_toStartOf="@+id/gbs_addon_price_total_fractional_part"
-        app:layout_constraintTop_toTopOf="@+id/gbs_addon_name"
+        android:layout_marginTop="@dimen/gc_small"
+        app:layout_constraintTop_toBottomOf="@id/gbs_addon_name"
+        app:layout_constraintStart_toStartOf="@id/gbs_addon_name"
         tools:text="-€9.99" />
 
     <TextView
@@ -42,9 +40,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/gc_large"
-        app:layout_constraintBottom_toBottomOf="@+id/gbs_addon_price_total_integral_part"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/gbs_addon_price_total_integral_part"
+        app:layout_constraintStart_toEndOf="@id/gbs_addon_price_total_integral_part"
+        app:layout_constraintTop_toTopOf="@id/gbs_addon_price_total_integral_part"
         tools:text=".90" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

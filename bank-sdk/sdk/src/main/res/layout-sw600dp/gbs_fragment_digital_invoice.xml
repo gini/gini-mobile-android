@@ -20,7 +20,7 @@
         style="@style/GiniCaptureTheme.Typography.Subtitle2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/gc_large_24"
+        android:layout_marginStart="@dimen/gc_large"
         android:layout_marginTop="@dimen/gc_large_24"
         android:text="@string/gbs_articles"
         app:layout_constraintStart_toStartOf="@+id/line_items"
@@ -39,7 +39,6 @@
         app:layout_constraintTop_toBottomOf="@+id/gbs_article_txt"
         tools:itemCount="5"
         tools:listitem="@layout/gbs_item_digital_invoice_line_item" />
-
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/gbs_bottom_wrapper"
@@ -71,7 +70,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/gc_large_24"
                 app:layout_constraintBottom_toBottomOf="@+id/gross_price_total_integral_part"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/gross_price_total_integral_part"
                 app:layout_constraintTop_toTopOf="@+id/gross_price_total_integral_part"
                 tools:text=".99" />
 
@@ -80,9 +79,9 @@
                 style="@style/GiniCaptureTheme.Typography.Headline5"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginTop="@dimen/gc_large_24"
-                app:layout_constraintEnd_toStartOf="@+id/gross_price_total_fractional_part"
-                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="@dimen/gc_small"
+                app:layout_constraintStart_toStartOf="@id/total_label"
+                app:layout_constraintTop_toBottomOf="@id/total_label"
                 tools:text="€242" />
 
 
@@ -91,24 +90,24 @@
                 style="@style/GiniCaptureTheme.Typography.Body1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/gc_large_24"
                 android:layout_marginStart="@dimen/gc_large_24"
+                android:layout_marginTop="@dimen/gc_large_24"
                 android:text="@string/gbs_digital_invoice_footer_total_label"
-                app:layout_constraintBottom_toBottomOf="@id/gross_price_total_integral_part"
                 app:layout_constraintHorizontal_chainStyle="spread_inside"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/gross_price_total_integral_part" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <com.google.android.material.button.MaterialButton
                 style="@style/GiniCaptureTheme.Widget.Button.UnelevatedButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gc_large_24"
-                android:layout_marginBottom="@dimen/gc_large_24"
+                android:layout_margin="@dimen/gc_large_24"
                 android:text="@string/gbs_proceed"
                 android:id="@+id/gbs_pay"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/gross_price_total_fractional_part"
-                app:layout_constraintStart_toStartOf="@+id/total_label"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/gross_price_total_integral_part" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
