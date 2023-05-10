@@ -230,6 +230,8 @@ internal class ReviewViewModel(internal val giniHealth: GiniHealth) : ViewModel(
                             extractionsContainer.compoundExtractions.withFeedback(paymentDetails.value)
                         )
                     }
+                    is ResultWrapper.Error -> {}
+                    is ResultWrapper.Loading -> {}
                 }
             } catch (ignored: Throwable) {
                 // Ignored since we don't want to interrupt the flow because of feedback failure
