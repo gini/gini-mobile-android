@@ -244,7 +244,7 @@ class ExtractionFeedbackIntegrationTest {
 
         override fun describeContents(): Int = 0
 
-        override fun writeToParcel(dest: Parcel?, flags: Int) {}
+        override fun writeToParcel(dest: Parcel, flags: Int) {}
 
         override fun getId(): String = UUID.randomUUID().toString()
 
