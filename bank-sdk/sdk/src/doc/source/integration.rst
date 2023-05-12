@@ -1,6 +1,17 @@
 Integration
 ===========
 
+..
+  Audience: Android dev who integrates for the first time
+  Purpose: Describe what app configuration is needed, which preconditions have to be met, how to configure the SDK and how to run it.
+  Content type: Getting started - as defined in the Docs for Developers book (https://docsfordevelopers.com/)
+
+  Headers:
+  h1 =====
+  h2 -----
+  h3 ~~~~~
+  h4 ^^^^^
+
 The Gini Bank SDK has two main features: `capturing invoices`_ for information extraction and `handling payment requests`_. Both
 can be used independently and you may opt to use only one or both in your app.
 
@@ -14,6 +25,9 @@ results when used with the Gini Bank API.
 
 Android Manifest
 ~~~~~~~~~~~~~~~~
+
+Permissions
+^^^^^^^^^^^
 
 The capture feature of the SDK uses the camera therefore the camera permission is required:
 
@@ -29,6 +43,17 @@ The capture feature of the SDK uses the camera therefore the camera permission i
 .. note::
 
     Make sure you request the camera permission before starting the SDK.
+
+Predictive Back Gesture
+^^^^^^^^^^^^^^^^^^^^^^^
+
+Starting from Android 13 apps should apply changes to support `predictive back gestures
+<https://developer.android.com/guide/navigation/predictive-back-gesture>`_. The Gini Bank SDK already contains the
+necessary changes.
+
+Once your app is ready to support it (by targeting Android 13 and `enabling it in the Android Manifest
+<https://developer.android.com/guide/navigation/predictive-back-gesture#opt-predictive>`_), then no further changes are
+required from you.
 
 Requirements Check
 ~~~~~~~~~~~~~~~~~~
