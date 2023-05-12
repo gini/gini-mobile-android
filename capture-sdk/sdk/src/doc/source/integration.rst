@@ -4,7 +4,7 @@ Integration
 ..
   Audience: Android dev who integrates for the first time
   Purpose: Describe what app configuration is needed, which preconditions have to be met, how to configure the SDK and how to run it.
-  Content type: Getting started
+  Content type: Getting started - as defined in the Docs for Developers book (https://docsfordevelopers.com/)
 
   Headers:
   h1 =====
