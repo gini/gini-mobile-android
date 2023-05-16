@@ -141,7 +141,7 @@ To use it add the ``gini-capture-network-lib`` dependency to your app's ``build.
 
     dependencies {
         ...
-        implementation 'net.gini.android:gini-capture-sdk-default-network:3.0.0'
+        implementation 'net.gini.android:gini-capture-sdk-default-network:3.1.0'
     }
 
 For the Gini Capture SDK to be aware of the default implementation create an instance and pass
@@ -208,7 +208,7 @@ be sent only for the extractions the user has seen and accepted (or corrected).
     }
 
 We provide a sample test case `here
-<https://github.com/gini/gini-mobile-android/blob/capture-sdk%3B3.0.0/capture-sdk/default-network/src/androidTest/java/net/gini/android/capture/network/ExtractionFeedbackIntegrationTest.kt>`_
+<https://github.com/gini/gini-mobile-android/blob/capture-sdk%3B3.1.0/capture-sdk/default-network/src/androidTest/java/net/gini/android/capture/network/ExtractionFeedbackIntegrationTest.kt>`_
 to verify that extraction feedback sending works. You may use it along with the example pdf and json files as a starting
 point to write your own test case.
 

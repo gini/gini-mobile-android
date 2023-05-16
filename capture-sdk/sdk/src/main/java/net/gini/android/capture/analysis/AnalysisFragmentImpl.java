@@ -113,7 +113,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
                     public void onGlobalLayout() {
                         future.complete(null);
                         mHintsAnimator.setContainerViewHeight(view.getHeight());
-                        view.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                        view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                     }
                 });
         view.requestLayout();
@@ -244,7 +244,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
         }
     }
 
-    public void onStart() {
+    public void onResume() {
         getPresenter().start();
     }
 

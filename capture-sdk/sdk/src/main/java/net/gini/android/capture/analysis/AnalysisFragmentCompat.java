@@ -74,9 +74,9 @@ public class AnalysisFragmentCompat extends Fragment implements FragmentImplCall
      * @suppress
      */
     @Override
-    public void onStart() {
-        super.onStart();
-        mFragmentImpl.onStart();
+    public void onResume() {
+        super.onResume();
+        mFragmentImpl.onResume();
     }
 
     /**
