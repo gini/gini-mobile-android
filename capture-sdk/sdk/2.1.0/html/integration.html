@@ -1,0 +1,792 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Integration &mdash; Gini Capture SDK for Android 2.0 documentation</title>
+  
+
+  
+  
+
+  
+  <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,400italic,600italic|Source+Code+Pro|Roboto+Slab:400,700" rel="stylesheet" type="text/css" />
+
+  
+  
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:'./',
+        VERSION:'2.0',
+        COLLAPSE_INDEX:false,
+        FILE_SUFFIX:'.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/language_data.js"></script>
+
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+    <script type="text/javascript">
+        jQuery(function () {
+            SphinxRtdTheme.StickyNav.enable();
+        });
+    </script>
+  
+
+  
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Gini Capture SDK for Android 2.0 documentation" href="index.html"/>
+        <link rel="next" title="Features" href="features.html"/>
+        <link rel="prev" title="Getting started" href="getting-started.html"/> 
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="index.html" id="gini-logo">
+          <img src="_static/logo.png" />
+        </a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="getting-started.html#requirements">Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting-started.html#installation">Installation</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Integration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#android-manifest">Android Manifest</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#permissions">Permissions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#predictive-back-gesture">Predictive Back Gesture</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#requirements-check">Requirements Check</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tablet-support">Tablet Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#networking">Networking</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#default-implementation">Default Implementation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#custom-implementation">Custom Implementation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sending-feedback">Sending Feedback</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#capturing-documents">Capturing documents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#screen-api">Screen API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#component-api">Component API</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="features.html">Features</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="features.html#document-capture">Document Capture</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="features.html#onboarding">Onboarding</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features.html#single-page">Single Page</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features.html#multi-page">Multi-Page</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features.html#camera">Camera</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#qr-code-scanning">QR Code Scanning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#document-import">Document Import</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="features.html#android-manifest">Android Manifest</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features.html#intercepting-the-imported-document">Intercepting the imported document</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#file-import-open-with">File Import (Open With)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="features.html#registering-pdf-and-image-file-types">Registering pdf and image file types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features.html#handling-imported-files">Handling Imported Files</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#help-screen-customization">Help Screen Customization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#event-tracking">Event Tracking</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="features.html#events">Events</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#error-logging">Error Logging</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="customization-guide.html">Customization Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#onboarding-screen">Onboarding Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#action-bar">1. Action Bar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#next-button">2. Next Button</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#page-indicators">3. Page Indicators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#onboarding-message">4. Onboarding Message</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#onboarding-pages">5. Onboarding Pages</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#camera-screen">Camera Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#camera-1">1. Action Bar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#document-corner-guides">2. Document Corner Guides</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#camera-trigger-button">3. Camera Trigger Button</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#tap-to-focus-indicator">4. Tap to Focus Indicator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#help-menu-item">5. Help Menu Item</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#background">6. Background</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#document-import-button">7. Document Import Button</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#hints">8. Hints</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#images-stack">9. Images Stack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#qrcode-detected-popup">10. QRCode Detected Popup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#read-storage-permission-dialogs">11. Read Storage Permission Dialogs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#no-camera-permission">12. No Camera Permission</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#multi-page-limit-alert">13. Multi-Page Limit Alert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#flash-toggle-button">14. Flash Toggle Button</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#review-screen">Review Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#review-1">1. Action Bar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#review-2">2. Next Button</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#rotate-button">3. Rotate Button</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#advice">4. Advice</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#review-5">5. Background</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#analysis-screen">Analysis Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#analysis-1">1. Action Bar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#activity-indicator">2. Activity Indicator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#pdf-info-panel">3. PDF Info Panel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#error-snackbar">4. Error Snackbar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#analysis-5">5. Background</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#multi-page-review-screen">Multi-Page Review Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#multi-page-review-1">1. Action Bar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#multi-page-review-2">2. Page Indicators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#multi-page-review-3">3. Next Button</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#thumbnails-panel">4. Thumbnails Panel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#thumbnail-card">5. Thumbnail Card</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#add-pages-card">6. Add Pages Card</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#reorder-pages-tip">7. Reorder Pages Tip</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#bottom-toolbar">8. Bottom Toolbar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#image-error">9. Image Error</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#imported-image-delete-last-page-dialog">10. Imported Image Delete Last Page Dialog</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#help-screen">Help Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#help-screen-1">1. Action Bar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#help-screen-2">2. Background</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#help-list-item">3. Help List Item</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#photo-tips-screen">Photo Tips Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#photo-tips-1">1. Action Bar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#photo-tips-2">2. Background</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#header">3. Header</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#tip">4. Tip</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#back-to-camera-button">5. Back To Camera Button</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#supported-formats-screen">Supported Formats Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#supported-formats-1">1. Action Bar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#supported-formats-2">2. Background</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#supported-formats-3">3. Header</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#format-info-list-item">4. Format Info List Item</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#file-import-screen">File Import Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#file-import-1">1. Action Bar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#file-import-2">2. Background</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#file-import-3">3. Header</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#separator-line">4. Separator Line</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#section">5. Section</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#sections">6. Sections</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#clear-defaults-dialog">Clear Defaults Dialog</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#message">1. Message</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="migrate-to-2-0-0.html">Migrate to 2.0.0</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="migrate-to-2-0-0.html#default-networking-implementation">Default Networking Implementation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-2-0-0.html#ginicapturedefaultnetworkservice-builder">GiniCaptureDefaultNetworkService.Builder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-2-0-0.html#sessionmanager">SessionManager</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">Reference Docs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="license.html#licenses-and-acknowledgements-for-incorporated-software">Licenses and Acknowledgements for Incorporated Software</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="license.html#apache-commons-imaging">Apache Commons Imaging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license.html#touchimageview">TouchImageView</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license.html#simple-logging-facade-for-java-slf4j">Simple Logging Facade for Java (SLF4J)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license.html#jersey-repackaged-jsr166e">Jersey Repackaged JSR166e</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Gini Capture SDK for Android</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Integration</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="integration">
+<h1>Integration<a class="headerlink" href="#integration" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="android-manifest">
+<h2>Android Manifest<a class="headerlink" href="#android-manifest" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="permissions">
+<h3>Permissions<a class="headerlink" href="#permissions" title="Permalink to this headline">¶</a></h3>
+<p>The Gini Capture SDK uses the camera therefore the camera permission is required:</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;manifest</span> <span class="na">xmlns:android=</span><span class="s">&quot;http://schemas.android.com/apk/res/android&quot;</span>
+    <span class="na">package=</span><span class="s">&quot;...&quot;</span><span class="nt">&gt;</span>
+
+    <span class="nt">&lt;uses-permission</span> <span class="na">android:name=</span><span class="s">&quot;android.permission.CAMERA&quot;</span> <span class="nt">/&gt;</span>
+
+<span class="nt">&lt;/manifest&gt;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Make sure you request the camera permission before starting the SDK.</p>
+</div>
+</div>
+<div class="section" id="predictive-back-gesture">
+<h3>Predictive Back Gesture<a class="headerlink" href="#predictive-back-gesture" title="Permalink to this headline">¶</a></h3>
+<p>Starting from Android 13 apps should apply changes to support <a class="reference external" href="https://developer.android.com/guide/navigation/predictive-back-gesture">predictive back gestures</a>. The Gini Capture SDK already contains the
+necessary changes.</p>
+<p>Once your app is ready to support it (by targeting Android 13 and <a class="reference external" href="https://developer.android.com/guide/navigation/predictive-back-gesture#opt-predictive">enabling it in the Android Manifest</a>), then no further changes are
+required from you.</p>
+</div>
+</div>
+<div class="section" id="requirements-check">
+<h2>Requirements Check<a class="headerlink" href="#requirements-check" title="Permalink to this headline">¶</a></h2>
+<p>We recommend running our runtime requirements check first before launching the Gini Capture SDK to ensure the device is
+capable of taking pictures of adequate quality.</p>
+<p>Simply run <code class="docutils literal notranslate"><span class="pre">GiniCaptureRequirements.checkRequirements()</span></code> and inspect the returned <code class="docutils literal notranslate"><span class="pre">RequirementsReport</span></code> for the result:</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">On Android 6.0 and later the camera permission is required before checking the requirements.</p>
+</div>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">final</span> <span class="n">RequirementsReport</span> <span class="n">report</span> <span class="o">=</span> <span class="n">GiniCaptureRequirements</span><span class="p">.</span><span class="na">checkRequirements</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">report</span><span class="p">.</span><span class="na">isFulfilled</span><span class="p">())</span> <span class="p">{</span>
+    <span class="kd">final</span> <span class="n">StringBuilder</span> <span class="n">stringBuilder</span> <span class="o">=</span> <span class="k">new</span> <span class="n">StringBuilder</span><span class="p">();</span>
+    <span class="n">report</span><span class="p">.</span><span class="na">getRequirementReports</span><span class="p">().</span><span class="na">forEach</span><span class="p">(</span><span class="n">requirementReport</span> <span class="o">-&gt;</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">requirementReport</span><span class="p">.</span><span class="na">isFulfilled</span><span class="p">())</span> <span class="p">{</span>
+            <span class="n">stringBuilder</span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="n">requirementReport</span><span class="p">.</span><span class="na">getRequirementId</span><span class="p">());</span>
+            <span class="n">stringBuilder</span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="s">&quot;: &quot;</span><span class="p">);</span>
+            <span class="n">stringBuilder</span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="n">requirementReport</span><span class="p">.</span><span class="na">getDetails</span><span class="p">());</span>
+            <span class="n">stringBuilder</span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="s">&quot;\n&quot;</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">});</span>
+    <span class="n">Toast</span><span class="p">.</span><span class="na">makeText</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s">&quot;Requirements not fulfilled:\n&quot;</span> <span class="o">+</span> <span class="n">stringBuilder</span><span class="p">,</span>
+            <span class="n">Toast</span><span class="p">.</span><span class="na">LENGTH_LONG</span><span class="p">).</span><span class="na">show</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="configuration">
+<h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h2>
+<p>Configuration and interaction is done using the <code class="docutils literal notranslate"><span class="pre">GiniCapture</span></code> singleton.</p>
+<p>To configure and create a new instance use the <code class="docutils literal notranslate"><span class="pre">GiniCapture.Builder</span></code> returned by <code class="docutils literal notranslate"><span class="pre">GiniCapture.newInstance()</span></code>. The
+builder creates a new <code class="docutils literal notranslate"><span class="pre">GiniCapture</span></code> singleton which you will need to destroy later with <code class="docutils literal notranslate"><span class="pre">GiniCapture.getInstance().cleanup()</span></code>.
+This will also free up any used resources.</p>
+<p>You should call <code class="docutils literal notranslate"><span class="pre">cleanup()</span></code> after the SDK returned control to your application and your app has sent feedback to the
+Gini Bank API and is not using the SDK anymore.</p>
+<p>To view all the configuration options see the documentation of <a class="reference external" href="https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/2.1.0/dokka/sdk/net.gini.android.capture/-gini-capture/-builder/index.html?query=public%20class%20Builder">GiniCapture.Builder</a>.</p>
+<p>Information about the configurable features are available on the <a class="reference external" href="features.html">Features</a> page.</p>
+</div>
+<div class="section" id="tablet-support">
+<h2>Tablet Support<a class="headerlink" href="#tablet-support" title="Permalink to this headline">¶</a></h2>
+<p>The Gini Capture SDK can be used on tablets, too. Some UI elements adapt to the larger screen to offer the best user
+experience for tablet users.</p>
+<p>Many tablets with at least 8MP cameras don’t have an LED flash. Therefore we don’t require flash for tablets. For this
+reason the extraction quality on those tablets might be lower compared to smartphones.</p>
+<p>On tablets landscape orientation is also supported (smartphones are portrait only). We advise you to test your
+integration on tablets in both orientations.</p>
+<p>In landscape the camera screen’s UI displays the camera trigger button on the right side of the screen. Users
+can reach the camera trigger more easily this way. The camera preview along with the document corner guides are shown in
+landscape to match the device’s orientation.</p>
+<p>Other UI elements on all the screens maintain their relative position and the screen layouts are scaled automatically to
+fit the current orientation.</p>
+</div>
+<div class="section" id="networking">
+<h2>Networking<a class="headerlink" href="#networking" title="Permalink to this headline">¶</a></h2>
+<p>Communication with the Gini Bank API is not part of the Gini Capture SDK in order to allow you the freedom to use a
+networking implementation of your own choosing.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You should have received Gini Bank API client credentials from us. Please get in touch with us in case you don’t have
+them. Without credentials you won’t be able to use the Gini Bank API.</p>
+</div>
+<p>We provide two interfaces which need to be implemented to enable the SDK to analyze documents and retrieve extractions:</p>
+<ul class="simple">
+<li><dl class="first docutils">
+<dt><code class="docutils literal notranslate"><span class="pre">GiniCaptureNetworkService</span></code></dt>
+<dd>This interface is used to upload, analyze and delete documents. See the
+<a class="reference external" href="https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/2.1.0/dokka/sdk/net.gini.android.capture.network/-gini-capture-network-service/index.html">reference documentation</a>
+for details.</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><code class="docutils literal notranslate"><span class="pre">GiniCaptureNetworkApi</span></code></dt>
+<dd>This interface is used to declare network tasks which should be called by you outside of the Gini Capture SDK (e.g.,
+for sending feedback after the user saw and potentielly corrected the extractions).  See the
+<a class="reference external" href="https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/2.1.0/dokka/sdk/net.gini.android.capture.network/-gini-capture-network-api/index.html">reference documentation</a> for details.</dd>
+</dl>
+</li>
+</ul>
+<div class="section" id="default-implementation">
+<h3>Default Implementation<a class="headerlink" href="#default-implementation" title="Permalink to this headline">¶</a></h3>
+<p>The quickest way to add networking is to use the <a class="reference external" href="https://github.com/gini/gini-mobile-android/tree/main/capture-sdk/default-network">Gini Capture Network
+Library</a>.</p>
+<p>To use it add the <code class="docutils literal notranslate"><span class="pre">gini-capture-network-lib</span></code> dependency to your app’s <code class="docutils literal notranslate"><span class="pre">build.gradle</span></code>:</p>
+<div class="highlight-groovy notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span> <span class="o">{</span>
+    <span class="o">...</span>
+    <span class="n">implementation</span> <span class="s1">&#39;net.gini.android:gini-capture-sdk-default-network:2.1.0&#39;</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>For the Gini Capture SDK to be aware of the default implementations create the instances and pass
+them to the builder of <code class="docutils literal notranslate"><span class="pre">GiniCapture</span></code>:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">GiniCaptureDefaultNetworkService</span> <span class="n">networkService</span> <span class="o">=</span>
+    <span class="n">GiniCaptureDefaultNetworkService</span><span class="p">.</span><span class="na">builder</span><span class="p">((</span><span class="n">Context</span><span class="p">)</span> <span class="k">this</span><span class="p">)</span>
+        <span class="p">.</span><span class="na">setClientCredentials</span><span class="p">(</span><span class="n">myClientId</span><span class="p">,</span> <span class="n">myClientSecret</span><span class="p">,</span> <span class="n">myEmailDomain</span><span class="p">)</span>
+        <span class="p">.</span><span class="na">build</span><span class="p">();</span>
+
+<span class="n">GiniCaptureDefaultNetworkApi</span> <span class="n">networkApi</span> <span class="o">=</span>
+    <span class="n">GiniCaptureDefaultNetworkApi</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span>
+        <span class="p">.</span><span class="na">withGiniCaptureDefaultNetworkService</span><span class="p">(</span><span class="n">networkService</span><span class="p">)</span>
+        <span class="p">.</span><span class="na">build</span><span class="p">();</span>
+
+<span class="n">GiniCapture</span><span class="p">.</span><span class="na">newInstance</span><span class="p">()</span>
+    <span class="p">.</span><span class="na">setGiniCaptureNetworkService</span><span class="p">(</span><span class="n">networkService</span><span class="p">)</span>
+    <span class="p">.</span><span class="na">setGiniCaptureNetworkApi</span><span class="p">(</span><span class="n">networkApi</span><span class="p">)</span>
+    <span class="p">.</span><span class="na">build</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>Both default implementations follow the builder pattern. See the documentation of
+<a class="reference external" href="https://developer.gini.net/gini-mobile-android/capture-sdk/default-network/2.1.0/dokka/default-network/net.gini.android.capture.network/-gini-capture-default-network-service/-builder/index.html">GiniCaptureDefaultNetworkService.Builder</a>
+and <a class="reference external" href="https://developer.gini.net/gini-mobile-android/capture-sdk/default-network/2.1.0/dokka/default-network/net.gini.android.capture.network/-gini-capture-default-network-api/-builder/index.html">GiniCaptureDefaultNetworkApi.Builder</a>
+for configuration options.</p>
+<div class="section" id="retrieve-the-analyzed-document">
+<h4>Retrieve the Analyzed Document<a class="headerlink" href="#retrieve-the-analyzed-document" title="Permalink to this headline">¶</a></h4>
+<p>You can call <code class="docutils literal notranslate"><span class="pre">GiniCaptureDefaultNetworkService.getAnalyzedGiniApiDocument()</span></code> after the Gini Capture SDK has returned
+extractions to your application. It returns the Gini Bank API document which was created when the user uploaded an
+image or pdf for analysis.</p>
+<p>When extractions were retrieved without using the Gini Bank API, then it will return <code class="docutils literal notranslate"><span class="pre">null</span></code>. For example when the
+extractions came from an EPS QR Code.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Make sure to call it before calling <code class="docutils literal notranslate"><span class="pre">GiniCaptureDefaultNetworkService.cleanup()</span></code> or <code class="docutils literal notranslate"><span class="pre">GiniCapture.cleanup()</span></code>.
+Otherwise the analyzed document won’t be available anymore.</p>
+</div>
+</div>
+</div>
+<div class="section" id="custom-implementation">
+<h3>Custom Implementation<a class="headerlink" href="#custom-implementation" title="Permalink to this headline">¶</a></h3>
+<p>You can also provide your own networking by implementing the <code class="docutils literal notranslate"><span class="pre">GiniCaptureNetworkService</span></code> and the
+<code class="docutils literal notranslate"><span class="pre">GiniCaptureNetworkApi</span></code> interfaces. Pass your instances to the builder of <code class="docutils literal notranslate"><span class="pre">GiniCapture</span></code> as shown
+above.</p>
+<p>You may also use the <a class="reference external" href="https://github.com/gini/gini-mobile-android/bank-api-library">Gini Bank API Library</a> for Android or implement
+communication with the Gini Bank API yourself.</p>
+</div>
+<div class="section" id="sending-feedback">
+<h3>Sending Feedback<a class="headerlink" href="#sending-feedback" title="Permalink to this headline">¶</a></h3>
+<p>Your app should send feedback for the extractions the Gini Bank API delivered. Feedback should be sent <em>only</em> for the
+extractions the user has seen and accepted (or corrected).</p>
+<p>For additional information about feedback see the <a class="reference external" href="https://pay-api.gini.net/documentation/#send-feedback-and-get-even-better-extractions-next-time">Gini Bank API documentation</a>.</p>
+<div class="section" id="id1">
+<h4>Default Implementation<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h4>
+<p>The example below shows how to correct extractions and send feedback using the default networking implementation:</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>We also provide a sample test case <a class="reference external" href="https://github.com/gini/gini-mobile-android/blob/main/capture-sdk/default-network/src/androidTest/java/net/gini/android/capture/network/ExtractionFeedbackIntegrationTest.kt">here</a>
+to verify that extraction feedback sending works. You may use it along with the example pdf and json files as a
+starting point to write your own test case.</p>
+<p class="last">The sample test case is based on the Bank API documentation’s <a class="reference external" href="https://pay-api.gini.net/documentation/#test-example">recommended steps</a> for testing extraction feedback sending.</p>
+</div>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">GiniCaptureDefaultNetworkApi</span> <span class="n">networkApi</span><span class="p">;</span> <span class="c1">// Provided</span>
+
+<span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span> <span class="n">GiniCaptureSpecificExtraction</span><span class="o">&gt;</span> <span class="n">extractions</span><span class="p">;</span> <span class="c1">// Provided</span>
+
+<span class="c1">// Modify the amount to pay extraction&#39;s value.</span>
+<span class="n">GiniCaptureSpecificExtraction</span> <span class="n">amountToPay</span> <span class="o">=</span> <span class="n">extractions</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;amountToPay&quot;</span><span class="p">);</span>
+<span class="n">amountToPay</span><span class="p">.</span><span class="na">setValue</span><span class="p">(</span><span class="s">&quot;31:00&quot;</span><span class="p">);</span>
+
+<span class="c1">// You should send feedback only for extractions the user has seen and accepted.</span>
+<span class="c1">// In this example only the amountToPay was wrong and we can reuse the other extractions.</span>
+<span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span> <span class="n">GiniCaptureSpecificExtraction</span><span class="o">&gt;</span> <span class="n">feedback</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span> <span class="n">GiniCaptureSpecificExtraction</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="n">feedback</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;iban&quot;</span><span class="p">,</span> <span class="n">extractions</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;iban&quot;</span><span class="p">));</span>
+<span class="n">feedback</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;amountToPay&quot;</span><span class="p">,</span> <span class="n">amountToPay</span><span class="p">);</span>
+<span class="n">feedback</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;bic&quot;</span><span class="p">,</span> <span class="n">extractions</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;bic&quot;</span><span class="p">));</span>
+<span class="n">feedback</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;senderName&quot;</span><span class="p">,</span> <span class="n">extractions</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;senderName&quot;</span><span class="p">));</span>
+
+<span class="n">networkApi</span><span class="p">.</span><span class="na">sendFeedback</span><span class="p">(</span><span class="n">feedback</span><span class="p">,</span> <span class="k">new</span> <span class="n">GiniCaptureNetworkCallback</span><span class="o">&lt;</span><span class="n">Void</span><span class="p">,</span> <span class="n">Error</span><span class="o">&gt;</span><span class="p">()</span> <span class="p">{</span>
+         <span class="nd">@Override</span>
+         <span class="kd">public</span> <span class="kt">void</span> <span class="nf">failure</span><span class="p">(</span><span class="n">Error</span> <span class="n">error</span><span class="p">)</span> <span class="p">{</span>
+             <span class="c1">// Handle the error.</span>
+         <span class="p">}</span>
+
+         <span class="nd">@Override</span>
+         <span class="kd">public</span> <span class="kt">void</span> <span class="nf">success</span><span class="p">(</span><span class="n">Void</span> <span class="n">result</span><span class="p">)</span> <span class="p">{</span>
+             <span class="c1">// Feedback sent successfully.</span>
+         <span class="p">}</span>
+
+         <span class="nd">@Override</span>
+         <span class="kd">public</span> <span class="kt">void</span> <span class="nf">cancelled</span><span class="p">()</span> <span class="p">{</span>
+             <span class="c1">// Handle cancellation.</span>
+         <span class="p">}</span>
+     <span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id2">
+<h4>Custom Implementation<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h4>
+<p>If you use your own networking implementation and directly communicate with the Gini Bank API then see <a class="reference external" href="https://pay-api.gini.net/documentation/#submitting-feedback-on-extractions">this section</a> in its documentation on how to send
+feedback.</p>
+<p>In case you use the Gini Bank API Library then see <a class="reference external" href="https://developer.gini.net/gini-mobile-android/bank-api-library/library/html/guides/common-tasks.html#sending-feedback">this section</a> in its documentation
+for details.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The Bank API documentation provides <a class="reference external" href="https://pay-api.gini.net/documentation/#test-example">recommended steps</a> for
+testing extraction feedback sending. You may use it along with the example pdf and json files as a starting point to
+write a test case for verifying that feedback sending works.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="capturing-documents">
+<h2>Capturing documents<a class="headerlink" href="#capturing-documents" title="Permalink to this headline">¶</a></h2>
+<p>The Gini Capture SDK can be used in two ways, either by using the <em>Screen API</em> or the <em>Component API</em>:</p>
+<ul class="simple">
+<li>The <em>Screen API</em> provides activities for easy integration that can be customized in a
+limited way. The screen and configuration design is based on our long-lasting experience with
+integration in customer apps.</li>
+<li>In the <em>Component API</em> we provide fragments for advanced integration
+with more freedom for customization.</li>
+</ul>
+<div class="section" id="screen-api">
+<h3>Screen API<a class="headerlink" href="#screen-api" title="Permalink to this headline">¶</a></h3>
+<p>This is the easiest way to use the SDK. You only need to:</p>
+<ol class="arabic simple">
+<li>Request camera access,</li>
+<li>Configure a new instance of <code class="docutils literal notranslate"><span class="pre">GiniCapture</span></code>,</li>
+<li>Launch the <code class="docutils literal notranslate"><span class="pre">CameraActivity</span></code>,</li>
+<li>Handle the result.</li>
+</ol>
+<p>The following diagram shows the interaction between your app and the SDK:</p>
+<div class="figure">
+<a class="reference internal image-reference" href="_images/Screen-API.png"><img alt="Diagram of interaction between your app and the SDK with the Screen API" src="_images/Screen-API.png" style="width: 100%;" /></a>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Check out the <a class="reference external" href="https://github.com/gini/gini-mobile-android/tree/main/capture-sdk/screen-api-example-app">Screen API example app</a> to see how an integration could look
+like.</p>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">CameraActivity</span></code> can return with the following result codes:</p>
+<ul>
+<li><p class="first">Activity.RESULT_OK</p>
+<blockquote>
+<div><p>Document was analyzed and the extractions are available in the <code class="docutils literal notranslate"><span class="pre">EXTRA_OUT_EXTRACTIONS</span></code> result extra. It contains a
+<code class="docutils literal notranslate"><span class="pre">Bundle</span></code> with the extraction labels as keys and <code class="docutils literal notranslate"><span class="pre">GiniCaptureSpecificExtraction</span></code> parcelables as values.</p>
+</div></blockquote>
+</li>
+<li><p class="first">Activity.RESULT_CANCELED</p>
+<blockquote>
+<div><p>User has canceled the Gini Capture SDK.</p>
+</div></blockquote>
+</li>
+<li><p class="first">CameraActivity.RESULT_ERROR</p>
+<blockquote>
+<div><p>An error occured and the details are available in the <code class="docutils literal notranslate"><span class="pre">EXTRA_OUT_ERROR</span></code> result extra. It contains a parcelable extra
+of type <code class="docutils literal notranslate"><span class="pre">GiniCaptureError</span></code> detailing what went wrong.</p>
+</div></blockquote>
+</li>
+</ul>
+<p>The following example shows how to launch the Gini Capture SDK using the <em>Screen API</em> and how to handle the results:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">launchGiniCapture</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// Make sure camera permission has been already granted at this point.</span>
+
+    <span class="c1">// Check that the device fulfills the requirements.</span>
+    <span class="n">RequirementsReport</span> <span class="n">report</span> <span class="o">=</span> <span class="n">GiniCaptureRequirements</span><span class="p">.</span><span class="na">checkRequirements</span><span class="p">((</span><span class="n">Context</span><span class="p">)</span> <span class="k">this</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">report</span><span class="p">.</span><span class="na">isFulfilled</span><span class="p">())</span> <span class="p">{</span>
+        <span class="n">handleUnfulfilledRequirements</span><span class="p">(</span><span class="n">report</span><span class="p">);</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="c1">// Instantiate the networking implementations.</span>
+    <span class="n">GiniCaptureNetworkService</span> <span class="n">networkService</span> <span class="o">=</span> <span class="p">...</span>
+    <span class="n">GiniCaptureNetworkApi</span> <span class="n">networkApi</span> <span class="o">=</span> <span class="p">...</span>
+
+    <span class="c1">// Cleanup GiniCapture to make sure everything is reset.</span>
+    <span class="n">GiniCapture</span><span class="p">.</span><span class="na">cleanup</span><span class="p">((</span><span class="n">Context</span><span class="p">)</span> <span class="k">this</span><span class="p">);</span>
+
+    <span class="c1">// Configure GiniCapture and create a new singleton instance.</span>
+    <span class="n">GiniCapture</span><span class="p">.</span><span class="na">newInstance</span><span class="p">()</span>
+            <span class="p">.</span><span class="na">setGiniCaptureNetworkService</span><span class="p">(</span><span class="n">networkService</span><span class="p">)</span>
+            <span class="p">.</span><span class="na">setGiniCaptureNetworkApi</span><span class="p">(</span><span class="n">networkApi</span><span class="p">)</span>
+            <span class="p">...</span>
+            <span class="p">.</span><span class="na">build</span><span class="p">();</span>
+
+    <span class="c1">// Launch the CameraActivity and wait for the result.</span>
+    <span class="n">Intent</span> <span class="n">intent</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Intent</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="n">CameraActivity</span><span class="p">.</span><span class="na">class</span><span class="p">);</span>
+    <span class="n">startActivityForResult</span><span class="p">(</span><span class="n">intent</span><span class="p">,</span> <span class="n">GINI_CAPTURE_REQUEST</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nd">@Override</span>
+<span class="kd">protected</span> <span class="kt">void</span> <span class="nf">onActivityResult</span><span class="p">(</span><span class="kd">final</span> <span class="kt">int</span> <span class="n">requestCode</span><span class="p">,</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">resultCode</span><span class="p">,</span>
+        <span class="kd">final</span> <span class="n">Intent</span> <span class="n">data</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">super</span><span class="p">.</span><span class="na">onActivityResult</span><span class="p">(</span><span class="n">requestCode</span><span class="p">,</span> <span class="n">resultCode</span><span class="p">,</span> <span class="n">data</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">requestCode</span> <span class="o">==</span> <span class="n">GINI_CAPTURE_REQUEST</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">switch</span> <span class="p">(</span><span class="n">resultCode</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">case</span> <span class="n">Activity</span><span class="p">.</span><span class="na">RESULT_CANCELED</span><span class="p">:</span>
+                <span class="k">break</span><span class="p">;</span>
+
+            <span class="k">case</span> <span class="n">Activity</span><span class="p">.</span><span class="na">RESULT_OK</span><span class="p">:</span>
+                <span class="c1">// Retrieve the extractions</span>
+                <span class="n">Bundle</span> <span class="n">extractionsBundle</span> <span class="o">=</span> <span class="n">data</span><span class="p">.</span><span class="na">getBundleExtra</span><span class="p">(</span>
+                        <span class="n">CameraActivity</span><span class="p">.</span><span class="na">EXTRA_OUT_EXTRACTIONS</span><span class="p">);</span>
+
+                <span class="c1">// Retrieve the extractions from the extractionsBundle</span>
+                <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span> <span class="n">GiniCaptureSpecificExtraction</span><span class="o">&gt;</span> <span class="n">extractions</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+                <span class="k">for</span> <span class="p">(</span><span class="n">String</span> <span class="n">extractionLabel</span> <span class="p">:</span> <span class="n">extractionsBundle</span><span class="p">.</span><span class="na">keySet</span><span class="p">())</span> <span class="p">{</span>
+                    <span class="n">GiniCaptureSpecificExtraction</span> <span class="n">extraction</span> <span class="o">=</span> <span class="n">extractionsBundle</span><span class="p">.</span><span class="na">getParcelable</span><span class="p">(</span><span class="n">extractionLabel</span><span class="p">);</span>
+                    <span class="n">extractions</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="n">extractionLabel</span><span class="p">,</span> <span class="n">extraction</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="n">handleExtractions</span><span class="p">(</span><span class="n">extractions</span><span class="p">);</span>
+
+                <span class="k">break</span><span class="p">;</span>
+
+            <span class="k">case</span> <span class="n">CameraActivity</span><span class="p">.</span><span class="na">RESULT_ERROR</span><span class="p">:</span>
+                <span class="c1">// Something went wrong, retrieve and handle the error</span>
+                <span class="kd">final</span> <span class="n">GiniCaptureError</span> <span class="n">error</span> <span class="o">=</span> <span class="n">data</span><span class="p">.</span><span class="na">getParcelableExtra</span><span class="p">(</span>
+                        <span class="n">CameraActivity</span><span class="p">.</span><span class="na">EXTRA_OUT_ERROR</span><span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">error</span> <span class="o">!=</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">handleError</span><span class="p">(</span><span class="n">error</span><span class="p">);</span>
+                <span class="p">}</span>
+
+                <span class="k">break</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="component-api">
+<h3>Component API<a class="headerlink" href="#component-api" title="Permalink to this headline">¶</a></h3>
+<p>This is the more complicated way of using the SDK. The advantage is that it is based on fragments and you have full
+control over how these are shown in your UI.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Check out the <a class="reference external" href="https://github.com/gini/gini-mobile-android/tree/main/capture-sdk/component-api-example-app">Component API example app</a> to see how an integration could
+look like.</p>
+</div>
+<p>There is also one activity for showing the help screen. This is not a fragment in order to avoid overcomplicating
+the Component API integration.</p>
+<p>The fragments extend <code class="docutils literal notranslate"><span class="pre">androidx.fragment.app.Fragment</span></code> and to make it clear, that they are not native fragments we
+suffix them with <code class="docutils literal notranslate"><span class="pre">Compat</span></code>.</p>
+<p>Each fragment has a <code class="docutils literal notranslate"><span class="pre">createInstance()</span></code> factory method. Some require arguments and those will have to be passed to this
+factory method.</p>
+<p>Fragments also have a listener through which they inform you about events and which next fragment should
+be shown. The result will be also returned through a listener method. The listener can be set either explicitly on the
+fragment or implicitly by making the host activity implement the listener interface.</p>
+<p>The following diagram shows the possible flows through the SDK based on the listener method invocations. For brevity
+each fragment’s listener is shown next to it. In your integration you will provide the listener implementations and
+handle the listener method calls. You should navigate to the appropriate fragment based on this diagram:</p>
+<a class="reference internal image-reference" href="_images/Component-API.jpg"><img alt="Diagram of possible flows through the SDK with the Component API fragments and their listeners" src="_images/Component-API.jpg" style="width: 100%;" /></a>
+<div class="section" id="camerafragmentcompat">
+<h4>CameraFragmentCompat<a class="headerlink" href="#camerafragmentcompat" title="Permalink to this headline">¶</a></h4>
+<p>This is the entry point and should be launched first. These are the steps you should follow to start the
+<code class="docutils literal notranslate"><span class="pre">CameraFragmentCompat</span></code>:</p>
+<ol class="arabic simple">
+<li>Request camera access,</li>
+<li>Configure a new instance of <code class="docutils literal notranslate"><span class="pre">GiniCapture</span></code>,</li>
+<li>Create a new instance of <code class="docutils literal notranslate"><span class="pre">CameraFragmentCompat</span></code> using it’s <code class="docutils literal notranslate"><span class="pre">createInstance</span></code> factory method,</li>
+<li>Provide a listener either using <code class="docutils literal notranslate"><span class="pre">setListener()</span></code> or making the host activity implement <code class="docutils literal notranslate"><span class="pre">CameraFragmentListener</span></code>,</li>
+<li>Create a <code class="docutils literal notranslate"><span class="pre">GiniCaptureCoordinator</span></code> and set a listener to know when to show the <code class="docutils literal notranslate"><span class="pre">OnboardingFragmentCompat</span></code>,</li>
+<li>Show the <code class="docutils literal notranslate"><span class="pre">CameraFragmentCompat</span></code> and handle listener method invocations.</li>
+</ol>
+<p>It shows a camera preview with document corner guides and tap-to-focus functionality, a trigger button and an optional flash on/off button, import
+button and images stack when capturing multiple pages.</p>
+<p>A <code class="docutils literal notranslate"><span class="pre">CameraFragmentListener</span></code> instance must be available before it is attached to an activity.
+Failing to do so will throw an exception. The listener instance can be provided either implicitly by making the host
+activity implement the <code class="docutils literal notranslate"><span class="pre">CameraFragmentListener</span></code> interface or explicitly by setting the listener using <code class="docutils literal notranslate"><span class="pre">setListener()</span></code>.</p>
+<p>See the reference documentation of this fragment’s <a class="reference external" href="https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/2.1.0/dokka/sdk/net.gini.android.capture.camera/-camera-fragment-interface/index.html">public interface</a> and it’s <a class="reference external" href="https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/2.1.0/dokka/sdk/net.gini.android.capture.camera/-camera-fragment-listener/index.html">listener</a> for more details.</p>
+<div class="section" id="ginicapturecoordinator">
+<h5>GiniCaptureCoordinator<a class="headerlink" href="#ginicapturecoordinator" title="Permalink to this headline">¶</a></h5>
+<p>This coordinator helps to implement the default behavior of the SDK. For example it helps to show the onboarding screen
+at first launch.</p>
+<p>See the <a class="reference external" href="https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/2.1.0/dokka/sdk/net.gini.android.capture/-gini-capture-coordinator/index.html?query=public%20class%20GiniCaptureCoordinator">reference documentation</a> for
+details.</p>
+</div>
+</div>
+<div class="section" id="onboardingfragmentcompat">
+<h4>OnboardingFragmentCompat<a class="headerlink" href="#onboardingfragmentcompat" title="Permalink to this headline">¶</a></h4>
+<p>This fragment shows the onboarding screen. You can use the <code class="docutils literal notranslate"><span class="pre">GiniCaptureCoordinator</span></code> to know when to show it. You can
+also implement a button to allow users to view it on demand.</p>
+<p>It displays important advice for correctly photographing a document.</p>
+<p>The default way of showing this fragment is as an overlay above the camera screen with a semi-transparent
+background.</p>
+<p>By default an empty last page is added to enable the revealing of the camera preview before this fragment is dismissed.
+You can disable this by using the appropriate <code class="docutils literal notranslate"><span class="pre">createInstance...()</span></code> factory  method.</p>
+<p>If you would like to display a different number of pages, you can use the factory methods and provide a list of
+<code class="docutils literal notranslate"><span class="pre">OnboardingPage</span></code> objects.</p>
+<p>An <code class="docutils literal notranslate"><span class="pre">OnboardingFragmentListener</span></code> instance must be available before the fragment is attached to an
+activity. Failing to do so will throw an exception. The listener instance can be provided either implicitly by making
+the host activity implement the <code class="docutils literal notranslate"><span class="pre">OnboardingFragmentListener</span></code> interface or explicitly by setting the listener using
+<code class="docutils literal notranslate"><span class="pre">setListener()</span></code>.</p>
+<p>See the <a class="reference external" href="https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/2.1.0/dokka/sdk/net.gini.android.capture.onboarding/-onboarding-fragment-compat/index.html?query=public%20class%20OnboardingFragmentCompat%20extends%20Fragment%20implements%20OnboardingFragmentImplCallback,%20OnboardingFragmentInterface">reference documentation</a>,
+<a class="reference external" href="https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/2.1.0/dokka/sdk/net.gini.android.capture.onboarding/-onboarding-fragment-interface/index.html">public interface</a>
+and <a class="reference external" href="https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/2.1.0/dokka/sdk/net.gini.android.capture.onboarding/-onboarding-fragment-listener/index.html">listener</a>
+for details.</p>
+</div>
+<div class="section" id="helpactivity">
+<h4>HelpActivity<a class="headerlink" href="#helpactivity" title="Permalink to this headline">¶</a></h4>
+<p>This activity shows the help screen. The content of this screen depends on how <code class="docutils literal notranslate"><span class="pre">GiniCapture</span></code> was configured. You can
+also add custom screens during configuration.</p>
+<p>You need to add a button to your UI to launch the <code class="docutils literal notranslate"><span class="pre">HelpActivity</span></code>. It requires no extras and can be launched with a
+simple intent.</p>
+<p>See the <a class="reference external" href="https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/2.1.0/dokka/sdk/net.gini.android.capture.help/-help-activity/index.html">reference documentation</a>
+for details.</p>
+</div>
+<div class="section" id="reviewfragmentcompat">
+<h4>ReviewFragmentCompat<a class="headerlink" href="#reviewfragmentcompat" title="Permalink to this headline">¶</a></h4>
+<p>This fragment shows the single page document review screen. This should be only used if multi-page document scanning was
+<em>not</em> enabled.</p>
+<p>It displays the photographed or imported image and allows the user to review it by checking the sharpness, quality and
+orientation of the image. The user can correct the orientation by rotating the image.</p>
+<p>A <code class="docutils literal notranslate"><span class="pre">ReviewFragmentListener</span></code> instance must be available before the <cite>ReviewFragmentCompat</cite> is attached to an activity.
+Failing to do so will throw an exception. The listener instance can be provided either implicitly by making the host
+activity implement the <code class="docutils literal notranslate"><span class="pre">ReviewFragmentListener</span></code> interface or explicitly by setting the listener using <code class="docutils literal notranslate"><span class="pre">setListener()</span></code>.</p>
+<p>See the <a class="reference external" href="https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/2.1.0/dokka/sdk/net.gini.android.capture.review/-review-fragment-compat/index.html?query=public%20class%20ReviewFragmentCompat%20extends%20Fragment%20implements%20FragmentImplCallback,%20ReviewFragmentInterface">reference documentation</a>,
+<a class="reference external" href="https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/2.1.0/dokka/sdk/net.gini.android.capture.review/-review-fragment-interface/index.html">public interface</a>
+and <a class="reference external" href="https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/2.1.0/dokka/sdk/net.gini.android.capture.review/-review-fragment-listener/index.html">listener</a>
+for details.</p>
+</div>
+<div class="section" id="multipagereviewfragment">
+<h4>MultiPageReviewFragment<a class="headerlink" href="#multipagereviewfragment" title="Permalink to this headline">¶</a></h4>
+<p>This fragment shows the multi-page document review screen. This should be only used if multi-page document scanning was
+enabled.</p>
+<p>It displays the photographed or imported images and allows the user to review them by checking the order, sharpness,
+quality and orientation of the images. The user can correct the order by dragging the thumbnails of the images and can
+also correct the orientation by rotating the images.</p>
+<p>A <code class="docutils literal notranslate"><span class="pre">MultiPageReviewFragmentListener</span></code> instance must be available before it is attached to
+an activity. Failing to do so will throw an exception. The listener instance can be provided either implicitly by making
+the host activity implement the <code class="docutils literal notranslate"><span class="pre">MultiPageReviewFragmentListener</span></code> interface or explicitly by setting the listener using
+<code class="docutils literal notranslate"><span class="pre">setListener()</span></code>.</p>
+<p>See the <a class="reference external" href="https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/2.1.0/dokka/sdk/net.gini.android.capture.review.multipage/-multi-page-review-fragment/index.html?query=public%20class%20MultiPageReviewFragment%20extends%20Fragment%20implements%20MultiPageReviewFragmentInterface,%20PreviewFragmentListener,%20FragmentImplCallback">reference documentation</a>,
+<a class="reference external" href="https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/2.1.0/dokka/sdk/net.gini.android.capture.review.multipage/-multi-page-review-fragment-interface/index.html">public interface</a>
+and <a class="reference external" href="https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/2.1.0/dokka/sdk/net.gini.android.capture.review.multipage/-multi-page-review-fragment-listener/index.html">listener</a>
+for details.</p>
+</div>
+<div class="section" id="analysisfragmentcompat">
+<h4>AnalysisFragmentCompat<a class="headerlink" href="#analysisfragmentcompat" title="Permalink to this headline">¶</a></h4>
+<p>This fragment shows the analysis screen. It displays the captured or imported document and an activity indicator while
+the document is being analyzed by the Gini Bank API. For PDF documents the first page is shown along with the PDF’s
+filename and number of pages above the page.</p>
+<p>An <code class="docutils literal notranslate"><span class="pre">AnalysisFragmentListener</span></code> instance must be available before it is attached to an
+activity. Failing to do so will throw an exception. The listener instance can be provided either implicitly by making
+the host activity implement the <code class="docutils literal notranslate"><span class="pre">AnalysisFragmentListener</span></code> interface or explicitly by setting the listener using <code class="docutils literal notranslate"><span class="pre">setListener()</span></code>.</p>
+<p>See the <a class="reference external" href="https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/2.1.0/dokka/sdk/net.gini.android.capture.analysis/-analysis-fragment-compat/index.html?query=public%20class%20AnalysisFragmentCompat%20extends%20Fragment%20implements%20FragmentImplCallback,%20AnalysisFragmentInterface">reference documentation</a>,
+<a class="reference external" href="https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/2.1.0/dokka/sdk/net.gini.android.capture.analysis/-analysis-fragment-interface/index.html">public interface</a>
+and <a class="reference external" href="https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/2.1.0/dokka/sdk/net.gini.android.capture.analysis/-analysis-fragment-listener/index.html">listener</a>
+for details.</p>
+</div>
+<div class="section" id="noresultsfragmentcompat">
+<h4>NoResultsFragmentCompat<a class="headerlink" href="#noresultsfragmentcompat" title="Permalink to this headline">¶</a></h4>
+<p>This fragment shows the no results screen. It displays hints that inform the user how to best take pictures of documents and
+also shows a button to return to the camera screen to retry the document capture.</p>
+<p>Your Activity must implement the <code class="docutils literal notranslate"><span class="pre">NoResultsFragmentListener</span></code> interface to receive events from the fragment. Failing to
+do so will throw an exception.</p>
+<p>See the <a class="reference external" href="https://developer.gini.net/gini-mobile-android/capture-sdk/sdk|version_path|dokka/sdk/net.gini.android.capture.noresults/-no-results-fragment-compat/index.html?query=public%20class%20NoResultsFragmentCompat%20extends%20Fragment%20implements%20FragmentImplCallback">reference documentation</a>
+and <a class="reference external" href="https://developer.gini.net/gini-mobile-android/capture-sdk/sdk|version_path|dokka/sdk/net.gini.android.capture.noresults/-no-results-fragment-listener/index.html">listener</a>
+for details.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="features.html" class="btn btn-neutral float-right" title="Features">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="getting-started.html" class="btn btn-neutral" title="Getting started"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+    </p>
+  </div>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  
+</body>
+</html>
