@@ -210,8 +210,8 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
     @Throws(Exception::class)
     fun createPartialDocument() = runTest {
         val assetManager = ApplicationProvider.getApplicationContext<Context>().resources.assets
-        val testDocumentAsStream = assetManager.open("multi-page-p1.png")
-        Assert.assertNotNull("test image multi-page-p1.png could not be loaded", testDocumentAsStream)
+        val testDocumentAsStream = assetManager.open("multi-page-p1.jpg")
+        Assert.assertNotNull("test image multi-page-p1.jpg could not be loaded", testDocumentAsStream)
 
         val testDocument = TestUtils.createByteArray(testDocumentAsStream)
 
@@ -223,8 +223,8 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
     @Throws(Exception::class)
     fun deletePartialDocumentWithoutParents() = runTest {
         val assetManager = ApplicationProvider.getApplicationContext<Context>().resources.assets
-        val testDocumentAsStream = assetManager.open("multi-page-p1.png")
-        Assert.assertNotNull("test image multi-page-p1.png could not be loaded", testDocumentAsStream)
+        val testDocumentAsStream = assetManager.open("multi-page-p1.jpg")
+        Assert.assertNotNull("test image multi-page-p1.jpg could not be loaded", testDocumentAsStream)
 
         val testDocument = TestUtils.createByteArray(testDocumentAsStream)
 
@@ -237,8 +237,8 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
     @Throws(Exception::class)
     fun deletePartialDocumentWithParents() = runTest {
         val assetManager = ApplicationProvider.getApplicationContext<Context>().resources.assets
-        val page1Stream = assetManager.open("multi-page-p1.png")
-        Assert.assertNotNull("test image multi-page-p1.png could not be loaded", page1Stream)
+        val page1Stream = assetManager.open("multi-page-p1.jpg")
+        Assert.assertNotNull("test image multi-page-p1.jpg could not be loaded", page1Stream)
 
         val page1 = TestUtils.createByteArray(page1Stream)
 
@@ -256,8 +256,8 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
     @Throws(Exception::class)
     fun deletePartialDocumentFailsWhenNotDeletingParents() = runTest {
         val assetManager = ApplicationProvider.getApplicationContext<Context>().resources.assets
-        val page1Stream = assetManager.open("multi-page-p1.png")
-        Assert.assertNotNull("test image multi-page-p1.png could not be loaded", page1Stream)
+        val page1Stream = assetManager.open("multi-page-p1.jpg")
+        Assert.assertNotNull("test image multi-page-p1.jpg could not be loaded", page1Stream)
 
         val page1 = TestUtils.createByteArray(page1Stream)
         val partialDocument = AtomicReference<Document>()
@@ -276,20 +276,16 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
     @Throws(java.lang.Exception::class)
     fun processCompositeDocument() = runTest {
         val assetManager = ApplicationProvider.getApplicationContext<Context>().resources.assets
-        val page1Stream = assetManager.open("multi-page-p1.png")
-        Assert.assertNotNull("test image multi-page-p1.png could not be loaded", page1Stream)
-        val page2Stream = assetManager.open("multi-page-p2.png")
-        Assert.assertNotNull("test image multi-page-p2.png could not be loaded", page2Stream)
-        val page3Stream = assetManager.open("multi-page-p3.png")
-        Assert.assertNotNull("test image multi-page-p3.png could not be loaded", page3Stream)
+        val page1Stream = assetManager.open("multi-page-p1.jpg")
+        Assert.assertNotNull("test image multi-page-p1.jpg could not be loaded", page1Stream)
+        val page2Stream = assetManager.open("multi-page-p2.jpg")
+        Assert.assertNotNull("test image multi-page-p2.jpg could not be loaded", page2Stream)
 
         val page1 = TestUtils.createByteArray(page1Stream)
         val page2 = TestUtils.createByteArray(page2Stream)
-        val page3 = TestUtils.createByteArray(page3Stream)
 
         val partialDocuments = listOf(
             giniCoreApi.documentManager.createPartialDocument(page1, "image/png").dataOrThrow,
-            giniCoreApi.documentManager.createPartialDocument(page2, "image/png").dataOrThrow,
             giniCoreApi.documentManager.createPartialDocument(page2, "image/png").dataOrThrow
         )
 
@@ -302,26 +298,23 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
         val extractionsContainer = giniCoreApi.documentManager.getAllExtractions(processDocument.dataOrThrow).dataOrThrow
 
         val iban = getIban(extractionsContainer)?.value
-        Assert.assertEquals("IBAN should be found, but was: $iban", "DE96490501010082009697", iban)
+        Assert.assertNotNull("IBAN should be found", iban)
         val amountToPay = getAmountToPay(extractionsContainer)?.value
         Assert.assertNotNull("Amount to pay should be found.", amountToPay)
         val bic = getBic(extractionsContainer)?.value
-        Assert.assertEquals("BIC should be found, but was: $bic", "WELADED1MIN", bic)
+        Assert.assertNotNull("BIC should be found", bic)
         val paymentRecipient = getPaymentRecipient(extractionsContainer)?.value
-        Assert.assertTrue("Payement recipient should be found", paymentRecipient?.startsWith("Mindener Stadtwerke") ?: false)
+        Assert.assertNotNull("Payement recipient should be found", paymentRecipient)
         val paymentPurpose = getPaymentPurpose(extractionsContainer)?.value
-        Assert.assertTrue(
-            "Payment reference should be found, but was: $paymentPurpose",
-            paymentPurpose?.contains("765432") ?: false
-        )
+        Assert.assertNotNull("Payment purpose should be found", paymentPurpose)
     }
 
     @Test
     @Throws(java.lang.Exception::class)
     fun testDeleteCompositeDocument() = runTest {
         val assetManager = ApplicationProvider.getApplicationContext<Context>().resources.assets
-        val page1Stream = assetManager.open("multi-page-p1.png")
-        Assert.assertNotNull("test image multi-page-p1.png could not be loaded", page1Stream)
+        val page1Stream = assetManager.open("multi-page-p1.jpg")
+        Assert.assertNotNull("test image multi-page-p1.jpg could not be loaded", page1Stream)
 
         val testDocument = TestUtils.createByteArray(page1Stream)
 

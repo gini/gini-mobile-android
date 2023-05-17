@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - 'bank-api-library;[0-9]+.[0-9]+.[0-9]+;doc**'
+      - 'bank-api-library;[0-9]+.[0-9]+.[0-9]+-beta[0-9][0-9];doc**'
   workflow_call:
     secrets:
       RELEASE_GITHUB_USER:
@@ -44,6 +45,11 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '2.7.x'
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2.0'
+          bundler-cache: true
 
       - name: release documentation
         uses: maierj/fastlane-action@v3.0.0
