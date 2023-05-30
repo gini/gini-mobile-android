@@ -14,8 +14,9 @@ android {
         applicationId = "net.gini.android.health.sdk.exampleapp"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk =libs.versions.android.targetSdk.get().toInt()
-        versionCode = 1
-        versionName ="1.0"
+
+        versionName = version as String
+        versionCode = (properties["versionCode"] as? String)?.toInt() ?: 0
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
