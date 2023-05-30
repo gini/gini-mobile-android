@@ -10,6 +10,7 @@ jobs:
     uses: gini/gini-mobile-android/.github/workflows/health-sdk.check.yml@2.x.x
     secrets:
       GINI_MOBILE_TEST_CLIENT_SECRET: ${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}
+      HEALTH_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD: ${{ secrets.HEALTH_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}
         
   release:
     needs: check
