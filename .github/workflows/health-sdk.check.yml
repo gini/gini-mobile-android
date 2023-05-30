@@ -22,6 +22,8 @@ on:
     secrets:
       GINI_MOBILE_TEST_CLIENT_SECRET:
         required: true
+      HEALTH_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD:
+        required: true
 
 jobs:
   test:
@@ -59,17 +61,33 @@ jobs:
           java-version: '11'
           cache: 'gradle'
 
-      - name: build example app
-        env:
-          client_id: gini-mobile-test
-          client_secret: ${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}
-        run: ./gradlew health-sdk:example-app:assembleDebug -PclientId="$client_id" -PclientSecret="$client_secret"
+      - name: build debug example app
+        run: >
+          ./gradlew health-sdk:example-app:assembleDebug 
+          -PclientId="gini-mobile-test" 
+          -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
 
-      - name: archive example app
+      - name: archive debug example app
         uses: actions/upload-artifact@v3
         with:
-          name: health-sdk-example-app
-          path: health-sdk/example-app/build/outputs/apk
+          name: health-sdk-example-app-debug
+          path: health-sdk/example-app/build/outputs/apk/debug
+
+      - name: build release example app
+        run: >
+          ./gradlew health-sdk:example-app:assembleRelease 
+          -PclientId="gini-mobile-test" 
+          -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
+          -PreleaseKeystoreFile="health_sdk_example.jks"
+          -PreleaseKeystorePassword='${{ secrets.HEALTH_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}'
+          -PreleaseKeyAlias="health_sdk_example"
+          -PreleaseKeyPassword='${{ secrets.HEALTH_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}'
+
+      - name: archive release example app
+        uses: actions/upload-artifact@v3
+        with:
+          name: health-sdk-example-app-release
+          path: health-sdk/example-app/build/outputs/apk/release
 
   android-lint:
     runs-on: ubuntu-latest
