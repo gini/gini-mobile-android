@@ -24,6 +24,8 @@ on:
     secrets:
       GINI_MOBILE_TEST_CLIENT_SECRET:
         required: true
+      BANK_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD:
+        required: true
 
 jobs:
   test:
@@ -130,17 +132,33 @@ jobs:
           java-version: '11'
           cache: 'gradle'
 
-      - name: build screen api example app
+      - name: build debug screen api example app
         run: >
           ./gradlew bank-sdk:screen-api-example-app:assembleDebug
           -PclientId="gini-mobile-test" 
           -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
 
-      - name: archive screen api example app
+      - name: archive debug screen api example app
         uses: actions/upload-artifact@v3
         with:
-          name: bank-sdk-screen-api-example-app
-          path: bank-sdk/screen-api-example-app/build/outputs/apk
+          name: bank-sdk-screen-api-example-app-debug
+          path: bank-sdk/screen-api-example-app/build/outputs/apk/debug
+
+      - name: build release screen api example app
+        run: >
+          ./gradlew bank-sdk:screen-api-example-app:assembleRelease
+          -PclientId="gini-mobile-test" 
+          -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
+          -PreleaseKeystoreFile="screen_api_example.jks"
+          -PreleaseKeystorePassword='${{ secrets.BANK_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}'
+          -PreleaseKeyAlias="screen_api_example"
+          -PreleaseKeyPassword='${{ secrets.BANK_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}'
+
+      - name: archive release screen api example app
+        uses: actions/upload-artifact@v3
+        with:
+          name: bank-sdk-screen-api-example-app-release
+          path: bank-sdk/screen-api-example-app/build/outputs/apk/release
 
       - name: build component api example app
         run: >
