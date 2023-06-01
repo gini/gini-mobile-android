@@ -14,16 +14,28 @@ android {
         applicationId = "net.gini.android.health.sdk.exampleapp"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk =libs.versions.android.targetSdk.get().toInt()
-        versionCode = 1
-        versionName ="1.0"
+
+        versionName = version as String
+        versionCode = (properties["versionCode"] as? String)?.toInt() ?: 0
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+        create("release") {
+            storeFile = file(properties["releaseKeystoreFile"] ?: "")
+            storePassword = (properties["releaseKeystorePassword"] as? String) ?: ""
+            keyAlias = (properties["releaseKeyAlias"] as? String) ?: ""
+            keyPassword = (properties["releaseKeyPassword"] as? String) ?: ""
+        }
     }
 
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
+
+            signingConfig = signingConfigs.getByName("release")
         }
     }
     buildFeatures {

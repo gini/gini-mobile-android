@@ -11,6 +11,7 @@ jobs:
     uses: gini/gini-mobile-android/.github/workflows/capture-sdk.check.yml@main
     secrets:
       GINI_MOBILE_TEST_CLIENT_SECRET: ${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}
+      CAPTURE_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD: ${{ secrets.CAPTURE_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}
         
   release:
     needs: check
