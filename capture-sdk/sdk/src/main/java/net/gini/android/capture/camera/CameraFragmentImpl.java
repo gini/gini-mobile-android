@@ -642,14 +642,8 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             mImportUrisAsyncTask.cancel(true);
         }
 
-        if (!mInstanceStateSaved) {
-            if (!mProceededToMultiPageReview) {
-                deleteUploadedMultiPageDocuments();
-                clearMultiPageDocument();
-            }
-            if (!mQRCodeAnalysisCompleted) {
-                deleteUploadedQRCodeDocument();
-            }
+        if (!mInstanceStateSaved && !mProceededToMultiPageReview) {
+            clearMultiPageDocument();
         }
     }
 
@@ -658,58 +652,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             mMultiPageDocument = null; // NOPMD
             GiniCapture.getInstance().internal()
                     .getImageMultiPageDocumentMemoryStore().clear();
-        }
-    }
-
-    private void deleteUploadedMultiPageDocuments() {
-        final Activity activity = mFragment.getActivity();
-        if (activity == null) {
-            return;
-        }
-        if (mMultiPageDocument == null) {
-            return;
-        }
-
-        if (GiniCapture.hasInstance()) {
-            final NetworkRequestsManager networkRequestsManager = GiniCapture.getInstance()
-                    .internal().getNetworkRequestsManager();
-            if (networkRequestsManager != null) {
-                networkRequestsManager.cancel(mMultiPageDocument);
-                networkRequestsManager.delete(mMultiPageDocument)
-                        .handle(new CompletableFuture.BiFun<NetworkRequestResult<
-                                GiniCaptureDocument>, Throwable, Void>() {
-                            @Override
-                            public Void apply(
-                                    final NetworkRequestResult<GiniCaptureDocument> requestResult,
-                                    final Throwable throwable) {
-                                for (final Object document : mMultiPageDocument.getDocuments()) {
-                                    final GiniCaptureDocument giniCaptureDocument =
-                                            (GiniCaptureDocument) document;
-                                    networkRequestsManager.cancel(giniCaptureDocument);
-                                    networkRequestsManager.delete(giniCaptureDocument);
-                                }
-                                return null;
-                            }
-                        });
-            }
-        }
-    }
-
-    private void deleteUploadedQRCodeDocument() {
-        final Activity activity = mFragment.getActivity();
-        if (activity == null) {
-            return;
-        }
-        if (mQRCodeDocument == null) {
-            return;
-        }
-        if (GiniCapture.hasInstance()) {
-            final NetworkRequestsManager networkRequestsManager = GiniCapture.getInstance()
-                    .internal().getNetworkRequestsManager();
-            if (networkRequestsManager != null) {
-                networkRequestsManager.cancel(mQRCodeDocument);
-                networkRequestsManager.delete(mQRCodeDocument);
-            }
         }
     }
 
