@@ -177,7 +177,9 @@ public class GiniCapture {
     @NonNull
     public static synchronized Builder newInstance(final Context context) {
         if (sInstance != null) {
-            sInstance.mNetworkRequestsManager.cleanup();
+            if (sInstance.mNetworkRequestsManager != null) {
+                sInstance.mNetworkRequestsManager.cleanup();
+            }
             doActualCleanUp(context);
         }
         return new Builder();
