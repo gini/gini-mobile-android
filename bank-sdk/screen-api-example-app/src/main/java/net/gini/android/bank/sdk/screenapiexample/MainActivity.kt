@@ -76,6 +76,7 @@ class MainActivity : AppCompatActivity() {
                 )
 
         GiniBank.setCaptureConfiguration(
+            this,
             CaptureConfiguration(
                 networkService = networkService,
                 documentImportEnabledFileTypes = DocumentImportEnabledFileTypes.PDF_AND_IMAGES,
@@ -228,37 +229,21 @@ class MainActivity : AppCompatActivity() {
                             Toast.LENGTH_LONG
                         ).show()
                 }
-                GiniBank.releaseCapture(
-                    this, "",
-                    "", "", "", "", Amount.EMPTY
-                )
                 if (isIntentActionViewOrSend(intent)) {
                     finish()
                 }
             }
             CaptureResult.Empty -> {
-                GiniBank.releaseCapture(
-                    this, "",
-                    "", "", "", "", Amount.EMPTY
-                )
                 if (isIntentActionViewOrSend(intent)) {
                     finish()
                 }
             }
             CaptureResult.Cancel -> {
-                GiniBank.releaseCapture(
-                    this, "",
-                    "", "", "", "", Amount.EMPTY
-                )
                 if (isIntentActionViewOrSend(intent)) {
                     finish()
                 }
             }
             CaptureResult.EnterManually -> {
-                GiniBank.releaseCapture(
-                    this, "",
-                    "", "", "", "", Amount.EMPTY
-                )
                 Toast.makeText(this, "Scan exited for manual enter mode", Toast.LENGTH_SHORT).show()
                 if (isIntentActionViewOrSend(intent)) {
                     finish()

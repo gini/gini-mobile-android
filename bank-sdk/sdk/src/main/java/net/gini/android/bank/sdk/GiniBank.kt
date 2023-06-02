@@ -48,7 +48,6 @@ import net.gini.android.core.api.models.PaymentRequest
  *  - the Screen API by calling [startCaptureFlow] or [startCaptureFlowForIntent].
  *
  * To use capture features, they need to be configured with [setCaptureConfiguration].
- * Note that configuration is immutable. [releaseCapture] needs to be called before passing a new configuration.
  *
  * To use the pay feature, first [setGiniApi] needs to be called. The flow for this feature would be:
  *  - [getRequestId] to extract the id from the [Intent]
@@ -110,6 +109,10 @@ object GiniBank {
      *
      * @throws IllegalStateException if capture is already configured.
      */
+    @Deprecated(
+        "Please use setCaptureConfiguration(context, captureConfiguration) which allows instance recreation without having to call releaseCapture()",
+        ReplaceWith("setCaptureConfiguration(context, captureConfiguration)")
+    )
     fun setCaptureConfiguration(captureConfiguration: CaptureConfiguration) {
         check(giniCapture == null) { "Gini Capture already configured. Call releaseCapture() before setting a new configuration." }
         GiniBank.captureConfiguration = captureConfiguration
@@ -120,7 +123,33 @@ object GiniBank {
     }
 
     /**
-     *  Frees up resources used by Capture.
+     * Sets configuration for Capture feature.
+     */
+    fun setCaptureConfiguration(context: Context, captureConfiguration: CaptureConfiguration) {
+        GiniBank.captureConfiguration = captureConfiguration
+        GiniCapture.newInstance(context)
+            .applyConfiguration(captureConfiguration)
+            .build()
+        giniCapture = GiniCapture.getInstance()
+    }
+
+    /**
+     * Frees up resources used by the capture flow.
+     *
+     * Please provide the required extraction feedback to improve the future extraction accuracy.
+     * Please follow the recommendations below:
+     *
+     * - Please provide values for all necessary fields, including those that were not extracted.</li>
+     * - Provide the final data approved by the user (and not the initially extracted only).</li>
+     * - Do cleanup after TAN verification.to clean up and provide the extraction values the user has used.</li>
+     *
+     * @param context Android context
+     * @param paymentRecipient payment receiver
+     * @param paymentReference ID based on Client ID (Kundennummer) and invoice ID (Rechnungsnummer)
+     * @param paymentPurpose statement what this payment is for
+     * @param iban international bank account
+     * @param bic bank identification code
+     * @param amount accepts extracted amount and currency
      */
     fun releaseCapture(
         context: Context,

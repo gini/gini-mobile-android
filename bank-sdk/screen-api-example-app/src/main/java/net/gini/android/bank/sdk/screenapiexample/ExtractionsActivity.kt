@@ -48,20 +48,6 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
         readExtras()
         showAnalyzedDocumentId()
         setUpRecyclerView(binding)
-        handleBackPressed()
-    }
-
-    private fun handleBackPressed() {
-        onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                // Clean up GiniBank and pass in empty extraction feedback to signal that the user cancelled without
-                // accepting any of them
-                GiniBank.releaseCapture(applicationContext,"", "",
-                    "", "", "", Amount.EMPTY)
-                isEnabled = false
-                onBackPressed()
-            }
-        })
     }
 
     private fun showAnalyzedDocumentId() {
