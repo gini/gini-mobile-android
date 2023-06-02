@@ -642,13 +642,8 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             mImportUrisAsyncTask.cancel(true);
         }
 
-        if (!mInstanceStateSaved) {
-            if (!mProceededToMultiPageReview) {
-                clearMultiPageDocument();
-            }
-            if (!mQRCodeAnalysisCompleted) {
-                deleteUploadedQRCodeDocument();
-            }
+        if (!mInstanceStateSaved && !mProceededToMultiPageReview) {
+            clearMultiPageDocument();
         }
     }
 
@@ -657,24 +652,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             mMultiPageDocument = null; // NOPMD
             GiniCapture.getInstance().internal()
                     .getImageMultiPageDocumentMemoryStore().clear();
-        }
-    }
-
-    private void deleteUploadedQRCodeDocument() {
-        final Activity activity = mFragment.getActivity();
-        if (activity == null) {
-            return;
-        }
-        if (mQRCodeDocument == null) {
-            return;
-        }
-        if (GiniCapture.hasInstance()) {
-            final NetworkRequestsManager networkRequestsManager = GiniCapture.getInstance()
-                    .internal().getNetworkRequestsManager();
-            if (networkRequestsManager != null) {
-                networkRequestsManager.cancel(mQRCodeDocument);
-                networkRequestsManager.delete(mQRCodeDocument);
-            }
         }
     }
 
