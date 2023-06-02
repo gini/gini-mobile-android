@@ -23,25 +23,12 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class HelpActivityTest {
 
-    @After
-    fun tearDown() {
-        GiniCapture.cleanup(
-            InstrumentationRegistry.getInstrumentation().targetContext,
-            "",
-            "",
-            "",
-            "",
-            "",
-            Amount.EMPTY
-        )
-    }
-
     @Test
     fun `shows custom help items`() {
         // Given
         val customTitle = R.string.custom_help_screen_title
 
-        GiniCapture.newInstance()
+        GiniCapture.newInstance(InstrumentationRegistry.getInstrumentation().targetContext)
             .setGiniCaptureNetworkService(mock())
             .setCustomHelpItems(
                 listOf(
@@ -68,7 +55,7 @@ class HelpActivityTest {
         // Given
         val customTitle = R.string.custom_help_screen_title
 
-        GiniCapture.newInstance()
+        GiniCapture.newInstance(InstrumentationRegistry.getInstrumentation().targetContext)
             .setGiniCaptureNetworkService(mock())
             .setCustomHelpItems(
                 listOf(

@@ -29,19 +29,6 @@ import org.robolectric.annotation.LooperMode
 @LooperMode(LooperMode.Mode.PAUSED)
 class MultipageReviewActivityTest {
 
-    @After
-    fun after() {
-        GiniCapture.cleanup(
-            InstrumentationRegistry.getInstrumentation().targetContext,
-            "",
-            "",
-            "",
-            "",
-            "",
-            Amount.EMPTY
-        )
-    }
-
     @Test
     fun `triggers Back event when back was pressed`() {
         // Given

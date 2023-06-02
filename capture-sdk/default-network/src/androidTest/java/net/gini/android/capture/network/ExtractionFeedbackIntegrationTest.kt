@@ -65,7 +65,7 @@ class ExtractionFeedbackIntegrationTest {
             .setUserCenterBaseUrl(testProperties["testUserCenterUri"] as String)
             .build()
 
-        GiniCapture.newInstance()
+        GiniCapture.newInstance(getApplicationContext())
             .setGiniCaptureNetworkService(networkService)
             .build()
 
@@ -79,11 +79,6 @@ class ExtractionFeedbackIntegrationTest {
             .setUserCenterApiBaseUrl(testProperties["testUserCenterUri"] as String)
             .setConnectionTimeoutInMs(60000)
             .build()
-    }
-
-    @After
-    fun tearDown() {
-        GiniCapture.cleanup(getApplicationContext(), "", "", "", "", "", Amount.EMPTY)
     }
 
     @Test

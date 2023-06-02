@@ -23,7 +23,7 @@ import net.gini.android.capture.internal.camera.photo.PhotoFactory;
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction;
 import net.gini.android.capture.network.model.GiniCaptureReturnReason;
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
-import net.gini.android.capture.review.ReviewActivity;
+import net.gini.android.capture.review.multipage.MultiPageReviewActivity;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -175,20 +175,12 @@ public class AnalysisScreenTest {
     private AnalysisActivityTestSpy startAnalysisActivity(final byte[] jpeg,
             final int orientation) {
         final Intent intent = getAnalysisActivityIntent();
-        addDocumentExtraToIntent(intent, jpeg, orientation);
         return mActivityTestRule.launchActivity(intent);
     }
 
     private Intent getAnalysisActivityIntent() {
         return new Intent(ApplicationProvider.getApplicationContext(),
                 AnalysisActivityTestSpy.class);
-    }
-
-    private void addDocumentExtraToIntent(final Intent intent, final byte[] jpeg,
-            final int orientation) {
-        intent.putExtra(ReviewActivity.EXTRA_IN_DOCUMENT, DocumentFactory.newImageDocumentFromPhoto(
-                PhotoFactory.newPhotoFromJpeg(jpeg, orientation, "portrait", "phone",
-                        ImageDocument.Source.newCameraSource())));
     }
 
     @Test(expected = IllegalStateException.class)

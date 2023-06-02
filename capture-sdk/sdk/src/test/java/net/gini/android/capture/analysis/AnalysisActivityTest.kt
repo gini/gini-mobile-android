@@ -30,13 +30,6 @@ import org.junit.runner.RunWith
 //@LooperMode(LooperMode.Mode.PAUSED)
 class AnalysisActivityTest {
 
-    @After
-    fun after() {
-        GiniCapture.cleanup(getInstrumentation().targetContext, "",
-            "", "",  "",
-            "", Amount.EMPTY)
-    }
-
     @Test
     fun `triggers Cancel event when back was pressed`() {
         // Given

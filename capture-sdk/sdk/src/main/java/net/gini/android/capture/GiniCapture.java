@@ -68,16 +68,18 @@ import androidx.annotation.VisibleForTesting;
 /**
  * Single entry point for the Gini Capture SDK for configuration and interaction.
  *
- * <p> This singleton class is preferred over the previous methods of configuration and interaction.
- * It is only mandatory for new features. You can continue using features from previous releases
- * without any modification.
+ * <p> To create and configure a singleton instance use the {@link #newInstance(Context)} method and the
+ * returned {@link Builder}.
  *
- * <p> To create and configure a singleton instance use the {@link #newInstance()} method and the
- * returned {@link Builder}. If an instance is already available you need to call {@link
- * #cleanup(Context, String, String, String, String, String, Amount)} before creating a new instance. Failing to do so will throw an exception.
+ * <p> Use the {@link #cleanup(Context, String, String, String, String, String, Amount)} method to clean up the SDK
+ * while also providing the required extraction feedback to improve the future extraction accuracy.
+ * Please follow the recommendations below:
  *
- * <p> After you are done using the Gini Capture SDK use the {@link #cleanup(Context, String, String, String, String, String, Amount)} method.
- * This will free up resources used by the library.
+ * <ul>
+ *     <li>Please provide values for all necessary fields, including those that were not extracted.</li>
+ *     <li>Provide the final data approved by the user (and not the initially extracted only).</li>
+ *     <li>Do cleanup after TAN verification.to clean up and provide the extraction values the user has used.</li>
+ * </ul>
  */
 public class GiniCapture {
 
@@ -153,8 +155,11 @@ public class GiniCapture {
      * @return a new {@link Builder}
      * @throws IllegalStateException when an instance already exists. Call {@link #cleanup(Context, String, String, String, String, String, Amount)}
      *                               before trying to create a new instance
+     * @deprecated Please use {@link #newInstance(Context)} which allows instance recreation without having to
+     * call {@link #cleanup(Context, String, String, String, String, String, Amount)} first.
      */
     @NonNull
+    @Deprecated
     public static synchronized Builder newInstance() {
         if (sInstance != null) {
             throw new IllegalStateException("An instance was already created. "
@@ -164,15 +169,38 @@ public class GiniCapture {
     }
 
     /**
+     * Configure and create a new instance using the returned {@link Builder}.
+     *
+     * @return a new {@link Builder}
+     * @param context Android context
+     */
+    @NonNull
+    public static synchronized Builder newInstance(final Context context) {
+        if (sInstance != null) {
+            sInstance.mNetworkRequestsManager.cleanup();
+            doActualCleanUp(context);
+        }
+        return new Builder();
+    }
+    /**
      * Destroys the {@link GiniCapture} instance and frees up used resources.
      *
+     * <p>Please provide the required extraction feedback to improve the future extraction accuracy.
+     * Please follow the recommendations below:
+     *
+     * <ul>
+     *     <li>Please provide values for all necessary fields, including those that were not extracted.</li>
+     *     <li>Provide the final data approved by the user (and not the initially extracted only).</li>
+     *     <li>Do cleanup after TAN verification.to clean up and provide the extraction values the user has used.</li>
+     * </ul>
+     *
      * @param context Android context
-     * @param paymentRecipient payment receiver.
-     * @param paymentReference ID based on Client ID (Kundennummer) and invoice ID (Rechnungsnummer).
-     * @param paymentPurpose statement what this payment is for.
-     * @param iban international bank account.
-     * @param bic bank identification code.
-     * @param amount accepts extracted amount and currency.
+     * @param paymentRecipient payment receiver
+     * @param paymentReference ID based on Client ID (Kundennummer) and invoice ID (Rechnungsnummer)
+     * @param paymentPurpose statement what this payment is for
+     * @param iban international bank account
+     * @param bic bank identification code
+     * @param amount accepts extracted amount and currency
      */
     public static synchronized void cleanup(@NonNull final Context context,
                                             @NonNull final String paymentRecipient,
@@ -600,7 +628,7 @@ public class GiniCapture {
     }
 
     /**
-     * Builder for {@link GiniCapture}. To get an instance call {@link #newInstance()}.
+     * Builder for {@link GiniCapture}. To get an instance call {@link #newInstance(Context)}.
      */
     public static class Builder {
 

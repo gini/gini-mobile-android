@@ -54,6 +54,8 @@ import androidx.lifecycle.Lifecycle;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
+
 import jersey.repackaged.jsr166e.CompletableFuture;
 
 /**
@@ -76,7 +78,6 @@ public class AnalysisFragmentImplTest {
         DialogShadow.cleanup();
         AnalysisHintsAnimatorShadow.cleanup();
         DefaultLoadingIndicatorAdapterShadow.cleanup();
-        GiniCaptureHelper.setGiniCaptureInstance(null);
     }
 
     @Test
@@ -140,7 +141,7 @@ public class AnalysisFragmentImplTest {
     @Test
     public void should_notShowScanAnimation_byDefault() throws Exception {
         // Given
-        GiniCapture.newInstance()
+        GiniCapture.newInstance(InstrumentationRegistry.getInstrumentation().getTargetContext())
                 .setGiniCaptureNetworkService(mock(GiniCaptureNetworkService.class))
                 .build();
 
@@ -164,7 +165,7 @@ public class AnalysisFragmentImplTest {
     @Test
     public void should_showScanAnimation_whenRequested() throws Exception {
         // Given
-        GiniCapture.newInstance()
+        GiniCapture.newInstance(InstrumentationRegistry.getInstrumentation().getTargetContext())
                 .setGiniCaptureNetworkService(mock(GiniCaptureNetworkService.class))
                 .build();
 
@@ -198,7 +199,7 @@ public class AnalysisFragmentImplTest {
     @Test
     public void should_hideScanAnimation_whenRequested() throws Exception {
         // Given
-        GiniCapture.newInstance()
+        GiniCapture.newInstance(InstrumentationRegistry.getInstrumentation().getTargetContext())
                 .setGiniCaptureNetworkService(mock(GiniCaptureNetworkService.class))
                 .build();
 
