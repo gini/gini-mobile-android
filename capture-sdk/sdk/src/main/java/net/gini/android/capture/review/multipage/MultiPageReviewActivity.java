@@ -207,12 +207,10 @@ public class MultiPageReviewActivity extends AppCompatActivity implements
                                     final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == ANALYSE_DOCUMENT_REQUEST) {
-            if (resultCode == RESULT_NO_EXTRACTIONS) {
-                finish();
-            } else if (resultCode != Activity.RESULT_CANCELED || (data != null && data.hasExtra(NO_RESULT_CANCEL_KEY))) {
+            if (resultCode != Activity.RESULT_CANCELED || (data != null && data.hasExtra(NO_RESULT_CANCEL_KEY))) {
                 setResult(resultCode, data);
-                finish();
             }
+            finish();
         }
 
         if (requestCode == ERROR_SCREEN_REQUEST) {
@@ -221,9 +219,7 @@ public class MultiPageReviewActivity extends AppCompatActivity implements
                     GiniCapture.getInstance().internal().getImageMultiPageDocumentMemoryStore().clear();
                 }
                 setResult(resultCode);
-                finish();
-            }
-            if (resultCode == RESULT_ENTER_MANUALLY) {
+            } else if (resultCode == RESULT_ENTER_MANUALLY) {
                 setResult(RESULT_ENTER_MANUALLY, data);
             }
             finish();
