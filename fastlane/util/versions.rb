@@ -67,3 +67,13 @@ def get_latest_version_from_release_tags(project_id, ui)
   latest_version_tag = get_latest_release_tag(project_id)
   get_project_version_from_tag(project_id, latest_version_tag, ui)
 end
+
+##
+# Check if the project has a release tag for the given version.
+#
+def has_release_tag?(project_id, project_version, ui)
+  release_tags = get_release_tags(project_id)
+  release_tags.any? { |release_tag| 
+    get_project_version_from_tag(project_id, release_tag, ui) == project_version
+  }
+end
