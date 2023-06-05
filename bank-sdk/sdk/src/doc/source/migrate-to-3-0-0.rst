@@ -38,7 +38,7 @@ The following steps will help you migrate to the new public API:
 * Configure the SDK the same way as before by using ``GiniBank``.
 * If you used a custom navigation bar, then you can use the new ability to inject fully custom UI elements. For this you
   need to implement the ``NavigationBarTopAdapter`` interface and pass it to
-  ``GiniBank.setCaptureConfiguration(CaptureConfiguration(navigationBarTopAdapter = ))``. The ``NavigationBarTopAdapter`` interface declares the
+  ``GiniBank.setCaptureConfiguration(context, CaptureConfiguration(navigationBarTopAdapter = ))``. The ``NavigationBarTopAdapter`` interface declares the
   contract your view has to fulfill and allows the SDK to ask for your view instance when needed.
 * Use the ``CaptureFlowContract`` and ``GiniBank.startCaptureFlow()`` to launch the SDK instead of ``CameraFragmentCompat``.
 * Handle the result of the ``CaptureFlowContract`` by implementing an ``ActivityResultCallback<CaptureResult>`` to
@@ -226,7 +226,7 @@ below:
         ImageOnboardingIllustrationAdapter(R.drawable.your_illustration_page_2)
     )
 
-    GiniBank.setCaptureConfiguration(
+    GiniBank.setCaptureConfiguration(context,
         CaptureConfiguration(
             onboardingPages = arrayListOf(page1, page2)
         )
@@ -250,7 +250,7 @@ Bottom Navigation Bar
 ^^^^^^^^^^^^^^^^^^^^^
 
 You can show a bottom navigation bar by passing ``true`` to
-``GiniBank.setCaptureConfiguration(CaptureConfiguration(bottomNavigationBarEnabled = ))``. There is a default
+``GiniBank.setCaptureConfiguration(context, CaptureConfiguration(bottomNavigationBarEnabled = ))``. There is a default
 implementation, but you can also use your own by implementing the ``OnboardingNavigationBarBottomAdapter`` interface and
 passing it to ``GiniBank``.
 
@@ -272,7 +272,7 @@ We implemented image cropping. Parts of the image that appears outside the white
 Bottom Navigation Bar
 ^^^^^^^^^^^^^^^^^^^^^
 
-You can show a bottom navigation bar by passing ``true`` to ``GiniBank.setCaptureConfiguration(CaptureConfiguration(bottomNavigationBarEnabled = ))``. There is a default implementation, but you can also use
+You can show a bottom navigation bar by passing ``true`` to ``GiniBank.setCaptureConfiguration(context, CaptureConfiguration(bottomNavigationBarEnabled = ))``. There is a default implementation, but you can also use
 your own by implementing the ``CameraNavigationBarBottomAdapter`` interface and passing it to ``GiniBank``.
 
 You can find more details `here <customization-guide.html#id3>`_.
@@ -306,7 +306,7 @@ QR code scanning UI and functionality have changed. Scanning and processing happ
 New Features
 ++++++++++++
 
-The SDK can be launched to only scan QR codes. To enable this feature simply pass ``true`` to ``GiniBank.setCaptureConfiguration(CaptureConfiguration(onlyQRCodeScanningEnabled = ))``.
+The SDK can be launched to only scan QR codes. To enable this feature simply pass ``true`` to ``GiniBank.setCaptureConfiguration(context, CaptureConfiguration(onlyQRCodeScanningEnabled = ))``.
 
 Review Screen
 ~~~~~
@@ -331,7 +331,7 @@ Bottom Navigation Bar
 ^^^^^^^^^^^^^^^^^^^^^
 
 You can show a bottom navigation bar by passing ``true`` to
-``GiniBank.setCaptureConfiguration(CaptureConfiguration(bottomNavigationBarEnabled = ))``. There is a default
+``GiniBank.setCaptureConfiguration(context, CaptureConfiguration(bottomNavigationBarEnabled = ))``. There is a default
 implementation, but you can also use your own by implementing the ``ReviewNavigationBarBottomAdapter`` interface and
 passing it to ``GiniCapture``.
 
@@ -358,7 +358,7 @@ Bottom Navigation Bar
 ^^^^^^^^^^^^^^^^^^^^^
 
 You can show a bottom navigation bar by passing ``true`` to
-``GiniBank.setCaptureConfiguration(CaptureConfiguration(bottomNavigationBarEnabled = ))``. There is a default implementation, but you can also use
+``GiniBank.setCaptureConfiguration(context, CaptureConfiguration(bottomNavigationBarEnabled = ))``. There is a default implementation, but you can also use
 your own by implementing the ``HelpNavigationBarBottomAdapter`` interface and passing it to ``GiniBank``.
 
 You can find more details `here <customization-guide.html#id9>`_.
@@ -460,7 +460,7 @@ Bottom navigation bar
 ^^^^^^^^^^^^^^^^^^^^^
 
 You can show a bottom navigation bar by passing true to
-``GiniBank.setCaptureConfiguration(CaptureConfiguration(bottomNavigationBarEnabled = ))``. There is a default
+``GiniBank.setCaptureConfiguration(context, CaptureConfiguration(bottomNavigationBarEnabled = ))``. There is a default
 implementation, but you can also use your own by implementing the ``DigitalInvoiceOnboardingNavigationBarBottomAdapter``
 interface and passing it to ``GiniBank``.
 
@@ -493,7 +493,7 @@ Bottom navigation bar
 ^^^^^^^^^^^^^^^^^^^^^
 
 You can show a bottom navigation bar by passing true to
-``GiniBank.setCaptureConfiguration(CaptureConfiguration(bottomNavigationBarEnabled = ))``. There is a default
+``GiniBank.setCaptureConfiguration(context, CaptureConfiguration(bottomNavigationBarEnabled = ))``. There is a default
 implementation, but you can also use your own by implementing the ``DigitalInvoiceHelpNavigationBarBottomAdapter``
 interface and passing it to ``GiniBank``.
 
@@ -519,7 +519,7 @@ Bottom navigation bar
 ^^^^^^^^^^^^^^^^^^^^^
 
 You can show a bottom navigation bar by passing true to
-``GiniBank.setCaptureConfiguration(CaptureConfiguration(bottomNavigationBarEnabled = ))``. There is a default
+``GiniBank.setCaptureConfiguration(context, CaptureConfiguration(bottomNavigationBarEnabled = ))``. There is a default
 implementation, but you can also use your own by implementing the ``DigitalInvoiceNavigationBarBottomAdapter`` interface
 and passing it to ``GiniBank``.
 

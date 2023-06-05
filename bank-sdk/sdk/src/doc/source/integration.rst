@@ -298,7 +298,7 @@ The following example shows how to launch the capture flow and how to handle the
         // Make sure camera permission has been already granted at this point.
         
         // Check that the device fulfills the requirements.
-        val report = GiniCaptureRequirements.checkRequirements((Context) this)
+        val report = GiniCaptureRequirements.checkRequirements(context)
         if (!report.isFulfilled()) {
             handleUnfulfilledRequirements(report)
             return
@@ -308,7 +308,7 @@ The following example shows how to launch the capture flow and how to handle the
         val networkService: GiniCaptureNetworkService  = ...
 
         // Configure the capture feature.
-        GiniBank.setCaptureConfiguration(
+        GiniBank.setCaptureConfiguration(context,
             CaptureConfiguration(
                 networkService = networkService,
                 ...
@@ -323,7 +323,7 @@ The following example shows how to launch the capture flow and how to handle the
         // After the user has seen and potentially corrected the extractions
         // cleanup the SDK while passing in the final extraction values 
         // which will be used as feedback to improve the future extraction accuracy:
-        GiniBank.releaseCapture(this,
+        GiniBank.releaseCapture(context,
                 paymentRecipient,
                 paymentReference,
                 paymentPurpose,

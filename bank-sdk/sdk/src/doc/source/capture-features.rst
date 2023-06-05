@@ -89,7 +89,7 @@ To enable this feature simply set ``returnAssistantEnabled`` to ``true`` in the 
 
 .. code-block:: java
 
-    GiniBank.setCaptureConfiguration(
+    GiniBank.setCaptureConfiguration(context,
         CaptureConfiguration(
             returnAssistantEnabled = true,
             ...
