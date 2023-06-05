@@ -351,9 +351,9 @@ platform :android do
       up_to_date = []
       to_be_released = []
 
-      # Create release tags for projects which have different versions than their latest release tag
+      # Create release tags for projects that don't have a release tag with their version
       projects.each do |project|
-        if project[:version] == get_latest_version_from_release_tags(project[:project_id], UI)
+        if has_release_tag?(project[:project_id], project[:version], UI)
           up_to_date.push project
         else
           to_be_released.push project
