@@ -352,7 +352,7 @@ a new ``GiniCapture`` instance:
 
 .. code-block:: java
 
-    GiniCapture.newInstance()
+    GiniCapture.newInstance(context)
         .setEventTracker(new MyEventTracker());
         .build();
 
@@ -436,7 +436,7 @@ If you would like to get informed of error logging events you can pass your impl
 
 .. code-block:: java
 
-    GiniCapture.newInstance()
+    GiniCapture.newInstance(context)
         .setCustomErrorLoggerListener(new MyErrorLoggerListener())
         .build();
 

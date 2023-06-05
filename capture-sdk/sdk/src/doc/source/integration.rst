@@ -154,7 +154,7 @@ it to the builder of ``GiniCapture``:
             .setClientCredentials(myClientId, myClientSecret, myEmailDomain)
             .build();
 
-    GiniCapture.newInstance()
+    GiniCapture.newInstance((Context) this)
         .setGiniCaptureNetworkService(networkService)
         .build();
 
@@ -283,7 +283,7 @@ The following example shows how to launch the Gini Capture SDK and how to handle
         GiniCaptureNetworkService networkService = ...
         
         // Configure GiniCapture and create a new singleton instance.
-        GiniCapture.newInstance()
+        GiniCapture.newInstance((Context) this)
                 .setGiniCaptureNetworkService(networkService)
                 ...
                 .build();

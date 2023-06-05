@@ -128,14 +128,14 @@ Top Navigation Bar
 ++++++++++++++++++
 
 To inject your own navigation bar view implement the ``NavigationBarTopAdapter`` and pass it to
-``GiniCapture.newInstance().setNavigationBarTopAdapter()``. Your view will then be displayed on all screens as the top
+``GiniCapture.newInstance(context).setNavigationBarTopAdapter()``. Your view will then be displayed on all screens as the top
 navigation bar.
 
 Bottom Navigation Bar
 +++++++++++++++++++++
 
 You can opt to show a bottom navigation bar. To enable it pass ``true`` to
-``GiniCapture.newInstance().setBottomNavigationBarEnabled()``.
+``GiniCapture.newInstance(context).setBottomNavigationBarEnabled()``.
 
 .. note::
 
@@ -146,7 +146,7 @@ You can opt to show a bottom navigation bar. To enable it pass ``true`` to
 Each screen has a slightly different bottom navigation bar because they contain screen specific call-to-action buttons.
 
 To inject your own views implement each screen's view adapter interface (e.g., ``OnboardingNavigationBarBottomAdapter``)
-and pass it to ``GiniCapture`` (e.g., ``GiniCapture.newInstance().setOnboardingNavigationBarBottomAdapter()``). Your
+and pass it to ``GiniCapture`` (e.g., ``GiniCapture.newInstance(context).setOnboardingNavigationBarBottomAdapter()``). Your
 view will then be displayed on the relevant screen.
 
 Dark mode
@@ -172,14 +172,14 @@ Bottom Navigation Bar
 ~~~~~~~~~~~~~~~~~~~~~
 
 You can inject your own view for the bottom navigation bar, if you set
-``GiniCapture.newInstance().setBottomNavigationBarEnabled()`` to ``true`` and pass a custom
+``GiniCapture.newInstance(context).setBottomNavigationBarEnabled()`` to ``true`` and pass a custom
 ``OnboardingNavigationBarBottomAdapter`` implementation to ``GiniCapture.Builder``:
 
 .. code-block:: java
 
     OnboardingNavigationBarBottomAdapter customOnboardingNavigationBarBottomAdapter = new CustomOnboardingNavigationBarBottomAdapter();
 
-    GiniCapture.newInstance()
+    GiniCapture.newInstance(context)
             .setOnboardingNavigationBarBottomAdapter(customOnboardingNavigationBarBottomAdapter)
             .build();
 
@@ -215,14 +215,14 @@ Bottom Navigation Bar
 ~~~~~~~~~~~~~~~~~~~~~
 
 You can inject your own view for the bottom navigation bar, if you set
-``GiniCapture.newInstance().setBottomNavigationBarEnabled()`` to ``true`` and pass a custom
+``GiniCapture.newInstance(context).setBottomNavigationBarEnabled()`` to ``true`` and pass a custom
 ``CameraNavigationBarBottomAdapter`` implementation to ``GiniCapture.Builder``:
 
 .. code-block:: java
 
     CameraNavigationBarBottomAdapter customCameraNavigationBarBottomAdapter = new CustomCameraNavigationBarBottomAdapter();
 
-    GiniCapture.newInstance()
+    GiniCapture.newInstance(context)
             .setCameraNavigationBarBottomAdapter(customCameraNavigationBarBottomAdapter)
             .build();
 
@@ -236,7 +236,7 @@ by implementing the ``CustomLoadingIndicatorAdapter`` interface and passing it t
 
     CustomLoadingIndicatorAdapter customLoadingIndicatorAdapter = new MyCustomLoadingIndicatorAdapter();
 
-    GiniCapture.newInstance()
+    GiniCapture.newInstance(context)
             .setLoadingIndicatorAdapter(customLoadingIndicatorAdapter)
             .build();
 
@@ -256,14 +256,14 @@ Bottom Navigation Bar
 ~~~~~~~~~~~~~~~~~~~~~
 
 You can inject your own view for the bottom navigation bar, if you set
-``GiniCapture.newInstance().setBottomNavigationBarEnabled()`` to ``true`` and pass a custom
+``GiniCapture.newInstance(context).setBottomNavigationBarEnabled()`` to ``true`` and pass a custom
 ``CameraNavigationBarBottomAdapter`` implementation to ``GiniCapture.Builder``:
 
 .. code-block:: java
 
     ReviewNavigationBarBottomAdapter customReviewNavigationBarBottomAdapter = new CustomReviewNavigationBarBottomAdapter();
 
-    GiniCapture.newInstance()
+    GiniCapture.newInstance(context)
             .setReviewBottomBarNavigationAdapter(customReviewNavigationBarBottomAdapter)
             .build();
 
@@ -278,7 +278,7 @@ your own activity indicator by implementing the ``OnButtonLoadingIndicatorAdapte
 
     OnButtonLoadingIndicatorAdapter customOnButtonLoadingIndicatorAdapter = new CustomOnButtonLoadingIndicatorAdapter();
 
-    GiniCapture.newInstance()
+    GiniCapture.newInstance(context)
             .setOnButtonLoadingIndicatorAdapter(customOnButtonLoadingIndicatorAdapter)
             .build();
 
@@ -296,7 +296,7 @@ UI Customization
 
 .. note::
 
-    This screen does not show a bottom navigation bar even if the value passed to ``GiniCapture.newInstance().setBottomNavigationBarEnabled()`` is ``true``.
+    This screen does not show a bottom navigation bar even if the value passed to ``GiniCapture.newInstance(context).setBottomNavigationBarEnabled()`` is ``true``.
 
 Custom Loading Indicator
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -308,7 +308,7 @@ You can show a customized activity indicator on this screen. You can pass your c
 
     CustomLoadingIndicatorAdapter customLoadingIndicatorAdapter = new MyCustomLoadingIndicatorAdapter();
 
-    GiniCapture.newInstance()
+    GiniCapture.newInstance(context)
             .setLoadingIndicatorAdapter(customLoadingIndicatorAdapter)
             .build();
 
@@ -334,7 +334,7 @@ You can inject your own view for the bottom navigation bar. You can pass your cu
 
     HelpNavigationBarBottomAdapter customHelpNavigationBarBottomAdapter = new CustomHelpNavigationBarBottomAdapter();
 
-    GiniCapture.newInstance()
+    GiniCapture.newInstance(context)
             .setHelpNavigationBarBottomAdapter(customHelpNavigationBarBottomAdapter)
             .build();
 
@@ -353,7 +353,7 @@ You can pass the title and activity for each screen to the
     customHelpItems.add(new HelpItem.Custom(R.string.custom_help_screen_title,
             new Intent((Context) this, CustomHelpActivity.class)));
 
-    GiniCapture.newInstance()
+    GiniCapture.newInstance(context)
             .setCustomHelpItems(customHelpItems)
             .build();
 
