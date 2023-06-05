@@ -90,12 +90,9 @@ Configuration
 Configuration and interaction is done using ``CaptureConfiguration``. To set the configuration use the
 ``GiniBank.setCaptureConfiguration()`` static method.
 
-You must call ``GiniBank.releaseCapture()`` after the user has seen (and potentially corrected) the extractions. You
-need to pass the updated extraction values to ``releaseCapture()``. If the SDK didn't return any extractions you can
-pass in empty strings.
-
-Failing to call ``GiniBank.releaseCapture()`` will throw an ``IllegalStateException`` when
-``GiniBank.setCaptureConfiguration()`` is called again.
+You must call ``GiniBank.releaseCapture()`` after the user has seen (and potentially corrected) the extractions and
+has used them to perform an action (for example to perform a payment transaction). Please pass the same values to
+``releaseCapture()`` which the user has seen and used in your UI.
 
 To view all the configuration options see the documentation of :root_dokka_path:`CaptureConfiguration <sdk/net.gini.android.bank.sdk.capture/-capture-configuration/index.html>`.
 
