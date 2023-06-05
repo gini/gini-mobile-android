@@ -9,6 +9,7 @@ import jersey.repackaged.jsr166e.CompletableFuture
 import net.gini.android.capture.Amount
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.GiniCaptureError
+import net.gini.android.capture.GiniCaptureHelper
 import net.gini.android.capture.internal.camera.api.CameraInterface
 import net.gini.android.capture.tracking.CameraScreenEvent
 import net.gini.android.capture.tracking.Event
@@ -26,19 +27,6 @@ import org.mockito.Mockito
 
 @RunWith(AndroidJUnit4::class)
 class CameraFragmentImplTest {
-
-    @After
-    fun after() {
-        GiniCapture.cleanup(
-            InstrumentationRegistry.getInstrumentation().targetContext,
-            "",
-            "",
-            "",
-            "",
-            "",
-            Amount.EMPTY
-        )
-    }
 
     @Test
     fun `triggers Take Picture event`() {
@@ -66,6 +54,8 @@ class CameraFragmentImplTest {
     @Test
     fun `notifies listener of error when GiniInstance is missing`() {
         // Given
+        GiniCaptureHelper.setGiniCaptureInstance(null)
+
         val fragmentImpl = CameraFragmentImpl(mock())
 
         val listener = mock<CameraFragmentListener>()

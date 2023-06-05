@@ -299,7 +299,7 @@ public class MainActivity extends AppCompatActivity {
         final BaseExampleApp app = (BaseExampleApp) getApplication();
 
         app.clearGiniCaptureNetworkInstances();
-        final GiniCapture.Builder builder = GiniCapture.newInstance()
+        final GiniCapture.Builder builder = GiniCapture.newInstance(this)
                 .setGiniCaptureNetworkService(
                         app.getGiniCaptureNetworkService("ScreenAPI")
                 )
@@ -395,9 +395,6 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_SCAN) {
             if (data == null) {
-                GiniCapture.cleanup(this, "", "",
-                        "", "","", Amount.EMPTY);
-
                 if (isIntentActionViewOrSend(getIntent())) {
                     finish();
                 }
@@ -409,13 +406,9 @@ public class MainActivity extends AppCompatActivity {
             }
             switch (resultCode) {
                 case CameraActivity.RESULT_ENTER_MANUALLY:
-                    GiniCapture.cleanup(this, "", "",
-                            "", "","", Amount.EMPTY);
                     handleEnterManuallyAction();
                     break;
                 case RESULT_CANCELED:
-                    GiniCapture.cleanup(this, "", "",
-                            "", "","", Amount.EMPTY);
                     break;
                 case RESULT_OK:
                     // Retrieve the extractions
@@ -447,8 +440,6 @@ public class MainActivity extends AppCompatActivity {
                                         + error.getMessage(),
                                 Toast.LENGTH_LONG).show();
                     }
-                    GiniCapture.cleanup(this, "", "",
-                            "", "","", Amount.EMPTY);
                     break;
             }
             if (isIntentActionViewOrSend(getIntent())) {

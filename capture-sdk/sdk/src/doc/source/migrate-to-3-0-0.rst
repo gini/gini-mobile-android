@@ -35,7 +35,7 @@ The following steps will help you migrate to the new public API:
 * Configure the SDK the same way as before by using ``GiniCapture``.
 * If you used a custom navigation bar, then you can use the new ability to inject fully custom UI elements. For this you
   need to implement the ``NavigationBarTopAdapter`` interface and pass it to
-  ``GiniCapture.newInstance().setNavigationBarTopAdapter()``. The ``NavigationBarTopAdapter`` interface declares the
+  ``GiniCapture.newInstance(context).setNavigationBarTopAdapter()``. The ``NavigationBarTopAdapter`` interface declares the
   contract your view has to fulfill and allows the SDK to ask for your view instance when needed.
 * Use the ``CameraActivity`` to launch the SDK instead of the ``CameraFragmentCompat``.
 * Handle the result of the ``CameraActivity`` to receive the extracted information (error or cancellation).
@@ -228,7 +228,7 @@ below:
         ImageOnboardingIllustrationAdapter(R.drawable.your_illustration_page_2)
     )
 
-    GiniCapture.newInstance()
+    GiniCapture.newInstance(context)
         .setCustomOnboardingPages(arrayListOf(page1, page2))
         .build()
 

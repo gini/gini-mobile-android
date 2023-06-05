@@ -63,8 +63,7 @@ public interface MultiPageReviewFragmentListener {
     /**
      * Called when the user deleted all the pages of a document received from another app.
      *
-     * <p> At this point you should finish Gini Capture by closing the {@link MultiPageReviewFragment} and
-     * cleaning up using {@link GiniCapture#cleanup(Context, String, String, String, String, String, net.gini.android.capture.Amount)}.
+     * <p> At this point you should finish Gini Capture by closing the {@link MultiPageReviewFragment}..
      */
     void onImportedDocumentReviewCancelled();
 

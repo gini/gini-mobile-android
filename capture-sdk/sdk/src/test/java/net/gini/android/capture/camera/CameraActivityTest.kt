@@ -28,19 +28,6 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class CameraActivityTest {
 
-    @After
-    fun after() {
-        GiniCapture.cleanup(
-            InstrumentationRegistry.getInstrumentation().targetContext,
-            "",
-            "",
-            "",
-            "",
-            "",
-            Amount.EMPTY
-        )
-    }
-
     @Test
     fun `triggers Exit event when back was pressed`() {
         // Given

@@ -67,9 +67,12 @@ class ExtractionFeedbackIntegrationTest {
             .setUserCenterBaseUrl(testProperties["testUserCenterUri"] as String)
             .build()
 
-        GiniBank.setCaptureConfiguration(CaptureConfiguration(
-            networkService = networkService
-        ))
+        GiniBank.setCaptureConfiguration(
+            getApplicationContext(),
+            CaptureConfiguration(
+                networkService = networkService
+            )
+        )
 
         giniBankAPI = GiniBankAPIBuilder(
             getApplicationContext(),
@@ -81,11 +84,6 @@ class ExtractionFeedbackIntegrationTest {
             .setUserCenterApiBaseUrl(testProperties["testUserCenterUri"] as String)
             .setConnectionTimeoutInMs(60000)
             .build()
-    }
-
-    @After
-    fun tearDown() {
-        GiniBank.releaseCapture(getApplicationContext(),"","","", "","", Amount.EMPTY)
     }
 
     @Test

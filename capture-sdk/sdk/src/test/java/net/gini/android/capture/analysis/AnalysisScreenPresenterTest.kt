@@ -140,17 +140,7 @@ class AnalysisScreenPresenterTest {
     }
 
     private fun createGiniCaptureInstance(): GiniCapture {
-        if (GiniCapture.hasInstance())
-            GiniCapture.cleanup(
-                InstrumentationRegistry.getInstrumentation().targetContext,
-                "",
-                "",
-                "",
-                "",
-                "",
-                Amount.EMPTY
-            )
-        GiniCapture.newInstance()
+        GiniCapture.newInstance(mActivity)
             .setGiniCaptureNetworkService(mock())
             .build()
         return GiniCapture.getInstance()

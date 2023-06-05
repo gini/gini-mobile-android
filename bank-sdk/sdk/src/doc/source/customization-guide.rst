@@ -133,14 +133,14 @@ Top Navigation Bar
 ++++++++++++++++++
 
 To inject your own navigation bar view implement the ``NavigationBarTopAdapter`` and pass it to
-``GiniBank.setCaptureConfiguration(CaptureConfiguration(navigationBarTopAdapter = ))``. Your view will then be displayed
+``GiniBank.setCaptureConfiguration(context, CaptureConfiguration(navigationBarTopAdapter = ))``. Your view will then be displayed
 on all screens as the top navigation bar.
 
 Bottom Navigation Bar
 +++++++++++++++++++++
 
 You can opt to show a bottom navigation bar. To enable it pass ``true`` to
-``GiniBank.setCaptureConfiguration(CaptureConfiguration(bottomNavigationBarEnabled = ))``.
+``GiniBank.setCaptureConfiguration(context, CaptureConfiguration(bottomNavigationBarEnabled = ))``.
 
 .. note::
 
@@ -151,7 +151,7 @@ You can opt to show a bottom navigation bar. To enable it pass ``true`` to
 Each screen has a slightly different bottom navigation bar because they contain screen specific call-to-action buttons.
 
 To inject your own views implement each screen's view adapter interface (e.g., ``OnboardingNavigationBarBottomAdapter``)
-and pass it to ``GiniBank`` (e.g., ``GiniBank.setCaptureConfiguration(CaptureConfiguration(onboardingNavigationBarBottomAdapter = ))``). Your
+and pass it to ``GiniBank`` (e.g., ``GiniBank.setCaptureConfiguration(context, CaptureConfiguration(onboardingNavigationBarBottomAdapter = ))``). Your
 view will then be displayed on the relevant screen.
 
 Dark mode
@@ -177,14 +177,14 @@ Bottom Navigation Bar
 ~~~~~~~~~~~~~~~~~~~~~
 
 You can inject your own view for the bottom navigation bar, if you set
-``GiniBank.setCaptureConfiguration(CaptureConfiguration(bottomNavigationBarEnabled = ))`` to ``true`` and pass a custom
+``GiniBank.setCaptureConfiguration(context, CaptureConfiguration(bottomNavigationBarEnabled = ))`` to ``true`` and pass a custom
 ``OnboardingNavigationBarBottomAdapter`` implementation to ``GiniBank``:
 
 .. code-block:: java
 
     let customOnboardingNavigationBarBottomAdapter:OnboardingNavigationBarBottomAdapter = CustomOnboardingNavigationBarBottomAdapter();
 
-    GiniBank.setCaptureConfiguration(
+    GiniBank.setCaptureConfiguration(context,
         CaptureConfiguration(
             onboardingNavigationBarBottomAdapter = customOnboardingNavigationBarBottomAdapter
         )
@@ -194,7 +194,7 @@ Custom Onboarding Pages
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 If you wish to show different onboarding pages then pass a list of ``OnboardingPage`` objects to
-``GiniBank.setCaptureConfiguration(CaptureConfiguration(onboardingPages = ))``.
+``GiniBank.setCaptureConfiguration(context, CaptureConfiguration(onboardingPages = ))``.
 
 Custom Illustration Views
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -222,14 +222,14 @@ Bottom Navigation Bar
 ~~~~~~~~~~~~~~~~~~~~~
 
 You can inject your own view for the bottom navigation bar, if you set
-``GiniBank.setCaptureConfiguration(CaptureConfiguration(bottomNavigationBarEnabled = ))`` to ``true`` and pass a custom
+``GiniBank.setCaptureConfiguration(context, CaptureConfiguration(bottomNavigationBarEnabled = ))`` to ``true`` and pass a custom
 ``CameraNavigationBarBottomAdapter`` implementation to ``GiniBank``:
 
 .. code-block:: java
 
     let customCameraNavigationBarBottomAdapter:CameraNavigationBarBottomAdapter = CustomCameraNavigationBarBottomAdapter();
 
-    GiniBank.setCaptureConfiguration(
+    GiniBank.setCaptureConfiguration(context,
         CaptureConfiguration(
             cameraNavigationBarBottomAdapter = customCameraNavigationBarBottomAdapter
         )
@@ -245,7 +245,7 @@ by implementing the ``CustomLoadingIndicatorAdapter`` interface and passing it t
 
     let myCustomLoadingIndicatorAdapter:CustomLoadingIndicatorAdapter = MyCustomLoadingIndicatorAdapter();
 
-    GiniBank.setCaptureConfiguration(
+    GiniBank.setCaptureConfiguration(context,
         CaptureConfiguration(
             customLoadingIndicatorAdapter = myCustomLoadingIndicatorAdapter
         )
@@ -267,14 +267,14 @@ Bottom Navigation Bar
 ~~~~~~~~~~~~~~~~~~~~~
 
 You can inject your own view for the bottom navigation bar, if you set
-``GiniBank.setCaptureConfiguration(CaptureConfiguration(bottomNavigationBarEnabled = ))`` to ``true`` and pass a custom
+``GiniBank.setCaptureConfiguration(context, CaptureConfiguration(bottomNavigationBarEnabled = ))`` to ``true`` and pass a custom
 ``ReviewNavigationBarBottomAdapter`` implementation to ``GiniBank``:
 
 .. code-block:: java
 
     let customReviewNavigationBarBottomAdapter:ReviewNavigationBarBottomAdapter = CustomReviewNavigationBarBottomAdapter();
 
-    GiniBank.setCaptureConfiguration(
+    GiniBank.setCaptureConfiguration(context,
         CaptureConfiguration(
             reviewNavigationBarBottomAdapter = customReviewNavigationBarBottomAdapter
         )
@@ -291,7 +291,7 @@ your own activity indicator by implementing the ``OnButtonLoadingIndicatorAdapte
 
     let customOnButtonLoadingIndicatorAdapter:OnButtonLoadingIndicatorAdapter = CustomOnButtonLoadingIndicatorAdapter();
 
-    GiniBank.setCaptureConfiguration(
+    GiniBank.setCaptureConfiguration(context,
         CaptureConfiguration(
             onButtonLoadingIndicatorAdapter = customOnButtonLoadingIndicatorAdapter
         )
@@ -311,7 +311,7 @@ UI Customization
 
 .. note::
 
-    This screen does not show a bottom navigation bar even if the value passed to ``GiniBank.setCaptureConfiguration(CaptureConfiguration(bottomNavigationBarEnabled = ))`` is ``true``.
+    This screen does not show a bottom navigation bar even if the value passed to ``GiniBank.setCaptureConfiguration(context, CaptureConfiguration(bottomNavigationBarEnabled = ))`` is ``true``.
 
 Custom Loading Indicator
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -323,7 +323,7 @@ You can show a customized activity indicator on this screen. You can pass your c
 
     let myCustomOnButtonLoadingIndicatorAdapter:CustomLoadingIndicatorAdapter = MyCustomLoadingIndicatorAdapter();
 
-    GiniBank.setCaptureConfiguration(
+    GiniBank.setCaptureConfiguration(context,
         CaptureConfiguration(
             customLoadingIndicatorAdapter = myCustomOnButtonLoadingIndicatorAdapter
         )
@@ -345,14 +345,14 @@ Bottom Navigation Bar
 ~~~~~~~~~~~~~~~~~~~~~
 
 You can inject your own view for the bottom navigation bar, if you set
-``GiniBank.setCaptureConfiguration(CaptureConfiguration(bottomNavigationBarEnabled = ))`` to ``true`` and pass a custom
+``GiniBank.setCaptureConfiguration(context, CaptureConfiguration(bottomNavigationBarEnabled = ))`` to ``true`` and pass a custom
 ``HelpNavigationBarBottomAdapter`` implementation to ``GiniBank``:
 
 .. code-block:: java
 
     let customHelpNavigationBarBottomAdapter:HelpNavigationBarBottomAdapter = CustomHelpNavigationBarBottomAdapter();
 
-    GiniBank.setCaptureConfiguration(
+    GiniBank.setCaptureConfiguration(context,
         CaptureConfiguration(
             helpNavigationBarBottomAdapter = customHelpNavigationBarBottomAdapter
         )
@@ -376,7 +376,7 @@ You can pass the title and activity for each screen to ``GiniBank`` using a list
         )
     )
     
-    GiniBank.setCaptureConfiguration(
+    GiniBank.setCaptureConfiguration(context,
         CaptureConfiguration(
             customHelpItems = customHelpItems
         )
@@ -425,7 +425,7 @@ Bottom Navigation Bar
 +++++++++++++++++++++
 
 You can inject your own view for the bottom navigation bar, if you set
-``GiniBank.setCaptureConfiguration(CaptureConfiguration(bottomNavigationBarEnabled = ))`` to ``true`` and pass a custom
+``GiniBank.setCaptureConfiguration(context, CaptureConfiguration(bottomNavigationBarEnabled = ))`` to ``true`` and pass a custom
 ``DigitalInvoiceOnboardingNavigationBarBottomAdapter`` implementation to ``GiniBank``:
 
 .. code-block:: java
@@ -463,7 +463,7 @@ Bottom Navigation Bar
 +++++++++++++++++++++
 
 You can inject your own view for the bottom navigation bar, if you set
-``GiniBank.setCaptureConfiguration(CaptureConfiguration(bottomNavigationBarEnabled = ))`` to ``true`` and pass a custom
+``GiniBank.setCaptureConfiguration(context, CaptureConfiguration(bottomNavigationBarEnabled = ))`` to ``true`` and pass a custom
 ``DigitalInvoiceOnboardingNavigationBarBottomAdapter`` implementation to ``GiniBank``:
 
 .. code-block:: java
@@ -489,7 +489,7 @@ Bottom Navigation Bar
 +++++++++++++++++++++
 
 You can inject your own view for the bottom navigation bar, if you set
-``GiniBank.setCaptureConfiguration(CaptureConfiguration(bottomNavigationBarEnabled = ))`` to ``true`` and pass a custom
+``GiniBank.setCaptureConfiguration(context, CaptureConfiguration(bottomNavigationBarEnabled = ))`` to ``true`` and pass a custom
 ``DigitalInvoiceNavigationBarBottomAdapter`` implementation to ``GiniBank``:
 
 .. code-block:: java

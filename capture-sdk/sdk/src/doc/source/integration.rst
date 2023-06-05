@@ -78,16 +78,13 @@ Configuration
 
 Configuration and interaction is done using the ``GiniCapture`` singleton.
 
-To configure and create a new instance use the ``GiniCapture.Builder`` returned by ``GiniCapture.newInstance()``. The
-builder creates a new ``GiniCapture`` singleton which you will need to destroy later with ``GiniCapture.cleanup()``.
-This will also free up any used resources.
+To configure and create a new instance use the ``GiniCapture.Builder`` returned by ``GiniCapture.newInstance(context)``.
+The builder creates a new ``GiniCapture`` singleton which you can destroy later with ``GiniCapture.cleanup()``. This
+will also free up any used resources.
 
-You must call ``GiniCapture.cleanup()`` after the user has seen (and potentially corrected) the extractions. You
-need to pass the updated extraction values to ``cleanup()``. If the SDK didn't return any extractions you can
-pass in empty strings.
-
-Failing to call ``GiniCapture.cleanup()`` will throw an ``IllegalStateException`` when
-``GiniCapture.newInstance()`` is called again.
+You must call ``GiniCapture.cleanup()`` after the user has seen (and potentially corrected) the extractions and
+has used them to perform an action (for example to perform a payment transaction). Please pass the same values to
+``cleanup()`` which the user has seen and used in your UI.
 
 To view all the configuration options see the documentation of :root_dokka_path:`GiniCapture.Builder
 <sdk/net.gini.android.capture/-gini-capture/-builder/index.html?query=public%20class%20Builder>`.
@@ -154,7 +151,7 @@ it to the builder of ``GiniCapture``:
             .setClientCredentials(myClientId, myClientSecret, myEmailDomain)
             .build();
 
-    GiniCapture.newInstance()
+    GiniCapture.newInstance((Context) this)
         .setGiniCaptureNetworkService(networkService)
         .build();
 
@@ -283,7 +280,7 @@ The following example shows how to launch the Gini Capture SDK and how to handle
         GiniCaptureNetworkService networkService = ...
         
         // Configure GiniCapture and create a new singleton instance.
-        GiniCapture.newInstance()
+        GiniCapture.newInstance((Context) this)
                 .setGiniCaptureNetworkService(networkService)
                 ...
                 .build();
