@@ -65,6 +65,13 @@ def get_latest_release_tag(project_id)
 end
 
 ##
+# Retrieve all release tags for the project id.
+#
+def get_release_tags(project_id)
+  sh("git tag --list '#{project_id};*'", log: false).split
+end
+
+##
 # Returns `true` if the folder contains changes since the last release tag of the project.
 #
 def did_folder_change_since_last_release(project_id, folder, ui)
