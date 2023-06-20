@@ -56,7 +56,13 @@ end
 # Retrieve the version from the project's "gradle.properties" file.
 #
 def get_project_version_from_gradle(project_id, module_id)
-  output = sh("cd .. && ./gradlew #{project_id}:#{module_id}:printVersion -q")
+  gradle_command = "./gradlew #{project_id}:#{module_id}:printVersion -q"
+  # Go to repo root, if the current working dir is in the 'fastlane' folder
+  if Dir.pwd.include? "fastlane"
+    output = sh("cd .. && #{gradle_command}")
+  else
+    output = sh("#{gradle_command}")
+  end
   output.lines.last.strip
 end
 

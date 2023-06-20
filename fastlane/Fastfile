@@ -391,7 +391,14 @@ platform :android do
           # Gather all projects which have documentation that changed since the last release
           components = doc_dir.split("/")
           project_id = components[1]
-          did_folder_change_since_last_release(project_id, doc_dir, UI)
+          module_id = components[2]
+          project_version = get_project_version_from_gradle(project_id, module_id)
+          if has_release_tag?(project_id, project_version, UI) 
+            release_tag = get_latest_release_tag_for_version(project_id, project_version)
+            did_folder_change_since_release_tag(release_tag, doc_dir, UI)
+          else
+            false
+          end
         }
         .map { |doc_dir|
           # Create documentation release tags
