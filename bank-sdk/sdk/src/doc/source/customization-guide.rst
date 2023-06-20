@@ -169,9 +169,9 @@ UI Customization
 
 .. raw:: html
 
-<iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
-src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FcgyH8gHdMyrlHvW5Sw4fCv%2FAndroid-Gini-Bank-SDK-3.1.0-UI-Customisation%3Fnode-id%3D40%253A584%26t%3DHyGkeGrBo3bKnWHI-1"
-allowfullscreen></iframe>
+    <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
+    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FcgyH8gHdMyrlHvW5Sw4fCv%2FAndroid-Gini-Bank-SDK-3.1.0-UI-Customisation%3Fnode-id%3D40%253A584%26t%3DHyGkeGrBo3bKnWHI-1"
+    allowfullscreen></iframe>
 
 Bottom Navigation Bar
 ~~~~~~~~~~~~~~~~~~~~~
@@ -214,9 +214,9 @@ UI Customization
 
 .. raw:: html
 
-<iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
-src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FcgyH8gHdMyrlHvW5Sw4fCv%2FAndroid-Gini-Bank-SDK-3.1.0-UI-Customisation%3Fnode-id%3D92%253A3712%26t%3DHyGkeGrBo3bKnWHI-1"
-allowfullscreen></iframe>
+    <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
+    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FcgyH8gHdMyrlHvW5Sw4fCv%2FAndroid-Gini-Bank-SDK-3.1.0-UI-Customisation%3Fnode-id%3D92%253A3712%26t%3DHyGkeGrBo3bKnWHI-1"
+    allowfullscreen></iframe>
 
 Bottom Navigation Bar
 ~~~~~~~~~~~~~~~~~~~~~
