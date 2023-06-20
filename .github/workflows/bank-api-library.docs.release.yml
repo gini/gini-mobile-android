@@ -44,7 +44,7 @@ jobs:
       - name: setup python
         uses: actions/setup-python@v4
         with:
-          python-version: '2.7.x'
+          python-version: 'pypy2.7'
 
       - uses: ruby/setup-ruby@v1
         with:
