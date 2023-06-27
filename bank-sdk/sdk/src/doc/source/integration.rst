@@ -202,7 +202,7 @@ Bank API delivered. Feedback should be sent only for the extractions the user ha
     }
 
 We provide a sample test case `here
-<https://github.com/gini/gini-mobile-android/blob/bank-sdk%3B3.2.0/bank-sdk/sdk/src/androidTest/java/net/gini/android/bank/sdk/ExtractionFeedbackIntegrationTest.kt>`_
+<https://github.com/gini/gini-mobile-android/blob/bank-sdk%3B3.2.1/bank-sdk/sdk/src/androidTest/java/net/gini/android/bank/sdk/ExtractionFeedbackIntegrationTest.kt>`_
 to verify that extraction feedback sending works. You may use it along with the example pdf and json files as a starting
 point to write your own test case.
 
