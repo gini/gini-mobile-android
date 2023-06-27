@@ -72,7 +72,7 @@ You can view our color palette here:
 .. raw:: html
 
     <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
-    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FNbkPFkdxk6pj1o9LouxzMU%2FAndroid-Gini-Capture-SDK-3.1.0-UI-Customisation%3Fnode-id%3D40%253A491%26t%3DWOcgW89SotkIWDMB-1"
+    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FzyN1EkRlqN4QyXLBIFn8or%2FAndroid-Gini-Capture-SDK-3.2.1-UI-Customisation%3Ftype%3Ddesign%26node-id%3D40%253A491%26mode%3Ddesign%26t%3DY2bMNVnWxZALPnHV-1"
     allowfullscreen></iframe>
 
 Images
@@ -109,7 +109,7 @@ You can preview our typography along with their style resource names below:
 .. raw:: html
 
     <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
-    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FNbkPFkdxk6pj1o9LouxzMU%2FAndroid-Gini-Capture-SDK-3.1.0-UI-Customisation%3Fnode-id%3D40%253A492%26t%3DWOcgW89SotkIWDMB-1"
+    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FzyN1EkRlqN4QyXLBIFn8or%2FAndroid-Gini-Capture-SDK-3.2.1-UI-Customisation%3Ftype%3Ddesign%26node-id%3D40%253A492%26mode%3Ddesign%26t%3DY2bMNVnWxZALPnHV-1"
     allowfullscreen></iframe>
 
 Text
@@ -165,7 +165,7 @@ UI Customization
 .. raw:: html
 
     <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
-    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FNbkPFkdxk6pj1o9LouxzMU%2FAndroid-Gini-Capture-SDK-3.1.0-UI-Customisation%3Fnode-id%3D40%253A584%26t%3DWOcgW89SotkIWDMB-1"
+    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FzyN1EkRlqN4QyXLBIFn8or%2FAndroid-Gini-Capture-SDK-3.2.1-UI-Customisation%3Ftype%3Ddesign%26node-id%3D40%253A584%26mode%3Ddesign%26t%3DY2bMNVnWxZALPnHV-1"
     allowfullscreen></iframe>
 
 Bottom Navigation Bar
@@ -208,7 +208,7 @@ UI Customization
 .. raw:: html
 
     <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
-    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FNbkPFkdxk6pj1o9LouxzMU%2FAndroid-Gini-Capture-SDK-3.1.0-UI-Customisation%3Fnode-id%3D92%253A3712%26t%3DWOcgW89SotkIWDMB-1"
+    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FzyN1EkRlqN4QyXLBIFn8or%2FAndroid-Gini-Capture-SDK-3.2.1-UI-Customisation%3Ftype%3Ddesign%26node-id%3D92%253A3712%26mode%3Ddesign%26t%3DY2bMNVnWxZALPnHV-1"
     allowfullscreen></iframe>
 
 Bottom Navigation Bar
@@ -249,7 +249,7 @@ UI Customization
 .. raw:: html
 
     <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
-    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FNbkPFkdxk6pj1o9LouxzMU%2FAndroid-Gini-Capture-SDK-3.1.0-UI-Customisation%3Fnode-id%3D143%253A4156%26t%3DWOcgW89SotkIWDMB-1"
+    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FzyN1EkRlqN4QyXLBIFn8or%2FAndroid-Gini-Capture-SDK-3.2.1-UI-Customisation%3Ftype%3Ddesign%26node-id%3D143%253A4156%26mode%3Ddesign%26t%3DY2bMNVnWxZALPnHV-1"
     allowfullscreen></iframe>
 
 Bottom Navigation Bar
@@ -291,7 +291,7 @@ UI Customization
 .. raw:: html
 
     <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
-    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FNbkPFkdxk6pj1o9LouxzMU%2FAndroid-Gini-Capture-SDK-3.1.0-UI-Customisation%3Fnode-id%3D7%253A18496%26t%3DWOcgW89SotkIWDMB-1"
+    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FzyN1EkRlqN4QyXLBIFn8or%2FAndroid-Gini-Capture-SDK-3.2.1-UI-Customisation%3Ftype%3Ddesign%26node-id%3D7%253A18496%26mode%3Ddesign%26t%3DY2bMNVnWxZALPnHV-1"
     allowfullscreen></iframe>
 
 .. note::
@@ -321,7 +321,7 @@ UI Customization
 .. raw:: html
 
     <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
-    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FNbkPFkdxk6pj1o9LouxzMU%2FAndroid-Gini-Capture-SDK-3.1.0-UI-Customisation%3Fnode-id%3D9%253A4645%26t%3DWOcgW89SotkIWDMB-1"
+    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FzyN1EkRlqN4QyXLBIFn8or%2FAndroid-Gini-Capture-SDK-3.2.1-UI-Customisation%3Ftype%3Ddesign%26node-id%3D9%253A4645%26mode%3Ddesign%26t%3DY2bMNVnWxZALPnHV-1"
     allowfullscreen></iframe>
 
 Bottom Navigation Bar
@@ -366,7 +366,7 @@ UI Customization
 .. raw:: html
 
     <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
-    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FNbkPFkdxk6pj1o9LouxzMU%2FAndroid-Gini-Capture-SDK-3.1.0-UI-Customisation%3Fnode-id%3D10%253A2540%26t%3DWOcgW89SotkIWDMB-1"
+    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FzyN1EkRlqN4QyXLBIFn8or%2FAndroid-Gini-Capture-SDK-3.2.1-UI-Customisation%3Ftype%3Ddesign%26node-id%3D10%253A2540%26mode%3Ddesign%26t%3DY2bMNVnWxZALPnHV-1"
     allowfullscreen></iframe>
 
 Error Screen
@@ -378,6 +378,6 @@ UI Customization
 .. raw:: html
 
     <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
-    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FNbkPFkdxk6pj1o9LouxzMU%2FAndroid-Gini-Capture-SDK-3.1.0-UI-Customisation%3Fnode-id%3D9%253A5075%26t%3DWOcgW89SotkIWDMB-1"
+    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FzyN1EkRlqN4QyXLBIFn8or%2FAndroid-Gini-Capture-SDK-3.2.1-UI-Customisation%3Ftype%3Ddesign%26node-id%3D9%253A5075%26mode%3Ddesign%26t%3DY2bMNVnWxZALPnHV-1"
     allowfullscreen></iframe>
 

@@ -65,7 +65,7 @@ class MainActivity : AppCompatActivity() {
         val useCustomOnboardingPages = false
         val useCustomLoadingIndicator = false
 
-        if (binding.gbsEnableCustomIllustration.isChecked)
+        if (binding.enableCustomIllustration.isChecked)
             GiniBank.digitalInvoiceOnboardingIllustrationAdapter =
                 CustomOnboardingIllustrationAdapter(
                     this.resources.getIdentifier(
@@ -81,7 +81,7 @@ class MainActivity : AppCompatActivity() {
                 networkService = networkService,
                 documentImportEnabledFileTypes = DocumentImportEnabledFileTypes.PDF_AND_IMAGES,
                 fileImportEnabled = true,
-                qrCodeScanningEnabled = true,
+                qrCodeScanningEnabled = binding.qrCodeScanningEnabled.isChecked,
                 multiPageEnabled = true,
                 flashButtonEnabled = true,
                 eventTracker = GiniCaptureEventTracker,
@@ -92,7 +92,8 @@ class MainActivity : AppCompatActivity() {
                     )
                 ),
                 importedFileSizeBytesLimit = 5 * 1024 * 1024,
-                bottomNavigationBarEnabled = binding.gbsEnableBottomBar.isChecked,
+                bottomNavigationBarEnabled = binding.enableBottomBar.isChecked,
+                onlyQRCodeScanningEnabled = binding.onlyQrCodeScanning.isChecked,
                 onboardingAlignCornersIllustrationAdapter = if (useCustomOnboardingPages) {
                     CustomOnboardingIllustrationAdapter(
                         resources.getIdentifier(
