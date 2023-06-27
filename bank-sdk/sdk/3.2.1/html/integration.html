@@ -1,0 +1,747 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Integration &mdash; Gini Bank SDK for Android 2.0 documentation</title>
+  
+
+  
+  
+
+  
+  <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,400italic,600italic|Source+Code+Pro|Roboto+Slab:400,700" rel="stylesheet" type="text/css" />
+
+  
+  
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:'./',
+        VERSION:'2.0',
+        COLLAPSE_INDEX:false,
+        FILE_SUFFIX:'.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/language_data.js"></script>
+
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+    <script type="text/javascript">
+        jQuery(function () {
+            SphinxRtdTheme.StickyNav.enable();
+        });
+    </script>
+  
+
+  
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Gini Bank SDK for Android 2.0 documentation" href="index.html"/>
+        <link rel="next" title="Invoice Capture Features" href="capture-features.html"/>
+        <link rel="prev" title="Getting started" href="getting-started.html"/> 
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="index.html" id="gini-logo">
+          <img src="_static/logo_flat.png" />
+        </a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="getting-started.html#requirements">Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting-started.html#installation">Installation</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Integration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#capturing-invoices">Capturing Invoices</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#android-manifest">Android Manifest</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#requirements-check">Requirements Check</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#configuration">Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#tablet-support">Tablet Support</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#networking">Networking</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#cleanup-and-sending-feedback">Cleanup and Sending Feedback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#capture-flow">Capture Flow</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#handling-payment-requests">Handling Payment Requests</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">Networking</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">Android Manifest</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#package-name">Package Name</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#receive-payment-requests">Receive Payment Requests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#testing">Testing</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="capture-features.html">Invoice Capture Features</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="capture-features.html#features-from-the-gini-capture-sdk">Features from the Gini Capture SDK</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="capture-features.html#file-import-open-with">File Import (Open With)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="capture-features.html#return-assistant">Return Assistant</a></li>
+<li class="toctree-l2"><a class="reference internal" href="capture-features.html#accessibility">Accessibility</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="customization-guide.html">Customization Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#overview-of-ui-customization-options">Overview of UI Customization Options</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#styles">Styles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#colors">Colors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#images">Images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#typography">Typography</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#text">Text</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#custom-ui-elements">Custom UI Elements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#dark-mode">Dark mode</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#onboarding-screen">Onboarding Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#ui-customization">UI Customization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id1">Bottom Navigation Bar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#custom-onboarding-pages">Custom Onboarding Pages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#custom-illustration-views">Custom Illustration Views</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#camera-screen">Camera Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id2">UI Customization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id3">Bottom Navigation Bar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#custom-loading-indicator">Custom Loading Indicator</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#review-screen">Review Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id4">UI Customization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id5">Bottom Navigation Bar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#custom-process-button-loading-indicator">Custom “Process” Button Loading Indicator</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#analysis-screen">Analysis Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id6">UI Customization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id7">Custom Loading Indicator</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#help-screen">Help Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id8">UI Customization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id9">Bottom Navigation Bar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#custom-help-screens">Custom Help Screens</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#no-results-screen">No Results Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id10">UI Customization</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#error-screen">Error Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id11">UI Customization</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#return-assistant">Return Assistant</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#digital-invoice-onboarding-screen">Digital Invoice Onboarding Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#digital-invoice-help-screen">Digital Invoice Help Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#digital-invoice-overview-screen">Digital Invoice Overview Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#digital-invoice-edit-article-screen">Digital Invoice Edit Article Screen</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="migrating-from-gvl.html">Migrating from the Gini Vision Library</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#kotlin">Kotlin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#gini-capture-sdk">Gini Capture SDK</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#gini-bank-api-library">Gini Bank API Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#requirements">Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#screen-api">Screen API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#component-api">Component API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#open-with">Open With</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="migrating-from-gvl.html#id2">Screen API</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#networking">Networking</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="migrating-from-gvl.html#default">Default</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrating-from-gvl.html#custom">Custom</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#event-tracking">Event Tracking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-from-gvl.html#customization">Customization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="migrate-to-2-0-0.html">Migrate to 2.0.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="migrate-to-3-0-0.html">Migrate to 3.0.0</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="migrate-to-3-0-0.html#migrate-from-component-api">Migrate from Component API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrate-to-3-0-0.html#migrate-from-screen-api">Migrate from Screen API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrate-to-3-0-0.html#migrate-cleanup-step-and-feedback-sending">Migrate Cleanup Step and Feedback Sending</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#default-networking-implementation">Default Networking Implementation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#custom-networking-implementation">Custom Networking Implementation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="migrate-to-3-0-0.html#overview-of-new-ui-customization-options">Overview of New UI Customization Options</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#styles">Styles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#colors">Colors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#images">Images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#typography">Typography</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#text">Text</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#ui-elements">UI Elements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#dark-mode">Dark mode</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="migrate-to-3-0-0.html#migrate-to-the-new-ui">Migrate to the new UI</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#back-buttons">Back Buttons</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#onboarding-screen">Onboarding Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#camera-screen">Camera Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#qr-code-scanner">QR Code Scanner</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#review-screen">Review Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#help-screen">Help Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#analysis-screen">Analysis Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#error-screen">Error Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#no-results-screen">No Results Screen</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="migrate-to-3-0-0.html#migrate-the-return-assistant">Migrate the Return Assistant</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#digital-invoice-onboarding-screen">Digital Invoice Onboarding Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#digital-invoice-help-screen">Digital Invoice Help Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#digital-invoice-overview-screen">Digital Invoice Overview Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#digital-invoice-edit-article-screen">Digital Invoice Edit Article Screen</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">Reference Doc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Gini Bank SDK for Android</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Integration</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="integration">
+<h1>Integration<a class="headerlink" href="#integration" title="Permalink to this headline">¶</a></h1>
+<p>The Gini Bank SDK has two main features: <a class="reference internal" href="#capturing-invoices">capturing invoices</a> for information extraction and <a class="reference internal" href="#handling-payment-requests">handling payment requests</a>. Both
+can be used independently and you may opt to use only one or both in your app.</p>
+<div class="section" id="capturing-invoices">
+<h2>Capturing Invoices<a class="headerlink" href="#capturing-invoices" title="Permalink to this headline">¶</a></h2>
+<p>The capture feature uses our <a class="reference external" href="https://github.com/gini/gini-mobile-android/tree/main/capture-sdk">Gini Capture SDK</a> to provide
+Activities and Fragments to capture invoices and prepare them for upload to the Gini Bank API. It also allows documents
+to be imported from other apps. The captured images can be reviewed and are optimized on the device to provide the best
+results when used with the Gini Bank API.</p>
+<div class="section" id="android-manifest">
+<h3>Android Manifest<a class="headerlink" href="#android-manifest" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="permissions">
+<h4>Permissions<a class="headerlink" href="#permissions" title="Permalink to this headline">¶</a></h4>
+<p>The capture feature of the SDK uses the camera therefore the camera permission is required:</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;manifest</span> <span class="na">xmlns:android=</span><span class="s">&quot;http://schemas.android.com/apk/res/android&quot;</span>
+    <span class="na">package=</span><span class="s">&quot;...&quot;</span><span class="nt">&gt;</span>
+
+    <span class="nt">&lt;uses-permission</span> <span class="na">android:name=</span><span class="s">&quot;android.permission.CAMERA&quot;</span> <span class="nt">/&gt;</span>
+
+<span class="nt">&lt;/manifest&gt;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Make sure you request the camera permission before starting the SDK.</p>
+</div>
+</div>
+<div class="section" id="predictive-back-gesture">
+<h4>Predictive Back Gesture<a class="headerlink" href="#predictive-back-gesture" title="Permalink to this headline">¶</a></h4>
+<p>Starting from Android 13 apps should apply changes to support <a class="reference external" href="https://developer.android.com/guide/navigation/predictive-back-gesture">predictive back gestures</a>. The Gini Bank SDK already contains the
+necessary changes.</p>
+<p>Once your app is ready to support it (by targeting Android 13 and <a class="reference external" href="https://developer.android.com/guide/navigation/predictive-back-gesture#opt-predictive">enabling it in the Android Manifest</a>), then no further changes are
+required from you.</p>
+</div>
+</div>
+<div class="section" id="requirements-check">
+<h3>Requirements Check<a class="headerlink" href="#requirements-check" title="Permalink to this headline">¶</a></h3>
+<p>We recommend running our runtime requirements check first before launching the Gini Capture SDK to ensure the device is
+capable of taking pictures of adequate quality.</p>
+<p>Simply run <code class="docutils literal notranslate"><span class="pre">GiniBank.checkCaptureRequirements()</span></code> and inspect the returned <code class="docutils literal notranslate"><span class="pre">RequirementsReport</span></code> for the result:</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">On Android 6.0 and later the camera permission is required before checking the requirements.</p>
+</div>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">final</span> <span class="n">RequirementsReport</span> <span class="n">report</span> <span class="o">=</span> <span class="n">GiniBank</span><span class="p">.</span><span class="na">checkCaptureRequirements</span><span class="p">((</span><span class="n">Context</span><span class="p">)</span> <span class="k">this</span><span class="p">);</span>
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">report</span><span class="p">.</span><span class="na">isFulfilled</span><span class="p">())</span> <span class="p">{</span>
+    <span class="kd">final</span> <span class="n">StringBuilder</span> <span class="n">stringBuilder</span> <span class="o">=</span> <span class="k">new</span> <span class="n">StringBuilder</span><span class="p">();</span>
+    <span class="n">report</span><span class="p">.</span><span class="na">getRequirementReports</span><span class="p">().</span><span class="na">forEach</span><span class="p">(</span><span class="n">requirementReport</span> <span class="o">-&gt;</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">requirementReport</span><span class="p">.</span><span class="na">isFulfilled</span><span class="p">())</span> <span class="p">{</span>
+            <span class="n">stringBuilder</span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="n">requirementReport</span><span class="p">.</span><span class="na">getRequirementId</span><span class="p">());</span>
+            <span class="n">stringBuilder</span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="s">&quot;: &quot;</span><span class="p">);</span>
+            <span class="n">stringBuilder</span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="n">requirementReport</span><span class="p">.</span><span class="na">getDetails</span><span class="p">());</span>
+            <span class="n">stringBuilder</span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="s">&quot;\n&quot;</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">});</span>
+    <span class="n">Toast</span><span class="p">.</span><span class="na">makeText</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s">&quot;Requirements not fulfilled:\n&quot;</span> <span class="o">+</span> <span class="n">stringBuilder</span><span class="p">,</span>
+            <span class="n">Toast</span><span class="p">.</span><span class="na">LENGTH_LONG</span><span class="p">).</span><span class="na">show</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="configuration">
+<h3>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h3>
+<p>Configuration and interaction is done using <code class="docutils literal notranslate"><span class="pre">CaptureConfiguration</span></code>. To set the configuration use the
+<code class="docutils literal notranslate"><span class="pre">GiniBank.setCaptureConfiguration()</span></code> static method.</p>
+<p>You must call <code class="docutils literal notranslate"><span class="pre">GiniBank.releaseCapture()</span></code> after the user has seen (and potentially corrected) the extractions and
+has used them to perform an action (for example to perform a payment transaction). Please pass the same values to
+<code class="docutils literal notranslate"><span class="pre">releaseCapture()</span></code> which the user has seen and used in your UI.</p>
+<p>To view all the configuration options see the documentation of <a class="reference external" href="https://developer.gini.net/gini-mobile-android/bank-sdk/sdk/3.2.1/dokka/sdk/net.gini.android.bank.sdk.capture/-capture-configuration/index.html">CaptureConfiguration</a>.</p>
+<p>Information about the configurable features are available on the <a class="reference external" href="capture-features.html">Capture Features</a> page and UI
+customization options can be viewed in the <a class="reference external" href="customization-guide.html">Customization Guide</a>.</p>
+</div>
+<div class="section" id="tablet-support">
+<h3>Tablet Support<a class="headerlink" href="#tablet-support" title="Permalink to this headline">¶</a></h3>
+<p>The Gini Bank SDK can be used on tablets, too. Some UI elements adapt to the larger screen to offer the best user
+experience for tablet users.</p>
+<p>Many tablets with at least 8MP cameras don’t have an LED flash. Therefore we don’t require flash for tablets. For this
+reason the extraction quality on those tablets might be lower compared to smartphones.</p>
+<p>On tablets landscape orientation is also supported (smartphones are portrait only). We advise you to test your
+integration on tablets in both orientations.</p>
+<p>In landscape the camera screen’s UI displays the camera trigger button on the right side of the screen. Users
+can reach the camera trigger more easily this way. The camera preview along with the document corner guides are shown in
+landscape to match the device’s orientation.</p>
+<p>Other UI elements on all the screens maintain their relative position and the screen layouts are scaled automatically to
+fit the current orientation.</p>
+</div>
+<div class="section" id="networking">
+<h3>Networking<a class="headerlink" href="#networking" title="Permalink to this headline">¶</a></h3>
+<p>The Gini Bank SDK allows you to use the default networking implementation of our Gini Capture SDK to communicate with the Gini
+Bank API. You may also implement your own networking layer.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You should have received Gini Bank API client credentials from us. Please get in touch with us in case you don’t have
+them. Without credentials you won’t be able to use the Gini Bank API.</p>
+</div>
+<p>We provide the <code class="docutils literal notranslate"><span class="pre">GiniCaptureNetworkService</span></code> interface which is used to upload, analyze and delete documents. See the
+<a class="reference external" href="https://developer.gini.net/gini-mobile-android/bank-sdk/sdk/3.2.1/dokka/sdk/net.gini.android.capture.network/-gini-capture-network-service/index.html">reference documentation</a>
+for details.</p>
+<div class="section" id="default-implementation">
+<h4>Default Implementation<a class="headerlink" href="#default-implementation" title="Permalink to this headline">¶</a></h4>
+<p>The capture feature is not aware of any networking implementations and requires you to set them in the
+<code class="docutils literal notranslate"><span class="pre">CaptureConfiguration</span></code>.</p>
+<p>The default networking implementations is <code class="docutils literal notranslate"><span class="pre">GiniCaptureDefaultNetworkService</span></code>. We provide you with a helper method
+to create it with minimal configuration:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">val</span> <span class="n">networkService</span> <span class="o">=</span> <span class="n">getDefaultNetworkService</span><span class="p">(</span>
+    <span class="n">context</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
+    <span class="n">clientId</span> <span class="o">=</span> <span class="n">myClientId</span><span class="p">,</span>
+    <span class="n">clientSecret</span> <span class="o">=</span> <span class="n">myClientSecret</span><span class="p">,</span>
+    <span class="n">emailDomain</span> <span class="o">=</span> <span class="n">myEmailDomain</span><span class="p">,</span>
+    <span class="n">documentMetadata</span> <span class="o">=</span> <span class="n">myDocumentMetadata</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>For all configuration options of the default networking implementation see the documentation of
+<a class="reference external" href="https://developer.gini.net/gini-mobile-android/capture-sdk/default_network/3.2.1/dokka/default-network/net.gini.android.capture.network/-gini-capture-default-network-service/-builder/index.html">GiniCaptureDefaultNetworkService.Builder</a>.</p>
+<div class="section" id="retrieve-the-analyzed-document">
+<h5>Retrieve the Analyzed Document<a class="headerlink" href="#retrieve-the-analyzed-document" title="Permalink to this headline">¶</a></h5>
+<p>You can call <code class="docutils literal notranslate"><span class="pre">GiniCaptureDefaultNetworkService.getAnalyzedGiniApiDocument()</span></code> after the Gini Bank SDK has returned
+extractions to your application. It returns the Gini Bank API document which was created when the user uploaded an
+image or pdf for analysis.</p>
+<p>When extractions were retrieved without using the Gini Bank API, then it will return <code class="docutils literal notranslate"><span class="pre">null</span></code>. For example when the
+extractions came from an EPS QR Code.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Make sure to call it before calling <code class="docutils literal notranslate"><span class="pre">GiniBank.releaseCapture()</span></code>. Otherwise the analyzed document won’t be
+available anymore.</p>
+</div>
+</div>
+</div>
+<div class="section" id="custom-implementation">
+<h4>Custom Implementation<a class="headerlink" href="#custom-implementation" title="Permalink to this headline">¶</a></h4>
+<p>You can also provide your own networking by implementing the <code class="docutils literal notranslate"><span class="pre">GiniCaptureNetworkService</span></code> interface.</p>
+<p>You may also use the <a class="reference external" href="https://github.com/gini/gini-mobile-android/tree/main/bank-api-library">Gini Bank API Library</a>
+for Android or implement communication with the <a class="reference external" href="https://pay-api.gini.net/documentation/">Gini Bank API</a> yourself.</p>
+</div>
+</div>
+<div class="section" id="cleanup-and-sending-feedback">
+<h3>Cleanup and Sending Feedback<a class="headerlink" href="#cleanup-and-sending-feedback" title="Permalink to this headline">¶</a></h3>
+<p>Your app should clean up the SDK by releasing the capture singleton and providing feedback for the extractions the Gini
+Bank API delivered. Feedback should be sent only for the extractions the user has seen and accepted (or corrected).</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">fun</span> <span class="nf">stopGiniBankSDK</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// After the user has seen and potentially corrected the extractions</span>
+    <span class="c1">// cleanup the SDK while passing in the final extraction values</span>
+    <span class="c1">// which will be used as feedback to improve the future extraction accuracy:</span>
+    <span class="n">GiniBank</span><span class="p">.</span><span class="na">releaseCapture</span><span class="p">(</span><span class="k">this</span><span class="p">,</span>
+            <span class="n">paymentRecipient</span><span class="p">,</span>
+            <span class="n">paymentReference</span><span class="p">,</span>
+            <span class="n">paymentPurpose</span><span class="p">,</span>
+            <span class="n">iban</span><span class="p">,</span>
+            <span class="n">bic</span><span class="p">,</span>
+            <span class="n">amount</span>
+        <span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>We provide a sample test case <a class="reference external" href="https://github.com/gini/gini-mobile-android/blob/bank-sdk%3B3.2.1/bank-sdk/sdk/src/androidTest/java/net/gini/android/bank/sdk/ExtractionFeedbackIntegrationTest.kt">here</a>
+to verify that extraction feedback sending works. You may use it along with the example pdf and json files as a starting
+point to write your own test case.</p>
+<p>The sample test case is based on the Bank API documentation’s <a class="reference external" href="https://pay-api.gini.net/documentation/#test-example">recommended steps</a> for testing extraction feedback sending.</p>
+<p>For additional information about feedback see the <a class="reference external" href="https://pay-api.gini.net/documentation/#send-feedback-and-get-even-better-extractions-next-time">Gini Bank API documentation</a>.</p>
+</div>
+<div class="section" id="capture-flow">
+<h3>Capture Flow<a class="headerlink" href="#capture-flow" title="Permalink to this headline">¶</a></h3>
+<p>To use the capture flow you only need to:</p>
+<ol class="arabic">
+<li><p class="first">Request camera access,</p>
+</li>
+<li><p class="first">Configure the capture feature using the <code class="docutils literal notranslate"><span class="pre">CaptureConfiguration</span></code>,</p>
+</li>
+<li><p class="first">Register an activity result handler with the <code class="docutils literal notranslate"><span class="pre">CaptureFlowContract()</span></code>,</p>
+</li>
+<li><p class="first">Launch the SDK with <code class="docutils literal notranslate"><span class="pre">GiniBank.startCaptureFlow()</span></code>,</p>
+</li>
+<li><p class="first">Handle the extraction results,</p>
+</li>
+<li><p class="first">Cleanup the SDK by calling <code class="docutils literal notranslate"><span class="pre">GiniBank.releaseCapture()</span></code> while also providing the required extraction feedback to
+improve the future extraction accuracy. You don’t need to implement any extra steps, just follow the recommendations below:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Please provide values for all necessary fields, including those that were not extracted.</li>
+<li>Provide the final data approved by the user (and not the initially extracted only).</li>
+<li>Do cleanup after TAN verification.</li>
+</ul>
+</div></blockquote>
+</li>
+</ol>
+<p>The following diagram shows the interaction between your app and the SDK:</p>
+<div class="figure">
+<a class="reference internal image-reference" href="_images/Screen-API.png"><img alt="Diagram of interaction between your app and the SDK" src="_images/Screen-API.png" style="width: 100%;" /></a>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Check out the <a class="reference external" href="https://github.com/gini/gini-mobile-android/tree/main/bank-sdk/screen-api-example-app">example app</a> to see how an integration could look
+like.</p>
+</div>
+<p>The following example shows how to launch the capture flow and how to handle the results:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// Use the androidx&#39;s Activity Result API to register a handler for the capture result.</span>
+<span class="n">val</span> <span class="n">captureLauncher</span> <span class="o">=</span> <span class="n">registerForActivityResult</span><span class="p">(</span><span class="n">CaptureFlowContract</span><span class="p">())</span> <span class="p">{</span> <span class="n">result</span><span class="p">:</span> <span class="n">CaptureResult</span> <span class="o">-&gt;</span>
+    <span class="n">when</span> <span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">is</span> <span class="n">CaptureResult</span><span class="p">.</span><span class="na">Success</span> <span class="o">-&gt;</span> <span class="p">{</span>
+            <span class="n">handleExtractions</span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="na">specificExtractions</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="n">is</span> <span class="n">CaptureResult</span><span class="p">.</span><span class="na">Error</span> <span class="o">-&gt;</span> <span class="p">{</span>
+            <span class="n">when</span> <span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="na">value</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">is</span> <span class="n">ResultError</span><span class="p">.</span><span class="na">Capture</span> <span class="o">-&gt;</span> <span class="p">{</span>
+                    <span class="n">val</span> <span class="n">captureError</span><span class="p">:</span> <span class="n">GiniCaptureError</span> <span class="o">=</span> <span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="na">value</span> <span class="n">as</span> <span class="n">ResultError</span><span class="p">.</span><span class="na">Capture</span><span class="p">).</span><span class="na">giniCaptureError</span>
+                    <span class="n">handleCaptureError</span><span class="p">(</span><span class="n">captureError</span><span class="p">)</span>
+                <span class="p">}</span>
+                <span class="n">is</span> <span class="n">ResultError</span><span class="p">.</span><span class="na">FileImport</span> <span class="o">-&gt;</span> <span class="p">{</span>
+                    <span class="c1">// See the File Import section on the Capture Features page for more details.</span>
+                    <span class="n">val</span> <span class="n">fileImportError</span> <span class="o">=</span> <span class="n">result</span><span class="p">.</span><span class="na">value</span> <span class="n">as</span> <span class="n">ResultError</span><span class="p">.</span><span class="na">FileImport</span>
+                    <span class="nf">handleFileImportError</span><span class="p">(</span><span class="n">fileImportError</span><span class="p">)</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="n">GiniBank</span><span class="p">.</span><span class="na">releaseCapture</span><span class="p">(</span>
+                <span class="k">this</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span>
+                <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Amount</span><span class="p">.</span><span class="na">EMPTY</span>
+            <span class="p">)</span>
+        <span class="p">}</span>
+        <span class="n">CaptureResult</span><span class="p">.</span><span class="na">Empty</span> <span class="o">-&gt;</span> <span class="p">{</span>
+            <span class="n">handleNoExtractions</span><span class="p">()</span>
+            <span class="n">GiniBank</span><span class="p">.</span><span class="na">releaseCapture</span><span class="p">(</span>
+                <span class="k">this</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span>
+                <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Amount</span><span class="p">.</span><span class="na">EMPTY</span>
+            <span class="p">)</span>
+        <span class="p">}</span>
+        <span class="n">CaptureResult</span><span class="p">.</span><span class="na">Cancel</span> <span class="o">-&gt;</span> <span class="p">{</span>
+            <span class="n">handleCancellation</span><span class="p">()</span>
+            <span class="n">GiniBank</span><span class="p">.</span><span class="na">releaseCapture</span><span class="p">(</span>
+                <span class="k">this</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span>
+                <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Amount</span><span class="p">.</span><span class="na">EMPTY</span>
+            <span class="p">)</span>
+        <span class="p">}</span>
+        <span class="n">CaptureResult</span><span class="p">.</span><span class="na">EnterManually</span> <span class="o">-&gt;</span> <span class="p">{</span>
+            <span class="n">handleEnterManually</span><span class="p">()</span>
+            <span class="n">GiniBank</span><span class="p">.</span><span class="na">releaseCapture</span><span class="p">(</span>
+                <span class="k">this</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span>
+                <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">Amount</span><span class="p">.</span><span class="na">EMPTY</span>
+            <span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">fun</span> <span class="nf">launchGiniCapture</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// Make sure camera permission has been already granted at this point.</span>
+
+    <span class="c1">// Check that the device fulfills the requirements.</span>
+    <span class="n">val</span> <span class="n">report</span> <span class="o">=</span> <span class="n">GiniCaptureRequirements</span><span class="p">.</span><span class="na">checkRequirements</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">report</span><span class="p">.</span><span class="na">isFulfilled</span><span class="p">())</span> <span class="p">{</span>
+        <span class="n">handleUnfulfilledRequirements</span><span class="p">(</span><span class="n">report</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="p">}</span>
+
+    <span class="c1">// Instantiate the networking implementation.</span>
+    <span class="n">val</span> <span class="n">networkService</span><span class="p">:</span> <span class="n">GiniCaptureNetworkService</span>  <span class="o">=</span> <span class="p">...</span>
+
+    <span class="c1">// Configure the capture feature.</span>
+    <span class="n">GiniBank</span><span class="p">.</span><span class="na">setCaptureConfiguration</span><span class="p">(</span><span class="n">context</span><span class="p">,</span>
+        <span class="n">CaptureConfiguration</span><span class="p">(</span>
+            <span class="n">networkService</span> <span class="o">=</span> <span class="n">networkService</span><span class="p">,</span>
+            <span class="p">...</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="c1">// Launch and wait for the result.</span>
+    <span class="n">GiniBank</span><span class="p">.</span><span class="na">startCaptureFlow</span><span class="p">(</span><span class="n">captureLauncher</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="n">fun</span> <span class="nf">stopGiniBankSDK</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// After the user has seen and potentially corrected the extractions</span>
+    <span class="c1">// cleanup the SDK while passing in the final extraction values</span>
+    <span class="c1">// which will be used as feedback to improve the future extraction accuracy:</span>
+    <span class="n">GiniBank</span><span class="p">.</span><span class="na">releaseCapture</span><span class="p">(</span><span class="n">context</span><span class="p">,</span>
+            <span class="n">paymentRecipient</span><span class="p">,</span>
+            <span class="n">paymentReference</span><span class="p">,</span>
+            <span class="n">paymentPurpose</span><span class="p">,</span>
+            <span class="n">iban</span><span class="p">,</span>
+            <span class="n">bic</span><span class="p">,</span>
+            <span class="n">amount</span>
+        <span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="handling-payment-requests">
+<h2>Handling Payment Requests<a class="headerlink" href="#handling-payment-requests" title="Permalink to this headline">¶</a></h2>
+<p>The Gini Bank SDK enables your app to handle payment requests started by other Gini SDKs (e.g., Gini Health SDK) in another app.
+You can retrieve the payment requests’s content, mark the payment request as payed and also return your user to the app
+that created the payment request.</p>
+<div class="section" id="id1">
+<h3>Networking<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>The pay feature depends on the <a class="reference external" href="https://github.com/gini/gini-mobile-android/tree/main/bank-api-library">Gini Bank API Library</a>, which
+provides an entry point through the <code class="docutils literal notranslate"><span class="pre">GiniBankAPI</span></code> class.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You should have received Gini Bank API client credentials from us. Please get in touch with us in case you don’t have
+them. Without credentials you won’t be able to use the Gini Bank API.</p>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">GiniBankAPI</span></code> class can be built either with client credentials or with a <code class="docutils literal notranslate"><span class="pre">SessionManager</span></code> if you already have an
+authorization token. We provide helper methods for each case:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">getGiniApi</span><span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">clientId</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span> <span class="n">clientSecret</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span>
+           <span class="n">emailDomain</span><span class="p">:</span> <span class="n">String</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">getGiniApi</span><span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">sessionManager</span><span class="p">:</span> <span class="n">SessionManager</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">SessionManager</span></code> is an interface which you need to implement to send the token.</p>
+<p>For more details about the <code class="docutils literal notranslate"><span class="pre">GiniBankAPI</span></code> class see the Gini Bank API Library’s <a class="reference external" href="https://developer.gini.net/gini-mobile-android/bank-api-library/library/html/guides/getting-started.html#creating-the-gini-instance">documentation</a>.</p>
+<p>Once you have a <code class="docutils literal notranslate"><span class="pre">GiniBankAPI</span></code> instance you need to pass it to <code class="docutils literal notranslate"><span class="pre">GiniBank.setGiniApi()</span></code>:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">val</span> <span class="n">giniApi</span> <span class="o">=</span> <span class="n">getGiniApi</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="n">myClientId</span><span class="p">,</span> <span class="n">myClientSecret</span><span class="p">,</span> <span class="n">myEmailDomain</span><span class="p">)</span>
+
+<span class="n">GiniBank</span><span class="p">.</span><span class="na">setGiniApi</span><span class="p">(</span><span class="n">giniApi</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id3">
+<h3>Android Manifest<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>To be able to receive payment requests you need to add an intent filter for the ginipay URI to your manifest. This also
+allows other Gini SDKs (e.g., Gini Health SDK) to detect if your app is installed:</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;intent-filter&gt;</span>
+    <span class="nt">&lt;action</span> <span class="na">android:name=</span><span class="s">&quot;android.intent.action.VIEW&quot;</span> <span class="nt">/&gt;</span>
+
+    <span class="nt">&lt;category</span> <span class="na">android:name=</span><span class="s">&quot;android.intent.category.DEFAULT&quot;</span> <span class="nt">/&gt;</span>
+
+    <span class="nt">&lt;data</span>
+        <span class="na">android:host=</span><span class="s">&quot;payment&quot;</span>
+        <span class="na">android:scheme=</span><span class="s">&quot;ginipay&quot;</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/intent-filter&gt;</span>
+</pre></div>
+</div>
+<p>The intent filter can be added to the activity which will handle the payment flow of that payment request.</p>
+</div>
+<div class="section" id="package-name">
+<h3>Package Name<a class="headerlink" href="#package-name" title="Permalink to this headline">¶</a></h3>
+<p>You also need to tell us your app’s package name. It will be associated with the payment provider we
+create for your banking app in the Gini Bank API. Other Gini SDKs (like the Gini Health SDK) will only open your banking
+app if it is installed and it has the same package name as the one known by the Gini Bank API.</p>
+<p>If you have different package names for development and production
+then please share both of them with us so that we can use the right one for each environment.</p>
+</div>
+<div class="section" id="receive-payment-requests">
+<h3>Receive Payment Requests<a class="headerlink" href="#receive-payment-requests" title="Permalink to this headline">¶</a></h3>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You can see an example implementation in the example app’s <a class="reference external" href="https://github.com/gini/gini-mobile-android/tree/main/bank-sdk/screen-api-example-app/src/main/java/net/gini/pay/appscreenapi/pay">pay</a>
+package.</p>
+</div>
+<p>When your activity is launched with an intent you should follow the steps below to receive and handle the payment
+request:</p>
+<ol class="arabic">
+<li><p class="first">Extract the payment request id from the intent with <code class="docutils literal notranslate"><span class="pre">getRequestId()</span></code>:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">val</span> <span class="n">requestId</span> <span class="o">=</span> <span class="n">getRequestId</span><span class="p">(</span><span class="n">intent</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Retrieve the payment details set by other Gini SDKs (like the Gini Health SDK) using <code class="docutils literal notranslate"><span class="pre">GiniBank.getPaymentRequest()</span></code>:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">val</span> <span class="n">paymentRequest</span><span class="p">:</span> <span class="n">PaymentRequest</span> <span class="o">=</span> <span class="n">giniBank</span><span class="p">.</span><span class="na">getPaymentRequest</span><span class="p">(</span><span class="n">requestId</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Show the payment details to your user:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">showPaymentDetails</span><span class="p">(</span>
+    <span class="n">paymentRequest</span><span class="p">.</span><span class="na">recipient</span><span class="p">,</span>
+    <span class="n">paymentRequest</span><span class="p">.</span><span class="na">iban</span><span class="p">,</span>
+    <span class="n">paymentRequest</span><span class="p">.</span><span class="na">bic</span><span class="p">,</span>
+    <span class="n">paymentRequest</span><span class="p">.</span><span class="na">amount</span><span class="p">,</span>
+    <span class="n">paymentRequest</span><span class="p">.</span><span class="na">purpose</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">After your user has initiated the payment mark the payment request as paid using
+<code class="docutils literal notranslate"><span class="pre">GiniBank.resolvePaymentRequest()</span></code>:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// The actual payment details used for the payment (as corrected and accepted by the user).</span>
+<span class="n">val</span> <span class="n">usedPaymentDetails</span> <span class="o">=</span> <span class="n">ResolvePaymentInput</span><span class="p">(</span>
+    <span class="n">recipient</span> <span class="o">=</span> <span class="s">&quot;...&quot;</span><span class="p">,</span>
+    <span class="n">iban</span> <span class="o">=</span> <span class="s">&quot;...&quot;</span><span class="p">,</span>
+    <span class="n">bic</span> <span class="o">=</span> <span class="s">&quot;...&quot;</span><span class="p">,</span>
+    <span class="n">amount</span> <span class="o">=</span> <span class="s">&quot;...&quot;</span><span class="p">,</span>
+    <span class="n">purpose</span> <span class="o">=</span> <span class="s">&quot;...&quot;</span>
+<span class="p">)</span>
+
+<span class="n">val</span> <span class="n">resolvedPayment</span><span class="p">:</span> <span class="n">ResolvedPayment</span> <span class="o">=</span> <span class="n">giniBank</span><span class="p">.</span><span class="na">resolvePaymentRequest</span><span class="p">(</span><span class="n">requestId</span><span class="p">,</span> <span class="n">usedPaymentDetails</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">You can allow your user to return to the app that started the flow using <code class="docutils literal notranslate"><span class="pre">GiniBank.returnToPaymentInitiatorApp()</span></code>:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">giniBank</span><span class="p">.</span><span class="na">returnToPaymentInitiatorApp</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">resolvedPayment</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</div>
+<div class="section" id="testing">
+<h3>Testing<a class="headerlink" href="#testing" title="Permalink to this headline">¶</a></h3>
+<p>Testing the payment feature requires an app which uses a Gini SDK which can create payment requests. The Gini Health SDK
+is one such SDK. You can use it to create payment requests and to forward them to your banking app to view and resolve
+those payment requests.</p>
+<div class="section" id="requirements">
+<h4>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="example-app-for-creating-payment-requests">
+<h5>Example app for creating payment requests<a class="headerlink" href="#example-app-for-creating-payment-requests" title="Permalink to this headline">¶</a></h5>
+<p>An example app is available in the <a class="reference external" href="https://github.com/gini/gini-mobile-android/tree/main/health-sdk/example-app">Gini Health SDK’s</a>
+repository.</p>
+<p>You can use the same Gini Bank API client credentials in that example app as in your app, if not otherwise specified.</p>
+<div class="section" id="development-gini-bank-api-client-credentials">
+<h6>Development Gini Bank API client credentials<a class="headerlink" href="#development-gini-bank-api-client-credentials" title="Permalink to this headline">¶</a></h6>
+<p>In order to test using the example app you need to use development client credentials. This will make sure
+the example will use a payment provider which will open your development banking app.</p>
+</div>
+</div>
+</div>
+<div class="section" id="end-to-end-testing">
+<h4>End to end testing<a class="headerlink" href="#end-to-end-testing" title="Permalink to this headline">¶</a></h4>
+<p>After you’ve set the client credentials in the Gini Health SDK’s example app you can install it along with your banking app on
+your device.</p>
+<p>Run the example app and import an invoice or take a picture of one to start the payment flow.</p>
+<p>After following the integration steps above your banking app will be launched and you’ll be able to fetch the payment
+request, show the payment information and resolve the payment after the transaction has been confirmed. At this point,
+you may redirect back to the example app.</p>
+<p>With these steps completed you have verified that your app, the Gini Bank API, the Gini Health SDK and the Gini Bank SDK
+work together correctly.</p>
+</div>
+<div class="section" id="testing-in-production">
+<h4>Testing in production<a class="headerlink" href="#testing-in-production" title="Permalink to this headline">¶</a></h4>
+<p>The steps are the same but instead of the development client credentials you will need to use production client
+credentials. This will make sure the Gini Health SDK receives real payment providers including the one which
+opens your production banking app.</p>
+<p>For testing the flow using the example app please make sure that the production client credentials are used
+before installing it.</p>
+<p>You can also test with a real app which uses the Gini Health SDK (or another similar Gini SDK). Please contact us in
+case you don’t know which app(s) to install for starting the payment flow.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="capture-features.html" class="btn btn-neutral float-right" title="Invoice Capture Features">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="getting-started.html" class="btn btn-neutral" title="Getting started"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+    </p>
+  </div>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  
+</body>
+</html>
