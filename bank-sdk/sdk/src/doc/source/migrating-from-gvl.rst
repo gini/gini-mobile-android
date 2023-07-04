@@ -304,7 +304,9 @@ Migrating a custom networking layer implementation is also straight forward:
 
 * rename imported packages: replace ``net.gini.android.vision`` with ``net.gini.android.capture``,
 * rename interface names: replace ``GiniVision`` with ``GiniCapture``,
-* we recommend moving from the Gini API SDK to the newer Gini Bank API Library which offers kotlin coroutine support.
+* if you are using the `Gini API SDK <https://developer.gini.net/gini-sdk-android/index.html>`_ you must replace it with
+  the newer `Gini Bank API Library <https://developer.gini.net/gini-mobile-android/bank-api-library/library>`_ which
+  offers kotlin coroutine support.
 
 Event Tracking
 --------------
