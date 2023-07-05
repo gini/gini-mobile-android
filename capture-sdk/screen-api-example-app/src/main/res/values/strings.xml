@@ -38,6 +38,9 @@
     <string name="gc_qr_code_scanning">QR code scanning</string>
     <string name="gc_disable_camera_permission">Do not request camera permission</string>
 
+
+    <string name="apply_gini_sdk_configuration">Apply</string>
+
     <!-- String customization examples -->
 
     <!--<string name="gc_title_camera">Dokument fotografieren</string>-->
