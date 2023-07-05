@@ -1,4 +1,4 @@
-package net.gini.android.capture.example.shared
+package net.gini.android.capture.screen
 
 import android.util.Log
 import kotlinx.coroutines.CoroutineScope

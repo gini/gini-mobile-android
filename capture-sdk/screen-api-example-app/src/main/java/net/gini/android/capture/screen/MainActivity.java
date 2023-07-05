@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,7 +16,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import net.gini.android.capture.Amount;
 import net.gini.android.capture.BuildConfig;
 import net.gini.android.capture.onboarding.DefaultPages;
 import net.gini.android.capture.AsyncCallback;
@@ -27,8 +25,6 @@ import net.gini.android.capture.GiniCaptureDebug;
 import net.gini.android.capture.GiniCaptureError;
 import net.gini.android.capture.ImportedFileValidationException;
 import net.gini.android.capture.camera.CameraActivity;
-import net.gini.android.capture.example.shared.BaseExampleApp;
-import net.gini.android.capture.example.shared.RuntimePermissionHandler;
 import net.gini.android.capture.help.HelpItem;
 import net.gini.android.capture.logging.ErrorLog;
 import net.gini.android.capture.logging.ErrorLoggerListener;
@@ -56,7 +52,7 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.android.LogcatAppender;
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 
-import static net.gini.android.capture.example.shared.ExampleUtil.isPay5Extraction;
+import static net.gini.android.capture.screen.ExampleUtil.isPay5Extraction;
 
 /**
  * Entry point for the screen api example app.

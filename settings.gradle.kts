@@ -26,7 +26,7 @@ include("health-sdk:example-app")
 
 include("capture-sdk:sdk")
 include("capture-sdk:default-network")
-include("capture-sdk:example-app-shared-code")
+//include("capture-sdk:example-app-shared-code")
 include("capture-sdk:screen-api-example-app")
 
 include("bank-sdk:sdk")
