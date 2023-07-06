@@ -21,7 +21,7 @@ import java.util.Map;
  *
  * @suppress
  */
-interface CameraFragmentListener {
+public interface CameraFragmentListener {
     /**
      * <p>
      * Called when the user has imported a document that passed the Gini Capture SDK's validation and any custom checks that were implemented.

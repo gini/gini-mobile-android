@@ -3,6 +3,8 @@ import net.gini.gradle.*
 plugins {
     id("com.android.application")
     kotlin("android")
+    kotlin("kapt")
+    id("com.google.dagger.hilt.android")
 }
 
 // TODO: construct version code and name in fastlane and inject them
@@ -99,6 +101,9 @@ dependencies {
 
     implementation(libs.lottie)
 
+    implementation(libs.hilt.library)
+    kapt(libs.hilt.compiler)
+
     testImplementation(libs.junit)
 
     androidTestImplementation(libs.androidx.test.runner)
@@ -113,4 +118,8 @@ dependencies {
     androidTestImplementation(libs.androidx.test.junit)
 }
 
+// this is needed because of Dagger-Hilt
+kapt {
+    correctErrorTypes = true
+}
 apply<CodeAnalysisPlugin>()

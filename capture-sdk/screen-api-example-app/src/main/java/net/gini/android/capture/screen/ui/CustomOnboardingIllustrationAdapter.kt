@@ -1,4 +1,4 @@
-package net.gini.android.capture.screen
+package net.gini.android.capture.screen.ui
 
 import android.os.Parcel
 import android.os.Parcelable

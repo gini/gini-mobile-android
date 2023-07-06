@@ -16,4 +16,5 @@ dependencies {
     implementation(libs.detekt.gradle)
     implementation(libs.ktlint.gradle)
     implementation(libs.benManesVersions.gradle)
+    implementation(libs.java.poet)
 }

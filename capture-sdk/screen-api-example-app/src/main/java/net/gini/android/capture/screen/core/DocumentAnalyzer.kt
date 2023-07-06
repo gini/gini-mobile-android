@@ -1,4 +1,4 @@
-package net.gini.android.capture.screen
+package net.gini.android.capture.screen.core
 
 import android.util.Log
 import kotlinx.coroutines.CoroutineScope
@@ -14,9 +14,7 @@ import java.lang.Exception
 import kotlin.coroutines.CoroutineContext
 
 /**
- * Created by Alpar Szotyori on 29.11.2017.
  *
- * Copyright (c) 2017 Gini GmbH.
  */
 class DocumentAnalyzer @JvmOverloads internal constructor(
     private val documentManager: DocumentManager<*, *>,
