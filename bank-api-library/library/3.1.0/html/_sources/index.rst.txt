@@ -12,7 +12,7 @@ information such as the document sender or the payment relevant information (amo
 also provides a secure channel for sharing payment related information between clients. 
 
 .. note::
-   The documentation for the 1.x.x version can be found `here. <https://developer.gini.net/gini-mobile-android/bank-api-library/library/1.2.1/html/index.html>`_
+   The documentation for the 1.x.x version can be found `here. <https://developer.gini.net/gini-mobile-android/bank-api-library/library/1.3.0/html/index.html>`_
 
 Table of contents
 -----------------
