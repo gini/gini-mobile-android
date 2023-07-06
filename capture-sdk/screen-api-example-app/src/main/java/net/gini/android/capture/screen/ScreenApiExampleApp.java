@@ -1,7 +1,5 @@
 package net.gini.android.capture.screen;
 
-import net.gini.android.capture.example.shared.BaseExampleApp;
-
 /**
  * Created by Alpar Szotyori on 01.12.2017.
  *

@@ -58,7 +58,7 @@ android {
         }
         release {
             isMinifyEnabled = true
-            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
 
             signingConfig = signingConfigs.getByName("release")
 
@@ -66,10 +66,25 @@ android {
             resValue("string", "gini_api_client_secret", credentials["clientSecret"] ?: "")
         }
     }
+    compileOptions {
+        sourceCompatibility(JavaVersion.VERSION_1_8)
+        targetCompatibility(JavaVersion.VERSION_1_8)
+    }
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
 }
 
 dependencies {
-    implementation(project(":capture-sdk:example-app-shared-code"))
+// For testing the local version
+    api(project(":capture-sdk:sdk"))
+    // For testing a released version
+    //implementation "net.gini.android:gini-capture-sdk:0.0.1"
+
+    // For testing the local version
+    api(project(":capture-sdk:default-network"))
+    // For testing a released version
+    //implementation "net.gini.android:gini-capture-sdk-default-network:0.0.1"
 
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.activity)

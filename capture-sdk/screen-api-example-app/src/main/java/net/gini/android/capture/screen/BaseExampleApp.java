@@ -1,18 +1,18 @@
-package net.gini.android.capture.example.shared;
+package net.gini.android.capture.screen;
 
 import android.text.TextUtils;
+
+import androidx.annotation.NonNull;
+import androidx.multidex.MultiDexApplication;
 
 import net.gini.android.bank.api.GiniBankAPI;
 import net.gini.android.bank.api.GiniBankAPIBuilder;
 import net.gini.android.capture.network.GiniCaptureDefaultNetworkService;
-import net.gini.android.core.api.DocumentMetadata;
 import net.gini.android.capture.network.GiniCaptureNetworkService;
+import net.gini.android.core.api.DocumentMetadata;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import androidx.annotation.NonNull;
-import androidx.multidex.MultiDexApplication;
 
 /**
  * <p>
