@@ -52,6 +52,8 @@ class Exif {
     static final String USER_COMMENT_SOURCE = "Source";
     static final String USER_COMMENT_IMPORT_METHOD = "ImportMethod";
 
+    static final String USER_COMMENT_ENTRY_POINT = "EntryPoint";
+
     private final TiffOutputSet mTiffOutputSet;
 
     private Exif(@NonNull final TiffOutputSet tiffOutputSet) {
@@ -370,6 +372,7 @@ class Exif {
         private String mDeviceType;
         private String mSource;
         private String mImportMethod;
+        private String mEntryPoint;
 
         private UserCommentBuilder() {
 
@@ -412,6 +415,11 @@ class Exif {
 
         UserCommentBuilder setImportMethod(final String importMethod) {
             mImportMethod = importMethod;
+            return this;
+        }
+
+        UserCommentBuilder setEntryPoint(final String entryPoint) {
+            mEntryPoint = entryPoint;
             return this;
         }
 
@@ -460,6 +468,7 @@ class Exif {
             if (mImportMethod != null) {
                 map.put(USER_COMMENT_IMPORT_METHOD, mImportMethod);
             }
+            map.put(USER_COMMENT_ENTRY_POINT, mEntryPoint);
             return map;
         }
 
