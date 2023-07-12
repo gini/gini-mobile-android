@@ -8,7 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_horizontal_margin"
-    tools:context="net.gini.android.capture.screen.MainActivity">
+    tools:context="net.gini.android.capture.screen.ui.MainActivity">
 
     <TextView
         android:id="@+id/configuration_options_header"

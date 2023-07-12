@@ -1,8 +1,9 @@
-package net.gini.android.capture.screen
+package net.gini.android.capture.screen.ui
 
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import net.gini.android.capture.screen.R
 
 class CustomHelpActivity : AppCompatActivity() {
 

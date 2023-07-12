@@ -18,6 +18,7 @@ espresso = "3.5.1"
 checkstyle = "7.8.2"
 pmd = "6.0.0"
 jacoco = "0.8.7"
+hilt = "2.46.1"
 
 [libraries]
 android-gradle = { module = "com.android.tools.build:gradle", version.ref = "android-gradle-plugin" }
@@ -93,4 +94,8 @@ retrofit = "com.squareup.retrofit2:retrofit:2.9.0"
 okhttp3 = "com.squareup.okhttp3:okhttp:4.10.0"
 retrofit-moshi-converter = "com.squareup.retrofit2:converter-moshi:2.4.0"
 okhttp3-logging-interceptor = "com.squareup.okhttp3:logging-interceptor:4.10.0"
+hilt-library = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
+hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
+hilt-plugin = { module = "com.google.dagger:hilt-android-gradle-plugin", version.ref = "hilt" }
+java-poet = "com.squareup:javapoet:1.13.0"
 
