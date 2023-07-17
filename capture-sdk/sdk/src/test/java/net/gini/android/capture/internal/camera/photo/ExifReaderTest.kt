@@ -75,12 +75,11 @@ class ExifReaderTest {
     @Throws(Exception::class)
     fun `returns value for key in user comment CSV`() {
         // Given
-        val jpeg = Helpers.getTestJpeg()
-        val exifReader = ExifReader.forJpeg(jpeg)
+        val userComment =
+            "Platform=Android,OSVer=7.0,GiniVisionVer=2.1.0(SNAPSHOT),ContentId=21e5bc66-ee46-4ec4-93db-16bd553561bf,RotDeltaDeg=0"
         // When
         val value = ExifReader.getValueForKeyFromUserComment(
-            "OSVer", "Platform=Android,OSVer=7.0,GiniVisionVer=2.1.0(SNAPSHOT),"
-                    + "ContentId=21e5bc66-ee46-4ec4-93db-16bd553561bf,RotDeltaDeg=0"
+            "OSVer", userComment
         )
         // Then
         Truth.assertThat(value).isEqualTo("7.0")
@@ -90,12 +89,10 @@ class ExifReaderTest {
     @Throws(Exception::class)
     fun `returns null if key was not found in user comment CSV`() {
         // Given
-        val jpeg = Helpers.getTestJpeg()
-        val exifReader = ExifReader.forJpeg(jpeg)
+        val userComment = "no such key here"
         // When
         val value = ExifReader.getValueForKeyFromUserComment(
-            "unknownKey",
-            "no such key here"
+            "unknownKey", userComment
         )
         // Then
         Truth.assertThat(value).isNull()
@@ -105,10 +102,9 @@ class ExifReaderTest {
     @Throws(Exception::class)
     fun `returns null if user comment CSV is empty`() {
         // Given
-        val jpeg = Helpers.getTestJpeg()
-        val exifReader = ExifReader.forJpeg(jpeg)
+        val userComment = ""
         // When
-        val value = ExifReader.getValueForKeyFromUserComment("", "")
+        val value = ExifReader.getValueForKeyFromUserComment("", userComment)
         // Then
         Truth.assertThat(value).isNull()
     }
@@ -117,10 +113,9 @@ class ExifReaderTest {
     @Throws(Exception::class)
     fun `returns null if user comment CSV is malformed`() {
         // Given
-        val jpeg = Helpers.getTestJpeg()
-        val exifReader = ExifReader.forJpeg(jpeg)
+        val userComment = ",Key1=OSVer=,"
         // When
-        val value = ExifReader.getValueForKeyFromUserComment("OSVer", ",Key1=OSVer=,")
+        val value = ExifReader.getValueForKeyFromUserComment("OSVer", userComment)
         // Then
         Truth.assertThat(value).isNull()
     }
