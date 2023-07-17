@@ -697,7 +697,7 @@ public class GiniCapture {
         private InjectedViewAdapterInstance<ReviewNavigationBarBottomAdapter> reviewNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultReviewNavigationBarBottomAdapter());
 
         private InjectedViewAdapterInstance<OnButtonLoadingIndicatorAdapter> onButtonLoadingIndicatorAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultOnButtonLoadingIndicatorAdapter());
-        private EntryPoint entryPoint = EntryPoint.BUTTON;
+        private EntryPoint entryPoint = Internal.DEFAULT_ENTRY_POINT;
 
         /**
          * Create a new {@link GiniCapture} instance.
@@ -1229,6 +1229,8 @@ public class GiniCapture {
      * @suppress
      */
     public static class Internal {
+
+        public static final EntryPoint DEFAULT_ENTRY_POINT = EntryPoint.BUTTON;
 
         private final GiniCapture mGiniCapture;
 

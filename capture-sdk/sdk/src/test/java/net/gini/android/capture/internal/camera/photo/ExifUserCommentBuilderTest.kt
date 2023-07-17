@@ -1,12 +1,23 @@
 package net.gini.android.capture.internal.camera.photo
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth
+import net.gini.android.capture.EntryPoint
+import net.gini.android.capture.GiniCapture
+import net.gini.android.capture.GiniCaptureHelper
+import net.gini.android.capture.internal.camera.photo.ExifUserCommentHelper.Companion.getValueForKeyFromUserComment
+import org.junit.After
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class UserCommentBuilderTest {
+class ExifUserCommentBuilderTest {
+
+    @After
+    fun teardown() {
+        GiniCaptureHelper.setGiniCaptureInstance(null)
+    }
 
     @Test
     @Throws(Exception::class)
@@ -21,7 +32,6 @@ class UserCommentBuilderTest {
             .setDeviceOrientation("landscape")
             .setDeviceType("tablet")
             .setSource("picker")
-            .setEntryPoint("field")
         val userComment = builder.build()
         // Then
         val keys = getListOfKeys(userComment)
@@ -59,6 +69,35 @@ class UserCommentBuilderTest {
             Exif.USER_COMMENT_DEVICE_TYPE, Exif.USER_COMMENT_SOURCE,
             Exif.USER_COMMENT_IMPORT_METHOD, Exif.USER_COMMENT_ENTRY_POINT
         ).inOrder()
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun `adds default EntryPoint to user comment if there is no GiniCapture instance`() {
+        // Given
+        val builder = Exif.userCommentBuilder()
+        // When
+        builder.setContentId("asdasd-assd-ssdsa-sdsdss")
+        val userComment = builder.build()
+        // Then
+        val entryPoint = getValueForKeyFromUserComment(Exif.USER_COMMENT_ENTRY_POINT, userComment)
+        Truth.assertThat(EntryPoint.valueOf(entryPoint.uppercase())).isEqualTo(GiniCapture.Internal.DEFAULT_ENTRY_POINT)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun `adds configured EntryPoint to user comment if there is a GiniCapture instance`() {
+        // Given
+        GiniCapture.newInstance(InstrumentationRegistry.getInstrumentation().context)
+            .setEntryPoint(EntryPoint.FIELD)
+            .build()
+        val builder = Exif.userCommentBuilder()
+        // When
+        builder.setContentId("asdasd-assd-ssdsa-sdsdss")
+        val userComment = builder.build()
+        // Then
+        val entryPoint = getValueForKeyFromUserComment(Exif.USER_COMMENT_ENTRY_POINT, userComment)
+        Truth.assertThat(EntryPoint.valueOf(entryPoint.uppercase())).isEqualTo(EntryPoint.FIELD)
     }
 
     private fun getListOfKeys(userComment: String): List<String?> {

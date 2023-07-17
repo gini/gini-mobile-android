@@ -6,6 +6,8 @@ import android.os.Build;
 import android.util.Log;
 
 import net.gini.android.capture.BuildConfig;
+import net.gini.android.capture.EntryPoint;
+import net.gini.android.capture.GiniCapture;
 
 import org.apache.commons.imaging.ImageReadException;
 import org.apache.commons.imaging.ImageWriteException;
@@ -372,7 +374,6 @@ class Exif {
         private String mDeviceType;
         private String mSource;
         private String mImportMethod;
-        private String mEntryPoint;
 
         private UserCommentBuilder() {
 
@@ -415,11 +416,6 @@ class Exif {
 
         UserCommentBuilder setImportMethod(final String importMethod) {
             mImportMethod = importMethod;
-            return this;
-        }
-
-        UserCommentBuilder setEntryPoint(final String entryPoint) {
-            mEntryPoint = entryPoint;
             return this;
         }
 
@@ -468,7 +464,12 @@ class Exif {
             if (mImportMethod != null) {
                 map.put(USER_COMMENT_IMPORT_METHOD, mImportMethod);
             }
-            map.put(USER_COMMENT_ENTRY_POINT, mEntryPoint);
+            if (GiniCapture.hasInstance()) {
+                map.put(USER_COMMENT_ENTRY_POINT, entryPointToString(GiniCapture.getInstance().getEntryPoint()));
+            } else {
+                map.put(USER_COMMENT_ENTRY_POINT, entryPointToString(GiniCapture.Internal.DEFAULT_ENTRY_POINT));
+            }
+
             return map;
         }
 
@@ -487,6 +488,21 @@ class Exif {
                         .append(keyValueEntry.getValue());
             }
             return csvBuilder.toString();
+        }
+
+        private String entryPointToString(@NonNull final EntryPoint entryPoint) {
+            final String value;
+            switch (entryPoint) {
+                case FIELD:
+                    value = "field";
+                    break;
+                case BUTTON:
+                    value = "button";
+                    break;
+                default:
+                    throw new IllegalStateException("Unexpected EntryPoint value: " + entryPoint);
+            }
+            return value;
         }
 
     }
