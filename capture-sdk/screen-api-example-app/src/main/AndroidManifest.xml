@@ -74,6 +74,9 @@
             android:name=".ui.CustomHelpActivity"
             android:label="@string/custom_help_screen_title" />
 
+        <activity android:name="net.gini.android.capture.screen.ui.ConfigurationActivity"
+            android:label="@string/configuration_activity_title" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="net.gini.android.capture.screen.fileprovider"

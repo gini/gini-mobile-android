@@ -4,9 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
-import android.widget.CompoundButton
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import ch.qos.logback.classic.Logger
@@ -14,7 +11,6 @@ import ch.qos.logback.classic.LoggerContext
 import ch.qos.logback.classic.android.LogcatAppender
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.switchmaterial.SwitchMaterial
 import dagger.hilt.android.AndroidEntryPoint
 import net.gini.android.capture.AsyncCallback
 import net.gini.android.capture.BuildConfig
@@ -37,6 +33,8 @@ import net.gini.android.capture.screen.R
 import net.gini.android.capture.screen.ScreenApiExampleApp
 import net.gini.android.capture.screen.core.ExampleUtil
 import net.gini.android.capture.screen.core.RuntimePermissionHandler
+import net.gini.android.capture.screen.databinding.ActivityMainBinding
+import net.gini.android.capture.screen.ui.data.Configuration
 import net.gini.android.capture.tracking.AnalysisScreenEvent
 import net.gini.android.capture.tracking.CameraScreenEvent
 import net.gini.android.capture.tracking.Event
@@ -48,42 +46,43 @@ import net.gini.android.capture.view.DefaultLoadingIndicatorAdapter
 import org.slf4j.LoggerFactory
 import javax.inject.Inject
 
+
 /**
  * Entry point for the screen api example app.
  */
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
-    // TODO: use ViewBinding
+class MainActivity : AppCompatActivity(R.layout.activity_main) {
+
+    private lateinit var binding: ActivityMainBinding
+
+    //private val exampleViewModel: ConfigurationViewModel by viewModelStore
+
     @Inject
     lateinit var giniCaptureDefaultNetworkService: GiniCaptureDefaultNetworkService
-    private lateinit var mButtonStartScanner: Button
     private var mRestoredInstance = false
     private lateinit var mRuntimePermissionHandler: RuntimePermissionHandler
-    private lateinit var mTextGiniCaptureSdkVersion: TextView
-    private var mTextAppVersion: TextView? = null
-    private var bottomNavBarSwitch: SwitchMaterial? = null
-    private var animatedOnboardingIllustrationsSwitch: SwitchMaterial? = null
-    private var customLoadingAnimationSwitch: SwitchMaterial? = null
-    private lateinit var isQRenabledSwitch: SwitchMaterial
-    private var onlyQRCodeSwitch: SwitchMaterial? = null
-    private lateinit var disableCameraPermission: SwitchMaterial
     private var mFileImportCancellationToken: CancellationToken? = null
+    private lateinit var configuration: Configuration
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        bindViews()
+        binding = ActivityMainBinding.inflate(layoutInflater)
+
+        setContentView(binding.root)
+
+        configuration = Configuration()
         addInputHandlers()
         setGiniCaptureSdkDebugging()
         showVersions()
         createRuntimePermissionsHandler()
         mRestoredInstance = savedInstanceState != null
-        isQRenabledSwitch.setOnCheckedChangeListener { buttonView: CompoundButton?, isChecked: Boolean ->
+        /*isQRenabledSwitch.setOnCheckedChangeListener { buttonView: CompoundButton?, isChecked: Boolean ->
             if (!isChecked) {
                 onlyQRCodeSwitch!!.isChecked = false
             }
-        }
+        }*/
     }
 
     override fun onStart() {
@@ -181,10 +180,8 @@ class MainActivity : AppCompatActivity() {
 
     @SuppressLint("SetTextI18n")
     private fun showVersions() {
-        //TODO: put the strings in the strings.xml file
-        mTextGiniCaptureSdkVersion.text =
-            "Gini Capture SDK v" + BuildConfig.VERSION_NAME
-        mTextAppVersion!!.text = "Screen API Example App v" + BuildConfig.VERSION_NAME
+        binding.textGiniCaptureVersion.text =
+            getString(R.string.gini_capture_sdk_version) + BuildConfig.VERSION_NAME
     }
 
     private fun setGiniCaptureSdkDebugging() {
@@ -195,13 +192,25 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun addInputHandlers() {
-        mButtonStartScanner.setOnClickListener { v: View? ->
-            if (disableCameraPermission.isChecked) {
+        binding.buttonStartScanner.setOnClickListener { v: View? ->
+            //TODO: set from configuration object and delete the line below
+            startGiniCaptureSdk()
+            /*if (disableCameraPermission.isChecked) {
                 doStartGiniCaptureSdk()
             } else {
                 startGiniCaptureSdk()
-            }
+            }*/
         }
+
+        binding.textGiniCaptureVersion.setOnClickListener {
+            startActivityForResult(
+                Intent(
+                    this,
+                    ConfigurationActivity::class.java
+                ).putExtra(CONFIGURATION_BUNDLE, configuration), REQUEST_CONFIGURATION
+            )
+        }
+
     }
 
     private fun startGiniCaptureSdk() {
@@ -213,6 +222,8 @@ class MainActivity : AppCompatActivity() {
 
             override fun permissionDenied() {}
         })
+
+
     }
 
     private fun doStartGiniCaptureSdk() {
@@ -239,9 +250,9 @@ class MainActivity : AppCompatActivity() {
             )
             .setDocumentImportEnabledFileTypes(DocumentImportEnabledFileTypes.PDF_AND_IMAGES)
             .setFileImportEnabled(true)
-            .setQRCodeScanningEnabled(isQRenabledSwitch.isChecked)
-            .setMultiPageEnabled(true)
-        builder.setFlashButtonEnabled(true)
+            .setQRCodeScanningEnabled(configuration.isQrCodeEnabled)
+            .setMultiPageEnabled(configuration.isMultiPageEnabled)
+        builder.setFlashButtonEnabled(configuration.isFlashToggleEnabled)
         builder.setEventTracker(GiniCaptureEventTracker())
         builder.setCustomErrorLoggerListener(CustomErrorLoggerListener())
         builder.setReviewBottomBarNavigationAdapter(DefaultReviewNavigationBarBottomAdapter())
@@ -254,8 +265,8 @@ class MainActivity : AppCompatActivity() {
             )
         )
         builder.setCustomHelpItems(customHelpItems)
-        builder.setBottomNavigationBarEnabled(bottomNavBarSwitch!!.isChecked)
-        if (animatedOnboardingIllustrationsSwitch!!.isChecked) {
+        builder.setBottomNavigationBarEnabled(configuration.isBottomNavigationBarEnabled)
+        if (/*animatedOnboardingIllustrationsSwitch!!.isChecked*/true) {
             builder.setOnboardingAlignCornersIllustrationAdapter(
                 CustomOnboardingIllustrationAdapter(
                     resources.getIdentifier("floating_document", "raw", this.packageName)
@@ -273,18 +284,19 @@ class MainActivity : AppCompatActivity() {
             )
             builder.setOnboardingQRCodeIllustrationAdapter(
                 CustomOnboardingIllustrationAdapter(
-                    resources.getIdentifier("scan_qr_code", "raw", this.packageName)
+                    R.raw.scan_qr_code
                 )
             )
         }
-        if (customLoadingAnimationSwitch!!.isChecked) {
+        //TODO: set from configuration object
+        if (/*customLoadingAnimationSwitch!!.isChecked*/true) {
             builder.setLoadingIndicatorAdapter(
                 CustomLottiLoadingIndicatorAdapter(
                     resources.getIdentifier("custom_loading", "raw", this.packageName)
                 )
             )
         }
-        builder.setOnlyQRCodeScanning(onlyQRCodeSwitch!!.isChecked)
+        builder.setOnlyQRCodeScanning(configuration.isOnlyQrCodeEnabled)
         builder.build()
     }
 
@@ -310,18 +322,6 @@ class MainActivity : AppCompatActivity() {
         ).show()
     }
 
-    private fun bindViews() {
-        mButtonStartScanner = findViewById<View>(R.id.button_start_scanner) as Button
-        mTextGiniCaptureSdkVersion = findViewById<View>(R.id.text_gini_capture_version) as TextView
-        mTextAppVersion = findViewById<View>(R.id.text_app_version) as TextView
-        bottomNavBarSwitch = findViewById(R.id.bottom_navbar_switch)
-        animatedOnboardingIllustrationsSwitch =
-            findViewById(R.id.animated_onboarding_illustrations_switch)
-        customLoadingAnimationSwitch = findViewById(R.id.custom_loading_indicator_switch)
-        isQRenabledSwitch = findViewById(R.id.gc_qr_code_scanning_enabled)
-        onlyQRCodeSwitch = findViewById(R.id.gc_only_qr_code_scanning)
-        disableCameraPermission = findViewById(R.id.gc_disable_camera_permision)
-    }
 
     private fun getOnboardingPages(
         isMultiPageEnabled: Boolean,
@@ -397,6 +397,20 @@ class MainActivity : AppCompatActivity() {
             }
             if (isIntentActionViewOrSend(intent)) {
                 finish()
+            }
+        }
+        if (requestCode == REQUEST_CONFIGURATION) {
+            when (resultCode) {
+                RESULT_CANCELED -> {}
+                RESULT_OK -> {
+                    var configurationResult: Configuration? = data?.getParcelableExtra(
+                        CONFIGURATION_BUNDLE
+                    )
+
+
+                    if (configurationResult != null)
+                        configuration = configurationResult
+                }
             }
         }
     }
@@ -509,8 +523,10 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         const val EXTRA_OUT_EXTRACTIONS = "EXTRA_OUT_EXTRACTIONS"
+        const val CONFIGURATION_BUNDLE = "CONFIGURATION_BUNDLE"
         private val LOG = LoggerFactory.getLogger(MainActivity::class.java)
         private const val REQUEST_SCAN = 1
         private const val REQUEST_NO_EXTRACTIONS = 2
+        private const val REQUEST_CONFIGURATION = 3
     }
 }
