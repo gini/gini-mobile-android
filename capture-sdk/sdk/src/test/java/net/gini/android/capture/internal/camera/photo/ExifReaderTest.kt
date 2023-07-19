@@ -12,7 +12,7 @@ class ExifReaderTest {
     @Test
     @Throws(Exception::class)
     fun `reads user comment`() {
-        val testJpeg = Helpers.loadAsset("remslip-valid-user-comment.jpeg")
+        val testJpeg = Helpers.loadAsset("invoice-valid-user-comment.jpeg")
         val exifReader = ExifReader.forJpeg(testJpeg)
         Truth.assertThat(exifReader.userComment).isEqualTo("This is valid")
     }
@@ -21,7 +21,7 @@ class ExifReaderTest {
     @Throws(Exception::class)
     fun `reads user comment if length is too short`() {
         // Minimum length is 8 bytes (character code length), following image has 5 bytes
-        val testJpeg = Helpers.loadAsset("remslip-malformed-user-comment.jpeg")
+        val testJpeg = Helpers.loadAsset("invoice-malformed-user-comment.jpeg")
         val exifReader = ExifReader.forJpeg(testJpeg)
         Truth.assertThat(exifReader.userComment).isEqualTo("short")
     }
@@ -29,7 +29,7 @@ class ExifReaderTest {
     @Test
     @Throws(Exception::class)
     fun `throws exception if metadata was missing`() {
-        val testJpeg = Helpers.loadAsset("remslip-no-metadata.jpeg")
+        val testJpeg = Helpers.loadAsset("invoice-no-metadata.jpeg")
         var exception: ExifReaderException? = null
         try {
             ExifReader.forJpeg(testJpeg)
@@ -44,7 +44,7 @@ class ExifReaderTest {
     @Throws(Exception::class)
     fun `throws exception if user comment was missing`() {
         // Given
-        val testJpeg = Helpers.loadAsset("remslip-no-user-comment.jpeg")
+        val testJpeg = Helpers.loadAsset("invoice-no-user-comment.jpeg")
         val exifReader = ExifReader.forJpeg(testJpeg)
         var exception: ExifReaderException? = null
         try {
