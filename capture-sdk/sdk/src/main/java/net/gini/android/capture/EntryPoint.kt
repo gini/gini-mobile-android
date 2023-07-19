@@ -11,12 +11,12 @@ package net.gini.android.capture
  */
 enum class EntryPoint {
     /**
-     * Must be used when the user launches the SDK from a text field.
-     */
-    FIELD,
-
-    /**
      * Must be used when the user launches the SDK from a button.
      */
-    BUTTON
+    BUTTON,
+
+    /**
+     * Must be used when the user launches the SDK from a text field.
+     */
+    FIELD
 }
