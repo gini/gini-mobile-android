@@ -105,6 +105,8 @@ dependencies {
     implementation(libs.hilt.library)
     kapt(libs.hilt.compiler)
 
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+
     testImplementation(libs.junit)
 
     androidTestImplementation(libs.androidx.test.runner)

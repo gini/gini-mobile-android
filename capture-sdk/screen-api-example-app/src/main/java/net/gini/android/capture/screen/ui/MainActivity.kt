@@ -6,12 +6,17 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import ch.qos.logback.classic.Logger
 import ch.qos.logback.classic.LoggerContext
 import ch.qos.logback.classic.android.LogcatAppender
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import net.gini.android.capture.AsyncCallback
 import net.gini.android.capture.BuildConfig
 import net.gini.android.capture.DocumentImportEnabledFileTypes
@@ -56,7 +61,8 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     private lateinit var binding: ActivityMainBinding
 
-    //private val exampleViewModel: ConfigurationViewModel by viewModelStore
+    private lateinit var configurationViewModel: ConfigurationViewModel
+
 
     @Inject
     lateinit var giniCaptureDefaultNetworkService: GiniCaptureDefaultNetworkService
@@ -69,10 +75,17 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
-
         setContentView(binding.root)
+        configurationViewModel = ViewModelProvider(this)[ConfigurationViewModel::class.java]
 
-        configuration = Configuration()
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                configurationViewModel.configuration.collect {
+                    configuration = it
+                }
+            }
+        }
+
         addInputHandlers()
         setGiniCaptureSdkDebugging()
         showVersions()
@@ -408,8 +421,10 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
                     )
 
 
-                    if (configurationResult != null)
+                    if (configurationResult != null) {
                         configuration = configurationResult
+                        configurationViewModel.setConfiguration(configurationResult)
+                    }
                 }
             }
         }
