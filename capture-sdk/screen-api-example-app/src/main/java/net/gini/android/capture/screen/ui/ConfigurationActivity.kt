@@ -34,7 +34,7 @@ class ConfigurationActivity : AppCompatActivity(R.layout.activity_configuration)
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                configurationViewModel.configuration.collect {
+                configurationViewModel.configurationFlow.collect {
                     configuration = it
                 }
             }

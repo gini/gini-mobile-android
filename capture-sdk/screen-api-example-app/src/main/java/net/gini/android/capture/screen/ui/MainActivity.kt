@@ -19,35 +19,23 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import net.gini.android.capture.AsyncCallback
 import net.gini.android.capture.BuildConfig
-import net.gini.android.capture.DocumentImportEnabledFileTypes
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.GiniCaptureDebug
 import net.gini.android.capture.GiniCaptureError
 import net.gini.android.capture.ImportedFileValidationException
 import net.gini.android.capture.camera.CameraActivity
-import net.gini.android.capture.help.HelpItem.Custom
-import net.gini.android.capture.logging.ErrorLog
-import net.gini.android.capture.logging.ErrorLoggerListener
 import net.gini.android.capture.network.GiniCaptureDefaultNetworkService
 import net.gini.android.capture.onboarding.DefaultPages.Companion.asArrayList
 import net.gini.android.capture.onboarding.OnboardingPage
 import net.gini.android.capture.requirements.GiniCaptureRequirements
 import net.gini.android.capture.requirements.RequirementsReport
-import net.gini.android.capture.review.multipage.view.DefaultReviewNavigationBarBottomAdapter
 import net.gini.android.capture.screen.R
 import net.gini.android.capture.screen.ScreenApiExampleApp
 import net.gini.android.capture.screen.core.ExampleUtil
 import net.gini.android.capture.screen.core.RuntimePermissionHandler
 import net.gini.android.capture.screen.databinding.ActivityMainBinding
 import net.gini.android.capture.screen.ui.data.Configuration
-import net.gini.android.capture.tracking.AnalysisScreenEvent
-import net.gini.android.capture.tracking.CameraScreenEvent
-import net.gini.android.capture.tracking.Event
-import net.gini.android.capture.tracking.EventTracker
-import net.gini.android.capture.tracking.OnboardingScreenEvent
-import net.gini.android.capture.tracking.ReviewScreenEvent
 import net.gini.android.capture.util.CancellationToken
-import net.gini.android.capture.view.DefaultLoadingIndicatorAdapter
 import org.slf4j.LoggerFactory
 import javax.inject.Inject
 
@@ -69,7 +57,6 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     private var mRestoredInstance = false
     private lateinit var mRuntimePermissionHandler: RuntimePermissionHandler
     private var mFileImportCancellationToken: CancellationToken? = null
-    private lateinit var configuration: Configuration
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,13 +65,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         setContentView(binding.root)
         configurationViewModel = ViewModelProvider(this)[ConfigurationViewModel::class.java]
 
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                configurationViewModel.configuration.collect {
-                    configuration = it
-                }
-            }
-        }
+
 
         addInputHandlers()
         setGiniCaptureSdkDebugging()
@@ -165,7 +146,6 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
                 override fun onError(exception: ImportedFileValidationException) {
                     mFileImportCancellationToken = null
-                    // For Alpar -> is it okay? it is because we are calling Java from Kotlin!
                     handleFileImportError(exception)
                 }
 
@@ -220,7 +200,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
                 Intent(
                     this,
                     ConfigurationActivity::class.java
-                ).putExtra(CONFIGURATION_BUNDLE, configuration), REQUEST_CONFIGURATION
+                ).putExtra(CONFIGURATION_BUNDLE, configurationViewModel.configurationFlow.value), REQUEST_CONFIGURATION
             )
         }
 
@@ -261,56 +241,11 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
             .setGiniCaptureNetworkService(
                 giniCaptureDefaultNetworkService
             )
-            .setDocumentImportEnabledFileTypes(DocumentImportEnabledFileTypes.PDF_AND_IMAGES)
-            .setFileImportEnabled(true)
-            .setQRCodeScanningEnabled(configuration.isQrCodeEnabled)
-            .setMultiPageEnabled(configuration.isMultiPageEnabled)
-        builder.setFlashButtonEnabled(configuration.isFlashToggleEnabled)
-        builder.setEventTracker(GiniCaptureEventTracker())
-        builder.setCustomErrorLoggerListener(CustomErrorLoggerListener())
-        builder.setReviewBottomBarNavigationAdapter(DefaultReviewNavigationBarBottomAdapter())
-        builder.setLoadingIndicatorAdapter(DefaultLoadingIndicatorAdapter())
-        val customHelpItems: MutableList<Custom> = ArrayList()
-        customHelpItems.add(
-            Custom(
-                R.string.custom_help_screen_title,
-                Intent(this, CustomHelpActivity::class.java)
-            )
-        )
-        builder.setCustomHelpItems(customHelpItems)
-        builder.setBottomNavigationBarEnabled(configuration.isBottomNavigationBarEnabled)
-        if (/*animatedOnboardingIllustrationsSwitch!!.isChecked*/true) {
-            builder.setOnboardingAlignCornersIllustrationAdapter(
-                CustomOnboardingIllustrationAdapter(
-                    resources.getIdentifier("floating_document", "raw", this.packageName)
-                )
-            )
-            builder.setOnboardingLightingIllustrationAdapter(
-                CustomOnboardingIllustrationAdapter(
-                    resources.getIdentifier("lighting", "raw", this.packageName)
-                )
-            )
-            builder.setOnboardingMultiPageIllustrationAdapter(
-                CustomOnboardingIllustrationAdapter(
-                    resources.getIdentifier("multipage", "raw", this.packageName)
-                )
-            )
-            builder.setOnboardingQRCodeIllustrationAdapter(
-                CustomOnboardingIllustrationAdapter(
-                    R.raw.scan_qr_code
-                )
-            )
-        }
-        //TODO: set from configuration object
-        if (/*customLoadingAnimationSwitch!!.isChecked*/true) {
-            builder.setLoadingIndicatorAdapter(
-                CustomLottiLoadingIndicatorAdapter(
-                    resources.getIdentifier("custom_loading", "raw", this.packageName)
-                )
-            )
-        }
-        builder.setOnlyQRCodeScanning(configuration.isOnlyQrCodeEnabled)
-        builder.build()
+
+        val intent = Intent(this, CustomHelpActivity::class.java)
+        configurationViewModel.configureGiniCapture(builder, intent)
+
+
     }
 
     private fun showUnfulfilledRequirementsToast(report: RequirementsReport) {
@@ -422,7 +357,6 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
 
                     if (configurationResult != null) {
-                        configuration = configurationResult
                         configurationViewModel.setConfiguration(configurationResult)
                     }
                 }
@@ -480,66 +414,13 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         Toast.makeText(this, "Scan exited for manual enter mode", Toast.LENGTH_SHORT).show()
     }
 
-    private class GiniCaptureEventTracker : EventTracker {
-        override fun onOnboardingScreenEvent(event: Event<OnboardingScreenEvent>) {
-            when (event.type) {
-                OnboardingScreenEvent.START -> LOG.info("Onboarding started")
-                OnboardingScreenEvent.FINISH -> LOG.info("Onboarding finished")
-            }
-        }
 
-        override fun onCameraScreenEvent(event: Event<CameraScreenEvent>) {
-            when (event.type) {
-                CameraScreenEvent.TAKE_PICTURE -> LOG.info("Take picture")
-                CameraScreenEvent.HELP -> LOG.info("Show help")
-                CameraScreenEvent.EXIT -> LOG.info("Exit")
-            }
-        }
 
-        override fun onReviewScreenEvent(event: Event<ReviewScreenEvent>) {
-            when (event.type) {
-                ReviewScreenEvent.NEXT -> LOG.info("Go next to analyse")
-                ReviewScreenEvent.BACK -> LOG.info("Go back to the camera")
-                ReviewScreenEvent.UPLOAD_ERROR -> {
-                    val error =
-                        event.details[ReviewScreenEvent.UPLOAD_ERROR_DETAILS_MAP_KEY.ERROR_OBJECT] as Throwable?
-                    LOG.info(
-                        "Upload failed:\nmessage: {}\nerror:",
-                        event.details[ReviewScreenEvent.UPLOAD_ERROR_DETAILS_MAP_KEY.MESSAGE],
-                        error
-                    )
-                }
-            }
-        }
 
-        override fun onAnalysisScreenEvent(event: Event<AnalysisScreenEvent>) {
-            when (event.type) {
-                AnalysisScreenEvent.ERROR -> {
-                    val error =
-                        event.details[AnalysisScreenEvent.ERROR_DETAILS_MAP_KEY.ERROR_OBJECT] as Throwable?
-                    LOG.info(
-                        "Analysis failed:\nmessage: {}\nerror:",
-                        event.details[AnalysisScreenEvent.ERROR_DETAILS_MAP_KEY.MESSAGE],
-                        error
-                    )
-                }
-
-                AnalysisScreenEvent.RETRY -> LOG.info("Retry analysis")
-                AnalysisScreenEvent.CANCEL -> LOG.info("Analysis cancelled")
-            }
-        }
-    }
-
-    private class CustomErrorLoggerListener : ErrorLoggerListener {
-        override fun handleErrorLog(errorLog: ErrorLog) {
-            LOG.error("Custom error logger: {}", errorLog.toString())
-        }
-    }
 
     companion object {
         const val EXTRA_OUT_EXTRACTIONS = "EXTRA_OUT_EXTRACTIONS"
         const val CONFIGURATION_BUNDLE = "CONFIGURATION_BUNDLE"
-        private val LOG = LoggerFactory.getLogger(MainActivity::class.java)
         private const val REQUEST_SCAN = 1
         private const val REQUEST_NO_EXTRACTIONS = 2
         private const val REQUEST_CONFIGURATION = 3
