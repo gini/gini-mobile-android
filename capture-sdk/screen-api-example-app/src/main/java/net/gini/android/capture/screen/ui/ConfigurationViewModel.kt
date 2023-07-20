@@ -55,6 +55,8 @@ class ConfigurationViewModel @Inject constructor() : ViewModel() {
         )
         builder.setCustomHelpItems(customHelpItems)
         builder.setBottomNavigationBarEnabled(configuration.isBottomNavigationBarEnabled)
+        builder.setShouldShowOnboarding(configuration.isOnboardingEnabled)
+        builder.setShouldShowOnboardingAtFirstRun(configuration.isOnboardingAtFirstRunEnabled)
         if (/*animatedOnboardingIllustrationsSwitch!!.isChecked*/true) {
             builder.setOnboardingAlignCornersIllustrationAdapter(
                 CustomOnboardingIllustrationAdapter(
