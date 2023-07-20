@@ -1,6 +1,7 @@
 package net.gini.android.capture.camera;
 
 import static net.gini.android.capture.analysis.AnalysisActivity.RESULT_NO_EXTRACTIONS;
+import static net.gini.android.capture.error.ErrorActivity.ERROR_SCREEN_REQUEST;
 import static net.gini.android.capture.internal.util.ActivityHelper.interceptOnBackPressed;
 import static net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboarding;
 import static net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboardingAtFirstRun;
@@ -361,13 +362,19 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
             case REVIEW_DOCUMENT_REQUEST:
             case ANALYSE_DOCUMENT_REQUEST:
             case MULTI_PAGE_REVIEW_REQUEST:
+            case ERROR_SCREEN_REQUEST:
             case NO_RESULT_REQUEST:
                 // The first CameraActivity instance is invisible to the user
                 // after we navigate to the review or analysis activity.
                 // Once we get a result it means we are back at the first CameraActivity instance
-                // so we need to return the result to the client if result is not retake images from No Results
+                // so we need to return the result to the client if result is not retake images
+                // from No Results or Error screens
 
                 if (resultCode == RESULT_CAMERA_SCREEN) {
+                    // Clear the image from the memory store because the user will take new pictures
+                    if (GiniCapture.hasInstance()) {
+                        GiniCapture.getInstance().internal().getImageMultiPageDocumentMemoryStore().clear();
+                    }
                     super.onActivityResult(requestCode, resultCode, data);
                     break;
                 }
