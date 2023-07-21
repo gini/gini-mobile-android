@@ -120,6 +120,10 @@ class ConfigurationActivity : AppCompatActivity() {
         binding.switchOnboardingScreensAtFirstRun.isChecked =
             configuration.isOnboardingAtFirstRunEnabled
 
+        // 14 enable onboarding at every launch
+        binding.switchOnboardingScreensAtEveryLaunch.isChecked =
+            configuration.isOnboardingAtEveryLaunchEnabled
+
         binding.switchSupportedFormatsScreen.isChecked =
             configuration.isSupportedFormatsHelpScreenEnabled
     }
@@ -249,6 +253,15 @@ class ConfigurationActivity : AppCompatActivity() {
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(
                     isOnboardingAtFirstRunEnabled = isChecked
+                )
+            )
+        }
+
+        // 14 enable onboarding at every launch
+        binding.switchOnboardingScreensAtEveryLaunch.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    isOnboardingAtEveryLaunchEnabled = isChecked
                 )
             )
         }

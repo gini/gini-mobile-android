@@ -59,6 +59,10 @@ data class Configuration(
     //    net.gini.android.capture.GiniCapture.Builder#setShouldShowOnboardingAtFirstRun → on/off switch
     val isOnboardingAtFirstRunEnabled: Boolean = true,
 
+    // 14 enable onboarding at every launch
+    //    net.gini.android.capture.GiniCapture.Builder#setShouldShowOnboarding → on/off switch
+    val isOnboardingAtEveryLaunchEnabled: Boolean = false,
+
     val isEventTrackerEnabled: Boolean = true,
 
 
@@ -69,8 +73,7 @@ data class Configuration(
     val isCustomOnboardingPagesEnabled: Boolean = true,
 
 
-//    net.gini.android.capture.GiniCapture.Builder#setShouldShowOnboarding → on/off switch
-    val isOnboardingEnabled: Boolean = false,
+
 
 
 

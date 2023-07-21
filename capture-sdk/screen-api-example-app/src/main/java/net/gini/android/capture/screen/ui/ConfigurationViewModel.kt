@@ -62,6 +62,8 @@ class ConfigurationViewModel @Inject constructor() : ViewModel() {
         //builder.()
         // 13 enable onboarding screens at first launch
         builder.setShouldShowOnboardingAtFirstRun(configuration.isOnboardingAtFirstRunEnabled)
+        // 14 enable onboarding at every launch
+        builder.setShouldShowOnboarding(configuration.isOnboardingAtEveryLaunchEnabled)
 
         builder.setEventTracker(GiniCaptureEventTracker())
         builder.setCustomErrorLoggerListener(CustomErrorLoggerListener())
@@ -75,7 +77,6 @@ class ConfigurationViewModel @Inject constructor() : ViewModel() {
             )
         )
         builder.setCustomHelpItems(customHelpItems)
-        builder.setShouldShowOnboarding(configuration.isOnboardingEnabled)
         if (/*animatedOnboardingIllustrationsSwitch!!.isChecked*/true) {
             builder.setOnboardingAlignCornersIllustrationAdapter(
                 CustomOnboardingIllustrationAdapter(
