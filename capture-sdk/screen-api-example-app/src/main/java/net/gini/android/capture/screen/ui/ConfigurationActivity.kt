@@ -106,6 +106,7 @@ class ConfigurationActivity : AppCompatActivity() {
         }
         binding.toggleBtnFileImportSetup.check(checkButtonId)
 
+        // 8 enable bottom navigation bar
         binding.switchShowBottomNavbar.isChecked = configuration.isBottomNavigationBarEnabled
 
 
@@ -188,6 +189,7 @@ class ConfigurationActivity : AppCompatActivity() {
             )
         }
 
+        // 8 enable bottom navigation bar
         binding.switchShowBottomNavbar.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(

@@ -37,6 +37,7 @@ data class Configuration(
 //    net.gini.android.capture.GiniCapture.Builder#setDocumentImportEnabledFileTypes → radio buttons to select an available enum value
     val documentImportEnabledFileTypes: DocumentImportEnabledFileTypes = DocumentImportEnabledFileTypes.PDF_AND_IMAGES,
 
+    // 8 enable bottom navigation bar
 // net.gini.android.capture.GiniCapture.Builder#setBottomNavigationBarEnabled → on/off switch
     val isBottomNavigationBarEnabled: Boolean = true,
 // net.gini.android.capture.GiniCapture.Builder#setCustomHelpItems → on/off switch to show a custom help item

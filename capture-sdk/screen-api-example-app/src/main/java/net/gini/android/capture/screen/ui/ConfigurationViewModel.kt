@@ -49,8 +49,9 @@ class ConfigurationViewModel @Inject constructor() : ViewModel() {
         // 6 enable flash on by default
         builder.setFlashOnByDefault(configuration.isFlashOnByDefault)
         // 7 set file import type
-        builder
-            .setDocumentImportEnabledFileTypes(configuration.documentImportEnabledFileTypes)
+        builder.setDocumentImportEnabledFileTypes(configuration.documentImportEnabledFileTypes)
+        // 8 enable bottom navigation bar
+        builder.setBottomNavigationBarEnabled(configuration.isBottomNavigationBarEnabled)
 
 
         builder.setEventTracker(GiniCaptureEventTracker())
@@ -65,7 +66,6 @@ class ConfigurationViewModel @Inject constructor() : ViewModel() {
             )
         )
         builder.setCustomHelpItems(customHelpItems)
-        builder.setBottomNavigationBarEnabled(configuration.isBottomNavigationBarEnabled)
         builder.setShouldShowOnboarding(configuration.isOnboardingEnabled)
         builder.setShouldShowOnboardingAtFirstRun(configuration.isOnboardingAtFirstRunEnabled)
         if (/*animatedOnboardingIllustrationsSwitch!!.isChecked*/true) {
