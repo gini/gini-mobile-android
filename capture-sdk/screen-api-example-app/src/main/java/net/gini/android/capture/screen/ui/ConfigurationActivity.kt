@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import net.gini.android.capture.DocumentImportEnabledFileTypes
 import net.gini.android.capture.internal.util.ActivityHelper.interceptOnBackPressed
 import net.gini.android.capture.screen.R
 import net.gini.android.capture.screen.databinding.ActivityConfigurationBinding
@@ -88,17 +89,30 @@ class ConfigurationActivity : AppCompatActivity() {
 
     private fun updateUIWithConfigurationObject(configuration: Configuration) {
         //binding.switchOpenWith.isEnabled = configuration.isQrCodeEnabled
+        // 2 QR code scanning
         binding.switchQrCodeScanning.isChecked = configuration.isQrCodeEnabled
+        // 3 only QR code scanning
         binding.switchOnlyQRCodeScanning.isChecked = configuration.isOnlyQrCodeEnabled
-
+        // 4 enable multi page
         binding.switchMultiPage.isChecked = configuration.isMultiPageEnabled
-
+        // 5 enable flash toggle
         binding.switchFlashToggle.isChecked = configuration.isFlashToggleEnabled
+        // 6 enable flash on by default
         binding.switchFlashOnByDefault.isChecked = configuration.isFlashOnByDefault
+        // 7 set import document type support
+        val checkButtonId = when (configuration.documentImportEnabledFileTypes) {
+            DocumentImportEnabledFileTypes.NONE -> R.id.btn_fileImportDisabled
+            DocumentImportEnabledFileTypes.PDF -> R.id.btn_fileImportOnlyPdf
+            DocumentImportEnabledFileTypes.PDF_AND_IMAGES -> R.id.btn_fileImportPdfAndImage
+            else -> R.id.btn_fileImportOnlyPdf
+        }
+        binding.toggleBtnFileImportSetup.check(checkButtonId)
+
         binding.switchShowBottomNavbar.isChecked = configuration.isBottomNavigationBarEnabled
 
 
-        binding.switchSupportedFormatsScreen.isChecked = configuration.isSupportedFormatsHelpScreenEnabled
+        binding.switchSupportedFormatsScreen.isChecked =
+            configuration.isSupportedFormatsHelpScreenEnabled
     }
 
     private fun setConfigurationFeatures() {
@@ -107,6 +121,7 @@ class ConfigurationActivity : AppCompatActivity() {
 
         }
 
+        // 2 QR code scanning
         binding.switchQrCodeScanning.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(
@@ -115,6 +130,7 @@ class ConfigurationActivity : AppCompatActivity() {
             )
 
         }
+        // 3 only QR code scanning
         binding.switchOnlyQRCodeScanning.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(
@@ -122,6 +138,7 @@ class ConfigurationActivity : AppCompatActivity() {
                 )
             )
         }
+        // 4 enable multi page
         binding.switchMultiPage.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(
@@ -129,6 +146,7 @@ class ConfigurationActivity : AppCompatActivity() {
                 )
             )
         }
+        // 5 enable flash toggle
         binding.switchFlashToggle.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(
@@ -136,6 +154,7 @@ class ConfigurationActivity : AppCompatActivity() {
                 )
             )
         }
+        // 6 enable flash on by default
         binding.switchFlashOnByDefault.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(
@@ -143,8 +162,29 @@ class ConfigurationActivity : AppCompatActivity() {
                 )
             )
         }
-        //TODO: implement file import functionality
+        // 7 set import document type support
+        binding.toggleBtnFileImportSetup.addOnButtonCheckedListener { toggleButton, checkedId, isChecked ->
+            val checked = toggleButton.checkedButtonId
+            configurationViewModel.setConfiguration(
+                when (checked) {
+                    R.id.btn_fileImportDisabled -> configurationViewModel.configurationFlow.value.copy(
+                        documentImportEnabledFileTypes = DocumentImportEnabledFileTypes.NONE
+                    )
 
+                    R.id.btn_fileImportOnlyPdf -> configurationViewModel.configurationFlow.value.copy(
+                        documentImportEnabledFileTypes = DocumentImportEnabledFileTypes.PDF
+                    )
+
+                    R.id.btn_fileImportPdfAndImage -> configurationViewModel.configurationFlow.value.copy(
+                        documentImportEnabledFileTypes = DocumentImportEnabledFileTypes.PDF_AND_IMAGES
+                    )
+
+                    else -> configurationViewModel.configurationFlow.value.copy(
+                        documentImportEnabledFileTypes = DocumentImportEnabledFileTypes.NONE
+                    )
+                }
+            )
+        }
 
         binding.switchShowBottomNavbar.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(

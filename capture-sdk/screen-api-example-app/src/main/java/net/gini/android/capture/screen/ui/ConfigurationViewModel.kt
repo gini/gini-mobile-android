@@ -36,13 +36,24 @@ class ConfigurationViewModel @Inject constructor() : ViewModel() {
 
     fun configureGiniCapture(builder: GiniCapture.Builder, intent: Intent) {
         val configuration = configurationFlow.value
-        builder
-            .setDocumentImportEnabledFileTypes(DocumentImportEnabledFileTypes.PDF_AND_IMAGES)
-            .setFileImportEnabled(true)
-            .setQRCodeScanningEnabled(configuration.isQrCodeEnabled)
-            .setMultiPageEnabled(configuration.isMultiPageEnabled)
-        builder.setSupportedFormatsHelpScreenEnabled(configuration.isSupportedFormatsHelpScreenEnabled)
+        // 1 open with
+
+        // 2 QR code scanning
+        builder.setQRCodeScanningEnabled(configuration.isQrCodeEnabled)
+        // 3 only QR code scanning
+        builder.setOnlyQRCodeScanning(configuration.isOnlyQrCodeEnabled)
+        // 4 enable multi page
+        builder.setMultiPageEnabled(configuration.isMultiPageEnabled)
+        // 5 enable flash toggle
         builder.setFlashButtonEnabled(configuration.isFlashToggleEnabled)
+        // 6 enable flash on by default
+        builder.setFlashOnByDefault(configuration.isFlashOnByDefault)
+        // 7 set file import type
+        builder
+            .setFileImportEnabled(true)
+            .setDocumentImportEnabledFileTypes(configuration.documentImportEnabledFileTypes)
+
+
         builder.setEventTracker(GiniCaptureEventTracker())
         builder.setCustomErrorLoggerListener(CustomErrorLoggerListener())
         builder.setReviewBottomBarNavigationAdapter(DefaultReviewNavigationBarBottomAdapter())
@@ -88,7 +99,8 @@ class ConfigurationViewModel @Inject constructor() : ViewModel() {
                 )
             )
         }
-        builder.setOnlyQRCodeScanning(configuration.isOnlyQrCodeEnabled)
+
+        builder.setSupportedFormatsHelpScreenEnabled(configuration.isSupportedFormatsHelpScreenEnabled)
         builder.build()
     }
 

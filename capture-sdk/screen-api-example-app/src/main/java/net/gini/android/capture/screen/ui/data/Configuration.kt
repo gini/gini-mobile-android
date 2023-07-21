@@ -2,22 +2,38 @@ package net.gini.android.capture.screen.ui.data
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import net.gini.android.capture.DocumentImportEnabledFileTypes
 
 
 @Parcelize
 data class Configuration(
     // net.gini.android.capture.GiniCapture.Builder#setBackButtonsEnabled → ignore (will be removed)
 
+
+    // 2 QR code scanning
 //    net.gini.android.capture.GiniCapture.Builder#setOnlyQRCodeScanning → on/off switch
     val isQrCodeEnabled: Boolean = true,
+
+    // 3 only QR code scanning
 //    net.gini.android.capture.GiniCapture.Builder#setQRCodeScanningEnabled → on/off switch
     val isOnlyQrCodeEnabled: Boolean = false,
+
+    // 4 enable multi page
 //    net.gini.android.capture.GiniCapture.Builder#setMultiPageEnabled →  on/off switch
     val isMultiPageEnabled: Boolean = true,
+
+    // 5 enable flash toggle
 //    net.gini.android.capture.GiniCapture.Builder#setFlashButtonEnabled → on/off switch
     val isFlashToggleEnabled: Boolean = true,
+
+    // 6 enable flash on by default
 //    net.gini.android.capture.GiniCapture.Builder#setFlashOnByDefault → on/off switch
     val isFlashOnByDefault: Boolean = true,
+
+    // 7 set import document type support
+//    net.gini.android.capture.GiniCapture.Builder#setDocumentImportEnabledFileTypes → radio buttons to select an available enum value
+    val documentImportEnabledFileTypes: DocumentImportEnabledFileTypes = DocumentImportEnabledFileTypes.PDF_AND_IMAGES,
+
 // net.gini.android.capture.GiniCapture.Builder#setBottomNavigationBarEnabled → on/off switch
     val isBottomNavigationBarEnabled: Boolean = true,
 // net.gini.android.capture.GiniCapture.Builder#setCustomHelpItems → on/off switch to show a custom help item
@@ -47,7 +63,6 @@ data class Configuration(
     val isSupportedFormatsHelpScreenEnabled: Boolean = true,
 
     /*
-    net.gini.android.capture.GiniCapture.Builder#setDocumentImportEnabledFileTypes → radio buttons to select an available enum value
 
     net.gini.android.capture.GiniCapture.Builder#setErrorNavigationBarBottomAdapter →  on/off switch to show a custom adapter implementation
 

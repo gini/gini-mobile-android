@@ -120,7 +120,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                app:singleSelection="true">
+                app:selectionRequired="true"
+                app:singleSelection="true"
+                >
 
                 <Button
                     android:id="@+id/btn_fileImportDisabled"
