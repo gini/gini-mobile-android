@@ -16,3 +16,4 @@ sealed class HttpHeader(val name: String, val value: String) {
 }
 
 class BearerAuthorizatonHeader(token: String): HttpHeader("Authorization", "Bearer $token")
+class BasicAuthorizatonHeader(credentials: String): HttpHeader("Authorization", "Basic $credentials")
