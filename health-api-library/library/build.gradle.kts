@@ -80,6 +80,7 @@ dependencies {
     testImplementation(libs.androidx.test.runner)
     testImplementation(libs.androidx.test.core.ktx)
     testImplementation(libs.androidx.test.junit.ktx)
+    testImplementation(libs.kotlinx.coroutines.test)
 }
 
 apply<PublishToMavenPlugin>()
