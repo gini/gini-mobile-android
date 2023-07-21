@@ -40,12 +40,24 @@ data class Configuration(
     // 8 enable bottom navigation bar
 // net.gini.android.capture.GiniCapture.Builder#setBottomNavigationBarEnabled → on/off switch
     val isBottomNavigationBarEnabled: Boolean = true,
+
+    // 9 enable Help screens custom bottom navigation bar
 // net.gini.android.capture.GiniCapture.Builder#setCustomHelpItems → on/off switch to show a custom help item
     val isHelpScreensCustomBottomNavBarEnabled: Boolean = true,
+
+    // 10 enable camera screens custom bottom navigation bar
 //    net.gini.android.capture.GiniCapture.Builder#setCameraNavigationBarBottomAdapter → on/off switch to show a custom adapter implementation
     val isCameraBottomNavBarEnabled: Boolean = true,
+
+    // 11 enable review screens custom bottom navigation bar
 //    net.gini.android.capture.GiniCapture.Builder#setReviewBottomBarNavigationAdapter →  on/off switch to show a custom adapter implementation
     val isReviewScreenCustomBottomNavBarEnabled: Boolean = true,
+
+    // 12 enable image picker screens custom bottom navigation bar
+
+    // 13 enable onboarding screens at first launch
+    //    net.gini.android.capture.GiniCapture.Builder#setShouldShowOnboardingAtFirstRun → on/off switch
+    val isOnboardingAtFirstRunEnabled: Boolean = true,
 
     val isEventTrackerEnabled: Boolean = true,
 
@@ -58,10 +70,9 @@ data class Configuration(
 
 
 //    net.gini.android.capture.GiniCapture.Builder#setShouldShowOnboarding → on/off switch
-    val isOnboardingEnabled: Boolean = true,
+    val isOnboardingEnabled: Boolean = false,
 
-//    net.gini.android.capture.GiniCapture.Builder#setShouldShowOnboardingAtFirstRun → on/off switch
-    val isOnboardingAtFirstRunEnabled: Boolean = true,
+
 
 //    net.gini.android.capture.GiniCapture.Builder#setSupportedFormatsHelpScreenEnabled → on/off switch
     val isSupportedFormatsHelpScreenEnabled: Boolean = true,

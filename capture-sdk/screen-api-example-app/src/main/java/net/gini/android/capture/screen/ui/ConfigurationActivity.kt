@@ -108,7 +108,17 @@ class ConfigurationActivity : AppCompatActivity() {
 
         // 8 enable bottom navigation bar
         binding.switchShowBottomNavbar.isChecked = configuration.isBottomNavigationBarEnabled
+        // 9 enable Help screens custom bottom navigation bar
 
+        // 10 enable camera screens custom bottom navigation bar
+
+        // 11 enable review screens custom bottom navigation bar
+
+        // 12 enable image picker screens custom bottom navigation bar
+
+        // 13 enable onboarding screens at first launch
+        binding.switchOnboardingScreensAtFirstRun.isChecked =
+            configuration.isOnboardingAtFirstRunEnabled
 
         binding.switchSupportedFormatsScreen.isChecked =
             configuration.isSupportedFormatsHelpScreenEnabled
@@ -197,6 +207,8 @@ class ConfigurationActivity : AppCompatActivity() {
                 )
             )
         }
+
+        // 9 enable Help screens custom bottom navigation bar
         binding.switchShowHelpScreenCustomBottomNavbar.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(
@@ -204,6 +216,8 @@ class ConfigurationActivity : AppCompatActivity() {
                 )
             )
         }
+
+        // 10 enable camera screens custom bottom navigation bar
         binding.switchCameraScreenCustomBottomNavbar.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(
@@ -211,6 +225,8 @@ class ConfigurationActivity : AppCompatActivity() {
                 )
             )
         }
+
+        // 11 enable review screens custom bottom navigation bar
         binding.switchReviewScreenCustomBottomNavbar.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(
@@ -219,6 +235,7 @@ class ConfigurationActivity : AppCompatActivity() {
             )
         }
 
+        // 12 enable image picker screens custom bottom navigation bar
         binding.switchImagePickerScreenCustomBottomNavbar.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(
@@ -227,11 +244,11 @@ class ConfigurationActivity : AppCompatActivity() {
             )
         }
 
-
-        binding.switchSupportedFormatsScreen.setOnCheckedChangeListener { _, isChecked ->
+        // 13 enable onboarding screens at first launch
+        binding.switchOnboardingScreensAtFirstRun.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(
-                    isSupportedFormatsHelpScreenEnabled = isChecked
+                    isOnboardingAtFirstRunEnabled = isChecked
                 )
             )
         }

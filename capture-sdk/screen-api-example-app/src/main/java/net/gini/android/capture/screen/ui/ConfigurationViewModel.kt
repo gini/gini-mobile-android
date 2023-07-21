@@ -52,7 +52,16 @@ class ConfigurationViewModel @Inject constructor() : ViewModel() {
         builder.setDocumentImportEnabledFileTypes(configuration.documentImportEnabledFileTypes)
         // 8 enable bottom navigation bar
         builder.setBottomNavigationBarEnabled(configuration.isBottomNavigationBarEnabled)
-
+        // 9 enable Help screens custom bottom navigation bar
+        //builder.setHelpNavigationBarBottomAdapter()
+        // 10 enable camera screens custom bottom navigation bar
+        //builder.setCameraNavigationBarBottomAdapter()
+        // 11 enable review screens custom bottom navigation bar
+        //builder.setReviewBottomBarNavigationAdapter()
+        // 12 enable image picker screens custom bottom navigation bar
+        //builder.()
+        // 13 enable onboarding screens at first launch
+        builder.setShouldShowOnboardingAtFirstRun(configuration.isOnboardingAtFirstRunEnabled)
 
         builder.setEventTracker(GiniCaptureEventTracker())
         builder.setCustomErrorLoggerListener(CustomErrorLoggerListener())
@@ -67,7 +76,6 @@ class ConfigurationViewModel @Inject constructor() : ViewModel() {
         )
         builder.setCustomHelpItems(customHelpItems)
         builder.setShouldShowOnboarding(configuration.isOnboardingEnabled)
-        builder.setShouldShowOnboardingAtFirstRun(configuration.isOnboardingAtFirstRunEnabled)
         if (/*animatedOnboardingIllustrationsSwitch!!.isChecked*/true) {
             builder.setOnboardingAlignCornersIllustrationAdapter(
                 CustomOnboardingIllustrationAdapter(
