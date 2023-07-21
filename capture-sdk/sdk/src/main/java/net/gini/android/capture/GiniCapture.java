@@ -120,6 +120,7 @@ public class GiniCapture {
     private final InjectedViewAdapterInstance<CustomLoadingIndicatorAdapter> loadingIndicatorAdapterInstance;
     private final InjectedViewAdapterInstance<ReviewNavigationBarBottomAdapter> reviewNavigationBarBottomAdapterInstance;
     private final InjectedViewAdapterInstance<OnButtonLoadingIndicatorAdapter> onButtonLoadingIndicatorAdapterInstance;
+    private final EntryPoint entryPoint;
 
     /**
      * Retrieve the current instance.
@@ -322,6 +323,7 @@ public class GiniCapture {
         loadingIndicatorAdapterInstance = builder.getLoadingIndicatorAdapterInstance();
         reviewNavigationBarBottomAdapterInstance = builder.getReviewNavigationBarBottomAdapterInstance();
         onButtonLoadingIndicatorAdapterInstance = builder.getOnButtonLoadingIndicatorAdapterInstance();
+        entryPoint = builder.getEntryPoint();
     }
 
     /**
@@ -630,6 +632,18 @@ public class GiniCapture {
     }
 
     /**
+     * The entry point used for launching the SDK.
+     *
+     * <p> Default value is {@code EntryPoint.BUTTON}.
+     *
+     * @return the {@link EntryPoint}
+     */
+    @NonNull
+    public EntryPoint getEntryPoint() {
+        return entryPoint;
+    }
+
+    /**
      * Builder for {@link GiniCapture}. To get an instance call {@link #newInstance(Context)}.
      */
     public static class Builder {
@@ -683,6 +697,7 @@ public class GiniCapture {
         private InjectedViewAdapterInstance<ReviewNavigationBarBottomAdapter> reviewNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultReviewNavigationBarBottomAdapter());
 
         private InjectedViewAdapterInstance<OnButtonLoadingIndicatorAdapter> onButtonLoadingIndicatorAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultOnButtonLoadingIndicatorAdapter());
+        private EntryPoint entryPoint = Internal.DEFAULT_ENTRY_POINT;
 
         /**
          * Create a new {@link GiniCapture} instance.
@@ -1189,6 +1204,23 @@ public class GiniCapture {
         private InjectedViewAdapterInstance<ReviewNavigationBarBottomAdapter> getReviewNavigationBarBottomAdapterInstance() {
             return reviewNavigationBarBottomAdapterInstance;
         }
+
+        /**
+         * Set the entry point used for launching the SDK. See {@link EntryPoint} for possible values.
+         *
+         * <p> Default value is {@code EntryPoint.BUTTON}.
+         *
+         * @param entryPoint an {@link EntryPoint} enum value
+         * @return the {@link Builder} instance
+         */
+        public Builder setEntryPoint(@NonNull final EntryPoint entryPoint) {
+            this.entryPoint = entryPoint;
+            return this;
+        }
+
+        private EntryPoint getEntryPoint() {
+            return entryPoint;
+        }
     }
 
     /**
@@ -1197,6 +1229,8 @@ public class GiniCapture {
      * @suppress
      */
     public static class Internal {
+
+        public static final EntryPoint DEFAULT_ENTRY_POINT = EntryPoint.BUTTON;
 
         private final GiniCapture mGiniCapture;
 

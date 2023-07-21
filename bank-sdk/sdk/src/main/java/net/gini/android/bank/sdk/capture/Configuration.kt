@@ -1,6 +1,7 @@
 package net.gini.android.bank.sdk.capture
 
 import net.gini.android.capture.DocumentImportEnabledFileTypes
+import net.gini.android.capture.EntryPoint
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.camera.CameraActivity
 import net.gini.android.capture.camera.view.CameraNavigationBarBottomAdapter
@@ -184,6 +185,13 @@ data class CaptureConfiguration(
      * Set an adapter implementation to show a custom bottom navigation bar on the help screen.
      */
     val helpNavigationBarBottomAdapter: HelpNavigationBarBottomAdapter? = null,
+
+    /**
+     * Set the entry point used for launching the SDK. See [EntryPoint] for possible values.
+     *
+     * Default value is [EntryPoint.BUTTON].
+     */
+    val entryPoint: EntryPoint = GiniCapture.Internal.DEFAULT_ENTRY_POINT
 )
 
 internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfiguration): GiniCapture.Builder {
@@ -202,6 +210,7 @@ internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfig
         .setGiniErrorLoggerIsOn(configuration.giniErrorLoggerIsOn)
         .setImportedFileSizeBytesLimit(configuration.importedFileSizeBytesLimit)
         .setBottomNavigationBarEnabled(configuration.bottomNavigationBarEnabled)
+        .setEntryPoint(configuration.entryPoint)
         .apply {
             configuration.eventTracker?.let { setEventTracker(it) }
             configuration.errorLoggerListener?.let { setCustomErrorLoggerListener(it) }

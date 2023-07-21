@@ -1,6 +1,9 @@
 package net.gini.android.capture.test;
 
+import static android.os.Looper.getMainLooper;
 import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
+
+import static org.robolectric.Shadows.shadowOf;
 
 import android.app.Instrumentation;
 import android.content.res.AssetManager;
@@ -102,6 +105,8 @@ public final class Helpers {
         final Parcel parcel = Parcel.obtain();
         payload.writeToParcel(parcel, 0);
         parcel.setDataPosition(0);
+        // execute all tasks posted to main looper (https://robolectric.org/blog/2019/06/04/paused-looper/)
+        shadowOf(getMainLooper()).idle();
         return creator.createFromParcel(parcel);
     }
 
