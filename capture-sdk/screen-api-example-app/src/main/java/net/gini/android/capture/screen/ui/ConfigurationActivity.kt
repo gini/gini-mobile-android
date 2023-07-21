@@ -96,6 +96,9 @@ class ConfigurationActivity : AppCompatActivity() {
         binding.switchFlashToggle.isChecked = configuration.isFlashToggleEnabled
         binding.switchFlashOnByDefault.isChecked = configuration.isFlashOnByDefault
         binding.switchShowBottomNavbar.isChecked = configuration.isBottomNavigationBarEnabled
+
+
+        binding.switchSupportedFormatsScreen.isChecked = configuration.isSupportedFormatsHelpScreenEnabled
     }
 
     private fun setConfigurationFeatures() {
@@ -181,6 +184,13 @@ class ConfigurationActivity : AppCompatActivity() {
         }
 
 
+        binding.switchSupportedFormatsScreen.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    isSupportedFormatsHelpScreenEnabled = isChecked
+                )
+            )
+        }
     }
 
 

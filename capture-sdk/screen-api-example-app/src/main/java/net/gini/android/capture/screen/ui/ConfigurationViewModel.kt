@@ -41,6 +41,7 @@ class ConfigurationViewModel @Inject constructor() : ViewModel() {
             .setFileImportEnabled(true)
             .setQRCodeScanningEnabled(configuration.isQrCodeEnabled)
             .setMultiPageEnabled(configuration.isMultiPageEnabled)
+        builder.setSupportedFormatsHelpScreenEnabled(configuration.isSupportedFormatsHelpScreenEnabled)
         builder.setFlashButtonEnabled(configuration.isFlashToggleEnabled)
         builder.setEventTracker(GiniCaptureEventTracker())
         builder.setCustomErrorLoggerListener(CustomErrorLoggerListener())

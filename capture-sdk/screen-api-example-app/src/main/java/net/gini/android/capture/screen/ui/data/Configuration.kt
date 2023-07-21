@@ -43,6 +43,8 @@ data class Configuration(
 //    net.gini.android.capture.GiniCapture.Builder#setShouldShowOnboardingAtFirstRun → on/off switch
     val isOnboardingAtFirstRunEnabled: Boolean = true,
 
+//    net.gini.android.capture.GiniCapture.Builder#setSupportedFormatsHelpScreenEnabled → on/off switch
+    val isSupportedFormatsHelpScreenEnabled: Boolean = true,
 
     /*
     net.gini.android.capture.GiniCapture.Builder#setDocumentImportEnabledFileTypes → radio buttons to select an available enum value
@@ -73,5 +75,5 @@ data class Configuration(
 
 
 
-    net.gini.android.capture.GiniCapture.Builder#setSupportedFormatsHelpScreenEnabled → on/off switch*/
+ */
 ) : Parcelable
