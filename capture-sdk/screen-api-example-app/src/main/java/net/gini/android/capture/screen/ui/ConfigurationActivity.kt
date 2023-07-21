@@ -124,6 +124,24 @@ class ConfigurationActivity : AppCompatActivity() {
         binding.switchOnboardingScreensAtEveryLaunch.isChecked =
             configuration.isOnboardingAtEveryLaunchEnabled
 
+        // 15 enable custom onboarding pages
+        binding.switchCustomOnboardingPages.isChecked =
+            configuration.isCustomOnboardingPagesEnabled
+        // 16 enable align corners onboarding pages
+        binding.switchCustomOnboardingAlignCornersPage.isChecked =
+            configuration.isAlignCornersInCustomOnboardingEnabled
+
+        // 17 enable lighting in custom onboarding pages
+        binding.switchCustomOnboardingLightingPage.isChecked =
+            configuration.isLightingInCustomOnboardingEnabled
+        // 18 enable QR code in custom onboarding pages
+        binding.switchCustomOnboardingQRCodePage.isChecked =
+            configuration.isQRCodeInCustomOnboardingEnabled
+        // 19 enable multi page in custom onboarding pages
+        binding.switchCustomOnboardingMultiPage.isChecked =
+            configuration.isMultiPageInCustomOnboardingEnabled
+
+
         binding.switchSupportedFormatsScreen.isChecked =
             configuration.isSupportedFormatsHelpScreenEnabled
     }
@@ -262,6 +280,47 @@ class ConfigurationActivity : AppCompatActivity() {
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(
                     isOnboardingAtEveryLaunchEnabled = isChecked
+                )
+            )
+        }
+
+        // 15 enable custom onboarding pages
+        binding.switchCustomOnboardingPages.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    isCustomOnboardingPagesEnabled = isChecked
+                )
+            )
+        }
+        // 16 enable align corners onboarding pages
+        binding.switchCustomOnboardingAlignCornersPage.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    isAlignCornersInCustomOnboardingEnabled = isChecked
+                )
+            )
+        }
+        // 17 enable lighting in custom onboarding pages
+        binding.switchCustomOnboardingLightingPage.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    isLightingInCustomOnboardingEnabled = isChecked
+                )
+            )
+        }
+        // 18 enable QR code in custom onboarding pages
+        binding.switchCustomOnboardingQRCodePage.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    isQRCodeInCustomOnboardingEnabled = isChecked
+                )
+            )
+        }
+        // 19 enable multi page in custom onboarding pages
+        binding.switchCustomOnboardingMultiPage.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    isMultiPageInCustomOnboardingEnabled = isChecked
                 )
             )
         }

@@ -56,25 +56,43 @@ data class Configuration(
     // 12 enable image picker screens custom bottom navigation bar
 
     // 13 enable onboarding screens at first launch
-    //    net.gini.android.capture.GiniCapture.Builder#setShouldShowOnboardingAtFirstRun → on/off switch
+//    net.gini.android.capture.GiniCapture.Builder#setShouldShowOnboardingAtFirstRun → on/off switch
     val isOnboardingAtFirstRunEnabled: Boolean = true,
 
     // 14 enable onboarding at every launch
-    //    net.gini.android.capture.GiniCapture.Builder#setShouldShowOnboarding → on/off switch
+//    net.gini.android.capture.GiniCapture.Builder#setShouldShowOnboarding → on/off switch
     val isOnboardingAtEveryLaunchEnabled: Boolean = false,
+
+    // 15 enable custom onboarding pages
+//    net.gini.android.capture.GiniCapture.Builder#setCustomOnboardingPages → on/off switch to show custom onboarding pages
+    val isCustomOnboardingPagesEnabled: Boolean = false,
+
+    // 16 enable align corners in custom onboarding pages
+//    net.gini.android.capture.GiniCapture.Builder#setOnboardingAlignCornersIllustrationAdapter
+    val isAlignCornersInCustomOnboardingEnabled: Boolean = false,
+
+    // 17 enable lighting in custom onboarding pages
+//    net.gini.android.capture.GiniCapture.Builder#setOnboardingLightingIllustrationAdapter
+    val isLightingInCustomOnboardingEnabled: Boolean = false,
+
+    // 18 enable QR code in custom onboarding pages
+//    net.gini.android.capture.GiniCapture.Builder#setOnboardingQRCodeIllustrationAdapter-> on/off switch to show custom adapter with animated illustrations
+    val isQRCodeInCustomOnboardingEnabled: Boolean = false,
+
+    // 19 enable multi page in custom onboarding pages
+//    net.gini.android.capture.GiniCapture.Builder#setOnboardingMultiPageIllustrationAdapter
+    val isMultiPageInCustomOnboardingEnabled: Boolean = false,
+
+    // 20 enable custom navigation bar in custom onboarding pages
+//    net.gini.android.capture.GiniCapture.Builder#setOnboardingNavigationBarBottomAdapter
+    val isCustomNavigationBarInCustomOnboardingEnabled: Boolean = false,
+
 
     val isEventTrackerEnabled: Boolean = true,
 
 
-    // net.gini.android.capture.GiniCapture.Builder#setCustomErrorLoggerListener → ignore
+//    net.gini.android.capture.GiniCapture.Builder#setCustomErrorLoggerListener → ignore
     //val setCustomErrorLoggerListener: ErrorLoggerListener? = null,
-
-    // net.gini.android.capture.GiniCapture.Builder#setCustomOnboardingPages → on/off switch to show custom onboarding pages
-    val isCustomOnboardingPagesEnabled: Boolean = true,
-
-
-
-
 
 
 //    net.gini.android.capture.GiniCapture.Builder#setSupportedFormatsHelpScreenEnabled → on/off switch
@@ -101,7 +119,6 @@ data class Configuration(
 
     net.gini.android.capture.GiniCapture.Builder#setNoResultsNavigationBarBottomAdapter →  on/off switch to show a custom adapter implementation
 
-    net.gini.android.capture.GiniCapture.Builder#setOnboardingAlignCornersIllustrationAdapternet.gini.android.capture.GiniCapture.Builder#setOnboardingLightingIllustrationAdapternet.gini.android.capture.GiniCapture.Builder#setOnboardingMultiPageIllustrationAdapternet.gini.android.capture.GiniCapture.Builder#setOnboardingNavigationBarBottomAdapternet.gini.android.capture.GiniCapture.Builder#setOnboardingQRCodeIllustrationAdapter-> on/off switch to show custom adapter with animated illustrations
 
     net.gini.android.capture.GiniCapture.Builder#setOnButtonLoadingIndicatorAdapter →  on/off switch to show a custom adapter implementation
 
