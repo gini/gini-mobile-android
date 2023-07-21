@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import net.gini.android.capture.DocumentImportEnabledFileTypes
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.help.HelpItem
 import net.gini.android.capture.logging.ErrorLog
@@ -37,6 +36,7 @@ class ConfigurationViewModel @Inject constructor() : ViewModel() {
     fun configureGiniCapture(builder: GiniCapture.Builder, intent: Intent) {
         val configuration = configurationFlow.value
         // 1 open with
+        builder.setFileImportEnabled(configuration.isFileImportEnabled)
 
         // 2 QR code scanning
         builder.setQRCodeScanningEnabled(configuration.isQrCodeEnabled)
@@ -50,7 +50,6 @@ class ConfigurationViewModel @Inject constructor() : ViewModel() {
         builder.setFlashOnByDefault(configuration.isFlashOnByDefault)
         // 7 set file import type
         builder
-            .setFileImportEnabled(true)
             .setDocumentImportEnabledFileTypes(configuration.documentImportEnabledFileTypes)
 
 

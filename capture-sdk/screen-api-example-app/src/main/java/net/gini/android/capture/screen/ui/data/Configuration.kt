@@ -9,6 +9,9 @@ import net.gini.android.capture.DocumentImportEnabledFileTypes
 data class Configuration(
     // net.gini.android.capture.GiniCapture.Builder#setBackButtonsEnabled → ignore (will be removed)
 
+    // 1 open with
+//    net.gini.android.capture.GiniCapture.Builder#setFileImportEnabled → on/off switch
+    val isFileImportEnabled: Boolean = true,
 
     // 2 QR code scanning
 //    net.gini.android.capture.GiniCapture.Builder#setOnlyQRCodeScanning → on/off switch
@@ -68,7 +71,6 @@ data class Configuration(
 
     net.gini.android.capture.GiniCapture.Builder#setEventTracker → ignore
 
-    net.gini.android.capture.GiniCapture.Builder#setFileImportEnabled → on/off switch
 
     net.gini.android.capture.GiniCapture.Builder#setGiniCaptureNetworkService → ignore
 

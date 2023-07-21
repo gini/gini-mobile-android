@@ -52,9 +52,6 @@ class ConfigurationActivity : AppCompatActivity() {
 
         setConfigurationFeatures()
         handleOnBackPressed()
-        /*binding.buttonCloseConfiguration.setOnClickListener {
-            returnToMainActivity()
-        }*/
     }
 
     private fun setupActionBar() {
@@ -88,7 +85,8 @@ class ConfigurationActivity : AppCompatActivity() {
     }
 
     private fun updateUIWithConfigurationObject(configuration: Configuration) {
-        //binding.switchOpenWith.isEnabled = configuration.isQrCodeEnabled
+        // 1 open with
+        binding.switchOpenWith.isChecked = configuration.isFileImportEnabled
         // 2 QR code scanning
         binding.switchQrCodeScanning.isChecked = configuration.isQrCodeEnabled
         // 3 only QR code scanning
@@ -116,9 +114,13 @@ class ConfigurationActivity : AppCompatActivity() {
     }
 
     private fun setConfigurationFeatures() {
-        //TODO: open with is not set yet!
+        // 1 open with
         binding.switchOpenWith.setOnCheckedChangeListener { _, isChecked ->
-
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    isFileImportEnabled = isChecked
+                )
+            )
         }
 
         // 2 QR code scanning
