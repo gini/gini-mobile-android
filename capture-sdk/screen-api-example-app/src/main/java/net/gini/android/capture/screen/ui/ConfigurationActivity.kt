@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
@@ -11,19 +12,20 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import net.gini.android.capture.internal.util.ActivityHelper.interceptOnBackPressed
 import net.gini.android.capture.screen.R
 import net.gini.android.capture.screen.databinding.ActivityConfigurationBinding
 import net.gini.android.capture.screen.ui.MainActivity.Companion.CONFIGURATION_BUNDLE
 import net.gini.android.capture.screen.ui.data.Configuration
 
+
 @AndroidEntryPoint
-class ConfigurationActivity : AppCompatActivity(R.layout.activity_configuration) {
+class ConfigurationActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityConfigurationBinding
     lateinit var configurationViewModel: ConfigurationViewModel
     // TODO: use viewModels and remove ViewModelProvider(this)[ConfigurationViewModel::class.java]
     //val configurationViewModel1 by viewModels<ConfigurationViewModel>()
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,7 +34,9 @@ class ConfigurationActivity : AppCompatActivity(R.layout.activity_configuration)
         setContentView(binding.root)
         configurationViewModel = ViewModelProvider(this)[ConfigurationViewModel::class.java]
 
-        configurationViewModel.setConfiguration(intent.getParcelableExtra(CONFIGURATION_BUNDLE) ?: Configuration())
+        configurationViewModel.setConfiguration(
+            intent.getParcelableExtra(CONFIGURATION_BUNDLE) ?: Configuration()
+        )
 
         setupActionBar()
 
@@ -46,6 +50,7 @@ class ConfigurationActivity : AppCompatActivity(R.layout.activity_configuration)
 
 
         setConfigurationFeatures()
+        handleOnBackPressed()
         /*binding.buttonCloseConfiguration.setOnClickListener {
             returnToMainActivity()
         }*/
@@ -56,8 +61,12 @@ class ConfigurationActivity : AppCompatActivity(R.layout.activity_configuration)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
-    override fun onBackPressed() {
-        returnToMainActivity()
+    private fun handleOnBackPressed() {
+        interceptOnBackPressed(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                returnToMainActivity()
+            }
+        })
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -71,7 +80,8 @@ class ConfigurationActivity : AppCompatActivity(R.layout.activity_configuration)
     }
 
     private fun returnToMainActivity() {
-        val returnIntent = Intent().putExtra(CONFIGURATION_BUNDLE, configurationViewModel.configurationFlow.value)
+        val returnIntent =
+            Intent().putExtra(CONFIGURATION_BUNDLE, configurationViewModel.configurationFlow.value)
         setResult(Activity.RESULT_OK, returnIntent)
         finish()
     }
@@ -95,26 +105,50 @@ class ConfigurationActivity : AppCompatActivity(R.layout.activity_configuration)
         }
 
         binding.switchQrCodeScanning.setOnCheckedChangeListener { _, isChecked ->
-            configurationViewModel.setConfiguration(configurationViewModel.configurationFlow.value.copy(isQrCodeEnabled = isChecked))
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    isQrCodeEnabled = isChecked
+                )
+            )
 
         }
         binding.switchOnlyQRCodeScanning.setOnCheckedChangeListener { _, isChecked ->
-            configurationViewModel.setConfiguration(configurationViewModel.configurationFlow.value.copy(isOnlyQrCodeEnabled = isChecked))
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    isOnlyQrCodeEnabled = isChecked
+                )
+            )
         }
         binding.switchMultiPage.setOnCheckedChangeListener { _, isChecked ->
-            configurationViewModel.setConfiguration(configurationViewModel.configurationFlow.value.copy(isMultiPageEnabled = isChecked))
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    isMultiPageEnabled = isChecked
+                )
+            )
         }
         binding.switchFlashToggle.setOnCheckedChangeListener { _, isChecked ->
-            configurationViewModel.setConfiguration(configurationViewModel.configurationFlow.value.copy(isFlashToggleEnabled = isChecked))
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    isFlashToggleEnabled = isChecked
+                )
+            )
         }
         binding.switchFlashOnByDefault.setOnCheckedChangeListener { _, isChecked ->
-            configurationViewModel.setConfiguration(configurationViewModel.configurationFlow.value.copy(isFlashOnByDefault = isChecked))
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    isFlashOnByDefault = isChecked
+                )
+            )
         }
         //TODO: implement file import functionality
 
 
         binding.switchShowBottomNavbar.setOnCheckedChangeListener { _, isChecked ->
-            configurationViewModel.setConfiguration(configurationViewModel.configurationFlow.value.copy(isBottomNavigationBarEnabled = isChecked))
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    isBottomNavigationBarEnabled = isChecked
+                )
+            )
         }
         binding.switchShowHelpScreenCustomBottomNavbar.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
@@ -124,9 +158,21 @@ class ConfigurationActivity : AppCompatActivity(R.layout.activity_configuration)
             )
         }
         binding.switchCameraScreenCustomBottomNavbar.setOnCheckedChangeListener { _, isChecked ->
-            configurationViewModel.setConfiguration(configurationViewModel.configurationFlow.value.copy(isCameraBottomNavBarEnabled = isChecked))
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    isCameraBottomNavBarEnabled = isChecked
+                )
+            )
         }
         binding.switchReviewScreenCustomBottomNavbar.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    isReviewScreenCustomBottomNavBarEnabled = isChecked
+                )
+            )
+        }
+
+        binding.switchImagePickerScreenCustomBottomNavbar.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(
                     isReviewScreenCustomBottomNavBarEnabled = isChecked
