@@ -1,5 +1,7 @@
 package net.gini.android.core.api.authorization
 
+import android.util.Base64
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -11,20 +13,21 @@ import net.gini.android.core.api.authorization.apimodels.SessionTokenInfo
 import net.gini.android.core.api.authorization.apimodels.UserRequestModel
 import net.gini.android.core.api.authorization.apimodels.UserResponseModel
 import okhttp3.ResponseBody
-import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert.*
 import org.junit.Test
+import org.junit.runner.RunWith
 import retrofit2.Response
 import java.util.UUID
 
 @OptIn(ExperimentalCoroutinesApi::class)
+@RunWith(AndroidJUnit4::class)
 class UserRemoteSourceTest {
 
     @Test
     fun `sets bearer authorization header with capital case 'Bearer' in createUser`() = runTest {
         val accessToken = UUID.randomUUID().toString()
-        val expectedAuthorizationHeader = "Bearer $accessToken"
-        verifyAuthorizationHeader(expectedAuthorizationHeader, this) {
+        val expectedHeaderValue = "Bearer $accessToken"
+        verifyHeader(name = "Authorization", value = expectedHeaderValue, testScope = this) {
             createUser(UserRequestModel(), accessToken)
         }
     }
@@ -32,8 +35,8 @@ class UserRemoteSourceTest {
     @Test
     fun `sets bearer authorization header with capital case 'Bearer' in getGiniApiSessionTokenInfo`() = runTest {
         val accessToken = UUID.randomUUID().toString()
-        val expectedAuthorizationHeader = "Bearer $accessToken"
-        verifyAuthorizationHeader(expectedAuthorizationHeader, this) {
+        val expectedHeaderValue = "Bearer $accessToken"
+        verifyHeader(name = "Authorization", value = expectedHeaderValue, testScope = this) {
             getGiniApiSessionTokenInfo("", accessToken)
         }
     }
@@ -41,8 +44,8 @@ class UserRemoteSourceTest {
     @Test
     fun `sets bearer authorization header with capital case 'Bearer' in getUserInfo`() = runTest {
         val accessToken = UUID.randomUUID().toString()
-        val expectedAuthorizationHeader = "Bearer $accessToken"
-        verifyAuthorizationHeader(expectedAuthorizationHeader, this) {
+        val expectedHeaderValue = "Bearer $accessToken"
+        verifyHeader(name = "Authorization", value = expectedHeaderValue, testScope = this) {
             getUserInfo("", accessToken)
         }
     }
@@ -50,21 +53,63 @@ class UserRemoteSourceTest {
     @Test
     fun `sets bearer authorization header with capital case 'Bearer' in updateEmail`() = runTest {
         val accessToken = UUID.randomUUID().toString()
-        val expectedAuthorizationHeader = "Bearer $accessToken"
-        verifyAuthorizationHeader(expectedAuthorizationHeader, this) {
+        val expectedHeaderValue = "Bearer $accessToken"
+        verifyHeader(name = "Authorization", value = expectedHeaderValue, testScope = this) {
             updateEmail("", UserRequestModel(), accessToken)
         }
     }
 
-    private inline fun verifyAuthorizationHeader(
-        expectedAuthorizationHeader: String,
+    @Test
+    fun `sets basic authorization header with capital case 'Basic' in signIn`() = runTest {
+        val clientId = "id"
+        val clientSecret = "secret"
+        val credentials = Base64.encodeToString("${clientId}:${clientSecret}".toByteArray(), Base64.NO_WRAP)
+        val expectedHeaderValue = "Basic $credentials"
+        verifyHeader(
+            name = "Authorization",
+            value = expectedHeaderValue,
+            clientId = clientId,
+            clientSecret = clientSecret,
+            testScope = this
+        ) {
+            signIn(UserRequestModel())
+        }
+    }
+
+    @Test
+    fun `sets basic authorization header with capital case 'Basic' in logInClient`() = runTest {
+        val clientId = "id"
+        val clientSecret = "secret"
+        val credentials = Base64.encodeToString("${clientId}:${clientSecret}".toByteArray(), Base64.NO_WRAP)
+        val expectedHeaderValue = "Basic $credentials"
+        verifyHeader(
+            name = "Authorization",
+            value = expectedHeaderValue,
+            clientId = clientId,
+            clientSecret = clientSecret,
+            testScope = this
+        ) {
+            loginClient()
+        }
+    }
+
+    private inline fun verifyHeader(
+        name: String,
+        value: String,
+        clientId: String = "",
+        clientSecret: String = "",
         testScope: TestScope,
         testBlock: UserRemoteSource.() -> Unit
     ) {
         // Given
-        val userServiceAuthInterceptor = UserServiceAuthInterceptor()
+        val userServiceInterceptor = UserServiceInterceptor()
         val testSubject =
-            UserRemoteSource(StandardTestDispatcher(testScope.testScheduler), userServiceAuthInterceptor, "", "")
+            UserRemoteSource(
+                StandardTestDispatcher(testScope.testScheduler),
+                userServiceInterceptor,
+                clientId,
+                clientSecret
+            )
 
         // When
         with(testSubject) {
@@ -73,31 +118,33 @@ class UserRemoteSourceTest {
         testScope.advanceUntilIdle()
 
         // Then
-        Truth.assertThat(userServiceAuthInterceptor.bearerAuthHeader).isNotNull()
-        Truth.assertThat(userServiceAuthInterceptor.bearerAuthHeader).isEqualTo(expectedAuthorizationHeader)
+        Truth.assertThat(userServiceInterceptor.headers[name]).isNotNull()
+        Truth.assertThat(userServiceInterceptor.headers[name]).isEqualTo(value)
     }
 
-    private class UserServiceAuthInterceptor : UserService {
+    private class UserServiceInterceptor : UserService {
 
-        var bearerAuthHeader: String? = null
+        var headers: Map<String, String> = emptyMap()
 
         override suspend fun signIn(
             basicAuthHeaders: Map<String, String>,
             userName: String,
             password: String
         ): Response<SessionToken> {
-            return Response.success(null)
+            headers = basicAuthHeaders
+            return Response.success(SessionToken("", "", 0))
         }
 
         override suspend fun loginClient(basicAuthHeaders: Map<String, String>): Response<SessionToken> {
-            return Response.success(null)
+            headers = basicAuthHeaders
+            return Response.success(SessionToken("", "", 0))
         }
 
         override suspend fun createUser(
             bearerHeaders: Map<String, String>,
             userRequestModel: UserRequestModel
         ): Response<ResponseBody> {
-            bearerAuthHeader = bearerHeaders["Authorization"]
+            headers = bearerHeaders
             return Response.success(null)
         }
 
@@ -105,12 +152,12 @@ class UserRemoteSourceTest {
             bearerHeaders: Map<String, String>,
             token: String
         ): Response<SessionTokenInfo> {
-            bearerAuthHeader = bearerHeaders["Authorization"]
+            headers = bearerHeaders
             return Response.success(SessionTokenInfo(""))
         }
 
         override suspend fun getUserInfo(bearerHeaders: Map<String, String>, uri: String): Response<UserResponseModel> {
-            bearerAuthHeader = bearerHeaders["Authorization"]
+            headers = bearerHeaders
             return Response.success(UserResponseModel())
         }
 
@@ -119,7 +166,7 @@ class UserRemoteSourceTest {
             userId: String,
             userRequestModel: UserRequestModel
         ): Response<ResponseBody> {
-            bearerAuthHeader = bearerHeaders["Authorization"]
+            headers = bearerHeaders
             return Response.success(null)
         }
 
