@@ -19,8 +19,10 @@ import net.gini.android.capture.tracking.EventTracker
 import net.gini.android.capture.tracking.OnboardingScreenEvent
 import net.gini.android.capture.tracking.ReviewScreenEvent
 import net.gini.android.capture.view.DefaultLoadingIndicatorAdapter
+import net.gini.android.capture.view.DefaultNavigationBarTopAdapter
 import net.gini.android.capture.view.DefaultOnButtonLoadingIndicatorAdapter
 import net.gini.android.capture.view.InjectedViewAdapterInstance
+import net.gini.android.capture.view.NavigationBarTopAdapter
 import org.slf4j.LoggerFactory
 import javax.inject.Inject
 
@@ -135,10 +137,15 @@ class ConfigurationViewModel @Inject constructor() : ViewModel() {
             builder.setCustomHelpItems(customHelpItems)
         }
 
+        // 25 enable custom navigation bar
+        if (configuration.isCustomNavBarEnabled)
+            builder.setNavigationBarTopAdapter(DefaultNavigationBarTopAdapter())
+
+
+
         builder.setEventTracker(GiniCaptureEventTracker())
         builder.setCustomErrorLoggerListener(CustomErrorLoggerListener())
         builder.setReviewBottomBarNavigationAdapter(DefaultReviewNavigationBarBottomAdapter())
-
 
 
 

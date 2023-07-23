@@ -103,14 +103,16 @@ data class Configuration(
 // net.gini.android.capture.GiniCapture.Builder#setCustomHelpItems → on/off switch to show a custom help item
     val isCustomHelpItemsEnabled: Boolean = false,
 
+    // 25 enable custom navigation bar
+//    net.gini.android.capture.GiniCapture.Builder#setNavigationBarTopAdapter →  on/off switch to show a custom adapter implementation
+    val isCustomNavBarEnabled: Boolean = false,
+
 
     val isEventTrackerEnabled: Boolean = true,
 
 
 //    net.gini.android.capture.GiniCapture.Builder#setCustomErrorLoggerListener → ignore
     //val setCustomErrorLoggerListener: ErrorLoggerListener? = null,
-
-
 
 
     /*

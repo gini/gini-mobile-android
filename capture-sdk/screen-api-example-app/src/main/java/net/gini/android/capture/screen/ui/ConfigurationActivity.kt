@@ -157,6 +157,10 @@ class ConfigurationActivity : AppCompatActivity() {
         // 24 enable custom help items
         binding.switchCustomHelpMenuItems.isChecked =
             configuration.isCustomHelpItemsEnabled
+
+        // 25 enable custom navigation bar
+        binding.switchCustomNavigationController.isChecked =
+            configuration.isCustomNavBarEnabled
     }
 
     private fun setConfigurationFeatures() {
@@ -372,6 +376,15 @@ class ConfigurationActivity : AppCompatActivity() {
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(
                     isCustomHelpItemsEnabled = isChecked
+                )
+            )
+        }
+
+        // 25 enable custom navigation bar
+        binding.switchCustomNavigationController.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    isCustomNavBarEnabled = isChecked
                 )
             )
         }
