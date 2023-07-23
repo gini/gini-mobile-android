@@ -170,6 +170,10 @@ class ConfigurationActivity : AppCompatActivity() {
         binding.switchGiniErrorLogger.isChecked =
             configuration.isGiniErrorLoggerEnabled
 
+        // 28 enable custom error logger
+        binding.switchCustomErrorLogger.isChecked =
+            configuration.isCustomErrorLoggerEnabled
+
     }
 
     private fun setConfigurationFeatures() {
@@ -412,6 +416,15 @@ class ConfigurationActivity : AppCompatActivity() {
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(
                     isGiniErrorLoggerEnabled = isChecked
+                )
+            )
+        }
+
+        // 28 enable custom error logger
+        binding.switchCustomErrorLogger.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    isCustomErrorLoggerEnabled = isChecked
                 )
             )
         }

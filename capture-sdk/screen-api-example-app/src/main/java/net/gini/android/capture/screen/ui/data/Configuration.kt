@@ -117,9 +117,10 @@ data class Configuration(
 //    net.gini.android.capture.GiniCapture.Builder#setGiniErrorLoggerIsOn → ignore
     val isGiniErrorLoggerEnabled: Boolean = true,
 
-
+    // 28 enable custom error logger
 //    net.gini.android.capture.GiniCapture.Builder#setCustomErrorLoggerListener → ignore
     //val setCustomErrorLoggerListener: ErrorLoggerListener? = null,
+    val isCustomErrorLoggerEnabled: Boolean = false,
 
 
     /*

@@ -35,76 +35,68 @@
                 android:id="@+id/divider2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gc_medium"
-                />
+                android:layout_marginTop="@dimen/gc_medium" />
 
 
             <com.google.android.material.switchmaterial.SwitchMaterial
-                style="@style/TextAppearance.MaterialComponents.Body1"
                 android:id="@+id/switch_openWith"
+                style="@style/TextAppearance.MaterialComponents.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/open_with_switch_label"
 
-                 />
-
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                style="@style/TextAppearance.MaterialComponents.Body1"
-                android:id="@+id/switch_qrCodeScanning"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/qr_code_scanning_switch_label"
-                 />
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                style="@style/TextAppearance.MaterialComponents.Body1"
-                android:id="@+id/switch_onlyQRCodeScanning"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/only_qr_code_scanning_switch_label"
                 />
+
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/switch_qrCodeScanning"
+                style="@style/TextAppearance.MaterialComponents.Body1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/qr_code_scanning_switch_label" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/switch_onlyQRCodeScanning"
+                style="@style/TextAppearance.MaterialComponents.Body1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/only_qr_code_scanning_switch_label" />
 
             <TextView
                 android:id="@+id/tv_onlyQrCodeDescription"
                 style="@style/TextAppearance.MaterialComponents.Caption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/only_qr_code_scanning_switch_description"
-                />
+                android:text="@string/only_qr_code_scanning_switch_description" />
 
             <com.google.android.material.switchmaterial.SwitchMaterial
-                style="@style/TextAppearance.MaterialComponents.Body1"
                 android:id="@+id/switch_multiPage"
+                style="@style/TextAppearance.MaterialComponents.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/gc_medium_12"
-                android:text="@string/multi_page_switch_label"
-                />
+                android:text="@string/multi_page_switch_label" />
 
             <com.google.android.material.switchmaterial.SwitchMaterial
-                style="@style/TextAppearance.MaterialComponents.Body1"
                 android:id="@+id/switch_flashToggle"
+                style="@style/TextAppearance.MaterialComponents.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/flash_toggle_switch_label"
-                />
+                android:text="@string/flash_toggle_switch_label" />
 
             <com.google.android.material.switchmaterial.SwitchMaterial
-                style="@style/TextAppearance.MaterialComponents.Body1"
                 android:id="@+id/switch_flashOnByDefault"
+                style="@style/TextAppearance.MaterialComponents.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/flash_on_by_default_switch_label"
-                />
+                android:text="@string/flash_on_by_default_switch_label" />
 
             <TextView
                 android:id="@+id/tv_flashOnByDefaultDescription"
                 style="@style/TextAppearance.MaterialComponents.Caption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/flash_on_by_default_switch_description"
-                />
+                android:text="@string/flash_on_by_default_switch_description" />
 
             <TextView
                 android:id="@+id/tv_fileImportLabel"
@@ -112,8 +104,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/gc_large"
-                android:text="@string/file_import_segmented_button_label"
-                />
+                android:text="@string/file_import_segmented_button_label" />
 
             <com.google.android.material.button.MaterialButtonToggleGroup
                 android:id="@+id/toggleBtn_fileImportSetup"
@@ -121,8 +112,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 app:selectionRequired="true"
-                app:singleSelection="true"
-                >
+                app:singleSelection="true">
 
                 <Button
                     android:id="@+id/btn_fileImportDisabled"
@@ -151,303 +141,277 @@
 
 
             <com.google.android.material.switchmaterial.SwitchMaterial
-                style="@style/TextAppearance.MaterialComponents.Body1"
                 android:id="@+id/switch_showBottomNavbar"
+                style="@style/TextAppearance.MaterialComponents.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/bottom_navbar_switch_label"
-                />
+                android:text="@string/bottom_navbar_switch_label" />
 
             <com.google.android.material.switchmaterial.SwitchMaterial
-                style="@style/TextAppearance.MaterialComponents.Body1"
                 android:id="@+id/switch_showHelpScreenCustomBottomNavbar"
+                style="@style/TextAppearance.MaterialComponents.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/help_screens_bottom_navbar_switch_label"
-                />
+                android:text="@string/help_screens_bottom_navbar_switch_label" />
 
             <TextView
                 android:id="@+id/tv_showHelpScreenCustomBottomNavbarDescription"
                 style="@style/TextAppearance.MaterialComponents.Caption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/custom_bottom_navbar_switch_description"
-                />
+                android:text="@string/custom_bottom_navbar_switch_description" />
 
             <com.google.android.material.switchmaterial.SwitchMaterial
-                style="@style/TextAppearance.MaterialComponents.Body1"
                 android:id="@+id/switch_cameraScreenCustomBottomNavbar"
+                style="@style/TextAppearance.MaterialComponents.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/gc_medium_12"
-                android:text="@string/camera_screen_custom_bottom_navbar_switch_label"
-                />
+                android:text="@string/camera_screen_custom_bottom_navbar_switch_label" />
 
             <TextView
                 android:id="@+id/tv_cameraScreenCustomBottomNavbarDescription"
                 style="@style/TextAppearance.MaterialComponents.Caption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/custom_bottom_navbar_switch_description"
-                />
+                android:text="@string/custom_bottom_navbar_switch_description" />
 
 
             <com.google.android.material.switchmaterial.SwitchMaterial
-                style="@style/TextAppearance.MaterialComponents.Body1"
                 android:id="@+id/switch_reviewScreenCustomBottomNavbar"
+                style="@style/TextAppearance.MaterialComponents.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/gc_medium_12"
-                android:text="@string/review_screen_custom_bottom_navbar_switch_label"
-                />
+                android:text="@string/review_screen_custom_bottom_navbar_switch_label" />
 
             <TextView
                 android:id="@+id/tv_reviewScreenCustomBottomNavbarDescription"
                 style="@style/TextAppearance.MaterialComponents.Caption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/custom_bottom_navbar_switch_description"
-                />
+                android:text="@string/custom_bottom_navbar_switch_description" />
 
 
             <com.google.android.material.switchmaterial.SwitchMaterial
-                style="@style/TextAppearance.MaterialComponents.Body1"
                 android:id="@+id/switch_imagePickerScreenCustomBottomNavbar"
+                style="@style/TextAppearance.MaterialComponents.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/gc_medium_12"
-                android:text="@string/image_picker_custom_bottom_navbar_switch_label"
-                />
+                android:text="@string/image_picker_custom_bottom_navbar_switch_label" />
 
             <TextView
                 android:id="@+id/tv_imagePickerCustomBottomNavbarDescription"
                 style="@style/TextAppearance.MaterialComponents.Caption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/custom_bottom_navbar_switch_description"
-                />
-
+                android:text="@string/custom_bottom_navbar_switch_description" />
 
 
             <com.google.android.material.switchmaterial.SwitchMaterial
-                style="@style/TextAppearance.MaterialComponents.Body1"
                 android:id="@+id/switch_onboardingScreensAtFirstRun"
+                style="@style/TextAppearance.MaterialComponents.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/gc_medium_12"
-                android:text="@string/onboarding_screens_at_first_launch_switch_label"
-                />
+                android:text="@string/onboarding_screens_at_first_launch_switch_label" />
 
 
             <com.google.android.material.switchmaterial.SwitchMaterial
-                style="@style/TextAppearance.MaterialComponents.Body1"
                 android:id="@+id/switch_onboardingScreensAtEveryLaunch"
+                style="@style/TextAppearance.MaterialComponents.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/gc_medium_12"
-                android:text="@string/onboarding_screens_at_every_launch_switch_label"
-                />
+                android:text="@string/onboarding_screens_at_every_launch_switch_label" />
 
             <TextView
                 android:id="@+id/tv_onboardingScreensAtEveryLaunchDescription"
                 style="@style/TextAppearance.MaterialComponents.Caption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/onboarding_screens_at_every_launch_switch_description"
-                />
+                android:text="@string/onboarding_screens_at_every_launch_switch_description" />
 
             <com.google.android.material.switchmaterial.SwitchMaterial
-                style="@style/TextAppearance.MaterialComponents.Body1"
                 android:id="@+id/switch_customOnboardingPages"
+                style="@style/TextAppearance.MaterialComponents.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/gc_medium_12"
-                android:text="@string/custom_onboarding_pages_switch_label"
-                />
+                android:text="@string/custom_onboarding_pages_switch_label" />
 
             <TextView
                 android:id="@+id/tv_customOnboardingPagesDescription"
                 style="@style/TextAppearance.MaterialComponents.Caption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/custom_onboarding_pages_switch_description"
-                />
+                android:text="@string/custom_onboarding_pages_switch_description" />
 
             <com.google.android.material.switchmaterial.SwitchMaterial
-                style="@style/TextAppearance.MaterialComponents.Body1"
                 android:id="@+id/switch_customOnboardingAlignCornersPage"
+                style="@style/TextAppearance.MaterialComponents.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/gc_medium_12"
-                android:text="@string/custom_onboarding_align_corners_page_switch_label"
-                />
+                android:text="@string/custom_onboarding_align_corners_page_switch_label" />
 
             <TextView
                 android:id="@+id/tv_customOnboardingAlignCornerPageDescription"
                 style="@style/TextAppearance.MaterialComponents.Caption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/custom_onboarding_pages_switch_description"
-                />
+                android:text="@string/custom_onboarding_pages_switch_description" />
 
 
             <com.google.android.material.switchmaterial.SwitchMaterial
-                style="@style/TextAppearance.MaterialComponents.Body1"
                 android:id="@+id/switch_customOnboardingLightingPage"
+                style="@style/TextAppearance.MaterialComponents.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/gc_medium_12"
-                android:text="@string/custom_onboarding_lighting_page_switch_label"
-                />
+                android:text="@string/custom_onboarding_lighting_page_switch_label" />
 
             <TextView
                 android:id="@+id/tv_customOnboardingLightingPageDescription"
                 style="@style/TextAppearance.MaterialComponents.Caption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/custom_onboarding_pages_switch_description"
-                />
+                android:text="@string/custom_onboarding_pages_switch_description" />
 
             <com.google.android.material.switchmaterial.SwitchMaterial
-                style="@style/TextAppearance.MaterialComponents.Body1"
                 android:id="@+id/switch_customOnboardingQRCodePage"
+                style="@style/TextAppearance.MaterialComponents.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/gc_medium_12"
-                android:text="@string/custom_onboarding_qr_code_page_switch_label"
-                />
+                android:text="@string/custom_onboarding_qr_code_page_switch_label" />
 
             <TextView
                 android:id="@+id/tv_customOnboardingQRCodePageDescription"
                 style="@style/TextAppearance.MaterialComponents.Caption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/custom_onboarding_pages_switch_description"
-                />
+                android:text="@string/custom_onboarding_pages_switch_description" />
 
 
             <com.google.android.material.switchmaterial.SwitchMaterial
-                style="@style/TextAppearance.MaterialComponents.Body1"
                 android:id="@+id/switch_customOnboardingMultiPage"
+                style="@style/TextAppearance.MaterialComponents.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/gc_medium_12"
-                android:text="@string/custom_onboarding_multi_page_switch_label"
-                />
+                android:text="@string/custom_onboarding_multi_page_switch_label" />
 
             <TextView
                 android:id="@+id/tv_customOnboardingMultiPageDescription"
                 style="@style/TextAppearance.MaterialComponents.Caption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/custom_onboarding_pages_switch_description"
-                />
+                android:text="@string/custom_onboarding_pages_switch_description" />
 
             <com.google.android.material.switchmaterial.SwitchMaterial
-                style="@style/TextAppearance.MaterialComponents.Body1"
                 android:id="@+id/switch_onboardingCustomNavBar"
+                style="@style/TextAppearance.MaterialComponents.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/gc_medium_12"
-                android:text="@string/onboarding_custom_bottom_nav_bar_switch_label"
-                />
+                android:text="@string/onboarding_custom_bottom_nav_bar_switch_label" />
 
             <TextView
                 android:id="@+id/tv_onboardingCustomNavBarDescription"
                 style="@style/TextAppearance.MaterialComponents.Caption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/onboarding_custom_bottom_nav_bar_switch_description"
-                />
+                android:text="@string/onboarding_custom_bottom_nav_bar_switch_description" />
 
             <com.google.android.material.switchmaterial.SwitchMaterial
-                style="@style/TextAppearance.MaterialComponents.Body1"
                 android:id="@+id/switch_buttonsCustomLoadingIndicator"
+                style="@style/TextAppearance.MaterialComponents.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/gc_medium_12"
-                android:text="@string/buttons_custom_loading_indicator_switch_label"
-                />
+                android:text="@string/buttons_custom_loading_indicator_switch_label" />
 
             <TextView
                 android:id="@+id/tv_buttonsCustomLoadingIndicatorDescription"
                 style="@style/TextAppearance.MaterialComponents.Caption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/buttons_custom_loading_indicator_switch_description"
-                />
+                android:text="@string/buttons_custom_loading_indicator_switch_description" />
 
 
             <com.google.android.material.switchmaterial.SwitchMaterial
-                style="@style/TextAppearance.MaterialComponents.Body1"
                 android:id="@+id/switch_screenCustomLoadingIndicator"
+                style="@style/TextAppearance.MaterialComponents.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/gc_medium_12"
-                android:text="@string/screen_custom_loading_indicator_switch_label"
-                />
+                android:text="@string/screen_custom_loading_indicator_switch_label" />
 
             <TextView
                 android:id="@+id/tv_screenCustomLoadingIndicatorDescription"
                 style="@style/TextAppearance.MaterialComponents.Caption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/screen_custom_loading_indicator_switch_description"
-                />
+                android:text="@string/screen_custom_loading_indicator_switch_description" />
 
             <com.google.android.material.switchmaterial.SwitchMaterial
-                style="@style/TextAppearance.MaterialComponents.Body1"
                 android:id="@+id/switch_supportedFormatsScreen"
+                style="@style/TextAppearance.MaterialComponents.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/gc_medium_12"
-                android:text="@string/supported_formats_screen_switch_label"
-                />
+                android:text="@string/supported_formats_screen_switch_label" />
 
             <TextView
                 android:id="@+id/tv_supportedFormatsScreenDescription"
                 style="@style/TextAppearance.MaterialComponents.Caption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/supported_formats_screen_switch_description"
-                />
+                android:text="@string/supported_formats_screen_switch_description" />
 
             <com.google.android.material.switchmaterial.SwitchMaterial
-                style="@style/TextAppearance.MaterialComponents.Body1"
                 android:id="@+id/switch_customHelpMenuItems"
+                style="@style/TextAppearance.MaterialComponents.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/gc_medium_12"
-                android:text="@string/help_custom_menu_items_switch_label"
-                />
+                android:text="@string/help_custom_menu_items_switch_label" />
 
             <com.google.android.material.switchmaterial.SwitchMaterial
-                style="@style/TextAppearance.MaterialComponents.Body1"
                 android:id="@+id/switch_customNavigationController"
+                style="@style/TextAppearance.MaterialComponents.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/gc_medium_12"
-                android:text="@string/custom_navigation_controller_switch_label"
-                />
+                android:text="@string/custom_navigation_controller_switch_label" />
 
 
             <com.google.android.material.switchmaterial.SwitchMaterial
-                style="@style/TextAppearance.MaterialComponents.Body1"
                 android:id="@+id/switch_eventTracker"
+                style="@style/TextAppearance.MaterialComponents.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/gc_medium_12"
-                android:text="@string/event_tracker_switch_label"
-                />
+                android:text="@string/event_tracker_switch_label" />
 
             <com.google.android.material.switchmaterial.SwitchMaterial
-                style="@style/TextAppearance.MaterialComponents.Body1"
                 android:id="@+id/switch_giniErrorLogger"
+                style="@style/TextAppearance.MaterialComponents.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/gc_medium_12"
-                android:text="@string/gini_error_switch_label"
-                />
+                android:text="@string/gini_error_switch_label" />
+
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/switch_customErrorLogger"
+                style="@style/TextAppearance.MaterialComponents.Body1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/gc_medium_12"
+                android:text="@string/custom_error_switch_label" />
 
 
         </LinearLayout>

@@ -158,7 +158,10 @@ class ConfigurationViewModel @Inject constructor() : ViewModel() {
         // 27 enable Gini error logger
         builder.setGiniErrorLoggerIsOn(configuration.isGiniErrorLoggerEnabled)
 
-        builder.setCustomErrorLoggerListener(CustomErrorLoggerListener())
+        //TODO: should we disable the Gini error logger when this one is enabled?
+        // 28 enable custom error logger
+        if (configuration.isCustomErrorLoggerEnabled)
+            builder.setCustomErrorLoggerListener(CustomErrorLoggerListener())
         builder.setReviewBottomBarNavigationAdapter(DefaultReviewNavigationBarBottomAdapter())
 
 
