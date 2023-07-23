@@ -166,6 +166,9 @@ class ConfigurationActivity : AppCompatActivity() {
         binding.switchEventTracker.isChecked =
             configuration.isEventTrackerEnabled
 
+        // 27 enable Gini error logger
+        binding.switchGiniErrorLogger.isChecked =
+            configuration.isGiniErrorLoggerEnabled
 
     }
 
@@ -400,6 +403,15 @@ class ConfigurationActivity : AppCompatActivity() {
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(
                     isEventTrackerEnabled = isChecked
+                )
+            )
+        }
+
+        // 27 enable Gini error logger
+        binding.switchGiniErrorLogger.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    isGiniErrorLoggerEnabled = isChecked
                 )
             )
         }

@@ -18,11 +18,8 @@ import net.gini.android.capture.tracking.Event
 import net.gini.android.capture.tracking.EventTracker
 import net.gini.android.capture.tracking.OnboardingScreenEvent
 import net.gini.android.capture.tracking.ReviewScreenEvent
-import net.gini.android.capture.view.DefaultLoadingIndicatorAdapter
 import net.gini.android.capture.view.DefaultNavigationBarTopAdapter
 import net.gini.android.capture.view.DefaultOnButtonLoadingIndicatorAdapter
-import net.gini.android.capture.view.InjectedViewAdapterInstance
-import net.gini.android.capture.view.NavigationBarTopAdapter
 import org.slf4j.LoggerFactory
 import javax.inject.Inject
 
@@ -158,6 +155,8 @@ class ConfigurationViewModel @Inject constructor() : ViewModel() {
         if (configuration.isEventTrackerEnabled)
             builder.setEventTracker(GiniCaptureEventTracker())
 
+        // 27 enable Gini error logger
+        builder.setGiniErrorLoggerIsOn(configuration.isGiniErrorLoggerEnabled)
 
         builder.setCustomErrorLoggerListener(CustomErrorLoggerListener())
         builder.setReviewBottomBarNavigationAdapter(DefaultReviewNavigationBarBottomAdapter())

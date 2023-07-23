@@ -89,6 +89,7 @@
     <string name="custom_navigation_controller_switch_label">Custom navigation controller</string>
 
     <string name="event_tracker_switch_label">Event tracker</string>
+    <string name="gini_error_switch_label">Gini error logger</string>
 
 
     <!-- String customization examples -->

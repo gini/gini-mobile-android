@@ -440,6 +440,15 @@
                 android:text="@string/event_tracker_switch_label"
                 />
 
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                style="@style/TextAppearance.MaterialComponents.Body1"
+                android:id="@+id/switch_giniErrorLogger"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/gc_medium_12"
+                android:text="@string/gini_error_switch_label"
+                />
+
 
         </LinearLayout>
 

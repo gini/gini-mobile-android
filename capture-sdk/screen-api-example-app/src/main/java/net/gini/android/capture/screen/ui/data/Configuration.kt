@@ -113,6 +113,10 @@ data class Configuration(
 //    net.gini.android.capture.GiniCapture.Builder#setEventTracker → ignore
     val isEventTrackerEnabled: Boolean = true,
 
+    // 27 enable Gini error logger
+//    net.gini.android.capture.GiniCapture.Builder#setGiniErrorLoggerIsOn → ignore
+    val isGiniErrorLoggerEnabled: Boolean = true,
+
 
 //    net.gini.android.capture.GiniCapture.Builder#setCustomErrorLoggerListener → ignore
     //val setCustomErrorLoggerListener: ErrorLoggerListener? = null,
@@ -126,7 +130,6 @@ data class Configuration(
 
     net.gini.android.capture.GiniCapture.Builder#setGiniCaptureNetworkService → ignore
 
-    net.gini.android.capture.GiniCapture.Builder#setGiniErrorLoggerIsOn → ignore
 
 
     net.gini.android.capture.GiniCapture.Builder#setImportedFileSizeBytesLimit → numeric text field
