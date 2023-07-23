@@ -88,8 +88,7 @@
     <string name="help_custom_menu_items_switch_label">Help custom menu items</string>
     <string name="custom_navigation_controller_switch_label">Custom navigation controller</string>
 
-    <string name="return_assistant_feature_switch_label">Return Assistant feature</string>
-    <string name="return_assistant_feature_switch_description">Present a digital representation of the invoice</string>
+    <string name="event_tracker_switch_label">Event tracker</string>
 
 
     <!-- String customization examples -->

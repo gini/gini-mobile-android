@@ -154,9 +154,11 @@ class ConfigurationViewModel @Inject constructor() : ViewModel() {
         if (configuration.isCustomNavBarEnabled)
             builder.setNavigationBarTopAdapter(DefaultNavigationBarTopAdapter())
 
+        // 26 enable event tracker
+        if (configuration.isEventTrackerEnabled)
+            builder.setEventTracker(GiniCaptureEventTracker())
 
 
-        builder.setEventTracker(GiniCaptureEventTracker())
         builder.setCustomErrorLoggerListener(CustomErrorLoggerListener())
         builder.setReviewBottomBarNavigationAdapter(DefaultReviewNavigationBarBottomAdapter())
 

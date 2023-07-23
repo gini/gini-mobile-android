@@ -433,19 +433,11 @@
 
             <com.google.android.material.switchmaterial.SwitchMaterial
                 style="@style/TextAppearance.MaterialComponents.Body1"
-                android:id="@+id/switch_returnAssistantFeature"
+                android:id="@+id/switch_eventTracker"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/gc_medium_12"
-                android:text="@string/return_assistant_feature_switch_label"
-                />
-
-            <TextView
-                android:id="@+id/tv_returnAssistantFeatureDescription"
-                style="@style/TextAppearance.MaterialComponents.Caption"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/return_assistant_feature_switch_description"
+                android:text="@string/event_tracker_switch_label"
                 />
 
 

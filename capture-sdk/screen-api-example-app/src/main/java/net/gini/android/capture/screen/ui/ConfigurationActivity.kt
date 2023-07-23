@@ -161,6 +161,12 @@ class ConfigurationActivity : AppCompatActivity() {
         // 25 enable custom navigation bar
         binding.switchCustomNavigationController.isChecked =
             configuration.isCustomNavBarEnabled
+
+        // 26 enable event tracker
+        binding.switchEventTracker.isChecked =
+            configuration.isEventTrackerEnabled
+
+
     }
 
     private fun setConfigurationFeatures() {
@@ -388,6 +394,17 @@ class ConfigurationActivity : AppCompatActivity() {
                 )
             )
         }
+
+        // 26 enable event tracker
+        binding.switchEventTracker.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    isEventTrackerEnabled = isChecked
+                )
+            )
+        }
+
+
     }
 
 

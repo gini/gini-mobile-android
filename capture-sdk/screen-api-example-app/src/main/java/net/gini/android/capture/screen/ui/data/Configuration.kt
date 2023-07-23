@@ -109,7 +109,8 @@ data class Configuration(
 //    net.gini.android.capture.GiniCapture.Builder#setNavigationBarTopAdapter →  on/off switch to show a custom adapter implementation
     val isCustomNavBarEnabled: Boolean = false,
 
-
+    // 26 enable event tracker
+//    net.gini.android.capture.GiniCapture.Builder#setEventTracker → ignore
     val isEventTrackerEnabled: Boolean = true,
 
 
@@ -121,7 +122,6 @@ data class Configuration(
 
     net.gini.android.capture.GiniCapture.Builder#setErrorNavigationBarBottomAdapter →  on/off switch to show a custom adapter implementation
 
-    net.gini.android.capture.GiniCapture.Builder#setEventTracker → ignore
 
 
     net.gini.android.capture.GiniCapture.Builder#setGiniCaptureNetworkService → ignore
