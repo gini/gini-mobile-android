@@ -3,6 +3,7 @@ package net.gini.android.capture.screen.ui.data
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 import net.gini.android.capture.DocumentImportEnabledFileTypes
+import net.gini.android.capture.internal.util.FileImportValidator
 
 
 @Parcelize
@@ -122,22 +123,18 @@ data class Configuration(
     //val setCustomErrorLoggerListener: ErrorLoggerListener? = null,
     val isCustomErrorLoggerEnabled: Boolean = false,
 
-
-    /*
-
-    net.gini.android.capture.GiniCapture.Builder#setErrorNavigationBarBottomAdapter →  on/off switch to show a custom adapter implementation
-
+    // 29 set imported file size bytes limit
+//    net.gini.android.capture.GiniCapture.Builder#setImportedFileSizeBytesLimit → numeric text field
+    val importedFileSizeBytesLimit: Int = FileImportValidator.FILE_SIZE_LIMIT
 
 
-    net.gini.android.capture.GiniCapture.Builder#setGiniCaptureNetworkService → ignore
+    //TODO: this one is not in the builder methods
+//    net.gini.android.capture.GiniCapture.Builder#setErrorNavigationBarBottomAdapter →  on/off switch to show a custom adapter implementation
 
+    //TODO: this one is set in the Dagger-Hilt at the beginning, what should happen to it?
+//    net.gini.android.capture.GiniCapture.Builder#setGiniCaptureNetworkService → ignore
 
+    //TODO: this one is not in the builder methods
+//    net.gini.android.capture.GiniCapture.Builder#setNoResultsNavigationBarBottomAdapter →  on/off switch to show a custom adapter implementation
 
-    net.gini.android.capture.GiniCapture.Builder#setImportedFileSizeBytesLimit → numeric text field
-
-
-
-    net.gini.android.capture.GiniCapture.Builder#setNoResultsNavigationBarBottomAdapter →  on/off switch to show a custom adapter implementation
-
- */
 ) : Parcelable

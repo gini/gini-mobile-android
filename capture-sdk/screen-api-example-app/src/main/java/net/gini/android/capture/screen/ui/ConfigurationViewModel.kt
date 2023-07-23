@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.help.HelpItem
+import net.gini.android.capture.internal.util.FileImportValidator
 import net.gini.android.capture.logging.ErrorLog
 import net.gini.android.capture.logging.ErrorLoggerListener
 import net.gini.android.capture.review.multipage.view.DefaultReviewNavigationBarBottomAdapter
@@ -162,6 +163,12 @@ class ConfigurationViewModel @Inject constructor() : ViewModel() {
         // 28 enable custom error logger
         if (configuration.isCustomErrorLoggerEnabled)
             builder.setCustomErrorLoggerListener(CustomErrorLoggerListener())
+
+        // 29 set imported file size bytes limit
+
+        if (configuration.importedFileSizeBytesLimit != FileImportValidator.FILE_SIZE_LIMIT && configuration.importedFileSizeBytesLimit <= 0)
+            builder.importedFileSizeBytesLimit = configuration.importedFileSizeBytesLimit
+
         builder.setReviewBottomBarNavigationAdapter(DefaultReviewNavigationBarBottomAdapter())
 
 

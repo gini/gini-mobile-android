@@ -3,9 +3,12 @@ package net.gini.android.capture.screen.ui
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.MenuItem
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -173,6 +176,11 @@ class ConfigurationActivity : AppCompatActivity() {
         // 28 enable custom error logger
         binding.switchCustomErrorLogger.isChecked =
             configuration.isCustomErrorLoggerEnabled
+
+        // 29 set imported file size bytes limit
+        binding.editTextImportedFileSizeBytesLimit.hint =
+            configuration.importedFileSizeBytesLimit.toString()
+
 
     }
 
@@ -427,6 +435,28 @@ class ConfigurationActivity : AppCompatActivity() {
                     isCustomErrorLoggerEnabled = isChecked
                 )
             )
+        }
+
+        //TODO: edit text does not change the configuration amount on exiting ConfigurationActivity
+        // 29 set imported file size bytes limit
+        binding.editTextImportedFileSizeBytesLimit.addTextChangedListener {
+            object : TextWatcher {
+                override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                }
+
+                override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                    configurationViewModel.setConfiguration(
+                        configurationViewModel.configurationFlow.value.copy(
+                            importedFileSizeBytesLimit = p0.toString().toInt()
+                        )
+                    )
+                }
+
+                override fun afterTextChanged(p0: Editable?) {
+                }
+
+            }
+
         }
 
 
