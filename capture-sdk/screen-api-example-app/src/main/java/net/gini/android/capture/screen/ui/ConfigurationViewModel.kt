@@ -120,6 +120,9 @@ class ConfigurationViewModel @Inject constructor() : ViewModel() {
             )
         }
 
+        // 23 enable supported format help screen
+        builder.setSupportedFormatsHelpScreenEnabled(configuration.isSupportedFormatsHelpScreenEnabled)
+
 
         builder.setEventTracker(GiniCaptureEventTracker())
         builder.setCustomErrorLoggerListener(CustomErrorLoggerListener())
@@ -136,7 +139,7 @@ class ConfigurationViewModel @Inject constructor() : ViewModel() {
 
 
 
-        builder.setSupportedFormatsHelpScreenEnabled(configuration.isSupportedFormatsHelpScreenEnabled)
+
         builder.build()
     }
 

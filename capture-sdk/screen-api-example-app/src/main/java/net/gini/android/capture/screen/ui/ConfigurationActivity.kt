@@ -150,6 +150,7 @@ class ConfigurationActivity : AppCompatActivity() {
         binding.switchScreenCustomLoadingIndicator.isChecked =
             configuration.isScreenCustomLoadingIndicatorEnabled
 
+        // 23 enable supported format help screen
         binding.switchSupportedFormatsScreen.isChecked =
             configuration.isSupportedFormatsHelpScreenEnabled
     }
@@ -349,6 +350,15 @@ class ConfigurationActivity : AppCompatActivity() {
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(
                     isScreenCustomLoadingIndicatorEnabled = isChecked
+                )
+            )
+        }
+
+        // 23 enable supported format help screen
+        binding.switchSupportedFormatsScreen.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    isSupportedFormatsHelpScreenEnabled = isChecked
                 )
             )
         }

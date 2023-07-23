@@ -95,6 +95,9 @@ data class Configuration(
     // 22 enable screen's custom loading indicator
     val isScreenCustomLoadingIndicatorEnabled: Boolean = false,
 
+    // 23 enable supported format help screen
+    //    net.gini.android.capture.GiniCapture.Builder#setSupportedFormatsHelpScreenEnabled → on/off switch
+    val isSupportedFormatsHelpScreenEnabled: Boolean = true,
 
     val isEventTrackerEnabled: Boolean = true,
 
@@ -103,8 +106,7 @@ data class Configuration(
     //val setCustomErrorLoggerListener: ErrorLoggerListener? = null,
 
 
-//    net.gini.android.capture.GiniCapture.Builder#setSupportedFormatsHelpScreenEnabled → on/off switch
-    val isSupportedFormatsHelpScreenEnabled: Boolean = true,
+
 
     /*
 
