@@ -92,6 +92,10 @@ data class Configuration(
 //    net.gini.android.capture.GiniCapture.Builder#setOnButtonLoadingIndicatorAdapter →  on/off switch to show a custom adapter implementation
     val isButtonsCustomLoadingIndicatorEnabled: Boolean = false,
 
+    // 22 enable screen's custom loading indicator
+    val isScreenCustomLoadingIndicatorEnabled: Boolean = false,
+
+
     val isEventTrackerEnabled: Boolean = true,
 
 

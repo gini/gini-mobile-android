@@ -146,6 +146,10 @@ class ConfigurationActivity : AppCompatActivity() {
         binding.switchButtonsCustomLoadingIndicator.isChecked =
             configuration.isButtonsCustomLoadingIndicatorEnabled
 
+        // 22 enable screen's custom loading indicator
+        binding.switchScreenCustomLoadingIndicator.isChecked =
+            configuration.isScreenCustomLoadingIndicatorEnabled
+
         binding.switchSupportedFormatsScreen.isChecked =
             configuration.isSupportedFormatsHelpScreenEnabled
     }
@@ -336,6 +340,15 @@ class ConfigurationActivity : AppCompatActivity() {
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(
                     isButtonsCustomLoadingIndicatorEnabled = isChecked
+                )
+            )
+        }
+
+        // 22 enable screen's custom loading indicator
+        binding.switchScreenCustomLoadingIndicator.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    isScreenCustomLoadingIndicatorEnabled = isChecked
                 )
             )
         }

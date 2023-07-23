@@ -106,6 +106,13 @@ class ConfigurationViewModel @Inject constructor() : ViewModel() {
 
         // 21 enable button's custom loading indicator
         if (configuration.isButtonsCustomLoadingIndicatorEnabled) {
+            builder.setOnButtonLoadingIndicatorAdapter(
+                DefaultOnButtonLoadingIndicatorAdapter()
+            )
+        }
+
+        // 22 enable screen's custom loading indicator
+        if (configuration.isScreenCustomLoadingIndicatorEnabled) {
             builder.setLoadingIndicatorAdapter(
                 CustomLottiLoadingIndicatorAdapter(
                     R.raw.custom_loading
@@ -113,10 +120,11 @@ class ConfigurationViewModel @Inject constructor() : ViewModel() {
             )
         }
 
+
         builder.setEventTracker(GiniCaptureEventTracker())
         builder.setCustomErrorLoggerListener(CustomErrorLoggerListener())
         builder.setReviewBottomBarNavigationAdapter(DefaultReviewNavigationBarBottomAdapter())
-        builder.setLoadingIndicatorAdapter(DefaultLoadingIndicatorAdapter())
+        //builder.setLoadingIndicatorAdapter(DefaultLoadingIndicatorAdapter())
         val customHelpItems: MutableList<HelpItem.Custom> = ArrayList()
         customHelpItems.add(
             HelpItem.Custom(
