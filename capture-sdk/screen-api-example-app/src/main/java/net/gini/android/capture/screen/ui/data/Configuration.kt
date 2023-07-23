@@ -88,6 +88,10 @@ data class Configuration(
     val isCustomNavigationBarInCustomOnboardingEnabled: Boolean = false,
 
 
+    // 21 enable button's custom loading indicator
+//    net.gini.android.capture.GiniCapture.Builder#setOnButtonLoadingIndicatorAdapter →  on/off switch to show a custom adapter implementation
+    val isButtonsCustomLoadingIndicatorEnabled: Boolean = false,
+
     val isEventTrackerEnabled: Boolean = true,
 
 
@@ -120,7 +124,6 @@ data class Configuration(
     net.gini.android.capture.GiniCapture.Builder#setNoResultsNavigationBarBottomAdapter →  on/off switch to show a custom adapter implementation
 
 
-    net.gini.android.capture.GiniCapture.Builder#setOnButtonLoadingIndicatorAdapter →  on/off switch to show a custom adapter implementation
 
 
 

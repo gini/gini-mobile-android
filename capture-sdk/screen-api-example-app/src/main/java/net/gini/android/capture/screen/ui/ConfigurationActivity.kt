@@ -140,7 +140,11 @@ class ConfigurationActivity : AppCompatActivity() {
         // 19 enable multi page in custom onboarding pages
         binding.switchCustomOnboardingMultiPage.isChecked =
             configuration.isMultiPageInCustomOnboardingEnabled
+        // 20 enable custom navigation bar in custom onboarding pages
 
+        // 21 enable button's custom loading indicator
+        binding.switchButtonsCustomLoadingIndicator.isChecked =
+            configuration.isButtonsCustomLoadingIndicatorEnabled
 
         binding.switchSupportedFormatsScreen.isChecked =
             configuration.isSupportedFormatsHelpScreenEnabled
@@ -321,6 +325,17 @@ class ConfigurationActivity : AppCompatActivity() {
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(
                     isMultiPageInCustomOnboardingEnabled = isChecked
+                )
+            )
+        }
+        // 20 enable custom navigation bar in custom onboarding pages
+
+
+        // 21 enable button's custom loading indicator
+        binding.switchButtonsCustomLoadingIndicator.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    isButtonsCustomLoadingIndicatorEnabled = isChecked
                 )
             )
         }

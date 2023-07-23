@@ -19,6 +19,8 @@ import net.gini.android.capture.tracking.EventTracker
 import net.gini.android.capture.tracking.OnboardingScreenEvent
 import net.gini.android.capture.tracking.ReviewScreenEvent
 import net.gini.android.capture.view.DefaultLoadingIndicatorAdapter
+import net.gini.android.capture.view.DefaultOnButtonLoadingIndicatorAdapter
+import net.gini.android.capture.view.InjectedViewAdapterInstance
 import org.slf4j.LoggerFactory
 import javax.inject.Inject
 
@@ -100,6 +102,17 @@ class ConfigurationViewModel @Inject constructor() : ViewModel() {
             }
 
         }
+        // 20 enable custom navigation bar in custom onboarding pages
+
+        // 21 enable button's custom loading indicator
+        if (configuration.isButtonsCustomLoadingIndicatorEnabled) {
+            builder.setLoadingIndicatorAdapter(
+                CustomLottiLoadingIndicatorAdapter(
+                    R.raw.custom_loading
+                )
+            )
+        }
+
         builder.setEventTracker(GiniCaptureEventTracker())
         builder.setCustomErrorLoggerListener(CustomErrorLoggerListener())
         builder.setReviewBottomBarNavigationAdapter(DefaultReviewNavigationBarBottomAdapter())
@@ -113,13 +126,7 @@ class ConfigurationViewModel @Inject constructor() : ViewModel() {
         )
         builder.setCustomHelpItems(customHelpItems)
 
-        if (/*customLoadingAnimationSwitch!!.isChecked*/true) {
-            builder.setLoadingIndicatorAdapter(
-                CustomLottiLoadingIndicatorAdapter(
-                    R.raw.custom_loading
-                )
-            )
-        }
+
 
         builder.setSupportedFormatsHelpScreenEnabled(configuration.isSupportedFormatsHelpScreenEnabled)
         builder.build()
