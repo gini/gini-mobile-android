@@ -56,14 +56,23 @@ class ConfigurationViewModel @Inject constructor() : ViewModel() {
         builder.setDocumentImportEnabledFileTypes(configuration.documentImportEnabledFileTypes)
         // 8 enable bottom navigation bar
         builder.setBottomNavigationBarEnabled(configuration.isBottomNavigationBarEnabled)
+
+        //TODO: should be implemented
         // 9 enable Help screens custom bottom navigation bar
         //builder.setHelpNavigationBarBottomAdapter()
+
+        //TODO: should be implemented
         // 10 enable camera screens custom bottom navigation bar
         //builder.setCameraNavigationBarBottomAdapter()
+
+        //TODO: should be implemented
         // 11 enable review screens custom bottom navigation bar
         //builder.setReviewBottomBarNavigationAdapter()
+
+        //TODO: should be implemented
         // 12 enable image picker screens custom bottom navigation bar
         //builder.()
+
         // 13 enable onboarding screens at first launch
         builder.setShouldShowOnboardingAtFirstRun(configuration.isOnboardingAtFirstRunEnabled)
         // 14 enable onboarding at every launch
@@ -104,8 +113,11 @@ class ConfigurationViewModel @Inject constructor() : ViewModel() {
             }
 
         }
+
+        //TODO: should be implemented
         // 20 enable custom navigation bar in custom onboarding pages
 
+        //TODO: should use a custom adapter
         // 21 enable button's custom loading indicator
         if (configuration.isButtonsCustomLoadingIndicatorEnabled) {
             builder.setOnButtonLoadingIndicatorAdapter(
@@ -137,6 +149,7 @@ class ConfigurationViewModel @Inject constructor() : ViewModel() {
             builder.setCustomHelpItems(customHelpItems)
         }
 
+        //TODO: should be replaced with a custom adapter
         // 25 enable custom navigation bar
         if (configuration.isCustomNavBarEnabled)
             builder.setNavigationBarTopAdapter(DefaultNavigationBarTopAdapter())
