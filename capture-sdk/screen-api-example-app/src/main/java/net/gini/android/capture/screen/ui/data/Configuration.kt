@@ -42,7 +42,7 @@ data class Configuration(
     val isBottomNavigationBarEnabled: Boolean = true,
 
     // 9 enable Help screens custom bottom navigation bar
-// net.gini.android.capture.GiniCapture.Builder#setCustomHelpItems → on/off switch to show a custom help item
+//    net.gini.android.capture.GiniCapture.Builder#setHelpNavigationBarBottomAdapter →  on/off switch to show a custom adapter implementation
     val isHelpScreensCustomBottomNavBarEnabled: Boolean = true,
 
     // 10 enable camera screens custom bottom navigation bar
@@ -99,6 +99,11 @@ data class Configuration(
     //    net.gini.android.capture.GiniCapture.Builder#setSupportedFormatsHelpScreenEnabled → on/off switch
     val isSupportedFormatsHelpScreenEnabled: Boolean = true,
 
+    // 24 enable custom help items
+// net.gini.android.capture.GiniCapture.Builder#setCustomHelpItems → on/off switch to show a custom help item
+    val isCustomHelpItemsEnabled: Boolean = false,
+
+
     val isEventTrackerEnabled: Boolean = true,
 
 
@@ -119,7 +124,6 @@ data class Configuration(
 
     net.gini.android.capture.GiniCapture.Builder#setGiniErrorLoggerIsOn → ignore
 
-    net.gini.android.capture.GiniCapture.Builder#setHelpNavigationBarBottomAdapter →  on/off switch to show a custom adapter implementation
 
     net.gini.android.capture.GiniCapture.Builder#setImportedFileSizeBytesLimit → numeric text field
 

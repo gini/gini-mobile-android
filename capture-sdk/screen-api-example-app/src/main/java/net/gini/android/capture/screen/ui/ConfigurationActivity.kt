@@ -153,6 +153,10 @@ class ConfigurationActivity : AppCompatActivity() {
         // 23 enable supported format help screen
         binding.switchSupportedFormatsScreen.isChecked =
             configuration.isSupportedFormatsHelpScreenEnabled
+
+        // 24 enable custom help items
+        binding.switchCustomHelpMenuItems.isChecked =
+            configuration.isCustomHelpItemsEnabled
     }
 
     private fun setConfigurationFeatures() {
@@ -359,6 +363,15 @@ class ConfigurationActivity : AppCompatActivity() {
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(
                     isSupportedFormatsHelpScreenEnabled = isChecked
+                )
+            )
+        }
+
+        // 24 enable custom help items
+        binding.switchCustomHelpMenuItems.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    isCustomHelpItemsEnabled = isChecked
                 )
             )
         }

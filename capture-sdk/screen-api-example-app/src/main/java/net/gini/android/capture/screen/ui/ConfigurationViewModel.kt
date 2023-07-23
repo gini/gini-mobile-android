@@ -123,19 +123,22 @@ class ConfigurationViewModel @Inject constructor() : ViewModel() {
         // 23 enable supported format help screen
         builder.setSupportedFormatsHelpScreenEnabled(configuration.isSupportedFormatsHelpScreenEnabled)
 
+        // 24 enable custom help items
+        if (configuration.isCustomHelpItemsEnabled) {
+            val customHelpItems: MutableList<HelpItem.Custom> = ArrayList()
+            customHelpItems.add(
+                HelpItem.Custom(
+                    R.string.custom_help_screen_title,
+                    intent
+                )
+            )
+            builder.setCustomHelpItems(customHelpItems)
+        }
 
         builder.setEventTracker(GiniCaptureEventTracker())
         builder.setCustomErrorLoggerListener(CustomErrorLoggerListener())
         builder.setReviewBottomBarNavigationAdapter(DefaultReviewNavigationBarBottomAdapter())
-        //builder.setLoadingIndicatorAdapter(DefaultLoadingIndicatorAdapter())
-        val customHelpItems: MutableList<HelpItem.Custom> = ArrayList()
-        customHelpItems.add(
-            HelpItem.Custom(
-                R.string.custom_help_screen_title,
-                intent
-            )
-        )
-        builder.setCustomHelpItems(customHelpItems)
+
 
 
 
