@@ -93,14 +93,16 @@ data class Configuration(
     val isButtonsCustomLoadingIndicatorEnabled: Boolean = false,
 
     // 22 enable screen's custom loading indicator
+//    net.gini.android.capture.GiniCapture.Builder#setLoadingIndicatorAdapter →  on/off switch to show a custom adapter implementation
+
     val isScreenCustomLoadingIndicatorEnabled: Boolean = false,
 
     // 23 enable supported format help screen
-    //    net.gini.android.capture.GiniCapture.Builder#setSupportedFormatsHelpScreenEnabled → on/off switch
+//    net.gini.android.capture.GiniCapture.Builder#setSupportedFormatsHelpScreenEnabled → on/off switch
     val isSupportedFormatsHelpScreenEnabled: Boolean = true,
 
     // 24 enable custom help items
-// net.gini.android.capture.GiniCapture.Builder#setCustomHelpItems → on/off switch to show a custom help item
+//    net.gini.android.capture.GiniCapture.Builder#setCustomHelpItems → on/off switch to show a custom help item
     val isCustomHelpItemsEnabled: Boolean = false,
 
     // 25 enable custom navigation bar
@@ -129,15 +131,9 @@ data class Configuration(
 
     net.gini.android.capture.GiniCapture.Builder#setImportedFileSizeBytesLimit → numeric text field
 
-    net.gini.android.capture.GiniCapture.Builder#setLoadingIndicatorAdapter →  on/off switch to show a custom adapter implementation
 
-    net.gini.android.capture.GiniCapture.Builder#setNavigationBarTopAdapter →  on/off switch to show a custom adapter implementation
 
     net.gini.android.capture.GiniCapture.Builder#setNoResultsNavigationBarBottomAdapter →  on/off switch to show a custom adapter implementation
-
-
-
-
 
  */
 ) : Parcelable
