@@ -90,7 +90,7 @@ dependencies {
     //implementation "net.gini.android:gini-capture-sdk-default-network:0.0.1"
 
     implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.activity)
+    implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.coordinatorlayout)
     implementation(libs.androidx.multidex)
     implementation(libs.dexter)

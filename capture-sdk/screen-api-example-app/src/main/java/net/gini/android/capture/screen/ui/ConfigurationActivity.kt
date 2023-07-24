@@ -3,17 +3,12 @@ package net.gini.android.capture.screen.ui
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.Selection.setSelection
-import android.text.TextWatcher
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.widget.addTextChangedListener
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
@@ -30,16 +25,13 @@ import net.gini.android.capture.screen.ui.data.Configuration
 class ConfigurationActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityConfigurationBinding
-    lateinit var configurationViewModel: ConfigurationViewModel
-    // TODO: use viewModels and remove ViewModelProvider(this)[ConfigurationViewModel::class.java]
-    //val configurationViewModel1 by viewModels<ConfigurationViewModel>()
 
+    private val configurationViewModel: ConfigurationViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityConfigurationBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        configurationViewModel = ViewModelProvider(this)[ConfigurationViewModel::class.java]
 
         configurationViewModel.setConfiguration(
             intent.getParcelableExtra(CONFIGURATION_BUNDLE) ?: Configuration()
@@ -54,7 +46,6 @@ class ConfigurationActivity : AppCompatActivity() {
                 }
             }
         }
-
 
         setConfigurationFeatures()
         handleOnBackPressed()
@@ -131,8 +122,7 @@ class ConfigurationActivity : AppCompatActivity() {
             configuration.isOnboardingAtEveryLaunchEnabled
 
         // 15 enable custom onboarding pages
-        binding.switchCustomOnboardingPages.isChecked =
-            configuration.isCustomOnboardingPagesEnabled
+        binding.switchCustomOnboardingPages.isChecked = configuration.isCustomOnboardingPagesEnabled
         // 16 enable align corners onboarding pages
         binding.switchCustomOnboardingAlignCornersPage.isChecked =
             configuration.isAlignCornersInCustomOnboardingEnabled
@@ -161,29 +151,23 @@ class ConfigurationActivity : AppCompatActivity() {
             configuration.isSupportedFormatsHelpScreenEnabled
 
         // 24 enable custom help items
-        binding.switchCustomHelpMenuItems.isChecked =
-            configuration.isCustomHelpItemsEnabled
+        binding.switchCustomHelpMenuItems.isChecked = configuration.isCustomHelpItemsEnabled
 
         // 25 enable custom navigation bar
-        binding.switchCustomNavigationController.isChecked =
-            configuration.isCustomNavBarEnabled
+        binding.switchCustomNavigationController.isChecked = configuration.isCustomNavBarEnabled
 
         // 26 enable event tracker
-        binding.switchEventTracker.isChecked =
-            configuration.isEventTrackerEnabled
+        binding.switchEventTracker.isChecked = configuration.isEventTrackerEnabled
 
         // 27 enable Gini error logger
-        binding.switchGiniErrorLogger.isChecked =
-            configuration.isGiniErrorLoggerEnabled
+        binding.switchGiniErrorLogger.isChecked = configuration.isGiniErrorLoggerEnabled
 
         // 28 enable custom error logger
-        binding.switchCustomErrorLogger.isChecked =
-            configuration.isCustomErrorLoggerEnabled
+        binding.switchCustomErrorLogger.isChecked = configuration.isCustomErrorLoggerEnabled
 
         // 29 set imported file size bytes limit
-        binding.editTextImportedFileSizeBytesLimit.hint = configuration.importedFileSizeBytesLimit.toString()
-
-
+        binding.editTextImportedFileSizeBytesLimit.hint =
+            configuration.importedFileSizeBytesLimit.toString()
     }
 
     private fun setConfigurationFeatures() {
@@ -442,6 +426,5 @@ class ConfigurationActivity : AppCompatActivity() {
         }
 
     }
-
 
 }
