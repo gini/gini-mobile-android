@@ -12,6 +12,7 @@ import net.gini.android.capture.logging.ErrorLog
 import net.gini.android.capture.logging.ErrorLoggerListener
 import net.gini.android.capture.review.multipage.view.DefaultReviewNavigationBarBottomAdapter
 import net.gini.android.capture.screen.R
+import net.gini.android.capture.screen.ui.adapters.CustomCameraNavigationBarBottomAdapter
 import net.gini.android.capture.screen.ui.adapters.CustomHelpNavigationBarBottomAdapter
 import net.gini.android.capture.screen.ui.data.Configuration
 import net.gini.android.capture.tracking.AnalysisScreenEvent
@@ -59,9 +60,9 @@ class ConfigurationViewModel @Inject constructor() : ViewModel() {
         // 9 enable Help screens custom bottom navigation bar
         builder.setHelpNavigationBarBottomAdapter(CustomHelpNavigationBarBottomAdapter())
 
-        //TODO: should be implemented
         // 10 enable camera screens custom bottom navigation bar
-        //builder.setCameraNavigationBarBottomAdapter()
+        if (configuration.isCameraBottomNavBarEnabled)
+            builder.setCameraNavigationBarBottomAdapter(CustomCameraNavigationBarBottomAdapter())
 
         //TODO: should be implemented
         // 11 enable review screens custom bottom navigation bar
