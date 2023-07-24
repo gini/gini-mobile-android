@@ -163,7 +163,7 @@ class ConfigurationViewModel @Inject constructor() : ViewModel() {
 
         // 29 set imported file size bytes limit
 
-        if (configuration.importedFileSizeBytesLimit != FileImportValidator.FILE_SIZE_LIMIT && configuration.importedFileSizeBytesLimit <= 0)
+        if (configuration.importedFileSizeBytesLimit != FileImportValidator.FILE_SIZE_LIMIT && configuration.importedFileSizeBytesLimit >= 0)
             builder.importedFileSizeBytesLimit = configuration.importedFileSizeBytesLimit
 
         builder.setReviewBottomBarNavigationAdapter(DefaultReviewNavigationBarBottomAdapter())

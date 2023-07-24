@@ -398,19 +398,28 @@
                 android:layout_marginTop="@dimen/gc_medium_12"
                 android:text="@string/custom_error_switch_label" />
 
+            <TextView
+                android:id="@+id/textView_importedFileSizeBytesLimitTitle"
+                style="@style/TextAppearance.MaterialComponents.Body1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/imported_file_size_bytes_limit"
+                android:layout_marginTop="@dimen/gc_medium_12"
+                app:layout_constraintTop_toTopOf="parent" />
+
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/textInputLayout_importedFileSizeBytesLimit"
                 style="?attr/textInputOutlinedStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:hint="Hint">
+                >
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/editText_importedFileSizeBytesLimit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="18sp"
                     android:textColor="@drawable/edittext_selector"
-                    android:inputType="text"
+                    android:inputType="number"
                     android:maxLines="1"
                     tools:text="Hello@World and stuff and foo and bar and whatchamacallit"/>
             </com.google.android.material.textfield.TextInputLayout>
