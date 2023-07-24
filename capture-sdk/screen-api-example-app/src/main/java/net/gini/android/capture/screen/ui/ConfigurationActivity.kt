@@ -88,7 +88,7 @@ class ConfigurationActivity : AppCompatActivity() {
     }
 
     private fun updateUIWithConfigurationObject(configuration: Configuration) {
-        // 1 open with
+        // 1 file import
         binding.switchOpenWith.isChecked = configuration.isFileImportEnabled
         // 2 QR code scanning
         binding.switchQrCodeScanning.isChecked = configuration.isQrCodeEnabled
@@ -117,7 +117,7 @@ class ConfigurationActivity : AppCompatActivity() {
 
         // 11 enable review screens custom bottom navigation bar
 
-        // 12 enable image picker screens custom bottom navigation bar
+        // 12 enable image picker screens custom bottom navigation bar -> was implemented on iOS, not needed for Android
 
         // 13 enable onboarding screens at first launch
         binding.switchOnboardingScreensAtFirstRun.isChecked =
@@ -185,7 +185,7 @@ class ConfigurationActivity : AppCompatActivity() {
     }
 
     private fun setConfigurationFeatures() {
-        // 1 open with
+        // 1 file import
         binding.switchOpenWith.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(
@@ -295,14 +295,7 @@ class ConfigurationActivity : AppCompatActivity() {
             )
         }
 
-        // 12 enable image picker screens custom bottom navigation bar
-        binding.switchImagePickerScreenCustomBottomNavbar.setOnCheckedChangeListener { _, isChecked ->
-            configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    isReviewScreenCustomBottomNavBarEnabled = isChecked
-                )
-            )
-        }
+        // 12 enable image picker screens custom bottom navigation bar -> was implemented on iOS, not needed for Android
 
         // 13 enable onboarding screens at first launch
         binding.switchOnboardingScreensAtFirstRun.setOnCheckedChangeListener { _, isChecked ->

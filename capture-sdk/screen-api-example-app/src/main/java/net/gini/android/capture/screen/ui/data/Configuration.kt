@@ -10,7 +10,7 @@ import net.gini.android.capture.internal.util.FileImportValidator
 data class Configuration(
     // net.gini.android.capture.GiniCapture.Builder#setBackButtonsEnabled → ignore (will be removed)
 
-    // 1 open with
+    // 1 file import
 //    net.gini.android.capture.GiniCapture.Builder#setFileImportEnabled → on/off switch
     val isFileImportEnabled: Boolean = true,
 
@@ -54,7 +54,7 @@ data class Configuration(
 //    net.gini.android.capture.GiniCapture.Builder#setReviewBottomBarNavigationAdapter →  on/off switch to show a custom adapter implementation
     val isReviewScreenCustomBottomNavBarEnabled: Boolean = true,
 
-    // 12 enable image picker screens custom bottom navigation bar
+    // 12 enable image picker screens custom bottom navigation bar -> was implemented on iOS, not needed for Android
 
     // 13 enable onboarding screens at first launch
 //    net.gini.android.capture.GiniCapture.Builder#setShouldShowOnboardingAtFirstRun → on/off switch
@@ -127,14 +127,5 @@ data class Configuration(
 //    net.gini.android.capture.GiniCapture.Builder#setImportedFileSizeBytesLimit → numeric text field
     val importedFileSizeBytesLimit: Int = FileImportValidator.FILE_SIZE_LIMIT
 
-
-    //TODO: this one is not in the builder methods
-//    net.gini.android.capture.GiniCapture.Builder#setErrorNavigationBarBottomAdapter →  on/off switch to show a custom adapter implementation
-
-    //TODO: this one is set in the Dagger-Hilt at the beginning, what should happen to it?
-//    net.gini.android.capture.GiniCapture.Builder#setGiniCaptureNetworkService → ignore
-
-    //TODO: this one is not in the builder methods
-//    net.gini.android.capture.GiniCapture.Builder#setNoResultsNavigationBarBottomAdapter →  on/off switch to show a custom adapter implementation
 
 ) : Parcelable

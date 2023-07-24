@@ -43,7 +43,7 @@
                 style="@style/TextAppearance.MaterialComponents.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/open_with_switch_label"
+                android:text="@string/file_import_switch_label"
 
                 />
 
@@ -104,7 +104,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/gc_large"
-                android:text="@string/file_import_segmented_button_label" />
+                android:text="@string/document_import_file_types_segmented_button_label" />
 
             <com.google.android.material.button.MaterialButtonToggleGroup
                 android:id="@+id/toggleBtn_fileImportSetup"
@@ -120,7 +120,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/file_import_disabled_button_label" />
+                    android:text="@string/document_import_file_types_disabled_button_label" />
 
                 <Button
                     android:id="@+id/btn_fileImportOnlyPdf"
@@ -128,7 +128,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/file_import_only_pdf_button_label" />
+                    android:text="@string/document_import_file_types_only_pdf_button_label" />
 
                 <Button
                     android:id="@+id/btn_fileImportPdfAndImage"
@@ -136,7 +136,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/file_import_pdf_and_image_button_label" />
+                    android:text="@string/document_import_file_types_pdf_and_image_button_label" />
             </com.google.android.material.button.MaterialButtonToggleGroup>
 
 
@@ -192,21 +192,6 @@
                 android:layout_height="wrap_content"
                 android:text="@string/custom_bottom_navbar_switch_description" />
 
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/switch_imagePickerScreenCustomBottomNavbar"
-                style="@style/TextAppearance.MaterialComponents.Body1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gc_medium_12"
-                android:text="@string/image_picker_custom_bottom_navbar_switch_label" />
-
-            <TextView
-                android:id="@+id/tv_imagePickerCustomBottomNavbarDescription"
-                style="@style/TextAppearance.MaterialComponents.Caption"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/custom_bottom_navbar_switch_description" />
 
 
             <com.google.android.material.switchmaterial.SwitchMaterial

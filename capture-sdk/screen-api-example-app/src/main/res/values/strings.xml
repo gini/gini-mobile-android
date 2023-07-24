@@ -42,7 +42,7 @@
     <string name="close_gini_sdk_configuration">Close</string>
     <string name="example_label">Example</string>
     <string name="relaunch_to_use_default_configuration">Please relaunch the app to use the default GiniConfiguration values.</string>
-    <string name="open_with_switch_label">Open with</string>
+    <string name="file_import_switch_label">File Import</string>
     <string name="qr_code_scanning_switch_label">QR code scanning</string>
     <string name="only_qr_code_scanning_switch_label">QR code scanning only</string>
     <string name="only_qr_code_scanning_switch_description">This will work if the \'Qr code scanning\' switch is also enabled.</string>
@@ -50,16 +50,15 @@
     <string name="flash_toggle_switch_label">Flash toggle</string>
     <string name="flash_on_by_default_switch_label">Flash ON by default</string>
     <string name="flash_on_by_default_switch_description">This will work if the \'Flash toggle\' switch is also enabled.</string>
-    <string name="file_import_disabled_button_label">Disabled</string>
-    <string name="file_import_only_pdf_button_label">PDF</string>
-    <string name="file_import_pdf_and_image_button_label">PDF &amp; Images</string>
-    <string name="file_import_segmented_button_label">File import</string>
+    <string name="document_import_file_types_disabled_button_label">Disabled</string>
+    <string name="document_import_file_types_only_pdf_button_label">PDF</string>
+    <string name="document_import_file_types_pdf_and_image_button_label">PDF &amp; Images</string>
+    <string name="document_import_file_types_segmented_button_label">Document Import File Types</string>
     <string name="bottom_navbar_switch_label">Bottom navigation bar</string>
     <string name="help_screens_bottom_navbar_switch_label">Help screens custom bottom navigation bar</string>
     <string name="custom_bottom_navbar_switch_description">The custom bottom navigation bar is shown if \'Bottom navigation bar\' is also enabled.</string>
     <string name="camera_screen_custom_bottom_navbar_switch_label">Camera screen custom bottom navigation bar</string>
     <string name="review_screen_custom_bottom_navbar_switch_label">Review screen custom bottom navigation bar</string>
-    <string name="image_picker_custom_bottom_navbar_switch_label">Image picker custom bottom navigation bar</string>
     <string name="onboarding_screens_at_every_launch_switch_label">Onboarding screens at every launch</string>
     <string name="onboarding_screens_at_first_launch_switch_label">Onboarding screens at first launch</string>
     <!--TODO: is it correct. please also pay attention to the layout in activity!-->

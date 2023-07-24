@@ -37,7 +37,7 @@ class ConfigurationViewModel @Inject constructor() : ViewModel() {
 
     fun configureGiniCapture(builder: GiniCapture.Builder, intent: Intent) {
         val configuration = configurationFlow.value
-        // 1 open with
+        // 1 file import
         builder.setFileImportEnabled(configuration.isFileImportEnabled)
 
         // 2 QR code scanning
@@ -67,9 +67,7 @@ class ConfigurationViewModel @Inject constructor() : ViewModel() {
         // 11 enable review screens custom bottom navigation bar
         //builder.setReviewBottomBarNavigationAdapter()
 
-        //TODO: should be implemented
-        // 12 enable image picker screens custom bottom navigation bar
-        //builder.()
+        // 12 enable image picker screens custom bottom navigation bar -> was implemented on iOS, not needed for Android
 
         // 13 enable onboarding screens at first launch
         builder.setShouldShowOnboardingAtFirstRun(configuration.isOnboardingAtFirstRunEnabled)
@@ -159,7 +157,6 @@ class ConfigurationViewModel @Inject constructor() : ViewModel() {
         // 27 enable Gini error logger
         builder.setGiniErrorLoggerIsOn(configuration.isGiniErrorLoggerEnabled)
 
-        //TODO: should we disable the Gini error logger when this one is enabled?
         // 28 enable custom error logger
         if (configuration.isCustomErrorLoggerEnabled)
             builder.setCustomErrorLoggerListener(CustomErrorLoggerListener())
