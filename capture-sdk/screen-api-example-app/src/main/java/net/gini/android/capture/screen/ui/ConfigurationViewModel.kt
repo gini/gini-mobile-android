@@ -10,10 +10,10 @@ import net.gini.android.capture.help.HelpItem
 import net.gini.android.capture.internal.util.FileImportValidator
 import net.gini.android.capture.logging.ErrorLog
 import net.gini.android.capture.logging.ErrorLoggerListener
-import net.gini.android.capture.review.multipage.view.DefaultReviewNavigationBarBottomAdapter
 import net.gini.android.capture.screen.R
 import net.gini.android.capture.screen.ui.adapters.CustomCameraNavigationBarBottomAdapter
 import net.gini.android.capture.screen.ui.adapters.CustomHelpNavigationBarBottomAdapter
+import net.gini.android.capture.screen.ui.adapters.CustomReviewNavigationBarBottomAdapter
 import net.gini.android.capture.screen.ui.data.Configuration
 import net.gini.android.capture.tracking.AnalysisScreenEvent
 import net.gini.android.capture.tracking.CameraScreenEvent
@@ -65,9 +65,9 @@ class ConfigurationViewModel @Inject constructor() : ViewModel() {
         if (configuration.isCameraBottomNavBarEnabled)
             builder.setCameraNavigationBarBottomAdapter(CustomCameraNavigationBarBottomAdapter())
 
-        //TODO: should be implemented
         // 11 enable review screens custom bottom navigation bar
-        //builder.setReviewBottomBarNavigationAdapter()
+        if (configuration.isReviewScreenCustomBottomNavBarEnabled)
+            builder.setReviewBottomBarNavigationAdapter(CustomReviewNavigationBarBottomAdapter())
 
         // 12 enable image picker screens custom bottom navigation bar -> was implemented on iOS, not needed for Android
 
@@ -167,8 +167,6 @@ class ConfigurationViewModel @Inject constructor() : ViewModel() {
 
         if (configuration.importedFileSizeBytesLimit != FileImportValidator.FILE_SIZE_LIMIT && configuration.importedFileSizeBytesLimit >= 0)
             builder.importedFileSizeBytesLimit = configuration.importedFileSizeBytesLimit
-
-        builder.setReviewBottomBarNavigationAdapter(DefaultReviewNavigationBarBottomAdapter())
 
 
 

@@ -112,6 +112,7 @@ class ConfigurationActivity : AppCompatActivity() {
         binding.switchCameraScreenCustomBottomNavbar.isChecked = configuration.isCameraBottomNavBarEnabled
 
         // 11 enable review screens custom bottom navigation bar
+        binding.switchReviewScreenCustomBottomNavbar.isChecked = configuration.isReviewScreenCustomBottomNavBarEnabled
 
         // 12 enable image picker screens custom bottom navigation bar -> was implemented on iOS, not needed for Android
 
