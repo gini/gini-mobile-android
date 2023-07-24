@@ -40,19 +40,19 @@ data class Configuration(
 
     // 8 enable bottom navigation bar
 // net.gini.android.capture.GiniCapture.Builder#setBottomNavigationBarEnabled → on/off switch
-    val isBottomNavigationBarEnabled: Boolean = true,
+    val isBottomNavigationBarEnabled: Boolean = false,
 
     // 9 enable Help screens custom bottom navigation bar
 //    net.gini.android.capture.GiniCapture.Builder#setHelpNavigationBarBottomAdapter →  on/off switch to show a custom adapter implementation
-    val isHelpScreensCustomBottomNavBarEnabled: Boolean = true,
+    val isHelpScreensCustomBottomNavBarEnabled: Boolean = false,
 
     // 10 enable camera screens custom bottom navigation bar
 //    net.gini.android.capture.GiniCapture.Builder#setCameraNavigationBarBottomAdapter → on/off switch to show a custom adapter implementation
-    val isCameraBottomNavBarEnabled: Boolean = true,
+    val isCameraBottomNavBarEnabled: Boolean = false,
 
     // 11 enable review screens custom bottom navigation bar
 //    net.gini.android.capture.GiniCapture.Builder#setReviewBottomBarNavigationAdapter →  on/off switch to show a custom adapter implementation
-    val isReviewScreenCustomBottomNavBarEnabled: Boolean = true,
+    val isReviewScreenCustomBottomNavBarEnabled: Boolean = false,
 
     // 12 enable image picker screens custom bottom navigation bar -> was implemented on iOS, not needed for Android
 

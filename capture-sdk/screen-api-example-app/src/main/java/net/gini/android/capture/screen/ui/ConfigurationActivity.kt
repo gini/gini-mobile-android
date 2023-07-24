@@ -106,6 +106,7 @@ class ConfigurationActivity : AppCompatActivity() {
         // 8 enable bottom navigation bar
         binding.switchShowBottomNavbar.isChecked = configuration.isBottomNavigationBarEnabled
         // 9 enable Help screens custom bottom navigation bar
+        binding.switchShowHelpScreenCustomBottomNavbar.isChecked = configuration.isHelpScreensCustomBottomNavBarEnabled
 
         // 10 enable camera screens custom bottom navigation bar
 
