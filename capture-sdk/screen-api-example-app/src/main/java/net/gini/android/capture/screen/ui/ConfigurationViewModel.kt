@@ -58,7 +58,8 @@ class ConfigurationViewModel @Inject constructor() : ViewModel() {
         builder.setBottomNavigationBarEnabled(configuration.isBottomNavigationBarEnabled)
 
         // 9 enable Help screens custom bottom navigation bar
-        builder.setHelpNavigationBarBottomAdapter(CustomHelpNavigationBarBottomAdapter())
+        if (configuration.isHelpScreensCustomBottomNavBarEnabled)
+            builder.setHelpNavigationBarBottomAdapter(CustomHelpNavigationBarBottomAdapter())
 
         // 10 enable camera screens custom bottom navigation bar
         if (configuration.isCameraBottomNavBarEnabled)
