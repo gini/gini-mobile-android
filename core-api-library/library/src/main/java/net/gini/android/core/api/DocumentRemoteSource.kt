@@ -4,6 +4,7 @@ import android.net.Uri
 import kotlinx.coroutines.withContext
 import net.gini.android.core.api.authorization.apimodels.SessionToken
 import net.gini.android.core.api.requests.ApiException
+import net.gini.android.core.api.requests.BearerAuthorizatonHeader
 import net.gini.android.core.api.requests.SafeApiRequest
 import net.gini.android.core.api.response.PaymentRequestResponse
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -110,7 +111,7 @@ abstract class DocumentRemoteSource(
         metadata: Map<String, String>? = null
     ): Map<String, String> {
         return mutableMapOf<String, String>().apply {
-            put("Authorization", "BEARER $accessToken")
+            BearerAuthorizatonHeader(accessToken).addToMap(this)
             accept?.let { put("Accept", accept) }
             contentType?.let { put("Content-Type", contentType) }
             metadata?.let { putAll(metadata) }
