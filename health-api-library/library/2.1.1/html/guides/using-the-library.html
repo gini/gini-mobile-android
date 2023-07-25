@@ -1,0 +1,363 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Using the Gini Health API Library &mdash; Gini Health API Library for Android v1 documentation</title>
+  
+
+  
+  
+
+  
+  <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,400italic,600italic|Source+Code+Pro|Roboto+Slab:400,700" rel="stylesheet" type="text/css" />
+
+  
+  
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:'../',
+        VERSION:'v1',
+        COLLAPSE_INDEX:false,
+        FILE_SUFFIX:'.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="../_static/language_data.js"></script>
+
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+    <script type="text/javascript">
+        jQuery(function () {
+            SphinxRtdTheme.StickyNav.enable();
+        });
+    </script>
+  
+
+  
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="Gini Health API Library for Android v1 documentation" href="../index.html"/>
+        <link rel="next" title="Migrate to 2.0.0" href="migrate-to-2-0-0.html"/>
+        <link rel="prev" title="Getting started" href="getting-started.html"/> 
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../index.html" id="gini-logo">
+          <img src="../_static/logo_flat.png" />
+        </a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="getting-started.html#first-of-all-add-the-library-to-your-build">First of all: Add the library to your build</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting-started.html#integrating-the-gini-health-api-library">Integrating the Gini Health API Library</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="getting-started.html#creating-the-ginihealthapi-instance">Creating the GiniHealthAPI instance</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="getting-started.html#public-key-pinning">Public Key Pinning</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="getting-started.html#configure-pinning">Configure Pinning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="getting-started.html#id4">TrustKit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="getting-started.html#enable-pinning-with-a-network-security-configuration">Enable Pinning with a Network Security Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="getting-started.html#enable-pinning-with-a-custom-trustmanager-implementation">Enable Pinning with a custom TrustManager implementation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="getting-started.html#extract-hash-from-health-api-gini-net">Extract Hash From health-api.gini.net</a></li>
+<li class="toctree-l3"><a class="reference internal" href="getting-started.html#extract-hash-from-public-key">Extract Hash From Public Key</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Using the Gini Health API Library</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#upload-a-document">Upload a document</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#setting-the-document-type-hint">Setting the document type hint</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#getting-extractions">Getting extractions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sending-feedback">Sending feedback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#handling-errors">Handling errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#debugging">Debugging</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="migrate-to-2-0-0.html">Migrate to 2.0.0</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="migrate-to-2-0-0.html#overview-of-public-api-changes">Overview of public API changes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-2-0-0.html#ginihealthapibuilder">GiniHealthAPIBuilder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-2-0-0.html#ginihealthapi">GiniHealthAPI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-2-0-0.html#healthapidocumenttaskmanager">HealthApiDocumentTaskManager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-2-0-0.html#healthapidocumentmanager">HealthApiDocumentManager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-2-0-0.html#sessionmanager">SessionManager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-2-0-0.html#resource">Resource</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-2-0-0.html#documenttype">DocumentType</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="migrate-to-2-0-0.html#examples">Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-2-0-0.html#custom-caching">Custom caching</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-2-0-0.html#custom-sessionmanager">Custom SessionManager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-2-0-0.html#upload-and-analyze-a-document">Upload and analyze a document</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../see_also.html">See also</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../license.html#licenses-and-acknowledgements-for-incorporated-software">Licenses and Acknowledgements for Incorporated Software</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../license.html#bolts">Bolts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../license.html#android-volley">Android Volley</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../license.html#trustkit">TrustKit</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">Gini Health API Library for Android</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>Using the Gini Health API Library</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="using-the-gini-health-api-library">
+<h1>Using the Gini Health API Library<a class="headerlink" href="#using-the-gini-health-api-library" title="Permalink to this headline">¶</a></h1>
+<p>The Gini Health API Library uses kotlin coroutine suspend functions for a convenient and elegant way to work with
+asynchronous Gini Health API requests. All the public suspend functions are main-safe, meaning they’re safe to call from
+the main thread.</p>
+<p>Each suspend function returns an instance of the <code class="docutils literal notranslate"><span class="pre">Resource</span></code> sealed class. Depending on the request result the
+following <code class="docutils literal notranslate"><span class="pre">Resource</span></code> instances are returned:</p>
+<ul class="simple">
+<li>successful request: <code class="docutils literal notranslate"><span class="pre">Resource.Success</span></code> which contains the deserialized response payload in the <code class="docutils literal notranslate"><span class="pre">data</span></code> property.</li>
+<li>failed request: <code class="docutils literal notranslate"><span class="pre">Resource.Error</span></code> which contains the response details and/or the exception which caused the failure.</li>
+<li>cancelled request: <code class="docutils literal notranslate"><span class="pre">Resource.Cancelled</span></code>.</li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">Resource</span></code> also provides a helper instance method for chaining requests called <code class="docutils literal notranslate"><span class="pre">mapSuccess()</span></code>. For more details please
+consult the <a class="reference external" href="https://developer.gini.net/gini-mobile-android/health-api-library/library/2.1.1/dokka/library/net.gini.android.core.api/-resource/index.html">reference documentation</a>.</p>
+<div class="section" id="upload-a-document">
+<h2>Upload a document<a class="headerlink" href="#upload-a-document" title="Permalink to this headline">¶</a></h2>
+<p>As the key aspect of the Gini Health API is to provide information extraction for analyzing documents, the
+API is mainly built around the concept of documents. A document can be any written representation of
+information such as invoices, reminders, contracts and so on.</p>
+<p>The Gini Health API Library supports creating documents from images, PDFs or UTF-8 encoded text. Images are
+usually a picture of a paper document which was taken with the device’s camera.</p>
+<p>The following example shows how to create a new document from a byte array containing a JPEG image.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// Assuming that `giniHealthApi` is an instance of the `GiniHealthAPI` facade class and `imageBytes`</span>
+<span class="c1">// is an instance of a byte array containing a JPEG image,</span>
+<span class="c1">// e.g. from a picture taken by the camera</span>
+
+<span class="n">coroutineScope</span><span class="p">.</span><span class="na">launch</span> <span class="p">{</span>
+    <span class="c1">// Create a partial document by uploading the document data</span>
+    <span class="n">val</span> <span class="n">partialDocumentResource</span> <span class="o">=</span>
+        <span class="n">giniHealthApi</span><span class="p">.</span><span class="na">documentManager</span><span class="p">.</span><span class="na">createPartialDocument</span><span class="p">(</span><span class="n">imageBytes</span><span class="p">,</span> <span class="s">&quot;image/jpeg&quot;</span><span class="p">,</span> <span class="s">&quot;myFirstDocument.jpg&quot;</span><span class="p">)</span>
+
+    <span class="n">when</span> <span class="p">(</span><span class="n">partialDocumentResource</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">is</span> <span class="n">Resource</span><span class="p">.</span><span class="na">Success</span> <span class="o">-&gt;</span> <span class="p">{</span>
+            <span class="c1">// Use the partial document</span>
+            <span class="n">val</span> <span class="n">partialDocument</span> <span class="o">=</span> <span class="n">extractionsResource</span><span class="p">.</span><span class="na">data</span>
+        <span class="p">}</span>
+        <span class="n">is</span> <span class="n">Resource</span><span class="p">.</span><span class="na">Error</span> <span class="o">-&gt;</span> <span class="c1">// Handle error</span>
+        <span class="n">is</span> <span class="n">Resource</span><span class="p">.</span><span class="na">Cancelled</span> <span class="o">-&gt;</span> <span class="c1">// Handle cancellation</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Each page of a document needs to uploaded as a partial document. In addition documents consisting of
+one page also should be uploaded as a partial document.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">PDFs and UTF-8 encoded text should also be uploaded as partial documents. Even though PDFs might
+contain multiple pages and text is “pageless”, creating partial documents for these keeps your
+interaction with the library consistent for all the supported document types.</p>
+</div>
+<p>Extractions are not available for partial documents. Creating a partial document is analogous to an
+upload. For retrieving extractions see <a class="reference internal" href="#getting-extractions"><span class="std std-ref">Getting extractions</span></a>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The filename (<code class="docutils literal notranslate"><span class="pre">myFirstDocument.jpg</span></code> in the example) is not required, it could be <code class="docutils literal notranslate"><span class="pre">null</span></code>, but
+setting a filename is a good practice for human readable document identification.</p>
+</div>
+<div class="section" id="setting-the-document-type-hint">
+<h3>Setting the document type hint<a class="headerlink" href="#setting-the-document-type-hint" title="Permalink to this headline">¶</a></h3>
+<p>To easily set the document type hint we introduced the <code class="docutils literal notranslate"><span class="pre">DocumentType</span></code> enum. It is safer and easier
+to use than a <code class="docutils literal notranslate"><span class="pre">String</span></code>. For more details about the document type hints see the <a class="reference external" href="https://pay-api.gini.net/documentation/#document-types">Document Type
+Hints in the Gini Health API documentation</a>.</p>
+</div>
+</div>
+<div class="section" id="getting-extractions">
+<span id="id1"></span><h2>Getting extractions<a class="headerlink" href="#getting-extractions" title="Permalink to this headline">¶</a></h2>
+<p>After you have successfully created the partial documents, you most likely want to get the
+extractions for the document. <em>Composite documents</em> consist of
+previously created <em>partial documents</em>. You can consider creating partial documents analogous to
+uploading pages of a document and creating a composite document analogous to processing those pages
+as a single document.</p>
+<p>Before retrieving extractions you need to create a composite document from your partial documents.
+The <code class="docutils literal notranslate"><span class="pre">createCompositeDocument()</span></code> method accepts either a <code class="docutils literal notranslate"><span class="pre">List</span></code> of partial <code class="docutils literal notranslate"><span class="pre">Documents</span></code> or a
+<code class="docutils literal notranslate"><span class="pre">LinkedHashMap</span></code>. The <code class="docutils literal notranslate"><span class="pre">LinkedHashMap</span></code> contains partial <code class="docutils literal notranslate"><span class="pre">Documents</span></code> as keys and the user applied
+rotation as values. In both cases the order is important and the partial documents should be in the
+same order as the pages of the scanned document.</p>
+<p>Gini needs to process the composite document first before you can fetch the extractions. Effectively
+this means that you won’t get any extractions before the composite document is fully processed. The
+processing time may vary, usually it is in the range of a couple of seconds, but blurred or slightly
+rotated images are known to drasticly increase the processing time.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">HealthApiDocumentManager</span></code> provides the <code class="docutils literal notranslate"><span class="pre">getAllExtractionsWithPolling</span></code> method which can be
+used to fetch the extractions after the processing of the document is completed. The following
+example shows how to achieve this in detail.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// Assuming that `giniHealthApi` is an instance of the `GiniHealthAPI` facade class and `partialDocuments` is</span>
+<span class="c1">// a list of `Documents` which were returned by `createPartialDocument(...)` calls</span>
+
+<span class="n">coroutineScope</span><span class="p">.</span><span class="na">launch</span> <span class="p">{</span>
+    <span class="c1">// Create a partial document by uploading the document data</span>
+    <span class="n">val</span> <span class="n">extractionsResource</span> <span class="o">=</span>
+        <span class="n">giniHealthApi</span><span class="p">.</span><span class="na">documentManager</span><span class="p">.</span><span class="na">createCompositeDocument</span><span class="p">(</span><span class="n">partialDocuments</span><span class="p">)</span>
+            <span class="p">.</span><span class="na">mapSuccess</span> <span class="p">{</span> <span class="n">compositeDocumentResource</span> <span class="o">-&gt;</span>
+                <span class="c1">// Poll the document and retrieve the extractions</span>
+                <span class="n">giniHealthApi</span><span class="p">.</span><span class="na">documentManager</span><span class="p">.</span><span class="na">getAllExtractionsWithPolling</span><span class="p">(</span><span class="n">compositeDocumentResource</span><span class="p">.</span><span class="na">data</span><span class="p">)</span>
+            <span class="p">}</span>
+
+    <span class="n">when</span> <span class="p">(</span><span class="n">extractionsResource</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">is</span> <span class="n">Resource</span><span class="p">.</span><span class="na">Success</span> <span class="o">-&gt;</span> <span class="p">{</span>
+            <span class="c1">// You may use the extractions to fulfill your use-case</span>
+            <span class="n">val</span> <span class="n">extractionsContainer</span> <span class="o">=</span> <span class="n">extractionsResource</span><span class="p">.</span><span class="na">data</span>
+            <span class="n">val</span> <span class="n">amountToPay</span><span class="p">:</span> <span class="n">SpecificExtraction</span><span class="o">?</span> <span class="o">=</span>
+                <span class="n">extractionsContainer</span><span class="p">.</span><span class="na">specificExtractions</span><span class="o">[</span><span class="s">&quot;amountToPay&quot;</span><span class="o">]</span>
+            <span class="n">val</span> <span class="n">lineItems</span><span class="p">:</span> <span class="n">CompoundExtraction</span><span class="o">?</span> <span class="o">=</span>
+                <span class="n">extractionsContainer</span><span class="p">.</span><span class="na">compoundExtractions</span><span class="o">[</span><span class="s">&quot;lineItems&quot;</span><span class="o">]</span>
+        <span class="p">}</span>
+        <span class="n">is</span> <span class="n">Resource</span><span class="p">.</span><span class="na">Error</span> <span class="o">-&gt;</span> <span class="c1">// Handle error</span>
+        <span class="n">is</span> <span class="n">Resource</span><span class="p">.</span><span class="na">Cancelled</span> <span class="o">-&gt;</span> <span class="c1">// Handle cancellation</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="sending-feedback">
+<h2>Sending feedback<a class="headerlink" href="#sending-feedback" title="Permalink to this headline">¶</a></h2>
+<p>Depending on your use case your app probably presents the extractions to the user and offers the
+opportunity to correct them. We do our best to prevent errors. You can help improve our service if
+your app sends feedback for the extractions Gini delivered. Your app should send feedback only for
+the extractions the <em>user has seen and accepted</em>. Feedback should be sent for corrected extractions
+<strong>and</strong> for <em>correct extractions</em>. The code example below shows how to correct extractions and send
+feedback.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// Assuming that `giniHealthApi` is an instance of the `GiniHealthAPI` facade class</span>
+
+<span class="n">coroutineScope</span><span class="p">.</span><span class="na">launch</span> <span class="p">{</span>
+    <span class="n">val</span> <span class="n">retrievedExtractions</span><span class="p">:</span> <span class="n">ExtractionsContainer</span> <span class="c1">// provided</span>
+    <span class="n">val</span> <span class="n">compositeDocument</span><span class="p">:</span> <span class="n">Document</span> <span class="c1">// provided</span>
+
+    <span class="c1">// amounToPay was wrong, we&#39;ll correct it</span>
+    <span class="n">val</span> <span class="n">amountToPay</span><span class="p">:</span> <span class="n">SpecificExtraction</span> <span class="o">=</span> <span class="n">retrievedExtractions</span><span class="p">.</span><span class="na">specificiExtractions</span><span class="o">[</span><span class="s">&quot;amountToPay&quot;</span><span class="o">]</span><span class="p">;</span>
+    <span class="n">amountToPay</span><span class="p">.</span><span class="na">value</span> <span class="o">=</span> <span class="s">&quot;31.00:EUR&quot;</span><span class="p">;</span>
+
+    <span class="c1">// we should send only feedback for extractions we have seen and accepted</span>
+    <span class="c1">// all extractions we&#39;ve seen were correct except amountToPay</span>
+    <span class="n">val</span> <span class="n">feedback</span><span class="p">:</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span> <span class="n">SpecificExtraction</span><span class="o">&gt;</span> <span class="o">=</span> <span class="n">mutableMapOf</span><span class="p">(</span>
+        <span class="s">&quot;iban&quot;</span> <span class="n">to</span> <span class="n">retrievedExtractions</span><span class="p">.</span><span class="na">specificiExtractions</span><span class="o">[</span><span class="s">&quot;iban&quot;</span><span class="o">]</span><span class="p">,</span>
+        <span class="s">&quot;amountToPay&quot;</span> <span class="n">to</span> <span class="n">amountToPay</span><span class="p">,</span>
+        <span class="s">&quot;paymentRecipient&quot;</span> <span class="n">to</span> <span class="n">retrievedExtractions</span><span class="p">.</span><span class="na">specificiExtractions</span><span class="o">[</span><span class="s">&quot;paymentRecipient&quot;</span><span class="o">]</span><span class="p">,</span>
+        <span class="s">&quot;paymentReference&quot;</span> <span class="n">to</span> <span class="n">retrievedExtractions</span><span class="p">.</span><span class="na">specificiExtractions</span><span class="o">[</span><span class="s">&quot;paymentReference&quot;</span><span class="o">]</span><span class="p">,</span>
+    <span class="p">);</span>
+
+    <span class="n">val</span> <span class="n">feedbackResource</span> <span class="o">=</span> <span class="n">giniHealthApi</span><span class="p">.</span><span class="na">documentManager</span><span class="p">.</span><span class="na">sendFeedbackForExtractions</span><span class="p">(</span><span class="n">document</span><span class="p">,</span> <span class="n">feedback</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="handling-errors">
+<h2>Handling errors<a class="headerlink" href="#handling-errors" title="Permalink to this headline">¶</a></h2>
+<p>Errors are returned via <code class="docutils literal notranslate"><span class="pre">Resource.Error</span></code> instances which contain the response details and/or the exception which
+caused the failure. You can use these to log the error and decide whether to allow the user to retry the request or not.</p>
+</div>
+<div class="section" id="debugging">
+<h2>Debugging<a class="headerlink" href="#debugging" title="Permalink to this headline">¶</a></h2>
+<p>You can enable the debugging mode by passing <code class="docutils literal notranslate"><span class="pre">true</span></code> to the <code class="docutils literal notranslate"><span class="pre">GiniBankAPIBuilder.setDebuggingEnabled()</span></code>. This will
+cause all requests and responses to be logged.</p>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="migrate-to-2-0-0.html" class="btn btn-neutral float-right" title="Migrate to 2.0.0">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="getting-started.html" class="btn btn-neutral" title="Getting started"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+    </p>
+  </div>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  
+</body>
+</html>
