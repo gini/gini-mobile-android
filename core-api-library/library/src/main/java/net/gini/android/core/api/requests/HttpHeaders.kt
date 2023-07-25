@@ -1,5 +1,7 @@
 package net.gini.android.core.api.requests
 
+import net.gini.android.core.api.MediaTypes
+
 /**
  * Created by Alpár Szotyori on 21.07.23.
  *
@@ -17,3 +19,4 @@ sealed class HttpHeader(val name: String, val value: String) {
 
 class BearerAuthorizatonHeader(token: String): HttpHeader("Authorization", "Bearer $token")
 class BasicAuthorizatonHeader(credentials: String): HttpHeader("Authorization", "Basic $credentials")
+class JsonAcceptHeader(): HttpHeader("Accept", MediaTypes.APPLICATION_JSON)

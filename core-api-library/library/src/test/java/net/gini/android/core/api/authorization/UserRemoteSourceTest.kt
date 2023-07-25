@@ -23,6 +23,9 @@ import java.util.UUID
 @RunWith(AndroidJUnit4::class)
 class UserRemoteSourceTest {
 
+
+    // region Bearer authorization header tests
+
     @Test
     fun `sets bearer authorization header with capital case 'Bearer' in createUser`() = runTest {
         val accessToken = UUID.randomUUID().toString()
@@ -59,6 +62,9 @@ class UserRemoteSourceTest {
         }
     }
 
+    // endregion
+
+    // region Basic authorization header tests
     @Test
     fun `sets basic authorization header with capital case 'Basic' in signIn`() = runTest {
         val clientId = "id"
@@ -92,6 +98,82 @@ class UserRemoteSourceTest {
             loginClient()
         }
     }
+
+    // endregion
+
+    // region Accept header tests
+
+    @Test
+    fun `sets json accept header in createUser`() = runTest {
+        val accessToken = UUID.randomUUID().toString()
+        val expectedHeaderValue = "application/json"
+        verifyHeader(name = "Accept", value = expectedHeaderValue, testScope = this) {
+            createUser(UserRequestModel(), accessToken)
+        }
+    }
+
+    @Test
+    fun `sets json accept header in getGiniApiSessionTokenInfo`() = runTest {
+        val accessToken = UUID.randomUUID().toString()
+        val expectedHeaderValue = "application/json"
+        verifyHeader(name = "Accept", value = expectedHeaderValue, testScope = this) {
+            getGiniApiSessionTokenInfo("", accessToken)
+        }
+    }
+
+    @Test
+    fun `sets json accept header in getUserInfo`() = runTest {
+        val accessToken = UUID.randomUUID().toString()
+        val expectedHeaderValue = "application/json"
+        verifyHeader(name = "Accept", value = expectedHeaderValue, testScope = this) {
+            getUserInfo("", accessToken)
+        }
+    }
+
+    @Test
+    fun `sets json accept header in updateEmail`() = runTest {
+        val accessToken = UUID.randomUUID().toString()
+        val expectedHeaderValue = "application/json"
+        verifyHeader(name = "Accept", value = expectedHeaderValue, testScope = this) {
+            updateEmail("", UserRequestModel(), accessToken)
+        }
+    }
+
+    @Test
+    fun `sets json accept header in signIn`() = runTest {
+        val clientId = "id"
+        val clientSecret = "secret"
+        val credentials = Base64.encodeToString("${clientId}:${clientSecret}".toByteArray(), Base64.NO_WRAP)
+        val expectedHeaderValue = "application/json"
+        verifyHeader(
+            name = "Accept",
+            value = expectedHeaderValue,
+            clientId = clientId,
+            clientSecret = clientSecret,
+            testScope = this
+        ) {
+            signIn(UserRequestModel())
+        }
+    }
+
+    @Test
+    fun `sets json accept header in logInClient`() = runTest {
+        val clientId = "id"
+        val clientSecret = "secret"
+        val credentials = Base64.encodeToString("${clientId}:${clientSecret}".toByteArray(), Base64.NO_WRAP)
+        val expectedHeaderValue = "application/json"
+        verifyHeader(
+            name = "Accept",
+            value = expectedHeaderValue,
+            clientId = clientId,
+            clientSecret = clientSecret,
+            testScope = this
+        ) {
+            loginClient()
+        }
+    }
+
+    // endregion
 
     private inline fun verifyHeader(
         name: String,

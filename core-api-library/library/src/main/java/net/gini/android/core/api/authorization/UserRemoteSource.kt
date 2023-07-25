@@ -9,6 +9,7 @@ import net.gini.android.core.api.authorization.apimodels.UserResponseModel
 import net.gini.android.core.api.requests.ApiException
 import net.gini.android.core.api.requests.BasicAuthorizatonHeader
 import net.gini.android.core.api.requests.BearerAuthorizatonHeader
+import net.gini.android.core.api.requests.JsonAcceptHeader
 import net.gini.android.core.api.requests.SafeApiRequest
 import kotlin.coroutines.CoroutineContext
 
@@ -61,12 +62,12 @@ internal class UserRemoteSource(
 
     private fun basicHeaderMap(): Map<String, String> {
         val encoded = Base64.encodeToString("${clientId}:${clientSecret}".toByteArray(), Base64.NO_WRAP)
-        return mapOf("Accept" to "application/json",
+        return mapOf(JsonAcceptHeader().toPair(),
             BasicAuthorizatonHeader(encoded).toPair())
     }
 
     private fun bearerHeaderMap(accessToken: String): Map<String, String> {
-        return mapOf("Accept" to "application/json",
+        return mapOf(JsonAcceptHeader().toPair(),
             BearerAuthorizatonHeader(accessToken).toPair())
     }
 }
