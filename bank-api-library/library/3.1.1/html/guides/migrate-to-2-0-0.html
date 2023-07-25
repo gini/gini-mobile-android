@@ -1,0 +1,436 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Migrate to 2.0.0 &mdash; Gini Bank API Library for Android v1 documentation</title>
+  
+
+  
+  
+
+  
+  <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,400italic,600italic|Source+Code+Pro|Roboto+Slab:400,700" rel="stylesheet" type="text/css" />
+
+  
+  
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:'../',
+        VERSION:'v1',
+        COLLAPSE_INDEX:false,
+        FILE_SUFFIX:'.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="../_static/language_data.js"></script>
+
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+    <script type="text/javascript">
+        jQuery(function () {
+            SphinxRtdTheme.StickyNav.enable();
+        });
+    </script>
+  
+
+  
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="Gini Bank API Library for Android v1 documentation" href="../index.html"/>
+        <link rel="next" title="See also" href="../see_also.html"/>
+        <link rel="prev" title="Using the Gini Bank API Library" href="using-the-library.html"/> 
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../index.html" id="gini-logo">
+          <img src="../_static/logo_flat.png" />
+        </a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="getting-started.html#first-of-all-add-the-library-to-your-build">First of all: Add the library to your build</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting-started.html#integrating-the-gini-bank-api-library">Integrating the Gini Bank API Library</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="getting-started.html#creating-the-ginibankapi-instance">Creating the GiniBankAPI instance</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="getting-started.html#public-key-pinning">Public Key Pinning</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="getting-started.html#configure-pinning">Configure Pinning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="getting-started.html#id4">TrustKit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="getting-started.html#enable-pinning-with-a-network-security-configuration">Enable Pinning with a Network Security Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="getting-started.html#enable-pinning-with-a-custom-trustmanager-implementation">Enable Pinning with a custom TrustManager implementation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="getting-started.html#extract-hash-from-pay-api-gini-net">Extract Hash From pay-api.gini.net</a></li>
+<li class="toctree-l3"><a class="reference internal" href="getting-started.html#extract-hash-from-public-key">Extract Hash From Public Key</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="using-the-library.html">Using the Gini Bank API Library</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="using-the-library.html#upload-a-document">Upload a document</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="using-the-library.html#setting-the-document-type-hint">Setting the document type hint</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="using-the-library.html#getting-extractions">Getting extractions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="using-the-library.html#sending-feedback">Sending feedback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="using-the-library.html#handling-errors">Handling errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="using-the-library.html#debugging">Debugging</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Migrate to 2.0.0</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#overview-of-public-api-changes">Overview of public API changes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#ginibankapibuilder">GiniBankAPIBuilder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ginibankapi">GiniBankAPI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bankapidocumenttaskmanager">BankApiDocumentTaskManager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bankapidocumentmanager">BankApiDocumentManager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sessionmanager">SessionManager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#resource">Resource</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#documenttype">DocumentType</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#examples">Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#custom-caching">Custom caching</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#custom-sessionmanager">Custom SessionManager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#upload-and-analyze-a-document">Upload and analyze a document</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../see_also.html">See also</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../license.html#licenses-and-acknowledgements-for-incorporated-software">Licenses and Acknowledgements for Incorporated Software</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../license.html#bolts">Bolts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../license.html#android-volley">Android Volley</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../license.html#trustkit">TrustKit</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">Gini Bank API Library for Android</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>Migrate to 2.0.0</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="migrate-to-2-0-0">
+<h1>Migrate to 2.0.0<a class="headerlink" href="#migrate-to-2-0-0" title="Permalink to this headline">¶</a></h1>
+<p>In version 2.0.0 we removed Bolts and Volley. Bolts was replaced with kotlin coroutines which is part of the kotlin
+standard library. Volley was replaced with Retrofit2, a more popular and elegant networking library built upon okhttp3.</p>
+<p>We also modernized the internal architecture to take advantage of the features provided by kotlin, coroutines and
+Retrofit2.</p>
+<div class="section" id="overview-of-public-api-changes">
+<h2>Overview of public API changes<a class="headerlink" href="#overview-of-public-api-changes" title="Permalink to this headline">¶</a></h2>
+<p>We tried to minimize the public API changes as much as possible, but due to the fact that Bolts has been part of the old
+public API we had to change all methods that exposed Bolts classes. Also some Volley features and classes were exposed
+which had to be removed or changed due to the switch to Retrofit2.</p>
+<div class="section" id="ginibankapibuilder">
+<h3>GiniBankAPIBuilder<a class="headerlink" href="#ginibankapibuilder" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">GiniBankAPIBuilder</span></code> was ported to kotlin and the following methods were changed, removed or added:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">setCache()</span></code> now takes an <code class="docutils literal notranslate"><span class="pre">okhttp3.Cache</span></code> instead of <code class="docutils literal notranslate"><span class="pre">com.android.volley.Cache</span></code>. Please consult the <a class="reference external" href="https://square.github.io/okhttp/features/caching/">okhttp3
+documentation</a> on how to customize caching.</li>
+<li><code class="docutils literal notranslate"><span class="pre">setConnectionBackOffMultiplier()</span></code> was removed as it’s not available in Retrofit2 and okhttp3.</li>
+<li><code class="docutils literal notranslate"><span class="pre">setMaxNumberOfRetries()</span></code> was removed as it’s not available in Retrofit2 and okhttp3.</li>
+<li><code class="docutils literal notranslate"><span class="pre">setDebuggingEnabled()</span></code> was added to allow enabling debugging mode which will log all requests and responses. Make
+sure to disable debugging for release builds!</li>
+</ul>
+</div>
+<div class="section" id="ginibankapi">
+<h3>GiniBankAPI<a class="headerlink" href="#ginibankapi" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">GiniBankAPI</span></code> which is created via the builder was ported to kotlin and the following methods had to be changed or
+removed:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">getDocumentTaskManager()</span></code> was removed. The <code class="docutils literal notranslate"><span class="pre">getDocumentManager()</span></code> method fully replaces it.</li>
+</ul>
+</div>
+<div class="section" id="bankapidocumenttaskmanager">
+<h3>BankApiDocumentTaskManager<a class="headerlink" href="#bankapidocumenttaskmanager" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">BankApiDocumentTaskManager</span></code> relied on Bolts and was replaced by the <code class="docutils literal notranslate"><span class="pre">BankApiDocumentManager</span></code> which exposes
+kotlin suspend functions instead of Bolts tasks.</p>
+</div>
+<div class="section" id="bankapidocumentmanager">
+<h3>BankApiDocumentManager<a class="headerlink" href="#bankapidocumentmanager" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">BankApiDocumentManager</span></code> is now the main class to execute Gini Bank API calls.</p>
+<p>All methods are suspend functions and return an instance of the sealed class <code class="docutils literal notranslate"><span class="pre">Resource</span></code> which encapsulates the API
+resource and request result. You can find more details in the <a class="reference internal" href="#resource">Resource</a> section.</p>
+<p>The following methods were renamed, removed or added:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">getExtractions()</span></code> was renamed to <code class="docutils literal notranslate"><span class="pre">getAllExtractionsWithPolling()</span></code>.</li>
+<li><code class="docutils literal notranslate"><span class="pre">getAllExtractions()</span></code> was added to retrieve extractions without polling. This method should be called only after
+polling if the document processing state is <code class="docutils literal notranslate"><span class="pre">Document.ProcessingState.COMPLETED</span></code>.</li>
+<li><code class="docutils literal notranslate"><span class="pre">reportDocument()</span></code> was removed.</li>
+<li><code class="docutils literal notranslate"><span class="pre">sendFeedback()</span></code> was renamed to <code class="docutils literal notranslate"><span class="pre">sendFeedbackForExtractions()</span></code> which has an overload for sending feedback only for
+specific extractions.</li>
+<li><code class="docutils literal notranslate"><span class="pre">logErrorEvent()</span></code> was added to allow reporting errors to the Gini Bank API.</li>
+</ul>
+</div>
+<div class="section" id="sessionmanager">
+<h3>SessionManager<a class="headerlink" href="#sessionmanager" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">SessionManager</span></code> interface was changed to declare the <code class="docutils literal notranslate"><span class="pre">getSession()</span></code> method as a suspend function with a return
+type of <code class="docutils literal notranslate"><span class="pre">Resource&lt;Session&gt;</span></code>. You can find more details about the <code class="docutils literal notranslate"><span class="pre">Resource</span></code> class in the <a class="reference internal" href="#resource">Resource</a> section.</p>
+</div>
+<div class="section" id="resource">
+<h3>Resource<a class="headerlink" href="#resource" title="Permalink to this headline">¶</a></h3>
+<p>Instances of the new <code class="docutils literal notranslate"><span class="pre">Resource</span></code> sealed class are returned by all methods which previously either returned Bolts tasks
+or were suspend functions.</p>
+<p>Depending on the request result the following <code class="docutils literal notranslate"><span class="pre">Resource</span></code> instances are returned:</p>
+<ul class="simple">
+<li>successful request: <code class="docutils literal notranslate"><span class="pre">Resource.Success</span></code> which contains the deserialized response payload in the <code class="docutils literal notranslate"><span class="pre">data</span></code> property.</li>
+<li>failed request: <code class="docutils literal notranslate"><span class="pre">Resource.Error</span></code> which contains the response details and/or the exception which caused the failure.</li>
+<li>cancelled request: <code class="docutils literal notranslate"><span class="pre">Resource.Cancelled</span></code>.</li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">Resource</span></code> also provides a helper instance method for chaining requests called <code class="docutils literal notranslate"><span class="pre">mapSuccess()</span></code>. For more details please
+consult the <a class="reference external" href="https://developer.gini.net/gini-mobile-android/bank-api-library/library/3.1.1/dokka/library/net.gini.android.core.api/-resource/index.html">reference documentation</a>.</p>
+</div>
+<div class="section" id="documenttype">
+<h3>DocumentType<a class="headerlink" href="#documenttype" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">DocumentType</span></code> enum was moved from <code class="docutils literal notranslate"><span class="pre">DocumentTaskManager</span></code> to <code class="docutils literal notranslate"><span class="pre">DocumentManager</span></code>. You have to update import
+statements to use <code class="docutils literal notranslate"><span class="pre">DocumentManager.DocumentType</span></code>.</p>
+</div>
+</div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<p>In this section you can find examples of what needs to be changed for different use cases.</p>
+<div class="section" id="custom-caching">
+<h3>Custom caching<a class="headerlink" href="#custom-caching" title="Permalink to this headline">¶</a></h3>
+<p>In version 1.x.x you had to pass an implementation of the <code class="docutils literal notranslate"><span class="pre">com.android.volley.Cache</span></code> interface to the builder:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">val</span> <span class="n">giniBankApi</span><span class="p">:</span> <span class="n">GiniBankAPI</span> <span class="o">=</span> <span class="n">GiniBankAPIBuilder</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="s">&quot;gini-client-id&quot;</span><span class="p">,</span> <span class="s">&quot;GiniClientSecret&quot;</span><span class="p">,</span> <span class="s">&quot;example.com&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="na">setCache</span><span class="p">(</span><span class="n">CustomVolleyCache</span><span class="p">())</span>
+    <span class="p">.</span><span class="na">build</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>In version 2.x.x you have to pass an <code class="docutils literal notranslate"><span class="pre">okhttp3.Cache</span></code> instance:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">val</span> <span class="n">giniBankApi</span><span class="p">:</span> <span class="n">GiniBankAPI</span> <span class="o">=</span> <span class="n">GiniBankAPIBuilder</span><span class="p">(</span><span class="n">getContext</span><span class="p">(),</span> <span class="s">&quot;gini-client-id&quot;</span><span class="p">,</span> <span class="s">&quot;GiniClientSecret&quot;</span><span class="p">,</span> <span class="s">&quot;example.com&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="na">setCache</span><span class="p">(</span><span class="n">Cache</span><span class="p">(</span>
+        <span class="n">directory</span> <span class="o">=</span> <span class="n">File</span><span class="p">(</span><span class="n">application</span><span class="p">.</span><span class="na">cacheDir</span><span class="p">,</span> <span class="s">&quot;http_cache&quot;</span><span class="p">),</span>
+        <span class="n">maxSize</span> <span class="o">=</span> <span class="mi">50L</span> <span class="o">*</span> <span class="mi">1024L</span> <span class="o">*</span> <span class="mi">1024L</span> <span class="c1">// 50 MiB</span>
+    <span class="p">))</span>
+    <span class="p">.</span><span class="na">build</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="custom-sessionmanager">
+<h3>Custom SessionManager<a class="headerlink" href="#custom-sessionmanager" title="Permalink to this headline">¶</a></h3>
+<p>In version 1.x.x you had to return a Bolts <code class="docutils literal notranslate"><span class="pre">Task&lt;Session&gt;</span></code> in your <code class="docutils literal notranslate"><span class="pre">SessionManager</span></code> interface implementation:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nc">CustomSessionManager</span> <span class="p">:</span> <span class="n">SessionManager</span> <span class="p">{</span>
+  <span class="n">override</span> <span class="n">fun</span> <span class="nf">getSession</span><span class="p">():</span> <span class="n">Task</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span> <span class="p">{</span>
+      <span class="c1">// retrieve a user session</span>
+      <span class="n">val</span> <span class="n">session</span><span class="p">:</span> <span class="n">Session</span> <span class="o">=</span> <span class="p">...</span>
+      <span class="k">return</span> <span class="n">Task</span><span class="p">.</span><span class="na">forResult</span><span class="p">(</span><span class="n">session</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>In version 2.x.x you have to return a <code class="docutils literal notranslate"><span class="pre">Resource</span></code> from the <code class="docutils literal notranslate"><span class="pre">getSession()</span></code> suspend function:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nc">CustomSessionManager</span> <span class="p">:</span> <span class="n">SessionManager</span> <span class="p">{</span>
+    <span class="n">override</span> <span class="n">suspend</span> <span class="n">fun</span> <span class="nf">getSession</span><span class="p">():</span> <span class="n">Resource</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span> <span class="p">{</span>
+        <span class="c1">// retrieve a user session</span>
+        <span class="n">val</span> <span class="n">session</span><span class="p">:</span> <span class="n">Session</span> <span class="o">=</span> <span class="p">...</span>
+        <span class="k">return</span> <span class="n">Resource</span><span class="p">.</span><span class="na">Success</span><span class="p">(</span><span class="n">session</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="upload-and-analyze-a-document">
+<h3>Upload and analyze a document<a class="headerlink" href="#upload-and-analyze-a-document" title="Permalink to this headline">¶</a></h3>
+<p>In version 1.x.x to upload and analyze document you could use methods of the <code class="docutils literal notranslate"><span class="pre">BankApiDocumentTaskManager</span></code> which
+returned Bolts tasks:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// This example uses Java</span>
+
+<span class="c1">// Assuming that `giniBankApi` is an instance of the `GiniBankAPI` facade class</span>
+
+<span class="c1">// Upload and analysis requires creation of a partial document and then a composite document</span>
+
+<span class="c1">// Create a partial document by uploading the document bytes</span>
+<span class="n">giniBankApi</span><span class="p">.</span><span class="na">getDocumentTaskManager</span><span class="p">()</span>
+        <span class="p">.</span><span class="na">createPartialDocument</span><span class="p">(</span><span class="n">documentBytes</span><span class="p">,</span> <span class="s">&quot;image/jpeg&quot;</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="kc">null</span><span class="p">)</span>
+        <span class="p">.</span><span class="na">onSuccessTask</span><span class="p">(</span><span class="k">new</span> <span class="n">Continuation</span><span class="o">&lt;</span><span class="n">Document</span><span class="p">,</span> <span class="n">Task</span><span class="o">&lt;</span><span class="n">Document</span><span class="o">&gt;&gt;</span><span class="p">()</span> <span class="p">{</span>
+            <span class="nd">@Override</span>
+            <span class="kd">public</span> <span class="n">Task</span><span class="o">&lt;</span><span class="n">Document</span><span class="o">&gt;</span> <span class="nf">then</span><span class="p">(</span><span class="n">Task</span><span class="o">&lt;</span><span class="n">Document</span><span class="o">&gt;</span> <span class="n">task</span><span class="p">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="p">{</span>
+                <span class="kd">final</span> <span class="n">Document</span> <span class="n">partialDocument</span> <span class="o">=</span> <span class="n">task</span><span class="p">.</span><span class="na">getResult</span><span class="p">();</span>
+
+                <span class="c1">// Create a composite document to start analysis</span>
+                <span class="k">return</span> <span class="n">giniBankApi</span><span class="p">.</span><span class="na">getDocumentTaskManager</span><span class="p">().</span><span class="na">createCompositeDocument</span><span class="p">(</span><span class="n">Collections</span><span class="p">.</span><span class="na">singletonList</span><span class="p">(</span><span class="n">partialDocument</span><span class="p">),</span> <span class="kc">null</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">})</span>
+        <span class="p">.</span><span class="na">onSuccessTask</span><span class="p">(</span><span class="k">new</span> <span class="n">Continuation</span><span class="o">&lt;</span><span class="n">Document</span><span class="p">,</span> <span class="n">Task</span><span class="o">&lt;</span><span class="n">Document</span><span class="o">&gt;&gt;</span><span class="p">()</span> <span class="p">{</span>
+            <span class="nd">@Override</span>
+            <span class="kd">public</span> <span class="n">Task</span><span class="o">&lt;</span><span class="n">Document</span><span class="o">&gt;</span> <span class="nf">then</span><span class="p">(</span><span class="n">Task</span><span class="o">&lt;</span><span class="n">Document</span><span class="o">&gt;</span> <span class="n">task</span><span class="p">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="p">{</span>
+                <span class="kd">final</span> <span class="n">Document</span> <span class="n">compositeDocument</span> <span class="o">=</span> <span class="n">task</span><span class="p">.</span><span class="na">getResult</span><span class="p">();</span>
+
+                <span class="c1">// Poll the document processing state</span>
+                <span class="k">return</span> <span class="n">giniBankApi</span><span class="p">.</span><span class="na">getDocumentTaskManager</span><span class="p">().</span><span class="na">pollDocument</span><span class="p">(</span><span class="n">compositeDocument</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">})</span>
+        <span class="p">.</span><span class="na">onSuccessTask</span><span class="p">(</span><span class="k">new</span> <span class="n">Continuation</span><span class="o">&lt;</span><span class="n">Document</span><span class="p">,</span> <span class="n">Task</span><span class="o">&lt;</span><span class="n">ExtractionsContainer</span><span class="o">&gt;&gt;</span><span class="p">()</span> <span class="p">{</span>
+
+            <span class="nd">@Override</span>
+            <span class="kd">public</span> <span class="n">Task</span><span class="o">&lt;</span><span class="n">ExtractionsContainer</span><span class="o">&gt;</span> <span class="nf">then</span><span class="p">(</span><span class="n">Task</span><span class="o">&lt;</span><span class="n">Document</span><span class="o">&gt;</span> <span class="n">task</span><span class="p">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="p">{</span>
+                <span class="kd">final</span> <span class="n">Document</span> <span class="n">compositeDocument</span> <span class="o">=</span> <span class="n">task</span><span class="p">.</span><span class="na">getResult</span><span class="p">();</span>
+
+                <span class="c1">// Retrieve the extractions</span>
+                <span class="k">return</span> <span class="n">giniBankApi</span><span class="p">.</span><span class="na">getDocumentTaskManager</span><span class="p">().</span><span class="na">getAllExtractions</span><span class="p">(</span><span class="n">compositeDocument</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">})</span>
+        <span class="p">.</span><span class="na">continueWith</span><span class="p">(</span><span class="k">new</span> <span class="n">Continuation</span><span class="o">&lt;</span><span class="n">ExtractionsContainer</span><span class="p">,</span> <span class="n">Void</span><span class="o">&gt;</span><span class="p">()</span> <span class="p">{</span>
+            <span class="nd">@Override</span>
+            <span class="kd">public</span> <span class="n">Void</span> <span class="nf">then</span><span class="p">(</span><span class="n">Task</span><span class="o">&lt;</span><span class="n">ExtractionsContainer</span><span class="o">&gt;</span> <span class="n">task</span><span class="p">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">task</span><span class="p">.</span><span class="na">isFaulted</span><span class="p">())</span> <span class="p">{</span>
+                    <span class="c1">// Handle error</span>
+                    <span class="kd">final</span> <span class="n">Exception</span> <span class="n">e</span> <span class="o">=</span> <span class="n">task</span><span class="p">.</span><span class="na">getError</span><span class="p">();</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="c1">// Use the extractions</span>
+                    <span class="kd">final</span> <span class="n">ExtractionsContainer</span> <span class="n">extractionsContainer</span> <span class="o">=</span> <span class="n">task</span><span class="p">.</span><span class="na">getResult</span><span class="p">();</span>
+                <span class="p">}</span>
+                <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">});</span>
+</pre></div>
+</div>
+<p>In version 1.x.x you were also able to complete the above with coroutines using the <code class="docutils literal notranslate"><span class="pre">BankApiDocumentManager</span></code>:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// Assuming that `giniBankApi` is an instance of the `GiniBankAPI` facade class</span>
+
+<span class="c1">// Upload and analysis requires creation of a partial document and then a composite document</span>
+
+<span class="n">coroutineScope</span><span class="p">.</span><span class="na">launch</span> <span class="p">{</span>
+    <span class="c1">// Create a partial document by uploading the document data</span>
+    <span class="n">val</span> <span class="n">partialDocument</span> <span class="o">=</span> <span class="n">giniBankApi</span><span class="p">.</span><span class="na">documentManager</span><span class="p">.</span><span class="na">createPartialDocument</span><span class="p">(</span><span class="n">documentBytes</span><span class="p">,</span> <span class="s">&quot;image/jpeg&quot;</span><span class="p">)</span>
+
+    <span class="c1">// Create a composite document to start analysis</span>
+    <span class="n">val</span> <span class="n">compositeDocument</span> <span class="o">=</span> <span class="n">giniBankApi</span><span class="p">.</span><span class="na">documentManager</span><span class="p">.</span><span class="na">createCompositeDocument</span><span class="p">(</span><span class="n">listOf</span><span class="p">(</span><span class="n">partialDocument</span><span class="p">))</span>
+
+    <span class="c1">// Poll the document and retrieve the extractions</span>
+    <span class="n">val</span> <span class="n">extractions</span> <span class="o">=</span> <span class="n">giniBankApi</span><span class="p">.</span><span class="na">documentManager</span><span class="p">.</span><span class="na">getExtractions</span><span class="p">(</span><span class="n">compositeDocument</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>In version 2.x.x you have to use the <code class="docutils literal notranslate"><span class="pre">BankApiDocumentManager</span></code> which returns <code class="docutils literal notranslate"><span class="pre">Resource</span></code> instances:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// Assuming that `giniBankApi` is an instance of the `GiniBankAPI` facade class</span>
+
+<span class="c1">// Upload and analysis requires creation of a partial document and then a composite document</span>
+
+<span class="n">coroutineScope</span><span class="p">.</span><span class="na">launch</span> <span class="p">{</span>
+    <span class="c1">// Create a partial document by uploading the document data</span>
+    <span class="n">val</span> <span class="n">extractionsResource</span> <span class="o">=</span>
+        <span class="n">giniBankApi</span><span class="p">.</span><span class="na">documentManager</span><span class="p">.</span><span class="na">createPartialDocument</span><span class="p">(</span><span class="n">documentBytes</span><span class="p">,</span> <span class="s">&quot;image/jpeg&quot;</span><span class="p">)</span>
+            <span class="p">.</span><span class="na">mapSuccess</span> <span class="p">{</span> <span class="n">partialDocumentResource</span> <span class="o">-&gt;</span>
+                <span class="c1">// Create a composite document to start analysis</span>
+                <span class="n">giniBankApi</span><span class="p">.</span><span class="na">documentManager</span><span class="p">.</span><span class="na">createCompositeDocument</span><span class="p">(</span><span class="n">listOf</span><span class="p">(</span><span class="n">partialDocumentResource</span><span class="p">.</span><span class="na">data</span><span class="p">))</span>
+            <span class="p">}</span>
+            <span class="p">.</span><span class="na">mapSuccess</span> <span class="p">{</span> <span class="n">compositeDocumentResource</span> <span class="o">-&gt;</span>
+                <span class="c1">// Poll the document and retrieve the extractions</span>
+                <span class="n">giniBankApi</span><span class="p">.</span><span class="na">documentManager</span><span class="p">.</span><span class="na">getAllExtractionsWithPolling</span><span class="p">(</span><span class="n">compositeDocumentResource</span><span class="p">.</span><span class="na">data</span><span class="p">)</span>
+            <span class="p">}</span>
+
+    <span class="n">when</span> <span class="p">(</span><span class="n">extractionsResource</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">is</span> <span class="n">Resource</span><span class="p">.</span><span class="na">Success</span> <span class="o">-&gt;</span> <span class="p">{</span>
+            <span class="c1">// You may use the extractions to fulfill your use-case</span>
+            <span class="n">val</span> <span class="n">extractionsContainer</span> <span class="o">=</span> <span class="n">extractionsResource</span><span class="p">.</span><span class="na">data</span>
+        <span class="p">}</span>
+        <span class="n">is</span> <span class="n">Resource</span><span class="p">.</span><span class="na">Error</span> <span class="o">-&gt;</span> <span class="c1">// Handle error</span>
+        <span class="n">is</span> <span class="n">Resource</span><span class="p">.</span><span class="na">Cancelled</span> <span class="o">-&gt;</span> <span class="c1">// Handle cancellation</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Instead of using <code class="docutils literal notranslate"><span class="pre">mapExtractions()</span></code> you could also use <code class="docutils literal notranslate"><span class="pre">when</span></code> for each returned <code class="docutils literal notranslate"><span class="pre">Resource</span></code> to handle errors and
+cancellations for each request separately.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../see_also.html" class="btn btn-neutral float-right" title="See also">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="using-the-library.html" class="btn btn-neutral" title="Using the Gini Bank API Library"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+    </p>
+  </div>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  
+</body>
+</html>
