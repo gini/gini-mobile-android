@@ -5,8 +5,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import ch.qos.logback.classic.Logger
 import ch.qos.logback.classic.LoggerContext
 import ch.qos.logback.classic.android.LogcatAppender
@@ -21,8 +21,6 @@ import net.gini.android.capture.GiniCaptureError
 import net.gini.android.capture.ImportedFileValidationException
 import net.gini.android.capture.camera.CameraActivity
 import net.gini.android.capture.network.GiniCaptureDefaultNetworkService
-import net.gini.android.capture.onboarding.DefaultPages.Companion.asArrayList
-import net.gini.android.capture.onboarding.OnboardingPage
 import net.gini.android.capture.requirements.GiniCaptureRequirements
 import net.gini.android.capture.requirements.RequirementsReport
 import net.gini.android.capture.screen.R
@@ -45,7 +43,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
-    private lateinit var configurationViewModel: ConfigurationViewModel
+    private val configurationViewModel: ConfigurationViewModel by viewModels()
 
 
     @Inject
@@ -59,20 +57,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        configurationViewModel = ViewModelProvider(this)[ConfigurationViewModel::class.java]
-
-
 
         addInputHandlers()
         setGiniCaptureSdkDebugging()
         showVersions()
         createRuntimePermissionsHandler()
         mRestoredInstance = savedInstanceState != null
-        /*isQRenabledSwitch.setOnCheckedChangeListener { buttonView: CompoundButton?, isChecked: Boolean ->
-            if (!isChecked) {
-                onlyQRCodeSwitch!!.isChecked = false
-            }
-        }*/
     }
 
     override fun onStart() {
@@ -211,8 +201,6 @@ class MainActivity : AppCompatActivity() {
 
             override fun permissionDenied() {}
         })
-
-
     }
 
     private fun doStartGiniCaptureSdk() {
@@ -240,8 +228,6 @@ class MainActivity : AppCompatActivity() {
 
         val intent = Intent(this, CustomHelpActivity::class.java)
         configurationViewModel.configureGiniCapture(builder, intent)
-
-
     }
 
     private fun showUnfulfilledRequirementsToast(report: RequirementsReport) {
@@ -266,22 +252,6 @@ class MainActivity : AppCompatActivity() {
         ).show()
     }
 
-
-    private fun getOnboardingPages(
-        isMultiPageEnabled: Boolean,
-        isQRCodeScanningEnabled: Boolean
-    ): ArrayList<OnboardingPage> {
-        // Adding a custom page to the default pages
-        val pages = asArrayList(isMultiPageEnabled, isQRCodeScanningEnabled)
-        pages.add(
-            OnboardingPage(
-                R.string.additional_onboarding_page_title,
-                R.string.additional_onboarding_page_message,
-                null
-            )
-        )
-        return pages
-    }
 
     override fun onActivityResult(
         requestCode: Int, resultCode: Int,
@@ -350,8 +320,6 @@ class MainActivity : AppCompatActivity() {
                     var configurationResult: Configuration? = data?.getParcelableExtra(
                         CONFIGURATION_BUNDLE
                     )
-
-
                     if (configurationResult != null) {
                         configurationViewModel.setConfiguration(configurationResult)
                     }
@@ -409,9 +377,6 @@ class MainActivity : AppCompatActivity() {
     private fun handleEnterManuallyAction() {
         Toast.makeText(this, "Scan exited for manual enter mode", Toast.LENGTH_SHORT).show()
     }
-
-
-
 
 
     companion object {

@@ -24,7 +24,6 @@ import net.gini.android.capture.tracking.Event
 import net.gini.android.capture.tracking.EventTracker
 import net.gini.android.capture.tracking.OnboardingScreenEvent
 import net.gini.android.capture.tracking.ReviewScreenEvent
-import net.gini.android.capture.view.DefaultNavigationBarTopAdapter
 import org.slf4j.LoggerFactory
 import javax.inject.Inject
 
