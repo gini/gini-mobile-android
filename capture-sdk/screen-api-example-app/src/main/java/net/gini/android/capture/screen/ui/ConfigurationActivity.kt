@@ -102,34 +102,31 @@ class ConfigurationActivity : AppCompatActivity() {
             else -> R.id.btn_fileImportOnlyPdf
         }
         binding.toggleBtnFileImportSetup.check(checkButtonId)
-
         // 8 enable bottom navigation bar
         binding.switchShowBottomNavbar.isChecked = configuration.isBottomNavigationBarEnabled
         // 9 enable Help screens custom bottom navigation bar
-        binding.switchShowHelpScreenCustomBottomNavbar.isChecked = configuration.isHelpScreensCustomBottomNavBarEnabled
-
+        binding.switchShowHelpScreenCustomBottomNavbar.isChecked =
+            configuration.isHelpScreensCustomBottomNavBarEnabled
         // 10 enable camera screens custom bottom navigation bar
-        binding.switchCameraScreenCustomBottomNavbar.isChecked = configuration.isCameraBottomNavBarEnabled
-
+        binding.switchCameraScreenCustomBottomNavbar.isChecked =
+            configuration.isCameraBottomNavBarEnabled
         // 11 enable review screens custom bottom navigation bar
-        binding.switchReviewScreenCustomBottomNavbar.isChecked = configuration.isReviewScreenCustomBottomNavBarEnabled
+        binding.switchReviewScreenCustomBottomNavbar.isChecked =
+            configuration.isReviewScreenCustomBottomNavBarEnabled
 
         // 12 enable image picker screens custom bottom navigation bar -> was implemented on iOS, not needed for Android
 
         // 13 enable onboarding screens at first launch
         binding.switchOnboardingScreensAtFirstRun.isChecked =
             configuration.isOnboardingAtFirstRunEnabled
-
         // 14 enable onboarding at every launch
         binding.switchOnboardingScreensAtEveryLaunch.isChecked =
             configuration.isOnboardingAtEveryLaunchEnabled
-
         // 15 enable custom onboarding pages
         binding.switchCustomOnboardingPages.isChecked = configuration.isCustomOnboardingPagesEnabled
         // 16 enable align corners onboarding pages
         binding.switchCustomOnboardingAlignCornersPage.isChecked =
             configuration.isAlignCornersInCustomOnboardingEnabled
-
         // 17 enable lighting in custom onboarding pages
         binding.switchCustomOnboardingLightingPage.isChecked =
             configuration.isLightingInCustomOnboardingEnabled
@@ -140,34 +137,27 @@ class ConfigurationActivity : AppCompatActivity() {
         binding.switchCustomOnboardingMultiPage.isChecked =
             configuration.isMultiPageInCustomOnboardingEnabled
         // 20 enable custom navigation bar in custom onboarding pages
-
+        binding.switchOnboardingCustomNavBar.isChecked =
+            configuration.isCustomNavigationBarInCustomOnboardingEnabled
         // 21 enable button's custom loading indicator
         binding.switchButtonsCustomLoadingIndicator.isChecked =
             configuration.isButtonsCustomLoadingIndicatorEnabled
-
         // 22 enable screen's custom loading indicator
         binding.switchScreenCustomLoadingIndicator.isChecked =
             configuration.isScreenCustomLoadingIndicatorEnabled
-
         // 23 enable supported format help screen
         binding.switchSupportedFormatsScreen.isChecked =
             configuration.isSupportedFormatsHelpScreenEnabled
-
         // 24 enable custom help items
         binding.switchCustomHelpMenuItems.isChecked = configuration.isCustomHelpItemsEnabled
-
         // 25 enable custom navigation bar
         binding.switchCustomNavigationController.isChecked = configuration.isCustomNavBarEnabled
-
         // 26 enable event tracker
         binding.switchEventTracker.isChecked = configuration.isEventTrackerEnabled
-
         // 27 enable Gini error logger
         binding.switchGiniErrorLogger.isChecked = configuration.isGiniErrorLoggerEnabled
-
         // 28 enable custom error logger
         binding.switchCustomErrorLogger.isChecked = configuration.isCustomErrorLoggerEnabled
-
         // 29 set imported file size bytes limit
         binding.editTextImportedFileSizeBytesLimit.hint =
             configuration.importedFileSizeBytesLimit.toString()
@@ -345,8 +335,13 @@ class ConfigurationActivity : AppCompatActivity() {
             )
         }
         // 20 enable custom navigation bar in custom onboarding pages
-
-
+        binding.switchOnboardingCustomNavBar.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    isCustomNavigationBarInCustomOnboardingEnabled = isChecked
+                )
+            )
+        }
         // 21 enable button's custom loading indicator
         binding.switchButtonsCustomLoadingIndicator.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(

@@ -13,6 +13,7 @@ import net.gini.android.capture.logging.ErrorLoggerListener
 import net.gini.android.capture.screen.R
 import net.gini.android.capture.screen.ui.adapters.CustomCameraNavigationBarBottomAdapter
 import net.gini.android.capture.screen.ui.adapters.CustomHelpNavigationBarBottomAdapter
+import net.gini.android.capture.screen.ui.adapters.CustomOnboardingNavigationBarBottomAdapter
 import net.gini.android.capture.screen.ui.adapters.CustomReviewNavigationBarBottomAdapter
 import net.gini.android.capture.screen.ui.data.Configuration
 import net.gini.android.capture.tracking.AnalysisScreenEvent
@@ -36,12 +37,10 @@ class ConfigurationViewModel @Inject constructor() : ViewModel() {
         _configurationFlow.value = configuration
     }
 
-
     fun configureGiniCapture(builder: GiniCapture.Builder, intent: Intent) {
         val configuration = configurationFlow.value
         // 1 file import
         builder.setFileImportEnabled(configuration.isFileImportEnabled)
-
         // 2 QR code scanning
         builder.setQRCodeScanningEnabled(configuration.isQrCodeEnabled)
         // 3 only QR code scanning
@@ -56,19 +55,15 @@ class ConfigurationViewModel @Inject constructor() : ViewModel() {
         builder.setDocumentImportEnabledFileTypes(configuration.documentImportEnabledFileTypes)
         // 8 enable bottom navigation bar
         builder.setBottomNavigationBarEnabled(configuration.isBottomNavigationBarEnabled)
-
         // 9 enable Help screens custom bottom navigation bar
         if (configuration.isHelpScreensCustomBottomNavBarEnabled)
             builder.setHelpNavigationBarBottomAdapter(CustomHelpNavigationBarBottomAdapter())
-
         // 10 enable camera screens custom bottom navigation bar
         if (configuration.isCameraBottomNavBarEnabled)
             builder.setCameraNavigationBarBottomAdapter(CustomCameraNavigationBarBottomAdapter())
-
         // 11 enable review screens custom bottom navigation bar
         if (configuration.isReviewScreenCustomBottomNavBarEnabled)
             builder.setReviewBottomBarNavigationAdapter(CustomReviewNavigationBarBottomAdapter())
-
         // 12 enable image picker screens custom bottom navigation bar -> was implemented on iOS, not needed for Android
 
         // 13 enable onboarding screens at first launch
@@ -112,8 +107,11 @@ class ConfigurationViewModel @Inject constructor() : ViewModel() {
 
         }
 
-        //TODO: should be implemented
         // 20 enable custom navigation bar in custom onboarding pages
+        if (configuration.isCustomNavigationBarInCustomOnboardingEnabled)
+            builder.setOnboardingNavigationBarBottomAdapter(
+                CustomOnboardingNavigationBarBottomAdapter()
+            )
 
         //TODO: should use a custom adapter
         // 21 enable button's custom loading indicator
@@ -122,7 +120,6 @@ class ConfigurationViewModel @Inject constructor() : ViewModel() {
                 DefaultOnButtonLoadingIndicatorAdapter()
             )
         }
-
         // 22 enable screen's custom loading indicator
         if (configuration.isScreenCustomLoadingIndicatorEnabled) {
             builder.setLoadingIndicatorAdapter(
@@ -131,7 +128,6 @@ class ConfigurationViewModel @Inject constructor() : ViewModel() {
                 )
             )
         }
-
         // 23 enable supported format help screen
         builder.setSupportedFormatsHelpScreenEnabled(configuration.isSupportedFormatsHelpScreenEnabled)
 
@@ -155,21 +151,14 @@ class ConfigurationViewModel @Inject constructor() : ViewModel() {
         // 26 enable event tracker
         if (configuration.isEventTrackerEnabled)
             builder.setEventTracker(GiniCaptureEventTracker())
-
         // 27 enable Gini error logger
         builder.setGiniErrorLoggerIsOn(configuration.isGiniErrorLoggerEnabled)
-
         // 28 enable custom error logger
         if (configuration.isCustomErrorLoggerEnabled)
             builder.setCustomErrorLoggerListener(CustomErrorLoggerListener())
-
         // 29 set imported file size bytes limit
-
         if (configuration.importedFileSizeBytesLimit != FileImportValidator.FILE_SIZE_LIMIT && configuration.importedFileSizeBytesLimit >= 0)
             builder.importedFileSizeBytesLimit = configuration.importedFileSizeBytesLimit
-
-
-
 
         builder.build()
     }
