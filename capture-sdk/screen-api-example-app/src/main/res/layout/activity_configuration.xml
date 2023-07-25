@@ -424,6 +424,13 @@
                     tools:text="Hello@World and stuff and foo and bar and whatchamacallit"/>
             </com.google.android.material.textfield.TextInputLayout>
 
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/switch_disableCameraPermission"
+                style="@style/TextAppearance.MaterialComponents.Body1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/gc_medium_12"
+                android:text="@string/disable_camera_permission" />
 
         </LinearLayout>
 

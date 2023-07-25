@@ -45,7 +45,6 @@ class MainActivity : AppCompatActivity() {
 
     private val configurationViewModel: ConfigurationViewModel by viewModels()
 
-
     @Inject
     lateinit var giniCaptureDefaultNetworkService: GiniCaptureDefaultNetworkService
     private var mRestoredInstance = false
@@ -84,19 +83,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun createRuntimePermissionsHandler() {
-        mRuntimePermissionHandler = RuntimePermissionHandler
-            .forActivity(this)
-            .withCameraPermissionDeniedMessage(
+        mRuntimePermissionHandler =
+            RuntimePermissionHandler.forActivity(this).withCameraPermissionDeniedMessage(
                 getString(R.string.camera_permission_denied_message)
-            )
-            .withCameraPermissionRationale(getString(R.string.camera_permission_rationale))
-            .withStoragePermissionDeniedMessage(
-                getString(R.string.storage_permission_denied_message)
-            )
-            .withStoragePermissionRationale(getString(R.string.storage_permission_rationale))
-            .withGrantAccessButtonTitle(getString(R.string.grant_access))
-            .withCancelButtonTitle(getString(R.string.cancel))
-            .build()
+            ).withCameraPermissionRationale(getString(R.string.camera_permission_rationale))
+                .withStoragePermissionDeniedMessage(
+                    getString(R.string.storage_permission_denied_message)
+                ).withStoragePermissionRationale(getString(R.string.storage_permission_rationale))
+                .withGrantAccessButtonTitle(getString(R.string.grant_access))
+                .withCancelButtonTitle(getString(R.string.cancel)).build()
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -123,7 +118,8 @@ class MainActivity : AppCompatActivity() {
         // Configure the Gini Capture SDK
         configureGiniCapture()
         mFileImportCancellationToken = GiniCapture.getInstance().createIntentForImportedFiles(
-            importedFileIntent, this,
+            importedFileIntent,
+            this,
             object : AsyncCallback<Intent, ImportedFileValidationException> {
                 override fun onSuccess(result: Intent) {
                     mFileImportCancellationToken = null
@@ -146,10 +142,8 @@ class MainActivity : AppCompatActivity() {
         if (exception.validationError != null) {
             message = getString(exception.validationError!!.textResource)
         }
-        MaterialAlertDialogBuilder(this)
-            .setMessage(message)
-            .setPositiveButton("OK") { dialogInterface, i -> finish() }
-            .show()
+        MaterialAlertDialogBuilder(this).setMessage(message)
+            .setPositiveButton("OK") { dialogInterface, i -> finish() }.show()
     }
 
     private fun isIntentActionViewOrSend(intent: Intent): Boolean {
@@ -172,21 +166,27 @@ class MainActivity : AppCompatActivity() {
 
     private fun addInputHandlers() {
         binding.buttonStartScanner.setOnClickListener { v: View? ->
-            //TODO: set from configuration object and delete the line below
-            startGiniCaptureSdk()
-            /*if (disableCameraPermission.isChecked) {
+            if (configurationViewModel.disableCameraPermissionFlow.value) {
                 doStartGiniCaptureSdk()
             } else {
                 startGiniCaptureSdk()
-            }*/
+            }
         }
 
         binding.textGiniCaptureVersion.setOnClickListener {
             startActivityForResult(
                 Intent(
-                    this,
-                    ConfigurationActivity::class.java
-                ).putExtra(CONFIGURATION_BUNDLE, configurationViewModel.configurationFlow.value), REQUEST_CONFIGURATION
+                    this, ConfigurationActivity::class.java
+                )
+                    .putExtra(
+                        CONFIGURATION_BUNDLE,
+                        configurationViewModel.configurationFlow.value
+                    )
+                    .putExtra(
+                        CAMERA_PERMISSION_BUNDLE,
+                        configurationViewModel.disableCameraPermissionFlow.value
+                    ),
+                REQUEST_CONFIGURATION
             )
         }
 
@@ -221,10 +221,9 @@ class MainActivity : AppCompatActivity() {
     private fun configureGiniCapture() {
         val app = application as ScreenApiExampleApp
         app.clearGiniCaptureNetworkInstances()
-        val builder = GiniCapture.newInstance(this)
-            .setGiniCaptureNetworkService(
-                giniCaptureDefaultNetworkService
-            )
+        val builder = GiniCapture.newInstance(this).setGiniCaptureNetworkService(
+            giniCaptureDefaultNetworkService
+        )
 
         val intent = Intent(this, CustomHelpActivity::class.java)
         configurationViewModel.configureGiniCapture(builder, intent)
@@ -247,15 +246,13 @@ class MainActivity : AppCompatActivity() {
             }
         }
         Toast.makeText(
-            this, "Requirements not fulfilled:\n$stringBuilder",
-            Toast.LENGTH_LONG
+            this, "Requirements not fulfilled:\n$stringBuilder", Toast.LENGTH_LONG
         ).show()
     }
 
 
     override fun onActivityResult(
-        requestCode: Int, resultCode: Int,
-        data: Intent?
+        requestCode: Int, resultCode: Int, data: Intent?
     ) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_SCAN) {
@@ -287,8 +284,9 @@ class MainActivity : AppCompatActivity() {
                     }
                     val compoundExtractionsBundle =
                         data.getBundleExtra(CameraActivity.EXTRA_OUT_COMPOUND_EXTRACTIONS)
-                    if ((pay5ExtractionsAvailable(extractionsBundle)
-                                || epsPaymentAvailable(extractionsBundle)) || compoundExtractionsBundle != null
+                    if ((pay5ExtractionsAvailable(extractionsBundle) || epsPaymentAvailable(
+                            extractionsBundle
+                        )) || compoundExtractionsBundle != null
                     ) {
                         startExtractionsActivity(extractionsBundle, compoundExtractionsBundle)
                     }
@@ -301,9 +299,8 @@ class MainActivity : AppCompatActivity() {
                     )
                     if (error != null) {
                         Toast.makeText(
-                            this, "Error: "
-                                    + error.errorCode + " - "
-                                    + error.message,
+                            this,
+                            "Error: " + error.errorCode + " - " + error.message,
                             Toast.LENGTH_LONG
                         ).show()
                     }
@@ -323,6 +320,12 @@ class MainActivity : AppCompatActivity() {
                     if (configurationResult != null) {
                         configurationViewModel.setConfiguration(configurationResult)
                     }
+
+                    configurationViewModel.disableCameraPermission(
+                        data?.getBooleanExtra(
+                            CAMERA_PERMISSION_BUNDLE, false
+                        ) ?: false
+                    )
                 }
             }
         }
@@ -347,14 +350,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startExtractionsActivity(
-        extractionsBundle: Bundle,
-        compoundExtractionsBundle: Bundle?
+        extractionsBundle: Bundle, compoundExtractionsBundle: Bundle?
     ) {
         val intent = Intent(this, ExtractionsActivity::class.java)
         intent.putExtra(ExtractionsActivity.EXTRA_IN_EXTRACTIONS, extractionsBundle)
         intent.putExtra(
-            ExtractionsActivity.EXTRA_IN_COMPOUND_EXTRACTIONS,
-            compoundExtractionsBundle
+            ExtractionsActivity.EXTRA_IN_COMPOUND_EXTRACTIONS, compoundExtractionsBundle
         )
         startActivity(intent)
     }
@@ -382,6 +383,7 @@ class MainActivity : AppCompatActivity() {
     companion object {
         const val EXTRA_OUT_EXTRACTIONS = "EXTRA_OUT_EXTRACTIONS"
         const val CONFIGURATION_BUNDLE = "CONFIGURATION_BUNDLE"
+        const val CAMERA_PERMISSION_BUNDLE = "CAMERA_PERMISSION_BUNDLE"
         private const val REQUEST_SCAN = 1
         private const val REQUEST_NO_EXTRACTIONS = 2
         private const val REQUEST_CONFIGURATION = 3

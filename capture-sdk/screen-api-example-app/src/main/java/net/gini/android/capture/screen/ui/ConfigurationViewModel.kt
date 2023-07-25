@@ -30,8 +30,15 @@ import javax.inject.Inject
 @HiltViewModel
 class ConfigurationViewModel @Inject constructor() : ViewModel() {
 
+    private val _disableCameraPermissionFlow = MutableStateFlow<Boolean>(false)
+    val disableCameraPermissionFlow: StateFlow<Boolean> = _disableCameraPermissionFlow
+
     private val _configurationFlow = MutableStateFlow(Configuration())
     val configurationFlow: StateFlow<Configuration> = _configurationFlow
+
+    fun disableCameraPermission(cameraPermission: Boolean) {
+        _disableCameraPermissionFlow.value = cameraPermission
+    }
 
     fun setConfiguration(configuration: Configuration) {
         _configurationFlow.value = configuration

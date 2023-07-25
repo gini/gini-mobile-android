@@ -17,6 +17,7 @@ import net.gini.android.capture.DocumentImportEnabledFileTypes
 import net.gini.android.capture.internal.util.ActivityHelper.interceptOnBackPressed
 import net.gini.android.capture.screen.R
 import net.gini.android.capture.screen.databinding.ActivityConfigurationBinding
+import net.gini.android.capture.screen.ui.MainActivity.Companion.CAMERA_PERMISSION_BUNDLE
 import net.gini.android.capture.screen.ui.MainActivity.Companion.CONFIGURATION_BUNDLE
 import net.gini.android.capture.screen.ui.data.Configuration
 
@@ -36,15 +37,31 @@ class ConfigurationActivity : AppCompatActivity() {
         configurationViewModel.setConfiguration(
             intent.getParcelableExtra(CONFIGURATION_BUNDLE) ?: Configuration()
         )
+        configurationViewModel.disableCameraPermission(
+            intent.getBooleanExtra(CAMERA_PERMISSION_BUNDLE, false) ?: false
+        )
 
         setupActionBar()
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                configurationViewModel.configurationFlow.collect {
-                    updateUIWithConfigurationObject(it)
+                launch {
+                    configurationViewModel.configurationFlow.collect {
+                        updateUIWithConfigurationObject(it)
+                    }
                 }
+                launch {
+                    configurationViewModel.disableCameraPermissionFlow.collect {
+                        binding.switchDisableCameraPermission.isChecked =
+                            it
+                    }
+                }
+
             }
+        }
+
+        binding.switchDisableCameraPermission.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.disableCameraPermission(isChecked)
         }
 
         setConfigurationFeatures()
@@ -76,7 +93,12 @@ class ConfigurationActivity : AppCompatActivity() {
 
     private fun returnToMainActivity() {
         val returnIntent =
-            Intent().putExtra(CONFIGURATION_BUNDLE, configurationViewModel.configurationFlow.value)
+            Intent()
+                .putExtra(CONFIGURATION_BUNDLE, configurationViewModel.configurationFlow.value)
+                .putExtra(
+                    CAMERA_PERMISSION_BUNDLE,
+                    configurationViewModel.disableCameraPermissionFlow.value
+                )
         setResult(Activity.RESULT_OK, returnIntent)
         finish()
     }
