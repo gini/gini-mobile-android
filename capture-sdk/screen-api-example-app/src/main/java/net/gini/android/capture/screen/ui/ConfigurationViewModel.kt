@@ -13,6 +13,7 @@ import net.gini.android.capture.logging.ErrorLoggerListener
 import net.gini.android.capture.screen.R
 import net.gini.android.capture.screen.ui.adapters.CustomCameraNavigationBarBottomAdapter
 import net.gini.android.capture.screen.ui.adapters.CustomHelpNavigationBarBottomAdapter
+import net.gini.android.capture.screen.ui.adapters.CustomNavigationBarTopAdapter
 import net.gini.android.capture.screen.ui.adapters.CustomOnButtonLoadingIndicatorAdapter
 import net.gini.android.capture.screen.ui.adapters.CustomOnboardingNavigationBarBottomAdapter
 import net.gini.android.capture.screen.ui.adapters.CustomReviewNavigationBarBottomAdapter
@@ -24,7 +25,6 @@ import net.gini.android.capture.tracking.EventTracker
 import net.gini.android.capture.tracking.OnboardingScreenEvent
 import net.gini.android.capture.tracking.ReviewScreenEvent
 import net.gini.android.capture.view.DefaultNavigationBarTopAdapter
-import net.gini.android.capture.view.DefaultOnButtonLoadingIndicatorAdapter
 import org.slf4j.LoggerFactory
 import javax.inject.Inject
 
@@ -143,10 +143,9 @@ class ConfigurationViewModel @Inject constructor() : ViewModel() {
             builder.setCustomHelpItems(customHelpItems)
         }
 
-        //TODO: should be replaced with a custom adapter
         // 25 enable custom navigation bar
         if (configuration.isCustomNavBarEnabled)
-            builder.setNavigationBarTopAdapter(DefaultNavigationBarTopAdapter())
+            builder.setNavigationBarTopAdapter(CustomNavigationBarTopAdapter())
 
         // 26 enable event tracker
         if (configuration.isEventTrackerEnabled)
