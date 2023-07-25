@@ -13,6 +13,7 @@ import net.gini.android.capture.logging.ErrorLoggerListener
 import net.gini.android.capture.screen.R
 import net.gini.android.capture.screen.ui.adapters.CustomCameraNavigationBarBottomAdapter
 import net.gini.android.capture.screen.ui.adapters.CustomHelpNavigationBarBottomAdapter
+import net.gini.android.capture.screen.ui.adapters.CustomOnButtonLoadingIndicatorAdapter
 import net.gini.android.capture.screen.ui.adapters.CustomOnboardingNavigationBarBottomAdapter
 import net.gini.android.capture.screen.ui.adapters.CustomReviewNavigationBarBottomAdapter
 import net.gini.android.capture.screen.ui.data.Configuration
@@ -113,11 +114,10 @@ class ConfigurationViewModel @Inject constructor() : ViewModel() {
                 CustomOnboardingNavigationBarBottomAdapter()
             )
 
-        //TODO: should use a custom adapter
         // 21 enable button's custom loading indicator
         if (configuration.isButtonsCustomLoadingIndicatorEnabled) {
             builder.setOnButtonLoadingIndicatorAdapter(
-                DefaultOnButtonLoadingIndicatorAdapter()
+                CustomOnButtonLoadingIndicatorAdapter()
             )
         }
         // 22 enable screen's custom loading indicator
