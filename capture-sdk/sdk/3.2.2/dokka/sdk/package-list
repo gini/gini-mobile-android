@@ -774,11 +774,6 @@ $dokka.location:net.gini.android.capture/DocumentImportEnabledFileTypes.PDF_AND_
 $dokka.location:net.gini.android.capture/DocumentImportEnabledFileTypes///PointingToDeclaration/sdk/net.gini.android.capture/-document-import-enabled-file-types/index.html
 $dokka.location:net.gini.android.capture/DocumentImportEnabledFileTypes/valueOf/#java.lang.String/PointingToDeclaration/sdk/net.gini.android.capture/-document-import-enabled-file-types/value-of.html
 $dokka.location:net.gini.android.capture/DocumentImportEnabledFileTypes/values/#/PointingToDeclaration/sdk/net.gini.android.capture/-document-import-enabled-file-types/values.html
-$dokka.location:net.gini.android.capture/EntryPoint.BUTTON///PointingToDeclaration/{"org.jetbrains.dokka.links.EnumEntryDRIExtra":{"key":"org.jetbrains.dokka.links.EnumEntryDRIExtra"}}sdk/net.gini.android.capture/-entry-point/-b-u-t-t-o-n/index.html
-$dokka.location:net.gini.android.capture/EntryPoint.FIELD///PointingToDeclaration/{"org.jetbrains.dokka.links.EnumEntryDRIExtra":{"key":"org.jetbrains.dokka.links.EnumEntryDRIExtra"}}sdk/net.gini.android.capture/-entry-point/-f-i-e-l-d/index.html
-$dokka.location:net.gini.android.capture/EntryPoint///PointingToDeclaration/sdk/net.gini.android.capture/-entry-point/index.html
-$dokka.location:net.gini.android.capture/EntryPoint/valueOf/#kotlin.String/PointingToDeclaration/sdk/net.gini.android.capture/-entry-point/value-of.html
-$dokka.location:net.gini.android.capture/EntryPoint/values/#/PointingToDeclaration/sdk/net.gini.android.capture/-entry-point/values.html
 $dokka.location:net.gini.android.capture/GiniCapture.Builder///PointingToDeclaration/sdk/net.gini.android.capture/-gini-capture/-builder/index.html
 $dokka.location:net.gini.android.capture/GiniCapture.Builder/build/#/PointingToDeclaration/sdk/net.gini.android.capture/-gini-capture/-builder/build.html
 $dokka.location:net.gini.android.capture/GiniCapture.Builder/getImportedFileSizeBytesLimit/#/PointingToDeclaration/sdk/net.gini.android.capture/-gini-capture/-builder/get-imported-file-size-bytes-limit.html
@@ -788,7 +783,6 @@ $dokka.location:net.gini.android.capture/GiniCapture.Builder/setCustomErrorLogge
 $dokka.location:net.gini.android.capture/GiniCapture.Builder/setCustomHelpItems/#java.util.List<net.gini.android.capture.help.HelpItem.Custom>/PointingToDeclaration/sdk/net.gini.android.capture/-gini-capture/-builder/set-custom-help-items.html
 $dokka.location:net.gini.android.capture/GiniCapture.Builder/setCustomOnboardingPages/#java.util.ArrayList<net.gini.android.capture.onboarding.OnboardingPage>/PointingToDeclaration/sdk/net.gini.android.capture/-gini-capture/-builder/set-custom-onboarding-pages.html
 $dokka.location:net.gini.android.capture/GiniCapture.Builder/setDocumentImportEnabledFileTypes/#net.gini.android.capture.DocumentImportEnabledFileTypes/PointingToDeclaration/sdk/net.gini.android.capture/-gini-capture/-builder/set-document-import-enabled-file-types.html
-$dokka.location:net.gini.android.capture/GiniCapture.Builder/setEntryPoint/#net.gini.android.capture.EntryPoint/PointingToDeclaration/sdk/net.gini.android.capture/-gini-capture/-builder/set-entry-point.html
 $dokka.location:net.gini.android.capture/GiniCapture.Builder/setEventTracker/#net.gini.android.capture.tracking.EventTracker/PointingToDeclaration/sdk/net.gini.android.capture/-gini-capture/-builder/set-event-tracker.html
 $dokka.location:net.gini.android.capture/GiniCapture.Builder/setFileImportEnabled/#boolean/PointingToDeclaration/sdk/net.gini.android.capture/-gini-capture/-builder/set-file-import-enabled.html
 $dokka.location:net.gini.android.capture/GiniCapture.Builder/setFlashButtonEnabled/#boolean/PointingToDeclaration/sdk/net.gini.android.capture/-gini-capture/-builder/set-flash-button-enabled.html
@@ -840,7 +834,6 @@ $dokka.location:net.gini.android.capture/GiniCapture/getCameraNavigationBarBotto
 $dokka.location:net.gini.android.capture/GiniCapture/getCustomHelpItems/#/PointingToDeclaration/sdk/net.gini.android.capture/-gini-capture/get-custom-help-items.html
 $dokka.location:net.gini.android.capture/GiniCapture/getCustomOnboardingPages/#/PointingToDeclaration/sdk/net.gini.android.capture/-gini-capture/get-custom-onboarding-pages.html
 $dokka.location:net.gini.android.capture/GiniCapture/getDocumentImportEnabledFileTypes/#/PointingToDeclaration/sdk/net.gini.android.capture/-gini-capture/get-document-import-enabled-file-types.html
-$dokka.location:net.gini.android.capture/GiniCapture/getEntryPoint/#/PointingToDeclaration/sdk/net.gini.android.capture/-gini-capture/get-entry-point.html
 $dokka.location:net.gini.android.capture/GiniCapture/getHelpNavigationBarBottomAdapter/#/PointingToDeclaration/sdk/net.gini.android.capture/-gini-capture/get-help-navigation-bar-bottom-adapter.html
 $dokka.location:net.gini.android.capture/GiniCapture/getImportedFileSizeBytesLimit/#/PointingToDeclaration/sdk/net.gini.android.capture/-gini-capture/get-imported-file-size-bytes-limit.html
 $dokka.location:net.gini.android.capture/GiniCapture/getInstance/#/PointingToDeclaration/sdk/net.gini.android.capture/-gini-capture/get-instance.html
