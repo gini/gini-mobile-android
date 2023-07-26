@@ -10,6 +10,8 @@ import net.gini.android.capture.help.HelpItem
 import net.gini.android.capture.internal.util.FileImportValidator
 import net.gini.android.capture.logging.ErrorLog
 import net.gini.android.capture.logging.ErrorLoggerListener
+import net.gini.android.capture.onboarding.DefaultPages
+import net.gini.android.capture.onboarding.OnboardingPage
 import net.gini.android.capture.screen.R
 import net.gini.android.capture.screen.ui.adapters.CustomCameraNavigationBarBottomAdapter
 import net.gini.android.capture.screen.ui.adapters.CustomHelpNavigationBarBottomAdapter
@@ -79,41 +81,51 @@ class ConfigurationViewModel @Inject constructor() : ViewModel() {
         builder.setShouldShowOnboarding(configuration.isOnboardingAtEveryLaunchEnabled)
         // 15 enable custom onboarding pages
         if (configuration.isCustomOnboardingPagesEnabled) {
-            // 16 enable align corners in custom onboarding pages
-            if (configuration.isAlignCornersInCustomOnboardingEnabled) {
-                builder.setOnboardingAlignCornersIllustrationAdapter(
-                    CustomOnboardingIllustrationAdapter(
-                        R.raw.floating_document
-                    )
+            val pages = DefaultPages.asArrayList(
+                configuration.isMultiPageEnabled,
+                configuration.isQrCodeEnabled
+            )
+            pages.add(
+                OnboardingPage(
+                    R.string.additional_onboarding_page_title,
+                    R.string.additional_onboarding_page_message,
+                    null
                 )
-            }
-            // 17 enable lighting in custom onboarding pages
-            if (configuration.isLightingInCustomOnboardingEnabled) {
-                builder.setOnboardingLightingIllustrationAdapter(
-                    CustomOnboardingIllustrationAdapter(
-                        R.raw.lighting
-                    )
-                )
-            }
-            // 18 enable QR code in custom onboarding pages
-            if (configuration.isQRCodeInCustomOnboardingEnabled) {
-                builder.setOnboardingQRCodeIllustrationAdapter(
-                    CustomOnboardingIllustrationAdapter(
-                        R.raw.scan_qr_code
-                    )
-                )
-            }
-            // 19 enable multi page in custom onboarding pages
-            if (configuration.isMultiPageInCustomOnboardingEnabled) {
-                builder.setOnboardingMultiPageIllustrationAdapter(
-                    CustomOnboardingIllustrationAdapter(
-                        R.raw.multipage
-                    )
-                )
-            }
-
+            )
+            builder.setCustomOnboardingPages(pages)
         }
-
+        // 16 enable align corners in custom onboarding pages
+        if (configuration.isAlignCornersInCustomOnboardingEnabled) {
+            builder.setOnboardingAlignCornersIllustrationAdapter(
+                CustomOnboardingIllustrationAdapter(
+                    R.raw.floating_document
+                )
+            )
+        }
+        // 17 enable lighting in custom onboarding pages
+        if (configuration.isLightingInCustomOnboardingEnabled) {
+            builder.setOnboardingLightingIllustrationAdapter(
+                CustomOnboardingIllustrationAdapter(
+                    R.raw.lighting
+                )
+            )
+        }
+        // 18 enable QR code in custom onboarding pages
+        if (configuration.isQRCodeInCustomOnboardingEnabled) {
+            builder.setOnboardingQRCodeIllustrationAdapter(
+                CustomOnboardingIllustrationAdapter(
+                    R.raw.scan_qr_code
+                )
+            )
+        }
+        // 19 enable multi page in custom onboarding pages
+        if (configuration.isMultiPageInCustomOnboardingEnabled) {
+            builder.setOnboardingMultiPageIllustrationAdapter(
+                CustomOnboardingIllustrationAdapter(
+                    R.raw.multipage
+                )
+            )
+        }
         // 20 enable custom navigation bar in custom onboarding pages
         if (configuration.isCustomNavigationBarInCustomOnboardingEnabled)
             builder.setOnboardingNavigationBarBottomAdapter(

@@ -21,7 +21,6 @@ import net.gini.android.capture.screen.ui.MainActivity.Companion.CAMERA_PERMISSI
 import net.gini.android.capture.screen.ui.MainActivity.Companion.CONFIGURATION_BUNDLE
 import net.gini.android.capture.screen.ui.data.Configuration
 
-
 @AndroidEntryPoint
 class ConfigurationActivity : AppCompatActivity() {
 
