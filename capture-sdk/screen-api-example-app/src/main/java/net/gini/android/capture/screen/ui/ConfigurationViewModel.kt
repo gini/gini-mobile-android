@@ -177,6 +177,7 @@ class ConfigurationViewModel @Inject constructor() : ViewModel() {
         if (configuration.importedFileSizeBytesLimit != FileImportValidator.FILE_SIZE_LIMIT && configuration.importedFileSizeBytesLimit >= 0)
             builder.importedFileSizeBytesLimit = configuration.importedFileSizeBytesLimit
 
+        builder.setEntryPoint(configuration.entryPoint)
         builder.build()
     }
 
