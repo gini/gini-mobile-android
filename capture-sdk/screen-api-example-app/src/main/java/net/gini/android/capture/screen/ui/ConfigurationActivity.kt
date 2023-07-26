@@ -14,6 +14,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import net.gini.android.capture.DocumentImportEnabledFileTypes
+import net.gini.android.capture.EntryPoint
 import net.gini.android.capture.internal.util.ActivityHelper.interceptOnBackPressed
 import net.gini.android.capture.screen.R
 import net.gini.android.capture.screen.databinding.ActivityConfigurationBinding
@@ -182,6 +183,13 @@ class ConfigurationActivity : AppCompatActivity() {
         // 29 set imported file size bytes limit
         binding.editTextImportedFileSizeBytesLimit.hint =
             configuration.importedFileSizeBytesLimit.toString()
+        // 30 entry point
+        val checkedEntryPointButtonId = when (configuration.entryPoint) {
+            EntryPoint.BUTTON -> R.id.btn_buttonEntryPoint
+            EntryPoint.FIELD -> R.id.btn_fieldEntryPoint
+            else -> R.id.btn_buttonEntryPoint
+        }
+        binding.toggleBtnEntryPoint.check(checkedEntryPointButtonId)
     }
 
     private fun setConfigurationFeatures() {
@@ -441,6 +449,24 @@ class ConfigurationActivity : AppCompatActivity() {
                 configurationViewModel.configurationFlow.value.copy(
                     importedFileSizeBytesLimit = it.toString().toInt()
                 )
+            )
+        }
+
+        // 30 entry point
+        binding.toggleBtnEntryPoint.addOnButtonCheckedListener { toggleButton, checkedId, isChecked ->
+            val checked = toggleButton.checkedButtonId
+            configurationViewModel.setConfiguration(
+                when (checked) {
+                    R.id.btn_buttonEntryPoint -> configurationViewModel.configurationFlow.value.copy(
+                        entryPoint = EntryPoint.BUTTON
+                    )
+                    R.id.btn_fieldEntryPoint -> configurationViewModel.configurationFlow.value.copy(
+                        entryPoint = EntryPoint.FIELD
+                    )
+                    else -> configurationViewModel.configurationFlow.value.copy(
+                        entryPoint = EntryPoint.BUTTON
+                    )
+                }
             )
         }
 
