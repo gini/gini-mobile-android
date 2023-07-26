@@ -29,7 +29,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/relaunch_to_use_default_configuration"
-                app:layout_constraintTop_toTopOf="parent" />
+                 />
+
+            <TextView
+                android:id="@+id/tv_closeForConfigurationsToTakePlace"
+                style="@style/TextAppearance.MaterialComponents.Body1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/close_screen_for_configurations_to_take_place"
+                android:layout_marginTop="@dimen/gc_medium_12"
+                />
 
             <com.google.android.material.divider.MaterialDivider
                 android:id="@+id/divider2"
