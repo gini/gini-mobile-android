@@ -5,6 +5,7 @@ plugins {
     kotlin("android")
     kotlin("kapt")
     id("com.google.dagger.hilt.android")
+    id("kotlin-parcelize")
 }
 
 // TODO: construct version code and name in fastlane and inject them
@@ -89,7 +90,7 @@ dependencies {
     //implementation "net.gini.android:gini-capture-sdk-default-network:0.0.1"
 
     implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.activity)
+    implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.coordinatorlayout)
     implementation(libs.androidx.multidex)
     implementation(libs.dexter)
@@ -103,6 +104,8 @@ dependencies {
 
     implementation(libs.hilt.library)
     kapt(libs.hilt.compiler)
+
+    implementation(libs.androidx.lifecycle.runtime.ktx)
 
     testImplementation(libs.junit)
 

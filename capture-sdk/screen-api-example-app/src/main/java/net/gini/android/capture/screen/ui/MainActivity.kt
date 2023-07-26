@@ -4,49 +4,35 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
-import android.widget.CompoundButton
-import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import ch.qos.logback.classic.Logger
 import ch.qos.logback.classic.LoggerContext
 import ch.qos.logback.classic.android.LogcatAppender
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.switchmaterial.SwitchMaterial
 import dagger.hilt.android.AndroidEntryPoint
 import net.gini.android.capture.AsyncCallback
 import net.gini.android.capture.BuildConfig
-import net.gini.android.capture.DocumentImportEnabledFileTypes
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.GiniCaptureDebug
 import net.gini.android.capture.GiniCaptureError
 import net.gini.android.capture.ImportedFileValidationException
 import net.gini.android.capture.camera.CameraActivity
-import net.gini.android.capture.help.HelpItem.Custom
-import net.gini.android.capture.logging.ErrorLog
-import net.gini.android.capture.logging.ErrorLoggerListener
 import net.gini.android.capture.network.GiniCaptureDefaultNetworkService
-import net.gini.android.capture.onboarding.DefaultPages.Companion.asArrayList
-import net.gini.android.capture.onboarding.OnboardingPage
 import net.gini.android.capture.requirements.GiniCaptureRequirements
 import net.gini.android.capture.requirements.RequirementsReport
-import net.gini.android.capture.review.multipage.view.DefaultReviewNavigationBarBottomAdapter
 import net.gini.android.capture.screen.R
 import net.gini.android.capture.screen.ScreenApiExampleApp
 import net.gini.android.capture.screen.core.ExampleUtil
 import net.gini.android.capture.screen.core.RuntimePermissionHandler
-import net.gini.android.capture.tracking.AnalysisScreenEvent
-import net.gini.android.capture.tracking.CameraScreenEvent
-import net.gini.android.capture.tracking.Event
-import net.gini.android.capture.tracking.EventTracker
-import net.gini.android.capture.tracking.OnboardingScreenEvent
-import net.gini.android.capture.tracking.ReviewScreenEvent
+import net.gini.android.capture.screen.databinding.ActivityMainBinding
+import net.gini.android.capture.screen.ui.data.Configuration
 import net.gini.android.capture.util.CancellationToken
-import net.gini.android.capture.view.DefaultLoadingIndicatorAdapter
 import org.slf4j.LoggerFactory
 import javax.inject.Inject
+
 
 /**
  * Entry point for the screen api example app.
@@ -54,36 +40,28 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-    // TODO: use ViewBinding
+
+    private lateinit var binding: ActivityMainBinding
+
+    private val configurationViewModel: ConfigurationViewModel by viewModels()
+
     @Inject
     lateinit var giniCaptureDefaultNetworkService: GiniCaptureDefaultNetworkService
-    private lateinit var mButtonStartScanner: Button
     private var mRestoredInstance = false
     private lateinit var mRuntimePermissionHandler: RuntimePermissionHandler
-    private lateinit var mTextGiniCaptureSdkVersion: TextView
-    private var mTextAppVersion: TextView? = null
-    private var bottomNavBarSwitch: SwitchMaterial? = null
-    private var animatedOnboardingIllustrationsSwitch: SwitchMaterial? = null
-    private var customLoadingAnimationSwitch: SwitchMaterial? = null
-    private lateinit var isQRenabledSwitch: SwitchMaterial
-    private var onlyQRCodeSwitch: SwitchMaterial? = null
-    private lateinit var disableCameraPermission: SwitchMaterial
     private var mFileImportCancellationToken: CancellationToken? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        bindViews()
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
         addInputHandlers()
         setGiniCaptureSdkDebugging()
         showVersions()
         createRuntimePermissionsHandler()
         mRestoredInstance = savedInstanceState != null
-        isQRenabledSwitch.setOnCheckedChangeListener { buttonView: CompoundButton?, isChecked: Boolean ->
-            if (!isChecked) {
-                onlyQRCodeSwitch!!.isChecked = false
-            }
-        }
     }
 
     override fun onStart() {
@@ -105,19 +83,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun createRuntimePermissionsHandler() {
-        mRuntimePermissionHandler = RuntimePermissionHandler
-            .forActivity(this)
-            .withCameraPermissionDeniedMessage(
+        mRuntimePermissionHandler =
+            RuntimePermissionHandler.forActivity(this).withCameraPermissionDeniedMessage(
                 getString(R.string.camera_permission_denied_message)
-            )
-            .withCameraPermissionRationale(getString(R.string.camera_permission_rationale))
-            .withStoragePermissionDeniedMessage(
-                getString(R.string.storage_permission_denied_message)
-            )
-            .withStoragePermissionRationale(getString(R.string.storage_permission_rationale))
-            .withGrantAccessButtonTitle(getString(R.string.grant_access))
-            .withCancelButtonTitle(getString(R.string.cancel))
-            .build()
+            ).withCameraPermissionRationale(getString(R.string.camera_permission_rationale))
+                .withStoragePermissionDeniedMessage(
+                    getString(R.string.storage_permission_denied_message)
+                ).withStoragePermissionRationale(getString(R.string.storage_permission_rationale))
+                .withGrantAccessButtonTitle(getString(R.string.grant_access))
+                .withCancelButtonTitle(getString(R.string.cancel)).build()
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -128,23 +102,29 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startGiniCaptureSdkForImportedFile(importedFileIntent: Intent) {
-        mRuntimePermissionHandler.requestStoragePermission(object :
-            RuntimePermissionHandler.Listener {
-            override fun permissionGranted() {
-                doStartGiniCaptureSdkForImportedFile(importedFileIntent)
-            }
+        if (configurationViewModel.configurationFlow.value.isFileImportEnabled) {
+            mRuntimePermissionHandler.requestStoragePermission(object :
+                RuntimePermissionHandler.Listener {
+                override fun permissionGranted() {
+                    doStartGiniCaptureSdkForImportedFile(importedFileIntent)
+                }
 
-            override fun permissionDenied() {
-                finish()
-            }
-        })
+                override fun permissionDenied() {
+                    finish()
+                }
+            })
+        } else {
+            MaterialAlertDialogBuilder(this).setMessage(R.string.file_import_feature_is_disabled_dialog_message)
+                .setPositiveButton("OK") { dialogInterface, i -> finish() }.show()
+        }
     }
 
     private fun doStartGiniCaptureSdkForImportedFile(importedFileIntent: Intent) {
         // Configure the Gini Capture SDK
         configureGiniCapture()
         mFileImportCancellationToken = GiniCapture.getInstance().createIntentForImportedFiles(
-            importedFileIntent, this,
+            importedFileIntent,
+            this,
             object : AsyncCallback<Intent, ImportedFileValidationException> {
                 override fun onSuccess(result: Intent) {
                     mFileImportCancellationToken = null
@@ -153,7 +133,6 @@ class MainActivity : AppCompatActivity() {
 
                 override fun onError(exception: ImportedFileValidationException) {
                     mFileImportCancellationToken = null
-                    // For Alpar -> is it okay? it is because we are calling Java from Kotlin!
                     handleFileImportError(exception)
                 }
 
@@ -168,10 +147,8 @@ class MainActivity : AppCompatActivity() {
         if (exception.validationError != null) {
             message = getString(exception.validationError!!.textResource)
         }
-        MaterialAlertDialogBuilder(this)
-            .setMessage(message)
-            .setPositiveButton("OK") { dialogInterface, i -> finish() }
-            .show()
+        MaterialAlertDialogBuilder(this).setMessage(message)
+            .setPositiveButton("OK") { dialogInterface, i -> finish() }.show()
     }
 
     private fun isIntentActionViewOrSend(intent: Intent): Boolean {
@@ -181,10 +158,8 @@ class MainActivity : AppCompatActivity() {
 
     @SuppressLint("SetTextI18n")
     private fun showVersions() {
-        //TODO: put the strings in the strings.xml file
-        mTextGiniCaptureSdkVersion.text =
-            "Gini Capture SDK v" + BuildConfig.VERSION_NAME
-        mTextAppVersion!!.text = "Screen API Example App v" + BuildConfig.VERSION_NAME
+        binding.textGiniCaptureVersion.text =
+            getString(R.string.gini_capture_sdk_version) + BuildConfig.VERSION_NAME
     }
 
     private fun setGiniCaptureSdkDebugging() {
@@ -195,13 +170,31 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun addInputHandlers() {
-        mButtonStartScanner.setOnClickListener { v: View? ->
-            if (disableCameraPermission.isChecked) {
+        binding.buttonStartScanner.setOnClickListener { v: View? ->
+            if (configurationViewModel.disableCameraPermissionFlow.value) {
                 doStartGiniCaptureSdk()
             } else {
                 startGiniCaptureSdk()
             }
         }
+
+        binding.textGiniCaptureVersion.setOnClickListener {
+            startActivityForResult(
+                Intent(
+                    this, ConfigurationActivity::class.java
+                )
+                    .putExtra(
+                        CONFIGURATION_BUNDLE,
+                        configurationViewModel.configurationFlow.value
+                    )
+                    .putExtra(
+                        CAMERA_PERMISSION_BUNDLE,
+                        configurationViewModel.disableCameraPermissionFlow.value
+                    ),
+                REQUEST_CONFIGURATION
+            )
+        }
+
     }
 
     private fun startGiniCaptureSdk() {
@@ -233,59 +226,12 @@ class MainActivity : AppCompatActivity() {
     private fun configureGiniCapture() {
         val app = application as ScreenApiExampleApp
         app.clearGiniCaptureNetworkInstances()
-        val builder = GiniCapture.newInstance(this)
-            .setGiniCaptureNetworkService(
-                giniCaptureDefaultNetworkService
-            )
-            .setDocumentImportEnabledFileTypes(DocumentImportEnabledFileTypes.PDF_AND_IMAGES)
-            .setFileImportEnabled(true)
-            .setQRCodeScanningEnabled(isQRenabledSwitch.isChecked)
-            .setMultiPageEnabled(true)
-        builder.setFlashButtonEnabled(true)
-        builder.setEventTracker(GiniCaptureEventTracker())
-        builder.setCustomErrorLoggerListener(CustomErrorLoggerListener())
-        builder.setReviewBottomBarNavigationAdapter(DefaultReviewNavigationBarBottomAdapter())
-        builder.setLoadingIndicatorAdapter(DefaultLoadingIndicatorAdapter())
-        val customHelpItems: MutableList<Custom> = ArrayList()
-        customHelpItems.add(
-            Custom(
-                R.string.custom_help_screen_title,
-                Intent(this, CustomHelpActivity::class.java)
-            )
+        val builder = GiniCapture.newInstance(this).setGiniCaptureNetworkService(
+            giniCaptureDefaultNetworkService
         )
-        builder.setCustomHelpItems(customHelpItems)
-        builder.setBottomNavigationBarEnabled(bottomNavBarSwitch!!.isChecked)
-        if (animatedOnboardingIllustrationsSwitch!!.isChecked) {
-            builder.setOnboardingAlignCornersIllustrationAdapter(
-                CustomOnboardingIllustrationAdapter(
-                    resources.getIdentifier("floating_document", "raw", this.packageName)
-                )
-            )
-            builder.setOnboardingLightingIllustrationAdapter(
-                CustomOnboardingIllustrationAdapter(
-                    resources.getIdentifier("lighting", "raw", this.packageName)
-                )
-            )
-            builder.setOnboardingMultiPageIllustrationAdapter(
-                CustomOnboardingIllustrationAdapter(
-                    resources.getIdentifier("multipage", "raw", this.packageName)
-                )
-            )
-            builder.setOnboardingQRCodeIllustrationAdapter(
-                CustomOnboardingIllustrationAdapter(
-                    resources.getIdentifier("scan_qr_code", "raw", this.packageName)
-                )
-            )
-        }
-        if (customLoadingAnimationSwitch!!.isChecked) {
-            builder.setLoadingIndicatorAdapter(
-                CustomLottiLoadingIndicatorAdapter(
-                    resources.getIdentifier("custom_loading", "raw", this.packageName)
-                )
-            )
-        }
-        builder.setOnlyQRCodeScanning(onlyQRCodeSwitch!!.isChecked)
-        builder.build()
+
+        val intent = Intent(this, CustomHelpActivity::class.java)
+        configurationViewModel.configureGiniCapture(builder, intent)
     }
 
     private fun showUnfulfilledRequirementsToast(report: RequirementsReport) {
@@ -305,43 +251,13 @@ class MainActivity : AppCompatActivity() {
             }
         }
         Toast.makeText(
-            this, "Requirements not fulfilled:\n$stringBuilder",
-            Toast.LENGTH_LONG
+            this, "Requirements not fulfilled:\n$stringBuilder", Toast.LENGTH_LONG
         ).show()
     }
 
-    private fun bindViews() {
-        mButtonStartScanner = findViewById<View>(R.id.button_start_scanner) as Button
-        mTextGiniCaptureSdkVersion = findViewById<View>(R.id.text_gini_capture_version) as TextView
-        mTextAppVersion = findViewById<View>(R.id.text_app_version) as TextView
-        bottomNavBarSwitch = findViewById(R.id.bottom_navbar_switch)
-        animatedOnboardingIllustrationsSwitch =
-            findViewById(R.id.animated_onboarding_illustrations_switch)
-        customLoadingAnimationSwitch = findViewById(R.id.custom_loading_indicator_switch)
-        isQRenabledSwitch = findViewById(R.id.gc_qr_code_scanning_enabled)
-        onlyQRCodeSwitch = findViewById(R.id.gc_only_qr_code_scanning)
-        disableCameraPermission = findViewById(R.id.gc_disable_camera_permision)
-    }
-
-    private fun getOnboardingPages(
-        isMultiPageEnabled: Boolean,
-        isQRCodeScanningEnabled: Boolean
-    ): ArrayList<OnboardingPage> {
-        // Adding a custom page to the default pages
-        val pages = asArrayList(isMultiPageEnabled, isQRCodeScanningEnabled)
-        pages.add(
-            OnboardingPage(
-                R.string.additional_onboarding_page_title,
-                R.string.additional_onboarding_page_message,
-                null
-            )
-        )
-        return pages
-    }
 
     override fun onActivityResult(
-        requestCode: Int, resultCode: Int,
-        data: Intent?
+        requestCode: Int, resultCode: Int, data: Intent?
     ) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_SCAN) {
@@ -373,8 +289,9 @@ class MainActivity : AppCompatActivity() {
                     }
                     val compoundExtractionsBundle =
                         data.getBundleExtra(CameraActivity.EXTRA_OUT_COMPOUND_EXTRACTIONS)
-                    if ((pay5ExtractionsAvailable(extractionsBundle)
-                                || epsPaymentAvailable(extractionsBundle)) || compoundExtractionsBundle != null
+                    if ((pay5ExtractionsAvailable(extractionsBundle) || epsPaymentAvailable(
+                            extractionsBundle
+                        )) || compoundExtractionsBundle != null
                     ) {
                         startExtractionsActivity(extractionsBundle, compoundExtractionsBundle)
                     }
@@ -387,9 +304,8 @@ class MainActivity : AppCompatActivity() {
                     )
                     if (error != null) {
                         Toast.makeText(
-                            this, "Error: "
-                                    + error.errorCode + " - "
-                                    + error.message,
+                            this,
+                            "Error: " + error.errorCode + " - " + error.message,
                             Toast.LENGTH_LONG
                         ).show()
                     }
@@ -397,6 +313,25 @@ class MainActivity : AppCompatActivity() {
             }
             if (isIntentActionViewOrSend(intent)) {
                 finish()
+            }
+        }
+        if (requestCode == REQUEST_CONFIGURATION) {
+            when (resultCode) {
+                RESULT_CANCELED -> {}
+                RESULT_OK -> {
+                    var configurationResult: Configuration? = data?.getParcelableExtra(
+                        CONFIGURATION_BUNDLE
+                    )
+                    if (configurationResult != null) {
+                        configurationViewModel.setConfiguration(configurationResult)
+                    }
+
+                    configurationViewModel.disableCameraPermission(
+                        data?.getBooleanExtra(
+                            CAMERA_PERMISSION_BUNDLE, false
+                        ) ?: false
+                    )
+                }
             }
         }
     }
@@ -420,14 +355,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startExtractionsActivity(
-        extractionsBundle: Bundle,
-        compoundExtractionsBundle: Bundle?
+        extractionsBundle: Bundle, compoundExtractionsBundle: Bundle?
     ) {
         val intent = Intent(this, ExtractionsActivity::class.java)
         intent.putExtra(ExtractionsActivity.EXTRA_IN_EXTRACTIONS, extractionsBundle)
         intent.putExtra(
-            ExtractionsActivity.EXTRA_IN_COMPOUND_EXTRACTIONS,
-            compoundExtractionsBundle
+            ExtractionsActivity.EXTRA_IN_COMPOUND_EXTRACTIONS, compoundExtractionsBundle
         )
         startActivity(intent)
     }
@@ -451,66 +384,13 @@ class MainActivity : AppCompatActivity() {
         Toast.makeText(this, "Scan exited for manual enter mode", Toast.LENGTH_SHORT).show()
     }
 
-    private class GiniCaptureEventTracker : EventTracker {
-        override fun onOnboardingScreenEvent(event: Event<OnboardingScreenEvent>) {
-            when (event.type) {
-                OnboardingScreenEvent.START -> LOG.info("Onboarding started")
-                OnboardingScreenEvent.FINISH -> LOG.info("Onboarding finished")
-            }
-        }
-
-        override fun onCameraScreenEvent(event: Event<CameraScreenEvent>) {
-            when (event.type) {
-                CameraScreenEvent.TAKE_PICTURE -> LOG.info("Take picture")
-                CameraScreenEvent.HELP -> LOG.info("Show help")
-                CameraScreenEvent.EXIT -> LOG.info("Exit")
-            }
-        }
-
-        override fun onReviewScreenEvent(event: Event<ReviewScreenEvent>) {
-            when (event.type) {
-                ReviewScreenEvent.NEXT -> LOG.info("Go next to analyse")
-                ReviewScreenEvent.BACK -> LOG.info("Go back to the camera")
-                ReviewScreenEvent.UPLOAD_ERROR -> {
-                    val error =
-                        event.details[ReviewScreenEvent.UPLOAD_ERROR_DETAILS_MAP_KEY.ERROR_OBJECT] as Throwable?
-                    LOG.info(
-                        "Upload failed:\nmessage: {}\nerror:",
-                        event.details[ReviewScreenEvent.UPLOAD_ERROR_DETAILS_MAP_KEY.MESSAGE],
-                        error
-                    )
-                }
-            }
-        }
-
-        override fun onAnalysisScreenEvent(event: Event<AnalysisScreenEvent>) {
-            when (event.type) {
-                AnalysisScreenEvent.ERROR -> {
-                    val error =
-                        event.details[AnalysisScreenEvent.ERROR_DETAILS_MAP_KEY.ERROR_OBJECT] as Throwable?
-                    LOG.info(
-                        "Analysis failed:\nmessage: {}\nerror:",
-                        event.details[AnalysisScreenEvent.ERROR_DETAILS_MAP_KEY.MESSAGE],
-                        error
-                    )
-                }
-
-                AnalysisScreenEvent.RETRY -> LOG.info("Retry analysis")
-                AnalysisScreenEvent.CANCEL -> LOG.info("Analysis cancelled")
-            }
-        }
-    }
-
-    private class CustomErrorLoggerListener : ErrorLoggerListener {
-        override fun handleErrorLog(errorLog: ErrorLog) {
-            LOG.error("Custom error logger: {}", errorLog.toString())
-        }
-    }
 
     companion object {
         const val EXTRA_OUT_EXTRACTIONS = "EXTRA_OUT_EXTRACTIONS"
-        private val LOG = LoggerFactory.getLogger(MainActivity::class.java)
+        const val CONFIGURATION_BUNDLE = "CONFIGURATION_BUNDLE"
+        const val CAMERA_PERMISSION_BUNDLE = "CAMERA_PERMISSION_BUNDLE"
         private const val REQUEST_SCAN = 1
         private const val REQUEST_NO_EXTRACTIONS = 2
+        private const val REQUEST_CONFIGURATION = 3
     }
 }

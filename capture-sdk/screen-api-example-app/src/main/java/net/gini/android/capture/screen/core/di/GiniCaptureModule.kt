@@ -8,7 +8,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import net.gini.android.capture.network.GiniCaptureDefaultNetworkService
-import net.gini.android.capture.network.GiniCaptureNetworkService
 import net.gini.android.capture.screen.R
 import net.gini.android.core.api.DocumentMetadata
 import org.slf4j.Logger

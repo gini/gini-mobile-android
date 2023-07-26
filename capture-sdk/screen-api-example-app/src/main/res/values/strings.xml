@@ -31,12 +31,68 @@
 
     <string name="analyzed_document_id">Analyzed Gini Bank API Document ID: %s</string>
     <string name="configuration_options_header">Configuration options</string>
-    <string name="bottom_navbar_switch_label">Bottom navigation bar</string>
     <string name="animated_onboarding_illustrations_switch_label">Animated onboarding illustrations</string>
     <string name="custom_loading_indicator_switch_label">Custom loading indicator animation</string>
-    <string name="gc_only_qr_code_scanning">QR code scanning only</string>
-    <string name="gc_qr_code_scanning">QR code scanning</string>
-    <string name="gc_disable_camera_permission">Do not request camera permission</string>
+    <string name="disable_camera_permission">Do not request camera permission</string>
+    <string name="txt_show_custom_help_item">Show custom help item</string>
+    <string name="gini_capture_sdk_version">Gini Capture SDK v</string>
+
+    <!-- Strings for ConfigurationActivity -->
+    <string name="configuration_activity_title">Custom Help Screen</string>
+    <string name="close_gini_sdk_configuration">Close</string>
+    <string name="example_label">Example</string>
+    <string name="relaunch_to_use_default_configuration">Please relaunch the app to use the default GiniConfiguration values.</string>
+    <string name="file_import_switch_label">File Import</string>
+    <string name="qr_code_scanning_switch_label">QR code scanning</string>
+    <string name="only_qr_code_scanning_switch_label">QR code scanning only</string>
+    <string name="only_qr_code_scanning_switch_description">This will work if the \'Qr code scanning\' switch is also enabled.</string>
+    <string name="multi_page_switch_label">Multi page</string>
+    <string name="flash_toggle_switch_label">Flash toggle</string>
+    <string name="flash_on_by_default_switch_label">Flash ON by default</string>
+    <string name="flash_on_by_default_switch_description">This will work if the \'Flash toggle\' switch is also enabled.</string>
+    <string name="document_import_file_types_disabled_button_label">Disabled</string>
+    <string name="document_import_file_types_only_pdf_button_label">PDF</string>
+    <string name="document_import_file_types_pdf_and_image_button_label">PDF &amp; Images</string>
+    <string name="document_import_file_types_segmented_button_label">Document Import File Types</string>
+    <string name="bottom_navbar_switch_label">Bottom navigation bar</string>
+    <string name="help_screens_bottom_navbar_switch_label">Help screens custom bottom navigation bar</string>
+    <string name="custom_bottom_navbar_switch_description">The custom bottom navigation bar is shown if \'Bottom navigation bar\' is also enabled.</string>
+    <string name="camera_screen_custom_bottom_navbar_switch_label">Camera screen custom bottom navigation bar</string>
+    <string name="review_screen_custom_bottom_navbar_switch_label">Review screen custom bottom navigation bar</string>
+    <string name="onboarding_screens_at_every_launch_switch_label">Onboarding screens at every launch</string>
+    <string name="onboarding_screens_at_first_launch_switch_label">Onboarding screens at first launch</string>
+    <!--TODO: is it correct. please also pay attention to the layout in activity!-->
+    <string name="onboarding_screens_at_every_launch_switch_description">Overwrites \'Onboarding screens at first launch\'.</string>
+    <string name="custom_onboarding_pages_switch_label">Custom onboarding pages</string>
+    <string name="custom_onboarding_pages_switch_description">This will work if the \`Onboarding show at every launch\` switch is also enabled.</string>
+    <string name="custom_onboarding_align_corners_page_switch_label">Onboarding \`align corners\` page custom illustration</string>
+    <string name="custom_onboarding_lighting_page_switch_label">Onboarding \`lighting\` page custom illustration</string>
+    <string name="custom_onboarding_qr_code_page_switch_label">Onboarding \`QR code\` page custom illustration</string>
+    <string name="custom_onboarding_multi_page_switch_label">Onboarding \`multi page\` page custom illustration</string>
+
+    <string name="onboarding_custom_bottom_nav_bar_switch_label">Onboarding custom bottom navigation bar</string>
+    <string name="onboarding_custom_bottom_nav_bar_switch_description">The custom bottom navigation bar is shown if \`Bottom navigation bar\` is also enabled.</string>
+
+
+    <string name="buttons_custom_loading_indicator_switch_label">Buttons custom loading indicator</string>
+    <string name="buttons_custom_loading_indicator_switch_description">Set custom loading indicator on the buttons which support loading.</string>
+
+    <string name="screen_custom_loading_indicator_switch_label">Screen custom loading indicator</string>
+    <string name="screen_custom_loading_indicator_switch_description">Show a custom loading indicator on the document analysis screen.</string>
+
+
+    <string name="supported_formats_screen_switch_label">Supported formats screen</string>
+    <string name="supported_formats_screen_switch_description">Show the supported formats screen in the Help menu.</string>
+
+    <string name="help_custom_menu_items_switch_label">Help custom menu items</string>
+    <string name="custom_navigation_controller_switch_label">Custom navigation controller</string>
+
+    <string name="event_tracker_switch_label">Event tracker</string>
+    <string name="gini_error_switch_label">Gini error logger</string>
+    <string name="custom_error_switch_label">Custom error logger</string>
+    <string name="imported_file_size_bytes_limit">Imported File Size Bytes Limit</string>
+    <string name="file_import_feature_is_disabled_dialog_message">`File import` feature is currently disabled. If you want to test this, please enable it in Gini configuration.</string>
+
 
     <!-- String customization examples -->
 

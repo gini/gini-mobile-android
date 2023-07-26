@@ -6,6 +6,11 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="actionBarTheme">@style/AppActionBar</item>
+    </style>
+
+    <style name="AppActionBar" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar">
+        <item name="android:tint">@color/white</item>
     </style>
 
     <!-- Example of customizing the status bar color -->

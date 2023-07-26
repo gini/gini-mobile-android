@@ -3,7 +3,7 @@
     <color name="colorPrimary">#009edc</color>
     <color name="colorPrimaryDark">#017dae</color>
     <color name="colorAccent">#009edc</color>
-
+    <color name="white">#ffffff</color>
     <!-- Color customization examples -->
 
     <!--<color name="gc_action_bar">#E12932</color>-->

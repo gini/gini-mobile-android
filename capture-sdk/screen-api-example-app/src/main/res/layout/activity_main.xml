@@ -1,122 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:paddingBottom="@dimen/activity_horizontal_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingBottom="@dimen/activity_horizontal_margin"
     tools:context="net.gini.android.capture.screen.ui.MainActivity">
 
     <TextView
-        android:id="@+id/configuration_options_header"
-        style="@style/TextAppearance.MaterialComponents.Subtitle1"
+        android:id="@+id/tv_example_mainActivity"
+        style="@style/TextAppearance.MaterialComponents.Headline5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:text="@string/configuration_options_header" />
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/button_start_scanner"
-        android:layout_below="@id/configuration_options_header"
-        android:layout_marginBottom="8dp">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp">
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/bottom_navbar_switch"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/bottom_navbar_switch_label"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:switchPadding="8dp" />
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/animated_onboarding_illustrations_switch"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/animated_onboarding_illustrations_switch_label"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/bottom_navbar_switch"
-                app:switchPadding="8dp" />
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/custom_loading_indicator_switch"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/custom_loading_indicator_switch_label"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/animated_onboarding_illustrations_switch"
-                app:switchPadding="8dp" />
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/gc_qr_code_scanning_enabled"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/gc_qr_code_scanning"
-                android:checked="true"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/custom_loading_indicator_switch"
-                app:switchPadding="8dp" />
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/gc_only_qr_code_scanning"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/gc_only_qr_code_scanning"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/gc_qr_code_scanning_enabled"
-                app:switchPadding="8dp" />
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/gc_disable_camera_permision"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/gc_disable_camera_permission"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/gc_only_qr_code_scanning"
-                app:switchPadding="8dp" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </ScrollView>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:textStyle="bold"
+        android:text="@string/example_label" />
 
     <Button
         android:id="@+id/button_start_scanner"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@id/text_gini_capture_version"
-        android:layout_gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/tv_example_mainActivity"
+        app:layout_constraintBottom_toTopOf="@id/text_gini_capture_version"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         android:text="@string/start_gini_capture_sdk"
-        android:textColor="@color/colorPrimary" />
+        />
 
     <TextView
         android:id="@+id/text_gini_capture_version"
-        style="@style/TextAppearance.MaterialComponents.Caption"
-        android:layout_width="wrap_content"
+        style="@style/GiniCaptureTheme.Typography.Overline"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_above="@id/text_app_version"
-        android:layout_alignEnd="@+id/button_start_scanner"
-        android:layout_marginBottom="32dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:padding="@dimen/gc_medium"
         tools:text="Gini Capture SDK v2.0.0-stub1" />
 
-    <TextView
-        style="@style/TextAppearance.MaterialComponents.Caption"
-        android:id="@+id/text_app_version"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        tools:text="Screen API Example App v1.0.0" />
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
