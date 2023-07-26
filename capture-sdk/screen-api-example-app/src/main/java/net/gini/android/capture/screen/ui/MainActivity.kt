@@ -102,16 +102,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startGiniCaptureSdkForImportedFile(importedFileIntent: Intent) {
-        mRuntimePermissionHandler.requestStoragePermission(object :
-            RuntimePermissionHandler.Listener {
-            override fun permissionGranted() {
-                doStartGiniCaptureSdkForImportedFile(importedFileIntent)
-            }
+        if (configurationViewModel.configurationFlow.value.isFileImportEnabled) {
+            mRuntimePermissionHandler.requestStoragePermission(object :
+                RuntimePermissionHandler.Listener {
+                override fun permissionGranted() {
+                    doStartGiniCaptureSdkForImportedFile(importedFileIntent)
+                }
 
-            override fun permissionDenied() {
-                finish()
-            }
-        })
+                override fun permissionDenied() {
+                    finish()
+                }
+            })
+        } else {
+            MaterialAlertDialogBuilder(this).setMessage(R.string.file_import_feature_is_disabled_dialog_message)
+                .setPositiveButton("OK") { dialogInterface, i -> finish() }.show()
+        }
     }
 
     private fun doStartGiniCaptureSdkForImportedFile(importedFileIntent: Intent) {

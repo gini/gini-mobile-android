@@ -91,6 +91,7 @@
     <string name="gini_error_switch_label">Gini error logger</string>
     <string name="custom_error_switch_label">Custom error logger</string>
     <string name="imported_file_size_bytes_limit">Imported File Size Bytes Limit</string>
+    <string name="file_import_feature_is_disabled_dialog_message">`File import` feature is currently disabled. If you want to test this, please enable it in Gini configuration.</string>
 
 
     <!-- String customization examples -->
