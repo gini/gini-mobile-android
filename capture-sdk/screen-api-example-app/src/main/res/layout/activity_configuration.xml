@@ -29,7 +29,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/relaunch_to_use_default_configuration"
-                app:layout_constraintTop_toTopOf="parent" />
+                 />
+
+            <TextView
+                android:id="@+id/tv_closeForConfigurationsToTakePlace"
+                style="@style/TextAppearance.MaterialComponents.Body1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/close_screen_for_configurations_to_take_place"
+                android:layout_marginTop="@dimen/gc_medium_12"
+                />
 
             <com.google.android.material.divider.MaterialDivider
                 android:id="@+id/divider2"
@@ -431,6 +440,44 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/gc_medium_12"
                 android:text="@string/disable_camera_permission" />
+
+            <TextView
+                android:id="@+id/tv_entryPointLabel"
+                style="@style/TextAppearance.MaterialComponents.Body2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/gc_large"
+                android:layout_weight="1"
+                android:text="@string/entry_point_label" />
+
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/toggleBtn_entryPoint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                app:selectionRequired="true"
+                app:singleSelection="true">
+
+                <Button
+                    android:id="@+id/btn_buttonEntryPoint"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/button_entry_point" />
+
+                <Button
+                    android:id="@+id/btn_fieldEntryPoint"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/field_entry_point" />
+
+
+
+
+            </com.google.android.material.button.MaterialButtonToggleGroup>
 
         </LinearLayout>
 

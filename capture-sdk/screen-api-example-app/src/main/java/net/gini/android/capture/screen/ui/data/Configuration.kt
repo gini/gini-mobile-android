@@ -3,6 +3,7 @@ package net.gini.android.capture.screen.ui.data
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 import net.gini.android.capture.DocumentImportEnabledFileTypes
+import net.gini.android.capture.EntryPoint
 import net.gini.android.capture.internal.util.FileImportValidator
 
 
@@ -125,7 +126,9 @@ data class Configuration(
 
     // 29 set imported file size bytes limit
 //    net.gini.android.capture.GiniCapture.Builder#setImportedFileSizeBytesLimit → numeric text field
-    val importedFileSizeBytesLimit: Int = FileImportValidator.FILE_SIZE_LIMIT
+    val importedFileSizeBytesLimit: Int = FileImportValidator.FILE_SIZE_LIMIT,
 
+    // 30 entry point
+    val entryPoint: EntryPoint = EntryPoint.BUTTON,
 
 ) : Parcelable

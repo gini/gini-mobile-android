@@ -38,10 +38,11 @@
     <string name="gini_capture_sdk_version">Gini Capture SDK v</string>
 
     <!-- Strings for ConfigurationActivity -->
-    <string name="configuration_activity_title">Custom Help Screen</string>
+    <string name="configuration_activity_title">Configuration</string>
     <string name="close_gini_sdk_configuration">Close</string>
     <string name="example_label">Example</string>
     <string name="relaunch_to_use_default_configuration">Please relaunch the app to use the default GiniConfiguration values.</string>
+    <string name="close_screen_for_configurations_to_take_place">The configuration changes will take effect after closing this screen.</string>
     <string name="file_import_switch_label">File Import</string>
     <string name="qr_code_scanning_switch_label">QR code scanning</string>
     <string name="only_qr_code_scanning_switch_label">QR code scanning only</string>
@@ -61,7 +62,6 @@
     <string name="review_screen_custom_bottom_navbar_switch_label">Review screen custom bottom navigation bar</string>
     <string name="onboarding_screens_at_every_launch_switch_label">Onboarding screens at every launch</string>
     <string name="onboarding_screens_at_first_launch_switch_label">Onboarding screens at first launch</string>
-    <!--TODO: is it correct. please also pay attention to the layout in activity!-->
     <string name="onboarding_screens_at_every_launch_switch_description">Overwrites \'Onboarding screens at first launch\'.</string>
     <string name="custom_onboarding_pages_switch_label">Custom onboarding pages</string>
     <string name="custom_onboarding_pages_switch_description">This will work if the \`Onboarding show at every launch\` switch is also enabled.</string>
@@ -92,6 +92,9 @@
     <string name="custom_error_switch_label">Custom error logger</string>
     <string name="imported_file_size_bytes_limit">Imported File Size Bytes Limit</string>
     <string name="file_import_feature_is_disabled_dialog_message">`File import` feature is currently disabled. If you want to test this, please enable it in Gini configuration.</string>
+    <string name="entry_point_label">Entry Point</string>
+    <string name="button_entry_point">Button</string>
+    <string name="field_entry_point">Field</string>
 
 
     <!-- String customization examples -->
