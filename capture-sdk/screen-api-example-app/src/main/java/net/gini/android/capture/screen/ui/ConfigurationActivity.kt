@@ -249,6 +249,13 @@ class ConfigurationActivity : AppCompatActivity() {
                     isFlashToggleEnabled = isChecked
                 )
             )
+            if (!isChecked) {
+                configurationViewModel.setConfiguration(
+                    configurationViewModel.configurationFlow.value.copy(
+                        isFlashOnByDefault = false
+                    )
+                )
+            }
         }
         // 6 enable flash on by default
         binding.switchFlashOnByDefault.setOnCheckedChangeListener { _, isChecked ->
@@ -257,6 +264,13 @@ class ConfigurationActivity : AppCompatActivity() {
                     isFlashOnByDefault = isChecked
                 )
             )
+            if (isChecked) {
+                configurationViewModel.setConfiguration(
+                    configurationViewModel.configurationFlow.value.copy(
+                        isFlashToggleEnabled = true
+                    )
+                )
+            }
         }
         // 7 set import document type support
         binding.toggleBtnFileImportSetup.addOnButtonCheckedListener { toggleButton, checkedId, isChecked ->
