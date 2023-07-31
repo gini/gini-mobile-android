@@ -110,6 +110,7 @@ class ConfigurationActivity : AppCompatActivity() {
         binding.switchQrCodeScanning.isChecked = configuration.isQrCodeEnabled
         // 3 only QR code scanning
         binding.switchOnlyQRCodeScanning.isChecked = configuration.isOnlyQrCodeEnabled
+
         // 4 enable multi page
         binding.switchMultiPage.isChecked = configuration.isMultiPageEnabled
         // 5 enable flash toggle
@@ -209,6 +210,13 @@ class ConfigurationActivity : AppCompatActivity() {
                     isQrCodeEnabled = isChecked
                 )
             )
+            if (!isChecked) {
+                configurationViewModel.setConfiguration(
+                    configurationViewModel.configurationFlow.value.copy(
+                        isOnlyQrCodeEnabled = false
+                    )
+                )
+            }
 
         }
         // 3 only QR code scanning
@@ -218,6 +226,13 @@ class ConfigurationActivity : AppCompatActivity() {
                     isOnlyQrCodeEnabled = isChecked
                 )
             )
+            if (isChecked) {
+                configurationViewModel.setConfiguration(
+                    configurationViewModel.configurationFlow.value.copy(
+                        isQrCodeEnabled = true
+                    )
+                )
+            }
         }
         // 4 enable multi page
         binding.switchMultiPage.setOnCheckedChangeListener { _, isChecked ->
@@ -460,9 +475,11 @@ class ConfigurationActivity : AppCompatActivity() {
                     R.id.btn_buttonEntryPoint -> configurationViewModel.configurationFlow.value.copy(
                         entryPoint = EntryPoint.BUTTON
                     )
+
                     R.id.btn_fieldEntryPoint -> configurationViewModel.configurationFlow.value.copy(
                         entryPoint = EntryPoint.FIELD
                     )
+
                     else -> configurationViewModel.configurationFlow.value.copy(
                         entryPoint = EntryPoint.BUTTON
                     )
