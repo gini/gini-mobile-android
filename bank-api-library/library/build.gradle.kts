@@ -1,4 +1,5 @@
 import net.gini.gradle.*
+import org.jetbrains.dokka.gradle.DokkaCollectorTask
 
 plugins {
     id("com.android.library")
@@ -76,6 +77,10 @@ apply<PublishToMavenPlugin>()
 apply<DokkaPlugin>()
 apply<CodeAnalysisPlugin>()
 apply<PropertiesPlugin>()
+
+tasks.getByName<DokkaCollectorTask>("dokkaHtmlSiblingCollector") {
+    this.moduleName.set("Gini Bank API Library for Android")
+}
 
 tasks.register<CreatePropertiesTask>("injectTestProperties") {
     val propertiesMap = mutableMapOf<String, String>()
