@@ -131,6 +131,10 @@ apply<PublishToMavenPlugin>()
 apply<DokkaPlugin>()
 apply<CodeAnalysisPlugin>()
 
+tasks.getByName<org.jetbrains.dokka.gradle.DokkaCollectorTask>("dokkaHtmlSiblingCollector") {
+    this.moduleName.set("Gini Capture SDK for Android")
+}
+
 tasks.getByName<DokkaTask>("dokkaHtml") {
     dokkaSourceSets.named("main") {
         perPackageOption {
