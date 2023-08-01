@@ -115,7 +115,7 @@ class MainActivity : AppCompatActivity() {
             })
         } else {
             MaterialAlertDialogBuilder(this).setMessage(R.string.file_import_feature_is_disabled_dialog_message)
-                .setPositiveButton("OK") { dialogInterface, i -> finish() }.show()
+                .setPositiveButton("OK") { dialogInterface, i -> {} }.show()
         }
     }
 

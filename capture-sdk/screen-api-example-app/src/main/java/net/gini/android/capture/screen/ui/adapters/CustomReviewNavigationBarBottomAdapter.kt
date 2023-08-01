@@ -4,8 +4,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import net.gini.android.capture.GiniCapture
-import net.gini.android.capture.databinding.CustomReviewNavigationBarBottomBinding
 import net.gini.android.capture.review.multipage.view.ReviewNavigationBarBottomAdapter
+import net.gini.android.capture.screen.databinding.CustomReviewNavigationBarBottomBinding
 import net.gini.android.capture.view.InjectedViewAdapterHolder
 import net.gini.android.capture.view.OnButtonLoadingIndicatorAdapter
 

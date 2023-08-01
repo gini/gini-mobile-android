@@ -8,8 +8,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.R
-import net.gini.android.capture.databinding.CustomNavigationBarTopBinding
-import net.gini.android.capture.databinding.GcNavigationBarTopBinding
+import net.gini.android.capture.screen.databinding.CustomNavigationBarTopBinding
 import net.gini.android.capture.view.NavButtonType
 import net.gini.android.capture.view.NavigationBarTopAdapter
 

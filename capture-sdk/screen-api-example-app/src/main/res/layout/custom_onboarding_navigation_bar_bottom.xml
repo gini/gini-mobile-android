@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -13,34 +12,34 @@
         style="@style/GiniCaptureTheme.Widget.Button.OutlinedButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/gc_large_24"
+        android:layout_marginStart="@dimen/gc_large_64"
         android:layout_marginEnd="@dimen/gc_medium"
         android:layout_marginBottom="@dimen/gc_large_48"
         android:text="@string/gc_skip"
         android:visibility="invisible"
-        tools:visibility="visible"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/gc_next"
+        app:layout_constraintEnd_toStartOf="@id/button_next"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintWidth_max="160dp"
-        app:layout_constraintWidth_min="120dp" />
+        app:layout_constraintWidth_min="120dp"
+        tools:visibility="visible" />
 
     <Button
         android:id="@+id/button_next"
         style="@style/GiniCaptureTheme.Widget.Button.UnelevatedButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/gc_large_24"
+        android:layout_marginEnd="@dimen/gc_large_64"
         android:text="@string/gc_next"
         android:visibility="invisible"
-        tools:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="@id/gc_skip"
+        app:layout_constraintBottom_toBottomOf="@id/button_skip"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/gc_skip"
-        app:layout_constraintTop_toTopOf="@id/gc_skip"
+        app:layout_constraintStart_toEndOf="@id/button_skip"
+        app:layout_constraintTop_toTopOf="@id/button_skip"
         app:layout_constraintWidth_max="160dp"
-        app:layout_constraintWidth_min="120dp" />
+        app:layout_constraintWidth_min="120dp"
+        tools:visibility="visible" />
 
     <Button
         android:id="@+id/button_get_started"
@@ -51,7 +50,7 @@
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/gc_skip"
+        app:layout_constraintTop_toTopOf="@id/button_skip"
         app:layout_constraintWidth_max="160dp"
         app:layout_constraintWidth_min="120dp" />
 
