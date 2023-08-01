@@ -88,6 +88,10 @@ apply<DokkaPlugin>()
 apply<CodeAnalysisPlugin>()
 apply<PropertiesPlugin>()
 
+tasks.getByName<org.jetbrains.dokka.gradle.DokkaCollectorTask>("dokkaHtmlSiblingCollector") {
+    this.moduleName.set("Gini Health API Library for Android")
+}
+
 tasks.register<CreatePropertiesTask>("injectTestProperties") {
     val propertiesMap = mutableMapOf<String, String>()
 
