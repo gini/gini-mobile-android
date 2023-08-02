@@ -35,12 +35,12 @@ class CameraScreenApiActivity : CameraActivity() {
             // (document.getData() may be null)
             val intent = document.intent
             if (intent == null) {
-                callback.documentRejected(getString(R.string.gc_document_import_error))
+                callback.documentRejected(getString(net.gini.android.capture.R.string.gc_document_import_error))
                 return
             }
             val uri = IntentHelper.getUri(intent)
             if (uri == null) {
-                callback.documentRejected(getString(R.string.gc_document_import_error))
+                callback.documentRejected(getString(net.gini.android.capture.R.string.gc_document_import_error))
                 return
             }
             if (hasMoreThan5MB(uri)) {

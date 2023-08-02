@@ -69,7 +69,7 @@ class ConfigurationActivity : AppCompatActivity() {
     }
 
     private fun setupActionBar() {
-        supportActionBar?.setHomeAsUpIndicator(R.drawable.gc_close)
+        supportActionBar?.setHomeAsUpIndicator(net.gini.android.capture.R.drawable.gc_close)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 

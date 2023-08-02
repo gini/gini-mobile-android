@@ -7,8 +7,13 @@ plugins {
 }
 
 android {
+    // after upgrading to AGP 8, we need this (copied from the module's AndroidManifest.xml)
+    namespace = "net.gini.android.core.api"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
-
+    // after upgrading to AGP 8, we need this to have the defaultConfig block
+    buildFeatures {
+        buildConfig = true
+    }
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
@@ -42,7 +47,11 @@ android {
         moduleName = "${properties["groupId"]}.${properties["artifactId"]}"
     }
 }
-
+// after upgrading to AGP 8, we need this, otherwise, gradle will complain to use the same jdk version as your machine (17 which is bundled with Android Studio)
+// https://youtrack.jetbrains.com/issue/KT-55947/Unable-to-set-kapt-jvm-target-version
+tasks.withType(type = org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask::class) {
+    kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
+}
 dependencies {
     api(libs.retrofit)
     implementation(libs.okhttp3)

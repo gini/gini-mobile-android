@@ -4,8 +4,14 @@ plugins {
 }
 
 android {
+    // after upgrading to AGP 8, we need this (copied from the module's AndroidManifest.xml
+    namespace = "net.gini.android.core.api.test.shared"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
+    // after upgrading to AGP 8, we need this to have the defaultConfig block
+    buildFeatures {
+        buildConfig = true
+    }
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
