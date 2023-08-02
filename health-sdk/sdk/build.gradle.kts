@@ -1,4 +1,5 @@
 import net.gini.gradle.*
+import org.jetbrains.dokka.gradle.DokkaCollectorTask
 
 plugins {
     id("com.android.library")
@@ -99,6 +100,6 @@ apply<PublishToMavenPlugin>()
 apply<DokkaPlugin>()
 apply<CodeAnalysisPlugin>()
 
-tasks.getByName<org.jetbrains.dokka.gradle.DokkaCollectorTask>("dokkaHtmlSiblingCollector") {
+tasks.getByName<DokkaCollectorTask>("dokkaHtmlSiblingCollector") {
     this.moduleName.set("Gini Health SDK for Android")
 }
