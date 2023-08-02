@@ -1,4 +1,5 @@
 import net.gini.gradle.*
+import org.jetbrains.dokka.gradle.DokkaCollectorTask
 import org.jetbrains.dokka.gradle.DokkaTask
 
 plugins {
@@ -131,7 +132,7 @@ apply<PublishToMavenPlugin>()
 apply<DokkaPlugin>()
 apply<CodeAnalysisPlugin>()
 
-tasks.getByName<org.jetbrains.dokka.gradle.DokkaCollectorTask>("dokkaHtmlSiblingCollector") {
+tasks.getByName<DokkaCollectorTask>("dokkaHtmlSiblingCollector") {
     this.moduleName.set("Gini Capture SDK for Android")
 }
 

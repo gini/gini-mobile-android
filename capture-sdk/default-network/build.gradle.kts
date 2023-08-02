@@ -1,4 +1,5 @@
 import net.gini.gradle.*
+import org.jetbrains.dokka.gradle.DokkaCollectorTask
 
 plugins {
     id("com.android.library")
@@ -78,7 +79,7 @@ apply<PublishToMavenPlugin>()
 apply<CodeAnalysisPlugin>()
 apply<DokkaPlugin>()
 
-tasks.getByName<org.jetbrains.dokka.gradle.DokkaCollectorTask>("dokkaHtmlSiblingCollector") {
+tasks.getByName<DokkaCollectorTask>("dokkaHtmlSiblingCollector") {
     this.moduleName.set("Gini Capture SDK - Default Network Library for Android")
 }
 
