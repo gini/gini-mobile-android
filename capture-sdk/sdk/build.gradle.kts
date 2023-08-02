@@ -5,13 +5,13 @@ import org.jetbrains.dokka.gradle.DokkaTask
 plugins {
     id("com.android.library")
     kotlin("android")
-//    id("com.hiya.jacoco-android")
     id("kotlin-parcelize")
+    id("jacoco")
 }
 
-//jacoco {
-//    toolVersion = libs.versions.jacoco.get()
-//}
+jacoco {
+    toolVersion = libs.versions.jacoco.get()
+}
 
 android {
     // after upgrading to AGP 8, we need this (copied from the module's AndroidManifest.xml)

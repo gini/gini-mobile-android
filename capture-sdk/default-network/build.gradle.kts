@@ -5,12 +5,12 @@ plugins {
     id("com.android.library")
     kotlin("android")
     kotlin("kapt")
-//    id("com.hiya.jacoco-android")
+    id("jacoco")
 }
 
-//jacoco {
-//    toolVersion = libs.versions.jacoco.get()
-//}
+jacoco {
+    toolVersion = libs.versions.jacoco.get()
+}
 
 android {
     // after upgrading to AGP 8, we need this (copied from the module's AndroidManifest.xml)
