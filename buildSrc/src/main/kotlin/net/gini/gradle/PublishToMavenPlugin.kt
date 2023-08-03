@@ -21,36 +21,22 @@ import java.util.*
 class PublishToMavenPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
-        //configureMavenPublish(target)
+        configureMavenPublish(target)
 
-       /* target.tasks.create("printVersion") {
+        target.tasks.create("printVersion") {
             doLast {
                 val version: String by target
                 println(version)
             }
-        }*/
+        }
     }
 
-    /*private fun configureMavenPublish(target: Project) {
+    private fun configureMavenPublish(target: Project) {
         target.plugins.apply("maven-publish")
         target.plugins.apply("signing")
 
-        *//*val sourcesJar = target.tasks.register<Jar>("sourcesJar") {
-            archiveClassifier.set("sources")
-            val library = target.extensions.getByType<LibraryExtension>()
-            from(library.sourceSets["main"].java.srcDirs)
-        }
-
-        val javadocJar = target.tasks.register<Jar>("javadocJar") {
-            archiveClassifier.set("javadoc")
-            val dokkaJavadoc = target.tasks.getByName<DokkaTask>("dokkaJavadoc")
-            dependsOn(dokkaJavadoc)
-            from(dokkaJavadoc.outputDirectory)
-        }*//*
 
         target.afterEvaluate {
-            //val sourcesArtifact = artifacts.add("archives", sourcesJar)
-            //val javadocArtifact = artifacts.add("archives", javadocJar)
 
             extensions.getByType<PublishingExtension>().apply {
                 publications {
@@ -58,10 +44,6 @@ class PublishToMavenPlugin : Plugin<Project> {
                     create<MavenPublication>("release") {
                         // Applies the component for the release build variant
                         from(components["release"])
-
-                        // Adds additional artifacts
-                        //artifact(sourcesArtifact)
-                        //artifact(javadocArtifact)
 
                         // Customizes attributes of the publication
                         val groupId: String by target
@@ -169,7 +151,7 @@ class PublishToMavenPlugin : Plugin<Project> {
                 }
             }
         }
-    }*/
+    }
 
 }
 

@@ -58,6 +58,13 @@ android {
             isIncludeAndroidResources = true
         }
     }
+    // After AGP 8, this replaces the tasks in PublishToMavenPlugin
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
 }
 
 // after upgrading to AGP 8, we need this, otherwise, gradle will complain to use the same jdk version as your machine (17 which is bundled with Android Studio)
