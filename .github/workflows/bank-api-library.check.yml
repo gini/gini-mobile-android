@@ -35,7 +35,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '17'
           cache: 'gradle'
 
       - name: avd cache
@@ -91,7 +91,7 @@ jobs:
       - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '17'
           cache: 'gradle'
 
       - name: run checkstyle
@@ -112,7 +112,7 @@ jobs:
       - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '17'
           cache: 'gradle'
 
       - name: run pmd
@@ -133,7 +133,7 @@ jobs:
       - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '17'
           cache: 'gradle'
 
       - name: run android lint
@@ -154,7 +154,7 @@ jobs:
       - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '17'
           cache: 'gradle'
 
       - name: run detekt
@@ -175,7 +175,7 @@ jobs:
       - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '17'
           cache: 'gradle'
 
       - name: run ktlint
