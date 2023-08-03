@@ -1,3 +1,3 @@
-# Module ginipaybusiness
+# Module sdk
 
-## Gini Pay Business SDK for Android
+## Gini Health SDK for Android

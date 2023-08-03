@@ -1,4 +1,5 @@
 import net.gini.gradle.*
+import org.jetbrains.dokka.gradle.DokkaCollectorTask
 
 plugins {
     id("com.android.library")
@@ -77,6 +78,10 @@ dependencies {
 apply<PublishToMavenPlugin>()
 apply<CodeAnalysisPlugin>()
 apply<DokkaPlugin>()
+
+tasks.getByName<DokkaCollectorTask>("dokkaHtmlSiblingCollector") {
+    this.moduleName.set("Gini Capture SDK - Default Network Library for Android")
+}
 
 tasks.register<CreatePropertiesTask>("injectTestProperties") {
     val propertiesMap = mutableMapOf<String, String>()
