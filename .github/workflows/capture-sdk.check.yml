@@ -36,7 +36,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '17'
           cache: 'gradle'
 
       - name: run unit tests
@@ -49,15 +49,18 @@ jobs:
           name: capture-sdk-unit-test-results
           path: capture-sdk/sdk/build/reports/tests
 
-      - name: create unit test coverage report
-        run: ./gradlew capture-sdk:sdk:jacocoTestDebugUnitTestReport
-
-      - name: archive unit test coverage report
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: capture-sdk-unit-test-coverage
-          path: capture-sdk/sdk/build/jacoco/jacocoHtml
+#      should be investigated later, right now does not work with AGP 8
+#      read this article for some help: https://about.codecov.io/blog/code-coverage-for-android-development-using-kotlin-jacoco-github-actions-and-codecov/
+#
+#      - name: create unit test coverage report
+#        run: ./gradlew capture-sdk:sdk:jacocoTestDebugUnitTestReport
+#
+#      - name: archive unit test coverage report
+#        if: always()
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: capture-sdk-unit-test-coverage
+#          path: capture-sdk/sdk/build/jacoco/jacocoHtml
 
   default-network-test:
     runs-on: ubuntu-latest
@@ -69,7 +72,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '17'
           cache: 'gradle'
 
       - name: run unit tests
@@ -82,15 +85,18 @@ jobs:
           name: capture-sdk-default-network-unit-test-results
           path: capture-sdk/default-network/build/reports/tests
 
-      - name: create unit test coverage report
-        run: ./gradlew capture-sdk:default-network:jacocoTestDebugUnitTestReport
-
-      - name: archive unit test coverage report
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: capture-sdk-default-network-unit-test-coverage
-          path: capture-sdk/default-network/build/jacoco/jacocoHtml
+#      should be investigated later, right now does not work with AGP 8
+#      read this article for some help: https://about.codecov.io/blog/code-coverage-for-android-development-using-kotlin-jacoco-github-actions-and-codecov/
+#
+#      - name: create unit test coverage report
+#        run: ./gradlew capture-sdk:default-network:jacocoTestDebugUnitTestReport
+#
+#      - name: archive unit test coverage report
+#        if: always()
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: capture-sdk-default-network-unit-test-coverage
+#          path: capture-sdk/default-network/build/jacoco/jacocoHtml
 
   default-network-instrumented-test:
     runs-on: macos-latest
@@ -102,7 +108,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '17'
           cache: 'gradle'
 
       - name: avd cache
@@ -158,7 +164,7 @@ jobs:
       - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '17'
           cache: 'gradle'
 
       - name: build debug screen api example app
@@ -198,7 +204,7 @@ jobs:
       - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '17'
           cache: 'gradle'
 
       - name: run checkstyle
@@ -219,7 +225,7 @@ jobs:
       - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '17'
           cache: 'gradle'
 
       - name: run pmd
@@ -240,7 +246,7 @@ jobs:
       - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '17'
           cache: 'gradle'
 
       - name: run android lint
@@ -261,7 +267,7 @@ jobs:
       - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '17'
           cache: 'gradle'
 
       - name: run detekt
@@ -282,7 +288,7 @@ jobs:
       - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '17'
           cache: 'gradle'
 
       - name: run ktlint

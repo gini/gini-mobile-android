@@ -21,7 +21,7 @@ class DokkaPlugin: Plugin<Project> {
         target.plugins.apply("org.jetbrains.dokka")
 
         target.dependencies {
-            add("dokkaHtmlPlugin", target.libs.findDependency("dokka.kotlinAsJava").get())
+            add("dokkaHtmlPlugin", target.libs.findLibrary("dokka.kotlinAsJava").get())
         }
 
         target.tasks.create<DokkaCollectorTask>("dokkaHtmlSiblingCollector") {

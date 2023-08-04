@@ -86,7 +86,7 @@ internal class DigitalInvoiceActivity : AppCompatActivity(), DigitalInvoiceFragm
         }
         enableHomeAsUp(this)
 
-        if (resources.getBoolean(R.bool.gc_is_tablet)) {
+        if (resources.getBoolean(net.gini.android.capture.R.bool.gc_is_tablet)) {
             window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
         }
     }

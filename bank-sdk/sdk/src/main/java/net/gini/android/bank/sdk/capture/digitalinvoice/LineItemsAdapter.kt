@@ -90,8 +90,9 @@ internal class LineItemsAdapter(private val listener: LineItemsAdapterListener, 
                 }
 
                 // Adding padding for the last addon item, so the item looks full height without modifying the layout file
-                val bottomPadding =  if (position == (itemCount - 1)) context.resources.getDimension(R.dimen.gc_large).toInt() else 0
-                viewHolder.itemView.setPadding(context.resources.getDimension(R.dimen.gc_large).toInt(), 0, 0, bottomPadding)
+                val bottomPadding =  if (position == (itemCount - 1)) context.resources.getDimension(
+                    net.gini.android.capture.R.dimen.gc_large).toInt() else 0
+                viewHolder.itemView.setPadding(context.resources.getDimension(net.gini.android.capture.R.dimen.gc_large).toInt(), 0, 0, bottomPadding)
             }
         }
     }

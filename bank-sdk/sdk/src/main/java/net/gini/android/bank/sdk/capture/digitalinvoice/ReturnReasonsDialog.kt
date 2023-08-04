@@ -97,7 +97,7 @@ internal class ReturnReasonDialog : BottomSheetDialogFragment() {
         view?.let {
             if (ContextHelper.isTablet(requireContext())) {
                 val mBehavior = BottomSheetBehavior.from(it.parent as View)
-                mBehavior.maxWidth = resources.getDimension(R.dimen.gc_tablet_width).toInt()
+                mBehavior.maxWidth = resources.getDimension(net.gini.android.capture.R.dimen.gc_tablet_width).toInt()
                 mBehavior.state = BottomSheetBehavior.STATE_EXPANDED
             }
         }

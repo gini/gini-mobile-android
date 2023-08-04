@@ -6,7 +6,7 @@ plugins {
     kotlin("android")
     kotlin("kapt")
     id("kotlin-parcelize")
-    id("com.hiya.jacoco-android")
+    id("jacoco")
 }
 
 jacoco {
@@ -14,8 +14,14 @@ jacoco {
 }
 
 android {
+    // after upgrading to AGP 8, we need this (copied from the module's AndroidManifest.xml)
+    namespace = "net.gini.android.bank.sdk"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
+    // after upgrading to AGP 8, we need this to have the defaultConfig block
+    buildFeatures {
+        buildConfig = true
+    }
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
@@ -54,6 +60,19 @@ android {
         // https://stackoverflow.com/a/56329676/276129
         moduleName = "${properties["groupId"]}.${properties["artifactId"]}"
     }
+    // After AGP 8, this replaces the tasks in PublishToMavenPlugin
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
+}
+
+// after upgrading to AGP 8, we need this, otherwise, gradle will complain to use the same jdk version as your machine (17 which is bundled with Android Studio)
+// https://youtrack.jetbrains.com/issue/KT-55947/Unable-to-set-kapt-jvm-target-version
+tasks.withType(type = org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask::class) {
+    kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
 }
 
 dependencies {

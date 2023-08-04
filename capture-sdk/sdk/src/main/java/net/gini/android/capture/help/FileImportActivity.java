@@ -97,7 +97,7 @@ public class FileImportActivity extends AppCompatActivity {
 
         TypedValue typedValue = new TypedValue();
         Resources.Theme theme = getTheme();
-        theme.resolveAttribute(R.attr.colorAccent, typedValue, true);
+        theme.resolveAttribute(androidx.appcompat.R.attr.colorAccent, typedValue, true);
         @ColorInt int color = typedValue.data;
 
         snackbar.setAction(getString(R.string.gc_snackbar_dismiss), v -> snackbar.dismiss());

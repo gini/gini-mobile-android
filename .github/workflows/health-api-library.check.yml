@@ -32,7 +32,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '17'
           cache: 'gradle'
 
       - name: run unit tests
@@ -45,15 +45,18 @@ jobs:
           name: health-api-library-unit-test-results
           path: health-api-library/library/build/reports/tests
 
-      - name: create unit test coverage report
-        run: ./gradlew health-api-library:library:jacocoTestDebugUnitTestReport
-
-      - name: archive unit test coverage report
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: health-api-library-unit-test-coverage
-          path: health-api-library/library/build/jacoco/jacocoHtml
+#      should be investigated later, right now does not work with AGP 8
+#      read this article for some help: https://about.codecov.io/blog/code-coverage-for-android-development-using-kotlin-jacoco-github-actions-and-codecov/
+#
+#      - name: create unit test coverage report
+#        run: ./gradlew health-api-library:library:jacocoTestDebugUnitTestReport
+#
+#      - name: archive unit test coverage report
+#        if: always()
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: health-api-library-unit-test-coverage
+#          path: health-api-library/library/build/jacoco/jacocoHtml
 
   instrumented-test:
     runs-on: macos-latest
@@ -68,7 +71,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '17'
           cache: 'gradle'
 
       - name: avd cache
@@ -124,7 +127,7 @@ jobs:
       - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '17'
           cache: 'gradle'
 
       - name: run checkstyle
@@ -145,7 +148,7 @@ jobs:
       - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '17'
           cache: 'gradle'
 
       - name: run pmd
@@ -166,7 +169,7 @@ jobs:
       - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '17'
           cache: 'gradle'
 
       - name: run android lint
@@ -187,7 +190,7 @@ jobs:
       - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '17'
           cache: 'gradle'
 
       - name: run detekt
@@ -208,7 +211,7 @@ jobs:
       - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '17'
           cache: 'gradle'
 
       - name: run ktlint
