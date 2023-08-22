@@ -1,9 +1,5 @@
 package net.gini.android.capture.requirements;
 
-import static com.google.common.truth.Truth.assertWithMessage;
-
-import static net.gini.android.capture.test.PermissionsHelper.grantCameraPermission;
-
 import android.hardware.Camera;
 
 import org.junit.Ignore;
@@ -15,6 +11,9 @@ import java.util.Locale;
 
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+
+import static com.google.common.truth.Truth.assertWithMessage;
+import static net.gini.android.capture.test.PermissionsHelper.grantCameraPermission;
 
 @RunWith(AndroidJUnit4.class)
 public class GiniCaptureRequirementsTest {
@@ -71,9 +70,9 @@ public class GiniCaptureRequirementsTest {
         stringBuilder.append("Resolution, Megapixel, Aspect Ratio\n");
         for (final Camera.Size size : sizes) {
             stringBuilder.append(
-                    String.format(Locale.US, "%dx%d, %.1fMP, %.6f", size.width, size.height,
-                            (float) size.width * size.height / 1_000_000f,
-                            (float) size.width / size.height))
+                            String.format(Locale.US, "%dx%d, %.1fMP, %.6f", size.width, size.height,
+                                    (float) size.width * size.height / 1_000_000f,
+                                    (float) size.width / size.height))
                     .append("\n");
         }
     }

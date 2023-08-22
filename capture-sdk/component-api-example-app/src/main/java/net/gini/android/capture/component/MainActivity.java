@@ -4,22 +4,13 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
-import net.gini.android.core.api.GiniApiType;
 import net.gini.android.capture.DocumentImportEnabledFileTypes;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.GiniCaptureDebug;
-import net.gini.android.capture.GiniCaptureError;
 import net.gini.android.capture.component.camera.CameraExampleAppCompatActivity;
 import net.gini.android.capture.example.shared.BaseExampleApp;
 import net.gini.android.capture.example.shared.RuntimePermissionHandler;
@@ -31,6 +22,11 @@ import net.gini.android.capture.requirements.RequirementsReport;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 import static net.gini.android.capture.example.shared.ExampleUtil.isIntentActionViewOrSend;
 
@@ -129,21 +125,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startGiniCaptureForImportedFile(@Nullable final Intent importedFileIntent) {
-        mRuntimePermissionHandler.requestStoragePermission(
-                new RuntimePermissionHandler.Listener() {
-                    @Override
-                    public void permissionGranted() {
-                        final Intent intent = new Intent(importedFileIntent);
-                        intent.setClass(MainActivity.this, CameraExampleAppCompatActivity.class);
-                        startActivity(intent);
-                        finish();
-                    }
-
-                    @Override
-                    public void permissionDenied() {
-                        finish();
-                    }
-                });
+        final Intent intent = new Intent(importedFileIntent);
+        intent.setClass(MainActivity.this, CameraExampleAppCompatActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     private void addInputHandlers() {
@@ -211,9 +196,6 @@ public class MainActivity extends AppCompatActivity {
                 .withCameraPermissionDeniedMessage(
                         getString(R.string.camera_permission_denied_message))
                 .withCameraPermissionRationale(getString(R.string.camera_permission_rationale))
-                .withStoragePermissionDeniedMessage(
-                        getString(R.string.storage_permission_denied_message))
-                .withStoragePermissionRationale(getString(R.string.storage_permission_rationale))
                 .withGrantAccessButtonTitle(getString(R.string.grant_access))
                 .withCancelButtonTitle(getString(R.string.cancel))
                 .build();

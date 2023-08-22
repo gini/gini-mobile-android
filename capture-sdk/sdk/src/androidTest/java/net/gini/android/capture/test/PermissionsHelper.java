@@ -1,8 +1,5 @@
 package net.gini.android.capture.test;
 
-import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
-import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
-
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.UiAutomation;
@@ -17,21 +14,13 @@ import java.io.IOException;
 
 import androidx.annotation.NonNull;
 
+import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
+import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
+
 public class PermissionsHelper {
 
     private static final String LOG_TAG = "GrantPermission";
 
-    public static void grantExternalStoragePermission() throws InterruptedException {
-        grantExternalStoragePermission(getApplicationContext().getPackageName());
-    }
-
-    public static void grantExternalStoragePermission(final String packageName)
-            throws InterruptedException {
-        grantPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, packageName);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            grantPermission(Manifest.permission.READ_EXTERNAL_STORAGE, packageName);
-        }
-    }
 
     public static void grantCameraPermission() throws InterruptedException {
         grantCameraPermission(getApplicationContext().getPackageName());

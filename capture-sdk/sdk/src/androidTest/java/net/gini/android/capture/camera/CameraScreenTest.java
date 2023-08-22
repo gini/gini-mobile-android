@@ -4,45 +4,19 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Camera;
 import android.os.RemoteException;
 import android.view.Surface;
 import android.view.View;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.test.InstrumentationRegistry;
-import androidx.test.core.app.ActivityScenario;
-import androidx.test.core.app.ApplicationProvider;
-import androidx.test.espresso.Espresso;
-import androidx.test.espresso.action.ViewActions;
-import androidx.test.espresso.assertion.ViewAssertions;
-import androidx.test.espresso.intent.Intents;
-import androidx.test.espresso.intent.matcher.IntentMatchers;
-import androidx.test.espresso.intent.rule.IntentsTestRule;
-import androidx.test.espresso.matcher.ViewMatchers;
-import androidx.test.ext.junit.rules.ActivityScenarioRule;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.filters.RequiresDevice;
-import androidx.test.filters.SdkSuppress;
-import androidx.test.rule.ActivityTestRule;
-import androidx.test.uiautomator.UiDevice;
-import androidx.test.uiautomator.UiObject;
-import androidx.test.uiautomator.UiSelector;
 
 import net.gini.android.capture.Document;
 import net.gini.android.capture.DocumentImportEnabledFileTypes;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.GiniCaptureError;
 import net.gini.android.capture.R;
-import net.gini.android.capture.analysis.AnalysisActivityTestSpy;
-import net.gini.android.capture.document.DocumentFactory;
 import net.gini.android.capture.document.GiniCaptureMultiPageDocument;
-import net.gini.android.capture.document.ImageDocument;
 import net.gini.android.capture.document.QRCodeDocument;
 import net.gini.android.capture.document.QRCodeDocumentHelper;
 import net.gini.android.capture.internal.camera.api.CameraControllerFake;
-import net.gini.android.capture.internal.camera.photo.PhotoFactory;
 import net.gini.android.capture.internal.qrcode.PaymentQRCodeData;
 import net.gini.android.capture.network.GiniCaptureNetworkApi;
 import net.gini.android.capture.network.GiniCaptureNetworkService;
@@ -50,19 +24,14 @@ import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
 import net.gini.android.capture.onboarding.OnboardingActivity;
 import net.gini.android.capture.onboarding.OnboardingPage;
 import net.gini.android.capture.review.ReviewActivity;
-import net.gini.android.capture.review.ReviewActivityTestSpy;
 import net.gini.android.capture.test.EspressoAssertions;
 import net.gini.android.capture.test.PermissionsHelper;
 
-import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.mockito.ArgumentMatcher;
-import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 
 import java.io.IOException;
@@ -71,13 +40,29 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
+import androidx.annotation.NonNull;
+import androidx.test.InstrumentationRegistry;
+import androidx.test.core.app.ActivityScenario;
+import androidx.test.core.app.ApplicationProvider;
+import androidx.test.espresso.Espresso;
+import androidx.test.espresso.action.ViewActions;
+import androidx.test.espresso.assertion.ViewAssertions;
+import androidx.test.espresso.intent.Intents;
+import androidx.test.espresso.intent.matcher.IntentMatchers;
+import androidx.test.espresso.matcher.ViewMatchers;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.filters.RequiresDevice;
+import androidx.test.filters.SdkSuppress;
+import androidx.test.uiautomator.UiDevice;
+import androidx.test.uiautomator.UiObject;
+import androidx.test.uiautomator.UiSelector;
+
 import static com.google.common.truth.Truth.assertThat;
 import static net.gini.android.capture.OncePerInstallEventStoreHelper.clearOnboardingWasShownPreference;
 import static net.gini.android.capture.OncePerInstallEventStoreHelper.setOnboardingWasShownPreference;
 import static net.gini.android.capture.camera.CameraFragmentImpl.GC_SHARED_PREFS;
 import static net.gini.android.capture.camera.CameraFragmentImpl.SHOW_QRCODE_SCANNER_HINT_POP_UP;
 import static net.gini.android.capture.camera.CameraFragmentImpl.SHOW_UPLOAD_HINT_POP_UP;
-import static net.gini.android.capture.test.EspressoMatchers.hasComponent;
 import static net.gini.android.capture.test.Helpers.convertJpegToNV21;
 import static net.gini.android.capture.test.Helpers.isTablet;
 import static net.gini.android.capture.test.Helpers.loadAsset;
@@ -86,14 +71,8 @@ import static net.gini.android.capture.test.Helpers.resetDeviceOrientation;
 import static net.gini.android.capture.test.Helpers.waitForWindowUpdate;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @RunWith(AndroidJUnit4.class)
@@ -549,7 +528,7 @@ public class CameraScreenTest {
                         "DE19690516200000581900",
                         "SOLADES1PFD",
                         "140.40:EUR")
-                );
+        );
     }
 
     @Test
@@ -711,7 +690,7 @@ public class CameraScreenTest {
 
             @Override
             public void onCheckImportedDocument(@NonNull final Document document,
-                    @NonNull final DocumentCheckResultCallback callback) {
+                                                @NonNull final DocumentCheckResultCallback callback) {
 
             }
 
