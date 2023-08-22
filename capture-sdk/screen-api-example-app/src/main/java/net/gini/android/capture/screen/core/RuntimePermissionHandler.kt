@@ -93,56 +93,7 @@ class RuntimePermissionHandler private constructor(builder: Builder) {
         alertDialog.show()
     }
 
-    @SuppressLint("InlinedApi")
-    fun requestStoragePermission(listener: Listener) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            listener.permissionGranted()
-            return
-        }
-        Dexter.withActivity(mActivity)
-            .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
-            .withListener(object : PermissionListener {
-                override fun onPermissionGranted(response: PermissionGrantedResponse) {
-                    listener.permissionGranted()
-                }
 
-                override fun onPermissionDenied(response: PermissionDeniedResponse) {
-                    showStoragePermissionDeniedDialog(listener)
-                }
-
-                override fun onPermissionRationaleShouldBeShown(
-                    permission: PermissionRequest,
-                    token: PermissionToken
-                ) {
-                    showStoragePermissionRationale(token)
-                }
-            })
-            .withErrorListener { error -> LOG.error("Permission error: {}", error.name) }
-            .check()
-    }
-
-    private fun showStoragePermissionDeniedDialog(listener: Listener) {
-        val alertDialog = MaterialAlertDialogBuilder(mActivity!!)
-            .setMessage(mStoragePermissionDeniedMessage)
-            .setPositiveButton(
-                mGrantAccessButtonTitle
-            ) { dialog, which -> showAppDetailsSettingsScreen() }
-            .setNegativeButton(mCancelButtonTitle) { dialog, which -> listener.permissionDenied() }
-            .setOnCancelListener { listener.permissionDenied() }
-            .create()
-        alertDialog.show()
-    }
-
-    private fun showStoragePermissionRationale(token: PermissionToken) {
-        val alertDialog = MaterialAlertDialogBuilder(mActivity!!)
-            .setMessage(mStoragePermissionRationale)
-            .setPositiveButton(
-                mGrantAccessButtonTitle
-            ) { dialog, which -> token.continuePermissionRequest() }
-            .setOnCancelListener { token.cancelPermissionRequest() }
-            .create()
-        alertDialog.show()
-    }
 
     interface Listener {
         fun permissionDenied()

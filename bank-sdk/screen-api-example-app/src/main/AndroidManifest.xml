@@ -3,8 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="net.gini.android.bank.sdk.screenapiexample">
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.CAMERA" />
 
     <queries>

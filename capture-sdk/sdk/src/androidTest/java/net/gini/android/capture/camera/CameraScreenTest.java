@@ -61,8 +61,6 @@ import static com.google.common.truth.Truth.assertThat;
 import static net.gini.android.capture.OncePerInstallEventStoreHelper.clearOnboardingWasShownPreference;
 import static net.gini.android.capture.OncePerInstallEventStoreHelper.setOnboardingWasShownPreference;
 import static net.gini.android.capture.camera.CameraFragmentImpl.GC_SHARED_PREFS;
-import static net.gini.android.capture.camera.CameraFragmentImpl.SHOW_QRCODE_SCANNER_HINT_POP_UP;
-import static net.gini.android.capture.camera.CameraFragmentImpl.SHOW_UPLOAD_HINT_POP_UP;
 import static net.gini.android.capture.test.Helpers.convertJpegToNV21;
 import static net.gini.android.capture.test.Helpers.isTablet;
 import static net.gini.android.capture.test.Helpers.loadAsset;
