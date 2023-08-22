@@ -1,12 +1,5 @@
 package net.gini.android.capture.screen.screenshots;
 
-import static com.google.common.truth.Truth.assertThat;
-
-import static net.gini.android.capture.screen.screenshots.Helper.openApp;
-import static net.gini.android.capture.screen.screenshots.ScreenshotHelper.screenshotFileForBitBar;
-import static net.gini.android.capture.screen.screenshots.ScreenshotHelper.takeUIAutomatorScreenshot;
-import static net.gini.android.capture.screen.testhelper.PermissionsHelper.grantCameraPermission;
-
 import android.os.RemoteException;
 
 import net.gini.android.capture.screen.screenshots.screens.screenapi.AnalysisScreen;
@@ -26,6 +19,12 @@ import androidx.test.filters.SdkSuppress;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObjectNotFoundException;
+
+import static com.google.common.truth.Truth.assertThat;
+import static net.gini.android.capture.screen.screenshots.Helper.openApp;
+import static net.gini.android.capture.screen.screenshots.ScreenshotHelper.screenshotFileForBitBar;
+import static net.gini.android.capture.screen.screenshots.ScreenshotHelper.takeUIAutomatorScreenshot;
+import static net.gini.android.capture.screen.testhelper.PermissionsHelper.grantCameraPermission;
 
 @SdkSuppress(minSdkVersion = 18)
 @RunWith(AndroidJUnit4.class)

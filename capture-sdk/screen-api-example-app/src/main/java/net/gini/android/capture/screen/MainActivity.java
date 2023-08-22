@@ -5,18 +5,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
-import net.gini.android.core.api.GiniApiType;
 import net.gini.android.capture.AsyncCallback;
 import net.gini.android.capture.DocumentImportEnabledFileTypes;
 import net.gini.android.capture.GiniCapture;
@@ -26,9 +18,7 @@ import net.gini.android.capture.ImportedFileValidationException;
 import net.gini.android.capture.camera.CameraActivity;
 import net.gini.android.capture.example.shared.BaseExampleApp;
 import net.gini.android.capture.example.shared.RuntimePermissionHandler;
-import net.gini.android.capture.help.FileImportActivity;
 import net.gini.android.capture.help.HelpItem;
-import net.gini.android.capture.help.PhotoTipsActivity;
 import net.gini.android.capture.logging.ErrorLog;
 import net.gini.android.capture.logging.ErrorLoggerListener;
 import net.gini.android.capture.onboarding.DefaultPagesPhone;
@@ -50,6 +40,10 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.android.LogcatAppender;
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
@@ -113,9 +107,6 @@ public class MainActivity extends AppCompatActivity {
                 .withCameraPermissionDeniedMessage(
                         getString(R.string.camera_permission_denied_message))
                 .withCameraPermissionRationale(getString(R.string.camera_permission_rationale))
-                .withStoragePermissionDeniedMessage(
-                        getString(R.string.storage_permission_denied_message))
-                .withStoragePermissionRationale(getString(R.string.storage_permission_rationale))
                 .withGrantAccessButtonTitle(getString(R.string.grant_access))
                 .withCancelButtonTitle(getString(R.string.cancel))
                 .build();
@@ -130,18 +121,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startGiniCaptureSdkForImportedFile(final Intent importedFileIntent) {
-        mRuntimePermissionHandler.requestStoragePermission(new RuntimePermissionHandler.Listener() {
-            @Override
-            public void permissionGranted() {
-                doStartGiniCaptureSdkForImportedFile(importedFileIntent);
-            }
-
-            @Override
-            public void permissionDenied() {
-                finish();
-            }
-        });
-
+        doStartGiniCaptureSdkForImportedFile(importedFileIntent);
     }
 
     private void doStartGiniCaptureSdkForImportedFile(final Intent importedFileIntent) {
@@ -195,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(final DialogInterface dialogInterface,
-                            final int i) {
+                                        final int i) {
                         finish();
                     }
                 })
@@ -373,7 +353,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode,
-            final Intent data) {
+                                    final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_SCAN) {
             if (data == null) {

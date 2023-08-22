@@ -1,7 +1,6 @@
 package net.gini.android.capture.example.shared;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -24,7 +23,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Created by Alpar Szotyori on 05.12.2017.
- *
+ * <p>
  * Copyright (c) 2017 Gini GmbH.
  */
 
@@ -37,13 +36,9 @@ public class RuntimePermissionHandler {
     private final String mCameraPermissionRationale;
     private final String mCancelButtonTitle;
     private final String mGrantAccessButtonTitle;
-    private final String mStoragePermissionDeniedMessage;
-    private final String mStoragePermissionRationale;
 
     private RuntimePermissionHandler(final Builder builder) {
         mActivity = builder.mActivity;
-        mStoragePermissionDeniedMessage = builder.mStoragePermissionDeniedMessage;
-        mStoragePermissionRationale = builder.mStoragePermissionRationale;
         mCameraPermissionDeniedMessage = builder.mCameraPermissionDeniedMessage;
         mCameraPermissionRationale = builder.mCameraPermissionRationale;
         mGrantAccessButtonTitle = builder.mGrantAccessButtonTitle;
@@ -136,86 +131,6 @@ public class RuntimePermissionHandler {
         alertDialog.show();
     }
 
-    @SuppressLint("InlinedApi")
-    public void requestStoragePermission(final Listener listener) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            listener.permissionGranted();
-            return;
-        }
-        Dexter.withActivity(mActivity)
-                .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
-                .withListener(new PermissionListener() {
-                    @Override
-                    public void onPermissionGranted(final PermissionGrantedResponse response) {
-                        listener.permissionGranted();
-                    }
-
-                    @Override
-                    public void onPermissionDenied(final PermissionDeniedResponse response) {
-                        showStoragePermissionDeniedDialog(listener);
-                    }
-
-                    @Override
-                    public void onPermissionRationaleShouldBeShown(
-                            final PermissionRequest permission,
-                            final PermissionToken token) {
-                        showStoragePermissionRationale(token);
-                    }
-                })
-                .withErrorListener(new PermissionRequestErrorListener() {
-                    @Override
-                    public void onError(final DexterError error) {
-                        LOG.error("Permission error: {}", error.name());
-                    }
-                })
-                .check();
-    }
-
-    private void showStoragePermissionDeniedDialog(final Listener listener) {
-        final AlertDialog alertDialog = new AlertDialog.Builder(mActivity)
-                .setMessage(mStoragePermissionDeniedMessage)
-                .setPositiveButton(mGrantAccessButtonTitle,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(final DialogInterface dialog, final int which) {
-                                showAppDetailsSettingsScreen();
-                            }
-                        })
-                .setNegativeButton(mCancelButtonTitle, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(final DialogInterface dialog, final int which) {
-                        listener.permissionDenied();
-                    }
-                })
-                .setOnCancelListener(new DialogInterface.OnCancelListener() {
-                    @Override
-                    public void onCancel(final DialogInterface dialog) {
-                        listener.permissionDenied();
-                    }
-                })
-                .create();
-        alertDialog.show();
-    }
-
-    private void showStoragePermissionRationale(final PermissionToken token) {
-        final AlertDialog alertDialog = new AlertDialog.Builder(mActivity)
-                .setMessage(mStoragePermissionRationale)
-                .setPositiveButton(mGrantAccessButtonTitle,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(final DialogInterface dialog, final int which) {
-                                token.continuePermissionRequest();
-                            }
-                        })
-                .setOnCancelListener(new DialogInterface.OnCancelListener() {
-                    @Override
-                    public void onCancel(final DialogInterface dialog) {
-                        token.cancelPermissionRequest();
-                    }
-                })
-                .create();
-        alertDialog.show();
-    }
 
     public interface Listener {
         void permissionDenied();
@@ -230,8 +145,6 @@ public class RuntimePermissionHandler {
         private String mCameraPermissionRationale;
         private String mCancelButtonTitle;
         private String mGrantAccessButtonTitle;
-        private String mStoragePermissionDeniedMessage;
-        private String mStoragePermissionRationale;
 
         public RuntimePermissionHandler build() {
             return new RuntimePermissionHandler(this);
@@ -258,16 +171,6 @@ public class RuntimePermissionHandler {
             return this;
         }
 
-        public Builder withStoragePermissionDeniedMessage(
-                final String storagePermissionDeniedMessage) {
-            mStoragePermissionDeniedMessage = storagePermissionDeniedMessage;
-            return this;
-        }
-
-        public Builder withStoragePermissionRationale(final String storagePermissionRationale) {
-            mStoragePermissionRationale = storagePermissionRationale;
-            return this;
-        }
 
         private Builder forActivity(final Activity activity) {
             mActivity = activity;

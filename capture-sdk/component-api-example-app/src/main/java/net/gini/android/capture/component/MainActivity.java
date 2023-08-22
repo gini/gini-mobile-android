@@ -129,21 +129,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startGiniCaptureForImportedFile(@Nullable final Intent importedFileIntent) {
-        mRuntimePermissionHandler.requestStoragePermission(
-                new RuntimePermissionHandler.Listener() {
-                    @Override
-                    public void permissionGranted() {
-                        final Intent intent = new Intent(importedFileIntent);
-                        intent.setClass(MainActivity.this, CameraExampleAppCompatActivity.class);
-                        startActivity(intent);
-                        finish();
-                    }
-
-                    @Override
-                    public void permissionDenied() {
-                        finish();
-                    }
-                });
+        final Intent intent = new Intent(importedFileIntent);
+        intent.setClass(MainActivity.this, CameraExampleAppCompatActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     private void addInputHandlers() {
@@ -211,9 +200,6 @@ public class MainActivity extends AppCompatActivity {
                 .withCameraPermissionDeniedMessage(
                         getString(R.string.camera_permission_denied_message))
                 .withCameraPermissionRationale(getString(R.string.camera_permission_rationale))
-                .withStoragePermissionDeniedMessage(
-                        getString(R.string.storage_permission_denied_message))
-                .withStoragePermissionRationale(getString(R.string.storage_permission_rationale))
                 .withGrantAccessButtonTitle(getString(R.string.grant_access))
                 .withCancelButtonTitle(getString(R.string.cancel))
                 .build();
