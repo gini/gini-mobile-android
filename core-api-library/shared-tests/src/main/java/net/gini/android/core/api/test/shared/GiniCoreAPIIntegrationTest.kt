@@ -6,10 +6,12 @@ import androidx.annotation.XmlRes
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.LargeTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.async
 import kotlinx.coroutines.test.runTest
 import net.gini.android.core.api.DocumentManager
 import net.gini.android.core.api.DocumentRepository
 import net.gini.android.core.api.Resource
+import net.gini.android.core.api.authorization.CredentialsStore
 import net.gini.android.core.api.authorization.EncryptedCredentialsStore
 import net.gini.android.core.api.authorization.UserCredentials
 import net.gini.android.core.api.internal.GiniCoreAPI
@@ -21,11 +23,9 @@ import net.gini.android.core.api.test.shared.helpers.TestUtils
 import net.gini.android.core.api.test.shared.helpers.TrustKitHelper
 import okhttp3.Cache
 import org.json.JSONException
-import org.json.JSONObject
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
-import java.io.BufferedReader
 import java.io.File
 import java.io.IOException
 import java.security.cert.CertificateException
@@ -46,6 +46,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
     private lateinit var clientSecret: String
     private lateinit var apiUri: String
     private lateinit var userCenterUri: String
+    private lateinit var credentialsStore: InMemoryCredentialsStore
 
     @Before
     @Throws(Exception::class)
@@ -64,12 +65,36 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
 
         TrustKitHelper.resetTrustKit()
 
+        credentialsStore = InMemoryCredentialsStore()
+
         giniCoreApi = createGiniCoreAPIBuilder(clientId, clientSecret, "example.com")
             .setApiBaseUrl(apiUri)
             .setUserCenterApiBaseUrl(userCenterUri)
             .setConnectionTimeoutInMs(60000)
+            .setCredentialsStore(credentialsStore)
             .build()
     }
+
+    class InMemoryCredentialsStore: CredentialsStore {
+
+        private var credentials: UserCredentials? = null
+
+        override fun storeUserCredentials(userCredentials: UserCredentials?): Boolean {
+            credentials = userCredentials
+            return true
+        }
+
+        override fun getUserCredentials(): UserCredentials? {
+            return credentials
+        }
+
+        override fun deleteUserCredentials(): Boolean {
+            credentials = null
+            return true
+        }
+
+    }
+
 
     protected abstract fun createGiniCoreAPIBuilder(clientId: String, clientSecret: String, emailDomain: String): GiniCoreAPIBuilder<DM, G, DR, E>
 
@@ -284,10 +309,12 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
         val page1 = TestUtils.createByteArray(page1Stream)
         val page2 = TestUtils.createByteArray(page2Stream)
 
-        val partialDocuments = listOf(
-            giniCoreApi.documentManager.createPartialDocument(page1, "image/png").dataOrThrow,
-            giniCoreApi.documentManager.createPartialDocument(page2, "image/png").dataOrThrow
+        // Create the partial documents in parallel as this is how it's done in our SDKs
+        val partialDocumentsAsync = listOf(
+            async { giniCoreApi.documentManager.createPartialDocument(page1, "image/png").dataOrThrow },
+            async { giniCoreApi.documentManager.createPartialDocument(page2, "image/png").dataOrThrow }
         )
+        val partialDocuments = partialDocumentsAsync.map { it.await() }
 
         val documentRotationDeltaMap = partialDocuments.associateWithTo(linkedMapOf()) { 0 }
 
