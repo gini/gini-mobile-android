@@ -31,6 +31,12 @@ android {
 
         buildConfigField("String", "VERSION_NAME", "\"$version\"")
         buildConfigField("String", "VERSION_CODE", "\"${properties["versionCode"]}\"")
+
+        // Prevent creating PNGs for vector drawables. Without this PNGs don't override vector drawables and
+        // overriding of vector drawables requires adding them to both 'drawable-anydpi' and 'drawable-anydpi-v24'.
+        // Our min SDK level allows only Android versions which have
+        // runtime support for vector drawables so it's safe and we also reduce the apk size.
+        vectorDrawables.useSupportLibrary = true
     }
 
     buildFeatures {
