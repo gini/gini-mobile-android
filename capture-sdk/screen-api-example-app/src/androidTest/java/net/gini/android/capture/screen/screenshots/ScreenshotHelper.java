@@ -1,7 +1,5 @@
 package net.gini.android.capture.screen.screenshots;
 
-import static net.gini.android.capture.screen.testhelper.PermissionsHelper.grantExternalStoragePermission;
-
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Environment;
@@ -24,7 +22,6 @@ public class ScreenshotHelper {
 
     private static Bitmap takeScreenshotFromActivity(final Activity activity)
             throws InterruptedException {
-        grantExternalStoragePermission();
         final View scrView = activity.getWindow().getDecorView().getRootView();
         scrView.setDrawingCacheEnabled(true);
         final Bitmap bitmap = Bitmap.createBitmap(scrView.getDrawingCache());
@@ -51,7 +48,6 @@ public class ScreenshotHelper {
 
     public static void takeUIAutomatorScreenshot(final File destination, final UiDevice device)
             throws InterruptedException {
-        grantExternalStoragePermission();
         device.takeScreenshot(destination);
     }
 
