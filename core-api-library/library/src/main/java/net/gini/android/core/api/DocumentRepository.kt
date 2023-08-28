@@ -2,8 +2,9 @@ package net.gini.android.core.api
 
 import android.net.Uri
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import net.gini.android.core.api.Resource.Companion.wrapInResource
-import net.gini.android.core.api.authorization.Session
 import net.gini.android.core.api.authorization.SessionManager
 import net.gini.android.core.api.models.Box
 import net.gini.android.core.api.models.CompoundExtraction
@@ -28,6 +29,13 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
     protected val sessionManager: SessionManager,
     private val giniApiType: GiniApiType
 ) {
+
+    /*
+    We need mutex lock because otherwise when the user upload multiple documents at first use of the app, the app
+    creates multiple users (equal to number of documents) and we will get a server error (the document does not belong to the user)!
+    We are using a Mutex to prevent coroutines from retrieving access tokens in parallel. This way even when multiple uploads are started only one user is created.
+     */
+    val accessTokenMutex = Mutex()
 
     suspend fun deletePartialDocumentAndParents(documentId: String): Resource<Unit> =
         withAccessToken { accessToken ->
@@ -378,10 +386,12 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
     }
 
     protected suspend inline fun <T> withAccessToken(crossinline block: suspend (String) -> Resource<T>): Resource<T> {
-        return when(val getSession = sessionManager.getSession()) {
-            is Resource.Cancelled -> Resource.Cancelled()
-            is Resource.Error -> Resource.Error(getSession)
-            is Resource.Success -> block(getSession.data.accessToken)
+        return accessTokenMutex.withLock {
+            return@withLock when (val getSession = sessionManager.getSession()) {
+                is Resource.Cancelled -> Resource.Cancelled()
+                is Resource.Error -> Resource.Error(getSession)
+                is Resource.Success -> block(getSession.data.accessToken)
+            }
         }
     }
 

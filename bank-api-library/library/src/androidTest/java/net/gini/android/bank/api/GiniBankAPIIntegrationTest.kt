@@ -10,7 +10,6 @@ import kotlinx.coroutines.test.runTest
 import net.gini.android.bank.api.models.ExtractionsContainer
 import net.gini.android.bank.api.models.ResolvePaymentInput
 import net.gini.android.bank.api.models.ResolvedPayment
-import net.gini.android.core.api.test.shared.helpers.TestUtils
 import net.gini.android.bank.api.requests.ErrorEvent
 import net.gini.android.core.api.DocumentManager
 import net.gini.android.core.api.Resource
@@ -19,6 +18,7 @@ import net.gini.android.core.api.models.Box
 import net.gini.android.core.api.models.CompoundExtraction
 import net.gini.android.core.api.models.SpecificExtraction
 import net.gini.android.core.api.test.shared.GiniCoreAPIIntegrationTest
+import net.gini.android.core.api.test.shared.helpers.TestUtils
 import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.api.GiniHealthAPIBuilder
 import net.gini.android.health.api.models.PaymentRequestInput
@@ -26,7 +26,6 @@ import org.junit.Assert
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.lang.Exception
 import java.util.*
 
 /**
