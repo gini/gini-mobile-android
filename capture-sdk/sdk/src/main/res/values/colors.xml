@@ -80,6 +80,7 @@
     <color name="gc_noresults_headline">#000</color>
     <color name="gc_noresults_tip">#000</color>
 
+    <color name="gc_file_provider_background">#fff</color>
     <color name="gc_file_provider_separator">#d8d8d8</color>
     <color name="gc_hint_close">#afb2b3</color>
     <color name="gc_noresults_button_text">#fff</color>

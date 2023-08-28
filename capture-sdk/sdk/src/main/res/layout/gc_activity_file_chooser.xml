@@ -16,7 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/gc_space"
-        android:background="@android:color/white"
+        android:background="@color/gc_file_provider_background"
         android:minHeight="180dp" />
 
 </RelativeLayout>
