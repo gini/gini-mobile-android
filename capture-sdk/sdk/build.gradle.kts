@@ -31,6 +31,19 @@ android {
 
         buildConfigField("String", "VERSION_NAME", "\"$version\"")
         buildConfigField("String", "VERSION_CODE", "\"${properties["versionCode"]}\"")
+
+        // Setting 'vectorDrawables.useSupportLibrary = true' prevents creating PNGs for vector drawables.
+        // This is needed to allow overriding of drawables either with other vector drawables added to 'drawable-anydpi'
+        // or with PNGs.
+        // If 'vectorDrawables.useSupportLibrary' is not set to 'true' then PNGs won't override vector drawables and
+        // overriding of vector drawables with other vector drawables only works on API Level 24 and higher if they
+        // are also added to 'drawable-anydpi-v24' in addition to 'drawable-anydpi'.
+        // Our min SDK level allows only Android versions which have runtime support for vector drawables
+        // so it's safe to prevent creating PNGs from vector drawables and we also reduce the apk size.
+        // TODO: when minSDK is raised to 24 or above delete PNGs for which we have vector drawables.
+        //       Background: for API Levels 21 to 23 we had to add PNGs for some vector drawables because
+        //       they were not rendered correctly.
+        vectorDrawables.useSupportLibrary = true
     }
 
     buildFeatures {
