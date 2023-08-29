@@ -3,9 +3,13 @@ package net.gini.android.capture.internal.camera.api;
 import static com.google.common.truth.Truth.assertThat;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import android.hardware.Camera;
+
+import net.gini.android.capture.internal.util.Size;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -14,6 +18,7 @@ import org.junit.runners.JUnit4;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 @RunWith(JUnit4.class)
 public class CameraParametersHelperTest {
@@ -100,4 +105,35 @@ public class CameraParametersHelperTest {
 
         assertThat(isSupported).isFalse();
     }
+
+    @Test
+    public void should_getSupportedPictureSizes_asListOfSizes() {
+        // Given
+        // Returning an empty list because Camera.Size cannot be instantiated outside of an android.hardware.Camera
+        // instance.
+        when(mParameters.getSupportedPictureSizes()).thenReturn(Collections.emptyList());
+
+        // When
+        final List<Size> supportedPictureSizes = CameraParametersHelper.getSupportedPictureSizes(mParameters);
+
+        // Then
+        verify(mParameters).getSupportedPictureSizes();
+        assertThat(supportedPictureSizes).isEmpty();
+    }
+
+    @Test
+    public void should_getSupportedPreviewSizes_asListOfSizes() {
+        // Given
+        // Returning an empty list because Camera.Size cannot be instantiated outside of an android.hardware.Camera
+        // instance.
+        when(mParameters.getSupportedPreviewSizes()).thenReturn(Collections.emptyList());
+
+        // When
+        final List<Size> supportedPictureSizes = CameraParametersHelper.getSupportedPreviewSizes(mParameters);
+
+        // Then
+        verify(mParameters).getSupportedPreviewSizes();
+        assertThat(supportedPictureSizes).isEmpty();
+    }
+
 }
