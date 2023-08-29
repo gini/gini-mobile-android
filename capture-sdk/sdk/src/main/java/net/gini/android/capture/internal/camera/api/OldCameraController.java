@@ -36,7 +36,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
 
@@ -44,6 +43,8 @@ import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static net.gini.android.capture.internal.camera.api.CameraException.Type.NO_ACCESS;
 import static net.gini.android.capture.internal.camera.api.CameraException.Type.NO_BACK_CAMERA;
 import static net.gini.android.capture.internal.camera.api.CameraException.Type.OPEN_FAILED;
+import static net.gini.android.capture.internal.camera.api.CameraParametersHelper.getSupportedPictureSizes;
+import static net.gini.android.capture.internal.camera.api.CameraParametersHelper.getSupportedPreviewSizes;
 import static net.gini.android.capture.internal.camera.api.CameraParametersHelper.isFlashModeSupported;
 import static net.gini.android.capture.internal.camera.api.CameraParametersHelper.isFocusModeSupported;
 import static net.gini.android.capture.internal.camera.api.CameraParametersHelper.isUsingFocusMode;
@@ -550,15 +551,8 @@ public class OldCameraController implements CameraInterface {
     }
 
     private void selectPictureAndPreviewSize(final Camera.Parameters params) {
-        final List<Size> pictureSizes = params.getSupportedPictureSizes()
-                .stream()
-                .map(size -> new Size(size.width, size.height))
-                .collect(Collectors.toList());
-        final List<Size> previewSizes = params.getSupportedPreviewSizes()
-                .stream()
-                .map(size -> new Size(size.width, size.height))
-                .collect(Collectors.toList());
-
+        final List<Size> pictureSizes = getSupportedPictureSizes(params);
+        final List<Size> previewSizes = getSupportedPreviewSizes(params);
         final Pair<Size, Size> sizes = getBestSize(pictureSizes, previewSizes,
                 CameraResolutionRequirement.MAX_PICTURE_AREA,
                 CameraResolutionRequirement.MIN_PICTURE_AREA,
