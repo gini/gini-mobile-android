@@ -1,0 +1,245 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Testing &mdash; Gini Health SDK for Android  documentation</title>
+  
+
+  
+  
+
+  
+  <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,400italic,600italic|Source+Code+Pro|Roboto+Slab:400,700" rel="stylesheet" type="text/css" />
+
+  
+  
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:'./',
+        VERSION:'',
+        COLLAPSE_INDEX:false,
+        FILE_SUFFIX:'.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/language_data.js"></script>
+
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+    <script type="text/javascript">
+        jQuery(function () {
+            SphinxRtdTheme.StickyNav.enable();
+        });
+    </script>
+  
+
+  
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Gini Health SDK for Android  documentation" href="index.html"/>
+        <link rel="next" title="Customization" href="customization.html"/>
+        <link rel="prev" title="Flow" href="flow.html"/> 
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="index.html" id="gini-logo">
+          <img src="_static/logo_flat.png" />
+        </a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="setup.html">Getting started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="setup.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="setup.html#gini-pay-deep-link-for-your-app">Gini Pay Deep Link For Your App</a></li>
+<li class="toctree-l2"><a class="reference internal" href="setup.html#gini-pay-api-client-credentials">Gini Pay API Client Credentials</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="authentication.html">Authentication</a></li>
+<li class="toctree-l1"><a class="reference internal" href="flow.html">Flow</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#checking-requirements">Checking requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#setting-a-document-for-review">Setting a document for review</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#display-reviewfragment">Display ReviewFragment</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="flow.html#event-tracking">Event Tracking</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#requirements">Requirements</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#example-banking-app">Example banking app</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#development-gini-pay-api-client-credentials">Development Gini Pay API client credentials</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#end-to-end-testing">End to end testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#testing-in-production">Testing in production</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="customization.html">Customization</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="customization.html#dark-mode">Dark Mode</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="migrate-to-2-0-0.html">Migrate to 2.0.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">Reference Docs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="license.html#licenses-and-acknowledgements-for-incorporated-software">Licenses and Acknowledgements for Incorporated Software</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="license.html#photoview">PhotoView</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license.html#insetter">Insetter</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Gini Health SDK for Android</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Testing</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="testing">
+<h1>Testing<a class="headerlink" href="#testing" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="requirements">
+<h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="example-banking-app">
+<h3>Example banking app<a class="headerlink" href="#example-banking-app" title="Permalink to this headline">¶</a></h3>
+<p>To pass the requirements for the Gini Health SDK a supported banking app has to be installed on the device running
+your app.</p>
+<p>An example banking app is available in the <a class="reference external" href="https://github.com/gini/gini-mobile-android/tree/main/bank-sdk">Gini Bank SDK</a>
+repository called <code class="docutils literal notranslate"><span class="pre">screen-api-example-app</span></code>.</p>
+<p>You can use the same Gini Pay API client credentials in the example banking app as in your app, if not otherwise
+specified.</p>
+</div>
+<div class="section" id="development-gini-pay-api-client-credentials">
+<h3>Development Gini Pay API client credentials<a class="headerlink" href="#development-gini-pay-api-client-credentials" title="Permalink to this headline">¶</a></h3>
+<p>In order to test using our example banking app you need to use development client credentials. This will make sure
+the Gini Health SDK uses a test payment provider which will open our example banking app.</p>
+</div>
+</div>
+<div class="section" id="end-to-end-testing">
+<h2>End to end testing<a class="headerlink" href="#end-to-end-testing" title="Permalink to this headline">¶</a></h2>
+<p>After you’ve set the client credentials in the example banking app and installed it on your device you can run your app
+and verify that <code class="docutils literal notranslate"><span class="pre">GiniHealth.checkRequirementsAsync()</span></code> returns an empty list.</p>
+<p>Following the <a class="reference external" href="flow.html">flow guide</a> show the <code class="docutils literal notranslate"><span class="pre">ReviewFragment</span></code> after analyzing a document.</p>
+<p>Check that the extractions and the document preview are shown and then press the <code class="docutils literal notranslate"><span class="pre">Pay</span></code> button:</p>
+<a class="reference internal image-reference" href="_images/business_review_fragment.png"><img alt="Review Fragment" class="align-center" src="_images/business_review_fragment.png" style="width: 150px;" /></a>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>You should be redirected to the example banking app where the final extractions are shown:</p>
+<a class="reference internal image-reference" href="_images/bank_payment_details.png"><img alt="Banking App - Payment Details" class="align-center" src="_images/bank_payment_details.png" style="width: 150px;" /></a>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>After you press the <code class="docutils literal notranslate"><span class="pre">Pay</span></code> button the Gini Pay Bank SDK resolves the payment and allows you to return to your app:</p>
+<a class="reference internal image-reference" href="_images/bank_resolved_payment.png"><img alt="Banking App - Resolved Payment" class="align-center" src="_images/bank_resolved_payment.png" style="width: 150px;" /></a>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>With these steps completed you have verified that your app, the Gini Pay API, the Gini Health SDK and the Gini Pay
+Bank SDK work together correctly.</p>
+</div>
+<div class="section" id="testing-in-production">
+<h2>Testing in production<a class="headerlink" href="#testing-in-production" title="Permalink to this headline">¶</a></h2>
+<p>The steps are the same but instead of the development client credentials you will need to use production client
+credentials. This will make sure the Gini Health SDK receives real payment providers which open real banking apps.</p>
+<p>You will also need to install a banking app which uses the Gini Pay Bank SDK. Please contact us in case you don’t know
+which banking app(s) to install.</p>
+<p>TODO: update scheme once we updated it on the backend for the gini-mobile-test client id</p>
+<p>Lastly make sure that for production you register the scheme we provided you for deep linking and you are not using
+<cite>ginipay-business://payment-requester</cite>.</p>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="customization.html" class="btn btn-neutral float-right" title="Customization">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="flow.html" class="btn btn-neutral" title="Flow"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+    </p>
+  </div>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  
+</body>
+</html>
