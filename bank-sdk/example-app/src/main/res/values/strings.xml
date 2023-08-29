@@ -12,7 +12,7 @@
     <string name="menu_item_feedback">Send Feedback and Close</string>
     <string name="menu_item_view_picture">View Picture</string>
     <string name="document_size_too_large">Diese Datei ist leider größer als 5MB.</string>
-    <string name="unsupported_document_type">Nur Dateien vom Format jpg oder pdf können analysiert werden.</string>
+    <string name="unsupported_document_type">Nur Dateien vom Format jpg oder PDF können analysiert werden.</string>
 
     <string name="storage_permission_denied_message">Nur mit Datei-Zugriff können gespeicherte Rechnungen hochgeladen werden.</string>
     <string name="grant_access">Zugriff erteilen</string>
