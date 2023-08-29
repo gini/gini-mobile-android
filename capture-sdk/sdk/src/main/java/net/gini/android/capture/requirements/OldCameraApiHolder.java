@@ -2,13 +2,13 @@ package net.gini.android.capture.requirements;
 
 import android.hardware.Camera;
 
+import net.gini.android.capture.internal.camera.api.CameraParametersHelper;
 import net.gini.android.capture.internal.util.Size;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import kotlin.Pair;
 
@@ -89,10 +89,7 @@ class OldCameraApiHolder implements CameraHolder {
             return null;
         }
 
-        return mCamera.getParameters().getSupportedPictureSizes()
-                .stream()
-                .map(size -> new Size(size.width, size.height))
-                .collect(Collectors.toList());
+        return CameraParametersHelper.getSupportedPictureSizes(mCamera.getParameters());
     }
 
     @Nullable
@@ -102,9 +99,6 @@ class OldCameraApiHolder implements CameraHolder {
             return null;
         }
 
-        return mCamera.getParameters().getSupportedPreviewSizes()
-                .stream()
-                .map(size -> new Size(size.width, size.height))
-                .collect(Collectors.toList());
+        return CameraParametersHelper.getSupportedPreviewSizes(mCamera.getParameters());
     }
 }
