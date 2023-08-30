@@ -437,12 +437,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
      * @suppress
      */
     public void onResume() {
-        if (mPaymentQRCodePopup != null) {
-            mPaymentQRCodePopup.hide();
-        }
-        if (mUnsupportedQRCodePopup != null) {
-            mUnsupportedQRCodePopup.hide();
-        }
         initMultiPageDocument();
     }
 
@@ -584,6 +578,12 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     void onStop() {
         closeCamera();
+        if (mPaymentQRCodePopup != null) {
+            mPaymentQRCodePopup.hide();
+        }
+        if (mUnsupportedQRCodePopup != null) {
+            mUnsupportedQRCodePopup.hide();
+        }
     }
 
     void onDestroy() {
