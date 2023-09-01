@@ -76,7 +76,6 @@ internal class QRCodePopup<T> @JvmOverloads constructor(
             fragmentImplCallback.view?.postDelayed(hideRunnable, hideDelayMs)
             return
         }
-        isShown = true
         showViews()
         fragmentImplCallback.view?.removeCallbacks(hideRunnable)
         fragmentImplCallback.view?.postDelayed(hideRunnable, hideDelayMs)
@@ -124,7 +123,6 @@ internal class QRCodePopup<T> @JvmOverloads constructor(
     }
 
     private fun progressViews() {
-
         qrCheckImage.visibility = View.GONE
         qrImageFrame.visibility = View.INVISIBLE
         loadingIndicatorContainer?.modifyAdapterIfOwned { it.onVisible() }
@@ -133,7 +131,6 @@ internal class QRCodePopup<T> @JvmOverloads constructor(
     }
 
     private fun hideViews() {
-
         qrStatusTxt.visibility = View.GONE
         qrCheckImage.visibility = View.GONE
         qrImageFrame.visibility = View.VISIBLE

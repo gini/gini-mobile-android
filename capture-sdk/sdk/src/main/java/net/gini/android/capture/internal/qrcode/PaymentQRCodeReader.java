@@ -43,6 +43,7 @@ public class PaymentQRCodeReader {
         public void onQRCodeReaderFail() {
         }
     };
+    private boolean isReleased = false;
 
     /**
      * Create a new instance which uses the provided {@link QRCodeDetectorTask} to do QRCode
@@ -66,6 +67,9 @@ public class PaymentQRCodeReader {
         mDetector.setListener(new QRCodeDetector.Listener() {
             @Override
             public void onQRCodesDetected(@NonNull final List<String> qrCodes) {
+                if (isReleased) {
+                    return;
+                }
                 for (final String qrCodeContent : qrCodes) {
                     try {
                         final PaymentQRCodeData paymentData = mParser.parse(qrCodeContent);
@@ -119,6 +123,7 @@ public class PaymentQRCodeReader {
      * Release all resources. Detection not possible after this has been called.
      */
     public void release() {
+        isReleased = true;
         mDetector.release();
     }
 
