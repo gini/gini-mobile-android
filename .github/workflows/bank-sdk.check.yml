@@ -134,19 +134,19 @@ jobs:
 
       - name: build debug screen api example app
         run: >
-          ./gradlew bank-sdk:screen-api-example-app:assembleDebug
+          ./gradlew bank-sdk:example-app:assembleDebug
           -PclientId="gini-mobile-test" 
           -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
 
       - name: archive debug screen api example app
         uses: actions/upload-artifact@v3
         with:
-          name: bank-sdk-screen-api-example-app-debug
-          path: bank-sdk/screen-api-example-app/build/outputs/apk/debug
+          name: example-app-debug
+          path: bank-sdk/example-app/build/outputs/apk/debug
 
       - name: build release screen api example app
         run: >
-          ./gradlew bank-sdk:screen-api-example-app:assembleRelease
+          ./gradlew bank-sdk:example-app:assembleRelease
           -PclientId="gini-mobile-test" 
           -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
           -PreleaseKeystoreFile="screen_api_example.jks"
@@ -157,8 +157,8 @@ jobs:
       - name: archive release screen api example app
         uses: actions/upload-artifact@v3
         with:
-          name: bank-sdk-screen-api-example-app-release
-          path: bank-sdk/screen-api-example-app/build/outputs/apk/release
+          name: example-app-release
+          path: bank-sdk/example-app/build/outputs/apk/release
 
   android-lint:
     runs-on: ubuntu-latest
