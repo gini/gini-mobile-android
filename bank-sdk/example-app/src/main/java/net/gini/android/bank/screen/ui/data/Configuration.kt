@@ -131,7 +131,10 @@ data class Configuration(
     // 30 entry point
     val entryPoint: EntryPoint = EntryPoint.BUTTON,
 
-    // 31 enable return reasons
-    val enableReturnReasons: Boolean = true,
+    // 31 enable return assistant
+    val isReturnAssistantEnabled: Boolean = true,
+
+    // 32 enable return reasons dialog
+    val isReturnReasonsEnabled: Boolean = true,
 
 ) : Parcelable

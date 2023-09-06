@@ -192,8 +192,11 @@ class ConfigurationActivity : AppCompatActivity() {
         }
         binding.toggleBtnEntryPoint.check(checkedEntryPointButtonId)
 
-        // 31 enable return reasons dialog
-        binding.switchEnableReturnReasonsDialog.isChecked = configuration.enableReturnReasons
+        // 31 enable return assistant
+        binding.switchReturnAssistantFeature.isChecked = configuration.isReturnAssistantEnabled
+
+        // 32 enable return reasons dialog
+        binding.switchReturnReasonsDialog.isChecked = configuration.isReturnReasonsEnabled
     }
 
     private fun setConfigurationFeatures() {
@@ -504,11 +507,20 @@ class ConfigurationActivity : AppCompatActivity() {
             )
         }
 
-        // 31 enable return reasons dialog
-        binding.switchEnableReturnReasonsDialog.setOnCheckedChangeListener { _, isChecked ->
+        // 31 enable return assistant
+        binding.switchReturnAssistantFeature.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(
-                    enableReturnReasons = isChecked
+                    isReturnAssistantEnabled = isChecked
+                )
+            )
+        }
+
+        // 32 enable return reasons dialog
+        binding.switchReturnReasonsDialog.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    isReturnReasonsEnabled = isChecked
                 )
             )
         }

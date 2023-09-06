@@ -95,8 +95,10 @@ class ConfigurationViewModel @Inject constructor(
             // 28-29 are implemented after captureConfiguration initialisation
 
             // 30 entry point
-            entryPoint = configuration.entryPoint
+            entryPoint = configuration.entryPoint,
 
+            // 31 enable return assistant
+            returnAssistantEnabled = configuration.isReturnAssistantEnabled
         )
 
         // 9 enable Help screens custom bottom navigation bar
@@ -232,8 +234,8 @@ class ConfigurationViewModel @Inject constructor(
 
         GiniBank.setCaptureConfiguration(context, captureConfiguration)
 
-
-        GiniBank.enableReturnReasons = configuration.enableReturnReasons
+        // 32 enable return reasons dialog
+        GiniBank.enableReturnReasons = configuration.isReturnReasonsEnabled
 
 
     }

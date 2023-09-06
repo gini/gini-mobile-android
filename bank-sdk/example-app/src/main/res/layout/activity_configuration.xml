@@ -380,6 +380,21 @@
                 android:layout_marginTop="@dimen/gc_medium_12"
                 android:text="@string/custom_navigation_controller_switch_label" />
 
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/switch_returnAssistantFeature"
+                style="@style/SwitchConfigurationStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/gc_medium_12"
+                android:text="@string/return_assistant_feature_switch_label" />
+
+
+            <TextView
+                android:id="@+id/tv_returnAssistantFeatureDescription"
+                style="@style/TextAppearance.MaterialComponents.Caption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/return_assistant_feature_switch_description" />
 
             <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/switch_eventTracker"
@@ -390,12 +405,12 @@
                 android:text="@string/event_tracker_switch_label" />
 
             <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/switch_enableReturnReasonsDialog"
+                android:id="@+id/switch_returnReasonsDialog"
                 style="@style/SwitchConfigurationStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/gc_medium_12"
-                android:text="@string/enable_return_reasons_dialog" />
+                android:text="@string/return_reasons_dialog_switch_label" />
 
             <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/switch_giniErrorLogger"
