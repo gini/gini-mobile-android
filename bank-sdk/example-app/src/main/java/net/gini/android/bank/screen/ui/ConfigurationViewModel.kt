@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import net.gini.android.bank.screen.R
 import net.gini.android.bank.screen.ui.adapters.CustomCameraNavigationBarBottomAdapter
+import net.gini.android.bank.screen.ui.adapters.CustomDigitalInvoiceHelpNavigationBarBottomAdapter
 import net.gini.android.bank.screen.ui.adapters.CustomHelpNavigationBarBottomAdapter
 import net.gini.android.bank.screen.ui.adapters.CustomNavigationBarTopAdapter
 import net.gini.android.bank.screen.ui.adapters.CustomOnButtonLoadingIndicatorAdapter
@@ -243,6 +244,10 @@ class ConfigurationViewModel @Inject constructor(
             GiniBank.digitalInvoiceOnboardingIllustrationAdapter = CustomOnboardingIllustrationAdapter(
                 R.raw.ai_animation
             )
+
+        // 34 Digital invoice help bottom navigation bar
+        if (configuration.isDigitalInvoiceHelpBottomNavigationBarEnabled)
+            GiniBank.digitalInvoiceHelpNavigationBarBottomAdapter = CustomDigitalInvoiceHelpNavigationBarBottomAdapter()
 
     }
 

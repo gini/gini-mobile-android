@@ -140,4 +140,7 @@ data class Configuration(
     // 33 Digital invoice onboarding custom illustration
     val isDigitalInvoiceOnboardingCustomIllustrationEnabled: Boolean = false,
 
-) : Parcelable
+    // 34 Digital invoice help bottom navigation bar
+    val isDigitalInvoiceHelpBottomNavigationBarEnabled: Boolean = false,
+
+    ) : Parcelable

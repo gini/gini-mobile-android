@@ -200,6 +200,10 @@ class ConfigurationActivity : AppCompatActivity() {
 
         // 33 Digital invoice onboarding custom illustration
         binding.switchDigitalInvoiceOnboardingCustomIllustration.isChecked = configuration.isDigitalInvoiceOnboardingCustomIllustrationEnabled
+
+        // 34 Digital invoice help bottom navigation bar
+        binding.switchDigitalInvoiceHelpBottomNavigationBar.isChecked = configuration.isDigitalInvoiceHelpBottomNavigationBarEnabled
+
     }
 
     private fun setConfigurationFeatures() {
@@ -533,6 +537,15 @@ class ConfigurationActivity : AppCompatActivity() {
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(
                     isDigitalInvoiceOnboardingCustomIllustrationEnabled = isChecked
+                )
+            )
+        }
+
+        // 34 Digital invoice help bottom navigation bar
+        binding.switchDigitalInvoiceHelpBottomNavigationBar.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    isDigitalInvoiceHelpBottomNavigationBarEnabled = isChecked
                 )
             )
         }
