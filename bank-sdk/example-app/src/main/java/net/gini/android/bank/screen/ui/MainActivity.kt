@@ -1,5 +1,6 @@
 package net.gini.android.bank.screen.ui
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
@@ -7,32 +8,28 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import ch.qos.logback.classic.Logger
 import ch.qos.logback.classic.LoggerContext
 import ch.qos.logback.classic.android.LogcatAppender
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import net.gini.android.bank.screen.BuildConfig
 import net.gini.android.bank.screen.ExampleApp
 import net.gini.android.bank.screen.R
-import net.gini.android.bank.screen.core.ExampleUtil
-import net.gini.android.bank.screen.core.RuntimePermissionHandler
+import net.gini.android.bank.screen.core.PermissionHandler
 import net.gini.android.bank.screen.databinding.ActivityMainBinding
 import net.gini.android.bank.screen.ui.data.Configuration
 import net.gini.android.bank.sdk.GiniBank
-import net.gini.android.capture.AsyncCallback
-import net.gini.android.capture.BuildConfig
-import net.gini.android.capture.GiniCapture
+import net.gini.android.bank.sdk.capture.CaptureFlowContract
+import net.gini.android.bank.sdk.capture.CaptureFlowImportContract
+import net.gini.android.bank.sdk.capture.CaptureResult
+import net.gini.android.bank.sdk.capture.ResultError
 import net.gini.android.capture.GiniCaptureDebug
-import net.gini.android.capture.GiniCaptureError
-import net.gini.android.capture.ImportedFileValidationException
-import net.gini.android.capture.camera.CameraActivity
-import net.gini.android.capture.network.GiniCaptureDefaultNetworkService
-import net.gini.android.capture.requirements.GiniCaptureRequirements
 import net.gini.android.capture.requirements.RequirementsReport
 import net.gini.android.capture.util.CancellationToken
 import org.slf4j.LoggerFactory
-import javax.inject.Inject
 
 
 /**
@@ -43,116 +40,41 @@ import javax.inject.Inject
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-
     private val configurationViewModel: ConfigurationViewModel by viewModels()
-
-    @Inject
-    lateinit var giniCaptureDefaultNetworkService: GiniCaptureDefaultNetworkService
-    private var mRestoredInstance = false
-    private lateinit var mRuntimePermissionHandler: RuntimePermissionHandler
-    private var mFileImportCancellationToken: CancellationToken? = null
+    private val captureImportLauncher =
+            registerForActivityResult(CaptureFlowImportContract(), ::onCaptureResult)
+    private var cancellationToken: CancellationToken? =
+            null // should be kept across configuration changes
+    private val permissionHandler = PermissionHandler(this)
+    private val captureLauncher =
+            registerForActivityResult(CaptureFlowContract(), ::onCaptureResult)
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-//          TODO: enable this feature
-//        if (binding.enableCustomIllustration.isChecked)
-//            GiniBank.digitalInvoiceOnboardingIllustrationAdapter =
-//                CustomOnboardingIllustrationAdapter(
-//                    this.resources.getIdentifier(
-//                        "ai_animation",
-//                        "raw",
-//                        this.packageName
-//                    )
-//                )
-
         addInputHandlers()
         setGiniCaptureSdkDebugging()
         showVersions()
-        createRuntimePermissionsHandler()
-        mRestoredInstance = savedInstanceState != null
+
     }
 
-    override fun onStart() {
-        super.onStart()
-        if (!mRestoredInstance) {
-            val intent = intent
-            if (isIntentActionViewOrSend(intent)) {
-                startGiniCaptureSdkForImportedFile(intent)
-            }
-        }
-    }
 
     override fun onDestroy() {
         super.onDestroy()
-        if (mFileImportCancellationToken != null) {
-            mFileImportCancellationToken!!.cancel()
-            mFileImportCancellationToken = null
-        }
+        // cancellationToken shouldn't be canceled when activity is recreated.
+        // For example cancel in ViewModel's onCleared() instead.
+        cancellationToken?.cancel()
     }
 
-    private fun createRuntimePermissionsHandler() {
-        mRuntimePermissionHandler =
-            RuntimePermissionHandler.forActivity(this).withCameraPermissionDeniedMessage(
-                getString(R.string.camera_permission_denied_message)
-            ).withCameraPermissionRationale(getString(R.string.camera_permission_rationale))
-                .withStoragePermissionDeniedMessage(
-                    getString(R.string.storage_permission_denied_message)
-                ).withStoragePermissionRationale(getString(R.string.storage_permission_rationale))
-                .withGrantAccessButtonTitle(getString(R.string.grant_access))
-                .withCancelButtonTitle(getString(R.string.cancel)).build()
-    }
-
-    override fun onNewIntent(intent: Intent) {
+    override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        if (isIntentActionViewOrSend(intent)) {
-            startGiniCaptureSdkForImportedFile(intent)
+        if (intent != null && isIntentActionViewOrSend(intent)) {
+            startGiniCaptureSdk(intent)
         }
     }
 
-    private fun startGiniCaptureSdkForImportedFile(importedFileIntent: Intent) {
-        if (configurationViewModel.configurationFlow.value.isFileImportEnabled) {
-            doStartGiniCaptureSdkForImportedFile(importedFileIntent)
-        } else {
-            MaterialAlertDialogBuilder(this).setMessage(R.string.file_import_feature_is_disabled_dialog_message)
-                .setPositiveButton("OK") { dialogInterface, i -> {} }.show()
-        }
-    }
-
-    private fun doStartGiniCaptureSdkForImportedFile(importedFileIntent: Intent) {
-        // Configure the Gini Capture SDK
-        configureGiniCapture()
-        mFileImportCancellationToken = GiniCapture.getInstance().createIntentForImportedFiles(
-            importedFileIntent,
-            this,
-            object : AsyncCallback<Intent, ImportedFileValidationException> {
-                override fun onSuccess(result: Intent) {
-                    mFileImportCancellationToken = null
-                    startActivityForResult(result, REQUEST_SCAN)
-                }
-
-                override fun onError(exception: ImportedFileValidationException) {
-                    mFileImportCancellationToken = null
-                    handleFileImportError(exception)
-                }
-
-                override fun onCancelled() {
-                    mFileImportCancellationToken = null
-                }
-            })
-    }
-
-    private fun handleFileImportError(exception: ImportedFileValidationException) {
-        var message = exception.message
-        if (exception.validationError != null) {
-            message = getString(exception.validationError!!.textResource)
-        }
-        MaterialAlertDialogBuilder(this).setMessage(message)
-            .setPositiveButton("OK") { dialogInterface, i -> finish() }.show()
-    }
 
     private fun isIntentActionViewOrSend(intent: Intent): Boolean {
         val action = intent.action
@@ -161,8 +83,8 @@ class MainActivity : AppCompatActivity() {
 
     @SuppressLint("SetTextI18n")
     private fun showVersions() {
-        binding.textGiniCaptureVersion.text =
-            getString(R.string.gini_capture_sdk_version) + BuildConfig.VERSION_NAME
+        binding.textGiniBankVersion.text =
+                getString(R.string.gini_capture_sdk_version) + net.gini.android.bank.sdk.BuildConfig.VERSION_NAME
     }
 
     private fun setGiniCaptureSdkDebugging() {
@@ -175,61 +97,114 @@ class MainActivity : AppCompatActivity() {
     private fun addInputHandlers() {
         binding.buttonStartScanner.setOnClickListener { v: View? ->
             if (configurationViewModel.disableCameraPermissionFlow.value) {
-                doStartGiniCaptureSdk()
-            } else {
                 startGiniCaptureSdk()
+            } else {
+                checkCameraPermission()
             }
         }
 
-        binding.textGiniCaptureVersion.setOnClickListener {
+        binding.textGiniBankVersion.setOnClickListener {
             startActivityForResult(
-                Intent(
-                    this, ConfigurationActivity::class.java
-                )
-                    .putExtra(
-                        CONFIGURATION_BUNDLE,
-                        configurationViewModel.configurationFlow.value
+                    Intent(
+                            this, ConfigurationActivity::class.java
                     )
-                    .putExtra(
-                        CAMERA_PERMISSION_BUNDLE,
-                        configurationViewModel.disableCameraPermissionFlow.value
-                    ),
-                REQUEST_CONFIGURATION
+                            .putExtra(
+                                    CONFIGURATION_BUNDLE,
+                                    configurationViewModel.configurationFlow.value
+                            )
+                            .putExtra(
+                                    CAMERA_PERMISSION_BUNDLE,
+                                    configurationViewModel.disableCameraPermissionFlow.value
+                            ),
+                    REQUEST_CONFIGURATION
             )
         }
 
     }
 
-    private fun startGiniCaptureSdk() {
-        mRuntimePermissionHandler.requestCameraPermission(object :
-            RuntimePermissionHandler.Listener {
-            override fun permissionGranted() {
-                doStartGiniCaptureSdk()
+    private fun checkCameraPermission(intent: Intent? = null) {
+        lifecycleScope.launch {
+            if (permissionHandler.grantPermission(Manifest.permission.CAMERA)) {
+                startGiniCaptureSdk()
+            } else {
+                if (intent != null) {
+                    finish()
+                }
             }
-
-            override fun permissionDenied() {}
-        })
+        }
     }
 
-    private fun doStartGiniCaptureSdk() {
-        // NOTE: on Android 6.0 and later the camera permission is required before checking the requirements
-        val report = GiniCaptureRequirements.checkRequirements(this)
+    private fun startGiniCaptureSdk(intent: Intent? = null) {
+        val report = GiniBank.checkCaptureRequirements(this@MainActivity)
         if (!report.isFulfilled) {
-            // In production apps you should not launch Gini Capture if requirements were not fulfilled
-            // We make an exception here to allow running the app on emulators
             showUnfulfilledRequirementsToast(report)
         }
 
-        // Configure the Gini Capture SDK
         configureGiniCapture()
-        val intent = Intent(this, CameraScreenApiActivity::class.java)
-        startActivityForResult(intent, REQUEST_SCAN)
+
+        if (intent != null) {
+            cancellationToken = GiniBank.startCaptureFlowForIntent(
+                    captureImportLauncher,
+                    this@MainActivity,
+                    intent
+            )
+        } else {
+            GiniBank.startCaptureFlow(captureLauncher)
+        }
+    }
+
+
+    private fun onCaptureResult(result: CaptureResult) {
+        when (result) {
+            is CaptureResult.Success -> {
+                startActivity(ExtractionsActivity.getStartIntent(this, result.specificExtractions))
+            }
+
+            is CaptureResult.Error -> {
+                when (result.value) {
+                    is ResultError.Capture ->
+                        Toast.makeText(
+                                this,
+                                "Error: ${(result.value as ResultError.Capture).giniCaptureError.errorCode} ${(result.value as ResultError.Capture).giniCaptureError.message}",
+                                Toast.LENGTH_LONG
+                        ).show()
+
+                    is ResultError.FileImport ->
+                        Toast.makeText(
+                                this,
+                                "Error: ${(result.value as ResultError.FileImport).code} ${(result.value as ResultError.FileImport).message}",
+                                Toast.LENGTH_LONG
+                        ).show()
+                }
+                if (isIntentActionViewOrSend(intent)) {
+                    finish()
+                }
+            }
+
+            CaptureResult.Empty -> {
+                if (isIntentActionViewOrSend(intent)) {
+                    finish()
+                }
+            }
+
+            CaptureResult.Cancel -> {
+                if (isIntentActionViewOrSend(intent)) {
+                    finish()
+                }
+            }
+
+            CaptureResult.EnterManually -> {
+                Toast.makeText(this, "Scan exited for manual enter mode", Toast.LENGTH_SHORT).show()
+                if (isIntentActionViewOrSend(intent)) {
+                    finish()
+                }
+            }
+        }
     }
 
     private fun configureGiniCapture() {
         val app = application as ExampleApp
         app.clearGiniCaptureNetworkInstances()
-
         configurationViewModel.configureGiniBank(this)
     }
 
@@ -250,119 +225,35 @@ class MainActivity : AppCompatActivity() {
             }
         }
         Toast.makeText(
-            this, "Requirements not fulfilled:\n$stringBuilder", Toast.LENGTH_LONG
+                this, "Requirements not fulfilled:\n$stringBuilder", Toast.LENGTH_LONG
         ).show()
     }
 
-
     override fun onActivityResult(
-        requestCode: Int, resultCode: Int, data: Intent?
+            requestCode: Int, resultCode: Int, data: Intent?
     ) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_SCAN) {
-            if (data == null) {
-                if (isIntentActionViewOrSend(intent)) {
-                    finish()
-                }
-                if (resultCode == CameraActivity.RESULT_ENTER_MANUALLY) {
-                    handleEnterManuallyAction()
-                }
-                return
-            }
-            when (resultCode) {
-                CameraActivity.RESULT_ENTER_MANUALLY -> handleEnterManuallyAction()
-                RESULT_CANCELED -> {}
-                RESULT_OK -> {
-                    // Retrieve the extractions
-                    var extractionsBundle = data.getBundleExtra(
-                        CameraActivity.EXTRA_OUT_EXTRACTIONS
-                    )
-                    if (extractionsBundle == null) {
-                        extractionsBundle = data.getBundleExtra(EXTRA_OUT_EXTRACTIONS)
-                    }
-                    if (extractionsBundle == null) {
-                        if (isIntentActionViewOrSend(intent)) {
-                            finish()
-                        }
-                        return
-                    }
-                    val compoundExtractionsBundle =
-                        data.getBundleExtra(CameraActivity.EXTRA_OUT_COMPOUND_EXTRACTIONS)
-                    if ((pay5ExtractionsAvailable(extractionsBundle) || epsPaymentAvailable(
-                            extractionsBundle
-                        )) || compoundExtractionsBundle != null
-                    ) {
-                        startExtractionsActivity(extractionsBundle, compoundExtractionsBundle)
-                    }
-                }
-
-                CameraActivity.RESULT_ERROR -> {
-                    // Something went wrong, retrieve and show the error
-                    val error = data.getParcelableExtra<GiniCaptureError>(
-                        CameraActivity.EXTRA_OUT_ERROR
-                    )
-                    if (error != null) {
-                        Toast.makeText(
-                            this,
-                            "Error: " + error.errorCode + " - " + error.message,
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
-                }
-            }
-            if (isIntentActionViewOrSend(intent)) {
-                finish()
-            }
-        }
         if (requestCode == REQUEST_CONFIGURATION) {
             when (resultCode) {
                 RESULT_CANCELED -> {}
                 RESULT_OK -> {
                     var configurationResult: Configuration? = data?.getParcelableExtra(
-                        CONFIGURATION_BUNDLE
+                            CONFIGURATION_BUNDLE
                     )
                     if (configurationResult != null) {
                         configurationViewModel.setConfiguration(configurationResult)
                     }
 
                     configurationViewModel.disableCameraPermission(
-                        data?.getBooleanExtra(
-                            CAMERA_PERMISSION_BUNDLE, false
-                        ) ?: false
+                            data?.getBooleanExtra(
+                                    CAMERA_PERMISSION_BUNDLE, false
+                            ) ?: false
                     )
                 }
             }
         }
     }
 
-    private fun pay5ExtractionsAvailable(extractionsBundle: Bundle): Boolean {
-        for (key in extractionsBundle.keySet()) {
-            if (ExampleUtil.isPay5Extraction(key)) {
-                return true
-            }
-        }
-        return false
-    }
-
-    private fun epsPaymentAvailable(extractionsBundle: Bundle): Boolean {
-        for (key in extractionsBundle.keySet()) {
-            if (key == "epsPaymentQRCodeUrl") {
-                return true
-            }
-        }
-        return false
-    }
-
-    private fun startExtractionsActivity(
-        extractionsBundle: Bundle, compoundExtractionsBundle: Bundle?
-    ) {
-        val intent = Intent(this, ExtractionsActivity::class.java)
-        intent.putExtra(ExtractionsActivity.EXTRA_IN_EXTRACTIONS, extractionsBundle)
-        intent.putExtra(
-            ExtractionsActivity.EXTRA_IN_COMPOUND_EXTRACTIONS, compoundExtractionsBundle
-        )
-        startActivity(intent)
-    }
 
     private fun configureLogging() {
         val lc = LoggerFactory.getILoggerFactory() as LoggerContext
@@ -379,17 +270,10 @@ class MainActivity : AppCompatActivity() {
         root.addAppender(logcatAppender)
     }
 
-    private fun handleEnterManuallyAction() {
-        Toast.makeText(this, "Scan exited for manual enter mode", Toast.LENGTH_SHORT).show()
-    }
-
 
     companion object {
-        const val EXTRA_OUT_EXTRACTIONS = "EXTRA_OUT_EXTRACTIONS"
         const val CONFIGURATION_BUNDLE = "CONFIGURATION_BUNDLE"
         const val CAMERA_PERMISSION_BUNDLE = "CAMERA_PERMISSION_BUNDLE"
-        private const val REQUEST_SCAN = 1
-        private const val REQUEST_NO_EXTRACTIONS = 2
         private const val REQUEST_CONFIGURATION = 3
     }
 }

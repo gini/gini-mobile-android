@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Screen API Example</string>
+    <string name="app_name">Gini Bank</string>
 
     <string name="additional_onboarding_page_title">Custom onboarding page</string>
     <string name="additional_onboarding_page_message">This is a an example of a custom onboarding page</string>
@@ -35,7 +35,7 @@
     <string name="custom_loading_indicator_switch_label">Custom loading indicator animation</string>
     <string name="disable_camera_permission">Do not request camera permission</string>
     <string name="txt_show_custom_help_item">Show custom help item</string>
-    <string name="gini_capture_sdk_version">Gini Capture SDK v</string>
+    <string name="gini_capture_sdk_version">Gini Bank SDK v</string>
 
     <!-- Strings for ConfigurationActivity -->
     <string name="configuration_activity_title">Configuration</string>

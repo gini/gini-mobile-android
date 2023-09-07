@@ -10,40 +10,39 @@
     android:paddingBottom="@dimen/activity_horizontal_margin"
     tools:context=".ui.MainActivity">
 
-    <TextView
-        android:id="@+id/tv_example_mainActivity"
-        style="@style/TextAppearance.MaterialComponents.Headline5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:textStyle="bold"
-        android:text="@string/example_label" />
-
     <Button
         android:id="@+id/button_start_scanner"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/tv_example_mainActivity"
-        app:layout_constraintBottom_toTopOf="@id/text_gini_capture_version"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         android:text="@string/start_gini_capture_sdk"
-        />
+        app:layout_constraintBottom_toTopOf="@id/text_gini_bank_version"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_example_mainActivity" />
 
     <TextView
-        android:id="@+id/text_gini_capture_version"
+        android:id="@+id/tv_example_mainActivity"
+        style="@style/TextAppearance.MaterialComponents.Headline5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/example_label"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/text_gini_bank_version"
         style="@style/GiniCaptureTheme.Typography.Overline"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         android:gravity="center"
-        app:layout_constraintBottom_toBottomOf="parent"
         android:padding="@dimen/gc_medium"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         tools:text="Gini Capture SDK v2.0.0-stub1" />
 
 
