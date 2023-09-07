@@ -93,17 +93,17 @@ tasks.withType(type = org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 
 dependencies {
     // For testing the local version
-    api(project(":capture-sdk:sdk"))
+    implementation(project(":capture-sdk:sdk"))
     // For testing a released version
     //implementation "net.gini.android:gini-capture-sdk:0.0.1"
 
     // For testing the local version
-    api(project(":capture-sdk:default-network"))
+    implementation(project(":capture-sdk:default-network"))
     // For testing a released version
     //implementation "net.gini.android:gini-capture-sdk-default-network:0.0.1"
 
     // For testing the local version
-    api(project(":bank-sdk:sdk"))
+    implementation(project(":bank-sdk:sdk"))
     // For testing a released version
     //implementation "net.gini.android:gini-bank-sdk:3.3.0"
 
