@@ -23,6 +23,7 @@ import net.gini.android.capture.logging.ErrorLoggerListener
 import net.gini.android.capture.network.GiniCaptureDefaultNetworkService
 import net.gini.android.capture.onboarding.DefaultPages
 import net.gini.android.capture.onboarding.OnboardingPage
+import net.gini.android.capture.onboarding.view.ImageOnboardingIllustrationAdapter
 import net.gini.android.capture.tracking.AnalysisScreenEvent
 import net.gini.android.capture.tracking.CameraScreenEvent
 import net.gini.android.capture.tracking.Event
@@ -237,6 +238,11 @@ class ConfigurationViewModel @Inject constructor(
         // 32 enable return reasons dialog
         GiniBank.enableReturnReasons = configuration.isReturnReasonsEnabled
 
+        // 33 Digital invoice onboarding custom illustration
+        if (configuration.isDigitalInvoiceOnboardingCustomIllustrationEnabled)
+            GiniBank.digitalInvoiceOnboardingIllustrationAdapter = CustomOnboardingIllustrationAdapter(
+                R.raw.ai_animation
+            )
 
     }
 

@@ -197,6 +197,9 @@ class ConfigurationActivity : AppCompatActivity() {
 
         // 32 enable return reasons dialog
         binding.switchReturnReasonsDialog.isChecked = configuration.isReturnReasonsEnabled
+
+        // 33 Digital invoice onboarding custom illustration
+        binding.switchDigitalInvoiceOnboardingCustomIllustration.isChecked = configuration.isDigitalInvoiceOnboardingCustomIllustrationEnabled
     }
 
     private fun setConfigurationFeatures() {
@@ -521,6 +524,15 @@ class ConfigurationActivity : AppCompatActivity() {
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(
                     isReturnReasonsEnabled = isChecked
+                )
+            )
+        }
+
+        // 33 Digital invoice onboarding custom illustration
+        binding.switchDigitalInvoiceOnboardingCustomIllustration.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    isDigitalInvoiceOnboardingCustomIllustrationEnabled = isChecked
                 )
             )
         }
