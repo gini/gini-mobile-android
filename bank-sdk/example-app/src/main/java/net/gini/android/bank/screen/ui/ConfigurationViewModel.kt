@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 import net.gini.android.bank.screen.R
 import net.gini.android.bank.screen.ui.adapters.CustomCameraNavigationBarBottomAdapter
 import net.gini.android.bank.screen.ui.adapters.CustomDigitalInvoiceHelpNavigationBarBottomAdapter
+import net.gini.android.bank.screen.ui.adapters.CustomDigitalInvoiceOnboardingNavigationBarBottomAdapter
 import net.gini.android.bank.screen.ui.adapters.CustomHelpNavigationBarBottomAdapter
 import net.gini.android.bank.screen.ui.adapters.CustomNavigationBarTopAdapter
 import net.gini.android.bank.screen.ui.adapters.CustomOnButtonLoadingIndicatorAdapter
@@ -249,6 +250,9 @@ class ConfigurationViewModel @Inject constructor(
         if (configuration.isDigitalInvoiceHelpBottomNavigationBarEnabled)
             GiniBank.digitalInvoiceHelpNavigationBarBottomAdapter = CustomDigitalInvoiceHelpNavigationBarBottomAdapter()
 
+        // 35 Digital invoice onboarding bottom navigation bar
+        if (configuration.isDigitalInvoiceOnboardingBottomNavigationBarEnabled)
+            GiniBank.digitalInvoiceOnboardingNavigationBarBottomAdapter = CustomDigitalInvoiceOnboardingNavigationBarBottomAdapter()
     }
 
     private class GiniCaptureEventTracker : EventTracker {

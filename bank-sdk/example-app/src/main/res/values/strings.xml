@@ -90,7 +90,8 @@
     <string name="return_assistant_feature_switch_description">Present a digital representation of the invoice</string>
     <string name="digital_invoice_onboarding_custom_illustration_switch_label">Digital invoice onboarding custom illustration</string>
     <string name="digital_invoice_help_bottom_navigation_bar_switch_label">Digital invoice help bottom navigation bar</string>
-    <string name="digital_invoice_help_bottom_navigation_bar_switch_description">The custom bottom navigation bar is shown if both \`Bottom navigation bar\` and \`Return assistant feature\` are enabled.</string>
+    <string name="digital_invoice_bottom_navigation_bar_switch_description">The custom bottom navigation bar is shown if both \`Bottom navigation bar\` and \`Return assistant feature\` are enabled.</string>
+    <string name="digital_invoice_onboarding_bottom_navigation_bar_switch_label">Digital invoice onboarding bottom navigation bar</string>
     <string name="event_tracker_switch_label">Event tracker</string>
     <string name="return_reasons_dialog_switch_label">Return reasons dialog</string>
     <string name="gini_error_switch_label">Gini error logger</string>
@@ -107,24 +108,6 @@
     <string name="purpose_hint">Purpose</string>
     <string name="return_to_business">Return to Business</string>
     <string name="resolve_payment">Pay</string>
-    <!-- String customization examples -->
 
-    <!--<string name="gc_title_camera">Dokument fotografieren</string>-->
-    <!--<string name="gc_title_onboarding">Anleitung</string>-->
-    <!--<string name="gc_title_review">Foto überprüfen</string>-->
-
-    <!--<string name="gc_show_onboarding">Hilfe</string>-->
-    <!--<string name="gc_select_from_camera_roll">Eigenes Bild auswählen</string>-->
-
-    <!--<string name="gc_camera_error_no_permission">Um Dokumente zu fotografieren, erlaube Gini Pay den Zugriff auf die Kamera.</string>-->
-    <!--<string name="gc_camera_error_no_permission_button_title">Zugriff erlauben</string>-->
-
-    <!--<string name="gc_onboarding_flat">Dokument flach fotografieren\n</string>-->
-    <!--<string name="gc_onboarding_parallel">Handy parallel\nzum Dokument\nhalten</string>-->
-    <!--<string name="gc_onboarding_align">Dokument\nvollständig in\nRahmen einpassen</string>-->
-
-    <!--<string name="gc_review_bottom_panel_text">Dokument vollständig, scharf und in Leserichtung?\n\nDoppeltippen um Schärfe zu prüfen.</string>-->
-
-    <!--<string name="gc_document_analysis_error_retry">Wiederholen</string>-->
 
 </resources>

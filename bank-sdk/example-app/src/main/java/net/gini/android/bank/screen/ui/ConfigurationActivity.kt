@@ -199,10 +199,16 @@ class ConfigurationActivity : AppCompatActivity() {
         binding.switchReturnReasonsDialog.isChecked = configuration.isReturnReasonsEnabled
 
         // 33 Digital invoice onboarding custom illustration
-        binding.switchDigitalInvoiceOnboardingCustomIllustration.isChecked = configuration.isDigitalInvoiceOnboardingCustomIllustrationEnabled
+        binding.switchDigitalInvoiceOnboardingCustomIllustration.isChecked =
+            configuration.isDigitalInvoiceOnboardingCustomIllustrationEnabled
 
         // 34 Digital invoice help bottom navigation bar
-        binding.switchDigitalInvoiceHelpBottomNavigationBar.isChecked = configuration.isDigitalInvoiceHelpBottomNavigationBarEnabled
+        binding.switchDigitalInvoiceHelpBottomNavigationBar.isChecked =
+            configuration.isDigitalInvoiceHelpBottomNavigationBarEnabled
+
+        // 35 Digital invoice onboarding bottom navigation bar
+        binding.switchDigitalInvoiceOnboardingBottomNavigationBar.isChecked =
+            configuration.isDigitalInvoiceOnboardingBottomNavigationBarEnabled
 
     }
 
@@ -550,6 +556,14 @@ class ConfigurationActivity : AppCompatActivity() {
             )
         }
 
+        // 35 Digital invoice onboarding bottom navigation bar
+        binding.switchDigitalInvoiceOnboardingBottomNavigationBar.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    isDigitalInvoiceOnboardingBottomNavigationBarEnabled = isChecked
+                )
+            )
+        }
     }
 
 }
