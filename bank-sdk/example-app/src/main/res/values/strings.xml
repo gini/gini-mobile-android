@@ -92,6 +92,7 @@
     <string name="digital_invoice_help_bottom_navigation_bar_switch_label">Digital invoice help bottom navigation bar</string>
     <string name="digital_invoice_bottom_navigation_bar_switch_description">The custom bottom navigation bar is shown if both \`Bottom navigation bar\` and \`Return assistant feature\` are enabled.</string>
     <string name="digital_invoice_onboarding_bottom_navigation_bar_switch_label">Digital invoice onboarding bottom navigation bar</string>
+    <string name="digital_invoice_bottom_navigation_bar_switch_label">Digital invoice bottom navigation bar</string>
     <string name="event_tracker_switch_label">Event tracker</string>
     <string name="return_reasons_dialog_switch_label">Return reasons dialog</string>
     <string name="gini_error_switch_label">Gini error logger</string>

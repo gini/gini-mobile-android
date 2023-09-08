@@ -210,6 +210,9 @@ class ConfigurationActivity : AppCompatActivity() {
         binding.switchDigitalInvoiceOnboardingBottomNavigationBar.isChecked =
             configuration.isDigitalInvoiceOnboardingBottomNavigationBarEnabled
 
+        // 36 Digital invoice bottom navigation bar
+        binding.switchDigitalInvoiceBottomNavigationBar.isChecked =
+            configuration.isDigitalInvoiceBottomNavigationBarEnabled
     }
 
     private fun setConfigurationFeatures() {
@@ -561,6 +564,15 @@ class ConfigurationActivity : AppCompatActivity() {
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(
                     isDigitalInvoiceOnboardingBottomNavigationBarEnabled = isChecked
+                )
+            )
+        }
+
+        // 36 Digital invoice bottom navigation bar
+        binding.switchDigitalInvoiceBottomNavigationBar.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    isDigitalInvoiceBottomNavigationBarEnabled = isChecked
                 )
             )
         }

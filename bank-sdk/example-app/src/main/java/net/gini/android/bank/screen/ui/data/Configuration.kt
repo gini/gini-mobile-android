@@ -146,4 +146,7 @@ data class Configuration(
     // 35 Digital invoice onboarding bottom navigation bar
     val isDigitalInvoiceOnboardingBottomNavigationBarEnabled: Boolean = false,
 
+    // 36 Digital invoice bottom navigation bar
+    val isDigitalInvoiceBottomNavigationBarEnabled: Boolean = false,
+
     ) : Parcelable
