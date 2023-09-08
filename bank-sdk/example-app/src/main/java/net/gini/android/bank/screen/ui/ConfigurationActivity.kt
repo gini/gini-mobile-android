@@ -213,6 +213,10 @@ class ConfigurationActivity : AppCompatActivity() {
         // 36 Digital invoice bottom navigation bar
         binding.switchDigitalInvoiceBottomNavigationBar.isChecked =
             configuration.isDigitalInvoiceBottomNavigationBarEnabled
+
+        // 37 Debug mode
+        binding.switchDebugMode.isChecked =
+            configuration.isDebugModeEnabled
     }
 
     private fun setConfigurationFeatures() {
@@ -573,6 +577,15 @@ class ConfigurationActivity : AppCompatActivity() {
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(
                     isDigitalInvoiceBottomNavigationBarEnabled = isChecked
+                )
+            )
+        }
+
+        // 37 Debug mode
+        binding.switchDebugMode.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    isDebugModeEnabled = isChecked
                 )
             )
         }

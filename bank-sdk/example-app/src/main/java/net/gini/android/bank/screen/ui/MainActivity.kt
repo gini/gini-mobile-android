@@ -9,14 +9,8 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import ch.qos.logback.classic.Logger
-import ch.qos.logback.classic.LoggerContext
-import ch.qos.logback.classic.android.LogcatAppender
-import ch.qos.logback.classic.encoder.PatternLayoutEncoder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import net.gini.android.bank.screen.BuildConfig
-import net.gini.android.bank.screen.ExampleApp
 import net.gini.android.bank.screen.R
 import net.gini.android.bank.screen.core.PermissionHandler
 import net.gini.android.bank.screen.databinding.ActivityMainBinding
@@ -26,10 +20,8 @@ import net.gini.android.bank.sdk.capture.CaptureFlowContract
 import net.gini.android.bank.sdk.capture.CaptureFlowImportContract
 import net.gini.android.bank.sdk.capture.CaptureResult
 import net.gini.android.bank.sdk.capture.ResultError
-import net.gini.android.capture.GiniCaptureDebug
 import net.gini.android.capture.requirements.RequirementsReport
 import net.gini.android.capture.util.CancellationToken
-import org.slf4j.LoggerFactory
 
 
 /**
@@ -55,7 +47,6 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         addInputHandlers()
-        setGiniCaptureSdkDebugging()
         showVersions()
 
     }
@@ -85,13 +76,6 @@ class MainActivity : AppCompatActivity() {
     private fun showVersions() {
         binding.textGiniBankVersion.text =
                 getString(R.string.gini_capture_sdk_version) + net.gini.android.bank.sdk.BuildConfig.VERSION_NAME
-    }
-
-    private fun setGiniCaptureSdkDebugging() {
-        if (BuildConfig.DEBUG) {
-            GiniCaptureDebug.enable()
-            configureLogging()
-        }
     }
 
     private fun addInputHandlers() {
@@ -203,8 +187,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun configureGiniCapture() {
-        val app = application as ExampleApp
-        app.clearGiniCaptureNetworkInstances()
+        configurationViewModel.clearGiniCaptureNetworkInstances()
         configurationViewModel.configureGiniBank(this)
     }
 
@@ -255,20 +238,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun configureLogging() {
-        val lc = LoggerFactory.getILoggerFactory() as LoggerContext
-        lc.reset()
-        val layoutEncoder = PatternLayoutEncoder()
-        layoutEncoder.context = lc
-        layoutEncoder.pattern = "%-5level %file:%line [%thread] - %msg%n"
-        layoutEncoder.start()
-        val logcatAppender = LogcatAppender()
-        logcatAppender.context = lc
-        logcatAppender.encoder = layoutEncoder
-        logcatAppender.start()
-        val root = LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME) as Logger
-        root.addAppender(logcatAppender)
-    }
+
 
 
     companion object {

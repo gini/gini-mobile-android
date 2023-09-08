@@ -3,10 +3,16 @@ package net.gini.android.bank.screen.ui
 import android.content.Context
 import android.content.Intent
 import androidx.lifecycle.ViewModel
+import ch.qos.logback.classic.Logger
+import ch.qos.logback.classic.LoggerContext
+import ch.qos.logback.classic.android.LogcatAppender
+import ch.qos.logback.classic.encoder.PatternLayoutEncoder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import net.gini.android.bank.screen.R
+import net.gini.android.bank.screen.core.di.GiniCaptureNetworkServiceDebug
+import net.gini.android.bank.screen.core.di.GiniCaptureNetworkServiceRelease
 import net.gini.android.bank.screen.ui.adapters.CustomCameraNavigationBarBottomAdapter
 import net.gini.android.bank.screen.ui.adapters.CustomDigitalInvoiceHelpNavigationBarBottomAdapter
 import net.gini.android.bank.screen.ui.adapters.CustomDigitalInvoiceNavigationBarBottomAdapter
@@ -19,6 +25,7 @@ import net.gini.android.bank.screen.ui.adapters.CustomReviewNavigationBarBottomA
 import net.gini.android.bank.screen.ui.data.Configuration
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.capture.CaptureConfiguration
+import net.gini.android.capture.GiniCaptureDebug
 import net.gini.android.capture.help.HelpItem
 import net.gini.android.capture.internal.util.FileImportValidator
 import net.gini.android.capture.logging.ErrorLog
@@ -26,7 +33,6 @@ import net.gini.android.capture.logging.ErrorLoggerListener
 import net.gini.android.capture.network.GiniCaptureDefaultNetworkService
 import net.gini.android.capture.onboarding.DefaultPages
 import net.gini.android.capture.onboarding.OnboardingPage
-import net.gini.android.capture.onboarding.view.ImageOnboardingIllustrationAdapter
 import net.gini.android.capture.tracking.AnalysisScreenEvent
 import net.gini.android.capture.tracking.CameraScreenEvent
 import net.gini.android.capture.tracking.Event
@@ -38,7 +44,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ConfigurationViewModel @Inject constructor(
-    private val giniCaptureDefaultNetworkService: GiniCaptureDefaultNetworkService
+    @GiniCaptureNetworkServiceRelease private val giniCaptureDefaultNetworkServiceRelease: GiniCaptureDefaultNetworkService,
+    @GiniCaptureNetworkServiceDebug private val giniCaptureDefaultNetworkServiceDebug: GiniCaptureDefaultNetworkService
 ) : ViewModel() {
 
     private val _disableCameraPermissionFlow = MutableStateFlow<Boolean>(false)
@@ -61,7 +68,8 @@ class ConfigurationViewModel @Inject constructor(
         val configuration = configurationFlow.value
 
         var captureConfiguration = CaptureConfiguration(
-            networkService = giniCaptureDefaultNetworkService,
+            // 37 Debug mode
+            networkService = if (configuration.isDebugModeEnabled) giniCaptureDefaultNetworkServiceDebug else giniCaptureDefaultNetworkServiceRelease,
             // 1 file import
             fileImportEnabled = configuration.isFileImportEnabled,
             // 2 QR code scanning
@@ -243,21 +251,32 @@ class ConfigurationViewModel @Inject constructor(
 
         // 33 Digital invoice onboarding custom illustration
         if (configuration.isDigitalInvoiceOnboardingCustomIllustrationEnabled)
-            GiniBank.digitalInvoiceOnboardingIllustrationAdapter = CustomOnboardingIllustrationAdapter(
-                R.raw.ai_animation
-            )
+            GiniBank.digitalInvoiceOnboardingIllustrationAdapter =
+                CustomOnboardingIllustrationAdapter(
+                    R.raw.ai_animation
+                )
 
         // 34 Digital invoice help bottom navigation bar
         if (configuration.isDigitalInvoiceHelpBottomNavigationBarEnabled)
-            GiniBank.digitalInvoiceHelpNavigationBarBottomAdapter = CustomDigitalInvoiceHelpNavigationBarBottomAdapter()
+            GiniBank.digitalInvoiceHelpNavigationBarBottomAdapter =
+                CustomDigitalInvoiceHelpNavigationBarBottomAdapter()
 
         // 35 Digital invoice onboarding bottom navigation bar
         if (configuration.isDigitalInvoiceOnboardingBottomNavigationBarEnabled)
-            GiniBank.digitalInvoiceOnboardingNavigationBarBottomAdapter = CustomDigitalInvoiceOnboardingNavigationBarBottomAdapter()
+            GiniBank.digitalInvoiceOnboardingNavigationBarBottomAdapter =
+                CustomDigitalInvoiceOnboardingNavigationBarBottomAdapter()
 
         // 36 Digital invoice bottom navigation bar
         if (configuration.isDigitalInvoiceBottomNavigationBarEnabled)
-            GiniBank.digitalInvoiceNavigationBarBottomAdapter = CustomDigitalInvoiceNavigationBarBottomAdapter()
+            GiniBank.digitalInvoiceNavigationBarBottomAdapter =
+                CustomDigitalInvoiceNavigationBarBottomAdapter()
+
+        // 37 Debug mode
+        if (configuration.isDebugModeEnabled) {
+            GiniCaptureDebug.enable()
+            configureLogging()
+        }
+
     }
 
     private class GiniCaptureEventTracker : EventTracker {
@@ -316,6 +335,26 @@ class ConfigurationViewModel @Inject constructor(
         }
     }
 
+    private fun configureLogging() {
+        val lc = LoggerFactory.getILoggerFactory() as LoggerContext
+        lc.reset()
+        val layoutEncoder = PatternLayoutEncoder()
+        layoutEncoder.context = lc
+        layoutEncoder.pattern = "%-5level %file:%line [%thread] - %msg%n"
+        layoutEncoder.start()
+        val logcatAppender = LogcatAppender()
+        logcatAppender.context = lc
+        logcatAppender.encoder = layoutEncoder
+        logcatAppender.start()
+        val root = LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME) as Logger
+        root.addAppender(logcatAppender)
+    }
+
+
+    fun clearGiniCaptureNetworkInstances() {
+        giniCaptureDefaultNetworkServiceRelease.cleanup()
+        giniCaptureDefaultNetworkServiceDebug.cleanup()
+    }
 
     companion object {
         private val LOG = LoggerFactory.getLogger(MainActivity::class.java)

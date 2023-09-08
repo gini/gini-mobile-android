@@ -149,4 +149,7 @@ data class Configuration(
     // 36 Digital invoice bottom navigation bar
     val isDigitalInvoiceBottomNavigationBarEnabled: Boolean = false,
 
+    // 37 Debug mode
+    val isDebugModeEnabled: Boolean = false,
+
     ) : Parcelable
