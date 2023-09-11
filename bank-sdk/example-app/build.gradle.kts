@@ -1,5 +1,4 @@
 import net.gini.gradle.*
-import org.gradle.internal.impldep.org.junit.experimental.categories.Categories.CategoryFilter.exclude
 
 plugins {
     id("com.android.application")
