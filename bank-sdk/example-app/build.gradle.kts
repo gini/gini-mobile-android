@@ -24,7 +24,7 @@ plugins {
 
 android {
     // after upgrading to AGP 8, we need this (copied from the module's AndroidManifest.xml
-    namespace = "net.gini.android.bank.screen"
+    namespace = "net.gini.android.bank.sdk.exampleapp"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     // after upgrading to AGP 8, we need this to have the defaultConfig block

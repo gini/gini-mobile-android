@@ -8,7 +8,7 @@
     android:paddingTop="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingBottom="@dimen/activity_horizontal_margin"
-    tools:context=".ui.MainActivity">
+    tools:context="net.gini.android.bank.exampleapp.ui.MainActivity">
 
     <Button
         android:id="@+id/button_start_scanner"
