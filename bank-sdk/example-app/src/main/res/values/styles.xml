@@ -17,6 +17,11 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="PhotoPaymentButtonStyle" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="cornerRadius">8dp</item>
+    </style>
+
+
     <!-- Example of customizing the status bar color -->
 <!--    <style name="GiniCaptureTheme" parent="Root.GiniCaptureTheme">-->
 <!--        <item name="colorPrimaryDark">@color/Error_03</item>-->

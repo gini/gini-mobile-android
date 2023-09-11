@@ -7,8 +7,11 @@
     <string name="title_extractions">Extractions</string>
     <string name="title_no_extractions">No Extractions</string>
 
-    <string name="start_gini_capture_sdk">Start Gini Capture SDK</string>
-
+    <string name="welcome_to_gini">Welcome to Gini</string>
+    <string name="or_use_label">or use</string>
+    <string name="start_gini_photo_payment">Photo payment</string>
+    <string name="example_of_photo_payment">Example of Photo Payment integration in the banking app</string>
+    <string name="enter_your_iban_code">Enter your IBAN code</string>
     <string name="menu_item_feedback">Send Feedback and Close</string>
     <string name="menu_item_view_picture">View Picture</string>
     <string name="document_size_too_large">Diese Datei ist leider größer als 5MB.</string>
@@ -35,7 +38,9 @@
     <string name="custom_loading_indicator_switch_label">Custom loading indicator animation</string>
     <string name="disable_camera_permission">Do not request camera permission</string>
     <string name="txt_show_custom_help_item">Show custom help item</string>
-    <string name="gini_capture_sdk_version">Gini Bank SDK v</string>
+    <string name="gini_bank_sdk_version">Gini Bank SDK v: </string>
+    <string name="gini_capture_sdk_version">\nGini Capture SDK v: </string>
+    <string name="gini_client_id">\nClient Id: </string>
 
     <!-- Strings for ConfigurationActivity -->
     <string name="configuration_activity_title">Configuration</string>

@@ -4,7 +4,6 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -22,6 +21,7 @@ import net.gini.android.bank.sdk.exampleapp.R
 import net.gini.android.bank.sdk.exampleapp.core.PermissionHandler
 import net.gini.android.bank.sdk.exampleapp.databinding.ActivityMainBinding
 import net.gini.android.bank.sdk.exampleapp.ui.data.Configuration
+import net.gini.android.capture.EntryPoint
 import net.gini.android.capture.requirements.RequirementsReport
 import net.gini.android.capture.util.CancellationToken
 
@@ -89,16 +89,20 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     private fun showVersions() {
         binding.textGiniBankVersion.text =
-            getString(R.string.gini_capture_sdk_version) + BuildConfig.VERSION_NAME
+                getString(R.string.gini_bank_sdk_version) + net.gini.android.bank.sdk.BuildConfig.VERSION_NAME +
+                getString(R.string.gini_capture_sdk_version) + net.gini.android.capture.BuildConfig.VERSION_NAME +
+                getString(R.string.gini_client_id) +  getString(R.string.gini_api_client_id)
+
     }
 
     private fun addInputHandlers() {
-        binding.buttonStartScanner.setOnClickListener { v: View? ->
-            if (configurationViewModel.disableCameraPermissionFlow.value) {
-                startGiniCaptureSdk()
-            } else {
-                checkCameraPermission()
-            }
+        binding.buttonStartScanner.setOnClickListener {
+            checkIfAppShouldAskForCameraPermission(EntryPoint.BUTTON)
+        }
+
+        binding.tilFieldEntryPoint.setEndIconOnClickListener {
+            checkIfAppShouldAskForCameraPermission(EntryPoint.FIELD)
+
         }
 
         binding.textGiniBankVersion.setOnClickListener {
@@ -118,6 +122,19 @@ class MainActivity : AppCompatActivity() {
             )
         }
 
+    }
+
+    private fun checkIfAppShouldAskForCameraPermission(entryPoint: EntryPoint) {
+        configurationViewModel.setConfiguration(
+            configurationViewModel.configurationFlow.value.copy(
+                entryPoint = entryPoint
+            )
+        )
+        if (configurationViewModel.disableCameraPermissionFlow.value) {
+            startGiniCaptureSdk()
+        } else {
+            checkCameraPermission()
+        }
     }
 
     private fun checkCameraPermission(intent: Intent? = null) {
