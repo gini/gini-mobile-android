@@ -31,7 +31,7 @@ android {
         buildConfig = true
     }
     defaultConfig {
-        applicationId = "net.gini.android.bank.screenapiexample"
+        applicationId = "net.gini.android.bank.sdk.exampleapp"
 
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
