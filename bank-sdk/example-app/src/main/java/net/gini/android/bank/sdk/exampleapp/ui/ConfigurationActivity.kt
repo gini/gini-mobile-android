@@ -19,7 +19,6 @@ import net.gini.android.bank.sdk.exampleapp.ui.MainActivity.Companion.CAMERA_PER
 import net.gini.android.bank.sdk.exampleapp.ui.MainActivity.Companion.CONFIGURATION_BUNDLE
 import net.gini.android.bank.sdk.exampleapp.ui.data.Configuration
 import net.gini.android.capture.DocumentImportEnabledFileTypes
-import net.gini.android.capture.EntryPoint
 import net.gini.android.capture.internal.util.ActivityHelper.interceptOnBackPressed
 
 @AndroidEntryPoint
@@ -184,13 +183,6 @@ class ConfigurationActivity : AppCompatActivity() {
         // 29 set imported file size bytes limit
         binding.editTextImportedFileSizeBytesLimit.hint =
             configuration.importedFileSizeBytesLimit.toString()
-        // 30 entry point
-        val checkedEntryPointButtonId = when (configuration.entryPoint) {
-            EntryPoint.BUTTON -> R.id.btn_buttonEntryPoint
-            EntryPoint.FIELD -> R.id.btn_fieldEntryPoint
-            else -> R.id.btn_buttonEntryPoint
-        }
-        binding.toggleBtnEntryPoint.check(checkedEntryPointButtonId)
 
         // 31 enable return assistant
         binding.switchReturnAssistantFeature.isChecked = configuration.isReturnAssistantEnabled
@@ -504,26 +496,6 @@ class ConfigurationActivity : AppCompatActivity() {
                 configurationViewModel.configurationFlow.value.copy(
                     importedFileSizeBytesLimit = it.toString().toInt()
                 )
-            )
-        }
-
-        // 30 entry point
-        binding.toggleBtnEntryPoint.addOnButtonCheckedListener { toggleButton, checkedId, isChecked ->
-            val checked = toggleButton.checkedButtonId
-            configurationViewModel.setConfiguration(
-                when (checked) {
-                    R.id.btn_buttonEntryPoint -> configurationViewModel.configurationFlow.value.copy(
-                        entryPoint = EntryPoint.BUTTON
-                    )
-
-                    R.id.btn_fieldEntryPoint -> configurationViewModel.configurationFlow.value.copy(
-                        entryPoint = EntryPoint.FIELD
-                    )
-
-                    else -> configurationViewModel.configurationFlow.value.copy(
-                        entryPoint = EntryPoint.BUTTON
-                    )
-                }
             )
         }
 

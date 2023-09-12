@@ -525,43 +525,6 @@
                 android:layout_marginTop="@dimen/gc_medium_12"
                 android:text="@string/debug_mode_switch_label" />
 
-            <TextView
-                android:id="@+id/tv_entryPointLabel"
-                style="@style/SwitchConfigurationStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gc_large"
-                android:layout_weight="1"
-                android:text="@string/entry_point_label" />
-
-            <com.google.android.material.button.MaterialButtonToggleGroup
-                android:id="@+id/toggleBtn_entryPoint"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                app:selectionRequired="true"
-                app:singleSelection="true">
-
-                <Button
-                    android:id="@+id/btn_buttonEntryPoint"
-                    style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/button_entry_point" />
-
-                <Button
-                    android:id="@+id/btn_fieldEntryPoint"
-                    style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/field_entry_point" />
-
-
-
-
-            </com.google.android.material.button.MaterialButtonToggleGroup>
 
         </LinearLayout>
 
