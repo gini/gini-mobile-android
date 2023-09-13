@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import net.gini.android.bank.sdk.GiniBank
@@ -34,13 +35,13 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private val configurationViewModel: ConfigurationViewModel by viewModels()
-    private val captureImportLauncher =
-            registerForActivityResult(CaptureFlowImportContract(), ::onCaptureResult)
-    private var cancellationToken: CancellationToken? =
-            null // should be kept across configuration changes
-    private val permissionHandler = PermissionHandler(this)
     private val captureLauncher =
-            registerForActivityResult(CaptureFlowContract(), ::onCaptureResult)
+        registerForActivityResult(CaptureFlowContract(), ::onCaptureResult)
+    private val captureImportLauncher =
+        registerForActivityResult(CaptureFlowImportContract(), ::onCaptureResult)
+    private var cancellationToken: CancellationToken? =
+        null // should be kept across configuration changes
+    private val permissionHandler = PermissionHandler(this)
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,6 +51,11 @@ class MainActivity : AppCompatActivity() {
         addInputHandlers()
         showVersions()
 
+        if (savedInstanceState == null) {
+            if (isIntentActionViewOrSend(intent)) {
+                startGiniCaptureSdk(intent)
+            }
+        }
     }
 
 
@@ -120,21 +126,24 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startGiniCaptureSdk(intent: Intent? = null) {
-        val report = GiniBank.checkCaptureRequirements(this@MainActivity)
-        if (!report.isFulfilled) {
-            showUnfulfilledRequirementsToast(report)
-        }
-
-        configureGiniCapture()
-
-        if (intent != null) {
-            cancellationToken = GiniBank.startCaptureFlowForIntent(
-                    captureImportLauncher,
-                    this@MainActivity,
-                    intent
-            )
+        if (!configurationViewModel.configurationFlow.value.isFileImportEnabled) {
+            MaterialAlertDialogBuilder(this).setMessage(R.string.file_import_feature_is_disabled_dialog_message)
+                .setPositiveButton("OK", null).show()
         } else {
-            GiniBank.startCaptureFlow(captureLauncher)
+            val report = GiniBank.checkCaptureRequirements(this@MainActivity)
+            if (!report.isFulfilled) {
+                showUnfulfilledRequirementsToast(report)
+            }
+
+            configureGiniCapture()
+
+            if (intent != null) {
+                cancellationToken = GiniBank.startCaptureFlowForIntent(
+                    captureImportLauncher, this@MainActivity, intent
+                )
+            } else {
+                GiniBank.startCaptureFlow(captureLauncher)
+            }
         }
     }
 
