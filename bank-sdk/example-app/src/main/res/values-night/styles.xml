@@ -39,7 +39,7 @@
     </style>
 
     <style name="PhotoPaymentButtonStyle" parent="Widget.Material3.Button">
-        <item name="cornerRadius">8dp</item>
+        <item name="cornerRadius">4dp</item>
         <item name="backgroundTint">@color/gc_dark_04</item>
         <item name="android:textColor">@color/gc_light_01</item>
         <item name="android:textSize">17sp</item>
