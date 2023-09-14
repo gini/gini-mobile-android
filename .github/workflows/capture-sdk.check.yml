@@ -155,46 +155,6 @@ jobs:
           name: capture-sdk-default-network-instrumented-test-results
           path: capture-sdk/default-network/build/outputs/androidTest-results/connected
 
-  build-example-apps:
-    runs-on: ubuntu-latest
-    steps:
-      - name: checkout
-        uses: actions/checkout@v3
-
-      - uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-          cache: 'gradle'
-
-      - name: build debug screen api example app
-        run: >
-          ./gradlew capture-sdk:screen-api-example-app:assembleDebug 
-          -PclientId="gini-mobile-test" 
-          -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
-
-      - name: archive debug screen api example app
-        uses: actions/upload-artifact@v3
-        with:
-          name: capture-sdk-screen-api-example-app-debug
-          path: capture-sdk/screen-api-example-app/build/outputs/apk/debug
-
-      - name: build release screen api example app
-        run: >
-          ./gradlew capture-sdk:screen-api-example-app:assembleRelease
-          -PclientId="gini-mobile-test" 
-          -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
-          -PreleaseKeystoreFile="screen_api_example.jks"
-          -PreleaseKeystorePassword='${{ secrets.CAPTURE_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}'
-          -PreleaseKeyAlias="screen_api_example"
-          -PreleaseKeyPassword='${{ secrets.CAPTURE_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}'
-
-      - name: archive release screen api example app
-        uses: actions/upload-artifact@v3
-        with:
-          name: capture-sdk-screen-api-example-app-release
-          path: capture-sdk/screen-api-example-app/build/outputs/apk/release
-
   checkstyle:
     runs-on: ubuntu-latest
     steps:
