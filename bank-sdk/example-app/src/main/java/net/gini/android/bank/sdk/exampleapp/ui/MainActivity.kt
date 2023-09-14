@@ -42,6 +42,8 @@ class MainActivity : AppCompatActivity() {
     private var cancellationToken: CancellationToken? =
         null // should be kept across configuration changes
     private val permissionHandler = PermissionHandler(this)
+    private var mRestoredInstance = false
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,10 +52,15 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         addInputHandlers()
         showVersions()
+        mRestoredInstance = savedInstanceState != null
+    }
 
-        if (savedInstanceState == null) {
+    override fun onStart() {
+        super.onStart()
+        if (!mRestoredInstance) {
+            val intent = intent
             if (isIntentActionViewOrSend(intent)) {
-                startGiniCaptureSdk(intent)
+                startGiniCaptureSdkForImportedFile(intent)
             }
         }
     }
@@ -69,7 +76,7 @@ class MainActivity : AppCompatActivity() {
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         if (intent != null && isIntentActionViewOrSend(intent)) {
-            startGiniCaptureSdk(intent)
+            startGiniCaptureSdkForImportedFile(intent)
         }
     }
 
@@ -82,7 +89,7 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     private fun showVersions() {
         binding.textGiniBankVersion.text =
-                getString(R.string.gini_capture_sdk_version) + BuildConfig.VERSION_NAME
+            getString(R.string.gini_capture_sdk_version) + BuildConfig.VERSION_NAME
     }
 
     private fun addInputHandlers() {
@@ -96,18 +103,18 @@ class MainActivity : AppCompatActivity() {
 
         binding.textGiniBankVersion.setOnClickListener {
             startActivityForResult(
-                    Intent(
-                            this, ConfigurationActivity::class.java
+                Intent(
+                    this, ConfigurationActivity::class.java
+                )
+                    .putExtra(
+                        CONFIGURATION_BUNDLE,
+                        configurationViewModel.configurationFlow.value
                     )
-                            .putExtra(
-                                    CONFIGURATION_BUNDLE,
-                                    configurationViewModel.configurationFlow.value
-                            )
-                            .putExtra(
-                                    CAMERA_PERMISSION_BUNDLE,
-                                    configurationViewModel.disableCameraPermissionFlow.value
-                            ),
-                    REQUEST_CONFIGURATION
+                    .putExtra(
+                        CAMERA_PERMISSION_BUNDLE,
+                        configurationViewModel.disableCameraPermissionFlow.value
+                    ),
+                REQUEST_CONFIGURATION
             )
         }
 
@@ -125,25 +132,29 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun startGiniCaptureSdk(intent: Intent? = null) {
-        if (!configurationViewModel.configurationFlow.value.isFileImportEnabled) {
-            MaterialAlertDialogBuilder(this).setMessage(R.string.file_import_feature_is_disabled_dialog_message)
-                .setPositiveButton("OK", null).show()
+    private fun startGiniCaptureSdkForImportedFile(importedFileIntent: Intent) {
+        if (configurationViewModel.configurationFlow.value.isFileImportEnabled) {
+            startGiniCaptureSdk(importedFileIntent)
         } else {
-            val report = GiniBank.checkCaptureRequirements(this@MainActivity)
-            if (!report.isFulfilled) {
-                showUnfulfilledRequirementsToast(report)
-            }
+            MaterialAlertDialogBuilder(this).setMessage(R.string.file_import_feature_is_disabled_dialog_message)
+                .setPositiveButton("OK") { dialogInterface, i -> {} }.show()
+        }
+    }
 
-            configureGiniCapture()
+    private fun startGiniCaptureSdk(intent: Intent? = null) {
+        val report = GiniBank.checkCaptureRequirements(this@MainActivity)
+        if (!report.isFulfilled) {
+            showUnfulfilledRequirementsToast(report)
+        }
 
-            if (intent != null) {
-                cancellationToken = GiniBank.startCaptureFlowForIntent(
-                    captureImportLauncher, this@MainActivity, intent
-                )
-            } else {
-                GiniBank.startCaptureFlow(captureLauncher)
-            }
+        configureGiniCapture()
+
+        if (intent != null) {
+            cancellationToken = GiniBank.startCaptureFlowForIntent(
+                captureImportLauncher, this@MainActivity, intent
+            )
+        } else {
+            GiniBank.startCaptureFlow(captureLauncher)
         }
     }
 
@@ -158,16 +169,16 @@ class MainActivity : AppCompatActivity() {
                 when (result.value) {
                     is ResultError.Capture ->
                         Toast.makeText(
-                                this,
-                                "Error: ${(result.value as ResultError.Capture).giniCaptureError.errorCode} ${(result.value as ResultError.Capture).giniCaptureError.message}",
-                                Toast.LENGTH_LONG
+                            this,
+                            "Error: ${(result.value as ResultError.Capture).giniCaptureError.errorCode} ${(result.value as ResultError.Capture).giniCaptureError.message}",
+                            Toast.LENGTH_LONG
                         ).show()
 
                     is ResultError.FileImport ->
                         Toast.makeText(
-                                this,
-                                "Error: ${(result.value as ResultError.FileImport).code} ${(result.value as ResultError.FileImport).message}",
-                                Toast.LENGTH_LONG
+                            this,
+                            "Error: ${(result.value as ResultError.FileImport).code} ${(result.value as ResultError.FileImport).message}",
+                            Toast.LENGTH_LONG
                         ).show()
                 }
                 if (isIntentActionViewOrSend(intent)) {
@@ -218,12 +229,12 @@ class MainActivity : AppCompatActivity() {
             }
         }
         Toast.makeText(
-                this, "Requirements not fulfilled:\n$stringBuilder", Toast.LENGTH_LONG
+            this, "Requirements not fulfilled:\n$stringBuilder", Toast.LENGTH_LONG
         ).show()
     }
 
     override fun onActivityResult(
-            requestCode: Int, resultCode: Int, data: Intent?
+        requestCode: Int, resultCode: Int, data: Intent?
     ) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CONFIGURATION) {
@@ -231,24 +242,21 @@ class MainActivity : AppCompatActivity() {
                 RESULT_CANCELED -> {}
                 RESULT_OK -> {
                     var configurationResult: Configuration? = data?.getParcelableExtra(
-                            CONFIGURATION_BUNDLE
+                        CONFIGURATION_BUNDLE
                     )
                     if (configurationResult != null) {
                         configurationViewModel.setConfiguration(configurationResult)
                     }
 
                     configurationViewModel.disableCameraPermission(
-                            data?.getBooleanExtra(
-                                    CAMERA_PERMISSION_BUNDLE, false
-                            ) ?: false
+                        data?.getBooleanExtra(
+                            CAMERA_PERMISSION_BUNDLE, false
+                        ) ?: false
                     )
                 }
             }
         }
     }
-
-
-
 
 
     companion object {
