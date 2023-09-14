@@ -1,6 +1,5 @@
-package net.gini.android.capture.internal.ocr
+package net.gini.android.capture.internal.textrecognition
 
-import android.graphics.Point
 import android.graphics.Rect
 
 /**

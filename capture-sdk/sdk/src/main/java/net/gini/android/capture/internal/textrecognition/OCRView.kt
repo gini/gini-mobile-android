@@ -1,13 +1,11 @@
-package net.gini.android.capture.internal.ocr
+package net.gini.android.capture.internal.textrecognition
 
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.Path
 import android.graphics.Rect
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
 import net.gini.android.capture.internal.util.Size
 

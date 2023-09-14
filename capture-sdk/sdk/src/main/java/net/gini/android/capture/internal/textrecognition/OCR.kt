@@ -1,4 +1,4 @@
-package net.gini.android.capture.internal.ocr
+package net.gini.android.capture.internal.textrecognition
 
 import android.graphics.Rect
 import android.media.Image
@@ -7,11 +7,8 @@ import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.util.concurrent.Executors
 
 /**
  * Created by Alpár Szotyori on 27.04.23.

@@ -1,4 +1,4 @@
-package net.gini.android.capture.internal.ocr
+package net.gini.android.capture.internal.textrecognition
 
 import android.graphics.Rect
 import android.util.Log
@@ -13,7 +13,7 @@ class IBANFilter {
 
     private val ibanValidator: IBANValidator = IBANValidator()
 
-    private val ibanRegex = """[A-Z]{2}\d{2}.*\d""".toRegex()
+    private val ibanRegex = Regex("[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}")
 
     fun process(text: OCRText): OCRText {
         return OCRText(text.elements.map { element ->
