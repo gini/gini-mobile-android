@@ -98,7 +98,7 @@
     <string name="gc_supported_format_section_header">Supported formats</string>
     <string name="gc_unsupported_format_section_header">Not supported formats</string>
     <string name="gc_file_import_section_1_title">1. Select an invoice</string>
-    <string name="gc_file_import_section_1_body">To do so, please select a PDF invoice from within your email app, PDF viewer or other app on your smarthpone. To redirect the file to GiniVision, use the “Share” function, represented as a square with the arrow pointing up.</string>
+    <string name="gc_file_import_section_1_body">To do so, please select a PDF invoice from within your email app, PDF viewer or another app on your smartphone. To redirect the file to the Banking App, use the “Share” button.</string>
     <string name="gc_file_import_section_2_title">2. Import to app</string>
     <string name="gc_file_import_section_2_body">Please select your Banking App from the list to start the analysis and transfer process.</string>
 
