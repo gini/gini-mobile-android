@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="AppTheme" parent="Theme.Material3.DayNight">
-        <item name="android:windowBackground">@color/gc_light_01</item>
+        <item name="android:windowBackground">@color/gc_color_01</item>
         <item name="colorPrimary">@color/gc_accent_01</item>
-        <item name="colorPrimaryDark">@color/gc_light_02</item>
-        <item name="colorOnPrimary">@color/gc_light_01</item>
-        <item name="backgroundColor">@color/gc_light_02</item>
-        <item name="colorOnBackground">@color/gc_dark_02</item>
-        <item name="dividerColor">@color/gc_light_02</item>
-        <item name="colorSurface">@color/gc_light_01</item>
+        <item name="colorPrimaryDark">@color/gc_color_02</item>
+        <item name="colorOnPrimary">@color/gc_color_01</item>
+        <item name="backgroundColor">@color/gc_color_02</item>
+        <item name="colorOnBackground">@color/gc_color_contrast_02</item>
+        <item name="dividerColor">@color/gc_color_02</item>
+        <item name="colorSurface">@color/gc_color_01</item>
         <item name="colorOnSurface">?attr/colorOnBackground</item>
-        <item name="colorSurfaceInverse">@color/gc_dark_03</item>
-        <item name="colorOnSurfaceInverse">@color/gc_light_02</item>
-        <item name="colorSurfaceVariant">@color/gc_light_01</item>
+        <item name="colorSurfaceInverse">@color/gc_color_contrast_03</item>
+        <item name="colorOnSurfaceInverse">@color/gc_color_02</item>
+        <item name="colorSurfaceVariant">@color/gc_color_01</item>
         <item name="colorOnSurfaceVariant">?attr/colorOnBackground</item>
         <item name="android:windowLightStatusBar">true</item>
         <item name="colorAccent">?attr/colorPrimary</item>
@@ -20,19 +20,19 @@
 
 
     <style name="Headline5" parent="TextAppearance.MaterialComponents.Headline5">
-        <item name="android:textColor">@color/gc_dark_01</item>
+        <item name="android:textColor">@color/gc_color_contrast_01</item>
     </style>
 
     <style name="Body1" parent="TextAppearance.MaterialComponents.Body1">
-        <item name="android:textColor">@color/gc_dark_01</item>
+        <item name="android:textColor">@color/gc_color_contrast_01</item>
     </style>
 
     <style name="Body1Gray" parent="TextAppearance.MaterialComponents.Body1">
-        <item name="android:textColor">@color/gc_dark_05</item>
+        <item name="android:textColor">@color/gc_color_contrast_05</item>
     </style>
 
     <style name="AppActionBar" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar">
-        <item name="android:tint">@color/gc_light_01</item>
+        <item name="android:tint">@color/gc_color_01</item>
     </style>
 
     <style name="SwitchConfigurationStyle" parent="TextAppearance.MaterialComponents.Body1">
@@ -41,24 +41,23 @@
 
     <style name="PhotoPaymentButtonStyle" parent="Widget.Material3.Button">
         <item name="cornerRadius">4dp</item>
-        <item name="backgroundTint">@color/gc_light_04</item>
-        <item name="android:textColor">@color/gc_dark_01</item>
+        <item name="backgroundTint">@color/gc_color_04</item>
+        <item name="android:textColor">@color/gc_color_contrast_01</item>
         <item name="android:textSize">17sp</item>
-
     </style>
 
-    <style name="TextInputLayoutThemeOverlay" parent="ThemeOverlay.Material3.TextInputEditText.FilledBox">
-        <item name="colorControlActivated">@color/gc_dark_01</item>
+    <style name="TextInputLayoutThemeOverlay" parent="">
+        <item name="colorControlActivated">@color/gc_color_contrast_01</item>
     </style>
 
     <style name="TextInputLayoutStyle" parent="ThemeOverlay.Material3.TextInputEditText.FilledBox">
         <item name="android:theme">@style/TextInputLayoutThemeOverlay</item>
-        <item name="boxBackgroundColor">@color/gc_light_04</item>
-        <item name="boxStrokeColor">@color/text_input_layout_stroke_color_light</item>
-        <item name="android:textColor">@color/gc_dark_04</item>
-        <item name="android:textColorHint">@color/gc_dark_01</item>
-        <item name="hintTextColor">@color/gc_dark_01</item>
-        <item name="endIconTint">@color/gc_dark_01</item>
+        <item name="boxBackgroundColor">@color/gc_color_04</item>
+        <item name="boxStrokeColor">@color/text_input_layout_stroke_color</item>
+        <item name="android:textColor">@color/gc_color_contrast_04</item>
+        <item name="android:textColorHint">@color/gc_color_contrast_01</item>
+        <item name="hintTextColor">@color/gc_color_contrast_01</item>
+        <item name="endIconTint">@color/gc_color_contrast_01</item>
     </style>
 
 </resources>
