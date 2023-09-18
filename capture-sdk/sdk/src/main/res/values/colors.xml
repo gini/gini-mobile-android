@@ -82,6 +82,8 @@
 
     <color name="gc_file_provider_background">#fff</color>
     <color name="gc_file_provider_separator">#d8d8d8</color>
+    <color name="gc_file_provider_title_text_color">#8e9193</color>
+    <color name="gc_file_provider_item_text_color">#000000</color>
     <color name="gc_hint_close">#afb2b3</color>
     <color name="gc_noresults_button_text">#fff</color>
     <color name="gc_noresults_button">#009edc</color>
