@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <color name="gc_color_01">@color/gc_dark_01</color>
     <color name="gc_color_02">@color/gc_dark_02</color>
     <color name="gc_color_03">@color/gc_dark_03</color>
