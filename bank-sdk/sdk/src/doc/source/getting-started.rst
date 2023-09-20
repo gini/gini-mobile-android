@@ -20,7 +20,7 @@ build.gradle:
 .. code-block:: groovy
 
     dependencies {
-        implementation 'net.gini.android:gini-bank-sdk:2.2.0'
+        implementation 'net.gini.android:gini-bank-sdk:2.3.0'
     }
 
 After syncing Gradle you can start integrating the SDK.
