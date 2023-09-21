@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import net.gini.android.capture.internal.iban.IBANValidator;
+
 /**
  * Created by Alpar Szotyori on 11.12.2017.
  *
