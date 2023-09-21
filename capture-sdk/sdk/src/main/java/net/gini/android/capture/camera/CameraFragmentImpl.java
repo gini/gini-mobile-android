@@ -60,7 +60,7 @@ import net.gini.android.capture.internal.fileimport.FileChooserActivity;
 import net.gini.android.capture.internal.network.AnalysisNetworkRequestResult;
 import net.gini.android.capture.internal.network.FailureException;
 import net.gini.android.capture.internal.network.NetworkRequestsManager;
-import net.gini.android.capture.internal.textrecognition.IBANRecognizer;
+import net.gini.android.capture.internal.iban.IBANRecognizer;
 import net.gini.android.capture.internal.qrcode.PaymentQRCodeData;
 import net.gini.android.capture.internal.qrcode.PaymentQRCodeReader;
 import net.gini.android.capture.internal.qrcode.QRCodeDetectorTask;
