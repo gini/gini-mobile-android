@@ -1,14 +1,5 @@
 package net.gini.android.capture.camera;
 
-import static net.gini.android.capture.analysis.AnalysisActivity.RESULT_NO_EXTRACTIONS;
-import static net.gini.android.capture.error.ErrorActivity.ERROR_SCREEN_REQUEST;
-import static net.gini.android.capture.internal.util.ActivityHelper.interceptOnBackPressed;
-import static net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboarding;
-import static net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboardingAtFirstRun;
-import static net.gini.android.capture.review.multipage.MultiPageReviewActivity.RESULT_SCROLL_TO_LAST_PAGE;
-import static net.gini.android.capture.review.multipage.MultiPageReviewActivity.SHOULD_SCROLL_TO_LAST_PAGE;
-import static net.gini.android.capture.tracking.EventTrackingHelper.trackCameraScreenEvent;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -37,8 +28,20 @@ import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
 import net.gini.android.capture.noresults.NoResultsActivity;
 import net.gini.android.capture.onboarding.OnboardingActivity;
 import net.gini.android.capture.review.multipage.MultiPageReviewActivity;
+import net.gini.android.capture.tracking.AnalysisScreenEvent;
 import net.gini.android.capture.tracking.CameraScreenEvent;
+
 import java.util.Map;
+
+import static net.gini.android.capture.analysis.AnalysisActivity.RESULT_NO_EXTRACTIONS;
+import static net.gini.android.capture.error.ErrorActivity.ERROR_SCREEN_REQUEST;
+import static net.gini.android.capture.internal.util.ActivityHelper.interceptOnBackPressed;
+import static net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboarding;
+import static net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboardingAtFirstRun;
+import static net.gini.android.capture.review.multipage.MultiPageReviewActivity.RESULT_SCROLL_TO_LAST_PAGE;
+import static net.gini.android.capture.review.multipage.MultiPageReviewActivity.SHOULD_SCROLL_TO_LAST_PAGE;
+import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
+import static net.gini.android.capture.tracking.EventTrackingHelper.trackCameraScreenEvent;
 
 /**
  * The {@code CameraActivity} is the main entry point to the Gini Capture SDK.
@@ -344,6 +347,7 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
 
     @Override
     public void noExtractionsFromQRCode(QRCodeDocument qrCodeDocument) {
+        trackAnalysisScreenEvent(AnalysisScreenEvent.NO_RESULTS);
         final Intent noResultsActivity = new Intent(this, NoResultsActivity.class);
         noResultsActivity.putExtra(NoResultsActivity.EXTRA_IN_DOCUMENT, qrCodeDocument);
         noResultsActivity.setExtrasClassLoader(CameraActivity.class.getClassLoader());

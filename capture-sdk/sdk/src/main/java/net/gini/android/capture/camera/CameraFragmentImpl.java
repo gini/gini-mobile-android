@@ -21,6 +21,14 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.UiThread;
+import androidx.annotation.VisibleForTesting;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.Group;
+import androidx.core.content.ContextCompat;
+
 import net.gini.android.capture.AsyncCallback;
 import net.gini.android.capture.Document;
 import net.gini.android.capture.DocumentImportEnabledFileTypes;
@@ -76,6 +84,7 @@ import net.gini.android.capture.requirements.CameraHolder;
 import net.gini.android.capture.requirements.CameraResolutionRequirement;
 import net.gini.android.capture.requirements.CameraXHolder;
 import net.gini.android.capture.requirements.RequirementReport;
+import net.gini.android.capture.tracking.AnalysisScreenEvent;
 import net.gini.android.capture.tracking.CameraScreenEvent;
 import net.gini.android.capture.util.IntentHelper;
 import net.gini.android.capture.util.UriHelper;
@@ -93,13 +102,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.UiThread;
-import androidx.annotation.VisibleForTesting;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.Group;
-import androidx.core.content.ContextCompat;
 import jersey.repackaged.jsr166e.CompletableFuture;
 import kotlin.Unit;
 
@@ -115,6 +117,7 @@ import static net.gini.android.capture.internal.util.FeatureConfiguration.getDoc
 import static net.gini.android.capture.internal.util.FeatureConfiguration.isMultiPageEnabled;
 import static net.gini.android.capture.internal.util.FeatureConfiguration.isQRCodeScanningEnabled;
 import static net.gini.android.capture.internal.util.FileImportValidator.FILE_SIZE_LIMIT;
+import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackCameraScreenEvent;
 
 /**
@@ -963,6 +966,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             return;
 
         final FailureException failureException = FailureException.tryCastFromCompletableFutureThrowable(throwable);
+        trackAnalysisScreenEvent(AnalysisScreenEvent.ERROR);
         if (failureException != null) {
             ErrorActivity.startErrorActivity(mFragment.getActivity(), failureException.getErrorType(), document);
         } else {

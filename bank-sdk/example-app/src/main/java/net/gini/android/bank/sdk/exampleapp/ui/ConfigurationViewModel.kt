@@ -327,6 +327,7 @@ class ConfigurationViewModel @Inject constructor(
 
                 AnalysisScreenEvent.RETRY -> LOG.info("Retry analysis")
                 AnalysisScreenEvent.CANCEL -> LOG.info("Analysis cancelled")
+                AnalysisScreenEvent.NO_RESULTS -> LOG.info("No results analysis")
             }
         }
     }

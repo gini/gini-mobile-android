@@ -26,7 +26,11 @@ public enum AnalysisScreenEvent {
     /**
      * Triggers when the user retries analysis after it failed.(<b>Screen API</b>)
      */
-    RETRY;
+    RETRY,
+    /**
+     * Triggers when the NoResults screen is shown after analysis failed.
+     */
+    NO_RESULTS;
 
     /**
      * Keys to retrieve details about the {@link AnalysisScreenEvent#ERROR} event.
