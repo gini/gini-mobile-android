@@ -6,7 +6,11 @@ import androidx.annotation.NonNull;
  * <p>
  *     Contains the report of a requirement check result.
  * </p>
+ *
+ * @deprecated Checking the requirements is no longer necessary and this class will be removed in a future release.
+ *             The majority of Android devices already meet the SDK's requirements.
  */
+@Deprecated
 public class RequirementReport {
 
     private final RequirementId mRequirementId;

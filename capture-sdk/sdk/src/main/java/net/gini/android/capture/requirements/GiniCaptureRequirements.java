@@ -25,7 +25,11 @@ import androidx.annotation.NonNull;
  * <p>
  *     On Android 6.0 and later you need to ask the user for the camera permission before you check the requirements.
  * </p>
+ *
+ * @deprecated Checking the requirements is no longer necessary and this class will be removed in a future release.
+ *             The majority of Android devices already meet the SDK's requirements.
  */
+@Deprecated
 public final class GiniCaptureRequirements {
 
     private static final Logger LOG = LoggerFactory.getLogger(GiniCaptureRequirements.class);
