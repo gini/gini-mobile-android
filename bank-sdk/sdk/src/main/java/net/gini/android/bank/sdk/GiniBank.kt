@@ -184,7 +184,13 @@ object GiniBank {
     /**
      *  Checks hardware requirements for Capture feature.
      *  Requirements are not enforced, but are recommended to be checked before using.
+     *
+     * @deprecated Checking the requirements is no longer necessary and this method will be removed in a future release.
+     *             The majority of Android devices already meet the SDK's requirements.
      */
+    @Deprecated(
+        "Checking the requirements is no longer necessary and this method will be removed in a future release."
+    )
     fun checkCaptureRequirements(context: Context): RequirementsReport =
         GiniCaptureRequirements.checkRequirements(context)
 
