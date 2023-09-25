@@ -20,7 +20,7 @@
     <string name="gc_document_error_multi_page_limit_cancel_button">Abbrechen</string>
 
     <string name="gc_onboarding_align_corners_title">Dokument flach ausrichten</string>
-    <string name="gc_onboarding_align_corners_message">Das Dokument muss flach liegen und sich innerhalb des Rahmens befinden.</string>
+    <string name="gc_onboarding_align_corners_message">Das Dokument muss flach liegen und sich innerhalb des Rahmens befinden</string>
     <string name="gc_onboarding_lighting_title">Gute Lichtverhältnisse</string>
     <string name="gc_onboarding_lighting_message">Kein Blitz und gutes Licht führt zu besseren Ergebnissen</string>
     <string name="gc_onboarding_multipage_title">Mehrere Seiten</string>
@@ -55,9 +55,9 @@
     <string name="gc_error_connection_title">Überprüfen Sie Ihre Internetverbindung</string>
     <string name="gc_error_connection_text">Es konnte keine Verbindung zum Internet hergestellt werden. Bitte überprüfen Sie Ihre Netzwerkverbindung und wiederholen Sie den Vorgang.</string>
     <string name="gc_error_server_title">Dienst nicht verfügbar</string>
-    <string name="gc_error_server_text">Upload des Dokuments ist fehlgeschlagen aufgrund eines Serverfehlers. Bitte versuchen Sie es später noch einmal.</string>
+    <string name="gc_error_server_text">Der Upload des Dokuments ist fehlgeschlagen aufgrund eines Serverfehlers. Bitte versuchen Sie es später noch einmal.</string>
     <string name="gc_error_auth_title">Authentifizierung fehlgeschlagen</string>
-    <string name="gc_error_auth_text">Upload des Dokuments ist fehlgeschlagen aufgrund eines Fehlers bei der Authentifizierung. Bitte versuchen Sie es später noch einmal.</string>
+    <string name="gc_error_auth_text">Der Upload des Dokuments ist fehlgeschlagen aufgrund eines Fehlers bei der Authentifizierung. Bitte versuchen Sie es später noch einmal.</string>
     <string name="gc_error_unexpected_title">Ein unbekannter Fehler ist aufgetreten.</string>
     <string name="gc_error_unexpected_text">Es scheint, hier ist etwas schiefgelaufen. Bitte versuchen Sie es später noch einmal.</string>
     <string name="gc_error_file_import_generic_title">Ihre Datei konnte nicht geöffnet werden. Bitte versuchen Sie es mit einer anderen Datei.</string>
@@ -99,7 +99,7 @@
 
     <string name="gc_supported_format_printed_invoices">Maschinell erstellte Rechnungen und Überweisungsträger</string>
     <string name="gc_supported_format_single_page_as_jpeg_png_gif">Einseitige Fotos im jpeg, png oder gif Format</string>
-    <string name="gc_supported_format_pdf">PDF-Dokumente von bis zu 10 Seiten</string>
+    <string name="gc_supported_format_pdf">PDF-Dokumente bis zu 10 Seiten</string>
     <string name="gc_supported_format_qr_code">QR-Codes</string>
     <string name="gc_supported_format_qr_type_bezahl" translatable="false">BezahlCode</string>
     <string name="gc_supported_format_qr_type_eps" translatable="false">eps Überweisung</string>
