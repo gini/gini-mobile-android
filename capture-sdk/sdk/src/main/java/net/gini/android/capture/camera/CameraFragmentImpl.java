@@ -57,10 +57,10 @@ import net.gini.android.capture.internal.camera.photo.Photo;
 import net.gini.android.capture.internal.camera.photo.PhotoEdit;
 import net.gini.android.capture.internal.camera.view.QRCodePopup;
 import net.gini.android.capture.internal.fileimport.FileChooserActivity;
+import net.gini.android.capture.internal.iban.IBANRecognizer;
 import net.gini.android.capture.internal.network.AnalysisNetworkRequestResult;
 import net.gini.android.capture.internal.network.FailureException;
 import net.gini.android.capture.internal.network.NetworkRequestsManager;
-import net.gini.android.capture.internal.iban.IBANRecognizer;
 import net.gini.android.capture.internal.qrcode.PaymentQRCodeData;
 import net.gini.android.capture.internal.qrcode.PaymentQRCodeReader;
 import net.gini.android.capture.internal.qrcode.QRCodeDetectorTask;
@@ -213,6 +213,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private ViewStubSafeInflater mViewStubInflater;
     private ConstraintLayout mPaneWrapper;
     private TextView mScanTextView;
+    private TextView mIbanDetectedTextView;
     private boolean mIsTakingPicture;
 
     private boolean mImportDocumentButtonEnabled;
@@ -677,6 +678,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         mCameraFrameWrapper = view.findViewById(R.id.gc_camera_frame_wrapper);
         mPaneWrapper = view.findViewById(R.id.gc_pane_wrapper);
         mLoadingIndicator = view.findViewById(R.id.gc_injected_loading_indicator);
+        mIbanDetectedTextView = view.findViewById(R.id.gc_iban_detected);
 
         if (!ContextHelper.isTablet(mFragment.getActivity())) {
             mScanTextView = view.findViewById(R.id.gc_camera_title);
@@ -1724,6 +1726,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                             previewFrameReferenceCount.getAndIncrement();
 
                             ibanRecognizer.processImage(image, imageSize.width, imageSize.height, rotation, (text) -> {
+                                showIbanDetectedOnScreen(text);
                                 LOG.debug("IBAN recognized: {}", text);
                                 previewFrameReferenceCount.getAndDecrement();
                                 if (previewFrameReferenceCount.get() == 0) {
@@ -1770,6 +1773,16 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                     }
                 }
             });
+        }
+    }
+
+    private void showIbanDetectedOnScreen(String iban) {
+
+        if (iban != null && !iban.isEmpty()) {
+            mIbanDetectedTextView.setVisibility(View.VISIBLE);
+            mIbanDetectedTextView.setText(String.format("%s%s", iban, mFragment.getActivity().getString(R.string.gc_iban_detected_please_take_picture)));
+        } else {
+            mIbanDetectedTextView.setVisibility(View.GONE);
         }
     }
 
