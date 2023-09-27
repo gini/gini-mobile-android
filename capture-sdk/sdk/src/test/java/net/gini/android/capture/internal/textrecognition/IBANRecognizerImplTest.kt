@@ -6,6 +6,7 @@ import com.nhaarman.mockitokotlin2.mock
 import junitparams.JUnitParamsRunner
 import junitparams.Parameters
 import net.gini.android.capture.internal.iban.IBANRecognizer
+import net.gini.android.capture.internal.iban.IBANRecognizerImpl
 import net.gini.android.capture.test.Helpers.loadJavaResource
 import org.junit.Before
 import org.junit.Test
@@ -16,20 +17,20 @@ import org.junit.runner.RunWith
  * [IBANExtractor tests](https://github.com/gini/semantics-semantics/blob/42663a59392f56827366fbbbf721cfd637cde641/extractor-commons/src/test/scala/net/gini/semantics/bank_data/extractor/IBANExtractorSpec.scala).
  */
 @RunWith(JUnitParamsRunner::class)
-class IBANRecognizerTest {
+class IBANRecognizerImplTest {
 
     private lateinit var ibanRecognizer: IBANRecognizer
 
     @Before
     fun setup() {
-        ibanRecognizer = IBANRecognizer(TextRecognizerDummy())
+        ibanRecognizer = IBANRecognizerImpl(TextRecognizerDummy())
     }
 
     @Test
     fun `returns null when no IBAN found in image byte array`() {
         // Given
         val byteArray = ByteArray(100)
-        ibanRecognizer = IBANRecognizer(TextRecognizerStub(""))
+        ibanRecognizer = IBANRecognizerImpl(TextRecognizerStub(""))
 
         // When
         ibanRecognizer.processByteArray(byteArray, 200, 300, 0) { iban ->
@@ -42,7 +43,7 @@ class IBANRecognizerTest {
     fun `returns null when no IBAN found in image`() {
         // Given
         val image: Image = mock()
-        ibanRecognizer = IBANRecognizer(TextRecognizerStub(""))
+        ibanRecognizer = IBANRecognizerImpl(TextRecognizerStub(""))
 
         // When
         ibanRecognizer.processImage(image, 200, 300, 0) { iban ->
@@ -122,45 +123,45 @@ class IBANRecognizerTest {
     @Test
     @Parameters(method = "recognizesIBANTestParameterValues")
     @Suppress("JUnitMalformedDeclaration")
-    fun `recognizes IBAN in image byte array`(recognizedText: String, expectedIBAN: String) {
+    fun `recognizes all IBANs in image byte array`(recognizedText: String, expectedIBANs: List<String>) {
         // Given
         val byteArray = ByteArray(100)
-        ibanRecognizer = IBANRecognizer(TextRecognizerStub(recognizedText))
+        ibanRecognizer = IBANRecognizerImpl(TextRecognizerStub(recognizedText))
 
         // When
-        ibanRecognizer.processByteArray(byteArray, 200, 300, 0) { iban ->
+        ibanRecognizer.processByteArray(byteArray, 200, 300, 0) { ibans ->
             // Then
-            assertThat(iban).isEqualTo(expectedIBAN)
+            assertThat(ibans).isEqualTo(expectedIBANs)
         }
     }
 
     @Test
     @Parameters(method = "recognizesIBANTestParameterValues")
     @Suppress("JUnitMalformedDeclaration")
-    fun `recognizes IBAN in image`(recognizedText: String, expectedIBAN: String) {
+    fun `recognizes IBAN in image`(recognizedText: String, expectedIBANs: List<String>) {
         // Given
         val image: Image = mock()
-        ibanRecognizer = IBANRecognizer(TextRecognizerStub(recognizedText))
+        ibanRecognizer = IBANRecognizerImpl(TextRecognizerStub(recognizedText))
 
         // When
-        ibanRecognizer.processImage(image, 200, 300, 0) { iban ->
+        ibanRecognizer.processImage(image, 200, 300, 0) { ibans ->
             // Then
-            assertThat(iban).isEqualTo(expectedIBAN)
+            assertThat(ibans).isEqualTo(expectedIBANs)
         }
     }
 
     private fun recognizesIBANTestParameterValues(): Array<Any> = arrayOf(
-        // recognizedText, expectedIBAN
-        arrayOf("DE78500105172594181438", "DE78500105172594181438"),
-        arrayOf("AT195400071341364866", "AT195400071341364866"),
+        // recognizedText, expectedIBANs
+        arrayOf("DE78500105172594181438", listOf("DE78500105172594181438")),
+        arrayOf("AT195400071341364866", listOf("AT195400071341364866")),
         // support IBANs with whitespace
-        arrayOf(loadTextResource("o2doc2-dookuid-8645.txt"), "DE16700202700005713153"),
+        arrayOf(loadTextResource("o2doc2-dookuid-8645.txt"), listOf("DE16700202700005713153")),
         // use first detected IBAN
-        arrayOf(loadTextResource("samplecontract-dookuid-380.txt"), "DE64700202700000088811"),
+        arrayOf(loadTextResource("samplecontract-dookuid-380.txt"), listOf("DE50700100800014060800", "DE64700202700000088811", "DE23701500000000109850")),
         // prefer German IBANs
-        arrayOf(loadTextResource("dookuid-1311.txt"), "DE92680800300672270200"),
+        arrayOf(loadTextResource("dookuid-1311.txt"), listOf("DE92680800300672270200")),
         // support IBANs with whitespace
-        arrayOf(loadTextResource("smantix_1756-dookuid-281.txt"), "DE28430609672032163700"),
+        arrayOf(loadTextResource("smantix_1756-dookuid-281.txt"), listOf("DE28430609672032163700")),
     )
 
     private fun loadTextResource(name: String): String {

@@ -58,6 +58,7 @@ import net.gini.android.capture.internal.camera.photo.PhotoEdit;
 import net.gini.android.capture.internal.camera.view.QRCodePopup;
 import net.gini.android.capture.internal.fileimport.FileChooserActivity;
 import net.gini.android.capture.internal.iban.IBANRecognizer;
+import net.gini.android.capture.internal.iban.IBANRecognizerImpl;
 import net.gini.android.capture.internal.network.AnalysisNetworkRequestResult;
 import net.gini.android.capture.internal.network.FailureException;
 import net.gini.android.capture.internal.network.NetworkRequestsManager;
@@ -526,7 +527,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         if (ibanRecognizer != null) {
             return;
         }
-        ibanRecognizer = new IBANRecognizer(MLKitTextRecognizer.newInstance());
+        ibanRecognizer = new IBANRecognizerImpl(MLKitTextRecognizer.newInstance());
     }
 
     private void enableTapToFocus() {
@@ -1726,7 +1727,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                             previewFrameReferenceCount.getAndIncrement();
 
                             ibanRecognizer.processImage(image, imageSize.width, imageSize.height, rotation, (text) -> {
-                                showIbanDetectedOnScreen(text);
+                                //showIbanDetectedOnScreen(text.fir);
                                 LOG.debug("IBAN recognized: {}", text);
                                 previewFrameReferenceCount.getAndDecrement();
                                 if (previewFrameReferenceCount.get() == 0) {

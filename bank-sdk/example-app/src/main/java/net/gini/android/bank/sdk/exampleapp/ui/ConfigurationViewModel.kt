@@ -27,6 +27,7 @@ import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomOnboardingIllustra
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomOnboardingNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomReviewNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.data.Configuration
+import net.gini.android.capture.EntryPoint
 import net.gini.android.capture.GiniCaptureDebug
 import net.gini.android.capture.help.HelpItem
 import net.gini.android.capture.internal.util.FileImportValidator
@@ -109,7 +110,8 @@ class ConfigurationViewModel @Inject constructor(
             // 28-29 are implemented after captureConfiguration initialisation
 
             // 30 entry point
-            entryPoint = configuration.entryPoint,
+            //entryPoint = configuration.entryPoint,
+            entryPoint = EntryPoint.FIELD,
 
             // 31 enable return assistant
             returnAssistantEnabled = configuration.isReturnAssistantEnabled
@@ -274,6 +276,8 @@ class ConfigurationViewModel @Inject constructor(
                 CustomDigitalInvoiceNavigationBarBottomAdapter()
 
         // 37 Debug mode
+        GiniCaptureDebug.enable()
+        configureLogging()
         if (configuration.isDebugModeEnabled) {
             GiniCaptureDebug.enable()
             configureLogging()
