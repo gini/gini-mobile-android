@@ -22,7 +22,7 @@ interface IBANRecognizer {
         width: Int,
         height: Int,
         rotationDegrees: Int,
-        doneCallback: (List<String>?) -> Unit
+        doneCallback: (List<String>) -> Unit
     )
 
     /**
@@ -40,7 +40,7 @@ interface IBANRecognizer {
         width: Int,
         height: Int,
         rotationDegrees: Int,
-        doneCallback: (List<String>?) -> Unit
+        doneCallback: (List<String>) -> Unit
     )
 
     /**

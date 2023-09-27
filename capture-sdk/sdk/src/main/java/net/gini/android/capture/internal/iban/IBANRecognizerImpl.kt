@@ -38,7 +38,7 @@ internal class IBANRecognizerImpl @JvmOverloads constructor(
         width: Int,
         height: Int,
         rotationDegrees: Int,
-        doneCallback: (List<String>?) -> Unit
+        doneCallback: (List<String>) -> Unit
     ) {
         checkWidthAndHeight(width, height)
         textRecognizer.processImage(image, width, height, rotationDegrees) { recognizedText ->
@@ -46,7 +46,7 @@ internal class IBANRecognizerImpl @JvmOverloads constructor(
         }
     }
 
-    private fun extractIBAN(recognizedText: String?, doneCallback: (List<String>?) -> Unit) {
+    private fun extractIBAN(recognizedText: String?, doneCallback: (List<String>) -> Unit) {
         if (!recognizedText.isNullOrEmpty()) {
             val ibans = (singleLineIBANs(recognizedText) + ibanInBlocks(recognizedText))
                 .distinct()
@@ -61,7 +61,7 @@ internal class IBANRecognizerImpl @JvmOverloads constructor(
                 doneCallback(ibans)
             }
         } else {
-            doneCallback(null)
+            doneCallback(emptyList())
         }
     }
 
@@ -97,7 +97,7 @@ internal class IBANRecognizerImpl @JvmOverloads constructor(
         width: Int,
         height: Int,
         rotationDegrees: Int,
-        doneCallback: (List<String>?) -> Unit
+        doneCallback: (List<String>) -> Unit
     ) {
         checkWidthAndHeight(width, height)
         textRecognizer.processByteArray(byteArray, width, height, rotationDegrees) { recognizedText ->

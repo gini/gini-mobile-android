@@ -1,12 +1,11 @@
-package net.gini.android.capture.internal.textrecognition
+package net.gini.android.capture.internal.iban
 
 import android.media.Image
 import com.google.common.truth.Truth.assertThat
 import com.nhaarman.mockitokotlin2.mock
 import junitparams.JUnitParamsRunner
 import junitparams.Parameters
-import net.gini.android.capture.internal.iban.IBANRecognizer
-import net.gini.android.capture.internal.iban.IBANRecognizerImpl
+import net.gini.android.capture.internal.textrecognition.TextRecognizer
 import net.gini.android.capture.test.Helpers.loadJavaResource
 import org.junit.Before
 import org.junit.Test
@@ -27,7 +26,7 @@ class IBANRecognizerImplTest {
     }
 
     @Test
-    fun `returns null when no IBAN found in image byte array`() {
+    fun `returns empty list when no IBAN found in image byte array`() {
         // Given
         val byteArray = ByteArray(100)
         ibanRecognizer = IBANRecognizerImpl(TextRecognizerStub(""))
@@ -35,12 +34,12 @@ class IBANRecognizerImplTest {
         // When
         ibanRecognizer.processByteArray(byteArray, 200, 300, 0) { iban ->
             // Then
-            assertThat(iban).isNull()
+            assertThat(iban).isEqualTo(emptyList<String>())
         }
     }
 
     @Test
-    fun `returns null when no IBAN found in image`() {
+    fun `returns empty list when no IBAN found in image`() {
         // Given
         val image: Image = mock()
         ibanRecognizer = IBANRecognizerImpl(TextRecognizerStub(""))
@@ -48,7 +47,7 @@ class IBANRecognizerImplTest {
         // When
         ibanRecognizer.processImage(image, 200, 300, 0) { iban ->
             // Then
-            assertThat(iban).isNull()
+            assertThat(iban).isEqualTo(emptyList<String>())
         }
     }
 
