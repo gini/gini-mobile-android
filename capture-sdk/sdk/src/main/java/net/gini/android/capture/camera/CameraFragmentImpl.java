@@ -57,7 +57,7 @@ import net.gini.android.capture.internal.camera.photo.Photo;
 import net.gini.android.capture.internal.camera.photo.PhotoEdit;
 import net.gini.android.capture.internal.camera.view.QRCodePopup;
 import net.gini.android.capture.internal.fileimport.FileChooserActivity;
-import net.gini.android.capture.internal.iban.IBANRecognizer;
+import net.gini.android.capture.internal.iban.IBANRecognizerFilter;
 import net.gini.android.capture.internal.iban.IBANRecognizerImpl;
 import net.gini.android.capture.internal.network.AnalysisNetworkRequestResult;
 import net.gini.android.capture.internal.network.FailureException;
@@ -231,7 +231,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private InjectedViewContainer<CustomLoadingIndicatorAdapter> mLoadingIndicator;
     private InjectedViewContainer<CameraNavigationBarBottomAdapter> mBottomInjectedContainer;
 
-    private IBANRecognizer ibanRecognizer;
+    private IBANRecognizerFilter ibanRecognizerFilter;
 
     CameraFragmentImpl(@NonNull final FragmentImplCallback fragment) {
         mFragment = fragment;
@@ -405,7 +405,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             initQRCodeReader();
         }
         if (GiniCapture.hasInstance() && GiniCapture.getInstance().getEntryPoint() == EntryPoint.FIELD) {
-            initIBANRecognizer();
+            initIBANRecognizerFilter();
         }
 
         if (isCameraPermissionGranted()) {
@@ -523,11 +523,13 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         });
     }
 
-    private void initIBANRecognizer() {
-        if (ibanRecognizer != null) {
+    private void initIBANRecognizerFilter() {
+        if (ibanRecognizerFilter != null) {
             return;
         }
-        ibanRecognizer = new IBANRecognizerImpl(MLKitTextRecognizer.newInstance());
+        ibanRecognizerFilter = new IBANRecognizerFilter(new IBANRecognizerImpl(MLKitTextRecognizer.newInstance()), (IBANRecognizerFilter.Listener) ibans -> {
+            showIbansDetectedOnScreen(ibans);
+        });
     }
 
     private void enableTapToFocus() {
@@ -643,9 +645,9 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             mPaymentQRCodeReader.release();
             mPaymentQRCodeReader = null; // NOPMD
         }
-        if (ibanRecognizer != null) {
-            ibanRecognizer.close();
-            ibanRecognizer = null; // NOPMD
+        if (ibanRecognizerFilter != null) {
+            ibanRecognizerFilter.cleanup();
+            ibanRecognizerFilter = null; // NOPMD
         }
         mCameraController.disableTapToFocus();
         mCameraController.setPreviewCallback(null);
@@ -1722,19 +1724,15 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                 @Override
                 public void onPreviewFrame(@NonNull Image image, @NonNull Size imageSize, int rotation, @NonNull CameraInterface.PreviewFrameCallback previewFrameCallback) {
                     AtomicInteger previewFrameReferenceCount = new AtomicInteger();
-                    if (ibanRecognizer != null) {
+                    if (ibanRecognizerFilter != null) {
                         try {
                             previewFrameReferenceCount.getAndIncrement();
 
-                            ibanRecognizer.processImage(image, imageSize.width, imageSize.height, rotation, (text) -> {
-                                //showIbanDetectedOnScreen(text.fir);
-                                LOG.debug("IBAN recognized: {}", text);
+                            ibanRecognizerFilter.processImage(image, imageSize.width, imageSize.height, rotation, () -> {
                                 previewFrameReferenceCount.getAndDecrement();
                                 if (previewFrameReferenceCount.get() == 0) {
                                     previewFrameCallback.onReleaseFrame();
                                 }
-
-                                return Unit.INSTANCE;
                             });
                         } catch (Exception e) {
                             LOG.error("Failed to process image for IBAN recognition", e);
@@ -1762,12 +1760,9 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                     if (mPaymentQRCodeReader != null) {
                         mPaymentQRCodeReader.readFromByteArray(image, imageSize, rotation);
                     }
-                    if (ibanRecognizer != null) {
+                    if (ibanRecognizerFilter != null) {
                         try {
-                            ibanRecognizer.processByteArray(image, imageSize.width, imageSize.height, rotation, (text) -> {
-                                LOG.debug("IBAN recognized: {}", text);
-                                return Unit.INSTANCE;
-                            });
+                            ibanRecognizerFilter.processByteArray(image, imageSize.width, imageSize.height, rotation, () -> {});
                         } catch (Exception e) {
                             LOG.error("Failed to process image for IBAN recognition", e);
                         }
@@ -1777,11 +1772,10 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         }
     }
 
-    private void showIbanDetectedOnScreen(String iban) {
-
-        if (iban != null && !iban.isEmpty()) {
+    private void showIbansDetectedOnScreen(List<String> ibans) {
+        if (!ibans.isEmpty()) {
             mIbanDetectedTextView.setVisibility(View.VISIBLE);
-            mIbanDetectedTextView.setText(String.format("%s%s", iban, mFragment.getActivity().getString(R.string.gc_iban_detected_please_take_picture)));
+            mIbanDetectedTextView.setText(String.format("%s%s", ibans, mFragment.getActivity().getString(R.string.gc_iban_detected_please_take_picture)));
         } else {
             mIbanDetectedTextView.setVisibility(View.GONE);
         }

@@ -1,6 +1,5 @@
 package net.gini.android.capture.internal.iban
 
-import android.text.TextUtils
 import java.math.BigInteger
 import java.util.regex.Pattern
 

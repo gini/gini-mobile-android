@@ -110,8 +110,7 @@ class ConfigurationViewModel @Inject constructor(
             // 28-29 are implemented after captureConfiguration initialisation
 
             // 30 entry point
-            //entryPoint = configuration.entryPoint,
-            entryPoint = EntryPoint.FIELD,
+            entryPoint = configuration.entryPoint,
 
             // 31 enable return assistant
             returnAssistantEnabled = configuration.isReturnAssistantEnabled
