@@ -8,12 +8,14 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import net.gini.android.capture.Document
+import net.gini.android.capture.ImageRetakeOptionsListener
 import net.gini.android.capture.R
 import net.gini.android.capture.document.ImageMultiPageDocument
 import net.gini.android.capture.internal.ui.FragmentImplCallback
-import net.gini.android.capture.internal.util.ActivityHelper
-import net.gini.android.capture.ImageRetakeOptionsListener
 import net.gini.android.capture.internal.ui.setIntervalClickListener
+import net.gini.android.capture.internal.util.ActivityHelper
+import net.gini.android.capture.tracking.AnalysisScreenEvent
+import net.gini.android.capture.tracking.EventTrackingHelper
 
 /**
  * Main logic implementation for error handling UI presented by {@link ErrorActivity}.
@@ -48,7 +50,10 @@ class ErrorFragmentImpl(
         retakeImagesButton = view.findViewById(R.id.gc_button_error_retake_images)
 
         if (shouldAllowRetakeImages()) {
-            retakeImagesButton.setIntervalClickListener { imageRetakeOptionsListener?.onBackToCameraPressed() }
+            retakeImagesButton.setIntervalClickListener {
+                EventTrackingHelper.trackAnalysisScreenEvent(AnalysisScreenEvent.RETRY)
+                imageRetakeOptionsListener?.onBackToCameraPressed()
+            }
         } else {
             retakeImagesButton.visibility = View.GONE
         }

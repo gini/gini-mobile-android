@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,7 +13,6 @@ import net.gini.android.capture.AsyncCallback;
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.GiniCaptureError;
-import net.gini.android.capture.R;
 import net.gini.android.capture.document.DocumentFactory;
 import net.gini.android.capture.document.GiniCaptureDocument;
 import net.gini.android.capture.document.GiniCaptureDocumentError;
@@ -25,12 +23,11 @@ import net.gini.android.capture.error.ErrorType;
 import net.gini.android.capture.internal.camera.photo.ParcelableMemoryCache;
 import net.gini.android.capture.internal.document.DocumentRenderer;
 import net.gini.android.capture.internal.document.DocumentRendererFactory;
+import net.gini.android.capture.internal.network.FailureException;
 import net.gini.android.capture.internal.storage.ImageDiskStore;
 import net.gini.android.capture.internal.util.FileImportHelper;
-import net.gini.android.capture.internal.util.MimeType;
 import net.gini.android.capture.logging.ErrorLog;
 import net.gini.android.capture.logging.ErrorLogger;
-import net.gini.android.capture.internal.network.FailureException;
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction;
 import net.gini.android.capture.network.model.GiniCaptureReturnReason;
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
@@ -329,12 +326,14 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                         switch (result) {
                             case SUCCESS_NO_EXTRACTIONS:
                                 mAnalysisCompleted = true;
+                                trackAnalysisScreenEvent(AnalysisScreenEvent.NO_RESULTS);
                                 getAnalysisFragmentListenerOrNoOp()
                                         .onProceedToNoExtractionsScreen(mMultiPageDocument);
                                 break;
                             case SUCCESS_WITH_EXTRACTIONS:
                                 mAnalysisCompleted = true;
                                 if (resultHolder.getExtractions().isEmpty()) {
+                                    trackAnalysisScreenEvent(AnalysisScreenEvent.NO_RESULTS);
                                     getAnalysisFragmentListenerOrNoOp()
                                             .onProceedToNoExtractionsScreen(mMultiPageDocument);
                                     return null;

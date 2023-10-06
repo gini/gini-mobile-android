@@ -1,10 +1,5 @@
 package net.gini.android.capture.review.multipage;
 
-import static net.gini.android.capture.GiniCaptureError.ErrorCode.MISSING_GINI_CAPTURE_INSTANCE;
-import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
-import static net.gini.android.capture.internal.util.FileImportHelper.showAlertIfOpenWithDocumentAndAppIsDefault;
-import static net.gini.android.capture.tracking.EventTrackingHelper.trackReviewScreenEvent;
-
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -16,43 +11,6 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.LinearLayout;
-
-import net.gini.android.capture.Document;
-import net.gini.android.capture.GiniCapture;
-import net.gini.android.capture.GiniCaptureError;
-import net.gini.android.capture.R;
-import net.gini.android.capture.document.GiniCaptureDocument;
-import net.gini.android.capture.document.GiniCaptureDocumentError;
-import net.gini.android.capture.document.ImageDocument;
-import net.gini.android.capture.document.ImageMultiPageDocument;
-import net.gini.android.capture.error.ErrorActivity;
-import net.gini.android.capture.internal.network.NetworkRequestResult;
-import net.gini.android.capture.internal.network.NetworkRequestsManager;
-import net.gini.android.capture.internal.ui.ClickListenerExtKt;
-import net.gini.android.capture.internal.ui.FragmentImplCallback;
-import net.gini.android.capture.internal.ui.IntervalClickListener;
-import net.gini.android.capture.internal.util.AlertDialogHelperCompat;
-import net.gini.android.capture.internal.util.FileImportHelper;
-import net.gini.android.capture.error.ErrorType;
-import net.gini.android.capture.internal.network.FailureException;
-import net.gini.android.capture.review.multipage.previews.MiddlePageManager;
-import net.gini.android.capture.review.multipage.previews.PreviewFragmentListener;
-import net.gini.android.capture.review.multipage.previews.PreviewPagesAdapter;
-import net.gini.android.capture.review.multipage.view.ReviewNavigationBarBottomAdapter;
-import net.gini.android.capture.review.zoom.ZoomInPreviewActivity;
-import net.gini.android.capture.tracking.ReviewScreenEvent;
-import net.gini.android.capture.tracking.ReviewScreenEvent.UPLOAD_ERROR_DETAILS_MAP_KEY;
-import net.gini.android.capture.view.InjectedViewAdapterHolder;
-import net.gini.android.capture.view.InjectedViewContainer;
-import net.gini.android.capture.view.NavButtonType;
-import net.gini.android.capture.view.NavigationBarTopAdapter;
-import net.gini.android.capture.view.OnButtonLoadingIndicatorAdapter;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -67,8 +25,52 @@ import androidx.recyclerview.widget.SnapHelper;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.tabs.TabLayout;
 
+import net.gini.android.capture.Document;
+import net.gini.android.capture.GiniCapture;
+import net.gini.android.capture.GiniCaptureError;
+import net.gini.android.capture.R;
+import net.gini.android.capture.document.GiniCaptureDocument;
+import net.gini.android.capture.document.GiniCaptureDocumentError;
+import net.gini.android.capture.document.ImageDocument;
+import net.gini.android.capture.document.ImageMultiPageDocument;
+import net.gini.android.capture.error.ErrorActivity;
+import net.gini.android.capture.error.ErrorType;
+import net.gini.android.capture.internal.network.FailureException;
+import net.gini.android.capture.internal.network.NetworkRequestResult;
+import net.gini.android.capture.internal.network.NetworkRequestsManager;
+import net.gini.android.capture.internal.ui.ClickListenerExtKt;
+import net.gini.android.capture.internal.ui.FragmentImplCallback;
+import net.gini.android.capture.internal.ui.IntervalClickListener;
+import net.gini.android.capture.internal.util.AlertDialogHelperCompat;
+import net.gini.android.capture.internal.util.FileImportHelper;
+import net.gini.android.capture.review.multipage.previews.MiddlePageManager;
+import net.gini.android.capture.review.multipage.previews.PreviewFragmentListener;
+import net.gini.android.capture.review.multipage.previews.PreviewPagesAdapter;
+import net.gini.android.capture.review.multipage.view.ReviewNavigationBarBottomAdapter;
+import net.gini.android.capture.review.zoom.ZoomInPreviewActivity;
+import net.gini.android.capture.tracking.AnalysisScreenEvent;
+import net.gini.android.capture.tracking.ReviewScreenEvent;
+import net.gini.android.capture.tracking.ReviewScreenEvent.UPLOAD_ERROR_DETAILS_MAP_KEY;
+import net.gini.android.capture.view.InjectedViewAdapterHolder;
+import net.gini.android.capture.view.InjectedViewContainer;
+import net.gini.android.capture.view.NavButtonType;
+import net.gini.android.capture.view.NavigationBarTopAdapter;
+import net.gini.android.capture.view.OnButtonLoadingIndicatorAdapter;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import jersey.repackaged.jsr166e.CompletableFuture;
 import kotlin.Unit;
+
+import static net.gini.android.capture.GiniCaptureError.ErrorCode.MISSING_GINI_CAPTURE_INSTANCE;
+import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
+import static net.gini.android.capture.internal.util.FileImportHelper.showAlertIfOpenWithDocumentAndAppIsDefault;
+import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
+import static net.gini.android.capture.tracking.EventTrackingHelper.trackReviewScreenEvent;
 
 /**
  * Created by Alpar Szotyori on 07.05.2018.
@@ -693,6 +695,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
             } else {
                 final GiniCaptureDocumentError documentError = mMultiPageDocument.getErrorForDocument(imageDocument);
                 if (documentError != null) {
+                    trackAnalysisScreenEvent(AnalysisScreenEvent.ERROR);
                     ErrorType errorType = ErrorType.typeFromDocumentErrorCode(documentError.getErrorCode());
                     ErrorActivity.startErrorActivity(requireActivity(), errorType, imageDocument);
                 }
@@ -757,6 +760,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     private void handleError(Throwable throwable, Document document) {
         if (getActivity() != null) {
             final FailureException failureException = FailureException.tryCastFromCompletableFutureThrowable(throwable);
+            trackAnalysisScreenEvent(AnalysisScreenEvent.ERROR);
             if (failureException != null) {
                 ErrorActivity.startErrorActivity(requireActivity(), failureException.getErrorType(), document);
             } else {
