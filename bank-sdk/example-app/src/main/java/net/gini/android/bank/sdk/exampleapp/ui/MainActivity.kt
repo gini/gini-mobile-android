@@ -142,11 +142,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startGiniCaptureSdk(intent: Intent? = null) {
-        val report = GiniBank.checkCaptureRequirements(this@MainActivity)
-        if (!report.isFulfilled) {
-            showUnfulfilledRequirementsToast(report)
-        }
-
         configureGiniCapture()
 
         if (intent != null) {
