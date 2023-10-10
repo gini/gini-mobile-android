@@ -172,4 +172,5 @@
     <string name="gc_menu_item_help_button_content_description">Hilfe, Schaltfläche</string>
     <string name="gc_menu_item_close_button_content_description">Schließen, Schaltfläche</string>
     <string name="gc_iban_detected_please_take_picture">\n\nBitte ein Foto machen</string>
+    <string name="gc_iban_detected">IBAN erkannt</string>
 </resources>

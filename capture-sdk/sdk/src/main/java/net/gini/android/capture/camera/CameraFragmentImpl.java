@@ -1782,7 +1782,10 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private void showIBANsDetectedOnScreen(List<String> ibans) {
         if (!ibans.isEmpty()) {
             mIbanDetectedTextView.setVisibility(View.VISIBLE);
-            mIbanDetectedTextView.setText(String.format("%s%s", ibans, mFragment.getActivity().getString(R.string.gc_iban_detected_please_take_picture)));
+            if (ibans.size() == 1)
+                mIbanDetectedTextView.setText(String.format("%s%s", ibans.get(0), mFragment.getActivity().getString(R.string.gc_iban_detected_please_take_picture)));
+            else
+                mIbanDetectedTextView.setText(String.format("%s%s", mFragment.getActivity().getString(R.string.gc_iban_detected), mFragment.getActivity().getString(R.string.gc_iban_detected_please_take_picture)));
         } else {
             mIbanDetectedTextView.setVisibility(View.GONE);
         }
