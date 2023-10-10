@@ -155,12 +155,14 @@ class IBANRecognizerImplTest {
         arrayOf("AT195400071341364866", listOf("AT195400071341364866")),
         // support IBANs with whitespace
         arrayOf(loadTextResource("o2doc2-dookuid-8645.txt"), listOf("DE16700202700005713153")),
-        // use first detected IBAN
+        // use all detected German IBANs
         arrayOf(loadTextResource("samplecontract-dookuid-380.txt"), listOf("DE50700100800014060800", "DE64700202700000088811", "DE23701500000000109850")),
         // prefer German IBANs
         arrayOf(loadTextResource("dookuid-1311.txt"), listOf("DE92680800300672270200")),
         // support IBANs with whitespace
         arrayOf(loadTextResource("smantix_1756-dookuid-281.txt"), listOf("DE28430609672032163700")),
+        // filter out same IBANs irrespective of whitespace
+        arrayOf(loadTextResource("same-iban-with-and-without-whitespaces.txt"), listOf("AT471100000660044901")),
     )
 
     private fun loadTextResource(name: String): String {
