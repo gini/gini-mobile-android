@@ -1,65 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <style name="AppTheme" parent="Theme.Material3.DayNight">
+        <item name="android:windowBackground">@color/gc_color_01</item>
+        <item name="colorPrimary">@color/gc_accent_01</item>
+        <item name="colorPrimaryDark">@color/gc_color_02</item>
+        <item name="colorOnPrimary">@color/gc_color_01</item>
+        <item name="backgroundColor">@color/gc_color_02</item>
+        <item name="colorOnBackground">@color/gc_color_contrast_02</item>
+        <item name="dividerColor">@color/gc_color_02</item>
+        <item name="colorSurface">@color/gc_color_01</item>
+        <item name="colorOnSurface">?attr/colorOnBackground</item>
+        <item name="colorSurfaceInverse">@color/gc_color_contrast_03</item>
+        <item name="colorOnSurfaceInverse">@color/gc_color_02</item>
+        <item name="colorSurfaceVariant">@color/gc_color_01</item>
+        <item name="colorOnSurfaceVariant">?attr/colorOnBackground</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="colorAccent">?attr/colorPrimary</item>
+    </style>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="actionBarTheme">@style/AppActionBar</item>
+
+    <style name="Headline5" parent="TextAppearance.MaterialComponents.Headline5">
+        <item name="android:textColor">@color/gc_color_contrast_01</item>
+    </style>
+
+    <style name="Body1" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="android:textColor">@color/gc_color_contrast_01</item>
+    </style>
+
+    <style name="Body1Gray" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="android:textColor">@color/gc_color_contrast_05</item>
     </style>
 
     <style name="AppActionBar" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar">
-        <item name="android:tint">@color/white</item>
+        <item name="android:tint">@color/gc_color_01</item>
     </style>
 
     <style name="SwitchConfigurationStyle" parent="TextAppearance.MaterialComponents.Body1">
         <item name="android:textStyle">bold</item>
     </style>
 
-    <!-- Example of customizing the status bar color -->
-<!--    <style name="GiniCaptureTheme" parent="Root.GiniCaptureTheme">-->
-<!--        <item name="colorPrimaryDark">@color/Error_03</item>-->
-<!--    </style>-->
+    <style name="PhotoPaymentButtonStyle" parent="Widget.Material3.Button">
+        <item name="cornerRadius">4dp</item>
+        <item name="backgroundTint">@color/gc_color_04</item>
+        <item name="android:textColor">@color/gc_color_contrast_01</item>
+        <item name="android:textSize">17sp</item>
+    </style>
 
-    <!-- Example of customizing the Camera Screen no camera permission error's text style -->
-    <!--<style name="GiniCaptureTheme.Camera.Error.NoPermission.TextStyle" parent="Root.GiniCaptureTheme.Camera.Error.NoPermission.TextStyle">-->
-        <!--<item name="android:textStyle">bold</item>-->
-        <!--<item name="android:textSize">30sp</item>-->
-        <!--<item name="gcCustomFont">Cave-Story.ttf</item>-->
-    <!--</style>-->
+    <style name="TextInputLayoutThemeOverlay" parent="">
+        <item name="colorControlActivated">@color/gc_color_contrast_01</item>
+    </style>
 
-    <!-- Example of customizing the Camera Screen no camera permission error button's text style -->
-    <!--<style name="GiniCaptureTheme.Camera.Error.NoPermission.Button.TextStyle" parent="Root.GiniCaptureTheme.Camera.Error.NoPermission.Button.TextStyle">-->
-        <!--<item name="android:textStyle">italic</item>-->
-        <!--<item name="android:textSize">30sp</item>-->
-        <!--<item name="gcCustomFont">Cave-Story.ttf</item>-->
-    <!--</style>-->
-
-    <!-- Example of customizing the Review Screen bottom panel's text style -->
-    <!--<style name="GiniCaptureTheme.Review.BottomPanel.TextStyle" parent="Root.GiniCaptureTheme.Review.BottomPanel.TextStyle">-->
-        <!--<item name="android:textStyle">bold</item>-->
-        <!--<item name="android:textSize">16sp</item>-->
-        <!--<item name="gcCustomFont">fonts/Warenhaus-Standard.ttf</item>-->
-    <!--</style>-->
-
-    <!-- Example of customizing the Onboarding Screen's text style -->
-    <!--<style name="GiniCaptureTheme.Onboarding.Message.TextStyle" parent="Root.GiniCaptureTheme.Onboarding.Message.TextStyle">-->
-        <!--<item name="android:textSize">40sp</item>-->
-    <!--</style>-->
-
-    <!-- Example of customizing the Analysis Screen error snackbar's text style -->
-    <!--<style name="GiniCaptureTheme.Snackbar.Error.TextStyle" parent="Root.GiniCaptureTheme.Snackbar.Error.TextStyle">-->
-        <!--<item name="android:textStyle">bold</item>-->
-        <!--<item name="android:textSize">16sp</item>-->
-        <!--<item name="gcCustomFont"/>-->
-    <!--</style>-->
-
-    <!-- Example of customizing the Analysis Screen error snackbar button's text style -->
-    <!--<style name="GiniCaptureTheme.Snackbar.Error.Button.TextStyle" parent="Root.GiniCaptureTheme.Snackbar.Error.Button.TextStyle">-->
-        <!--<item name="android:textStyle">bold|italic</item>-->
-        <!--<item name="android:textSize">16sp</item>-->
-        <!--<item name="gcCustomFont"/>-->
-    <!--</style>-->
+    <style name="TextInputLayoutStyle" parent="ThemeOverlay.Material3.TextInputEditText.FilledBox">
+        <item name="android:theme">@style/TextInputLayoutThemeOverlay</item>
+        <item name="boxBackgroundColor">@color/gc_color_04</item>
+        <item name="boxStrokeColor">@color/text_input_layout_stroke_color</item>
+        <item name="android:textColor">@color/gc_color_contrast_04</item>
+        <item name="android:textColorHint">@color/gc_color_contrast_01</item>
+        <item name="hintTextColor">@color/gc_color_contrast_01</item>
+        <item name="endIconTint">@color/gc_color_contrast_01</item>
+    </style>
 
 </resources>

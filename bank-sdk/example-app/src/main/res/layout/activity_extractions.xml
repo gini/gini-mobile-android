@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="net.gini.android.bank.exampleapp.ui.ExtractionsActivity">
+    tools:context=".ui.ExtractionsActivity">
 
     <TextView
         android:id="@+id/text_document_id"
@@ -41,7 +41,6 @@
             android:layout_gravity="center"
             android:paddingBottom="10dp"
             android:indeterminateOnly="true"
-            android:indeterminateTint="@color/colorPrimary"
             android:indeterminateTintMode="src_in"
             tools:targetApi="lollipop" />
 

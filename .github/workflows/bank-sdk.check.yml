@@ -141,7 +141,7 @@ jobs:
       - name: archive debug screen api example app
         uses: actions/upload-artifact@v3
         with:
-          name: example-app-debug
+          name: bank-sdk-example-app-debug
           path: bank-sdk/example-app/build/outputs/apk/debug
 
       - name: build release screen api example app
@@ -157,7 +157,7 @@ jobs:
       - name: archive release screen api example app
         uses: actions/upload-artifact@v3
         with:
-          name: example-app-release
+          name: bank-sdk-example-app-release
           path: bank-sdk/example-app/build/outputs/apk/release
 
   android-lint:

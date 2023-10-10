@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#009edc</color>
-    <color name="colorPrimaryDark">#017dae</color>
-    <color name="colorAccent">#009edc</color>
-    <color name="white">#ffffff</color>
+    <color name="gc_color_01">@color/gc_light_01</color>
+    <color name="gc_color_02">@color/gc_light_02</color>
+    <color name="gc_color_03">@color/gc_light_03</color>
+    <color name="gc_color_04">@color/gc_light_04</color>
+    <color name="gc_color_05">@color/gc_light_05</color>
+    <color name="gc_color_06">@color/gc_light_06</color>
+
+    <color name="gc_color_contrast_01">@color/gc_dark_01</color>
+    <color name="gc_color_contrast_02">@color/gc_dark_02</color>
+    <color name="gc_color_contrast_03">@color/gc_dark_03</color>
+    <color name="gc_color_contrast_04">@color/gc_dark_04</color>
+    <color name="gc_color_contrast_05">@color/gc_dark_05</color>
+    <color name="gc_color_contrast_06">@color/gc_dark_06</color>
 </resources>

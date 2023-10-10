@@ -1,5 +1,19 @@
 <resources>
     <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="gc_small">4dp</dimen>
+    <dimen name="gc_medium">8dp</dimen>
+    <dimen name="gc_medium_12">12dp</dimen>
+    <dimen name="gc_large">16dp</dimen>
+    <dimen name="gc_large_20">20dp</dimen>
+    <dimen name="gc_large_24">24dp</dimen>
+    <dimen name="gc_large_32">32dp</dimen>
+    <dimen name="gc_large_48">48dp</dimen>
+    <dimen name="gc_large_64">64dp</dimen>
+    <dimen name="gc_large_72">72dp</dimen>
+    <dimen name="gc_large_80">80dp</dimen>
+    <dimen name="gc_large_96">96dp</dimen>
+
+
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="input_spacing">16dp</dimen>
