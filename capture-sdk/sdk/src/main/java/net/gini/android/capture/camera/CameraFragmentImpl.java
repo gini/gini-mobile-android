@@ -127,7 +127,7 @@ import static net.gini.android.capture.tracking.EventTrackingHelper.trackCameraS
 
 /**
  * Internal use only.
- *
+ * <p>
  * Legacy class which was used to share camera fragment logic between support library (androidx) fragments and
  * native ones.
  * TODO: refactor this to use a modern architecture for the camera fragment
@@ -257,6 +257,8 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private void handleQRCodeDetected(@Nullable final PaymentQRCodeData paymentQRCodeData,
                                       @NonNull final String qrCodeContent) {
+
+        hideIBANsDetectedOnScreen();
 
         if (mInterfaceHidden) {
             return;
@@ -404,7 +406,9 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         if (isQRCodeScanningEnabled()) {
             initQRCodeReader();
         }
-        if (GiniCapture.hasInstance() && GiniCapture.getInstance().getEntryPoint() == EntryPoint.FIELD) {
+        if (GiniCapture.hasInstance()
+                && GiniCapture.getInstance().getEntryPoint() == EntryPoint.FIELD
+                && !isOnlyQRCodeScanningEnabled()) {
             initIBANRecognizerFilter();
         }
 
@@ -528,7 +532,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             return;
         }
         ibanRecognizerFilter = new IBANRecognizerFilter(new IBANRecognizerImpl(MLKitTextRecognizer.newInstance()), (IBANRecognizerFilter.Listener) ibans -> {
-            showIbansDetectedOnScreen(ibans);
+            showIBANsDetectedOnScreen(ibans);
         });
     }
 
@@ -690,7 +694,8 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private void preventPaneClickThrough() {
         mPaneWrapper.setEnabled(false);
-        mPaneWrapper.setOnClickListener(v -> {});
+        mPaneWrapper.setOnClickListener(v -> {
+        });
     }
 
     private void setTopBarInjectedViewContainer() {
@@ -763,7 +768,8 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private void setCustomLoadingIndicator() {
         if (GiniCapture.hasInstance()) {
 //            mLoadingIndicator.invalidate();
-            mLoadingIndicator.setInjectedViewAdapterHolder(new InjectedViewAdapterHolder<>(GiniCapture.getInstance().internal().getLoadingIndicatorAdapterInstance(), injectedViewAdapter -> {}));
+            mLoadingIndicator.setInjectedViewAdapterHolder(new InjectedViewAdapterHolder<>(GiniCapture.getInstance().internal().getLoadingIndicatorAdapterInstance(), injectedViewAdapter -> {
+            }));
 //            mLoadingIndicator.setInjectedViewAdapter(GiniCapture.getInstance().getloadingIndicatorAdapter());
 
 //            if (mLoadingIndicator.getInjectedViewAdapter() != null)
@@ -1762,7 +1768,8 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                     }
                     if (ibanRecognizerFilter != null) {
                         try {
-                            ibanRecognizerFilter.processByteArray(image, imageSize.width, imageSize.height, rotation, () -> {});
+                            ibanRecognizerFilter.processByteArray(image, imageSize.width, imageSize.height, rotation, () -> {
+                            });
                         } catch (Exception e) {
                             LOG.error("Failed to process image for IBAN recognition", e);
                         }
@@ -1772,7 +1779,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         }
     }
 
-    private void showIbansDetectedOnScreen(List<String> ibans) {
+    private void showIBANsDetectedOnScreen(List<String> ibans) {
         if (!ibans.isEmpty()) {
             mIbanDetectedTextView.setVisibility(View.VISIBLE);
             mIbanDetectedTextView.setText(String.format("%s%s", ibans, mFragment.getActivity().getString(R.string.gc_iban_detected_please_take_picture)));
@@ -1780,6 +1787,11 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             mIbanDetectedTextView.setVisibility(View.GONE);
         }
     }
+
+    private void hideIBANsDetectedOnScreen() {
+        mIbanDetectedTextView.setVisibility(View.GONE);
+    }
+
 
     @NonNull
     protected CameraInterface createCameraController(final Activity activity) {
