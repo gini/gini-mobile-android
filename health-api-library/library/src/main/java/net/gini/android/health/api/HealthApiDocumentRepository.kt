@@ -66,7 +66,7 @@ class HealthApiDocumentRepository(
 
     private suspend fun getPages(accessToken: String, documentId: String): List<Page> =
         documentRemoteSource.getPages(accessToken, documentId)
-            .toPageList(Uri.parse(giniApiType.baseUrl))
+            .toPageList(documentRemoteSource.baseUri)
 
     suspend fun getPaymentProviders(): Resource<List<PaymentProvider>> {
         return withAccessToken { accessToken ->
