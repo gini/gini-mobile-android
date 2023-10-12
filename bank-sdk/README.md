@@ -7,7 +7,7 @@ The Gini Bank SDK for Android provides all the UI and functionality needed to us
 extract payment information from invoices and to resolve payment requests originating from other apps.
 
 The Gini Bank API provides an information extraction service for analyzing invoices. Specifically it extracts information
-such as the document sender or the payment relevant information (amount to pay, IBAN, etc.). In addition it also
+such as the document sender or the payment relevant information (amount to pay, IBAN, etc.). In addition, it also
 provides a secure channel for sharing payment related information between clients.
 
 Documentation
@@ -20,17 +20,11 @@ Examples
 
 ## Invoice Capture
 
-We are providing example apps for the Screen API and the Component API. These apps demonstrate how
-to integrate the Gini Pay Bank SDK's invoice capture feature:
-
-You can find the example apps in the following modules:
-
-- `screen-api-example-app` for the Screen API
-- `component-api-example-app` for the Component API
+We are providing an example app in the `:bank-sdk:example-app` module, which demonstrates how to integrate the Gini Bank SDK's invoice capture feature.
 
 ## Payment Requests
 
-You can find an example on how to handle payment requests in the `screen-api-example-app` module's `PayActivity`. 
+You can find an example on how to handle payment requests in the example app's `PayActivity`. 
 
 For testing the payment flow integration you can use the example app from the [Health
 SDK](https://github.com/gini/gini-mobile-android/tree/main/health-sdk#example-apps) to create payment requests.
