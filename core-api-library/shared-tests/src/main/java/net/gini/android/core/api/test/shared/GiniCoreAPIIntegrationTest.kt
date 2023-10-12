@@ -45,7 +45,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
     private lateinit var clientId: String
     private lateinit var clientSecret: String
     private lateinit var apiUri: String
-    private lateinit var userCenterUri: String
+    protected lateinit var userCenterUri: String
     private lateinit var credentialsStore: InMemoryCredentialsStore
 
     @Before
@@ -63,6 +63,8 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
         apiUri = getProperty(testProperties, "testApiUri")
         userCenterUri = getProperty(testProperties, "testUserCenterUri")
 
+        onTestPropertiesAvailable(testProperties)
+
         TrustKitHelper.resetTrustKit()
 
         credentialsStore = InMemoryCredentialsStore()
@@ -72,8 +74,11 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
             .setUserCenterApiBaseUrl(userCenterUri)
             .setConnectionTimeoutInMs(60000)
             .setCredentialsStore(credentialsStore)
+            .setDebuggingEnabled(true)
             .build()
     }
+
+    abstract fun onTestPropertiesAvailable(properties: Properties)
 
     class InMemoryCredentialsStore: CredentialsStore {
 
@@ -453,7 +458,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
         return Collections.singletonMap(createComposite.dataOrThrow, retrieveExtractions.dataOrThrow);
     }
 
-    private fun getProperty(properties: Properties, propertyName: String): String {
+    protected fun getProperty(properties: Properties, propertyName: String): String {
         val value = properties[propertyName]
         Assert.assertNotNull("$propertyName not set!", value)
         return value.toString()

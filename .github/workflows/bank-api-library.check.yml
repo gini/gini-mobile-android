@@ -74,6 +74,7 @@ jobs:
             -PtestClientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
             -PtestApiUri="https://pay-api.gini.net"
             -PtestUserCenterUri="https://user.gini.net"
+            -PtestHealthApiUri="https://health-api.gini.net"
 
       - name: archive instrumented test results
         if: always()

@@ -39,6 +39,11 @@ import java.util.*
 class GiniBankAPIIntegrationTest: GiniCoreAPIIntegrationTest<BankApiDocumentManager, BankApiDocumentRepository, GiniBankAPI, ExtractionsContainer>() {
 
     private lateinit var giniHealthApi: GiniHealthAPI
+    private lateinit var healthApiUri: String
+
+    override fun onTestPropertiesAvailable(properties: Properties) {
+        healthApiUri = getProperty(properties, "testHealthApiUri")
+    }
 
     @Test
     @Throws(Exception::class)
@@ -262,7 +267,10 @@ class GiniBankAPIIntegrationTest: GiniCoreAPIIntegrationTest<BankApiDocumentMana
         clientSecret: String,
         emailDomain: String
     ): GiniCoreAPIBuilder<BankApiDocumentManager, GiniBankAPI, BankApiDocumentRepository, ExtractionsContainer> {
-        giniHealthApi = GiniHealthAPIBuilder(getApplicationContext(), clientId, clientSecret, emailDomain).build()
+        giniHealthApi = GiniHealthAPIBuilder(getApplicationContext(), clientId, clientSecret, emailDomain)
+            .setApiBaseUrl(healthApiUri)
+            .setUserCenterApiBaseUrl(userCenterUri)
+            .build()
         return GiniBankAPIBuilder(getApplicationContext(), clientId, clientSecret, emailDomain)
     }
 
