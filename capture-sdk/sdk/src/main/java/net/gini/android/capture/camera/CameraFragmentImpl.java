@@ -226,6 +226,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private int mMultiPageDocumentSize = 0;
     private boolean mShouldScrollToLastPage = false;
     private String mQRCodeContent;
+    private boolean mIsOnDeviceIbanDetectionEnabled = true;
 
     private InjectedViewContainer<NavigationBarTopAdapter> topAdapterInjectedViewContainer;
     private InjectedViewContainer<CustomLoadingIndicatorAdapter> mLoadingIndicator;
@@ -258,13 +259,18 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private void handleQRCodeDetected(@Nullable final PaymentQRCodeData paymentQRCodeData,
                                       @NonNull final String qrCodeContent) {
 
-        hideIBANsDetectedOnScreen();
+        disableIBANsDetectedOnScreen();
 
         if (mInterfaceHidden) {
             return;
         }
 
-        if (mUnsupportedQRCodePopup.isShown() || mPaymentQRCodePopup.isShown())
+        if (mUnsupportedQRCodePopup.isShown()) {
+            mIsOnDeviceIbanDetectionEnabled = true;
+            return;
+        }
+
+        if (mPaymentQRCodePopup.isShown())
             return;
 
         if (mQRCodeContent == null || !mQRCodeContent.equals(qrCodeContent)) {
@@ -1780,7 +1786,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     }
 
     private void showIBANsDetectedOnScreen(List<String> ibans) {
-        if (!ibans.isEmpty()) {
+        if (!ibans.isEmpty() && mIsOnDeviceIbanDetectionEnabled) {
             mIbanDetectedTextView.setVisibility(View.VISIBLE);
             if (ibans.size() == 1)
                 mIbanDetectedTextView.setText(String.format("%s%s", ibans.get(0), mFragment.getActivity().getString(R.string.gc_iban_detected_please_take_picture)));
@@ -1791,8 +1797,9 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         }
     }
 
-    private void hideIBANsDetectedOnScreen() {
+    private void disableIBANsDetectedOnScreen() {
         mIbanDetectedTextView.setVisibility(View.GONE);
+        mIsOnDeviceIbanDetectionEnabled = false;
     }
 
 
