@@ -226,7 +226,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private int mMultiPageDocumentSize = 0;
     private boolean mShouldScrollToLastPage = false;
     private String mQRCodeContent;
-    private boolean mIsOnDeviceIbanDetectionEnabled = true;
 
     private InjectedViewContainer<NavigationBarTopAdapter> topAdapterInjectedViewContainer;
     private InjectedViewContainer<CustomLoadingIndicatorAdapter> mLoadingIndicator;
@@ -258,20 +257,15 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private void handleQRCodeDetected(@Nullable final PaymentQRCodeData paymentQRCodeData,
                                       @NonNull final String qrCodeContent) {
-
-        disableIBANsDetectedOnScreen();
-
         if (mInterfaceHidden) {
             return;
         }
 
-        if (mUnsupportedQRCodePopup.isShown()) {
-            mIsOnDeviceIbanDetectionEnabled = true;
+        if (isQRCodeDetectionInProgress()) {
             return;
         }
 
-        if (mPaymentQRCodePopup.isShown())
-            return;
+        hideIBANsDetectedOnScreen();
 
         if (mQRCodeContent == null || !mQRCodeContent.equals(qrCodeContent)) {
             showQRCodeView(paymentQRCodeData, qrCodeContent);
@@ -1786,7 +1780,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     }
 
     private void showIBANsDetectedOnScreen(List<String> ibans) {
-        if (!ibans.isEmpty() && mIsOnDeviceIbanDetectionEnabled) {
+        if (!ibans.isEmpty() && !isQRCodeDetectionInProgress()) {
             mIbanDetectedTextView.setVisibility(View.VISIBLE);
             if (ibans.size() == 1)
                 mIbanDetectedTextView.setText(String.format("%s%s", ibans.get(0), mFragment.getActivity().getString(R.string.gc_iban_detected_please_take_picture)));
@@ -1797,11 +1791,13 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         }
     }
 
-    private void disableIBANsDetectedOnScreen() {
-        mIbanDetectedTextView.setVisibility(View.GONE);
-        mIsOnDeviceIbanDetectionEnabled = false;
+    private boolean isQRCodeDetectionInProgress() {
+        return mPaymentQRCodePopup.isShown() || mUnsupportedQRCodePopup.isShown();
     }
 
+    private void hideIBANsDetectedOnScreen() {
+        mIbanDetectedTextView.setVisibility(View.GONE);
+    }
 
     @NonNull
     protected CameraInterface createCameraController(final Activity activity) {
