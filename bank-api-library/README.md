@@ -22,8 +22,7 @@ Dependencies
 
 The Gini Bank API Library has the following dependencies:
 
-* [Volley from Google](https://developer.android.com/training/volley/index.html) ([AOSP Repository](https://android.googlesource.com/platform/frameworks/volley))
-* [Bolts from facebook](https://github.com/BoltsFramework/Bolts-Android)
+* [Retrofit2](https://square.github.io/retrofit/)
 * [TrustKit from DataTheorem](https://github.com/datatheorem/TrustKit-Android)
 
 License
