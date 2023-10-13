@@ -18,13 +18,6 @@ Documentation
 * [Gini Capture Reference Docs](https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/dokka/index.html)
 * [Network Library Reference Docs](https://developer.gini.net/gini-mobile-android/capture-sdk/default-network/dokka/index.html)
 
-Examples
---------
-
-We are providing example apps for the Screen API and the Component API. These apps demonstrate how
-to integrate the Gini Capture SDK and how to use it with the Gini Capture Network Library to
-analyze photos of documents.
-
 License
 -------
 
