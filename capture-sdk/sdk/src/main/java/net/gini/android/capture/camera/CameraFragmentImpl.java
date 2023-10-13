@@ -274,6 +274,10 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         }
     }
 
+    private boolean isQRCodeDetectionInProgress() {
+        return mPaymentQRCodePopup.isShown() || mUnsupportedQRCodePopup.isShown();
+    }
+
     private void showQRCodeViewWithDelay(PaymentQRCodeData data, String qrCodeContent) {
         new Handler(Looper.getMainLooper())
                 .postDelayed(() -> {
@@ -531,9 +535,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         if (ibanRecognizerFilter != null) {
             return;
         }
-        ibanRecognizerFilter = new IBANRecognizerFilter(new IBANRecognizerImpl(MLKitTextRecognizer.newInstance()), (IBANRecognizerFilter.Listener) ibans -> {
-            showIBANsDetectedOnScreen(ibans);
-        });
+        ibanRecognizerFilter = new IBANRecognizerFilter(new IBANRecognizerImpl(MLKitTextRecognizer.newInstance()), this::handleIBANsDetected);
     }
 
     private void enableTapToFocus() {
@@ -1779,24 +1781,26 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         }
     }
 
-    private void showIBANsDetectedOnScreen(List<String> ibans) {
+    private void handleIBANsDetected(List<String> ibans) {
         if (!ibans.isEmpty() && !isQRCodeDetectionInProgress()) {
-            mIbanDetectedTextView.setVisibility(View.VISIBLE);
-            if (ibans.size() == 1)
-                mIbanDetectedTextView.setText(String.format("%s%s", ibans.get(0), mFragment.getActivity().getString(R.string.gc_iban_detected_please_take_picture)));
-            else
-                mIbanDetectedTextView.setText(String.format("%s%s", mFragment.getActivity().getString(R.string.gc_iban_detected), mFragment.getActivity().getString(R.string.gc_iban_detected_please_take_picture)));
+            showIBANsDetectedOnScreen(ibans);
         } else {
-            mIbanDetectedTextView.setVisibility(View.GONE);
+            hideIBANsDetectedOnScreen();
         }
     }
 
-    private boolean isQRCodeDetectionInProgress() {
-        return mPaymentQRCodePopup.isShown() || mUnsupportedQRCodePopup.isShown();
+    private void showIBANsDetectedOnScreen(List<String> ibans) {
+        mIbanDetectedTextView.setVisibility(View.VISIBLE);
+        if (ibans.size() == 1) {
+            mIbanDetectedTextView.setText(String.format("%s%s", ibans.get(0), mFragment.getActivity().getString(R.string.gc_iban_detected_please_take_picture)));
+        } else {
+            mIbanDetectedTextView.setText(String.format("%s%s", mFragment.getActivity().getString(R.string.gc_iban_detected), mFragment.getActivity().getString(R.string.gc_iban_detected_please_take_picture)));
+        }
     }
 
     private void hideIBANsDetectedOnScreen() {
         mIbanDetectedTextView.setVisibility(View.GONE);
+        mIbanDetectedTextView.setText("");
     }
 
     @NonNull
