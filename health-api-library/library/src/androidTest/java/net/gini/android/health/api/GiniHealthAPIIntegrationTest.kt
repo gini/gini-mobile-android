@@ -21,6 +21,7 @@ import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.util.Collections.singletonList
+import java.util.Properties
 
 /**
  * Created by Alpár Szotyori on 24.01.22.
@@ -170,6 +171,8 @@ class GiniHealthAPIIntegrationTest: GiniCoreAPIIntegrationTest<HealthApiDocument
         val imageBytes = giniCoreApi.documentManager.getPageImage(document.id, 1).dataOrThrow
         Assert.assertNotNull(BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size))
     }
+
+    override fun onTestPropertiesAvailable(properties: Properties) { }
 
     override fun createGiniCoreAPIBuilder(
         clientId: String,
