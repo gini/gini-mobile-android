@@ -198,6 +198,7 @@ public class GiniCapture {
      * Please follow the recommendations below:
      *
      * <ul>
+     *     <li>Please call this method before calling the {@link #cleanup(Context)} method</li>
      *     <li>Please provide values for all necessary fields, including those that were not extracted.</li>
      *     <li>Provide the final data approved by the user (and not the initially extracted only).</li>
      * </ul>
@@ -270,6 +271,7 @@ public class GiniCapture {
                             }
                         }
                     });
+
     }
 
 
@@ -293,7 +295,7 @@ public class GiniCapture {
      * @param bic bank identification code
      * @param amount accepts extracted amount and currency
      *
-     * @deprecated Please use {@link #cleanup(Context)} which does not require transfer summary parameters.
+     * @deprecated Please use {@link #cleanup(Context)} to cleanup and {@link #transferSummary(String, String, String, String, String, Amount)} to provide the required extraction feedback.
      */
 
     @Deprecated
@@ -304,60 +306,7 @@ public class GiniCapture {
                                             @NonNull final String iban,
                                             @NonNull final String bic,
                                             @NonNull final Amount amount) {
-
-        if (sInstance == null) {
-            return;
-        }
-
-        Map<String, GiniCaptureSpecificExtraction> extractionMap = new HashMap<>();
-
-        extractionMap.put("amountToPay", new GiniCaptureSpecificExtraction("amountToPay", amount.amountToPay(),
-                "amount", null, emptyList()));
-
-        extractionMap.put("paymentRecipient", new GiniCaptureSpecificExtraction("paymentRecipient", paymentRecipient,
-                "companyname", null, emptyList()));
-
-        extractionMap.put("paymentReference", new GiniCaptureSpecificExtraction("paymentReference", paymentReference,
-                "reference", null, emptyList()));
-
-        extractionMap.put("paymentPurpose", new GiniCaptureSpecificExtraction("paymentPurpose", paymentPurpose,
-                "reference", null, emptyList()));
-
-        extractionMap.put("iban", new GiniCaptureSpecificExtraction("iban", iban,
-                "iban", null, emptyList()));
-
-        extractionMap.put("bic", new GiniCaptureSpecificExtraction("bic", bic,
-                "bic", null, emptyList()));
-
-
-        // Test fails here if for some reason mGiniCaptureNetworkService is null
-        // Added null checking to fix test fail -> or figure out something else
-        final GiniCapture oldInstance = sInstance;
-        if (oldInstance.mGiniCaptureNetworkService != null)
-            oldInstance.mGiniCaptureNetworkService.sendFeedback(extractionMap,
-                    oldInstance.mInternal.getCompoundExtractions(), new GiniCaptureNetworkCallback<Void, Error>() {
-                        @Override
-                        public void failure(Error error) {
-                            if (oldInstance.mNetworkRequestsManager != null) {
-                                oldInstance.mNetworkRequestsManager.cleanup();
-                            }
-                        }
-
-                        @Override
-                        public void success(Void result) {
-                            if (oldInstance.mNetworkRequestsManager != null) {
-                                oldInstance.mNetworkRequestsManager.cleanup();
-                            }
-                        }
-
-                        @Override
-                        public void cancelled() {
-                            if (oldInstance.mNetworkRequestsManager != null) {
-                                oldInstance.mNetworkRequestsManager.cleanup();
-                            }
-                        }
-                    });
-
+        transferSummary(paymentRecipient, paymentReference, paymentPurpose, iban, bic, amount);
         cleanup(context);
     }
 

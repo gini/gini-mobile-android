@@ -34,9 +34,7 @@ import net.gini.android.capture.onboarding.view.OnboardingIllustrationAdapter
 import net.gini.android.capture.requirements.GiniCaptureRequirements
 import net.gini.android.capture.requirements.RequirementsReport
 import net.gini.android.capture.util.CancellationToken
-import net.gini.android.capture.view.DefaultNavigationBarTopAdapter
 import net.gini.android.capture.view.InjectedViewAdapterInstance
-import net.gini.android.capture.view.NavigationBarTopAdapter
 import net.gini.android.core.api.Resource
 import net.gini.android.core.api.models.PaymentRequest
 
@@ -133,6 +131,45 @@ object GiniBank {
         giniCapture = GiniCapture.getInstance()
     }
 
+
+    /**
+     * Provides transfer summary to Gini.
+     *
+     *
+     * Please provide the required extraction feedback to improve the future extraction accuracy.
+     * Please follow the recommendations below:
+     *
+     * Please make sure to call this method before calling [releaseCapture].
+     *
+     *  Please provide values for all necessary fields, including those that were not extracted.
+     *  Provide the final data approved by the user (and not the initially extracted only).
+     *
+     *
+     * @param paymentRecipient payment receiver
+     * @param paymentReference ID based on Client ID (Kundennummer) and invoice ID (Rechnungsnummer)
+     * @param paymentPurpose statement what this payment is for
+     * @param iban international bank account
+     * @param bic bank identification code
+     * @param amount accepts extracted amount and currency
+     */
+    fun transferSummary(
+        paymentRecipient: String,
+        paymentReference: String,
+        paymentPurpose: String,
+        iban: String,
+        bic: String,
+        amount: Amount
+    ) {
+        GiniCapture.transferSummary(
+            paymentRecipient,
+            paymentReference,
+            paymentPurpose,
+            iban,
+            bic,
+            amount
+        )
+    }
+
     /**
      * Frees up resources used by the capture flow.
      *
@@ -150,7 +187,13 @@ object GiniBank {
      * @param iban international bank account
      * @param bic bank identification code
      * @param amount accepts extracted amount and currency
+     *
+     * @deprecated Please use {@link #releaseCapture(Context)} which does not require transfer summary parameters.
      */
+    @Deprecated(
+        "Please use releaseCapture(Context) which does not require transfer summary parameters.",
+        ReplaceWith("releaseCapture(context)")
+    )
     fun releaseCapture(
         context: Context,
         paymentRecipient: String,
@@ -160,14 +203,29 @@ object GiniBank {
         bic: String,
         amount: Amount
     ) {
-        GiniCapture.cleanup(
-            context,
+        transferSummary(
             paymentRecipient,
             paymentReference,
             paymentPurpose,
             iban,
             bic,
             amount
+        )
+        releaseCapture(context)
+    }
+
+
+    /**
+     * Frees up resources used by the capture flow.
+     *
+     * @param context Android context
+     *
+     */
+    fun releaseCapture(
+        context: Context
+    ) {
+        GiniCapture.cleanup(
+            context
         )
         captureConfiguration = null
         giniCapture = null
@@ -176,7 +234,7 @@ object GiniBank {
         digitalInvoiceHelpNavigationBarBottomAdapter = DefaultDigitalInvoiceHelpNavigationBarBottomAdapter()
 
         digitalInvoiceOnboardingIllustrationAdapter = ImageOnboardingIllustrationAdapter(R.drawable.gbs_digital_invoice_list_image,
-        R.string.gbs_digital_invoice_onboarding_text_1)
+            R.string.gbs_digital_invoice_onboarding_text_1)
 
         digitalInvoiceNavigationBarBottomAdapter = DefaultDigitalInvoiceNavigationBarBottomAdapter()
     }
