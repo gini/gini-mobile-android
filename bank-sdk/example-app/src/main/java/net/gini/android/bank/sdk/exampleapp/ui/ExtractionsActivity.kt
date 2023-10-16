@@ -47,8 +47,12 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
 
     // {extraction name} to it's {entity name}
     private val editableSpecificExtractions = hashMapOf(
-        "paymentRecipient" to "companyname", "paymentReference" to "reference",
-        "paymentPurpose" to "text", "iban" to "iban", "bic" to "bic", "amountToPay" to "amount"
+        "paymentRecipient" to "companyname",
+        "paymentReference" to "reference",
+        "paymentPurpose" to "text",
+        "iban" to "iban",
+        "bic" to "bic",
+        "amountToPay" to "amount"
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -102,8 +106,7 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
             editableSpecificExtractions.forEach {
                 if (!mExtractions.containsKey(it.key)) {
                     mExtractions[it.key] = GiniCaptureSpecificExtraction(
-                        it.key, "",
-                        it.value, null, emptyList()
+                        it.key, "", it.value, null, emptyList()
                     )
                 }
             }
@@ -167,14 +170,12 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
         const val EXTRA_IN_EXTRACTIONS = "EXTRA_IN_EXTRACTIONS"
 
         fun getStartIntent(
-            context: Context,
-            extractionsBundle: Map<String, GiniCaptureSpecificExtraction>
-        ): Intent =
-            Intent(context, ExtractionsActivity::class.java).apply {
-                putExtra(EXTRA_IN_EXTRACTIONS, Bundle().apply {
-                    extractionsBundle.map { putParcelable(it.key, it.value) }
-                })
-            }
+            context: Context, extractionsBundle: Map<String, GiniCaptureSpecificExtraction>
+        ): Intent = Intent(context, ExtractionsActivity::class.java).apply {
+            putExtra(EXTRA_IN_EXTRACTIONS, Bundle().apply {
+                extractionsBundle.map { putParcelable(it.key, it.value) }
+            })
+        }
     }
 }
 

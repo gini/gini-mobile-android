@@ -168,8 +168,7 @@ public class GiniCapture {
     @Deprecated
     public static synchronized Builder newInstance() {
         if (sInstance != null) {
-            throw new IllegalStateException("An instance was already created. "
-                    + "Call GiniCapture.cleanup() before creating a new instance.");
+            throw new IllegalStateException("An instance was already created. " + "Call GiniCapture.cleanup() before creating a new instance.");
         }
         return new Builder();
     }
@@ -177,8 +176,8 @@ public class GiniCapture {
     /**
      * Configure and create a new instance using the returned {@link Builder}.
      *
-     * @return a new {@link Builder}
      * @param context Android context
+     * @return a new {@link Builder}
      */
     @NonNull
     public static synchronized Builder newInstance(final Context context) {
@@ -205,19 +204,12 @@ public class GiniCapture {
      *
      * @param paymentRecipient payment receiver
      * @param paymentReference ID based on Client ID (Kundennummer) and invoice ID (Rechnungsnummer)
-     * @param paymentPurpose statement what this payment is for
-     * @param iban international bank account
-     * @param bic bank identification code
-     * @param amount accepts extracted amount and currency
-     *
+     * @param paymentPurpose   statement what this payment is for
+     * @param iban             international bank account
+     * @param bic              bank identification code
+     * @param amount           accepts extracted amount and currency
      */
-    public static synchronized void transferSummary(
-                                            @NonNull final String paymentRecipient,
-                                            @NonNull final String paymentReference,
-                                            @NonNull final String paymentPurpose,
-                                            @NonNull final String iban,
-                                            @NonNull final String bic,
-                                            @NonNull final Amount amount) {
+    public static synchronized void transferSummary(@NonNull final String paymentRecipient, @NonNull final String paymentReference, @NonNull final String paymentPurpose, @NonNull final String iban, @NonNull final String bic, @NonNull final Amount amount) {
 
         if (sInstance == null) {
             return;
@@ -225,52 +217,45 @@ public class GiniCapture {
 
         Map<String, GiniCaptureSpecificExtraction> extractionMap = new HashMap<>();
 
-        extractionMap.put("amountToPay", new GiniCaptureSpecificExtraction("amountToPay", amount.amountToPay(),
-                "amount", null, emptyList()));
+        extractionMap.put("amountToPay", new GiniCaptureSpecificExtraction("amountToPay", amount.amountToPay(), "amount", null, emptyList()));
 
-        extractionMap.put("paymentRecipient", new GiniCaptureSpecificExtraction("paymentRecipient", paymentRecipient,
-                "companyname", null, emptyList()));
+        extractionMap.put("paymentRecipient", new GiniCaptureSpecificExtraction("paymentRecipient", paymentRecipient, "companyname", null, emptyList()));
 
-        extractionMap.put("paymentReference", new GiniCaptureSpecificExtraction("paymentReference", paymentReference,
-                "reference", null, emptyList()));
+        extractionMap.put("paymentReference", new GiniCaptureSpecificExtraction("paymentReference", paymentReference, "reference", null, emptyList()));
 
-        extractionMap.put("paymentPurpose", new GiniCaptureSpecificExtraction("paymentPurpose", paymentPurpose,
-                "reference", null, emptyList()));
+        extractionMap.put("paymentPurpose", new GiniCaptureSpecificExtraction("paymentPurpose", paymentPurpose, "reference", null, emptyList()));
 
-        extractionMap.put("iban", new GiniCaptureSpecificExtraction("iban", iban,
-                "iban", null, emptyList()));
+        extractionMap.put("iban", new GiniCaptureSpecificExtraction("iban", iban, "iban", null, emptyList()));
 
-        extractionMap.put("bic", new GiniCaptureSpecificExtraction("bic", bic,
-                "bic", null, emptyList()));
+        extractionMap.put("bic", new GiniCaptureSpecificExtraction("bic", bic, "bic", null, emptyList()));
 
 
         // Test fails here if for some reason mGiniCaptureNetworkService is null
         // Added null checking to fix test fail -> or figure out something else
         final GiniCapture oldInstance = sInstance;
         if (oldInstance.mGiniCaptureNetworkService != null)
-            oldInstance.mGiniCaptureNetworkService.sendFeedback(extractionMap,
-                    oldInstance.mInternal.getCompoundExtractions(), new GiniCaptureNetworkCallback<Void, Error>() {
-                        @Override
-                        public void failure(Error error) {
-                            if (oldInstance.mNetworkRequestsManager != null) {
-                                oldInstance.mNetworkRequestsManager.cleanup();
-                            }
-                        }
+            oldInstance.mGiniCaptureNetworkService.sendFeedback(extractionMap, oldInstance.mInternal.getCompoundExtractions(), new GiniCaptureNetworkCallback<Void, Error>() {
+                @Override
+                public void failure(Error error) {
+                    if (oldInstance.mNetworkRequestsManager != null) {
+                        oldInstance.mNetworkRequestsManager.cleanup();
+                    }
+                }
 
-                        @Override
-                        public void success(Void result) {
-                            if (oldInstance.mNetworkRequestsManager != null) {
-                                oldInstance.mNetworkRequestsManager.cleanup();
-                            }
-                        }
+                @Override
+                public void success(Void result) {
+                    if (oldInstance.mNetworkRequestsManager != null) {
+                        oldInstance.mNetworkRequestsManager.cleanup();
+                    }
+                }
 
-                        @Override
-                        public void cancelled() {
-                            if (oldInstance.mNetworkRequestsManager != null) {
-                                oldInstance.mNetworkRequestsManager.cleanup();
-                            }
-                        }
-                    });
+                @Override
+                public void cancelled() {
+                    if (oldInstance.mNetworkRequestsManager != null) {
+                        oldInstance.mNetworkRequestsManager.cleanup();
+                    }
+                }
+            });
 
     }
 
@@ -287,25 +272,18 @@ public class GiniCapture {
      *     <li>Do cleanup after TAN verification.to clean up and provide the extraction values the user has used.</li>
      * </ul>
      *
-     * @param context Android context
+     * @param context          Android context
      * @param paymentRecipient payment receiver
      * @param paymentReference ID based on Client ID (Kundennummer) and invoice ID (Rechnungsnummer)
-     * @param paymentPurpose statement what this payment is for
-     * @param iban international bank account
-     * @param bic bank identification code
-     * @param amount accepts extracted amount and currency
-     *
+     * @param paymentPurpose   statement what this payment is for
+     * @param iban             international bank account
+     * @param bic              bank identification code
+     * @param amount           accepts extracted amount and currency
      * @deprecated Please use {@link #cleanup(Context)} to cleanup and {@link #transferSummary(String, String, String, String, String, Amount)} to provide the required extraction feedback.
      */
 
     @Deprecated
-    public static synchronized void cleanup(@NonNull final Context context,
-                                            @NonNull final String paymentRecipient,
-                                            @NonNull final String paymentReference,
-                                            @NonNull final String paymentPurpose,
-                                            @NonNull final String iban,
-                                            @NonNull final String bic,
-                                            @NonNull final Amount amount) {
+    public static synchronized void cleanup(@NonNull final Context context, @NonNull final String paymentRecipient, @NonNull final String paymentReference, @NonNull final String paymentPurpose, @NonNull final String iban, @NonNull final String bic, @NonNull final Amount amount) {
         transferSummary(paymentRecipient, paymentReference, paymentPurpose, iban, bic, amount);
         cleanup(context);
     }
@@ -339,8 +317,7 @@ public class GiniCapture {
         mDocumentDataMemoryCache = new DocumentDataMemoryCache();
         mPhotoMemoryCache = new PhotoMemoryCache(mDocumentDataMemoryCache);
         mImageDiskStore = new ImageDiskStore();
-        mNetworkRequestsManager = mGiniCaptureNetworkService != null ? new NetworkRequestsManager(
-                mGiniCaptureNetworkService, mDocumentDataMemoryCache) : null;
+        mNetworkRequestsManager = mGiniCaptureNetworkService != null ? new NetworkRequestsManager(mGiniCaptureNetworkService, mDocumentDataMemoryCache) : null;
         mImageMultiPageDocumentMemoryStore = new ImageMultiPageDocumentMemoryStore();
         mGiniCaptureFileImport = new GiniCaptureFileImport(this);
         mInternal = new Internal(this);
@@ -350,9 +327,7 @@ public class GiniCapture {
         mIsFlashOnByDefault = builder.isFlashOnByDefault();
         mEventTracker = builder.getEventTracker();
         mCustomHelpItems = builder.getCustomHelpItems();
-        mErrorLogger = new ErrorLogger(builder.getGiniErrorLoggerIsOn(),
-                builder.getGiniCaptureNetworkService(),
-                builder.getCustomErrorLoggerListener());
+        mErrorLogger = new ErrorLogger(builder.getGiniErrorLoggerIsOn(), builder.getGiniCaptureNetworkService(), builder.getCustomErrorLoggerListener());
         mImportedFileSizeBytesLimit = builder.getImportedFileSizeBytesLimit();
         navigationBarTopAdapterInstance = builder.getNavigationBarTopAdapterInstance();
         onboardingNavigationBarBottomAdapterInstance = builder.getOnboardingNavigationBarBottomAdapterInstance();
@@ -538,9 +513,7 @@ public class GiniCapture {
      * @return a {@link CancellationToken} for cancelling the import process
      */
     @NonNull
-    public CancellationToken createIntentForImportedFiles(@NonNull final Intent intent,
-                                                          @NonNull final Context context,
-                                                          @NonNull final AsyncCallback<Intent, ImportedFileValidationException> callback) {
+    public CancellationToken createIntentForImportedFiles(@NonNull final Intent intent, @NonNull final Context context, @NonNull final AsyncCallback<Intent, ImportedFileValidationException> callback) {
         return mGiniCaptureFileImport.createIntentForImportedFiles(intent, context, callback);
     }
 
@@ -692,8 +665,7 @@ public class GiniCapture {
     public static class Builder {
 
         private GiniCaptureNetworkService mGiniCaptureNetworkService;
-        private DocumentImportEnabledFileTypes mDocumentImportEnabledFileTypes =
-                DocumentImportEnabledFileTypes.NONE;
+        private DocumentImportEnabledFileTypes mDocumentImportEnabledFileTypes = DocumentImportEnabledFileTypes.NONE;
         private boolean mFileImportEnabled;
         private boolean mQRCodeScanningEnabled;
         private boolean mOnlyQRCodeScanningEnabled;
@@ -703,7 +675,7 @@ public class GiniCapture {
         private boolean mMultiPageEnabled;
         private boolean mIsSupportedFormatsHelpScreenEnabled = true;
         private boolean mFlashButtonEnabled;
-        
+
         private boolean mIsFlashOnByDefault = true;
 
         private EventTracker mEventTracker = new EventTracker() {
@@ -752,10 +724,7 @@ public class GiniCapture {
 
         private void checkNetworkingImplementations() {
             if (mGiniCaptureNetworkService == null) {
-                LOG.warn("GiniCaptureNetworkService instance not set. "
-                        + "Relying on client to perform network calls."
-                        + "You may provide a GiniCaptureNetworkService instance with "
-                        + "GiniCapture.newInstance().setGiniCaptureNetworkService()");
+                LOG.warn("GiniCaptureNetworkService instance not set. " + "Relying on client to perform network calls." + "You may provide a GiniCaptureNetworkService instance with " + "GiniCapture.newInstance().setGiniCaptureNetworkService()");
             }
         }
 
@@ -772,8 +741,7 @@ public class GiniCapture {
          * @return the {@link Builder} instance
          */
         @NonNull
-        public Builder setShouldShowOnboardingAtFirstRun(
-                final boolean shouldShowOnboardingAtFirstRun) {
+        public Builder setShouldShowOnboardingAtFirstRun(final boolean shouldShowOnboardingAtFirstRun) {
             mShouldShowOnboardingAtFirstRun = shouldShowOnboardingAtFirstRun;
             return this;
         }
@@ -785,8 +753,7 @@ public class GiniCapture {
          * @return the {@link Builder} instance
          */
         @NonNull
-        public Builder setCustomOnboardingPages(
-                @NonNull final ArrayList<OnboardingPage> onboardingPages) { // NOPMD - ArrayList required (Bundle)
+        public Builder setCustomOnboardingPages(@NonNull final ArrayList<OnboardingPage> onboardingPages) { // NOPMD - ArrayList required (Bundle)
             mOnboardingPages = onboardingPages;
             return this;
         }
@@ -847,8 +814,7 @@ public class GiniCapture {
          * @return the {@link Builder} instance
          */
         @NonNull
-        public Builder setGiniCaptureNetworkService(
-                @NonNull final GiniCaptureNetworkService giniCaptureNetworkService) {
+        public Builder setGiniCaptureNetworkService(@NonNull final GiniCaptureNetworkService giniCaptureNetworkService) {
             mGiniCaptureNetworkService = giniCaptureNetworkService;
             return this;
         }
@@ -868,8 +834,7 @@ public class GiniCapture {
          * @return the {@link Builder} instance
          */
         @NonNull
-        public Builder setDocumentImportEnabledFileTypes(
-                @NonNull final DocumentImportEnabledFileTypes documentImportEnabledFileTypes) {
+        public Builder setDocumentImportEnabledFileTypes(@NonNull final DocumentImportEnabledFileTypes documentImportEnabledFileTypes) {
             mDocumentImportEnabledFileTypes = documentImportEnabledFileTypes;
             return this;
         }

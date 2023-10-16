@@ -66,7 +66,8 @@ object GiniBank {
         InjectedViewAdapterInstance(DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter())
     var digitalInvoiceOnboardingNavigationBarBottomAdapter: DigitalInvoiceOnboardingNavigationBarBottomAdapter
         set(value) {
-            digitalInvoiceOnboardingNavigationBarBottomAdapterInstance = InjectedViewAdapterInstance(value)
+            digitalInvoiceOnboardingNavigationBarBottomAdapterInstance =
+                InjectedViewAdapterInstance(value)
         }
         get() = digitalInvoiceOnboardingNavigationBarBottomAdapterInstance.viewAdapter
 
@@ -74,12 +75,18 @@ object GiniBank {
         InjectedViewAdapterInstance(DefaultDigitalInvoiceHelpNavigationBarBottomAdapter())
     var digitalInvoiceHelpNavigationBarBottomAdapter: DigitalInvoiceHelpNavigationBarBottomAdapter
         set(value) {
-            digitalInvoiceHelpNavigationBarBottomAdapterInstance = InjectedViewAdapterInstance(value)
+            digitalInvoiceHelpNavigationBarBottomAdapterInstance =
+                InjectedViewAdapterInstance(value)
         }
         get() = digitalInvoiceHelpNavigationBarBottomAdapterInstance.viewAdapter
 
     internal var digitalInvoiceOnboardingIllustrationAdapterInstance: InjectedViewAdapterInstance<OnboardingIllustrationAdapter> =
-        InjectedViewAdapterInstance(ImageOnboardingIllustrationAdapter(R.drawable.gbs_digital_invoice_list_image, R.string.gbs_digital_invoice_onboarding_text_1))
+        InjectedViewAdapterInstance(
+            ImageOnboardingIllustrationAdapter(
+                R.drawable.gbs_digital_invoice_list_image,
+                R.string.gbs_digital_invoice_onboarding_text_1
+            )
+        )
     var digitalInvoiceOnboardingIllustrationAdapter: OnboardingIllustrationAdapter
         set(value) {
             digitalInvoiceOnboardingIllustrationAdapterInstance = InjectedViewAdapterInstance(value)
@@ -114,9 +121,7 @@ object GiniBank {
     fun setCaptureConfiguration(captureConfiguration: CaptureConfiguration) {
         check(giniCapture == null) { "Gini Capture already configured. Call releaseCapture() before setting a new configuration." }
         GiniBank.captureConfiguration = captureConfiguration
-        GiniCapture.newInstance()
-            .applyConfiguration(captureConfiguration)
-            .build()
+        GiniCapture.newInstance().applyConfiguration(captureConfiguration).build()
         giniCapture = GiniCapture.getInstance()
     }
 
@@ -125,9 +130,7 @@ object GiniBank {
      */
     fun setCaptureConfiguration(context: Context, captureConfiguration: CaptureConfiguration) {
         GiniBank.captureConfiguration = captureConfiguration
-        GiniCapture.newInstance(context)
-            .applyConfiguration(captureConfiguration)
-            .build()
+        GiniCapture.newInstance(context).applyConfiguration(captureConfiguration).build()
         giniCapture = GiniCapture.getInstance()
     }
 
@@ -161,12 +164,7 @@ object GiniBank {
         amount: Amount
     ) {
         GiniCapture.transferSummary(
-            paymentRecipient,
-            paymentReference,
-            paymentPurpose,
-            iban,
-            bic,
-            amount
+            paymentRecipient, paymentReference, paymentPurpose, iban, bic, amount
         )
     }
 
@@ -204,12 +202,7 @@ object GiniBank {
         amount: Amount
     ) {
         transferSummary(
-            paymentRecipient,
-            paymentReference,
-            paymentPurpose,
-            iban,
-            bic,
-            amount
+            paymentRecipient, paymentReference, paymentPurpose, iban, bic, amount
         )
         releaseCapture(context)
     }
@@ -230,11 +223,15 @@ object GiniBank {
         captureConfiguration = null
         giniCapture = null
 
-        digitalInvoiceOnboardingNavigationBarBottomAdapter = DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter()
-        digitalInvoiceHelpNavigationBarBottomAdapter = DefaultDigitalInvoiceHelpNavigationBarBottomAdapter()
+        digitalInvoiceOnboardingNavigationBarBottomAdapter =
+            DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter()
+        digitalInvoiceHelpNavigationBarBottomAdapter =
+            DefaultDigitalInvoiceHelpNavigationBarBottomAdapter()
 
-        digitalInvoiceOnboardingIllustrationAdapter = ImageOnboardingIllustrationAdapter(R.drawable.gbs_digital_invoice_list_image,
-            R.string.gbs_digital_invoice_onboarding_text_1)
+        digitalInvoiceOnboardingIllustrationAdapter = ImageOnboardingIllustrationAdapter(
+            R.drawable.gbs_digital_invoice_list_image,
+            R.string.gbs_digital_invoice_onboarding_text_1
+        )
 
         digitalInvoiceNavigationBarBottomAdapter = DefaultDigitalInvoiceNavigationBarBottomAdapter()
     }
@@ -271,16 +268,12 @@ object GiniBank {
      * @throws IllegalStateException if the capture feature was not configured.
      */
     fun startCaptureFlowForIntent(
-        resultLauncher: ActivityResultLauncher<CaptureImportInput>,
-        context: Context,
-        intent: Intent
+        resultLauncher: ActivityResultLauncher<CaptureImportInput>, context: Context, intent: Intent
     ): CancellationToken {
         giniCapture.let { capture ->
             check(capture != null) { "Capture feature is not configured. Call setCaptureConfiguration before starting the flow." }
             return capture.createIntentForImportedFiles(
-                intent,
-                context,
-                getImportFileCallback(resultLauncher)
+                intent, context, getImportFileCallback(resultLauncher)
             )
         }
     }
@@ -313,9 +306,9 @@ object GiniBank {
         return when (val paymentRequestResource = api.documentManager.getPaymentRequest(id)) {
             is Resource.Cancelled -> throw Exception("Cancelled")
             is Resource.Error -> throw Exception(
-                paymentRequestResource.message,
-                paymentRequestResource.exception
+                paymentRequestResource.message, paymentRequestResource.exception
             )
+
             is Resource.Success -> paymentRequestResource.data
         }
     }
@@ -333,8 +326,7 @@ object GiniBank {
      * @throws AmountParsingException If the amount string could not be parsed
      */
     suspend fun resolvePaymentRequest(
-        requestId: String,
-        resolvePaymentInput: ResolvePaymentInput
+        requestId: String, resolvePaymentInput: ResolvePaymentInput
     ): ResolvedPayment {
         val api = giniApi
         check(api != null) { "Gini Api is not set" }
@@ -344,9 +336,9 @@ object GiniBank {
         )) {
             is Resource.Cancelled -> throw Exception("Cancelled")
             is Resource.Error -> throw Exception(
-                resolvedPaymentResource.message,
-                resolvedPaymentResource.exception
+                resolvedPaymentResource.message, resolvedPaymentResource.exception
             )
+
             is Resource.Success -> resolvedPaymentResource.data
         }
     }
