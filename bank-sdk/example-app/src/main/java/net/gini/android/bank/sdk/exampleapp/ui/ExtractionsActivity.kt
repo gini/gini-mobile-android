@@ -31,7 +31,7 @@ import javax.inject.Inject
 /**
  * Displays the Pay5 extractions: paymentRecipient, iban, bic, amount and paymentReference.
  *
- * A menu item is added to send feedback.
+ * A menu item is added to send transfer summary.
  */
 
 @AndroidEntryPoint
@@ -76,8 +76,8 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
-        R.id.feedback -> {
-            sendFeedbackAndClose(binding)
+        R.id.transfer_summary -> {
+            sendTransferSummaryAndClose(binding)
             true
         }
 
@@ -130,8 +130,8 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
     private fun <T> getSortedExtractions(extractions: Map<String, T>): List<T> =
         extractions.toSortedMap().values.toList()
 
-    private fun sendFeedbackAndClose(binding: ActivityExtractionsBinding) {
-        // Feedback should be sent only for the user visible fields. Non-visible fields should be filtered out.
+    private fun sendTransferSummaryAndClose(binding: ActivityExtractionsBinding) {
+        // Transfer summary should be sent only for the user visible fields. Non-visible fields should be filtered out.
         // In a real application the user input should be used as the new value.
 
         var amount = mExtractions["amountToPay"]?.value ?: ""
@@ -145,7 +145,7 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
             amount = Amount.EMPTY.amountToPay()
         }
 
-        GiniBank.transferSummary(
+        GiniBank.sendTransferSummary(
             paymentRecipient, paymentReference, paymentPurpose, iban, bic, Amount(
                 BigDecimal(amount.removeSuffix(":EUR")), AmountCurrency.EUR
             )

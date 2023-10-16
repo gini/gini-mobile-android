@@ -70,20 +70,15 @@ import static net.gini.android.capture.internal.util.FileImportValidator.FILE_SI
  * <p> To create and configure a singleton instance use the {@link #newInstance(Context)} method and the
  * returned {@link Builder}.
  *
- * <p> Use the {@link #cleanup(Context)} method to clean up the SDK
+ * <p> Please first provide the transfer summary via the {@link #sendTransferSummary(String, String, String, String, String, Amount)} method.
+ * The transfer summary is used to improve the future extraction accuracy.
+ * Then, use the {@link #cleanup(Context)} method to clean up the SDK.
+ *
  * Please follow the recommendations below:
  *
  * <ul>
- *     <li>Do cleanup after TAN verification.to clean up.</li>
- * </ul>
- *
- * <p> Use the {@link #transferSummary(String, String, String, String, String, Amount)}  method to
- * provide the required extraction feedback to improve the future extraction accuracy.
- * Please follow the recommendations below:
- *
- * <ul>
- *     <li>Please provide values for all necessary fields, including those that were not extracted.</li>
  *     <li>Provide the final data approved by the user (and not the initially extracted only).</li>
+ *     <li>Send the transfer summary after TAN verification and provide the extraction values the user has used.</li>
  * </ul>
  */
 public class GiniCapture {
@@ -168,7 +163,7 @@ public class GiniCapture {
     @Deprecated
     public static synchronized Builder newInstance() {
         if (sInstance != null) {
-            throw new IllegalStateException("An instance was already created. " + "Call GiniCapture.cleanup() before creating a new instance.");
+            throw new IllegalStateException("An instance was already created. Call GiniCapture.cleanup() before creating a new instance.");
         }
         return new Builder();
     }
@@ -193,13 +188,13 @@ public class GiniCapture {
     /**
      * Provides transfer summary to Gini.
      *
-     * <p>Please provide the required extraction feedback to improve the future extraction accuracy.
+     * <p>Please provide the required transfer summary to improve the future extraction accuracy.
      * Please follow the recommendations below:
-     *
      * <ul>
-     *     <li>Please call this method before calling the {@link #cleanup(Context)} method</li>
+     *     <li>Please make sure to call this method before calling {@link #cleanup(Context)} if the user has completed TAN verification.</li>
      *     <li>Please provide values for all necessary fields, including those that were not extracted.</li>
      *     <li>Provide the final data approved by the user (and not the initially extracted only).</li>
+     *     <li>Send the transfer summary after TAN verification and provide the extraction values the user has used.</li>
      * </ul>
      *
      * @param paymentRecipient payment receiver
@@ -209,7 +204,7 @@ public class GiniCapture {
      * @param bic              bank identification code
      * @param amount           accepts extracted amount and currency
      */
-    public static synchronized void transferSummary(@NonNull final String paymentRecipient, @NonNull final String paymentReference, @NonNull final String paymentPurpose, @NonNull final String iban, @NonNull final String bic, @NonNull final Amount amount) {
+    public static synchronized void sendTransferSummary(@NonNull final String paymentRecipient, @NonNull final String paymentReference, @NonNull final String paymentPurpose, @NonNull final String iban, @NonNull final String bic, @NonNull final Amount amount) {
 
         if (sInstance == null) {
             return;
@@ -233,7 +228,7 @@ public class GiniCapture {
         // Test fails here if for some reason mGiniCaptureNetworkService is null
         // Added null checking to fix test fail -> or figure out something else
         final GiniCapture oldInstance = sInstance;
-        if (oldInstance.mGiniCaptureNetworkService != null)
+        if (oldInstance.mGiniCaptureNetworkService != null) {
             oldInstance.mGiniCaptureNetworkService.sendFeedback(extractionMap, oldInstance.mInternal.getCompoundExtractions(), new GiniCaptureNetworkCallback<Void, Error>() {
                 @Override
                 public void failure(Error error) {
@@ -256,6 +251,7 @@ public class GiniCapture {
                     }
                 }
             });
+        }
 
     }
 
@@ -263,7 +259,7 @@ public class GiniCapture {
     /**
      * Destroys the {@link GiniCapture} instance and frees up used resources.
      *
-     * <p>Please provide the required extraction feedback to improve the future extraction accuracy.
+     * <p>Please provide the required transfer summary to improve the future extraction accuracy.
      * Please follow the recommendations below:
      *
      * <ul>
@@ -279,12 +275,13 @@ public class GiniCapture {
      * @param iban             international bank account
      * @param bic              bank identification code
      * @param amount           accepts extracted amount and currency
-     * @deprecated Please use {@link #cleanup(Context)} to cleanup and {@link #transferSummary(String, String, String, String, String, Amount)} to provide the required extraction feedback.
+     * @deprecated Please use {@link #sendTransferSummary(String, String, String, String, String, Amount)} to provide the required transfer summary first (if the user has completed TAN verification) and then {@link #cleanup(Context)} to let the SDK free up used resources.
+     *
      */
 
     @Deprecated
     public static synchronized void cleanup(@NonNull final Context context, @NonNull final String paymentRecipient, @NonNull final String paymentReference, @NonNull final String paymentPurpose, @NonNull final String iban, @NonNull final String bic, @NonNull final Amount amount) {
-        transferSummary(paymentRecipient, paymentReference, paymentPurpose, iban, bic, amount);
+        sendTransferSummary(paymentRecipient, paymentReference, paymentPurpose, iban, bic, amount);
         cleanup(context);
     }
 

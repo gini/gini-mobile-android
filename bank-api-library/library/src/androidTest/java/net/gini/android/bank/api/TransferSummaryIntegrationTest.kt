@@ -22,7 +22,7 @@ import java.util.*
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
-class ExtractionFeedbackIntegrationTest {
+class TransferSummaryIntegrationTest {
 
     private lateinit var giniBankAPI: GiniBankAPI
     private val moshi = Moshi.Builder().build()

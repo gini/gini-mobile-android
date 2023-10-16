@@ -138,15 +138,13 @@ object GiniBank {
     /**
      * Provides transfer summary to Gini.
      *
+     * Please provide the required transfer summary to improve the future extraction accuracy.
      *
-     * Please provide the required extraction feedback to improve the future extraction accuracy.
      * Please follow the recommendations below:
-     *
-     * Please make sure to call this method before calling [releaseCapture].
-     *
-     *  Please provide values for all necessary fields, including those that were not extracted.
-     *  Provide the final data approved by the user (and not the initially extracted only).
-     *
+     * - Please make sure to call this method before calling [releaseCapture] if the user has completed TAN verification.
+     * - Please provide values for all necessary fields, including those that were not extracted.
+     * - Provide the final data approved by the user (and not the initially extracted only).
+     * - Send the transfer summary after TAN verification and provide the extraction values the user has used.
      *
      * @param paymentRecipient payment receiver
      * @param paymentReference ID based on Client ID (Kundennummer) and invoice ID (Rechnungsnummer)
@@ -155,7 +153,7 @@ object GiniBank {
      * @param bic bank identification code
      * @param amount accepts extracted amount and currency
      */
-    fun transferSummary(
+    fun sendTransferSummary(
         paymentRecipient: String,
         paymentReference: String,
         paymentPurpose: String,
@@ -163,7 +161,7 @@ object GiniBank {
         bic: String,
         amount: Amount
     ) {
-        GiniCapture.transferSummary(
+        GiniCapture.sendTransferSummary(
             paymentRecipient, paymentReference, paymentPurpose, iban, bic, amount
         )
     }
@@ -171,7 +169,7 @@ object GiniBank {
     /**
      * Frees up resources used by the capture flow.
      *
-     * Please provide the required extraction feedback to improve the future extraction accuracy.
+     * Please provide the required transfer summary to improve the future extraction accuracy.
      * Please follow the recommendations below:
      *
      * - Please provide values for all necessary fields, including those that were not extracted.</li>
@@ -186,10 +184,10 @@ object GiniBank {
      * @param bic bank identification code
      * @param amount accepts extracted amount and currency
      *
-     * @deprecated Please use {@link #releaseCapture(Context)} which does not require transfer summary parameters.
+     * @deprecated Please use [sendTransferSummary] to provide the required transfer summary first (if the user has completed TAN verification) and then [releaseCapture] to let the SDK free up used resources.
      */
     @Deprecated(
-        "Please use releaseCapture(Context) which does not require transfer summary parameters.",
+        "Please use sendTransferSummary() to provide the required transfer summary first (if the user has completed TAN verification) and then releaseCapture() to let the SDK free up used resources.",
         ReplaceWith("releaseCapture(context)")
     )
     fun releaseCapture(
@@ -201,7 +199,7 @@ object GiniBank {
         bic: String,
         amount: Amount
     ) {
-        transferSummary(
+        sendTransferSummary(
             paymentRecipient, paymentReference, paymentPurpose, iban, bic, amount
         )
         releaseCapture(context)
