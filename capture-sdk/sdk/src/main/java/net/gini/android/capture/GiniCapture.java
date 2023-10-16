@@ -1,13 +1,12 @@
 package net.gini.android.capture;
 
-import static net.gini.android.capture.internal.util.FileImportValidator.FILE_SIZE_LIMIT;
-
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
-
 import android.content.Context;
 import android.content.Intent;
-import net.gini.android.capture.analysis.AnalysisActivity;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
+
 import net.gini.android.capture.camera.view.CameraNavigationBarBottomAdapter;
 import net.gini.android.capture.camera.view.DefaultCameraNavigationBarBottomAdapter;
 import net.gini.android.capture.help.HelpItem;
@@ -22,21 +21,15 @@ import net.gini.android.capture.logging.ErrorLogger;
 import net.gini.android.capture.logging.ErrorLoggerListener;
 import net.gini.android.capture.network.Error;
 import net.gini.android.capture.network.GiniCaptureNetworkCallback;
+import net.gini.android.capture.network.GiniCaptureNetworkService;
+import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction;
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
+import net.gini.android.capture.onboarding.OnboardingPage;
 import net.gini.android.capture.onboarding.view.DefaultOnboardingNavigationBarBottomAdapter;
 import net.gini.android.capture.onboarding.view.OnboardingIllustrationAdapter;
 import net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomAdapter;
 import net.gini.android.capture.review.multipage.view.DefaultReviewNavigationBarBottomAdapter;
 import net.gini.android.capture.review.multipage.view.ReviewNavigationBarBottomAdapter;
-import net.gini.android.capture.view.CustomLoadingIndicatorAdapter;
-import net.gini.android.capture.view.DefaultLoadingIndicatorAdapter;
-import net.gini.android.capture.view.DefaultOnButtonLoadingIndicatorAdapter;
-import net.gini.android.capture.view.InjectedViewAdapterInstance;
-import net.gini.android.capture.view.NavigationBarTopAdapter;
-import net.gini.android.capture.view.DefaultNavigationBarTopAdapter;
-import net.gini.android.capture.network.GiniCaptureNetworkService;
-import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction;
-import net.gini.android.capture.onboarding.OnboardingPage;
 import net.gini.android.capture.tracking.AnalysisScreenEvent;
 import net.gini.android.capture.tracking.CameraScreenEvent;
 import net.gini.android.capture.tracking.Event;
@@ -44,6 +37,12 @@ import net.gini.android.capture.tracking.EventTracker;
 import net.gini.android.capture.tracking.OnboardingScreenEvent;
 import net.gini.android.capture.tracking.ReviewScreenEvent;
 import net.gini.android.capture.util.CancellationToken;
+import net.gini.android.capture.view.CustomLoadingIndicatorAdapter;
+import net.gini.android.capture.view.DefaultLoadingIndicatorAdapter;
+import net.gini.android.capture.view.DefaultNavigationBarTopAdapter;
+import net.gini.android.capture.view.DefaultOnButtonLoadingIndicatorAdapter;
+import net.gini.android.capture.view.InjectedViewAdapterInstance;
+import net.gini.android.capture.view.NavigationBarTopAdapter;
 import net.gini.android.capture.view.OnButtonLoadingIndicatorAdapter;
 
 import org.jetbrains.annotations.NotNull;
@@ -55,9 +54,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.VisibleForTesting;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
+import static net.gini.android.capture.internal.util.FileImportValidator.FILE_SIZE_LIMIT;
 
 /**
  * Created by Alpar Szotyori on 22.02.2018.
@@ -71,14 +70,20 @@ import androidx.annotation.VisibleForTesting;
  * <p> To create and configure a singleton instance use the {@link #newInstance(Context)} method and the
  * returned {@link Builder}.
  *
- * <p> Use the {@link #cleanup(Context, String, String, String, String, String, Amount)} method to clean up the SDK
- * while also providing the required extraction feedback to improve the future extraction accuracy.
+ * <p> Use the {@link #cleanup(Context)} method to clean up the SDK
+ * Please follow the recommendations below:
+ *
+ * <ul>
+ *     <li>Do cleanup after TAN verification.to clean up.</li>
+ * </ul>
+ *
+ * <p> Use the {@link #transferSummary(String, String, String, String, String, Amount)}  method to
+ * provide the required extraction feedback to improve the future extraction accuracy.
  * Please follow the recommendations below:
  *
  * <ul>
  *     <li>Please provide values for all necessary fields, including those that were not extracted.</li>
  *     <li>Provide the final data approved by the user (and not the initially extracted only).</li>
- *     <li>Do cleanup after TAN verification.to clean up and provide the extraction values the user has used.</li>
  * </ul>
  */
 public class GiniCapture {
@@ -154,10 +159,10 @@ public class GiniCapture {
      * Configure and create a new instance using the returned {@link Builder}.
      *
      * @return a new {@link Builder}
-     * @throws IllegalStateException when an instance already exists. Call {@link #cleanup(Context, String, String, String, String, String, Amount)}
+     * @throws IllegalStateException when an instance already exists. Call {@link #cleanup(Context)}
      *                               before trying to create a new instance
      * @deprecated Please use {@link #newInstance(Context)} which allows instance recreation without having to
-     * call {@link #cleanup(Context, String, String, String, String, String, Amount)} first.
+     * call {@link #cleanup(Context)} first.
      */
     @NonNull
     @Deprecated
@@ -181,10 +186,93 @@ public class GiniCapture {
             if (sInstance.mNetworkRequestsManager != null) {
                 sInstance.mNetworkRequestsManager.cleanup();
             }
-            doActualCleanUp(context);
+            cleanup(context);
         }
         return new Builder();
     }
+
+    /**
+     * Provides transfer summary to Gini.
+     *
+     * <p>Please provide the required extraction feedback to improve the future extraction accuracy.
+     * Please follow the recommendations below:
+     *
+     * <ul>
+     *     <li>Please provide values for all necessary fields, including those that were not extracted.</li>
+     *     <li>Provide the final data approved by the user (and not the initially extracted only).</li>
+     * </ul>
+     *
+     * @param paymentRecipient payment receiver
+     * @param paymentReference ID based on Client ID (Kundennummer) and invoice ID (Rechnungsnummer)
+     * @param paymentPurpose statement what this payment is for
+     * @param iban international bank account
+     * @param bic bank identification code
+     * @param amount accepts extracted amount and currency
+     *
+     */
+    public static synchronized void transferSummary(
+                                            @NonNull final String paymentRecipient,
+                                            @NonNull final String paymentReference,
+                                            @NonNull final String paymentPurpose,
+                                            @NonNull final String iban,
+                                            @NonNull final String bic,
+                                            @NonNull final Amount amount) {
+
+        if (sInstance == null) {
+            return;
+        }
+
+        Map<String, GiniCaptureSpecificExtraction> extractionMap = new HashMap<>();
+
+        extractionMap.put("amountToPay", new GiniCaptureSpecificExtraction("amountToPay", amount.amountToPay(),
+                "amount", null, emptyList()));
+
+        extractionMap.put("paymentRecipient", new GiniCaptureSpecificExtraction("paymentRecipient", paymentRecipient,
+                "companyname", null, emptyList()));
+
+        extractionMap.put("paymentReference", new GiniCaptureSpecificExtraction("paymentReference", paymentReference,
+                "reference", null, emptyList()));
+
+        extractionMap.put("paymentPurpose", new GiniCaptureSpecificExtraction("paymentPurpose", paymentPurpose,
+                "reference", null, emptyList()));
+
+        extractionMap.put("iban", new GiniCaptureSpecificExtraction("iban", iban,
+                "iban", null, emptyList()));
+
+        extractionMap.put("bic", new GiniCaptureSpecificExtraction("bic", bic,
+                "bic", null, emptyList()));
+
+
+        // Test fails here if for some reason mGiniCaptureNetworkService is null
+        // Added null checking to fix test fail -> or figure out something else
+        final GiniCapture oldInstance = sInstance;
+        if (oldInstance.mGiniCaptureNetworkService != null)
+            oldInstance.mGiniCaptureNetworkService.sendFeedback(extractionMap,
+                    oldInstance.mInternal.getCompoundExtractions(), new GiniCaptureNetworkCallback<Void, Error>() {
+                        @Override
+                        public void failure(Error error) {
+                            if (oldInstance.mNetworkRequestsManager != null) {
+                                oldInstance.mNetworkRequestsManager.cleanup();
+                            }
+                        }
+
+                        @Override
+                        public void success(Void result) {
+                            if (oldInstance.mNetworkRequestsManager != null) {
+                                oldInstance.mNetworkRequestsManager.cleanup();
+                            }
+                        }
+
+                        @Override
+                        public void cancelled() {
+                            if (oldInstance.mNetworkRequestsManager != null) {
+                                oldInstance.mNetworkRequestsManager.cleanup();
+                            }
+                        }
+                    });
+    }
+
+
     /**
      * Destroys the {@link GiniCapture} instance and frees up used resources.
      *
@@ -204,7 +292,11 @@ public class GiniCapture {
      * @param iban international bank account
      * @param bic bank identification code
      * @param amount accepts extracted amount and currency
+     *
+     * @deprecated Please use {@link #cleanup(Context)} which does not require transfer summary parameters.
      */
+
+    @Deprecated
     public static synchronized void cleanup(@NonNull final Context context,
                                             @NonNull final String paymentRecipient,
                                             @NonNull final String paymentReference,
@@ -266,11 +358,13 @@ public class GiniCapture {
                         }
                     });
 
-        doActualCleanUp(context);
+        cleanup(context);
     }
 
-
-    private static void doActualCleanUp(Context context) {
+    /**
+     * Destroys the {@link GiniCapture} instance and frees up used resources.
+     */
+    public static void cleanup(Context context) {
         sInstance.mDocumentDataMemoryCache.clear();
         sInstance.mPhotoMemoryCache.clear();
         sInstance.mInternal.setUpdatedCompoundExtractions(emptyMap());
