@@ -29,9 +29,19 @@ class IBANRecognizerFilter @JvmOverloads constructor(
                     if (prevIBANs.isNotEmpty() && ibans.isNotEmpty()) {
                         delay(1000)
                     }
-                    listener.onIBANsReceived(ibans)
+                    listener.onIBANsReceived(ibans.setIBANFormatting())
                     prevIBANs = ibans
                 }
+        }
+    }
+
+    private fun List<String>.setIBANFormatting(): List<String> {
+        return if (this.size == 1) {
+            this.map { iban ->
+                iban.chunked(4).joinToString(" ")
+            }
+        } else {
+            this
         }
     }
 
