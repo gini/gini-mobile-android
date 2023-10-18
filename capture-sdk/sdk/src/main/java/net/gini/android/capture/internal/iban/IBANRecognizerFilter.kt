@@ -21,16 +21,8 @@ class IBANRecognizerFilter @JvmOverloads constructor(
 
     init {
         listenerScope.launch {
-            var prevIBANs: List<String> = emptyList()
-            ibansFlow
-                .distinctUntilChanged()
-                .collect { ibans ->
-                    // Delay only when IBAN changes to a different IBAN
-                    if (prevIBANs.isNotEmpty() && ibans.isNotEmpty()) {
-                        delay(1000)
-                    }
+            ibansFlow.distinctUntilChanged().collect { ibans ->
                     listener.onIBANsReceived(ibans.setIBANFormatting())
-                    prevIBANs = ibans
                 }
         }
     }

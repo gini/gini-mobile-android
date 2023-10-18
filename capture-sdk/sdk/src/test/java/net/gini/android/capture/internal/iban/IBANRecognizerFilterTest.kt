@@ -86,40 +86,6 @@ class IBANRecognizerFilterTest {
     }
 
     @Test
-    fun `delays subsequent non-empty callback values by one second for image`() = runTest {
-        // Given
-        val listenerSpy: IBANRecognizerFilter.Listener = spy()
-        val ibanRecognizerFilter = IBANRecognizerFilter(
-            IBANRecognizerStub(listOf(listOf("1"), listOf("2"), listOf("3"))),
-            listenerSpy,
-            this.coroutineContext
-        )
-
-        // When - emitting two non-empty callback values
-        ibanRecognizerFilter.processImage(mock(), 200, 300, 0, noOpProcessingListener)
-        ibanRecognizerFilter.processImage(mock(), 200, 300, 0, noOpProcessingListener)
-
-        // Then - the first one is returned immediately and the second one after one second
-        advanceTimeBy(1)
-        verify(listenerSpy).onIBANsReceived(listOf("1"))
-        advanceTimeBy(900)
-        verify(listenerSpy, times(0)).onIBANsReceived(listOf("2"))
-        advanceTimeBy(110)
-        verify(listenerSpy).onIBANsReceived(listOf("2"))
-
-        // When - emitting the third non-empty callback value
-        ibanRecognizerFilter.processImage(mock(), 200, 300, 0, noOpProcessingListener)
-
-        // Then - it is returned after one second
-        advanceTimeBy(900)
-        verify(listenerSpy, times(0)).onIBANsReceived(listOf("3"))
-        advanceTimeBy(110)
-        verify(listenerSpy).onIBANsReceived(listOf("3"))
-
-        ibanRecognizerFilter.cleanup()
-    }
-
-    @Test
     fun `returns empty callback values without delay for image`() = runTest {
         // Given
         val listenerSpy: IBANRecognizerFilter.Listener = spy()
