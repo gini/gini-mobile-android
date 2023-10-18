@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.media.Image;
@@ -1801,6 +1802,13 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private void showIBANsDetectedOnScreen(List<String> ibans) {
         mIbanDetectedTextView.setVisibility(View.VISIBLE);
+        mImageFrame.setImageTintList(ColorStateList.valueOf(
+                        ContextCompat.getColor(
+                                mFragment.getActivity(),
+                                R.color.gc_success_02
+                        )
+                )
+        );
         if (ibans.size() == 1) {
             mIbanDetectedTextView.setText(String.format("%s%s", ibans.get(0), mFragment.getActivity().getString(R.string.gc_iban_detected_please_take_picture)));
         } else {
@@ -1809,6 +1817,13 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     }
 
     private void hideIBANsDetectedOnScreen() {
+        mImageFrame.setImageTintList(ColorStateList.valueOf(
+                        ContextCompat.getColor(
+                                mFragment.getActivity(),
+                                R.color.gc_light_01
+                        )
+                )
+        );
         mIbanDetectedTextView.setVisibility(View.GONE);
         mIbanDetectedTextView.setText("");
     }
