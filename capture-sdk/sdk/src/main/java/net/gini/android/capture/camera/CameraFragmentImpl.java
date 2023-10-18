@@ -244,6 +244,9 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     @Override
     public void onNonPaymentQRCodeDetected(@NonNull String qrCodeContent) {
+        if (mIbanDetectedTextView.getVisibility() == View.VISIBLE) {
+            return;
+        }
         handleQRCodeDetected(null, qrCodeContent);
     }
 
@@ -261,7 +264,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             return;
         }
 
-        if (isQRCodeDetectionInProgress()) {
+        if (isPaymentQRCodeDetectionInProgress() || mUnsupportedQRCodePopup.isShown()) {
             return;
         }
 
@@ -274,8 +277,8 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         }
     }
 
-    private boolean isQRCodeDetectionInProgress() {
-        return mPaymentQRCodePopup.isShown() || mUnsupportedQRCodePopup.isShown();
+    private boolean isPaymentQRCodeDetectionInProgress() {
+        return mPaymentQRCodePopup.isShown();
     }
 
     private void showQRCodeViewWithDelay(PaymentQRCodeData data, String qrCodeContent) {
@@ -283,7 +286,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                 .postDelayed(() -> {
                     if (data == null) {
                         mQRCodeContent = qrCodeContent;
-                        mUnsupportedQRCodePopup.show(null);
+                        showUnsupportedQRCodePopup();
                     } else {
                         mPaymentQRCodePopup.show(data);
                     }
@@ -293,9 +296,15 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private void showQRCodeView(PaymentQRCodeData data, String qrCodeContent) {
         if (data == null) {
             mQRCodeContent = qrCodeContent;
-            mUnsupportedQRCodePopup.show(null);
+            showUnsupportedQRCodePopup();
         } else {
             mPaymentQRCodePopup.show(data);
+        }
+    }
+
+    private void showUnsupportedQRCodePopup() {
+        if (mIbanDetectedTextView.getVisibility() != View.VISIBLE) {
+            mUnsupportedQRCodePopup.show(null);
         }
     }
 
@@ -1782,7 +1791,8 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     }
 
     private void handleIBANsDetected(List<String> ibans) {
-        if (!ibans.isEmpty() && !isQRCodeDetectionInProgress()) {
+        if (!ibans.isEmpty() && !isPaymentQRCodeDetectionInProgress()) {
+            mUnsupportedQRCodePopup.hide();
             showIBANsDetectedOnScreen(ibans);
         } else {
             hideIBANsDetectedOnScreen();
