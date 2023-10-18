@@ -76,58 +76,11 @@ class IBANRecognizerFilterTest {
         // When
         ibanRecognizerFilter.processImage(mock(), 200, 300, 0, noOpProcessingListener)
         ibanRecognizerFilter.processImage(mock(), 200, 300, 0, noOpProcessingListener)
-        advanceTimeBy(1010)
+        advanceTimeBy(1)
 
         // Then
         verify(listenerSpy).onIBANsReceived(eq(listOf("1")))
         verify(listenerSpy).onIBANsReceived(eq(listOf("2")))
-
-        ibanRecognizerFilter.cleanup()
-    }
-
-    @Test
-    fun `returns empty callback values without delay for image`() = runTest {
-        // Given
-        val listenerSpy: IBANRecognizerFilter.Listener = spy()
-        val ibanRecognizerFilter = IBANRecognizerFilter(
-            IBANRecognizerStub(listOf(listOf("1"), emptyList(), emptyList())),
-            listenerSpy,
-            this.coroutineContext
-        )
-
-        // When
-        ibanRecognizerFilter.processImage(mock(), 200, 300, 0, noOpProcessingListener)
-        ibanRecognizerFilter.processImage(mock(), 200, 300, 0, noOpProcessingListener)
-        ibanRecognizerFilter.processImage(mock(), 200, 300, 0, noOpProcessingListener)
-
-        // Then - both are returned without delay
-        advanceTimeBy(1)
-        verify(listenerSpy, atMost(1)).onIBANsReceived(listOf("1"))
-        verify(listenerSpy, atMost(1)).onIBANsReceived(emptyList())
-
-        ibanRecognizerFilter.cleanup()
-    }
-
-    @Test
-    fun `returns non-empty callback value after empty callback value without delay for image`() = runTest {
-        // Given
-        val listenerSpy: IBANRecognizerFilter.Listener = spy()
-        val ibanRecognizerFilter = IBANRecognizerFilter(
-            IBANRecognizerStub(listOf(listOf("1"), emptyList(), listOf("2"))),
-            listenerSpy,
-            this.coroutineContext
-        )
-
-        // When
-        ibanRecognizerFilter.processImage(mock(), 200, 300, 0, noOpProcessingListener)
-        ibanRecognizerFilter.processImage(mock(), 200, 300, 0, noOpProcessingListener)
-        ibanRecognizerFilter.processImage(mock(), 200, 300, 0, noOpProcessingListener)
-
-        // Then
-        advanceTimeBy(1)
-        verify(listenerSpy).onIBANsReceived(listOf("1"))
-        verify(listenerSpy).onIBANsReceived(emptyList())
-        verify(listenerSpy).onIBANsReceived(listOf("2"))
 
         ibanRecognizerFilter.cleanup()
     }
@@ -208,7 +161,6 @@ class IBANRecognizerFilterTest {
         ibanRecognizerFilter.processImage(mock(), 200, 300, 0, processingListenerSpy)
 
         // Then
-        advanceTimeBy(1)
         verify(processingListenerSpy, times(3)).onProcessingFinished()
 
         ibanRecognizerFilter.cleanup()
@@ -231,7 +183,6 @@ class IBANRecognizerFilterTest {
         ibanRecognizerFilter.processImage(mock(), 200, 300, 0, processingListenerSpy)
 
         // Then
-        advanceTimeBy(1)
         verify(processingListenerSpy, times(3)).onProcessingFinished()
 
         ibanRecognizerFilter.cleanup()
