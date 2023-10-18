@@ -34,13 +34,14 @@ internal class MLKitTextRecognizer(private val recognizer: com.google.mlkit.visi
         width: Int,
         height: Int,
         rotationDegrees: Int,
-        doneCallback: (String?) -> Unit
+        doneCallback: (String?) -> Unit,
+        cancelledCallback: () -> Unit
     ) {
         if (processingTask != null) {
             if (DEBUG) {
                 LOG.warn("Text recognizer is already processing an image")
             }
-            doneCallback(null)
+            cancelledCallback()
             return
         }
 
@@ -65,13 +66,14 @@ internal class MLKitTextRecognizer(private val recognizer: com.google.mlkit.visi
         width: Int,
         height: Int,
         rotationDegrees: Int,
-        doneCallback: (String?) -> Unit
+        doneCallback: (String?) -> Unit,
+        cancelledCallback: () -> Unit
     ) {
         if (processingTask != null) {
             if (DEBUG) {
                 LOG.warn("Text recognizer is already processing an image")
             }
-            doneCallback(null)
+            cancelledCallback()
             return
         }
 
@@ -111,7 +113,7 @@ internal class MLKitTextRecognizer(private val recognizer: com.google.mlkit.visi
     }
 
     companion object {
-        const val DEBUG = false
+        const val DEBUG = true
         val LOG: Logger = LoggerFactory.getLogger(MLKitTextRecognizer::class.java)
 
         @JvmStatic

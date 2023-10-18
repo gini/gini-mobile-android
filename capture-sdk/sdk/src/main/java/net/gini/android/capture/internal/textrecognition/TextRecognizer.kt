@@ -15,12 +15,14 @@ internal interface TextRecognizer {
      * @param height the height of the image
      * @param rotationDegrees the rotation of the image
      * @param doneCallback the callback which will receive the recognized text or null if no text was found
+     * @param cancelledCallback the callback which will be called when the processing is cancelled
      */
     fun processImage(image: Image,
                      width: Int,
                      height: Int,
                      rotationDegrees: Int,
-                     doneCallback: (String?) -> Unit)
+                     doneCallback: (String?) -> Unit,
+                     cancelledCallback: () -> Unit)
 
     /**
      * Processes the given image byte array and returns the recognized text in the callback.
@@ -30,14 +32,15 @@ internal interface TextRecognizer {
      * @param height the height of the image
      * @param rotationDegrees the rotation of the image
      * @param doneCallback the callback which will receive the recognized text or null if no text was found
+     * @param cancelledCallback the callback which will be called when the processing is cancelled
      */
     fun processByteArray(
         byteArray: ByteArray,
         width: Int,
         height: Int,
         rotationDegrees: Int,
-        doneCallback: (String?) -> Unit
-    )
+        doneCallback: (String?) -> Unit,
+        cancelledCallback: () -> Unit)
 
     /**
      * Closes the text recognizer.

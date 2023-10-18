@@ -32,10 +32,11 @@ class IBANRecognizerImplTest {
         ibanRecognizer = IBANRecognizerImpl(TextRecognizerStub(""))
 
         // When
-        ibanRecognizer.processByteArray(byteArray, 200, 300, 0) { iban ->
+        ibanRecognizer.processByteArray(byteArray, 200, 300, 0, doneCallback = { iban ->
             // Then
             assertThat(iban).isEqualTo(emptyList<String>())
-        }
+        }, cancelledCallback = {
+        })
     }
 
     @Test
@@ -45,10 +46,11 @@ class IBANRecognizerImplTest {
         ibanRecognizer = IBANRecognizerImpl(TextRecognizerStub(""))
 
         // When
-        ibanRecognizer.processImage(image, 200, 300, 0) { iban ->
+        ibanRecognizer.processImage(image, 200, 300, 0, doneCallback = { iban ->
             // Then
             assertThat(iban).isEqualTo(emptyList<String>())
-        }
+        }, cancelledCallback = {
+        })
     }
 
     @Test
@@ -59,7 +61,7 @@ class IBANRecognizerImplTest {
         // When
         var exception: Exception? = null
         try {
-            ibanRecognizer.processByteArray(byteArray, 0, 300, 0) { }
+            ibanRecognizer.processByteArray(byteArray, 0, 300, 0, doneCallback = {}, cancelledCallback = {})
         } catch (e: Exception) {
             exception = e
         }
@@ -76,7 +78,7 @@ class IBANRecognizerImplTest {
         // When
         var exception: Exception? = null
         try {
-            ibanRecognizer.processImage(image, 0, 300, 0) { }
+            ibanRecognizer.processImage(image, 0, 300, 0, doneCallback = {}, cancelledCallback = {})
         } catch (e: Exception) {
             exception = e
         }
@@ -93,7 +95,7 @@ class IBANRecognizerImplTest {
         // When
         var exception: Exception? = null
         try {
-            val iban = ibanRecognizer.processByteArray(byteArray, 200, 0, 0) { }
+            val iban = ibanRecognizer.processByteArray(byteArray, 200, 0, 0, doneCallback = {}, cancelledCallback = {})
         } catch (e: Exception) {
             exception = e
         }
@@ -110,7 +112,7 @@ class IBANRecognizerImplTest {
         // When
         var exception: Exception? = null
         try {
-            val iban = ibanRecognizer.processImage(image, 200, 0, 0) { }
+            val iban = ibanRecognizer.processImage(image, 200, 0, 0, doneCallback = {}, cancelledCallback = {})
         } catch (e: Exception) {
             exception = e
         }
@@ -128,10 +130,11 @@ class IBANRecognizerImplTest {
         ibanRecognizer = IBANRecognizerImpl(TextRecognizerStub(recognizedText))
 
         // When
-        ibanRecognizer.processByteArray(byteArray, 200, 300, 0) { ibans ->
+        ibanRecognizer.processByteArray(byteArray, 200, 300, 0, doneCallback = { ibans ->
             // Then
             assertThat(ibans).isEqualTo(expectedIBANs)
-        }
+        }, cancelledCallback = {
+        })
     }
 
     @Test
@@ -143,10 +146,27 @@ class IBANRecognizerImplTest {
         ibanRecognizer = IBANRecognizerImpl(TextRecognizerStub(recognizedText))
 
         // When
-        ibanRecognizer.processImage(image, 200, 300, 0) { ibans ->
+        ibanRecognizer.processImage(image, 200, 300, 0, doneCallback = { ibans ->
             // Then
             assertThat(ibans).isEqualTo(expectedIBANs)
-        }
+        }, cancelledCallback = {
+        })
+    }
+
+    @Test
+    fun `calls cancelled callback when text recognizer is cancelled`() {
+        // Given
+        val image: Image = mock()
+        ibanRecognizer = IBANRecognizerImpl(TextRecognizerStub(text = "", isCancelled = true))
+        var cancelledCallbackInvoked = false
+
+        // When
+        ibanRecognizer.processImage(image, 200, 300, 0, doneCallback = {}, cancelledCallback = {
+            cancelledCallbackInvoked = true
+        })
+
+        // Then
+        assertThat(cancelledCallbackInvoked).isTrue()
     }
 
     private fun recognizesIBANTestParameterValues(): Array<Any> = arrayOf(
@@ -175,7 +195,8 @@ class IBANRecognizerImplTest {
             width: Int,
             height: Int,
             rotationDegrees: Int,
-            doneCallback: (String?) -> Unit
+            doneCallback: (String?) -> Unit,
+            cancelledCallback: () -> Unit
         ) {
             doneCallback(null)
         }
@@ -185,7 +206,8 @@ class IBANRecognizerImplTest {
             width: Int,
             height: Int,
             rotationDegrees: Int,
-            doneCallback: (String?) -> Unit
+            doneCallback: (String?) -> Unit,
+            cancelledCallback: () -> Unit
         ) {
             doneCallback(null)
         }
@@ -196,15 +218,22 @@ class IBANRecognizerImplTest {
 
     }
 
-    class TextRecognizerStub(private val text: String?) : TextRecognizer {
+    class TextRecognizerStub(
+        private val text: String?,
+        private val isCancelled: Boolean = false) : TextRecognizer {
         override fun processImage(
             image: Image,
             width: Int,
             height: Int,
             rotationDegrees: Int,
-            doneCallback: (String?) -> Unit
+            doneCallback: (String?) -> Unit,
+            cancelledCallback: () -> Unit
         ) {
-            doneCallback(text)
+            if (isCancelled) {
+                cancelledCallback()
+            } else {
+                doneCallback(text)
+            }
         }
 
         override fun processByteArray(
@@ -212,9 +241,14 @@ class IBANRecognizerImplTest {
             width: Int,
             height: Int,
             rotationDegrees: Int,
-            doneCallback: (String?) -> Unit
+            doneCallback: (String?) -> Unit,
+            cancelledCallback: () -> Unit
         ) {
-            doneCallback(text)
+            if (isCancelled) {
+                cancelledCallback()
+            } else {
+                doneCallback(text)
+            }
         }
 
         override fun close() {

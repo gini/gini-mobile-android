@@ -38,12 +38,15 @@ internal class IBANRecognizerImpl @JvmOverloads constructor(
         width: Int,
         height: Int,
         rotationDegrees: Int,
-        doneCallback: (List<String>) -> Unit
+        doneCallback: (List<String>) -> Unit,
+        cancelledCallback: () -> Unit
     ) {
         checkWidthAndHeight(width, height)
-        textRecognizer.processImage(image, width, height, rotationDegrees) { recognizedText ->
+        textRecognizer.processImage(image, width, height, rotationDegrees, doneCallback = { recognizedText ->
             extractIBAN(recognizedText, doneCallback)
-        }
+        }, cancelledCallback = {
+            cancelledCallback()
+        })
     }
 
     private fun extractIBAN(recognizedText: String?, doneCallback: (List<String>) -> Unit) {
@@ -97,12 +100,15 @@ internal class IBANRecognizerImpl @JvmOverloads constructor(
         width: Int,
         height: Int,
         rotationDegrees: Int,
-        doneCallback: (List<String>) -> Unit
+        doneCallback: (List<String>) -> Unit,
+        cancelledCallback: () -> Unit
     ) {
         checkWidthAndHeight(width, height)
-        textRecognizer.processByteArray(byteArray, width, height, rotationDegrees) { recognizedText ->
+        textRecognizer.processByteArray(byteArray, width, height, rotationDegrees, doneCallback = { recognizedText ->
             extractIBAN(recognizedText, doneCallback)
-        }
+        }, cancelledCallback = {
+            cancelledCallback()
+        })
     }
 
     private fun checkWidthAndHeight(width: Int, height: Int) {

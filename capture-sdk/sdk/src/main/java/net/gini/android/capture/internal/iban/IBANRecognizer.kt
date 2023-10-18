@@ -15,6 +15,7 @@ interface IBANRecognizer {
      * @param height the height of the image
      * @param rotationDegrees the rotation of the image
      * @param doneCallback the callback which will receive the recognized IBANs or null if no IBAN was found
+     * @param cancelledCallback the callback which will be called when the processing is cancelled
      */
     @Throws(IllegalArgumentException::class)
     fun processImage(
@@ -22,7 +23,8 @@ interface IBANRecognizer {
         width: Int,
         height: Int,
         rotationDegrees: Int,
-        doneCallback: (List<String>) -> Unit
+        doneCallback: (List<String>) -> Unit,
+        cancelledCallback: () -> Unit
     )
 
     /**
@@ -33,6 +35,7 @@ interface IBANRecognizer {
      * @param height the height of the image
      * @param rotationDegrees the rotation of the image
      * @param doneCallback the callback which will receive the recognized IBANs or null if no IBAN was found
+     * @param cancelledCallback the callback which will be called when the processing is cancelled
      */
     @Throws(IllegalArgumentException::class)
     fun processByteArray(
@@ -40,7 +43,8 @@ interface IBANRecognizer {
         width: Int,
         height: Int,
         rotationDegrees: Int,
-        doneCallback: (List<String>) -> Unit
+        doneCallback: (List<String>) -> Unit,
+        cancelledCallback: () -> Unit
     )
 
     /**

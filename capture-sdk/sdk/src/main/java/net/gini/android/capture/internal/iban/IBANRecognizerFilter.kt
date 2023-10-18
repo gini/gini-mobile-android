@@ -44,12 +44,14 @@ class IBANRecognizerFilter @JvmOverloads constructor(
         rotationDegrees: Int,
         processingListener: ProcessingListener
     ) {
-        ibanRecognizer.processImage(image, width, height, rotationDegrees) {
+        ibanRecognizer.processImage(image, width, height, rotationDegrees, doneCallback =  {
             processingListener.onProcessingFinished()
             listenerScope.launch {
                 ibansFlow.emit(it)
             }
-        }
+        }, cancelledCallback = {
+            processingListener.onProcessingFinished()
+        })
     }
 
     fun processByteArray(
@@ -59,12 +61,14 @@ class IBANRecognizerFilter @JvmOverloads constructor(
         rotationDegrees: Int,
         processingListener: ProcessingListener
     ) {
-        ibanRecognizer.processByteArray(byteArray, width, height, rotationDegrees) {
+        ibanRecognizer.processByteArray(byteArray, width, height, rotationDegrees, doneCallback =  {
             processingListener.onProcessingFinished()
             listenerScope.launch {
                 ibansFlow.emit(it)
             }
-        }
+        }, cancelledCallback = {
+            processingListener.onProcessingFinished()
+        })
     }
 
     fun cleanup() {

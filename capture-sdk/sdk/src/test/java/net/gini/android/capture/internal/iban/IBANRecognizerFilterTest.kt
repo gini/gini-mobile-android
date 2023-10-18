@@ -132,7 +132,6 @@ class IBANRecognizerFilterTest {
         ibanRecognizerFilter.cleanup()
     }
 
-
     @Test
     fun `apply format to a single iban`() = runTest {
         // Given
@@ -151,15 +150,11 @@ class IBANRecognizerFilterTest {
 
         // When
         ibanRecognizerFilter.processImage(mock(), 200, 300, 0, noOpProcessingListener)
-        advanceTimeBy(1010)
         ibanRecognizerFilter.processImage(mock(), 200, 300, 0, noOpProcessingListener)
-        advanceTimeBy(1010)
         ibanRecognizerFilter.processImage(mock(), 200, 300, 0, noOpProcessingListener)
-        advanceTimeBy(1010)
         ibanRecognizerFilter.processImage(mock(), 200, 300, 0, noOpProcessingListener)
-        advanceTimeBy(1010)
         ibanRecognizerFilter.processImage(mock(), 200, 300, 0, noOpProcessingListener)
-        advanceTimeBy(1010)
+        advanceTimeBy(1)
 
         // Then
         verify(listenerSpy).onIBANsReceived(eq(listOf("NL60 ABNA 8181 0916 12")))
@@ -186,9 +181,8 @@ class IBANRecognizerFilterTest {
 
         // When
         ibanRecognizerFilter.processImage(mock(), 200, 300, 0, noOpProcessingListener)
-        advanceTimeBy(1010)
         ibanRecognizerFilter.processImage(mock(), 200, 300, 0, noOpProcessingListener)
-        advanceTimeBy(1010)
+        advanceTimeBy(1)
 
         // Then
         verify(listenerSpy).onIBANsReceived(eq(listOf("NL60ABNA8181091612", "DE83500105175744527463")))
@@ -197,8 +191,55 @@ class IBANRecognizerFilterTest {
         ibanRecognizerFilter.cleanup()
     }
 
+    @Test
+    fun `informs processing finished via listener`() = runTest {
+        // Given
+        val listenerSpy: IBANRecognizerFilter.Listener = spy()
+        val ibanRecognizerFilter = IBANRecognizerFilter(
+            IBANRecognizerStub(listOf(listOf("1"), emptyList(), listOf("2"))),
+            listenerSpy,
+            this.coroutineContext
+        )
+        val processingListenerSpy: IBANRecognizerFilter.ProcessingListener = spy()
+
+        // When
+        ibanRecognizerFilter.processImage(mock(), 200, 300, 0, processingListenerSpy)
+        ibanRecognizerFilter.processImage(mock(), 200, 300, 0, processingListenerSpy)
+        ibanRecognizerFilter.processImage(mock(), 200, 300, 0, processingListenerSpy)
+
+        // Then
+        advanceTimeBy(1)
+        verify(processingListenerSpy, times(3)).onProcessingFinished()
+
+        ibanRecognizerFilter.cleanup()
+    }
+
+    @Test
+    fun `informs processing finished via listener also when processing was cancelled`() = runTest {
+        // Given
+        val listenerSpy: IBANRecognizerFilter.Listener = spy()
+        val ibanRecognizerFilter = IBANRecognizerFilter(
+            IBANRecognizerStub(expectedValues = emptyList(), isCancelled = true),
+            listenerSpy,
+            this.coroutineContext
+        )
+        val processingListenerSpy: IBANRecognizerFilter.ProcessingListener = spy()
+
+        // When
+        ibanRecognizerFilter.processImage(mock(), 200, 300, 0, processingListenerSpy)
+        ibanRecognizerFilter.processImage(mock(), 200, 300, 0, processingListenerSpy)
+        ibanRecognizerFilter.processImage(mock(), 200, 300, 0, processingListenerSpy)
+
+        // Then
+        advanceTimeBy(1)
+        verify(processingListenerSpy, times(3)).onProcessingFinished()
+
+        ibanRecognizerFilter.cleanup()
+    }
+
     class IBANRecognizerStub(
-        private val expectedValues: List<List<String>>
+        private val expectedValues: List<List<String>>,
+        private val isCancelled: Boolean = false
     ) : IBANRecognizer {
 
         private var counter = 0
@@ -208,9 +249,12 @@ class IBANRecognizerFilterTest {
             width: Int,
             height: Int,
             rotationDegrees: Int,
-            doneCallback: (List<String>) -> Unit
+            doneCallback: (List<String>) -> Unit,
+            cancelledCallback: () -> Unit
         ) {
-            if (expectedValues.isNotEmpty()) {
+            if (isCancelled) {
+                cancelledCallback()
+            } else if (expectedValues.isNotEmpty()) {
                 doneCallback(expectedValues[counter])
                 counter++
             } else {
@@ -223,9 +267,12 @@ class IBANRecognizerFilterTest {
             width: Int,
             height: Int,
             rotationDegrees: Int,
-            doneCallback: (List<String>) -> Unit
+            doneCallback: (List<String>) -> Unit,
+            cancelledCallback: () -> Unit
         ) {
-            if (expectedValues.isNotEmpty()) {
+            if (isCancelled) {
+                cancelledCallback()
+            } else if (expectedValues.isNotEmpty()) {
                 doneCallback(expectedValues[counter])
                 counter++
             } else {
