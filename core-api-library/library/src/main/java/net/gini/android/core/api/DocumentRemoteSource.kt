@@ -22,7 +22,7 @@ abstract class DocumentRemoteSource(
     baseUriString: String
 ) {
 
-    private var baseUri: Uri? = null
+    var baseUri: Uri
 
     init {
         baseUri = getBaseUri(baseUriString, giniApiType)
@@ -122,7 +122,7 @@ abstract class DocumentRemoteSource(
         return baseUri?.buildUpon()?.path(uri.path)?.query(uri.query)?.build()
     }
 
-    private fun getBaseUri(baseUriString: String?, giniApiType: GiniApiType): Uri? {
+    private fun getBaseUri(baseUriString: String?, giniApiType: GiniApiType): Uri {
         return if (baseUriString != null) {
             Uri.parse(Utils.checkNotNull(baseUriString))
         } else {
