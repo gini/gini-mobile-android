@@ -166,6 +166,71 @@ class IBANRecognizerFilterTest {
         ibanRecognizerFilter.cleanup()
     }
 
+
+    @Test
+    fun `apply format to a single iban`() = runTest {
+        // Given
+        val listenerSpy: IBANRecognizerFilter.Listener = spy()
+        val ibanRecognizerFilter = IBANRecognizerFilter(
+            IBANRecognizerStub(
+                listOf(
+                    listOf("NL60ABNA8181091612"),
+                    listOf("DE83500105175744527463"),
+                    listOf("DE96500105175969721944"),
+                    listOf("DE76500105172435532833"),
+                    listOf("DE95500105172898696724")
+                )
+            ), listenerSpy, this.coroutineContext
+        )
+
+        // When
+        ibanRecognizerFilter.processImage(mock(), 200, 300, 0, noOpProcessingListener)
+        advanceTimeBy(1010)
+        ibanRecognizerFilter.processImage(mock(), 200, 300, 0, noOpProcessingListener)
+        advanceTimeBy(1010)
+        ibanRecognizerFilter.processImage(mock(), 200, 300, 0, noOpProcessingListener)
+        advanceTimeBy(1010)
+        ibanRecognizerFilter.processImage(mock(), 200, 300, 0, noOpProcessingListener)
+        advanceTimeBy(1010)
+        ibanRecognizerFilter.processImage(mock(), 200, 300, 0, noOpProcessingListener)
+        advanceTimeBy(1010)
+
+        // Then
+        verify(listenerSpy).onIBANsReceived(eq(listOf("NL60 ABNA 8181 0916 12")))
+        verify(listenerSpy).onIBANsReceived(eq(listOf("DE83 5001 0517 5744 5274 63")))
+        verify(listenerSpy).onIBANsReceived(eq(listOf("DE96 5001 0517 5969 7219 44")))
+        verify(listenerSpy).onIBANsReceived(eq(listOf("DE76 5001 0517 2435 5328 33")))
+        verify(listenerSpy).onIBANsReceived(eq(listOf("DE95 5001 0517 2898 6967 24")))
+
+        ibanRecognizerFilter.cleanup()
+    }
+
+    @Test
+    fun `do not apply format to multiple ibans`() = runTest {
+        // Given
+        val listenerSpy: IBANRecognizerFilter.Listener = spy()
+        val ibanRecognizerFilter = IBANRecognizerFilter(
+            IBANRecognizerStub(
+                listOf(
+                    listOf("NL60ABNA8181091612", "DE83500105175744527463"),
+                    listOf("DE96500105175969721944", "DE76500105172435532833", "DE95500105172898696724")
+                )
+            ), listenerSpy, this.coroutineContext
+        )
+
+        // When
+        ibanRecognizerFilter.processImage(mock(), 200, 300, 0, noOpProcessingListener)
+        advanceTimeBy(1010)
+        ibanRecognizerFilter.processImage(mock(), 200, 300, 0, noOpProcessingListener)
+        advanceTimeBy(1010)
+
+        // Then
+        verify(listenerSpy).onIBANsReceived(eq(listOf("NL60ABNA8181091612", "DE83500105175744527463")))
+        verify(listenerSpy).onIBANsReceived(eq(listOf("DE96500105175969721944", "DE76500105172435532833", "DE95500105172898696724")))
+
+        ibanRecognizerFilter.cleanup()
+    }
+
     class IBANRecognizerStub(
         private val expectedValues: List<List<String>>
     ) : IBANRecognizer {
