@@ -314,7 +314,7 @@
         <TextView
             android:id="@+id/gc_iban_detected"
             style="@style/GiniCaptureTheme.Typography.Caption1"
-            android:layout_width="wrap_content"
+            android:layout_width="190dp"
             android:layout_height="wrap_content"
             android:text="@string/gc_iban_detected_please_take_picture"
             android:textColor="@color/gc_light_01"
