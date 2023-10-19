@@ -16,11 +16,11 @@ import javax.inject.Singleton
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
-annotation class GiniCaptureNetworkServiceRelease
+annotation class GiniCaptureNetworkServiceDebugDisabled
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
-annotation class GiniCaptureNetworkServiceDebug
+annotation class GiniCaptureNetworkServiceDebugEnabled
 
 
 @Module
@@ -28,31 +28,39 @@ annotation class GiniCaptureNetworkServiceDebug
 class GiniExampleModule {
 
     @Singleton
-    @GiniCaptureNetworkServiceRelease
+    @GiniCaptureNetworkServiceDebugDisabled
     @Provides
-    fun bindGiniCaptureNetworkServiceRelease(
+    fun bindGiniCaptureNetworkServiceDebugDisabled(
         @ApplicationContext context: Context, logger: Logger
     ): GiniCaptureDefaultNetworkService {
-        val (clientId, clientSecret) = getClientIdAndClientSecret(context, logger)
-        return GiniCaptureDefaultNetworkService.builder(context).setClientCredentials(
-            clientId,
-            clientSecret,
-            "example.com"
-        ).setDocumentMetadata(getDocumentMetaData()).build()
+        return createGiniCaptureNetworkServiceBuilder(context, logger)
+            .build()
     }
 
     @Singleton
-    @GiniCaptureNetworkServiceDebug
+    @GiniCaptureNetworkServiceDebugEnabled
     @Provides
-    fun bindGiniCaptureNetworkServiceDebug(
+    fun bindGiniCaptureNetworkServiceDebugEnabled(
         @ApplicationContext context: Context, logger: Logger
     ): GiniCaptureDefaultNetworkService {
+        return createGiniCaptureNetworkServiceBuilder(context, logger)
+            .setDebuggingEnabled(true)
+            .build()
+    }
+
+    private fun createGiniCaptureNetworkServiceBuilder(
+        context: Context,
+        logger: Logger
+    ): GiniCaptureDefaultNetworkService.Builder {
         val (clientId, clientSecret) = getClientIdAndClientSecret(context, logger)
-        return GiniCaptureDefaultNetworkService.builder(context).setClientCredentials(
-            clientId,
-            clientSecret,
-            "example.com"
-        ).setDocumentMetadata(getDocumentMetaData()).setDebuggingEnabled(true).build()
+        return GiniCaptureDefaultNetworkService
+            .builder(context)
+            .setClientCredentials(
+                clientId,
+                clientSecret,
+                "example.com"
+            )
+            .setDocumentMetadata(getDocumentMetaData())
     }
 
     private fun getClientIdAndClientSecret(context: Context, logger: Logger): Pair<String, String> {
