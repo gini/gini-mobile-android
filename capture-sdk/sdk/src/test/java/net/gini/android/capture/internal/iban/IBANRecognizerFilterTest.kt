@@ -2,7 +2,6 @@ package net.gini.android.capture.internal.iban
 
 import android.media.Image
 import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.atMost
 import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.spy

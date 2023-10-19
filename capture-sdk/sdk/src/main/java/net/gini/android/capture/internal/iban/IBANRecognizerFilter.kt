@@ -4,7 +4,6 @@ import android.media.Image
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancelChildren
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
@@ -22,18 +21,18 @@ class IBANRecognizerFilter @JvmOverloads constructor(
     init {
         listenerScope.launch {
             ibansFlow.distinctUntilChanged().collect { ibans ->
-                    listener.onIBANsReceived(ibans.setIBANFormatting())
+                    listener.onIBANsReceived(setIBANFormatting(ibans))
                 }
         }
     }
 
-    private fun List<String>.setIBANFormatting(): List<String> {
-        return if (this.size == 1) {
-            this.map { iban ->
+    private fun setIBANFormatting(ibans: List<String>): List<String> {
+        return if (ibans.size == 1) {
+            ibans.map { iban ->
                 iban.chunked(4).joinToString(" ")
             }
         } else {
-            this
+            ibans
         }
     }
 
