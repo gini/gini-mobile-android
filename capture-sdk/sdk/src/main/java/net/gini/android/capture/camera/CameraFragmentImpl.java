@@ -1805,7 +1805,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         mImageFrame.setImageTintList(ColorStateList.valueOf(
                         ContextCompat.getColor(
                                 mFragment.getActivity(),
-                                R.color.gc_success_02
+                                R.color.gc_success_05
                         )
                 )
         );
