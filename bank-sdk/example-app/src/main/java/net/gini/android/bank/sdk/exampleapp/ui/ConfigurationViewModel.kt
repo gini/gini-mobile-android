@@ -13,8 +13,8 @@ import kotlinx.coroutines.flow.StateFlow
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.capture.CaptureConfiguration
 import net.gini.android.bank.sdk.exampleapp.R
-import net.gini.android.bank.sdk.exampleapp.core.di.GiniCaptureNetworkServiceDebug
-import net.gini.android.bank.sdk.exampleapp.core.di.GiniCaptureNetworkServiceRelease
+import net.gini.android.bank.sdk.exampleapp.core.di.GiniCaptureNetworkServiceDebugDisabled
+import net.gini.android.bank.sdk.exampleapp.core.di.GiniCaptureNetworkServiceDebugEnabled
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomCameraNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomDigitalInvoiceHelpNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomDigitalInvoiceNavigationBarBottomAdapter
@@ -46,8 +46,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ConfigurationViewModel @Inject constructor(
-    @GiniCaptureNetworkServiceRelease private val giniCaptureDefaultNetworkServiceRelease: GiniCaptureDefaultNetworkService,
-    @GiniCaptureNetworkServiceDebug private val giniCaptureDefaultNetworkServiceDebug: GiniCaptureDefaultNetworkService
+    @GiniCaptureNetworkServiceDebugDisabled private val giniCaptureDefaultNetworkServiceDebugDisabled: GiniCaptureDefaultNetworkService,
+    @GiniCaptureNetworkServiceDebugEnabled private val giniCaptureDefaultNetworkServiceDebugEnabled: GiniCaptureDefaultNetworkService
 ) : ViewModel() {
 
     private val _disableCameraPermissionFlow = MutableStateFlow<Boolean>(false)
@@ -71,7 +71,7 @@ class ConfigurationViewModel @Inject constructor(
 
         var captureConfiguration = CaptureConfiguration(
             // 37 Debug mode
-            networkService = if (configuration.isDebugModeEnabled) giniCaptureDefaultNetworkServiceDebug else giniCaptureDefaultNetworkServiceRelease,
+            networkService = if (configuration.isDebugModeEnabled) giniCaptureDefaultNetworkServiceDebugEnabled else giniCaptureDefaultNetworkServiceDebugDisabled,
             // 1 file import
             fileImportEnabled = configuration.isFileImportEnabled,
             // 2 QR code scanning
@@ -355,8 +355,8 @@ class ConfigurationViewModel @Inject constructor(
 
 
     fun clearGiniCaptureNetworkInstances() {
-        giniCaptureDefaultNetworkServiceRelease.cleanup()
-        giniCaptureDefaultNetworkServiceDebug.cleanup()
+        giniCaptureDefaultNetworkServiceDebugDisabled.cleanup()
+        giniCaptureDefaultNetworkServiceDebugEnabled.cleanup()
     }
 
     companion object {
