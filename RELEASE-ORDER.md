@@ -26,7 +26,7 @@ Release order for :capture-sdk:default-network 3.6.0:
  3. :capture-sdk:sdk 3.6.0
  4. :capture-sdk:default-network 3.6.0
 
-Release order for :bank-sdk:sdk 3.5.0:
+Release order for :bank-sdk:sdk 3.6.0:
  1. :core-api-library:library 2.1.2
  2. :bank-api-library:library 3.1.2
  3. :capture-sdk:sdk 3.6.0
