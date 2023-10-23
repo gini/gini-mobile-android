@@ -23,11 +23,9 @@ We provide two types of documentation: reference documentation and integration g
 
 The reference documentation is part of the source code (kdoc or javadoc) and is compiled to a static website using [Dokka](https://github.com/Kotlin/dokka) for both java and kotlin source.
 
-The integration guides are created using [Sphinx](https://www.sphinx-doc.org/en/master/) and can be found in each releasable sub-module's `src/doc` folder. Not all releasable sub-module's have an integration guide. For example the `core-api-library` doesn't have one as it is not meant to be used directly by our clients.
-
 ## How to build the documentation
 
-Both the reference documentation and the guides can be built using fastlane with the following command:
+The reference documentation can be built using fastlane with the following command:
 
 ```
 $ bundle exec fastlane build_documentation project_id:<project-id> module_id:<module-id>
@@ -50,7 +48,7 @@ $ open capture-sdk/sdk/build/docs/dokka/index.html
 $ open capture-sdk/sdk/build/docs/html/index.html
 ```
 
-### Build only the reference documentation
+### Build the reference documentation using Gradle
 
 The reference documentation can be built using Gradle with the following command:
 
@@ -74,29 +72,9 @@ With the following command you can open the reference documentation in the brows
 $ open capture-sdk/sdk/build/docs/dokka/index.html
 ```
 
-### Build only the guides
-
-The guides are built using Sphinx and a makefile. The makefile is found in each releasable sub-module's `src/doc` folder.
-
-You must use Python 2.x to build the guides. It won't work with Python 3.x. We have good experience using [pyenv](https://github.com/pyenv/pyenv) to easily switch to Python 2.x whenever we want to build the guides.
-
-For example the following commands show how to build the guides for the Capture SDK:
-
-```
-$ cd capture-sdk/sdk/src/doc/
-$ pyenv local 2.7.18
-$ make html
-```
-
-The built guides will be found under `build/html` in the same location, and you can open them in the browser with the following command:
-
-```
-$ open build/html/index.html
-```
-
 # Example Apps
 
-All SDKs have accompanying example apps. These can be found as sub-modules under the SDK's module. The example apps serve as a tool for us during development as well as an aid for our clients.
+Some SDKs have accompanying example apps. These can be found as sub-modules under the SDK's module. The example apps serve as a tool for us during development as well as an aid for our clients.
 
 # Publishing
 
@@ -123,7 +101,7 @@ For example `bank-sdk;1.0.2` or `health-api-lib;2.0.3`.
 
 Documentation is implicitly versioned via the associated SDK or library version tag and is automatically released with the SDK or library.
 
-Both reference documentation and the integration guide is published in the `gh-pages` branch in the `<project-name>/<sub-module-name>` sub-folder. For example the Capture SDK has documentation for the SDK itself at http://developer.gini.net/gini-mobile-android/capture-sdk/sdk/html/ and also reference documentation for the default networking implementation at http://developer.gini.net/gini-mobile-android/capture-sdk/default-network/dokka/.
+The reference documentation is published in the `gh-pages` branch in the `<project-name>/<sub-module-name>` sub-folder. For example, the reference documentation for the default networking implementation at http://developer.gini.net/gini-mobile-android/capture-sdk/default-network/dokka/.
 
 When only documentation release is necessary, then use a subtag of the last SDK or library version tag following this pattern:
 ```
