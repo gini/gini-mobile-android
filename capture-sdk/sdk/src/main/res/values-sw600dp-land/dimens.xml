@@ -4,6 +4,7 @@
     <dimen name="gc_small">4dp</dimen>
     <dimen name="gc_medium">8dp</dimen>
     <dimen name="gc_large">16dp</dimen>
+    <dimen name="gc_large_20">20dp</dimen>
     <dimen name="gc_large_24">24dp</dimen>
     <dimen name="gc_large_32">32dp</dimen>
     <dimen name="gc_large_48">64dp</dimen>

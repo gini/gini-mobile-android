@@ -311,6 +311,23 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <TextView
+            android:id="@+id/gc_iban_detected"
+            style="@style/GiniCaptureTheme.Typography.Caption1"
+            android:layout_width="290dp"
+            android:layout_height="wrap_content"
+            android:text="@string/gc_iban_detected_please_take_picture"
+            android:textColor="@color/gc_light_01"
+            android:gravity="center"
+            android:paddingVertical="@dimen/gc_medium_12"
+            android:paddingHorizontal="@dimen/gc_medium"
+            android:visibility="gone"
+            android:background="@drawable/gc_on_device_iban_detected_background"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/gc_camera_frame" />
+
+
         <net.gini.android.capture.view.InjectedViewContainer
             android:id="@+id/gc_injected_loading_indicator"
             android:layout_width="wrap_content"

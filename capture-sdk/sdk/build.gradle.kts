@@ -122,6 +122,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.cardview)
     implementation(libs.mlkit.barcodescanning)
+    implementation(libs.mlkit.textrecognition)
     implementation(libs.apachecommons.imaging)
     implementation(libs.completableFuture)
 
@@ -141,6 +142,7 @@ dependencies {
     testImplementation(libs.androidx.test.espresso.core)
     testImplementation(libs.androidx.test.espresso.intents)
     testImplementation(libs.jUnitParams)
+    testImplementation(libs.kotlinx.coroutines.test)
 
     debugImplementation(libs.androidx.test.core.ktx)
     debugImplementation(libs.androidx.fragment.testing)

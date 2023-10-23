@@ -8,6 +8,8 @@ import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 
+import net.gini.android.capture.internal.iban.IBANValidator;
+
 /**
  * Created by Alpar Szotyori on 11.12.2017.
  *

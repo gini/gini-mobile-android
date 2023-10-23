@@ -27,6 +27,7 @@ import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomOnboardingIllustra
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomOnboardingNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomReviewNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.data.Configuration
+import net.gini.android.capture.EntryPoint
 import net.gini.android.capture.GiniCaptureDebug
 import net.gini.android.capture.help.HelpItem
 import net.gini.android.capture.internal.util.FileImportValidator
@@ -274,6 +275,8 @@ class ConfigurationViewModel @Inject constructor(
                 CustomDigitalInvoiceNavigationBarBottomAdapter()
 
         // 37 Debug mode
+        GiniCaptureDebug.enable()
+        configureLogging()
         if (configuration.isDebugModeEnabled) {
             GiniCaptureDebug.enable()
             configureLogging()

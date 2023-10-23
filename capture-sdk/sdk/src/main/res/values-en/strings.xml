@@ -152,4 +152,6 @@
     <string name="gc_delete_page">Delete page</string>
     <string name="gc_document_page">Document page</string>
     <string name="gc_useful_tips">Useful tips</string>
+    <string name="gc_iban_detected_please_take_picture">\n\nTake a photo</string>
+    <string name="gc_iban_detected">IBAN detected</string>
 </resources>
