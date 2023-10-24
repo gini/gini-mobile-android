@@ -7,6 +7,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import net.gini.android.bank.api.GiniBankAPI
+import net.gini.android.bank.api.GiniBankAPIBuilder
 import net.gini.android.bank.sdk.exampleapp.R
 import net.gini.android.capture.network.GiniCaptureDefaultNetworkService
 import net.gini.android.core.api.DocumentMetadata
@@ -26,6 +28,16 @@ annotation class GiniCaptureNetworkServiceDebugEnabled
 @Module
 @InstallIn(SingletonComponent::class)
 class GiniExampleModule {
+
+    @Singleton
+    @Provides
+    fun bindGiniBankAPI(
+        @ApplicationContext context: Context, logger: Logger
+    ): GiniBankAPI {
+        val (clientId, clientSecret) = getClientIdAndClientSecret(context, logger)
+        return GiniBankAPIBuilder(context, clientId, clientSecret, "emailDomain")
+            .build()
+    }
 
     @Singleton
     @GiniCaptureNetworkServiceDebugDisabled

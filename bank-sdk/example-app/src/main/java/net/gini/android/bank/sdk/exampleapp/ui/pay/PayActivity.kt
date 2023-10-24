@@ -6,12 +6,14 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import dagger.hilt.android.AndroidEntryPoint
 import net.gini.android.bank.api.models.ResolvePaymentInput
 import net.gini.android.bank.sdk.exampleapp.core.ResultWrapper
 import net.gini.android.bank.sdk.exampleapp.databinding.ActivityPayBinding
 import net.gini.android.bank.sdk.pay.getRequestId
 import net.gini.android.core.api.models.PaymentRequest
 
+@AndroidEntryPoint
 class PayActivity : AppCompatActivity() {
 
     // Replace PayViewModel with PayViewModelJava to try out
