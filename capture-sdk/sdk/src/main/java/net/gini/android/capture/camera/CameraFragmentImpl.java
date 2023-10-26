@@ -49,6 +49,7 @@ import net.gini.android.capture.document.QRCodeDocument;
 import net.gini.android.capture.error.ErrorActivity;
 import net.gini.android.capture.error.ErrorType;
 import net.gini.android.capture.help.HelpActivity;
+import net.gini.android.capture.internal.textrecognition.CropToCameraFrameTextRecognizer;
 import net.gini.android.capture.internal.camera.api.CameraException;
 import net.gini.android.capture.internal.camera.api.CameraInterface;
 import net.gini.android.capture.internal.camera.api.OldCameraController;
@@ -233,6 +234,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private InjectedViewContainer<CameraNavigationBarBottomAdapter> mBottomInjectedContainer;
 
     private IBANRecognizerFilter ibanRecognizerFilter;
+    private CropToCameraFrameTextRecognizer cropToCameraFrameTextRecognizer;
 
     CameraFragmentImpl(@NonNull final FragmentImplCallback fragment) {
         mFragment = fragment;
@@ -545,7 +547,8 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         if (ibanRecognizerFilter != null) {
             return;
         }
-        ibanRecognizerFilter = new IBANRecognizerFilter(new IBANRecognizerImpl(MLKitTextRecognizer.newInstance()), this::handleIBANsDetected);
+        cropToCameraFrameTextRecognizer = new CropToCameraFrameTextRecognizer(MLKitTextRecognizer.newInstance());
+        ibanRecognizerFilter = new IBANRecognizerFilter(new IBANRecognizerImpl(cropToCameraFrameTextRecognizer), this::handleIBANsDetected);
     }
 
     private void enableTapToFocus() {
@@ -1745,6 +1748,12 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                     if (ibanRecognizerFilter != null) {
                         try {
                             previewFrameReferenceCount.getAndIncrement();
+
+                            if (cropToCameraFrameTextRecognizer != null) {
+                                cropToCameraFrameTextRecognizer.setCameraPreviewSize(new Size(mCameraPreview.getWidth(), mCameraPreview.getHeight()));
+                                cropToCameraFrameTextRecognizer.setImageSizeAndRotation(imageSize, rotation);
+                                cropToCameraFrameTextRecognizer.setCameraFrameRect(getRectForCroppingFromImageFrame());
+                            }
 
                             ibanRecognizerFilter.processImage(image, imageSize.width, imageSize.height, rotation, () -> {
                                 previewFrameReferenceCount.getAndDecrement();
