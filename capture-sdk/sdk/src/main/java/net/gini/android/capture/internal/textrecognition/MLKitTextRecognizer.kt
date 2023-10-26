@@ -20,8 +20,7 @@ internal class MLKitTextRecognizer(private val recognizer: com.google.mlkit.visi
     /**
      * Processes the given [Image] and returns the recognized text in the callback.
      *
-     * **IMPORTANT**: If an image is already processing then `doneCallback` will be called with null and the new image
-     * will not be processed.
+     * **IMPORTANT**: If an image is already processing then `cancelledCallback` will be called.
      *
      * @param image the image to process
      * @param width the width of the image
@@ -34,7 +33,7 @@ internal class MLKitTextRecognizer(private val recognizer: com.google.mlkit.visi
         width: Int,
         height: Int,
         rotationDegrees: Int,
-        doneCallback: (String?) -> Unit,
+        doneCallback: (RecognizedText?) -> Unit,
         cancelledCallback: () -> Unit
     ) {
         if (processingTask != null) {
@@ -52,8 +51,7 @@ internal class MLKitTextRecognizer(private val recognizer: com.google.mlkit.visi
     /**
      * Processes the given image byte array and returns the recognized text in the callback.
      *
-     * **IMPORTANT**: If an image is already processing then `doneCallback` will be called with null and the new image
-     * will not be processed.
+     * **IMPORTANT**: If an image is already processing then `cancelledCallback` will be called.
      *
      * @param byteArray the image byte array to process
      * @param width the width of the image
@@ -66,7 +64,7 @@ internal class MLKitTextRecognizer(private val recognizer: com.google.mlkit.visi
         width: Int,
         height: Int,
         rotationDegrees: Int,
-        doneCallback: (String?) -> Unit,
+        doneCallback: (RecognizedText?) -> Unit,
         cancelledCallback: () -> Unit
     ) {
         if (processingTask != null) {
@@ -93,13 +91,13 @@ internal class MLKitTextRecognizer(private val recognizer: com.google.mlkit.visi
         recognizer.close()
     }
 
-    private fun handleProcessingTask(doneCallback: (String?) -> Unit) {
+    private fun handleProcessingTask(doneCallback: (RecognizedText?) -> Unit) {
         processingTask
             ?.addOnSuccessListener { result ->
                 if (DEBUG) {
                     LOG.debug("Text recognizer success: {}", result.text)
                 }
-                doneCallback(result.text)
+                doneCallback(mlKitTextToRecognizedText(result))
             }
             ?.addOnFailureListener { e ->
                 if (DEBUG) {
@@ -110,6 +108,16 @@ internal class MLKitTextRecognizer(private val recognizer: com.google.mlkit.visi
             ?.addOnCompleteListener {
                 processingTask = null
             }
+    }
+
+    private fun mlKitTextToRecognizedText(mlKitText: Text): RecognizedText {
+        return RecognizedText(mlKitText.text, mlKitText.textBlocks.map { block ->
+            RecognizedTextBlock(block.lines.map { line ->
+                RecognizedTextLine(line.elements.map { element ->
+                    RecognizedTextElement(element.text, element.boundingBox)
+                })
+            })
+        })
     }
 
     companion object {

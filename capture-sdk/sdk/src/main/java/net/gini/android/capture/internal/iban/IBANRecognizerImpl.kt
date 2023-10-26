@@ -43,7 +43,7 @@ internal class IBANRecognizerImpl @JvmOverloads constructor(
     ) {
         checkWidthAndHeight(width, height)
         textRecognizer.processImage(image, width, height, rotationDegrees, doneCallback = { recognizedText ->
-            extractIBAN(recognizedText, doneCallback)
+            extractIBAN(recognizedText?.text, doneCallback)
         }, cancelledCallback = {
             cancelledCallback()
         })
@@ -105,7 +105,7 @@ internal class IBANRecognizerImpl @JvmOverloads constructor(
     ) {
         checkWidthAndHeight(width, height)
         textRecognizer.processByteArray(byteArray, width, height, rotationDegrees, doneCallback = { recognizedText ->
-            extractIBAN(recognizedText, doneCallback)
+            extractIBAN(recognizedText?.text, doneCallback)
         }, cancelledCallback = {
             cancelledCallback()
         })
