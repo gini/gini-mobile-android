@@ -19,7 +19,7 @@ import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.exampleapp.R
-import net.gini.android.bank.sdk.exampleapp.core.di.GiniCaptureNetworkServiceRelease
+import net.gini.android.bank.sdk.exampleapp.core.di.GiniCaptureNetworkServiceDebugEnabled
 import net.gini.android.bank.sdk.exampleapp.databinding.ActivityExtractionsBinding
 import net.gini.android.capture.Amount
 import net.gini.android.capture.AmountCurrency
@@ -42,7 +42,7 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
     private lateinit var mExtractionsAdapter: ExtractionsAdapter
 
     @Inject
-    @GiniCaptureNetworkServiceRelease
+    @GiniCaptureNetworkServiceDebugEnabled
     lateinit var defaultNetworkService: GiniCaptureDefaultNetworkService
 
     // {extraction name} to it's {entity name}
