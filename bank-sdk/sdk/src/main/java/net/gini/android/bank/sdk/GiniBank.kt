@@ -140,9 +140,9 @@ object GiniBank {
      *
      * Please provide the required transfer summary to improve the future extraction accuracy.
      *
-     * Please follow the recommendations below:
-     * - Please make sure to call this method before calling [releaseCapture] if the user has completed TAN verification.
-     * - Please provide values for all necessary fields, including those that were not extracted.
+     * Follow the recommendations below:
+     * - Make sure to call this method before calling [releaseCapture] if the user has completed TAN verification.
+     * - Provide values for all necessary fields, including those that were not extracted.
      * - Provide the final data approved by the user (and not the initially extracted only).
      * - Send the transfer summary after TAN verification and provide the extraction values the user has used.
      *
@@ -170,9 +170,9 @@ object GiniBank {
      * Frees up resources used by the capture flow.
      *
      * Please provide the required transfer summary to improve the future extraction accuracy.
-     * Please follow the recommendations below:
+     * Follow the recommendations below:
      *
-     * - Please provide values for all necessary fields, including those that were not extracted.</li>
+     * - Provide values for all necessary fields, including those that were not extracted.</li>
      * - Provide the final data approved by the user (and not the initially extracted only).</li>
      * - Do cleanup after TAN verification.to clean up and provide the extraction values the user has used.</li>
      *
@@ -184,7 +184,7 @@ object GiniBank {
      * @param bic bank identification code
      * @param amount accepts extracted amount and currency
      *
-     * @deprecated Please use [sendTransferSummary] to provide the required transfer summary first (if the user has completed TAN verification) and then [releaseCapture] to let the SDK free up used resources.
+     * @deprecated Use [sendTransferSummary] to provide the required transfer summary first (if the user has completed TAN verification) and then [releaseCapture] to let the SDK free up used resources.
      */
     @Deprecated(
         "Please use sendTransferSummary() to provide the required transfer summary first (if the user has completed TAN verification) and then releaseCapture() to let the SDK free up used resources.",

@@ -189,10 +189,10 @@ public class GiniCapture {
      * Provides transfer summary to Gini.
      *
      * <p>Please provide the required transfer summary to improve the future extraction accuracy.
-     * Please follow the recommendations below:
+     * Follow the recommendations below:
      * <ul>
-     *     <li>Please make sure to call this method before calling {@link #cleanup(Context)} if the user has completed TAN verification.</li>
-     *     <li>Please provide values for all necessary fields, including those that were not extracted.</li>
+     *     <li>Make sure to call this method before calling {@link #cleanup(Context)} if the user has completed TAN verification.</li>
+     *     <li>Provide values for all necessary fields, including those that were not extracted.</li>
      *     <li>Provide the final data approved by the user (and not the initially extracted only).</li>
      *     <li>Send the transfer summary after TAN verification and provide the extraction values the user has used.</li>
      * </ul>
@@ -260,10 +260,10 @@ public class GiniCapture {
      * Destroys the {@link GiniCapture} instance and frees up used resources.
      *
      * <p>Please provide the required transfer summary to improve the future extraction accuracy.
-     * Please follow the recommendations below:
+     * Follow the recommendations below:
      *
      * <ul>
-     *     <li>Please provide values for all necessary fields, including those that were not extracted.</li>
+     *     <li>Provide values for all necessary fields, including those that were not extracted.</li>
      *     <li>Provide the final data approved by the user (and not the initially extracted only).</li>
      *     <li>Do cleanup after TAN verification.to clean up and provide the extraction values the user has used.</li>
      * </ul>
@@ -275,7 +275,7 @@ public class GiniCapture {
      * @param iban             international bank account
      * @param bic              bank identification code
      * @param amount           accepts extracted amount and currency
-     * @deprecated Please use {@link #sendTransferSummary(String, String, String, String, String, Amount)} to provide the required transfer summary first (if the user has completed TAN verification) and then {@link #cleanup(Context)} to let the SDK free up used resources.
+     * @deprecated Use {@link #sendTransferSummary(String, String, String, String, String, Amount)} to provide the required transfer summary first (if the user has completed TAN verification) and then {@link #cleanup(Context)} to let the SDK free up used resources.
      *
      */
 
