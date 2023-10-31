@@ -15,8 +15,8 @@ internal class CropToCameraFrameTextRecognizer(private val actualTextRecognizer:
          */
         set(value) {
             field = value
-            scaleX = cameraPreviewSize.width.toFloat() / imageSize.width
-            scaleY = cameraPreviewSize.height.toFloat() / imageSize.height
+            scaleX = calculateScaleX()
+            scaleY = calculateScaleY()
         }
 
     /**
@@ -27,9 +27,24 @@ internal class CropToCameraFrameTextRecognizer(private val actualTextRecognizer:
     private var imageSize: Size = Size(1, 1)
         set(value) {
             field = value
-            scaleX = cameraPreviewSize.width.toFloat() / imageSize.width
-            scaleY = cameraPreviewSize.height.toFloat() / imageSize.height
+            scaleX = calculateScaleX()
+            scaleY = calculateScaleY()
         }
+
+    private fun calculateScaleY() =
+        if (imageSize.height > 1 && cameraPreviewSize.width > 1) {
+            cameraPreviewSize.height.toFloat() / imageSize.height
+        } else {
+            1f
+        }
+
+    private fun calculateScaleX() =
+        if (imageSize.width > 1 && cameraPreviewSize.width > 1) {
+            cameraPreviewSize.width.toFloat() / imageSize.width
+        } else {
+            1f
+        }
+
     private var imageRotation = 0
     private var scaleX = 1f
     private var scaleY = 1f
