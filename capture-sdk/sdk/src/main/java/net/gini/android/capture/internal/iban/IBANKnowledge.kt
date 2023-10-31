@@ -31,7 +31,7 @@ object IBANKnowledge {
         """($countryCodesRegex) ?(\d ?\d) ?([-\p{Alnum} ]{11,50}\p{Alnum}|[\p{Alnum}]{11,30})\b""".toRegex()
 
     val ibanInBlocksRegex =
-        """\b($countryCodesRegex) ?\d{2}(\s{0,3}[a-zA-Z0-9]{4}){3,8}(\s{0,3}[a-zA-Z0-9]{1,4})\b""".toRegex()
+        """\b($countryCodesRegex) ?\d{2}(\s{0,3}[a-zA-Z0-9]{4}){2,8}(\s{0,3}[a-zA-Z0-9]{1,4})\b""".toRegex()
 
     val germanIBANRegex = """^DE\d{${countryIbanDictionary["DE"]?.minus(2)}}$""".toRegex()
 }
