@@ -24,7 +24,6 @@ import net.gini.android.capture.Document
 import net.gini.android.capture.GiniCaptureError
 import net.gini.android.capture.internal.util.MimeType
 import net.gini.android.capture.network.*
-import org.junit.After
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -41,7 +40,7 @@ import kotlin.coroutines.resumeWithException
  */
 
 @RunWith(AndroidJUnit4::class)
-class ExtractionFeedbackIntegrationTest {
+class TransferSummaryIntegrationTest {
 
     private lateinit var networkService: GiniCaptureDefaultNetworkService
     private lateinit var giniBankAPI: GiniBankAPI
@@ -103,18 +102,22 @@ class ExtractionFeedbackIntegrationTest {
         // 3. Assuming the user saw the following extractions:
         //    amountToPay, iban, bic, paymentPurpose and paymentRecipient
 
-        //    When releasing capture we need to provide the values the user has used for
+        //    Before releasing capture we need to provide the values the user has used for
         //    creating the transaction.
         //    Supposing the user changed the amountToPay from "995.00:EUR" to "950.00:EUR"
         //    we need to pass in the changed value. For the other extractions we can pass in
         //    the original values since the user did not edit them.
-        GiniBank.releaseCapture(getApplicationContext(),
+        GiniBank.sendTransferSummary(
             result.specificExtractions["paymentRecipient"]!!.value,
             "", // Payment reference was not shown to the user and can be left empty
             result.specificExtractions["paymentPurpose"]!!.value,
             result.specificExtractions["iban"]!!.value,
             result.specificExtractions["bic"]!!.value,
             Amount(BigDecimal("950.00"), AmountCurrency.EUR)
+        )
+
+        // Now we can release capture
+        GiniBank.releaseCapture(getApplicationContext()
         )
 
         //    Wait a little for the feedback sending to complete

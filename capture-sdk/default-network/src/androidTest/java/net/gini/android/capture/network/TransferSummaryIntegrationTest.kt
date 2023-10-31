@@ -22,7 +22,6 @@ import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.network.test.ExtractionsFixture
 import net.gini.android.capture.network.test.bankAPIDocumentWithId
 import net.gini.android.capture.network.test.fromJsonAsset
-import org.junit.After
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -39,7 +38,7 @@ import kotlin.coroutines.resumeWithException
  */
 
 @RunWith(AndroidJUnit4::class)
-class ExtractionFeedbackIntegrationTest {
+class TransferSummaryIntegrationTest {
 
     private lateinit var networkService: GiniCaptureDefaultNetworkService
     private lateinit var giniBankAPI: GiniBankAPI
@@ -98,12 +97,12 @@ class ExtractionFeedbackIntegrationTest {
         val amountToPay = extractionsBundle.getParcelable<GiniCaptureSpecificExtraction>("amountToPay")
         amountToPay!!.value = "950.00:EUR"
 
-        //    When releasing capture we need to provide the values the user has used for
+        //    Before cleaning up the capture we need to provide the values the user has used for
         //    creating the transaction.
         //    Supposing the user changed the amountToPay from "995.00:EUR" to "950.00:EUR"
         //    we need to pass in the changed value. For the other extractions we can pass in
         //    the original values since the user did not edit them.
-        GiniCapture.cleanup(getApplicationContext(),
+        GiniCapture.sendTransferSummary(
             extractionsBundle.getParcelable<GiniCaptureSpecificExtraction>("paymentRecipient")!!.value,
             "", // Payment reference was not shown to the user and can be left empty
             extractionsBundle.getParcelable<GiniCaptureSpecificExtraction>("paymentPurpose")!!.value,
@@ -111,6 +110,9 @@ class ExtractionFeedbackIntegrationTest {
             extractionsBundle.getParcelable<GiniCaptureSpecificExtraction>("bic")!!.value,
             Amount(BigDecimal("950.00"), AmountCurrency.EUR)
         )
+
+        // Now we can clean up the capture
+        GiniCapture.cleanup(getApplicationContext())
 
         //    Wait a little for the feedback sending to complete
         delay(2_000)

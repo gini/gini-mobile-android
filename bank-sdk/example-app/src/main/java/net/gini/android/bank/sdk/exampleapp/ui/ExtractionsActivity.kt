@@ -19,7 +19,7 @@ import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.exampleapp.R
-import net.gini.android.bank.sdk.exampleapp.core.di.GiniCaptureNetworkServiceDebugDisabled
+import net.gini.android.bank.sdk.exampleapp.core.di.GiniCaptureNetworkServiceDebugEnabled
 import net.gini.android.bank.sdk.exampleapp.databinding.ActivityExtractionsBinding
 import net.gini.android.capture.Amount
 import net.gini.android.capture.AmountCurrency
@@ -31,7 +31,7 @@ import javax.inject.Inject
 /**
  * Displays the Pay5 extractions: paymentRecipient, iban, bic, amount and paymentReference.
  *
- * A menu item is added to send feedback.
+ * A menu item is added to send transfer summary.
  */
 
 @AndroidEntryPoint
@@ -40,12 +40,20 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
 
     private var mExtractions: MutableMap<String, GiniCaptureSpecificExtraction> = hashMapOf()
     private lateinit var mExtractionsAdapter: ExtractionsAdapter
-    @Inject  @GiniCaptureNetworkServiceDebugDisabled
+
+    @Inject
+    @GiniCaptureNetworkServiceDebugEnabled
     lateinit var defaultNetworkService: GiniCaptureDefaultNetworkService
 
     // {extraction name} to it's {entity name}
-    private val editableSpecificExtractions = hashMapOf("paymentRecipient" to "companyname", "paymentReference" to "reference",
-            "paymentPurpose" to "text", "iban" to "iban", "bic" to "bic", "amountToPay" to "amount")
+    private val editableSpecificExtractions = hashMapOf(
+        "paymentRecipient" to "companyname",
+        "paymentReference" to "reference",
+        "paymentPurpose" to "text",
+        "iban" to "iban",
+        "bic" to "bic",
+        "amountToPay" to "amount"
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,8 +76,8 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
-        R.id.feedback -> {
-            sendFeedbackAndClose(binding)
+        R.id.transfer_summary -> {
+            sendTransferSummaryAndClose(binding)
             true
         }
 
@@ -98,26 +106,32 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
             editableSpecificExtractions.forEach {
                 if (!mExtractions.containsKey(it.key)) {
                     mExtractions[it.key] = GiniCaptureSpecificExtraction(
-                            it.key, "",
-                            it.value, null, emptyList())
+                        it.key, "", it.value, null, emptyList()
+                    )
                 }
             }
 
-            adapter = ExtractionsAdapter(getSortedExtractions(mExtractions), this@ExtractionsActivity, editableSpecificExtractions.keys.toList()).also {
+            adapter = ExtractionsAdapter(
+                getSortedExtractions(mExtractions),
+                this@ExtractionsActivity,
+                editableSpecificExtractions.keys.toList()
+            ).also {
                 mExtractionsAdapter = it
             }
             setOnTouchListener { _, _ ->
                 performClick()
-                val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+                val inputMethodManager =
+                    getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
                 inputMethodManager.hideSoftInputFromWindow(windowToken, 0)
             }
         }
     }
 
-    private fun <T> getSortedExtractions(extractions: Map<String, T>): List<T> = extractions.toSortedMap().values.toList()
+    private fun <T> getSortedExtractions(extractions: Map<String, T>): List<T> =
+        extractions.toSortedMap().values.toList()
 
-    private fun sendFeedbackAndClose(binding: ActivityExtractionsBinding) {
-        // Feedback should be sent only for the user visible fields. Non-visible fields should be filtered out.
+    private fun sendTransferSummaryAndClose(binding: ActivityExtractionsBinding) {
+        // Transfer summary should be sent only for the user visible fields. Non-visible fields should be filtered out.
         // In a real application the user input should be used as the new value.
 
         var amount = mExtractions["amountToPay"]?.value ?: ""
@@ -131,9 +145,13 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
             amount = Amount.EMPTY.amountToPay()
         }
 
-        GiniBank.releaseCapture(applicationContext, paymentRecipient, paymentReference, paymentPurpose, iban, bic, Amount(
-                BigDecimal(amount.removeSuffix(":EUR")), AmountCurrency.EUR)
+        GiniBank.sendTransferSummary(
+            paymentRecipient, paymentReference, paymentPurpose, iban, bic, Amount(
+                BigDecimal(amount.removeSuffix(":EUR")), AmountCurrency.EUR
+            )
         )
+
+        GiniBank.releaseCapture(applicationContext)
 
         finish()
     }
@@ -151,25 +169,30 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
     companion object {
         const val EXTRA_IN_EXTRACTIONS = "EXTRA_IN_EXTRACTIONS"
 
-        fun getStartIntent(context: Context, extractionsBundle: Map<String, GiniCaptureSpecificExtraction>): Intent =
-                Intent(context, ExtractionsActivity::class.java).apply {
-                    putExtra(EXTRA_IN_EXTRACTIONS, Bundle().apply {
-                        extractionsBundle.map { putParcelable(it.key, it.value) }
-                    })
-                }
+        fun getStartIntent(
+            context: Context, extractionsBundle: Map<String, GiniCaptureSpecificExtraction>
+        ): Intent = Intent(context, ExtractionsActivity::class.java).apply {
+            putExtra(EXTRA_IN_EXTRACTIONS, Bundle().apply {
+                extractionsBundle.map { putParcelable(it.key, it.value) }
+            })
+        }
     }
 }
 
-private class ExtractionsAdapter(var extractions: List<GiniCaptureSpecificExtraction>,
-                                 var listener: ExtractionsAdapterInterface? = null,
-                                 val editableSpecificExtractions: List<String>) : RecyclerView.Adapter<ExtractionsViewHolder>() {
+private class ExtractionsAdapter(
+    var extractions: List<GiniCaptureSpecificExtraction>,
+    var listener: ExtractionsAdapterInterface? = null,
+    val editableSpecificExtractions: List<String>
+) : RecyclerView.Adapter<ExtractionsViewHolder>() {
 
     interface ExtractionsAdapterInterface {
         fun valueChanged(key: String, value: String)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ExtractionsViewHolder {
-        val holder = ExtractionsViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_extraction, parent, false))
+        val holder = ExtractionsViewHolder(
+            LayoutInflater.from(parent.context).inflate(R.layout.item_extraction, parent, false)
+        )
         holder.mTextValue.addTextChangedListener {
             listener?.valueChanged(holder.mTextInputLayout.hint.toString(), it.toString())
         }

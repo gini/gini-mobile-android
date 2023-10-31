@@ -34,9 +34,7 @@ import net.gini.android.capture.onboarding.view.OnboardingIllustrationAdapter
 import net.gini.android.capture.requirements.GiniCaptureRequirements
 import net.gini.android.capture.requirements.RequirementsReport
 import net.gini.android.capture.util.CancellationToken
-import net.gini.android.capture.view.DefaultNavigationBarTopAdapter
 import net.gini.android.capture.view.InjectedViewAdapterInstance
-import net.gini.android.capture.view.NavigationBarTopAdapter
 import net.gini.android.core.api.Resource
 import net.gini.android.core.api.models.PaymentRequest
 
@@ -68,7 +66,8 @@ object GiniBank {
         InjectedViewAdapterInstance(DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter())
     var digitalInvoiceOnboardingNavigationBarBottomAdapter: DigitalInvoiceOnboardingNavigationBarBottomAdapter
         set(value) {
-            digitalInvoiceOnboardingNavigationBarBottomAdapterInstance = InjectedViewAdapterInstance(value)
+            digitalInvoiceOnboardingNavigationBarBottomAdapterInstance =
+                InjectedViewAdapterInstance(value)
         }
         get() = digitalInvoiceOnboardingNavigationBarBottomAdapterInstance.viewAdapter
 
@@ -76,12 +75,18 @@ object GiniBank {
         InjectedViewAdapterInstance(DefaultDigitalInvoiceHelpNavigationBarBottomAdapter())
     var digitalInvoiceHelpNavigationBarBottomAdapter: DigitalInvoiceHelpNavigationBarBottomAdapter
         set(value) {
-            digitalInvoiceHelpNavigationBarBottomAdapterInstance = InjectedViewAdapterInstance(value)
+            digitalInvoiceHelpNavigationBarBottomAdapterInstance =
+                InjectedViewAdapterInstance(value)
         }
         get() = digitalInvoiceHelpNavigationBarBottomAdapterInstance.viewAdapter
 
     internal var digitalInvoiceOnboardingIllustrationAdapterInstance: InjectedViewAdapterInstance<OnboardingIllustrationAdapter> =
-        InjectedViewAdapterInstance(ImageOnboardingIllustrationAdapter(R.drawable.gbs_digital_invoice_list_image, R.string.gbs_digital_invoice_onboarding_text_1))
+        InjectedViewAdapterInstance(
+            ImageOnboardingIllustrationAdapter(
+                R.drawable.gbs_digital_invoice_list_image,
+                R.string.gbs_digital_invoice_onboarding_text_1
+            )
+        )
     var digitalInvoiceOnboardingIllustrationAdapter: OnboardingIllustrationAdapter
         set(value) {
             digitalInvoiceOnboardingIllustrationAdapterInstance = InjectedViewAdapterInstance(value)
@@ -116,9 +121,7 @@ object GiniBank {
     fun setCaptureConfiguration(captureConfiguration: CaptureConfiguration) {
         check(giniCapture == null) { "Gini Capture already configured. Call releaseCapture() before setting a new configuration." }
         GiniBank.captureConfiguration = captureConfiguration
-        GiniCapture.newInstance()
-            .applyConfiguration(captureConfiguration)
-            .build()
+        GiniCapture.newInstance().applyConfiguration(captureConfiguration).build()
         giniCapture = GiniCapture.getInstance()
     }
 
@@ -127,19 +130,49 @@ object GiniBank {
      */
     fun setCaptureConfiguration(context: Context, captureConfiguration: CaptureConfiguration) {
         GiniBank.captureConfiguration = captureConfiguration
-        GiniCapture.newInstance(context)
-            .applyConfiguration(captureConfiguration)
-            .build()
+        GiniCapture.newInstance(context).applyConfiguration(captureConfiguration).build()
         giniCapture = GiniCapture.getInstance()
+    }
+
+
+    /**
+     * Provides transfer summary to Gini.
+     *
+     * Please provide the required transfer summary to improve the future extraction accuracy.
+     *
+     * Follow the recommendations below:
+     * - Make sure to call this method before calling [releaseCapture] if the user has completed TAN verification.
+     * - Provide values for all necessary fields, including those that were not extracted.
+     * - Provide the final data approved by the user (and not the initially extracted only).
+     * - Send the transfer summary after TAN verification and provide the extraction values the user has used.
+     *
+     * @param paymentRecipient payment receiver
+     * @param paymentReference ID based on Client ID (Kundennummer) and invoice ID (Rechnungsnummer)
+     * @param paymentPurpose statement what this payment is for
+     * @param iban international bank account
+     * @param bic bank identification code
+     * @param amount accepts extracted amount and currency
+     */
+    fun sendTransferSummary(
+        paymentRecipient: String,
+        paymentReference: String,
+        paymentPurpose: String,
+        iban: String,
+        bic: String,
+        amount: Amount
+    ) {
+        GiniCapture.sendTransferSummary(
+            paymentRecipient, paymentReference, paymentPurpose, iban, bic, amount
+        )
     }
 
     /**
      * Frees up resources used by the capture flow.
      *
-     * Please provide the required extraction feedback to improve the future extraction accuracy.
-     * Please follow the recommendations below:
+     * Please provide the required transfer summary to improve the future extraction accuracy.
+     * Follow the recommendations below:
      *
-     * - Please provide values for all necessary fields, including those that were not extracted.</li>
+     * - Provide values for all necessary fields, including those that were not extracted.</li>
      * - Provide the final data approved by the user (and not the initially extracted only).</li>
      * - Do cleanup after TAN verification.to clean up and provide the extraction values the user has used.</li>
      *
@@ -150,7 +183,13 @@ object GiniBank {
      * @param iban international bank account
      * @param bic bank identification code
      * @param amount accepts extracted amount and currency
+     *
+     * @deprecated Use [sendTransferSummary] to provide the required transfer summary first (if the user has completed TAN verification) and then [releaseCapture] to let the SDK free up used resources.
      */
+    @Deprecated(
+        "Please use sendTransferSummary() to provide the required transfer summary first (if the user has completed TAN verification) and then releaseCapture() to let the SDK free up used resources.",
+        ReplaceWith("releaseCapture(context)")
+    )
     fun releaseCapture(
         context: Context,
         paymentRecipient: String,
@@ -160,23 +199,37 @@ object GiniBank {
         bic: String,
         amount: Amount
     ) {
+        sendTransferSummary(
+            paymentRecipient, paymentReference, paymentPurpose, iban, bic, amount
+        )
+        releaseCapture(context)
+    }
+
+
+    /**
+     * Frees up resources used by the capture flow.
+     *
+     * @param context Android context
+     *
+     */
+    fun releaseCapture(
+        context: Context
+    ) {
         GiniCapture.cleanup(
-            context,
-            paymentRecipient,
-            paymentReference,
-            paymentPurpose,
-            iban,
-            bic,
-            amount
+            context
         )
         captureConfiguration = null
         giniCapture = null
 
-        digitalInvoiceOnboardingNavigationBarBottomAdapter = DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter()
-        digitalInvoiceHelpNavigationBarBottomAdapter = DefaultDigitalInvoiceHelpNavigationBarBottomAdapter()
+        digitalInvoiceOnboardingNavigationBarBottomAdapter =
+            DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter()
+        digitalInvoiceHelpNavigationBarBottomAdapter =
+            DefaultDigitalInvoiceHelpNavigationBarBottomAdapter()
 
-        digitalInvoiceOnboardingIllustrationAdapter = ImageOnboardingIllustrationAdapter(R.drawable.gbs_digital_invoice_list_image,
-        R.string.gbs_digital_invoice_onboarding_text_1)
+        digitalInvoiceOnboardingIllustrationAdapter = ImageOnboardingIllustrationAdapter(
+            R.drawable.gbs_digital_invoice_list_image,
+            R.string.gbs_digital_invoice_onboarding_text_1
+        )
 
         digitalInvoiceNavigationBarBottomAdapter = DefaultDigitalInvoiceNavigationBarBottomAdapter()
     }
@@ -213,16 +266,12 @@ object GiniBank {
      * @throws IllegalStateException if the capture feature was not configured.
      */
     fun startCaptureFlowForIntent(
-        resultLauncher: ActivityResultLauncher<CaptureImportInput>,
-        context: Context,
-        intent: Intent
+        resultLauncher: ActivityResultLauncher<CaptureImportInput>, context: Context, intent: Intent
     ): CancellationToken {
         giniCapture.let { capture ->
             check(capture != null) { "Capture feature is not configured. Call setCaptureConfiguration before starting the flow." }
             return capture.createIntentForImportedFiles(
-                intent,
-                context,
-                getImportFileCallback(resultLauncher)
+                intent, context, getImportFileCallback(resultLauncher)
             )
         }
     }
@@ -255,9 +304,9 @@ object GiniBank {
         return when (val paymentRequestResource = api.documentManager.getPaymentRequest(id)) {
             is Resource.Cancelled -> throw Exception("Cancelled")
             is Resource.Error -> throw Exception(
-                paymentRequestResource.message,
-                paymentRequestResource.exception
+                paymentRequestResource.message, paymentRequestResource.exception
             )
+
             is Resource.Success -> paymentRequestResource.data
         }
     }
@@ -275,8 +324,7 @@ object GiniBank {
      * @throws AmountParsingException If the amount string could not be parsed
      */
     suspend fun resolvePaymentRequest(
-        requestId: String,
-        resolvePaymentInput: ResolvePaymentInput
+        requestId: String, resolvePaymentInput: ResolvePaymentInput
     ): ResolvedPayment {
         val api = giniApi
         check(api != null) { "Gini Api is not set" }
@@ -286,9 +334,9 @@ object GiniBank {
         )) {
             is Resource.Cancelled -> throw Exception("Cancelled")
             is Resource.Error -> throw Exception(
-                resolvedPaymentResource.message,
-                resolvedPaymentResource.exception
+                resolvedPaymentResource.message, resolvedPaymentResource.exception
             )
+
             is Resource.Success -> resolvedPaymentResource.data
         }
     }
