@@ -21,7 +21,7 @@ internal interface TextRecognizer {
                      width: Int,
                      height: Int,
                      rotationDegrees: Int,
-                     doneCallback: (String?) -> Unit,
+                     doneCallback: (RecognizedText?) -> Unit,
                      cancelledCallback: () -> Unit)
 
     /**
@@ -39,7 +39,7 @@ internal interface TextRecognizer {
         width: Int,
         height: Int,
         rotationDegrees: Int,
-        doneCallback: (String?) -> Unit,
+        doneCallback: (RecognizedText?) -> Unit,
         cancelledCallback: () -> Unit)
 
     /**

@@ -8,6 +8,7 @@ import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.slf4j.helpers.NOPLogger
 
 /**
  * Use this class to recognize text in images via the ML Kit Text Recognition API.
@@ -20,8 +21,7 @@ internal class MLKitTextRecognizer(private val recognizer: com.google.mlkit.visi
     /**
      * Processes the given [Image] and returns the recognized text in the callback.
      *
-     * **IMPORTANT**: If an image is already processing then `doneCallback` will be called with null and the new image
-     * will not be processed.
+     * **IMPORTANT**: If an image is already processing then `cancelledCallback` will be called.
      *
      * @param image the image to process
      * @param width the width of the image
@@ -34,13 +34,11 @@ internal class MLKitTextRecognizer(private val recognizer: com.google.mlkit.visi
         width: Int,
         height: Int,
         rotationDegrees: Int,
-        doneCallback: (String?) -> Unit,
+        doneCallback: (RecognizedText?) -> Unit,
         cancelledCallback: () -> Unit
     ) {
         if (processingTask != null) {
-            if (DEBUG) {
-                LOG.warn("Text recognizer is already processing an image")
-            }
+            LOG.warn("Text recognizer is already processing an image")
             cancelledCallback()
             return
         }
@@ -52,8 +50,7 @@ internal class MLKitTextRecognizer(private val recognizer: com.google.mlkit.visi
     /**
      * Processes the given image byte array and returns the recognized text in the callback.
      *
-     * **IMPORTANT**: If an image is already processing then `doneCallback` will be called with null and the new image
-     * will not be processed.
+     * **IMPORTANT**: If an image is already processing then `cancelledCallback` will be called.
      *
      * @param byteArray the image byte array to process
      * @param width the width of the image
@@ -66,13 +63,11 @@ internal class MLKitTextRecognizer(private val recognizer: com.google.mlkit.visi
         width: Int,
         height: Int,
         rotationDegrees: Int,
-        doneCallback: (String?) -> Unit,
+        doneCallback: (RecognizedText?) -> Unit,
         cancelledCallback: () -> Unit
     ) {
         if (processingTask != null) {
-            if (DEBUG) {
-                LOG.warn("Text recognizer is already processing an image")
-            }
+            LOG.warn("Text recognizer is already processing an image")
             cancelledCallback()
             return
         }
@@ -93,18 +88,14 @@ internal class MLKitTextRecognizer(private val recognizer: com.google.mlkit.visi
         recognizer.close()
     }
 
-    private fun handleProcessingTask(doneCallback: (String?) -> Unit) {
+    private fun handleProcessingTask(doneCallback: (RecognizedText?) -> Unit) {
         processingTask
             ?.addOnSuccessListener { result ->
-                if (DEBUG) {
-                    LOG.debug("Text recognizer success: {}", result.text)
-                }
-                doneCallback(result.text)
+                LOG.debug("Text recognizer success: {}", result.text)
+                doneCallback(mlKitTextToRecognizedText(result))
             }
             ?.addOnFailureListener { e ->
-                if (DEBUG) {
-                    LOG.error("Text recognizer failed", e)
-                }
+                LOG.error("Text recognizer failed", e)
                 doneCallback(null)
             }
             ?.addOnCompleteListener {
@@ -112,9 +103,19 @@ internal class MLKitTextRecognizer(private val recognizer: com.google.mlkit.visi
             }
     }
 
+    private fun mlKitTextToRecognizedText(mlKitText: Text): RecognizedText {
+        return RecognizedText(mlKitText.text, mlKitText.textBlocks.map { block ->
+            RecognizedTextBlock(block.lines.map { line ->
+                RecognizedTextLine(line.elements.map { element ->
+                    RecognizedTextElement(element.text, element.boundingBox)
+                })
+            })
+        })
+    }
+
     companion object {
-        const val DEBUG = true
-        val LOG: Logger = LoggerFactory.getLogger(MLKitTextRecognizer::class.java)
+        private const val DEBUG = false
+        val LOG: Logger = if (DEBUG) LoggerFactory.getLogger(MLKitTextRecognizer::class.java) else NOPLogger.NOP_LOGGER
 
         @JvmStatic
         fun newInstance() = MLKitTextRecognizer(TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS))

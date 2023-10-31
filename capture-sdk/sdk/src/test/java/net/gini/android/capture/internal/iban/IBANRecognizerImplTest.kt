@@ -5,7 +5,9 @@ import com.google.common.truth.Truth.assertThat
 import com.nhaarman.mockitokotlin2.mock
 import junitparams.JUnitParamsRunner
 import junitparams.Parameters
-import net.gini.android.capture.internal.textrecognition.TextRecognizer
+import net.gini.android.capture.internal.textrecognition.RecognizedText
+import net.gini.android.capture.internal.textrecognition.test.TextRecognizerDummy
+import net.gini.android.capture.internal.textrecognition.test.TextRecognizerStub
 import net.gini.android.capture.test.Helpers.loadJavaResource
 import org.junit.Before
 import org.junit.Test
@@ -29,7 +31,7 @@ class IBANRecognizerImplTest {
     fun `returns empty list when no IBAN found in image byte array`() {
         // Given
         val byteArray = ByteArray(100)
-        ibanRecognizer = IBANRecognizerImpl(TextRecognizerStub(""))
+        ibanRecognizer = IBANRecognizerImpl(TextRecognizerStub(RecognizedText("", emptyList())))
 
         // When
         ibanRecognizer.processByteArray(byteArray, 200, 300, 0, doneCallback = { iban ->
@@ -43,7 +45,7 @@ class IBANRecognizerImplTest {
     fun `returns empty list when no IBAN found in image`() {
         // Given
         val image: Image = mock()
-        ibanRecognizer = IBANRecognizerImpl(TextRecognizerStub(""))
+        ibanRecognizer = IBANRecognizerImpl(TextRecognizerStub(RecognizedText("", emptyList())))
 
         // When
         ibanRecognizer.processImage(image, 200, 300, 0, doneCallback = { iban ->
@@ -127,7 +129,7 @@ class IBANRecognizerImplTest {
     fun `recognizes all IBANs in image byte array`(recognizedText: String, expectedIBANs: List<String>) {
         // Given
         val byteArray = ByteArray(100)
-        ibanRecognizer = IBANRecognizerImpl(TextRecognizerStub(recognizedText))
+        ibanRecognizer = IBANRecognizerImpl(TextRecognizerStub(RecognizedText(recognizedText, emptyList())))
 
         // When
         ibanRecognizer.processByteArray(byteArray, 200, 300, 0, doneCallback = { ibans ->
@@ -143,7 +145,7 @@ class IBANRecognizerImplTest {
     fun `recognizes IBAN in image`(recognizedText: String, expectedIBANs: List<String>) {
         // Given
         val image: Image = mock()
-        ibanRecognizer = IBANRecognizerImpl(TextRecognizerStub(recognizedText))
+        ibanRecognizer = IBANRecognizerImpl(TextRecognizerStub(RecognizedText(recognizedText, emptyList())))
 
         // When
         ibanRecognizer.processImage(image, 200, 300, 0, doneCallback = { ibans ->
@@ -157,7 +159,7 @@ class IBANRecognizerImplTest {
     fun `calls cancelled callback when text recognizer is cancelled`() {
         // Given
         val image: Image = mock()
-        ibanRecognizer = IBANRecognizerImpl(TextRecognizerStub(text = "", isCancelled = true))
+        ibanRecognizer = IBANRecognizerImpl(TextRecognizerStub(text = RecognizedText("", emptyList()), isCancelled = true))
         var cancelledCallbackInvoked = false
 
         // When
@@ -189,71 +191,4 @@ class IBANRecognizerImplTest {
         return loadJavaResource(name).toString(Charsets.UTF_8)
     }
 
-    class TextRecognizerDummy : TextRecognizer {
-        override fun processImage(
-            image: Image,
-            width: Int,
-            height: Int,
-            rotationDegrees: Int,
-            doneCallback: (String?) -> Unit,
-            cancelledCallback: () -> Unit
-        ) {
-            doneCallback(null)
-        }
-
-        override fun processByteArray(
-            byteArray: ByteArray,
-            width: Int,
-            height: Int,
-            rotationDegrees: Int,
-            doneCallback: (String?) -> Unit,
-            cancelledCallback: () -> Unit
-        ) {
-            doneCallback(null)
-        }
-
-        override fun close() {
-
-        }
-
-    }
-
-    class TextRecognizerStub(
-        private val text: String?,
-        private val isCancelled: Boolean = false) : TextRecognizer {
-        override fun processImage(
-            image: Image,
-            width: Int,
-            height: Int,
-            rotationDegrees: Int,
-            doneCallback: (String?) -> Unit,
-            cancelledCallback: () -> Unit
-        ) {
-            if (isCancelled) {
-                cancelledCallback()
-            } else {
-                doneCallback(text)
-            }
-        }
-
-        override fun processByteArray(
-            byteArray: ByteArray,
-            width: Int,
-            height: Int,
-            rotationDegrees: Int,
-            doneCallback: (String?) -> Unit,
-            cancelledCallback: () -> Unit
-        ) {
-            if (isCancelled) {
-                cancelledCallback()
-            } else {
-                doneCallback(text)
-            }
-        }
-
-        override fun close() {
-
-        }
-
-    }
 }
