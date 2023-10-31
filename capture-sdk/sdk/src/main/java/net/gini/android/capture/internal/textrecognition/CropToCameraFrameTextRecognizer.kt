@@ -102,7 +102,7 @@ internal class CropToCameraFrameTextRecognizer(private val actualTextRecognizer:
     private fun getCroppedRecognizedText(recognizedText: RecognizedText): RecognizedText {
         return cameraFrameRect?.let { frameRect ->
             val croppedBlocks = getCroppedBlocks(recognizedText, frameRect)
-            val croppedTextString = getCroppedTextString(recognizedText, frameRect)
+            val croppedTextString = reconstructTextFromBlocks(croppedBlocks)
             RecognizedText(croppedTextString, croppedBlocks)
         } ?: recognizedText
     }
@@ -113,22 +113,23 @@ internal class CropToCameraFrameTextRecognizer(private val actualTextRecognizer:
      * @param recognizedText the recognized text
      * @param cameraFrameRect the camera frame
      */
-    private fun getCroppedTextString(
-        recognizedText: RecognizedText,
-        cameraFrameRect: Rect
-    ): String = recognizedText.blocks.fold(StringBuilder()) { acc, textBlock ->
-        textBlock.lines.fold(acc) { acc, line ->
-            line.elements.fold(acc) { acc, element ->
-                if (element.boundingBox != null) {
-                    if (cameraFrameRect.contains(getScaledBoundingBox(element.boundingBox))) {
-                        acc.append(element.text)
-                    }
-                }
-                acc
-            }
+    private fun reconstructTextFromBlocks(
+        croppedBlocks: List<RecognizedTextBlock>
+    ): String = croppedBlocks.foldIndexed(StringBuilder()) { index, acc, textBlock ->
+        if (index != 0) {
             acc.append("\n")
         }
-        acc.append("\n")
+        textBlock.lines.foldIndexed(acc) { index, acc, line ->
+            if (index != 0) {
+                acc.append("\n")
+            }
+            line.elements.foldIndexed(acc) { index, acc, element ->
+                if (index != 0) {
+                    acc.append(" ")
+                }
+                acc.append(element.text)
+            }
+        }
     }.toString()
 
     /**
