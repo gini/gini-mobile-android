@@ -41,9 +41,6 @@ class MainActivity : AppCompatActivity() {
     private var cancellationToken: CancellationToken? =
         null // should be kept across configuration changes
     private val permissionHandler = PermissionHandler(this)
-    private var mRestoredInstance = false
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,19 +48,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         addInputHandlers()
         showVersions()
-        mRestoredInstance = savedInstanceState != null
-    }
-
-    override fun onStart() {
-        super.onStart()
-        if (!mRestoredInstance) {
-            val intent = intent
+        if (savedInstanceState == null) {
             if (isIntentActionViewOrSend(intent)) {
                 startGiniCaptureSdkForImportedFile(intent)
             }
         }
     }
-
 
     override fun onDestroy() {
         super.onDestroy()
@@ -78,7 +68,6 @@ class MainActivity : AppCompatActivity() {
             startGiniCaptureSdkForImportedFile(intent)
         }
     }
-
 
     private fun isIntentActionViewOrSend(intent: Intent): Boolean {
         val action = intent.action
@@ -168,7 +157,6 @@ class MainActivity : AppCompatActivity() {
             GiniBank.startCaptureFlow(captureLauncher)
         }
     }
-
 
     private fun onCaptureResult(result: CaptureResult) {
         when (result) {
