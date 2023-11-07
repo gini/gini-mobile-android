@@ -1,3 +1,10 @@
+# Release order
+1. Check the `RELEASE-ORDER.md` file.
+2. If there are multiple modules affected by this version, release should be created from top to bottom (the ones with less dependencies are released first, so after their release, the dependent ones can be released). So, with the new release of the `capture-sdk`, `bank-sdk` should be released as well.
+3. `capture-sdk:default-network` version is always bumped when the `capture-sdk` is updated.
+4. `core-api-library` and `capture-sdk:default-network` don't get their own release notes, but they still need to be released separately. For `core-api-library`, we share release notes through `bank-api-library` and `healht-api-library`. For `capture-sdk:default-network` we share the release notes through `capture-sdk`.
+
+# How to release
 To publish releases follow these steps:
 1. Create releases in Jira in PIA's project: https://ginis.atlassian.net/projects/PIA?selectedItem=com.atlassian.jira.jira-projects-plugin%3Arelease-page
    1. Connect tickets to each release: for each to-be-released ticket add the release to its "Fix versions" field.
@@ -22,12 +29,13 @@ To publish releases follow these steps:
       2. Update the `RELEASE-ORDER.md` file by running: `./gradlew updateReleaseOrderFile`.
       3. Commit the version bump changes using the commit message template from above.
    6. Push the commits to the required branch.
-4. Create and push release tags by running: `bundle exec fastlane create_release_tags`.
-5. Check that the release workflows have started in [GitHub Actions](https://github.com/gini/gini-mobile-android/actions).
-6. After all builds have finished log into [Sonatype's Nexus Repository Manager](https://oss.sonatype.org/#welcome)
+4. Wait for QA to assign back the release candidate tickets to you. 
+5. Create and push release tags by running: `bundle exec fastlane create_release_tags`.
+6. Check that the release workflows have started in [GitHub Actions](https://github.com/gini/gini-mobile-android/actions). 
+7. After all builds have finished log into [Sonatype's Nexus Repository Manager](https://oss.sonatype.org/#welcome)
    (for Maven Central) and view the `Staging Repositories`. Credentials are in 1Password: "Maven Central Sonatype account for net.gini".
    1. Run pre-release checks: select all staging repositories and click `Close`.
    2. After the checks have completed check your emails to see whether Sonatype Lift detected any vulnerabilities.
    3. Finalize release: after the automated checks are done select all staging repositories and click `Release`.
-7. Create and publish releases in [GitHub](https://github.com/gini/gini-mobile-android/releases) for each of the created release tags using the release notes from the Jira release.
+8. Create and publish releases in [GitHub](https://github.com/gini/gini-mobile-android/releases) for each of the created release tags using the release notes from the Jira release.
 
