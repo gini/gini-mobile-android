@@ -1455,6 +1455,8 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         // and we need the frame rect relative to the camera preview's origin
         frameHitRect.offset(-cameraPreviewHitRect.left, -cameraPreviewHitRect.top);
 
+        mOCRView.setCameraFrame(frameHitRect);
+
         return frameHitRect;
     }
 
@@ -1706,13 +1708,13 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             mCameraController.setPreviewCallback(new CameraInterface.PreviewCallback() {
                 @Override
                 public void onPreviewFrame(@NonNull Image image, @NonNull Size imageSize, int rotation, @NonNull CameraInterface.PreviewFrameCallback previewFrameCallback) {
-                    ocr.processImage(image, rotation, (text) -> {
+                    ocr.processImage(image, rotation, getRectForCroppingFromImageFrame(), mOCRView.scaleX, mOCRView.scaleY, (text) -> {
                         if (text == null) return Unit.INSTANCE;
 
                         mOCRView.setCameraPreviewSize(new Size(mCameraPreview.getWidth(), mCameraPreview.getHeight()));
                         mOCRView.setImageSizeAndRotation(imageSize, rotation);
                         final OCRText ibans = ibanFilter.process(text);
-                        mOCRView.setText(ibans);
+                        mOCRView.setText(text);
 
 //                        if (!ibans.getElements().isEmpty()) {
 //                            onCameraTriggerClicked();

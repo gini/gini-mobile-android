@@ -21,7 +21,7 @@ class OCR {
 
     private var processingTask: Task<Text>? = null
 
-    fun processImage(image: Image, rotation: Int, doneCallback: (OCRText?) -> Unit) {
+    fun processImage(image: Image, rotation: Int, cropRect: Rect, scaleX: Float, scaleY: Float, doneCallback: (OCRText?) -> Unit) {
         if (processingTask != null) return
 
         processingTask = recognizer.process(InputImage.fromMediaImage(image, rotation))
@@ -31,14 +31,34 @@ class OCR {
 
                 val ocrElements = result.textBlocks.fold(mutableListOf<OCRElement>()) { acc, textBlock ->
                     textBlock.lines.fold(acc) { acc, line ->
-                        acc.apply {
-                            add(OCRElement(line.text, line.boundingBox ?: Rect()))
-                        }
-//                        line.elements.fold(acc) { acc, element ->
-//                            acc.apply {
-//                                add(OCRElement(element.text, element.boundingBox ?: Rect(), element.cornerPoints ?: emptyArray()))
+//                        acc.apply {
+//                            line.boundingBox?.let { boundingBox ->
+//                                val scaledRect = Rect(
+//                                    (boundingBox.left * scaleX).toInt(),
+//                                    (boundingBox.top * scaleY).toInt(),
+//                                    (boundingBox.right * scaleX).toInt(),
+//                                    (boundingBox.bottom * scaleY).toInt()
+//                                )
+//                                if (cropRect.contains(scaledRect)) {
+//                                    add(OCRElement(line.text, boundingBox))
+//                                }
 //                            }
 //                        }
+                        line.elements.fold(acc) { acc, element ->
+                            acc.apply {
+                                element.boundingBox?.let { boundingBox ->
+                                    val scaledRect = Rect(
+                                        (boundingBox.left * scaleX).toInt(),
+                                        (boundingBox.top * scaleY).toInt(),
+                                        (boundingBox.right * scaleX).toInt(),
+                                        (boundingBox.bottom * scaleY).toInt()
+                                    )
+                                    if (cropRect.contains(scaledRect)) {
+                                        add(OCRElement(element.text, boundingBox))
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
                 doneCallback(OCRText(ocrElements))

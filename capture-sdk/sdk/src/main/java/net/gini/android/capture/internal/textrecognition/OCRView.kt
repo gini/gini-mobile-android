@@ -37,13 +37,23 @@ class OCRView @JvmOverloads constructor(context: Context?, attrs: AttributeSet? 
             scaleY = cameraPreviewSize.height.toFloat() / imageSize.height
         }
     private var imageRotation = 0
-    private var scaleX = 1f
-    private var scaleY = 1f
+    @JvmField
+    var scaleX = 1f
+    @JvmField
+    var scaleY = 1f
+
+    var cameraFrame: Rect = Rect()
 
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.FILL
         strokeWidth = 4f
         color = Color.parseColor("#88ffffff")
+    }
+
+    private val framePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.STROKE
+        strokeWidth = 4f
+        color = Color.parseColor("#00ff00")
     }
 
     fun setImageSizeAndRotation(size: Size, rotation: Int) {
@@ -56,6 +66,8 @@ class OCRView @JvmOverloads constructor(context: Context?, attrs: AttributeSet? 
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+
+        canvas.drawRect(cameraFrame, framePaint)
 
         text?.elements?.forEach { element ->
             val scaledRect = Rect(
