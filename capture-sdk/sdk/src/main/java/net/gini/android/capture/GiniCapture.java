@@ -484,7 +484,7 @@ public class GiniCapture {
     /**
      * Find out whether the camera flash is on or off by default.
      *
-     * <p> If not changed, then flash is on by default.
+     * <p> If not changed, then flash is off by default.
      *
      * @return {@code true} if the flash is on by default
      */
@@ -672,8 +672,7 @@ public class GiniCapture {
         private boolean mMultiPageEnabled;
         private boolean mIsSupportedFormatsHelpScreenEnabled = true;
         private boolean mFlashButtonEnabled;
-
-        private boolean mIsFlashOnByDefault = true;
+        private boolean mIsFlashOnByDefault = false;
 
         private EventTracker mEventTracker = new EventTracker() {
             @Override
@@ -930,9 +929,9 @@ public class GiniCapture {
         }
 
         /**
-         * Set whether the camera flash is on or off by default.
+         * Set whether the camera flash is on or off when the SDK starts.
          *
-         * <p> If not changed, then flash is on by default.
+         * <p> If not changed, then flash is off by default.
          *
          * @param flashOn {@code true} to turn the flash on
          * @return the {@link Builder} instance

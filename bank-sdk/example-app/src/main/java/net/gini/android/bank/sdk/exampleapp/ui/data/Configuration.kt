@@ -33,7 +33,7 @@ data class Configuration(
 
     // 6 enable flash on by default
 //    net.gini.android.capture.GiniCapture.Builder#setFlashOnByDefault → on/off switch
-    val isFlashOnByDefault: Boolean = true,
+    val isFlashOnByDefault: Boolean = false,
 
     // 7 set import document type support
 //    net.gini.android.capture.GiniCapture.Builder#setDocumentImportEnabledFileTypes → radio buttons to select an available enum value
