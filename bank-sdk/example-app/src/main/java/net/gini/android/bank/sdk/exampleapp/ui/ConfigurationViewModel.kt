@@ -27,7 +27,6 @@ import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomOnboardingIllustra
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomOnboardingNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomReviewNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.data.Configuration
-import net.gini.android.capture.EntryPoint
 import net.gini.android.capture.GiniCaptureDebug
 import net.gini.android.capture.help.HelpItem
 import net.gini.android.capture.internal.util.FileImportValidator
@@ -65,6 +64,13 @@ class ConfigurationViewModel @Inject constructor(
         _configurationFlow.value = configuration
     }
 
+    fun setupSDKWithDefaultConfigurations() {
+        _configurationFlow.value = Configuration.setupSDKWithDefaultConfiguration(
+            configurationFlow.value,
+            CaptureConfiguration(giniCaptureDefaultNetworkServiceDebugDisabled)
+        )
+    }
+
     fun configureGiniBank(context: Context) {
         val intent = Intent(context, CustomHelpActivity::class.java)
 
@@ -82,9 +88,9 @@ class ConfigurationViewModel @Inject constructor(
             // 4 enable multi page
             multiPageEnabled = configuration.isMultiPageEnabled,
             // 5 enable flash toggle
-            flashButtonEnabled = configuration.isFlashToggleEnabled,
+            flashButtonEnabled = configuration.isFlashButtonDisplayed,
             // 6 enable flash on by default
-            flashOnByDefault = configuration.isFlashOnByDefault,
+            flashOnByDefault = configuration.isFlashDefaultStateEnabled,
             // 7 set file import type
             documentImportEnabledFileTypes = configuration.documentImportEnabledFileTypes,
             // 8 enable bottom navigation bar
@@ -253,26 +259,30 @@ class ConfigurationViewModel @Inject constructor(
         GiniBank.enableReturnReasons = configuration.isReturnReasonsEnabled
 
         // 33 Digital invoice onboarding custom illustration
-        if (configuration.isDigitalInvoiceOnboardingCustomIllustrationEnabled)
+        if (configuration.isDigitalInvoiceOnboardingCustomIllustrationEnabled) {
             GiniBank.digitalInvoiceOnboardingIllustrationAdapter =
                 CustomOnboardingIllustrationAdapter(
                     R.raw.ai_animation
                 )
+        }
 
         // 34 Digital invoice help bottom navigation bar
-        if (configuration.isDigitalInvoiceHelpBottomNavigationBarEnabled)
+        if (configuration.isDigitalInvoiceHelpBottomNavigationBarEnabled) {
             GiniBank.digitalInvoiceHelpNavigationBarBottomAdapter =
                 CustomDigitalInvoiceHelpNavigationBarBottomAdapter()
+        }
 
         // 35 Digital invoice onboarding bottom navigation bar
-        if (configuration.isDigitalInvoiceOnboardingBottomNavigationBarEnabled)
+        if (configuration.isDigitalInvoiceOnboardingBottomNavigationBarEnabled) {
             GiniBank.digitalInvoiceOnboardingNavigationBarBottomAdapter =
                 CustomDigitalInvoiceOnboardingNavigationBarBottomAdapter()
+        }
 
         // 36 Digital invoice bottom navigation bar
-        if (configuration.isDigitalInvoiceBottomNavigationBarEnabled)
+        if (configuration.isDigitalInvoiceBottomNavigationBarEnabled) {
             GiniBank.digitalInvoiceNavigationBarBottomAdapter =
                 CustomDigitalInvoiceNavigationBarBottomAdapter()
+        }
 
         // 37 Debug mode
         GiniCaptureDebug.enable()

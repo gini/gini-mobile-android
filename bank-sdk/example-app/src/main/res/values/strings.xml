@@ -48,6 +48,7 @@
     <string name="example_label">Example</string>
     <string name="relaunch_to_use_default_configuration">Please relaunch the app to use the default GiniConfiguration values.</string>
     <string name="close_screen_for_configurations_to_take_place">The configuration changes will take effect after closing this screen.</string>
+    <string name="default_sdk_configuration_switch_label">SDK default configurations</string>
     <string name="file_import_switch_label">File import</string>
     <string name="qr_code_scanning_switch_label">QR code scanning</string>
     <string name="only_qr_code_scanning_switch_label">QR code scanning only</string>

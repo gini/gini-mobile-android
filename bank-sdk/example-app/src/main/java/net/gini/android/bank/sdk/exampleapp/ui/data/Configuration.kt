@@ -2,6 +2,7 @@ package net.gini.android.bank.sdk.exampleapp.ui.data
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import net.gini.android.bank.sdk.capture.CaptureConfiguration
 import net.gini.android.capture.DocumentImportEnabledFileTypes
 import net.gini.android.capture.EntryPoint
 import net.gini.android.capture.internal.util.FileImportValidator
@@ -9,7 +10,8 @@ import net.gini.android.capture.internal.util.FileImportValidator
 
 @Parcelize
 data class Configuration(
-    // net.gini.android.capture.GiniCapture.Builder#setBackButtonsEnabled → ignore (will be removed)
+    // 0 setup sdk with default configurations
+    val isDefaultSDKConfigurationsEnabled: Boolean = false,
 
     // 1 file import
 //    net.gini.android.capture.GiniCapture.Builder#setFileImportEnabled → on/off switch
@@ -29,11 +31,11 @@ data class Configuration(
 
     // 5 enable flash toggle
 //    net.gini.android.capture.GiniCapture.Builder#setFlashButtonEnabled → on/off switch
-    val isFlashToggleEnabled: Boolean = true,
+    val isFlashButtonDisplayed: Boolean = true,
 
     // 6 enable flash on by default
 //    net.gini.android.capture.GiniCapture.Builder#setFlashOnByDefault → on/off switch
-    val isFlashOnByDefault: Boolean = false,
+    val isFlashDefaultStateEnabled: Boolean = false,
 
     // 7 set import document type support
 //    net.gini.android.capture.GiniCapture.Builder#setDocumentImportEnabledFileTypes → radio buttons to select an available enum value
@@ -152,4 +154,27 @@ data class Configuration(
     // 37 Debug mode
     val isDebugModeEnabled: Boolean = false,
 
-    ) : Parcelable
+    ) : Parcelable {
+
+    companion object {
+        fun setupSDKWithDefaultConfiguration(currentConfiguration: Configuration, defaultCaptureConfiguration: CaptureConfiguration) : Configuration{
+            return currentConfiguration.copy(
+                isFileImportEnabled = defaultCaptureConfiguration.fileImportEnabled,
+                isQrCodeEnabled = defaultCaptureConfiguration.qrCodeScanningEnabled,
+                isOnlyQrCodeEnabled = defaultCaptureConfiguration.onlyQRCodeScanningEnabled,
+                isMultiPageEnabled = defaultCaptureConfiguration.multiPageEnabled,
+                isFlashButtonDisplayed = defaultCaptureConfiguration.flashButtonEnabled,
+                isFlashDefaultStateEnabled = defaultCaptureConfiguration.flashOnByDefault,
+                documentImportEnabledFileTypes = defaultCaptureConfiguration.documentImportEnabledFileTypes,
+                isBottomNavigationBarEnabled = defaultCaptureConfiguration.bottomNavigationBarEnabled,
+                isOnboardingAtFirstRunEnabled = defaultCaptureConfiguration.showOnboardingAtFirstRun,
+                isOnboardingAtEveryLaunchEnabled = defaultCaptureConfiguration.showOnboarding,
+                isSupportedFormatsHelpScreenEnabled = defaultCaptureConfiguration.supportedFormatsHelpScreenEnabled,
+                isGiniErrorLoggerEnabled = defaultCaptureConfiguration.giniErrorLoggerIsOn,
+                isReturnAssistantEnabled = defaultCaptureConfiguration.returnAssistantEnabled
+            )
+
+
+        }
+    }
+}
