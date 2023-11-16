@@ -113,7 +113,7 @@ class ConfigurationActivity : AppCompatActivity() {
         // 4 enable multi page
         binding.switchMultiPage.isChecked = configuration.isMultiPageEnabled
         // 5 enable flash toggle
-        binding.switchFlashToggle.isChecked = configuration.isFlashToggleEnabled
+        binding.switchDisplayFlashButton.isChecked = configuration.isFlashToggleEnabled
         // 6 enable flash on by default
         binding.switchFlashOnByDefault.isChecked = configuration.isFlashOnByDefault
         // 7 set import document type support
@@ -261,7 +261,7 @@ class ConfigurationActivity : AppCompatActivity() {
             )
         }
         // 5 enable flash toggle
-        binding.switchFlashToggle.setOnCheckedChangeListener { _, isChecked ->
+        binding.switchDisplayFlashButton.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(
                     isFlashToggleEnabled = isChecked
