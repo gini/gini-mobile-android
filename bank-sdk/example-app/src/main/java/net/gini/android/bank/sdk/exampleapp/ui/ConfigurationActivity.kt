@@ -34,7 +34,7 @@ class ConfigurationActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         configurationViewModel.setConfiguration(
-            intent.getParcelableExtra(CONFIGURATION_BUNDLE) ?: Configuration()
+            intent.getParcelableExtra(CONFIGURATION_BUNDLE)!!
         )
         configurationViewModel.disableCameraPermission(
             intent.getBooleanExtra(CAMERA_PERMISSION_BUNDLE, false) ?: false
@@ -103,6 +103,9 @@ class ConfigurationActivity : AppCompatActivity() {
     }
 
     private fun updateUIWithConfigurationObject(configuration: Configuration) {
+        // 0 setup sdk with default configuration
+        binding.switchSetupSdkWithDefaultConfiguration.isChecked =
+            configuration.isDefaultSDKConfigurationsEnabled
         // 1 file import
         binding.switchOpenWith.isChecked = configuration.isFileImportEnabled
         // 2 QR code scanning
@@ -113,9 +116,9 @@ class ConfigurationActivity : AppCompatActivity() {
         // 4 enable multi page
         binding.switchMultiPage.isChecked = configuration.isMultiPageEnabled
         // 5 enable flash toggle
-        binding.switchFlashToggle.isChecked = configuration.isFlashToggleEnabled
+        binding.switchDisplayFlashButton.isChecked = configuration.isFlashButtonDisplayed
         // 6 enable flash on by default
-        binding.switchFlashOnByDefault.isChecked = configuration.isFlashOnByDefault
+        binding.switchFlashOnByDefault.isChecked = configuration.isFlashDefaultStateEnabled
         // 7 set import document type support
         val checkButtonId = when (configuration.documentImportEnabledFileTypes) {
             DocumentImportEnabledFileTypes.NONE -> R.id.btn_fileImportDisabled
@@ -212,6 +215,18 @@ class ConfigurationActivity : AppCompatActivity() {
     }
 
     private fun setConfigurationFeatures() {
+        // 0 setup sdk with default configuration
+        binding.switchSetupSdkWithDefaultConfiguration.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    isDefaultSDKConfigurationsEnabled = isChecked
+                )
+            )
+            if (isChecked) {
+                configurationViewModel.setupSDKWithDefaultConfigurations()
+            }
+        }
+
         // 1 file import
         binding.switchOpenWith.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
@@ -261,16 +276,16 @@ class ConfigurationActivity : AppCompatActivity() {
             )
         }
         // 5 enable flash toggle
-        binding.switchFlashToggle.setOnCheckedChangeListener { _, isChecked ->
+        binding.switchDisplayFlashButton.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(
-                    isFlashToggleEnabled = isChecked
+                    isFlashButtonDisplayed = isChecked
                 )
             )
             if (!isChecked) {
                 configurationViewModel.setConfiguration(
                     configurationViewModel.configurationFlow.value.copy(
-                        isFlashOnByDefault = false
+                        isFlashDefaultStateEnabled = false
                     )
                 )
             }
@@ -279,13 +294,13 @@ class ConfigurationActivity : AppCompatActivity() {
         binding.switchFlashOnByDefault.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(
-                    isFlashOnByDefault = isChecked
+                    isFlashDefaultStateEnabled = isChecked
                 )
             )
             if (isChecked) {
                 configurationViewModel.setConfiguration(
                     configurationViewModel.configurationFlow.value.copy(
-                        isFlashToggleEnabled = true
+                        isFlashButtonDisplayed = true
                     )
                 )
             }

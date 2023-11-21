@@ -87,9 +87,9 @@ data class CaptureConfiguration(
     val flashButtonEnabled: Boolean = false,
 
     /**
-     * Set whether the camera flash is on or off by default.
+     * Set whether the camera flash should be on or off when the SDK starts. The flash is off by default.
      */
-    val flashOnByDefault: Boolean = true,
+    val flashOnByDefault: Boolean = false,
 
     /**
      * Enable/disable the return assistant feature.

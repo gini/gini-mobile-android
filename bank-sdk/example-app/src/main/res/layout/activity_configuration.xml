@@ -46,6 +46,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/gc_medium" />
 
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/switch_setupSdkWithDefaultConfiguration"
+                style="@style/SwitchConfigurationStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/default_sdk_configuration_switch_label"
+                />
 
             <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/switch_openWith"
@@ -53,7 +60,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/file_import_switch_label"
-
                 />
 
 
@@ -87,11 +93,19 @@
                 android:text="@string/multi_page_switch_label" />
 
             <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/switch_flashToggle"
+                android:id="@+id/switch_displayFlashButton"
                 style="@style/SwitchConfigurationStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/flash_toggle_switch_label" />
+                android:text="@string/flash_button_switch_label" />
+
+            <TextView
+                android:id="@+id/tv_flashButtonDescription"
+                style="@style/TextAppearance.MaterialComponents.Caption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/flash_button_switch_description" />
+
 
             <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/switch_flashOnByDefault"
