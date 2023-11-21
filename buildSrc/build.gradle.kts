@@ -17,4 +17,6 @@ dependencies {
     implementation(libs.ktlint.gradle)
     implementation(libs.benManesVersions.gradle)
     implementation(libs.java.poet)
+    implementation(libs.cyclonedx.gradle)
+    implementation(libs.cyclonedx.core.java)
 }
