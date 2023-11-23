@@ -56,6 +56,8 @@ class SBOMPlugin : Plugin<Project> {
                     incorrectPURL = generatedPURL,
                     correctPURL = projectPURL)
 
+                addAuthors(metadataJson)
+
                 bomFile.writeText(bomJson.toString(4))
             }
         }
@@ -84,6 +86,20 @@ class SBOMPlugin : Plugin<Project> {
                 dependencyJson.put("ref", correctPURL)
             }
         }
+    }
+
+    private fun addAuthors(metadataJson: JSONObject) {
+        metadataJson.put(
+            "authors", JSONArray(
+                listOf(
+                    JSONObject(
+                        mapOf(
+                            "name" to "Gini GmbH"
+                        )
+                    )
+                )
+            )
+        )
     }
 
 }
