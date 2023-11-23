@@ -3,6 +3,8 @@ package net.gini.gradle
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.getByName
+import org.json.JSONArray
+import org.json.JSONObject
 
 /**
  * Uses the CycloneDX Gradle plugin to generate an SBOM (Software Bill of Materials) for the project.
@@ -37,38 +39,49 @@ class SBOMPlugin : Plugin<Project> {
             }
 
             doLast {
+                val artifactId = project.properties["artifactId"] as String
+                val projectPURL = "pkg:maven/${project.group}/$artifactId@${project.version}?type=aar"
+                val generatedPURL = "pkg:maven/${project.group}/${project.name}@${project.version}?type=jar"
+
                 val bomFile = project.file("build/reports/$outputName.json")
                 val bom = bomFile.readText()
-                val editedBom = bom.replace(
-                    """
-                        "name" : "${project.name}"
-                    """.trimIndent(),
-                    """
-                        "name" : "${project.properties["artifactId"]}"
-                    """.trimIndent()
-                ).replace(
-                    """
-                        "purl" : "pkg:maven/${project.group}/${project.name}@${project.version}?type=jar"
-                    """.trimIndent(),
-                    """
-                        "purl" : "pkg:maven/${project.group}/${project.properties["artifactId"]}@${project.version}?type=aar"
-                    """.trimIndent()
-                ).replace(
-                    """
-                        "bom-ref" : "pkg:maven/${project.group}/${project.name}@${project.version}?type=jar"
-                    """.trimIndent(),
-                    """
-                        "bom-ref" : "pkg:maven/${project.group}/${project.properties["artifactId"]}@${project.version}?type=aar"
-                    """.trimIndent()
-                ).replace(
-                    """
-                        "ref" : "pkg:maven/${project.group}/${project.name}@${project.version}?type=jar"
-                    """.trimIndent(),
-                    """
-                        "ref" : "pkg:maven/${project.group}/${project.properties["artifactId"]}@${project.version}?type=aar"
-                    """.trimIndent()
-                )
-              bomFile.writeText(editedBom)
+
+                val bomJson = JSONObject(bom)
+                val metadataJson = bomJson["metadata"] as JSONObject
+
+                fixComponentName(bomJson, artifactId)
+
+                fixPURLAndRefs(
+                    bomJson = bomJson,
+                    incorrectPURL = generatedPURL,
+                    correctPURL = projectPURL)
+
+                bomFile.writeText(bomJson.toString(4))
+            }
+        }
+    }
+
+    private fun fixComponentName(bomJson: JSONObject, artifactId: String,) {
+        val metadataJson = bomJson["metadata"] as JSONObject
+        val componentJson = metadataJson["component"] as JSONObject
+        componentJson.put("name", artifactId)
+    }
+
+    private fun fixPURLAndRefs(
+        bomJson: JSONObject,
+        incorrectPURL: String,
+        correctPURL: String,
+    ) {
+        val metadataJson = bomJson["metadata"] as JSONObject
+        val componentJson = metadataJson["component"] as JSONObject
+        componentJson.put("purl", correctPURL)
+        componentJson.put("bom-ref", correctPURL)
+
+        val dependenciesJson = bomJson["dependencies"] as JSONArray
+        dependenciesJson.forEach {
+            val dependencyJson = it as JSONObject
+            if (dependencyJson["ref"].toString() == incorrectPURL) {
+                dependencyJson.put("ref", correctPURL)
             }
         }
     }
