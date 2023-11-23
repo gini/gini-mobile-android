@@ -56,6 +56,8 @@ class SBOMPlugin : Plugin<Project> {
                     incorrectPURL = generatedPURL,
                     correctPURL = projectPURL)
 
+                renameManufactureToSupplier(metadataJson)
+
                 addAuthors(metadataJson)
 
                 bomFile.writeText(bomJson.toString(4))
@@ -86,6 +88,12 @@ class SBOMPlugin : Plugin<Project> {
                 dependencyJson.put("ref", correctPURL)
             }
         }
+    }
+
+    private fun renameManufactureToSupplier(metadataJson: JSONObject) {
+        val manufactureJson = metadataJson["manufacture"] as JSONObject
+        metadataJson.remove("manufacture")
+        metadataJson.put("supplier", manufactureJson)
     }
 
     private fun addAuthors(metadataJson: JSONObject) {
