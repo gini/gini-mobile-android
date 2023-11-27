@@ -1,4 +1,5 @@
 import net.gini.gradle.*
+import net.gini.gradle.extensions.apiProjectDependencyForSBOM
 import org.jetbrains.dokka.gradle.DokkaCollectorTask
 
 plugins {
@@ -90,9 +91,18 @@ tasks.withType(type = org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 
 dependencies {
 
-    api(project(":bank-api-library:library"))
-    api(project(":capture-sdk:sdk"))
-    api(project(":capture-sdk:default-network"))
+    val bankApiLibrary = project(":bank-api-library:library")
+    val captureSdk = project(":capture-sdk:sdk")
+    val captureSdkDefaultNetwork = project(":capture-sdk:default-network")
+    if (properties["createSBOM"] == "true") {
+        apiProjectDependencyForSBOM(bankApiLibrary)
+        apiProjectDependencyForSBOM(captureSdk)
+        apiProjectDependencyForSBOM(captureSdkDefaultNetwork)
+    } else {
+        api(bankApiLibrary)
+        api(captureSdk)
+        api(captureSdkDefaultNetwork)
+    }
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.ktx)
@@ -122,6 +132,7 @@ dependencies {
 apply<PublishToMavenPlugin>()
 apply<DokkaPlugin>()
 apply<CodeAnalysisPlugin>()
+apply<SBOMPlugin>()
 
 tasks.getByName<DokkaCollectorTask>("dokkaHtmlSiblingCollector") {
     this.moduleName.set("Gini Bank SDK for Android")

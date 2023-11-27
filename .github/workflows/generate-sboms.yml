@@ -1,0 +1,65 @@
+name: Generate SBOMs for all projects
+
+# TODO: remove push trigger after merging to main
+# TODO: add trigger to run after we have published a release
+# TODO: use GitHub's dependency submission API to submit the SBOMs to GitHub's dependency graph:
+#       https://docs.github.com/en/code-security/supply-chain-security/understanding-your-software-supply-chain/using-the-dependency-submission-api
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  generate-sbom:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: setup java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: generate a cyclonedx sbom for each project
+        run: >
+          ./gradlew clean
+          core-api-library:library:cyclonedxBom
+          health-api-library:library:cyclonedxBom
+          bank-api-library:library:cyclonedxBom
+          health-sdk:sdk:cyclonedxBom
+          capture-sdk:sdk:cyclonedxBom
+          capture-sdk:default-network:cyclonedxBom
+          bank-sdk:sdk:cyclonedxBom
+          -PcreateSBOM=true
+
+      - name: validate cyclonedx sboms
+        shell: bash
+        run: |
+          curl -Lo cyclonedx https://github.com/CycloneDX/cyclonedx-cli/releases/download/v0.25.0/cyclonedx-linux-x64
+          chmod +x cyclonedx
+          ./cyclonedx validate --input-file core-api-library/library/build/reports/gini-internal-core-api-lib-sbom.json
+          ./cyclonedx validate --input-file health-api-library/library/build/reports/gini-health-api-lib-sbom.json
+          ./cyclonedx validate --input-file bank-api-library/library/build/reports/gini-bank-api-lib-sbom.json
+          ./cyclonedx validate --input-file health-sdk/sdk/build/reports/gini-health-sdk-sbom.json
+          ./cyclonedx validate --input-file capture-sdk/sdk/build/reports/gini-capture-sdk-sbom.json
+          ./cyclonedx validate --input-file capture-sdk/default-network/build/reports/gini-capture-sdk-default-network-sbom.json
+          ./cyclonedx validate --input-file bank-sdk/sdk/build/reports/gini-bank-sdk-sbom.json
+
+      - name: zip the cyclonedx sboms
+        run: >
+          zip -rj sbom-jsons.zip
+          core-api-library/library/build/reports/gini-internal-core-api-lib-sbom.json
+          health-api-library/library/build/reports/gini-health-api-lib-sbom.json
+          bank-api-library/library/build/reports/gini-bank-api-lib-sbom.json
+          health-sdk/sdk/build/reports/gini-health-sdk-sbom.json
+          capture-sdk/sdk/build/reports/gini-capture-sdk-sbom.json
+          capture-sdk/default-network/build/reports/gini-capture-sdk-default-network-sbom.json
+          bank-sdk/sdk/build/reports/gini-bank-sdk-sbom.json
+
+      - name: archive the cyclonedx sboms
+        uses: actions/upload-artifact@v3
+        with:
+          name: CycloneDX SBOM JSONs
+          path: sbom-jsons.zip

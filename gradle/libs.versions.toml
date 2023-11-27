@@ -100,4 +100,6 @@ hilt-library = { module = "com.google.dagger:hilt-android", version.ref = "hilt"
 hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
 hilt-plugin = { module = "com.google.dagger:hilt-android-gradle-plugin", version.ref = "hilt" }
 java-poet = "com.squareup:javapoet:1.13.0"
-
+cyclonedx-gradle = "org.cyclonedx:cyclonedx-gradle-plugin:1.8.1"
+cyclonedx-core-java = "org.cyclonedx:cyclonedx-core-java:8.0.3"
+jsonJava = "org.json:json:20231013"

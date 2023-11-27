@@ -1,4 +1,5 @@
 import net.gini.gradle.*
+import net.gini.gradle.extensions.apiProjectDependencyForSBOM
 import org.jetbrains.dokka.gradle.DokkaCollectorTask
 
 plugins {
@@ -97,8 +98,12 @@ tasks.withType(type = org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 }
 
 dependencies {
-
-    api(project(":health-api-library:library"))
+    val healthApiLibrary = project(":health-api-library:library")
+    if (properties["createSBOM"] == "true") {
+        apiProjectDependencyForSBOM(healthApiLibrary)
+    } else {
+        api(healthApiLibrary)
+    }
 
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
@@ -131,6 +136,7 @@ dependencies {
 apply<PublishToMavenPlugin>()
 apply<DokkaPlugin>()
 apply<CodeAnalysisPlugin>()
+apply<SBOMPlugin>()
 
 tasks.getByName<DokkaCollectorTask>("dokkaHtmlSiblingCollector") {
     this.moduleName.set("Gini Health SDK for Android")

@@ -1,4 +1,5 @@
 import net.gini.gradle.*
+import net.gini.gradle.extensions.apiProjectDependencyForSBOM
 import org.jetbrains.dokka.gradle.DokkaCollectorTask
 
 plugins {
@@ -64,7 +65,12 @@ tasks.withType(type = org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 }
 
 dependencies {
-    api(project(":core-api-library:library"))
+    val coreApiLibrary = project(":core-api-library:library")
+    if (properties["createSBOM"] == "true") {
+        apiProjectDependencyForSBOM(coreApiLibrary)
+    } else {
+        api(coreApiLibrary)
+    }
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.kotlinx.coroutines.core)
@@ -96,6 +102,7 @@ apply<PublishToMavenPlugin>()
 apply<DokkaPlugin>()
 apply<CodeAnalysisPlugin>()
 apply<PropertiesPlugin>()
+apply<SBOMPlugin>()
 
 tasks.getByName<DokkaCollectorTask>("dokkaHtmlSiblingCollector") {
     this.moduleName.set("Gini Bank API Library for Android")
