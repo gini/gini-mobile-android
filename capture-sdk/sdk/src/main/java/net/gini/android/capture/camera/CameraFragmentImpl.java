@@ -49,7 +49,6 @@ import net.gini.android.capture.document.QRCodeDocument;
 import net.gini.android.capture.error.ErrorActivity;
 import net.gini.android.capture.error.ErrorType;
 import net.gini.android.capture.help.HelpActivity;
-import net.gini.android.capture.internal.textrecognition.CropToCameraFrameTextRecognizer;
 import net.gini.android.capture.internal.camera.api.CameraException;
 import net.gini.android.capture.internal.camera.api.CameraInterface;
 import net.gini.android.capture.internal.camera.api.OldCameraController;
@@ -69,6 +68,7 @@ import net.gini.android.capture.internal.qrcode.PaymentQRCodeReader;
 import net.gini.android.capture.internal.qrcode.QRCodeDetectorTask;
 import net.gini.android.capture.internal.qrcode.QRCodeDetectorTaskMLKit;
 import net.gini.android.capture.internal.storage.ImageDiskStore;
+import net.gini.android.capture.internal.textrecognition.CropToCameraFrameTextRecognizer;
 import net.gini.android.capture.internal.textrecognition.MLKitTextRecognizer;
 import net.gini.android.capture.internal.ui.ClickListenerExtKt;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
@@ -631,30 +631,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     void onDestroy() {
         if (mImportUrisAsyncTask != null) {
             mImportUrisAsyncTask.cancel(true);
-        }
-
-        if (!mInstanceStateSaved) {
-            if (!mQRCodeAnalysisCompleted) {
-                deleteUploadedQRCodeDocument();
-            }
-        }
-    }
-
-    private void deleteUploadedQRCodeDocument() {
-        final Activity activity = mFragment.getActivity();
-        if (activity == null) {
-            return;
-        }
-        if (mQRCodeDocument == null) {
-            return;
-        }
-        if (GiniCapture.hasInstance()) {
-            final NetworkRequestsManager networkRequestsManager = GiniCapture.getInstance()
-                    .internal().getNetworkRequestsManager();
-            if (networkRequestsManager != null) {
-                networkRequestsManager.cancel(mQRCodeDocument);
-                networkRequestsManager.delete(mQRCodeDocument);
-            }
         }
     }
 
