@@ -68,7 +68,7 @@ class ConfigurationActivity : AppCompatActivity() {
     }
 
     private fun setupActionBar() {
-        supportActionBar?.setHomeAsUpIndicator(net.gini.android.capture.R.drawable.gc_close)
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_close)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
@@ -507,11 +507,13 @@ class ConfigurationActivity : AppCompatActivity() {
 
         // 29 set imported file size bytes limit
         binding.editTextImportedFileSizeBytesLimit.doAfterTextChanged {
-            configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    importedFileSizeBytesLimit = it.toString().toInt()
+            if (it.toString().isNotEmpty()) {
+                configurationViewModel.setConfiguration(
+                    configurationViewModel.configurationFlow.value.copy(
+                        importedFileSizeBytesLimit = it.toString().toInt()
+                    )
                 )
-            )
+            }
         }
 
         // 31 enable return assistant
