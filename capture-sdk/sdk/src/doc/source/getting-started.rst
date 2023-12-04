@@ -30,7 +30,7 @@ build.gradle:
 .. code-block:: groovy
 
     dependencies {
-        implementation 'net.gini.android:gini-capture-sdk:3.8.0'
+        implementation 'net.gini.android:gini-capture-sdk:3.8.1'
     }
 
 After syncing Gradle you can start integrating the Gini Capture SDK.
