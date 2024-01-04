@@ -74,7 +74,7 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
         super.onCreate(savedInstanceState)
         createPresenter(requireActivity())
         initListener()
-        enterTransition = TransitionInflater.from(context).inflateTransition(R.transition.fade)
+        enterTransition = TransitionInflater.from(requireContext()).inflateTransition(R.transition.fade)
         exitTransition = enterTransition
 
     }

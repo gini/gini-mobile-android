@@ -396,11 +396,11 @@ internal class CameraXController(val activity: Activity) : CameraInterface {
     }
 }
 
-internal class CameraLifecycle : LifecycleOwner {
+internal class CameraLifecycle() : LifecycleOwner {
 
     private val lifecycleRegistry = LifecycleRegistry(this)
 
-    override fun getLifecycle(): Lifecycle = lifecycleRegistry
+    override val lifecycle: Lifecycle = lifecycleRegistry
 
     fun start() {
         lifecycleRegistry.currentState = Lifecycle.State.CREATED

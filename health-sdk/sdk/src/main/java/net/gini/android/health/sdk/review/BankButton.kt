@@ -31,7 +31,7 @@ internal class BankButton @JvmOverloads constructor(
 
     var showEditIcon = true
 
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
         if (showEditIcon) {

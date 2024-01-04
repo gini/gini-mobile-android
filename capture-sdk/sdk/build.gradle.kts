@@ -7,6 +7,7 @@ plugins {
     kotlin("android")
     id("kotlin-parcelize")
     id("jacoco")
+    id("androidx.navigation.safeargs.kotlin")
 }
 
 jacoco {
@@ -129,6 +130,9 @@ dependencies {
     implementation(libs.androidx.camera.camera2)
     implementation(libs.androidx.camera.lifecycle)
     implementation(libs.androidx.camera.view)
+
+    implementation(libs.navigation.fragment.ktx)
+    implementation(libs.navigation.ui.ktx)
 
     testImplementation(libs.junit)
     testImplementation(libs.truth)
