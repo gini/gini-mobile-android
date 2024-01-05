@@ -6,6 +6,7 @@ plugins {
     kotlin("kapt")
     id("com.google.dagger.hilt.android")
     id("kotlin-parcelize")
+    id("androidx.navigation.safeargs.kotlin")
 }
 
 // TODO: construct version code and name in fastlane and inject them
@@ -120,6 +121,8 @@ dependencies {
     implementation(libs.lottie)
 
     implementation(libs.hilt.library)
+    implementation(libs.navigation.fragment.ktx)
+    implementation(libs.navigation.ui.ktx)
     kapt(libs.hilt.compiler)
 
     implementation(libs.androidx.lifecycle.runtime.ktx)

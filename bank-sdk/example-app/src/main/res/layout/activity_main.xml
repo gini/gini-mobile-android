@@ -31,6 +31,19 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_orUseLabel" />
 
+            <Button
+                android:id="@+id/button_startSingleActivity"
+                style="@style/PhotoPaymentButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/gc_large"
+                android:paddingVertical="@dimen/gc_medium_12"
+                android:text="@string/start_gini_single_activity"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/button_startScanner" />
+
+
             <ImageView
                 android:id="@+id/iv_giniLogo"
                 android:layout_width="wrap_content"

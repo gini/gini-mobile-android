@@ -93,6 +93,10 @@ class MainActivity : AppCompatActivity() {
 
         }
 
+        binding.buttonStartSingleActivity.setOnClickListener {
+            startActivity(Intent(this, CaptureFlowHostActivity::class.java))
+        }
+
         binding.textGiniBankVersion.setOnClickListener {
             startActivityForResult(
                 Intent(

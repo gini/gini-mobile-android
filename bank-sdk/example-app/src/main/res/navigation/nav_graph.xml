@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/startCaptureFragment"
+    >
+
+    <fragment
+        android:id="@+id/startCaptureFragment"
+        android:name="net.gini.android.bank.sdk.exampleapp.ui.CaptureFlowSampleFragment"
+        android:label="StartCaptureFragment"
+        tools:layout="@layout/fragment_capture_flow_sample" >
+
+    </fragment>
+</navigation>

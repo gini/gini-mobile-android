@@ -19,7 +19,7 @@ checkstyle = "7.8.2"
 pmd = "6.0.0"
 jacoco = "0.8.10"
 hilt = "2.46.1"
-navigation_component = "2.7.5"
+navigation_component = "2.7.6"
 
 [libraries]
 android-gradle = { module = "com.android.tools.build:gradle", version.ref = "android-gradle-plugin" }

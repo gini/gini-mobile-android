@@ -5,6 +5,9 @@
     <string name="start_gini_photo_payment">Photopayment</string>
     <string name="example_of_photo_payment">Example of Photo Payment integration in the banking app</string>
     <string name="enter_your_iban_code">Enter your IBAN code</string>
+    <string name="start_gini_single_activity">Single Activity</string>
+    <string name="start_gini_capture_flow">Capture flow</string>
+    <string name="start_gini_bank_flow">Bank flow</string>
 
 
 </resources>
