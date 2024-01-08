@@ -8,6 +8,7 @@ plugins {
     kotlin("kapt")
     id("kotlin-parcelize")
     id("jacoco")
+    id("androidx.navigation.safeargs.kotlin")
 }
 
 jacoco {
@@ -110,6 +111,9 @@ dependencies {
     implementation(libs.androidx.lifecycle.common.java8)
     implementation(libs.androidx.recyclerview)
     implementation(libs.material)
+
+    implementation(libs.navigation.fragment.ktx)
+    implementation(libs.navigation.ui.ktx)
 
     testImplementation(libs.junit)
     testImplementation(libs.mockk)

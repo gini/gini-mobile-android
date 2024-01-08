@@ -3,6 +3,7 @@ package net.gini.android.bank.sdk.exampleapp.ui
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentContainerView
 import dagger.hilt.android.AndroidEntryPoint
 import net.gini.android.bank.sdk.exampleapp.R
 
@@ -15,20 +16,21 @@ class CaptureFlowHostActivity : AppCompatActivity() {
 
         if (savedInstanceState == null) {
             if (isIntentActionViewOrSend(intent)) {
-                //startBankSDKForOpenWith(intent)
+                startBankSDKForOpenWith(intent)
             }
         }
     }
 
-   /* private fun startBankSDKForOpenWith(openWithIntent: Intent) {
-        findViewById<FragmentContainerView>(R.id.fragment_host).getFragment<CaptureFlowSampleFragment>()
+
+    private fun startBankSDKForOpenWith(openWithIntent: Intent) {
+        findViewById<FragmentContainerView>(R.id.fragment_host).getFragment<ClientCaptureFragment>()
             .startBankSDKForIntent(openWithIntent)
-    }*/
+    }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         if (intent != null && isIntentActionViewOrSend(intent)) {
-           // startBankSDKForOpenWith(intent)
+            startBankSDKForOpenWith(intent)
         }
     }
 

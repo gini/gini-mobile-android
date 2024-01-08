@@ -451,7 +451,7 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
     }
 
     private void showErrorIfAvailableAndAnalyzeDocument() {
-        if (mDocumentAnalysisErrorMessage != null) {
+        if (mDocumentAnalysisErrorMessage != null && !mDocumentAnalysisErrorMessage.isEmpty()) {
             final Map<String, Object> errorDetails = new HashMap<>();
             errorDetails.put(ERROR_DETAILS_MAP_KEY.MESSAGE, mDocumentAnalysisErrorMessage);
 

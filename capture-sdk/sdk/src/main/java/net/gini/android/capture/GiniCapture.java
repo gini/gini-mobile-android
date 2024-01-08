@@ -122,12 +122,7 @@ public class GiniCapture {
     private final InjectedViewAdapterInstance<OnButtonLoadingIndicatorAdapter> onButtonLoadingIndicatorAdapterInstance;
     private final EntryPoint entryPoint;
 
-    public static GiniCaptureFragment createGiniCaptureFragment() {
-        {
-            //check(giniCapture != null) { "Capture feature is not configured. Call setCaptureConfiguration before starting the flow." }
-            return GiniCaptureFragment.Companion.createInstance(null);
-        }
-    }
+
 
     /**
      * Retrieve the current instance.

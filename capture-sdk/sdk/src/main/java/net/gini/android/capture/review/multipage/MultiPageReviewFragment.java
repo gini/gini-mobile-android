@@ -868,8 +868,8 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     public void setShouldScrollToLastPage(boolean shouldScrollToLastPage) {
         if (getActivity() == null)
             return;
-
-        ((MultiPageReviewActivity) getActivity()).setShouldScrollToLastPage(shouldScrollToLastPage);
+        // TODO for fragments: Move logic from MultiPageReviewActivity to the fragment
+//        ((MultiPageReviewActivity) getActivity()).setShouldScrollToLastPage(shouldScrollToLastPage);
     }
 
     @Override

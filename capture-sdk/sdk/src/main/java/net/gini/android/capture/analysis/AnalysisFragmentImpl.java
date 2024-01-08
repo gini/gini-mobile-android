@@ -14,6 +14,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.R;
@@ -31,10 +36,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.VisibleForTesting;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import jersey.repackaged.jsr166e.CompletableFuture;
 import kotlin.Unit;
 
@@ -58,8 +59,8 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     private boolean isScanAnimationActive;
 
     AnalysisFragmentImpl(final FragmentImplCallback fragment,
-            @NonNull final Document document,
-            final String documentAnalysisErrorMessage) {
+                         @NonNull final Document document,
+                         final String documentAnalysisErrorMessage) {
         mFragment = fragment;
         if (mFragment.getActivity() == null) {
             throw new IllegalStateException("Missing activity for fragment.");
@@ -69,7 +70,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
 
     @VisibleForTesting
     void createPresenter(@NonNull final Activity activity, @NonNull final Document document,
-            final String documentAnalysisErrorMessage) {
+                         final String documentAnalysisErrorMessage) {
         new AnalysisScreenPresenter(activity, this, document,
                 documentAnalysisErrorMessage);
     }
@@ -143,10 +144,10 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
 
     @Override
     void showAlertDialog(@NonNull final String message, @NonNull final String positiveButtonTitle,
-            @NonNull final DialogInterface.OnClickListener positiveButtonClickListener,
-            @Nullable final String negativeButtonTitle,
-            @Nullable final DialogInterface.OnClickListener negativeButtonClickListener,
-            @Nullable final DialogInterface.OnCancelListener cancelListener) {
+                         @NonNull final DialogInterface.OnClickListener positiveButtonClickListener,
+                         @Nullable final String negativeButtonTitle,
+                         @Nullable final DialogInterface.OnClickListener negativeButtonClickListener,
+                         @Nullable final DialogInterface.OnCancelListener cancelListener) {
         mFragment.showAlertDialog(message, positiveButtonTitle, positiveButtonClickListener,
                 negativeButtonTitle, negativeButtonClickListener, cancelListener);
     }
@@ -186,7 +187,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     }
 
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
-            final Bundle savedInstanceState) {
+                             final Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.gc_fragment_analysis, container, false);
         bindViews(view);
         setTopBarInjectedViewContainer();
@@ -223,8 +224,9 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
                 injectedViewAdapter.setTitle(mFragment.getActivity().getResources().getString(R.string.gc_title_analysis));
 
                 injectedViewAdapter.setOnNavButtonClickListener(new IntervalClickListener(v -> {
-                    mFragment.getActivity().setResult(Activity.RESULT_CANCELED);
-                    mFragment.getActivity().finish();
+//                    mFragment.getActivity().setResult(Activity.RESULT_CANCELED);
+//                    mFragment.getActivity().finish();
+                    mFragment.getActivity().onBackPressed();
                 }));
             }));
         }

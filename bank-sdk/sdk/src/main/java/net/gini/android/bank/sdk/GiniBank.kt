@@ -15,6 +15,7 @@ import net.gini.android.bank.sdk.GiniBank.setGiniApi
 import net.gini.android.bank.sdk.GiniBank.startCaptureFlow
 import net.gini.android.bank.sdk.GiniBank.startCaptureFlowForIntent
 import net.gini.android.bank.sdk.capture.CaptureConfiguration
+import net.gini.android.bank.sdk.capture.CaptureFlowFragment
 import net.gini.android.bank.sdk.capture.CaptureImportInput
 import net.gini.android.bank.sdk.capture.applyConfiguration
 import net.gini.android.bank.sdk.capture.digitalinvoice.help.view.DefaultDigitalInvoiceHelpNavigationBarBottomAdapter
@@ -29,6 +30,7 @@ import net.gini.android.bank.sdk.pay.getBusinessIntent
 import net.gini.android.bank.sdk.pay.getRequestId
 import net.gini.android.bank.sdk.util.parseAmountToBackendFormat
 import net.gini.android.capture.*
+import net.gini.android.capture.analysis.AnalysisActivity
 import net.gini.android.capture.onboarding.view.ImageOnboardingIllustrationAdapter
 import net.gini.android.capture.onboarding.view.OnboardingIllustrationAdapter
 import net.gini.android.capture.requirements.GiniCaptureRequirements
@@ -256,6 +258,44 @@ object GiniBank {
     fun startCaptureFlow(resultLauncher: ActivityResultLauncher<Unit>) {
         check(giniCapture != null) { "Capture feature is not configured. Call setCaptureConfiguration before starting the flow." }
         resultLauncher.launch(Unit)
+    }
+
+    fun createCaptureFlowFragment(): CaptureFlowFragment
+    {
+        check(giniCapture != null) { "Capture feature is not configured. Call setCaptureConfiguration before starting the flow." }
+        return CaptureFlowFragment.createInstance()
+    }
+
+    fun createCaptureFlowFragmentForIntent(context: Context, intent: Intent, callback: (CreateCaptureFlowFragmentForIntentResult) -> Unit): CancellationToken {
+        check(giniCapture != null) { "Capture feature is not configured. Call setCaptureConfiguration before starting the flow." }
+        return giniCapture!!.createIntentForImportedFiles(intent, context, object: AsyncCallback<Intent, ImportedFileValidationException> {
+            override fun onSuccess(result: Intent) {
+                when(result.component?.className) {
+                    // Since version 3.x the SDK always goes to the analysis screen for "open with" files
+                    AnalysisActivity::class.java.name -> {
+                        callback(CreateCaptureFlowFragmentForIntentResult.Success(
+                            CaptureFlowFragment.createInstance(result)))
+                    }
+                    else -> callback(CreateCaptureFlowFragmentForIntentResult.Error(ImportedFileValidationException("Unknown activity class: ${result.component?.className}")))
+                }
+            }
+
+            override fun onError(exception: ImportedFileValidationException) {
+                callback(CreateCaptureFlowFragmentForIntentResult.Error(exception))
+            }
+
+            override fun onCancelled() {
+                callback(CreateCaptureFlowFragmentForIntentResult.Cancelled)
+            }
+
+        })
+    }
+
+
+    sealed class CreateCaptureFlowFragmentForIntentResult {
+        data class Success(val fragment: CaptureFlowFragment): CreateCaptureFlowFragmentForIntentResult()
+        data class Error(val exception: ImportedFileValidationException): CreateCaptureFlowFragmentForIntentResult()
+        object Cancelled: CreateCaptureFlowFragmentForIntentResult()
     }
 
     /**

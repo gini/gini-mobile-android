@@ -116,6 +116,5 @@
     <string name="resolve_payment">Pay</string>
     <string name="intent_filter_label_file_import_fragments">Fragments</string>
     <string name="start_gini_single_activity">Single Activity</string>
-    <string name="start_gini_capture_flow">Capture flow</string>
-    <string name="start_gini_bank_flow">Bank flow</string>
+
 </resources>
