@@ -133,14 +133,6 @@ public class CameraFragment extends Fragment implements CameraFragmentInterface,
     }
 
     @Override
-    public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-        final boolean handled = mFragmentImpl.onActivityResult(requestCode, resultCode, data);
-        if (!handled) {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
-    }
-
-    @Override
     public void setListener(@NonNull final CameraFragmentListener listener) {
         if (mFragmentImpl != null) {
             mFragmentImpl.setListener(listener);

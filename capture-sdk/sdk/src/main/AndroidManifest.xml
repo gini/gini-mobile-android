@@ -31,10 +31,6 @@
             android:label="@string/gc_title_onboarding"
             android:theme="@style/GiniCaptureTheme" />
         <activity
-            android:name="net.gini.android.capture.internal.fileimport.FileChooserActivity"
-            android:exported="false"
-            android:theme="@style/GiniCaptureTheme.Chooser" />
-        <activity
             android:name="net.gini.android.capture.help.HelpActivity"
             android:exported="false"
             android:label="@string/gc_title_help"

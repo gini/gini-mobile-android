@@ -2,9 +2,17 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/gc_layout_root"
-    android:layout_width="match_parent"
+    android:layout_width="@dimen/gc_tablet_width"
     android:layout_height="match_parent"
-    tools:context="net.gini.android.capture.internal.fileimport.FileChooserActivity">
+    android:layout_gravity="center">
+
+    <View
+        android:id="@+id/gc_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.4"
+        android:background="@color/gc_dark_01"
+        android:visibility="invisible" />
 
     <Space
         android:id="@+id/gc_space"

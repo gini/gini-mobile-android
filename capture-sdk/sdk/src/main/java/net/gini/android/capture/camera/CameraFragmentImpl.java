@@ -29,6 +29,7 @@ import androidx.annotation.VisibleForTesting;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.Group;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 
 import net.gini.android.capture.AsyncCallback;
 import net.gini.android.capture.Document;
@@ -57,7 +58,8 @@ import net.gini.android.capture.internal.camera.api.camerax.CameraXController;
 import net.gini.android.capture.internal.camera.photo.Photo;
 import net.gini.android.capture.internal.camera.photo.PhotoEdit;
 import net.gini.android.capture.internal.camera.view.QRCodePopup;
-import net.gini.android.capture.internal.fileimport.FileChooserActivity;
+import net.gini.android.capture.internal.fileimport.FileChooserFragment;
+import net.gini.android.capture.internal.fileimport.FileChooserResult;
 import net.gini.android.capture.internal.iban.IBANRecognizerFilter;
 import net.gini.android.capture.internal.iban.IBANRecognizerImpl;
 import net.gini.android.capture.internal.network.AnalysisNetworkRequestResult;
@@ -368,7 +370,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         if (!GiniCapture.getInstance().isQRCodeScanningEnabled()) {
             setQRDisabledTexts();
         }
-
         return view;
     }
 
@@ -435,6 +436,30 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             });
         } else {
             showNoPermissionView();
+        }
+
+        setFileChooserFragmentResultListener();
+    }
+
+
+    private void setFileChooserFragmentResultListener() {
+        mFragment.getChildFragmentManager().setFragmentResultListener(FileChooserFragment.REQUEST_KEY, mFragment.getViewLifecycleOwner(), (requestKey, result) -> {
+            final FileChooserResult fileChooserResult = result.getParcelable(FileChooserFragment.RESULT_KEY);
+            if (fileChooserResult != null) {
+                handleFileChooserResult(fileChooserResult);
+            }
+            hideFileChooser();
+        });
+    }
+
+    public void handleFileChooserResult(@NonNull FileChooserResult result) {
+        if (result instanceof FileChooserResult.FilesSelected) {
+            importDocumentFromIntent(((FileChooserResult.FilesSelected) result).getDataIntent());
+        } else if (result instanceof FileChooserResult.Error) {
+            final GiniCaptureError error = ((FileChooserResult.Error) result).getError();
+            final String message = "Document import failed: " + error.getMessage();
+            LOG.error(message);
+            showGenericInvalidFileError(ErrorType.FILE_IMPORT_GENERIC);
         }
     }
 
@@ -822,9 +847,12 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     }
 
     private boolean isDocumentImportEnabled(@NonNull final Activity activity) {
+//        return getDocumentImportEnabledFileTypes()
+//                != DocumentImportEnabledFileTypes.NONE
+//                && FileChooserActivity.canChooseFiles(activity);
         return getDocumentImportEnabledFileTypes()
                 != DocumentImportEnabledFileTypes.NONE
-                && FileChooserActivity.canChooseFiles(activity);
+                && FileChooserFragment.canChooseFiles(activity);
     }
 
     private void setInputHandlers() {
@@ -1006,39 +1034,39 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         if (activity == null) {
             return;
         }
-        final Intent fileChooserIntent = FileChooserActivity.createIntent(activity);
+//        final Intent fileChooserIntent = FileChooserActivity.createIntent(activity);
+//        final DocumentImportEnabledFileTypes enabledFileTypes;
+//        if (mInMultiPageState) {
+//            enabledFileTypes = DocumentImportEnabledFileTypes.IMAGES;
+//        } else {
+//            enabledFileTypes = getDocumentImportEnabledFileTypes();
+//        }
+//        fileChooserIntent.putExtra(FileChooserActivity.EXTRA_IN_DOCUMENT_IMPORT_FILE_TYPES,
+//                enabledFileTypes);
+//        fileChooserIntent.setExtrasClassLoader(CameraFragmentImpl.class.getClassLoader());
+//        mFragment.startActivityForResult(fileChooserIntent, REQ_CODE_CHOOSE_FILE);
+
         final DocumentImportEnabledFileTypes enabledFileTypes;
         if (mInMultiPageState) {
             enabledFileTypes = DocumentImportEnabledFileTypes.IMAGES;
         } else {
             enabledFileTypes = getDocumentImportEnabledFileTypes();
         }
-        fileChooserIntent.putExtra(FileChooserActivity.EXTRA_IN_DOCUMENT_IMPORT_FILE_TYPES,
-                enabledFileTypes);
-        fileChooserIntent.setExtrasClassLoader(CameraFragmentImpl.class.getClassLoader());
-        mFragment.startActivityForResult(fileChooserIntent, REQ_CODE_CHOOSE_FILE);
+        final FileChooserFragment fileChooserFragment = FileChooserFragment.newInstance(enabledFileTypes);
+        mFragment.getChildFragmentManager()
+                .beginTransaction()
+                .add(R.id.gc_fragment_container, fileChooserFragment, FileChooserFragment.class.getName())
+                .commit();
     }
 
-    boolean onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-        if (requestCode == REQ_CODE_CHOOSE_FILE) {
-            if (resultCode == RESULT_OK) {
-                importDocumentFromIntent(data);
-            } else if (resultCode != RESULT_CANCELED) {
-                final String message;
-                if (resultCode == FileChooserActivity.RESULT_ERROR) {
-                    final GiniCaptureError error = data.getParcelableExtra(
-                            FileChooserActivity.EXTRA_OUT_ERROR);
-                    message = "Document import failed: " + error.getMessage();
-                } else {
-                    message = "Document import failed: unknown result code " + resultCode;
-                }
-                LOG.error(message);
-                showGenericInvalidFileError(ErrorType.FILE_IMPORT_GENERIC);
-            }
-            return true;
+    private void hideFileChooser() {
+        final Fragment fragment = mFragment.getChildFragmentManager().findFragmentByTag(FileChooserFragment.class.getName());
+        if (fragment != null) {
+            mFragment.getChildFragmentManager()
+                    .beginTransaction()
+                    .remove(fragment)
+                    .commit();
         }
-
-        return false;
     }
 
     private void importDocumentFromIntent(@NonNull final Intent data) {
