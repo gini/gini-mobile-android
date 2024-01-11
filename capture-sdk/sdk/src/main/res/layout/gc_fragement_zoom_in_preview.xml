@@ -3,7 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/gc_dark_01">
 
     <net.gini.android.capture.review.RotatableTouchImageViewContainer
         android:id="@+id/gc_rotatable_img_container"
@@ -11,6 +12,18 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/gc_action_close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/gc_large_24"
+        android:layout_marginTop="@dimen/gc_large_32"
+        android:background="@android:color/transparent"
+        android:src="@drawable/gc_close_round_btn"
+        android:contentDescription="@string/gc_close"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
