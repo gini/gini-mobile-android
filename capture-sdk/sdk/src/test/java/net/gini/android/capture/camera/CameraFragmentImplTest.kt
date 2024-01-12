@@ -1,20 +1,21 @@
 package net.gini.android.capture.camera
 
 import android.app.Activity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.*
 import jersey.repackaged.jsr166e.CompletableFuture
-import net.gini.android.capture.Amount
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.GiniCaptureError
 import net.gini.android.capture.GiniCaptureHelper
 import net.gini.android.capture.internal.camera.api.CameraInterface
+import net.gini.android.capture.internal.ui.FragmentImplCallback
 import net.gini.android.capture.tracking.CameraScreenEvent
 import net.gini.android.capture.tracking.Event
 import net.gini.android.capture.tracking.EventTracker
-import org.junit.After
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito
@@ -69,5 +70,50 @@ class CameraFragmentImplTest {
         Mockito.verify(listener).onError(args.capture())
         Truth.assertThat(args.firstValue.errorCode)
             .isEqualTo(GiniCaptureError.ErrorCode.MISSING_GINI_CAPTURE_INSTANCE)
+    }
+
+    @Test
+    fun `triggers Help event when help was started`() {
+        // Given
+        val eventTracker = spy<EventTracker>()
+        GiniCapture.Builder().setEventTracker(eventTracker).build()
+
+        // Stub the fragment transaction related calls
+        val fragmentCallbackStub = mock<FragmentImplCallback>()
+        whenever(fragmentCallbackStub.childFragmentManager).thenReturn(object: FragmentManager() {
+            override fun beginTransaction(): FragmentTransaction {
+                return object: FragmentTransaction() {
+                    override fun add(containerViewId: Int, fragment: Fragment, tag: String?): FragmentTransaction {
+                        return this;
+                    }
+
+                    override fun addToBackStack(name: String?): FragmentTransaction {
+                        return this
+                    }
+
+                    override fun commit(): Int {
+                        return 0
+                    }
+
+                    override fun commitAllowingStateLoss(): Int {
+                        return 0
+                    }
+
+                    override fun commitNow() {
+                    }
+
+                    override fun commitNowAllowingStateLoss() {
+                    }
+                }
+            }
+        })
+
+        val fragmentImpl = CameraFragmentImpl(fragmentCallbackStub)
+
+        // When
+        fragmentImpl.startHelpActivity()
+
+        // Then
+        verify(eventTracker).onCameraScreenEvent(Event(CameraScreenEvent.HELP))
     }
 }

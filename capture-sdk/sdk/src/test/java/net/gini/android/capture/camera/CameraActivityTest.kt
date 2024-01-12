@@ -47,25 +47,4 @@ class CameraActivityTest {
         }
     }
 
-    @Test
-    fun `triggers Help event when help was started`() {
-        // Given
-        val eventTracker = spy<EventTracker>()
-        GiniCapture.Builder().setEventTracker(eventTracker).build()
-
-        ActivityScenario.launch(CameraActivity::class.java).use { scenario ->
-            scenario.moveToState(Lifecycle.State.STARTED)
-
-            // When
-            scenario.onActivity { activity ->
-                val menuItem = mock<MenuItem>()
-                whenever(menuItem.itemId).thenReturn(R.id.gc_action_show_onboarding)
-                activity.onOptionsItemSelected(menuItem)
-
-                // Then
-                verify(eventTracker).onCameraScreenEvent(Event(CameraScreenEvent.HELP))
-            }
-        }
-    }
-
 }

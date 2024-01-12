@@ -1,7 +1,7 @@
 package net.gini.android.capture.help
 
 import android.content.Intent
-import androidx.test.core.app.launchActivity
+import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -13,15 +13,13 @@ import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.nhaarman.mockitokotlin2.mock
-import net.gini.android.capture.Amount
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.R
-import org.junit.After
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class HelpActivityTest {
+class HelpFragmentTest {
 
     @Test
     fun `shows custom help items`() {
@@ -44,7 +42,7 @@ class HelpActivityTest {
             .build()
 
         // When
-        launchActivity<HelpActivity>().use {
+        launchFragmentInContainer<HelpFragment>(themeResId = R.style.GiniCaptureTheme).use {
             // Then
             onView(ViewMatchers.withText(customTitle)).check(matches(isDisplayed()))
         }
@@ -73,7 +71,7 @@ class HelpActivityTest {
         // When
         Intents.init()
 
-        launchActivity<HelpActivity>().use {
+        launchFragmentInContainer<HelpFragment>(themeResId = R.style.GiniCaptureTheme).use {
             // Then
             onView(ViewMatchers.withText(customTitle)).perform(click())
 
