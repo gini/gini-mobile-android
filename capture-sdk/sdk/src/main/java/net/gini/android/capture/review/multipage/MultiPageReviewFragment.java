@@ -47,7 +47,6 @@ import net.gini.android.capture.review.multipage.previews.MiddlePageManager;
 import net.gini.android.capture.review.multipage.previews.PreviewFragmentListener;
 import net.gini.android.capture.review.multipage.previews.PreviewPagesAdapter;
 import net.gini.android.capture.review.multipage.view.ReviewNavigationBarBottomAdapter;
-import net.gini.android.capture.review.zoom.ZoomInPreviewActivity;
 import net.gini.android.capture.review.zoom.ZoomInPreviewFragment;
 import net.gini.android.capture.tracking.AnalysisScreenEvent;
 import net.gini.android.capture.tracking.ReviewScreenEvent;
