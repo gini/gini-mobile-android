@@ -1,6 +1,5 @@
 package net.gini.android.capture.help
 
-import android.app.Activity
 import android.content.Intent
 import androidx.annotation.StringRes
 import net.gini.android.capture.R
@@ -9,8 +8,7 @@ import net.gini.android.capture.R
  * This sealed class declares the items which can be shown in the Help Screen.
  */
 sealed class HelpItem(
-    @StringRes val title: Int,
-    val activityClass: Class<out Activity>? = null
+    @StringRes val title: Int
 ) {
 
     /**
@@ -19,8 +17,7 @@ sealed class HelpItem(
      * Item label customizable by overriding the string resource named {@code gc_help_item_photo_tips_title}
      */
     object PhotoTips : HelpItem(
-        R.string.gc_help_item_photo_tips_title,
-        PhotoTipsActivity::class.java
+        R.string.gc_help_item_photo_tips_title
     )
 
     /**
@@ -28,9 +25,8 @@ sealed class HelpItem(
      *
      * Item label customizable by overriding the string resource named {@code gc_help_item_file_import_guide_title}
      */
-    object FileImportGuide : HelpItem(
-        R.string.gc_help_item_file_import_guide_title,
-        FileImportActivity::class.java
+    object FileImport : HelpItem(
+        R.string.gc_help_item_file_import_guide_title
     )
 
     /**
@@ -39,8 +35,7 @@ sealed class HelpItem(
      * Item label customizable by overriding the string resource named {@code gc_help_item_supported_formats_title}
      */
     object SupportedFormats : HelpItem(
-        R.string.gc_help_item_supported_formats_title,
-        SupportedFormatsActivity::class.java
+        R.string.gc_help_item_supported_formats_title
     )
 
     /**

@@ -49,7 +49,7 @@ import net.gini.android.capture.document.ImageMultiPageDocument;
 import net.gini.android.capture.document.QRCodeDocument;
 import net.gini.android.capture.error.ErrorActivity;
 import net.gini.android.capture.error.ErrorType;
-import net.gini.android.capture.help.HelpActivity;
+import net.gini.android.capture.help.HelpFragment;
 import net.gini.android.capture.internal.camera.api.CameraException;
 import net.gini.android.capture.internal.camera.api.CameraInterface;
 import net.gini.android.capture.internal.camera.api.OldCameraController;
@@ -803,13 +803,18 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         }
     }
 
-    private void startHelpActivity() {
-
-        if (mFragment.getActivity() == null || mIsTakingPicture)
+    @VisibleForTesting
+    void startHelpActivity() {
+        if (mIsTakingPicture) {
             return;
+        }
 
-        final Intent intent = new Intent(mFragment.getActivity(), HelpActivity.class);
-        mFragment.getActivity().startActivity(intent);
+        mFragment.getChildFragmentManager()
+                .beginTransaction()
+                .add(R.id.gc_fragment_container, HelpFragment.newInstance(), HelpFragment.class.getName())
+                .addToBackStack(null)
+                .commit();
+
         trackCameraScreenEvent(CameraScreenEvent.HELP);
     }
 

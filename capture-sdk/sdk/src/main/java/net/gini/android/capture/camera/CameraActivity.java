@@ -20,7 +20,6 @@ import net.gini.android.capture.R;
 import net.gini.android.capture.analysis.AnalysisActivity;
 import net.gini.android.capture.document.GiniCaptureMultiPageDocument;
 import net.gini.android.capture.document.QRCodeDocument;
-import net.gini.android.capture.help.HelpActivity;
 import net.gini.android.capture.internal.util.ContextHelper;
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction;
 import net.gini.android.capture.network.model.GiniCaptureReturnReason;
@@ -253,20 +252,11 @@ CameraActivity extends AppCompatActivity implements CameraFragmentListener,
      */
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
-        if (item.getItemId() == R.id.gc_action_show_onboarding) {
-            startHelpActivity();
-            return true;
-        } else if (item.getItemId() == android.R.id.home) {
+        if (item.getItemId() == android.R.id.home) {
             onBackPressed();
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private void startHelpActivity() {
-        final Intent intent = new Intent(this, HelpActivity.class);
-        startActivity(intent);
-        trackCameraScreenEvent(CameraScreenEvent.HELP);
     }
 
     @VisibleForTesting

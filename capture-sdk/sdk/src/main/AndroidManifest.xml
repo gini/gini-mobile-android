@@ -31,26 +31,6 @@
             android:label="@string/gc_title_onboarding"
             android:theme="@style/GiniCaptureTheme" />
         <activity
-            android:name="net.gini.android.capture.help.HelpActivity"
-            android:exported="false"
-            android:label="@string/gc_title_help"
-            android:theme="@style/GiniCaptureTheme" />
-        <activity
-            android:name="net.gini.android.capture.help.PhotoTipsActivity"
-            android:exported="false"
-            android:label="@string/gc_title_photo_tips"
-            android:theme="@style/GiniCaptureTheme" />
-        <activity
-            android:name="net.gini.android.capture.help.SupportedFormatsActivity"
-            android:exported="false"
-            android:label="@string/gc_title_supported_formats"
-            android:theme="@style/GiniCaptureTheme" />
-        <activity
-            android:name="net.gini.android.capture.help.FileImportActivity"
-            android:exported="false"
-            android:label="@string/gc_title_file_import"
-            android:theme="@style/GiniCaptureTheme" />
-        <activity
             android:name="net.gini.android.capture.review.multipage.MultiPageReviewActivity"
             android:exported="false"
             android:label="@string/gc_title_review"

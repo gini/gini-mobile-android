@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="?attr/backgroundColor"
     android:orientation="vertical"
-    tools:context="net.gini.android.capture.help.SupportedFormatsActivity">
+    tools:context="net.gini.android.capture.help.SupportedFormatsHelpFragment">
 
     <net.gini.android.capture.view.InjectedViewContainer
         android:id="@+id/gc_injected_navigation_bar_container_top"
@@ -16,17 +16,39 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/gc_formats_list"
-        android:layout_width="@dimen/gc_tablet_width"
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="@dimen/gc_large_48"
         app:layout_constraintBottom_toTopOf="@+id/gc_injected_navigation_bar_container_bottom"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/gc_injected_navigation_bar_container_top"
-        tools:listitem="@layout/gc_item_format_info" />
+        app:layout_constraintTop_toBottomOf="@+id/gc_injected_navigation_bar_container_top">
+
+        <LinearLayout
+            android:layout_width="@dimen/gc_tablet_width"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/gc_large_48" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/gc_formats_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:nestedScrollingEnabled="false"
+                tools:listitem="@layout/gc_item_format_info" />
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/gc_large" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
 
     <net.gini.android.capture.view.InjectedViewContainer
         android:id="@+id/gc_injected_navigation_bar_container_bottom"
@@ -35,4 +57,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

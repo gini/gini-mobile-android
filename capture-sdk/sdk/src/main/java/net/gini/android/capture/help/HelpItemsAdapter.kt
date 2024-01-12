@@ -28,7 +28,7 @@ internal class HelpItemsAdapter(val onItemSelected: (HelpItem) -> Unit) :
         }
 
         if (FeatureConfiguration.isFileImportEnabled()) {
-            add(HelpItem.FileImportGuide)
+            add(HelpItem.FileImport)
         }
         if (GiniCapture.hasInstance()) {
             addAll(GiniCapture.getInstance().customHelpItems)
