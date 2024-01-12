@@ -3,15 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/capture_flow_nav_graph"
-    app:startDestination="@id/cameraFragment1">
+    app:startDestination="@id/giniCaptureFragment">
+
 
     <fragment
-        android:id="@+id/cameraFragment1"
-        android:name="net.gini.android.capture.camera.CameraFragment"
-        android:label="fragment_camera"
-        tools:layout="@layout/gc_fragment_camera">
+        android:id="@+id/giniCaptureFragment"
+        android:name="net.gini.android.capture.GiniCaptureFragment"
+        android:label="gc_fragment_gini_capture"
+        tools:layout="@layout/gc_fragment_gini_capture">
 
     </fragment>
+
+
 
 
 </navigation>

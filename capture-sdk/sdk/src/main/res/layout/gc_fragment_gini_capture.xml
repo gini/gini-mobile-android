@@ -7,7 +7,7 @@
     >
 
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/nav_host_fragment"
+        android:id="@+id/gc_nav_host_fragment"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -15,8 +15,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:tag="my_tag"
-        app:navGraph="@navigation/capture_nav_graph"
+        android:tag="gc_nav_host_fragment"
+        app:navGraph="@navigation/gc_nav_graph"
         app:defaultNavHost="true"/>
     <!--    Has to be the default nav host to handle back button presses. -->
     <!--    It's safe to do this because this NavHostFragment is the only one in the CaptureFlowFragment's childFragmentManager: https://stackoverflow.com/a/60550809 -->

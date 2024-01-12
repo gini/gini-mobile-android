@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
+import net.gini.android.capture.analysis.AnalysisActivity;
 import net.gini.android.capture.camera.view.CameraNavigationBarBottomAdapter;
 import net.gini.android.capture.camera.view.DefaultCameraNavigationBarBottomAdapter;
 import net.gini.android.capture.help.HelpItem;
@@ -657,6 +658,63 @@ public class GiniCapture {
     public EntryPoint getEntryPoint() {
         return entryPoint;
     }
+
+
+    public static GiniCaptureFragment createGiniCaptureFragment() {
+        return GiniCaptureFragment.Companion.createInstance(null);
+    }
+
+    public CancellationToken createGiniCaptureFragmentForIntent(Context context, Intent intent, TheCallback the) {
+        return createIntentForImportedFiles(intent, context, new AsyncCallback<Intent, ImportedFileValidationException>() {
+            @Override
+            public void onSuccess(Intent result) {
+                if (result.getComponent().getClassName().equals(AnalysisActivity.class.getName())) {
+                    the.callback(new CreateCaptureFlowFragmentForIntentResult.Success(GiniCaptureFragment.Companion.createInstance(result)));
+                } else {
+                    the.callback(new CreateCaptureFlowFragmentForIntentResult.Error(new ImportedFileValidationException("Unknown activity class: ${result.component?.className}")));
+                }
+            }
+
+            @Override
+            public void onError(ImportedFileValidationException exception) {
+                the.callback(new CreateCaptureFlowFragmentForIntentResult.Error(exception));
+            }
+
+            @Override
+            public void onCancelled() {
+                the.callback(new CreateCaptureFlowFragmentForIntentResult.Cancelled());
+            }
+        });
+    }
+
+    interface TheCallback {
+        void callback(CreateCaptureFlowFragmentForIntentResult result);
+    }
+
+    static class CreateCaptureFlowFragmentForIntentResult<T> {
+        static class Cancelled extends CreateCaptureFlowFragmentForIntentResult {}
+
+        static class Success extends CreateCaptureFlowFragmentForIntentResult {
+            @NonNull
+            GiniCaptureFragment fragment;
+
+            public Success(GiniCaptureFragment fragment) {
+                this.fragment = fragment;
+            }
+        }
+        static class Error extends CreateCaptureFlowFragmentForIntentResult {
+            @NonNull
+            Exception exception;
+
+            public Error(ImportedFileValidationException exception) {
+                this.exception = exception;
+            }
+
+        }
+
+
+    }
+
 
     /**
      * Builder for {@link GiniCapture}. To get an instance call {@link #newInstance(Context)}.

@@ -2,7 +2,7 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/capture_flow_nav_graph"
+    android:id="@+id/gc_nav_graph"
     app:startDestination="@id/cameraFragment">
 
     <fragment
@@ -15,8 +15,8 @@
             app:destination="@id/reviewFragment"
             app:popUpTo="@id/cameraFragment"
             app:popUpToInclusive="true"/>
-<!--        popUpTo and popUpToInclusive are needed to make the review screen the start destination -->
-<!--        (i.e., replace the camera screen with the review screen in the back stack) -->
+        <!--        popUpTo and popUpToInclusive are needed to make the review screen the start destination -->
+        <!--        (i.e., replace the camera screen with the review screen in the back stack) -->
         <action
             android:id="@+id/to_analysis_fragment"
             app:destination="@id/analysisFragment"
@@ -28,7 +28,7 @@
             <argument
                 android:name="GC_ARGS_DOCUMENT_ANALYSIS_ERROR_MESSAGE"
                 app:argType="string" />
-    </action>
+        </action>
     </fragment>
 
     <fragment
@@ -44,8 +44,8 @@
             app:destination="@id/cameraFragment"
             app:popUpTo="@id/reviewFragment"
             app:popUpToInclusive="true"/>
-<!--        popUpTo and popUpToInclusive are needed to make the camera screen the start destination again -->
-<!--        (i.e., replace the review screen with the camera screen in the back stack) -->
+        <!--        popUpTo and popUpToInclusive are needed to make the camera screen the start destination again -->
+        <!--        (i.e., replace the review screen with the camera screen in the back stack) -->
         <action
             android:id="@+id/to_analysis_fragment"
             app:destination="@id/analysisFragment"
@@ -66,5 +66,6 @@
         android:label="fragment_analysis"
         tools:layout="@layout/gc_fragment_analysis">
     </fragment>
+
 
 </navigation>

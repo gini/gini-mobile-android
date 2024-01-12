@@ -8,7 +8,7 @@
 
     <fragment
         android:id="@+id/clientCaptureFragment"
-        android:name="net.gini.android.bank.sdk.exampleapp.ui.ClientCaptureFragment"
+        android:name="net.gini.android.bank.sdk.exampleapp.ui.ClientGiniCaptureFragment"
         android:label="StartCaptureFragment"
         tools:layout="@layout/fragment_client_capture" >
 

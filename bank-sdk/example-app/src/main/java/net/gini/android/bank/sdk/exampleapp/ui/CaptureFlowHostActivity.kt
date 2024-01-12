@@ -23,7 +23,7 @@ class CaptureFlowHostActivity : AppCompatActivity() {
 
 
     private fun startBankSDKForOpenWith(openWithIntent: Intent) {
-        findViewById<FragmentContainerView>(R.id.fragment_host).getFragment<ClientCaptureFragment>()
+        findViewById<FragmentContainerView>(R.id.fragment_host).getFragment<ClientGiniCaptureFragment>()
             .startBankSDKForIntent(openWithIntent)
     }
 

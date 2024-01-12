@@ -1,64 +1,74 @@
 package net.gini.android.bank.sdk.exampleapp.ui
 
+import android.Manifest
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.capture.CaptureConfiguration
-import net.gini.android.bank.sdk.capture.CaptureFlowFragmentListener
-import net.gini.android.bank.sdk.capture.CaptureResult
-import net.gini.android.bank.sdk.capture.ResultError
 import net.gini.android.bank.sdk.exampleapp.R
+import net.gini.android.bank.sdk.exampleapp.core.PermissionHandler
+import net.gini.android.bank.sdk.exampleapp.core.di.GiniCaptureNetworkServiceDebugEnabled
+import net.gini.android.capture.CaptureResult
 import net.gini.android.capture.DocumentImportEnabledFileTypes
+import net.gini.android.capture.GiniCapture
+import net.gini.android.capture.GiniCaptureFragmentListener
+import net.gini.android.capture.ResultError
 import net.gini.android.capture.network.GiniCaptureDefaultNetworkService
+import net.gini.android.capture.review.multipage.view.DefaultReviewNavigationBarBottomAdapter
+import net.gini.android.capture.view.DefaultLoadingIndicatorAdapter
 import net.gini.android.core.api.DocumentMetadata
+import javax.inject.Inject
 
-class ClientCaptureFragment : Fragment(R.layout.fragment_client_capture),
-    CaptureFlowFragmentListener {
+@AndroidEntryPoint
+class ClientGiniCaptureFragment : Fragment(R.layout.fragment_client_capture),
+    GiniCaptureFragmentListener {
+
+    @Inject
+    @GiniCaptureNetworkServiceDebugEnabled
+    lateinit var giniCaptureDefaultNetworkService: GiniCaptureDefaultNetworkService
+    private lateinit var permissionHandler: PermissionHandler
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        startBankSDK()
+        configureBankSDK()
+//        startCaptureSDK()
     }
 
-
-    private fun startBankSDK() {
-        configureBankSDK()
-        val captureFlowFragment = GiniBank.createCaptureFlowFragment()
-        captureFlowFragment.setListener(this)
+    private fun startCaptureSDK() {
+        configureCaptureSDK()
+        val giniCaptureFragment = GiniCapture.createGiniCaptureFragment()
+        giniCaptureFragment.setListener(this)
 
         requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_host, captureFlowFragment, "gc_fragment_host")
+            .replace(R.id.fragment_host, giniCaptureFragment, "fragment_host")
             .addToBackStack(null)
             .commit()
     }
 
-    fun startBankSDKForIntent(openWithIntent: Intent) {
-        configureBankSDK()
-        GiniBank.createCaptureFlowFragmentForIntent(requireContext(), openWithIntent) { result ->
-            when (result) {
-                GiniBank.CreateCaptureFlowFragmentForIntentResult.Cancelled -> requireActivity().finish()
-                is GiniBank.CreateCaptureFlowFragmentForIntentResult.Error -> Toast.makeText(
-                    requireContext(),
-                    "Open with failed with error ${result.exception.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
+    private fun configureCaptureSDK() {
+        checkCameraPermission()
+        val builder = GiniCapture.newInstance(requireContext())
+            .setGiniCaptureNetworkService(
+                giniCaptureDefaultNetworkService
+            )
+            .setDocumentImportEnabledFileTypes(DocumentImportEnabledFileTypes.PDF_AND_IMAGES)
+            .setFileImportEnabled(true)
+            .setQRCodeScanningEnabled(true)
+            .setMultiPageEnabled(true)
+        builder.setFlashButtonEnabled(true)
+        builder.setReviewBottomBarNavigationAdapter(DefaultReviewNavigationBarBottomAdapter())
+        builder.setLoadingIndicatorAdapter(DefaultLoadingIndicatorAdapter())
 
-                is GiniBank.CreateCaptureFlowFragmentForIntentResult.Success -> {
-                    result.fragment.setListener(this)
-
-                    requireActivity().supportFragmentManager.beginTransaction()
-                        .replace(R.id.fragment_host, result.fragment, "gc_fragment_host")
-                        .addToBackStack(null)
-                        .commit()
-                }
-            }
-        }
-
+        builder.build()
     }
+
 
     private fun configureBankSDK() {
         val clientId = requireContext().getString(R.string.gini_api_client_id)
@@ -87,7 +97,56 @@ class ClientCaptureFragment : Fragment(R.layout.fragment_client_capture),
         )
         GiniBank.setCaptureConfiguration(requireContext(), captureConfiguration)
         GiniBank.enableReturnReasons = true
+
+        checkCameraPermission()
     }
+
+    private fun checkCameraPermission(intent: Intent? = null) {
+        permissionHandler = PermissionHandler(requireActivity())
+        lifecycleScope.launch {
+            if (permissionHandler.grantPermission(Manifest.permission.CAMERA)) {
+                startBankSDK()
+            } else {
+                if (intent != null) {
+                    requireActivity().finish()
+                }
+            }
+        }
+    }
+
+    private fun startBankSDK() {
+        val captureFlowFragment = GiniBank.createCaptureFlowFragment()
+        captureFlowFragment.setListener(this)
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_host, captureFlowFragment, "fragment_host")
+            .addToBackStack(null)
+            .commit()
+    }
+
+    fun startBankSDKForIntent(openWithIntent: Intent) {
+        configureBankSDK()
+//        GiniBank.createCaptureFlowFragmentForIntent(requireContext(), openWithIntent) { result ->
+//            when (result) {
+//                GiniBank.CreateCaptureFlowFragmentForIntentResult.Cancelled -> requireActivity().finish()
+//                is GiniBank.CreateCaptureFlowFragmentForIntentResult.Error -> Toast.makeText(
+//                    requireContext(),
+//                    "Open with failed with error ${result.exception.message}",
+//                    Toast.LENGTH_SHORT
+//                ).show()
+//
+//                is GiniBank.CreateCaptureFlowFragmentForIntentResult.Success -> {
+//                    result.fragment.setListener(this)
+//
+//                    requireActivity().supportFragmentManager.beginTransaction()
+//                        .replace(R.id.fragment_host, result.fragment, "gc_fragment_host")
+//                        .addToBackStack(null)
+//                        .commit()
+//                }
+//            }
+//        }
+
+    }
+
 
     override fun onFinishedWithResult(result: CaptureResult) {
         when (result) {
@@ -116,6 +175,8 @@ class ClientCaptureFragment : Fragment(R.layout.fragment_client_capture),
                             "Error: ${(result.value as ResultError.FileImport).code} ${(result.value as ResultError.FileImport).message}",
                             Toast.LENGTH_LONG
                         ).show()
+
+                    else -> {}
                 }
 //                if (isIntentActionViewOrSend(intent)) {
 //                    requireActivity().finish()
@@ -146,6 +207,7 @@ class ClientCaptureFragment : Fragment(R.layout.fragment_client_capture),
             }
         }
     }
+
 
     override fun onFinishedWithCancellation() {
         requireActivity().finish()
