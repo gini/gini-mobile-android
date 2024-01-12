@@ -309,6 +309,10 @@ class FileChooserFragment : Fragment() {
                 }
             }
 
+        @SuppressLint(
+            "QueryPermissionsNeeded",
+            "SDK documentation informs clients to declare the <queries> element in their manifest"
+        )
         @JvmStatic
         private fun queryImagePickers(context: Context): List<ResolveInfo> {
             val intent = createImagePickerIntent()
@@ -331,9 +335,9 @@ class FileChooserFragment : Fragment() {
             val imagePickerResolveInfos = queryImagePickers(context)
             val imageProviderResolveInfos = queryImageProviders(context)
             val pdfProviderResolveInfos = queryPdfProviders(context)
-            return (!imagePickerResolveInfos.isEmpty()
-                    || !imageProviderResolveInfos.isEmpty()
-                    || !pdfProviderResolveInfos.isEmpty())
+            return (imagePickerResolveInfos.isNotEmpty()
+                    || imageProviderResolveInfos.isNotEmpty()
+                    || pdfProviderResolveInfos.isNotEmpty())
         }
 
         @SuppressLint(
