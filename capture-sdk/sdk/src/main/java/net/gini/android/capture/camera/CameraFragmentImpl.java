@@ -806,11 +806,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             return;
         }
 
-        mFragment.getChildFragmentManager()
-                .beginTransaction()
-                .add(R.id.gc_fragment_container, HelpFragment.newInstance(), HelpFragment.class.getName())
-                .addToBackStack(null)
-                .commit();
+        mFragment.findNavController().navigate(CameraFragmentDirections.toHelpFragment());
 
         trackCameraScreenEvent(CameraScreenEvent.HELP);
     }

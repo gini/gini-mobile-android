@@ -36,6 +36,13 @@
                 android:name="GC_EXTRA_IN_DOCUMENT_IMPORT_FILE_TYPES"
                 app:argType="net.gini.android.capture.DocumentImportEnabledFileTypes" />
         </action>
+        <action
+            android:id="@+id/to_help_fragment"
+            app:destination="@id/gc_destination_help_fragment"
+            app:popUpTo="@id/gc_destination_camera_fragment"
+            app:popUpToInclusive="true" />
+        <!-- popUpTo and popUpToInclusive are needed to replace the camera screen with the help screen in the back stack -->
+        <!-- The camera preview is not restarted otherwise. It has something to do with the SurfaceView, but I couldn't find the root cause. -->
     </fragment>
 
     <fragment
@@ -81,5 +88,47 @@
         tools:layout="@layout/gc_fragment_file_chooser">
     </dialog>
 
+    <fragment
+        android:id="@+id/gc_destination_help_fragment"
+        android:name="net.gini.android.capture.help.HelpFragment"
+        android:label="fragment_help"
+        tools:layout="@layout/gc_fragment_help">
+        <action
+            android:id="@+id/to_file_import_help_fragment"
+            app:destination="@id/gc_destination_file_import_help_fragment" />
+        <action
+            android:id="@+id/to_photo_tips_help_fragment"
+            app:destination="@id/gc_destination_photo_tips_help_fragment" />
+        <action
+            android:id="@+id/to_supported_formats_help_fragment"
+            app:destination="@id/gc_destination_supported_formats_help_fragment" />
+        <action
+            android:id="@+id/to_camera_fragment"
+            app:destination="@id/gc_destination_camera_fragment"
+            app:popUpTo="@id/gc_destination_help_fragment"
+            app:popUpToInclusive="true" />
+        <!-- popUpTo and popUpToInclusive are needed to make the camera screen the start destination again -->
+    </fragment>
+
+    <fragment
+        android:id="@+id/gc_destination_file_import_help_fragment"
+        android:name="net.gini.android.capture.help.FileImportHelpFragment"
+        android:label="fragment_help"
+        tools:layout="@layout/gc_fragment_file_import_help">
+    </fragment>
+
+    <fragment
+        android:id="@+id/gc_destination_photo_tips_help_fragment"
+        android:name="net.gini.android.capture.help.PhotoTipsHelpFragment"
+        android:label="fragment_help"
+        tools:layout="@layout/gc_fragment_photo_tips_help">
+    </fragment>
+
+    <fragment
+        android:id="@+id/gc_destination_supported_formats_help_fragment"
+        android:name="net.gini.android.capture.help.SupportedFormatsHelpFragment"
+        android:label="fragment_help"
+        tools:layout="@layout/gc_fragment_supported_formats_help">
+    </fragment>
 
 </navigation>

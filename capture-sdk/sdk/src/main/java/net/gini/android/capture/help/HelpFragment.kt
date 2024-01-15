@@ -5,6 +5,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.R
@@ -28,8 +30,20 @@ class HelpFragment : Fragment() {
         setUpHelpItems()
         setupTopBarNavigation()
         setupBottomBarNavigation()
+        handleOnBackPressed()
         return binding.root
     }
+
+    private fun handleOnBackPressed() {
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                findNavController().navigate(HelpFragmentDirections.toCameraFragment())
+                isEnabled = false
+                remove()
+            }
+        })
+    }
+
 
     override fun onStart() {
         super.onStart()
@@ -63,7 +77,7 @@ class HelpFragment : Fragment() {
                     injectedViewAdapter.setNavButtonType(navType)
                     injectedViewAdapter.setTitle(getString(R.string.gc_title_help))
                     injectedViewAdapter.setOnNavButtonClickListener(IntervalClickListener {
-                        parentFragmentManager.popBackStack()
+                        findNavController().navigate(HelpFragmentDirections.toCameraFragment())
                     })
                 }
         }
@@ -76,7 +90,7 @@ class HelpFragment : Fragment() {
                 GiniCapture.getInstance().internal().helpNavigationBarBottomAdapterInstance
             ) { injectedViewAdapter ->
                 injectedViewAdapter.setOnBackClickListener(IntervalClickListener {
-                    parentFragmentManager.popBackStack()
+                    findNavController().navigate(HelpFragmentDirections.toCameraFragment())
                 })
             }
         }
@@ -84,19 +98,11 @@ class HelpFragment : Fragment() {
 
     private fun launchHelpScreen(helpItem: HelpItem) {
         when (helpItem) {
-            HelpItem.PhotoTips -> navigateToFragment(PhotoTipsHelpFragment.newInstance())
-            HelpItem.SupportedFormats -> navigateToFragment(SupportedFormatsHelpFragment.newInstance())
-            HelpItem.FileImport -> navigateToFragment(FileImportHelpFragment.newInstance())
+            HelpItem.PhotoTips -> findNavController().navigate(HelpFragmentDirections.toPhotoTipsHelpFragment())
+            HelpItem.SupportedFormats -> findNavController().navigate(HelpFragmentDirections.toSupportedFormatsHelpFragment())
+            HelpItem.FileImport -> findNavController().navigate(HelpFragmentDirections.toFileImportHelpFragment())
             is HelpItem.Custom -> requireActivity().startActivity(helpItem.intent)
         }
-    }
-
-    private fun navigateToFragment(fragment: Fragment) {
-        childFragmentManager
-            .beginTransaction()
-            .add(R.id.gc_fragment_container, fragment, fragment::class.java.name)
-            .addToBackStack(null)
-            .commit()
     }
 
     companion object {
