@@ -21,7 +21,9 @@ import net.gini.android.capture.document.QRCodeDocument
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
+import net.gini.android.capture.review.multipage.MultiPageReviewActivity
 import net.gini.android.capture.review.multipage.MultiPageReviewFragment
+import net.gini.android.capture.review.multipage.MultiPageReviewFragmentDirections
 import net.gini.android.capture.review.multipage.MultiPageReviewFragmentListener
 
 class GiniCaptureFragment(private val analysisIntent: Intent? = null) : Fragment(), CameraFragmentListener, MultiPageReviewFragmentListener,
@@ -102,7 +104,7 @@ class GiniCaptureFragment(private val analysisIntent: Intent? = null) : Fragment
     //new listener onFinishedWithResult -> returns the result to the client
 
     override fun onProceedToAnalysisScreen(document: Document) {
-        //navController.navigate(CameraFragmentDirections.toAnalysisFragment(document, ""))
+        navController.navigate(CameraFragmentDirections.toAnalysisFragment(document, ""))
     }
 
     override fun onProceedToMultiPageReviewScreen(
@@ -113,18 +115,18 @@ class GiniCaptureFragment(private val analysisIntent: Intent? = null) : Fragment
             if (addPages) {
                 // In case we returned to take more images
                 // Let the app know if it should scroll to the last position
-//                val intent: Intent = Intent(this, MultiPageReviewActivity::class.java)
+//                val intent: Intent = Intent(requireActivity(), MultiPageReviewActivity::class.java)
 //                intent.putExtra(MultiPageReviewActivity.SHOULD_SCROLL_TO_LAST_PAGE, shouldScrollToLastPage)
-//                setResult(MultiPageReviewActivity.RESULT_SCROLL_TO_LAST_PAGE, intent)
+//                requireActivity().setResult(MultiPageReviewActivity.RESULT_SCROLL_TO_LAST_PAGE, intent)
 
                 // For subsequent images a new CameraActivity was launched from the MultiPageReviewActivity
                 // and so we can simply finish to return to the review activity
-                //navController.popBackStack()
+                navController.popBackStack()
             } else {
                 // For the first image navigate to the review fragment by replacing the camera fragment to make
                 // the review fragment the new start destination
-                //val intent = MultiPageReviewActivity.createIntent(this, shouldScrollToLastPage)
-                //navController.navigate(CameraFragmentDirections.toReviewFragmentForFirstPage())
+//                val intent = MultiPageReviewActivity.createIntent(requireActivity(), shouldScrollToLastPage)
+                navController.navigate(CameraFragmentDirections.toReviewFragmentForFirstPage())
             }
         } else {
             throw UnsupportedOperationException("Unsupported multi-page document type.")
@@ -139,18 +141,18 @@ class GiniCaptureFragment(private val analysisIntent: Intent? = null) : Fragment
     }
 
     override fun onProceedToAnalysisScreen(document: GiniCaptureMultiPageDocument<*, *>) {
-        //navController.navigate(MultiPageReviewFragmentDirections.toAnalysisFragment(document, ""))
+        navController.navigate(MultiPageReviewFragmentDirections.toAnalysisFragment(document, ""))
     }
 
     override fun onReturnToCameraScreenToAddPages() {
         // When returning to the camera screen for adding pages we navigate to a new CameraFragment instance
-        //navController.navigate(MultiPageReviewFragmentDirections.toCameraFragmentForAddingPages())
+        navController.navigate(MultiPageReviewFragmentDirections.toCameraFragmentForAddingPages())
         addPages = true
     }
 
     override fun onReturnToCameraScreenForFirstPage() {
         // When returning to the camera screen for adding the first page we navigate back to the first CameraFragment instance
-        //navController.navigate(MultiPageReviewFragmentDirections.toCameraFragmentForFirstPage())
+        navController.navigate(MultiPageReviewFragmentDirections.toCameraFragmentForFirstPage())
         addPages = false
     }
 
@@ -170,21 +172,6 @@ class GiniCaptureFragment(private val analysisIntent: Intent? = null) : Fragment
         returnReasons: MutableList<GiniCaptureReturnReason>
     ) {
         Log.d("analysis", "extractions received: $extractions")
-
-//        if (GiniBank.getCaptureConfiguration()?.returnAssistantEnabled == true) {
-//            try {
-//                LineItemsValidator.validate(compoundExtractions)
-//                // TODO: launch the digital invoice fragment
-//            } catch (notUsed: DigitalInvoiceException) {
-//                captureFlowFragmentListener.onFinishedWithResult(
-//                    CaptureResult.Success(
-//                        extractions,
-//                        emptyMap(),
-//                        emptyList()
-//                    )
-//                )
-//            }
-//        } else {
             giniCaptureFragmentListener.onFinishedWithResult(
                 CaptureResult.Success(
                     extractions,
@@ -192,7 +179,6 @@ class GiniCaptureFragment(private val analysisIntent: Intent? = null) : Fragment
                     emptyList()
                 )
             )
-        //}
     }
 
     override fun onProceedToNoExtractionsScreen(document: Document) {

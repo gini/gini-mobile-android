@@ -11,8 +11,10 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import net.gini.android.bank.sdk.R
 import net.gini.android.capture.CaptureResult
+import net.gini.android.capture.Document
 import net.gini.android.capture.GiniCaptureFragment
 import net.gini.android.capture.GiniCaptureFragmentListener
+import net.gini.android.capture.camera.CameraFragmentListener
 
 class CaptureFlowFragment : Fragment(), GiniCaptureFragmentListener {
 
@@ -22,12 +24,12 @@ class CaptureFlowFragment : Fragment(), GiniCaptureFragmentListener {
         }
     }
 
-    fun setListener(listener: GiniCaptureFragmentListener) {
-        this.giniCaptureFragmentListener = listener
+    fun setListener(listener: CaptureFlowFragmentListener) {
+        this.captureFlowFragmentListener = listener
     }
 
     private lateinit var navController: NavController
-    private lateinit var giniCaptureFragmentListener: GiniCaptureFragmentListener
+    private lateinit var captureFlowFragmentListener: CaptureFlowFragmentListener
 
     // Related to navigation logic ported from CameraActivity
     private var addPages = false
@@ -76,11 +78,11 @@ class CaptureFlowFragment : Fragment(), GiniCaptureFragmentListener {
     }
 
     override fun onFinishedWithResult(result: CaptureResult) {
-        TODO("Not yet implemented")
+        captureFlowFragmentListener.onFinishedWithResult(result)
     }
 
     override fun onFinishedWithCancellation() {
-        TODO("Not yet implemented")
+        captureFlowFragmentListener.onFinishedWithCancellation()
     }
 
     //it shows the camera in the start
@@ -96,6 +98,15 @@ class CaptureFlowFragment : Fragment(), GiniCaptureFragmentListener {
 
 }
 
+interface CaptureFlowFragmentListener {
+    fun onFinishedWithResult(result: CaptureResult)
+
+    fun onFinishedWithCancellation()
+
+    fun onCheckImportedDocument(document: Document, callback: CameraFragmentListener.DocumentCheckResultCallback) {
+        callback.documentAccepted()
+    }
+}
 
 class CaptureFlowFragmentFactory(
     private val giniCaptureFragmentListener: GiniCaptureFragmentListener
