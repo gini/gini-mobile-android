@@ -3,12 +3,9 @@ package net.gini.android.bank.sdk.exampleapp.ui
 import android.Manifest
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
-import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.capture.CaptureConfiguration
@@ -16,25 +13,16 @@ import net.gini.android.bank.sdk.capture.CaptureFlowFragmentListener
 import net.gini.android.bank.sdk.capture.CaptureResult
 import net.gini.android.bank.sdk.capture.ResultError
 import net.gini.android.bank.sdk.exampleapp.R
-import net.gini.android.bank.sdk.exampleapp.core.ExampleUtil.isIntentActionViewOrSend
 import net.gini.android.bank.sdk.exampleapp.core.PermissionHandler
-import net.gini.android.bank.sdk.exampleapp.core.di.GiniCaptureNetworkServiceDebugEnabled
 import net.gini.android.capture.CaptureSDKResultError
-import net.gini.android.capture.Document
 import net.gini.android.capture.DocumentImportEnabledFileTypes
-import net.gini.android.capture.camera.CameraFragmentListener
 import net.gini.android.capture.network.GiniCaptureDefaultNetworkService
 import net.gini.android.core.api.DocumentMetadata
-import javax.inject.Inject
 
-@AndroidEntryPoint
 class ClientGiniCaptureFragment :
     Fragment(R.layout.fragment_client_capture),
     CaptureFlowFragmentListener {
 
-    @Inject
-    @GiniCaptureNetworkServiceDebugEnabled
-    lateinit var giniCaptureDefaultNetworkService: GiniCaptureDefaultNetworkService
     private lateinit var permissionHandler: PermissionHandler
 
     override fun onAttach(context: Context) {
@@ -42,15 +30,13 @@ class ClientGiniCaptureFragment :
         checkCameraPermission()
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-    }
 
     private fun checkCameraPermission(intent: Intent? = null) {
         permissionHandler = PermissionHandler(requireActivity())
         lifecycleScope.launch {
             if (permissionHandler.grantPermission(Manifest.permission.CAMERA)) {
                 configureBankSDK()
+                startBankSDK()
             } else {
                 if (intent != null) {
                     requireActivity().finish()
@@ -88,7 +74,6 @@ class ClientGiniCaptureFragment :
         GiniBank.setCaptureConfiguration(requireContext(), captureConfiguration)
         GiniBank.enableReturnReasons = true
 
-        startBankSDK()
     }
 
 
@@ -103,25 +88,25 @@ class ClientGiniCaptureFragment :
 
     fun startBankSDKForIntent(openWithIntent: Intent) {
         configureBankSDK()
-//        GiniBank.createCaptureFlowFragmentForIntent(requireContext(), openWithIntent) { result ->
-//            when (result) {
-//                GiniBank.CreateCaptureFlowFragmentForIntentResult.Cancelled -> requireActivity().finish()
-//                is GiniBank.CreateCaptureFlowFragmentForIntentResult.Error -> Toast.makeText(
-//                    requireContext(),
-//                    "Open with failed with error ${result.exception.message}",
-//                    Toast.LENGTH_SHORT
-//                ).show()
-//
-//                is GiniBank.CreateCaptureFlowFragmentForIntentResult.Success -> {
-//                    result.fragment.setListener(this)
-//
-//                    requireActivity().supportFragmentManager.beginTransaction()
-//                        .replace(R.id.fragment_host, result.fragment, "gc_fragment_host")
-//                        .addToBackStack(null)
-//                        .commit()
-//                }
-//            }
-//        }
+        GiniBank.createCaptureFlowFragmentForIntent(requireContext(), openWithIntent) { result ->
+            when (result) {
+                GiniBank.CreateCaptureFlowFragmentForIntentResult.Cancelled -> requireActivity().finish()
+                is GiniBank.CreateCaptureFlowFragmentForIntentResult.Error -> Toast.makeText(
+                    requireContext(),
+                    "Open with failed with error ${result.exception.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                is GiniBank.CreateCaptureFlowFragmentForIntentResult.Success -> {
+                    result.fragment.setListener(this)
+
+                    requireActivity().supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_host, result.fragment, "fragment_host")
+                        .addToBackStack(null)
+                        .commit()
+                }
+            }
+        }
 
     }
 
@@ -156,21 +141,21 @@ class ClientGiniCaptureFragment :
 
                     else -> {}
                 }
-                //if (isIntentActionViewOrSend(requireActivity().intent)) {
-                requireActivity().finish()
-                // }
+//                if (isIntentActionViewOrSend(requireActivity().intent)) {
+//                requireActivity().finish()
+//                 }
             }
 
             CaptureResult.Empty -> {
-                //if (isIntentActionViewOrSend(requireActivity().intent)) {
-                requireActivity().finish()
-                //}
+//                if (isIntentActionViewOrSend(requireActivity().intent)) {
+//                requireActivity().finish()
+//                }
             }
 
             CaptureResult.Cancel -> {
-                //if (isIntentActionViewOrSend(requireActivity().intent)) {
-                requireActivity().finish()
-                //}
+//                if (isIntentActionViewOrSend(requireActivity().intent)) {
+//                requireActivity().finish()
+//                }
             }
 
             CaptureResult.EnterManually -> {
@@ -179,9 +164,9 @@ class ClientGiniCaptureFragment :
                     "Scan exited for manual enter mode",
                     Toast.LENGTH_SHORT
                 ).show()
-                if (isIntentActionViewOrSend(requireActivity().intent)) {
-                    requireActivity().finish()
-                }
+//                if (isIntentActionViewOrSend(requireActivity().intent)) {
+//                    requireActivity().finish()
+//                }
             }
         }
     }
@@ -191,12 +176,6 @@ class ClientGiniCaptureFragment :
         requireActivity().finish()
     }
 
-    override fun onCheckImportedDocument(
-        document: Document,
-        callback: CameraFragmentListener.DocumentCheckResultCallback
-    ) {
-        TODO("Not yet implemented")
-    }
 
 
 }

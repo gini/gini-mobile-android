@@ -16,11 +16,13 @@ import net.gini.android.capture.GiniCaptureFragment
 import net.gini.android.capture.GiniCaptureFragmentListener
 import net.gini.android.capture.camera.CameraFragmentListener
 
-class CaptureFlowFragment : Fragment(), GiniCaptureFragmentListener {
+class CaptureFlowFragment(private val analysisIntent: Intent? = null) :
+    Fragment(),
+    GiniCaptureFragmentListener {
 
     internal companion object {
         fun createInstance(intent: Intent? = null): CaptureFlowFragment {
-            return CaptureFlowFragment()
+            return CaptureFlowFragment(intent)
         }
     }
 
@@ -54,7 +56,7 @@ class CaptureFlowFragment : Fragment(), GiniCaptureFragmentListener {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        childFragmentManager.fragmentFactory = CaptureFlowFragmentFactory(this)
+        childFragmentManager.fragmentFactory = CaptureFlowFragmentFactory(this, analysisIntent)
         super.onCreate(savedInstanceState)
     }
 
@@ -103,21 +105,26 @@ interface CaptureFlowFragmentListener {
 
     fun onFinishedWithCancellation()
 
-    fun onCheckImportedDocument(document: Document, callback: CameraFragmentListener.DocumentCheckResultCallback) {
+    fun onCheckImportedDocument(
+        document: Document,
+        callback: CameraFragmentListener.DocumentCheckResultCallback
+    ) {
         callback.documentAccepted()
     }
 }
 
 class CaptureFlowFragmentFactory(
-    private val giniCaptureFragmentListener: GiniCaptureFragmentListener
+    private val giniCaptureFragmentListener: GiniCaptureFragmentListener,
+    private val analysisIntent: Intent? = null
 ) : FragmentFactory() {
     override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
         when (className) {
-            GiniCaptureFragment::class.java.name -> return GiniCaptureFragment().apply {
-                setListener(
-                    giniCaptureFragmentListener
-                )
-            }
+            GiniCaptureFragment::class.java.name -> return GiniCaptureFragment(analysisIntent)
+                .apply {
+                    setListener(
+                        giniCaptureFragmentListener
+                    )
+                }
 
             else -> return super.instantiate(classLoader, className)
         }
