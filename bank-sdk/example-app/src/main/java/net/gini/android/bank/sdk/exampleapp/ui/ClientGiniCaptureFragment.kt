@@ -6,8 +6,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.core.content.ContextCompat.startActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
@@ -15,29 +13,24 @@ import kotlinx.coroutines.launch
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.capture.CaptureConfiguration
 import net.gini.android.bank.sdk.capture.CaptureFlowFragmentListener
+import net.gini.android.bank.sdk.capture.CaptureResult
+import net.gini.android.bank.sdk.capture.ResultError
 import net.gini.android.bank.sdk.exampleapp.R
 import net.gini.android.bank.sdk.exampleapp.core.ExampleUtil.isIntentActionViewOrSend
 import net.gini.android.bank.sdk.exampleapp.core.PermissionHandler
 import net.gini.android.bank.sdk.exampleapp.core.di.GiniCaptureNetworkServiceDebugEnabled
-import net.gini.android.capture.CaptureResult
+import net.gini.android.capture.CaptureSDKResultError
 import net.gini.android.capture.Document
 import net.gini.android.capture.DocumentImportEnabledFileTypes
-import net.gini.android.capture.GiniCapture
-import net.gini.android.capture.GiniCaptureFragmentListener
-import net.gini.android.capture.ResultError
 import net.gini.android.capture.camera.CameraFragmentListener
 import net.gini.android.capture.network.GiniCaptureDefaultNetworkService
-import net.gini.android.capture.review.multipage.view.DefaultReviewNavigationBarBottomAdapter
-import net.gini.android.capture.view.DefaultLoadingIndicatorAdapter
 import net.gini.android.core.api.DocumentMetadata
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ClientGiniCaptureFragment : Fragment(R.layout.fragment_client_capture),
-    //Bank SDK
+class ClientGiniCaptureFragment :
+    Fragment(R.layout.fragment_client_capture),
     CaptureFlowFragmentListener {
-    //Capture SDK
-//    GiniCaptureFragmentListener,  {
 
     @Inject
     @GiniCaptureNetworkServiceDebugEnabled
@@ -58,31 +51,12 @@ class ClientGiniCaptureFragment : Fragment(R.layout.fragment_client_capture),
         lifecycleScope.launch {
             if (permissionHandler.grantPermission(Manifest.permission.CAMERA)) {
                 configureBankSDK()
-//                configureCaptureSDK()
             } else {
                 if (intent != null) {
                     requireActivity().finish()
                 }
             }
         }
-    }
-
-
-    private fun configureCaptureSDK() {
-        val builder = GiniCapture.newInstance(requireContext())
-            .setGiniCaptureNetworkService(
-                giniCaptureDefaultNetworkService
-            )
-            .setDocumentImportEnabledFileTypes(DocumentImportEnabledFileTypes.PDF_AND_IMAGES)
-            .setFileImportEnabled(true)
-            .setQRCodeScanningEnabled(true)
-            .setMultiPageEnabled(true)
-        builder.setFlashButtonEnabled(true)
-        builder.setReviewBottomBarNavigationAdapter(DefaultReviewNavigationBarBottomAdapter())
-        builder.setLoadingIndicatorAdapter(DefaultLoadingIndicatorAdapter())
-
-        builder.build()
-        startCaptureSDK()
     }
 
 
@@ -117,17 +91,6 @@ class ClientGiniCaptureFragment : Fragment(R.layout.fragment_client_capture),
         startBankSDK()
     }
 
-
-
-    private fun startCaptureSDK() {
-        val giniCaptureFragment = GiniCapture.createGiniCaptureFragment()
-        //giniCaptureFragment.setListener(this)
-
-        requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_host, giniCaptureFragment, "fragment_host")
-            .addToBackStack(null)
-            .commit()
-    }
 
     private fun startBankSDK() {
         val captureFlowFragment = GiniBank.createCaptureFlowFragment()
@@ -177,36 +140,36 @@ class ClientGiniCaptureFragment : Fragment(R.layout.fragment_client_capture),
 
             is CaptureResult.Error -> {
                 when (result.value) {
-                    is ResultError.Capture ->
+                    is CaptureResult ->
                         Toast.makeText(
                             requireContext(),
-                            "Error: ${(result.value as ResultError.Capture).giniCaptureError.errorCode} ${(result.value as ResultError.Capture).giniCaptureError.message}",
+                            "Error: ${(result.value as CaptureSDKResultError.Capture).giniCaptureError.errorCode} ${(result.value as CaptureSDKResultError.Capture).giniCaptureError.message}",
                             Toast.LENGTH_LONG
                         ).show()
 
                     is ResultError.FileImport ->
                         Toast.makeText(
                             requireContext(),
-                            "Error: ${(result.value as ResultError.FileImport).code} ${(result.value as ResultError.FileImport).message}",
+                            "Error: ${(result.value as CaptureSDKResultError.FileImport).code} ${(result.value as CaptureSDKResultError.FileImport).message}",
                             Toast.LENGTH_LONG
                         ).show()
 
                     else -> {}
                 }
                 //if (isIntentActionViewOrSend(requireActivity().intent)) {
-                    requireActivity().finish()
-               // }
+                requireActivity().finish()
+                // }
             }
 
             CaptureResult.Empty -> {
                 //if (isIntentActionViewOrSend(requireActivity().intent)) {
-                    requireActivity().finish()
+                requireActivity().finish()
                 //}
             }
 
             CaptureResult.Cancel -> {
                 //if (isIntentActionViewOrSend(requireActivity().intent)) {
-                    requireActivity().finish()
+                requireActivity().finish()
                 //}
             }
 
@@ -234,8 +197,6 @@ class ClientGiniCaptureFragment : Fragment(R.layout.fragment_client_capture),
     ) {
         TODO("Not yet implemented")
     }
-
-
 
 
 }

@@ -10,7 +10,7 @@ import androidx.fragment.app.FragmentFactory
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import net.gini.android.bank.sdk.R
-import net.gini.android.capture.CaptureResult
+import net.gini.android.capture.CaptureSDKResult
 import net.gini.android.capture.Document
 import net.gini.android.capture.GiniCaptureFragment
 import net.gini.android.capture.GiniCaptureFragmentListener
@@ -77,8 +77,8 @@ class CaptureFlowFragment : Fragment(), GiniCaptureFragmentListener {
             .commit()
     }
 
-    override fun onFinishedWithResult(result: CaptureResult) {
-        captureFlowFragmentListener.onFinishedWithResult(result)
+    override fun onFinishedWithResult(result: CaptureSDKResult) {
+        captureFlowFragmentListener.onFinishedWithResult(result.toCaptureResult())
     }
 
     override fun onFinishedWithCancellation() {

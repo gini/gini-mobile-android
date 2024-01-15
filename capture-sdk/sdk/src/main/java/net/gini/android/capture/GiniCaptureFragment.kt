@@ -21,12 +21,14 @@ import net.gini.android.capture.document.QRCodeDocument
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
-import net.gini.android.capture.review.multipage.MultiPageReviewActivity
 import net.gini.android.capture.review.multipage.MultiPageReviewFragment
 import net.gini.android.capture.review.multipage.MultiPageReviewFragmentDirections
 import net.gini.android.capture.review.multipage.MultiPageReviewFragmentListener
 
-class GiniCaptureFragment(private val analysisIntent: Intent? = null) : Fragment(), CameraFragmentListener, MultiPageReviewFragmentListener,
+class GiniCaptureFragment(private val analysisIntent: Intent? = null) :
+    Fragment(),
+    CameraFragmentListener,
+    MultiPageReviewFragmentListener,
     AnalysisFragmentListener {
 
     internal companion object {
@@ -62,8 +64,13 @@ class GiniCaptureFragment(private val analysisIntent: Intent? = null) : Fragment
         super.onViewCreated(view, savedInstanceState)
         navController = (childFragmentManager.fragments[0]).findNavController()
         if (analysisIntent != null) {
-            navController.navigate(CameraFragmentDirections.toAnalysisFragment(analysisIntent.getParcelableExtra(
-                AnalysisActivity.EXTRA_IN_DOCUMENT)!!, ""))
+            navController.navigate(
+                CameraFragmentDirections.toAnalysisFragment(
+                    analysisIntent.getParcelableExtra(
+                        AnalysisActivity.EXTRA_IN_DOCUMENT
+                    )!!, ""
+                )
+            )
         }
     }
 
@@ -172,13 +179,13 @@ class GiniCaptureFragment(private val analysisIntent: Intent? = null) : Fragment
         returnReasons: MutableList<GiniCaptureReturnReason>
     ) {
         Log.d("analysis", "extractions received: $extractions")
-            giniCaptureFragmentListener.onFinishedWithResult(
-                CaptureResult.Success(
-                    extractions,
-                    emptyMap(),
-                    emptyList()
-                )
+        giniCaptureFragmentListener.onFinishedWithResult(
+            CaptureSDKResult.Success(
+                extractions,
+                emptyMap(),
+                emptyList()
             )
+        )
     }
 
     override fun onProceedToNoExtractionsScreen(document: Document) {
@@ -195,7 +202,7 @@ class GiniCaptureFragment(private val analysisIntent: Intent? = null) : Fragment
         Log.d("analysis", "extractions received: $extractions")
 
         giniCaptureFragmentListener.onFinishedWithResult(
-            CaptureResult.Success(
+            CaptureSDKResult.Success(
                 extractions,
                 emptyMap(),
                 emptyList()
@@ -241,11 +248,14 @@ class CaptureFragmentFactory(
 }
 
 interface GiniCaptureFragmentListener {
-    fun onFinishedWithResult(result: CaptureResult)
+    fun onFinishedWithResult(result: CaptureSDKResult)
 
     fun onFinishedWithCancellation()
 
-    fun onCheckImportedDocument(document: Document, callback: CameraFragmentListener.DocumentCheckResultCallback) {
+    fun onCheckImportedDocument(
+        document: Document,
+        callback: CameraFragmentListener.DocumentCheckResultCallback
+    ) {
         callback.documentAccepted()
     }
 }

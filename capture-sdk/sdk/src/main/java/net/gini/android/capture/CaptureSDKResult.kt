@@ -11,7 +11,7 @@ import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 /**
  * Result returned by capture flow.
  */
-sealed class CaptureResult {
+sealed class CaptureSDKResult {
     /**
      * Extractions were found.
      */
@@ -19,42 +19,42 @@ sealed class CaptureResult {
         val specificExtractions: Map<String, GiniCaptureSpecificExtraction>,
         val compoundExtractions: Map<String, GiniCaptureCompoundExtraction>,
         val returnReasons: List<GiniCaptureReturnReason>,
-    ) : CaptureResult()
+    ) : CaptureSDKResult()
 
     /**
      * No extraction.
      */
-    object Empty : CaptureResult()
+    object Empty : CaptureSDKResult()
 
     /**
      * User navigated back.
      */
-    object Cancel : CaptureResult()
+    object Cancel : CaptureSDKResult()
 
     /**
      * Capture flow returned an error.
      */
-    class Error(val value: ResultError) : CaptureResult()
+    class Error(val value: CaptureSDKResultError) : CaptureSDKResult()
 
     /**
      * User decided to enter data manually after the scanning resulted in no results or an error.
      */
-    object EnterManually: CaptureResult()
+    object EnterManually: CaptureSDKResult()
 }
 
-sealed class ResultError {
+sealed class CaptureSDKResultError {
     /**
      * An error which occurred during the capture flow.
      */
-    data class Capture(val giniCaptureError: GiniCaptureError) : ResultError()
+    data class Capture(val giniCaptureError: GiniCaptureError) : CaptureSDKResultError()
 
     /**
      * An error which occurred during importing a file shared from another app.
      */
-    data class FileImport(val code: FileImportValidator.Error? = null, val message: String? = null) : ResultError()
+    data class FileImport(val code: FileImportValidator.Error? = null, val message: String? = null) : CaptureSDKResultError()
 }
 
-internal fun CaptureResult.Success.toIntent(): Intent {
+internal fun CaptureSDKResult.Success.toIntent(): Intent {
     return Intent().apply {
         this.putExtra(CameraActivity.EXTRA_OUT_EXTRACTIONS, Bundle().apply {
             specificExtractions.forEach { putParcelable(it.key, it.value) }
