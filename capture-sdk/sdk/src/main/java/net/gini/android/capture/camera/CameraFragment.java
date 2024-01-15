@@ -2,7 +2,6 @@ package net.gini.android.capture.camera;
 
 import android.app.Activity;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +10,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.util.AlertDialogHelperCompat;
@@ -185,5 +186,11 @@ public class CameraFragment extends Fragment implements CameraFragmentInterface,
         AlertDialogHelperCompat.showAlertDialog(activity, message, positiveButtonTitle,
                 positiveButtonClickListener, negativeButtonTitle, negativeButtonClickListener,
                 cancelListener);
+    }
+
+    @NonNull
+    @Override
+    public NavController findNavController() {
+        return NavHostFragment.findNavController(this);
     }
 }

@@ -7,7 +7,7 @@ plugins {
     kotlin("android")
     id("kotlin-parcelize")
     id("jacoco")
-    id("androidx.navigation.safeargs.kotlin")
+    id("androidx.navigation.safeargs")
 }
 
 jacoco {

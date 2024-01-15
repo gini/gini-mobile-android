@@ -15,6 +15,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 
 /**
  * Internal use only.
@@ -140,6 +142,12 @@ public class AnalysisFragmentCompat extends Fragment implements FragmentImplCall
         AlertDialogHelperCompat.showAlertDialog(activity, message, positiveButtonTitle,
                 positiveButtonClickListener, negativeButtonTitle, negativeButtonClickListener,
                 cancelListener);
+    }
+
+    @NonNull
+    @Override
+    public NavController findNavController() {
+        return NavHostFragment.findNavController(this);
     }
 
     @VisibleForTesting

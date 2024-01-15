@@ -18,6 +18,8 @@ import net.gini.android.capture.internal.util.AlertDialogHelperCompat;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 
 import static net.gini.android.capture.GiniCaptureError.ErrorCode.MISSING_GINI_CAPTURE_INSTANCE;
 
@@ -78,6 +80,12 @@ public class NoResultsFragmentCompat extends Fragment implements FragmentImplCal
         AlertDialogHelperCompat.showAlertDialog(activity, message, positiveButtonTitle,
                 positiveButtonClickListener, negativeButtonTitle, negativeButtonClickListener,
                 cancelListener);
+    }
+
+    @NonNull
+    @Override
+    public NavController findNavController() {
+        return NavHostFragment.findNavController(this);
     }
 
     private void checkGiniCaptureInstance() {

@@ -29,7 +29,7 @@ import androidx.annotation.VisibleForTesting;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.Group;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
+import androidx.navigation.NavDestination;
 
 import net.gini.android.capture.AsyncCallback;
 import net.gini.android.capture.Document;
@@ -114,8 +114,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import jersey.repackaged.jsr166e.CompletableFuture;
 import kotlin.Unit;
 
-import static android.app.Activity.RESULT_CANCELED;
-import static android.app.Activity.RESULT_OK;
 import static net.gini.android.capture.GiniCaptureError.ErrorCode.MISSING_GINI_CAPTURE_INSTANCE;
 import static net.gini.android.capture.document.ImageDocument.ImportMethod;
 import static net.gini.android.capture.internal.network.NetworkRequestsManager.isCancellation;
@@ -443,12 +441,11 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
 
     private void setFileChooserFragmentResultListener() {
-        mFragment.getChildFragmentManager().setFragmentResultListener(FileChooserFragment.REQUEST_KEY, mFragment.getViewLifecycleOwner(), (requestKey, result) -> {
+        mFragment.getParentFragmentManager().setFragmentResultListener(FileChooserFragment.REQUEST_KEY, mFragment.getViewLifecycleOwner(), (requestKey, result) -> {
             final FileChooserResult fileChooserResult = result.getParcelable(FileChooserFragment.RESULT_KEY);
             if (fileChooserResult != null) {
                 handleFileChooserResult(fileChooserResult);
             }
-            hideFileChooser();
         });
     }
 
@@ -1039,39 +1036,26 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         if (activity == null) {
             return;
         }
-//        final Intent fileChooserIntent = FileChooserActivity.createIntent(activity);
-//        final DocumentImportEnabledFileTypes enabledFileTypes;
-//        if (mInMultiPageState) {
-//            enabledFileTypes = DocumentImportEnabledFileTypes.IMAGES;
-//        } else {
-//            enabledFileTypes = getDocumentImportEnabledFileTypes();
-//        }
-//        fileChooserIntent.putExtra(FileChooserActivity.EXTRA_IN_DOCUMENT_IMPORT_FILE_TYPES,
-//                enabledFileTypes);
-//        fileChooserIntent.setExtrasClassLoader(CameraFragmentImpl.class.getClassLoader());
-//        mFragment.startActivityForResult(fileChooserIntent, REQ_CODE_CHOOSE_FILE);
-
         final DocumentImportEnabledFileTypes enabledFileTypes;
         if (mInMultiPageState) {
             enabledFileTypes = DocumentImportEnabledFileTypes.IMAGES;
         } else {
             enabledFileTypes = getDocumentImportEnabledFileTypes();
         }
-        final FileChooserFragment fileChooserFragment = FileChooserFragment.newInstance(enabledFileTypes);
-        mFragment.getChildFragmentManager()
-                .beginTransaction()
-                .add(R.id.gc_fragment_container, fileChooserFragment, FileChooserFragment.class.getName())
-                .commit();
+        // Make sure we are still at the camera fragment destination. Rarely, but it can happen that the user clicks
+        // the "files" button twice very fast and the second click happens after the destination is already at the
+        // file chooser fragment.
+        if (isAtCameraFragmentDestination()) {
+            mFragment.findNavController().navigate(CameraFragmentDirections.toFileChooserFragment(enabledFileTypes));
+        }
     }
 
-    private void hideFileChooser() {
-        final Fragment fragment = mFragment.getChildFragmentManager().findFragmentByTag(FileChooserFragment.class.getName());
-        if (fragment != null) {
-            mFragment.getChildFragmentManager()
-                    .beginTransaction()
-                    .remove(fragment)
-                    .commit();
+    private boolean isAtCameraFragmentDestination() {
+        final NavDestination currentDestination = mFragment.findNavController().getCurrentDestination();
+        if (currentDestination == null) {
+            return false;
         }
+        return currentDestination.getId() == R.id.gc_destination_camera_fragment;
     }
 
     private void importDocumentFromIntent(@NonNull final Intent data) {

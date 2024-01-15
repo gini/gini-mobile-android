@@ -3,6 +3,7 @@ package net.gini.android.capture.internal.fileimport
 import android.annotation.SuppressLint
 import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -13,15 +14,12 @@ import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.RelativeLayout
-import androidx.activity.OnBackPressedCallback
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.transition.AutoTransition
-import androidx.transition.Transition
-import androidx.transition.TransitionListenerAdapter
-import androidx.transition.TransitionManager
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.parcelize.Parcelize
 import net.gini.android.capture.DocumentImportEnabledFileTypes
 import net.gini.android.capture.GiniCaptureError
@@ -41,14 +39,12 @@ import net.gini.android.capture.internal.util.autoCleared
 private const val ARG_DOCUMENT_IMPORT_FILE_TYPES = "GC_EXTRA_IN_DOCUMENT_IMPORT_FILE_TYPES"
 private const val GRID_SPAN_COUNT_PHONE = 3
 private const val GRID_SPAN_COUNT_TABLET = 6
-private const val ANIM_DURATION = 200L
-private const val SHOW_ANIM_DELAY = 300L
 private const val REQ_CODE_CHOOSE_FILE = 1
 
 /**
  * Internal use only.
  */
-class FileChooserFragment : Fragment() {
+class FileChooserFragment : BottomSheetDialogFragment() {
     private var docImportEnabledFileTypes: DocumentImportEnabledFileTypes? = null
     private var binding: GcFragmentFileChooserBinding by autoCleared()
 
@@ -65,47 +61,18 @@ class FileChooserFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = GcFragmentFileChooserBinding.inflate(inflater)
-        setInputHandlers()
         setupFileProvidersView()
-        handleOnBackPressed()
         return binding.root
     }
 
-    private fun handleOnBackPressed() {
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                if (binding.gcFileProviders.tag == null) {
-                    return
-                }
-                val isShown = binding.gcFileProviders.tag as Boolean
-                if (!isShown) {
-                    return
-                }
-                hideFileProviders(object : TransitionListenerAdapter() {
-                    override fun onTransitionEnd(transition: Transition) {
-                        isEnabled = false
-                        setFragmentResult(REQUEST_KEY, Bundle().apply {
-                            putParcelable(RESULT_KEY, FileChooserResult.Cancelled)
-                        })
-                    }
-                })
-            }
-        })
-    }
-
-    private fun setInputHandlers() {
-        binding.root.setOnClickListener {
-            val isShown = binding.gcFileProviders.tag as? Boolean
-            if (isShown != null && isShown) {
-                hideFileProviders(object : TransitionListenerAdapter() {
-                    override fun onTransitionEnd(transition: Transition) {
-                        setFragmentResult(REQUEST_KEY, Bundle().apply {
-                            putParcelable(RESULT_KEY, FileChooserResult.Cancelled)
-                        })
-                    }
-                })
-            }
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val dialog = super.onCreateDialog(savedInstanceState)
+        val bottomSheetDialog = dialog as? BottomSheetDialog
+        bottomSheetDialog?.behavior?.apply {
+            state = BottomSheetBehavior.STATE_EXPANDED
+            peekHeight = 0
         }
+        return dialog
     }
 
     private fun setupFileProvidersView() {
@@ -118,7 +85,6 @@ class FileChooserFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         populateFileProviders()
-        showFileProviders()
     }
 
     private fun populateFileProviders() {
@@ -157,6 +123,9 @@ class FileChooserFragment : Fragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+
+        findNavController().popBackStack()
+
         if (requestCode == REQ_CODE_CHOOSE_FILE) {
             when (resultCode) {
                 RESULT_OK -> {
@@ -248,53 +217,6 @@ class FileChooserFragment : Fragment() {
     private fun shouldShowPdfProviders(): Boolean {
         return (docImportEnabledFileTypes == DocumentImportEnabledFileTypes.PDF
                 || docImportEnabledFileTypes == DocumentImportEnabledFileTypes.PDF_AND_IMAGES)
-    }
-
-    private fun showFileProviders() {
-        binding.root.postDelayed({
-            val backgroundTransition = AutoTransition()
-            backgroundTransition.duration = ANIM_DURATION
-            backgroundTransition.addListener(object : TransitionListenerAdapter() {
-                override fun onTransitionEnd(transition: Transition) {
-                    val bottomSheetTransition = AutoTransition()
-                    bottomSheetTransition.duration = ANIM_DURATION
-                    TransitionManager.beginDelayedTransition(binding.root, bottomSheetTransition)
-
-                    val layoutParams = binding.gcFileProviders.layoutParams as RelativeLayout.LayoutParams
-                    layoutParams.addRule(RelativeLayout.BELOW)
-                    layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
-
-                    binding.gcFileProviders.layoutParams = layoutParams
-                    binding.gcFileProviders.tag = true
-                }
-            })
-            TransitionManager.beginDelayedTransition(binding.root, backgroundTransition)
-
-            binding.gcBackground.visibility = View.VISIBLE
-        }, SHOW_ANIM_DELAY)
-    }
-
-    private fun hideFileProviders(transitionListener: Transition.TransitionListener) {
-        val bottomSheetTransition = AutoTransition()
-        bottomSheetTransition.duration = ANIM_DURATION
-        bottomSheetTransition.addListener(object : TransitionListenerAdapter() {
-            override fun onTransitionEnd(transition: Transition) {
-                val backgroundTransition = AutoTransition()
-                backgroundTransition.duration = ANIM_DURATION
-                backgroundTransition.addListener(transitionListener)
-                TransitionManager.beginDelayedTransition(binding.root, backgroundTransition)
-
-                binding.gcBackground.visibility = View.INVISIBLE
-            }
-        })
-        TransitionManager.beginDelayedTransition(binding.root, bottomSheetTransition)
-
-        val layoutParams = binding.gcFileProviders.layoutParams as RelativeLayout.LayoutParams
-        layoutParams.addRule(RelativeLayout.BELOW, R.id.gc_space)
-        layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
-
-        binding.gcFileProviders.layoutParams = layoutParams
-        binding.gcFileProviders.tag = false
     }
 
     companion object {

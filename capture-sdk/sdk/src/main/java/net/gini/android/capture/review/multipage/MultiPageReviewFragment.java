@@ -84,7 +84,7 @@ import static net.gini.android.capture.tracking.EventTrackingHelper.trackReviewS
  * @suppress
  */
 public class MultiPageReviewFragment extends Fragment implements MultiPageReviewFragmentInterface,
-        PreviewFragmentListener, FragmentImplCallback {
+        PreviewFragmentListener {
 
     private static final String ARGS_DOCUMENT = "GC_ARGS_DOCUMENT";
     private static final Logger LOG = LoggerFactory.getLogger(MultiPageReviewFragment.class);
@@ -156,7 +156,6 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
         mInstanceStateSaved = true;
     }
 
-    @Override
     public void showAlertDialog(@NonNull final String message,
                                 @NonNull final String positiveButtonTitle,
                                 @NonNull final DialogInterface.OnClickListener positiveButtonClickListener,

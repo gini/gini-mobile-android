@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.LifecycleOwner;
+import androidx.navigation.NavController;
 
 /**
  * Internal use only.
@@ -42,8 +43,14 @@ public interface FragmentImplCallback {
     @NonNull
     FragmentManager getChildFragmentManager();
 
+    @NonNull
+    FragmentManager getParentFragmentManager();
+
     @MainThread
     @NonNull
     LifecycleOwner getViewLifecycleOwner();
+
+    @NonNull
+    NavController findNavController();
 
 }

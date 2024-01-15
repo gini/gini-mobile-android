@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
 import net.gini.android.capture.Document
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.GiniCaptureError
@@ -68,6 +70,10 @@ class ErrorFragmentCompat : Fragment(), FragmentImplCallback {
             AlertDialogHelperCompat.showAlertDialog(it, message, positiveButtonTitle,
                 positiveButtonClickListener, negativeButtonTitle, negativeButtonClickListener, cancelListener)
         }
+    }
+
+    override fun findNavController(): NavController {
+        return NavHostFragment.findNavController(this)
     }
 
     private fun checkGiniCaptureInstance() {
