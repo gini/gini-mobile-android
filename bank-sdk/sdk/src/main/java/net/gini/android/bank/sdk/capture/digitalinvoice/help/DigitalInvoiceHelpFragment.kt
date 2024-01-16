@@ -1,63 +1,45 @@
 package net.gini.android.bank.sdk.capture.digitalinvoice.help
 
 import android.os.Bundle
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
 import android.view.View
-import androidx.activity.OnBackPressedCallback
-import androidx.appcompat.app.AppCompatActivity
+import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import net.gini.android.bank.sdk.GiniBank
-import net.gini.android.bank.sdk.R
-import net.gini.android.bank.sdk.capture.digitalinvoice.help.view.DigitalInvoiceHelpNavigationBarBottomAdapter
+import net.gini.android.bank.sdk.databinding.GbsFragmentDigitalInvoiceHelpBinding
+import net.gini.android.bank.sdk.util.autoCleared
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.internal.ui.IntervalClickListener
-import net.gini.android.capture.internal.util.ActivityHelper
 import net.gini.android.capture.view.InjectedViewAdapterHolder
-import net.gini.android.capture.view.InjectedViewContainer
 import net.gini.android.capture.view.NavButtonType
-import net.gini.android.capture.view.NavigationBarTopAdapter
 
 /**
  * Internal use only.
- *
  */
-class HelpActivity : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+class DigitalInvoiceHelpFragment : Fragment() {
+    private var binding: GbsFragmentDigitalInvoiceHelpBinding by autoCleared()
 
-        setContentView(R.layout.gbs_activity_help)
-        if (!GiniCapture.hasInstance()) {
-            finish()
-            return
-        }
-
-        ActivityHelper.forcePortraitOrientationOnPhones(this)
-
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = GbsFragmentDigitalInvoiceHelpBinding.inflate(inflater)
         setupHelpList()
         setupTopBarNavigation()
         setupBottomNavigationBar()
-        handleOnBackPressed()
+        return binding.root
     }
 
     private fun setupHelpList() {
-        val recyclerView = findViewById<RecyclerView>(R.id.gbs_help_items)
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = HelpItemAdapter(this)
-    }
-
-    private fun handleOnBackPressed() {
-        ActivityHelper.interceptOnBackPressed(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                finish()
-            }
-        })
+        val recyclerView = binding.gbsHelpItems
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.adapter = HelpItemAdapter(requireContext())
     }
 
     private fun setupTopBarNavigation() {
-        val topBarInjectedViewContainer =
-            findViewById<InjectedViewContainer<NavigationBarTopAdapter>>(R.id.gbs_injected_navigation_bar_container_top)
+        val topBarInjectedViewContainer = binding.gbsInjectedNavigationBarContainerTop
         if (GiniCapture.hasInstance()) {
-
             topBarInjectedViewContainer.injectedViewAdapterHolder = InjectedViewAdapterHolder(
                 GiniCapture.getInstance().internal().navigationBarTopAdapterInstance
             ) { injectedAdapterView ->
@@ -68,7 +50,8 @@ class HelpActivity : AppCompatActivity() {
                 injectedAdapterView.setTitle(getString(net.gini.android.capture.R.string.gc_title_help))
 
                 injectedAdapterView.setOnNavButtonClickListener(IntervalClickListener {
-                    onBackPressed()
+                    // TODO: use nagivation component
+                    // findNavController().popBackStack()
                 })
             }
         }
@@ -76,14 +59,19 @@ class HelpActivity : AppCompatActivity() {
 
     private fun setupBottomNavigationBar() {
         if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled) {
-            val injectedViewContainer =
-                findViewById<InjectedViewContainer<DigitalInvoiceHelpNavigationBarBottomAdapter>>(R.id.gbs_injected_navigation_bar_container_bottom)
+            val injectedViewContainer = binding.gbsInjectedNavigationBarContainerBottom
             injectedViewContainer.injectedViewAdapterHolder =
                 InjectedViewAdapterHolder(GiniBank.digitalInvoiceHelpNavigationBarBottomAdapterInstance) { injectedViewAdapter ->
                     injectedViewAdapter.setOnBackButtonClickListener(IntervalClickListener {
-                        onBackPressed()
+                        // TODO: use nagivation component
+                        // findNavController().popBackStack()
                     })
                 }
         }
+    }
+
+    companion object {
+        @JvmStatic
+        fun newInstance() = DigitalInvoiceHelpFragment()
     }
 }

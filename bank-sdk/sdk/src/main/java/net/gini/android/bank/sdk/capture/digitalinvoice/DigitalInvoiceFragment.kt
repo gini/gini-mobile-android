@@ -2,7 +2,6 @@ package net.gini.android.bank.sdk.capture.digitalinvoice
 
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
@@ -15,7 +14,6 @@ import androidx.recyclerview.widget.LinearSmoothScroller
 import kotlinx.coroutines.CoroutineScope
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.R
-import net.gini.android.bank.sdk.capture.digitalinvoice.help.HelpActivity
 import net.gini.android.bank.sdk.capture.digitalinvoice.view.DigitalInvoiceNavigationBarBottomAdapter
 import net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
@@ -218,7 +216,7 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
                     injectedViewAdapter.setMenuResource(R.menu.gbs_menu_digital_invoice)
                     injectedViewAdapter.setOnMenuItemClickListener(IntervalToolbarMenuItemIntervalClickListener {
                         if (it.itemId == R.id.help) {
-                            startActivity(Intent(requireContext(), HelpActivity::class.java))
+                            showHelp()
                         }
                         true
                     })
@@ -231,6 +229,14 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
         }
     }
 
+    private fun showHelp() {
+        // TODO: use navigation component's NavController to navigate to show the help fragment
+//        childFragmentManager.beginTransaction()
+//            .add(R.id.gbs_fragment_container, DigitalInvoiceHelpFragment.newInstance(), DigitalInvoiceHelpFragment::class.java.name)
+//            .addToBackStack(null)
+//            .commit()
+    }
+
     private fun initBottomBar() {
         if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled) {
 
@@ -240,7 +246,7 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
             binding.gbsBottomBarNavigation.injectedViewAdapterHolder =
                 InjectedViewAdapterHolder(GiniBank.digitalInvoiceNavigationBarBottomAdapterInstance) { injectedViewAdapter ->
                     injectedViewAdapter.setOnHelpClickListener {
-                        startActivity(Intent(requireContext(), HelpActivity::class.java))
+                        showHelp()
                     }
 
                     injectedViewAdapter.setOnProceedClickListener {
