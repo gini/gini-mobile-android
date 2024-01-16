@@ -1,8 +1,8 @@
 package net.gini.android.bank.sdk.exampleapp.ui
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
+import android.os.Bundle
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -25,11 +25,12 @@ class ClientGiniCaptureFragment :
 
     private lateinit var permissionHandler: PermissionHandler
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        checkCameraPermission()
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (savedInstanceState == null) {
+            checkCameraPermission()
+        }
     }
-
 
     private fun checkCameraPermission(intent: Intent? = null) {
         permissionHandler = PermissionHandler(requireActivity())
