@@ -12,6 +12,7 @@ import android.widget.FrameLayout
 import androidx.annotation.ColorInt
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.R
@@ -63,7 +64,7 @@ class FileImportHelpFragment : Fragment() {
                 )
                 injectedViewAdapter.setTitle(getString(R.string.gc_title_file_import))
                 injectedViewAdapter.setOnNavButtonClickListener(IntervalClickListener {
-                    parentFragmentManager.popBackStack()
+                    findNavController().popBackStack()
                 })
             }
         }
@@ -76,7 +77,7 @@ class FileImportHelpFragment : Fragment() {
                 GiniCapture.getInstance().internal().helpNavigationBarBottomAdapterInstance
             ) { injectedViewAdapter: HelpNavigationBarBottomAdapter ->
                 injectedViewAdapter.setOnBackClickListener(IntervalClickListener {
-                    parentFragmentManager.popBackStack()
+                    findNavController().popBackStack()
                 })
             }
         }
