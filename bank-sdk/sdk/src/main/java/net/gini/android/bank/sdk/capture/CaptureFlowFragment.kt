@@ -74,9 +74,13 @@ class CaptureFlowFragment(private val analysisIntent: Intent? = null) :
         super.onPause()
 
         // We need to restore the primary navigation fragment to not break the client's fragment navigation
-        parentFragmentManager.beginTransaction()
-            .setPrimaryNavigationFragment(originalPrimaryNavigationFragment)
-            .commit()
+        // We need to restore the primary navigation fragment to not break the client's fragment navigation.
+        // Only restore the original primary navigation fragment if the client didn't change it in the meantime.
+        if (parentFragmentManager.primaryNavigationFragment == this) {
+            parentFragmentManager.beginTransaction()
+                .setPrimaryNavigationFragment(originalPrimaryNavigationFragment)
+                .commit()
+        }
     }
 
     override fun onFinishedWithResult(result: CaptureSDKResult) {
