@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.transition.TransitionInflater
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.R
@@ -39,8 +40,7 @@ import net.gini.android.capture.view.InjectedViewAdapterHolder
  *
  * TODO: PPL-14: Customization guide for return assistant - Android
  */
-class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenContract.View,
-    DigitalOnboardingFragmentInterface {
+class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenContract.View {
 
     companion object {
         @JvmStatic
@@ -50,11 +50,6 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
     private var binding by autoCleared<GbsFragmentDigitalInvoiceOnboardingBinding>()
 
     private var presenter: DigitalOnboardingScreenContract.Presenter? = null
-    override var listener: DigitalInvoiceOnboardingFragmentListener?
-        get() = this.presenter?.listener
-        set(value) {
-            this.presenter?.listener = value
-        }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -73,7 +68,6 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         createPresenter(requireActivity())
-        initListener()
         enterTransition = TransitionInflater.from(requireContext()).inflateTransition(R.transition.fade)
         exitTransition = enterTransition
 
@@ -85,14 +79,8 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
             this,
         )
 
-    private fun initListener() {
-        if (activity is DigitalInvoiceOnboardingFragmentListener) {
-            listener = activity as DigitalInvoiceOnboardingFragmentListener?
-        } else checkNotNull(listener) {
-            ("DigitalInvoiceOnboardingFragmentListener not set. "
-                    + "You can set it with DigitalInvoiceOnboardingFragmentListener#setListener() or "
-                    + "by making the host activity implement the DigitalInvoiceOnboardingFragmentListener.")
-        }
+    override fun close() {
+        findNavController().popBackStack()
     }
 
     /**
@@ -164,16 +152,6 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
                     )
                 }
         }
-    }
-
-    /**
-     * Internal use only.
-     *
-     * @suppress
-     */
-    override fun onDestroyView() {
-        listener = null
-        super.onDestroyView()
     }
 
     private fun setInputHandlers() {

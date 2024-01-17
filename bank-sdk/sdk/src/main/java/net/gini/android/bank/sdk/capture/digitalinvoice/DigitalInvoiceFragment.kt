@@ -7,23 +7,25 @@ import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import kotlinx.coroutines.CoroutineScope
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.capture.digitalinvoice.view.DigitalInvoiceNavigationBarBottomAdapter
-import net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones
-import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
-import net.gini.android.capture.network.model.GiniCaptureReturnReason
-import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.bank.sdk.capture.util.autoCleared
 import net.gini.android.bank.sdk.capture.util.parentFragmentManagerOrNull
 import net.gini.android.bank.sdk.databinding.GbsFragmentDigitalInvoiceBinding
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.internal.ui.IntervalToolbarMenuItemIntervalClickListener
+import net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones
+import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
+import net.gini.android.capture.network.model.GiniCaptureReturnReason
+import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.view.InjectedViewAdapterHolder
 import net.gini.android.capture.view.NavButtonType
 
@@ -43,37 +45,17 @@ private const val TAG_RETURN_REASON_DIALOG = "TAG_RETURN_REASON_DIALOG"
 private const val TAG_WHAT_IS_THIS_DIALOG = "TAG_WHAT_IS_THIS_DIALOG"
 
 /**
- * The returned extractions in the [DigitalInvoiceFragmentListener.onPayInvoice()] are updated to include the user's modifications:
- * - "amountToPay" is updated to contain the sum of the selected line items' prices,
- * - the line items are updated according to the user's modifications.
- *
- * Before showing the `DigitalInvoiceFragment` you should validate the compound extractions
- * using the [LineItemsValidator]. These extractions are returned in the [AnalysisFragmentListener.onExtractionsAvailable()]
- * listener method.
- *
- * Include the `DigitalInvoiceFragment` into your layout by using the [DigitalInvoiceFragment.createInstance()] factory method to create
- * an instance and display it using the [androidx.fragment.app.FragmentManager].
- *
- * A [DigitalInvoiceFragmentListener] instance must be available before the `DigitalInvoiceFragment` is attached to an Activity. Failing to
- * do so will throw an exception. The listener instance can be provided either implicitly by making the hosting Activity implement the
- * [DigitalInvoiceFragmentListener] interface or explicitly by setting the listener using [DigitalInvoiceFragment.listener].
- *
- * Your Activity is automatically set as the listener in [DigitalInvoiceFragment.onCreate()].
- *
- * ### Customizing the Digital Invoice Screen
- *
- * See the [DigitalInvoiceActivity] for details.
+ * Internal use only.
  */
-open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.View,
-    DigitalInvoiceFragmentInterface, LineItemsAdapterListener {
+open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.View, LineItemsAdapterListener {
 
 
     private var binding by autoCleared<GbsFragmentDigitalInvoiceBinding>()
     private var lineItemsAdapter by autoCleared<LineItemsAdapter>()
 
-    override var listener: DigitalInvoiceFragmentListener?
-        get() = this.presenter?.listener
+    var listener: DigitalInvoiceFragmentListener? = null
         set(value) {
+            field = value
             this.presenter?.listener = value
         }
 
@@ -106,20 +88,30 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
             returnReasons: List<GiniCaptureReturnReason>,
         ) = DigitalInvoiceFragment().apply {
             arguments = Bundle().apply {
-                putBundle(ARGS_EXTRACTIONS, Bundle().apply {
-                    extractions.forEach { putParcelable(it.key, it.value) }
-                })
-                putBundle(ARGS_COMPOUND_EXTRACTIONS, Bundle().apply {
-                    compoundExtractions.forEach { putParcelable(it.key, it.value) }
-                })
+                putBundle(ARGS_EXTRACTIONS, getExtractionsBundle(extractions))
+                putBundle(ARGS_COMPOUND_EXTRACTIONS, getCompoundExtractionsBundle(compoundExtractions))
                 putParcelableArrayList(ARGS_RETURN_REASONS, ArrayList(returnReasons))
-
-                val isInaccurateExtraction = extractions["amountsAreConsistent"]?.let {
-                    it.value == "false"
-                } ?: true
-
+                val isInaccurateExtraction = getAmountsAreConsistentExtraction(extractions)
                 putBoolean(ARGS_INACCURATE_EXTRACTION, isInaccurateExtraction)
             }
+        }
+
+        internal fun getExtractionsBundle(extractions: Map<String, GiniCaptureSpecificExtraction>): Bundle =
+            Bundle().apply {
+                extractions.forEach { putParcelable(it.key, it.value) }
+            }
+
+        internal fun getCompoundExtractionsBundle(compoundExtractions: Map<String, GiniCaptureCompoundExtraction>): Bundle =
+            Bundle().apply {
+                compoundExtractions.forEach { putParcelable(it.key, it.value) }
+            }
+
+
+        internal fun getAmountsAreConsistentExtraction(extractions: Map<String, GiniCaptureSpecificExtraction>): Boolean {
+            val isInaccurateExtraction = extractions["amountsAreConsistent"]?.let {
+                it.value == "false"
+            } ?: true
+            return isInaccurateExtraction
         }
     }
 
@@ -136,8 +128,12 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
         }
         forcePortraitOrientationOnPhones(activity)
         readArguments()
-        createPresenter(activity, savedInstanceState)
         initListener()
+        createPresenter(activity, savedInstanceState)
+
+        if (resources.getBoolean(net.gini.android.capture.R.bool.gc_is_tablet)) {
+            requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
+        }
     }
 
     private fun readArguments() {
@@ -152,7 +148,7 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
                     keySet().map { it to getParcelable<GiniCaptureCompoundExtraction>(it)!! }
                         .toMap()
             }
-            returnReasons = getParcelableArrayList(ARGS_RETURN_REASONS) ?: emptyList()
+            returnReasons = getParcelableArray(ARGS_RETURN_REASONS, GiniCaptureReturnReason::class.java)?.toList() ?: emptyList()
 
             isInaccurateExtraction = getBoolean(ARGS_INACCURATE_EXTRACTION, false)
         }
@@ -167,7 +163,9 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
             returnReasons,
             isInaccurateExtraction,
             savedInstanceState,
-        )
+        ).apply {
+            listener = this@DigitalInvoiceFragment.listener
+        }
 
     override fun onSaveInstanceState(outState: Bundle) {
         presenter?.saveState(outState)
@@ -223,18 +221,14 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
                 }
 
                 injectedViewAdapter.setOnNavButtonClickListener {
-                    activity?.finish()
+                    activity?.onBackPressedDispatcher?.onBackPressed()
                 }
             }
         }
     }
 
     private fun showHelp() {
-        // TODO: use navigation component's NavController to navigate to show the help fragment
-//        childFragmentManager.beginTransaction()
-//            .add(R.id.gbs_fragment_container, DigitalInvoiceHelpFragment.newInstance(), DigitalInvoiceHelpFragment::class.java.name)
-//            .addToBackStack(null)
-//            .commit()
+        findNavController().navigate(DigitalInvoiceFragmentDirections.toDigitalInvoiceHelpFragment())
     }
 
     private fun initBottomBar() {
@@ -329,6 +323,14 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
             scrollListener
         )
         scrollList(false)
+    }
+
+    override fun onEditLineItem(selectableLineItem: SelectableLineItem) {
+        findNavController().navigate(DigitalInvoiceFragmentDirections.toDigitalInvoiceEditItemBottomSheetDialog(selectableLineItem))
+    }
+
+    override fun showOnboarding() {
+        findNavController().navigate(DigitalInvoiceFragmentDirections.toDigitalInvoiceOnboardingFragment())
     }
 
     private fun scrollList(toTop: Boolean) {
@@ -428,6 +430,20 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
     override fun onStart() {
         super.onStart()
         presenter?.start()
+        setBottomSheetResultListener()
+    }
+
+    private fun setBottomSheetResultListener() {
+        parentFragmentManager
+            .setFragmentResultListener(
+                DigitalInvoiceBottomSheet.REQUEST_KEY,
+                viewLifecycleOwner
+            ) { _: String?, result: Bundle ->
+                result.getParcelable(DigitalInvoiceBottomSheet.RESULT_KEY, SelectableLineItem::class.java)
+                    ?.let { selectableLineItem ->
+                        presenter?.updateLineItem(selectableLineItem)
+                    }
+            }
     }
 
     /**
@@ -466,9 +482,5 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
      */
     override fun onLineItemDeselected(lineItem: SelectableLineItem) {
         presenter?.deselectLineItem(lineItem)
-    }
-
-    override fun updateLineItem(selectableLineItem: SelectableLineItem) {
-        presenter?.updateLineItem(selectableLineItem)
     }
 }

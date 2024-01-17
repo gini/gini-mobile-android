@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.databinding.GbsFragmentDigitalInvoiceHelpBinding
@@ -50,8 +51,7 @@ class DigitalInvoiceHelpFragment : Fragment() {
                 injectedAdapterView.setTitle(getString(net.gini.android.capture.R.string.gc_title_help))
 
                 injectedAdapterView.setOnNavButtonClickListener(IntervalClickListener {
-                    // TODO: use nagivation component
-                    // findNavController().popBackStack()
+                    findNavController().popBackStack()
                 })
             }
         }
@@ -63,8 +63,7 @@ class DigitalInvoiceHelpFragment : Fragment() {
             injectedViewContainer.injectedViewAdapterHolder =
                 InjectedViewAdapterHolder(GiniBank.digitalInvoiceHelpNavigationBarBottomAdapterInstance) { injectedViewAdapter ->
                     injectedViewAdapter.setOnBackButtonClickListener(IntervalClickListener {
-                        // TODO: use nagivation component
-                        // findNavController().popBackStack()
+                        findNavController().popBackStack()
                     })
                 }
         }

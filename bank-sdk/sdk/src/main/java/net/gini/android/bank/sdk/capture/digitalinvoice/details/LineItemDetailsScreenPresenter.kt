@@ -11,8 +11,6 @@ import java.math.BigDecimal
 import java.text.DecimalFormat
 import java.text.ParseException
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
-import net.gini.android.bank.sdk.R
-import java.text.NumberFormat
 import java.util.*
 
 /**
@@ -41,8 +39,6 @@ internal class LineItemDetailsScreenPresenter(
     }
 ) :
     Presenter(activity, view) {
-
-    override var listener: LineItemDetailsListener? = null
 
     private val originalLineItem: SelectableLineItem = selectableLineItem.copy()
 
@@ -153,10 +149,12 @@ internal class LineItemDetailsScreenPresenter(
         when {
             selectableLineItem.lineItem.id.isBlank() -> {
                 val lineItem = selectableLineItem.lineItem.copy(UUID.randomUUID().toString())
-                listener?.onSave(selectableLineItem.copy(lineItem = lineItem))
+                view.onSave(selectableLineItem.copy(lineItem = lineItem))
+//                listener?.onSave(selectableLineItem.copy(lineItem = lineItem))
             }
             else -> {
-                listener?.onSave(selectableLineItem)
+                view.onSave(selectableLineItem)
+//                listener?.onSave(selectableLineItem)
             }
         }
     }

@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.setFragmentResult
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -23,13 +24,12 @@ import net.gini.android.bank.sdk.databinding.GbsEditItemBottomSheetBinding
 import net.gini.android.capture.AmountCurrency
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
 
-private const val EXTRA_IN_SELECTABLE_LINE_ITEM = "EXTRA_IN_SELECTABLE_LINE_ITEM"
+private const val ARGS_SELECTABLE_LINE_ITEM = "GBS_ARGS_SELECTABLE_LINE_ITEM"
 
 /**
  * Internal use only.
  */
-internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItemDetailsScreenContract.View,
-    LineItemDetailsInterface {
+internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItemDetailsScreenContract.View {
 
     private lateinit var binding: GbsEditItemBottomSheetBinding
     private var selectableLineItem: SelectableLineItem? = null
@@ -45,10 +45,9 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            selectableLineItem = it.getParcelable(EXTRA_IN_SELECTABLE_LINE_ITEM)
+            selectableLineItem = it.getParcelable(ARGS_SELECTABLE_LINE_ITEM, SelectableLineItem::class.java)
             activity?.let { activity ->
                 createPresenter(activity)
-                initListener()
             }
         }
     }
@@ -81,16 +80,6 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
         activity, this,
         selectableLineItem!!
     )
-
-    private fun initListener() {
-        if (activity is LineItemDetailsListener) {
-            listener = activity as LineItemDetailsListener?
-        } else checkNotNull(listener) {
-            ("LineItemDetailsFragmentListener not set. "
-                    + "You can set it with LineItemDetailsFragmentListener#setListener() or "
-                    + "by making the host activity implement the LineItemDetailsFragmentListener.")
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -316,12 +305,6 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
         }
     }
 
-    override var listener: LineItemDetailsListener?
-        get() = this.presenter?.listener
-        set(value) {
-            this.presenter?.listener = value
-        }
-
     private var presenter: LineItemDetailsScreenContract.Presenter? = null
 
     override fun showDescription(description: String) {
@@ -362,6 +345,12 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
 
     }
 
+    override fun onSave(selectableLineItem: SelectableLineItem) {
+        setFragmentResult(REQUEST_KEY, Bundle().apply {
+            putParcelable(RESULT_KEY, selectableLineItem)
+        })
+    }
+
     override fun setPresenter(presenter: LineItemDetailsScreenContract.Presenter) {
         this.presenter = presenter
     }
@@ -378,11 +367,13 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
     companion object {
         const val QUANTITY_LIMIT = 1000
         const val MULTIPLE_CURRENCIES_ENABLED = false
+        const val REQUEST_KEY = "GBS_DIGITAL_INVOICE_BOTTOM_SHEET_REQUEST_KEY"
+        const val RESULT_KEY = "GBS_DIGITAL_INVOICE_BOTTOM_SHEET_RESULT_BUNDLE_KEY"
 
         fun newInstance(selectableLineItem: SelectableLineItem) =
             DigitalInvoiceBottomSheet().apply {
                 val args = Bundle()
-                args.putParcelable(EXTRA_IN_SELECTABLE_LINE_ITEM, selectableLineItem)
+                args.putParcelable(ARGS_SELECTABLE_LINE_ITEM, selectableLineItem)
                 this.arguments = args
                 return this
             }

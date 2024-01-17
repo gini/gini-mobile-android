@@ -15,8 +15,6 @@ internal class DigitalOnboardingScreenPresenter(
     private val simpleBusEventStore: SimpleBusEventStore = SimpleBusEventStore(activity)
 ) : DigitalOnboardingScreenContract.Presenter(activity, view) {
 
-    override var listener: DigitalInvoiceOnboardingFragmentListener? = null
-
     init {
         view.setPresenter(this)
     }
@@ -26,7 +24,7 @@ internal class DigitalOnboardingScreenPresenter(
             oncePerInstallEventStore.saveEvent(OncePerInstallEvent.SHOW_DIGITAL_INVOICE_ONBOARDING)
         }
         simpleBusEventStore.saveEvent(BusEvent.DISMISS_ONBOARDING_FRAGMENT)
-        listener?.onCloseOnboarding()
+        view.close()
     }
 
     override fun start() {

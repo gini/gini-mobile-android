@@ -9,16 +9,24 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
+import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.R
+import net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceException
+import net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceFragment
+import net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceFragmentListener
+import net.gini.android.bank.sdk.capture.digitalinvoice.LineItemsValidator
 import net.gini.android.capture.CaptureSDKResult
 import net.gini.android.capture.Document
 import net.gini.android.capture.GiniCaptureFragment
+import net.gini.android.capture.GiniCaptureFragmentDirections
 import net.gini.android.capture.GiniCaptureFragmentListener
 import net.gini.android.capture.camera.CameraFragmentListener
+import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
+import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 
 class CaptureFlowFragment(private val analysisIntent: Intent? = null) :
     Fragment(),
-    GiniCaptureFragmentListener {
+    GiniCaptureFragmentListener, DigitalInvoiceFragmentListener {
 
     internal companion object {
         fun createInstance(intent: Intent? = null): CaptureFlowFragment {
@@ -56,7 +64,7 @@ class CaptureFlowFragment(private val analysisIntent: Intent? = null) :
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        childFragmentManager.fragmentFactory = CaptureFlowFragmentFactory(this, analysisIntent)
+        childFragmentManager.fragmentFactory = CaptureFlowFragmentFactory(this, analysisIntent, this)
         super.onCreate(savedInstanceState)
     }
 
@@ -84,11 +92,41 @@ class CaptureFlowFragment(private val analysisIntent: Intent? = null) :
     }
 
     override fun onFinishedWithResult(result: CaptureSDKResult) {
-        captureFlowFragmentListener.onFinishedWithResult(result.toCaptureResult())
+        when(result) {
+            is CaptureSDKResult.Success -> {
+                if (GiniBank.getCaptureConfiguration()?.returnAssistantEnabled == true) {
+                    try {
+                        LineItemsValidator.validate(result.compoundExtractions)
+                        navController.navigate(GiniCaptureFragmentDirections.toDigitalInvoiceFragment(
+                            DigitalInvoiceFragment.getExtractionsBundle(result.specificExtractions),
+                            DigitalInvoiceFragment.getCompoundExtractionsBundle(result.compoundExtractions),
+                            result.returnReasons.toTypedArray(),
+                            DigitalInvoiceFragment.getAmountsAreConsistentExtraction(result.specificExtractions)
+                        ))
+                    } catch (notUsed: DigitalInvoiceException) {
+                        captureFlowFragmentListener.onFinishedWithResult(result.toCaptureResult())
+                    }
+                } else {
+                    captureFlowFragmentListener.onFinishedWithResult(result.toCaptureResult())
+                }
+            }
+            else -> captureFlowFragmentListener.onFinishedWithResult(result.toCaptureResult())
+        }
     }
 
     override fun onFinishedWithCancellation() {
         captureFlowFragmentListener.onFinishedWithCancellation()
+    }
+
+    override fun onPayInvoice(
+        specificExtractions: Map<String, GiniCaptureSpecificExtraction>,
+        compoundExtractions: Map<String, GiniCaptureCompoundExtraction>
+    ) {
+        captureFlowFragmentListener.onFinishedWithResult(CaptureResult.Success(
+            specificExtractions,
+            compoundExtractions,
+            emptyList()
+        ))
     }
 
     //it shows the camera in the start
@@ -119,18 +157,21 @@ interface CaptureFlowFragmentListener {
 
 class CaptureFlowFragmentFactory(
     private val giniCaptureFragmentListener: GiniCaptureFragmentListener,
-    private val analysisIntent: Intent? = null
+    private val analysisIntent: Intent? = null,
+    private val digitalInvoiceListener: DigitalInvoiceFragmentListener
 ) : FragmentFactory() {
     override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
-        when (className) {
-            GiniCaptureFragment::class.java.name -> return GiniCaptureFragment(analysisIntent)
+        return when (className) {
+            GiniCaptureFragment::class.java.name -> GiniCaptureFragment(analysisIntent)
                 .apply {
                     setListener(
                         giniCaptureFragmentListener
                     )
                 }
-
-            else -> return super.instantiate(classLoader, className)
+            DigitalInvoiceFragment::class.java.name -> DigitalInvoiceFragment().apply {
+                listener = digitalInvoiceListener
+            }
+            else -> super.instantiate(classLoader, className)
         }
     }
 }

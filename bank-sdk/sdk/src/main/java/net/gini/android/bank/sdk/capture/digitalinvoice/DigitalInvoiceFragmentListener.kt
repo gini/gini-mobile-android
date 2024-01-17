@@ -16,15 +16,6 @@ import net.gini.android.bank.sdk.capture.digitalinvoice.onboarding.DigitalInvoic
 interface DigitalInvoiceFragmentListener {
 
     /**
-     * Called when the user tapped on a line item to edit it.
-     *
-     * You should show the [LineItemDetailsFragment] with the selectable line item.
-     *
-     * @param selectableLineItem - the [SelectableLineItem] to be edited
-     */
-    fun onEditLineItem(selectableLineItem: SelectableLineItem)
-
-    /**
      * Called when the user presses the buy button.
      *
      * The extractions were updated to contain the user's modifications:
@@ -36,12 +27,4 @@ interface DigitalInvoiceFragmentListener {
      */
     fun onPayInvoice(specificExtractions: Map<String, GiniCaptureSpecificExtraction>,
                      compoundExtractions: Map<String, GiniCaptureCompoundExtraction>)
-
-
-    /**
-     * Called before displaying [DigitalInvoiceFragment] so the user can see the onboarding view.
-     *
-     * You should display [DigitalInvoiceOnboardingFragment]
-     */
-    fun showOnboarding()
 }

@@ -2,12 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="net.gini.android.bank.sdk">
 
-    <application>
-        <activity
-            android:name=".capture.digitalinvoice.DigitalInvoiceActivity"
-            android:exported="false"
-            android:label="@string/gbs_title_digital_invoice"
-            android:theme="@style/GiniCaptureTheme" />
-    </application>
+    <application/>
 
 </manifest>

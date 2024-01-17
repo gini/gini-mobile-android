@@ -5,10 +5,8 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import net.gini.android.capture.camera.CameraActivity
 import net.gini.android.bank.sdk.GiniBank
-import net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceContract
 import net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceException
 import net.gini.android.bank.sdk.capture.digitalinvoice.LineItemsValidator
-import net.gini.android.bank.sdk.capture.digitalinvoice.toDigitalInvoiceInput
 
 /**
  * Entry point for Screen API. It exists for the purpose of communication between Capture SDK's Screen API and Return Assistant.
@@ -17,7 +15,6 @@ internal class CaptureFlowActivity : AppCompatActivity(), CaptureFlowImportContr
 
     private val cameraLauncher = registerForActivityResult(CameraContract(), ::onCameraResult)
     private val cameraImportLauncher = registerForActivityResult(CaptureImportContract(), ::onCameraResult)
-    private val digitalInvoiceLauncher = registerForActivityResult(DigitalInvoiceContract(), ::onDigitalInvoiceResult)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,18 +40,7 @@ internal class CaptureFlowActivity : AppCompatActivity(), CaptureFlowImportContr
 
     private fun onCameraResult(result: CaptureResult) {
         when (result) {
-            is CaptureResult.Success -> {
-                if (GiniBank.getCaptureConfiguration()?.returnAssistantEnabled == true) {
-                    try {
-                        LineItemsValidator.validate(result.compoundExtractions)
-                        digitalInvoiceLauncher.launch(result.toDigitalInvoiceInput())
-                    } catch (notUsed: DigitalInvoiceException) {
-                        setSuccessfulResult(result)
-                    }
-                } else {
-                    setSuccessfulResult(result)
-                }
-            }
+            is CaptureResult.Success -> setSuccessfulResult(result)
             CaptureResult.Empty -> setEmptyResult()
             is CaptureResult.Error -> setErrorResult(result)
             CaptureResult.EnterManually -> setEnterManuallyResult()

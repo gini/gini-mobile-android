@@ -16,6 +16,7 @@ import net.gini.android.capture.analysis.AnalysisFragmentListener
 import net.gini.android.capture.camera.CameraFragment
 import net.gini.android.capture.camera.CameraFragmentDirections
 import net.gini.android.capture.camera.CameraFragmentListener
+import net.gini.android.capture.document.GiniCaptureDocumentError
 import net.gini.android.capture.document.GiniCaptureMultiPageDocument
 import net.gini.android.capture.document.QRCodeDocument
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
@@ -185,8 +186,8 @@ class GiniCaptureFragment(private val analysisIntent: Intent? = null) :
         giniCaptureFragmentListener.onFinishedWithResult(
             CaptureSDKResult.Success(
                 extractions,
-                emptyMap(),
-                emptyList()
+                compoundExtractions,
+                returnReasons
             )
         )
     }

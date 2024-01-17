@@ -41,8 +41,6 @@ internal class DigitalInvoiceScreenPresenter(
 
     private var onboardingDisplayed: Boolean = savedInstanceBundle != null
 
-    override var listener: DigitalInvoiceFragmentListener? = null
-
     private var footerDetails =
         DigitalInvoiceScreenContract.FooterDetails(inaccurateExtraction = isInaccurateExtraction)
 
@@ -101,7 +99,7 @@ internal class DigitalInvoiceScreenPresenter(
     private fun canShowReturnReasonsDialog() = GiniBank.enableReturnReasons && returnReasons.isNotEmpty()
 
     override fun editLineItem(lineItem: SelectableLineItem) {
-        listener?.onEditLineItem(lineItem)
+        view.onEditLineItem(lineItem)
     }
 
     override fun pay() {
@@ -139,7 +137,7 @@ internal class DigitalInvoiceScreenPresenter(
         if (shouldDisplayOnboarding()) {
             simpleBusEventStore.saveEvent(BusEvent.DISMISS_ONBOARDING_FRAGMENT, false)
             onboardingDisplayed = true
-            listener?.showOnboarding()
+            view.showOnboarding()
         }
     }
 
