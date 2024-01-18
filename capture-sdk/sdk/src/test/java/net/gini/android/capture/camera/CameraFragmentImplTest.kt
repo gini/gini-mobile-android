@@ -107,6 +107,7 @@ class CameraFragmentImplTest {
                 }
             }
         })
+        whenever(fragmentCallbackStub.findNavController()).thenReturn(mock())
 
         val fragmentImpl = CameraFragmentImpl(fragmentCallbackStub)
 
