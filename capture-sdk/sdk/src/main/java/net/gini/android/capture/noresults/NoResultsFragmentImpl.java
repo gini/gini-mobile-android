@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
-import net.gini.android.capture.ImageRetakeOptionsListener;
+import net.gini.android.capture.EnterManuallyButtonListener;
 import net.gini.android.capture.R;
 import net.gini.android.capture.document.ImageMultiPageDocument;
 import net.gini.android.capture.help.PhotoTipsAdapter;
@@ -37,18 +37,12 @@ import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysi
  */
 class NoResultsFragmentImpl {
 
-    private static final ImageRetakeOptionsListener NO_OP_LISTENER =
-            new ImageRetakeOptionsListener() {
-                @Override
-                public void onBackToCameraPressed() {}
-
-                @Override
-                public void onEnterManuallyPressed() {}
-            };
+    private static final EnterManuallyButtonListener NO_OP_LISTENER =
+            () -> {};
 
     private final FragmentImplCallback mFragment;
     private final Document mDocument;
-    private ImageRetakeOptionsListener mListener;
+    private EnterManuallyButtonListener mListener;
     private TextView mTitleTextView;
 
     private InjectedViewContainer<NavigationBarTopAdapter> topAdapterInjectedViewContainer;
@@ -59,7 +53,7 @@ class NoResultsFragmentImpl {
         mDocument = document;
     }
 
-    void setListener(@Nullable final ImageRetakeOptionsListener listener) {
+    void setListener(@Nullable final EnterManuallyButtonListener listener) {
         if (listener == null) {
             mListener = NO_OP_LISTENER;
         } else {
@@ -78,7 +72,6 @@ class NoResultsFragmentImpl {
         if (shouldAllowRetakeImages()) {
             ClickListenerExtKt.setIntervalClickListener(retakeImagesButton, v -> {
                 trackAnalysisScreenEvent(AnalysisScreenEvent.RETRY);
-                mListener.onBackToCameraPressed();
             });
         } else {
             retakeImagesButton.setVisibility(GONE);

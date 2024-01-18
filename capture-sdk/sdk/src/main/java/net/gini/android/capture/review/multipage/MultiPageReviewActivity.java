@@ -1,14 +1,5 @@
 package net.gini.android.capture.review.multipage;
 
-import static net.gini.android.capture.analysis.AnalysisActivity.RESULT_NO_EXTRACTIONS;
-import static net.gini.android.capture.camera.CameraActivity.RESULT_CAMERA_SCREEN;
-import static net.gini.android.capture.camera.CameraActivity.RESULT_ENTER_MANUALLY;
-import static net.gini.android.capture.error.ErrorActivity.ERROR_SCREEN_REQUEST;
-import static net.gini.android.capture.internal.util.ActivityHelper.enableHomeAsUp;
-import static net.gini.android.capture.internal.util.ActivityHelper.interceptOnBackPressed;
-import static net.gini.android.capture.noresults.NoResultsActivity.NO_RESULT_CANCEL_KEY;
-import static net.gini.android.capture.tracking.EventTrackingHelper.trackReviewScreenEvent;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -16,7 +7,10 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.MenuItem;
 
-import net.gini.android.capture.GiniCapture;
+import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import net.gini.android.capture.GiniCaptureError;
 import net.gini.android.capture.R;
 import net.gini.android.capture.analysis.AnalysisActivity;
@@ -26,9 +20,11 @@ import net.gini.android.capture.tracking.ReviewScreenEvent;
 
 import java.util.List;
 
-import androidx.activity.OnBackPressedCallback;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+import static net.gini.android.capture.camera.CameraActivity.RESULT_CAMERA_SCREEN;
+import static net.gini.android.capture.internal.util.ActivityHelper.enableHomeAsUp;
+import static net.gini.android.capture.internal.util.ActivityHelper.interceptOnBackPressed;
+import static net.gini.android.capture.noresults.NoResultsActivity.NO_RESULT_CANCEL_KEY;
+import static net.gini.android.capture.tracking.EventTrackingHelper.trackReviewScreenEvent;
 
 /**
  * Created by Alpar Szotyori on 16.02.2018.
@@ -209,18 +205,6 @@ public class MultiPageReviewActivity extends AppCompatActivity implements
         if (requestCode == ANALYSE_DOCUMENT_REQUEST) {
             if (resultCode != Activity.RESULT_CANCELED || (data != null && data.hasExtra(NO_RESULT_CANCEL_KEY))) {
                 setResult(resultCode, data);
-            }
-            finish();
-        }
-
-        if (requestCode == ERROR_SCREEN_REQUEST) {
-            if (resultCode == RESULT_CAMERA_SCREEN) {
-                if (GiniCapture.hasInstance()) {
-                    GiniCapture.getInstance().internal().getImageMultiPageDocumentMemoryStore().clear();
-                }
-                setResult(resultCode);
-            } else if (resultCode == RESULT_ENTER_MANUALLY) {
-                setResult(RESULT_ENTER_MANUALLY, data);
             }
             finish();
         }

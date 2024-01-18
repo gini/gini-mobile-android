@@ -3,7 +3,12 @@ package net.gini.android.capture.analysis;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
+
+import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
+import androidx.appcompat.app.AppCompatActivity;
 
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
@@ -21,15 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import androidx.activity.OnBackPressedCallback;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.VisibleForTesting;
-import androidx.appcompat.app.AppCompatActivity;
-
 import static net.gini.android.capture.camera.CameraActivity.RESULT_CAMERA_SCREEN;
 import static net.gini.android.capture.camera.CameraActivity.RESULT_ENTER_MANUALLY;
-import static net.gini.android.capture.error.ErrorActivity.ERROR_SCREEN_REQUEST;
 import static net.gini.android.capture.internal.util.ActivityHelper.enableHomeAsUp;
 import static net.gini.android.capture.internal.util.ActivityHelper.interceptOnBackPressed;
 import static net.gini.android.capture.noresults.NoResultsActivity.NO_RESULT_CANCEL_KEY;
@@ -252,7 +250,7 @@ public class AnalysisActivity extends AppCompatActivity implements
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if ((requestCode == NO_RESULT_REQUEST || requestCode == ERROR_SCREEN_REQUEST) &&
+        if ((requestCode == NO_RESULT_REQUEST) &&
                 ((resultCode == RESULT_CANCELED && data != null && data.hasExtra(NO_RESULT_CANCEL_KEY)) || resultCode == RESULT_ENTER_MANUALLY || resultCode == RESULT_CAMERA_SCREEN)) {
             if (resultCode == RESULT_CAMERA_SCREEN) {
                 if (GiniCapture.hasInstance()) {

@@ -13,6 +13,7 @@ import net.gini.android.bank.sdk.capture.CaptureFlowFragmentListener
 import net.gini.android.bank.sdk.capture.CaptureResult
 import net.gini.android.bank.sdk.capture.ResultError
 import net.gini.android.bank.sdk.exampleapp.R
+import net.gini.android.bank.sdk.exampleapp.core.ExampleUtil.isIntentActionViewOrSend
 import net.gini.android.bank.sdk.exampleapp.core.PermissionHandler
 import net.gini.android.capture.CaptureSDKResultError
 import net.gini.android.capture.DocumentImportEnabledFileTypes
@@ -142,21 +143,21 @@ class ClientGiniCaptureFragment :
 
                     else -> {}
                 }
-//                if (isIntentActionViewOrSend(requireActivity().intent)) {
-//                requireActivity().finish()
-//                 }
+                if (isIntentActionViewOrSend(requireActivity().intent)) {
+                    requireActivity().finish()
+                }
             }
 
             CaptureResult.Empty -> {
-//                if (isIntentActionViewOrSend(requireActivity().intent)) {
-//                requireActivity().finish()
-//                }
+                if (isIntentActionViewOrSend(requireActivity().intent)) {
+                    requireActivity().finish()
+                }
             }
 
             CaptureResult.Cancel -> {
-//                if (isIntentActionViewOrSend(requireActivity().intent)) {
-//                requireActivity().finish()
-//                }
+                if (isIntentActionViewOrSend(requireActivity().intent)) {
+                    requireActivity().finish()
+                }
             }
 
             CaptureResult.EnterManually -> {
@@ -165,9 +166,9 @@ class ClientGiniCaptureFragment :
                     "Scan exited for manual enter mode",
                     Toast.LENGTH_SHORT
                 ).show()
-//                if (isIntentActionViewOrSend(requireActivity().intent)) {
-//                    requireActivity().finish()
-//                }
+                if (isIntentActionViewOrSend(requireActivity().intent)) {
+                    requireActivity().finish()
+                }
             }
         }
     }
@@ -176,7 +177,6 @@ class ClientGiniCaptureFragment :
     override fun onFinishedWithCancellation() {
         requireActivity().finish()
     }
-
 
 
 }

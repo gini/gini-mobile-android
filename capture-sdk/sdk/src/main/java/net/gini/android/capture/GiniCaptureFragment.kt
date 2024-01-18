@@ -19,6 +19,7 @@ import net.gini.android.capture.camera.CameraFragmentListener
 import net.gini.android.capture.document.GiniCaptureDocumentError
 import net.gini.android.capture.document.GiniCaptureMultiPageDocument
 import net.gini.android.capture.document.QRCodeDocument
+import net.gini.android.capture.error.ErrorFragment
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
@@ -30,7 +31,8 @@ class GiniCaptureFragment(private val analysisIntent: Intent? = null) :
     Fragment(),
     CameraFragmentListener,
     MultiPageReviewFragmentListener,
-    AnalysisFragmentListener {
+    AnalysisFragmentListener,
+    EnterManuallyButtonListener {
 
     internal companion object {
         fun createInstance(intent: Intent? = null): GiniCaptureFragment {
@@ -76,7 +78,7 @@ class GiniCaptureFragment(private val analysisIntent: Intent? = null) :
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        childFragmentManager.fragmentFactory = CaptureFragmentFactory(this, this, this)
+        childFragmentManager.fragmentFactory = CaptureFragmentFactory(this, this, this, this)
         super.onCreate(savedInstanceState)
     }
 
@@ -219,12 +221,17 @@ class GiniCaptureFragment(private val analysisIntent: Intent? = null) :
         // TODO("Not yet implemented")
     }
 
+    override fun onEnterManuallyPressed() {
+        giniCaptureFragmentListener.onFinishedWithResult(CaptureSDKResult.EnterManually)
+    }
+
 }
 
 class CaptureFragmentFactory(
     private val cameraListener: CameraFragmentListener,
     private val multiPageReviewFragmentListener: MultiPageReviewFragmentListener,
-    private val analysisFragmentListener: AnalysisFragmentListener
+    private val analysisFragmentListener: AnalysisFragmentListener,
+    private val enterManuallyButtonListener: EnterManuallyButtonListener
 ) : FragmentFactory() {
     override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
         when (className) {
@@ -243,6 +250,11 @@ class CaptureFragmentFactory(
             AnalysisFragmentCompat::class.java.name -> return AnalysisFragmentCompat().apply {
                 setListener(
                     analysisFragmentListener
+                )
+            }
+            ErrorFragment::class.java.name -> return ErrorFragment().apply {
+                setListener(
+                    enterManuallyButtonListener
                 )
             }
 

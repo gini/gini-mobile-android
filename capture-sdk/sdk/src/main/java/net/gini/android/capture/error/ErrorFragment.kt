@@ -7,10 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
+import androidx.navigation.NavDirections
 import androidx.navigation.fragment.NavHostFragment
 import net.gini.android.capture.Document
-import net.gini.android.capture.GiniCapture
-import net.gini.android.capture.GiniCaptureError
+import net.gini.android.capture.EnterManuallyButtonListener
+import net.gini.android.capture.R
 import net.gini.android.capture.internal.ui.FragmentImplCallback
 import net.gini.android.capture.internal.util.AlertDialogHelperCompat
 
@@ -32,22 +33,19 @@ import net.gini.android.capture.internal.util.AlertDialogHelperCompat
  * Your Activity is automatically set as the listener in {@link ErrorFragmentCompat#onCreate(Bundle)}.
  * </p>
  */
-class ErrorFragmentCompat : Fragment(), FragmentImplCallback {
+class ErrorFragment : Fragment(), FragmentImplCallback,
+    EnterManuallyButtonListener {
 
     private lateinit var fragmentImpl: ErrorFragmentImpl
-    private var errorListener: ErrorFragmentListener? = null
+    private lateinit var listener: EnterManuallyButtonListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        fragmentImpl = ErrorFragmentHelper.createFragmentImpl(this, arguments)
-        activity?.let {
-            ErrorFragmentHelper.setListener(fragmentImpl, it)
-            if (it is ErrorFragmentListener) errorListener = it
-        }
+        fragmentImpl = createFragmentImpl(this, arguments)
+        fragmentImpl.setListener(listener)
         fragmentImpl.onCreate(savedInstanceState)
 
-        checkGiniCaptureInstance()
     }
 
     override fun onCreateView(
@@ -56,6 +54,13 @@ class ErrorFragmentCompat : Fragment(), FragmentImplCallback {
         savedInstanceState: Bundle?
     ): View {
         return fragmentImpl.onCreateView(inflater, container, savedInstanceState)
+    }
+
+    fun setListener(
+        listener: EnterManuallyButtonListener
+    ) {
+        this.listener = listener
+
     }
 
     override fun showAlertDialog(
@@ -67,8 +72,15 @@ class ErrorFragmentCompat : Fragment(), FragmentImplCallback {
         cancelListener: DialogInterface.OnCancelListener?
     ) {
         activity?.let {
-            AlertDialogHelperCompat.showAlertDialog(it, message, positiveButtonTitle,
-                positiveButtonClickListener, negativeButtonTitle, negativeButtonClickListener, cancelListener)
+            AlertDialogHelperCompat.showAlertDialog(
+                it,
+                message,
+                positiveButtonTitle,
+                positiveButtonClickListener,
+                negativeButtonTitle,
+                negativeButtonClickListener,
+                cancelListener
+            )
         }
     }
 
@@ -76,30 +88,39 @@ class ErrorFragmentCompat : Fragment(), FragmentImplCallback {
         return NavHostFragment.findNavController(this)
     }
 
-    private fun checkGiniCaptureInstance() {
-        if (!GiniCapture.hasInstance()) {
-            errorListener?.onError(GiniCaptureError(
-                GiniCaptureError.ErrorCode.MISSING_GINI_CAPTURE_INSTANCE,
-                "Missing GiniCapture instance. It was not created or there was an application process restart."
-            ))
-        }
+    fun createFragmentImpl(
+        fragment: FragmentImplCallback,
+        arguments: Bundle?
+    ): ErrorFragmentImpl {
+        val document = arguments?.getParcelable<Document>(ARGS_DOCUMENT)
+        val error = arguments?.getSerializable(ARGS_ERROR) as? ErrorType
+        val customError = arguments?.getString(ARGS_CUSTOM_ERROR)
+        return ErrorFragmentImpl(fragment, document, error, customError)
     }
 
     companion object {
-        /**
-         *
-         *
-         * Factory method for creating a new instance of the Fragment.
-         *
-         *
-         * @param document a [Document] for which no valid extractions were received
-         *
-         * @return a new instance of the Fragment
-         */
-        fun createInstance(errorType: ErrorType?, document: Document?, customError: String?): ErrorFragmentCompat {
-            val fragment = ErrorFragmentCompat()
-            fragment.arguments = ErrorFragmentHelper.createArguments(errorType, document, customError)
-            return fragment
+        private const val ARGS_ERROR = "GC_ARGS_ERROR"
+        private const val ARGS_DOCUMENT = "ARGS_DOCUMENT"
+        private const val ARGS_CUSTOM_ERROR = "ARGS_CUSTOM_ERROR"
+
+
+        fun navigateToErrorFragment(
+            navController: NavController,
+            direction: NavDirections
+        ) {
+            if (navController.currentDestination?.id == R.id.gc_destination_error_fragment) {
+                return
+            }
+            navController.navigate(direction)
         }
+
+
     }
+
+
+    override fun onEnterManuallyPressed() {
+
+    }
+
+
 }

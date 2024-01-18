@@ -4,14 +4,17 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCaptureBasePresenter;
 import net.gini.android.capture.GiniCaptureBaseView;
+import net.gini.android.capture.error.ErrorType;
 import net.gini.android.capture.internal.util.Size;
 
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import jersey.repackaged.jsr166e.CompletableFuture;
 
 /**
@@ -57,6 +60,9 @@ interface AnalysisScreenContract {
                 @Nullable final DialogInterface.OnCancelListener cancelListener);
 
         abstract void showHints(List<AnalysisHint> hints);
+
+        abstract void showError(String errorMessage, Document document);
+        abstract void showError(ErrorType errorType, Document document);
     }
 
     abstract class Presenter extends GiniCaptureBasePresenter<View> implements

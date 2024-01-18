@@ -3,11 +3,11 @@ package net.gini.android.capture.noresults;
 import android.content.Context;
 import android.os.Bundle;
 
-import net.gini.android.capture.Document;
-import net.gini.android.capture.ImageRetakeOptionsListener;
-import net.gini.android.capture.internal.ui.FragmentImplCallback;
-
 import androidx.annotation.NonNull;
+
+import net.gini.android.capture.Document;
+import net.gini.android.capture.EnterManuallyButtonListener;
+import net.gini.android.capture.internal.ui.FragmentImplCallback;
 
 /**
  * Helper class for setting arguments to analysis fragment.
@@ -36,8 +36,8 @@ final class NoResultsFragmentHelper {
 
     public static void setListener(@NonNull final NoResultsFragmentImpl fragmentImpl,
             @NonNull final Context context) {
-        if (context instanceof ImageRetakeOptionsListener) {
-            fragmentImpl.setListener((ImageRetakeOptionsListener) context);
+        if (context instanceof EnterManuallyButtonListener) {
+            fragmentImpl.setListener((EnterManuallyButtonListener) context);
         } else {
             throw new IllegalStateException(
                     "Hosting activity must implement NoResultsFragmentListener.");

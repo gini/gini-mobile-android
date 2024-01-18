@@ -664,30 +664,30 @@ public class GiniCapture {
         return GiniCaptureFragment.Companion.createInstance(null);
     }
 
-    public CancellationToken createGiniCaptureFragmentForIntent(Context context, Intent intent, TheCallback the) {
+    public CancellationToken createGiniCaptureFragmentForIntent(Context context, Intent intent, GiniCaptureIntentCallback captureIntentCallback) {
         return createIntentForImportedFiles(intent, context, new AsyncCallback<Intent, ImportedFileValidationException>() {
             @Override
             public void onSuccess(Intent result) {
                 if (result.getComponent().getClassName().equals(AnalysisActivity.class.getName())) {
-                    the.callback(new CreateCaptureFlowFragmentForIntentResult.Success(GiniCaptureFragment.Companion.createInstance(result)));
+                    captureIntentCallback.callback(new CreateCaptureFlowFragmentForIntentResult.Success(GiniCaptureFragment.Companion.createInstance(result)));
                 } else {
-                    the.callback(new CreateCaptureFlowFragmentForIntentResult.Error(new ImportedFileValidationException("Unknown activity class: ${result.component?.className}")));
+                    captureIntentCallback.callback(new CreateCaptureFlowFragmentForIntentResult.Error(new ImportedFileValidationException("Unknown activity class: ${result.component?.className}")));
                 }
             }
 
             @Override
             public void onError(ImportedFileValidationException exception) {
-                the.callback(new CreateCaptureFlowFragmentForIntentResult.Error(exception));
+                captureIntentCallback.callback(new CreateCaptureFlowFragmentForIntentResult.Error(exception));
             }
 
             @Override
             public void onCancelled() {
-                the.callback(new CreateCaptureFlowFragmentForIntentResult.Cancelled());
+                captureIntentCallback.callback(new CreateCaptureFlowFragmentForIntentResult.Cancelled());
             }
         });
     }
 
-    interface TheCallback {
+    interface GiniCaptureIntentCallback {
         void callback(CreateCaptureFlowFragmentForIntentResult result);
     }
 

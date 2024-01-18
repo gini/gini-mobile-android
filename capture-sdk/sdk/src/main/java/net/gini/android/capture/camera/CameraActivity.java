@@ -33,7 +33,6 @@ import net.gini.android.capture.tracking.CameraScreenEvent;
 import java.util.Map;
 
 import static net.gini.android.capture.analysis.AnalysisActivity.RESULT_NO_EXTRACTIONS;
-import static net.gini.android.capture.error.ErrorActivity.ERROR_SCREEN_REQUEST;
 import static net.gini.android.capture.internal.util.ActivityHelper.interceptOnBackPressed;
 import static net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboarding;
 import static net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboardingAtFirstRun;
@@ -357,7 +356,6 @@ CameraActivity extends AppCompatActivity implements CameraFragmentListener,
             case REVIEW_DOCUMENT_REQUEST:
             case ANALYSE_DOCUMENT_REQUEST:
             case MULTI_PAGE_REVIEW_REQUEST:
-            case ERROR_SCREEN_REQUEST:
             case NO_RESULT_REQUEST:
                 // The first CameraActivity instance is invisible to the user
                 // after we navigate to the review or analysis activity.

@@ -6,18 +6,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
-import net.gini.android.capture.Document;
-import net.gini.android.capture.GiniCaptureError;
-import net.gini.android.capture.ImageRetakeOptionsListener;
-import net.gini.android.capture.R;
-
 import androidx.activity.OnBackPressedCallback;
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
-import static net.gini.android.capture.camera.CameraActivity.RESULT_CAMERA_SCREEN;
+import net.gini.android.capture.Document;
+import net.gini.android.capture.EnterManuallyButtonListener;
+import net.gini.android.capture.R;
+
 import static net.gini.android.capture.camera.CameraActivity.RESULT_ENTER_MANUALLY;
 import static net.gini.android.capture.internal.util.ActivityHelper.interceptOnBackPressed;
 
@@ -26,7 +23,7 @@ import static net.gini.android.capture.internal.util.ActivityHelper.interceptOnB
  *
  * The {@code NoResultsActivity} displays hints that show how to best use the SDK.
  */
-public class NoResultsActivity extends AppCompatActivity implements ImageRetakeOptionsListener, NoResultsFragmentListener {
+public class NoResultsActivity extends AppCompatActivity implements EnterManuallyButtonListener {
 
     /**
      * Internal use only.
@@ -46,12 +43,6 @@ public class NoResultsActivity extends AppCompatActivity implements ImageRetakeO
     private static final int RESULT_ERROR = RESULT_FIRST_USER + 1;
 
     private Document mDocument;
-
-    @Override
-    public void onBackToCameraPressed() {
-        setResult(RESULT_CAMERA_SCREEN);
-        finish();
-    }
 
     @Override
     public void onEnterManuallyPressed() {
@@ -121,11 +112,4 @@ public class NoResultsActivity extends AppCompatActivity implements ImageRetakeO
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onError(@NonNull GiniCaptureError error) {
-        Intent noResultsIntent = new Intent();
-        noResultsIntent.putExtra(EXTRA_OUT_ERROR, true);
-        setResult(RESULT_ERROR, noResultsIntent);
-        finish();
-    }
 }

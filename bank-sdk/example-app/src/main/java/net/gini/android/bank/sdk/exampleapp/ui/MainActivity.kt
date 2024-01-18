@@ -21,7 +21,6 @@ import net.gini.android.bank.sdk.exampleapp.core.PermissionHandler
 import net.gini.android.bank.sdk.exampleapp.databinding.ActivityMainBinding
 import net.gini.android.bank.sdk.exampleapp.ui.data.Configuration
 import net.gini.android.capture.EntryPoint
-import net.gini.android.capture.requirements.RequirementsReport
 import net.gini.android.capture.util.CancellationToken
 
 
@@ -215,26 +214,6 @@ class MainActivity : AppCompatActivity() {
         configurationViewModel.configureGiniBank(this)
     }
 
-    private fun showUnfulfilledRequirementsToast(report: RequirementsReport) {
-        val stringBuilder = StringBuilder()
-        val requirementReports = report.requirementReports
-        for (i in requirementReports.indices) {
-            val requirementReport = requirementReports[i]
-            if (!requirementReport.isFulfilled) {
-                if (stringBuilder.isNotEmpty()) {
-                    stringBuilder.append("\n")
-                }
-                stringBuilder.append(requirementReport.requirementId)
-                if (requirementReport.details.isNotEmpty()) {
-                    stringBuilder.append(": ")
-                    stringBuilder.append(requirementReport.details)
-                }
-            }
-        }
-        Toast.makeText(
-            this, "Requirements not fulfilled:\n$stringBuilder", Toast.LENGTH_LONG
-        ).show()
-    }
 
     override fun onActivityResult(
         requestCode: Int, resultCode: Int, data: Intent?

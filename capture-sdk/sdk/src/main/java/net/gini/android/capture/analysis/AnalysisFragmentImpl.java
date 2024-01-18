@@ -22,6 +22,8 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.R;
+import net.gini.android.capture.error.ErrorFragment;
+import net.gini.android.capture.error.ErrorType;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.ui.IntervalClickListener;
 import net.gini.android.capture.internal.util.Size;
@@ -157,6 +159,22 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
         mHintsAnimator.stop();
         mHintsAnimator.setHints(hints);
         mHintsAnimator.start();
+    }
+
+    @Override
+    void showError(String error, Document document) {
+        ErrorFragment.Companion.navigateToErrorFragment(
+                mFragment.findNavController(),
+                AnalysisFragmentCompatDirections.toErrorFragmentWithErrorMessage(error, document)
+        );
+    }
+
+    @Override
+    void showError(ErrorType errorType, Document document) {
+        ErrorFragment.Companion.navigateToErrorFragment(
+                mFragment.findNavController(),
+                AnalysisFragmentCompatDirections.toErrorFragmentWithErrorType(errorType, document)
+        );
     }
 
     private void rotateDocumentImageView(final int rotationForDisplay) {

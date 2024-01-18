@@ -47,9 +47,8 @@ import net.gini.android.capture.document.GiniCaptureMultiPageDocument;
 import net.gini.android.capture.document.ImageDocument;
 import net.gini.android.capture.document.ImageMultiPageDocument;
 import net.gini.android.capture.document.QRCodeDocument;
-import net.gini.android.capture.error.ErrorActivity;
+import net.gini.android.capture.error.ErrorFragment;
 import net.gini.android.capture.error.ErrorType;
-import net.gini.android.capture.help.HelpFragment;
 import net.gini.android.capture.internal.camera.api.CameraException;
 import net.gini.android.capture.internal.camera.api.CameraInterface;
 import net.gini.android.capture.internal.camera.api.OldCameraController;
@@ -336,6 +335,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         if (savedInstanceState != null) {
             restoreSavedState(savedInstanceState);
         }
+
     }
 
     private void initFlashState() {
@@ -1016,9 +1016,15 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         final FailureException failureException = FailureException.tryCastFromCompletableFutureThrowable(throwable);
         trackAnalysisScreenEvent(AnalysisScreenEvent.ERROR);
         if (failureException != null) {
-            ErrorActivity.startErrorActivity(mFragment.getActivity(), failureException.getErrorType(), document);
+            ErrorFragment.Companion.navigateToErrorFragment(
+                    mFragment.findNavController(),
+                    CameraFragmentDirections.toErrorFragment(failureException.getErrorType(), document)
+            );
         } else {
-            ErrorActivity.startErrorActivity(mFragment.getActivity(), ErrorType.GENERAL, document);
+            ErrorFragment.Companion.navigateToErrorFragment(
+                    mFragment.findNavController(),
+                    CameraFragmentDirections.toErrorFragment(ErrorType.GENERAL, document)
+            );
         }
     }
 

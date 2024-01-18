@@ -8,7 +8,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import net.gini.android.capture.Document
-import net.gini.android.capture.ImageRetakeOptionsListener
+import net.gini.android.capture.EnterManuallyButtonListener
 import net.gini.android.capture.R
 import net.gini.android.capture.document.ImageMultiPageDocument
 import net.gini.android.capture.internal.ui.FragmentImplCallback
@@ -28,13 +28,9 @@ class ErrorFragmentImpl(
     private val customError: String?
 ) {
 
-    private val defaultListener: ImageRetakeOptionsListener = object :
-        ImageRetakeOptionsListener {
-        override fun onBackToCameraPressed() {}
-        override fun onEnterManuallyPressed() {}
-    }
+    private val defaultListener: EnterManuallyButtonListener = EnterManuallyButtonListener { }
 
-    private var imageRetakeOptionsListener: ImageRetakeOptionsListener? = null
+    private var enterManuallyButtonListener: EnterManuallyButtonListener? = null
     private lateinit var retakeImagesButton: Button
 
     fun onCreate(savedInstanceState: Bundle?) {
@@ -52,17 +48,20 @@ class ErrorFragmentImpl(
         if (shouldAllowRetakeImages()) {
             retakeImagesButton.setIntervalClickListener {
                 EventTrackingHelper.trackAnalysisScreenEvent(AnalysisScreenEvent.RETRY)
-                imageRetakeOptionsListener?.onBackToCameraPressed()
             }
         } else {
             retakeImagesButton.visibility = View.GONE
         }
 
         val enterManuallyButton = view.findViewById<View>(R.id.gc_button_error_enter_manually)
-        enterManuallyButton.setIntervalClickListener { imageRetakeOptionsListener?.onEnterManuallyPressed() }
+        enterManuallyButton.setIntervalClickListener { enterManuallyButtonListener?.onEnterManuallyPressed() }
 
         customError?.let {
             view.findViewById<TextView>(R.id.gc_error_header).text = it
+        }
+
+        view.findViewById<Button>(R.id.gc_button_error_retake_images).setOnClickListener {
+            fragment.findNavController().navigate(ErrorFragmentDirections.toCameraFragment())
         }
 
         errorType?.let {
@@ -77,8 +76,8 @@ class ErrorFragmentImpl(
         return view
     }
 
-    fun setListener(imageRetakeOptionsListener: ImageRetakeOptionsListener?) {
-        this.imageRetakeOptionsListener = imageRetakeOptionsListener ?: defaultListener
+    fun setListener(enterManuallyButtonListener: EnterManuallyButtonListener?) {
+        this.enterManuallyButtonListener = enterManuallyButtonListener ?: defaultListener
     }
 
     private fun shouldAllowRetakeImages(): Boolean {

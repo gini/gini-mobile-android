@@ -8,20 +8,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import net.gini.android.capture.Document;
-import net.gini.android.capture.GiniCapture;
-import net.gini.android.capture.GiniCaptureError;
-import net.gini.android.capture.ImageRetakeOptionsListener;
-import net.gini.android.capture.internal.ui.FragmentImplCallback;
-import net.gini.android.capture.internal.util.AlertDialogHelperCompat;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
-import static net.gini.android.capture.GiniCaptureError.ErrorCode.MISSING_GINI_CAPTURE_INSTANCE;
+import net.gini.android.capture.Document;
+import net.gini.android.capture.internal.ui.FragmentImplCallback;
+import net.gini.android.capture.internal.util.AlertDialogHelperCompat;
 
 /**
  * Internal use only.
@@ -29,19 +24,14 @@ import static net.gini.android.capture.GiniCaptureError.ErrorCode.MISSING_GINI_C
 public class NoResultsFragmentCompat extends Fragment implements FragmentImplCallback {
 
     private NoResultsFragmentImpl mFragmentImpl;
-    private NoResultsFragmentListener errorListener;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mFragmentImpl = NoResultsFragmentHelper.createFragmentImpl(this, getArguments());
         NoResultsFragmentHelper.setListener(mFragmentImpl, getActivity());
-        if (getActivity() instanceof NoResultsFragmentListener) {
-            errorListener = (NoResultsFragmentListener) getActivity();
-        }
         mFragmentImpl.onCreate(savedInstanceState);
 
-        checkGiniCaptureInstance();
     }
 
     @Nullable
@@ -88,10 +78,4 @@ public class NoResultsFragmentCompat extends Fragment implements FragmentImplCal
         return NavHostFragment.findNavController(this);
     }
 
-    private void checkGiniCaptureInstance() {
-        if (!GiniCapture.hasInstance()) {
-            errorListener.onError(new GiniCaptureError(MISSING_GINI_CAPTURE_INSTANCE,
-                    "Missing GiniCapture instance. It was not created or there was an application process restart."));
-        }
-    }
 }

@@ -2,7 +2,6 @@ package net.gini.android.capture.review.multipage;
 
 import android.app.Activity;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -18,6 +17,7 @@ import androidx.annotation.VisibleForTesting;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
@@ -33,13 +33,12 @@ import net.gini.android.capture.document.GiniCaptureDocument;
 import net.gini.android.capture.document.GiniCaptureDocumentError;
 import net.gini.android.capture.document.ImageDocument;
 import net.gini.android.capture.document.ImageMultiPageDocument;
-import net.gini.android.capture.error.ErrorActivity;
+import net.gini.android.capture.error.ErrorFragment;
 import net.gini.android.capture.error.ErrorType;
 import net.gini.android.capture.internal.network.FailureException;
 import net.gini.android.capture.internal.network.NetworkRequestResult;
 import net.gini.android.capture.internal.network.NetworkRequestsManager;
 import net.gini.android.capture.internal.ui.ClickListenerExtKt;
-import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.ui.IntervalClickListener;
 import net.gini.android.capture.internal.util.AlertDialogHelperCompat;
 import net.gini.android.capture.internal.util.FileImportHelper;
@@ -387,11 +386,11 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
         if (GiniCapture.hasInstance() && !GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
             injectedLoadingIndicatorContainer.setInjectedViewAdapterHolder(new InjectedViewAdapterHolder<>(
                     GiniCapture.getInstance().internal().getOnButtonLoadingIndicatorAdapterInstance(), injectedViewAdapter -> {
-                        if (isOnButtonLoadingIndicatorActive) {
-                            injectedViewAdapter.onVisible();
-                        } else {
-                            injectedViewAdapter.onHidden();
-                        }
+                if (isOnButtonLoadingIndicatorActive) {
+                    injectedViewAdapter.onVisible();
+                } else {
+                    injectedViewAdapter.onHidden();
+                }
             }));
         }
     }
@@ -687,6 +686,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     }
 
     private void uploadDocuments() {
+
         for (final ImageDocument imageDocument : mMultiPageDocument.getDocuments()) {
             if (!mMultiPageDocument.hasDocumentError(imageDocument)) {
                 // Documents with a an error should not be uploaded automatically
@@ -696,7 +696,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
                 if (documentError != null) {
                     trackAnalysisScreenEvent(AnalysisScreenEvent.ERROR);
                     ErrorType errorType = ErrorType.typeFromDocumentErrorCode(documentError.getErrorCode());
-                    ErrorActivity.startErrorActivity(requireActivity(), errorType, imageDocument);
+                    Navigation.findNavController(this.getView()).navigate(MultiPageReviewFragmentDirections.toErrorFragment(errorType, imageDocument));
                 }
             }
         }
@@ -722,30 +722,24 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
         mMultiPageDocument.removeErrorForDocument(document);
         mDocumentUploadResults.put(document.getId(), false);
         networkRequestsManager.upload(activity, document)
-                .handle(new CompletableFuture.BiFun<NetworkRequestResult<GiniCaptureDocument>,
-                        Throwable, Void>() {
-                    @Override
-                    public Void apply(
-                            final NetworkRequestResult<GiniCaptureDocument> requestResult,
-                            final Throwable throwable) {
-                        if (throwable != null
-                                && !NetworkRequestsManager.isCancellation(throwable)) {
+                .handle((CompletableFuture.BiFun<NetworkRequestResult<GiniCaptureDocument>, Throwable, Void>) (requestResult, throwable) -> {
+                    if (throwable != null
+                            && !NetworkRequestsManager.isCancellation(throwable)) {
 
-                            hideIndicator();
+                        hideIndicator();
 
-                            trackUploadError(throwable);
+                        trackUploadError(throwable);
 
-                            if (getActivity() != null) {
-                                handleError(throwable, document);
-                            }
-
-                        } else if (requestResult != null) {
-                            hideIndicator();
-                            mDocumentUploadResults.put(document.getId(), true);
+                        if (getActivity() != null) {
+                            handleError(throwable, document);
                         }
-                        updateNextButtonVisibility();
-                        return null;
+
+                    } else if (requestResult != null) {
+                        hideIndicator();
+                        mDocumentUploadResults.put(document.getId(), true);
                     }
+                    updateNextButtonVisibility();
+                    return null;
                 });
     }
 
@@ -761,9 +755,15 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
             final FailureException failureException = FailureException.tryCastFromCompletableFutureThrowable(throwable);
             trackAnalysisScreenEvent(AnalysisScreenEvent.ERROR);
             if (failureException != null) {
-                ErrorActivity.startErrorActivity(requireActivity(), failureException.getErrorType(), document);
+                ErrorFragment.Companion.navigateToErrorFragment(
+                        Navigation.findNavController(this.getView()),
+                        MultiPageReviewFragmentDirections.toErrorFragment(failureException.getErrorType(), document)
+                );
             } else {
-                ErrorActivity.startErrorActivity(requireActivity(), ErrorType.GENERAL, document);
+                ErrorFragment.Companion.navigateToErrorFragment(
+                        Navigation.findNavController(this.getView()),
+                        MultiPageReviewFragmentDirections.toErrorFragment(ErrorType.GENERAL, document)
+                );
             }
         }
     }
