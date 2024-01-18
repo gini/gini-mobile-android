@@ -753,7 +753,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                     }));
                 }
 
-                injectedViewAdapter.setOnNavButtonClickListener(new IntervalClickListener(v -> mFragment.getActivity().onBackPressed()));
+                injectedViewAdapter.setOnNavButtonClickListener(new IntervalClickListener(v -> mFragment.findNavController().popBackStack()));
             }));
 
         }
@@ -769,8 +769,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                         injectedViewAdapter.setBackButtonVisibility(isEmpty ? View.GONE : View.VISIBLE);
 
                         injectedViewAdapter.setOnBackButtonClickListener(new IntervalClickListener(v -> {
-                            if (mFragment.getActivity() != null)
-                                mFragment.getActivity().finish();
+                            mFragment.findNavController().popBackStack();
                         }));
 
                         injectedViewAdapter.setOnHelpButtonClickListener(new IntervalClickListener(v -> startHelpActivity()));
@@ -864,8 +863,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         ClickListenerExtKt.setIntervalClickListener(mButtonImportDocument, v -> showFileChooser());
 
         ClickListenerExtKt.setIntervalClickListener(mPhotoThumbnail, v -> {
-            if (mFragment.getActivity() != null)
-                (mFragment.getActivity()).finish();
+            mFragment.findNavController().popBackStack();
         });
     }
 
