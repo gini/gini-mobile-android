@@ -71,31 +71,6 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
     private var footerDetails: DigitalInvoiceScreenContract.FooterDetails? = null
 
     companion object {
-
-        /**
-         * Factory method for creating a new instance of the `DigitalInvoiceFragment` using the provided extractions.
-         *
-         * **Note:** Always use this method to create new instances. The extractions are required and passed as fragment arguments to the
-         * instance.
-         *
-         * @param extractions a map of [GiniCaptureSpecificExtraction]s
-         * @param compoundExtractions a map of [GiniCaptureCompoundExtraction]s
-         */
-        @JvmStatic
-        fun createInstance(
-            extractions: Map<String, GiniCaptureSpecificExtraction>,
-            compoundExtractions: Map<String, GiniCaptureCompoundExtraction>,
-            returnReasons: List<GiniCaptureReturnReason>,
-        ) = DigitalInvoiceFragment().apply {
-            arguments = Bundle().apply {
-                putBundle(ARGS_EXTRACTIONS, getExtractionsBundle(extractions))
-                putBundle(ARGS_COMPOUND_EXTRACTIONS, getCompoundExtractionsBundle(compoundExtractions))
-                putParcelableArrayList(ARGS_RETURN_REASONS, ArrayList(returnReasons))
-                val isInaccurateExtraction = getAmountsAreConsistentExtraction(extractions)
-                putBoolean(ARGS_INACCURATE_EXTRACTION, isInaccurateExtraction)
-            }
-        }
-
         internal fun getExtractionsBundle(extractions: Map<String, GiniCaptureSpecificExtraction>): Bundle =
             Bundle().apply {
                 extractions.forEach { putParcelable(it.key, it.value) }
@@ -105,7 +80,6 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
             Bundle().apply {
                 compoundExtractions.forEach { putParcelable(it.key, it.value) }
             }
-
 
         internal fun getAmountsAreConsistentExtraction(extractions: Map<String, GiniCaptureSpecificExtraction>): Boolean {
             val isInaccurateExtraction = extractions["amountsAreConsistent"]?.let {

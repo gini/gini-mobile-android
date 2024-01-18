@@ -42,11 +42,6 @@ import net.gini.android.capture.view.InjectedViewAdapterHolder
  */
 class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenContract.View {
 
-    companion object {
-        @JvmStatic
-        fun createInstance() = DigitalInvoiceOnboardingFragment()
-    }
-
     private var binding by autoCleared<GbsFragmentDigitalInvoiceOnboardingBinding>()
 
     private var presenter: DigitalOnboardingScreenContract.Presenter? = null

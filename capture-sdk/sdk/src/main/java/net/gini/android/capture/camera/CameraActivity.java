@@ -180,7 +180,7 @@ CameraActivity extends AppCompatActivity implements CameraFragmentListener,
     }
 
     protected CameraFragment createCameraFragment() {
-        return CameraFragment.createInstance();
+        return new CameraFragment();
     }
 
     private void initFragment() {

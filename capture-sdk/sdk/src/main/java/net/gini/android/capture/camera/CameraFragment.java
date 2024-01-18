@@ -26,10 +26,6 @@ public class CameraFragment extends Fragment implements CameraFragmentInterface,
 
     private CameraFragmentListener mListener;
 
-    public static CameraFragment createInstance() {
-        return new CameraFragment();
-    }
-
     private CameraFragmentImpl mFragmentImpl;
 
     /**
