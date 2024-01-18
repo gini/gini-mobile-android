@@ -93,6 +93,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.buttonStartSingleActivity.setOnClickListener {
+            configureGiniBank()
             startActivity(Intent(this, CaptureFlowHostActivity::class.java))
         }
 
@@ -150,7 +151,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startGiniCaptureSdk(intent: Intent? = null) {
-        configureGiniCapture()
+        configureGiniBank()
 
         if (intent != null) {
             cancellationToken = GiniBank.startCaptureFlowForIntent(
@@ -209,7 +210,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun configureGiniCapture() {
+    private fun configureGiniBank() {
         configurationViewModel.clearGiniCaptureNetworkInstances()
         configurationViewModel.configureGiniBank(this)
     }

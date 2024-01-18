@@ -37,7 +37,8 @@ class ClientGiniCaptureFragment :
         permissionHandler = PermissionHandler(requireActivity())
         lifecycleScope.launch {
             if (permissionHandler.grantPermission(Manifest.permission.CAMERA)) {
-                configureBankSDK()
+                // Bank SDK is configured in the MainActivity, but you can
+                // call [overrideBankSDKConfiguration] here if you want to override the configuration
                 startBankSDK()
             } else {
                 if (intent != null) {
@@ -48,7 +49,7 @@ class ClientGiniCaptureFragment :
     }
 
 
-    private fun configureBankSDK() {
+    private fun overrideBankSDKConfiguration() {
         val clientId = requireContext().getString(R.string.gini_api_client_id)
         val clientSecret = requireContext().getString(R.string.gini_api_client_secret)
         val documentMetadata = DocumentMetadata()
@@ -89,7 +90,8 @@ class ClientGiniCaptureFragment :
     }
 
     fun startBankSDKForIntent(openWithIntent: Intent) {
-        configureBankSDK()
+        // Bank SDK is configured in the MainActivity, but you can
+        // call [overrideBankSDKConfiguration] here if you want to override the configuration
         GiniBank.createCaptureFlowFragmentForIntent(requireContext(), openWithIntent) { result ->
             when (result) {
                 GiniBank.CreateCaptureFlowFragmentForIntentResult.Cancelled -> requireActivity().finish()
