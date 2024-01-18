@@ -131,6 +131,8 @@ dependencies {
     androidTestImplementation(libs.androidx.test.rules)
     androidTestImplementation(libs.androidx.test.espresso.core)
     androidTestImplementation(libs.androidx.test.espresso.intents)
+    androidTestImplementation(libs.androidx.test.espresso.contrib)
+    androidTestImplementation(libs.androidx.test.espresso.idling.resource)
     androidTestImplementation(libs.androidx.test.uiautomator)
     androidTestImplementation(libs.mockito.core)
     androidTestImplementation(libs.mockito.android)
