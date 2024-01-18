@@ -22,8 +22,10 @@ import androidx.constraintlayout.widget.Group;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.viewpager.widget.ViewPager;
 
+import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.R;
 import net.gini.android.capture.internal.ui.ClickListenerExtKt;
 import net.gini.android.capture.internal.ui.IntervalClickListener;
@@ -46,15 +48,11 @@ import kotlin.Unit;
  *
  * @suppress
  */
-public class OnboardingFragment extends Fragment implements OnboardingScreenContract.View,
-        OnboardingFragmentInterface {
+public class OnboardingFragment extends Fragment implements OnboardingScreenContract.View {
 
     private static final Logger LOG = LoggerFactory.getLogger(OnboardingFragment.class);
 
-    private static final String ARGS_PAGES = "GC_PAGES";
-
     private OnboardingScreenContract.Presenter mPresenter;
-    private OnboardingFragmentListener mListener;
 
     private ViewPager mViewPager;
     private LinearLayout mLayoutPageIndicators;
@@ -65,29 +63,6 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
     private Button buttonGetStarted;
     private Group groupNextAndSkipButtons;
     private OnboardingNavigationBarBottomButton[] navigationBarBottomButtons = new OnboardingNavigationBarBottomButton[]{};
-
-    /**
-     * <p>
-     * Factory method for creating a new instance of the Fragment using the provided list of
-     * onboarding pages.
-     * </p>
-     * <p>
-     * If you don't need a custom number of pages and wish to use the default behaviour, you can use
-     * the default constructor of {@link OnboardingFragment}.
-     * </p>
-     *
-     * @param pages the pages to be shown
-     *
-     * @return a new instance of the Fragment
-     */
-    public static OnboardingFragment createInstance(
-            @NonNull final ArrayList<OnboardingPage> pages) { // NOPMD - ArrayList required (Bundle)
-        final OnboardingFragment fragment = new OnboardingFragment();
-        final Bundle arguments = new Bundle();
-        arguments.putParcelableArrayList(ARGS_PAGES, pages);
-        fragment.setArguments(arguments);
-        return fragment;
-    }
 
     /**
      * @param savedInstanceState
@@ -105,29 +80,15 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
 
         forcePortraitOrientationOnPhones(activity);
 
-        initListener(activity);
-        initPresenter(activity, getOnboardingPages());
-    }
-
-    private void initListener(@NonNull final Activity activity) {
-        if (activity instanceof OnboardingFragmentListener) {
-            setListener((OnboardingFragmentListener) activity);
-        } else if (mListener == null) {
-            throw new IllegalStateException(
-                    "OnboardingFragmentListener not set. "
-                            + "You can set it with OnboardingFragment#setListener() or "
-                            + "by making the host activity implement the OnboardingFragmentListener.");
-        }
+        initPresenter(activity, getCustomOnboardingPages());
     }
 
     @Nullable
-    private ArrayList<OnboardingPage> getOnboardingPages() {
-        final Bundle arguments = getArguments();
-        ArrayList<OnboardingPage> pages = null;
-        if (arguments != null) {
-            pages = arguments.getParcelableArrayList(ARGS_PAGES);
+    private ArrayList<OnboardingPage> getCustomOnboardingPages() {
+        if (GiniCapture.hasInstance()) {
+            return GiniCapture.getInstance().getCustomOnboardingPages();
         }
-        return pages;
+        return null;
     }
 
     private void initPresenter(@NonNull final Activity activity, @Nullable final ArrayList<OnboardingPage> pages) { // NOPMD - Bundle
@@ -135,7 +96,6 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
         if (pages != null) {
             mPresenter.setCustomPages(pages);
         }
-        mPresenter.setListener(mListener);
     }
 
     protected void createPresenter(@NonNull final Activity activity) {
@@ -168,6 +128,11 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
         buttonGetStarted.setVisibility(View.GONE);
     }
 
+    @Override
+    public void close() {
+        NavHostFragment.findNavController(this).popBackStack();
+    }
+
     private void bindViews(final View view) {
         mViewPager = (ViewPager) view.findViewById(R.id.gc_onboarding_viewpager);
         mLayoutPageIndicators = (LinearLayout) view.findViewById(R.id.gc_layout_page_indicators);
@@ -197,14 +162,6 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
         ClickListenerExtKt.setIntervalClickListener(buttonNext, v -> mPresenter.showNextPage());
         ClickListenerExtKt.setIntervalClickListener(buttonSkip, v -> mPresenter.skip());
         ClickListenerExtKt.setIntervalClickListener(buttonGetStarted, v -> mPresenter.showNextPage());
-    }
-
-    @Override
-    public void setListener(@NonNull final OnboardingFragmentListener listener) {
-        mListener = listener;
-        if (mPresenter != null) {
-            mPresenter.setListener(listener);
-        }
     }
 
     @Override

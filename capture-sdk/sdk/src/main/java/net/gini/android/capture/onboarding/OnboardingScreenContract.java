@@ -18,7 +18,7 @@ import androidx.annotation.NonNull;
  */
 interface OnboardingScreenContract {
 
-    interface View extends GiniCaptureBaseView<Presenter>, OnboardingFragmentInterface {
+    interface View extends GiniCaptureBaseView<Presenter> {
 
         @Override
         void setPresenter(@NonNull final Presenter presenter);
@@ -38,10 +38,11 @@ interface OnboardingScreenContract {
         void setNavigationBarBottomAdapterInstance(@NonNull final InjectedViewAdapterInstance<OnboardingNavigationBarBottomAdapter> adapterInstance);
 
         void hideButtons();
+
+        void close();
     }
 
-    abstract class Presenter extends GiniCaptureBasePresenter<View> implements
-            OnboardingFragmentInterface {
+    abstract class Presenter extends GiniCaptureBasePresenter<View> {
 
         Presenter(
                 @NonNull final Activity activity,

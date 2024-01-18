@@ -12,7 +12,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
-import net.gini.android.capture.GiniCaptureCoordinator;
 import net.gini.android.capture.GiniCaptureError;
 import net.gini.android.capture.R;
 import net.gini.android.capture.camera.CameraActivity;
@@ -227,7 +226,7 @@ public class AnalysisActivity extends AppCompatActivity implements
 
     @Override
     public void onProceedToNoExtractionsScreen(@NonNull final Document document) {
-        if (GiniCaptureCoordinator.shouldShowGiniCaptureNoResultsScreen(mDocument)) {
+        if (shouldShowGiniCaptureNoResultsScreen(mDocument)) {
             final Intent noResultsActivity = new Intent(this, NoResultsActivity.class);
             noResultsActivity.putExtra(NoResultsActivity.EXTRA_IN_DOCUMENT, mDocument);
             noResultsActivity.setExtrasClassLoader(AnalysisActivity.class.getClassLoader());
@@ -241,6 +240,10 @@ public class AnalysisActivity extends AppCompatActivity implements
             setResult(RESULT_OK, result);
             finish();
         }
+    }
+
+    public static boolean shouldShowGiniCaptureNoResultsScreen(final Document document) {
+        return document.getType() != Document.Type.QRCode && document.getType() != Document.Type.QR_CODE_MULTI_PAGE;
     }
 
     @Override

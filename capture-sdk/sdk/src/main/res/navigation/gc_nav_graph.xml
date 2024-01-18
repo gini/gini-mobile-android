@@ -136,6 +136,9 @@
         </action>
         <!-- popUpTo and popUpToInclusive are needed to replace the camera screen with the help screen in the back stack -->
         <!-- The camera preview is not restarted otherwise. It has something to do with the SurfaceView, but I couldn't find the root cause. -->
+        <action
+            android:id="@+id/to_onboarding_fragment"
+            app:destination="@id/gc_destination_onboarding_fragment"/>
     </fragment>
 
     <fragment
@@ -191,6 +194,12 @@
             app:popUpToInclusive="true" />
 
 
+    </fragment>
+
+    <fragment
+        android:id="@+id/gc_destination_onboarding_fragment"
+        android:name="net.gini.android.capture.onboarding.OnboardingFragment"
+        android:label="fragment_onboarding">
     </fragment>
 
 </navigation>

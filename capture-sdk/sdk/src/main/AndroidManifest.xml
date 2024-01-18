@@ -21,11 +21,6 @@
             android:label="@string/gc_title_no_results"
             android:theme="@style/GiniCaptureTheme" />
         <activity
-            android:name="net.gini.android.capture.onboarding.OnboardingActivity"
-            android:exported="false"
-            android:label="@string/gc_title_onboarding"
-            android:theme="@style/GiniCaptureTheme" />
-        <activity
             android:name="net.gini.android.capture.review.multipage.MultiPageReviewActivity"
             android:exported="false"
             android:label="@string/gc_title_review"

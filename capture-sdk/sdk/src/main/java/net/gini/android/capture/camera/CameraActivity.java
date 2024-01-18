@@ -14,7 +14,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
-import net.gini.android.capture.GiniCaptureCoordinator;
 import net.gini.android.capture.GiniCaptureError;
 import net.gini.android.capture.R;
 import net.gini.android.capture.analysis.AnalysisActivity;
@@ -25,7 +24,6 @@ import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction;
 import net.gini.android.capture.network.model.GiniCaptureReturnReason;
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
 import net.gini.android.capture.noresults.NoResultsActivity;
-import net.gini.android.capture.onboarding.OnboardingActivity;
 import net.gini.android.capture.review.multipage.MultiPageReviewActivity;
 import net.gini.android.capture.tracking.AnalysisScreenEvent;
 import net.gini.android.capture.tracking.CameraScreenEvent;
@@ -34,8 +32,6 @@ import java.util.Map;
 
 import static net.gini.android.capture.analysis.AnalysisActivity.RESULT_NO_EXTRACTIONS;
 import static net.gini.android.capture.internal.util.ActivityHelper.interceptOnBackPressed;
-import static net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboarding;
-import static net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboardingAtFirstRun;
 import static net.gini.android.capture.review.multipage.MultiPageReviewActivity.RESULT_SCROLL_TO_LAST_PAGE;
 import static net.gini.android.capture.review.multipage.MultiPageReviewActivity.SHOULD_SCROLL_TO_LAST_PAGE;
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
@@ -100,7 +96,6 @@ CameraActivity extends AppCompatActivity implements CameraFragmentListener,
     private static final String ONBOARDING_SHOWN_KEY = "ONBOARDING_SHOWN_KEY";
 
     private boolean mOnboardingShown;
-    private GiniCaptureCoordinator mGiniCaptureCoordinator;
     private boolean mAddPages;
 
     private CameraFragment mFragment;
@@ -130,14 +125,12 @@ CameraActivity extends AppCompatActivity implements CameraFragmentListener,
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gc_activity_camera);
         readExtras();
-        createGiniCaptureCoordinator();
         if (savedInstanceState == null) {
             initFragment();
         } else {
             restoreSavedState(savedInstanceState);
             retainFragment();
         }
-        showOnboardingIfRequested();
         handleOnBackPressed();
         setTitleOnTablets();
     }
@@ -206,31 +199,12 @@ CameraActivity extends AppCompatActivity implements CameraFragmentListener,
                 .commit();
     }
 
-    private void showOnboardingIfRequested() {
-        if (shouldShowOnboarding() && !mAddPages) {
-            startOnboardingActivity();
-        }
-    }
-
     @Override
     protected void onStart() {
         super.onStart();
-        mGiniCaptureCoordinator.onCameraStarted();
         if (mOnboardingShown) {
             hideInterface();
         }
-    }
-
-    private void createGiniCaptureCoordinator() {
-        mGiniCaptureCoordinator = GiniCaptureCoordinator.createInstance(this);
-        mGiniCaptureCoordinator
-                .setShowOnboardingAtFirstRun(shouldShowOnboardingAtFirstRun())
-                .setListener(new GiniCaptureCoordinator.Listener() {
-                    @Override
-                    public void onShowOnboarding() {
-                        startOnboardingActivity();
-                    }
-                });
     }
 
     /**
@@ -256,17 +230,6 @@ CameraActivity extends AppCompatActivity implements CameraFragmentListener,
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @VisibleForTesting
-    void startOnboardingActivity() {
-        if (mOnboardingShown) {
-            return;
-        }
-        final Intent intent = new Intent(this, OnboardingActivity.class);
-        hideInterface();
-        startActivityForResult(intent, ONBOARDING_REQUEST);
-        mOnboardingShown = true;
     }
 
     @Override

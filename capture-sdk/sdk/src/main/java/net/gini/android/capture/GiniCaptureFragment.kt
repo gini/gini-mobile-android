@@ -16,10 +16,11 @@ import net.gini.android.capture.analysis.AnalysisFragmentListener
 import net.gini.android.capture.camera.CameraFragment
 import net.gini.android.capture.camera.CameraFragmentDirections
 import net.gini.android.capture.camera.CameraFragmentListener
-import net.gini.android.capture.document.GiniCaptureDocumentError
 import net.gini.android.capture.document.GiniCaptureMultiPageDocument
 import net.gini.android.capture.document.QRCodeDocument
 import net.gini.android.capture.error.ErrorFragment
+import net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboarding
+import net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboardingAtFirstRun
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
@@ -46,6 +47,7 @@ class GiniCaptureFragment(private val analysisIntent: Intent? = null) :
 
     private lateinit var navController: NavController
     private lateinit var giniCaptureFragmentListener: GiniCaptureFragmentListener
+    private lateinit var oncePerInstallEventStore: OncePerInstallEventStore
 
     // Related to navigation logic ported from CameraActivity
     private var addPages = false
@@ -66,6 +68,7 @@ class GiniCaptureFragment(private val analysisIntent: Intent? = null) :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = (childFragmentManager.fragments[0]).findNavController()
+        oncePerInstallEventStore = OncePerInstallEventStore(requireContext())
         if (analysisIntent != null) {
             navController.navigate(
                 CameraFragmentDirections.toAnalysisFragment(
@@ -74,6 +77,11 @@ class GiniCaptureFragment(private val analysisIntent: Intent? = null) :
                     )!!, ""
                 )
             )
+        } else {
+            if (shouldShowOnboarding() || (shouldShowOnboardingAtFirstRun() && !oncePerInstallEventStore.containsEvent(OncePerInstallEvent.SHOW_ONBOARDING))) {
+                oncePerInstallEventStore.saveEvent(OncePerInstallEvent.SHOW_ONBOARDING)
+                navController.navigate(CameraFragmentDirections.toOnboardingFragment())
+            }
         }
     }
 
