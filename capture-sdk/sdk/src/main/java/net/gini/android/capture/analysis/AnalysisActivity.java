@@ -18,7 +18,6 @@ import net.gini.android.capture.camera.CameraActivity;
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction;
 import net.gini.android.capture.network.model.GiniCaptureReturnReason;
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
-import net.gini.android.capture.noresults.NoResultsActivity;
 import net.gini.android.capture.tracking.AnalysisScreenEvent;
 
 import java.util.ArrayList;
@@ -29,7 +28,6 @@ import static net.gini.android.capture.camera.CameraActivity.RESULT_CAMERA_SCREE
 import static net.gini.android.capture.camera.CameraActivity.RESULT_ENTER_MANUALLY;
 import static net.gini.android.capture.internal.util.ActivityHelper.enableHomeAsUp;
 import static net.gini.android.capture.internal.util.ActivityHelper.interceptOnBackPressed;
-import static net.gini.android.capture.noresults.NoResultsActivity.NO_RESULT_CANCEL_KEY;
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
 
 /**
@@ -226,24 +224,7 @@ public class AnalysisActivity extends AppCompatActivity implements
 
     @Override
     public void onProceedToNoExtractionsScreen(@NonNull final Document document) {
-        if (shouldShowGiniCaptureNoResultsScreen(mDocument)) {
-            final Intent noResultsActivity = new Intent(this, NoResultsActivity.class);
-            noResultsActivity.putExtra(NoResultsActivity.EXTRA_IN_DOCUMENT, mDocument);
-            noResultsActivity.setExtrasClassLoader(AnalysisActivity.class.getClassLoader());
-            startActivityForResult(noResultsActivity, NO_RESULT_REQUEST);
-            setResult(RESULT_NO_EXTRACTIONS);
-            if (GiniCapture.hasInstance()) {
-                GiniCapture.getInstance().internal().getImageMultiPageDocumentMemoryStore().clear();
-            }
-        } else {
-            final Intent result = new Intent();
-            setResult(RESULT_OK, result);
-            finish();
-        }
-    }
 
-    public static boolean shouldShowGiniCaptureNoResultsScreen(final Document document) {
-        return document.getType() != Document.Type.QRCode && document.getType() != Document.Type.QR_CODE_MULTI_PAGE;
     }
 
     @Override
@@ -254,7 +235,7 @@ public class AnalysisActivity extends AppCompatActivity implements
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if ((requestCode == NO_RESULT_REQUEST) &&
-                ((resultCode == RESULT_CANCELED && data != null && data.hasExtra(NO_RESULT_CANCEL_KEY)) || resultCode == RESULT_ENTER_MANUALLY || resultCode == RESULT_CAMERA_SCREEN)) {
+                ((resultCode == RESULT_CANCELED && data != null) || resultCode == RESULT_ENTER_MANUALLY || resultCode == RESULT_CAMERA_SCREEN)) {
             if (resultCode == RESULT_CAMERA_SCREEN) {
                 if (GiniCapture.hasInstance()) {
                     GiniCapture.getInstance().internal().getImageMultiPageDocumentMemoryStore().clear();

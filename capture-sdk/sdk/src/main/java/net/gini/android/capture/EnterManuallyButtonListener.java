@@ -1,10 +1,10 @@
 package net.gini.android.capture;
 
 import net.gini.android.capture.error.ErrorFragment;
-import net.gini.android.capture.noresults.NoResultsFragmentCompat;
+import net.gini.android.capture.noresults.NoResultsFragment;
 /**
  * <p>
- * Interface used by {@link NoResultsFragmentCompat} and {@link ErrorFragment} to dispatch events to the hosting Activity.
+ * Interface used by {@link NoResultsFragment} and {@link ErrorFragment} to dispatch events to the hosting Activity.
  * </p>
  */
 public interface EnterManuallyButtonListener {

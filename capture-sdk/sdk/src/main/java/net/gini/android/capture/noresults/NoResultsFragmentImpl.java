@@ -12,8 +12,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import net.gini.android.capture.Document;
-import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.EnterManuallyButtonListener;
+import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.R;
 import net.gini.android.capture.document.ImageMultiPageDocument;
 import net.gini.android.capture.help.PhotoTipsAdapter;
@@ -32,13 +32,14 @@ import static net.gini.android.capture.internal.util.ActivityHelper.forcePortrai
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
 
 /**
- * Main logic implementation for no results UI presented by {@link NoResultsActivity}.
+ * Main logic implementation for no results UI presented by {@link NoResultsFragment}.
  * Internal use only.
  */
 class NoResultsFragmentImpl {
 
     private static final EnterManuallyButtonListener NO_OP_LISTENER =
-            () -> {};
+            () -> {
+            };
 
     private final FragmentImplCallback mFragment;
     private final Document mDocument;
@@ -48,7 +49,7 @@ class NoResultsFragmentImpl {
     private InjectedViewContainer<NavigationBarTopAdapter> topAdapterInjectedViewContainer;
 
     NoResultsFragmentImpl(@NonNull final FragmentImplCallback fragment,
-            @NonNull final Document document) {
+                          @NonNull final Document document) {
         mFragment = fragment;
         mDocument = document;
     }
@@ -66,12 +67,14 @@ class NoResultsFragmentImpl {
     }
 
     View onCreateView(final LayoutInflater inflater, final ViewGroup container,
-            final Bundle savedInstanceState) {
+                      final Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.gc_fragment_noresults, container, false);
         final View retakeImagesButton = view.findViewById(R.id.gc_button_no_results_retake_images);
         if (shouldAllowRetakeImages()) {
             ClickListenerExtKt.setIntervalClickListener(retakeImagesButton, v -> {
                 trackAnalysisScreenEvent(AnalysisScreenEvent.RETRY);
+                mFragment.findNavController().navigate(NoResultsFragmentDirections.toCameraFragment());
+
             });
         } else {
             retakeImagesButton.setVisibility(GONE);

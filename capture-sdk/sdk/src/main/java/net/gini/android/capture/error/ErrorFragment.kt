@@ -33,8 +33,7 @@ import net.gini.android.capture.internal.util.AlertDialogHelperCompat
  * Your Activity is automatically set as the listener in {@link ErrorFragmentCompat#onCreate(Bundle)}.
  * </p>
  */
-class ErrorFragment : Fragment(), FragmentImplCallback,
-    EnterManuallyButtonListener {
+class ErrorFragment : Fragment(), FragmentImplCallback {
 
     private lateinit var fragmentImpl: ErrorFragmentImpl
     private lateinit var listener: EnterManuallyButtonListener
@@ -114,11 +113,6 @@ class ErrorFragment : Fragment(), FragmentImplCallback,
             navController.navigate(direction)
         }
 
-
-    }
-
-
-    override fun onEnterManuallyPressed() {
 
     }
 

@@ -12,6 +12,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import net.gini.android.capture.analysis.AnalysisActivity
 import net.gini.android.capture.analysis.AnalysisFragmentCompat
+import net.gini.android.capture.analysis.AnalysisFragmentCompatDirections
 import net.gini.android.capture.analysis.AnalysisFragmentListener
 import net.gini.android.capture.camera.CameraFragment
 import net.gini.android.capture.camera.CameraFragmentDirections
@@ -24,6 +25,7 @@ import net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnb
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
+import net.gini.android.capture.noresults.NoResultsFragment
 import net.gini.android.capture.review.multipage.MultiPageReviewFragment
 import net.gini.android.capture.review.multipage.MultiPageReviewFragmentDirections
 import net.gini.android.capture.review.multipage.MultiPageReviewFragmentListener
@@ -203,8 +205,10 @@ class GiniCaptureFragment(private val analysisIntent: Intent? = null) :
     }
 
     override fun onProceedToNoExtractionsScreen(document: Document) {
-        // TODO: launch the no results fragment for the document
-        // TODO("Not yet implemented")
+        NoResultsFragment.navigateToNoResultsFragment(
+            navController,
+            AnalysisFragmentCompatDirections.toNoResultsFragment(document)
+        )
     }
 
     override fun onDefaultPDFAppAlertDialogCancelled() {
@@ -260,11 +264,19 @@ class CaptureFragmentFactory(
                     analysisFragmentListener
                 )
             }
+
             ErrorFragment::class.java.name -> return ErrorFragment().apply {
                 setListener(
                     enterManuallyButtonListener
                 )
             }
+
+            NoResultsFragment::class.java.name -> return NoResultsFragment()
+                .apply {
+                    setListener(
+                        enterManuallyButtonListener
+                    )
+                }
 
             else -> return super.instantiate(classLoader, className)
         }

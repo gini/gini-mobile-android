@@ -23,7 +23,6 @@ import java.util.List;
 import static net.gini.android.capture.camera.CameraActivity.RESULT_CAMERA_SCREEN;
 import static net.gini.android.capture.internal.util.ActivityHelper.enableHomeAsUp;
 import static net.gini.android.capture.internal.util.ActivityHelper.interceptOnBackPressed;
-import static net.gini.android.capture.noresults.NoResultsActivity.NO_RESULT_CANCEL_KEY;
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackReviewScreenEvent;
 
 /**
@@ -203,7 +202,7 @@ public class MultiPageReviewActivity extends AppCompatActivity implements
                                     final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == ANALYSE_DOCUMENT_REQUEST) {
-            if (resultCode != Activity.RESULT_CANCELED || (data != null && data.hasExtra(NO_RESULT_CANCEL_KEY))) {
+            if (resultCode != Activity.RESULT_CANCELED || (data != null)) {
                 setResult(resultCode, data);
             }
             finish();

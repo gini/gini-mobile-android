@@ -23,18 +23,14 @@ import net.gini.android.capture.internal.util.ContextHelper;
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction;
 import net.gini.android.capture.network.model.GiniCaptureReturnReason;
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
-import net.gini.android.capture.noresults.NoResultsActivity;
 import net.gini.android.capture.review.multipage.MultiPageReviewActivity;
-import net.gini.android.capture.tracking.AnalysisScreenEvent;
 import net.gini.android.capture.tracking.CameraScreenEvent;
 
 import java.util.Map;
 
-import static net.gini.android.capture.analysis.AnalysisActivity.RESULT_NO_EXTRACTIONS;
 import static net.gini.android.capture.internal.util.ActivityHelper.interceptOnBackPressed;
 import static net.gini.android.capture.review.multipage.MultiPageReviewActivity.RESULT_SCROLL_TO_LAST_PAGE;
 import static net.gini.android.capture.review.multipage.MultiPageReviewActivity.SHOULD_SCROLL_TO_LAST_PAGE;
-import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackCameraScreenEvent;
 
 /**
@@ -300,15 +296,6 @@ CameraActivity extends AppCompatActivity implements CameraFragmentListener,
 
     @Override
     public void noExtractionsFromQRCode(QRCodeDocument qrCodeDocument) {
-        trackAnalysisScreenEvent(AnalysisScreenEvent.NO_RESULTS);
-        final Intent noResultsActivity = new Intent(this, NoResultsActivity.class);
-        noResultsActivity.putExtra(NoResultsActivity.EXTRA_IN_DOCUMENT, qrCodeDocument);
-        noResultsActivity.setExtrasClassLoader(CameraActivity.class.getClassLoader());
-        startActivityForResult(noResultsActivity, NO_RESULT_REQUEST);
-        setResult(RESULT_NO_EXTRACTIONS);
-        if (GiniCapture.hasInstance()) {
-            GiniCapture.getInstance().internal().getImageMultiPageDocumentMemoryStore().clear();
-        }
     }
 
     @Override

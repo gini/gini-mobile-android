@@ -48,6 +48,7 @@ class ErrorFragmentImpl(
         if (shouldAllowRetakeImages()) {
             retakeImagesButton.setIntervalClickListener {
                 EventTrackingHelper.trackAnalysisScreenEvent(AnalysisScreenEvent.RETRY)
+                fragment.findNavController().navigate(ErrorFragmentDirections.toCameraFragment())
             }
         } else {
             retakeImagesButton.visibility = View.GONE
@@ -60,9 +61,6 @@ class ErrorFragmentImpl(
             view.findViewById<TextView>(R.id.gc_error_header).text = it
         }
 
-        view.findViewById<Button>(R.id.gc_button_error_retake_images).setOnClickListener {
-            fragment.findNavController().navigate(ErrorFragmentDirections.toCameraFragment())
-        }
 
         errorType?.let {
             view.findViewById<TextView>(R.id.gc_error_header).text =
