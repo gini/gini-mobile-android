@@ -44,7 +44,7 @@ import kotlin.Unit;
 import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
 
 /**
- * Main logic implementation for analysis UI presented by {@link AnalysisActivity}
+ * Main logic implementation for analysis UI presented by {@link AnalysisFragment}
  */
 class AnalysisFragmentImpl extends AnalysisScreenContract.View {
 
@@ -165,7 +165,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     void showError(String error, Document document) {
         ErrorFragment.Companion.navigateToErrorFragment(
                 mFragment.findNavController(),
-                AnalysisFragmentCompatDirections.toErrorFragmentWithErrorMessage(error, document)
+                AnalysisFragmentDirections.toErrorFragmentWithErrorMessage(error, document)
         );
     }
 
@@ -173,7 +173,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     void showError(ErrorType errorType, Document document) {
         ErrorFragment.Companion.navigateToErrorFragment(
                 mFragment.findNavController(),
-                AnalysisFragmentCompatDirections.toErrorFragmentWithErrorType(errorType, document)
+                AnalysisFragmentDirections.toErrorFragmentWithErrorType(errorType, document)
         );
     }
 

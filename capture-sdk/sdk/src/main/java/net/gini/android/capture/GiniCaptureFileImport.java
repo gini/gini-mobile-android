@@ -1,18 +1,16 @@
 package net.gini.android.capture;
 
-import static net.gini.android.capture.internal.util.FileImportValidator.FILE_SIZE_LIMIT;
-
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
-import net.gini.android.capture.analysis.AnalysisActivity;
+import androidx.annotation.NonNull;
+
 import net.gini.android.capture.document.DocumentFactory;
 import net.gini.android.capture.document.ImageMultiPageDocument;
 import net.gini.android.capture.internal.util.DeviceHelper;
 import net.gini.android.capture.internal.util.FileImportValidator;
 import net.gini.android.capture.internal.util.MimeType;
-import net.gini.android.capture.review.multipage.MultiPageReviewActivity;
 import net.gini.android.capture.util.CancellationToken;
 import net.gini.android.capture.util.IntentHelper;
 import net.gini.android.capture.util.NoOpCancellationToken;
@@ -20,8 +18,7 @@ import net.gini.android.capture.util.UriHelper;
 
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import static net.gini.android.capture.internal.util.FileImportValidator.FILE_SIZE_LIMIT;
 
 /**
  * This class contains methods for preparing launching the Gini Capture SDK with a file received
@@ -31,22 +28,6 @@ public final class GiniCaptureFileImport {
 
     @NonNull
     private final GiniCapture mGiniCapture;
-
-    @NonNull
-    private static Intent createIntentForMultiPageDocument(@NonNull final Context context,
-                                                        final Document document) {
-        final Intent giniCaptureIntent;
-        if (document.isReviewable()) {
-            // The new ImageMultiPageDocument was already added to the memory store
-            giniCaptureIntent = MultiPageReviewActivity.createIntent(context, false);
-        } else {
-            giniCaptureIntent = new Intent(context, AnalysisActivity.class);
-            giniCaptureIntent.putExtra(AnalysisActivity.EXTRA_IN_DOCUMENT, document);
-            giniCaptureIntent.setExtrasClassLoader(GiniCaptureFileImport.class.getClassLoader());
-        }
-
-        return giniCaptureIntent;
-    }
 
     @NonNull
     private static Document createDocumentForImportedFile(@NonNull final Intent intent,
@@ -79,35 +60,6 @@ public final class GiniCaptureFileImport {
         mGiniCapture = giniCapture;
     }
 
-    CancellationToken createIntentForImportedFiles(@NonNull final Intent intent,
-            @NonNull final Context context,
-            @NonNull final AsyncCallback<Intent, ImportedFileValidationException> callback) {
-        final CancellationToken cancellationToken =
-                createDocumentForImportedFiles(intent, context,
-                        new AsyncCallback<Document, ImportedFileValidationException>() {
-                            @Override
-                            public void onSuccess(final Document result) {
-                                final Intent giniCaptureIntent = createIntentForMultiPageDocument(context, result);
-                                callback.onSuccess(giniCaptureIntent);
-                            }
-
-                            @Override
-                            public void onError(final ImportedFileValidationException exception) {
-                                callback.onError(exception);
-                            }
-
-                            @Override
-                            public void onCancelled() {
-                                callback.onCancelled();
-                            }
-                        });
-        return new CancellationToken() {
-            @Override
-            public void cancel() {
-                cancellationToken.cancel();
-            }
-        };
-    }
 
     CancellationToken createDocumentForImportedFiles(@NonNull final Intent intent,
             @NonNull final Context context,

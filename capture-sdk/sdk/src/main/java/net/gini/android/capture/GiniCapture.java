@@ -7,7 +7,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
-import net.gini.android.capture.analysis.AnalysisActivity;
 import net.gini.android.capture.camera.view.CameraNavigationBarBottomAdapter;
 import net.gini.android.capture.camera.view.DefaultCameraNavigationBarBottomAdapter;
 import net.gini.android.capture.help.HelpItem;
@@ -514,7 +513,14 @@ public class GiniCapture {
      */
     @NonNull
     public CancellationToken createIntentForImportedFiles(@NonNull final Intent intent, @NonNull final Context context, @NonNull final AsyncCallback<Intent, ImportedFileValidationException> callback) {
-        return mGiniCaptureFileImport.createIntentForImportedFiles(intent, context, callback);
+        //return mGiniCaptureFileImport.createIntentForImportedFiles(intent, context, callback);
+        //TODO fix this when fixing CameraActivity
+        return null;
+    }
+
+    @NonNull
+    public CancellationToken createDocumentForImportedFiles(@NonNull final Intent intent, @NonNull final Context context, @NonNull final AsyncCallback<Document, ImportedFileValidationException> callback) {
+        return mGiniCaptureFileImport.createDocumentForImportedFiles(intent, context, callback);
     }
 
     /**
@@ -665,14 +671,11 @@ public class GiniCapture {
     }
 
     public CancellationToken createGiniCaptureFragmentForIntent(Context context, Intent intent, GiniCaptureIntentCallback captureIntentCallback) {
-        return createIntentForImportedFiles(intent, context, new AsyncCallback<Intent, ImportedFileValidationException>() {
+        return createDocumentForImportedFiles(intent, context, new AsyncCallback<Document, ImportedFileValidationException>() {
             @Override
-            public void onSuccess(Intent result) {
-                if (result.getComponent().getClassName().equals(AnalysisActivity.class.getName())) {
+            public void onSuccess(Document result) {
+                // TODO please refactor this piece
                     captureIntentCallback.callback(new CreateCaptureFlowFragmentForIntentResult.Success(GiniCaptureFragment.Companion.createInstance(result)));
-                } else {
-                    captureIntentCallback.callback(new CreateCaptureFlowFragmentForIntentResult.Error(new ImportedFileValidationException("Unknown activity class: ${result.component?.className}")));
-                }
             }
 
             @Override

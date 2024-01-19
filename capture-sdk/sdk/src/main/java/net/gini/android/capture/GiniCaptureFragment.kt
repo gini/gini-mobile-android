@@ -1,6 +1,5 @@
 package net.gini.android.capture
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,9 +9,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
-import net.gini.android.capture.analysis.AnalysisActivity
 import net.gini.android.capture.analysis.AnalysisFragment
-import net.gini.android.capture.analysis.AnalysisFragmentCompatDirections
+import net.gini.android.capture.analysis.AnalysisFragmentDirections
 import net.gini.android.capture.analysis.AnalysisFragmentListener
 import net.gini.android.capture.camera.CameraFragment
 import net.gini.android.capture.camera.CameraFragmentDirections
@@ -30,7 +28,7 @@ import net.gini.android.capture.review.multipage.MultiPageReviewFragment
 import net.gini.android.capture.review.multipage.MultiPageReviewFragmentDirections
 import net.gini.android.capture.review.multipage.MultiPageReviewFragmentListener
 
-class GiniCaptureFragment(private val analysisIntent: Intent? = null) :
+class GiniCaptureFragment(private val openWithDocument: Document? = null) :
     Fragment(),
     CameraFragmentListener,
     MultiPageReviewFragmentListener,
@@ -38,8 +36,8 @@ class GiniCaptureFragment(private val analysisIntent: Intent? = null) :
     EnterManuallyButtonListener {
 
     internal companion object {
-        fun createInstance(intent: Intent? = null): GiniCaptureFragment {
-            return GiniCaptureFragment(intent)
+        fun createInstance(document: Document? = null): GiniCaptureFragment {
+            return GiniCaptureFragment(document)
         }
     }
 
@@ -71,12 +69,11 @@ class GiniCaptureFragment(private val analysisIntent: Intent? = null) :
         super.onViewCreated(view, savedInstanceState)
         navController = (childFragmentManager.fragments[0]).findNavController()
         oncePerInstallEventStore = OncePerInstallEventStore(requireContext())
-        if (analysisIntent != null) {
+        if (openWithDocument != null) {
             navController.navigate(
                 CameraFragmentDirections.toAnalysisFragment(
-                    analysisIntent.getParcelableExtra(
-                        AnalysisActivity.EXTRA_IN_DOCUMENT
-                    )!!, ""
+                    openWithDocument,
+                    ""
                 )
             )
         } else {
@@ -207,7 +204,7 @@ class GiniCaptureFragment(private val analysisIntent: Intent? = null) :
     override fun onProceedToNoExtractionsScreen(document: Document) {
         NoResultsFragment.navigateToNoResultsFragment(
             navController,
-            AnalysisFragmentCompatDirections.toNoResultsFragment(document)
+            AnalysisFragmentDirections.toNoResultsFragment(document)
         )
     }
 

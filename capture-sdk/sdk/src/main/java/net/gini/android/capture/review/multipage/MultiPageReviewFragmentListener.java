@@ -1,13 +1,12 @@
 package net.gini.android.capture.review.multipage;
 
+import androidx.annotation.NonNull;
+
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCaptureError;
-import net.gini.android.capture.analysis.AnalysisActivity;
 import net.gini.android.capture.analysis.AnalysisFragment;
 import net.gini.android.capture.camera.CameraFragment;
 import net.gini.android.capture.document.GiniCaptureMultiPageDocument;
-
-import androidx.annotation.NonNull;
 
 /**
  * Created by Alpar Szotyori on 07.05.2018.
@@ -26,8 +25,7 @@ public interface MultiPageReviewFragmentListener {
     /**
      * Called when all pages were uploaded successfully and the user tapped on the "next" button.
      *
-     * <p> If you use the Screen API you should start the {@link AnalysisActivity} and set the
-     * document as the {@link AnalysisActivity#EXTRA_IN_DOCUMENT} extra.
+     * <p> If you use the Screen API you should start the {@link AnalysisFragment} and
      *
      * <p> If you use the Component API you should start the {@link AnalysisFragment}
      * and pass the document when creating it with {@link

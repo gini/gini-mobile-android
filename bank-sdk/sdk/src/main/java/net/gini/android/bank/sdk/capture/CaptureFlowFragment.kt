@@ -24,13 +24,13 @@ import net.gini.android.capture.camera.CameraFragmentListener
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 
-class CaptureFlowFragment(private val analysisIntent: Intent? = null) :
+class CaptureFlowFragment(private val openWithDocument: Document? = null) :
     Fragment(),
     GiniCaptureFragmentListener, DigitalInvoiceFragmentListener {
 
     internal companion object {
-        fun createInstance(intent: Intent? = null): CaptureFlowFragment {
-            return CaptureFlowFragment(intent)
+        fun createInstance(openWithDocument: Document? = null): CaptureFlowFragment {
+            return CaptureFlowFragment(openWithDocument)
         }
     }
 
@@ -64,7 +64,7 @@ class CaptureFlowFragment(private val analysisIntent: Intent? = null) :
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        childFragmentManager.fragmentFactory = CaptureFlowFragmentFactory(this, analysisIntent, this)
+        childFragmentManager.fragmentFactory = CaptureFlowFragmentFactory(this, openWithDocument, this)
         super.onCreate(savedInstanceState)
     }
 
@@ -151,12 +151,12 @@ interface CaptureFlowFragmentListener {
 
 class CaptureFlowFragmentFactory(
     private val giniCaptureFragmentListener: GiniCaptureFragmentListener,
-    private val analysisIntent: Intent? = null,
+    private val openWithDocument: Document? = null,
     private val digitalInvoiceListener: DigitalInvoiceFragmentListener
 ) : FragmentFactory() {
     override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
         return when (className) {
-            GiniCaptureFragment::class.java.name -> GiniCaptureFragment(analysisIntent)
+            GiniCaptureFragment::class.java.name -> GiniCaptureFragment(openWithDocument)
                 .apply {
                     setListener(
                         giniCaptureFragmentListener

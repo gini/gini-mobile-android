@@ -16,7 +16,6 @@ import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.GiniCaptureError;
 import net.gini.android.capture.R;
-import net.gini.android.capture.analysis.AnalysisActivity;
 import net.gini.android.capture.document.GiniCaptureMultiPageDocument;
 import net.gini.android.capture.document.QRCodeDocument;
 import net.gini.android.capture.internal.util.ContextHelper;
@@ -230,7 +229,7 @@ CameraActivity extends AppCompatActivity implements CameraFragmentListener,
 
     @Override
     public void onProceedToAnalysisScreen(@NonNull final Document document) {
-        startAnalysisActivity(document);
+
     }
 
     @Override
@@ -263,13 +262,6 @@ CameraActivity extends AppCompatActivity implements CameraFragmentListener,
     public void onCheckImportedDocument(@NonNull final Document document,
             @NonNull final DocumentCheckResultCallback callback) {
         callback.documentAccepted();
-    }
-
-     private void startAnalysisActivity(@NonNull final Document document) {
-        final Intent analysisIntent = new Intent(this, AnalysisActivity.class);
-        analysisIntent.putExtra(AnalysisActivity.EXTRA_IN_DOCUMENT, document);
-        analysisIntent.setExtrasClassLoader(CameraActivity.class.getClassLoader());
-        startActivityForResult(analysisIntent, ANALYSE_DOCUMENT_REQUEST);
     }
 
     @Override

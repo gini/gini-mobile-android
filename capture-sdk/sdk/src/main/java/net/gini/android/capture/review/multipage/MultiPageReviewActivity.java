@@ -13,7 +13,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import net.gini.android.capture.GiniCaptureError;
 import net.gini.android.capture.R;
-import net.gini.android.capture.analysis.AnalysisActivity;
 import net.gini.android.capture.camera.CameraActivity;
 import net.gini.android.capture.document.GiniCaptureMultiPageDocument;
 import net.gini.android.capture.tracking.ReviewScreenEvent;
@@ -163,10 +162,7 @@ public class MultiPageReviewActivity extends AppCompatActivity implements
         if (documents.isEmpty()) {
             return;
         }
-        final Intent intent = new Intent(this, AnalysisActivity.class);
-        intent.putExtra(AnalysisActivity.EXTRA_IN_DOCUMENT, multiPageDocument);
-        intent.setExtrasClassLoader(MultiPageReviewActivity.class.getClassLoader());
-        startActivityForResult(intent, ANALYSE_DOCUMENT_REQUEST);
+
     }
 
     @Override
