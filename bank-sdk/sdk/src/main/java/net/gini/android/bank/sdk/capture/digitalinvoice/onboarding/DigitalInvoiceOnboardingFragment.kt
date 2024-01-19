@@ -75,7 +75,7 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
         )
 
     override fun close() {
-        findNavController().popBackStack()
+        activity?.onBackPressedDispatcher?.onBackPressed()
     }
 
     /**

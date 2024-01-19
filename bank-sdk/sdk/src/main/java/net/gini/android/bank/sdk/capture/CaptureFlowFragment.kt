@@ -47,6 +47,9 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
     // Remember the original primary navigation fragment so that we can restore it when this fragment is detached
     private var originalPrimaryNavigationFragment: Fragment? = null
 
+    private var willBeRestored = false
+    private var didFinishWithResult = false
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -68,8 +71,23 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
         super.onCreate(savedInstanceState)
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        willBeRestored = true
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (!didFinishWithResult && !willBeRestored) {
+            captureFlowFragmentListener.onFinishedWithResult(CaptureResult.Cancel)
+        }
+    }
+
+
     override fun onResume() {
         super.onResume()
+        willBeRestored = false
+
         originalPrimaryNavigationFragment = parentFragmentManager.primaryNavigationFragment
 
         // To be the first to handle back button pressed events we need to set this fragment as the primary navigation fragment
@@ -104,13 +122,18 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
                             DigitalInvoiceFragment.getAmountsAreConsistentExtraction(result.specificExtractions)
                         ))
                     } catch (notUsed: DigitalInvoiceException) {
+                        didFinishWithResult = true
                         captureFlowFragmentListener.onFinishedWithResult(result.toCaptureResult())
                     }
                 } else {
+                    didFinishWithResult = true
                     captureFlowFragmentListener.onFinishedWithResult(result.toCaptureResult())
                 }
             }
-            else -> captureFlowFragmentListener.onFinishedWithResult(result.toCaptureResult())
+            else -> {
+                didFinishWithResult = true
+                captureFlowFragmentListener.onFinishedWithResult(result.toCaptureResult())
+            }
         }
     }
 
@@ -118,6 +141,7 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
         specificExtractions: Map<String, GiniCaptureSpecificExtraction>,
         compoundExtractions: Map<String, GiniCaptureCompoundExtraction>
     ) {
+        didFinishWithResult = true
         captureFlowFragmentListener.onFinishedWithResult(CaptureResult.Success(
             specificExtractions,
             compoundExtractions,

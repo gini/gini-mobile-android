@@ -51,7 +51,7 @@ class DigitalInvoiceHelpFragment : Fragment() {
                 injectedAdapterView.setTitle(getString(net.gini.android.capture.R.string.gc_title_help))
 
                 injectedAdapterView.setOnNavButtonClickListener(IntervalClickListener {
-                    findNavController().popBackStack()
+                    activity?.onBackPressedDispatcher?.onBackPressed()
                 })
             }
         }
@@ -63,7 +63,7 @@ class DigitalInvoiceHelpFragment : Fragment() {
             injectedViewContainer.injectedViewAdapterHolder =
                 InjectedViewAdapterHolder(GiniBank.digitalInvoiceHelpNavigationBarBottomAdapterInstance) { injectedViewAdapter ->
                     injectedViewAdapter.setOnBackButtonClickListener(IntervalClickListener {
-                        findNavController().popBackStack()
+                        activity?.onBackPressedDispatcher?.onBackPressed()
                     })
                 }
         }
