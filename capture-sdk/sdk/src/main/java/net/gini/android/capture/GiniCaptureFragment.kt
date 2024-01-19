@@ -1,7 +1,6 @@
 package net.gini.android.capture
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -55,6 +54,14 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
     // Remember the original primary navigation fragment so that we can restore it when this fragment is detached
     private var originalPrimaryNavigationFragment: Fragment? = null
 
+    private var willBeRestored = false
+    private var didFinishWithResult = false
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        childFragmentManager.fragmentFactory = CaptureFragmentFactory(this, this, this, this)
+        super.onCreate(savedInstanceState)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -84,13 +91,21 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        childFragmentManager.fragmentFactory = CaptureFragmentFactory(this, this, this, this)
-        super.onCreate(savedInstanceState)
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        willBeRestored = true
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (!didFinishWithResult && !willBeRestored) {
+            giniCaptureFragmentListener.onFinishedWithResult(CaptureSDKResult.Cancel)
+        }
     }
 
     override fun onResume() {
         super.onResume()
+        willBeRestored = false
 
         originalPrimaryNavigationFragment = parentFragmentManager.primaryNavigationFragment
 
@@ -141,7 +156,7 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
 
                 // For subsequent images a new CameraActivity was launched from the MultiPageReviewActivity
                 // and so we can simply finish to return to the review activity
-                navController.popBackStack()
+                activity?.onBackPressedDispatcher?.onBackPressed()
             } else {
                 // For the first image navigate to the review fragment by replacing the camera fragment to make
                 // the review fragment the new start destination
@@ -191,7 +206,7 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
         compoundExtractions: MutableMap<String, GiniCaptureCompoundExtraction>,
         returnReasons: MutableList<GiniCaptureReturnReason>
     ) {
-        Log.d("analysis", "extractions received: $extractions")
+        didFinishWithResult = true
         giniCaptureFragmentListener.onFinishedWithResult(
             CaptureSDKResult.Success(
                 extractions,
@@ -209,13 +224,12 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
     }
 
     override fun onDefaultPDFAppAlertDialogCancelled() {
+        didFinishWithResult = true
         giniCaptureFragmentListener.onFinishedWithResult(CaptureSDKResult.Cancel)
     }
 
     override fun onExtractionsAvailable(extractions: MutableMap<String, GiniCaptureSpecificExtraction>) {
-
-        Log.d("analysis", "extractions received: $extractions")
-
+        didFinishWithResult = true
         giniCaptureFragmentListener.onFinishedWithResult(
             CaptureSDKResult.Success(
                 extractions,
@@ -231,6 +245,7 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
     }
 
     override fun onEnterManuallyPressed() {
+        didFinishWithResult = true
         giniCaptureFragmentListener.onFinishedWithResult(CaptureSDKResult.EnterManually)
     }
 

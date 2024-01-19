@@ -37,6 +37,7 @@ import net.gini.android.capture.DocumentImportEnabledFileTypes;
 import net.gini.android.capture.EntryPoint;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.GiniCaptureError;
+import net.gini.android.capture.GiniCaptureFragment;
 import net.gini.android.capture.ImportImageFileUrisAsyncTask;
 import net.gini.android.capture.ImportedFileValidationException;
 import net.gini.android.capture.R;
@@ -753,7 +754,11 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                     }));
                 }
 
-                injectedViewAdapter.setOnNavButtonClickListener(new IntervalClickListener(v -> mFragment.findNavController().popBackStack()));
+                injectedViewAdapter.setOnNavButtonClickListener(new IntervalClickListener(v -> {
+                    if (mFragment.getActivity() != null) {
+                        mFragment.getActivity().getOnBackPressedDispatcher().onBackPressed();
+                    }
+                }));
             }));
 
         }
@@ -769,7 +774,9 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                         injectedViewAdapter.setBackButtonVisibility(isEmpty ? View.GONE : View.VISIBLE);
 
                         injectedViewAdapter.setOnBackButtonClickListener(new IntervalClickListener(v -> {
-                            mFragment.findNavController().popBackStack();
+                            if (mFragment.getActivity() != null) {
+                                mFragment.getActivity().getOnBackPressedDispatcher().onBackPressed();
+                            }
                         }));
 
                         injectedViewAdapter.setOnHelpButtonClickListener(new IntervalClickListener(v -> startHelpActivity()));
@@ -863,7 +870,9 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         ClickListenerExtKt.setIntervalClickListener(mButtonImportDocument, v -> showFileChooser());
 
         ClickListenerExtKt.setIntervalClickListener(mPhotoThumbnail, v -> {
-            mFragment.findNavController().popBackStack();
+            if (mFragment.getActivity() != null) {
+                mFragment.getActivity().getOnBackPressedDispatcher().onBackPressed();
+            }
         });
     }
 

@@ -54,7 +54,9 @@ public class ZoomInPreviewFragment extends Fragment {
 
     private void setupInputHandlers(View view) {
         view.findViewById(R.id.gc_action_close).setOnClickListener(v -> {
-            getParentFragmentManager().popBackStack();
+            if (getActivity() != null) {
+                getActivity().getOnBackPressedDispatcher().onBackPressed();
+            }
         });
     }
 
@@ -62,17 +64,6 @@ public class ZoomInPreviewFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mRotatableTouchImageViewContainer = view.findViewById(R.id.gc_rotatable_img_container);
-        handleOnBackPressed();
-    }
-
-    private void handleOnBackPressed() {
-        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                getParentFragmentManager().popBackStack();
-                setEnabled(false);
-            }
-        });
     }
 
     @Override

@@ -130,7 +130,9 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
 
     @Override
     public void close() {
-        NavHostFragment.findNavController(this).popBackStack();
+        if (getActivity() != null) {
+            getActivity().getOnBackPressedDispatcher().onBackPressed();
+        }
     }
 
     private void bindViews(final View view) {

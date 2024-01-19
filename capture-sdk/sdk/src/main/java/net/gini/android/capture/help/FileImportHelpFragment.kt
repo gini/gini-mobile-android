@@ -64,7 +64,7 @@ class FileImportHelpFragment : Fragment() {
                 )
                 injectedViewAdapter.setTitle(getString(R.string.gc_title_file_import))
                 injectedViewAdapter.setOnNavButtonClickListener(IntervalClickListener {
-                    findNavController().popBackStack()
+                    activity?.onBackPressedDispatcher?.onBackPressed()
                 })
             }
         }
@@ -77,7 +77,7 @@ class FileImportHelpFragment : Fragment() {
                 GiniCapture.getInstance().internal().helpNavigationBarBottomAdapterInstance
             ) { injectedViewAdapter: HelpNavigationBarBottomAdapter ->
                 injectedViewAdapter.setOnBackClickListener(IntervalClickListener {
-                    findNavController().popBackStack()
+                    activity?.onBackPressedDispatcher?.onBackPressed()
                 })
             }
         }

@@ -489,7 +489,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
 
                         injectedViewAdapter.setOnNavButtonClickListener(new IntervalClickListener(v -> {
                             if (getActivity() != null) {
-                                getActivity().onBackPressed();
+                                getActivity().getOnBackPressedDispatcher().onBackPressed();
                             }
                         }));
                     }));

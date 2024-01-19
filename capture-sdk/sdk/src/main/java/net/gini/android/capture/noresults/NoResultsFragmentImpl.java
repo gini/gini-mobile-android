@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import net.gini.android.capture.Document;
 import net.gini.android.capture.EnterManuallyButtonListener;
 import net.gini.android.capture.GiniCapture;
+import net.gini.android.capture.GiniCaptureFragment;
 import net.gini.android.capture.R;
 import net.gini.android.capture.document.ImageMultiPageDocument;
 import net.gini.android.capture.help.PhotoTipsAdapter;
@@ -147,7 +148,11 @@ class NoResultsFragmentImpl {
                         injectedViewAdapter.setTitle(mFragment.getActivity().getResources().getString(R.string.gc_title_no_results));
 
                         injectedViewAdapter.setNavButtonType(NavButtonType.CLOSE);
-                        injectedViewAdapter.setOnNavButtonClickListener(new IntervalClickListener(view -> mFragment.getActivity().onBackPressed()));
+                        injectedViewAdapter.setOnNavButtonClickListener(new IntervalClickListener(view -> {
+                            if (mFragment.getActivity() != null) {
+                                mFragment.getActivity().getOnBackPressedDispatcher().onBackPressed();
+                            }
+                        }));
                     })
             );
         }

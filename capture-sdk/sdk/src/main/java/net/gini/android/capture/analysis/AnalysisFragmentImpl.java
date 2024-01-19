@@ -21,6 +21,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
+import net.gini.android.capture.GiniCaptureFragment;
 import net.gini.android.capture.R;
 import net.gini.android.capture.error.ErrorFragment;
 import net.gini.android.capture.error.ErrorType;
@@ -242,9 +243,9 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
                 injectedViewAdapter.setTitle(mFragment.getActivity().getResources().getString(R.string.gc_title_analysis));
 
                 injectedViewAdapter.setOnNavButtonClickListener(new IntervalClickListener(v -> {
-//                    mFragment.getActivity().setResult(Activity.RESULT_CANCELED);
-//                    mFragment.getActivity().finish();
-                    mFragment.getActivity().onBackPressed();
+                    if (mFragment.getActivity() != null) {
+                        mFragment.getActivity().getOnBackPressedDispatcher().onBackPressed();
+                    }
                 }));
             }));
         }

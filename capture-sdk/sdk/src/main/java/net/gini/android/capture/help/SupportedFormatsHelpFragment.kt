@@ -54,7 +54,7 @@ class SupportedFormatsHelpFragment : Fragment() {
                 )
                 injectedViewAdapter.setTitle(getString(R.string.gc_title_supported_formats))
                 injectedViewAdapter.setOnNavButtonClickListener(IntervalClickListener {
-                    findNavController().popBackStack()
+                    activity?.onBackPressedDispatcher?.onBackPressed()
                 })
             }
         }
@@ -67,7 +67,7 @@ class SupportedFormatsHelpFragment : Fragment() {
                 GiniCapture.getInstance().internal().helpNavigationBarBottomAdapterInstance
             ) { injectedViewAdapter: HelpNavigationBarBottomAdapter ->
                 injectedViewAdapter.setOnBackClickListener(IntervalClickListener {
-                    findNavController().popBackStack()
+                    activity?.onBackPressedDispatcher?.onBackPressed()
                 })
             }
         }

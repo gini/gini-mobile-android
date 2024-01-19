@@ -9,6 +9,7 @@ import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.navigation.NavController;
@@ -21,7 +22,7 @@ import androidx.navigation.NavController;
 public interface FragmentImplCallback {
 
     @Nullable
-    Activity getActivity();
+    FragmentActivity getActivity();
 
     @Nullable
     View getView();
