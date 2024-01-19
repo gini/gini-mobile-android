@@ -145,21 +145,15 @@ class ClientGiniCaptureFragment :
 
                     else -> {}
                 }
-                if (isIntentActionViewOrSend(requireActivity().intent)) {
-                    requireActivity().finish()
-                }
+                requireActivity().finish()
             }
 
             CaptureResult.Empty -> {
-                if (isIntentActionViewOrSend(requireActivity().intent)) {
-                    requireActivity().finish()
-                }
+                requireActivity().finish()
             }
 
             CaptureResult.Cancel -> {
-                if (isIntentActionViewOrSend(requireActivity().intent)) {
-                    requireActivity().finish()
-                }
+                requireActivity().finish()
             }
 
             CaptureResult.EnterManually -> {
@@ -168,9 +162,7 @@ class ClientGiniCaptureFragment :
                     "Scan exited for manual enter mode",
                     Toast.LENGTH_SHORT
                 ).show()
-                if (isIntentActionViewOrSend(requireActivity().intent)) {
-                    requireActivity().finish()
-                }
+                requireActivity().finish()
             }
         }
     }
