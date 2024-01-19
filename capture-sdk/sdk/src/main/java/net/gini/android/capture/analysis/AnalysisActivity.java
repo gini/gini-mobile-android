@@ -86,7 +86,7 @@ public class AnalysisActivity extends AppCompatActivity implements
 
     private String mAnalysisErrorMessage;
     private Document mDocument;
-    private AnalysisFragmentCompat mFragment;
+    private AnalysisFragment mFragment;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -136,7 +136,7 @@ public class AnalysisActivity extends AppCompatActivity implements
     }
 
     @VisibleForTesting
-    AnalysisFragmentCompat getFragment() {
+    AnalysisFragment getFragment() {
         return mFragment;
     }
 
@@ -153,7 +153,7 @@ public class AnalysisActivity extends AppCompatActivity implements
     }
 
     private void createFragment() {
-        mFragment = AnalysisFragmentCompat.createInstance(mDocument, mAnalysisErrorMessage);
+        mFragment = AnalysisFragment.createInstance(mDocument, mAnalysisErrorMessage);
     }
 
     private void initFragment() {
@@ -177,7 +177,7 @@ public class AnalysisActivity extends AppCompatActivity implements
     }
 
     private void retainFragment() {
-        mFragment = (AnalysisFragmentCompat) getSupportFragmentManager().findFragmentByTag(
+        mFragment = (AnalysisFragment) getSupportFragmentManager().findFragmentByTag(
                 ANALYSIS_FRAGMENT);
     }
 

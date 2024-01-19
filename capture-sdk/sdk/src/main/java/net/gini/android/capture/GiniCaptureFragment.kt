@@ -11,7 +11,7 @@ import androidx.fragment.app.FragmentFactory
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import net.gini.android.capture.analysis.AnalysisActivity
-import net.gini.android.capture.analysis.AnalysisFragmentCompat
+import net.gini.android.capture.analysis.AnalysisFragment
 import net.gini.android.capture.analysis.AnalysisFragmentCompatDirections
 import net.gini.android.capture.analysis.AnalysisFragmentListener
 import net.gini.android.capture.camera.CameraFragment
@@ -259,7 +259,8 @@ class CaptureFragmentFactory(
                 )
             }
 
-            AnalysisFragmentCompat::class.java.name -> return AnalysisFragmentCompat().apply {
+            AnalysisFragment::class.java.name -> return AnalysisFragment()
+                .apply {
                 setListener(
                     analysisFragmentListener
                 )

@@ -7,8 +7,6 @@ import static net.gini.android.capture.analysis.RotationMatcher.withRotation;
 import static net.gini.android.capture.test.Helpers.getTestJpeg;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -23,11 +21,9 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
-import android.view.View;
 
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
-import net.gini.android.capture.GiniCaptureHelper;
 import net.gini.android.capture.R;
 import net.gini.android.capture.document.DocumentFactory;
 import net.gini.android.capture.document.ImageDocument;
@@ -44,7 +40,6 @@ import org.junit.runner.RunWith;
 import org.robolectric.annotation.Config;
 import org.robolectric.annotation.Implementation;
 import org.robolectric.annotation.Implements;
-import org.robolectric.shadows.ShadowViewGroup;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -111,11 +106,11 @@ public class AnalysisFragmentImplTest {
             @NonNull final AnalysisScreenPresenter presenter,
             @NonNull final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef) {
         AnalysisFragmentCompatFake.sFragmentImplFactory =
-                new FragmentImplFactory<AnalysisFragmentImpl, AnalysisFragmentCompat>() {
+                new FragmentImplFactory<AnalysisFragmentImpl, AnalysisFragment>() {
                     @NonNull
                     @Override
                     public AnalysisFragmentImpl createFragmentImpl(
-                            @NonNull final AnalysisFragmentCompat fragment) {
+                            @NonNull final AnalysisFragment fragment) {
                         final Document document = DocumentFactory.newEmptyImageDocument(
                                 Document.Source.newCameraSource(), Document.ImportMethod.NONE);
                         final AnalysisFragmentImpl analysisFragmentImpl = new AnalysisFragmentImpl(

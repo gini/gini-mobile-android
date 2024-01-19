@@ -7,9 +7,9 @@ import net.gini.android.capture.test.FragmentImplFactory;
  *
  * Copyright (c) 2019 Gini GmbH.
  */
-public class AnalysisFragmentCompatFake extends AnalysisFragmentCompat {
+public class AnalysisFragmentCompatFake extends AnalysisFragment {
 
-    public static FragmentImplFactory<AnalysisFragmentImpl, AnalysisFragmentCompat>
+    public static FragmentImplFactory<AnalysisFragmentImpl, AnalysisFragment>
             sFragmentImplFactory;
 
     public AnalysisFragmentCompatFake() {

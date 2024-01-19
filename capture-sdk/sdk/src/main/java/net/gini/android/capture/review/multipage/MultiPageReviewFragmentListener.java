@@ -1,14 +1,9 @@
 package net.gini.android.capture.review.multipage;
 
-import android.content.Context;
-import android.content.Intent;
-
-import net.gini.android.capture.AsyncCallback;
 import net.gini.android.capture.Document;
-import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.GiniCaptureError;
 import net.gini.android.capture.analysis.AnalysisActivity;
-import net.gini.android.capture.analysis.AnalysisFragmentCompat;
+import net.gini.android.capture.analysis.AnalysisFragment;
 import net.gini.android.capture.camera.CameraFragment;
 import net.gini.android.capture.document.GiniCaptureMultiPageDocument;
 
@@ -34,9 +29,9 @@ public interface MultiPageReviewFragmentListener {
      * <p> If you use the Screen API you should start the {@link AnalysisActivity} and set the
      * document as the {@link AnalysisActivity#EXTRA_IN_DOCUMENT} extra.
      *
-     * <p> If you use the Component API you should start the {@link AnalysisFragmentCompat}
+     * <p> If you use the Component API you should start the {@link AnalysisFragment}
      * and pass the document when creating it with {@link
-     * AnalysisFragmentCompat#createInstance(Document, String)}.
+     * AnalysisFragment#createInstance(Document, String)}.
      *
      * @param document contains the reviewed image (can be the original one or a modified image)
      */

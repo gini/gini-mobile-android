@@ -7,10 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import net.gini.android.capture.Document;
-import net.gini.android.capture.internal.ui.FragmentImplCallback;
-import net.gini.android.capture.internal.util.AlertDialogHelperCompat;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
@@ -18,10 +14,14 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
+import net.gini.android.capture.Document;
+import net.gini.android.capture.internal.ui.FragmentImplCallback;
+import net.gini.android.capture.internal.util.AlertDialogHelperCompat;
+
 /**
  * Internal use only.
  */
-public class AnalysisFragmentCompat extends Fragment implements FragmentImplCallback,
+public class AnalysisFragment extends Fragment implements FragmentImplCallback,
         AnalysisFragmentInterface {
 
     private AnalysisFragmentImpl mFragmentImpl;
@@ -120,9 +120,9 @@ public class AnalysisFragmentCompat extends Fragment implements FragmentImplCall
      *
      * @return a new instance of the Fragment
      */
-    public static AnalysisFragmentCompat createInstance(@NonNull final Document document,
-            @Nullable final String documentAnalysisErrorMessage) {
-        final AnalysisFragmentCompat fragment = new AnalysisFragmentCompat();
+    public static AnalysisFragment createInstance(@NonNull final Document document,
+                                                  @Nullable final String documentAnalysisErrorMessage) {
+        final AnalysisFragment fragment = new AnalysisFragment();
         fragment.setArguments(
                 AnalysisFragmentHelper.createArguments(document, documentAnalysisErrorMessage));
         return fragment;

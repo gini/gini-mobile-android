@@ -54,7 +54,7 @@
 
     <fragment
         android:id="@+id/gc_destination_analysis_fragment"
-        android:name="net.gini.android.capture.analysis.AnalysisFragmentCompat"
+        android:name="net.gini.android.capture.analysis.AnalysisFragment"
         android:label="fragment_analysis"
         tools:layout="@layout/gc_fragment_analysis">
         <action

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/backgroundColor"
-    tools:context=".analysis.AnalysisFragmentCompat">
+    tools:context=".analysis.AnalysisFragment">
 
     <net.gini.android.capture.view.InjectedViewContainer
         android:id="@+id/gc_navigation_top_bar"
