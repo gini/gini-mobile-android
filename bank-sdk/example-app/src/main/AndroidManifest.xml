@@ -67,27 +67,7 @@
             android:name=".ui.CaptureFlowHostActivity"
             android:theme="@style/GiniCaptureTheme"
             android:launchMode="singleTask"
-            android:exported="true">
-            <intent-filter
-                android:label="@string/intent_filter_label_file_import_fragments"
-                tools:ignore="AppLinkUrlError">
-                <action android:name="android.intent.action.VIEW" />
-                <action android:name="android.intent.action.SEND" />
-                <action android:name="android.intent.action.SEND_MULTIPLE" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="image/*" />
-            </intent-filter>
-            <intent-filter
-                android:label="@string/intent_filter_label_file_import_fragments"
-                tools:ignore="AppLinkUrlError">
-                <action android:name="android.intent.action.VIEW" />
-                <action android:name="android.intent.action.SEND" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="application/pdf" />
-            </intent-filter>
-        </activity>
+            android:exported="false"/>
 
         <provider
             android:name="androidx.core.content.FileProvider"

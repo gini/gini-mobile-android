@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
         showVersions()
         if (savedInstanceState == null) {
             if (isIntentActionViewOrSend(intent)) {
-                startGiniCaptureSdkForImportedFile(intent)
+                startGiniCaptureSdkForOpenWith(intent)
             }
         }
     }
@@ -64,7 +64,7 @@ class MainActivity : AppCompatActivity() {
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         if (intent != null && isIntentActionViewOrSend(intent)) {
-            startGiniCaptureSdkForImportedFile(intent)
+            startGiniCaptureSdkForOpenWith(intent)
         }
     }
 
@@ -94,7 +94,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.buttonStartSingleActivity.setOnClickListener {
             configureGiniBank()
-            startActivity(Intent(this, CaptureFlowHostActivity::class.java))
+            startActivity(CaptureFlowHostActivity.newIntent(this))
         }
 
         binding.textGiniBankVersion.setOnClickListener {
@@ -141,9 +141,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun startGiniCaptureSdkForImportedFile(importedFileIntent: Intent) {
+    private fun startGiniCaptureSdkForOpenWith(openWithIntent: Intent) {
         if (configurationViewModel.configurationFlow.value.isFileImportEnabled) {
-            startGiniCaptureSdk(importedFileIntent)
+            // TODO: once CaptureFlowActivity uses the CaptureFlowFragment use startGiniCaptureSdk(openWithIntent) again
+            configureGiniBank()
+            startActivity(CaptureFlowHostActivity.newIntent(this, openWithIntent))
         } else {
             MaterialAlertDialogBuilder(this).setMessage(R.string.file_import_feature_is_disabled_dialog_message)
                 .setPositiveButton("OK") { dialogInterface, i -> {} }.show()
