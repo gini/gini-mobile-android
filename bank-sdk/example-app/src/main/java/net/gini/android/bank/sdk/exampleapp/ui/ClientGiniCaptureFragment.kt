@@ -176,10 +176,6 @@ class ClientGiniCaptureFragment :
     }
 
 
-    override fun onFinishedWithCancellation() {
-        requireActivity().finish()
-    }
-
 
 }
 

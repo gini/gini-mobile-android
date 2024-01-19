@@ -114,10 +114,6 @@ class CaptureFlowFragment(private val analysisIntent: Intent? = null) :
         }
     }
 
-    override fun onFinishedWithCancellation() {
-        captureFlowFragmentListener.onFinishedWithCancellation()
-    }
-
     override fun onPayInvoice(
         specificExtractions: Map<String, GiniCaptureSpecificExtraction>,
         compoundExtractions: Map<String, GiniCaptureCompoundExtraction>
@@ -144,8 +140,6 @@ class CaptureFlowFragment(private val analysisIntent: Intent? = null) :
 
 interface CaptureFlowFragmentListener {
     fun onFinishedWithResult(result: CaptureResult)
-
-    fun onFinishedWithCancellation()
 
     fun onCheckImportedDocument(
         document: Document,

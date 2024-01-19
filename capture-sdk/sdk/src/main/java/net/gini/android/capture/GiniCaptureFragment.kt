@@ -212,7 +212,7 @@ class GiniCaptureFragment(private val analysisIntent: Intent? = null) :
     }
 
     override fun onDefaultPDFAppAlertDialogCancelled() {
-        giniCaptureFragmentListener.onFinishedWithCancellation()
+        giniCaptureFragmentListener.onFinishedWithResult(CaptureSDKResult.Cancel)
     }
 
     override fun onExtractionsAvailable(extractions: MutableMap<String, GiniCaptureSpecificExtraction>) {
@@ -285,8 +285,6 @@ class CaptureFragmentFactory(
 
 interface GiniCaptureFragmentListener {
     fun onFinishedWithResult(result: CaptureSDKResult)
-
-    fun onFinishedWithCancellation()
 
     fun onCheckImportedDocument(
         document: Document,
