@@ -9,6 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.capture.CaptureConfiguration
+import net.gini.android.bank.sdk.capture.CaptureFlowFragment
 import net.gini.android.bank.sdk.capture.CaptureFlowFragmentListener
 import net.gini.android.bank.sdk.capture.CaptureResult
 import net.gini.android.bank.sdk.capture.ResultError
@@ -30,6 +31,10 @@ class ClientGiniCaptureFragment :
         super.onCreate(savedInstanceState)
         if (savedInstanceState == null) {
             checkCameraPermission()
+        } else {
+            val captureFlowFragment =
+                requireActivity().supportFragmentManager.findFragmentByTag("fragment_host") as? CaptureFlowFragment
+            captureFlowFragment?.setListener(this)
         }
     }
 
