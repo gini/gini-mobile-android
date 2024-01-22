@@ -142,20 +142,6 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
         giniCaptureFragmentListener.onCheckImportedDocument(document, callback)
     }
 
-    override fun onProceedToAnalysisScreen(document: GiniCaptureMultiPageDocument<*, *>) {
-        navController.navigate(MultiPageReviewFragmentDirections.toAnalysisFragment(document, ""))
-    }
-
-    override fun onReturnToCameraScreenToAddPages() {
-        // When returning to the camera screen for adding pages we navigate to a new CameraFragment instance
-        navController.navigate(MultiPageReviewFragmentDirections.toCameraFragmentForAddingPages())
-    }
-
-    override fun onReturnToCameraScreenForFirstPage() {
-        // When returning to the camera screen for adding the first page we navigate back to the first CameraFragment instance
-        navController.navigate(MultiPageReviewFragmentDirections.toCameraFragmentForFirstPage())
-    }
-
     override fun onImportedDocumentReviewCancelled() {
         // TODO: not needed anymore because this was called when the user deleted the last image imported via "open with"
         //       and since version 3.x we upload "open with" images directly (like PDFs) and users can't delete them

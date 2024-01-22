@@ -19,6 +19,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
@@ -435,7 +436,9 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
             mReviewNavigationBarBottomAdapter.setInjectedViewAdapterHolder(new InjectedViewAdapterHolder<>(
                     GiniCapture.getInstance().internal().getReviewNavigationBarBottomAdapterInstance(),
                     injectedViewAdapter -> {
-                        injectedViewAdapter.setOnAddPageButtonClickListener(new IntervalClickListener(v -> mListener.onReturnToCameraScreenToAddPages()));
+                        injectedViewAdapter.setOnAddPageButtonClickListener(new IntervalClickListener(v -> {
+                            NavHostFragment.findNavController(this).navigate(MultiPageReviewFragmentDirections.toCameraFragmentForAddingPages());
+                        }));
 
                         boolean isMultiPage = GiniCapture.getInstance().isMultiPageEnabled();
 
@@ -528,7 +531,9 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
             mAddPagesButton.setVisibility(GiniCapture.getInstance().isMultiPageEnabled() ? View.VISIBLE : View.GONE);
         }
 
-        ClickListenerExtKt.setIntervalClickListener(mAddPagesButton, v -> mListener.onReturnToCameraScreenToAddPages());
+        ClickListenerExtKt.setIntervalClickListener(mAddPagesButton, v -> {
+            NavHostFragment.findNavController(this).navigate(MultiPageReviewFragmentDirections.toCameraFragmentForAddingPages());
+        });
     }
 
 
@@ -551,7 +556,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
                         .create().show();
             } else {
                 doDeleteDocumentAndUpdateUI(document);
-                mListener.onReturnToCameraScreenForFirstPage();
+                NavHostFragment.findNavController(this).navigate(MultiPageReviewFragmentDirections.toCameraFragmentForFirstPage());
             }
         } else {
             doDeleteDocumentAndUpdateUI(document);
@@ -667,7 +672,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     void onNextButtonClicked() {
         trackReviewScreenEvent(ReviewScreenEvent.NEXT);
         mNextClicked = true;
-        mListener.onProceedToAnalysisScreen(mMultiPageDocument);
+        NavHostFragment.findNavController(this).navigate(MultiPageReviewFragmentDirections.toAnalysisFragment(mMultiPageDocument, ""));
     }
 
     @Override

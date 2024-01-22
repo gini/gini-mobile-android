@@ -23,37 +23,6 @@ import net.gini.android.capture.document.GiniCaptureMultiPageDocument;
 public interface MultiPageReviewFragmentListener {
 
     /**
-     * Called when all pages were uploaded successfully and the user tapped on the "next" button.
-     *
-     * <p> If you use the Screen API you should start the {@link AnalysisFragment} and
-     *
-     * <p> If you use the Component API you should start the {@link AnalysisFragment}
-     * and pass the document when creating it with {@link
-     * AnalysisFragment#createInstance(Document, String)}.
-     *
-     * @param document contains the reviewed image (can be the original one or a modified image)
-     */
-    void onProceedToAnalysisScreen(@NonNull GiniCaptureMultiPageDocument document);
-
-    /**
-     * Called when the user wants to add a picture of another page. Also called when the user has
-     * deleted every page and the document consisted of images taken with the Camera Screen or
-     * imported using the Camera Screen.
-     *
-     * <p> If you host the {@link MultiPageReviewFragment} in its own Activity, then you should
-     * simply finish the Activity.
-     *
-     * <p> If you use one Activity to host all the Gini Capture fragments, then you should display the
-     * {@link CameraFragment} again.
-     */
-    void onReturnToCameraScreenToAddPages();
-
-    /**
-     * Called when user deletes the last taken or imported image from {@link MultiPageReviewFragment}
-     */
-    void onReturnToCameraScreenForFirstPage();
-
-    /**
      * Called when the user deleted all the pages of a document received from another app.
      *
      * <p> At this point you should finish Gini Capture by closing the {@link MultiPageReviewFragment}..
