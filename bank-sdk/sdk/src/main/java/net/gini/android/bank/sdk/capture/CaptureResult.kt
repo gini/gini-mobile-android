@@ -3,7 +3,6 @@ package net.gini.android.bank.sdk.capture
 import android.content.Intent
 import android.os.Bundle
 import net.gini.android.capture.CaptureSDKResult
-import net.gini.android.capture.CaptureSDKResultError
 import net.gini.android.capture.GiniCaptureError
 import net.gini.android.capture.camera.CameraActivity
 import net.gini.android.capture.internal.util.FileImportValidator
@@ -61,25 +60,13 @@ fun CaptureSDKResult.toCaptureResult(): CaptureResult {
             CaptureResult.Cancel
         }
         is CaptureSDKResult.Error -> {
-            CaptureResult.Error(this.value.toResultError())
+            CaptureResult.Error(ResultError.Capture(this.value))
         }
         is CaptureSDKResult.EnterManually -> {
             CaptureResult.EnterManually
         }
     }
 }
-
-fun CaptureSDKResultError.toResultError(): ResultError {
-    return when (this) {
-        is CaptureSDKResultError.Capture -> {
-            ResultError.Capture(this.giniCaptureError)
-        }
-        is CaptureSDKResultError.FileImport -> {
-            ResultError.FileImport(this.code, this.message)
-        }
-    }
-}
-
 
 sealed class ResultError {
     /**

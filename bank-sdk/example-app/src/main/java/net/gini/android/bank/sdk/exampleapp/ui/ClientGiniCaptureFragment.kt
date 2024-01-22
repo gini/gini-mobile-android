@@ -14,9 +14,7 @@ import net.gini.android.bank.sdk.capture.CaptureFlowFragmentListener
 import net.gini.android.bank.sdk.capture.CaptureResult
 import net.gini.android.bank.sdk.capture.ResultError
 import net.gini.android.bank.sdk.exampleapp.R
-import net.gini.android.bank.sdk.exampleapp.core.ExampleUtil.isIntentActionViewOrSend
 import net.gini.android.bank.sdk.exampleapp.core.PermissionHandler
-import net.gini.android.capture.CaptureSDKResultError
 import net.gini.android.capture.DocumentImportEnabledFileTypes
 import net.gini.android.capture.network.GiniCaptureDefaultNetworkService
 import net.gini.android.core.api.DocumentMetadata
@@ -134,17 +132,17 @@ class ClientGiniCaptureFragment :
 
             is CaptureResult.Error -> {
                 when (result.value) {
-                    is CaptureResult ->
+                    is ResultError.Capture ->
                         Toast.makeText(
                             requireContext(),
-                            "Error: ${(result.value as CaptureSDKResultError.Capture).giniCaptureError.errorCode} ${(result.value as CaptureSDKResultError.Capture).giniCaptureError.message}",
+                            "Error: ${(result.value as ResultError.Capture).giniCaptureError.errorCode} ${(result.value as ResultError.Capture).giniCaptureError.message}",
                             Toast.LENGTH_LONG
                         ).show()
 
                     is ResultError.FileImport ->
                         Toast.makeText(
                             requireContext(),
-                            "Error: ${(result.value as CaptureSDKResultError.FileImport).code} ${(result.value as CaptureSDKResultError.FileImport).message}",
+                            "Error: ${(result.value as ResultError.FileImport).code} ${(result.value as ResultError.FileImport).message}",
                             Toast.LENGTH_LONG
                         ).show()
 

@@ -34,24 +34,12 @@ sealed class CaptureSDKResult {
     /**
      * Capture flow returned an error.
      */
-    class Error(val value: CaptureSDKResultError) : CaptureSDKResult()
+    class Error(val value: GiniCaptureError) : CaptureSDKResult()
 
     /**
      * User decided to enter data manually after the scanning resulted in no results or an error.
      */
     object EnterManually: CaptureSDKResult()
-}
-
-sealed class CaptureSDKResultError {
-    /**
-     * An error which occurred during the capture flow.
-     */
-    data class Capture(val giniCaptureError: GiniCaptureError) : CaptureSDKResultError()
-
-    /**
-     * An error which occurred during importing a file shared from another app.
-     */
-    data class FileImport(val code: FileImportValidator.Error? = null, val message: String? = null) : CaptureSDKResultError()
 }
 
 internal fun CaptureSDKResult.Success.toIntent(): Intent {
