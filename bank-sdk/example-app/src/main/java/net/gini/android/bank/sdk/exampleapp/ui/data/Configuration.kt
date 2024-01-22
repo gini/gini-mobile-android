@@ -131,7 +131,7 @@ data class Configuration(
     val importedFileSizeBytesLimit: Int = FileImportValidator.FILE_SIZE_LIMIT,
 
     // 30 entry point
-    val entryPoint: EntryPoint = EntryPoint.FIELD,
+    val entryPoint: EntryPoint = EntryPoint.BUTTON,
 
     // 31 enable return assistant
     val isReturnAssistantEnabled: Boolean = true,
