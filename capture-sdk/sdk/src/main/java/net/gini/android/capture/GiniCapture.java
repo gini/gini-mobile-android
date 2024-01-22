@@ -694,14 +694,14 @@ public class GiniCapture {
         void callback(CreateGiniCaptureFragmentForIntentResult result);
     }
 
-    static class CreateGiniCaptureFragmentForIntentResult<T> {
+    static class CreateGiniCaptureFragmentForIntentResult {
         static class Cancelled extends CreateGiniCaptureFragmentForIntentResult {}
 
         static class Success extends CreateGiniCaptureFragmentForIntentResult {
             @NonNull
             GiniCaptureFragment fragment;
 
-            public Success(GiniCaptureFragment fragment) {
+            public Success(@NonNull GiniCaptureFragment fragment) {
                 this.fragment = fragment;
             }
         }
@@ -709,7 +709,7 @@ public class GiniCapture {
             @NonNull
             Exception exception;
 
-            public Error(ImportedFileValidationException exception) {
+            public Error(@NonNull ImportedFileValidationException exception) {
                 this.exception = exception;
             }
 
