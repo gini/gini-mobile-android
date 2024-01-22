@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="net.gini.android.bank.sdk">
 
-    <application/>
+    <application>
+        <activity android:name=".capture.CaptureFlowActivity" />
+    </application>
 
 </manifest>
