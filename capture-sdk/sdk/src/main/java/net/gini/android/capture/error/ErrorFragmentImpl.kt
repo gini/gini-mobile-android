@@ -41,6 +41,11 @@ class ErrorFragmentImpl(
 
     fun onCreate(savedInstanceState: Bundle?) {
         ActivityHelper.forcePortraitOrientationOnPhones(fragmentCallback.activity)
+        // Clear the image from the memory store because the user can only exit for manual entry or in some cases
+        // can go back to the camera to take new pictures
+        if (GiniCapture.hasInstance()) {
+            GiniCapture.getInstance().internal().imageMultiPageDocumentMemoryStore.clear()
+        }
     }
 
     fun onCreateView(
