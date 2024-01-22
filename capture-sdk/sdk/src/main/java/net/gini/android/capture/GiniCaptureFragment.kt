@@ -48,9 +48,6 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
     private lateinit var giniCaptureFragmentListener: GiniCaptureFragmentListener
     private lateinit var oncePerInstallEventStore: OncePerInstallEventStore
 
-    // Related to navigation logic ported from CameraActivity
-    private var addPages = false
-
     // Remember the original primary navigation fragment so that we can restore it when this fragment is detached
     private var originalPrimaryNavigationFragment: Fragment? = null
 
@@ -138,36 +135,6 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
 
     //new listener onFinishedWithResult -> returns the result to the client
 
-    override fun onProceedToAnalysisScreen(document: Document) {
-        navController.navigate(CameraFragmentDirections.toAnalysisFragment(document, ""))
-    }
-
-    override fun onProceedToMultiPageReviewScreen(
-        multiPageDocument: GiniCaptureMultiPageDocument<*, *>,
-        shouldScrollToLastPage: Boolean
-    ) {
-        if (multiPageDocument.type == Document.Type.IMAGE_MULTI_PAGE) {
-            if (addPages) {
-                // In case we returned to take more images
-                // Let the app know if it should scroll to the last position
-//                val intent: Intent = Intent(requireActivity(), MultiPageReviewActivity::class.java)
-//                intent.putExtra(MultiPageReviewActivity.SHOULD_SCROLL_TO_LAST_PAGE, shouldScrollToLastPage)
-//                requireActivity().setResult(MultiPageReviewActivity.RESULT_SCROLL_TO_LAST_PAGE, intent)
-                navController.navigate(CameraFragmentDirections.toReviewFragmentForMorePages(true, multiPageDocument))
-                // For subsequent images a new CameraActivity was launched from the MultiPageReviewActivity
-                // and so we can simply finish to return to the review activity
-                activity?.onBackPressedDispatcher?.onBackPressed()
-            } else {
-                // For the first image navigate to the review fragment by replacing the camera fragment to make
-                // the review fragment the new start destination
-//                val intent = MultiPageReviewActivity.createIntent(requireActivity(), shouldScrollToLastPage)
-                navController.navigate(CameraFragmentDirections.toReviewFragmentForFirstPage())
-            }
-        } else {
-            throw UnsupportedOperationException("Unsupported multi-page document type.")
-        }
-    }
-
     override fun onCheckImportedDocument(
         document: Document,
         callback: CameraFragmentListener.DocumentCheckResultCallback
@@ -182,13 +149,11 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
     override fun onReturnToCameraScreenToAddPages() {
         // When returning to the camera screen for adding pages we navigate to a new CameraFragment instance
         navController.navigate(MultiPageReviewFragmentDirections.toCameraFragmentForAddingPages())
-        addPages = true
     }
 
     override fun onReturnToCameraScreenForFirstPage() {
         // When returning to the camera screen for adding the first page we navigate back to the first CameraFragment instance
         navController.navigate(MultiPageReviewFragmentDirections.toCameraFragmentForFirstPage())
-        addPages = false
     }
 
     override fun onImportedDocumentReviewCancelled() {
@@ -237,11 +202,6 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
                 emptyList()
             )
         )
-    }
-
-    override fun noExtractionsFromQRCode(qrCodeDocument: QRCodeDocument) {
-        // TODO: launch the no results fragment for qr codes
-        // TODO("Not yet implemented")
     }
 
     override fun onEnterManuallyPressed() {

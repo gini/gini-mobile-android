@@ -22,27 +22,6 @@ import java.util.Map;
  * @suppress
  */
 public interface CameraFragmentListener {
-    /**
-     * <p>
-     * Called when the user has imported a document that passed the Gini Capture SDK's validation and any custom checks that were implemented.
-     * </p>
-     *
-     * @param document the image taken by the camera or the validated imported document
-     */
-    void onProceedToAnalysisScreen(@NonNull Document document);
-
-
-    /**
-     * <p>
-     * Called when starting MultiPageReview Screen
-     * </p>
-     *
-     * @param multiPageDocument the image taken by the camera or the validated imported document
-     * @param shouldScrollToLastPage flag which defines if pages should scroll to the last page
-     */
-
-    void onProceedToMultiPageReviewScreen(
-            @NonNull final GiniCaptureMultiPageDocument multiPageDocument, boolean shouldScrollToLastPage);
 
     /**
      * <p>
@@ -75,34 +54,6 @@ public interface CameraFragmentListener {
      */
     void onExtractionsAvailable(
             @NonNull final Map<String, GiniCaptureSpecificExtraction> extractions);
-
-    /**
-     * <p>
-     *     Called when the user clicked the QR Code detected popup.
-     *     You should upload the {@link QRCodeDocument}'s data to the Gini API to get the extractions,
-     *     close the Gini Capture SDK and continue to your app's transfer form.
-     * </p>
-     * <p>
-     *      See {@link QRCodeDocument} for supported formats.
-     * </p>
-     *
-     * @param qrCodeDocument contains payment data from a QR Code
-     *
-     * @Deprecated When a {@link GiniCapture} instance is available the QRCode
-     * is analyzed internally by using the configured {@link GiniCaptureNetworkService}
-     * implementation. The extractions will be returned in {@link CameraFragmentListener#onExtractionsAvailable(Map)}.
-     */
-    @Deprecated
-    default void onQRCodeAvailable(@NonNull QRCodeDocument qrCodeDocument) {
-
-    }
-
-    /**
-     * <p>
-     *     Called when when QR code scanning returns empty extractions
-     * </p>
-     */
-    void noExtractionsFromQRCode(@NonNull QRCodeDocument qrCodeDocument);
 
     /**
      * <p>

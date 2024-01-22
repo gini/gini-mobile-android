@@ -22,6 +22,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
@@ -29,6 +30,7 @@ import androidx.annotation.VisibleForTesting;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.Group;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentActivity;
 import androidx.navigation.NavDestination;
 
 import net.gini.android.capture.AsyncCallback;
@@ -87,6 +89,7 @@ import net.gini.android.capture.logging.ErrorLogger;
 import net.gini.android.capture.network.Error;
 import net.gini.android.capture.network.model.GiniCaptureExtraction;
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
+import net.gini.android.capture.noresults.NoResultsFragment;
 import net.gini.android.capture.requirements.CameraHolder;
 import net.gini.android.capture.requirements.CameraResolutionRequirement;
 import net.gini.android.capture.requirements.CameraXHolder;
@@ -145,15 +148,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private static final CameraFragmentListener NO_OP_LISTENER = new CameraFragmentListener() {
         @Override
-        public void onProceedToAnalysisScreen(@NonNull final Document document) {
-        }
-
-        @Override
-        public void onProceedToMultiPageReviewScreen(
-                @NonNull final GiniCaptureMultiPageDocument multiPageDocument, boolean shouldScrollToLastPage) {
-        }
-
-        @Override
         public void onCheckImportedDocument(@NonNull final Document document,
                                             @NonNull final DocumentCheckResultCallback callback) {
             callback.documentAccepted();
@@ -166,15 +160,9 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         @Override
         public void onExtractionsAvailable(
                 @NonNull final Map<String, GiniCaptureSpecificExtraction> extractions) {
-
-        }
-
-        @Override
-        public void noExtractionsFromQRCode(QRCodeDocument qrCodeDocument) {
         }
     };
 
-    private static final int REQ_CODE_CHOOSE_FILE = 1;
     private static final String IN_MULTI_PAGE_STATE_KEY = "IN_MULTI_PAGE_STATE_KEY";
     private static final String IS_FLASH_ENABLED_KEY = "IS_FLASH_ENABLED_KEY";
 
@@ -220,12 +208,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private boolean mImportDocumentButtonEnabled;
     private ImportImageFileUrisAsyncTask mImportUrisAsyncTask;
-    private boolean mQRCodeAnalysisCompleted;
-    private QRCodeDocument mQRCodeDocument;
     private Group mImportButtonGroup;
-    private boolean mInstanceStateSaved;
-    private int mMultiPageDocumentSize = 0;
-    private boolean mShouldScrollToLastPage = false;
     private String mQRCodeContent;
 
     private InjectedViewContainer<NavigationBarTopAdapter> topAdapterInjectedViewContainer;
@@ -335,7 +318,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         if (savedInstanceState != null) {
             restoreSavedState(savedInstanceState);
         }
-
     }
 
     private void initFlashState() {
@@ -369,6 +351,26 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             setQRDisabledTexts();
         }
         return view;
+    }
+
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        handleOnBackPressed();
+    }
+
+    private void handleOnBackPressed() {
+        final FragmentActivity activity = mFragment.getActivity();
+        if (activity == null) {
+            return;
+        }
+        activity.getOnBackPressedDispatcher().addCallback(mFragment.getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                trackCameraScreenEvent(CameraScreenEvent.EXIT);
+                setEnabled(false);
+                remove();
+                mFragment.getActivity().getOnBackPressedDispatcher().onBackPressed();
+            }
+        });
     }
 
     private void addCameraPreviewView() {
@@ -414,7 +416,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         if (activity == null) {
             return;
         }
-        mInstanceStateSaved = false;
         initViews();
         initCameraController(activity);
         addCameraPreviewView();
@@ -505,13 +506,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                 mMultiPageDocument = multiPageDocument;
                 mInMultiPageState = true;
                 updatePhotoThumbnail();
-
-                if (multiPageDocument.getDocuments().size() > mMultiPageDocumentSize) {
-                    mMultiPageDocumentSize = multiPageDocument.getDocuments().size();
-                    setShouldScrollToLastPage(true);
-                } else {
-                    setShouldScrollToLastPage(false);
-                }
 
                 topAdapterInjectedViewContainer.modifyAdapterIfOwned(injectedViewAdapter -> {
                     final boolean isBottomNavigationBarEnabled = GiniCapture.getInstance().isBottomNavigationBarEnabled();
@@ -635,7 +629,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     }
 
     void onSaveInstanceState(@NonNull final Bundle outState) {
-        mInstanceStateSaved = true;
         outState.putBoolean(IN_MULTI_PAGE_STATE_KEY, mInMultiPageState);
         outState.putBoolean(IS_FLASH_ENABLED_KEY, mIsFlashEnabled);
     }
@@ -905,7 +898,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         switch (paymentQRCodeData.getFormat()) {
             case EPC069_12:
             case BEZAHL_CODE:
-                mQRCodeDocument = QRCodeDocument.fromPaymentQRCodeData(
+                QRCodeDocument mQRCodeDocument = QRCodeDocument.fromPaymentQRCodeData(
                         paymentQRCodeData);
                 analyzeQRCode(mQRCodeDocument);
                 break;
@@ -961,7 +954,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         if (activity == null) {
             return;
         }
-        mQRCodeAnalysisCompleted = false;
         if (GiniCapture.hasInstance()) {
             final NetworkRequestsManager networkRequestsManager =
                     GiniCapture.getInstance().internal().getNetworkRequestsManager();
@@ -996,9 +988,9 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                                 handleAnalysisError(throwable, qrCodeDocument);
                             } else if (requestResult != null) {
                                 mPaymentQRCodePopup.hide();
-                                mQRCodeAnalysisCompleted = true;
                                 if (requestResult.getAnalysisResult().getExtractions().isEmpty()) {
-                                    mListener.noExtractionsFromQRCode(qrCodeDocument);
+                                    //mListener.noExtractionsFromQRCode(qrCodeDocument);
+                                    NoResultsFragment.navigateToNoResultsFragment(mFragment.findNavController(), CameraFragmentDirections.toNoResultsFragment(qrCodeDocument));
                                     return null;
                                 }
                                 mListener.onExtractionsAvailable(
@@ -1006,11 +998,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                             }
                             return null;
                         });
-            } else {
-                mListener.onQRCodeAvailable(qrCodeDocument);
             }
-        } else {
-            mListener.onQRCodeAvailable(qrCodeDocument);
         }
     }
 
@@ -1151,7 +1139,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                             final ImageMultiPageDocument multiPageDocument =
                                     (ImageMultiPageDocument) document;
                             addToMultiPageDocumentMemoryStore(multiPageDocument);
-                            mListener.onProceedToMultiPageReviewScreen(multiPageDocument, shouldScrollToLastPage());
+                            returnToMultiPageReviewScreen(true);
                         } else {
                             if (document.isReviewable()) {
                                 if (document.getType() == Document.Type.IMAGE &&
@@ -1160,10 +1148,10 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                                             document.getSource(), document.getImportMethod());
                                     addToMultiPageDocumentMemoryStore(multiPageDocument);
                                     multiPageDocument.addDocument(((ImageDocument) document));
-                                    mListener.onProceedToMultiPageReviewScreen(multiPageDocument, false);
+                                    proceedToMultiPageReviewScreen(false);
                                 }
                             } else {
-                                mListener.onProceedToAnalysisScreen(document);
+                                mFragment.findNavController().navigate(CameraFragmentDirections.toAnalysisFragment(document , ""));
                             }
                         }
                     }
@@ -1180,6 +1168,21 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                         showInvalidFileAlert(messageForUser);
                     }
                 });
+    }
+
+    private void returnToMultiPageReviewScreen(final boolean shouldScrollToLastPage) {
+        if (mFragment.getActivity() == null) {
+            return;
+        }
+        // TODO: use fragment result API to tell the multi-page review screen to scroll to the last page
+        mFragment.getActivity().getOnBackPressedDispatcher().onBackPressed();
+    }
+
+    private void proceedToMultiPageReviewScreen(final boolean shouldScrollToLastPage) {
+        if (mFragment.getActivity() == null) {
+            return;
+        }
+        mFragment.findNavController().navigate(CameraFragmentDirections.toReviewFragmentForFirstPage());
     }
 
     private void addToMultiPageDocumentMemoryStore(final ImageMultiPageDocument multiPageDocument) {
@@ -1258,7 +1261,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                 >= FileImportValidator.DOCUMENT_PAGE_LIMIT;
     }
 
-    @Override
     public void showActivityIndicatorAndDisableInteraction() {
         if (mLoadingIndicator.getInjectedViewAdapterHolder() == null
                 || mActivityIndicatorBackground == null) {
@@ -1273,7 +1275,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         disableInteraction();
     }
 
-    @Override
     public void hideActivityIndicatorAndEnableInteraction() {
         if (mLoadingIndicator.getInjectedViewAdapterHolder() == null
                 || mActivityIndicatorBackground == null) {
@@ -1286,14 +1287,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             return Unit.INSTANCE;
         });
         enableInteraction();
-    }
-
-    @Override
-    public void showError(@NonNull final String message, final int duration) {
-        if (mFragment.getActivity() == null || mLayoutRoot == null) {
-            return;
-        }
-        throw new UnsupportedOperationException("Cannot show error. Need to replace own ErrorSnackbar with Material Snackbar");
     }
 
     private void updatePhotoThumbnail() {
@@ -1416,11 +1409,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                                     mPhotoThumbnail.setImage(new PhotoThumbnail.ThumbnailBitmap(result.getBitmapPreview(),
                                             document.getRotationForDisplay()));
                                     mPhotoThumbnail.setImageCount(mMultiPageDocument.getDocuments().size());
-                                    /*setmIsTakingPicture(false);
-                                    mCameraController.startPreview();*/
-
-                                    mListener.onProceedToMultiPageReviewScreen(mMultiPageDocument, shouldScrollToLastPage());
-
+                                    returnToMultiPageReviewScreen(true);
                                 } else {
                                     if (isMultiPageEnabled()) {
                                         final ImageDocument document = createSavedDocument(result);
@@ -1443,7 +1432,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                                                 new PhotoThumbnail.ThumbnailBitmap(result.getBitmapPreview(),
                                                         document.getRotationForDisplay()));
                                         mPhotoThumbnail.setImageCount(mMultiPageDocument.getDocuments().size());
-                                        mListener.onProceedToMultiPageReviewScreen(mMultiPageDocument, shouldScrollToLastPage());
+                                        proceedToMultiPageReviewScreen(true);
                                         setmIsTakingPicture(false);
                                     } else {
                                         final ImageDocument document = createSavedDocument(result);
@@ -1461,7 +1450,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                                                 .getImageMultiPageDocumentMemoryStore()
                                                 .setMultiPageDocument(multiPageDocument);
                                         multiPageDocument.addDocument(document);
-                                        mListener.onProceedToMultiPageReviewScreen(multiPageDocument, false);
+                                        proceedToMultiPageReviewScreen(false);
                                         setmIsTakingPicture(false);
                                     }
                                     mCameraController.startPreview();
@@ -1508,7 +1497,9 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         }
         mFragment.showAlertDialog(activity.getString(R.string.gc_document_error_too_many_pages),
                 activity.getString(R.string.gc_document_error_multi_page_limit_review_pages_button),
-                (dialogInterface, i) -> mListener.onProceedToMultiPageReviewScreen(mMultiPageDocument, shouldScrollToLastPage()), activity.getString(R.string.gc_document_error_multi_page_limit_cancel_button),
+                (dialogInterface, i) -> {
+                    returnToMultiPageReviewScreen(true);
+                }, activity.getString(R.string.gc_document_error_multi_page_limit_cancel_button),
                 null, null);
     }
 
@@ -1556,15 +1547,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         mButtonCameraTrigger.setEnabled(true);
     }
 
-    @Override
-    public void showInterface() {
-        if (!mInterfaceHidden || isNoPermissionViewVisible()) {
-            return;
-        }
-        mInterfaceHidden = false;
-        showInterfaceAnimated();
-    }
-
     private void showInterfaceAnimated() {
         showCameraTriggerButtonAnimated();
         showDocumentCornerGuidesAnimated();
@@ -1592,15 +1574,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private void showPaneAnimated() {
         mPaneWrapper.animate().alpha(1.0f);
-    }
-
-    @Override
-    public void hideInterface() {
-        if (mInterfaceHidden || isNoPermissionViewVisible()) {
-            return;
-        }
-        mInterfaceHidden = true;
-        hideInterfaceAnimated();
     }
 
     private void hideInterfaceAnimated() {
@@ -1868,13 +1841,5 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             LOG.error(message);
         }
         mListener.onError(new GiniCaptureError(errorCode, errorMessage));
-    }
-
-    private boolean shouldScrollToLastPage() {
-        return mMultiPageDocumentSize < mMultiPageDocument.getDocuments().size();
-    }
-
-    private void setShouldScrollToLastPage(boolean mShouldScrollToLastPage) {
-        this.mShouldScrollToLastPage = mShouldScrollToLastPage;
     }
 }

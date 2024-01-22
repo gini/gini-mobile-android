@@ -74,6 +74,12 @@ public class CameraFragment extends Fragment implements CameraFragmentInterface,
         return mFragmentImpl.onCreateView(inflater, container, savedInstanceState);
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mFragmentImpl.onViewCreated(view, savedInstanceState);
+    }
+
     /**
      * Internal use only.
      *
@@ -135,37 +141,6 @@ public class CameraFragment extends Fragment implements CameraFragmentInterface,
             mFragmentImpl.setListener(listener);
         }
         mListener = listener;
-    }
-
-    @Override
-    public void showInterface() {
-        if (mFragmentImpl == null) {
-            return;
-        }
-        mFragmentImpl.showInterface();
-    }
-
-    @Override
-    public void hideInterface() {
-        if (mFragmentImpl == null) {
-            return;
-        }
-        mFragmentImpl.hideInterface();
-    }
-
-    @Override
-    public void showActivityIndicatorAndDisableInteraction() {
-        mFragmentImpl.showActivityIndicatorAndDisableInteraction();
-    }
-
-    @Override
-    public void hideActivityIndicatorAndEnableInteraction() {
-        mFragmentImpl.hideActivityIndicatorAndEnableInteraction();
-    }
-
-    @Override
-    public void showError(@NonNull final String message, final int duration) {
-        mFragmentImpl.showError(message, duration);
     }
 
     @Override

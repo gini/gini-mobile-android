@@ -143,6 +143,8 @@
             app:destination="@id/gc_destination_help_fragment"
             app:popUpTo="@id/gc_destination_camera_fragment"
             app:popUpToInclusive="true" />
+        <!-- popUpTo and popUpToInclusive are needed to replace the camera screen with the help screen in the back stack -->
+        <!-- The camera preview is not restarted otherwise. It has something to do with the SurfaceView, but I couldn't find the root cause. -->
         <action
             android:id="@+id/to_error_fragment"
             app:destination="@id/gc_destination_error_fragment"
@@ -156,11 +158,18 @@
                 app:argType="net.gini.android.capture.Document" />
 
         </action>
-        <!-- popUpTo and popUpToInclusive are needed to replace the camera screen with the help screen in the back stack -->
-        <!-- The camera preview is not restarted otherwise. It has something to do with the SurfaceView, but I couldn't find the root cause. -->
         <action
             android:id="@+id/to_onboarding_fragment"
             app:destination="@id/gc_destination_onboarding_fragment"/>
+        <action
+            android:id="@+id/to_no_results_fragment"
+            app:destination="@id/gc_destination_noresults_fragment"
+            app:popUpTo="@id/gc_destination_camera_fragment"
+            app:popUpToInclusive="true">
+            <argument
+                android:name="GC_ARGS_DOCUMENT"
+                app:argType="net.gini.android.capture.Document" />
+        </action>
     </fragment>
 
     <fragment
