@@ -670,34 +670,34 @@ public class GiniCapture {
         return GiniCaptureFragment.Companion.createInstance(null);
     }
 
-    public CancellationToken createGiniCaptureFragmentForIntent(Context context, Intent intent, GiniCaptureIntentCallback captureIntentCallback) {
+    public CancellationToken createGiniCaptureFragmentForIntent(Context context, Intent intent, CreateGiniCaptureFragmentForIntentCallback captureIntentCallback) {
         return createDocumentForImportedFiles(intent, context, new AsyncCallback<Document, ImportedFileValidationException>() {
             @Override
             public void onSuccess(Document result) {
                 // TODO please refactor this piece
-                    captureIntentCallback.callback(new CreateCaptureFlowFragmentForIntentResult.Success(GiniCaptureFragment.Companion.createInstance(result)));
+                    captureIntentCallback.callback(new CreateGiniCaptureFragmentForIntentResult.Success(GiniCaptureFragment.Companion.createInstance(result)));
             }
 
             @Override
             public void onError(ImportedFileValidationException exception) {
-                captureIntentCallback.callback(new CreateCaptureFlowFragmentForIntentResult.Error(exception));
+                captureIntentCallback.callback(new CreateGiniCaptureFragmentForIntentResult.Error(exception));
             }
 
             @Override
             public void onCancelled() {
-                captureIntentCallback.callback(new CreateCaptureFlowFragmentForIntentResult.Cancelled());
+                captureIntentCallback.callback(new CreateGiniCaptureFragmentForIntentResult.Cancelled());
             }
         });
     }
 
-    interface GiniCaptureIntentCallback {
-        void callback(CreateCaptureFlowFragmentForIntentResult result);
+    interface CreateGiniCaptureFragmentForIntentCallback {
+        void callback(CreateGiniCaptureFragmentForIntentResult result);
     }
 
-    static class CreateCaptureFlowFragmentForIntentResult<T> {
-        static class Cancelled extends CreateCaptureFlowFragmentForIntentResult {}
+    static class CreateGiniCaptureFragmentForIntentResult<T> {
+        static class Cancelled extends CreateGiniCaptureFragmentForIntentResult {}
 
-        static class Success extends CreateCaptureFlowFragmentForIntentResult {
+        static class Success extends CreateGiniCaptureFragmentForIntentResult {
             @NonNull
             GiniCaptureFragment fragment;
 
@@ -705,7 +705,7 @@ public class GiniCapture {
                 this.fragment = fragment;
             }
         }
-        static class Error extends CreateCaptureFlowFragmentForIntentResult {
+        static class Error extends CreateGiniCaptureFragmentForIntentResult {
             @NonNull
             Exception exception;
 
