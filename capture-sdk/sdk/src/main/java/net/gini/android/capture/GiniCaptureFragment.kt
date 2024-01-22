@@ -153,7 +153,7 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
 //                val intent: Intent = Intent(requireActivity(), MultiPageReviewActivity::class.java)
 //                intent.putExtra(MultiPageReviewActivity.SHOULD_SCROLL_TO_LAST_PAGE, shouldScrollToLastPage)
 //                requireActivity().setResult(MultiPageReviewActivity.RESULT_SCROLL_TO_LAST_PAGE, intent)
-
+                navController.navigate(CameraFragmentDirections.toReviewFragmentForMorePages(true, multiPageDocument))
                 // For subsequent images a new CameraActivity was launched from the MultiPageReviewActivity
                 // and so we can simply finish to return to the review activity
                 activity?.onBackPressedDispatcher?.onBackPressed()

@@ -104,6 +104,19 @@
             app:destination="@id/gc_destination_review_fragment"
             app:popUpTo="@id/gc_destination_camera_fragment"
             app:popUpToInclusive="true" />
+
+        <action
+            android:id="@+id/to_review_fragment_for_more_pages"
+            app:destination="@id/gc_destination_review_fragment"
+            app:popUpTo="@id/gc_destination_camera_fragment"
+            app:popUpToInclusive="true" >
+            <argument
+                android:name="GC_SHOULD_SCROLL_TO_LAST_PAGE"
+                app:argType="boolean" />
+            <argument
+                android:name="GC_ARGS_DOCUMENT"
+                app:argType="net.gini.android.capture.Document" />
+        </action>
         <!--        popUpTo and popUpToInclusive are needed to make the review screen the start destination -->
         <!--        (i.e., replace the camera screen with the review screen in the back stack) -->
         <action

@@ -10,22 +10,6 @@
             android:exported="false"
             android:label="@string/gc_title_camera"
             android:theme="@style/GiniCaptureTheme" />
-        <activity
-            android:name="net.gini.android.capture.analysis.AnalysisActivity"
-            android:exported="false"
-            android:label="@string/gc_title_analysis"
-            android:theme="@style/GiniCaptureTheme" />
-        <activity
-            android:name="net.gini.android.capture.noresults.NoResultsActivity"
-            android:exported="false"
-            android:label="@string/gc_title_no_results"
-            android:theme="@style/GiniCaptureTheme" />
-        <activity
-            android:name="net.gini.android.capture.review.multipage.MultiPageReviewActivity"
-            android:exported="false"
-            android:label="@string/gc_title_review"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:theme="@style/GiniCaptureTheme" />
 
         <meta-data
             android:name="com.google.android.gms.version"

@@ -22,21 +22,17 @@ import net.gini.android.capture.internal.util.ContextHelper;
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction;
 import net.gini.android.capture.network.model.GiniCaptureReturnReason;
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
-import net.gini.android.capture.review.multipage.MultiPageReviewActivity;
 import net.gini.android.capture.tracking.CameraScreenEvent;
 
 import java.util.Map;
 
 import static net.gini.android.capture.internal.util.ActivityHelper.interceptOnBackPressed;
-import static net.gini.android.capture.review.multipage.MultiPageReviewActivity.RESULT_SCROLL_TO_LAST_PAGE;
-import static net.gini.android.capture.review.multipage.MultiPageReviewActivity.SHOULD_SCROLL_TO_LAST_PAGE;
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackCameraScreenEvent;
 
 /**
  * The {@code CameraActivity} is the main entry point to the Gini Capture SDK.
  **/
-public class
-CameraActivity extends AppCompatActivity implements CameraFragmentListener,
+public class CameraActivity extends AppCompatActivity implements CameraFragmentListener,
         CameraFragmentInterface {
 
     public static final String EXTRA_IN_ADD_PAGES = "GC_EXTRA_IN_ADD_PAGES";
@@ -240,9 +236,7 @@ CameraActivity extends AppCompatActivity implements CameraFragmentListener,
 
                 // In case we returned to take more images
                 // Let the app know if it should scroll to the last position
-                Intent intent = new Intent(this, MultiPageReviewActivity.class);
-                intent.putExtra(SHOULD_SCROLL_TO_LAST_PAGE, shouldScrollToLastPage);
-                setResult(RESULT_SCROLL_TO_LAST_PAGE, intent);
+
 
                 // For subsequent images a new CameraActivity was launched from the MultiPageReviewActivity
                 // and so we can simply finish to return to the review activity
@@ -250,8 +244,6 @@ CameraActivity extends AppCompatActivity implements CameraFragmentListener,
             } else {
                 // For the first image navigate to the review activity and when it returns a result
                 // we will return it directly to the client
-                final Intent intent = MultiPageReviewActivity.createIntent(this, shouldScrollToLastPage);
-                startActivityForResult(intent, MULTI_PAGE_REVIEW_REQUEST);
             }
         } else {
             throw new UnsupportedOperationException("Unsupported multi-page document type.");

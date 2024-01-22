@@ -10,7 +10,6 @@ import android.widget.TextView
 import net.gini.android.capture.Document
 import net.gini.android.capture.EnterManuallyButtonListener
 import net.gini.android.capture.GiniCapture
-import net.gini.android.capture.GiniCaptureFragment
 import net.gini.android.capture.R
 import net.gini.android.capture.document.ImageMultiPageDocument
 import net.gini.android.capture.internal.ui.FragmentImplCallback
@@ -29,7 +28,7 @@ import net.gini.android.capture.view.NavigationBarTopAdapter
  * Internal use only.
  */
 class ErrorFragmentImpl(
-    private val fragment: FragmentImplCallback,
+    private val fragmentCallback: FragmentImplCallback,
     private val document: Document?,
     private val errorType: ErrorType?,
     private val customError: String?
@@ -41,7 +40,7 @@ class ErrorFragmentImpl(
     private lateinit var retakeImagesButton: Button
 
     fun onCreate(savedInstanceState: Bundle?) {
-        ActivityHelper.forcePortraitOrientationOnPhones(fragment.activity)
+        ActivityHelper.forcePortraitOrientationOnPhones(fragmentCallback.activity)
     }
 
     fun onCreateView(
@@ -57,7 +56,7 @@ class ErrorFragmentImpl(
         if (shouldAllowRetakeImages()) {
             retakeImagesButton.setIntervalClickListener {
                 EventTrackingHelper.trackAnalysisScreenEvent(AnalysisScreenEvent.RETRY)
-                fragment.findNavController().navigate(ErrorFragmentDirections.toCameraFragment())
+                fragmentCallback.findNavController().navigate(ErrorFragmentDirections.toCameraFragment())
             }
         } else {
             retakeImagesButton.visibility = View.GONE
@@ -72,9 +71,9 @@ class ErrorFragmentImpl(
 
         errorType?.let {
             view.findViewById<TextView>(R.id.gc_error_header).text =
-                fragment.activity?.getString(it.titleTextResource)
+                fragmentCallback.activity?.getString(it.titleTextResource)
             view.findViewById<TextView>(R.id.gc_error_textview).text =
-                fragment.activity?.getString(it.descriptionTextResource)
+                fragmentCallback.activity?.getString(it.descriptionTextResource)
             view.findViewById<ImageView>(R.id.gc_error_header_icon)
                 .setImageResource(it.drawableResource)
         }
@@ -88,11 +87,11 @@ class ErrorFragmentImpl(
         if (GiniCapture.hasInstance()) {
             topBarContainer.injectedViewAdapterHolder = InjectedViewAdapterHolder(GiniCapture.getInstance().internal().navigationBarTopAdapterInstance) { injectedViewAdapter ->
                 injectedViewAdapter.apply {
-                    setTitle(fragment.activity?.getString(R.string.gc_title_error) ?: "")
+                    setTitle(fragmentCallback.activity?.getString(R.string.gc_title_error) ?: "")
 
                     setNavButtonType(NavButtonType.CLOSE)
                     setOnNavButtonClickListener(IntervalClickListener {
-                        fragment.activity?.onBackPressedDispatcher?.onBackPressed()
+                        fragmentCallback.activity?.onBackPressedDispatcher?.onBackPressed()
                     })
                 }
             }
@@ -105,7 +104,7 @@ class ErrorFragmentImpl(
 
     private fun shouldAllowRetakeImages(): Boolean {
         if (document == null) {
-            retakeImagesButton.text = fragment.activity?.getString(R.string.gc_error_back_to_camera)
+            retakeImagesButton.text = fragmentCallback.activity?.getString(R.string.gc_error_back_to_camera)
             return true
         }
 

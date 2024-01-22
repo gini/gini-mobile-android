@@ -11,6 +11,7 @@ import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
@@ -113,6 +114,11 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     private boolean isBottomNavigationBarContinueButtonEnabled;
     private boolean isBottomNavigationBarLoadingIndicatorActive;
 
+    private boolean mShouldScrollToLastPage = true;
+    private int mScrollToPosition = -1;
+    private final String KEY_SHOULD_SCROLL_TO_LAST_PAGE = "GC_SHOULD_SCROLL_TO_LAST_PAGE";
+    private final String KEY_SCROLL_TO_POSITION = "GC_SHOULD_SCROLL_TO_LAST_PAGE";
+
     public static MultiPageReviewFragment newInstance() {
 
         Bundle args = new Bundle();
@@ -132,7 +138,24 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
 
         forcePortraitOrientationOnPhones(getActivity());
 
+        OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
+            @Override
+            public void handleOnBackPressed() {
+                trackReviewScreenEvent(ReviewScreenEvent.BACK);
+            }
+        };
+        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
+
+        if (savedInstanceState != null) {
+            mScrollToPosition = savedInstanceState.getInt(KEY_SCROLL_TO_POSITION, -1);
+            mShouldScrollToLastPage = savedInstanceState.getBoolean(KEY_SHOULD_SCROLL_TO_LAST_PAGE, true);
+        }
+
         initListener();
+
+        if (getArguments() != null) {
+            mShouldScrollToLastPage = getArguments().getBoolean(KEY_SHOULD_SCROLL_TO_LAST_PAGE, false);
+        }
 
         if (!GiniCapture.hasInstance()) {
             mListener.onError(new GiniCaptureError(MISSING_GINI_CAPTURE_INSTANCE,
@@ -140,7 +163,6 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
         } else {
             initMultiPageDocument();
         }
-
     }
 
     @Override
@@ -153,6 +175,8 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         mInstanceStateSaved = true;
+        outState.putBoolean(KEY_SHOULD_SCROLL_TO_LAST_PAGE, mShouldScrollToLastPage);
+        outState.putInt(KEY_SCROLL_TO_POSITION, mScrollToPosition);
     }
 
     public void showAlertDialog(@NonNull final String message,
@@ -847,28 +871,28 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
         if (getActivity() == null)
             return -1;
 
-        return ((MultiPageReviewActivity) getActivity()).getScrollToPosition();
+        return mScrollToPosition;
     }
 
     private void setScrollToPosition(int scrollToPosition) {
         if (getActivity() == null)
             return;
 
-        ((MultiPageReviewActivity) getActivity()).setScrollToPosition(scrollToPosition);
+        mScrollToPosition = scrollToPosition;
     }
 
     public boolean shouldScrollToLastPage() {
         if (getActivity() == null)
             return false;
 
-        return ((MultiPageReviewActivity) getActivity()).shouldScrollToLastPage();
+        return mShouldScrollToLastPage;
     }
 
     public void setShouldScrollToLastPage(boolean shouldScrollToLastPage) {
         if (getActivity() == null)
             return;
         // TODO for fragments: Move logic from MultiPageReviewActivity to the fragment
-//        ((MultiPageReviewActivity) getActivity()).setShouldScrollToLastPage(shouldScrollToLastPage);
+        mShouldScrollToLastPage = shouldScrollToLastPage;
     }
 
     @Override

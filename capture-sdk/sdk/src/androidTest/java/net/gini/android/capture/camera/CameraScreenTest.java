@@ -39,7 +39,6 @@ import net.gini.android.capture.internal.qrcode.PaymentQRCodeData;
 import net.gini.android.capture.network.GiniCaptureNetworkService;
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
 import net.gini.android.capture.onboarding.OnboardingPage;
-import net.gini.android.capture.review.ReviewActivity;
 import net.gini.android.capture.test.EspressoAssertions;
 import net.gini.android.capture.test.PermissionsHelper;
 
@@ -681,11 +680,7 @@ public class CameraScreenTest {
                 isDocumentAvailable.set(true);
             }
 
-            @Override
-            public void onProceedToMultiPageReviewScreen(
-                    @NonNull final GiniCaptureMultiPageDocument multiPageDocument) {
 
-            }
 
             @Override
             public void onCheckImportedDocument(@NonNull final Document document,
