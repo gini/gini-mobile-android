@@ -24,9 +24,14 @@ import net.gini.android.capture.internal.util.AlertDialogHelperCompat;
 public class CameraFragment extends Fragment implements CameraFragmentInterface,
         FragmentImplCallback {
 
+    public static final String REQUEST_KEY = "GC_CAMERA_FRAGMENT_REQUEST_KEY";
+    public static final String RESULT_KEY_SHOULD_SCROLL_TO_LAST_PAGE = "RESULT_KEY_SHOULD_SCROLL_TO_LAST_PAGE";
+    private static final String ARGS_ADD_PAGES = "GC_ARGS_ADD_PAGES";
+
     private CameraFragmentListener mListener;
 
     private CameraFragmentImpl mFragmentImpl;
+    private boolean addPages = false;
 
     /**
      * Internal use only.
@@ -36,19 +41,21 @@ public class CameraFragment extends Fragment implements CameraFragmentInterface,
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        readArguments();
         mFragmentImpl = createFragmentImpl();
         setListener(mFragmentImpl, mListener);
         mFragmentImpl.onCreate(savedInstanceState);
     }
 
-    private void setListener(@NonNull final CameraFragmentImpl fragmentImpl, @Nullable final CameraFragmentListener listener) {
-        final Activity activity = getActivity();
-        if (activity == null) {
-            throw new IllegalStateException("Activity not available");
+    private void readArguments() {
+        final Bundle arguments = getArguments();
+        if (arguments != null) {
+            addPages = arguments.getBoolean(ARGS_ADD_PAGES, false);
         }
-        if (activity instanceof CameraFragmentListener) {
-            fragmentImpl.setListener((CameraFragmentListener) activity);
-        } else if (listener != null) {
+    }
+
+    private void setListener(@NonNull final CameraFragmentImpl fragmentImpl, @Nullable final CameraFragmentListener listener) {
+        if (listener != null) {
             fragmentImpl.setListener(listener);
         } else {
             throw new IllegalStateException(
@@ -59,7 +66,7 @@ public class CameraFragment extends Fragment implements CameraFragmentInterface,
     }
 
     protected CameraFragmentImpl createFragmentImpl() {
-        return new CameraFragmentImpl(this);
+        return new CameraFragmentImpl(this, addPages);
     }
 
     /**

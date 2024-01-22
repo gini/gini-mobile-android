@@ -36,8 +36,7 @@ import static net.gini.android.capture.tracking.EventTrackingHelper.trackCameraS
 /**
  * The {@code CameraActivity} is the main entry point to the Gini Capture SDK.
  **/
-public class CameraActivity extends AppCompatActivity implements CameraFragmentListener,
-CameraActivity extends AppCompatActivity implements GiniCaptureFragmentListener {
+public class CameraActivity extends AppCompatActivity implements GiniCaptureFragmentListener {
 
     /**
      * <p> Returned when the result code is {@link CameraActivity#RESULT_ERROR} and contains a

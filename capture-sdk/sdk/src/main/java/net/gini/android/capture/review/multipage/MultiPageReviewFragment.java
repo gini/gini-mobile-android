@@ -31,6 +31,7 @@ import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.GiniCaptureError;
 import net.gini.android.capture.R;
+import net.gini.android.capture.camera.CameraFragment;
 import net.gini.android.capture.document.GiniCaptureDocument;
 import net.gini.android.capture.document.GiniCaptureDocumentError;
 import net.gini.android.capture.document.ImageDocument;
@@ -87,7 +88,6 @@ import static net.gini.android.capture.tracking.EventTrackingHelper.trackReviewS
 public class MultiPageReviewFragment extends Fragment implements MultiPageReviewFragmentInterface,
         PreviewFragmentListener {
 
-    private static final String ARGS_DOCUMENT = "GC_ARGS_DOCUMENT";
     private static final Logger LOG = LoggerFactory.getLogger(MultiPageReviewFragment.class);
 
     @VisibleForTesting
@@ -170,6 +170,13 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     public void onStart() {
         super.onStart();
         mInstanceStateSaved = false;
+        setCameraFragmentResultListener();
+    }
+
+    private void setCameraFragmentResultListener() {
+        getParentFragmentManager().setFragmentResultListener(CameraFragment.REQUEST_KEY, getViewLifecycleOwner(), (requestKey, result) -> {
+            mShouldScrollToLastPage = result.getBoolean(CameraFragment.RESULT_KEY_SHOULD_SCROLL_TO_LAST_PAGE);
+        });
     }
 
     @Override
