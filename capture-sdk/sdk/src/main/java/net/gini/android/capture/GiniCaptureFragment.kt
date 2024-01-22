@@ -162,8 +162,8 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
     }
 
     override fun onError(error: GiniCaptureError) {
-        // TODO: launch the error fragment
-        // TODO("Not yet implemented")
+        didFinishWithResult = true
+        giniCaptureFragmentListener.onFinishedWithResult(CaptureSDKResult.Error(error))
     }
 
     override fun onExtractionsAvailable(
