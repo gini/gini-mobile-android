@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.view.ContextThemeWrapper
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
 import androidx.navigation.NavController
@@ -38,6 +39,12 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
 
     fun setListener(listener: CaptureFlowFragmentListener) {
         this.captureFlowFragmentListener = listener
+    }
+
+    override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
+        val inflater = super.onGetLayoutInflater(savedInstanceState)
+        val contextThemeWrapper = ContextThemeWrapper(requireContext(), net.gini.android.capture.R.style.GiniCaptureTheme)
+        return inflater.cloneInContext(contextThemeWrapper)
     }
 
     override fun onCreateView(

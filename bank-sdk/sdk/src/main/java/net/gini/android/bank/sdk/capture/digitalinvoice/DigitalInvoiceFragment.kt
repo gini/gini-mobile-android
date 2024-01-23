@@ -20,6 +20,7 @@ import net.gini.android.bank.sdk.capture.digitalinvoice.view.DigitalInvoiceNavig
 import net.gini.android.bank.sdk.capture.util.autoCleared
 import net.gini.android.bank.sdk.capture.util.parentFragmentManagerOrNull
 import net.gini.android.bank.sdk.databinding.GbsFragmentDigitalInvoiceBinding
+import net.gini.android.bank.sdk.util.getLayoutInflaterWithGiniCaptureTheme
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.internal.ui.IntervalToolbarMenuItemIntervalClickListener
 import net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones
@@ -48,7 +49,6 @@ private const val TAG_WHAT_IS_THIS_DIALOG = "TAG_WHAT_IS_THIS_DIALOG"
  * Internal use only.
  */
 open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.View, LineItemsAdapterListener {
-
 
     private var binding by autoCleared<GbsFragmentDigitalInvoiceBinding>()
     private var lineItemsAdapter by autoCleared<LineItemsAdapter>()
@@ -144,6 +144,11 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
     override fun onSaveInstanceState(outState: Bundle) {
         presenter?.saveState(outState)
         super.onSaveInstanceState(outState)
+    }
+
+    override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
+        val inflater = super.onGetLayoutInflater(savedInstanceState)
+        return this.getLayoutInflaterWithGiniCaptureTheme(inflater)
     }
 
     /**

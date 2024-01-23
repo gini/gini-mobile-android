@@ -17,10 +17,14 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import net.gini.android.bank.sdk.R
-import net.gini.android.bank.sdk.capture.digitalinvoice.details.*
+import net.gini.android.bank.sdk.capture.digitalinvoice.details.LineItemDetailsScreenContract
+import net.gini.android.bank.sdk.capture.digitalinvoice.details.LineItemDetailsScreenPresenter
+import net.gini.android.bank.sdk.capture.digitalinvoice.details.MIN_QUANTITY
+import net.gini.android.bank.sdk.capture.digitalinvoice.details.doAfterTextChanged
 import net.gini.android.bank.sdk.capture.util.amountWatcher
 import net.gini.android.bank.sdk.capture.util.hideKeyboard
 import net.gini.android.bank.sdk.databinding.GbsEditItemBottomSheetBinding
+import net.gini.android.bank.sdk.util.getLayoutInflaterWithGiniCaptureTheme
 import net.gini.android.capture.AmountCurrency
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
 
@@ -50,6 +54,11 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
                 createPresenter(activity)
             }
         }
+    }
+
+    override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
+        val inflater = super.onGetLayoutInflater(savedInstanceState)
+        return this.getLayoutInflaterWithGiniCaptureTheme(inflater)
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {

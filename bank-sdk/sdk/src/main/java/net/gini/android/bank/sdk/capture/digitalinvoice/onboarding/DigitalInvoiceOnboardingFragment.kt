@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import androidx.transition.TransitionInflater
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.R
@@ -14,6 +13,7 @@ import net.gini.android.bank.sdk.capture.util.autoCleared
 import net.gini.android.bank.sdk.databinding.GbsFragmentDigitalInvoiceOnboardingBinding
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.internal.ui.IntervalClickListener
+import net.gini.android.bank.sdk.util.getLayoutInflaterWithGiniCaptureTheme
 import net.gini.android.capture.onboarding.view.OnboardingIllustrationAdapter
 import net.gini.android.capture.view.InjectedViewAdapterHolder
 
@@ -45,6 +45,11 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
     private var binding by autoCleared<GbsFragmentDigitalInvoiceOnboardingBinding>()
 
     private var presenter: DigitalOnboardingScreenContract.Presenter? = null
+
+    override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
+        val inflater = super.onGetLayoutInflater(savedInstanceState)
+        return this.getLayoutInflaterWithGiniCaptureTheme(inflater)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
