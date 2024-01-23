@@ -1,22 +1,22 @@
 package net.gini.android.capture.analysis
 
-import android.content.Intent
+import android.os.Bundle
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentFactory
+import androidx.fragment.app.testing.FragmentScenario
 import androidx.lifecycle.Lifecycle
-import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.spy
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
-import net.gini.android.capture.Amount
 import net.gini.android.capture.Document
 import net.gini.android.capture.GiniCapture
+import net.gini.android.capture.R
 import net.gini.android.capture.document.ImageDocument
 import net.gini.android.capture.tracking.AnalysisScreenEvent
 import net.gini.android.capture.tracking.Event
 import net.gini.android.capture.tracking.EventTracker
-import org.junit.After
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -27,8 +27,7 @@ import org.junit.runner.RunWith
  */
 
 @RunWith(AndroidJUnit4::class)
-//@LooperMode(LooperMode.Mode.PAUSED)
-class AnalysisActivityTest {
+class AnalysisFragmentTest {
 
     @Test
     fun `triggers Cancel event when back was pressed`() {
@@ -37,17 +36,27 @@ class AnalysisActivityTest {
         GiniCapture.Builder().setEventTracker(eventTracker).build()
         GiniCapture.getInstance().internal().imageMultiPageDocumentMemoryStore.setMultiPageDocument(mock())
 
-        ActivityScenario.launch<AnalysisActivity>(Intent(getInstrumentation().targetContext, AnalysisActivity::class.java).apply {
-            putExtra(AnalysisActivity.EXTRA_IN_DOCUMENT, mock<ImageDocument>().apply {
+        val bundle = Bundle().apply {
+            putParcelable("GC_ARGS_DOCUMENT", mock<ImageDocument>().apply {
                 whenever(isReviewable).thenReturn(true)
                 whenever(type).thenReturn(Document.Type.IMAGE)
             })
-        }).use { scenario ->
+            putString("GC_ARGS_DOCUMENT_ANALYSIS_ERROR_MESSAGE", "")
+        }
+        FragmentScenario.launchInContainer(fragmentClass = AnalysisFragment::class.java, fragmentArgs = bundle,
+            themeResId = R.style.GiniCaptureTheme,
+            factory = object : FragmentFactory() {
+                override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
+                    return AnalysisFragment().apply {
+                        setListener(mock())
+                    }
+                }
+            }).use { scenario ->
             scenario.moveToState(Lifecycle.State.STARTED)
 
             // When
-            scenario.onActivity {activity ->
-                activity.onBackPressed()
+            scenario.onFragment { fragment ->
+                fragment.requireActivity().onBackPressedDispatcher.onBackPressed()
 
                 // Then
                 verify(eventTracker).onAnalysisScreenEvent(Event(AnalysisScreenEvent.CANCEL))

@@ -59,6 +59,12 @@ public class AnalysisFragment extends Fragment implements FragmentImplCallback,
         return mFragmentImpl.onCreateView(inflater, container, savedInstanceState);
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mFragmentImpl.onViewCreated(view, savedInstanceState);
+    }
+
     /**
      * Internal use only.
      *

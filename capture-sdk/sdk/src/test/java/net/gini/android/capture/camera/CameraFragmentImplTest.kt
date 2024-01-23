@@ -35,7 +35,7 @@ class CameraFragmentImplTest {
         val eventTracker = spy<EventTracker>()
         GiniCapture.Builder().setEventTracker(eventTracker).build()
 
-        val fragmentImpl = object: CameraFragmentImpl(mock()) {
+        val fragmentImpl = object: CameraFragmentImpl(mock(), false) {
             override fun createCameraController(activity: Activity?): CameraInterface {
                 return mock<CameraInterface>().apply {
                     whenever(isPreviewRunning).thenReturn(true)
@@ -57,7 +57,7 @@ class CameraFragmentImplTest {
         // Given
         GiniCaptureHelper.setGiniCaptureInstance(null)
 
-        val fragmentImpl = CameraFragmentImpl(mock())
+        val fragmentImpl = CameraFragmentImpl(mock(), false)
 
         val listener = mock<CameraFragmentListener>()
         fragmentImpl.setListener(listener)
@@ -109,7 +109,7 @@ class CameraFragmentImplTest {
         })
         whenever(fragmentCallbackStub.findNavController()).thenReturn(mock())
 
-        val fragmentImpl = CameraFragmentImpl(fragmentCallbackStub)
+        val fragmentImpl = CameraFragmentImpl(fragmentCallbackStub, false)
 
         // When
         fragmentImpl.startHelpActivity()
