@@ -23,13 +23,6 @@ import net.gini.android.capture.document.GiniCaptureMultiPageDocument;
 public interface MultiPageReviewFragmentListener {
 
     /**
-     * Called when the user deleted all the pages of a document received from another app.
-     *
-     * <p> At this point you should finish Gini Capture by closing the {@link MultiPageReviewFragment}..
-     */
-    void onImportedDocumentReviewCancelled();
-
-    /**
      * Called when an error occurred.
      *
      * @param error details about what went wrong

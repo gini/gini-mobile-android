@@ -550,21 +550,8 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
             if (activity == null) {
                 return;
             }
-            if (mMultiPageDocument.getImportMethod() == Document.ImportMethod.OPEN_WITH) {
-                new MaterialAlertDialogBuilder(activity)
-                        .setMessage(
-                                R.string.gc_multi_page_review_file_import_delete_last_page_dialog_message)
-                        .setPositiveButton(
-                                R.string.gc_multi_page_review_file_import_delete_last_page_dialog_positive_button,
-                                (dialog, which) -> mListener.onImportedDocumentReviewCancelled())
-                        .setNegativeButton(
-                                R.string.gc_multi_page_review_file_import_delete_last_page_dialog_negative_button,
-                                null)
-                        .create().show();
-            } else {
-                doDeleteDocumentAndUpdateUI(document);
-                NavHostFragment.findNavController(this).navigate(MultiPageReviewFragmentDirections.toCameraFragmentForFirstPage());
-            }
+            doDeleteDocumentAndUpdateUI(document);
+            NavHostFragment.findNavController(this).navigate(MultiPageReviewFragmentDirections.toCameraFragmentForFirstPage());
         } else {
             doDeleteDocumentAndUpdateUI(document);
         }

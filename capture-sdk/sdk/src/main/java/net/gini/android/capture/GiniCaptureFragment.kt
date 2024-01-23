@@ -142,11 +142,6 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
         giniCaptureFragmentListener.onCheckImportedDocument(document, callback)
     }
 
-    override fun onImportedDocumentReviewCancelled() {
-        // TODO: not needed anymore because this was called when the user deleted the last image imported via "open with"
-        //       and since version 3.x we upload "open with" images directly (like PDFs) and users can't delete them
-    }
-
     override fun onError(error: GiniCaptureError) {
         didFinishWithResult = true
         giniCaptureFragmentListener.onFinishedWithResult(CaptureSDKResult.Error(error))
