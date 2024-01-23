@@ -34,16 +34,6 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
     AnalysisFragmentListener,
     EnterManuallyButtonListener {
 
-    internal companion object {
-        fun createInstance(document: Document? = null): GiniCaptureFragment {
-            return GiniCaptureFragment(document)
-        }
-    }
-
-    fun setListener(listener: GiniCaptureFragmentListener) {
-        this.giniCaptureFragmentListener = listener
-    }
-
     private lateinit var navController: NavController
     private lateinit var giniCaptureFragmentListener: GiniCaptureFragmentListener
     private lateinit var oncePerInstallEventStore: OncePerInstallEventStore
@@ -53,6 +43,10 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
 
     private var willBeRestored = false
     private var didFinishWithResult = false
+
+    fun setListener(listener: GiniCaptureFragmentListener) {
+        this.giniCaptureFragmentListener = listener
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         childFragmentManager.fragmentFactory = CaptureFragmentFactory(this, this, this, this)
@@ -124,17 +118,6 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
         }
     }
 
-    //it shows the camera in the start
-
-    //it handles navigation between camera, review, analysis screens and .... (this navigation should be inside capture)
-    //capture-sdk should have its own fragment ->  GiniCaptureFragment
-
-    // final goal of the flow without return assistant: client -> CaptureFlowFragment -> GiniCaptureFragment -> CaptureFlowFragment -> client
-    // final goal of the flow with return assistant: client -> CaptureFlowFragment -> GiniCaptureFragment -> CaptureFlowFragment -> DigitalInvoiceFragment -> client
-
-
-    //new listener onFinishedWithResult -> returns the result to the client
-
     override fun onCheckImportedDocument(
         document: Document,
         callback: CameraFragmentListener.DocumentCheckResultCallback
@@ -188,6 +171,13 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
     override fun onEnterManuallyPressed() {
         didFinishWithResult = true
         giniCaptureFragmentListener.onFinishedWithResult(CaptureSDKResult.EnterManually)
+    }
+
+    companion object {
+        @JvmStatic
+        fun createInstance(document: Document? = null): GiniCaptureFragment {
+            return GiniCaptureFragment(document)
+        }
     }
 
 }

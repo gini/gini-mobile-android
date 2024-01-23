@@ -667,15 +667,14 @@ public class GiniCapture {
 
 
     public static GiniCaptureFragment createGiniCaptureFragment() {
-        return GiniCaptureFragment.Companion.createInstance(null);
+        return GiniCaptureFragment.createInstance(null);
     }
 
     public CancellationToken createGiniCaptureFragmentForIntent(Context context, Intent intent, CreateGiniCaptureFragmentForIntentCallback captureIntentCallback) {
         return createDocumentForImportedFiles(intent, context, new AsyncCallback<Document, ImportedFileValidationException>() {
             @Override
             public void onSuccess(Document result) {
-                // TODO please refactor this piece
-                    captureIntentCallback.callback(new CreateGiniCaptureFragmentForIntentResult.Success(GiniCaptureFragment.Companion.createInstance(result)));
+                captureIntentCallback.callback(new CreateGiniCaptureFragmentForIntentResult.Success(GiniCaptureFragment.createInstance(result)));
             }
 
             @Override
