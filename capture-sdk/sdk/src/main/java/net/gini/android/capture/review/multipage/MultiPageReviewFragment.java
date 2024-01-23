@@ -142,6 +142,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
             @Override
             public void handleOnBackPressed() {
                 trackReviewScreenEvent(ReviewScreenEvent.BACK);
+                NavHostFragment.findNavController(MultiPageReviewFragment.this).navigate(MultiPageReviewFragmentDirections.toCameraFragmentForFirstPage());
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
