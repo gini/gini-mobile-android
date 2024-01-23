@@ -2,22 +2,18 @@ package net.gini.android.capture.review.zoom;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import net.gini.android.capture.AsyncCallback;
-import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.R;
 import net.gini.android.capture.document.ImageDocument;
-import net.gini.android.capture.internal.camera.photo.ParcelableMemoryCache;
 import net.gini.android.capture.internal.camera.photo.Photo;
 import net.gini.android.capture.review.RotatableTouchImageViewContainer;
 
@@ -47,7 +43,7 @@ public class ZoomInPreviewFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        final View view = inflater.inflate(R.layout.gc_fragement_zoom_in_preview, container, false);
+        final View view = inflater.inflate(R.layout.gc_fragment_zoom_in_preview, container, false);
         setupInputHandlers(view);
         return view;
     }

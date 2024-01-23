@@ -49,7 +49,6 @@ import net.gini.android.capture.review.multipage.previews.MiddlePageManager;
 import net.gini.android.capture.review.multipage.previews.PreviewFragmentListener;
 import net.gini.android.capture.review.multipage.previews.PreviewPagesAdapter;
 import net.gini.android.capture.review.multipage.view.ReviewNavigationBarBottomAdapter;
-import net.gini.android.capture.review.zoom.ZoomInPreviewFragment;
 import net.gini.android.capture.tracking.AnalysisScreenEvent;
 import net.gini.android.capture.tracking.ReviewScreenEvent;
 import net.gini.android.capture.tracking.ReviewScreenEvent.UPLOAD_ERROR_DETAILS_MAP_KEY;
@@ -980,10 +979,7 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
 
     @Override
     public void onPageClicked(@NonNull ImageDocument document) {
-        getChildFragmentManager().beginTransaction()
-                .add(R.id.gc_fragment_container, ZoomInPreviewFragment.newInstance(document), ZoomInPreviewFragment.class.getName())
-                .addToBackStack(null)
-                .commit();
+        NavHostFragment.findNavController(this).navigate( MultiPageReviewFragmentDirections.toZoomInPreviewFragment(document));
     }
 
     @Override

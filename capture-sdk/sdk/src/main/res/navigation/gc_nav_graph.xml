@@ -55,6 +55,14 @@
                 android:name="ARGS_DOCUMENT"
                 app:argType="net.gini.android.capture.Document" />
         </action>
+        <action
+            android:id="@+id/to_zoom_in_preview_fragment"
+            app:destination="@id/gc_destination_zoom_in_preview_fragment"
+            >
+            <argument
+                android:name="GC_ARGS_DOCUMENT"
+                app:argType="net.gini.android.capture.Document" />
+        </action>
     </fragment>
 
     <fragment
@@ -239,6 +247,12 @@
         android:id="@+id/gc_destination_onboarding_fragment"
         android:name="net.gini.android.capture.onboarding.OnboardingFragment"
         android:label="fragment_onboarding">
+    </fragment>
+
+    <fragment
+        android:id="@+id/gc_destination_zoom_in_preview_fragment"
+        android:name="net.gini.android.capture.review.zoom.ZoomInPreviewFragment"
+        android:label="fragment_zoom_in_preview">
     </fragment>
 
 </navigation>
