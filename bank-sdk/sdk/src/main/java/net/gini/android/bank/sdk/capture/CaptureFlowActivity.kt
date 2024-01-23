@@ -2,30 +2,32 @@ package net.gini.android.bank.sdk.capture
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Parcelable
 import androidx.appcompat.app.AppCompatActivity
-import net.gini.android.capture.camera.CameraActivity
+import kotlinx.parcelize.Parcelize
 import net.gini.android.bank.sdk.GiniBank
-import net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceException
-import net.gini.android.bank.sdk.capture.digitalinvoice.LineItemsValidator
+import net.gini.android.bank.sdk.R
+import net.gini.android.capture.Document
+import net.gini.android.capture.internal.util.FileImportValidator
 
 /**
  * Entry point for Screen API. It exists for the purpose of communication between Capture SDK's Screen API and Return Assistant.
  */
-internal class CaptureFlowActivity : AppCompatActivity(), CaptureFlowImportContract.Contract {
-
-    private val cameraLauncher = registerForActivityResult(CameraContract(), ::onCameraResult)
-    private val cameraImportLauncher = registerForActivityResult(CaptureImportContract(), ::onCameraResult)
+internal class CaptureFlowActivity : AppCompatActivity(), CaptureFlowFragmentListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.gbs_activity_capture_flow)
         if (savedInstanceState == null) {
             handleInput()
+        } else {
+            restoreFragmentListener()
         }
     }
 
     private fun handleInput() {
-        when (val input = intent.getCaptureImportInput()) {
-            is CaptureImportInput.Error -> setErrorResult(
+        when (val input = getCaptureImportInput(intent)) {
+            is CaptureImportInput.Error -> setResultAndFinish(
                 CaptureResult.Error(
                     ResultError.FileImport(
                         input.error,
@@ -33,55 +35,72 @@ internal class CaptureFlowActivity : AppCompatActivity(), CaptureFlowImportContr
                     )
                 )
             )
-            is CaptureImportInput.Forward -> cameraImportLauncher.launch(input.intent)
-            CaptureImportInput.Default -> cameraLauncher.launch(Unit)
+            is CaptureImportInput.Forward -> initFragment(input.openWithDocument)
+            CaptureImportInput.Default -> initFragment()
         }
     }
 
-    private fun onCameraResult(result: CaptureResult) {
-        when (result) {
-            is CaptureResult.Success -> setSuccessfulResult(result)
-            CaptureResult.Empty -> setEmptyResult()
-            is CaptureResult.Error -> setErrorResult(result)
-            CaptureResult.EnterManually -> setEnterManuallyResult()
-            CaptureResult.Cancel -> finish()
+    private fun getCaptureImportInput(intent: Intent): CaptureImportInput =
+        intent.getParcelableExtra(EXTRA_IN_CAPTURE_IMPORT_INPUT, CaptureImportInput::class.java) ?: CaptureImportInput.Default
 
+    private fun initFragment(document: Document? = null) {
+        if (!isFragmentShown()) {
+            val fragment = createFragment(document)
+            showFragment(fragment)
         }
     }
 
-    private fun onDigitalInvoiceResult(result: CaptureResult) {
-        when (result) {
-            is CaptureResult.Success -> setSuccessfulResult(result)
-            CaptureResult.Empty -> setEmptyResult()
-            is CaptureResult.Error -> setErrorResult(result)
-            CaptureResult.Cancel -> finish()
-            CaptureResult.EnterManually -> setEnterManuallyResult()
+    private fun showFragment(fragment: CaptureFlowFragment) {
+        supportFragmentManager
+            .beginTransaction()
+            .add(R.id.gbs_fragment_container, fragment, CaptureFlowFragment::class.java.name)
+            .commit()
+    }
+
+    private fun isFragmentShown(): Boolean {
+        return supportFragmentManager.findFragmentByTag(CaptureFlowFragment::class.java.name) != null
+    }
+
+    private fun createFragment(openWithDocument: Document?): CaptureFlowFragment {
+        val fragment = if (openWithDocument != null) {
+            GiniBank.Internal.createCaptureFlowFragmentForOpenWithDocument(openWithDocument)
+        } else {
+            GiniBank.createCaptureFlowFragment()
         }
+        fragment.setListener(this)
+        return fragment
     }
 
-    private fun setSuccessfulResult(result: CaptureResult.Success) {
-        setResult(RESULT_OK, result.toIntent())
+    private fun restoreFragmentListener() {
+        val fragment =
+            supportFragmentManager.findFragmentByTag(CaptureFlowFragment::class.java.name) as CaptureFlowFragment?
+        fragment?.setListener(this)
+    }
+
+    override fun onFinishedWithResult(result: CaptureResult) {
+        setResultAndFinish(result)
+    }
+
+    private fun setResultAndFinish(result: CaptureResult) {
+        setResult(RESULT_OK, Intent().apply {
+            putExtra(EXTRA_OUT_RESULT, result)
+        })
         finish()
     }
 
-    private fun setErrorResult(errorResult: CaptureResult.Error) {
-        when (errorResult.value) {
-            is ResultError.FileImport -> setResult(
-                CameraActivity.RESULT_ERROR,
-                Intent().setImportResultError(errorResult.value.code, errorResult.value.message)
-            )
-            is ResultError.Capture -> setResult(CameraActivity.RESULT_ERROR, Intent().setCaptureResultError(errorResult.value.giniCaptureError))
-        }
-        finish()
+    internal companion object {
+        const val EXTRA_IN_CAPTURE_IMPORT_INPUT = "GBS_EXTRA_IN_CAPTURE_IMPORT_INPUT"
+        const val EXTRA_OUT_RESULT = "GBS_EXTRA_OUT_RESULT"
     }
 
-    private fun setEmptyResult() {
-        setResult(RESULT_OK)
-        finish()
-    }
+}
 
-    private fun setEnterManuallyResult() {
-        setResult(CameraActivity.RESULT_ENTER_MANUALLY)
-        finish()
-    }
+/**
+ * Input used when a document was shared from another app. It will be created internally.
+ */
+@Parcelize
+sealed class CaptureImportInput: Parcelable {
+    data class Forward(val openWithDocument: Document) : CaptureImportInput()
+    data class Error(val error: FileImportValidator.Error? = null, val message: String? = null) : CaptureImportInput()
+    object Default : CaptureImportInput()
 }

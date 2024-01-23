@@ -143,9 +143,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun startGiniCaptureSdkForOpenWith(openWithIntent: Intent) {
         if (configurationViewModel.configurationFlow.value.isFileImportEnabled) {
-            // TODO: once CaptureFlowActivity uses the CaptureFlowFragment use startGiniCaptureSdk(openWithIntent) again
             configureGiniBank()
-            startActivity(CaptureFlowHostActivity.newIntent(this, openWithIntent))
+            startGiniCaptureSdk(openWithIntent)
         } else {
             MaterialAlertDialogBuilder(this).setMessage(R.string.file_import_feature_is_disabled_dialog_message)
                 .setPositiveButton("OK") { dialogInterface, i -> {} }.show()

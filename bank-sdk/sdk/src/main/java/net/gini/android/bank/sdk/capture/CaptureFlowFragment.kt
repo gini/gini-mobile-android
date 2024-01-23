@@ -1,6 +1,5 @@
 package net.gini.android.bank.sdk.capture
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -113,11 +112,11 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
                         ))
                     } catch (notUsed: DigitalInvoiceException) {
                         didFinishWithResult = true
-                        captureFlowFragmentListener.onFinishedWithResult(result.toCaptureResult())
+                        captureFlowFragmentListener.onFinishedWithResult(interceptSuccessResult(result).toCaptureResult())
                     }
                 } else {
                     didFinishWithResult = true
-                    captureFlowFragmentListener.onFinishedWithResult(result.toCaptureResult())
+                    captureFlowFragmentListener.onFinishedWithResult(interceptSuccessResult(result).toCaptureResult())
                 }
             }
             else -> {
@@ -126,6 +125,31 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
             }
         }
     }
+
+    private fun interceptSuccessResult(result: CaptureSDKResult.Success): CaptureSDKResult {
+        return if (result.specificExtractions.isEmpty() ||
+            !pay5ExtractionsAvailable(result.specificExtractions) &&
+            !epsPaymentAvailable(result.specificExtractions)
+        ) {
+            CaptureSDKResult.Empty
+        } else {
+            result
+        }
+    }
+
+    private fun isPay5Extraction(extractionName: String): Boolean {
+        return extractionName == "amountToPay" ||
+                extractionName == "bic" ||
+                extractionName == "iban" ||
+                extractionName == "paymentReference" ||
+                extractionName == "paymentRecipient"
+    }
+
+    private fun pay5ExtractionsAvailable(specificExtractions: Map<String, GiniCaptureSpecificExtraction>) =
+        specificExtractions.keys.any { key -> isPay5Extraction(key) }
+
+    private fun epsPaymentAvailable(specificExtractions: Map<String, GiniCaptureSpecificExtraction>) =
+        specificExtractions.keys.contains("epsPaymentQRCodeUrl")
 
     override fun onPayInvoice(
         specificExtractions: Map<String, GiniCaptureSpecificExtraction>,
