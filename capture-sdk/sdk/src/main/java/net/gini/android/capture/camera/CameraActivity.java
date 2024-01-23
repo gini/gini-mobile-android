@@ -39,6 +39,11 @@ import static net.gini.android.capture.tracking.EventTrackingHelper.trackCameraS
 public class CameraActivity extends AppCompatActivity implements GiniCaptureFragmentListener {
 
     /**
+     * Internal use only.
+     */
+    public static final String EXTRA_IN_OPEN_WITH_DOCUMENT = "GC_EXTRA_IN_OPEN_WITH_DOCUMENT";
+
+    /**
      * <p> Returned when the result code is {@link CameraActivity#RESULT_ERROR} and contains a
      * {@link GiniCaptureError} object detailing what went wrong. </p>
      */
@@ -80,27 +85,28 @@ public class CameraActivity extends AppCompatActivity implements GiniCaptureFrag
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gc_activity_camera);
+        final Document openWithDocument = getIntent().getParcelableExtra(EXTRA_IN_OPEN_WITH_DOCUMENT, Document.class);
         if (savedInstanceState == null) {
-            initFragment();
+            initFragment(openWithDocument);
         } else {
             retainFragment();
         }
     }
 
-    private void createFragment() {
+    private void createFragment(@Nullable final Document openWithDocument) {
         if (GiniCapture.hasInstance()) {
-            mFragment = GiniCapture.createGiniCaptureFragment();
+            if (openWithDocument != null) {
+                mFragment = GiniCapture.Internal.createGiniCaptureFragmentForOpenWithDocument(openWithDocument);
+            } else {
+                mFragment = GiniCapture.createGiniCaptureFragment();
+            }
             mFragment.setListener(this);
         }
     }
 
-    protected CameraFragment createCameraFragment() {
-        return new CameraFragment();
-    }
-
-    private void initFragment() {
+    private void initFragment(@Nullable final Document document) {
         if (!isFragmentShown()) {
-            createFragment();
+            createFragment(document);
             showFragment();
         }
     }

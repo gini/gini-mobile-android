@@ -3,7 +3,9 @@
     package="net.gini.android.bank.sdk">
 
     <application>
-        <activity android:name=".capture.CaptureFlowActivity" />
+        <activity
+            android:name=".capture.CaptureFlowActivity"
+            android:theme="@style/GiniCaptureTheme" />
     </application>
 
 </manifest>

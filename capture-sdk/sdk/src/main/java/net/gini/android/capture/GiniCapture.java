@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
+import net.gini.android.capture.camera.CameraActivity;
 import net.gini.android.capture.camera.view.CameraNavigationBarBottomAdapter;
 import net.gini.android.capture.camera.view.DefaultCameraNavigationBarBottomAdapter;
 import net.gini.android.capture.help.HelpItem;
@@ -513,9 +514,24 @@ public class GiniCapture {
      */
     @NonNull
     public CancellationToken createIntentForImportedFiles(@NonNull final Intent intent, @NonNull final Context context, @NonNull final AsyncCallback<Intent, ImportedFileValidationException> callback) {
-        //return mGiniCaptureFileImport.createIntentForImportedFiles(intent, context, callback);
-        //TODO fix this when fixing CameraActivity
-        return null;
+        return mGiniCaptureFileImport.createDocumentForImportedFiles(intent, context, new AsyncCallback<Document, ImportedFileValidationException>() {
+            @Override
+            public void onSuccess(Document result) {
+                final Intent intent = new Intent(context, CameraActivity.class);
+                intent.putExtra(CameraActivity.EXTRA_IN_OPEN_WITH_DOCUMENT, result);
+                callback.onSuccess(intent);
+            }
+
+            @Override
+            public void onError(ImportedFileValidationException exception) {
+                callback.onError(exception);
+            }
+
+            @Override
+            public void onCancelled() {
+                callback.onCancelled();
+            }
+        });
     }
 
     @NonNull
@@ -1306,6 +1322,10 @@ public class GiniCapture {
 
         public Internal(@NonNull final GiniCapture giniCapture) {
             mGiniCapture = giniCapture;
+        }
+
+        public static GiniCaptureFragment createGiniCaptureFragmentForOpenWithDocument(@NonNull Document openWithDocument) {
+            return GiniCaptureFragment.createInstance(openWithDocument);
         }
 
         @Nullable
