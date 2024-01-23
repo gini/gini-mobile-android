@@ -683,10 +683,16 @@ public class GiniCapture {
 
 
     public static GiniCaptureFragment createGiniCaptureFragment() {
+        if (!GiniCapture.hasInstance()) {
+            throw new IllegalStateException("GiniCapture instance was created. Call GiniCapture.newInstance() before creating the GiniCaptureFragment.");
+        }
         return GiniCaptureFragment.createInstance(null);
     }
 
     public CancellationToken createGiniCaptureFragmentForIntent(Context context, Intent intent, CreateGiniCaptureFragmentForIntentCallback captureIntentCallback) {
+        if (!GiniCapture.hasInstance()) {
+            throw new IllegalStateException("GiniCapture instance was created. Call GiniCapture.newInstance() before creating the GiniCaptureFragment.");
+        }
         return createDocumentForImportedFiles(intent, context, new AsyncCallback<Document, ImportedFileValidationException>() {
             @Override
             public void onSuccess(Document result) {
