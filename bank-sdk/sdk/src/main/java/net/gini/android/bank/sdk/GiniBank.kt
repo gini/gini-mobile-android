@@ -259,7 +259,7 @@ object GiniBank {
     }
 
     fun createCaptureFlowFragment(): CaptureFlowFragment {
-        check(giniCapture != null) { "Capture feature is not configured. Call setCaptureConfiguration before starting the flow." }
+        check(giniCapture != null) { "Capture feature is not configured. Call setCaptureConfiguration before creating the CaptureFlowFragment." }
         return CaptureFlowFragment.createInstance()
     }
 
@@ -268,7 +268,7 @@ object GiniBank {
         intent: Intent,
         callback: (CreateCaptureFlowFragmentForIntentResult) -> Unit
     ): CancellationToken {
-        check(giniCapture != null) { "Capture feature is not configured. Call setCaptureConfiguration before starting the flow." }
+        check(giniCapture != null) { "Capture feature is not configured. Call setCaptureConfiguration before creating the CaptureFlowFragment." }
         return giniCapture!!.createDocumentForImportedFiles(
             intent,
             context,
