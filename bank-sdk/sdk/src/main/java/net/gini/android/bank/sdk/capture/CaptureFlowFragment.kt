@@ -28,27 +28,18 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
     Fragment(),
     GiniCaptureFragmentListener, DigitalInvoiceFragmentListener {
 
-    internal companion object {
-        fun createInstance(openWithDocument: Document? = null): CaptureFlowFragment {
-            return CaptureFlowFragment(openWithDocument)
-        }
-    }
-
-    fun setListener(listener: CaptureFlowFragmentListener) {
-        this.captureFlowFragmentListener = listener
-    }
-
     private lateinit var navController: NavController
     private lateinit var captureFlowFragmentListener: CaptureFlowFragmentListener
-
-    // Related to navigation logic ported from CameraActivity
-    private var addPages = false
 
     // Remember the original primary navigation fragment so that we can restore it when this fragment is detached
     private var originalPrimaryNavigationFragment: Fragment? = null
 
     private var willBeRestored = false
     private var didFinishWithResult = false
+
+    fun setListener(listener: CaptureFlowFragmentListener) {
+        this.captureFlowFragmentListener = listener
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -99,7 +90,6 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
     override fun onPause() {
         super.onPause()
 
-        // We need to restore the primary navigation fragment to not break the client's fragment navigation
         // We need to restore the primary navigation fragment to not break the client's fragment navigation.
         // Only restore the original primary navigation fragment if the client didn't change it in the meantime.
         if (parentFragmentManager.primaryNavigationFragment == this) {
@@ -149,17 +139,11 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
         ))
     }
 
-    //it shows the camera in the start
-
-    //it handles navigation between camera, review, analysis screens and .... (this navigation should be inside capture)
-    //capture-sdk should have its own fragment ->  GiniCaptureFragment
-
-    // final goal of the flow without return assistant: client -> CaptureFlowFragment -> GiniCaptureFragment -> CaptureFlowFragment -> client
-    // final goal of the flow with return assistant: client -> CaptureFlowFragment -> GiniCaptureFragment -> CaptureFlowFragment -> DigitalInvoiceFragment -> client
-
-
-    //new listener onFinishedWithResult -> returns the result to the client
-
+    internal companion object {
+        fun createInstance(openWithDocument: Document? = null): CaptureFlowFragment {
+            return CaptureFlowFragment(openWithDocument)
+        }
+    }
 }
 
 interface CaptureFlowFragmentListener {
