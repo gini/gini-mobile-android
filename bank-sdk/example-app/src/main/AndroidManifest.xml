@@ -65,7 +65,6 @@
 
         <activity
             android:name=".ui.CaptureFlowHostActivity"
-            android:theme="@style/GiniCaptureTheme"
             android:launchMode="singleTask"
             android:exported="false"/>
 
