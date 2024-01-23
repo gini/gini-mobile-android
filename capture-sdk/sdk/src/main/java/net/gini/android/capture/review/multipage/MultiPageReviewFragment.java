@@ -24,12 +24,10 @@ import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
 
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.tabs.TabLayout;
 
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
-import net.gini.android.capture.GiniCaptureError;
 import net.gini.android.capture.R;
 import net.gini.android.capture.camera.CameraFragment;
 import net.gini.android.capture.document.GiniCaptureDocument;
@@ -67,7 +65,6 @@ import java.util.Map;
 import jersey.repackaged.jsr166e.CompletableFuture;
 import kotlin.Unit;
 
-import static net.gini.android.capture.GiniCaptureError.ErrorCode.MISSING_GINI_CAPTURE_INSTANCE;
 import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
 import static net.gini.android.capture.internal.util.FileImportHelper.showAlertIfOpenWithDocumentAndAppIsDefault;
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
@@ -84,8 +81,7 @@ import static net.gini.android.capture.tracking.EventTrackingHelper.trackReviewS
  *
  * @suppress
  */
-public class MultiPageReviewFragment extends Fragment implements MultiPageReviewFragmentInterface,
-        PreviewFragmentListener {
+public class MultiPageReviewFragment extends Fragment implements PreviewFragmentListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(MultiPageReviewFragment.class);
 
@@ -93,7 +89,6 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     Map<String, Boolean> mDocumentUploadResults = new HashMap<>();
     @VisibleForTesting
     ImageMultiPageDocument mMultiPageDocument;
-    private MultiPageReviewFragmentListener mListener;
     private PreviewFragmentListener mPreviewFragmentListener;
     private PreviewPagesAdapter mPreviewPagesAdapter;
     private RecyclerView mRecyclerView;
@@ -152,15 +147,14 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
             mShouldScrollToLastPage = savedInstanceState.getBoolean(KEY_SHOULD_SCROLL_TO_LAST_PAGE, true);
         }
 
-        initListener();
+        mPreviewFragmentListener = this;
 
         if (getArguments() != null) {
             mShouldScrollToLastPage = getArguments().getBoolean(KEY_SHOULD_SCROLL_TO_LAST_PAGE, false);
         }
 
         if (!GiniCapture.hasInstance()) {
-            mListener.onError(new GiniCaptureError(MISSING_GINI_CAPTURE_INSTANCE,
-                    "Missing GiniCapture instance. It was not created or there was an application process restart."));
+            NavHostFragment.findNavController(this).navigate(MultiPageReviewFragmentDirections.toErrorFragment(ErrorType.GENERAL, mMultiPageDocument));
         } else {
             initMultiPageDocument();
         }
@@ -234,18 +228,6 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
         for (final ImageDocument imageDocument : mMultiPageDocument.getDocuments()) {
             mDocumentUploadResults.put(imageDocument.getId(), false);
         }
-    }
-
-    private void initListener() {
-        if (getActivity() instanceof MultiPageReviewFragmentListener) {
-            mListener = (MultiPageReviewFragmentListener) getActivity();
-        } else if (mListener == null) {
-            throw new IllegalStateException(
-                    "MultiPageReviewFragmentListener not set. "
-                            + "You can set it with MultiPageReviewFragment#setListener() or "
-                            + "by making the host activity implement the MultiPageReviewFragmentListener.");
-        }
-        mPreviewFragmentListener = this;
     }
 
     @Override
@@ -968,11 +950,6 @@ public class MultiPageReviewFragment extends Fragment implements MultiPageReview
     @Override
     public void onPageClicked(@NonNull ImageDocument document) {
         NavHostFragment.findNavController(this).navigate( MultiPageReviewFragmentDirections.toZoomInPreviewFragment(document));
-    }
-
-    @Override
-    public void setListener(@NonNull final MultiPageReviewFragmentListener listener) {
-        mListener = listener;
     }
 
 }

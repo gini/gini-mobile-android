@@ -14,8 +14,6 @@ import net.gini.android.capture.analysis.AnalysisFragmentListener
 import net.gini.android.capture.camera.CameraFragment
 import net.gini.android.capture.camera.CameraFragmentDirections
 import net.gini.android.capture.camera.CameraFragmentListener
-import net.gini.android.capture.document.GiniCaptureMultiPageDocument
-import net.gini.android.capture.document.QRCodeDocument
 import net.gini.android.capture.error.ErrorFragment
 import net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboarding
 import net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboardingAtFirstRun
@@ -23,14 +21,10 @@ import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.noresults.NoResultsFragment
-import net.gini.android.capture.review.multipage.MultiPageReviewFragment
-import net.gini.android.capture.review.multipage.MultiPageReviewFragmentDirections
-import net.gini.android.capture.review.multipage.MultiPageReviewFragmentListener
 
 class GiniCaptureFragment(private val openWithDocument: Document? = null) :
     Fragment(),
     CameraFragmentListener,
-    MultiPageReviewFragmentListener,
     AnalysisFragmentListener,
     EnterManuallyButtonListener {
 
@@ -49,7 +43,7 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        childFragmentManager.fragmentFactory = CaptureFragmentFactory(this, this, this, this)
+        childFragmentManager.fragmentFactory = CaptureFragmentFactory(this, this, this)
         super.onCreate(savedInstanceState)
     }
 
@@ -184,7 +178,6 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
 
 class CaptureFragmentFactory(
     private val cameraListener: CameraFragmentListener,
-    private val multiPageReviewFragmentListener: MultiPageReviewFragmentListener,
     private val analysisFragmentListener: AnalysisFragmentListener,
     private val enterManuallyButtonListener: EnterManuallyButtonListener
 ) : FragmentFactory() {
@@ -193,12 +186,6 @@ class CaptureFragmentFactory(
             CameraFragment::class.java.name -> return CameraFragment().apply {
                 setListener(
                     cameraListener
-                )
-            }
-
-            MultiPageReviewFragment::class.java.name -> return MultiPageReviewFragment().apply {
-                setListener(
-                    multiPageReviewFragmentListener
                 )
             }
 
