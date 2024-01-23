@@ -210,8 +210,7 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
 
     private void checkGiniCaptureInstance() {
         if (!GiniCapture.hasInstance()) {
-            mListener.onError(new GiniCaptureError(MISSING_GINI_CAPTURE_INSTANCE,
-                    "Missing GiniCapture instance. It was not created or there was an application process restart."));
+            getView().showError(ErrorType.GENERAL, mMultiPageDocument);
         }
     }
 

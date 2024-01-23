@@ -53,26 +53,6 @@ class CameraFragmentImplTest {
     }
 
     @Test
-    fun `notifies listener of error when GiniInstance is missing`() {
-        // Given
-        GiniCaptureHelper.setGiniCaptureInstance(null)
-
-        val fragmentImpl = CameraFragmentImpl(mock(), false)
-
-        val listener = mock<CameraFragmentListener>()
-        fragmentImpl.setListener(listener)
-
-        // When
-        fragmentImpl.onStart()
-
-        // Then
-        val args = argumentCaptor<GiniCaptureError>()
-        Mockito.verify(listener).onError(args.capture())
-        Truth.assertThat(args.firstValue.errorCode)
-            .isEqualTo(GiniCaptureError.ErrorCode.MISSING_GINI_CAPTURE_INSTANCE)
-    }
-
-    @Test
     fun `triggers Help event when help was started`() {
         // Given
         val eventTracker = spy<EventTracker>()

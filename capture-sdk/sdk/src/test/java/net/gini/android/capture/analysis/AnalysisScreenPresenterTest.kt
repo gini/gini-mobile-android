@@ -778,21 +778,4 @@ class AnalysisScreenPresenterTest {
             .onAnalysisScreenEvent(Event(AnalysisScreenEvent.ERROR, errorDetails))
     }
 
-    @Test
-    @Throws(Exception::class)
-    fun should_notifyListener_ofError_whenGiniInstanceIsMissing() {
-        // Given
-        val presenter = createPresenter(ImageDocumentFake(), null)
-        val listener = mock<AnalysisFragmentListener>()
-        presenter.setListener(listener)
-
-        // When
-        presenter.start()
-
-        // Then
-        val args = argumentCaptor<GiniCaptureError>()
-        verify(listener).onError(args.capture())
-        assertThat(args.firstValue.errorCode)
-            .isEqualTo(GiniCaptureError.ErrorCode.MISSING_GINI_CAPTURE_INSTANCE)
-    }
 }

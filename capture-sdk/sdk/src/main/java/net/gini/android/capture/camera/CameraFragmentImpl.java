@@ -32,6 +32,7 @@ import androidx.constraintlayout.widget.Group;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.navigation.NavDestination;
+import androidx.navigation.fragment.NavHostFragment;
 
 import net.gini.android.capture.AsyncCallback;
 import net.gini.android.capture.Document;
@@ -94,6 +95,7 @@ import net.gini.android.capture.requirements.CameraHolder;
 import net.gini.android.capture.requirements.CameraResolutionRequirement;
 import net.gini.android.capture.requirements.CameraXHolder;
 import net.gini.android.capture.requirements.RequirementReport;
+import net.gini.android.capture.review.multipage.MultiPageReviewFragmentDirections;
 import net.gini.android.capture.tracking.AnalysisScreenEvent;
 import net.gini.android.capture.tracking.CameraScreenEvent;
 import net.gini.android.capture.util.IntentHelper;
@@ -466,8 +468,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private void checkGiniCaptureInstance() {
         if (!GiniCapture.hasInstance()) {
-            mListener.onError(new GiniCaptureError(MISSING_GINI_CAPTURE_INSTANCE,
-                    "Missing GiniCapture instance. It was not created or there was an application process restart."));
+            mFragment.findNavController().navigate(MultiPageReviewFragmentDirections.toErrorFragment(ErrorType.GENERAL, mMultiPageDocument));
         }
     }
 
