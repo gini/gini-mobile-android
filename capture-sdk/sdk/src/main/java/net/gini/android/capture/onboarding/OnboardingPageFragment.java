@@ -1,5 +1,7 @@
 package net.gini.android.capture.onboarding;
 
+import static net.gini.android.capture.internal.util.FragmentExtensionsKt.getLayoutInflaterWithGiniCaptureTheme;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -90,6 +92,13 @@ public class OnboardingPageFragment extends Fragment implements OnboardingPageCo
 
     private void createPresenter(@NonNull final Activity activity) {
         new OnboardingPagePresenter(activity, this);
+    }
+
+    @NonNull
+    @Override
+    public LayoutInflater onGetLayoutInflater(@Nullable Bundle savedInstanceState) {
+        final LayoutInflater inflater = super.onGetLayoutInflater(savedInstanceState);
+        return getLayoutInflaterWithGiniCaptureTheme(this, inflater);
     }
 
     @Nullable

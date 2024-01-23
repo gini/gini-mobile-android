@@ -1,6 +1,7 @@
 package net.gini.android.capture.onboarding;
 
 import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
+import static net.gini.android.capture.internal.util.FragmentExtensionsKt.getLayoutInflaterWithGiniCaptureTheme;
 import static net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomButton.GET_STARTED;
 import static net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomButton.NEXT;
 import static net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomButton.SKIP;
@@ -102,15 +103,13 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
         new OnboardingScreenPresenter(activity, this);
     }
 
-    /**
-     * @param inflater
-     * @param container
-     * @param savedInstanceState
-     *
-     * @return
-     *
-     * @suppress
-     */
+    @NonNull
+    @Override
+    public LayoutInflater onGetLayoutInflater(@Nullable Bundle savedInstanceState) {
+        final LayoutInflater inflater = super.onGetLayoutInflater(savedInstanceState);
+        return getLayoutInflaterWithGiniCaptureTheme(this, inflater);
+    }
+
     @Nullable
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,

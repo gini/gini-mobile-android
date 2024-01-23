@@ -1,5 +1,7 @@
 package net.gini.android.capture.review.zoom;
 
+import static net.gini.android.capture.internal.util.FragmentExtensionsKt.getLayoutInflaterWithGiniCaptureTheme;
+
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -38,6 +40,13 @@ public class ZoomInPreviewFragment extends Fragment {
         if (getArguments() != null) {
             mImageDocument = getArguments().getParcelable(ARGS_DOCUMENT);
         }
+    }
+
+    @NonNull
+    @Override
+    public LayoutInflater onGetLayoutInflater(@Nullable Bundle savedInstanceState) {
+        final LayoutInflater inflater = super.onGetLayoutInflater(savedInstanceState);
+        return getLayoutInflaterWithGiniCaptureTheme(this, inflater);
     }
 
     @Nullable

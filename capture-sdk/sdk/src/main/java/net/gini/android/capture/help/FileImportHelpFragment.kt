@@ -12,7 +12,6 @@ import android.widget.FrameLayout
 import androidx.annotation.ColorInt
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.R
@@ -20,6 +19,7 @@ import net.gini.android.capture.databinding.GcFragmentFileImportHelpBinding
 import net.gini.android.capture.help.view.HelpNavigationBarBottomAdapter
 import net.gini.android.capture.internal.ui.IntervalClickListener
 import net.gini.android.capture.internal.util.autoCleared
+import net.gini.android.capture.internal.util.getLayoutInflaterWithGiniCaptureTheme
 import net.gini.android.capture.view.InjectedViewAdapterHolder
 import net.gini.android.capture.view.NavButtonType
 import net.gini.android.capture.view.NavigationBarTopAdapter
@@ -30,6 +30,11 @@ import net.gini.android.capture.view.NavigationBarTopAdapter
 class FileImportHelpFragment : Fragment() {
     private var binding: GcFragmentFileImportHelpBinding by autoCleared()
     private var snackbar: Snackbar? = null
+
+    override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
+        val inflater = super.onGetLayoutInflater(savedInstanceState)
+        return this.getLayoutInflaterWithGiniCaptureTheme(inflater)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

@@ -14,6 +14,7 @@ import net.gini.android.capture.EnterManuallyButtonListener
 import net.gini.android.capture.R
 import net.gini.android.capture.internal.ui.FragmentImplCallback
 import net.gini.android.capture.internal.util.AlertDialogHelperCompat
+import net.gini.android.capture.internal.util.getLayoutInflaterWithGiniCaptureTheme
 
 /**
  * Internal use only.
@@ -44,7 +45,11 @@ class ErrorFragment : Fragment(), FragmentImplCallback {
         fragmentImpl = createFragmentImpl(this, arguments)
         fragmentImpl.setListener(listener)
         fragmentImpl.onCreate(savedInstanceState)
+    }
 
+    override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
+        val inflater = super.onGetLayoutInflater(savedInstanceState)
+        return this.getLayoutInflaterWithGiniCaptureTheme(inflater)
     }
 
     override fun onCreateView(

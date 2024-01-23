@@ -1,6 +1,8 @@
 package net.gini.android.capture.noresults;
 
 
+import static net.gini.android.capture.internal.util.FragmentExtensionsKt.getLayoutInflaterWithGiniCaptureTheme;
+
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -29,7 +31,6 @@ public class NoResultsFragment extends Fragment implements FragmentImplCallback 
     private NoResultsFragmentImpl mFragmentImpl;
     private final String ARGS_DOCUMENT = "GC_ARGS_DOCUMENT";
 
-
     public void setListener(@Nullable final EnterManuallyButtonListener listener) {
         mListener = listener;
     }
@@ -43,6 +44,13 @@ public class NoResultsFragment extends Fragment implements FragmentImplCallback 
         mFragmentImpl.setListener(mListener);
         mFragmentImpl.onCreate(savedInstanceState);
 
+    }
+
+    @NonNull
+    @Override
+    public LayoutInflater onGetLayoutInflater(@Nullable Bundle savedInstanceState) {
+        final LayoutInflater inflater = super.onGetLayoutInflater(savedInstanceState);
+        return getLayoutInflaterWithGiniCaptureTheme(this, inflater);
     }
 
     @Nullable

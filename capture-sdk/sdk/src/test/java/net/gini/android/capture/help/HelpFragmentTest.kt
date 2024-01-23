@@ -42,7 +42,7 @@ class HelpFragmentTest {
             .build()
 
         // When
-        launchFragmentInContainer<HelpFragment>(themeResId = R.style.GiniCaptureTheme).use {
+        launchFragmentInContainer<HelpFragment>().use {
             // Then
             onView(ViewMatchers.withText(customTitle)).check(matches(isDisplayed()))
         }
@@ -71,7 +71,7 @@ class HelpFragmentTest {
         // When
         Intents.init()
 
-        launchFragmentInContainer<HelpFragment>(themeResId = R.style.GiniCaptureTheme).use {
+        launchFragmentInContainer<HelpFragment>().use {
             // Then
             onView(ViewMatchers.withText(customTitle)).perform(click())
 

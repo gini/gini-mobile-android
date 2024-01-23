@@ -1,5 +1,7 @@
 package net.gini.android.capture.analysis;
 
+import static net.gini.android.capture.internal.util.FragmentExtensionsKt.getLayoutInflaterWithGiniCaptureTheme;
+
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -45,6 +47,13 @@ public class AnalysisFragment extends Fragment implements FragmentImplCallback,
                 getArguments());
         AnalysisFragmentHelper.setListener(fragmentImpl, getActivity(), mListener);
         return fragmentImpl;
+    }
+
+    @NonNull
+    @Override
+    public LayoutInflater onGetLayoutInflater(@Nullable Bundle savedInstanceState) {
+        final LayoutInflater inflater = super.onGetLayoutInflater(savedInstanceState);
+        return getLayoutInflaterWithGiniCaptureTheme(this, inflater);
     }
 
     /**

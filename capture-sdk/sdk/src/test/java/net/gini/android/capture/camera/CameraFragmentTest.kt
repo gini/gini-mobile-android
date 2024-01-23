@@ -32,7 +32,6 @@ class CameraFragmentTest {
         GiniCapture.Builder().setEventTracker(eventTracker).build()
 
         FragmentScenario.launchInContainer(fragmentClass = CameraFragment::class.java,
-            themeResId = R.style.GiniCaptureTheme,
             factory = object : FragmentFactory() {
                 override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
                     return CameraFragment().apply {

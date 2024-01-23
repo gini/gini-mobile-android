@@ -44,7 +44,6 @@ class AnalysisFragmentTest {
             putString("GC_ARGS_DOCUMENT_ANALYSIS_ERROR_MESSAGE", "")
         }
         FragmentScenario.launchInContainer(fragmentClass = AnalysisFragment::class.java, fragmentArgs = bundle,
-            themeResId = R.style.GiniCaptureTheme,
             factory = object : FragmentFactory() {
                 override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
                     return AnalysisFragment().apply {

@@ -17,6 +17,7 @@ import net.gini.android.capture.camera.CameraFragmentListener
 import net.gini.android.capture.error.ErrorFragment
 import net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboarding
 import net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboardingAtFirstRun
+import net.gini.android.capture.internal.util.getLayoutInflaterWithGiniCaptureTheme
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
@@ -45,6 +46,11 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
     override fun onCreate(savedInstanceState: Bundle?) {
         childFragmentManager.fragmentFactory = CaptureFragmentFactory(this, this, this)
         super.onCreate(savedInstanceState)
+    }
+
+    override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
+        val inflater = super.onGetLayoutInflater(savedInstanceState)
+        return this.getLayoutInflaterWithGiniCaptureTheme(inflater)
     }
 
     override fun onCreateView(

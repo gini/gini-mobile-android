@@ -67,6 +67,7 @@ import kotlin.Unit;
 
 import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
 import static net.gini.android.capture.internal.util.FileImportHelper.showAlertIfOpenWithDocumentAndAppIsDefault;
+import static net.gini.android.capture.internal.util.FragmentExtensionsKt.getLayoutInflaterWithGiniCaptureTheme;
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackReviewScreenEvent;
 
@@ -228,6 +229,13 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
         for (final ImageDocument imageDocument : mMultiPageDocument.getDocuments()) {
             mDocumentUploadResults.put(imageDocument.getId(), false);
         }
+    }
+
+    @NonNull
+    @Override
+    public LayoutInflater onGetLayoutInflater(@Nullable Bundle savedInstanceState) {
+        final LayoutInflater inflater = super.onGetLayoutInflater(savedInstanceState);
+        return getLayoutInflaterWithGiniCaptureTheme(this, inflater);
     }
 
     @Override

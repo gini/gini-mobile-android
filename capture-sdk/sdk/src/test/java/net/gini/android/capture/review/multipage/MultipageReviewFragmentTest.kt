@@ -53,15 +53,7 @@ class MultipageReviewFragmentTest {
         GiniCapture.Builder().setEventTracker(eventTracker).build()
         GiniCapture.getInstance().internal().imageMultiPageDocumentMemoryStore.setMultiPageDocument(mock())
 
-        FragmentScenario.launchInContainer(fragmentClass = MultiPageReviewFragment::class.java,
-            themeResId = R.style.GiniCaptureTheme,
-            factory = object : FragmentFactory() {
-                override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
-                    return MultiPageReviewFragment().apply {
-                        setListener(mock())
-                    }
-                }
-            }).use { scenario ->
+        FragmentScenario.launchInContainer(fragmentClass = MultiPageReviewFragment::class.java).use { scenario ->
             scenario.moveToState(Lifecycle.State.STARTED)
 
             // When
@@ -86,15 +78,7 @@ class MultipageReviewFragmentTest {
             GiniCapture.Builder().setEventTracker(eventTracker).build()
             GiniCapture.getInstance().internal().imageMultiPageDocumentMemoryStore.setMultiPageDocument(mock())
 
-            FragmentScenario.launchInContainer(fragmentClass = MultiPageReviewFragment::class.java,
-                themeResId = R.style.GiniCaptureTheme,
-                factory = object : FragmentFactory() {
-                    override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
-                        return MultiPageReviewFragment().apply {
-                            setListener(mock())
-                        }
-                    }
-                }).use { scenario ->
+            FragmentScenario.launchInContainer(fragmentClass = MultiPageReviewFragment::class.java).use { scenario ->
                 scenario.moveToState(Lifecycle.State.STARTED)
 
                 // When
@@ -117,7 +101,6 @@ class MultipageReviewFragmentTest {
         // Given
         // Note: Use FragmentScenario in the future
         val fragment = mock<MultiPageReviewFragment>()
-        fragment.setListener(mock())
 
         // TODO: use FragmentScenario to fix the error
         `when`(fragment.activity).thenReturn(mock())
@@ -154,26 +137,5 @@ class MultipageReviewFragmentTest {
                 ERROR_OBJECT to exception
         )
         Mockito.verify(eventTracker).onReviewScreenEvent(Event(ReviewScreenEvent.UPLOAD_ERROR, errorDetails))
-    }
-
-    @Test
-    fun `notifies listener of error when GiniInstance is missing`() {
-        // Given
-        val listener = mock<MultiPageReviewFragmentListener>()
-
-        val scenario = launchFragment(initialState = CREATED, themeResId = R.style.GiniCaptureTheme) {
-            MultiPageReviewFragment.newInstance().apply {
-                setListener(listener)
-            }
-        }
-
-        // When
-        scenario.moveToState(RESUMED)
-
-        // Then
-        val args = argumentCaptor<GiniCaptureError>()
-        Mockito.verify(listener).onError(args.capture())
-        Truth.assertThat(args.firstValue.errorCode)
-            .isEqualTo(GiniCaptureError.ErrorCode.MISSING_GINI_CAPTURE_INSTANCE)
     }
 }

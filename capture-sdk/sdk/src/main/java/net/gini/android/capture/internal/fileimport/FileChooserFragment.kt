@@ -35,6 +35,7 @@ import net.gini.android.capture.internal.util.ContextHelper
 import net.gini.android.capture.internal.util.FeatureConfiguration
 import net.gini.android.capture.internal.util.MimeType
 import net.gini.android.capture.internal.util.autoCleared
+import net.gini.android.capture.internal.util.getLayoutInflaterWithGiniCaptureTheme
 
 private const val ARG_DOCUMENT_IMPORT_FILE_TYPES = "GC_EXTRA_IN_DOCUMENT_IMPORT_FILE_TYPES"
 private const val GRID_SPAN_COUNT_PHONE = 3
@@ -54,6 +55,11 @@ class FileChooserFragment : BottomSheetDialogFragment() {
             docImportEnabledFileTypes =
                 it.getSerializable(ARG_DOCUMENT_IMPORT_FILE_TYPES, DocumentImportEnabledFileTypes::class.java)
         }
+    }
+
+    override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
+        val inflater = super.onGetLayoutInflater(savedInstanceState)
+        return this.getLayoutInflaterWithGiniCaptureTheme(inflater)
     }
 
     override fun onCreateView(

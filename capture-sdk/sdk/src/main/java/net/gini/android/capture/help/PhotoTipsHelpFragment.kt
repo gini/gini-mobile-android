@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import net.gini.android.capture.GiniCapture
@@ -14,6 +13,7 @@ import net.gini.android.capture.databinding.GcFragmentPhotoTipsHelpBinding
 import net.gini.android.capture.help.view.HelpNavigationBarBottomAdapter
 import net.gini.android.capture.internal.ui.IntervalClickListener
 import net.gini.android.capture.internal.util.autoCleared
+import net.gini.android.capture.internal.util.getLayoutInflaterWithGiniCaptureTheme
 import net.gini.android.capture.view.InjectedViewAdapterHolder
 import net.gini.android.capture.view.NavButtonType
 import net.gini.android.capture.view.NavigationBarTopAdapter
@@ -23,6 +23,11 @@ import net.gini.android.capture.view.NavigationBarTopAdapter
  */
 class PhotoTipsHelpFragment : Fragment() {
     private var binding: GcFragmentPhotoTipsHelpBinding by autoCleared()
+
+    override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
+        val inflater = super.onGetLayoutInflater(savedInstanceState)
+        return this.getLayoutInflaterWithGiniCaptureTheme(inflater)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
