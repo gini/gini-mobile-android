@@ -36,26 +36,18 @@ class ClientGiniCaptureFragment :
                 requireActivity().supportFragmentManager.findFragmentByTag("fragment_host") as? CaptureFlowFragment
             captureFlowFragment?.setListener(this)
         }
+        (requireActivity() as AppCompatActivity).supportActionBar?.hide()
     }
 
-    private fun checkCameraPermission(intent: Intent? = null) {
+    private fun checkCameraPermission() {
         permissionHandler = PermissionHandler(requireActivity())
         lifecycleScope.launch {
             if (permissionHandler.grantPermission(Manifest.permission.CAMERA)) {
                 // Bank SDK is configured in the MainActivity, but you can
                 // call [overrideBankSDKConfiguration] here if you want to override the configuration
                 startBankSDK()
-            } else {
-                if (intent != null) {
-                    requireActivity().finish()
-                }
             }
         }
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        (requireActivity() as AppCompatActivity).supportActionBar?.hide()
     }
 
     private fun overrideBankSDKConfiguration() {
