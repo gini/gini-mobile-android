@@ -14,7 +14,11 @@
             android:id="@+id/to_digital_invoice_fragment"
             app:destination="@id/gbs_destination_digital_invoice_fragment"
             app:popUpTo="@id/gbs_destination_capture_fragment"
-            app:popUpToInclusive="true">
+            app:popUpToInclusive="true"
+            app:enterAnim="@anim/gc_nav_enter_anim"
+            app:exitAnim="@anim/gc_nav_exit_anim"
+            app:popEnterAnim="@anim/gc_nav_pop_enter_anim"
+            app:popExitAnim="@anim/gc_nav_pop_exit_anim">
             <argument
                 android:name="GBS_ARGS_EXTRACTIONS"
                 app:argType="android.os.Bundle" />
@@ -37,13 +41,25 @@
         tools:layout="@layout/gbs_fragment_digital_invoice">
         <action
             android:id="@+id/to_digital_invoice_onboarding_fragment"
-            app:destination="@id/gbs_destination_digital_invoice_onboarding_fragment"/>
+            app:destination="@id/gbs_destination_digital_invoice_onboarding_fragment"
+            app:enterAnim="@anim/gc_nav_enter_anim"
+            app:exitAnim="@anim/gc_nav_exit_anim"
+            app:popEnterAnim="@anim/gc_nav_pop_enter_anim"
+            app:popExitAnim="@anim/gc_nav_pop_exit_anim"/>
         <action
             android:id="@+id/to_digital_invoice_help_fragment"
-            app:destination="@id/gbs_destination_digital_invoice_help_fragment"/>
+            app:destination="@id/gbs_destination_digital_invoice_help_fragment"
+            app:enterAnim="@anim/gc_nav_enter_anim"
+            app:exitAnim="@anim/gc_nav_exit_anim"
+            app:popEnterAnim="@anim/gc_nav_pop_enter_anim"
+            app:popExitAnim="@anim/gc_nav_pop_exit_anim"/>
         <action
             android:id="@+id/to_digital_invoice_edit_item_bottom_sheet_dialog"
-            app:destination="@id/gbs_destination_digital_invoice_edit_item_bottom_sheet_dialog">
+            app:destination="@id/gbs_destination_digital_invoice_edit_item_bottom_sheet_dialog"
+            app:enterAnim="@anim/gc_nav_enter_anim"
+            app:exitAnim="@anim/gc_nav_exit_anim"
+            app:popEnterAnim="@anim/gc_nav_pop_enter_anim"
+            app:popExitAnim="@anim/gc_nav_pop_exit_anim">
             <argument
                 android:name="GBS_ARGS_SELECTABLE_LINE_ITEM"
                 app:argType="net.gini.android.bank.sdk.capture.digitalinvoice.SelectableLineItem" />
