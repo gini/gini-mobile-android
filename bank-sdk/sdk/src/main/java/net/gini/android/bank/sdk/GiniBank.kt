@@ -276,7 +276,7 @@ object GiniBank {
                 override fun onSuccess(document: Document) {
                     callback(
                         CreateCaptureFlowFragmentForIntentResult.Success(
-                            CaptureFlowFragment.createInstance(document)
+                            Internal.createCaptureFlowFragmentForOpenWithDocument(document)
                         )
                     )
                 }
