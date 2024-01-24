@@ -5,12 +5,12 @@ android-targetSdk = "33"
 kotlin = "1.8.20"
 android-gradle-plugin = "8.2.1"
 dokka = "1.7.20"
-androidx-lifecycle = "2.5.1"
-androidx-camera = "1.2.2"
-androidx-fragment = "1.5.3"
+androidx-lifecycle = "2.7.0"
+androidx-camera = "1.3.1"
+androidx-fragment = "1.6.2"
 androidx-test = "1.5.0"
 androidx-test-junit = "1.1.5"
-kotlinx-coroutines = "1.6.4"
+kotlinx-coroutines = "1.7.1"
 koin = "2.2.3"
 moshi = "1.14.0"
 mockito = "4.2.0"
@@ -26,10 +26,10 @@ android-gradle = { module = "com.android.tools.build:gradle", version.ref = "and
 kotlin-gradle = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 dokka-gradle = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
 dokka-kotlinAsJava = { module = "org.jetbrains.dokka:kotlin-as-java-plugin", version.ref = "dokka" }
-androidx-core-ktx = "androidx.core:core-ktx:1.10.0"
+androidx-core-ktx = "androidx.core:core-ktx:1.12.0"
 androidx-multidex = "androidx.multidex:multidex:2.0.1"
-androidx-activity = "androidx.activity:activity:1.7.0"
-androidx-activity-ktx = "androidx.activity:activity-ktx:1.7.0"
+androidx-activity = "androidx.activity:activity:1.8.2"
+androidx-activity-ktx = "androidx.activity:activity-ktx:1.8.2"
 androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "androidx-fragment" }
 androidx-fragment-testing = { module = "androidx.fragment:fragment-testing", version.ref = "androidx-fragment" }
 androidx-appcompat = "androidx.appcompat:appcompat:1.6.1"
@@ -40,12 +40,12 @@ androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtim
 androidx-constraintlayout = "androidx.constraintlayout:constraintlayout:2.1.4"
 androidx-viewpager = "androidx.viewpager:viewpager:1.0.0"
 androidx-viewpager2 = "androidx.viewpager2:viewpager2:1.0.0"
-androidx-recyclerview = "androidx.recyclerview:recyclerview:1.3.0"
+androidx-recyclerview = "androidx.recyclerview:recyclerview:1.3.2"
 androidx-cardview = "androidx.cardview:cardview:1.0.0"
 androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "androidx-camera" }
 androidx-camera-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "androidx-camera" }
 androidx-camera-view = { module = "androidx.camera:camera-view", version.ref = "androidx-camera" }
-androidx-annotation = "androidx.annotation:annotation:1.6.0"
+androidx-annotation = "androidx.annotation:annotation:1.7.1"
 androidx-test-core-ktx = { module = "androidx.test:core-ktx", version.ref = "androidx-test" }
 androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidx-test" }
 androidx-test-rules = { module = "androidx.test:rules", version.ref = "androidx-test" }
@@ -61,7 +61,7 @@ kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-t
 koin-androidx-scope = { module = "io.insert-koin:koin-androidx-scope", version.ref = "koin" }
 koin-androidx-viewmodel = { module = "io.insert-koin:koin-androidx-viewmodel", version.ref = "koin" }
 koin-androidx-fragment = { module = "io.insert-koin:koin-androidx-fragment", version.ref = "koin" }
-material = "com.google.android.material:material:1.8.0"
+material = "com.google.android.material:material:1.11.0"
 moshi-core = { module = "com.squareup.moshi:moshi", version.ref = "moshi" }
 moshi-codegen = { module = "com.squareup.moshi:moshi-kotlin-codegen", version.ref = "moshi" }
 insetter = "dev.chrisbanes.insetter:insetter:0.6.1"
