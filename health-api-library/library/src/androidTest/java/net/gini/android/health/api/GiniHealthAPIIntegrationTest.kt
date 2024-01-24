@@ -22,6 +22,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import java.util.Collections.singletonList
 import java.util.Properties
+import kotlin.time.Duration.Companion.seconds
 
 /**
  * Created by Alpár Szotyori on 24.01.22.
@@ -35,7 +36,7 @@ class GiniHealthAPIIntegrationTest: GiniCoreAPIIntegrationTest<HealthApiDocument
 
     @Test
     @Throws(Exception::class)
-    fun sendFeedback_withoutCompoundExtractions_forDocument_withLineItems() = runTest {
+    fun sendFeedback_withoutCompoundExtractions_forDocument_withLineItems() = runTest(timeout = 30.seconds) {
         val assetManager = getApplicationContext<Context>().resources.assets
         val testDocumentAsStream = assetManager.open("line-items.pdf")
         Assert.assertNotNull("test pdf line-items.pdf could not be loaded", testDocumentAsStream)
@@ -61,7 +62,7 @@ class GiniHealthAPIIntegrationTest: GiniCoreAPIIntegrationTest<HealthApiDocument
 
     @Test
     @Throws(Exception::class)
-    fun sendFeedback_withCompoundExtractions_forDocument_withLineItems() = runTest {
+    fun sendFeedback_withCompoundExtractions_forDocument_withLineItems() = runTest(timeout = 30.seconds) {
         val assetManager = getApplicationContext<Context>().resources.assets
         val testDocumentAsStream = assetManager.open("line-items.pdf")
         Assert.assertNotNull("test pdf line-items.pdf could not be loaded", testDocumentAsStream)
@@ -102,7 +103,7 @@ class GiniHealthAPIIntegrationTest: GiniCoreAPIIntegrationTest<HealthApiDocument
 
     @Test
     @Throws(Exception::class)
-    fun testGetPaymentProviders() = runTest {
+    fun testGetPaymentProviders() = runTest(timeout = 30.seconds) {
         val paymentProviders = giniCoreApi.documentManager.getPaymentProviders().dataOrThrow
 
         Assert.assertTrue("Payment providers list should not be empty", paymentProviders.isNotEmpty())
@@ -110,7 +111,7 @@ class GiniHealthAPIIntegrationTest: GiniCoreAPIIntegrationTest<HealthApiDocument
 
     @Test
     @Throws(Exception::class)
-    fun testGetPaymentProvider() = runTest {
+    fun testGetPaymentProvider() = runTest(timeout = 30.seconds) {
         val paymentProviders = giniCoreApi.documentManager.getPaymentProviders().dataOrThrow
 
         val paymentProvider = giniCoreApi.documentManager.getPaymentProvider(paymentProviders[0].id).dataOrThrow
@@ -120,14 +121,14 @@ class GiniHealthAPIIntegrationTest: GiniCoreAPIIntegrationTest<HealthApiDocument
 
     @Test
     @Throws(Exception::class)
-    fun testCreatePaymentRequest() = runTest {
+    fun testCreatePaymentRequest() = runTest(timeout = 30.seconds) {
         val paymentRequestId = createPaymentRequest()
         Assert.assertTrue("Payment request id should not be empty string", paymentRequestId.isNotBlank())
     }
 
     @Test
     @Throws(Exception::class)
-    fun testGetPaymentRequest() = runTest {
+    fun testGetPaymentRequest() = runTest(timeout = 30.seconds) {
         val paymentRequestId = createPaymentRequest()
         val paymentRequest = giniCoreApi.documentManager.getPaymentRequest(paymentRequestId).dataOrThrow
         Assert.assertEquals(paymentRequest.status, PaymentRequest.Status.OPEN)
@@ -159,7 +160,7 @@ class GiniHealthAPIIntegrationTest: GiniCoreAPIIntegrationTest<HealthApiDocument
 
     @Test
     @Throws(Exception::class)
-    fun testGetImage() = runTest {
+    fun testGetImage() = runTest(timeout = 30.seconds) {
         val assetManager = getApplicationContext<Context>().resources.assets
         val testDocumentAsStream = assetManager.open("test.jpg")
         Assert.assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream)
