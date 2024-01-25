@@ -110,7 +110,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
     private boolean isBottomNavigationBarContinueButtonEnabled;
     private boolean isBottomNavigationBarLoadingIndicatorActive;
 
-    private boolean mShouldScrollToLastPage = true;
+    private boolean mShouldScrollToLastPage = false;
     private int mScrollToPosition = -1;
     private final String KEY_SHOULD_SCROLL_TO_LAST_PAGE = "GC_SHOULD_SCROLL_TO_LAST_PAGE";
     private final String KEY_SCROLL_TO_POSITION = "GC_SHOULD_SCROLL_TO_LAST_PAGE";
@@ -142,17 +142,16 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
-
-        if (savedInstanceState != null) {
-            mScrollToPosition = savedInstanceState.getInt(KEY_SCROLL_TO_POSITION, -1);
-            mShouldScrollToLastPage = savedInstanceState.getBoolean(KEY_SHOULD_SCROLL_TO_LAST_PAGE, true);
-        }
-
-        mPreviewFragmentListener = this;
-
         if (getArguments() != null) {
             mShouldScrollToLastPage = getArguments().getBoolean(KEY_SHOULD_SCROLL_TO_LAST_PAGE, false);
         }
+
+        if (savedInstanceState != null) {
+            mScrollToPosition = savedInstanceState.getInt(KEY_SCROLL_TO_POSITION, -1);
+            mShouldScrollToLastPage = savedInstanceState.getBoolean(KEY_SHOULD_SCROLL_TO_LAST_PAGE, false);
+        }
+
+        mPreviewFragmentListener = this;
 
         if (!GiniCapture.hasInstance()) {
             NavHostFragment.findNavController(this).navigate(MultiPageReviewFragmentDirections.toErrorFragment(ErrorType.GENERAL, mMultiPageDocument));
@@ -360,7 +359,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
                         setScrollToPosition(position);
 
                         if (position < mMultiPageDocument.getDocuments().size() - 1)
-                            setShouldScrollToLastPage(false);
+                            mShouldScrollToLastPage = false;
                     }
 
                 } else if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
@@ -376,7 +375,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
 
         //Scroll to the last captured document
         if (mMultiPageDocument.getDocuments().size() > 1) {
-            if (shouldScrollToLastPage()) {
+            if (mShouldScrollToLastPage) {
                 scrollToCorrectPosition(mMultiPageDocument.getDocuments().size() - 1, true);
             } else {
                 if (getScrollPosition() > -1)
@@ -868,20 +867,6 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
             return;
 
         mScrollToPosition = scrollToPosition;
-    }
-
-    public boolean shouldScrollToLastPage() {
-        if (getActivity() == null)
-            return false;
-
-        return mShouldScrollToLastPage;
-    }
-
-    public void setShouldScrollToLastPage(boolean shouldScrollToLastPage) {
-        if (getActivity() == null)
-            return;
-        // TODO for fragments: Move logic from MultiPageReviewActivity to the fragment
-        mShouldScrollToLastPage = shouldScrollToLastPage;
     }
 
     @Override
