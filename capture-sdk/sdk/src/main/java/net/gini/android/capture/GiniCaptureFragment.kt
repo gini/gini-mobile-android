@@ -23,14 +23,12 @@ import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.noresults.NoResultsFragment
 import net.gini.android.capture.review.multipage.MultiPageReviewFragment
-import net.gini.android.capture.review.multipage.previews.PreviewCancelListener
 
 class GiniCaptureFragment(private val openWithDocument: Document? = null) :
     Fragment(),
     CameraFragmentListener,
     AnalysisFragmentListener,
-    EnterManuallyButtonListener,
-    PreviewCancelListener {
+    EnterManuallyButtonListener{
 
     private lateinit var navController: NavController
     private lateinit var giniCaptureFragmentListener: GiniCaptureFragmentListener
@@ -47,7 +45,7 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        childFragmentManager.fragmentFactory = CaptureFragmentFactory(this, this, this, this)
+        childFragmentManager.fragmentFactory = CaptureFragmentFactory(this, this, this)
         super.onCreate(savedInstanceState)
     }
 
@@ -183,16 +181,10 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
         }
     }
 
-    override fun onPreviewCancelled() {
-        didFinishWithResult = true
-        giniCaptureFragmentListener.onFinishedWithResult(CaptureSDKResult.Cancel)
-    }
-
 }
 
 class CaptureFragmentFactory(
     private val cameraListener: CameraFragmentListener,
-    private val previewCancelListener: PreviewCancelListener,
     private val analysisFragmentListener: AnalysisFragmentListener,
     private val enterManuallyButtonListener: EnterManuallyButtonListener
 ) : FragmentFactory() {
@@ -221,13 +213,6 @@ class CaptureFragmentFactory(
                 .apply {
                     setListener(
                         enterManuallyButtonListener
-                    )
-                }
-
-            MultiPageReviewFragment::class.java.name -> return MultiPageReviewFragment()
-                .apply {
-                    setListener(
-                        previewCancelListener
                     )
                 }
 

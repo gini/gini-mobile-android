@@ -44,7 +44,6 @@ import net.gini.android.capture.internal.ui.IntervalClickListener;
 import net.gini.android.capture.internal.util.AlertDialogHelperCompat;
 import net.gini.android.capture.internal.util.FileImportHelper;
 import net.gini.android.capture.review.multipage.previews.MiddlePageManager;
-import net.gini.android.capture.review.multipage.previews.PreviewCancelListener;
 import net.gini.android.capture.review.multipage.previews.PreviewFragmentListener;
 import net.gini.android.capture.review.multipage.previews.PreviewPagesAdapter;
 import net.gini.android.capture.review.multipage.view.ReviewNavigationBarBottomAdapter;
@@ -92,7 +91,6 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
     @VisibleForTesting
     ImageMultiPageDocument mMultiPageDocument;
     private PreviewFragmentListener mPreviewFragmentListener;
-    private PreviewCancelListener mPreviewCancelListener;
     private PreviewPagesAdapter mPreviewPagesAdapter;
     private RecyclerView mRecyclerView;
     private Button mButtonNext;
@@ -125,10 +123,6 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
         return fragment;
     }
 
-    public void setListener(PreviewCancelListener previewCancelListener) {
-        mPreviewCancelListener = previewCancelListener;
-    }
-
     /**
      * Internal use only.
      *
@@ -144,10 +138,11 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
             @Override
             public void handleOnBackPressed() {
                 trackReviewScreenEvent(ReviewScreenEvent.BACK);
-                if (mPreviewCancelListener != null) {
-                    mPreviewCancelListener.onPreviewCancelled();
+                setEnabled(false);
+                remove();
+                if (getActivity() != null) {
+                    getActivity().getOnBackPressedDispatcher().onBackPressed();
                 }
-                //NavHostFragment.findNavController(MultiPageReviewFragment.this).navigate(MultiPageReviewFragmentDirections.toCameraFragmentForFirstPage());
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
