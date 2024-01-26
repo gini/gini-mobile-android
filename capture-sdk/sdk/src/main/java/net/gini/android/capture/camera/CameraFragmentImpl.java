@@ -468,7 +468,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private void checkGiniCaptureInstance() {
         if (!GiniCapture.hasInstance()) {
-            mFragment.findNavController().navigate(MultiPageReviewFragmentDirections.toErrorFragment(ErrorType.GENERAL, mMultiPageDocument));
+            mFragment.findNavController().navigate(CameraFragmentDirections.toErrorFragment(ErrorType.GENERAL, mMultiPageDocument));
         }
     }
 
