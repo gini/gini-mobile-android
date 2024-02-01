@@ -14,6 +14,7 @@ import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.capture.util.autoCleared
 import net.gini.android.bank.sdk.databinding.GbsFragmentReturnReasonDialogBinding
+import net.gini.android.bank.sdk.util.getLayoutInflaterWithGiniCaptureTheme
 import net.gini.android.capture.internal.util.ContextHelper
 
 /**
@@ -47,6 +48,11 @@ internal class ReturnReasonDialog : BottomSheetDialogFragment() {
                 putParcelableArrayList(ARG_RETURN_REASONS, ArrayList(reasons))
             }
         }
+    }
+
+    override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
+        val inflater = super.onGetLayoutInflater(savedInstanceState)
+        return this.getLayoutInflaterWithGiniCaptureTheme(inflater)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
