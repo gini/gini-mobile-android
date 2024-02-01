@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,6 +16,9 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
+import net.gini.android.capture.GiniCapture;
+import net.gini.android.capture.internal.util.WindowExtensionsKt;
 
 /**
  * Created by Alpar Szotyori on 05.06.2018.
@@ -52,6 +56,16 @@ public class AlertDialogFragment extends DialogFragment {
     public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         readArguments();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if (GiniCapture.hasInstance() && !GiniCapture.getInstance().getAllowScreenshots()) {
+            if (getDialog() != null && getDialog().getWindow() != null) {
+                WindowExtensionsKt.disallowScreenshots(getDialog().getWindow());
+            }
+        }
     }
 
     private void readArguments() {
