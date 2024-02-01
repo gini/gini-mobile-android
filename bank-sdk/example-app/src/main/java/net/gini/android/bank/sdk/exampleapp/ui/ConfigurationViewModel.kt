@@ -119,7 +119,10 @@ class ConfigurationViewModel @Inject constructor(
             entryPoint = configuration.entryPoint,
 
             // 31 enable return assistant
-            returnAssistantEnabled = configuration.isReturnAssistantEnabled
+            returnAssistantEnabled = configuration.isReturnAssistantEnabled,
+
+            // allow screenshots
+            allowScreenshots = configuration.isAllowScreenshotsEnabled
         )
 
         // 9 enable Help screens custom bottom navigation bar

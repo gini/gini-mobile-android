@@ -154,6 +154,8 @@ data class Configuration(
     // 37 Debug mode
     val isDebugModeEnabled: Boolean = false,
 
+    val isAllowScreenshotsEnabled: Boolean = true,
+
     ) : Parcelable {
 
     companion object {
@@ -171,7 +173,8 @@ data class Configuration(
                 isOnboardingAtEveryLaunchEnabled = defaultCaptureConfiguration.showOnboarding,
                 isSupportedFormatsHelpScreenEnabled = defaultCaptureConfiguration.supportedFormatsHelpScreenEnabled,
                 isGiniErrorLoggerEnabled = defaultCaptureConfiguration.giniErrorLoggerIsOn,
-                isReturnAssistantEnabled = defaultCaptureConfiguration.returnAssistantEnabled
+                isReturnAssistantEnabled = defaultCaptureConfiguration.returnAssistantEnabled,
+                isAllowScreenshotsEnabled = defaultCaptureConfiguration.allowScreenshots
             )
 
 
