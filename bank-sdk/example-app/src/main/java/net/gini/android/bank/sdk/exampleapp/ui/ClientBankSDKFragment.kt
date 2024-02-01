@@ -20,8 +20,8 @@ import net.gini.android.capture.DocumentImportEnabledFileTypes
 import net.gini.android.capture.network.GiniCaptureDefaultNetworkService
 import net.gini.android.core.api.DocumentMetadata
 
-class ClientGiniCaptureFragment :
-    Fragment(R.layout.fragment_client_capture),
+class ClientBankSDKFragment :
+    Fragment(R.layout.fragment_client),
     CaptureFlowFragmentListener {
 
     private lateinit var permissionHandler: PermissionHandler

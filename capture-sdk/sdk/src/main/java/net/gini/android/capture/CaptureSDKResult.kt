@@ -3,7 +3,6 @@ package net.gini.android.capture
 import android.content.Intent
 import android.os.Bundle
 import net.gini.android.capture.camera.CameraActivity
-import net.gini.android.capture.internal.util.FileImportValidator
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction

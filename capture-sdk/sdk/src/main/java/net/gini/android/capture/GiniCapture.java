@@ -711,22 +711,22 @@ public class GiniCapture {
         });
     }
 
-    interface CreateGiniCaptureFragmentForIntentCallback {
+    public interface CreateGiniCaptureFragmentForIntentCallback {
         void callback(CreateGiniCaptureFragmentForIntentResult result);
     }
 
-    static class CreateGiniCaptureFragmentForIntentResult {
-        static class Cancelled extends CreateGiniCaptureFragmentForIntentResult {}
+    public static class CreateGiniCaptureFragmentForIntentResult {
+        public static class Cancelled extends CreateGiniCaptureFragmentForIntentResult {}
 
-        static class Success extends CreateGiniCaptureFragmentForIntentResult {
+        public static class Success extends CreateGiniCaptureFragmentForIntentResult {
             @NonNull
-            GiniCaptureFragment fragment;
+            public GiniCaptureFragment fragment;
 
             public Success(@NonNull GiniCaptureFragment fragment) {
                 this.fragment = fragment;
             }
         }
-        static class Error extends CreateGiniCaptureFragmentForIntentResult {
+        public static class Error extends CreateGiniCaptureFragmentForIntentResult {
             @NonNull
             Exception exception;
 
