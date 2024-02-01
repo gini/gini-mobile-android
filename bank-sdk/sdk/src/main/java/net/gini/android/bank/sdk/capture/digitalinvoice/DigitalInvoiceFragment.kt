@@ -20,6 +20,7 @@ import net.gini.android.bank.sdk.capture.digitalinvoice.view.DigitalInvoiceNavig
 import net.gini.android.bank.sdk.capture.util.autoCleared
 import net.gini.android.bank.sdk.capture.util.parentFragmentManagerOrNull
 import net.gini.android.bank.sdk.databinding.GbsFragmentDigitalInvoiceBinding
+import net.gini.android.bank.sdk.util.disallowScreenshots
 import net.gini.android.bank.sdk.util.getLayoutInflaterWithGiniCaptureTheme
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.internal.ui.IntervalToolbarMenuItemIntervalClickListener
@@ -99,6 +100,9 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
         val activity = this.activity
         checkNotNull(activity) {
             "Missing activity for fragment."
+        }
+        if (GiniCapture.hasInstance() && !GiniCapture.getInstance().allowScreenshots) {
+            requireActivity().window.disallowScreenshots()
         }
         forcePortraitOrientationOnPhones(activity)
         readArguments()

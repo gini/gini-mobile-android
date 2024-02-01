@@ -24,8 +24,10 @@ import net.gini.android.bank.sdk.capture.digitalinvoice.details.doAfterTextChang
 import net.gini.android.bank.sdk.capture.util.amountWatcher
 import net.gini.android.bank.sdk.capture.util.hideKeyboard
 import net.gini.android.bank.sdk.databinding.GbsEditItemBottomSheetBinding
+import net.gini.android.bank.sdk.util.disallowScreenshots
 import net.gini.android.bank.sdk.util.getLayoutInflaterWithGiniCaptureTheme
 import net.gini.android.capture.AmountCurrency
+import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
 
 private const val ARGS_SELECTABLE_LINE_ITEM = "GBS_ARGS_SELECTABLE_LINE_ITEM"
@@ -114,6 +116,10 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
         super.onViewCreated(view, savedInstanceState)
 
         setUpBindings()
+
+        if (GiniCapture.hasInstance() && !GiniCapture.getInstance().allowScreenshots) {
+            dialog?.window?.disallowScreenshots()
+        }
     }
 
     /**
