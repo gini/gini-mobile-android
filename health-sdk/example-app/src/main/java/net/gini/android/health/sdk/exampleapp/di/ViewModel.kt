@@ -12,7 +12,7 @@ import org.koin.dsl.module
 
 val viewModelModule = module {
     viewModel { MainViewModel(get()) }
-    viewModel { UploadViewModel(get(), get()) }
+    viewModel { UploadViewModel(get(), get(), get()) }
     viewModel { ReviewViewModel(get()) }
     viewModel { InvoicesViewModel(get()) }
     single { InvoicesRepository(get(), get(), get()) }
