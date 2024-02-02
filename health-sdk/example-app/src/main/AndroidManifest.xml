@@ -38,6 +38,11 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.GiniHealthExample.Review"
             android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".invoices.ui.InvoicesActivity"
+            android:label="@string/title_activity_invoices"
+            android:exported="false"
+            android:theme="@style/Theme.GiniHealthExample.ActionBar"/>
 
         <provider
             android:name="androidx.core.content.FileProvider"

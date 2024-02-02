@@ -1,5 +1,6 @@
 package net.gini.android.health.sdk.exampleapp
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -12,6 +13,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import net.gini.android.health.sdk.exampleapp.databinding.ActivityMainBinding
+import net.gini.android.health.sdk.exampleapp.invoices.ui.InvoicesActivity
 import net.gini.android.health.sdk.exampleapp.pager.PagerAdapter
 import net.gini.android.health.sdk.exampleapp.review.ReviewActivity
 import net.gini.android.health.sdk.exampleapp.upload.UploadActivity
@@ -72,6 +74,10 @@ class MainActivity : AppCompatActivity() {
                 after = {
                     binding.upload.isEnabled = true
                 })
+        }
+
+        binding.invoicesScreen.setOnClickListener {
+            startActivity(Intent(this, InvoicesActivity::class.java))
         }
     }
 

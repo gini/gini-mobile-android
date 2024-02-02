@@ -11,7 +11,7 @@ data class DocumentWithExtractions(
     val amount: String?,
     val dueDate: String?
 ) {
-    
+
     companion object {
         fun fromDocumentAndExtractions(
             document: Document,

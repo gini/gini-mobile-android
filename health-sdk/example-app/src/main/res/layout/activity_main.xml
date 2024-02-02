@@ -32,8 +32,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/import_file"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/take_photo"
+        app:layout_constraintBottom_toTopOf="@id/take_photo"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
@@ -41,9 +41,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/take_photo"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/upload"
-        app:layout_constraintStart_toEndOf="@id/import_file" />
+        app:layout_constraintBottom_toTopOf="@id/upload"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/upload"
@@ -51,9 +51,18 @@
         android:layout_height="wrap_content"
         android:enabled="false"
         android:text="@string/upload"
+        app:layout_constraintBottom_toTopOf="@id/invoices_screen"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/invoices_screen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Invoices list"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/take_photo" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <ProgressBar
         android:id="@+id/loading_indicator"

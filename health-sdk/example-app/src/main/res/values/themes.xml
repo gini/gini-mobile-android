@@ -17,6 +17,24 @@
         <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
         <!-- Customize your theme here. -->
     </style>
+    <style name="Theme.GiniHealthExample.ActionBar" parent="Theme.MaterialComponents.Light">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/blue</item>
+        <item name="colorPrimaryVariant">@color/blue_light</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorAccent">@color/blue</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/red</item>
+        <item name="colorSecondaryVariant">@color/red</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorError">#FF5252</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor" tools:targetApi="lollipop">@android:color/transparent</item>
+        <item name="android:navigationBarColor" tools:targetApi="lollipop">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
+        <!-- Customize your theme here. -->
+    </style>
+
     <style name="Theme.GiniHealthExample.Review" parent="Theme.GiniHealthExample">
         <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
     </style>
