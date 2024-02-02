@@ -4,7 +4,8 @@ import net.gini.gradle.readLocalPropertiesToMap
 
 plugins {
     id("com.android.application")
-    id("kotlin-android")
+    kotlin("android")
+    kotlin("kapt")
 }
 
 android {
@@ -24,6 +25,9 @@ android {
         versionCode = (properties["versionCode"] as? String)?.toInt() ?: 0
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            useSupportLibrary = true
+        }
     }
 
     signingConfigs {
@@ -56,6 +60,17 @@ android {
         // https://issuetracker.google.com/issues/217593040#comment6
         freeCompilerArgs = listOf("-Xjvm-default=all")
     }
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
+}
+
+// after upgrading to AGP 8, we need this, otherwise, gradle will complain to use the same jdk version as your machine (17 which is bundled with Android Studio)
+// https://youtrack.jetbrains.com/issue/KT-55947/Unable-to-set-kapt-jvm-target-version
+tasks.withType(type = org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask::class) {
+    kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
 }
 
 dependencies {
@@ -73,6 +88,10 @@ dependencies {
     implementation(libs.koin.androidx.viewmodel)
     implementation(libs.koin.androidx.fragment)
     implementation(libs.insetter)
+    implementation(libs.datastore.preferences)
+    implementation(libs.moshi.core)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    kapt(libs.moshi.codegen)
 
     testImplementation(libs.junit)
 
