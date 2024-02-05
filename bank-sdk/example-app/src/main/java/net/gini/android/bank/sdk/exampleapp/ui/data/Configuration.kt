@@ -152,7 +152,7 @@ data class Configuration(
     val isDigitalInvoiceBottomNavigationBarEnabled: Boolean = false,
 
     // 37 Debug mode
-    val isDebugModeEnabled: Boolean = false,
+    val isDebugModeEnabled: Boolean = true,
 
     ) : Parcelable {
 
