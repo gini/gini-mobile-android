@@ -22,6 +22,7 @@ import net.gini.android.health.sdk.exampleapp.R
 import net.gini.android.health.sdk.exampleapp.databinding.ActivityInvoicesBinding
 import net.gini.android.health.sdk.exampleapp.invoices.data.UploadHardcodedInvoicesState
 import net.gini.android.health.sdk.exampleapp.invoices.data.model.DocumentWithExtractions
+import net.gini.android.health.sdk.exampleapp.invoices.ui.model.InvoiceItem
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -95,7 +96,7 @@ class InvoicesActivity : AppCompatActivity() {
     }
 }
 
-class InvoicesAdapter(var dataSet: List<DocumentWithExtractions>) :
+class InvoicesAdapter(var dataSet: List<InvoiceItem>) :
     RecyclerView.Adapter<InvoicesAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {

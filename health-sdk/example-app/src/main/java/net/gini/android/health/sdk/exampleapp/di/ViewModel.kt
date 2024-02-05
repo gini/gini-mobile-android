@@ -15,7 +15,7 @@ val viewModelModule = module {
     viewModel { UploadViewModel(get(), get(), get()) }
     viewModel { ReviewViewModel(get()) }
     viewModel { InvoicesViewModel(get()) }
-    single { InvoicesRepository(get(), get(), get()) }
+    factory { InvoicesRepository(get(), get(), get()) }
     factory { InvoicesLocalDataSource(get()) }
     factory { HardcodedInvoicesLocalDataSource(get())}
 }
