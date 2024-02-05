@@ -13,6 +13,8 @@ import android.view.View
 import android.view.ViewConfiguration
 import androidx.annotation.RequiresApi
 import androidx.camera.core.*
+import androidx.camera.core.resolutionselector.ResolutionSelector
+import androidx.camera.core.resolutionselector.ResolutionStrategy
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
@@ -98,8 +100,17 @@ internal class CameraXController(val activity: Activity) : CameraInterface {
                     targetRotation, targetResolution
                 )
 
+                val resolutionSelector = ResolutionSelector.Builder()
+                    .setResolutionStrategy(
+                        ResolutionStrategy(
+                            targetResolution,
+                            ResolutionStrategy.FALLBACK_RULE_CLOSEST_HIGHER_THEN_LOWER
+                        )
+                    )
+                    .build()
+
                 val preview = Preview.Builder()
-                    .setTargetResolution(targetResolution)
+                    .setResolutionSelector(resolutionSelector)
                     .setTargetRotation(targetRotation)
                     .build()
                 previewUseCase = preview
@@ -117,7 +128,7 @@ internal class CameraXController(val activity: Activity) : CameraInterface {
 
                 val imageCapture = ImageCapture.Builder()
                     .setCaptureMode(ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY)
-                    .setTargetResolution(targetResolution)
+                    .setResolutionSelector(resolutionSelector)
                     .setTargetRotation(targetRotation)
                     .build()
                 imageCaptureUseCase = imageCapture
