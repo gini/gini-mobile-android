@@ -78,6 +78,8 @@ class ReviewActivity : AppCompatActivity() {
 
         super.onCreate(savedInstanceState)
 
+        supportActionBar?.hide()
+
         val binding = ActivityReviewBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
