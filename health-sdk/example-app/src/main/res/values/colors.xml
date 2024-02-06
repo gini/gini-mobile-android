@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="ic_launcher_background">#FED023</color>
+
     <color name="blue_light">#D1EEF8</color>
     <color name="blue_dark">#274FBB</color>
     <color name="blue">#368BD5</color>
@@ -10,7 +12,8 @@
     <color name="black30">#30000000</color>
     <color name="black80">#CC000000</color>
     <color name="gray10">#E6E7ED</color>
-    <color name="selected_dot">#90000000</color>
+    <color name="selected_dot">@color/ghs_color_contrast_03</color>
+    <color name="unselected_dot">@color/ghs_color_03</color>
 
     <color name="ghs_input_stroke_default">@color/gray10</color>
     <color name="ghs_input_stroke_active">@color/blue</color>
