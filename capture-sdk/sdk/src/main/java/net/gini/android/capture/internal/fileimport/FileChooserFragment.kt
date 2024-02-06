@@ -244,7 +244,7 @@ class FileChooserFragment : BottomSheetDialogFragment() {
         @JvmStatic
         private fun queryImagePickers(context: Context): List<ResolveInfo> {
             val intent = createImagePickerIntent()
-            return context.packageManager.queryIntentActivities(intent, PackageManager.ResolveInfoFlags.of(0))
+            return context.packageManager.queryIntentActivities(intent, 0)
         }
 
         private fun createImagePickerIntent(): Intent =
@@ -274,7 +274,7 @@ class FileChooserFragment : BottomSheetDialogFragment() {
         )
         private fun queryImageProviders(context: Context): List<ResolveInfo> {
             val intent = createGetImageDocumentIntent()
-            return context.packageManager.queryIntentActivities(intent, PackageManager.ResolveInfoFlags.of(0))
+            return context.packageManager.queryIntentActivities(intent, 0)
         }
 
         private fun createGetImageDocumentIntent(): Intent =
@@ -292,7 +292,7 @@ class FileChooserFragment : BottomSheetDialogFragment() {
         )
         private fun queryPdfProviders(context: Context): List<ResolveInfo> {
             val intent = createGetPdfDocumentIntent()
-            return context.packageManager.queryIntentActivities(intent, PackageManager.ResolveInfoFlags.of(0))
+            return context.packageManager.queryIntentActivities(intent, 0)
         }
 
         private fun createGetPdfDocumentIntent(): Intent =
