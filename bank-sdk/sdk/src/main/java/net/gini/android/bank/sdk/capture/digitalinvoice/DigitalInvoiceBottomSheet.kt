@@ -11,8 +11,8 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.annotation.ColorInt
-import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.content.ContextCompat
+import androidx.core.os.BundleCompat
 import androidx.fragment.app.setFragmentResult
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -53,7 +53,7 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            selectableLineItem = it.getParcelable(ARGS_SELECTABLE_LINE_ITEM, SelectableLineItem::class.java)
+            selectableLineItem = BundleCompat.getParcelable(it, ARGS_SELECTABLE_LINE_ITEM, SelectableLineItem::class.java)
             activity?.let { activity ->
                 createPresenter(activity)
             }
@@ -68,7 +68,7 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         if (resources.getBoolean(net.gini.android.capture.R.bool.gc_is_tablet)) {
             activity?.let {
-                binding = GbsEditItemBottomSheetBinding.inflate(it.layoutInflater, null, false)
+                binding = GbsEditItemBottomSheetBinding.inflate(getLayoutInflaterWithGiniCaptureTheme(it.layoutInflater), null, false)
 
                 val builder = AlertDialog.Builder(context)
                 builder.setView(binding.root)

@@ -4,6 +4,8 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import androidx.activity.result.contract.ActivityResultContract
+import androidx.core.content.IntentCompat
+import androidx.core.os.BundleCompat
 
 /**
  * Activity Result Api custom contract for starting the capture flow.
@@ -43,7 +45,8 @@ class CaptureFlowImportContract : ActivityResultContract<CaptureImportInput, Cap
 internal fun internalParseResult(resultCode: Int, result: Intent?): CaptureResult {
     return when(resultCode) {
         Activity.RESULT_CANCELED -> CaptureResult.Cancel
-        else -> result?.getParcelableExtra(CaptureFlowActivity.EXTRA_OUT_RESULT, CaptureResult::class.java)
-            ?: CaptureResult.Empty
+        else -> result?.let {
+            IntentCompat.getParcelableExtra(it, CaptureFlowActivity.EXTRA_OUT_RESULT, CaptureResult::class.java)
+        } ?: CaptureResult.Empty
     }
 }

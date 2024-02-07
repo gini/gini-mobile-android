@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.core.os.BundleCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -126,7 +127,9 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
                     keySet().map { it to getParcelable<GiniCaptureCompoundExtraction>(it)!! }
                         .toMap()
             }
-            returnReasons = getParcelableArray(ARGS_RETURN_REASONS, GiniCaptureReturnReason::class.java)?.toList() ?: emptyList()
+            returnReasons =
+                (BundleCompat.getParcelableArray(this, ARGS_RETURN_REASONS, GiniCaptureReturnReason::class.java)
+                    ?.toList() as? List<GiniCaptureReturnReason>) ?: emptyList()
 
             isInaccurateExtraction = getBoolean(ARGS_INACCURATE_EXTRACTION, false)
         }
@@ -422,7 +425,7 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
                 DigitalInvoiceBottomSheet.REQUEST_KEY,
                 viewLifecycleOwner
             ) { _: String?, result: Bundle ->
-                result.getParcelable(DigitalInvoiceBottomSheet.RESULT_KEY, SelectableLineItem::class.java)
+                BundleCompat.getParcelable(result, DigitalInvoiceBottomSheet.RESULT_KEY, SelectableLineItem::class.java)
                     ?.let { selectableLineItem ->
                         presenter?.updateLineItem(selectableLineItem)
                     }
