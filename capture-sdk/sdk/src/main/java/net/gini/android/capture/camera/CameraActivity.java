@@ -1,16 +1,12 @@
 package net.gini.android.capture.camera;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.IntentCompat;
 
 import net.gini.android.capture.CaptureSDKResult;
 import net.gini.android.capture.Document;
@@ -19,19 +15,12 @@ import net.gini.android.capture.GiniCaptureError;
 import net.gini.android.capture.GiniCaptureFragment;
 import net.gini.android.capture.GiniCaptureFragmentListener;
 import net.gini.android.capture.R;
-import net.gini.android.capture.document.GiniCaptureMultiPageDocument;
-import net.gini.android.capture.document.QRCodeDocument;
-import net.gini.android.capture.internal.util.ContextHelper;
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction;
 import net.gini.android.capture.network.model.GiniCaptureReturnReason;
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
-import net.gini.android.capture.tracking.CameraScreenEvent;
 
 import java.util.ArrayList;
 import java.util.Map;
-
-import static net.gini.android.capture.internal.util.ActivityHelper.interceptOnBackPressed;
-import static net.gini.android.capture.tracking.EventTrackingHelper.trackCameraScreenEvent;
 
 /**
  * The {@code CameraActivity} is the main entry point to the Gini Capture SDK.
@@ -85,7 +74,7 @@ public class CameraActivity extends AppCompatActivity implements GiniCaptureFrag
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gc_activity_camera);
-        final Document openWithDocument = getIntent().getParcelableExtra(EXTRA_IN_OPEN_WITH_DOCUMENT, Document.class);
+        final Document openWithDocument = IntentCompat.getParcelableExtra(getIntent(), EXTRA_IN_OPEN_WITH_DOCUMENT, Document.class);
         if (savedInstanceState == null) {
             initFragment(openWithDocument);
         } else {
