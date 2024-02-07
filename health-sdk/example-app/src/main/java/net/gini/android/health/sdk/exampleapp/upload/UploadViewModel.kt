@@ -12,11 +12,14 @@ import net.gini.android.core.api.MediaTypes
 import net.gini.android.core.api.Resource
 import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.sdk.GiniHealth
+import net.gini.android.health.sdk.exampleapp.invoices.data.InvoicesLocalDataSource
+import net.gini.android.health.sdk.exampleapp.invoices.data.model.DocumentWithExtractions
 import net.gini.android.health.sdk.exampleapp.util.getBytes
 
 class UploadViewModel(
     private val giniHealthAPI: GiniHealthAPI,
     val giniHealth: GiniHealth,
+    private val invoicesLocalDataSource: InvoicesLocalDataSource
 ) : ViewModel() {
     private val _uploadState: MutableStateFlow<UploadState> = MutableStateFlow(UploadState.Loading)
     val uploadState: StateFlow<UploadState> = _uploadState
@@ -47,6 +50,11 @@ class UploadViewModel(
                     is Resource.Success -> {
                         _uploadState.value = UploadState.Success(polledDocumentResource.data.id)
                         setDocumentForReview(polledDocumentResource.data.id)
+
+                        giniHealthAPI.documentManager.getAllExtractions(polledDocumentResource.data).mapSuccess { extractionsResource ->
+                            invoicesLocalDataSource.appendInvoiceWithExtractions(DocumentWithExtractions.fromDocumentAndExtractions(polledDocumentResource.data, extractionsResource.data))
+                            extractionsResource
+                        }
                     }
                 }
             } catch (throwable: Throwable) {

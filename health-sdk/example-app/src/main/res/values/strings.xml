@@ -8,4 +8,7 @@
     <string name="no_bank">No bank app installed</string>
     <string name="upload">Upload</string>
     <string name="invoice">Invoice</string>
+    <string name="title_activity_invoices">Invoices list</string>
+    <string name="no_invoices">No invoices</string>
+    <string name="upload_test_invoices">Upload Invoices</string>
 </resources>

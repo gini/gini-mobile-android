@@ -107,3 +107,4 @@ jsonJava = "org.json:json:20231013"
 navigation_fragment_ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigation_component" }
 navigation_ui_ktx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigation_component" }
 navigation_safe_args = { module = "androidx.navigation:navigation-safe-args-gradle-plugin", version.ref = "navigation_component" }
+datastore-preferences = "androidx.datastore:datastore-preferences:1.0.0"
