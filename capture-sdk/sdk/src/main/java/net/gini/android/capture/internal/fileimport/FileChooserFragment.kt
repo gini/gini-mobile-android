@@ -22,6 +22,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.parcelize.Parcelize
 import net.gini.android.capture.DocumentImportEnabledFileTypes
+import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.GiniCaptureError
 import net.gini.android.capture.R
 import net.gini.android.capture.databinding.GcFragmentFileChooserBinding
@@ -35,6 +36,7 @@ import net.gini.android.capture.internal.util.ContextHelper
 import net.gini.android.capture.internal.util.FeatureConfiguration
 import net.gini.android.capture.internal.util.MimeType
 import net.gini.android.capture.internal.util.autoCleared
+import net.gini.android.capture.internal.util.disallowScreenshots
 import net.gini.android.capture.internal.util.getLayoutInflaterWithGiniCaptureTheme
 
 private const val ARG_DOCUMENT_IMPORT_FILE_TYPES = "GC_EXTRA_IN_DOCUMENT_IMPORT_FILE_TYPES"
@@ -79,6 +81,13 @@ class FileChooserFragment : BottomSheetDialogFragment() {
             peekHeight = 0
         }
         return dialog
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        if (GiniCapture.hasInstance() && !GiniCapture.getInstance().allowScreenshots) {
+            dialog?.window?.disallowScreenshots()
+        }
     }
 
     private fun setupFileProvidersView() {

@@ -122,7 +122,7 @@ public class GiniCapture {
     private final InjectedViewAdapterInstance<ReviewNavigationBarBottomAdapter> reviewNavigationBarBottomAdapterInstance;
     private final InjectedViewAdapterInstance<OnButtonLoadingIndicatorAdapter> onButtonLoadingIndicatorAdapterInstance;
     private final EntryPoint entryPoint;
-
+    private final boolean allowScreenshots;
 
 
     /**
@@ -342,6 +342,7 @@ public class GiniCapture {
         reviewNavigationBarBottomAdapterInstance = builder.getReviewNavigationBarBottomAdapterInstance();
         onButtonLoadingIndicatorAdapterInstance = builder.getOnButtonLoadingIndicatorAdapterInstance();
         entryPoint = builder.getEntryPoint();
+        allowScreenshots = builder.getAllowScreenshots();
     }
 
     /**
@@ -681,6 +682,16 @@ public class GiniCapture {
         return entryPoint;
     }
 
+    /**
+     * Get whether screenshots are allowed or not.
+     *
+     * <p> Default value is {@code true}.
+     *
+     * @return {@code true} if screenshots are allowed
+     */
+    public boolean getAllowScreenshots() {
+        return allowScreenshots;
+    }
 
     public static GiniCaptureFragment createGiniCaptureFragment() {
         if (!GiniCapture.hasInstance()) {
@@ -793,6 +804,7 @@ public class GiniCapture {
 
         private InjectedViewAdapterInstance<OnButtonLoadingIndicatorAdapter> onButtonLoadingIndicatorAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultOnButtonLoadingIndicatorAdapter());
         private EntryPoint entryPoint = Internal.DEFAULT_ENTRY_POINT;
+        private boolean allowScreenshots = true;
 
         /**
          * Create a new {@link GiniCapture} instance.
@@ -1308,6 +1320,27 @@ public class GiniCapture {
 
         private EntryPoint getEntryPoint() {
             return entryPoint;
+        }
+
+        /**
+         * Set whether screenshots should be allowed or not.
+         *
+         * <p>Screenshots are allowed by default.
+         *
+         * <p>IMPORTANT: If you disallow screenshots and use the {@link GiniCaptureFragment} for launching the SDK in your activity, please clear the {@link android.view.WindowManager.LayoutParams#FLAG_SECURE}
+         * on your activity's window after the SDK has finished to allow users to take screenshots of your app again.
+         *
+         * @param allowScreenshots pass {@code true} to allow screenshots or {@code false} otherwise.
+         *
+         * @return the {@link Builder} instance
+         */
+        public Builder setAllowScreenshots(boolean allowScreenshots) {
+            this.allowScreenshots = allowScreenshots;
+            return this;
+        }
+
+        private boolean getAllowScreenshots() {
+            return allowScreenshots;
         }
     }
 

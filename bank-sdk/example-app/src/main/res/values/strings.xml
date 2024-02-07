@@ -107,6 +107,7 @@
     <string name="imported_file_size_bytes_limit">Imported File Size Bytes Limit</string>
     <string name="file_import_feature_is_disabled_dialog_message">`File import` feature is currently disabled. If you want to test this, please enable it in Gini configuration.</string>
     <string name="debug_mode_switch_label">Debug mode</string>
+    <string name="allow_screenshots_label">Allow screenshots</string>
 
     <string name="recipient_hint">recipient</string>
     <string name="iban_hint">IBAN</string>

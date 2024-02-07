@@ -209,6 +209,10 @@ class ConfigurationActivity : AppCompatActivity() {
         binding.switchDigitalInvoiceBottomNavigationBar.isChecked =
             configuration.isDigitalInvoiceBottomNavigationBarEnabled
 
+        // Allow screenshots
+        binding.switchAllowScreenshots.isChecked =
+            configuration.isAllowScreenshotsEnabled
+
         // 37 Debug mode
         binding.switchDebugMode.isChecked =
             configuration.isDebugModeEnabled
@@ -566,6 +570,15 @@ class ConfigurationActivity : AppCompatActivity() {
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(
                     isDigitalInvoiceBottomNavigationBarEnabled = isChecked
+                )
+            )
+        }
+
+        // Allow screenshots
+        binding.switchAllowScreenshots.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    isAllowScreenshotsEnabled = isChecked
                 )
             )
         }
