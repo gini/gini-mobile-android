@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
+import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
 import android.provider.MediaStore
@@ -54,8 +55,11 @@ class FileChooserFragment : BottomSheetDialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            docImportEnabledFileTypes =
+            docImportEnabledFileTypes = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 it.getSerializable(ARG_DOCUMENT_IMPORT_FILE_TYPES, DocumentImportEnabledFileTypes::class.java)
+            } else {
+                it.getSerializable(ARG_DOCUMENT_IMPORT_FILE_TYPES) as? DocumentImportEnabledFileTypes
+            }
         }
     }
 
