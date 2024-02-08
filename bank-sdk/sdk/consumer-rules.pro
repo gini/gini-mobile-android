@@ -1,0 +1,1 @@
+-keep class net.gini.android.bank.sdk.capture.digitalinvoice.SelectableLineItem
