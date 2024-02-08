@@ -19,4 +19,14 @@
     <string name="ghs_error_open_bank">Bezahlvorgang konnte nicht durchgeführt werden”</string>
     <string name="ghs_snackbar_retry">Wiederholen</string>
     <string name="ghs_payment_details_info_bar_text">Bitte überprüfe die vorausgefüllten Felder</string>
+
+    <string name="ghs_more_information_label">Bezahldaten an Banking-App übergeben und dort direkt bezahlen.</string>
+    <string name="ghs_more_information_underlined_part">Mehr Informationen.</string>
+    <string name="ghs_select_bank_label">Wählen Sie Ihre Bank aus</string>
+    <string name="ghs_select_bank">Bank Auswählen</string>
+    <string name="ghs_pay_invoice_button">Rechnung bezahlen</string>
+    <string name="ghs_payment_powered_by_label">Zahlung powered by</string>
+
+    <!-- TDOO: remove after adding payment providers -->
+    <string name="ghs_select_bank_sparkasse_demo">Sparkasse</string>
 </resources>
