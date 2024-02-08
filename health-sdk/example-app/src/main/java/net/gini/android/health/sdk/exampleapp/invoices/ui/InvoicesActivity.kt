@@ -43,13 +43,14 @@ class InvoicesActivity : AppCompatActivity() {
                             dataSet = invoicesWithExtractions
                             notifyDataSetChanged()
                         }
-                        binding.noInvoicesLabel.visibility = if (invoicesWithExtractions.isEmpty()) View.VISIBLE else View.GONE
+                        binding.noInvoicesLabel.visibility =
+                            if (invoicesWithExtractions.isEmpty()) View.VISIBLE else View.GONE
                         Log.d(this::class.simpleName, "Invoices with extractions: $invoicesWithExtractions")
                     }
                 }
                 launch {
                     viewModel.uploadHardcodedInvoicesState.collect { uploadState ->
-                        when(uploadState) {
+                        when (uploadState) {
                             is UploadHardcodedInvoicesState.Failure -> {
                                 AlertDialog.Builder(this@InvoicesActivity)
                                     .setTitle(R.string.upload_failed)
@@ -57,11 +58,13 @@ class InvoicesActivity : AppCompatActivity() {
                                     .setPositiveButton(android.R.string.ok, null)
                                     .show()
                             }
+
                             UploadHardcodedInvoicesState.Idle,
                             UploadHardcodedInvoicesState.Success -> {
                                 binding.loadingIndicatorContainer.visibility = View.INVISIBLE
                                 binding.loadingIndicator.visibility = View.INVISIBLE
                             }
+
                             UploadHardcodedInvoicesState.Loading -> {
                                 binding.loadingIndicatorContainer.visibility = View.VISIBLE
                                 binding.loadingIndicator.visibility = View.VISIBLE
@@ -91,6 +94,7 @@ class InvoicesActivity : AppCompatActivity() {
                 viewModel.uploadHardcodedInvoices()
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
     }

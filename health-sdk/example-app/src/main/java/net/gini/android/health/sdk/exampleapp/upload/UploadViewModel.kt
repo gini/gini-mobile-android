@@ -33,7 +33,8 @@ class UploadViewModel(
                     check(stream != null) { "ContentResolver failed" }
                     val partialDocumentResource = giniHealthAPI.documentManager.createPartialDocument(
                         stream.getBytes(),
-                        MimeTypeMap.getSingleton().getExtensionFromMimeType(contentResolver.getType(pageUri)) ?: MediaTypes.IMAGE_JPEG
+                        MimeTypeMap.getSingleton().getExtensionFromMimeType(contentResolver.getType(pageUri))
+                            ?: MediaTypes.IMAGE_JPEG
                     )
                     when (partialDocumentResource) {
                         is Resource.Cancelled -> throw Exception("Cancelled")
@@ -41,9 +42,10 @@ class UploadViewModel(
                         is Resource.Success -> partialDocumentResource.data
                     }
                 }
-                val polledDocumentResource = giniHealthAPI.documentManager.createCompositeDocument(documentPages).mapSuccess {
-                        documentResource -> giniHealthAPI.documentManager.pollDocument(documentResource.data)
-                }
+                val polledDocumentResource = giniHealthAPI.documentManager.createCompositeDocument(documentPages)
+                    .mapSuccess { documentResource ->
+                        giniHealthAPI.documentManager.pollDocument(documentResource.data)
+                    }
                 when (polledDocumentResource) {
                     is Resource.Cancelled -> throw Exception("Cancelled")
                     is Resource.Error -> throw Exception(polledDocumentResource.exception)
