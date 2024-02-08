@@ -3,6 +3,8 @@ package net.gini.android.bank.sdk.exampleapp.ui
 import android.Manifest
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -26,6 +28,8 @@ class ClientBankSDKFragment :
 
     private lateinit var permissionHandler: PermissionHandler
 
+    private var wasCameraPermissionGranted = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (savedInstanceState == null) {
@@ -45,8 +49,30 @@ class ClientBankSDKFragment :
                 // Bank SDK is configured in the MainActivity, but you can
                 // call [overrideBankSDKConfiguration] here if you want to override the configuration
                 startBankSDK()
+                wasCameraPermissionGranted = true
+                hideNoCameraPermissionMessage()
+            } else {
+                wasCameraPermissionGranted = false
+                showNoCameraPermissionMessage()
             }
         }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        if (wasCameraPermissionGranted) {
+            hideNoCameraPermissionMessage()
+        } else {
+            showNoCameraPermissionMessage()
+        }
+    }
+
+    private fun showNoCameraPermissionMessage() {
+        view?.findViewById<TextView>(R.id.no_camera_permission_message)?.visibility = View.VISIBLE
+    }
+
+    private fun hideNoCameraPermissionMessage() {
+        view?.findViewById<TextView>(R.id.no_camera_permission_message)?.visibility = View.GONE
     }
 
     private fun overrideBankSDKConfiguration() {

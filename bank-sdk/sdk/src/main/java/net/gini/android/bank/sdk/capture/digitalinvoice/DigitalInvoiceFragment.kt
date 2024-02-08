@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.core.os.BundleCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -20,6 +21,7 @@ import net.gini.android.bank.sdk.capture.digitalinvoice.view.DigitalInvoiceNavig
 import net.gini.android.bank.sdk.capture.util.autoCleared
 import net.gini.android.bank.sdk.capture.util.parentFragmentManagerOrNull
 import net.gini.android.bank.sdk.databinding.GbsFragmentDigitalInvoiceBinding
+import net.gini.android.bank.sdk.util.disallowScreenshots
 import net.gini.android.bank.sdk.util.getLayoutInflaterWithGiniCaptureTheme
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.internal.ui.IntervalToolbarMenuItemIntervalClickListener
@@ -100,6 +102,9 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
         checkNotNull(activity) {
             "Missing activity for fragment."
         }
+        if (GiniCapture.hasInstance() && !GiniCapture.getInstance().allowScreenshots) {
+            requireActivity().window.disallowScreenshots()
+        }
         forcePortraitOrientationOnPhones(activity)
         readArguments()
         initListener()
@@ -122,7 +127,9 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
                     keySet().map { it to getParcelable<GiniCaptureCompoundExtraction>(it)!! }
                         .toMap()
             }
-            returnReasons = getParcelableArray(ARGS_RETURN_REASONS, GiniCaptureReturnReason::class.java)?.toList() ?: emptyList()
+            returnReasons =
+                (BundleCompat.getParcelableArray(this, ARGS_RETURN_REASONS, GiniCaptureReturnReason::class.java)
+                    ?.toList() as? List<GiniCaptureReturnReason>) ?: emptyList()
 
             isInaccurateExtraction = getBoolean(ARGS_INACCURATE_EXTRACTION, false)
         }
@@ -418,7 +425,7 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
                 DigitalInvoiceBottomSheet.REQUEST_KEY,
                 viewLifecycleOwner
             ) { _: String?, result: Bundle ->
-                result.getParcelable(DigitalInvoiceBottomSheet.RESULT_KEY, SelectableLineItem::class.java)
+                BundleCompat.getParcelable(result, DigitalInvoiceBottomSheet.RESULT_KEY, SelectableLineItem::class.java)
                     ?.let { selectableLineItem ->
                         presenter?.updateLineItem(selectableLineItem)
                     }

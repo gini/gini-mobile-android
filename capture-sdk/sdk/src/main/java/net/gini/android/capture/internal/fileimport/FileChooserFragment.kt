@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
+import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
 import android.provider.MediaStore
@@ -22,6 +23,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.parcelize.Parcelize
 import net.gini.android.capture.DocumentImportEnabledFileTypes
+import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.GiniCaptureError
 import net.gini.android.capture.R
 import net.gini.android.capture.databinding.GcFragmentFileChooserBinding
@@ -35,6 +37,7 @@ import net.gini.android.capture.internal.util.ContextHelper
 import net.gini.android.capture.internal.util.FeatureConfiguration
 import net.gini.android.capture.internal.util.MimeType
 import net.gini.android.capture.internal.util.autoCleared
+import net.gini.android.capture.internal.util.disallowScreenshots
 import net.gini.android.capture.internal.util.getLayoutInflaterWithGiniCaptureTheme
 
 private const val ARG_DOCUMENT_IMPORT_FILE_TYPES = "GC_EXTRA_IN_DOCUMENT_IMPORT_FILE_TYPES"
@@ -52,8 +55,11 @@ class FileChooserFragment : BottomSheetDialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            docImportEnabledFileTypes =
+            docImportEnabledFileTypes = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 it.getSerializable(ARG_DOCUMENT_IMPORT_FILE_TYPES, DocumentImportEnabledFileTypes::class.java)
+            } else {
+                it.getSerializable(ARG_DOCUMENT_IMPORT_FILE_TYPES) as? DocumentImportEnabledFileTypes
+            }
         }
     }
 
@@ -79,6 +85,13 @@ class FileChooserFragment : BottomSheetDialogFragment() {
             peekHeight = 0
         }
         return dialog
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        if (GiniCapture.hasInstance() && !GiniCapture.getInstance().allowScreenshots) {
+            dialog?.window?.disallowScreenshots()
+        }
     }
 
     private fun setupFileProvidersView() {
@@ -244,7 +257,7 @@ class FileChooserFragment : BottomSheetDialogFragment() {
         @JvmStatic
         private fun queryImagePickers(context: Context): List<ResolveInfo> {
             val intent = createImagePickerIntent()
-            return context.packageManager.queryIntentActivities(intent, PackageManager.ResolveInfoFlags.of(0))
+            return context.packageManager.queryIntentActivities(intent, 0)
         }
 
         private fun createImagePickerIntent(): Intent =
@@ -274,7 +287,7 @@ class FileChooserFragment : BottomSheetDialogFragment() {
         )
         private fun queryImageProviders(context: Context): List<ResolveInfo> {
             val intent = createGetImageDocumentIntent()
-            return context.packageManager.queryIntentActivities(intent, PackageManager.ResolveInfoFlags.of(0))
+            return context.packageManager.queryIntentActivities(intent, 0)
         }
 
         private fun createGetImageDocumentIntent(): Intent =
@@ -292,7 +305,7 @@ class FileChooserFragment : BottomSheetDialogFragment() {
         )
         private fun queryPdfProviders(context: Context): List<ResolveInfo> {
             val intent = createGetPdfDocumentIntent()
-            return context.packageManager.queryIntentActivities(intent, PackageManager.ResolveInfoFlags.of(0))
+            return context.packageManager.queryIntentActivities(intent, 0)
         }
 
         private fun createGetPdfDocumentIntent(): Intent =

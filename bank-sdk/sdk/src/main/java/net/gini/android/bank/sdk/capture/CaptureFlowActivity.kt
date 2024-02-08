@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Parcelable
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.IntentCompat
 import kotlinx.parcelize.Parcelize
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.R
@@ -41,7 +42,8 @@ internal class CaptureFlowActivity : AppCompatActivity(), CaptureFlowFragmentLis
     }
 
     private fun getCaptureImportInput(intent: Intent): CaptureImportInput =
-        intent.getParcelableExtra(EXTRA_IN_CAPTURE_IMPORT_INPUT, CaptureImportInput::class.java) ?: CaptureImportInput.Default
+        IntentCompat.getParcelableExtra(intent, EXTRA_IN_CAPTURE_IMPORT_INPUT, CaptureImportInput::class.java)
+            ?: CaptureImportInput.Default
 
     private fun initFragment(document: Document? = null) {
         if (!isFragmentShown()) {

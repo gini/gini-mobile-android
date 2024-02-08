@@ -30,9 +30,9 @@ import androidx.annotation.VisibleForTesting;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.Group;
 import androidx.core.content.ContextCompat;
+import androidx.core.os.BundleCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.navigation.NavDestination;
-import androidx.navigation.fragment.NavHostFragment;
 
 import net.gini.android.capture.AsyncCallback;
 import net.gini.android.capture.Document;
@@ -448,7 +448,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private void setFileChooserFragmentResultListener() {
         mFragment.getParentFragmentManager().setFragmentResultListener(FileChooserFragment.REQUEST_KEY, mFragment.getViewLifecycleOwner(), (requestKey, result) -> {
-            final FileChooserResult fileChooserResult = result.getParcelable(FileChooserFragment.RESULT_KEY);
+            final FileChooserResult fileChooserResult = BundleCompat.getParcelable(result, FileChooserFragment.RESULT_KEY, FileChooserResult.class);
             if (fileChooserResult != null) {
                 handleFileChooserResult(fileChooserResult);
             }

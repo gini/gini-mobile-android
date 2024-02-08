@@ -15,8 +15,10 @@ import net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceException
 import net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceFragment
 import net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceFragmentListener
 import net.gini.android.bank.sdk.capture.digitalinvoice.LineItemsValidator
+import net.gini.android.bank.sdk.util.disallowScreenshots
 import net.gini.android.capture.CaptureSDKResult
 import net.gini.android.capture.Document
+import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.GiniCaptureFragment
 import net.gini.android.capture.GiniCaptureFragmentDirections
 import net.gini.android.capture.GiniCaptureFragmentListener
@@ -66,6 +68,9 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
     override fun onCreate(savedInstanceState: Bundle?) {
         childFragmentManager.fragmentFactory = CaptureFlowFragmentFactory(this, openWithDocument, this)
         super.onCreate(savedInstanceState)
+        if (GiniCapture.hasInstance() && !GiniCapture.getInstance().allowScreenshots) {
+            requireActivity().window.disallowScreenshots()
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

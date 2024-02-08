@@ -17,12 +17,12 @@ import net.gini.android.capture.camera.CameraFragmentListener
 import net.gini.android.capture.error.ErrorFragment
 import net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboarding
 import net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboardingAtFirstRun
+import net.gini.android.capture.internal.util.disallowScreenshots
 import net.gini.android.capture.internal.util.getLayoutInflaterWithGiniCaptureTheme
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.noresults.NoResultsFragment
-import net.gini.android.capture.review.multipage.MultiPageReviewFragment
 
 class GiniCaptureFragment(private val openWithDocument: Document? = null) :
     Fragment(),
@@ -47,6 +47,9 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
     override fun onCreate(savedInstanceState: Bundle?) {
         childFragmentManager.fragmentFactory = CaptureFragmentFactory(this, this, this)
         super.onCreate(savedInstanceState)
+        if (GiniCapture.hasInstance() && !GiniCapture.getInstance().allowScreenshots) {
+            requireActivity().window.disallowScreenshots()
+        }
     }
 
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {

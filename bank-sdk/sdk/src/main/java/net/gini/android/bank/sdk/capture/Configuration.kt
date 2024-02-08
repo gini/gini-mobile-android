@@ -191,7 +191,17 @@ data class CaptureConfiguration(
      *
      * Default value is [EntryPoint.BUTTON].
      */
-    val entryPoint: EntryPoint = GiniCapture.Internal.DEFAULT_ENTRY_POINT
+    val entryPoint: EntryPoint = GiniCapture.Internal.DEFAULT_ENTRY_POINT,
+
+    /**
+     * Set whether screenshots should be allowed or not.
+     *
+     * Screenshots are allowed by default.
+     *
+     * IMPORTANT: If you disallow screenshots and use the [CaptureFlowFragment] for launching the SDK in your activity, please clear the [android.view.WindowManager.LayoutParams.FLAG_SECURE]
+     * on your activity's window after the SDK has finished to allow users to take screenshots of your app again.
+    */
+    val allowScreenshots: Boolean = true
 )
 
 internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfiguration): GiniCapture.Builder {
@@ -211,6 +221,7 @@ internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfig
         .setImportedFileSizeBytesLimit(configuration.importedFileSizeBytesLimit)
         .setBottomNavigationBarEnabled(configuration.bottomNavigationBarEnabled)
         .setEntryPoint(configuration.entryPoint)
+        .setAllowScreenshots(configuration.allowScreenshots)
         .apply {
             configuration.eventTracker?.let { setEventTracker(it) }
             configuration.errorLoggerListener?.let { setCustomErrorLoggerListener(it) }

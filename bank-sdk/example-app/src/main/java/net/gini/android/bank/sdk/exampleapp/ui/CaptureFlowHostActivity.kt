@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.IntentCompat
 import androidx.fragment.app.FragmentContainerView
 import dagger.hilt.android.AndroidEntryPoint
 import net.gini.android.bank.sdk.exampleapp.R
@@ -18,7 +19,7 @@ class CaptureFlowHostActivity : AppCompatActivity() {
         setContentView(R.layout.activity_capture_flow_host)
 
         if (savedInstanceState == null) {
-            val openWithIntent = intent.extras?.getParcelable(EXTRA_IN_OPEN_WITH_INTENT, Intent::class.java)
+            val openWithIntent = IntentCompat.getParcelableExtra(intent, EXTRA_IN_OPEN_WITH_INTENT, Intent::class.java)
             if (openWithIntent != null) {
                 startBankSDKForOpenWith(openWithIntent)
             }
