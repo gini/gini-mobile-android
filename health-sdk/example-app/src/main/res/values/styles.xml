@@ -21,12 +21,14 @@
         <item name="colorOnSurfaceVariant">?attr/colorOnBackground</item>
         <item name="android:windowLightStatusBar">true</item>
     </style>
-    <style name="AppTheme" parent="Root.AppTheme"/>
+
+    <style name="AppTheme" parent="Root.AppTheme" />
 
     <style name="Root.ActionBar" parent="Widget.Material3.ActionBar.Solid">
         <item name="background">?attr/colorSurface</item>na
     </style>
-    <style name="ActionBar" parent="Root.ActionBar"/>
+
+    <style name="ActionBar" parent="Root.ActionBar" />
 
     <style name="Typography.Headline5" parent="TextAppearance.MaterialComponents.Headline5">
         <item name="android:textColor">@color/ghs_color_contrast_01</item>
@@ -44,6 +46,7 @@
         <item name="materialThemeOverlay">@style/ThemeOverlay.Button</item>
         <item name="cornerRadius">4dp</item>
     </style>
+
     <style name="ThemeOverlay.Button" parent="ThemeOverlay.Material3.Button">
         <item name="colorContainer">@color/ghs_color_04</item>
         <item name="colorOnContainer">@color/ghs_color_contrast_01</item>
@@ -53,23 +56,25 @@
 
     <!-- region Health SDK customisation -->
 
-    <style name="GiniHealth.PaymentButtonStyle" parent="Root.GiniHealth.PaymentButtonStyle">
-        <item name="android:layout_height">74dp</item>
-        <item name="android:insetTop">16dp</item>
-        <item name="android:insetBottom">16dp</item>
-        <item name="cornerRadius">5dp</item>
-    </style>
-    <style name="GiniHealth.BankButtonStyle" parent="Root.GiniHealth.BankButtonStyle">
+    <style name="GiniHealth.PaymentButtonStyle" parent="Root.GiniHealthTheme.PaymentButtonStyle">
         <item name="android:layout_height">74dp</item>
         <item name="android:insetTop">16dp</item>
         <item name="android:insetBottom">16dp</item>
         <item name="cornerRadius">5dp</item>
     </style>
 
-    <style name="GiniHealth.PaymentInputStyle" parent="Root.GiniHealth.PaymentInputStyle">
+    <style name="GiniHealth.BankButtonStyle" parent="Root.GiniHealthTheme.BankButtonStyle">
+        <item name="android:layout_height">74dp</item>
+        <item name="android:insetTop">16dp</item>
+        <item name="android:insetBottom">16dp</item>
+        <item name="cornerRadius">5dp</item>
+    </style>
+
+    <style name="GiniHealth.PaymentInputStyle" parent="Root.GiniHealthTheme.PaymentInputStyle">
         <item name="android:textSize">16sp</item>
         <item name="hintTextAppearance">@style/PaymentInput.TextAppearance.Hint</item>
     </style>
+
     <style name="PaymentInput.TextAppearance.Hint" parent="TextAppearance.MaterialComponents.Caption">
         <item name="android:textSize">14sp</item>
     </style>
