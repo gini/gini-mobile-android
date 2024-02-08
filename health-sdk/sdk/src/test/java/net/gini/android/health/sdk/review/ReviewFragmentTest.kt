@@ -59,7 +59,7 @@ class ReviewFragmentTest {
         ))
 
         val listener = mockk<ReviewFragmentListener>(relaxed = true)
-        launchFragmentInContainer(themeResId = R.style.Root_GiniHealth) {
+        launchFragmentInContainer(themeResId = R.style.GiniHealthTheme) {
             ReviewFragment(giniHealth = mockk(relaxed = true),
                 listener = listener,
                 viewModelFactory = viewModelFactory)
@@ -92,7 +92,7 @@ class ReviewFragmentTest {
         ))
 
         val listener = mockk<ReviewFragmentListener>(relaxed = true)
-        launchFragmentInContainer(themeResId = R.style.Root_GiniHealth) {
+        launchFragmentInContainer(themeResId = R.style.GiniHealthTheme) {
             ReviewFragment(
                 giniHealth = mockk(relaxed = true),
                 listener = listener,
