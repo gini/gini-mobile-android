@@ -36,7 +36,6 @@ class InvoicesRepository(
         val hardcodedInvoices = hardcodedInvoicesLocalDataSource.getHardcodedInvoices()
         val createdResources = hardcodedInvoices.map { invoiceBytes ->
             var document: Document? = null
-            var extractionsContainer: ExtractionsContainer? = null
             giniHealthAPI.documentManager.createPartialDocument(
                 invoiceBytes,
                 MediaTypes.IMAGE_JPEG
@@ -46,15 +45,16 @@ class InvoicesRepository(
                 document = compositeDocumentResource.data
                 giniHealthAPI.documentManager.getAllExtractionsWithPolling(compositeDocumentResource.data)
             }.mapSuccess { extractionsResource ->
-                extractionsContainer = extractionsResource.data
-                val isPayable = giniHealth.checkIfDocumentIsPayable(document!!.id)
-                documentsWithExtractions.add(
-                    DocumentWithExtractions.fromDocumentAndExtractions(
-                        document!!,
-                        extractionsContainer!!,
-                        isPayable
+                document?.let { doc ->
+                    val isPayable = giniHealth.checkIfDocumentIsPayable(doc.id)
+                    documentsWithExtractions.add(
+                        DocumentWithExtractions.fromDocumentAndExtractions(
+                            doc,
+                            extractionsResource.data,
+                            isPayable
+                        )
                     )
-                )
+                }
                 extractionsResource
             }
         }
