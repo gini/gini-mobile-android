@@ -15,7 +15,8 @@ data class InvoiceItem(
     val documentId: String,
     val recipient: String?,
     val amount: String?,
-    val dueDate: String?
+    val dueDate: String?,
+    val isPayable: Boolean = false
 ) {
 
     companion object {
@@ -24,7 +25,8 @@ data class InvoiceItem(
                 documentWithExtractions.documentId,
                 documentWithExtractions.recipient,
                 parseAmount(documentWithExtractions.amount),
-                documentWithExtractions.dueDate
+                documentWithExtractions.dueDate,
+                documentWithExtractions.isPayable
             )
         }
 

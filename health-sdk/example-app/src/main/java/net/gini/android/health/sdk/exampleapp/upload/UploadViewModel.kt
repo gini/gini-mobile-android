@@ -51,10 +51,18 @@ class UploadViewModel(
                         _uploadState.value = UploadState.Success(polledDocumentResource.data.id)
                         setDocumentForReview(polledDocumentResource.data.id)
 
-                        giniHealthAPI.documentManager.getAllExtractions(polledDocumentResource.data).mapSuccess { extractionsResource ->
-                            invoicesLocalDataSource.appendInvoiceWithExtractions(DocumentWithExtractions.fromDocumentAndExtractions(polledDocumentResource.data, extractionsResource.data))
-                            extractionsResource
-                        }
+                        giniHealthAPI.documentManager.getAllExtractions(polledDocumentResource.data)
+                            .mapSuccess { extractionsResource ->
+                                val isPayable = giniHealth.checkIfDocumentIsPayable(polledDocumentResource.data.id)
+                                invoicesLocalDataSource.appendInvoiceWithExtractions(
+                                    DocumentWithExtractions.fromDocumentAndExtractions(
+                                        polledDocumentResource.data,
+                                        extractionsResource.data,
+                                        isPayable
+                                    )
+                                )
+                                extractionsResource
+                            }
                     }
                 }
             } catch (throwable: Throwable) {
