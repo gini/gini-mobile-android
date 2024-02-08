@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/gc_medium"
+    android:padding="@dimen/ghs_medium"
     tools:context="net.gini.android.health.sdk.exampleapp.MainActivity">
 
     <ScrollView
@@ -24,7 +24,7 @@
                 android:id="@+id/iv_giniLogo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gc_large_64"
+                android:layout_marginTop="@dimen/ghs_large_64"
                 android:src="@drawable/gini_logo"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -35,7 +35,7 @@
                 style="@style/Typography.Headline5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gc_large_32"
+                android:layout_marginTop="@dimen/ghs_large_32"
                 android:text="@string/welcome_to_gini"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -47,23 +47,23 @@
                 style="@style/Typography.Body1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/gc_large_48"
-                android:layout_marginVertical="@dimen/gc_medium_12"
+                android:layout_marginHorizontal="@dimen/ghs_large_48"
+                android:layout_marginVertical="@dimen/ghs_medium_12"
                 android:gravity="center"
                 android:text="@string/example_of_health_sdk"
                 android:textAlignment="center"
+                app:layout_constraintBottom_toTopOf="@id/pager"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_welcomeToGini"
-                app:layout_constraintBottom_toTopOf="@id/pager"/>
+                app:layout_constraintTop_toBottomOf="@id/tv_welcomeToGini" />
 
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/pager"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                app:layout_constraintHeight_min="100dp"
                 app:layout_constraintBottom_toTopOf="@id/indicator"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHeight_min="100dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_exampleOfPhotoPayment" />
 
