@@ -6,12 +6,12 @@
 
 # How to release
 To publish releases follow these steps:
-1. Create releases in Jira in PIA's project: https://ginis.atlassian.net/projects/PIA?selectedItem=com.atlassian.jira.jira-projects-plugin%3Arelease-page
+1. For Capture SDK, Bank SDK and Bank API Library create releases in Jira in Photopayment's [project](https://ginis.atlassian.net/projects/PP?orderField=RANK&selectedItem=com.atlassian.jira.jira-projects-plugin:release-page&status=released-unreleased) and for Health SDK and Health API Library in the Insurance's [project](https://ginis.atlassian.net/projects/IPC?selectedItem=com.atlassian.jira.jira-projects-plugin:release-page). 
    1. Connect tickets to each release: for each to-be-released ticket add the release to its "Fix versions" field.
    2. Add release notes in markdown format to each release's description (you can copy and update the release notes of a previous release).  
       Markdown formatting is needed because these release notes will be published on GitHub's [releases page](https://github.com/gini/gini-mobile-android/releases).
 2. Read this
-   [wiki](https://ginis.atlassian.net/wiki/spaces/BANKING/pages/17236285/Support+multiple+Android+SDK+and+library+versions+parallely)
+   [wiki](https://ginis.atlassian.net/wiki/spaces/PLMO/pages/83787798/Support+multiple+Android+SDK+and+library+versions+parallely)
    page to determine which branch to use because we support three main version (1.x.x, 2.x.x and 3.x.x).
 3. Check out or create the required branch and bump the version numbers:
    1. Bump the version in each to-be-released module's:

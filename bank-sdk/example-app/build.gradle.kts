@@ -76,6 +76,19 @@ android {
             resValue("string", "gini_api_client_secret", credentials["clientSecret"] ?: "")
         }
     }
+    flavorDimensions += "environment"
+    productFlavors {
+        create("prod") {
+            dimension = "environment"
+        }
+        create("dev") {
+            isDefault = true
+            dimension = "environment"
+        }
+        create("qa") {
+            dimension = "environment"
+        }
+    }
     compileOptions {
         sourceCompatibility(JavaVersion.VERSION_1_8)
         targetCompatibility(JavaVersion.VERSION_1_8)
