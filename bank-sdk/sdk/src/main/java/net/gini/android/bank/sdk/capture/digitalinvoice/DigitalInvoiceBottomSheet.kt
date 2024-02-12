@@ -12,24 +12,32 @@ import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
+import androidx.core.os.BundleCompat
+import androidx.fragment.app.setFragmentResult
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import net.gini.android.bank.sdk.R
-import net.gini.android.bank.sdk.capture.digitalinvoice.details.*
+import net.gini.android.bank.sdk.capture.digitalinvoice.details.LineItemDetailsScreenContract
+import net.gini.android.bank.sdk.capture.digitalinvoice.details.LineItemDetailsScreenPresenter
+import net.gini.android.bank.sdk.capture.digitalinvoice.details.MIN_QUANTITY
+import net.gini.android.bank.sdk.capture.digitalinvoice.details.doAfterTextChanged
 import net.gini.android.bank.sdk.capture.util.amountWatcher
 import net.gini.android.bank.sdk.capture.util.hideKeyboard
 import net.gini.android.bank.sdk.databinding.GbsEditItemBottomSheetBinding
+import net.gini.android.bank.sdk.util.disallowScreenshots
+import net.gini.android.bank.sdk.util.getLayoutInflaterWithGiniCaptureTheme
+import net.gini.android.bank.sdk.util.wrappedWithGiniCaptureTheme
 import net.gini.android.capture.AmountCurrency
+import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
 
-private const val EXTRA_IN_SELECTABLE_LINE_ITEM = "EXTRA_IN_SELECTABLE_LINE_ITEM"
+private const val ARGS_SELECTABLE_LINE_ITEM = "GBS_ARGS_SELECTABLE_LINE_ITEM"
 
 /**
  * Internal use only.
  */
-internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItemDetailsScreenContract.View,
-    LineItemDetailsInterface {
+internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItemDetailsScreenContract.View {
 
     private lateinit var binding: GbsEditItemBottomSheetBinding
     private var selectableLineItem: SelectableLineItem? = null
@@ -45,18 +53,22 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            selectableLineItem = it.getParcelable(EXTRA_IN_SELECTABLE_LINE_ITEM)
+            selectableLineItem = BundleCompat.getParcelable(it, ARGS_SELECTABLE_LINE_ITEM, SelectableLineItem::class.java)
             activity?.let { activity ->
                 createPresenter(activity)
-                initListener()
             }
         }
+    }
+
+    override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
+        val inflater = super.onGetLayoutInflater(savedInstanceState)
+        return this.getLayoutInflaterWithGiniCaptureTheme(inflater)
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         if (resources.getBoolean(net.gini.android.capture.R.bool.gc_is_tablet)) {
             activity?.let {
-                binding = GbsEditItemBottomSheetBinding.inflate(it.layoutInflater, null, false)
+                binding = GbsEditItemBottomSheetBinding.inflate(getLayoutInflaterWithGiniCaptureTheme(it.layoutInflater), null, false)
 
                 val builder = AlertDialog.Builder(context)
                 builder.setView(binding.root)
@@ -82,16 +94,6 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
         selectableLineItem!!
     )
 
-    private fun initListener() {
-        if (activity is LineItemDetailsListener) {
-            listener = activity as LineItemDetailsListener?
-        } else checkNotNull(listener) {
-            ("LineItemDetailsFragmentListener not set. "
-                    + "You can set it with LineItemDetailsFragmentListener#setListener() or "
-                    + "by making the host activity implement the LineItemDetailsFragmentListener.")
-        }
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -116,6 +118,10 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
         super.onViewCreated(view, savedInstanceState)
 
         setUpBindings()
+
+        if (GiniCapture.hasInstance() && !GiniCapture.getInstance().allowScreenshots) {
+            dialog?.window?.disallowScreenshots()
+        }
     }
 
     /**
@@ -296,14 +302,13 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
                 getBottomSheetItemTitleColor()?.let {
                     binding.gbsUnitPriceTxt.setTextColor(it)
                 }
-                binding.gbsDropDownSelectionValue.setTextAppearance(net.gini.android.capture.R.style.Root_GiniCaptureTheme_Typography_Subtitle1)
             }
         }
     }
 
     private fun setUpDropDown() {
         val currenciesList = AmountCurrency.values().map { it.name }
-        binding.gbsCurrenciesDropDown.setAdapter(CurrencyAdapter(requireActivity(),
+        binding.gbsCurrenciesDropDown.setAdapter(CurrencyAdapter(requireContext().wrappedWithGiniCaptureTheme(),
             R.layout.gbs_item_currency_dropdown,
             if (MULTIPLE_CURRENCIES_ENABLED) currenciesList else listOf(selectedCurrency), selectedCurrency))
     }
@@ -315,12 +320,6 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
             manageFocuses()
         }
     }
-
-    override var listener: LineItemDetailsListener?
-        get() = this.presenter?.listener
-        set(value) {
-            this.presenter?.listener = value
-        }
 
     private var presenter: LineItemDetailsScreenContract.Presenter? = null
 
@@ -362,13 +361,19 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
 
     }
 
+    override fun onSave(selectableLineItem: SelectableLineItem) {
+        setFragmentResult(REQUEST_KEY, Bundle().apply {
+            putParcelable(RESULT_KEY, selectableLineItem)
+        })
+    }
+
     override fun setPresenter(presenter: LineItemDetailsScreenContract.Presenter) {
         this.presenter = presenter
     }
 
     @ColorInt
     private fun getBottomSheetItemTitleColor() : Int? {
-        return context?.let {
+        return context?.wrappedWithGiniCaptureTheme()?.let {
             val typedArray = it.obtainStyledAttributes(R.styleable.GBSCurrencyStyle)
             typedArray.getColor(R.styleable.GBSCurrencyStyle_gbsBottomSheetItemTitle, net.gini.android.capture.R.color.gc_light_01)
         }
@@ -378,11 +383,13 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
     companion object {
         const val QUANTITY_LIMIT = 1000
         const val MULTIPLE_CURRENCIES_ENABLED = false
+        const val REQUEST_KEY = "GBS_DIGITAL_INVOICE_BOTTOM_SHEET_REQUEST_KEY"
+        const val RESULT_KEY = "GBS_DIGITAL_INVOICE_BOTTOM_SHEET_RESULT_BUNDLE_KEY"
 
         fun newInstance(selectableLineItem: SelectableLineItem) =
             DigitalInvoiceBottomSheet().apply {
                 val args = Bundle()
-                args.putParcelable(EXTRA_IN_SELECTABLE_LINE_ITEM, selectableLineItem)
+                args.putParcelable(ARGS_SELECTABLE_LINE_ITEM, selectableLineItem)
                 this.arguments = args
                 return this
             }
@@ -400,7 +407,7 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
             }
             convertView!!.findViewById<TextView>(R.id.gbs_currency_textview).text = items[position]
 
-            val typedArray = mContext.theme.obtainStyledAttributes(R.styleable.GBSCurrencyStyle)
+            val typedArray = mContext.obtainStyledAttributes(R.styleable.GBSCurrencyStyle)
 
             if (items[position] == selectedCurrency) {
                 convertView.setBackgroundColor(typedArray.getColor(R.styleable.GBSCurrencyStyle_gbsCurrencyPickerItemSelectedColor, net.gini.android.capture.R.color.gc_light_01))

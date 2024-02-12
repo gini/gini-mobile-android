@@ -12,8 +12,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import net.gini.android.capture.Document;
+import net.gini.android.capture.EnterManuallyButtonListener;
 import net.gini.android.capture.GiniCapture;
-import net.gini.android.capture.ImageRetakeOptionsListener;
+import net.gini.android.capture.GiniCaptureFragment;
 import net.gini.android.capture.R;
 import net.gini.android.capture.document.ImageMultiPageDocument;
 import net.gini.android.capture.help.PhotoTipsAdapter;
@@ -32,34 +33,29 @@ import static net.gini.android.capture.internal.util.ActivityHelper.forcePortrai
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
 
 /**
- * Main logic implementation for no results UI presented by {@link NoResultsActivity}.
+ * Main logic implementation for no results UI presented by {@link NoResultsFragment}.
  * Internal use only.
  */
 class NoResultsFragmentImpl {
 
-    private static final ImageRetakeOptionsListener NO_OP_LISTENER =
-            new ImageRetakeOptionsListener() {
-                @Override
-                public void onBackToCameraPressed() {}
-
-                @Override
-                public void onEnterManuallyPressed() {}
+    private static final EnterManuallyButtonListener NO_OP_LISTENER =
+            () -> {
             };
 
     private final FragmentImplCallback mFragment;
     private final Document mDocument;
-    private ImageRetakeOptionsListener mListener;
+    private EnterManuallyButtonListener mListener;
     private TextView mTitleTextView;
 
     private InjectedViewContainer<NavigationBarTopAdapter> topAdapterInjectedViewContainer;
 
     NoResultsFragmentImpl(@NonNull final FragmentImplCallback fragment,
-            @NonNull final Document document) {
+                          @NonNull final Document document) {
         mFragment = fragment;
         mDocument = document;
     }
 
-    void setListener(@Nullable final ImageRetakeOptionsListener listener) {
+    void setListener(@Nullable final EnterManuallyButtonListener listener) {
         if (listener == null) {
             mListener = NO_OP_LISTENER;
         } else {
@@ -69,16 +65,22 @@ class NoResultsFragmentImpl {
 
     void onCreate(final Bundle savedInstanceState) {
         forcePortraitOrientationOnPhones(mFragment.getActivity());
+        // Clear the image from the memory store because the user can only exit for manual entry or in some cases
+        // can go back to the camera to take new pictures
+        if (GiniCapture.hasInstance()) {
+            GiniCapture.getInstance().internal().getImageMultiPageDocumentMemoryStore().clear();
+        }
     }
 
     View onCreateView(final LayoutInflater inflater, final ViewGroup container,
-            final Bundle savedInstanceState) {
+                      final Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.gc_fragment_noresults, container, false);
         final View retakeImagesButton = view.findViewById(R.id.gc_button_no_results_retake_images);
         if (shouldAllowRetakeImages()) {
             ClickListenerExtKt.setIntervalClickListener(retakeImagesButton, v -> {
                 trackAnalysisScreenEvent(AnalysisScreenEvent.RETRY);
-                mListener.onBackToCameraPressed();
+                mFragment.findNavController().navigate(NoResultsFragmentDirections.toCameraFragment());
+
             });
         } else {
             retakeImagesButton.setVisibility(GONE);
@@ -151,7 +153,11 @@ class NoResultsFragmentImpl {
                         injectedViewAdapter.setTitle(mFragment.getActivity().getResources().getString(R.string.gc_title_no_results));
 
                         injectedViewAdapter.setNavButtonType(NavButtonType.CLOSE);
-                        injectedViewAdapter.setOnNavButtonClickListener(new IntervalClickListener(view -> mFragment.getActivity().onBackPressed()));
+                        injectedViewAdapter.setOnNavButtonClickListener(new IntervalClickListener(view -> {
+                            if (mFragment.getActivity() != null) {
+                                mFragment.getActivity().getOnBackPressedDispatcher().onBackPressed();
+                            }
+                        }));
                     })
             );
         }

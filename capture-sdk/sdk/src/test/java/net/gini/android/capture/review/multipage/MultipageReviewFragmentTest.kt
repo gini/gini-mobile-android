@@ -1,10 +1,13 @@
 package net.gini.android.capture.review.multipage
 
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentFactory
+import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Lifecycle.State.CREATED
 import androidx.lifecycle.Lifecycle.State.RESUMED
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.*
 import jersey.repackaged.jsr166e.CompletableFuture
@@ -44,25 +47,53 @@ class MultipageReviewFragmentTest {
     }
 
     @Test
-    fun `triggers Next event`() {
+    fun `triggers Back event when back was pressed`() {
         // Given
-        val giniCapture = mock<GiniCapture>()
-        GiniCaptureHelper.setGiniCaptureInstance(giniCapture)
-
-        val internal = mock<GiniCapture.Internal>()
-        `when`(giniCapture.internal()).thenReturn(internal)
-
         val eventTracker = spy<EventTracker>()
-        `when`(giniCapture.internal().eventTracker).thenReturn(eventTracker)
+        GiniCapture.Builder().setEventTracker(eventTracker).build()
+        GiniCapture.getInstance().internal().imageMultiPageDocumentMemoryStore.setMultiPageDocument(mock())
 
-        val fragment = MultiPageReviewFragment()
-        fragment.setListener(mock())
+        FragmentScenario.launchInContainer(fragmentClass = MultiPageReviewFragment::class.java).use { scenario ->
+            scenario.moveToState(Lifecycle.State.STARTED)
 
-        // When
-        fragment.onNextButtonClicked()
+            // When
+            scenario.onFragment { fragment ->
+                try {
+                    fragment.requireActivity().onBackPressedDispatcher.onBackPressed()
+                } catch (e: IllegalStateException) {
+                    // The only exception we can get must be related to the NavController
+                    Truth.assertThat(e.message).contains("NavController")
+                }
 
-        // Then
-        verify(eventTracker).onReviewScreenEvent(Event(ReviewScreenEvent.NEXT))
+                // Then
+                verify(eventTracker).onReviewScreenEvent(Event(ReviewScreenEvent.BACK))
+            }
+        }
+    }
+
+    @Test
+    fun `triggers Next event`() {
+            // Given
+            val eventTracker = spy<EventTracker>()
+            GiniCapture.Builder().setEventTracker(eventTracker).build()
+            GiniCapture.getInstance().internal().imageMultiPageDocumentMemoryStore.setMultiPageDocument(mock())
+
+            FragmentScenario.launchInContainer(fragmentClass = MultiPageReviewFragment::class.java).use { scenario ->
+                scenario.moveToState(Lifecycle.State.STARTED)
+
+                // When
+                scenario.onFragment { fragment ->
+                    try {
+                        fragment.onNextButtonClicked()
+                    } catch (e: IllegalStateException) {
+                        // The only exception we can get must be related to the NavController
+                        Truth.assertThat(e.message).contains("NavController")
+                    }
+
+                    // Then
+                    verify(eventTracker).onReviewScreenEvent(Event(ReviewScreenEvent.NEXT))
+                }
+            }
     }
 
     @Test
@@ -70,7 +101,6 @@ class MultipageReviewFragmentTest {
         // Given
         // Note: Use FragmentScenario in the future
         val fragment = mock<MultiPageReviewFragment>()
-        fragment.setListener(mock())
 
         // TODO: use FragmentScenario to fix the error
         `when`(fragment.activity).thenReturn(mock())
@@ -107,26 +137,5 @@ class MultipageReviewFragmentTest {
                 ERROR_OBJECT to exception
         )
         Mockito.verify(eventTracker).onReviewScreenEvent(Event(ReviewScreenEvent.UPLOAD_ERROR, errorDetails))
-    }
-
-    @Test
-    fun `notifies listener of error when GiniInstance is missing`() {
-        // Given
-        val listener = mock<MultiPageReviewFragmentListener>()
-
-        val scenario = launchFragment(initialState = CREATED, themeResId = R.style.GiniCaptureTheme) {
-            MultiPageReviewFragment.newInstance().apply {
-                setListener(listener)
-            }
-        }
-
-        // When
-        scenario.moveToState(RESUMED)
-
-        // Then
-        val args = argumentCaptor<GiniCaptureError>()
-        Mockito.verify(listener).onError(args.capture())
-        Truth.assertThat(args.firstValue.errorCode)
-            .isEqualTo(GiniCaptureError.ErrorCode.MISSING_GINI_CAPTURE_INSTANCE)
     }
 }

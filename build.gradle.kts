@@ -21,6 +21,7 @@ buildscript {
         classpath(libs.benManesVersions.gradle)
         classpath(libs.hilt.plugin)
         classpath(libs.cyclonedx.gradle)
+        classpath(libs.navigation.safe.args)
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle.kts files

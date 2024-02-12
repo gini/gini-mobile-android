@@ -14,12 +14,24 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.FragmentActivity;
+
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
+import net.gini.android.capture.GiniCaptureFragment;
 import net.gini.android.capture.R;
+import net.gini.android.capture.error.ErrorFragment;
+import net.gini.android.capture.error.ErrorType;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.ui.IntervalClickListener;
 import net.gini.android.capture.internal.util.Size;
+import net.gini.android.capture.tracking.AnalysisScreenEvent;
+import net.gini.android.capture.tracking.CameraScreenEvent;
 import net.gini.android.capture.view.CustomLoadingIndicatorAdapter;
 import net.gini.android.capture.view.InjectedViewAdapterHolder;
 import net.gini.android.capture.view.InjectedViewContainer;
@@ -31,17 +43,15 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.VisibleForTesting;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import jersey.repackaged.jsr166e.CompletableFuture;
 import kotlin.Unit;
 
 import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
+import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
+import static net.gini.android.capture.tracking.EventTrackingHelper.trackCameraScreenEvent;
 
 /**
- * Main logic implementation for analysis UI presented by {@link AnalysisActivity}
+ * Main logic implementation for analysis UI presented by {@link AnalysisFragment}
  */
 class AnalysisFragmentImpl extends AnalysisScreenContract.View {
 
@@ -58,8 +68,8 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     private boolean isScanAnimationActive;
 
     AnalysisFragmentImpl(final FragmentImplCallback fragment,
-            @NonNull final Document document,
-            final String documentAnalysisErrorMessage) {
+                         @NonNull final Document document,
+                         final String documentAnalysisErrorMessage) {
         mFragment = fragment;
         if (mFragment.getActivity() == null) {
             throw new IllegalStateException("Missing activity for fragment.");
@@ -69,7 +79,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
 
     @VisibleForTesting
     void createPresenter(@NonNull final Activity activity, @NonNull final Document document,
-            final String documentAnalysisErrorMessage) {
+                         final String documentAnalysisErrorMessage) {
         new AnalysisScreenPresenter(activity, this, document,
                 documentAnalysisErrorMessage);
     }
@@ -143,10 +153,10 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
 
     @Override
     void showAlertDialog(@NonNull final String message, @NonNull final String positiveButtonTitle,
-            @NonNull final DialogInterface.OnClickListener positiveButtonClickListener,
-            @Nullable final String negativeButtonTitle,
-            @Nullable final DialogInterface.OnClickListener negativeButtonClickListener,
-            @Nullable final DialogInterface.OnCancelListener cancelListener) {
+                         @NonNull final DialogInterface.OnClickListener positiveButtonClickListener,
+                         @Nullable final String negativeButtonTitle,
+                         @Nullable final DialogInterface.OnClickListener negativeButtonClickListener,
+                         @Nullable final DialogInterface.OnCancelListener cancelListener) {
         mFragment.showAlertDialog(message, positiveButtonTitle, positiveButtonClickListener,
                 negativeButtonTitle, negativeButtonClickListener, cancelListener);
     }
@@ -156,6 +166,22 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
         mHintsAnimator.stop();
         mHintsAnimator.setHints(hints);
         mHintsAnimator.start();
+    }
+
+    @Override
+    void showError(String error, Document document) {
+        ErrorFragment.Companion.navigateToErrorFragment(
+                mFragment.findNavController(),
+                AnalysisFragmentDirections.toErrorFragmentWithErrorMessage(error, document)
+        );
+    }
+
+    @Override
+    void showError(ErrorType errorType, Document document) {
+        ErrorFragment.Companion.navigateToErrorFragment(
+                mFragment.findNavController(),
+                AnalysisFragmentDirections.toErrorFragmentWithErrorType(errorType, document)
+        );
     }
 
     private void rotateDocumentImageView(final int rotationForDisplay) {
@@ -186,7 +212,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     }
 
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
-            final Bundle savedInstanceState) {
+                             final Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.gc_fragment_analysis, container, false);
         bindViews(view);
         setTopBarInjectedViewContainer();
@@ -223,8 +249,9 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
                 injectedViewAdapter.setTitle(mFragment.getActivity().getResources().getString(R.string.gc_title_analysis));
 
                 injectedViewAdapter.setOnNavButtonClickListener(new IntervalClickListener(v -> {
-                    mFragment.getActivity().setResult(Activity.RESULT_CANCELED);
-                    mFragment.getActivity().finish();
+                    if (mFragment.getActivity() != null) {
+                        mFragment.getActivity().getOnBackPressedDispatcher().onBackPressed();
+                    }
                 }));
             }));
         }
@@ -242,6 +269,26 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
                         }
                     }));
         }
+    }
+
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        handleOnBackPressed();
+    }
+
+    private void handleOnBackPressed() {
+        final FragmentActivity activity = mFragment.getActivity();
+        if (activity == null) {
+            return;
+        }
+        activity.getOnBackPressedDispatcher().addCallback(mFragment.getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                trackAnalysisScreenEvent(AnalysisScreenEvent.CANCEL);
+                setEnabled(false);
+                remove();
+                mFragment.getActivity().getOnBackPressedDispatcher().onBackPressed();
+            }
+        });
     }
 
     public void onResume() {

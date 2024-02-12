@@ -8,6 +8,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
+import net.gini.android.capture.GiniCapture;
 /**
  * Created by Alpar Szotyori on 04.02.2019.
  *
@@ -37,6 +39,11 @@ public final class AlertDialogHelperCompat {
                 .setNegativeButton(negativeButtonTitle, negativeButtonClickListener)
                 .setOnCancelListener(cancelListener)
                 .create();
+        if (GiniCapture.hasInstance() && !GiniCapture.getInstance().getAllowScreenshots()) {
+            if (alertDialog.getWindow() != null) {
+                WindowExtensionsKt.disallowScreenshots(alertDialog.getWindow());
+            }
+        }
         alertDialog.setCanceledOnTouchOutside(false);
         alertDialog.show();
     }

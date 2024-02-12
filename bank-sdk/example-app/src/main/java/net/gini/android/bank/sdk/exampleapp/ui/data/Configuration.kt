@@ -131,7 +131,7 @@ data class Configuration(
     val importedFileSizeBytesLimit: Int = FileImportValidator.FILE_SIZE_LIMIT,
 
     // 30 entry point
-    val entryPoint: EntryPoint = EntryPoint.FIELD,
+    val entryPoint: EntryPoint = EntryPoint.BUTTON,
 
     // 31 enable return assistant
     val isReturnAssistantEnabled: Boolean = true,
@@ -152,7 +152,9 @@ data class Configuration(
     val isDigitalInvoiceBottomNavigationBarEnabled: Boolean = false,
 
     // 37 Debug mode
-    val isDebugModeEnabled: Boolean = false,
+    val isDebugModeEnabled: Boolean = true,
+
+    val isAllowScreenshotsEnabled: Boolean = true,
 
     ) : Parcelable {
 
@@ -171,7 +173,8 @@ data class Configuration(
                 isOnboardingAtEveryLaunchEnabled = defaultCaptureConfiguration.showOnboarding,
                 isSupportedFormatsHelpScreenEnabled = defaultCaptureConfiguration.supportedFormatsHelpScreenEnabled,
                 isGiniErrorLoggerEnabled = defaultCaptureConfiguration.giniErrorLoggerIsOn,
-                isReturnAssistantEnabled = defaultCaptureConfiguration.returnAssistantEnabled
+                isReturnAssistantEnabled = defaultCaptureConfiguration.returnAssistantEnabled,
+                isAllowScreenshotsEnabled = defaultCaptureConfiguration.allowScreenshots
             )
 
 

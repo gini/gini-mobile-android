@@ -5,6 +5,7 @@ import net.gini.android.capture.GiniCaptureBasePresenter
 import net.gini.android.capture.GiniCaptureBaseView
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.bank.sdk.capture.digitalinvoice.ReturnReasonDialogResultCallback
+import net.gini.android.bank.sdk.capture.digitalinvoice.SelectableLineItem
 
 /**
  * Created by Alpar Szotyori on 17.12.2019.
@@ -38,6 +39,7 @@ interface LineItemDetailsScreenContract {
                                    resultCallback: ReturnReasonDialogResultCallback
         )
         fun dismiss()
+        fun onSave(selectableLineItem: SelectableLineItem)
     }
 
     /**
@@ -46,7 +48,7 @@ interface LineItemDetailsScreenContract {
      * @suppress
      */
     abstract class Presenter(activity: Activity, view: View) :
-            GiniCaptureBasePresenter<View>(activity, view), LineItemDetailsInterface {
+            GiniCaptureBasePresenter<View>(activity, view) {
 
         abstract fun selectLineItem()
         abstract fun deselectLineItem()

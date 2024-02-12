@@ -532,6 +532,14 @@
                 android:text="@string/disable_camera_permission" />
 
             <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/switch_allowScreenshots"
+                style="@style/SwitchConfigurationStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/gc_medium_12"
+                android:text="@string/allow_screenshots_label" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/switch_debugMode"
                 style="@style/SwitchConfigurationStyle"
                 android:layout_width="match_parent"

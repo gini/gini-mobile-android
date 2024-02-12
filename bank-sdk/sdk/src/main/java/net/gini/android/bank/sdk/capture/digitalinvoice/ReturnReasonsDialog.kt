@@ -14,6 +14,9 @@ import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.capture.util.autoCleared
 import net.gini.android.bank.sdk.databinding.GbsFragmentReturnReasonDialogBinding
+import net.gini.android.bank.sdk.util.disallowScreenshots
+import net.gini.android.bank.sdk.util.getLayoutInflaterWithGiniCaptureTheme
+import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.internal.util.ContextHelper
 
 /**
@@ -49,6 +52,11 @@ internal class ReturnReasonDialog : BottomSheetDialogFragment() {
         }
     }
 
+    override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
+        val inflater = super.onGetLayoutInflater(savedInstanceState)
+        return this.getLayoutInflaterWithGiniCaptureTheme(inflater)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         readArguments()
@@ -73,6 +81,9 @@ internal class ReturnReasonDialog : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initListView()
+        if (GiniCapture.hasInstance() && !GiniCapture.getInstance().allowScreenshots) {
+            dialog?.window?.disallowScreenshots()
+        }
     }
 
     private fun initListView() {

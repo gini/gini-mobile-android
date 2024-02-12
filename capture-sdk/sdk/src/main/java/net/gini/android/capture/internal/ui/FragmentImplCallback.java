@@ -5,9 +5,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.View;
 
+import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.navigation.NavController;
 
 /**
  * Internal use only.
@@ -17,7 +22,7 @@ import androidx.fragment.app.Fragment;
 public interface FragmentImplCallback {
 
     @Nullable
-    Activity getActivity();
+    FragmentActivity getActivity();
 
     @Nullable
     View getView();
@@ -35,4 +40,18 @@ public interface FragmentImplCallback {
             @Nullable final String negativeButtonTitle,
             @Nullable final DialogInterface.OnClickListener negativeButtonClickListener,
             @Nullable final DialogInterface.OnCancelListener cancelListener);
+
+    @NonNull
+    FragmentManager getChildFragmentManager();
+
+    @NonNull
+    FragmentManager getParentFragmentManager();
+
+    @MainThread
+    @NonNull
+    LifecycleOwner getViewLifecycleOwner();
+
+    @NonNull
+    NavController findNavController();
+
 }

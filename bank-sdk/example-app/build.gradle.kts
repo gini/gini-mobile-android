@@ -6,6 +6,7 @@ plugins {
     kotlin("kapt")
     id("com.google.dagger.hilt.android")
     id("kotlin-parcelize")
+    id("androidx.navigation.safeargs.kotlin")
 }
 
 // TODO: construct version code and name in fastlane and inject them
@@ -75,6 +76,19 @@ android {
             resValue("string", "gini_api_client_secret", credentials["clientSecret"] ?: "")
         }
     }
+    flavorDimensions += "environment"
+    productFlavors {
+        create("prod") {
+            dimension = "environment"
+        }
+        create("dev") {
+            isDefault = true
+            dimension = "environment"
+        }
+        create("qa") {
+            dimension = "environment"
+        }
+    }
     compileOptions {
         sourceCompatibility(JavaVersion.VERSION_1_8)
         targetCompatibility(JavaVersion.VERSION_1_8)
@@ -120,6 +134,8 @@ dependencies {
     implementation(libs.lottie)
 
     implementation(libs.hilt.library)
+    implementation(libs.navigation.fragment.ktx)
+    implementation(libs.navigation.ui.ktx)
     kapt(libs.hilt.compiler)
 
     implementation(libs.androidx.lifecycle.runtime.ktx)

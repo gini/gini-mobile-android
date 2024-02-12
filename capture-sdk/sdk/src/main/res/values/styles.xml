@@ -53,19 +53,6 @@
         <item name="colorPrimary">?attr/colorPrimary</item>
     </style>
 
-    <style name="GiniCaptureTheme.Chooser">
-        <item name="android:windowActionBar">false</item>
-        <item name="android:statusBarColor" tools:targetApi="lollipop">@android:color/transparent
-        </item>
-        <item name="windowActionBar">false</item>
-        <item name="android:windowNoTitle">true</item>
-        <item name="windowNoTitle">true</item>
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:backgroundDimEnabled">true</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:colorBackgroundCacheHint">@null</item>
-    </style>
-
     <!-- Widgets -->
 
     <style name="Root.GiniCaptureTheme.Widget.Button.OutlinedButton" parent="Widget.Material3.Button.OutlinedButton">

@@ -29,10 +29,6 @@
     <string name="gc_onboarding_qr_code_message">QR-Codes werden automatisch erkannt und analysiert</string>
 
     <string name="gc_multi_page_review_add_pages_subtitle">Seiten hinzufügen</string>
-    <string name="gc_multi_page_review_file_import_delete_last_page_dialog_message">Möchten Sie das letzte Bild löschen?</string>
-    <string name="gc_multi_page_review_file_import_delete_last_page_dialog_positive_button">Löschen</string>
-
-    <string name="gc_multi_page_review_file_import_delete_last_page_dialog_negative_button">Abbrechen</string>
 
     <string name="gc_analysis_activity_indicator_message">Dokument wird analysiert</string>
     <string name="gc_pdf_analysis_activity_indicator_message">%s\nwird analysiert</string>

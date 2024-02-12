@@ -2,7 +2,6 @@ package net.gini.android.capture.camera;
 
 import android.app.Activity;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,9 +10,13 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.util.AlertDialogHelperCompat;
+
+import static net.gini.android.capture.internal.util.FragmentExtensionsKt.getLayoutInflaterWithGiniCaptureTheme;
 
 /**
  * Internal use only.
@@ -23,13 +26,14 @@ import net.gini.android.capture.internal.util.AlertDialogHelperCompat;
 public class CameraFragment extends Fragment implements CameraFragmentInterface,
         FragmentImplCallback {
 
+    public static final String REQUEST_KEY = "GC_CAMERA_FRAGMENT_REQUEST_KEY";
+    public static final String RESULT_KEY_SHOULD_SCROLL_TO_LAST_PAGE = "RESULT_KEY_SHOULD_SCROLL_TO_LAST_PAGE";
+    private static final String ARGS_ADD_PAGES = "GC_ARGS_ADD_PAGES";
+
     private CameraFragmentListener mListener;
 
-    public static CameraFragment createInstance() {
-        return new CameraFragment();
-    }
-
     private CameraFragmentImpl mFragmentImpl;
+    private boolean addPages = false;
 
     /**
      * Internal use only.
@@ -39,19 +43,21 @@ public class CameraFragment extends Fragment implements CameraFragmentInterface,
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        readArguments();
         mFragmentImpl = createFragmentImpl();
         setListener(mFragmentImpl, mListener);
         mFragmentImpl.onCreate(savedInstanceState);
     }
 
-    private void setListener(@NonNull final CameraFragmentImpl fragmentImpl, @Nullable final CameraFragmentListener listener) {
-        final Activity activity = getActivity();
-        if (activity == null) {
-            throw new IllegalStateException("Activity not available");
+    private void readArguments() {
+        final Bundle arguments = getArguments();
+        if (arguments != null) {
+            addPages = arguments.getBoolean(ARGS_ADD_PAGES, false);
         }
-        if (activity instanceof CameraFragmentListener) {
-            fragmentImpl.setListener((CameraFragmentListener) activity);
-        } else if (listener != null) {
+    }
+
+    private void setListener(@NonNull final CameraFragmentImpl fragmentImpl, @Nullable final CameraFragmentListener listener) {
+        if (listener != null) {
             fragmentImpl.setListener(listener);
         } else {
             throw new IllegalStateException(
@@ -62,7 +68,14 @@ public class CameraFragment extends Fragment implements CameraFragmentInterface,
     }
 
     protected CameraFragmentImpl createFragmentImpl() {
-        return new CameraFragmentImpl(this);
+        return new CameraFragmentImpl(this, addPages);
+    }
+
+    @NonNull
+    @Override
+    public LayoutInflater onGetLayoutInflater(@Nullable Bundle savedInstanceState) {
+        final LayoutInflater inflater = super.onGetLayoutInflater(savedInstanceState);
+        return getLayoutInflaterWithGiniCaptureTheme(this, inflater);
     }
 
     /**
@@ -75,6 +88,12 @@ public class CameraFragment extends Fragment implements CameraFragmentInterface,
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
             final Bundle savedInstanceState) {
         return mFragmentImpl.onCreateView(inflater, container, savedInstanceState);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mFragmentImpl.onViewCreated(view, savedInstanceState);
     }
 
     /**
@@ -133,50 +152,11 @@ public class CameraFragment extends Fragment implements CameraFragmentInterface,
     }
 
     @Override
-    public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-        final boolean handled = mFragmentImpl.onActivityResult(requestCode, resultCode, data);
-        if (!handled) {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
-    }
-
-    @Override
     public void setListener(@NonNull final CameraFragmentListener listener) {
         if (mFragmentImpl != null) {
             mFragmentImpl.setListener(listener);
         }
         mListener = listener;
-    }
-
-    @Override
-    public void showInterface() {
-        if (mFragmentImpl == null) {
-            return;
-        }
-        mFragmentImpl.showInterface();
-    }
-
-    @Override
-    public void hideInterface() {
-        if (mFragmentImpl == null) {
-            return;
-        }
-        mFragmentImpl.hideInterface();
-    }
-
-    @Override
-    public void showActivityIndicatorAndDisableInteraction() {
-        mFragmentImpl.showActivityIndicatorAndDisableInteraction();
-    }
-
-    @Override
-    public void hideActivityIndicatorAndEnableInteraction() {
-        mFragmentImpl.hideActivityIndicatorAndEnableInteraction();
-    }
-
-    @Override
-    public void showError(@NonNull final String message, final int duration) {
-        mFragmentImpl.showError(message, duration);
     }
 
     @Override
@@ -193,5 +173,11 @@ public class CameraFragment extends Fragment implements CameraFragmentInterface,
         AlertDialogHelperCompat.showAlertDialog(activity, message, positiveButtonTitle,
                 positiveButtonClickListener, negativeButtonTitle, negativeButtonClickListener,
                 cancelListener);
+    }
+
+    @NonNull
+    @Override
+    public NavController findNavController() {
+        return NavHostFragment.findNavController(this);
     }
 }

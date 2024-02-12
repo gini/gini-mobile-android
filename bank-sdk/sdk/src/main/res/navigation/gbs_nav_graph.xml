@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/capture_flow_nav_graph"
+    app:startDestination="@id/gbs_destination_capture_fragment">
+
+    <fragment
+        android:id="@+id/gbs_destination_capture_fragment"
+        android:name="net.gini.android.capture.GiniCaptureFragment"
+        android:label="gbs_fragment_gini_capture"
+        tools:layout="@layout/gc_fragment_gini_capture">
+        <action
+            android:id="@+id/to_digital_invoice_fragment"
+            app:destination="@id/gbs_destination_digital_invoice_fragment"
+            app:popUpTo="@id/gbs_destination_capture_fragment"
+            app:popUpToInclusive="true"
+            app:enterAnim="@anim/gc_nav_enter_anim"
+            app:exitAnim="@anim/gc_nav_exit_anim"
+            app:popEnterAnim="@anim/gc_nav_pop_enter_anim"
+            app:popExitAnim="@anim/gc_nav_pop_exit_anim">
+            <argument
+                android:name="GBS_ARGS_EXTRACTIONS"
+                app:argType="android.os.Bundle" />
+            <argument
+                android:name="GBS_ARGS_COMPOUND_EXTRACTIONS"
+                app:argType="android.os.Bundle" />
+            <argument
+                android:name="GBS_ARGS_RETURN_REASONS"
+                app:argType="net.gini.android.capture.network.model.GiniCaptureReturnReason[]" />
+            <argument
+                android:name="GBS_ARGS_INACCURATE_EXTRACTION"
+                app:argType="boolean" />
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/gbs_destination_digital_invoice_fragment"
+        android:name="net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceFragment"
+        android:label="gbs_fragment_digital_invoice"
+        tools:layout="@layout/gbs_fragment_digital_invoice">
+        <action
+            android:id="@+id/to_digital_invoice_onboarding_fragment"
+            app:destination="@id/gbs_destination_digital_invoice_onboarding_fragment"
+            app:enterAnim="@anim/gc_nav_enter_anim"
+            app:exitAnim="@anim/gc_nav_exit_anim"
+            app:popEnterAnim="@anim/gc_nav_pop_enter_anim"
+            app:popExitAnim="@anim/gc_nav_pop_exit_anim"/>
+        <action
+            android:id="@+id/to_digital_invoice_help_fragment"
+            app:destination="@id/gbs_destination_digital_invoice_help_fragment"
+            app:enterAnim="@anim/gc_nav_enter_anim"
+            app:exitAnim="@anim/gc_nav_exit_anim"
+            app:popEnterAnim="@anim/gc_nav_pop_enter_anim"
+            app:popExitAnim="@anim/gc_nav_pop_exit_anim"/>
+        <action
+            android:id="@+id/to_digital_invoice_edit_item_bottom_sheet_dialog"
+            app:destination="@id/gbs_destination_digital_invoice_edit_item_bottom_sheet_dialog"
+            app:enterAnim="@anim/gc_nav_enter_anim"
+            app:exitAnim="@anim/gc_nav_exit_anim"
+            app:popEnterAnim="@anim/gc_nav_pop_enter_anim"
+            app:popExitAnim="@anim/gc_nav_pop_exit_anim">
+            <argument
+                android:name="GBS_ARGS_SELECTABLE_LINE_ITEM"
+                app:argType="net.gini.android.bank.sdk.capture.digitalinvoice.SelectableLineItem" />
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/gbs_destination_digital_invoice_onboarding_fragment"
+        android:name="net.gini.android.bank.sdk.capture.digitalinvoice.onboarding.DigitalInvoiceOnboardingFragment"
+        android:label="gbs_fragment_digital_invoice_onboarding"
+        tools:layout="@layout/gbs_fragment_digital_invoice_onboarding" />
+
+    <fragment
+        android:id="@+id/gbs_destination_digital_invoice_help_fragment"
+        android:name="net.gini.android.bank.sdk.capture.digitalinvoice.help.DigitalInvoiceHelpFragment"
+        android:label="gbs_fragment_digital_invoice_help"
+        tools:layout="@layout/gbs_fragment_digital_invoice_help"/>
+
+    <dialog
+        android:id="@+id/gbs_destination_digital_invoice_edit_item_bottom_sheet_dialog"
+        android:name="net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceBottomSheet"
+        android:label="gbs_fragment_digital_invoice"
+        tools:layout="@layout/gbs_edit_item_bottom_sheet"/>
+
+</navigation>

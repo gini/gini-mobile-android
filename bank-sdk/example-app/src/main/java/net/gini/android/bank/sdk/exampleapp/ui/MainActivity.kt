@@ -21,7 +21,6 @@ import net.gini.android.bank.sdk.exampleapp.core.PermissionHandler
 import net.gini.android.bank.sdk.exampleapp.databinding.ActivityMainBinding
 import net.gini.android.bank.sdk.exampleapp.ui.data.Configuration
 import net.gini.android.capture.EntryPoint
-import net.gini.android.capture.requirements.RequirementsReport
 import net.gini.android.capture.util.CancellationToken
 
 
@@ -50,7 +49,7 @@ class MainActivity : AppCompatActivity() {
         showVersions()
         if (savedInstanceState == null) {
             if (isIntentActionViewOrSend(intent)) {
-                startGiniCaptureSdkForImportedFile(intent)
+                startGiniCaptureSdkForOpenWith(intent)
             }
         }
     }
@@ -65,7 +64,7 @@ class MainActivity : AppCompatActivity() {
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         if (intent != null && isIntentActionViewOrSend(intent)) {
-            startGiniCaptureSdkForImportedFile(intent)
+            startGiniCaptureSdkForOpenWith(intent)
         }
     }
 
@@ -91,6 +90,11 @@ class MainActivity : AppCompatActivity() {
         binding.tilFieldEntryPoint.setEndIconOnClickListener {
             checkIfAppShouldAskForCameraPermission(EntryPoint.FIELD)
 
+        }
+
+        binding.buttonStartSingleActivity.setOnClickListener {
+            configureGiniBank()
+            startActivity(CaptureFlowHostActivity.newIntent(this))
         }
 
         binding.textGiniBankVersion.setOnClickListener {
@@ -137,9 +141,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun startGiniCaptureSdkForImportedFile(importedFileIntent: Intent) {
+    private fun startGiniCaptureSdkForOpenWith(openWithIntent: Intent) {
         if (configurationViewModel.configurationFlow.value.isFileImportEnabled) {
-            startGiniCaptureSdk(importedFileIntent)
+            configureGiniBank()
+            startGiniCaptureSdk(openWithIntent)
         } else {
             MaterialAlertDialogBuilder(this).setMessage(R.string.file_import_feature_is_disabled_dialog_message)
                 .setPositiveButton("OK") { dialogInterface, i -> {} }.show()
@@ -147,7 +152,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startGiniCaptureSdk(intent: Intent? = null) {
-        configureGiniCapture()
+        configureGiniBank()
 
         if (intent != null) {
             cancellationToken = GiniBank.startCaptureFlowForIntent(
@@ -206,31 +211,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun configureGiniCapture() {
+    private fun configureGiniBank() {
         configurationViewModel.clearGiniCaptureNetworkInstances()
         configurationViewModel.configureGiniBank(this)
     }
 
-    private fun showUnfulfilledRequirementsToast(report: RequirementsReport) {
-        val stringBuilder = StringBuilder()
-        val requirementReports = report.requirementReports
-        for (i in requirementReports.indices) {
-            val requirementReport = requirementReports[i]
-            if (!requirementReport.isFulfilled) {
-                if (stringBuilder.isNotEmpty()) {
-                    stringBuilder.append("\n")
-                }
-                stringBuilder.append(requirementReport.requirementId)
-                if (requirementReport.details.isNotEmpty()) {
-                    stringBuilder.append(": ")
-                    stringBuilder.append(requirementReport.details)
-                }
-            }
-        }
-        Toast.makeText(
-            this, "Requirements not fulfilled:\n$stringBuilder", Toast.LENGTH_LONG
-        ).show()
-    }
 
     override fun onActivityResult(
         requestCode: Int, resultCode: Int, data: Intent?

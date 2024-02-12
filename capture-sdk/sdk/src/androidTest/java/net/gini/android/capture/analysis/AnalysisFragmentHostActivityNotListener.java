@@ -15,7 +15,7 @@ import java.io.IOException;
  */
 
 public class AnalysisFragmentHostActivityNotListener extends
-        FragmentHostActivity<AnalysisFragmentCompat> {
+        FragmentHostActivity<AnalysisFragment> {
 
     static AnalysisFragmentListener sListener;
 
@@ -27,9 +27,9 @@ public class AnalysisFragmentHostActivityNotListener extends
     }
 
     @Override
-    protected AnalysisFragmentCompat createFragment() {
+    protected AnalysisFragment createFragment() {
         try {
-            return AnalysisFragmentCompat.createInstance(
+            return AnalysisFragment.createInstance(
                     createDocument(getTestJpeg(), 0, "portrait", "phone", ImageDocument.Source.newCameraSource()), null);
         } catch (final IOException e) {
             throw new RuntimeException(e);

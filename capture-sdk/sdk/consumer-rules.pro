@@ -1,0 +1,4 @@
+-keep class net.gini.android.capture.network.model.GiniCaptureReturnReason
+-keep class net.gini.android.capture.Document
+-keep class net.gini.android.capture.error.ErrorType
+-keep class net.gini.android.capture.DocumentImportEnabledFileTypes

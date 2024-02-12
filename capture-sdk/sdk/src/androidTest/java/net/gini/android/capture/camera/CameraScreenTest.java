@@ -38,9 +38,7 @@ import net.gini.android.capture.internal.camera.api.CameraControllerFake;
 import net.gini.android.capture.internal.qrcode.PaymentQRCodeData;
 import net.gini.android.capture.network.GiniCaptureNetworkService;
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
-import net.gini.android.capture.onboarding.OnboardingActivity;
 import net.gini.android.capture.onboarding.OnboardingPage;
-import net.gini.android.capture.review.ReviewActivity;
 import net.gini.android.capture.test.EspressoAssertions;
 import net.gini.android.capture.test.PermissionsHelper;
 
@@ -668,7 +666,7 @@ public class CameraScreenTest {
 
     @Test(expected = IllegalStateException.class)
     public void should_throwException_whenListener_wasNotSet() {
-        final CameraFragment cameraFragment = CameraFragment.createInstance();
+        final CameraFragment cameraFragment = new CameraFragment();
         cameraFragment.onCreate(null);
     }
 
@@ -682,11 +680,7 @@ public class CameraScreenTest {
                 isDocumentAvailable.set(true);
             }
 
-            @Override
-            public void onProceedToMultiPageReviewScreen(
-                    @NonNull final GiniCaptureMultiPageDocument multiPageDocument) {
 
-            }
 
             @Override
             public void onCheckImportedDocument(@NonNull final Document document,

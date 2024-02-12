@@ -1,55 +1,36 @@
 package net.gini.android.capture.camera;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.IntentCompat;
 
+import net.gini.android.capture.CaptureSDKResult;
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
-import net.gini.android.capture.GiniCaptureCoordinator;
 import net.gini.android.capture.GiniCaptureError;
+import net.gini.android.capture.GiniCaptureFragment;
+import net.gini.android.capture.GiniCaptureFragmentListener;
 import net.gini.android.capture.R;
-import net.gini.android.capture.analysis.AnalysisActivity;
-import net.gini.android.capture.document.GiniCaptureMultiPageDocument;
-import net.gini.android.capture.document.QRCodeDocument;
-import net.gini.android.capture.help.HelpActivity;
-import net.gini.android.capture.internal.util.ContextHelper;
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction;
 import net.gini.android.capture.network.model.GiniCaptureReturnReason;
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
-import net.gini.android.capture.noresults.NoResultsActivity;
-import net.gini.android.capture.onboarding.OnboardingActivity;
-import net.gini.android.capture.review.multipage.MultiPageReviewActivity;
-import net.gini.android.capture.tracking.AnalysisScreenEvent;
-import net.gini.android.capture.tracking.CameraScreenEvent;
 
+import java.util.ArrayList;
 import java.util.Map;
-
-import static net.gini.android.capture.analysis.AnalysisActivity.RESULT_NO_EXTRACTIONS;
-import static net.gini.android.capture.error.ErrorActivity.ERROR_SCREEN_REQUEST;
-import static net.gini.android.capture.internal.util.ActivityHelper.interceptOnBackPressed;
-import static net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboarding;
-import static net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboardingAtFirstRun;
-import static net.gini.android.capture.review.multipage.MultiPageReviewActivity.RESULT_SCROLL_TO_LAST_PAGE;
-import static net.gini.android.capture.review.multipage.MultiPageReviewActivity.SHOULD_SCROLL_TO_LAST_PAGE;
-import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
-import static net.gini.android.capture.tracking.EventTrackingHelper.trackCameraScreenEvent;
 
 /**
  * The {@code CameraActivity} is the main entry point to the Gini Capture SDK.
  **/
-public class CameraActivity extends AppCompatActivity implements CameraFragmentListener,
-        CameraFragmentInterface {
+public class CameraActivity extends AppCompatActivity implements GiniCaptureFragmentListener {
 
-    public static final String EXTRA_IN_ADD_PAGES = "GC_EXTRA_IN_ADD_PAGES";
+    /**
+     * Internal use only.
+     */
+    public static final String EXTRA_IN_OPEN_WITH_DOCUMENT = "GC_EXTRA_IN_OPEN_WITH_DOCUMENT";
 
     /**
      * <p> Returned when the result code is {@link CameraActivity#RESULT_ERROR} and contains a
@@ -87,344 +68,106 @@ public class CameraActivity extends AppCompatActivity implements CameraFragmentL
      */
     public static final int RESULT_ENTER_MANUALLY = RESULT_FIRST_USER + 99;
 
-    /**
-     * <p> Returned result code in case the user wants to go back to camera screen </p>
-     */
-    public static final int RESULT_CAMERA_SCREEN = RESULT_FIRST_USER + 100;
-
-    @VisibleForTesting
-    static final int REVIEW_DOCUMENT_REQUEST = 1;
-    private static final int ONBOARDING_REQUEST = 2;
-    private static final int ANALYSE_DOCUMENT_REQUEST = 3;
-    private static final int MULTI_PAGE_REVIEW_REQUEST = 4;
-    private static final String CAMERA_FRAGMENT = "CAMERA_FRAGMENT";
-    private static final String ONBOARDING_SHOWN_KEY = "ONBOARDING_SHOWN_KEY";
-
-    private boolean mOnboardingShown;
-    private GiniCaptureCoordinator mGiniCaptureCoordinator;
-    private boolean mAddPages;
-
-    private CameraFragment mFragment;
-
-    /**
-     * Internal use only.
-     *
-     * @suppress
-     */
-    private static final int NO_RESULT_REQUEST = 999;
-
-    /**
-     * Internal use only.
-     *
-     * @param context android context
-     * @param addPages pass `true` when launching to add more pages. If there are no pages, then pass `false`.
-     * @return the intent to launch the {@link CameraActivity}
-     */
-    public static Intent createIntent(@NonNull final Context context, boolean addPages) {
-        Intent intent = new Intent(context, CameraActivity.class);
-        intent.putExtra(EXTRA_IN_ADD_PAGES, addPages);
-        return intent;
-    }
+    private GiniCaptureFragment mFragment;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gc_activity_camera);
-        readExtras();
-        createGiniCaptureCoordinator();
+        final Document openWithDocument = IntentCompat.getParcelableExtra(getIntent(), EXTRA_IN_OPEN_WITH_DOCUMENT, Document.class);
         if (savedInstanceState == null) {
-            initFragment();
+            initFragment(openWithDocument);
         } else {
-            restoreSavedState(savedInstanceState);
             retainFragment();
         }
-        showOnboardingIfRequested();
-        handleOnBackPressed();
-        setTitleOnTablets();
     }
 
-    private void readExtras() {
-        mAddPages = getIntent().getBooleanExtra(EXTRA_IN_ADD_PAGES, false);
-    }
-
-    private void handleOnBackPressed() {
-        interceptOnBackPressed(this, new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                trackCameraScreenEvent(CameraScreenEvent.EXIT);
+    private void createFragment(@Nullable final Document openWithDocument) {
+        if (GiniCapture.hasInstance()) {
+            if (openWithDocument != null) {
+                mFragment = GiniCapture.Internal.createGiniCaptureFragmentForOpenWithDocument(openWithDocument);
+            } else {
+                mFragment = GiniCapture.createGiniCaptureFragment();
             }
-        });
-    }
-
-    private void restoreSavedState(@Nullable final Bundle savedInstanceState) {
-        if (savedInstanceState == null) {
-            return;
-        }
-        mOnboardingShown = savedInstanceState.getBoolean(ONBOARDING_SHOWN_KEY);
-    }
-
-    private void setTitleOnTablets() {
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(ContextHelper.isTablet(this) ? getString(R.string.gc_camera_info_label_invoice_and_qr) : getString(R.string.gc_title_camera));
+            mFragment.setListener(this);
         }
     }
 
-
-    @Override
-    protected void onSaveInstanceState(final Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putBoolean(ONBOARDING_SHOWN_KEY, mOnboardingShown);
-    }
-
-    private void createFragment() {
-        mFragment = createCameraFragment();
-    }
-
-    protected CameraFragment createCameraFragment() {
-        return CameraFragment.createInstance();
-    }
-
-    private void initFragment() {
+    private void initFragment(@Nullable final Document document) {
         if (!isFragmentShown()) {
-            createFragment();
+            createFragment(document);
             showFragment();
         }
     }
 
     private boolean isFragmentShown() {
-        return getSupportFragmentManager().findFragmentByTag(CAMERA_FRAGMENT) != null;
+        return getSupportFragmentManager().findFragmentByTag(GiniCaptureFragment.class.getName()) != null;
     }
 
     private void retainFragment() {
-        mFragment = (CameraFragment) getSupportFragmentManager().findFragmentByTag(
-                CAMERA_FRAGMENT);
+        mFragment = (GiniCaptureFragment) getSupportFragmentManager().findFragmentByTag(GiniCaptureFragment.class.getName());
+        if (mFragment != null) {
+            mFragment.setListener(this);
+        }
     }
 
     private void showFragment() {
         getSupportFragmentManager()
                 .beginTransaction()
-                .add(R.id.gc_fragment_camera, mFragment, CAMERA_FRAGMENT)
+                .add(R.id.gc_fragment_camera, mFragment, GiniCaptureFragment.class.getName())
                 .commit();
     }
 
-    private void showOnboardingIfRequested() {
-        if (shouldShowOnboarding() && !mAddPages) {
-            startOnboardingActivity();
-        }
-    }
-
     @Override
-    protected void onStart() {
-        super.onStart();
-        mGiniCaptureCoordinator.onCameraStarted();
-        if (mOnboardingShown) {
-            hideInterface();
-        }
-    }
+    public void onFinishedWithResult(@NonNull CaptureSDKResult result) {
+        if (result instanceof CaptureSDKResult.Success) {
+            final CaptureSDKResult.Success successResult = (CaptureSDKResult.Success) result;
+            final Intent resultIntent = new Intent();
 
-    private void createGiniCaptureCoordinator() {
-        mGiniCaptureCoordinator = GiniCaptureCoordinator.createInstance(this);
-        mGiniCaptureCoordinator
-                .setShowOnboardingAtFirstRun(shouldShowOnboardingAtFirstRun())
-                .setListener(new GiniCaptureCoordinator.Listener() {
-                    @Override
-                    public void onShowOnboarding() {
-                        startOnboardingActivity();
-                    }
-                });
-    }
-
-    /**
-     * Internal use only.
-     *
-     * @suppress
-     */
-    @Override
-    public boolean onCreateOptionsMenu(final Menu menu) {
-        getMenuInflater().inflate(R.menu.gc_camera, menu);
-        return true;
-    }
-
-    /**
-     * Internal use only.
-     *
-     * @suppress
-     */
-    @Override
-    public boolean onOptionsItemSelected(final MenuItem item) {
-        if (item.getItemId() == R.id.gc_action_show_onboarding) {
-            startHelpActivity();
-            return true;
-        } else if (item.getItemId() == android.R.id.home) {
-            onBackPressed();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void startHelpActivity() {
-        final Intent intent = new Intent(this, HelpActivity.class);
-        startActivity(intent);
-        trackCameraScreenEvent(CameraScreenEvent.HELP);
-    }
-
-    @VisibleForTesting
-    void startOnboardingActivity() {
-        if (mOnboardingShown) {
-            return;
-        }
-        final Intent intent = new Intent(this, OnboardingActivity.class);
-        hideInterface();
-        startActivityForResult(intent, ONBOARDING_REQUEST);
-        mOnboardingShown = true;
-    }
-
-    @Override
-    public void onProceedToAnalysisScreen(@NonNull final Document document) {
-        startAnalysisActivity(document);
-    }
-
-    @Override
-    public void onProceedToMultiPageReviewScreen(
-            @NonNull final GiniCaptureMultiPageDocument multiPageDocument, boolean shouldScrollToLastPage) {
-        if (multiPageDocument.getType() == Document.Type.IMAGE_MULTI_PAGE) {
-            if (mAddPages) {
-
-                // In case we returned to take more images
-                // Let the app know if it should scroll to the last position
-                Intent intent = new Intent(this, MultiPageReviewActivity.class);
-                intent.putExtra(SHOULD_SCROLL_TO_LAST_PAGE, shouldScrollToLastPage);
-                setResult(RESULT_SCROLL_TO_LAST_PAGE, intent);
-
-                // For subsequent images a new CameraActivity was launched from the MultiPageReviewActivity
-                // and so we can simply finish to return to the review activity
-                finish();
-            } else {
-                // For the first image navigate to the review activity and when it returns a result
-                // we will return it directly to the client
-                final Intent intent = MultiPageReviewActivity.createIntent(this, shouldScrollToLastPage);
-                startActivityForResult(intent, MULTI_PAGE_REVIEW_REQUEST);
+            final Bundle extractionsBundle = new Bundle();
+            for (final Map.Entry<String, GiniCaptureSpecificExtraction> extraction
+                    : successResult.getSpecificExtractions().entrySet()) {
+                extractionsBundle.putParcelable(extraction.getKey(), extraction.getValue());
             }
-        } else {
-            throw new UnsupportedOperationException("Unsupported multi-page document type.");
+            resultIntent.putExtra(CameraActivity.EXTRA_OUT_EXTRACTIONS, extractionsBundle);
+
+            final Bundle compoundExtractionsBundle = new Bundle();
+            for (final Map.Entry<String, GiniCaptureCompoundExtraction> extraction
+                    : successResult.getCompoundExtractions().entrySet()) {
+                compoundExtractionsBundle.putParcelable(extraction.getKey(), extraction.getValue());
+            }
+            resultIntent.putExtra(CameraActivity.EXTRA_OUT_COMPOUND_EXTRACTIONS, compoundExtractionsBundle);
+
+            ArrayList<GiniCaptureReturnReason> returnReasonsExtra = new ArrayList<>(successResult.getReturnReasons());
+            resultIntent.putParcelableArrayListExtra(CameraActivity.EXTRA_OUT_RETURN_REASONS, returnReasonsExtra);
+
+            setResult(RESULT_OK, resultIntent);
+            finish();
+        } else if (result instanceof CaptureSDKResult.Empty) {
+            final Intent resultIntent = new Intent();
+            resultIntent.putExtra(CameraActivity.EXTRA_OUT_EXTRACTIONS, new Bundle());
+            resultIntent.putExtra(CameraActivity.EXTRA_OUT_COMPOUND_EXTRACTIONS, new Bundle());
+            ArrayList<GiniCaptureReturnReason> returnReasonsExtra = new ArrayList<>();
+            resultIntent.putParcelableArrayListExtra(CameraActivity.EXTRA_OUT_RETURN_REASONS, returnReasonsExtra);
+            setResult(RESULT_OK, resultIntent);
+            finish();
+        } else if (result instanceof CaptureSDKResult.Cancel) {
+            setResult(RESULT_CANCELED);
+            finish();
+        } else if (result instanceof CaptureSDKResult.EnterManually) {
+            setResult(RESULT_ENTER_MANUALLY);
+            finish();
+        } else if (result instanceof CaptureSDKResult.Error) {
+            final CaptureSDKResult.Error errorResult = (CaptureSDKResult.Error) result;
+            final Intent resultIntent = new Intent();
+            resultIntent.putExtra(CameraActivity.EXTRA_OUT_ERROR, errorResult.getValue());
+            setResult(RESULT_ERROR, resultIntent);
+            finish();
         }
     }
 
     @Override
-    public void onCheckImportedDocument(@NonNull final Document document,
-            @NonNull final DocumentCheckResultCallback callback) {
+    public void onCheckImportedDocument(@NonNull Document document, @NonNull CameraFragmentListener.DocumentCheckResultCallback callback) {
         callback.documentAccepted();
     }
-
-     private void startAnalysisActivity(@NonNull final Document document) {
-        final Intent analysisIntent = new Intent(this, AnalysisActivity.class);
-        analysisIntent.putExtra(AnalysisActivity.EXTRA_IN_DOCUMENT, document);
-        analysisIntent.setExtrasClassLoader(CameraActivity.class.getClassLoader());
-        startActivityForResult(analysisIntent, ANALYSE_DOCUMENT_REQUEST);
-    }
-
-    @Override
-    public void onError(@NonNull final GiniCaptureError error) {
-        final Intent result = new Intent();
-        result.putExtra(EXTRA_OUT_ERROR, error);
-        setResult(RESULT_ERROR, result);
-        finish();
-    }
-
-    @Override
-    public void onExtractionsAvailable(
-            @NonNull final Map<String, GiniCaptureSpecificExtraction> extractions) {
-        final Intent result = new Intent();
-        final Bundle extractionsBundle = new Bundle();
-        for (final Map.Entry<String, GiniCaptureSpecificExtraction> extraction
-                : extractions.entrySet()) {
-            extractionsBundle.putParcelable(extraction.getKey(), extraction.getValue());
-        }
-        result.putExtra(CameraActivity.EXTRA_OUT_EXTRACTIONS, extractionsBundle);
-        setResult(RESULT_OK, result);
-        finish();
-    }
-
-    @Override
-    public void noExtractionsFromQRCode(QRCodeDocument qrCodeDocument) {
-        trackAnalysisScreenEvent(AnalysisScreenEvent.NO_RESULTS);
-        final Intent noResultsActivity = new Intent(this, NoResultsActivity.class);
-        noResultsActivity.putExtra(NoResultsActivity.EXTRA_IN_DOCUMENT, qrCodeDocument);
-        noResultsActivity.setExtrasClassLoader(CameraActivity.class.getClassLoader());
-        startActivityForResult(noResultsActivity, NO_RESULT_REQUEST);
-        setResult(RESULT_NO_EXTRACTIONS);
-        if (GiniCapture.hasInstance()) {
-            GiniCapture.getInstance().internal().getImageMultiPageDocumentMemoryStore().clear();
-        }
-    }
-
-    @Override
-    protected void onActivityResult(final int requestCode, final int resultCode,
-            final Intent data) {
-
-        switch (requestCode) {
-            case REVIEW_DOCUMENT_REQUEST:
-            case ANALYSE_DOCUMENT_REQUEST:
-            case MULTI_PAGE_REVIEW_REQUEST:
-            case ERROR_SCREEN_REQUEST:
-            case NO_RESULT_REQUEST:
-                // The first CameraActivity instance is invisible to the user
-                // after we navigate to the review or analysis activity.
-                // Once we get a result it means we are back at the first CameraActivity instance
-                // so we need to return the result to the client if result is not retake images
-                // from No Results or Error screens
-
-                if (resultCode == RESULT_CAMERA_SCREEN) {
-                    // Clear the image from the memory store because the user will take new pictures
-                    if (GiniCapture.hasInstance()) {
-                        GiniCapture.getInstance().internal().getImageMultiPageDocumentMemoryStore().clear();
-                    }
-                    super.onActivityResult(requestCode, resultCode, data);
-                    break;
-                }
-
-                setResult(resultCode, data);
-                finish();
-                break;
-            case ONBOARDING_REQUEST:
-                mOnboardingShown = false;
-                showInterface();
-                break;
-            default:
-                super.onActivityResult(requestCode, resultCode, data);
-        }
-    }
-
-    @Override
-    public void setListener(@NonNull final CameraFragmentListener listener) {
-        throw new IllegalStateException("CameraFragmentListener must not be altered in the "
-                + "CameraActivity. Override listener methods in a CameraActivity subclass "
-                + "instead.");
-    }
-
-    @Override
-    public void showInterface() {
-        mFragment.showInterface();
-    }
-
-    @Override
-    public void hideInterface() {
-        mFragment.hideInterface();
-    }
-
-    @Override
-    public void showActivityIndicatorAndDisableInteraction() {
-        mFragment.showActivityIndicatorAndDisableInteraction();
-    }
-
-    @Override
-    public void hideActivityIndicatorAndEnableInteraction() {
-        mFragment.hideActivityIndicatorAndEnableInteraction();
-    }
-
-    @Override
-    public void showError(@NonNull final String message, final int duration) {
-        mFragment.showError(message, duration);
-    }
-
 }

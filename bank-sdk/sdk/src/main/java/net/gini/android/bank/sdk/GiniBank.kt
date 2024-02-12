@@ -15,6 +15,7 @@ import net.gini.android.bank.sdk.GiniBank.setGiniApi
 import net.gini.android.bank.sdk.GiniBank.startCaptureFlow
 import net.gini.android.bank.sdk.GiniBank.startCaptureFlowForIntent
 import net.gini.android.bank.sdk.capture.CaptureConfiguration
+import net.gini.android.bank.sdk.capture.CaptureFlowFragment
 import net.gini.android.bank.sdk.capture.CaptureImportInput
 import net.gini.android.bank.sdk.capture.applyConfiguration
 import net.gini.android.bank.sdk.capture.digitalinvoice.help.view.DefaultDigitalInvoiceHelpNavigationBarBottomAdapter
@@ -23,7 +24,6 @@ import net.gini.android.bank.sdk.capture.digitalinvoice.view.DefaultDigitalInvoi
 import net.gini.android.bank.sdk.capture.digitalinvoice.view.DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.capture.digitalinvoice.view.DigitalInvoiceNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.capture.digitalinvoice.view.DigitalInvoiceOnboardingNavigationBarBottomAdapter
-import net.gini.android.bank.sdk.capture.util.getImportFileCallback
 import net.gini.android.bank.sdk.error.AmountParsingException
 import net.gini.android.bank.sdk.pay.getBusinessIntent
 import net.gini.android.bank.sdk.pay.getRequestId
@@ -258,6 +258,51 @@ object GiniBank {
         resultLauncher.launch(Unit)
     }
 
+    fun createCaptureFlowFragment(): CaptureFlowFragment {
+        check(giniCapture != null) { "Capture feature is not configured. Call setCaptureConfiguration before creating the CaptureFlowFragment." }
+        return CaptureFlowFragment.createInstance()
+    }
+
+    fun createCaptureFlowFragmentForIntent(
+        context: Context,
+        intent: Intent,
+        callback: (CreateCaptureFlowFragmentForIntentResult) -> Unit
+    ): CancellationToken {
+        check(giniCapture != null) { "Capture feature is not configured. Call setCaptureConfiguration before creating the CaptureFlowFragment." }
+        return giniCapture!!.createDocumentForImportedFiles(
+            intent,
+            context,
+            object : AsyncCallback<Document, ImportedFileValidationException> {
+                override fun onSuccess(document: Document) {
+                    callback(
+                        CreateCaptureFlowFragmentForIntentResult.Success(
+                            Internal.createCaptureFlowFragmentForOpenWithDocument(document)
+                        )
+                    )
+                }
+
+                override fun onError(exception: ImportedFileValidationException) {
+                    callback(CreateCaptureFlowFragmentForIntentResult.Error(exception))
+                }
+
+                override fun onCancelled() {
+                    callback(CreateCaptureFlowFragmentForIntentResult.Cancelled)
+                }
+
+            })
+    }
+
+
+    sealed class CreateCaptureFlowFragmentForIntentResult {
+        data class Success(val fragment: CaptureFlowFragment) :
+            CreateCaptureFlowFragmentForIntentResult()
+
+        data class Error(val exception: ImportedFileValidationException) :
+            CreateCaptureFlowFragmentForIntentResult()
+
+        object Cancelled : CreateCaptureFlowFragmentForIntentResult()
+    }
+
     /**
      * Screen API for starting the capture flow when a pdf or image document was shared from another app.
      *
@@ -270,9 +315,18 @@ object GiniBank {
     ): CancellationToken {
         giniCapture.let { capture ->
             check(capture != null) { "Capture feature is not configured. Call setCaptureConfiguration before starting the flow." }
-            return capture.createIntentForImportedFiles(
-                intent, context, getImportFileCallback(resultLauncher)
-            )
+            return capture.createDocumentForImportedFiles(intent, context, object : AsyncCallback<Document, ImportedFileValidationException> {
+                override fun onSuccess(result: Document) {
+                    resultLauncher.launch(CaptureImportInput.Forward(result))
+                }
+
+                override fun onError(exception: ImportedFileValidationException?) {
+                    resultLauncher.launch(CaptureImportInput.Error(exception?.validationError, exception?.message))
+                }
+
+                override fun onCancelled() {
+                }
+            })
         }
     }
 
@@ -349,5 +403,15 @@ object GiniBank {
      */
     fun returnToPaymentInitiatorApp(context: Context, resolvedPayment: ResolvedPayment) {
         context.startActivity(resolvedPayment.getBusinessIntent())
+    }
+
+    class Internal {
+
+        companion object {
+            fun createCaptureFlowFragmentForOpenWithDocument(openWithDocument: Document): CaptureFlowFragment {
+                check(giniCapture != null) { "Capture feature is not configured. Call setCaptureConfiguration before starting the flow." }
+                return CaptureFlowFragment.createInstance(openWithDocument)
+            }
+        }
     }
 }

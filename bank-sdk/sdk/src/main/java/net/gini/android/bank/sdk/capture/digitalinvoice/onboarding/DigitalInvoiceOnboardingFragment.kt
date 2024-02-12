@@ -13,6 +13,7 @@ import net.gini.android.bank.sdk.capture.util.autoCleared
 import net.gini.android.bank.sdk.databinding.GbsFragmentDigitalInvoiceOnboardingBinding
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.internal.ui.IntervalClickListener
+import net.gini.android.bank.sdk.util.getLayoutInflaterWithGiniCaptureTheme
 import net.gini.android.capture.onboarding.view.OnboardingIllustrationAdapter
 import net.gini.android.capture.view.InjectedViewAdapterHolder
 
@@ -39,22 +40,16 @@ import net.gini.android.capture.view.InjectedViewAdapterHolder
  *
  * TODO: PPL-14: Customization guide for return assistant - Android
  */
-class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenContract.View,
-    DigitalOnboardingFragmentInterface {
-
-    companion object {
-        @JvmStatic
-        fun createInstance() = DigitalInvoiceOnboardingFragment()
-    }
+class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenContract.View {
 
     private var binding by autoCleared<GbsFragmentDigitalInvoiceOnboardingBinding>()
 
     private var presenter: DigitalOnboardingScreenContract.Presenter? = null
-    override var listener: DigitalInvoiceOnboardingFragmentListener?
-        get() = this.presenter?.listener
-        set(value) {
-            this.presenter?.listener = value
-        }
+
+    override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
+        val inflater = super.onGetLayoutInflater(savedInstanceState)
+        return this.getLayoutInflaterWithGiniCaptureTheme(inflater)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -73,8 +68,7 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         createPresenter(requireActivity())
-        initListener()
-        enterTransition = TransitionInflater.from(context).inflateTransition(R.transition.fade)
+        enterTransition = TransitionInflater.from(requireContext()).inflateTransition(R.transition.fade)
         exitTransition = enterTransition
 
     }
@@ -85,14 +79,8 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
             this,
         )
 
-    private fun initListener() {
-        if (activity is DigitalInvoiceOnboardingFragmentListener) {
-            listener = activity as DigitalInvoiceOnboardingFragmentListener?
-        } else checkNotNull(listener) {
-            ("DigitalInvoiceOnboardingFragmentListener not set. "
-                    + "You can set it with DigitalInvoiceOnboardingFragmentListener#setListener() or "
-                    + "by making the host activity implement the DigitalInvoiceOnboardingFragmentListener.")
-        }
+    override fun close() {
+        activity?.onBackPressedDispatcher?.onBackPressed()
     }
 
     /**
@@ -164,16 +152,6 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
                     )
                 }
         }
-    }
-
-    /**
-     * Internal use only.
-     *
-     * @suppress
-     */
-    override fun onDestroyView() {
-        listener = null
-        super.onDestroyView()
     }
 
     private fun setInputHandlers() {

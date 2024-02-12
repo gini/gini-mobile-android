@@ -36,6 +36,7 @@ import java.util.concurrent.atomic.AtomicReference
 import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
 import kotlin.coroutines.cancellation.CancellationException
+import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @LargeTest
@@ -104,7 +105,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
 
     @Test
     @Throws(IOException::class, InterruptedException::class, JSONException::class)
-    fun processDocumentByteArray() = runTest {
+    fun processDocumentByteArray() = runTest(timeout = 30.seconds) {
         val assetManager = ApplicationProvider.getApplicationContext<Context>().resources.assets
         val testDocumentAsStream = assetManager.open("test.jpg")
         Assert.assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream)
@@ -114,7 +115,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
 
     @Test
     @Throws(IOException::class, InterruptedException::class, JSONException::class)
-    fun processDocumentWithCustomCache() = runTest {
+    fun processDocumentWithCustomCache() = runTest(timeout = 30.seconds) {
         giniCoreApi = createGiniCoreAPIBuilder(clientId, clientSecret, "example.com")
             .setApiBaseUrl(apiUri)
             .setUserCenterApiBaseUrl(userCenterUri)
@@ -131,7 +132,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
 
     @Test
     @Throws(IOException::class, InterruptedException::class, JSONException::class)
-    fun documentUploadWorksAfterNewUserWasCreatedIfUserWasInvalid() = runTest {
+    fun documentUploadWorksAfterNewUserWasCreatedIfUserWasInvalid() = runTest(timeout = 30.seconds) {
         val credentialsStore = EncryptedCredentialsStore(ApplicationProvider.getApplicationContext<Context>()
             .getSharedPreferences("GiniTests", Context.MODE_PRIVATE), ApplicationProvider.getApplicationContext())
         giniCoreApi = createGiniCoreAPIBuilder(clientId, clientSecret, "example.com")
@@ -158,7 +159,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
 
     @Test
     @Throws(IOException::class, InterruptedException::class, JSONException::class)
-    fun emailDomainIsUpdatedForExistingUserIfEmailDomainWasChanged() = runTest {
+    fun emailDomainIsUpdatedForExistingUserIfEmailDomainWasChanged() = runTest(timeout = 30.seconds) {
 
         // Upload a document to make sure we have a valid user
         val credentialsStore = EncryptedCredentialsStore(ApplicationProvider.getApplicationContext<Context>()
@@ -198,7 +199,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
 
     @Test
     @Throws(Exception::class)
-    fun publicKeyPinningWithMatchingPublicKey() = runTest {
+    fun publicKeyPinningWithMatchingPublicKey() = runTest(timeout = 30.seconds) {
         TrustKitHelper.resetTrustKit()
         giniCoreApi = createGiniCoreAPIBuilder(clientId, clientSecret, "example.com")
             .setNetworkSecurityConfigResId(getNetworkSecurityConfigResId())
@@ -217,7 +218,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
 
     @Test
     @Throws(Exception::class)
-    fun publicKeyPinningWithCustomCache() = runTest {
+    fun publicKeyPinningWithCustomCache() = runTest(timeout = 30.seconds) {
         TrustKitHelper.resetTrustKit()
         giniCoreApi = createGiniCoreAPIBuilder(clientId, clientSecret, "example.com")
             .setNetworkSecurityConfigResId(getNetworkSecurityConfigResId())
@@ -237,7 +238,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
 
     @Test
     @Throws(Exception::class)
-    fun createPartialDocument() = runTest {
+    fun createPartialDocument() = runTest(timeout = 30.seconds) {
         val assetManager = ApplicationProvider.getApplicationContext<Context>().resources.assets
         val testDocumentAsStream = assetManager.open("multi-page-p1.jpg")
         Assert.assertNotNull("test image multi-page-p1.jpg could not be loaded", testDocumentAsStream)
@@ -250,7 +251,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
 
     @Test
     @Throws(Exception::class)
-    fun deletePartialDocumentWithoutParents() = runTest {
+    fun deletePartialDocumentWithoutParents() = runTest(timeout = 30.seconds) {
         val assetManager = ApplicationProvider.getApplicationContext<Context>().resources.assets
         val testDocumentAsStream = assetManager.open("multi-page-p1.jpg")
         Assert.assertNotNull("test image multi-page-p1.jpg could not be loaded", testDocumentAsStream)
@@ -264,7 +265,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
 
     @Test
     @Throws(Exception::class)
-    fun deletePartialDocumentWithParents() = runTest {
+    fun deletePartialDocumentWithParents() = runTest(timeout = 30.seconds) {
         val assetManager = ApplicationProvider.getApplicationContext<Context>().resources.assets
         val page1Stream = assetManager.open("multi-page-p1.jpg")
         Assert.assertNotNull("test image multi-page-p1.jpg could not be loaded", page1Stream)
@@ -283,7 +284,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
 
     @Test
     @Throws(Exception::class)
-    fun deletePartialDocumentFailsWhenNotDeletingParents() = runTest {
+    fun deletePartialDocumentFailsWhenNotDeletingParents() = runTest(timeout = 30.seconds) {
         val assetManager = ApplicationProvider.getApplicationContext<Context>().resources.assets
         val page1Stream = assetManager.open("multi-page-p1.jpg")
         Assert.assertNotNull("test image multi-page-p1.jpg could not be loaded", page1Stream)
@@ -303,7 +304,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
 
     @Test
     @Throws(java.lang.Exception::class)
-    fun processCompositeDocument() = runTest {
+    fun processCompositeDocument() = runTest(timeout = 30.seconds) {
         val assetManager = ApplicationProvider.getApplicationContext<Context>().resources.assets
         val page1Stream = assetManager.open("multi-page-p1.jpg")
         Assert.assertNotNull("test image multi-page-p1.jpg could not be loaded", page1Stream)
@@ -342,7 +343,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
 
     @Test
     @Throws(java.lang.Exception::class)
-    fun testDeleteCompositeDocument() = runTest {
+    fun testDeleteCompositeDocument() = runTest(timeout = 30.seconds) {
         val assetManager = ApplicationProvider.getApplicationContext<Context>().resources.assets
         val page1Stream = assetManager.open("multi-page-p1.jpg")
         Assert.assertNotNull("test image multi-page-p1.jpg could not be loaded", page1Stream)
@@ -360,7 +361,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
 
     @Test
     @Throws(IOException::class, InterruptedException::class)
-    fun allowsUsingCustomTrustManager() = runTest {
+    fun allowsUsingCustomTrustManager() = runTest(timeout = 30.seconds) {
         val customTrustManagerWasCalled = AtomicBoolean(false)
 
         // Don't trust any certificates: blocks all network calls
@@ -402,7 +403,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
     }
 
     @Test
-    fun getDocumentLayout() = runTest {
+    fun getDocumentLayout() = runTest(timeout = 30.seconds) {
         // Given
         val assetManager = ApplicationProvider.getApplicationContext<Context>().resources.assets
         val testDocumentAsStream = assetManager.open("test.jpg")

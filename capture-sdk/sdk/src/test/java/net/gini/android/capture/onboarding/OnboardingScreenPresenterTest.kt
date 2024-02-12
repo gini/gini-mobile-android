@@ -80,11 +80,9 @@ class OnboardingScreenPresenterTest {
 
     @Test
     @Throws(Exception::class)
-    fun `notify listener to close onboarding when show next page on last page was requested`() {
+    fun `notify view to close onboarding when show next page on last page was requested`() {
         // Given
         val presenter = createPresenter()
-        val listener = mock<OnboardingFragmentListener>()
-        presenter.setListener(listener)
 
         // When
         val customPages: List<OnboardingPage> = Lists.newArrayList(
@@ -96,7 +94,7 @@ class OnboardingScreenPresenterTest {
         presenter.showNextPage()
 
         // Then
-        Mockito.verify(listener).onCloseOnboarding()
+        Mockito.verify(mView).close()
     }
 
     @Test
@@ -241,14 +239,11 @@ class OnboardingScreenPresenterTest {
         // Given
         val presenter = createPresenter()
 
-        val listener = mock<OnboardingFragmentListener>()
-        presenter.setListener(listener)
-
         // When
         presenter.skip()
 
         // Then
-        verify(listener).onCloseOnboarding()
+        verify(mView).close()
     }
 
     @Test

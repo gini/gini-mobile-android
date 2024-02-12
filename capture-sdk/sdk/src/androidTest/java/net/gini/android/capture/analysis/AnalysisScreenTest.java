@@ -23,7 +23,6 @@ import net.gini.android.capture.internal.camera.photo.PhotoFactory;
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction;
 import net.gini.android.capture.network.model.GiniCaptureReturnReason;
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
-import net.gini.android.capture.review.multipage.MultiPageReviewActivity;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -185,7 +184,7 @@ public class AnalysisScreenTest {
 
     @Test(expected = IllegalStateException.class)
     public void should_throwException_whenListener_wasNotSet() throws Exception {
-        final AnalysisFragmentCompat fragment = AnalysisFragmentCompat.createInstance(
+        final AnalysisFragment fragment = AnalysisFragment.createInstance(
                 createDocument(getTestJpeg(), 0, "portrait", "phone", ImageDocument.Source.newCameraSource()), null);
         fragment.onCreate(null);
     }

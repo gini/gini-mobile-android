@@ -19,6 +19,7 @@ import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.exampleapp.R
+import net.gini.android.bank.sdk.exampleapp.core.di.GiniCaptureNetworkServiceDebugDisabled
 import net.gini.android.bank.sdk.exampleapp.core.di.GiniCaptureNetworkServiceDebugEnabled
 import net.gini.android.bank.sdk.exampleapp.databinding.ActivityExtractionsBinding
 import net.gini.android.capture.Amount
@@ -43,7 +44,10 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
 
     @Inject
     @GiniCaptureNetworkServiceDebugEnabled
-    lateinit var defaultNetworkService: GiniCaptureDefaultNetworkService
+    lateinit var defaultNetworkServiceDebugEnabled: GiniCaptureDefaultNetworkService
+    @Inject
+    @GiniCaptureNetworkServiceDebugDisabled
+    lateinit var defaultNetworkServiceDebugDisabled: GiniCaptureDefaultNetworkService
 
     // {extraction name} to it's {entity name}
     private val editableSpecificExtractions = hashMapOf(
@@ -65,7 +69,8 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
     }
 
     private fun showAnalyzedDocumentId() {
-        val documentId = defaultNetworkService.analyzedGiniApiDocument?.id ?: ""
+        val documentId = defaultNetworkServiceDebugDisabled.analyzedGiniApiDocument?.id
+            ?: defaultNetworkServiceDebugDisabled.analyzedGiniApiDocument?.id ?: ""
         binding.textDocumentId.text = getString(R.string.analyzed_document_id, documentId)
     }
 

@@ -21,18 +21,6 @@ import androidx.annotation.VisibleForTesting;
  */
 class OnboardingScreenPresenter extends OnboardingScreenContract.Presenter {
 
-    private static final OnboardingFragmentListener NO_OP_LISTENER =
-            new OnboardingFragmentListener() {
-                @Override
-                public void onCloseOnboarding() {
-                }
-
-                @Override
-                public void onError(@NonNull final GiniCaptureError error) {
-                }
-            };
-
-    private OnboardingFragmentListener mListener = NO_OP_LISTENER;
     private List<OnboardingPage> mPages;
     private int mCurrentPageIndex;
 
@@ -55,7 +43,7 @@ class OnboardingScreenPresenter extends OnboardingScreenContract.Presenter {
     @Override
     public void showNextPage() {
         if (isOnLastPage()) {
-            mListener.onCloseOnboarding();
+            getView().close();
             trackOnboardingScreenEvent(OnboardingScreenEvent.FINISH);
         } else {
             scrollToNextPage();
@@ -64,7 +52,7 @@ class OnboardingScreenPresenter extends OnboardingScreenContract.Presenter {
 
     @Override
     public void skip() {
-        mListener.onCloseOnboarding();
+        getView().close();
         trackOnboardingScreenEvent(OnboardingScreenEvent.FINISH);
     }
 
@@ -130,11 +118,6 @@ class OnboardingScreenPresenter extends OnboardingScreenContract.Presenter {
     @Override
     public void stop() {
 
-    }
-
-    @Override
-    public void setListener(@NonNull final OnboardingFragmentListener listener) {
-        mListener = listener;
     }
 
     @VisibleForTesting

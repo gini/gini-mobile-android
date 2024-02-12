@@ -252,6 +252,7 @@ class DigitalInvoiceScreenPresenterTest {
             view.showLineItems(any(), any())
             view.showAddons(any())
             view.animateListScroll()
+            view.showOnboarding()
         }
         verify { view.updateFooterDetails(any()) }
         confirmVerified(view)
@@ -300,6 +301,7 @@ class DigitalInvoiceScreenPresenterTest {
             view.showLineItems(any(), any())
             view.showAddons(any())
             view.animateListScroll()
+            view.showOnboarding()
         }
         verify { view.updateFooterDetails(any()) }
         confirmVerified(view)
@@ -353,6 +355,7 @@ class DigitalInvoiceScreenPresenterTest {
             view.showLineItems(any(), any())
             view.showAddons(any())
             view.animateListScroll()
+            view.showOnboarding()
         }
         verify { view.updateFooterDetails(any()) }
         confirmVerified(view)

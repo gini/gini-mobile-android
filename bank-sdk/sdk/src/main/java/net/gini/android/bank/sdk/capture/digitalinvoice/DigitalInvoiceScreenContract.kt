@@ -34,6 +34,8 @@ interface DigitalInvoiceScreenContract {
                                    resultCallback: ReturnReasonDialogResultCallback
         )
         fun animateListScroll()
+        fun onEditLineItem(selectableLineItem: SelectableLineItem)
+        fun showOnboarding()
     }
 
     /**
@@ -42,7 +44,9 @@ interface DigitalInvoiceScreenContract {
      * @suppress
      */
     abstract class Presenter(activity: Activity, view: View) :
-            GiniCaptureBasePresenter<View>(activity, view), DigitalInvoiceFragmentInterface {
+            GiniCaptureBasePresenter<View>(activity, view) {
+
+        var listener: DigitalInvoiceFragmentListener? = null
 
         abstract fun selectLineItem(lineItem: SelectableLineItem)
         abstract fun deselectLineItem(lineItem: SelectableLineItem)
@@ -50,6 +54,7 @@ interface DigitalInvoiceScreenContract {
         abstract fun pay()
         abstract fun onViewCreated()
         abstract fun saveState(outState: Bundle)
+        abstract fun updateLineItem(selectableLineItem: SelectableLineItem)
     }
 
     data class FooterDetails(

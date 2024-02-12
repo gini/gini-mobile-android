@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
+import net.gini.android.capture.camera.CameraActivity;
 import net.gini.android.capture.camera.view.CameraNavigationBarBottomAdapter;
 import net.gini.android.capture.camera.view.DefaultCameraNavigationBarBottomAdapter;
 import net.gini.android.capture.help.HelpItem;
@@ -121,6 +122,8 @@ public class GiniCapture {
     private final InjectedViewAdapterInstance<ReviewNavigationBarBottomAdapter> reviewNavigationBarBottomAdapterInstance;
     private final InjectedViewAdapterInstance<OnButtonLoadingIndicatorAdapter> onButtonLoadingIndicatorAdapterInstance;
     private final EntryPoint entryPoint;
+    private final boolean allowScreenshots;
+
 
     /**
      * Retrieve the current instance.
@@ -339,6 +342,7 @@ public class GiniCapture {
         reviewNavigationBarBottomAdapterInstance = builder.getReviewNavigationBarBottomAdapterInstance();
         onButtonLoadingIndicatorAdapterInstance = builder.getOnButtonLoadingIndicatorAdapterInstance();
         entryPoint = builder.getEntryPoint();
+        allowScreenshots = builder.getAllowScreenshots();
     }
 
     /**
@@ -511,7 +515,29 @@ public class GiniCapture {
      */
     @NonNull
     public CancellationToken createIntentForImportedFiles(@NonNull final Intent intent, @NonNull final Context context, @NonNull final AsyncCallback<Intent, ImportedFileValidationException> callback) {
-        return mGiniCaptureFileImport.createIntentForImportedFiles(intent, context, callback);
+        return mGiniCaptureFileImport.createDocumentForImportedFiles(intent, context, new AsyncCallback<Document, ImportedFileValidationException>() {
+            @Override
+            public void onSuccess(Document result) {
+                final Intent intent = new Intent(context, CameraActivity.class);
+                intent.putExtra(CameraActivity.EXTRA_IN_OPEN_WITH_DOCUMENT, result);
+                callback.onSuccess(intent);
+            }
+
+            @Override
+            public void onError(ImportedFileValidationException exception) {
+                callback.onError(exception);
+            }
+
+            @Override
+            public void onCancelled() {
+                callback.onCancelled();
+            }
+        });
+    }
+
+    @NonNull
+    public CancellationToken createDocumentForImportedFiles(@NonNull final Intent intent, @NonNull final Context context, @NonNull final AsyncCallback<Document, ImportedFileValidationException> callback) {
+        return mGiniCaptureFileImport.createDocumentForImportedFiles(intent, context, callback);
     }
 
     /**
@@ -657,6 +683,75 @@ public class GiniCapture {
     }
 
     /**
+     * Get whether screenshots are allowed or not.
+     *
+     * <p> Default value is {@code true}.
+     *
+     * @return {@code true} if screenshots are allowed
+     */
+    public boolean getAllowScreenshots() {
+        return allowScreenshots;
+    }
+
+    public static GiniCaptureFragment createGiniCaptureFragment() {
+        if (!GiniCapture.hasInstance()) {
+            throw new IllegalStateException("GiniCapture instance was created. Call GiniCapture.newInstance() before creating the GiniCaptureFragment.");
+        }
+        return GiniCaptureFragment.createInstance(null);
+    }
+
+    public CancellationToken createGiniCaptureFragmentForIntent(Context context, Intent intent, CreateGiniCaptureFragmentForIntentCallback captureIntentCallback) {
+        if (!GiniCapture.hasInstance()) {
+            throw new IllegalStateException("GiniCapture instance was created. Call GiniCapture.newInstance() before creating the GiniCaptureFragment.");
+        }
+        return createDocumentForImportedFiles(intent, context, new AsyncCallback<Document, ImportedFileValidationException>() {
+            @Override
+            public void onSuccess(Document result) {
+                captureIntentCallback.callback(new CreateGiniCaptureFragmentForIntentResult.Success(GiniCaptureFragment.createInstance(result)));
+            }
+
+            @Override
+            public void onError(ImportedFileValidationException exception) {
+                captureIntentCallback.callback(new CreateGiniCaptureFragmentForIntentResult.Error(exception));
+            }
+
+            @Override
+            public void onCancelled() {
+                captureIntentCallback.callback(new CreateGiniCaptureFragmentForIntentResult.Cancelled());
+            }
+        });
+    }
+
+    public interface CreateGiniCaptureFragmentForIntentCallback {
+        void callback(CreateGiniCaptureFragmentForIntentResult result);
+    }
+
+    public static class CreateGiniCaptureFragmentForIntentResult {
+        public static class Cancelled extends CreateGiniCaptureFragmentForIntentResult {}
+
+        public static class Success extends CreateGiniCaptureFragmentForIntentResult {
+            @NonNull
+            public GiniCaptureFragment fragment;
+
+            public Success(@NonNull GiniCaptureFragment fragment) {
+                this.fragment = fragment;
+            }
+        }
+        public static class Error extends CreateGiniCaptureFragmentForIntentResult {
+            @NonNull
+            Exception exception;
+
+            public Error(@NonNull ImportedFileValidationException exception) {
+                this.exception = exception;
+            }
+
+        }
+
+
+    }
+
+
+    /**
      * Builder for {@link GiniCapture}. To get an instance call {@link #newInstance(Context)}.
      */
     public static class Builder {
@@ -709,6 +804,7 @@ public class GiniCapture {
 
         private InjectedViewAdapterInstance<OnButtonLoadingIndicatorAdapter> onButtonLoadingIndicatorAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultOnButtonLoadingIndicatorAdapter());
         private EntryPoint entryPoint = Internal.DEFAULT_ENTRY_POINT;
+        private boolean allowScreenshots = true;
 
         /**
          * Create a new {@link GiniCapture} instance.
@@ -1225,6 +1321,27 @@ public class GiniCapture {
         private EntryPoint getEntryPoint() {
             return entryPoint;
         }
+
+        /**
+         * Set whether screenshots should be allowed or not.
+         *
+         * <p>Screenshots are allowed by default.
+         *
+         * <p>IMPORTANT: If you disallow screenshots and use the {@link GiniCaptureFragment} for launching the SDK in your activity, please clear the {@link android.view.WindowManager.LayoutParams#FLAG_SECURE}
+         * on your activity's window after the SDK has finished to allow users to take screenshots of your app again.
+         *
+         * @param allowScreenshots pass {@code true} to allow screenshots or {@code false} otherwise.
+         *
+         * @return the {@link Builder} instance
+         */
+        public Builder setAllowScreenshots(boolean allowScreenshots) {
+            this.allowScreenshots = allowScreenshots;
+            return this;
+        }
+
+        private boolean getAllowScreenshots() {
+            return allowScreenshots;
+        }
     }
 
     /**
@@ -1244,6 +1361,10 @@ public class GiniCapture {
 
         public Internal(@NonNull final GiniCapture giniCapture) {
             mGiniCapture = giniCapture;
+        }
+
+        public static GiniCaptureFragment createGiniCaptureFragmentForOpenWithDocument(@NonNull Document openWithDocument) {
+            return GiniCaptureFragment.createInstance(openWithDocument);
         }
 
         @Nullable

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="AppTheme" parent="Theme.Material3.DayNight">
+    <style name="Root.AppTheme" parent="Theme.Material3.DayNight">
         <item name="android:windowBackground">@color/gc_color_01</item>
         <item name="colorPrimary">@color/gc_accent_01</item>
         <item name="colorPrimaryDark">@color/gc_color_02</item>
@@ -17,6 +17,7 @@
         <item name="android:windowLightStatusBar">true</item>
         <item name="colorAccent">?attr/colorPrimary</item>
     </style>
+    <style name="AppTheme" parent="Root.AppTheme"/>
 
 
     <style name="Headline5" parent="TextAppearance.MaterialComponents.Headline5">

@@ -27,6 +27,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.util.*
+import kotlin.time.Duration.Companion.seconds
 
 /**
  * Created by Alpár Szotyori on 24.01.22.
@@ -47,7 +48,7 @@ class GiniBankAPIIntegrationTest: GiniCoreAPIIntegrationTest<BankApiDocumentMana
 
     @Test
     @Throws(Exception::class)
-    fun sendFeedback_withCompoundExtractions_forDocument_withoutLineItems() = runTest {
+    fun sendFeedback_withCompoundExtractions_forDocument_withoutLineItems() = runTest(timeout = 30.seconds) {
         val assetManager = getApplicationContext<Context>().resources.assets
         val testDocumentAsStream = assetManager.open("test.jpg")
         Assert.assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream)
@@ -94,7 +95,7 @@ class GiniBankAPIIntegrationTest: GiniCoreAPIIntegrationTest<BankApiDocumentMana
 
     @Test
     @Throws(Exception::class)
-    fun sendFeedback_withoutCompoundExtractions_forDocument_withoutLineItems() = runTest {
+    fun sendFeedback_withoutCompoundExtractions_forDocument_withoutLineItems() = runTest(timeout = 30.seconds) {
         val assetManager = getApplicationContext<Context>().resources.assets
         val testDocumentAsStream = assetManager.open("test.jpg")
         Assert.assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream)
@@ -123,7 +124,7 @@ class GiniBankAPIIntegrationTest: GiniCoreAPIIntegrationTest<BankApiDocumentMana
 
     @Test
     @Throws(Exception::class)
-    fun sendFeedback_withoutCompoundExtractions_forDocument_withLineItems() = runTest {
+    fun sendFeedback_withoutCompoundExtractions_forDocument_withLineItems() = runTest(timeout = 30.seconds) {
         val assetManager = getApplicationContext<Context>().resources.assets
         val testDocumentAsStream = assetManager.open("line-items.pdf")
         Assert.assertNotNull("test pdf line-items.pdf could not be loaded", testDocumentAsStream)
@@ -152,7 +153,7 @@ class GiniBankAPIIntegrationTest: GiniCoreAPIIntegrationTest<BankApiDocumentMana
 
     @Test
     @Throws(Exception::class)
-    fun sendFeedback_withCompoundExtractions_forDocument_withLineItems() = runTest {
+    fun sendFeedback_withCompoundExtractions_forDocument_withLineItems() = runTest(timeout = 30.seconds) {
         val assetManager = getApplicationContext<Context>().resources.assets
         val testDocumentAsStream = assetManager.open("line-items.pdf")
         Assert.assertNotNull("test pdf line-items.pdf could not be loaded", testDocumentAsStream)
@@ -188,7 +189,7 @@ class GiniBankAPIIntegrationTest: GiniCoreAPIIntegrationTest<BankApiDocumentMana
 
     @Test
     @Throws(Exception::class)
-    fun testResolvePayment() = runTest {
+    fun testResolvePayment() = runTest(timeout = 30.seconds) {
         val paymentRequestId = createPaymentRequest()
         val paymentRequest = giniCoreApi.documentManager.getPaymentRequest(paymentRequestId).dataOrThrow
         val (_, _, recipient, iban, _, amount, purpose) = paymentRequest
@@ -207,7 +208,7 @@ class GiniBankAPIIntegrationTest: GiniCoreAPIIntegrationTest<BankApiDocumentMana
 
     @Test
     @Throws(Exception::class)
-    fun testGetPayment() = runTest {
+    fun testGetPayment() = runTest(timeout = 30.seconds) {
         val paymentRequestId = createPaymentRequest()
         val paymentRequest = giniCoreApi.documentManager.getPaymentRequest(paymentRequestId).dataOrThrow
         val (_, _, recipient, iban, bic, amount, purpose) = paymentRequest
@@ -226,7 +227,7 @@ class GiniBankAPIIntegrationTest: GiniCoreAPIIntegrationTest<BankApiDocumentMana
 
     @Test
     @Throws(Exception::class)
-    fun logErrorEvent() = runTest {
+    fun logErrorEvent() = runTest(timeout = 30.seconds) {
         val errorEvent = ErrorEvent(
             Build.MODEL, "Android", Build.VERSION.RELEASE,
             "not available", BuildConfig.VERSION_NAME, "Error logging integration test"

@@ -17,6 +17,7 @@ import net.gini.android.capture.internal.util.Size;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.helpers.NOPLogger;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,7 +41,8 @@ import java.util.concurrent.ExecutionException;
 public class QRCodeDetectorTaskMLKit implements QRCodeDetectorTask {
 
     private static final boolean DEBUG = false;
-    private static final Logger LOG = LoggerFactory.getLogger(QRCodeDetectorTaskMLKit.class);
+//    private static final Logger LOG = LoggerFactory.getLogger(QRCodeDetectorTaskMLKit.class);
+    private static final Logger LOG = NOPLogger.NOP_LOGGER;
     private final BarcodeScanner mBarcodeScanner;
 
     public QRCodeDetectorTaskMLKit() {

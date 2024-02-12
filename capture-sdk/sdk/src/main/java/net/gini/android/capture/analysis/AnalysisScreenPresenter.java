@@ -1,8 +1,6 @@
 package net.gini.android.capture.analysis;
 
 import android.app.Activity;
-import android.content.DialogInterface;
-import android.graphics.Bitmap;
 import android.net.Uri;
 
 import androidx.annotation.NonNull;
@@ -18,7 +16,6 @@ import net.gini.android.capture.document.GiniCaptureDocument;
 import net.gini.android.capture.document.GiniCaptureDocumentError;
 import net.gini.android.capture.document.GiniCaptureMultiPageDocument;
 import net.gini.android.capture.document.PdfDocument;
-import net.gini.android.capture.error.ErrorActivity;
 import net.gini.android.capture.error.ErrorType;
 import net.gini.android.capture.internal.camera.photo.ParcelableMemoryCache;
 import net.gini.android.capture.internal.document.DocumentRenderer;
@@ -53,7 +50,7 @@ import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysi
 
 /**
  * Created by Alpar Szotyori on 08.05.2019.
- *
+ * <p>
  * Copyright (c) 2019 Gini GmbH.
  */
 
@@ -213,8 +210,7 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
 
     private void checkGiniCaptureInstance() {
         if (!GiniCapture.hasInstance()) {
-            mListener.onError(new GiniCaptureError(MISSING_GINI_CAPTURE_INSTANCE,
-                    "Missing GiniCapture instance. It was not created or there was an application process restart."));
+            getView().showError(ErrorType.GENERAL, mMultiPageDocument);
         }
     }
 
@@ -268,32 +264,17 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
     @VisibleForTesting
     void analyzeDocument() {
         showAlertIfOpenWithDocumentAndAppIsDefault(mMultiPageDocument,
-                new FileImportHelper.ShowAlertCallback() {
-                    @Override
-                    public void showAlertDialog(@NonNull final String message,
-                                                @NonNull final String positiveButtonTitle,
-                                                @NonNull final DialogInterface.OnClickListener
-                                                        positiveButtonClickListener,
-                                                @Nullable final String negativeButtonTitle,
-                                                @Nullable final DialogInterface.OnClickListener
-                                                        negativeButtonClickListener,
-                                                @Nullable final DialogInterface.OnCancelListener cancelListener) {
-                        getView().showAlertDialog(message, positiveButtonTitle,
-                                positiveButtonClickListener, negativeButtonTitle,
-                                negativeButtonClickListener, cancelListener);
+                (message, positiveButtonTitle, positiveButtonClickListener, negativeButtonTitle, negativeButtonClickListener, cancelListener) -> getView().showAlertDialog(message, positiveButtonTitle,
+                        positiveButtonClickListener, negativeButtonTitle,
+                        negativeButtonClickListener, cancelListener))
+                .handle((CompletableFuture.BiFun<Void, Throwable, Void>) (aVoid, throwable) -> {
+                    if (throwable != null) {
+                        getAnalysisFragmentListenerOrNoOp()
+                                .onDefaultPDFAppAlertDialogCancelled();
+                    } else {
+                        showErrorIfAvailableAndAnalyzeDocument();
                     }
-                })
-                .handle(new CompletableFuture.BiFun<Void, Throwable, Void>() {
-                    @Override
-                    public Void apply(final Void aVoid, final Throwable throwable) {
-                        if (throwable != null) {
-                            getAnalysisFragmentListenerOrNoOp()
-                                    .onDefaultPDFAppAlertDialogCancelled();
-                        } else {
-                            showErrorIfAvailableAndAnalyzeDocument();
-                        }
-                        return null;
-                    }
+                    return null;
                 });
     }
 
@@ -432,26 +413,22 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
     private void showDocument() {
         LOG.debug("Rendering the document");
         mDocumentRenderer.toBitmap(getActivity(), getView().getPdfPreviewSize(),
-                new DocumentRenderer.Callback() {
-                    @Override
-                    public void onBitmapReady(@Nullable final Bitmap bitmap,
-                                              final int rotationForDisplay) {
-                        LOG.debug("Document rendered");
-                        if (isStopped()) {
-                            return;
-                        }
-
-                        if (mMultiPageDocument.getType() == Document.Type.IMAGE_MULTI_PAGE || mMultiPageDocument.getType() == Document.Type.IMAGE) {
-                            return;
-                        }
-
-                        getView().showBitmap(bitmap, rotationForDisplay);
+                (bitmap, rotationForDisplay) -> {
+                    LOG.debug("Document rendered");
+                    if (isStopped()) {
+                        return;
                     }
+
+                    if (mMultiPageDocument.getType() == Document.Type.IMAGE_MULTI_PAGE || mMultiPageDocument.getType() == Document.Type.IMAGE) {
+                        return;
+                    }
+
+                    getView().showBitmap(bitmap, rotationForDisplay);
                 });
     }
 
     private void showErrorIfAvailableAndAnalyzeDocument() {
-        if (mDocumentAnalysisErrorMessage != null) {
+        if (mDocumentAnalysisErrorMessage != null && !mDocumentAnalysisErrorMessage.isEmpty()) {
             final Map<String, Object> errorDetails = new HashMap<>();
             errorDetails.put(ERROR_DETAILS_MAP_KEY.MESSAGE, mDocumentAnalysisErrorMessage);
 
@@ -463,7 +440,7 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                 }
             }
 
-            ErrorActivity.startErrorActivity(getActivity(), mDocumentAnalysisErrorMessage, mMultiPageDocument);
+            getView().showError(mDocumentAnalysisErrorMessage, mMultiPageDocument);
         } else {
             doAnalyzeDocument();
         }
@@ -482,6 +459,6 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
         } else {
             errorType = ErrorType.GENERAL;
         }
-        ErrorActivity.startErrorActivity(getActivity(), errorType, mMultiPageDocument);
+        getView().showError(errorType, mMultiPageDocument);
     }
 }

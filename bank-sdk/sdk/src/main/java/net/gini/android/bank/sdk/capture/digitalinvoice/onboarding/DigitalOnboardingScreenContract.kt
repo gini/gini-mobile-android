@@ -18,11 +18,11 @@ import net.gini.android.capture.GiniCaptureBaseView
 interface DigitalOnboardingScreenContract {
     interface View  : GiniCaptureBaseView<Presenter>
     {
-
+        fun close()
     }
 
     abstract class Presenter(activity: Activity, view: View) :
-        GiniCaptureBasePresenter<View>(activity, view), DigitalOnboardingFragmentInterface {
+        GiniCaptureBasePresenter<View>(activity, view) {
             abstract fun dismisOnboarding(doNotShowAnymore: Boolean)
     }
 }
