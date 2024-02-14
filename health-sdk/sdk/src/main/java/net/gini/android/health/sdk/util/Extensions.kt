@@ -1,5 +1,6 @@
 package net.gini.android.health.sdk.util
 
+import android.content.Context
 import android.content.res.ColorStateList
 import android.text.Editable
 import android.text.TextWatcher
@@ -167,9 +168,8 @@ internal suspend fun <T> Flow<T>.withPrev() = flow {
     }
 }
 
-internal fun View.getLayoutInflaterWithGiniHealthTheme(): LayoutInflater {
-    val inflater = LayoutInflater.from(context)
-    val contextThemeWrapper = ContextThemeWrapper(context, R.style.GiniHealthTheme)
-    return inflater.cloneInContext(contextThemeWrapper)
-}
+internal fun View.getLayoutInflaterWithGiniHealthTheme(): LayoutInflater =
+    LayoutInflater.from(context.wrappedWithGiniHealthTheme())
+
+internal fun Context.wrappedWithGiniHealthTheme(): Context = ContextThemeWrapper(this, R.style.GiniHealthTheme)
 
