@@ -245,6 +245,7 @@ internal class ReviewViewModel(internal val giniHealth: GiniHealth) : ViewModel(
         }
     }
 
+    // TODO: remove when updating the review screen to have only the pay button
     sealed class BankAppsState {
         object Loading : BankAppsState()
         class Success(val bankApps: List<BankApp>) : BankAppsState()
