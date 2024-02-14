@@ -5,7 +5,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import net.gini.android.core.api.MediaTypes
 import net.gini.android.core.api.Resource
 import net.gini.android.core.api.models.Document
-import net.gini.android.core.api.models.ExtractionsContainer
 import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.exampleapp.invoices.data.model.DocumentWithExtractions
@@ -17,10 +16,10 @@ class InvoicesRepository(
     private val invoicesLocalDataSource: InvoicesLocalDataSource
 ) {
 
-    private val _uploadHardcodedInvoicesState: MutableStateFlow<UploadHardcodedInvoicesState> = MutableStateFlow(
+    private val _uploadHardcodedInvoicesStateFlow: MutableStateFlow<UploadHardcodedInvoicesState> = MutableStateFlow(
         UploadHardcodedInvoicesState.Idle
     )
-    val uploadHardcodedInvoicesState = _uploadHardcodedInvoicesState.asStateFlow()
+    val uploadHardcodedInvoicesStateFlow = _uploadHardcodedInvoicesStateFlow.asStateFlow()
 
     val invoicesFlow = invoicesLocalDataSource.invoicesFlow
 
@@ -29,7 +28,7 @@ class InvoicesRepository(
     }
 
     suspend fun uploadHardcodedInvoices() {
-        _uploadHardcodedInvoicesState.value = UploadHardcodedInvoicesState.Loading
+        _uploadHardcodedInvoicesStateFlow.value = UploadHardcodedInvoicesState.Loading
 
         val documentsWithExtractions = mutableListOf<DocumentWithExtractions>()
 
@@ -70,12 +69,12 @@ class InvoicesRepository(
         }
 
         if (errors.isEmpty()) {
-            _uploadHardcodedInvoicesState.value = UploadHardcodedInvoicesState.Success
+            _uploadHardcodedInvoicesStateFlow.value = UploadHardcodedInvoicesState.Success
         } else {
-            _uploadHardcodedInvoicesState.value = UploadHardcodedInvoicesState.Failure(errors)
+            _uploadHardcodedInvoicesStateFlow.value = UploadHardcodedInvoicesState.Failure(errors)
         }
 
-        _uploadHardcodedInvoicesState.value = UploadHardcodedInvoicesState.Idle
+        _uploadHardcodedInvoicesStateFlow.value = UploadHardcodedInvoicesState.Idle
     }
 }
 
