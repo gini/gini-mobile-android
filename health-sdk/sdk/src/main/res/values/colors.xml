@@ -1,5 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <color name="ghs_accent_01">#009EDC</color>
+    <color name="ghs_accent_02">#45B4DF</color>
+    <color name="ghs_accent_03">#89C8E1</color>
+    <color name="ghs_accent_04">#BFE7F6</color>
+    <color name="ghs_accent_05">#E5F5FB</color>
+
+    <color name="ghs_dark_01">#191D30</color>
+    <color name="ghs_dark_02">#565656</color>
+    <color name="ghs_dark_03">#808080</color>
+    <color name="ghs_dark_04">#8A8A8E</color>
+    <color name="ghs_dark_05">#E8E9EB</color>
+    <color name="ghs_dark_06">#F3F3F3</color>
+    <color name="ghs_dark_07">#FFFFFF</color>
+
+    <color name="ghs_light_01">#F2F2F2</color>
+    <color name="ghs_light_02">#E8E9EB</color>
+    <color name="ghs_light_03">#f3f3f3</color>
+    <color name="ghs_light_04">#8A8A8E</color>
+    <color name="ghs_light_05">#565656</color>
+    <color name="ghs_light_06">#353535</color>
+    <color name="ghs_light_07">#000000</color>
+
+    <color name="ghs_payment_component_caption">@color/ghs_dark_04</color>
+
+    <!-- TODO: remove the colors below after refactoring the Payment Review screen to use the color palette -->
     <color name="ghs_selected_dot">#FFFFFFFF</color>
     <color name="ghs_unselected_dot">#90ffffff</color>
     <color name="ghs_document_background">#000</color>
@@ -13,4 +39,5 @@
     <color name="ghs_payment_button_background_enabled">#FF6800</color>
     <color name="ghs_page_error">#FFF</color>
     <color name="ghs_list_item_separator">#E6E7ED</color>
+
 </resources>

@@ -21,8 +21,8 @@ import kotlinx.coroutines.launch
 import net.gini.android.health.sdk.exampleapp.R
 import net.gini.android.health.sdk.exampleapp.databinding.ActivityInvoicesBinding
 import net.gini.android.health.sdk.exampleapp.invoices.data.UploadHardcodedInvoicesState
-import net.gini.android.health.sdk.exampleapp.invoices.data.model.DocumentWithExtractions
 import net.gini.android.health.sdk.exampleapp.invoices.ui.model.InvoiceItem
+import net.gini.android.health.sdk.paymentcomponent.PaymentComponentView
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -43,13 +43,14 @@ class InvoicesActivity : AppCompatActivity() {
                             dataSet = invoicesWithExtractions
                             notifyDataSetChanged()
                         }
-                        binding.noInvoicesLabel.visibility = if (invoicesWithExtractions.isEmpty()) View.VISIBLE else View.GONE
+                        binding.noInvoicesLabel.visibility =
+                            if (invoicesWithExtractions.isEmpty()) View.VISIBLE else View.GONE
                         Log.d(this::class.simpleName, "Invoices with extractions: $invoicesWithExtractions")
                     }
                 }
                 launch {
                     viewModel.uploadHardcodedInvoicesState.collect { uploadState ->
-                        when(uploadState) {
+                        when (uploadState) {
                             is UploadHardcodedInvoicesState.Failure -> {
                                 AlertDialog.Builder(this@InvoicesActivity)
                                     .setTitle(R.string.upload_failed)
@@ -57,11 +58,13 @@ class InvoicesActivity : AppCompatActivity() {
                                     .setPositiveButton(android.R.string.ok, null)
                                     .show()
                             }
+
                             UploadHardcodedInvoicesState.Idle,
                             UploadHardcodedInvoicesState.Success -> {
                                 binding.loadingIndicatorContainer.visibility = View.INVISIBLE
                                 binding.loadingIndicator.visibility = View.INVISIBLE
                             }
+
                             UploadHardcodedInvoicesState.Loading -> {
                                 binding.loadingIndicatorContainer.visibility = View.VISIBLE
                                 binding.loadingIndicator.visibility = View.VISIBLE
@@ -91,6 +94,7 @@ class InvoicesActivity : AppCompatActivity() {
                 viewModel.uploadHardcodedInvoices()
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -103,11 +107,13 @@ class InvoicesAdapter(var dataSet: List<InvoiceItem>) :
         val recipient: TextView
         val dueDate: TextView
         val amount: TextView
+        val paymentComponent: PaymentComponentView
 
         init {
             recipient = view.findViewById(R.id.recipient)
             dueDate = view.findViewById(R.id.due_date)
             amount = view.findViewById(R.id.amount)
+            paymentComponent = view.findViewById(R.id.payment_component)
         }
     }
 
@@ -118,9 +124,13 @@ class InvoicesAdapter(var dataSet: List<InvoiceItem>) :
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        viewHolder.recipient.text = dataSet[position].recipient ?: ""
-        viewHolder.dueDate.text = dataSet[position].dueDate ?: ""
-        viewHolder.amount.text = dataSet[position].amount ?: ""
+        val invoiceItem = dataSet[position]
+        viewHolder.recipient.text = invoiceItem.recipient ?: ""
+        viewHolder.dueDate.text = invoiceItem.dueDate ?: ""
+        viewHolder.amount.text = invoiceItem.amount ?: ""
+
+        viewHolder.paymentComponent.prepareForReuse()
+        viewHolder.paymentComponent.isPayable = invoiceItem.isPayable
     }
 
     override fun getItemCount() = dataSet.size

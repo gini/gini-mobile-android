@@ -15,7 +15,8 @@ data class InvoiceItem(
     val documentId: String,
     val recipient: String?,
     val amount: String?,
-    val dueDate: String?
+    val dueDate: String?,
+    val isPayable: Boolean = false
 ) {
 
     companion object {
@@ -24,7 +25,8 @@ data class InvoiceItem(
                 documentWithExtractions.documentId,
                 documentWithExtractions.recipient,
                 parseAmount(documentWithExtractions.amount),
-                documentWithExtractions.dueDate
+                documentWithExtractions.dueDate,
+                documentWithExtractions.isPayable
             )
         }
 
@@ -32,7 +34,8 @@ data class InvoiceItem(
             return amount?.split(":")?.let { substrings ->
                 if (substrings.size != 2) {
                     throw java.lang.NumberFormatException(
-                        "Invalid price format. Expected <Price>:<Currency Code>, but got: $amount")
+                        "Invalid price format. Expected <Price>:<Currency Code>, but got: $amount"
+                    )
                 }
                 val price = parsePrice(substrings[0])
                 val currency = Currency.getInstance(substrings[1])
@@ -51,9 +54,11 @@ data class InvoiceItem(
                     price.contains(".") -> {
                         parsePriceWithLocale(price, Locale.ENGLISH)
                     }
+
                     price.contains(",") -> {
                         parsePriceWithLocale(price, Locale.GERMAN)
                     }
+
                     else -> {
                         throw NumberFormatException("Unknown number format locale")
                     }
@@ -62,8 +67,10 @@ data class InvoiceItem(
                 throw NumberFormatException("Invalid number format")
             }
 
-        private fun parsePriceWithLocale(price: String, locale: Locale) = DecimalFormat("0.00",
-            DecimalFormatSymbols.getInstance(locale))
+        private fun parsePriceWithLocale(price: String, locale: Locale) = DecimalFormat(
+            "0.00",
+            DecimalFormatSymbols.getInstance(locale)
+        )
             .apply { isParseBigDecimal = true }
             .run {
                 try {

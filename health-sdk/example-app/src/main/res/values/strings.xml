@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Gini Health SDK</string>
+    <string name="app_name">Gini Health</string>
     <string name="take_photo">Take Photo</string>
     <string name="import_file">Import</string>
     <string name="payment">Pay</string>
@@ -11,4 +11,6 @@
     <string name="title_activity_invoices">Invoices list</string>
     <string name="no_invoices">No invoices</string>
     <string name="upload_test_invoices">Upload Invoices</string>
+    <string name="welcome_to_gini">Welcome to Gini</string>
+    <string name="example_of_health_sdk">Example of Gini Pay Connect integration in the insurance app</string>
 </resources>

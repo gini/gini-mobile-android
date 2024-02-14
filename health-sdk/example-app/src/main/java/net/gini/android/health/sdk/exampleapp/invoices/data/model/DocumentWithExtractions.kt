@@ -9,19 +9,24 @@ data class DocumentWithExtractions(
     val documentId: String,
     val recipient: String?,
     val amount: String?,
-    val dueDate: String?
+    val dueDate: String?,
+    val isPayable: Boolean = false
 ) {
 
     companion object {
         fun fromDocumentAndExtractions(
             document: Document,
-            extractionsContainer: ExtractionsContainer
+            extractionsContainer: ExtractionsContainer,
+            isPayable: Boolean
         ): DocumentWithExtractions {
             return DocumentWithExtractions(
                 document.id,
-                extractionsContainer.compoundExtractions["payment"]?.specificExtractionMaps?.get(0)?.get("payment_recipient")?.value,
-                extractionsContainer.compoundExtractions["payment"]?.specificExtractionMaps?.get(0)?.get("amount_to_pay")?.value,
-                extractionsContainer.specificExtractions["payment_due_date"]?.value
+                extractionsContainer.compoundExtractions["payment"]?.specificExtractionMaps?.get(0)
+                    ?.get("payment_recipient")?.value,
+                extractionsContainer.compoundExtractions["payment"]?.specificExtractionMaps?.get(0)
+                    ?.get("amount_to_pay")?.value,
+                extractionsContainer.specificExtractions["payment_due_date"]?.value,
+                isPayable
             )
         }
     }

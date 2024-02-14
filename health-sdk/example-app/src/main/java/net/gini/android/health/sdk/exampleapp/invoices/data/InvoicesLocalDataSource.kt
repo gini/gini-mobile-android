@@ -22,6 +22,7 @@ class InvoicesLocalDataSource(private val context: Context) {
     val invoicesFlow = _invoicesFlow.asStateFlow()
 
     private val moshi: Moshi = Moshi.Builder().build()
+
     @OptIn(ExperimentalStdlibApi::class)
     private val jsonAdapter: JsonAdapter<List<DocumentWithExtractions>> = moshi.adapter<List<DocumentWithExtractions>>()
 

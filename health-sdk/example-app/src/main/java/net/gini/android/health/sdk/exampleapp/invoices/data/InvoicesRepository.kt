@@ -7,10 +7,12 @@ import net.gini.android.core.api.Resource
 import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.models.ExtractionsContainer
 import net.gini.android.health.api.GiniHealthAPI
+import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.exampleapp.invoices.data.model.DocumentWithExtractions
 
 class InvoicesRepository(
     private val giniHealthAPI: GiniHealthAPI,
+    private val giniHealth: GiniHealth,
     private val hardcodedInvoicesLocalDataSource: HardcodedInvoicesLocalDataSource,
     private val invoicesLocalDataSource: InvoicesLocalDataSource
 ) {
@@ -34,7 +36,6 @@ class InvoicesRepository(
         val hardcodedInvoices = hardcodedInvoicesLocalDataSource.getHardcodedInvoices()
         val createdResources = hardcodedInvoices.map { invoiceBytes ->
             var document: Document? = null
-            var extractionsContainer: ExtractionsContainer? = null
             giniHealthAPI.documentManager.createPartialDocument(
                 invoiceBytes,
                 MediaTypes.IMAGE_JPEG
@@ -44,8 +45,16 @@ class InvoicesRepository(
                 document = compositeDocumentResource.data
                 giniHealthAPI.documentManager.getAllExtractionsWithPolling(compositeDocumentResource.data)
             }.mapSuccess { extractionsResource ->
-                extractionsContainer = extractionsResource.data
-                documentsWithExtractions.add(DocumentWithExtractions.fromDocumentAndExtractions(document!!, extractionsContainer!!))
+                document?.let { doc ->
+                    val isPayable = giniHealth.checkIfDocumentIsPayable(doc.id)
+                    documentsWithExtractions.add(
+                        DocumentWithExtractions.fromDocumentAndExtractions(
+                            doc,
+                            extractionsResource.data,
+                            isPayable
+                        )
+                    )
+                }
                 extractionsResource
             }
         }
