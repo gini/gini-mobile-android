@@ -105,6 +105,7 @@ dependencies {
         api(healthApiLibrary)
     }
 
+    api(libs.slf4j.api)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.androidx.lifecycle.common.java8)
