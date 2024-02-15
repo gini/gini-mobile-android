@@ -115,6 +115,24 @@ Create release tags for all projects that have different versions than their lat
 Create documentation release tags for all projects that have documentation that changed since their latest release.
 
 
+### android install_test_payment_provider_apps
+
+```sh
+[bundle exec] fastlane android install_test_payment_provider_apps
+```
+
+Install all test payment provider apps on all connected emulators and devices.
+
+
+### android uninstall_test_payment_provider_apps
+
+```sh
+[bundle exec] fastlane android uninstall_test_payment_provider_apps
+```
+
+Uninstall all test payment provider apps from all connected emulators and devices.
+
+
 ----
 
 This README.md is auto-generated and will be re-generated every time [_fastlane_](https://fastlane.tools) is run.
