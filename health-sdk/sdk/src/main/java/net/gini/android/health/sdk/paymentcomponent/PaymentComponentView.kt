@@ -71,14 +71,14 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
                     is PaymentProviderAppsState.Success -> {
                         if (paymentProviderAppsState.paymentProviderApps.isNotEmpty()) {
                             LOG.debug("Received {} payment provider apps", paymentProviderAppsState.paymentProviderApps.size)
-                            val firstPaymentProviderApp = paymentProviderAppsState.paymentProviderApps[0]
-                            if (firstPaymentProviderApp.installedPaymentProviderApp != null) {
-                                LOG.debug("First payment provider app is installed: {}", firstPaymentProviderApp.name)
-                                customizeBankPicker(firstPaymentProviderApp)
+                            val firstInstalledPaymentProviderApp = paymentProviderAppsState.paymentProviderApps.find { it.installedPaymentProviderApp != null }
+                            if (firstInstalledPaymentProviderApp != null) {
+                                LOG.debug("First payment provider app is installed: {}", firstInstalledPaymentProviderApp.name)
+                                customizeBankPicker(firstInstalledPaymentProviderApp)
                                 enablePayInvoiceButton()
-                                customizePayInvoiceButton(firstPaymentProviderApp)
+                                customizePayInvoiceButton(firstInstalledPaymentProviderApp)
                             } else {
-                                LOG.debug("First payment provider app is not installed: {}", firstPaymentProviderApp.name)
+                                LOG.debug("No installed payment provider app found")
                                 context?.wrappedWithGiniHealthTheme()?.let { context ->
                                     disablePayInvoiceButton()
                                 }
