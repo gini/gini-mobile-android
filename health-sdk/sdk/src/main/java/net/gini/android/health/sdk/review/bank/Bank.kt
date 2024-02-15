@@ -13,7 +13,7 @@ import android.net.Uri
 import androidx.annotation.ColorInt
 import net.gini.android.health.api.models.PaymentProvider
 
-// TODO: replace all of this with PaymentProviderApp.kt
+// TODO: replace all of this with PaymentProviderApp.kt when updating the review screen to have only the pay button (https://ginis.atlassian.net/browse/IPC-133)
 
 internal const val Scheme = "ginipay" // It has to match the scheme in query tag in manifest
 private const val PaymentPath = "payment"

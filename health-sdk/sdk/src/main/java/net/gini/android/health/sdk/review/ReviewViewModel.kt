@@ -245,7 +245,7 @@ internal class ReviewViewModel(internal val giniHealth: GiniHealth) : ViewModel(
         }
     }
 
-    // TODO: remove when updating the review screen to have only the pay button
+    // TODO: remove when updating the review screen to have only the pay button (https://ginis.atlassian.net/browse/IPC-133)
     sealed class BankAppsState {
         object Loading : BankAppsState()
         class Success(val bankApps: List<BankApp>) : BankAppsState()
