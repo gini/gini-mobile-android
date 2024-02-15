@@ -6,11 +6,11 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import net.gini.android.health.sdk.exampleapp.invoices.data.InvoicesRepository
 import net.gini.android.health.sdk.exampleapp.invoices.ui.model.InvoiceItem
-import net.gini.android.health.sdk.paymentcomponent.PaymentComponentsController
+import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
 
 class InvoicesViewModel(
     private val invoicesRepository: InvoicesRepository,
-    val paymentComponentsController: PaymentComponentsController
+    val paymentComponent: PaymentComponent
 ) : ViewModel() {
 
     val uploadHardcodedInvoicesStateFlow = invoicesRepository.uploadHardcodedInvoicesStateFlow
@@ -19,7 +19,7 @@ class InvoicesViewModel(
             InvoiceItem.fromInvoice(invoice)
         }
     }
-    val bankAppsFlow = paymentComponentsController.paymentProviderAppsFlow
+    val bankAppsFlow = paymentComponent.paymentProviderAppsFlow
 
     fun loadInvoicesWithExtractions() {
         viewModelScope.launch {
@@ -35,7 +35,7 @@ class InvoicesViewModel(
 
     fun loadPaymentProviderApps() {
         viewModelScope.launch {
-            paymentComponentsController.loadPaymentProviderApps()
+            paymentComponent.loadPaymentProviderApps()
         }
     }
 }

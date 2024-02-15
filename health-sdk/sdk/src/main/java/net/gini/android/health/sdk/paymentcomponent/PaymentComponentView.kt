@@ -4,8 +4,6 @@ import android.content.Context
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.util.AttributeSet
-import android.util.Log
-import android.util.TypedValue
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -28,7 +26,7 @@ import kotlin.coroutines.CoroutineContext
 
 class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintLayout(context, attrs) {
 
-    var paymentComponentsController: PaymentComponentsController? = null
+    var paymentComponent: PaymentComponent? = null
 
     var coroutineContext: CoroutineContext = Dispatchers.Main
     private var coroutineScope: CoroutineScope? = null
@@ -57,12 +55,12 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
             coroutineScope = CoroutineScope(coroutineContext)
         }
         coroutineScope?.launch {
-            if (paymentComponentsController == null) {
+            if (paymentComponent == null) {
                 LOG.warn("Cannot show payment provider apps: PaymentComponentsController must be set before showing the PaymentComponentView")
                 return@launch
             }
             LOG.debug("Collecting payment provider apps state from PaymentComponentsController")
-            paymentComponentsController?.paymentProviderAppsFlow?.collect { paymentProviderAppsState ->
+            paymentComponent?.paymentProviderAppsFlow?.collect { paymentProviderAppsState ->
                 LOG.debug("Received payment provider apps state: {}", paymentProviderAppsState)
                 when (paymentProviderAppsState) {
                     is PaymentProviderAppsState.Error,

@@ -9,7 +9,7 @@ import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.health.sdk.paymentprovider.getPaymentProviderApps
 import org.slf4j.LoggerFactory
 
-class PaymentComponentsController(private val context: Context, private val giniHealth: GiniHealth) {
+class PaymentComponent(private val context: Context, private val giniHealth: GiniHealth) {
 
     private val _paymentProviderAppsFlow = MutableStateFlow<PaymentProviderAppsState>(PaymentProviderAppsState.Loading)
     val paymentProviderAppsFlow: StateFlow<PaymentProviderAppsState> = _paymentProviderAppsFlow
@@ -49,7 +49,7 @@ class PaymentComponentsController(private val context: Context, private val gini
     }
 
     companion object {
-        private val LOG = LoggerFactory.getLogger(PaymentComponentsController::class.java)
+        private val LOG = LoggerFactory.getLogger(PaymentComponent::class.java)
     }
 
 }

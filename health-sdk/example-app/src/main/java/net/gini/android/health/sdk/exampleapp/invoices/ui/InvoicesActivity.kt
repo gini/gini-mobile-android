@@ -24,7 +24,7 @@ import net.gini.android.health.sdk.exampleapp.invoices.data.UploadHardcodedInvoi
 import net.gini.android.health.sdk.exampleapp.invoices.data.UploadHardcodedInvoicesState.Loading
 import net.gini.android.health.sdk.exampleapp.invoices.ui.model.InvoiceItem
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponentView
-import net.gini.android.health.sdk.paymentcomponent.PaymentComponentsController
+import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.health.sdk.paymentcomponent.PaymentProviderAppsState.Error
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import net.gini.android.health.sdk.paymentcomponent.PaymentProviderAppsState.Loading as LoadingBankApp
@@ -94,7 +94,7 @@ class InvoicesActivity : AppCompatActivity() {
         viewModel.loadPaymentProviderApps()
 
         binding.invoicesList.layoutManager = LinearLayoutManager(this)
-        binding.invoicesList.adapter = InvoicesAdapter(emptyList(), viewModel.paymentComponentsController)
+        binding.invoicesList.adapter = InvoicesAdapter(emptyList(), viewModel.paymentComponent)
         binding.invoicesList.addItemDecoration(DividerItemDecoration(this, LinearLayout.VERTICAL))
     }
 
@@ -117,11 +117,11 @@ class InvoicesActivity : AppCompatActivity() {
 
 class InvoicesAdapter(
     var dataSet: List<InvoiceItem>,
-    private val paymentComponentsController: PaymentComponentsController
+    private val paymentComponent: PaymentComponent
 ) :
     RecyclerView.Adapter<InvoicesAdapter.ViewHolder>() {
 
-    class ViewHolder(view: View, paymentComponentsController: PaymentComponentsController) :
+    class ViewHolder(view: View, paymentComponent: PaymentComponent) :
         RecyclerView.ViewHolder(view) {
         val recipient: TextView
         val dueDate: TextView
@@ -132,15 +132,15 @@ class InvoicesAdapter(
             recipient = view.findViewById(R.id.recipient)
             dueDate = view.findViewById(R.id.due_date)
             amount = view.findViewById(R.id.amount)
-            paymentComponent = view.findViewById(R.id.payment_component)
-            paymentComponent.paymentComponentsController = paymentComponentsController
+            this.paymentComponent = view.findViewById(R.id.payment_component)
+            this.paymentComponent.paymentComponent = paymentComponent
         }
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(viewGroup.context)
             .inflate(R.layout.item_invoice, viewGroup, false)
-        return ViewHolder(view, paymentComponentsController)
+        return ViewHolder(view, paymentComponent)
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {

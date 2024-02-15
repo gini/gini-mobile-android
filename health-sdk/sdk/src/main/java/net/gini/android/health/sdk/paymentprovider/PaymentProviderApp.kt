@@ -12,7 +12,6 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import androidx.annotation.ColorInt
 import net.gini.android.health.api.models.PaymentProvider
-import net.gini.android.health.sdk.paymentcomponent.PaymentComponentsController
 import org.slf4j.LoggerFactory
 
 internal const val Scheme = "ginipay" // It has to match the scheme in query tag in manifest
