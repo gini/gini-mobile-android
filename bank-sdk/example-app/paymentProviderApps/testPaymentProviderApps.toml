@@ -1,0 +1,5 @@
+paymentProviderApps = [
+    { applicationId = "net.gini.android.bank.sdk.exampleapp", appName = "Gini-Test-Payment-Provider" },
+    { applicationId = "net.gini.android.bank.sdk.ginibank", appName = "GiniBank" },
+    { applicationId = "net.gini.android.bank.insurance.mock", appName = "Bank" }
+]

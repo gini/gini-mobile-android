@@ -58,8 +58,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data
-                    android:host="payment"
-                    android:scheme="ginipay" />
+                    android:host="@string/gini_pay_connect_host"
+                    android:scheme="@string/gini_pay_connect_scheme" />
             </intent-filter>
         </activity>
 
@@ -70,7 +70,7 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities=".fileprovider"
+            android:authorities="${applicationId}.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

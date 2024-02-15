@@ -134,7 +134,7 @@ jobs:
 
       - name: build release example app for QA
         run: >
-          ./gradlew bank-sdk:example-app:assembleQaRelease
+          ./gradlew bank-sdk:example-app:assembleQaExampleAppRelease
           -PclientId="gini-mobile-test" 
           -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
           -PreleaseKeystoreFile="screen_api_example.jks"
@@ -146,11 +146,11 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: bank-sdk-example-app-qa-release
-          path: bank-sdk/example-app/build/outputs/apk/qa/release
+          path: bank-sdk/example-app/build/outputs/apk/qaExampleApp/release
 
       - name: build release example app for production
         run: >
-          ./gradlew bank-sdk:example-app:assembleProdRelease
+          ./gradlew bank-sdk:example-app:assembleProdExampleAppRelease
           -PclientId="gini-mobile-test" 
           -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
           -PreleaseKeystoreFile="screen_api_example.jks"
@@ -162,7 +162,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: bank-sdk-example-app-prod-release
-          path: bank-sdk/example-app/build/outputs/apk/prod/release
+          path: bank-sdk/example-app/build/outputs/apk/prodExampleApp/release
 
   android-lint:
     runs-on: ubuntu-latest
