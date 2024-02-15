@@ -21,6 +21,8 @@ enum class ErrorType(@DrawableRes val drawableResource: Int,
     AUTH(R.drawable.gc_error_auth_icon, R.string.gc_error_auth_title, R.string.gc_error_auth_text),
     UPLOAD(R.drawable.gc_error_upload_icon, R.string.gc_error_upload_title, R.string.gc_error_upload_text),
     SERVER(R.drawable.gc_error_server_icon, R.string.gc_error_server_title, R.string.gc_error_server_text),
+    OUTAGE(R.drawable.gc_error_server_icon, R.string.gc_error_outage_title, R.string.gc_error_outage_text),
+    MAINTENANCE(R.drawable.gc_error_miantenance, R.string.gc_error_maintenance_title, R.string.gc_error_maintenance_text),
     FILE_IMPORT_GENERIC(R.drawable.gc_alert_triangle_icon, R.string.gc_error_file_import_generic_title, R.string.gc_error_file_import_generic_text),
     FILE_IMPORT_SIZE(R.drawable.gc_alert_triangle_icon, R.string.gc_error_file_import_size_title, R.string.gc_error_file_import_size_text),
     FILE_IMPORT_PAGE_COUNT(R.drawable.gc_alert_triangle_icon, R.string.gc_error_file_import_page_count_title, R.string.gc_error_file_import_page_count_text),
@@ -36,6 +38,12 @@ enum class ErrorType(@DrawableRes val drawableResource: Int,
             }
 
             error.statusCode?.let {
+                if (it == 500) {
+                    return OUTAGE
+                }
+                if (it == 503) {
+                    return MAINTENANCE
+                }
                 if (it >= 500) {
                     return SERVER
                 }
