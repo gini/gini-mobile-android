@@ -23,7 +23,11 @@ data class PaymentProvider(
     /**
      * The icon to use when displaying the payment provider.
      */
-    val icon: ByteArray
+    val icon: ByteArray,
+    /**
+     * The URL to the Play Store of the payment provider app.
+     */
+    val playStoreUrl: String? = null,
 ) {
 
     override fun equals(other: Any?): Boolean {
@@ -38,8 +42,7 @@ data class PaymentProvider(
         if (appVersion != other.appVersion) return false
         if (colors != other.colors) return false
         if (!icon.contentEquals(other.icon)) return false
-
-        return true
+        return playStoreUrl == other.playStoreUrl
     }
 
     override fun hashCode(): Int {
@@ -49,6 +52,7 @@ data class PaymentProvider(
         result = 31 * result + appVersion.hashCode()
         result = 31 * result + colors.hashCode()
         result = 31 * result + icon.contentHashCode()
+        result = 31 * result + (playStoreUrl?.hashCode() ?: 0)
         return result
     }
 
@@ -70,5 +74,6 @@ internal fun PaymentProviderResponse.toPaymentProvider(icon: ByteArray) = Paymen
         backgroundColorRGBHex = colors.background,
         textColoRGBHex = colors.text,
     ),
-    icon = icon
+    icon = icon,
+    playStoreUrl = playStoreUrl,
 )
