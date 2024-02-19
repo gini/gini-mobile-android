@@ -19,7 +19,7 @@ class InvoicesViewModel(
             InvoiceItem.fromInvoice(invoice)
         }
     }
-    val bankAppsFlow = paymentComponent.paymentProviderAppsFlow
+    val paymentProviderAppsFlow = paymentComponent.paymentProviderAppsFlow
 
     fun loadInvoicesWithExtractions() {
         viewModelScope.launch {

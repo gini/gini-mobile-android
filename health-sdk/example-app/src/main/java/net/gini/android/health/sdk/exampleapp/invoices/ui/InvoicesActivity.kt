@@ -52,7 +52,7 @@ class InvoicesActivity : AppCompatActivity() {
                     }
                 }
                 launch {
-                    viewModel.uploadHardcodedInvoicesStateFlow.combine(viewModel.bankAppsFlow) { a, b -> a to b }
+                    viewModel.uploadHardcodedInvoicesStateFlow.combine(viewModel.paymentProviderAppsFlow) { a, b -> a to b }
                         .collect { (uploadState, bankAppsState) ->
                             if (uploadState == Loading || bankAppsState == LoadingBankApp) {
                                 binding.loadingIndicatorContainer.visibility = View.VISIBLE
@@ -76,11 +76,11 @@ class InvoicesActivity : AppCompatActivity() {
                     }
                 }
                 launch {
-                    viewModel.bankAppsFlow.collect { bankAppsState ->
-                        if (bankAppsState is Error) {
+                    viewModel.paymentProviderAppsFlow.collect { paymentProviderAppsState ->
+                        if (paymentProviderAppsState is Error) {
                             AlertDialog.Builder(this@InvoicesActivity)
                                 .setTitle(R.string.failed_to_load_bank_apps)
-                                .setMessage(bankAppsState.throwable.message)
+                                .setMessage(paymentProviderAppsState.throwable.message)
                                 .setPositiveButton(android.R.string.ok, null)
                                 .show()
                         }
