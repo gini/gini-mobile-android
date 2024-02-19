@@ -1,6 +1,7 @@
 package net.gini.android.health.sdk.exampleapp.invoices.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
@@ -18,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import net.gini.android.health.sdk.bankselection.BankSelectionBottomSheet
 import net.gini.android.health.sdk.exampleapp.R
 import net.gini.android.health.sdk.exampleapp.databinding.ActivityInvoicesBinding
 import net.gini.android.health.sdk.exampleapp.invoices.data.UploadHardcodedInvoicesState.Failure
@@ -96,6 +98,23 @@ class InvoicesActivity : AppCompatActivity() {
         binding.invoicesList.layoutManager = LinearLayoutManager(this)
         binding.invoicesList.adapter = InvoicesAdapter(emptyList(), viewModel.paymentComponent)
         binding.invoicesList.addItemDecoration(DividerItemDecoration(this, LinearLayout.VERTICAL))
+
+        viewModel.paymentComponent.listener = object: PaymentComponent.Listener {
+            override fun onMoreInformationClicked() {
+                Log.d(InvoicesActivity::class.simpleName, "More information clicked")
+            }
+
+            override fun onBankPickerClicked() {
+                BankSelectionBottomSheet.newInstance(viewModel.paymentComponent).apply {
+                    show(supportFragmentManager, BankSelectionBottomSheet::class.simpleName)
+                }
+            }
+
+            override fun onPayInvoiceClicked() {
+                Log.d(InvoicesActivity::class.simpleName, "Pay invoice clicked")
+            }
+
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
