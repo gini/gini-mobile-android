@@ -18,6 +18,8 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
         MutableStateFlow<SelectedPaymentProviderAppState>(SelectedPaymentProviderAppState.NothingSelected)
     val selectedPaymentProviderAppFlow: StateFlow<SelectedPaymentProviderAppState> = _selectedPaymentProviderAppFlow
 
+    var listener: Listener? = null
+
     suspend fun loadPaymentProviderApps() {
         LOG.debug("Loading payment providers")
         _paymentProviderAppsFlow.value = PaymentProviderAppsState.Loading
@@ -72,8 +74,18 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
         }
     }
 
+    internal fun setSelectedPaymentProviderApp(paymentProviderApp: PaymentProviderApp) {
+        _selectedPaymentProviderAppFlow.value = SelectedPaymentProviderAppState.AppSelected(paymentProviderApp)
+    }
+
     companion object {
         private val LOG = LoggerFactory.getLogger(PaymentComponent::class.java)
+    }
+
+    interface Listener {
+        fun onMoreInformationClicked()
+        fun onBankPickerClicked()
+        fun onPayInvoiceClicked()
     }
 
 }
