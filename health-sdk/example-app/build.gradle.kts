@@ -47,6 +47,19 @@ android {
             signingConfig = signingConfigs.getByName("release")
         }
     }
+    flavorDimensions += "environment"
+    productFlavors {
+        create("prod") {
+            dimension = "environment"
+        }
+        create("dev") {
+            isDefault = true
+            dimension = "environment"
+        }
+        create("qa") {
+            dimension = "environment"
+        }
+    }
     buildFeatures {
         viewBinding = true
     }
