@@ -14,6 +14,10 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
     private val _paymentProviderAppsFlow = MutableStateFlow<PaymentProviderAppsState>(PaymentProviderAppsState.Loading)
     val paymentProviderAppsFlow: StateFlow<PaymentProviderAppsState> = _paymentProviderAppsFlow
 
+    private val _selectedPaymentProviderAppFlow =
+        MutableStateFlow<SelectedPaymentProviderAppState>(SelectedPaymentProviderAppState.NothingSelected)
+    val selectedPaymentProviderAppFlow: StateFlow<SelectedPaymentProviderAppState> = _selectedPaymentProviderAppFlow
+
     suspend fun loadPaymentProviderApps() {
         LOG.debug("Loading payment providers")
         _paymentProviderAppsFlow.value = PaymentProviderAppsState.Loading
@@ -34,12 +38,32 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
                 is Resource.Success -> {
                     LOG.debug("Loaded payment providers")
                     LOG.debug("Loading installed payment provider apps")
-                    PaymentProviderAppsState.Success(
-                        context.packageManager.getPaymentProviderApps(
-                            paymentProvidersResource.data,
-                            context
-                        )
+                    val paymentProviderApps = context.packageManager.getPaymentProviderApps(
+                        paymentProvidersResource.data,
+                        context
                     )
+                    if (paymentProviderApps.isNotEmpty()) {
+                        LOG.debug("Received {} payment provider apps", paymentProviderApps.size)
+                        if (_selectedPaymentProviderAppFlow.value !is SelectedPaymentProviderAppState.AppSelected) {
+                            val firstInstalledPaymentProviderApp =
+                                paymentProviderApps.find { it.installedPaymentProviderApp != null }
+                            if (firstInstalledPaymentProviderApp != null) {
+                                LOG.debug(
+                                    "First payment provider app is installed: {}",
+                                    firstInstalledPaymentProviderApp.name
+                                )
+                                _selectedPaymentProviderAppFlow.value =
+                                    SelectedPaymentProviderAppState.AppSelected(firstInstalledPaymentProviderApp)
+                            } else {
+                                LOG.debug("No installed payment provider app found")
+                                _selectedPaymentProviderAppFlow.value = SelectedPaymentProviderAppState.NothingSelected
+                            }
+                        }
+                    } else {
+                        LOG.debug("No payment provider apps received")
+                        _selectedPaymentProviderAppFlow.value = SelectedPaymentProviderAppState.NothingSelected
+                    }
+                    PaymentProviderAppsState.Success(paymentProviderApps)
                 }
             }
         } catch (e: Exception) {
@@ -58,4 +82,9 @@ sealed class PaymentProviderAppsState {
     object Loading : PaymentProviderAppsState()
     class Success(val paymentProviderApps: List<PaymentProviderApp>) : PaymentProviderAppsState()
     class Error(val throwable: Throwable) : PaymentProviderAppsState()
+}
+
+sealed class SelectedPaymentProviderAppState {
+    object NothingSelected : SelectedPaymentProviderAppState()
+    class AppSelected(val paymentProviderApp: PaymentProviderApp) : SelectedPaymentProviderAppState()
 }

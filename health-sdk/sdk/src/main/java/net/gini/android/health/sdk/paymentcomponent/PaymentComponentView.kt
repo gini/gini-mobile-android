@@ -14,6 +14,7 @@ import androidx.core.text.inSpans
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import net.gini.android.health.sdk.R
 import net.gini.android.health.sdk.databinding.GhsViewPaymentComponentBinding
@@ -45,6 +46,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
 
     init {
         setupMoreInformationLabelAndIcon()
+        addButtonInputHandlers()
     }
 
     override fun onAttachedToWindow() {
@@ -56,77 +58,113 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
         }
         coroutineScope?.launch {
             if (paymentComponent == null) {
-                LOG.warn("Cannot show payment provider apps: PaymentComponentsController must be set before showing the PaymentComponentView")
+                LOG.warn("Cannot show payment provider apps: PaymentComponent must be set before showing the PaymentComponentView")
                 return@launch
             }
-            LOG.debug("Collecting payment provider apps state from PaymentComponentsController")
-            paymentComponent?.paymentProviderAppsFlow?.collect { paymentProviderAppsState ->
-                LOG.debug("Received payment provider apps state: {}", paymentProviderAppsState)
-                when (paymentProviderAppsState) {
-                    is PaymentProviderAppsState.Error,
-                    is PaymentProviderAppsState.Loading -> {
-                        disablePayInvoiceButton()
-                        disableBankPicker()
-                    }
-                    is PaymentProviderAppsState.Success -> {
-                        if (paymentProviderAppsState.paymentProviderApps.isNotEmpty()) {
-                            LOG.debug("Received {} payment provider apps", paymentProviderAppsState.paymentProviderApps.size)
-                            val firstInstalledPaymentProviderApp = paymentProviderAppsState.paymentProviderApps.find { it.installedPaymentProviderApp != null }
-                            if (firstInstalledPaymentProviderApp != null) {
-                                LOG.debug("First payment provider app is installed: {}", firstInstalledPaymentProviderApp.name)
-                                customizeBankPicker(firstInstalledPaymentProviderApp)
-                                enablePayInvoiceButton()
-                                customizePayInvoiceButton(firstInstalledPaymentProviderApp)
-                            } else {
-                                LOG.debug("No installed payment provider app found")
-                                context?.wrappedWithGiniHealthTheme()?.let { context ->
+            launch {
+                paymentComponent?.let { pc ->
+                    LOG.debug("Collecting payment provider apps state and selected payment provider app from PaymentComponent")
+                    pc.selectedPaymentProviderAppFlow.combine(pc.paymentProviderAppsFlow) { selectedPaymentProviderAppState, paymentProviderAppsState ->
+                        selectedPaymentProviderAppState to paymentProviderAppsState
+                    }.collect { (selectedPaymentProviderAppState, paymentProviderAppsState) ->
+                        LOG.debug("Received selected payment provider app state: {}", selectedPaymentProviderAppState)
+                        LOG.debug("Received payment provider apps state: {}", paymentProviderAppsState)
+                        if (paymentProviderAppsState is PaymentProviderAppsState.Success) {
+                            when (selectedPaymentProviderAppState) {
+                                is SelectedPaymentProviderAppState.AppSelected -> {
+                                    enableBankPicker()
+                                    customizeBankPicker(selectedPaymentProviderAppState.paymentProviderApp)
+                                    customizePayInvoiceButton(selectedPaymentProviderAppState.paymentProviderApp)
+                                    enablePayInvoiceButton()
+                                }
+
+                                SelectedPaymentProviderAppState.NothingSelected -> {
+                                    enableBankPicker()
+                                    restoreBankPickerDefaultState()
+                                    restorePayInvoiceButtonDefaultState()
                                     disablePayInvoiceButton()
                                 }
                             }
                         } else {
-                            LOG.debug("No payment provider apps received")
+                            disableBankPicker()
                             disablePayInvoiceButton()
                         }
-                        enableBankPicker()
                     }
                 }
             }
         }
     }
 
-    private fun customizeBankPicker(firstPaymentProviderApp: PaymentProviderApp) {
-        binding.ghsSelectBankPicker.text = firstPaymentProviderApp.name
-        binding.ghsSelectBankPicker.setCompoundDrawablesWithIntrinsicBounds(
-            firstPaymentProviderApp.icon,
-            null,
-            ContextCompat.getDrawable(context, R.drawable.ghs_chevron_down_icon),
-            null
-        )
+    private fun restoreBankPickerDefaultState() {
+        LOG.debug("Restoring bank picker default state")
+        context?.wrappedWithGiniHealthTheme()?.let { context ->
+            binding.ghsSelectBankPicker.text = context.getString(R.string.ghs_select_bank)
+            binding.ghsSelectBankPicker.setCompoundDrawablesWithIntrinsicBounds(
+                null,
+                null,
+                ContextCompat.getDrawable(context, R.drawable.ghs_chevron_down_icon),
+                null
+            )
+        }
     }
 
-    private fun customizePayInvoiceButton(firstPaymentProviderApp: PaymentProviderApp) {
-        binding.ghsPayInvoiceButton.setBackgroundTint(firstPaymentProviderApp.colors.backgroundColor)
-        binding.ghsPayInvoiceButton.setTextColor(firstPaymentProviderApp.colors.textColor)
+    private fun customizeBankPicker(paymentProviderApp: PaymentProviderApp) {
+        LOG.debug("Customizing bank picker for payment provider app: {}", paymentProviderApp.name)
+        context?.wrappedWithGiniHealthTheme()?.let { context ->
+            binding.ghsSelectBankPicker.text = paymentProviderApp.name
+            binding.ghsSelectBankPicker.setCompoundDrawablesWithIntrinsicBounds(
+                paymentProviderApp.icon,
+                null,
+                ContextCompat.getDrawable(context, R.drawable.ghs_chevron_down_icon),
+                null
+            )
+        }
+    }
+
+    private fun customizePayInvoiceButton(paymentProviderApp: PaymentProviderApp) {
+        LOG.debug("Customizing pay invoice button for payment provider app: {}", paymentProviderApp.name)
+        binding.ghsPayInvoiceButton.setBackgroundTint(paymentProviderApp.colors.backgroundColor, 255)
+        binding.ghsPayInvoiceButton.setTextColor(paymentProviderApp.colors.textColor)
     }
 
     private fun enableBankPicker() {
+        LOG.debug("Enabling bank picker")
         binding.ghsSelectBankPicker.isEnabled = true
     }
 
     private fun disableBankPicker() {
+        LOG.debug("Disabling bank picker")
         binding.ghsSelectBankPicker.isEnabled = false
     }
 
     private fun enablePayInvoiceButton() {
+        LOG.debug("Enabling pay invoice button")
         binding.ghsPayInvoiceButton.isEnabled = true
         binding.ghsPayInvoiceButton.alpha = 1f
     }
 
     private fun disablePayInvoiceButton() {
-        binding.ghsPayInvoiceButton.setBackgroundTint(ContextCompat.getColor(context, R.color.ghs_unelevated_button_background))
-        binding.ghsPayInvoiceButton.setTextColor(ContextCompat.getColor(context, R.color.ghs_unelevated_button_text))
+        LOG.debug("Disabling pay invoice button")
         binding.ghsPayInvoiceButton.isEnabled = false
         binding.ghsPayInvoiceButton.alpha = 0.4f
+    }
+
+    private fun restorePayInvoiceButtonDefaultState() {
+        LOG.debug("Restoring pay invoice button default state")
+        context?.wrappedWithGiniHealthTheme()?.let { context ->
+            binding.ghsPayInvoiceButton.setBackgroundTint(
+                ContextCompat.getColor(
+                    context,
+                    R.color.ghs_unelevated_button_background
+                )
+            )
+            binding.ghsPayInvoiceButton.setTextColor(
+                ContextCompat.getColor(
+                    context,
+                    R.color.ghs_unelevated_button_text
+                )
+            )
+        }
     }
 
     override fun onDetachedFromWindow() {
@@ -149,6 +187,8 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
     fun prepareForReuse() {
         isPayable = false
         disablePayInvoiceButton()
+        restorePayInvoiceButtonDefaultState()
+        restoreBankPickerDefaultState()
         disableBankPicker()
     }
 
@@ -198,7 +238,25 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
     }
 
     private fun onMoreInformationClicked() {
-        LOG.debug("More information clicked")
+        if (paymentComponent == null) {
+            LOG.warn("Cannot call PaymentComponent's listener: PaymentComponent must be set before showing the PaymentComponentView")
+        }
+        paymentComponent?.listener?.onMoreInformationClicked()
+    }
+
+    private fun addButtonInputHandlers() {
+        binding.ghsSelectBankPicker.setOnClickListener {
+            if (paymentComponent == null) {
+                LOG.warn("Cannot call PaymentComponent's listener: PaymentComponent must be set before showing the PaymentComponentView")
+            }
+            paymentComponent?.listener?.onBankPickerClicked()
+        }
+        binding.ghsPayInvoiceButton.setOnClickListener {
+            if (paymentComponent == null) {
+                LOG.warn("Cannot call PaymentComponent's listener: PaymentComponent must be set before showing the PaymentComponentView")
+            }
+            paymentComponent?.listener?.onPayInvoiceClicked()
+        }
     }
 
     companion object {
