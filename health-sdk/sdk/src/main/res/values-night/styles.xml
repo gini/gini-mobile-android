@@ -20,7 +20,7 @@
 
     <!-- region Widgets -->
 
-    <style name="GiniHealthTheme.Widget.Button.OutlinedButton" parent="Root.GiniHealthTheme.Widget.Button.OutlinedButton">
+    <style name="GiniHealthTheme.Widget.Button.OutlinedButton.Picker" parent="Root.GiniHealthTheme.Widget.Button.OutlinedButton.Picker">
         <item name="strokeColor">@color/ghs_light_05</item>
     </style>
 
