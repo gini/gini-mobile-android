@@ -18,13 +18,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.button.MaterialButton
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import net.gini.android.health.sdk.R
 import net.gini.android.health.sdk.databinding.GhsBottomSheetBankSelectionBinding
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
-import net.gini.android.health.sdk.paymentcomponent.PaymentProviderAppsState
-import net.gini.android.health.sdk.paymentcomponent.SelectedPaymentProviderAppState
 import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.health.sdk.util.autoCleared
 import net.gini.android.health.sdk.util.wrappedWithGiniHealthTheme
@@ -73,64 +70,25 @@ class BankSelectionBottomSheet private constructor(private val paymentComponent:
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewModel.start()
+
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
-                    if (viewModel.paymentComponent == null) {
-                        LOG.warn("Cannot show payment provider apps: PaymentComponent must be set before showing the BankSelectionBottomSheet")
-                        return@launch
-                    }
+                    viewModel.paymentProviderAppsListFlow.collect { paymentProviderAppsListState ->
+                        when (paymentProviderAppsListState) {
+                            is PaymentProviderAppsListState.Error -> {
+                                dismiss()
+                            }
 
-                    viewModel.paymentComponent?.let { pc ->
-                        LOG.debug("Collecting payment provider apps state and selected payment provider app from PaymentComponent")
+                            PaymentProviderAppsListState.Loading -> {}
 
-                        pc.selectedPaymentProviderAppFlow.combine(pc.paymentProviderAppsFlow) { selectedPaymentProviderAppState, paymentProviderAppsState ->
-                            selectedPaymentProviderAppState to paymentProviderAppsState
-                        }.collect { (selectedPaymentProviderAppState, paymentProviderAppsState) ->
-                            LOG.debug(
-                                "Received selected payment provider app state: {}",
-                                selectedPaymentProviderAppState
-                            )
-                            LOG.debug("Received payment provider apps state: {}", paymentProviderAppsState)
-
-                            val paymentProviderAppsList = mutableListOf<PaymentProviderAppListItem>()
-
-                            if (paymentProviderAppsState is PaymentProviderAppsState.Success) {
-                                if (paymentProviderAppsState.paymentProviderApps.isNotEmpty()) {
-                                    LOG.debug(
-                                        "Received {} payment provider apps",
-                                        paymentProviderAppsState.paymentProviderApps.size
-                                    )
-                                    paymentProviderAppsList += paymentProviderAppsState.paymentProviderApps.map {
-                                        PaymentProviderAppListItem(it, false)
-                                    }
-                                } else {
-                                    LOG.debug("No payment provider apps received")
-                                }
-
-                                when (selectedPaymentProviderAppState) {
-                                    is SelectedPaymentProviderAppState.AppSelected -> {
-                                        LOG.debug(
-                                            "Selected payment provider app: {}",
-                                            selectedPaymentProviderAppState.paymentProviderApp.name
-                                        )
-                                        paymentProviderAppsList.firstOrNull { it.paymentProviderApp == selectedPaymentProviderAppState.paymentProviderApp }
-                                            ?.isSelected = true
-                                    }
-
-                                    SelectedPaymentProviderAppState.NothingSelected -> {
-                                        LOG.debug("No payment provider app selected")
-                                        paymentProviderAppsList.forEach { it.isSelected = false }
-                                    }
-                                }
-
+                            is PaymentProviderAppsListState.Success -> {
                                 (binding.ghsPaymentProviderAppsList.adapter as PaymentProviderAppsAdapter).apply {
-                                    dataSet = paymentProviderAppsList
+                                    dataSet = paymentProviderAppsListState.paymentProviderAppsList
                                     notifyDataSetChanged()
                                 }
-                            } else if (paymentProviderAppsState is PaymentProviderAppsState.Error) {
-                                LOG.error("Error loading payment provider apps", paymentProviderAppsState.throwable)
-                                dismiss()
                             }
                         }
                     }
@@ -148,9 +106,7 @@ class BankSelectionBottomSheet private constructor(private val paymentComponent:
     }
 }
 
-data class PaymentProviderAppListItem(val paymentProviderApp: PaymentProviderApp, var isSelected: Boolean)
-
-class PaymentProviderAppsAdapter(
+internal class PaymentProviderAppsAdapter(
     var dataSet: List<PaymentProviderAppListItem>,
     val onItemClickListener: OnItemClickListener
 ) : RecyclerView.Adapter<PaymentProviderAppsAdapter.ViewHolder>() {
