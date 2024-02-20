@@ -5,11 +5,13 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.util.TypedValue
 import androidx.annotation.ColorInt
 import net.gini.android.health.api.models.PaymentProvider
 import org.slf4j.LoggerFactory
@@ -83,6 +85,7 @@ data class PaymentProviderApp(
 
 
     companion object {
+        internal const val ICON_SIZE = 32f // in dp
 
         private val LOG = LoggerFactory.getLogger(PaymentProviderApp::class.java)
 
@@ -106,7 +109,19 @@ data class PaymentProviderApp(
                 name = paymentProvider.name,
                 icon = BitmapFactory.decodeByteArray(paymentProvider.icon, 0, paymentProvider.icon.size)
                     ?.let { bitmap ->
-                        BitmapDrawable(context.resources, bitmap)
+                        val iconSizePx = TypedValue.applyDimension(
+                            TypedValue.COMPLEX_UNIT_DIP,
+                            ICON_SIZE,
+                            context.resources.displayMetrics
+                        ).toInt()
+                        val scaledBitamp = Bitmap.createScaledBitmap(
+                            bitmap,
+                            iconSizePx,
+                            iconSizePx,
+                            true
+                        )
+                        bitmap.recycle()
+                        BitmapDrawable(context.resources, scaledBitamp)
                     },
                 colors = PaymentProviderAppColors(
                     backgroundColor = Color.parseColor("#${paymentProvider.colors.backgroundColorRGBHex}"),
