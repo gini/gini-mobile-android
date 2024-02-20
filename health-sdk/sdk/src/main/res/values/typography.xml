@@ -52,6 +52,12 @@
         <!-- See "weight" here for details: https://developer.android.com/training/wearables/wff/group/part/text/font -->
         <item name="android:textFontWeight">500</item>
     </style>
+
+    <style name="Root.GiniHealthTheme.Typography.Button.ListItem" parent="Root.GiniHealthTheme.Typography.Button">
+        <!-- See "weight" here for details: https://developer.android.com/training/wearables/wff/group/part/text/font -->
+        <item name="android:textFontWeight">400</item>
+    </style>
+
     <style name="Root.GiniHealthTheme.Typography.Caption1" parent="TextAppearance.MaterialComponents.Caption">
         <item name="android:textSize">13sp</item>
         <item name="android:textColor">?attr/colorOnBackground</item>
@@ -71,6 +77,7 @@
     <style name="GiniHealthTheme.Typography.Subtitle2" parent="Root.GiniHealthTheme.Typography.Subtitle2"/>
     <style name="GiniHealthTheme.Typography.Button" parent="Root.GiniHealthTheme.Typography.Button"/>
     <style name="GiniHealthTheme.Typography.Button.Picker" parent="Root.GiniHealthTheme.Typography.Button.Picker"/>
+    <style name="GiniHealthTheme.Typography.Button.ListItem" parent="Root.GiniHealthTheme.Typography.Button.ListItem"/>
     <style name="GiniHealthTheme.Typography.Caption1" parent="Root.GiniHealthTheme.Typography.Caption1"/>
     <style name="GiniHealthTheme.Typography.Caption2" parent="Root.GiniHealthTheme.Typography.Caption2"/>
 
