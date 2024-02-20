@@ -43,7 +43,8 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
                     val paymentProviderApps = context.packageManager.getPaymentProviderApps(
                         paymentProvidersResource.data,
                         context
-                    )
+                    ).filter { it.isInstalled() || it.hasPlayStoreUrl() }
+
                     if (paymentProviderApps.isNotEmpty()) {
                         LOG.debug("Received {} payment provider apps", paymentProviderApps.size)
                         if (_selectedPaymentProviderAppFlow.value !is SelectedPaymentProviderAppState.AppSelected) {
