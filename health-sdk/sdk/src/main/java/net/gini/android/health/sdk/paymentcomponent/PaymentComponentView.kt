@@ -61,34 +61,34 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
                 LOG.warn("Cannot show payment provider apps: PaymentComponent must be set before showing the PaymentComponentView")
                 return@launch
             }
-            launch {
-                paymentComponent?.let { pc ->
-                    LOG.debug("Collecting payment provider apps state and selected payment provider app from PaymentComponent")
-                    pc.selectedPaymentProviderAppFlow.combine(pc.paymentProviderAppsFlow) { selectedPaymentProviderAppState, paymentProviderAppsState ->
-                        selectedPaymentProviderAppState to paymentProviderAppsState
-                    }.collect { (selectedPaymentProviderAppState, paymentProviderAppsState) ->
-                        LOG.debug("Received selected payment provider app state: {}", selectedPaymentProviderAppState)
-                        LOG.debug("Received payment provider apps state: {}", paymentProviderAppsState)
-                        if (paymentProviderAppsState is PaymentProviderAppsState.Success) {
-                            when (selectedPaymentProviderAppState) {
-                                is SelectedPaymentProviderAppState.AppSelected -> {
-                                    enableBankPicker()
-                                    customizeBankPicker(selectedPaymentProviderAppState.paymentProviderApp)
-                                    customizePayInvoiceButton(selectedPaymentProviderAppState.paymentProviderApp)
-                                    enablePayInvoiceButton()
-                                }
+            paymentComponent?.let { pc ->
+                LOG.debug("Collecting payment provider apps state and selected payment provider app from PaymentComponent")
 
-                                SelectedPaymentProviderAppState.NothingSelected -> {
-                                    enableBankPicker()
-                                    restoreBankPickerDefaultState()
-                                    restorePayInvoiceButtonDefaultState()
-                                    disablePayInvoiceButton()
-                                }
+                pc.selectedPaymentProviderAppFlow.combine(pc.paymentProviderAppsFlow) { selectedPaymentProviderAppState, paymentProviderAppsState ->
+                    selectedPaymentProviderAppState to paymentProviderAppsState
+                }.collect { (selectedPaymentProviderAppState, paymentProviderAppsState) ->
+                    LOG.debug("Received selected payment provider app state: {}", selectedPaymentProviderAppState)
+                    LOG.debug("Received payment provider apps state: {}", paymentProviderAppsState)
+
+                    if (paymentProviderAppsState is PaymentProviderAppsState.Success) {
+                        when (selectedPaymentProviderAppState) {
+                            is SelectedPaymentProviderAppState.AppSelected -> {
+                                enableBankPicker()
+                                customizeBankPicker(selectedPaymentProviderAppState.paymentProviderApp)
+                                customizePayInvoiceButton(selectedPaymentProviderAppState.paymentProviderApp)
+                                enablePayInvoiceButton()
                             }
-                        } else {
-                            disableBankPicker()
-                            disablePayInvoiceButton()
+
+                            SelectedPaymentProviderAppState.NothingSelected -> {
+                                enableBankPicker()
+                                restoreBankPickerDefaultState()
+                                restorePayInvoiceButtonDefaultState()
+                                disablePayInvoiceButton()
+                            }
                         }
+                    } else {
+                        disableBankPicker()
+                        disablePayInvoiceButton()
                     }
                 }
             }

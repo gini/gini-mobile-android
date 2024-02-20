@@ -1,10 +1,15 @@
 package net.gini.android.health.sdk.bankselection
 
+import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -12,13 +17,17 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.button.MaterialButton
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import net.gini.android.health.sdk.R
 import net.gini.android.health.sdk.databinding.GhsBottomSheetBankSelectionBinding
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.health.sdk.paymentcomponent.PaymentProviderAppsState
+import net.gini.android.health.sdk.paymentcomponent.SelectedPaymentProviderAppState
 import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.health.sdk.util.autoCleared
+import net.gini.android.health.sdk.util.wrappedWithGiniHealthTheme
 import org.slf4j.LoggerFactory
 
 class BankSelectionBottomSheet private constructor(private val paymentComponent: PaymentComponent?) :
@@ -33,20 +42,37 @@ class BankSelectionBottomSheet private constructor(private val paymentComponent:
         binding = GhsBottomSheetBankSelectionBinding.inflate(inflater, container, false)
 
         binding.ghsPaymentProviderAppsList.layoutManager = LinearLayoutManager(requireContext())
-        binding.ghsPaymentProviderAppsList.adapter = PaymentProviderAppsAdapter(emptyList(), object : PaymentProviderAppsAdapter.OnItemClickListener {
-            override fun onItemClick(paymentProviderApp: PaymentProviderApp) {
-                LOG.debug("Selected payment provider app: {}", paymentProviderApp.name)
-                viewModel.paymentComponent?.setSelectedPaymentProviderApp(paymentProviderApp)
-                this@BankSelectionBottomSheet.dismiss()
-            }
-        })
+        binding.ghsPaymentProviderAppsList.adapter =
+            PaymentProviderAppsAdapter(emptyList(), object : PaymentProviderAppsAdapter.OnItemClickListener {
+                override fun onItemClick(paymentProviderApp: PaymentProviderApp) {
+                    LOG.debug("Selected payment provider app: {}", paymentProviderApp.name)
+
+                    if (paymentProviderApp.isInstalled()) {
+                        LOG.debug("Changing selected payment provider app in PaymentComponent")
+                        viewModel.paymentComponent?.setSelectedPaymentProviderApp(paymentProviderApp)
+                        this@BankSelectionBottomSheet.dismiss()
+                    } else if (paymentProviderApp.hasPlayStoreUrl()) {
+                        paymentProviderApp.paymentProvider.playStoreUrl?.let {
+                            LOG.debug("Opening payment provider app in Play Store")
+                            openPlayStoreUrl(it)
+                        }
+                    } else {
+                        LOG.error("No installed payment provider app and no Play Store URL")
+                    }
+                }
+            })
 
         return binding.root
     }
 
+    private fun openPlayStoreUrl(playStoreUrl: String) {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(playStoreUrl))
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
@@ -54,33 +80,57 @@ class BankSelectionBottomSheet private constructor(private val paymentComponent:
                         LOG.warn("Cannot show payment provider apps: PaymentComponent must be set before showing the BankSelectionBottomSheet")
                         return@launch
                     }
-                    LOG.debug("Collecting payment provider apps state from PaymentComponent")
-                    viewModel.paymentComponent?.paymentProviderAppsFlow?.collect { paymentProviderAppsState ->
-                        LOG.debug("Received payment provider apps state: {}", paymentProviderAppsState)
-                        when (paymentProviderAppsState) {
-                            is PaymentProviderAppsState.Error -> {
-                                LOG.error("Error loading payment provider apps", paymentProviderAppsState.throwable)
-                                // TODO
-                            }
 
-                            PaymentProviderAppsState.Loading -> {
-                                LOG.debug("Loading payment provider apps")
-                                // TODO
-                            }
+                    viewModel.paymentComponent?.let { pc ->
+                        LOG.debug("Collecting payment provider apps state and selected payment provider app from PaymentComponent")
 
-                            is PaymentProviderAppsState.Success -> {
+                        pc.selectedPaymentProviderAppFlow.combine(pc.paymentProviderAppsFlow) { selectedPaymentProviderAppState, paymentProviderAppsState ->
+                            selectedPaymentProviderAppState to paymentProviderAppsState
+                        }.collect { (selectedPaymentProviderAppState, paymentProviderAppsState) ->
+                            LOG.debug(
+                                "Received selected payment provider app state: {}",
+                                selectedPaymentProviderAppState
+                            )
+                            LOG.debug("Received payment provider apps state: {}", paymentProviderAppsState)
+
+                            val paymentProviderAppsList = mutableListOf<PaymentProviderAppListItem>()
+
+                            if (paymentProviderAppsState is PaymentProviderAppsState.Success) {
                                 if (paymentProviderAppsState.paymentProviderApps.isNotEmpty()) {
                                     LOG.debug(
                                         "Received {} payment provider apps",
                                         paymentProviderAppsState.paymentProviderApps.size
                                     )
-                                    (binding.ghsPaymentProviderAppsList.adapter as PaymentProviderAppsAdapter).apply {
-                                        dataSet = paymentProviderAppsState.paymentProviderApps
-                                        notifyDataSetChanged()
+                                    paymentProviderAppsList += paymentProviderAppsState.paymentProviderApps.map {
+                                        PaymentProviderAppListItem(it, false)
                                     }
                                 } else {
                                     LOG.debug("No payment provider apps received")
                                 }
+
+                                when (selectedPaymentProviderAppState) {
+                                    is SelectedPaymentProviderAppState.AppSelected -> {
+                                        LOG.debug(
+                                            "Selected payment provider app: {}",
+                                            selectedPaymentProviderAppState.paymentProviderApp.name
+                                        )
+                                        paymentProviderAppsList.firstOrNull { it.paymentProviderApp == selectedPaymentProviderAppState.paymentProviderApp }
+                                            ?.isSelected = true
+                                    }
+
+                                    SelectedPaymentProviderAppState.NothingSelected -> {
+                                        LOG.debug("No payment provider app selected")
+                                        paymentProviderAppsList.forEach { it.isSelected = false }
+                                    }
+                                }
+
+                                (binding.ghsPaymentProviderAppsList.adapter as PaymentProviderAppsAdapter).apply {
+                                    dataSet = paymentProviderAppsList
+                                    notifyDataSetChanged()
+                                }
+                            } else if (paymentProviderAppsState is PaymentProviderAppsState.Error) {
+                                LOG.error("Error loading payment provider apps", paymentProviderAppsState.throwable)
+                                dismiss()
                             }
                         }
                     }
@@ -98,17 +148,19 @@ class BankSelectionBottomSheet private constructor(private val paymentComponent:
     }
 }
 
+data class PaymentProviderAppListItem(val paymentProviderApp: PaymentProviderApp, var isSelected: Boolean)
+
 class PaymentProviderAppsAdapter(
-    var dataSet: List<PaymentProviderApp>,
+    var dataSet: List<PaymentProviderAppListItem>,
     val onItemClickListener: OnItemClickListener
 ) : RecyclerView.Adapter<PaymentProviderAppsAdapter.ViewHolder>() {
 
     class ViewHolder(view: View, onClickListener: OnClickListener) : RecyclerView.ViewHolder(view) {
-        val name: TextView
+        val button: MaterialButton
 
         init {
-            name = view.findViewById(R.id.ghs_name)
-            view.setOnClickListener { onClickListener.onClick(adapterPosition) }
+            button = view.findViewById(R.id.ghs_payment_provider_app)
+            button.setOnClickListener { onClickListener.onClick(adapterPosition) }
         }
 
         interface OnClickListener {
@@ -118,16 +170,55 @@ class PaymentProviderAppsAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.ghs_item_payment_provider_app, parent, false)
-        val viewHolder = ViewHolder(view, object: ViewHolder.OnClickListener {
+        val viewHolder = ViewHolder(view, object : ViewHolder.OnClickListener {
             override fun onClick(adapterPosition: Int) {
-                onItemClickListener.onItemClick(dataSet[adapterPosition])
+                onItemClickListener.onItemClick(dataSet[adapterPosition].paymentProviderApp)
             }
         })
         return viewHolder
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.name.text = dataSet[position].name
+        val paymentProviderAppListItem = dataSet[position]
+        holder.itemView.context.wrappedWithGiniHealthTheme().let { context ->
+            holder.button.text = paymentProviderAppListItem.paymentProviderApp.name
+
+            if (paymentProviderAppListItem.isSelected) {
+                holder.button.strokeColor = ColorStateList.valueOf(
+                    ContextCompat.getColor(
+                        context,
+                        TypedValue().also {
+                            context.theme.resolveAttribute(androidx.appcompat.R.attr.colorPrimary, it, true)
+                        }.resourceId
+                    )
+                )
+
+                holder.button.setCompoundDrawablesWithIntrinsicBounds(
+                    paymentProviderAppListItem.paymentProviderApp.icon,
+                    null,
+                    ContextCompat.getDrawable(context, R.drawable.ghs_checkmark),
+                    null
+                )
+            } else {
+                val playStoreLogo: Drawable? =
+                    if (paymentProviderAppListItem.paymentProviderApp.installedPaymentProviderApp == null &&
+                        paymentProviderAppListItem.paymentProviderApp.paymentProvider.playStoreUrl != null
+                    ) {
+                        ContextCompat.getDrawable(context, R.drawable.ghs_play_store_logo)
+                    } else {
+                        null
+                    }
+
+                holder.button.strokeColor = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.ghs_dark_05))
+
+                holder.button.setCompoundDrawablesWithIntrinsicBounds(
+                    paymentProviderAppListItem.paymentProviderApp.icon,
+                    null,
+                    playStoreLogo,
+                    null
+                )
+            }
+        }
     }
 
     override fun getItemCount() = dataSet.size

@@ -48,7 +48,7 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
                         LOG.debug("Received {} payment provider apps", paymentProviderApps.size)
                         if (_selectedPaymentProviderAppFlow.value !is SelectedPaymentProviderAppState.AppSelected) {
                             val firstInstalledPaymentProviderApp =
-                                paymentProviderApps.find { it.installedPaymentProviderApp != null }
+                                paymentProviderApps.find { it.isInstalled() }
                             if (firstInstalledPaymentProviderApp != null) {
                                 LOG.debug(
                                     "First payment provider app is installed: {}",
