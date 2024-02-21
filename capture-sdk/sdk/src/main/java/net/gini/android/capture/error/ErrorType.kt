@@ -44,7 +44,7 @@ enum class ErrorType(@DrawableRes val drawableResource: Int,
                 if (it == 503) {
                     return MAINTENANCE
                 }
-                if (it >= 500) {
+                if (it > 500) {
                     return SERVER
                 }
 
