@@ -7,7 +7,7 @@
         <item name="colorPrimary">@color/ghs_accent_01</item>
         <item name="colorPrimaryDark">@color/ghs_dark_01</item>
         <item name="colorOnPrimary">@color/ghs_light_01</item>
-        <item name="colorSurface">@color/ghs_dark_03</item>
+        <item name="colorSurface">@color/ghs_light_07</item>
         <item name="backgroundColor">@color/ghs_dark_01</item>
         <item name="colorOnBackground">@color/ghs_light_01</item>
         <item name="dividerColor">@color/ghs_dark_02</item>
@@ -30,6 +30,19 @@
 
     <style name="GiniHealthTheme.Widget.Button.OutlinedButton.ListItem" parent="Root.GiniHealthTheme.Widget.Button.OutlinedButton.ListItem">
         <item name="strokeColor">@color/ghs_light_05</item>
+    </style>
+
+    <style name="GiniHealthTheme.ThemeOverlay.BottomSheetDialog" parent="Root.GiniHealthTheme.ThemeOverlay.BottomSheetDialog">
+        <item name="colorPrimary">@color/ghs_light_07</item>
+        <item name="bottomSheetStyle">@style/GiniHealthTheme.Widget.BottomSheet</item>
+    </style>
+
+    <style name="GiniHealthTheme.Widget.BottomSheet" parent="Root.GiniHealthTheme.Widget.BottomSheet">
+        <item name="backgroundTint">@color/ghs_light_07</item>
+    </style>
+
+    <style name="GiniHealthTheme.Widget.BottomSheet.DragHandle" parent="Root.GiniHealthTheme.Widget.BottomSheet.DragHandle">
+        <item name="tint">@color/ghs_light_05</item>
     </style>
 
     <!-- endregion -->

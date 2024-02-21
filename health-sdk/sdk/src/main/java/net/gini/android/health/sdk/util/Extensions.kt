@@ -14,6 +14,7 @@ import androidx.annotation.StringRes
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.graphics.ColorUtils
+import androidx.fragment.app.Fragment
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.flow.Flow
@@ -173,3 +174,6 @@ internal fun View.getLayoutInflaterWithGiniHealthTheme(): LayoutInflater =
 
 internal fun Context.wrappedWithGiniHealthTheme(): Context = ContextThemeWrapper(this, R.style.GiniHealthTheme)
 
+internal fun Fragment.getLayoutInflaterWithGiniHealthTheme(inflater: LayoutInflater): LayoutInflater {
+    return inflater.cloneInContext(requireContext().wrappedWithGiniHealthTheme())
+}

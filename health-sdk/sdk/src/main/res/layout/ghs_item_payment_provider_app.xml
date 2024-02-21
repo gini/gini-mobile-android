@@ -10,6 +10,8 @@
         style="@style/GiniHealthTheme.Widget.Button.OutlinedButton.ListItem"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/ghs_large"
+        android:layout_marginBottom="@dimen/ghs_medium"
         android:gravity="start|center_vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

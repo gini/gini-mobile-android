@@ -1,7 +1,9 @@
 package net.gini.android.health.sdk.bankselection
 
+import android.app.Dialog
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
@@ -9,6 +11,7 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -16,6 +19,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.button.MaterialButton
 import kotlinx.coroutines.launch
@@ -24,6 +29,7 @@ import net.gini.android.health.sdk.databinding.GhsBottomSheetBankSelectionBindin
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.health.sdk.util.autoCleared
+import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthTheme
 import net.gini.android.health.sdk.util.wrappedWithGiniHealthTheme
 import org.slf4j.LoggerFactory
 
@@ -34,6 +40,26 @@ class BankSelectionBottomSheet private constructor(private val paymentComponent:
 
     private var binding: GhsBottomSheetBankSelectionBinding by autoCleared()
     private val viewModel: BankSelectionViewModel by viewModels { BankSelectionViewModel.Factory(paymentComponent) }
+
+    override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
+        val inflater = super.onGetLayoutInflater(savedInstanceState)
+        return this.getLayoutInflaterWithGiniHealthTheme(inflater)
+    }
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val wrappedContext = requireContext().wrappedWithGiniHealthTheme()
+        val dialog = BottomSheetDialog(wrappedContext, theme)
+
+        val colorDrawable = ColorDrawable(ContextCompat.getColor(wrappedContext, R.color.ghs_bottom_sheet_scrim))
+        colorDrawable.alpha = 102 // 40% alpha
+        dialog.window?.setBackgroundDrawable(colorDrawable)
+
+        dialog.behavior.isFitToContents = true
+        dialog.behavior.skipCollapsed = true
+        dialog.behavior.state = STATE_EXPANDED
+
+        return dialog
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = GhsBottomSheetBankSelectionBinding.inflate(inflater, container, false)
@@ -58,6 +84,10 @@ class BankSelectionBottomSheet private constructor(private val paymentComponent:
                     }
                 }
             })
+
+        binding.ghsCloseButton.setOnClickListener {
+            dismiss()
+        }
 
         return binding.root
     }
@@ -125,7 +155,8 @@ internal class PaymentProviderAppsAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.ghs_item_payment_provider_app, parent, false)
+        val view =
+            parent.getLayoutInflaterWithGiniHealthTheme().inflate(R.layout.ghs_item_payment_provider_app, parent, false)
         val viewHolder = ViewHolder(view, object : ViewHolder.OnClickListener {
             override fun onClick(adapterPosition: Int) {
                 onItemClickListener.onItemClick(dataSet[adapterPosition].paymentProviderApp)
@@ -140,14 +171,11 @@ internal class PaymentProviderAppsAdapter(
             holder.button.text = paymentProviderAppListItem.paymentProviderApp.name
 
             if (paymentProviderAppListItem.isSelected) {
-                holder.button.strokeColor = ColorStateList.valueOf(
-                    ContextCompat.getColor(
-                        context,
-                        TypedValue().also {
-                            context.theme.resolveAttribute(androidx.appcompat.R.attr.colorPrimary, it, true)
-                        }.resourceId
-                    )
-                )
+                val colorTypedValue = TypedValue().also {
+                    context.theme.resolveAttribute(androidx.appcompat.R.attr.colorPrimary, it, true)
+                }
+                @ColorInt val color = colorTypedValue.data
+                holder.button.strokeColor = ColorStateList.valueOf(color)
 
                 holder.button.setCompoundDrawablesWithIntrinsicBounds(
                     paymentProviderAppListItem.paymentProviderApp.icon,

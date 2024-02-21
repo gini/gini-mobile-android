@@ -11,9 +11,9 @@
         <item name="backgroundColor">@color/ghs_light_01</item>
         <item name="colorOnBackground">@color/ghs_dark_01</item>
         <item name="dividerColor">@color/ghs_light_02</item>
-        <item name="colorSurface">@color/ghs_light_03</item>
+        <item name="colorSurface">@color/ghs_dark_07</item>
         <item name="colorOnSurface">?attr/colorOnBackground</item>
-        <item name="colorSurfaceInverse">@color/ghs_dark_03</item>
+        <item name="colorSurfaceInverse">@color/ghs_dark_01</item>
         <item name="colorOnSurfaceInverse">@color/ghs_light_02</item>
         <item name="colorSurfaceVariant">@color/ghs_light_01</item>
         <item name="colorOnSurfaceVariant">?attr/colorOnBackground</item>
@@ -21,6 +21,7 @@
         <item name="colorAccent">?attr/colorPrimary</item>
         <item name="alertDialogTheme">@style/GiniHealthTheme.ThemeOverlay.Dialog.Alert</item>
         <item name="toolbarStyle">@style/Widget.MaterialComponents.Toolbar.Surface</item>
+        <item name="bottomSheetDialogTheme">@style/GiniHealthTheme.ThemeOverlay.BottomSheetDialog</item>
         <item name="textAppearanceHeadline1">@style/GiniHealthTheme.Typography.Headline1</item>
         <item name="textAppearanceHeadline2">@style/GiniHealthTheme.Typography.Headline2</item>
         <item name="textAppearanceHeadline3">@style/GiniHealthTheme.Typography.Headline3</item>
@@ -84,11 +85,16 @@
         <item name="android:insetTop">0dp</item>
         <item name="android:insetBottom">0dp</item>
         <item name="iconPadding">@dimen/ghs_large</item>
-        <item name="android:backgroundTint">@color/ghs_outlined_button_background</item>
+        <item name="materialThemeOverlay">@style/GiniHealthTheme.ThemeOverlay.Button.OutlinedButton.Picker</item>
         <item name="android:textColor">@color/ghs_outlined_button_text</item>
         <item name="android:textAppearance">@style/GiniHealthTheme.Typography.Button.Picker</item>
     </style>
     <style name="GiniHealthTheme.Widget.Button.OutlinedButton.Picker" parent="Root.GiniHealthTheme.Widget.Button.OutlinedButton.Picker"/>
+
+    <style name="Root.GiniHealthTheme.ThemeOverlay.Button.OutlinedButton.Picker" parent="ThemeOverlay.Material3.Button">
+        <item name="colorPrimary">@color/ghs_outlined_button_background</item>
+    </style>
+    <style name="GiniHealthTheme.ThemeOverlay.Button.OutlinedButton.Picker" parent="Root.GiniHealthTheme.ThemeOverlay.Button.OutlinedButton.Picker" />
 
     <style name="Root.GiniHealthTheme.Widget.Button.OutlinedButton.ListItem" parent="Widget.Material3.Button.OutlinedButton">
         <item name="cornerRadius">4dp</item>
@@ -97,14 +103,43 @@
         <item name="android:autoSizeMaxTextSize">16sp</item>
         <item name="android:minHeight">@dimen/ghs_large_56</item>
         <item name="strokeColor">@color/ghs_dark_05</item>
+        <item name="strokeWidth">2dp</item>
         <item name="android:insetTop">0dp</item>
         <item name="android:insetBottom">0dp</item>
         <item name="iconPadding">@dimen/ghs_large</item>
-        <item name="android:backgroundTint">@color/ghs_outlined_button_list_item_background</item>
+        <item name="materialThemeOverlay">@style/GiniHealthTheme.ThemeOverlay.Button.OutlinedButton.ListItem</item>
         <item name="android:textColor">@color/ghs_outlined_button_text</item>
         <item name="android:textAppearance">@style/GiniHealthTheme.Typography.Button.ListItem</item>
     </style>
     <style name="GiniHealthTheme.Widget.Button.OutlinedButton.ListItem" parent="Root.GiniHealthTheme.Widget.Button.OutlinedButton.ListItem"/>
+
+    <style name="Root.GiniHealthTheme.ThemeOverlay.Button.OutlinedButton.ListItem" parent="ThemeOverlay.Material3.Button">
+        <item name="colorPrimary">@color/ghs_outlined_button_list_item_background</item>
+    </style>
+    <style name="GiniHealthTheme.ThemeOverlay.Button.OutlinedButton.ListItem" parent="Root.GiniHealthTheme.ThemeOverlay.Button.OutlinedButton.ListItem" />
+
+    <style name="Root.GiniHealthTheme.ThemeOverlay.BottomSheetDialog" parent="ThemeOverlay.Material3.BottomSheetDialog">
+        <item name="colorPrimary">@color/ghs_dark_07</item>
+        <item name="bottomSheetStyle">@style/GiniHealthTheme.Widget.BottomSheet</item>
+    </style>
+    <style name="GiniHealthTheme.ThemeOverlay.BottomSheetDialog" parent="Root.GiniHealthTheme.ThemeOverlay.BottomSheetDialog" />
+
+    <style name="Root.GiniHealthTheme.Widget.BottomSheet" parent="Widget.Material3.BottomSheet.Modal">
+        <item name="backgroundTint">@color/ghs_dark_07</item>
+        <item name="shapeAppearance">@style/GiniHealthTheme.Widget.BottomSheet.ShapeAppearance</item>
+    </style>
+    <style name="GiniHealthTheme.Widget.BottomSheet" parent="Root.GiniHealthTheme.Widget.BottomSheet" />
+
+    <style name="Root.GiniHealthTheme.Widget.BottomSheet.ShapeAppearance" parent="ShapeAppearance.Material3.LargeComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">12dp</item>
+    </style>
+    <style name="GiniHealthTheme.Widget.BottomSheet.ShapeAppearance" parent="Root.GiniHealthTheme.Widget.BottomSheet.ShapeAppearance" />
+
+    <style name="Root.GiniHealthTheme.Widget.BottomSheet.DragHandle" parent="Widget.Material3.BottomSheet.DragHandle">
+        <item name="tint">@color/ghs_dark_04</item>
+    </style>
+    <style name="GiniHealthTheme.Widget.BottomSheet.DragHandle" parent="Root.GiniHealthTheme.Widget.BottomSheet.DragHandle" />
 
     <!-- endregion -->
 
