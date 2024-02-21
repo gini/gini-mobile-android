@@ -56,8 +56,8 @@ internal class BankSelectionViewModel(val paymentComponent: PaymentComponent?) :
                                 "Selected payment provider app: {}",
                                 selectedPaymentProviderAppState.paymentProviderApp.name
                             )
-                            paymentProviderAppsList.firstOrNull {
-                                it.paymentProviderApp == selectedPaymentProviderAppState.paymentProviderApp
+                            paymentProviderAppsList.firstOrNull { paymentProviderApp ->
+                                hasSamePaymentProviderId(paymentProviderApp.paymentProviderApp, selectedPaymentProviderAppState.paymentProviderApp)
                             }?.isSelected = true
                         }
 
@@ -76,6 +76,12 @@ internal class BankSelectionViewModel(val paymentComponent: PaymentComponent?) :
             }
         }
     }
+
+    private fun hasSamePaymentProviderId(
+        paymentProviderApp: PaymentProviderApp,
+        selectedPaymentProviderApp: PaymentProviderApp
+    ): Boolean =
+        paymentProviderApp.paymentProvider.id == selectedPaymentProviderApp.paymentProvider.id
 
     class Factory(private val paymentComponent: PaymentComponent?) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
