@@ -259,7 +259,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
         }
     }
 
-    companion object {
+    private companion object {
         private val LOG = LoggerFactory.getLogger(PaymentComponentView::class.java)
     }
 }

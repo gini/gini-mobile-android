@@ -109,7 +109,7 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
         }
     }
 
-    companion object {
+    private companion object {
         private val LOG = LoggerFactory.getLogger(PaymentComponent::class.java)
     }
 
