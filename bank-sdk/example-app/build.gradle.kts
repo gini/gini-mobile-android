@@ -1,4 +1,7 @@
 import net.gini.gradle.*
+import org.tomlj.Toml
+import org.tomlj.TomlParseResult
+import org.tomlj.TomlTable
 
 plugins {
     id("com.android.application")
@@ -21,6 +24,33 @@ plugins {
 //        println "${appVersionName}"
 //    }
 //}
+
+fun loadPaymentProviderApps(): List<Map<String, String>> {
+    fun parsePaymentProvidersToml(tomlParseResult: TomlParseResult): List<Map<String, String>> =
+        tomlParseResult.getArray("paymentProviderApps")?.toList()?.map { (it as TomlTable).toMap() as Map<String, String> }
+            ?: emptyList()
+
+    // Load test payment providers (these can be checked into git)
+    val testPaymentProviderApps: List<Map<String, String>> =
+        parsePaymentProvidersToml(Toml.parse(project.file("paymentProviderApps/testPaymentProviderApps.toml").readText()))
+
+    // Load mock payment providers (these MUST NOT be checked into git because they contain sensitive data)
+    val mockPaymentProviderApps: List<Map<String, String>> = try {
+        parsePaymentProvidersToml(Toml.parse(project.file("paymentProviderApps/mockPaymentProviderApps.toml").readText()))
+    } catch (e: Exception) {
+        emptyList()
+    }
+
+    return testPaymentProviderApps + mockPaymentProviderApps
+}
+
+val paymentProviderApps = loadPaymentProviderApps()
+
+tasks.create("printNrOfTestPaymentProviders") {
+    doLast {
+        println(paymentProviderApps.size)
+    }
+}
 
 android {
     // after upgrading to AGP 8, we need this (copied from the module's AndroidManifest.xml
@@ -76,7 +106,7 @@ android {
             resValue("string", "gini_api_client_secret", credentials["clientSecret"] ?: "")
         }
     }
-    flavorDimensions += "environment"
+    flavorDimensions += listOf("environment", "purpose")
     productFlavors {
         create("prod") {
             dimension = "environment"
@@ -87,6 +117,21 @@ android {
         }
         create("qa") {
             dimension = "environment"
+        }
+        create("exampleApp") {
+            isDefault = true
+            dimension = "purpose"
+            resValue("string", "gini_pay_connect_host", "")
+            resValue("string", "gini_pay_connect_scheme", "")
+        }
+        paymentProviderApps.forEachIndexed { i, paymentProvider ->
+            create("paymentProvider${i+1}") {
+                dimension = "purpose"
+                applicationId = paymentProvider["applicationId"] as String
+                resValue("string", "app_name", paymentProvider["appName"] as String)
+                resValue("string", "gini_pay_connect_host", "payment")
+                resValue("string", "gini_pay_connect_scheme", "ginipay")
+            }
         }
     }
     compileOptions {

@@ -434,4 +434,36 @@ platform :android do
     end
   end
 
+  desc <<~DOC
+    Install all test payment provider apps on all connected emulators and devices.
+  DOC
+  lane :install_test_payment_provider_apps do
+    Dir.chdir("..") do
+      # Get nr of test payment providers
+      output = sh("./gradlew bank-sdk:example-app:printNrOfTestPaymentProviders -q")
+      nr_of_payment_providers = output.lines.last.strip.to_i
+
+      # Install each test payment provider
+      nr_of_payment_providers.times do |i|
+        sh("./gradlew bank-sdk:example-app:installDevPaymentProvider#{i+1}Debug")
+      end
+    end
+  end
+
+  desc <<~DOC
+    Uninstall all test payment provider apps from all connected emulators and devices.
+  DOC
+  lane :uninstall_test_payment_provider_apps do
+    Dir.chdir("..") do
+      # Get nr of test payment providers
+      output = sh("./gradlew bank-sdk:example-app:printNrOfTestPaymentProviders -q")
+      nr_of_payment_providers = output.lines.last.strip.to_i
+
+      # Uninstall each test payment provider
+      nr_of_payment_providers.times do |i|
+        sh("./gradlew bank-sdk:example-app:uninstallDevPaymentProvider#{i+1}Debug")
+      end
+    end
+  end
+
 end

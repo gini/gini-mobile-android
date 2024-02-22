@@ -61,21 +61,9 @@ jobs:
           java-version: '17'
           cache: 'gradle'
 
-      - name: build debug example app
+      - name: build release example app for QA
         run: >
-          ./gradlew health-sdk:example-app:assembleDebug 
-          -PclientId="gini-mobile-test" 
-          -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
-
-      - name: archive debug example app
-        uses: actions/upload-artifact@v3
-        with:
-          name: health-sdk-example-app-debug
-          path: health-sdk/example-app/build/outputs/apk/debug
-
-      - name: build release example app
-        run: >
-          ./gradlew health-sdk:example-app:assembleRelease 
+          ./gradlew health-sdk:example-app:assembleQaRelease
           -PclientId="gini-mobile-test" 
           -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
           -PreleaseKeystoreFile="health_sdk_example.jks"
@@ -83,11 +71,27 @@ jobs:
           -PreleaseKeyAlias="health_sdk_example"
           -PreleaseKeyPassword='${{ secrets.HEALTH_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}'
 
-      - name: archive release example app
+      - name: archive release example app for QA
         uses: actions/upload-artifact@v3
         with:
-          name: health-sdk-example-app-release
-          path: health-sdk/example-app/build/outputs/apk/release
+          name: health-sdk-example-app-qa-release
+          path: health-sdk/example-app/build/outputs/apk/qa/release
+
+      - name: build release example app for production
+        run: >
+          ./gradlew health-sdk:example-app:assembleProdRelease 
+          -PclientId="gini-mobile-test" 
+          -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
+          -PreleaseKeystoreFile="health_sdk_example.jks"
+          -PreleaseKeystorePassword='${{ secrets.HEALTH_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}'
+          -PreleaseKeyAlias="health_sdk_example"
+          -PreleaseKeyPassword='${{ secrets.HEALTH_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}'
+
+      - name: archive release example app for production
+        uses: actions/upload-artifact@v3
+        with:
+          name: health-sdk-example-app-prod-release
+          path: health-sdk/example-app/build/outputs/apk/prod/release
 
   android-lint:
     runs-on: ubuntu-latest

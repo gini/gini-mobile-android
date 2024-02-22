@@ -1,4 +1,4 @@
-package net.gini.android.health.sdk.review.bank
+package net.gini.android.health.sdk.paymentprovider
 
 import android.content.ComponentName
 import android.content.Context
@@ -12,125 +12,119 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import androidx.annotation.ColorInt
 import net.gini.android.health.api.models.PaymentProvider
-
-// TODO: replace all of this with PaymentProviderApp.kt when updating the review screen to have only the pay button (https://ginis.atlassian.net/browse/IPC-133)
+import org.slf4j.LoggerFactory
 
 internal const val Scheme = "ginipay" // It has to match the scheme in query tag in manifest
 private const val PaymentPath = "payment"
 internal const val QueryUri = "$Scheme://$PaymentPath/id"
-internal fun getBankUri(requestId: String) = "$Scheme://$PaymentPath/$requestId"
 
-internal fun PackageManager.getInstalledBankApps(): List<InstalledBankApp> = queryIntentActivities(getBankQueryIntent(), 0)
-    .map { InstalledBankApp.fromResolveInfo(it, this) }
+internal fun getPaymentProviderAppUri(requestId: String) = "$Scheme://$PaymentPath/$requestId"
+
+internal fun PackageManager.getInstalledPaymentProviderApps(): List<InstalledPaymentProviderApp> = queryIntentActivities(getPaymentProviderAppQueryIntent(), 0)
+    .map { InstalledPaymentProviderApp.fromResolveInfo(it, this) }
 
 
-internal fun PackageManager.getValidBankApps(paymentProviders: List<PaymentProvider>, context: Context): List<BankApp> =
-    getInstalledBankAppsWhichHavePaymentProviders(paymentProviders)
+internal fun PackageManager.getPaymentProviderApps(paymentProviders: List<PaymentProvider>, context: Context): List<PaymentProviderApp> =
+    linkInstalledPaymentProviderAppsWithPaymentProviders(paymentProviders)
         .map { (installedApp, paymentProvider) ->
-            BankApp.fromPaymentProvider(paymentProvider, installedApp, context)
+            PaymentProviderApp.fromPaymentProvider(paymentProvider, installedApp, context)
         }
 
-internal fun PackageManager.getInstalledBankAppsWhichHavePaymentProviders(paymentProviders: List<PaymentProvider>): List<Pair<InstalledBankApp, PaymentProvider>> {
-    return getInstalledBankApps()
-        .mapNotNull { installedApp ->
-            // Keep only those installed bank apps which have a corresponding payment provider
-            paymentProviders
-                .find { provider -> provider.packageName == installedApp.packageName }
-                ?.let { paymentProvider ->
-                    installedApp to paymentProvider
-                }
+internal fun PackageManager.linkInstalledPaymentProviderAppsWithPaymentProviders(paymentProviders: List<PaymentProvider>): List<Pair<InstalledPaymentProviderApp?, PaymentProvider>> {
+    val installedPaymentProviderApps = getInstalledPaymentProviderApps()
+    return paymentProviders
+        .map { paymentProvider ->
+            installedPaymentProviderApps
+                .find { installedApp -> paymentProvider.packageName == installedApp.packageName }
+                ?.let { installedApp -> installedApp to paymentProvider } ?: (null to paymentProvider)
         }
 }
 
-private fun getBankQueryIntent() = Intent().apply {
+private fun getPaymentProviderAppQueryIntent() = Intent().apply {
     action = Intent.ACTION_VIEW
     data = Uri.parse(QueryUri)
 }
 
-data class BankApp(
+data class PaymentProviderApp(
     val name: String,
-    val packageName: String,
-    val version: String,
     val icon: Drawable?,
-    val colors: BankAppColors,
+    val colors: PaymentProviderAppColors,
     val paymentProvider: PaymentProvider,
-    private val launchIntent: Intent
+    val installedPaymentProviderApp: InstalledPaymentProviderApp? = null,
 ) {
 
-    fun getIntent(paymentRequestId: String) = Intent(launchIntent).apply {
-        data = Uri.parse(getBankUri(paymentRequestId))
+    fun getIntent(paymentRequestId: String): Intent? = installedPaymentProviderApp?.let {
+        Intent(it.launchIntent).apply {
+            data = Uri.parse(getPaymentProviderAppUri(paymentRequestId))
+        }
     }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as BankApp
+        other as PaymentProviderApp
 
         if (name != other.name) return false
-        if (packageName != other.packageName) return false
-        if (version != other.version) return false
         if (icon != other.icon) return false
         if (colors != other.colors) return false
         if (paymentProvider != other.paymentProvider) return false
-        if (launchIntent.action != other.launchIntent.action) return false
-        if (launchIntent.component != other.launchIntent.component) return false
-
-        return true
+        return installedPaymentProviderApp == other.installedPaymentProviderApp
     }
 
     override fun hashCode(): Int {
         var result = name.hashCode()
-        result = 31 * result + packageName.hashCode()
-        result = 31 * result + version.hashCode()
         result = 31 * result + (icon?.hashCode() ?: 0)
         result = 31 * result + colors.hashCode()
         result = 31 * result + paymentProvider.hashCode()
-        result = 31 * result + launchIntent.hashCode()
+        result = 31 * result + (installedPaymentProviderApp?.hashCode() ?: 0)
         return result
     }
 
 
     companion object {
+
+        private val LOG = LoggerFactory.getLogger(PaymentProviderApp::class.java)
+
         internal fun fromPaymentProvider(
             paymentProvider: PaymentProvider,
-            installedBankApp: InstalledBankApp,
+            installedPaymentProviderApp: InstalledPaymentProviderApp?,
             context: Context,
-        ): BankApp {
-            if (paymentProvider.packageName != installedBankApp.packageName) {
-                throw IllegalArgumentException(
-                    """
-                    The payment provider and the installed bank app have different package names:
-                        - Payment provider:     ${paymentProvider.packageName}
-                        - Installed bank app:   ${installedBankApp.packageName}
-                """.trimIndent()
-                )
+        ): PaymentProviderApp {
+            if (installedPaymentProviderApp != null) {
+                if (paymentProvider.packageName != installedPaymentProviderApp.packageName) {
+                    val errorMessage = """
+                        The payment provider and the installed bank app have different package names:
+                            - Payment provider:     ${paymentProvider.packageName}
+                            - Installed bank app:   ${installedPaymentProviderApp.packageName}
+                    """.trimIndent()
+                    LOG.error(errorMessage)
+                    throw IllegalArgumentException(errorMessage)
+                }
             }
-            return BankApp(
+            return PaymentProviderApp(
                 name = paymentProvider.name,
-                packageName = paymentProvider.packageName,
-                version = installedBankApp.version,
                 icon = BitmapFactory.decodeByteArray(paymentProvider.icon, 0, paymentProvider.icon.size)
                     ?.let { bitmap ->
                         BitmapDrawable(context.resources, bitmap)
                     },
-                colors = BankAppColors(
+                colors = PaymentProviderAppColors(
                     backgroundColor = Color.parseColor("#${paymentProvider.colors.backgroundColorRGBHex}"),
                     textColor = Color.parseColor("#${paymentProvider.colors.textColoRGBHex}")
                 ),
                 paymentProvider = paymentProvider,
-                launchIntent = installedBankApp.launchIntent
+                installedPaymentProviderApp = installedPaymentProviderApp
             )
         }
     }
 }
 
-data class BankAppColors(
+data class PaymentProviderAppColors(
     @ColorInt val backgroundColor: Int,
     @ColorInt val textColor: Int
 )
 
-data class InstalledBankApp(
+data class InstalledPaymentProviderApp(
     val packageName: String,
     val version: String,
     val launchIntent: Intent
@@ -140,7 +134,7 @@ data class InstalledBankApp(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as InstalledBankApp
+        other as InstalledPaymentProviderApp
 
         if (packageName != other.packageName) return false
         if (version != other.version) return false
@@ -158,9 +152,10 @@ data class InstalledBankApp(
     }
 
     companion object {
-        internal fun fromResolveInfo(resolveInfo: ResolveInfo, packageManager: PackageManager): InstalledBankApp {
+
+        internal fun fromResolveInfo(resolveInfo: ResolveInfo, packageManager: PackageManager): InstalledPaymentProviderApp {
             val packageName = resolveInfo.activityInfo.applicationInfo.packageName
-            return InstalledBankApp(
+            return InstalledPaymentProviderApp(
                 packageName = packageName,
                 version = packageManager.getPackageInfo(packageName, 0).versionName,
                 launchIntent = Intent().apply {

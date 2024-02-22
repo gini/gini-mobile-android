@@ -1,7 +1,6 @@
 package net.gini.android.health.sdk.exampleapp.invoices.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
@@ -17,13 +16,18 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import net.gini.android.health.sdk.exampleapp.R
 import net.gini.android.health.sdk.exampleapp.databinding.ActivityInvoicesBinding
-import net.gini.android.health.sdk.exampleapp.invoices.data.UploadHardcodedInvoicesState
+import net.gini.android.health.sdk.exampleapp.invoices.data.UploadHardcodedInvoicesState.Failure
+import net.gini.android.health.sdk.exampleapp.invoices.data.UploadHardcodedInvoicesState.Loading
 import net.gini.android.health.sdk.exampleapp.invoices.ui.model.InvoiceItem
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponentView
+import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
+import net.gini.android.health.sdk.paymentcomponent.PaymentProviderAppsState.Error
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import net.gini.android.health.sdk.paymentcomponent.PaymentProviderAppsState.Loading as LoadingBankApp
 
 
 class InvoicesActivity : AppCompatActivity() {
@@ -45,41 +49,52 @@ class InvoicesActivity : AppCompatActivity() {
                         }
                         binding.noInvoicesLabel.visibility =
                             if (invoicesWithExtractions.isEmpty()) View.VISIBLE else View.GONE
-                        Log.d(this::class.simpleName, "Invoices with extractions: $invoicesWithExtractions")
                     }
                 }
                 launch {
-                    viewModel.uploadHardcodedInvoicesState.collect { uploadState ->
-                        when (uploadState) {
-                            is UploadHardcodedInvoicesState.Failure -> {
-                                AlertDialog.Builder(this@InvoicesActivity)
-                                    .setTitle(R.string.upload_failed)
-                                    .setMessage(uploadState.errors.toSet().joinToString(", "))
-                                    .setPositiveButton(android.R.string.ok, null)
-                                    .show()
-                            }
-
-                            UploadHardcodedInvoicesState.Idle,
-                            UploadHardcodedInvoicesState.Success -> {
+                    viewModel.uploadHardcodedInvoicesStateFlow.combine(viewModel.bankAppsFlow) { a, b -> a to b }
+                        .collect { (uploadState, bankAppsState) ->
+                            if (uploadState == Loading || bankAppsState == LoadingBankApp) {
+                                binding.loadingIndicatorContainer.visibility = View.VISIBLE
+                                binding.loadingIndicator.visibility = View.VISIBLE
+                            } else {
                                 binding.loadingIndicatorContainer.visibility = View.INVISIBLE
                                 binding.loadingIndicator.visibility = View.INVISIBLE
                             }
-
-                            UploadHardcodedInvoicesState.Loading -> {
-                                binding.loadingIndicatorContainer.visibility = View.VISIBLE
-                                binding.loadingIndicator.visibility = View.VISIBLE
-                            }
                         }
-                        Log.d(this::class.simpleName, "Upload state: $uploadState")
+                }
+                launch {
+                    viewModel.uploadHardcodedInvoicesStateFlow.collect { uploadState ->
+                        if (uploadState is Failure) {
+                            AlertDialog.Builder(this@InvoicesActivity)
+                                .setTitle(R.string.upload_failed)
+                                .setMessage(uploadState.errors.toSet().joinToString(", "))
+                                .setPositiveButton(android.R.string.ok, null)
+                                .show()
+                        }
+
+                    }
+                }
+                launch {
+                    viewModel.bankAppsFlow.collect { bankAppsState ->
+                        if (bankAppsState is Error) {
+                            AlertDialog.Builder(this@InvoicesActivity)
+                                .setTitle(R.string.failed_to_load_bank_apps)
+                                .setMessage(bankAppsState.throwable.message)
+                                .setPositiveButton(android.R.string.ok, null)
+                                .show()
+                        }
+
                     }
                 }
             }
         }
 
         viewModel.loadInvoicesWithExtractions()
+        viewModel.loadPaymentProviderApps()
 
         binding.invoicesList.layoutManager = LinearLayoutManager(this)
-        binding.invoicesList.adapter = InvoicesAdapter(emptyList())
+        binding.invoicesList.adapter = InvoicesAdapter(emptyList(), viewModel.paymentComponent)
         binding.invoicesList.addItemDecoration(DividerItemDecoration(this, LinearLayout.VERTICAL))
     }
 
@@ -100,10 +115,14 @@ class InvoicesActivity : AppCompatActivity() {
     }
 }
 
-class InvoicesAdapter(var dataSet: List<InvoiceItem>) :
+class InvoicesAdapter(
+    var dataSet: List<InvoiceItem>,
+    private val paymentComponent: PaymentComponent
+) :
     RecyclerView.Adapter<InvoicesAdapter.ViewHolder>() {
 
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    class ViewHolder(view: View, paymentComponent: PaymentComponent) :
+        RecyclerView.ViewHolder(view) {
         val recipient: TextView
         val dueDate: TextView
         val amount: TextView
@@ -113,14 +132,15 @@ class InvoicesAdapter(var dataSet: List<InvoiceItem>) :
             recipient = view.findViewById(R.id.recipient)
             dueDate = view.findViewById(R.id.due_date)
             amount = view.findViewById(R.id.amount)
-            paymentComponent = view.findViewById(R.id.payment_component)
+            this.paymentComponent = view.findViewById(R.id.payment_component)
+            this.paymentComponent.paymentComponent = paymentComponent
         }
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(viewGroup.context)
             .inflate(R.layout.item_invoice, viewGroup, false)
-        return ViewHolder(view)
+        return ViewHolder(view, paymentComponent)
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {

@@ -9,6 +9,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import ch.qos.logback.classic.Logger
+import ch.qos.logback.classic.LoggerContext
+import ch.qos.logback.classic.android.LogcatAppender
+import ch.qos.logback.classic.encoder.PatternLayoutEncoder
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -19,6 +23,7 @@ import net.gini.android.health.sdk.exampleapp.review.ReviewActivity
 import net.gini.android.health.sdk.exampleapp.upload.UploadActivity
 import net.gini.android.health.sdk.requirement.Requirement
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.slf4j.LoggerFactory
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -79,6 +84,8 @@ class MainActivity : AppCompatActivity() {
         binding.invoicesScreen.setOnClickListener {
             startActivity(Intent(this, InvoicesActivity::class.java))
         }
+
+        configureLogging()
     }
 
     private fun importFile() {
@@ -146,5 +153,20 @@ class MainActivity : AppCompatActivity() {
         }.let {
             Toast.makeText(this, it, Toast.LENGTH_LONG).show()
         }
+    }
+
+    private fun configureLogging() {
+        val lc = LoggerFactory.getILoggerFactory() as LoggerContext
+        lc.reset()
+        val layoutEncoder = PatternLayoutEncoder()
+        layoutEncoder.context = lc
+        layoutEncoder.pattern = "%-5level %file:%line [%thread] - %msg%n"
+        layoutEncoder.start()
+        val logcatAppender = LogcatAppender()
+        logcatAppender.context = lc
+        logcatAppender.encoder = layoutEncoder
+        logcatAppender.start()
+        val root = LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME) as Logger
+        root.addAppender(logcatAppender)
     }
 }

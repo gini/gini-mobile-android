@@ -16,8 +16,6 @@
     <color name="ghs_input_stroke_default">@color/gray10</color>
     <color name="ghs_input_stroke_active">@color/blue</color>
 
-    <color name="ghs_accent_01">#007BFF</color>
-
     <color name="ghs_color_01">#FFFFFF</color>
     <color name="ghs_color_02">#F2F2F2</color>
     <color name="ghs_color_03">#E5E5E5</color>

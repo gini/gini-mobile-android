@@ -47,6 +47,19 @@ android {
             signingConfig = signingConfigs.getByName("release")
         }
     }
+    flavorDimensions += "environment"
+    productFlavors {
+        create("prod") {
+            dimension = "environment"
+        }
+        create("dev") {
+            isDefault = true
+            dimension = "environment"
+        }
+        create("qa") {
+            dimension = "environment"
+        }
+    }
     buildFeatures {
         viewBinding = true
     }
@@ -92,6 +105,11 @@ dependencies {
     implementation(libs.moshi.core)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     kapt(libs.moshi.codegen)
+    implementation(libs.logback.android.core)
+    implementation(libs.logback.android.classic) {
+        // workaround issue #73
+        exclude(group = "com.google.android", module = "android")
+    }
 
     testImplementation(libs.junit)
 

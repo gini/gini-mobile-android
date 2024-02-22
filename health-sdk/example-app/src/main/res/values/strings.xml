@@ -6,6 +6,7 @@
     <string name="upload_failed">Upload failed</string>
     <string name="upload_succeeded">Upload succeeded</string>
     <string name="no_bank">No bank app installed</string>
+    <string name="failed_to_load_bank_apps">Failed to load bank apps</string>
     <string name="upload">Upload</string>
     <string name="invoice">Invoice</string>
     <string name="title_activity_invoices">Invoices list</string>

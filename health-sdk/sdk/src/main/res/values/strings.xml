@@ -27,6 +27,4 @@
     <string name="ghs_pay_invoice_button">Rechnung bezahlen</string>
     <string name="ghs_payment_powered_by_label">Zahlung powered by</string>
 
-    <!-- TDOO: remove after adding payment providers -->
-    <string name="ghs_select_bank_sparkasse_demo">Sparkasse</string>
 </resources>
