@@ -127,6 +127,11 @@ class BankSelectionBottomSheet private constructor(private val paymentComponent:
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        viewModel.recheckWhichPaymentProviderAppsAreInstalled()
+    }
+
     companion object {
         private val LOG = LoggerFactory.getLogger(BankSelectionBottomSheet::class.java)
 
