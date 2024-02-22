@@ -72,7 +72,7 @@ class BankSelectionBottomSheet private constructor(private val paymentComponent:
 
                     if (paymentProviderApp.isInstalled()) {
                         LOG.debug("Changing selected payment provider app in PaymentComponent")
-                        viewModel.paymentComponent?.setSelectedPaymentProviderApp(paymentProviderApp)
+                        viewModel.setSelectedPaymentProviderApp(paymentProviderApp)
                         this@BankSelectionBottomSheet.dismiss()
                     } else if (paymentProviderApp.hasPlayStoreUrl()) {
                         paymentProviderApp.paymentProvider.playStoreUrl?.let {
@@ -105,20 +105,18 @@ class BankSelectionBottomSheet private constructor(private val paymentComponent:
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    viewModel.paymentProviderAppsListFlow.collect { paymentProviderAppsListState ->
-                        when (paymentProviderAppsListState) {
-                            is PaymentProviderAppsListState.Error -> {
-                                dismiss()
-                            }
+                viewModel.paymentProviderAppsListFlow.collect { paymentProviderAppsListState ->
+                    when (paymentProviderAppsListState) {
+                        is PaymentProviderAppsListState.Error -> {
+                            dismiss()
+                        }
 
-                            PaymentProviderAppsListState.Loading -> {}
+                        PaymentProviderAppsListState.Loading -> {}
 
-                            is PaymentProviderAppsListState.Success -> {
-                                (binding.ghsPaymentProviderAppsList.adapter as PaymentProviderAppsAdapter).apply {
-                                    dataSet = paymentProviderAppsListState.paymentProviderAppsList
-                                    notifyDataSetChanged()
-                                }
+                        is PaymentProviderAppsListState.Success -> {
+                            (binding.ghsPaymentProviderAppsList.adapter as PaymentProviderAppsAdapter).apply {
+                                dataSet = paymentProviderAppsListState.paymentProviderAppsList
+                                notifyDataSetChanged()
                             }
                         }
                     }

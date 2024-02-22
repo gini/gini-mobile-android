@@ -1,8 +1,11 @@
 package net.gini.android.health.sdk.paymentcomponent
 
 import android.content.Context
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.onEach
 import net.gini.android.core.api.Resource
 import net.gini.android.health.api.models.PaymentProvider
 import net.gini.android.health.sdk.GiniHealth
@@ -13,11 +16,13 @@ import org.slf4j.LoggerFactory
 class PaymentComponent(private val context: Context, private val giniHealth: GiniHealth) {
 
     private val _paymentProviderAppsFlow = MutableStateFlow<PaymentProviderAppsState>(PaymentProviderAppsState.Loading)
-    val paymentProviderAppsFlow: StateFlow<PaymentProviderAppsState> = _paymentProviderAppsFlow
+    val paymentProviderAppsFlow: StateFlow<PaymentProviderAppsState> = _paymentProviderAppsFlow.asStateFlow()
 
     private val _selectedPaymentProviderAppFlow =
         MutableStateFlow<SelectedPaymentProviderAppState>(SelectedPaymentProviderAppState.NothingSelected)
-    val selectedPaymentProviderAppFlow: StateFlow<SelectedPaymentProviderAppState> = _selectedPaymentProviderAppFlow
+    val selectedPaymentProviderAppFlow: StateFlow<SelectedPaymentProviderAppState> = _selectedPaymentProviderAppFlow.asStateFlow()
+
+    private val paymentComponentPreferences = PaymentComponentPreferences(context)
 
     var listener: Listener? = null
 
@@ -57,11 +62,13 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
         }
     }
 
-    internal fun setSelectedPaymentProviderApp(paymentProviderApp: PaymentProviderApp) {
+    internal suspend fun setSelectedPaymentProviderApp(paymentProviderApp: PaymentProviderApp) {
         _selectedPaymentProviderAppFlow.value = SelectedPaymentProviderAppState.AppSelected(paymentProviderApp)
+
+        paymentComponentPreferences.saveSelectedPaymentProviderId(paymentProviderApp.paymentProvider.id)
     }
 
-    fun recheckWhichPaymentProviderAppsAreInstalled() {
+    suspend fun recheckWhichPaymentProviderAppsAreInstalled() {
         LOG.debug("Rechecking which payment provider apps are installed")
         when (val paymentProviderAppsState = _paymentProviderAppsFlow.value) {
             is PaymentProviderAppsState.Success -> {
@@ -116,21 +123,45 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
         return paymentProviderApps
     }
 
-    private fun selectPaymentProviderApp(paymentProviderApps: List<PaymentProviderApp>) {
+    private suspend fun selectPaymentProviderApp(paymentProviderApps: List<PaymentProviderApp>) {
         if (paymentProviderApps.isNotEmpty()) {
             LOG.debug("Received {} payment provider apps", paymentProviderApps.size)
+
             if (_selectedPaymentProviderAppFlow.value !is SelectedPaymentProviderAppState.AppSelected) {
-                selectFirstInstalledPaymentProviderAppOrNothing(paymentProviderApps)
+                val previouslySelectedPaymentProviderApp =
+                    getPreviouslySelectedPaymentProviderApp(paymentProviderApps)
+
+                if (previouslySelectedPaymentProviderApp != null && previouslySelectedPaymentProviderApp.isInstalled()) {
+                    LOG.debug("Using previously selected payment provider app: {}", previouslySelectedPaymentProviderApp.name)
+
+                    _selectedPaymentProviderAppFlow.value =
+                        SelectedPaymentProviderAppState.AppSelected(previouslySelectedPaymentProviderApp)
+                } else {
+                    LOG.debug("Previously selected payment provider app is not installed")
+
+                    selectFirstInstalledPaymentProviderAppOrNothing(paymentProviderApps)
+                }
             }
         } else {
             LOG.debug("No payment provider apps received")
             _selectedPaymentProviderAppFlow.value = SelectedPaymentProviderAppState.NothingSelected
+
+            paymentComponentPreferences.deleteSelectedPaymentProviderId()
         }
     }
 
-    private fun selectFirstInstalledPaymentProviderAppOrNothing(paymentProviderApps: List<PaymentProviderApp>) {
+    private suspend fun getPreviouslySelectedPaymentProviderApp(paymentProviderApps: List<PaymentProviderApp>): PaymentProviderApp? {
+        return paymentComponentPreferences.getSelectedPaymentProviderId()?.let { previouslySelectedPaymentProviderId ->
+            paymentProviderApps.find { it.hasSamePaymentProviderId(previouslySelectedPaymentProviderId) }
+        }
+    }
+
+    private suspend fun selectFirstInstalledPaymentProviderAppOrNothing(paymentProviderApps: List<PaymentProviderApp>) {
+        LOG.debug("Selecting first installed payment provider app or nothing")
+
         val firstInstalledPaymentProviderApp =
             paymentProviderApps.find { it.isInstalled() }
+        
         if (firstInstalledPaymentProviderApp != null) {
             LOG.debug(
                 "First payment provider app is installed: {}",
@@ -138,9 +169,13 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
             )
             _selectedPaymentProviderAppFlow.value =
                 SelectedPaymentProviderAppState.AppSelected(firstInstalledPaymentProviderApp)
+
+            paymentComponentPreferences.saveSelectedPaymentProviderId(firstInstalledPaymentProviderApp.paymentProvider.id)
         } else {
             LOG.debug("No installed payment provider app found")
             _selectedPaymentProviderAppFlow.value = SelectedPaymentProviderAppState.NothingSelected
+
+            paymentComponentPreferences.deleteSelectedPaymentProviderId()
         }
     }
 

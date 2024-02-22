@@ -117,6 +117,7 @@ dependencies {
     implementation(libs.androidx.viewpager2)
     implementation(libs.photoview)
     implementation(libs.insetter)
+    implementation(libs.datastore.preferences)
 
     debugImplementation(libs.androidx.test.core.ktx)
     debugImplementation(libs.androidx.fragment.testing)

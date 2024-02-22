@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
@@ -16,7 +18,8 @@ internal class BankSelectionViewModel(val paymentComponent: PaymentComponent?) :
 
     private val _paymentProviderAppsListFlow =
         MutableStateFlow<PaymentProviderAppsListState>(PaymentProviderAppsListState.Loading)
-    val paymentProviderAppsListFlow = _paymentProviderAppsListFlow
+    val paymentProviderAppsListFlow: StateFlow<PaymentProviderAppsListState> =
+        _paymentProviderAppsListFlow.asStateFlow()
 
     fun start() {
         viewModelScope.launch {
@@ -84,7 +87,15 @@ internal class BankSelectionViewModel(val paymentComponent: PaymentComponent?) :
         paymentProviderApp.hasSamePaymentProviderId(selectedPaymentProviderApp)
 
     fun recheckWhichPaymentProviderAppsAreInstalled() {
-        paymentComponent?.recheckWhichPaymentProviderAppsAreInstalled()
+        viewModelScope.launch {
+            paymentComponent?.recheckWhichPaymentProviderAppsAreInstalled()
+        }
+    }
+
+    fun setSelectedPaymentProviderApp(paymentProviderApp: PaymentProviderApp) {
+        viewModelScope.launch {
+            paymentComponent?.setSelectedPaymentProviderApp(paymentProviderApp)
+        }
     }
 
     class Factory(private val paymentComponent: PaymentComponent?) : ViewModelProvider.Factory {

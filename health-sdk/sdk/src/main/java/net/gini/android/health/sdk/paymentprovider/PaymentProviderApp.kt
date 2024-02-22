@@ -22,11 +22,15 @@ internal const val QueryUri = "$Scheme://$PaymentPath/id"
 
 internal fun getPaymentProviderAppUri(requestId: String) = "$Scheme://$PaymentPath/$requestId"
 
-internal fun PackageManager.getInstalledPaymentProviderApps(): List<InstalledPaymentProviderApp> = queryIntentActivities(getPaymentProviderAppQueryIntent(), 0)
-    .map { InstalledPaymentProviderApp.fromResolveInfo(it, this) }
+internal fun PackageManager.getInstalledPaymentProviderApps(): List<InstalledPaymentProviderApp> =
+    queryIntentActivities(getPaymentProviderAppQueryIntent(), 0)
+        .map { InstalledPaymentProviderApp.fromResolveInfo(it, this) }
 
 
-internal fun PackageManager.getPaymentProviderApps(paymentProviders: List<PaymentProvider>, context: Context): List<PaymentProviderApp> =
+internal fun PackageManager.getPaymentProviderApps(
+    paymentProviders: List<PaymentProvider>,
+    context: Context
+): List<PaymentProviderApp> =
     linkInstalledPaymentProviderAppsWithPaymentProviders(paymentProviders)
         .map { (installedApp, paymentProvider) ->
             PaymentProviderApp.fromPaymentProvider(paymentProvider, installedApp, context)
@@ -69,6 +73,8 @@ data class PaymentProviderApp(
         paymentProviderApp: PaymentProviderApp
     ): Boolean =
         paymentProvider.id == paymentProviderApp.paymentProvider.id
+
+    fun hasSamePaymentProviderId(id: String): Boolean = paymentProvider.id == id
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -163,9 +169,7 @@ data class InstalledPaymentProviderApp(
         if (packageName != other.packageName) return false
         if (version != other.version) return false
         if (launchIntent.action != other.launchIntent.action) return false
-        if (launchIntent.component != other.launchIntent.component) return false
-
-        return true
+        return launchIntent.component == other.launchIntent.component
     }
 
     override fun hashCode(): Int {
@@ -177,7 +181,10 @@ data class InstalledPaymentProviderApp(
 
     companion object {
 
-        internal fun fromResolveInfo(resolveInfo: ResolveInfo, packageManager: PackageManager): InstalledPaymentProviderApp {
+        internal fun fromResolveInfo(
+            resolveInfo: ResolveInfo,
+            packageManager: PackageManager
+        ): InstalledPaymentProviderApp {
             val packageName = resolveInfo.activityInfo.applicationInfo.packageName
             return InstalledPaymentProviderApp(
                 packageName = packageName,
