@@ -81,7 +81,7 @@ internal class BankSelectionViewModel(val paymentComponent: PaymentComponent?) :
         paymentProviderApp: PaymentProviderApp,
         selectedPaymentProviderApp: PaymentProviderApp
     ): Boolean =
-        paymentProviderApp.paymentProvider.id == selectedPaymentProviderApp.paymentProvider.id
+        paymentProviderApp.hasSamePaymentProviderId(selectedPaymentProviderApp)
 
     fun recheckWhichPaymentProviderAppsAreInstalled() {
         paymentComponent?.recheckWhichPaymentProviderAppsAreInstalled()

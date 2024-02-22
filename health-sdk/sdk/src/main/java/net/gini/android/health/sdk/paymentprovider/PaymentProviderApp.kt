@@ -65,6 +65,11 @@ data class PaymentProviderApp(
 
     fun hasPlayStoreUrl() = paymentProvider.playStoreUrl != null
 
+    fun hasSamePaymentProviderId(
+        paymentProviderApp: PaymentProviderApp
+    ): Boolean =
+        paymentProvider.id == paymentProviderApp.paymentProvider.id
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
