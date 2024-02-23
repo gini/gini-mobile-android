@@ -186,7 +186,7 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
     interface Listener {
         fun onMoreInformationClicked()
         fun onBankPickerClicked()
-        fun onPayInvoiceClicked()
+        fun onPayInvoiceClicked(paymentComponentViewIdentifier: String)
     }
 
 }

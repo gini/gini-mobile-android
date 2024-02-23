@@ -21,6 +21,7 @@ import net.gini.android.health.sdk.databinding.GhsViewPaymentComponentBinding
 import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthTheme
 import net.gini.android.health.sdk.util.setBackgroundTint
+import net.gini.android.health.sdk.util.setIntervalClickListener
 import net.gini.android.health.sdk.util.wrappedWithGiniHealthTheme
 import org.slf4j.LoggerFactory
 import kotlin.coroutines.CoroutineContext
@@ -41,6 +42,8 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
                 hide()
             }
         }
+
+    var identifier: String? = null
 
     private val binding = GhsViewPaymentComponentBinding.inflate(getLayoutInflaterWithGiniHealthTheme(), this)
 
@@ -186,6 +189,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
 
     fun prepareForReuse() {
         isPayable = false
+        identifier = null
         disablePayInvoiceButton()
         restorePayInvoiceButtonDefaultState()
         restoreBankPickerDefaultState()
@@ -255,7 +259,11 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
             if (paymentComponent == null) {
                 LOG.warn("Cannot call PaymentComponent's listener: PaymentComponent must be set before showing the PaymentComponentView")
             }
-            paymentComponent?.listener?.onPayInvoiceClicked()
+            identifier?.let { identifier ->
+                paymentComponent?.listener?.onPayInvoiceClicked(identifier)
+            } ?: run {
+                LOG.warn("Cannot call PaymentComponent's listener: identifier must be set before showing the PaymentComponentView")
+            }
         }
     }
 
