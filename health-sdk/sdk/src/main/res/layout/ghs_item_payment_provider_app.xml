@@ -17,7 +17,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:drawableEnd="@drawable/ghs_checkmark"
+        tools:drawableEnd="@drawable/ghs_play_store_logo"
         tools:text="Gini Bank" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
