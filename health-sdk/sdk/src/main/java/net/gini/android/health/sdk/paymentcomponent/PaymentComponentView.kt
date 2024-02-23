@@ -179,7 +179,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
         addMoreInformationUnderlinedClickableText {
             onMoreInformationClicked()
         }
-        binding.ghsInfoCircleIcon.setOnClickListener {
+        binding.ghsInfoCircleIcon.setIntervalClickListener {
             onMoreInformationClicked()
         }
     }
@@ -245,13 +245,13 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
     }
 
     private fun addButtonInputHandlers() {
-        binding.ghsSelectBankPicker.setOnClickListener {
+        binding.ghsSelectBankPicker.setIntervalClickListener {
             if (paymentComponent == null) {
                 LOG.warn("Cannot call PaymentComponent's listener: PaymentComponent must be set before showing the PaymentComponentView")
             }
             paymentComponent?.listener?.onBankPickerClicked()
         }
-        binding.ghsPayInvoiceButton.setOnClickListener {
+        binding.ghsPayInvoiceButton.setIntervalClickListener {
             if (paymentComponent == null) {
                 LOG.warn("Cannot call PaymentComponent's listener: PaymentComponent must be set before showing the PaymentComponentView")
             }
