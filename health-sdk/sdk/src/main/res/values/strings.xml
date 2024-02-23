@@ -26,5 +26,6 @@
     <string name="ghs_select_bank">Bank Auswählen</string>
     <string name="ghs_pay_invoice_button">Rechnung bezahlen</string>
     <string name="ghs_payment_powered_by_label">Zahlung powered by</string>
+    <string name="ghs_payment_provider_apps_list_description">Sie können die Rechnung nur bezahlen, wenn Sie ein Konto bei einer der unten aufgeführten Banken haben.</string>
 
 </resources>

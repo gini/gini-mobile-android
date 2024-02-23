@@ -63,7 +63,7 @@
         android:layout_marginStart="@dimen/ghs_large"
         android:layout_marginEnd="@dimen/ghs_large"
         android:layout_marginBottom="@dimen/ghs_large"
-        android:text="@string/ghs_more_information_label"
+        android:text="@string/ghs_payment_provider_apps_list_description"
         android:textColor="@color/ghs_bank_selection_bottom_sheet_caption"
         app:layout_constraintBottom_toTopOf="@id/ghs_payment_provider_apps_list"
         app:layout_constraintEnd_toEndOf="parent"
