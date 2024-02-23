@@ -25,9 +25,10 @@ import net.gini.android.health.sdk.exampleapp.databinding.ActivityInvoicesBindin
 import net.gini.android.health.sdk.exampleapp.invoices.data.UploadHardcodedInvoicesState.Failure
 import net.gini.android.health.sdk.exampleapp.invoices.data.UploadHardcodedInvoicesState.Loading
 import net.gini.android.health.sdk.exampleapp.invoices.ui.model.InvoiceItem
-import net.gini.android.health.sdk.paymentcomponent.PaymentComponentView
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
+import net.gini.android.health.sdk.paymentcomponent.PaymentComponentView
 import net.gini.android.health.sdk.paymentcomponent.PaymentProviderAppsState.Error
+import net.gini.android.health.sdk.review.ReviewFragmentListener
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import net.gini.android.health.sdk.paymentcomponent.PaymentProviderAppsState.Loading as LoadingBankApp
 
@@ -57,11 +58,9 @@ class InvoicesActivity : AppCompatActivity() {
                     viewModel.uploadHardcodedInvoicesStateFlow.combine(viewModel.paymentProviderAppsFlow) { a, b -> a to b }
                         .collect { (uploadState, bankAppsState) ->
                             if (uploadState == Loading || bankAppsState == LoadingBankApp) {
-                                binding.loadingIndicatorContainer.visibility = View.VISIBLE
-                                binding.loadingIndicator.visibility = View.VISIBLE
+                                showLoadingIndicator(binding)
                             } else {
-                                binding.loadingIndicatorContainer.visibility = View.INVISIBLE
-                                binding.loadingIndicator.visibility = View.INVISIBLE
+                                hideLoadingIndicator(binding)
                             }
                         }
                 }
@@ -89,6 +88,43 @@ class InvoicesActivity : AppCompatActivity() {
 
                     }
                 }
+                launch {
+                    viewModel.paymentReviewFragmentStateFlow.collect { paymentReviewFragmentState ->
+                        when (paymentReviewFragmentState) {
+                            is PaymentReviewFragmentState.Error -> {
+                                AlertDialog.Builder(this@InvoicesActivity)
+                                    .setTitle(getString(R.string.could_not_start_payment_review))
+                                    .setMessage(paymentReviewFragmentState.throwable.message)
+                                    .setPositiveButton(android.R.string.ok, null)
+                                    .show()
+                            }
+
+                            PaymentReviewFragmentState.Idle -> {}
+                            PaymentReviewFragmentState.Loading -> {
+                                showLoadingIndicator(binding)
+                            }
+
+                            is PaymentReviewFragmentState.Success -> {
+                                hideLoadingIndicator(binding)
+
+                                val paymentReviewFragment = paymentReviewFragmentState.fragment
+
+                                paymentReviewFragment.listener = object : ReviewFragmentListener {
+                                    override fun onCloseReview() {
+                                        supportFragmentManager.popBackStack()
+                                    }
+
+                                    override fun onNextClicked(paymentProviderName: String) {}
+                                }
+
+                                supportFragmentManager.beginTransaction()
+                                    .replace(R.id.payment_review_fragment_container, paymentReviewFragment)
+                                    .addToBackStack(null)
+                                    .commit()
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -110,11 +146,23 @@ class InvoicesActivity : AppCompatActivity() {
                 }
             }
 
-            override fun onPayInvoiceClicked() {
+            override fun onPayInvoiceClicked(paymentComponentViewIdentifier: String) {
                 Log.d(InvoicesActivity::class.simpleName, "Pay invoice clicked")
+
+                viewModel.getPaymentReviewFragment(paymentComponentViewIdentifier)
             }
 
         }
+    }
+
+    private fun hideLoadingIndicator(binding: ActivityInvoicesBinding) {
+        binding.loadingIndicatorContainer.visibility = View.INVISIBLE
+        binding.loadingIndicator.visibility = View.INVISIBLE
+    }
+
+    private fun showLoadingIndicator(binding: ActivityInvoicesBinding) {
+        binding.loadingIndicatorContainer.visibility = View.VISIBLE
+        binding.loadingIndicator.visibility = View.VISIBLE
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -164,12 +212,14 @@ class InvoicesAdapter(
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         val invoiceItem = dataSet[position]
+
         viewHolder.recipient.text = invoiceItem.recipient ?: ""
         viewHolder.dueDate.text = invoiceItem.dueDate ?: ""
         viewHolder.amount.text = invoiceItem.amount ?: ""
 
         viewHolder.paymentComponent.prepareForReuse()
         viewHolder.paymentComponent.isPayable = invoiceItem.isPayable
+        viewHolder.paymentComponent.identifier = invoiceItem.documentId
     }
 
     override fun getItemCount() = dataSet.size

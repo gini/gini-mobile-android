@@ -2,6 +2,7 @@ package net.gini.android.health.sdk.exampleapp.review
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -16,9 +17,12 @@ import androidx.lifecycle.viewModelScope
 import dev.chrisbanes.insetter.applyInsetter
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import net.gini.android.health.api.models.PaymentProvider
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.exampleapp.R
 import net.gini.android.health.sdk.exampleapp.databinding.ActivityReviewBinding
+import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
+import net.gini.android.health.sdk.paymentprovider.PaymentProviderAppColors
 import net.gini.android.health.sdk.review.ReviewConfiguration
 import net.gini.android.health.sdk.review.ReviewFragment
 import net.gini.android.health.sdk.review.ReviewFragmentListener

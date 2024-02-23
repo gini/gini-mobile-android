@@ -14,4 +14,5 @@
     <string name="upload_test_invoices">Upload Invoices</string>
     <string name="welcome_to_gini">Welcome to Gini</string>
     <string name="example_of_health_sdk">Example of Gini Pay Connect integration in the insurance app</string>
+    <string name="could_not_start_payment_review">Could not start payment review</string>
 </resources>
