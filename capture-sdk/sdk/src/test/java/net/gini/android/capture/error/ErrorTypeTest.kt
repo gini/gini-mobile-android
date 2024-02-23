@@ -4,6 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import net.gini.android.capture.document.GiniCaptureDocumentError
 import net.gini.android.capture.internal.util.FileImportValidator
 import org.junit.Test
+import java.lang.Exception
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import net.gini.android.capture.network.Error as GiniError
@@ -76,6 +77,20 @@ class ErrorTypeTest {
 
         // Then
         assertThat(errorType).isEqualTo(ErrorType.AUTH)
+    }
+
+
+    @Test
+    fun `typeFromError should return AUTH when error status is 400 and error has response body of error invalid_grant`() {
+
+            // Given
+            val error = GiniError(400, null, Exception("{\"error\":\"invalid_grant\"}") )
+
+            // When
+            val errorType = ErrorType.typeFromError(error)
+
+            // Then
+            assertThat(errorType).isEqualTo(ErrorType.AUTH)
     }
 
     @Test
