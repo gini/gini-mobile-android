@@ -1,16 +1,19 @@
 package net.gini.android.health.sdk.paymentcomponent
 
 import android.content.Context
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import net.gini.android.core.api.Resource
 import net.gini.android.health.api.models.PaymentProvider
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.health.sdk.paymentprovider.getPaymentProviderApps
+import net.gini.android.health.sdk.review.ReviewConfiguration
+import net.gini.android.health.sdk.review.ReviewFragment
 import org.slf4j.LoggerFactory
 
 class PaymentComponent(private val context: Context, private val giniHealth: GiniHealth) {
@@ -176,6 +179,32 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
             _selectedPaymentProviderAppFlow.value = SelectedPaymentProviderAppState.NothingSelected
 
             paymentComponentPreferences.deleteSelectedPaymentProviderId()
+        }
+    }
+
+    suspend fun getPaymentReviewFragment(documentId: String, configuration: ReviewConfiguration): ReviewFragment {
+        LOG.debug("Getting payment review fragment for id: {}", documentId)
+
+        giniHealth.setDocumentForReview(documentId)
+
+        when (val selectedPaymentProviderAppState = _selectedPaymentProviderAppFlow.value) {
+            is SelectedPaymentProviderAppState.AppSelected -> {
+                LOG.debug("Creating ReviewFragment with selected payment provider app: {}", selectedPaymentProviderAppState.paymentProviderApp.name)
+
+                return ReviewFragment(
+                    giniHealth,
+                    configuration = configuration,
+                    paymentProviderApp = selectedPaymentProviderAppState.paymentProviderApp
+                )
+            }
+
+            SelectedPaymentProviderAppState.NothingSelected -> {
+                LOG.error("Cannot create ReviewFragment: No selected payment provider app")
+
+                val exception =
+                    IllegalStateException("Cannot create ReviewFragment: No selected payment provider app")
+                throw exception
+            }
         }
     }
 

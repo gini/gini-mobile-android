@@ -14,6 +14,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.transition.*
@@ -28,6 +29,7 @@ import net.gini.android.core.api.models.Document
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.R
 import net.gini.android.health.sdk.databinding.GhsFragmentReviewBinding
+import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.health.sdk.preferences.UserPreferences
 import net.gini.android.health.sdk.review.bank.BankApp
 import net.gini.android.health.sdk.review.model.PaymentDetails
@@ -89,11 +91,12 @@ interface ReviewFragmentListener {
 class ReviewFragment(
     private val giniHealth: GiniHealth,
     private val configuration: ReviewConfiguration = ReviewConfiguration(),
-    private val listener: ReviewFragmentListener? = null,
-    private val viewModelFactory: ViewModelProvider.Factory = getReviewViewModelFactory(giniHealth)
+    var listener: ReviewFragmentListener? = null,
+    private val viewModelFactory: ViewModelProvider.Factory = getReviewViewModelFactory(giniHealth),
+    private val paymentProviderApp: PaymentProviderApp? = null // TODO: make it non-nullable
 ) : Fragment() {
 
-    private val viewModel: ReviewViewModel by activityViewModels { viewModelFactory }
+    private val viewModel: ReviewViewModel by viewModels { viewModelFactory }
     private var binding: GhsFragmentReviewBinding by autoCleared()
     private var documentPageAdapter: DocumentPageAdapter by autoCleared()
     private var isKeyboardShown = false
