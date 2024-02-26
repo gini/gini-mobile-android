@@ -11,6 +11,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -130,6 +131,16 @@ class InvoicesActivity : AppCompatActivity() {
             }
         }
 
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        supportFragmentManager.addOnBackStackChangedListener {
+            if (supportFragmentManager.backStackEntryCount == 0) {
+                supportActionBar?.setTitle(R.string.title_activity_invoices)
+            } else {
+                supportActionBar?.setTitle(R.string.title_payment_review)
+            }
+        }
+
         viewModel.loadInvoicesWithExtractions()
         viewModel.loadPaymentProviderApps()
 
@@ -180,6 +191,10 @@ class InvoicesActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.upload_test_invoices -> {
                 viewModel.uploadHardcodedInvoices()
+                true
+            }
+            android.R.id.home -> {
+                onBackPressedDispatcher.onBackPressed()
                 true
             }
 
