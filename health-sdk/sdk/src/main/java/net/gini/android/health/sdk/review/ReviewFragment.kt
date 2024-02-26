@@ -1,6 +1,7 @@
 package net.gini.android.health.sdk.review
 
 import android.content.ActivityNotFoundException
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -172,7 +173,10 @@ class ReviewFragment(
                     viewModel.giniHealth.openBankState.collect { handlePaymentState(it) }
                 }
                 launch {
-                    viewModel.isPaymentButtonEnabled.collect { payment.isEnabled = it }
+                    viewModel.isPaymentButtonEnabled.collect { isEnabled ->
+                        payment.isEnabled = isEnabled
+                        payment.alpha = if (isEnabled) 1f else 0.4f
+                    }
                 }
                 launch {
                     viewModel.isInfoBarVisible.collect { visible ->
@@ -190,8 +194,8 @@ class ReviewFragment(
             null,
             null
         )
-        payment.setBackgroundTint(paymentProviderApp.colors.backgroundColor)
-        payment.setTextColorTint(paymentProviderApp.colors.textColor)
+        payment.setBackgroundTint(paymentProviderApp.colors.backgroundColor, 255)
+        payment.setTextColor(paymentProviderApp.colors.textColor)
     }
 
     private fun GhsFragmentReviewBinding.handleDocumentResult(documentResult: ResultWrapper<Document>) {
@@ -310,6 +314,7 @@ class ReviewFragment(
                         paymentState.paymentRequest.bankApp.getIntent(paymentState.paymentRequest.id)
                     if (intent != null) {
                         startActivity(intent)
+                        viewModel.onBankOpened()
                     } else {
                         // TODO: use more informative error messages (include selected bank app name)
                         handleError(getString(R.string.ghs_error_bank_not_found)) { viewModel.onPayment() }

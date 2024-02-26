@@ -4,7 +4,7 @@
     <string name="ghs_purpose_hint">Verwendungszweck</string>
     <string name="ghs_recipient_hint">Empfänger</string>
     <string name="ghs_iban_hint">IBAN</string>
-    <string name="ghs_pay_button">Weiter</string>
+    <string name="ghs_pay_button">Zur Banking App</string>
     <string name="ghs_bank_placeholder">Wird geladen...</string>
     <string name="ghs_error_failed_to_load_image">Bild konnte nicht geladen werden</string>
     <string name="ghs_error_input_invalid_iban">Bitte gib eine gültige IBAN an</string>

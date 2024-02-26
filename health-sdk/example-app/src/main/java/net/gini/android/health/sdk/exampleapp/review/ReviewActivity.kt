@@ -141,6 +141,9 @@ class ReviewActivity : AppCompatActivity() {
             }
         }
 
+        // The PaymentComponentView needs the PaymentComponent to be set before it is shown
+        binding.paymentComponentView.paymentComponent = viewModel.paymentComponent
+
         lifecycleScope.launch {
             val documentId = (viewModel.giniHealth.documentFlow.value as ResultWrapper.Success<Document>).value.id
 
@@ -161,7 +164,6 @@ class ReviewActivity : AppCompatActivity() {
 
             // Configure the PaymentComponentView
             binding.paymentComponentView.isPayable = true
-            binding.paymentComponentView.paymentComponent = viewModel.paymentComponent
             binding.paymentComponentView.identifier = documentId
 
             // Load the payment provider apps and show an alert dialog for errors
