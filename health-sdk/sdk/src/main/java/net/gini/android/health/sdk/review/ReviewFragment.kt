@@ -1,7 +1,6 @@
 package net.gini.android.health.sdk.review
 
 import android.content.ActivityNotFoundException
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -53,9 +52,9 @@ import net.gini.android.health.sdk.util.hideErrorMessage
 import net.gini.android.health.sdk.util.hideKeyboard
 import net.gini.android.health.sdk.util.setBackgroundTint
 import net.gini.android.health.sdk.util.setErrorMessage
-import net.gini.android.health.sdk.util.setTextColorTint
 import net.gini.android.health.sdk.util.setTextIfDifferent
 import net.gini.android.health.sdk.util.showErrorMessage
+import org.slf4j.LoggerFactory
 
 
 /**
@@ -110,22 +109,24 @@ interface ReviewFragmentListener {
  *  }
  * ```
  */
-class ReviewFragment(
-    private val giniHealth: GiniHealth,
-    private val configuration: ReviewConfiguration = ReviewConfiguration(),
+class ReviewFragment private constructor(
+    private val giniHealth: GiniHealth? = null,
+    private val configuration: ReviewConfiguration? = null,
     var listener: ReviewFragmentListener? = null,
-    private val paymentProviderApp: PaymentProviderApp,
-    private val viewModelFactory: ViewModelProvider.Factory = ReviewViewModel.Factory(giniHealth, paymentProviderApp),
+    private val paymentProviderApp: PaymentProviderApp? = null,
+    private val viewModelFactory: ViewModelProvider.Factory? = null,
 ) : Fragment() {
 
-    private val viewModel: ReviewViewModel by viewModels { viewModelFactory }
+    constructor() : this(null)
+
+    private val viewModel: ReviewViewModel by viewModels { viewModelFactory ?: object : ViewModelProvider.Factory {} }
     private var binding: GhsFragmentReviewBinding by autoCleared()
     private var documentPageAdapter: DocumentPageAdapter by autoCleared()
     private var isKeyboardShown = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         super.onCreateView(inflater, container, savedInstanceState)
-        documentPageAdapter = DocumentPageAdapter(giniHealth)
+        documentPageAdapter = DocumentPageAdapter(viewModel.giniHealth)
         binding = GhsFragmentReviewBinding.inflate(inflater).apply {
             configureViews()
             configureOrientation()
@@ -145,7 +146,7 @@ class ReviewFragment(
             setActionListeners()
             setKeyboardAnimation()
             removePagerConstraint()
-            showSelectedPaymentProviderApp(paymentProviderApp)
+            showSelectedPaymentProviderApp()
         }
 
         // Set info bar bottom margin programmatically to reuse radius dimension with negative sign
@@ -187,15 +188,15 @@ class ReviewFragment(
         }
     }
 
-    private fun GhsFragmentReviewBinding.showSelectedPaymentProviderApp(paymentProviderApp: PaymentProviderApp) {
+    private fun GhsFragmentReviewBinding.showSelectedPaymentProviderApp() {
         payment.setCompoundDrawablesWithIntrinsicBounds(
-            paymentProviderApp.icon,
+            viewModel.paymentProviderApp.icon,
             null,
             null,
             null
         )
-        payment.setBackgroundTint(paymentProviderApp.colors.backgroundColor, 255)
-        payment.setTextColor(paymentProviderApp.colors.textColor)
+        payment.setBackgroundTint(viewModel.paymentProviderApp.colors.backgroundColor, 255)
+        payment.setTextColor(viewModel.paymentProviderApp.colors.textColor)
     }
 
     private fun GhsFragmentReviewBinding.handleDocumentResult(documentResult: ResultWrapper<Document>) {
@@ -222,7 +223,7 @@ class ReviewFragment(
     }
 
     private fun GhsFragmentReviewBinding.configureViews() {
-        close.isGone = !configuration.showCloseButton
+        close.isGone = !viewModel.configuration.showCloseButton
     }
 
     private fun GhsFragmentReviewBinding.configureOrientation() {
@@ -332,7 +333,7 @@ class ReviewFragment(
     }
 
     private fun GhsFragmentReviewBinding.handleError(text: String, onRetry: () -> Unit) {
-        if (configuration.handleErrorsInternally) {
+        if (viewModel.configuration.handleErrorsInternally) {
             showSnackbar(text, onRetry)
         }
     }
@@ -490,5 +491,15 @@ class ReviewFragment(
                 }
             }
         }
+    }
+
+    companion object {
+        fun newInstance(
+            giniHealth: GiniHealth,
+            configuration: ReviewConfiguration = ReviewConfiguration(),
+            listener: ReviewFragmentListener? = null,
+            paymentProviderApp: PaymentProviderApp,
+            viewModelFactory: ViewModelProvider.Factory = ReviewViewModel.Factory(giniHealth, paymentProviderApp, configuration)
+        ): ReviewFragment = ReviewFragment(giniHealth, configuration, listener, paymentProviderApp, viewModelFactory)
     }
 }

@@ -26,7 +26,7 @@ import net.gini.android.health.sdk.util.adjustToLocalDecimalSeparation
 import net.gini.android.health.sdk.util.toBackendFormat
 import net.gini.android.health.sdk.util.withPrev
 
-internal class ReviewViewModel(val giniHealth: GiniHealth, val paymentProviderApp: PaymentProviderApp) : ViewModel() {
+internal class ReviewViewModel(val giniHealth: GiniHealth, val paymentProviderApp: PaymentProviderApp, val configuration: ReviewConfiguration) : ViewModel() {
 
     internal var userPreferences: UserPreferences? = null
 
@@ -202,11 +202,11 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val paymentProviderAp
         }
     }
 
-    class Factory(private val giniHealth: GiniHealth, private val paymentProviderApp: PaymentProviderApp) :
+    class Factory(private val giniHealth: GiniHealth, private val paymentProviderApp: PaymentProviderApp, private val configuration: ReviewConfiguration) :
         ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return ReviewViewModel(giniHealth, paymentProviderApp) as T
+            return ReviewViewModel(giniHealth, paymentProviderApp, configuration) as T
         }
     }
 

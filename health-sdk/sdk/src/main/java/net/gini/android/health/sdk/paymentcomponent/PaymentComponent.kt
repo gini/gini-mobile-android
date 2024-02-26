@@ -191,7 +191,7 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
             is SelectedPaymentProviderAppState.AppSelected -> {
                 LOG.debug("Creating ReviewFragment with selected payment provider app: {}", selectedPaymentProviderAppState.paymentProviderApp.name)
 
-                return ReviewFragment(
+                return ReviewFragment.newInstance(
                     giniHealth,
                     configuration = configuration,
                     paymentProviderApp = selectedPaymentProviderAppState.paymentProviderApp
