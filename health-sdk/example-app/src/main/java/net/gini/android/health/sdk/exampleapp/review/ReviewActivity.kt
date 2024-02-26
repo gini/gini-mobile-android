@@ -27,6 +27,7 @@ import net.gini.android.health.sdk.exampleapp.databinding.ActivityReviewBinding
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.health.sdk.paymentcomponent.PaymentProviderAppsState
 import net.gini.android.health.sdk.review.ReviewConfiguration
+import net.gini.android.health.sdk.review.ReviewFragment
 import net.gini.android.health.sdk.review.ReviewFragmentListener
 import net.gini.android.health.sdk.review.model.ResultWrapper
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -126,7 +127,7 @@ class ReviewActivity : AppCompatActivity() {
                         reviewFragment.listener = reviewFragmentListener
 
                         supportFragmentManager.commit {
-                            replace(R.id.review_fragment, reviewFragment)
+                            replace(R.id.review_fragment, reviewFragment, REVIEW_FRAGMENT_TAG)
                         }
                     } catch (e: Exception) {
                         AlertDialog.Builder(this@ReviewActivity)
@@ -195,6 +196,11 @@ class ReviewActivity : AppCompatActivity() {
         }
 
         binding.close.setOnClickListener { finish() }
+
+        // Reattach the listener to the ReviewFragment if it is being shown (in case of configuration changes)
+        supportFragmentManager.findFragmentByTag(REVIEW_FRAGMENT_TAG)?.let {
+            (it as? ReviewFragment)?.listener = reviewFragmentListener
+        }
     }
 
     companion object {
@@ -210,3 +216,5 @@ class ReviewActivity : AppCompatActivity() {
             get() = getParcelableArrayListExtra<Uri>(EXTRA_URIS)?.toList() ?: emptyList()
     }
 }
+
+private const val REVIEW_FRAGMENT_TAG = "payment_review_fragment"

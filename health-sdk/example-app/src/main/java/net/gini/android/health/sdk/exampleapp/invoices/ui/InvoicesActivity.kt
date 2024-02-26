@@ -28,14 +28,22 @@ import net.gini.android.health.sdk.exampleapp.invoices.ui.model.InvoiceItem
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponentView
 import net.gini.android.health.sdk.paymentcomponent.PaymentProviderAppsState.Error
+import net.gini.android.health.sdk.review.ReviewFragment
 import net.gini.android.health.sdk.review.ReviewFragmentListener
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import net.gini.android.health.sdk.paymentcomponent.PaymentProviderAppsState.Loading as LoadingBankApp
 
-
 class InvoicesActivity : AppCompatActivity() {
 
     private val viewModel: InvoicesViewModel by viewModel()
+
+    private val reviewFragmentListener = object : ReviewFragmentListener {
+        override fun onCloseReview() {
+            supportFragmentManager.popBackStack()
+        }
+
+        override fun onNextClicked(paymentProviderName: String) {}
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -109,16 +117,10 @@ class InvoicesActivity : AppCompatActivity() {
 
                                 val paymentReviewFragment = paymentReviewFragmentState.fragment
 
-                                paymentReviewFragment.listener = object : ReviewFragmentListener {
-                                    override fun onCloseReview() {
-                                        supportFragmentManager.popBackStack()
-                                    }
-
-                                    override fun onNextClicked(paymentProviderName: String) {}
-                                }
+                                paymentReviewFragment.listener = reviewFragmentListener
 
                                 supportFragmentManager.beginTransaction()
-                                    .replace(R.id.payment_review_fragment_container, paymentReviewFragment)
+                                    .replace(R.id.payment_review_fragment_container, paymentReviewFragment, REVIEW_FRAGMENT_TAG)
                                     .addToBackStack(null)
                                     .commit()
                             }
@@ -151,7 +153,11 @@ class InvoicesActivity : AppCompatActivity() {
 
                 viewModel.getPaymentReviewFragment(paymentComponentViewIdentifier)
             }
+        }
 
+        // Reattach the listener to the ReviewFragment if it is being shown (in case of configuration changes)
+        supportFragmentManager.findFragmentByTag(REVIEW_FRAGMENT_TAG)?.let {
+            (it as? ReviewFragment)?.listener = reviewFragmentListener
         }
     }
 
@@ -224,3 +230,5 @@ class InvoicesAdapter(
 
     override fun getItemCount() = dataSet.size
 }
+
+private const val REVIEW_FRAGMENT_TAG = "payment_review_fragment"
