@@ -35,7 +35,7 @@ class ReviewActivity : AppCompatActivity() {
 
     private val viewModel: ReviewViewModel by viewModel()
 
-    private val reviewFragmentListener = object: ReviewFragmentListener {
+    private val reviewFragmentListener = object : ReviewFragmentListener {
         override fun onCloseReview() {
             Log.i("review_events", "on close clicked")
             finish()
@@ -49,14 +49,17 @@ class ReviewActivity : AppCompatActivity() {
                         GiniHealth.PaymentState.Loading -> {
                             Log.i("open_bank_state", "opening bank app")
                         }
+
                         is GiniHealth.PaymentState.Success -> {
                             Log.i("open_bank_state", "launching bank app: ${paymentState.paymentRequest.bankApp.name}")
                             cancel()
                         }
+
                         is GiniHealth.PaymentState.Error -> {
                             Log.e("open_bank_state", "failed to open bank app: ${paymentState.throwable}")
                             cancel()
                         }
+
                         GiniHealth.PaymentState.NoAction -> {}
                     }
                 }
@@ -99,8 +102,8 @@ class ReviewActivity : AppCompatActivity() {
         }
 
         // Set a listener on the PaymentComponent to receive events from the PaymentComponentView
-        viewModel.paymentComponent.listener = object: PaymentComponent.Listener {
-            override fun onMoreInformationClicked() { }
+        viewModel.paymentComponent.listener = object : PaymentComponent.Listener {
+            override fun onMoreInformationClicked() {}
 
             override fun onBankPickerClicked() {
                 // Show the BankSelectionBottomSheet to allow the user to select a bank app
@@ -147,7 +150,7 @@ class ReviewActivity : AppCompatActivity() {
                 AlertDialog.Builder(this@ReviewActivity)
                     .setTitle(R.string.document_not_payable_title)
                     .setMessage(R.string.document_not_payable_message)
-                    .setPositiveButton(android.R.string.ok, object: DialogInterface.OnClickListener {
+                    .setPositiveButton(android.R.string.ok, object : DialogInterface.OnClickListener {
                         override fun onClick(dialog: DialogInterface, which: Int) {
                             finish()
                         }
@@ -166,7 +169,7 @@ class ReviewActivity : AppCompatActivity() {
 
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.paymentComponent.paymentProviderAppsFlow.collect { paymentProviderAppsState ->
-                    when(paymentProviderAppsState) {
+                    when (paymentProviderAppsState) {
                         is PaymentProviderAppsState.Error -> {
                             binding.progress.visibility = View.INVISIBLE
 
@@ -176,9 +179,11 @@ class ReviewActivity : AppCompatActivity() {
                                 .setPositiveButton(android.R.string.ok, null)
                                 .show()
                         }
+
                         PaymentProviderAppsState.Loading -> {
                             binding.progress.visibility = View.VISIBLE
                         }
+
                         is PaymentProviderAppsState.Success -> {
                             binding.progress.visibility = View.INVISIBLE
                         }
@@ -192,9 +197,12 @@ class ReviewActivity : AppCompatActivity() {
 
     companion object {
         private const val EXTRA_URIS = "EXTRA_URIS"
-        fun getStartIntent(context: Context, pages: List<Uri> = emptyList()): Intent = Intent(context, ReviewActivity::class.java).apply {
-            putParcelableArrayListExtra(EXTRA_URIS, if (pages is ArrayList<Uri>) pages else ArrayList<Uri>().apply { addAll(pages) })
-        }
+        fun getStartIntent(context: Context, pages: List<Uri> = emptyList()): Intent =
+            Intent(context, ReviewActivity::class.java).apply {
+                putParcelableArrayListExtra(
+                    EXTRA_URIS,
+                    if (pages is ArrayList<Uri>) pages else ArrayList<Uri>().apply { addAll(pages) })
+            }
 
         private val Intent.pageUris: List<Uri>
             get() = getParcelableArrayListExtra<Uri>(EXTRA_URIS)?.toList() ?: emptyList()
