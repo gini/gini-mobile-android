@@ -154,22 +154,13 @@
                 android:hint="@string/ghs_purpose_hint" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <net.gini.android.health.sdk.review.BankButton
-            android:id="@+id/bank"
-            style="@style/GiniHealth.BankButtonStyle"
-            android:text="@string/ghs_bank_placeholder"
-            app:layout_constraintEnd_toStartOf="@id/payment"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/payment"
-            app:layout_constraintBottom_toBottomOf="@id/payment"/>
-
         <Button
             android:id="@+id/payment"
             style="@style/GiniHealth.PaymentButtonStyle"
             android:enabled="false"
             android:text="@string/ghs_pay_button"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/bank"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/purpose_layout" />
 
         <ProgressBar
