@@ -1,6 +1,5 @@
 package net.gini.android.health.sdk.review
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -12,15 +11,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import net.gini.android.core.api.Resource
 import net.gini.android.core.api.models.Document
 import net.gini.android.health.api.models.PaymentRequestInput
 import net.gini.android.health.sdk.GiniHealth
-import net.gini.android.health.sdk.bankselection.BankSelectionViewModel
-import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
-import net.gini.android.health.sdk.preferences.UserPreference.PreferredBankApp
 import net.gini.android.health.sdk.preferences.UserPreferences
 import net.gini.android.health.sdk.review.model.PaymentDetails
 import net.gini.android.health.sdk.review.model.PaymentRequest
@@ -83,7 +78,8 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val paymentProviderAp
                         .toMutableList()
 
                     // Check payment details for emptiness
-                    val newEmptyValidationMessages = paymentDetails.validate().filterIsInstance<ValidationMessage.Empty>()
+                    val newEmptyValidationMessages =
+                        paymentDetails.validate().filterIsInstance<ValidationMessage.Empty>()
 
                     // Clear IBAN error, if IBAN changed
                     if (prevPaymentDetails != null && prevPaymentDetails.iban != paymentDetails.iban) {
@@ -132,7 +128,7 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val paymentProviderAp
     }
 
     private suspend fun getPaymentRequest(): PaymentRequest {
-        return when(val createPaymentRequestResource = giniHealth.giniHealthAPI.documentManager.createPaymentRequest(
+        return when (val createPaymentRequestResource = giniHealth.giniHealthAPI.documentManager.createPaymentRequest(
             PaymentRequestInput(
                 paymentProvider = paymentProviderApp.paymentProvider.id,
                 recipient = paymentDetails.value.recipient,
@@ -160,11 +156,13 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val paymentProviderAp
                 giniHealth.setOpenBankState(GiniHealth.PaymentState.Loading)
                 // TODO: first get the payment request and handle error before proceeding
                 sendFeedback()
-                giniHealth.setOpenBankState(try {
-                    GiniHealth.PaymentState.Success(getPaymentRequest())
-                } catch (throwable: Throwable) {
-                    GiniHealth.PaymentState.Error(throwable)
-                })
+                giniHealth.setOpenBankState(
+                    try {
+                        GiniHealth.PaymentState.Success(getPaymentRequest())
+                    } catch (throwable: Throwable) {
+                        GiniHealth.PaymentState.Error(throwable)
+                    }
+                )
             }
         }
     }
@@ -188,6 +186,7 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val paymentProviderAp
                             extractionsContainer.compoundExtractions.withFeedback(paymentDetails.value)
                         )
                     }
+
                     is ResultWrapper.Error -> {}
                     is ResultWrapper.Loading -> {}
                 }
@@ -203,7 +202,8 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val paymentProviderAp
         }
     }
 
-    class Factory(private val giniHealth: GiniHealth, private val paymentProviderApp: PaymentProviderApp) : ViewModelProvider.Factory {
+    class Factory(private val giniHealth: GiniHealth, private val paymentProviderApp: PaymentProviderApp) :
+        ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return ReviewViewModel(giniHealth, paymentProviderApp) as T

@@ -8,20 +8,34 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
-import androidx.core.view.*
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsAnimationCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.doOnLayout
+import androidx.core.view.isGone
+import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.transition.*
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.transition.ChangeBounds
+import androidx.transition.Transition
+import androidx.transition.TransitionListenerAdapter
+import androidx.transition.TransitionManager
+import androidx.transition.TransitionSet
 import com.google.android.material.math.MathUtils.lerp
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.android.material.textfield.TextInputLayout
 import dev.chrisbanes.insetter.applyInsetter
 import dev.chrisbanes.insetter.windowInsetTypesOf
+import kotlinx.coroutines.launch
 import net.gini.android.core.api.models.Document
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.R
@@ -31,7 +45,16 @@ import net.gini.android.health.sdk.preferences.UserPreferences
 import net.gini.android.health.sdk.review.model.PaymentDetails
 import net.gini.android.health.sdk.review.model.ResultWrapper
 import net.gini.android.health.sdk.review.pager.DocumentPageAdapter
-import net.gini.android.health.sdk.util.*
+import net.gini.android.health.sdk.util.amountWatcher
+import net.gini.android.health.sdk.util.autoCleared
+import net.gini.android.health.sdk.util.clearErrorMessage
+import net.gini.android.health.sdk.util.hideErrorMessage
+import net.gini.android.health.sdk.util.hideKeyboard
+import net.gini.android.health.sdk.util.setBackgroundTint
+import net.gini.android.health.sdk.util.setErrorMessage
+import net.gini.android.health.sdk.util.setTextColorTint
+import net.gini.android.health.sdk.util.setTextIfDifferent
+import net.gini.android.health.sdk.util.showErrorMessage
 
 
 /**
@@ -176,6 +199,7 @@ class ReviewFragment(
                 })
                 removePagerConstraint()
             }
+
             is ResultWrapper.Error -> handleError(getString(R.string.ghs_error_document)) { viewModel.retryDocumentReview() }
             else -> { // Loading state handled by payment details
             }
@@ -231,16 +255,19 @@ class ReviewFragment(
             validationMessage?.let { message ->
                 getTextInputLayout(field).apply {
                     if (error.isNullOrEmpty()) {
-                        setErrorMessage(when (message) {
-                            is ValidationMessage.Empty -> when(field) {
-                                PaymentField.Recipient -> R.string.ghs_error_input_recipient_empty
-                                PaymentField.Iban -> R.string.ghs_error_input_iban_empty
-                                PaymentField.Amount -> R.string.ghs_error_input_amount_empty
-                                PaymentField.Purpose -> R.string.ghs_error_input_purpose_empty
+                        setErrorMessage(
+                            when (message) {
+                                is ValidationMessage.Empty -> when (field) {
+                                    PaymentField.Recipient -> R.string.ghs_error_input_recipient_empty
+                                    PaymentField.Iban -> R.string.ghs_error_input_iban_empty
+                                    PaymentField.Amount -> R.string.ghs_error_input_amount_empty
+                                    PaymentField.Purpose -> R.string.ghs_error_input_purpose_empty
+                                }
+
+                                ValidationMessage.InvalidIban -> R.string.ghs_error_input_invalid_iban
+                                ValidationMessage.AmountFormat -> R.string.ghs_error_input_amount_format
                             }
-                            ValidationMessage.InvalidIban -> R.string.ghs_error_input_invalid_iban
-                            ValidationMessage.AmountFormat -> R.string.ghs_error_input_amount_format
-                        })
+                        )
                         if (editText?.isFocused == true) {
                             hideErrorMessage()
                         }
@@ -349,58 +376,63 @@ class ReviewFragment(
     }
 
     private fun GhsFragmentReviewBinding.setKeyboardAnimation() {
-        ViewCompat.setWindowInsetsAnimationCallback(paymentDetails, object : WindowInsetsAnimationCompat.Callback(DISPATCH_MODE_STOP) {
-            var startBottom = 0
-            var endBottom = 0
+        ViewCompat.setWindowInsetsAnimationCallback(
+            paymentDetails,
+            object : WindowInsetsAnimationCompat.Callback(DISPATCH_MODE_STOP) {
+                var startBottom = 0
+                var endBottom = 0
 
-            override fun onPrepare(animation: WindowInsetsAnimationCompat) {
-                startBottom = paymentDetails.paddingBottom
-            }
-
-            override fun onStart(
-                animation: WindowInsetsAnimationCompat,
-                bounds: WindowInsetsAnimationCompat.BoundsCompat
-            ): WindowInsetsAnimationCompat.BoundsCompat {
-                if (Build.VERSION.SDK_INT >= 30) {
-                    endBottom = paymentDetails.paddingBottom
-                    paymentDetails.translationY = (endBottom - startBottom).toFloat()
-                    paymentDetailsInfoBar.translationY = paymentDetails.translationY
+                override fun onPrepare(animation: WindowInsetsAnimationCompat) {
+                    startBottom = paymentDetails.paddingBottom
                 }
-                if (startBottom < endBottom) {
-                    indicator.isVisible = false
-                }
-                return bounds
-            }
 
-            override fun onProgress(insets: WindowInsetsCompat, runningAnimations: MutableList<WindowInsetsAnimationCompat>): WindowInsetsCompat {
-                if (Build.VERSION.SDK_INT >= 30) {
-                    runningAnimations.find { it.typeMask == windowInsetTypesOf(ime = true) }?.let { animation ->
-                        paymentDetails.translationY =
-                            lerp((endBottom - startBottom).toFloat(), 0f, animation.interpolatedFraction)
+                override fun onStart(
+                    animation: WindowInsetsAnimationCompat,
+                    bounds: WindowInsetsAnimationCompat.BoundsCompat
+                ): WindowInsetsAnimationCompat.BoundsCompat {
+                    if (Build.VERSION.SDK_INT >= 30) {
+                        endBottom = paymentDetails.paddingBottom
+                        paymentDetails.translationY = (endBottom - startBottom).toFloat()
                         paymentDetailsInfoBar.translationY = paymentDetails.translationY
                     }
-                }
-                return insets
-            }
-
-            override fun onEnd(animation: WindowInsetsAnimationCompat) {
-                super.onEnd(animation)
-                if (Build.VERSION.SDK_INT >= 30) {
-                    paymentDetails.translationY = 0f
-                    paymentDetailsInfoBar.translationY = paymentDetails.translationY
-                }
-                // Was it a closing animation?
-                if (startBottom > endBottom) {
-                    if (pager.isUserInputEnabled) {
-                        indicator.isVisible = true
+                    if (startBottom < endBottom) {
+                        indicator.isVisible = false
                     }
-                    binding.clearFocus()
-                    isKeyboardShown = false
-                } else {
-                    isKeyboardShown = true
+                    return bounds
                 }
-            }
-        })
+
+                override fun onProgress(
+                    insets: WindowInsetsCompat,
+                    runningAnimations: MutableList<WindowInsetsAnimationCompat>
+                ): WindowInsetsCompat {
+                    if (Build.VERSION.SDK_INT >= 30) {
+                        runningAnimations.find { it.typeMask == windowInsetTypesOf(ime = true) }?.let { animation ->
+                            paymentDetails.translationY =
+                                lerp((endBottom - startBottom).toFloat(), 0f, animation.interpolatedFraction)
+                            paymentDetailsInfoBar.translationY = paymentDetails.translationY
+                        }
+                    }
+                    return insets
+                }
+
+                override fun onEnd(animation: WindowInsetsAnimationCompat) {
+                    super.onEnd(animation)
+                    if (Build.VERSION.SDK_INT >= 30) {
+                        paymentDetails.translationY = 0f
+                        paymentDetailsInfoBar.translationY = paymentDetails.translationY
+                    }
+                    // Was it a closing animation?
+                    if (startBottom > endBottom) {
+                        if (pager.isUserInputEnabled) {
+                            indicator.isVisible = true
+                        }
+                        binding.clearFocus()
+                        isKeyboardShown = false
+                    } else {
+                        isKeyboardShown = true
+                    }
+                }
+            })
     }
 
     private fun GhsFragmentReviewBinding.clearFocus() {
