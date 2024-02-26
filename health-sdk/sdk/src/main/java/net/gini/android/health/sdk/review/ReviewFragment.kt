@@ -154,27 +154,31 @@ class ReviewFragment(
     }
 
     private fun GhsFragmentReviewBinding.setStateListeners() {
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            viewModel.giniHealth.documentFlow.collect { handleDocumentResult(it) }
-        }
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            viewModel.giniHealth.paymentFlow.collect { handlePaymentResult(it) }
-        }
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            viewModel.paymentDetails.collect { setPaymentDetails(it) }
-        }
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            viewModel.paymentValidation.collect { handleValidationResult(it) }
-        }
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            viewModel.giniHealth.openBankState.collect { handlePaymentState(it) }
-        }
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            viewModel.isPaymentButtonEnabled.collect { payment.isEnabled = it }
-        }
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            viewModel.isInfoBarVisible.collect { visible ->
-                if (visible) showInfoBar() else hideInfoBarAnimated()
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.giniHealth.documentFlow.collect { handleDocumentResult(it) }
+                }
+                launch {
+                    viewModel.giniHealth.paymentFlow.collect { handlePaymentResult(it) }
+                }
+                launch {
+                    viewModel.paymentDetails.collect { setPaymentDetails(it) }
+                }
+                launch {
+                    viewModel.paymentValidation.collect { handleValidationResult(it) }
+                }
+                launch {
+                    viewModel.giniHealth.openBankState.collect { handlePaymentState(it) }
+                }
+                launch {
+                    viewModel.isPaymentButtonEnabled.collect { payment.isEnabled = it }
+                }
+                launch {
+                    viewModel.isInfoBarVisible.collect { visible ->
+                        if (visible) showInfoBar() else hideInfoBarAnimated()
+                    }
+                }
             }
         }
     }
