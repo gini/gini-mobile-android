@@ -28,4 +28,5 @@
     <string name="ghs_payment_powered_by_label">Powered by</string>
     <string name="ghs_payment_provider_apps_list_description">Sie können die Rechnung nur bezahlen, wenn Sie ein Konto bei einer der unten aufgeführten Banken haben.</string>
 
+    <string name="ghs_more_information">More Information</string>
 </resources>
