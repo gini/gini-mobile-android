@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
@@ -25,6 +26,7 @@ import net.gini.android.health.sdk.exampleapp.databinding.ActivityInvoicesBindin
 import net.gini.android.health.sdk.exampleapp.invoices.data.UploadHardcodedInvoicesState.Failure
 import net.gini.android.health.sdk.exampleapp.invoices.data.UploadHardcodedInvoicesState.Loading
 import net.gini.android.health.sdk.exampleapp.invoices.ui.model.InvoiceItem
+import net.gini.android.health.sdk.moreinformation.MoreInformationFragment
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponentView
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.health.sdk.paymentcomponent.PaymentProviderAppsState.Error
@@ -101,7 +103,12 @@ class InvoicesActivity : AppCompatActivity() {
 
         viewModel.paymentComponent.listener = object: PaymentComponent.Listener {
             override fun onMoreInformationClicked() {
-                Log.d(InvoicesActivity::class.simpleName, "More information clicked")
+                MoreInformationFragment.newInstance(viewModel.paymentComponent).apply {
+                    supportFragmentManager.beginTransaction()
+                        .add(R.id.fragment_container,this, this::class.java.simpleName)
+                        .addToBackStack(this::class.java.simpleName)
+                        .commitAllowingStateLoss()
+                }
             }
 
             override fun onBankPickerClicked() {
@@ -115,10 +122,18 @@ class InvoicesActivity : AppCompatActivity() {
             }
 
         }
+        supportFragmentManager.addOnBackStackChangedListener {
+            if (supportFragmentManager.backStackEntryCount == 0) {
+                title = getString(R.string.title_activity_invoices)
+            }
+            invalidateOptionsMenu()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.invoices_menu, menu)
+        if (supportFragmentManager.backStackEntryCount == 0) {
+            menuInflater.inflate(R.menu.invoices_menu, menu)
+        }
         return true
     }
 
