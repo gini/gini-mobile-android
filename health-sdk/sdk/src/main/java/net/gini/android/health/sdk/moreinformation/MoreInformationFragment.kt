@@ -1,6 +1,5 @@
 package net.gini.android.health.sdk.moreinformation
 
-import android.database.DataSetObserver
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.SpannableString
@@ -9,14 +8,11 @@ import android.text.TextPaint
 import android.text.method.LinkMovementMethod
 import android.text.style.TextAppearanceSpan
 import android.text.style.URLSpan
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.OnLayoutChangeListener
 import android.view.ViewGroup
 import android.widget.ExpandableListAdapter
 import android.widget.ExpandableListView
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.text.buildSpannedString
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -82,8 +78,8 @@ class MoreInformationFragment private constructor(val paymentComponent: PaymentC
         binding.ghsPaymentProvidersIconsList.adapter = PaymentProvidersIconsAdapter(listOf())
         binding.ghsFaqList.apply {
             setAdapter(FaqExpandableListAdapter(faqList))
-            setOnGroupClickListener { expandableListView, view, i, l ->
-                setListViewHeight(listView = expandableListView, group = i)
+            setOnGroupClickListener { expandableListView, _, group, _ ->
+                setListViewHeight(listView = expandableListView, group = group)
                 return@setOnGroupClickListener false
             }
         }
@@ -91,6 +87,7 @@ class MoreInformationFragment private constructor(val paymentComponent: PaymentC
         binding.ghsFaqList.postDelayed({
             setListViewHeight(listView = binding.ghsFaqList, group = -1)
         }, 100)
+
         viewLifecycleOwner.lifecycleScope.launch {
             paymentComponent?.paymentProviderAppsFlow?.collect { paymentProviderAppsState ->
                 when (paymentProviderAppsState) {
