@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/ghs_faq_label"
-    style="@style/GiniHealthTheme.Typography.Body2"
+    style="@style/GiniHealthTheme.Typography.Body1"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:textAlignment="viewEnd"/>
+    android:paddingStart="@dimen/ghs_large_25"
+    android:paddingVertical="@dimen/ghs_large_25"/>

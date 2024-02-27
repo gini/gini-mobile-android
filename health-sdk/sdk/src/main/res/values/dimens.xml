@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <dimen name="ghs_small_1">1dp</dimen>
     <dimen name="ghs_small">4dp</dimen>
     <dimen name="ghs_medium">8dp</dimen>
     <dimen name="ghs_medium_12">12dp</dimen>
     <dimen name="ghs_large">16dp</dimen>
     <dimen name="ghs_large_20">20dp</dimen>
     <dimen name="ghs_large_24">24dp</dimen>
+    <dimen name="ghs_large_25">25dp</dimen>
     <dimen name="ghs_large_32">32dp</dimen>
     <dimen name="ghs_large_48">48dp</dimen>
     <dimen name="ghs_large_56">56dp</dimen>

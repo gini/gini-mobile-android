@@ -366,8 +366,14 @@
     <style name="GiniHealth.PaymentDetails.InfoBar.TextView" parent="Root.GiniHealthTheme.PaymentDetails.InfoBar.TextView" />
 
     <style name="Root.GiniHealthTheme.PaymentDetails.InfoBar.TextAppearance" parent="TextAppearance.MaterialComponents.Body2">
-        <item name="android:textColor">@color/ghs_payment_details_info_bar_text_color</item>
+        <item name="android:textColor">@color/ghs_payment_button_background_enabled</item>
     </style>
     <style name="GiniHealth.PaymentDetails.InfoBar.TextAppearance" parent="Root.GiniHealthTheme.PaymentDetails.InfoBar.TextAppearance" />
+
+    <style name="Root.GiniHealthTheme.Link.TextAppearance" parent="TextAppearance.MaterialComponents.Body2">
+        <item name="android:textColor">@color/ghs_accent_01</item>
+        <item name="android:textFontWeight">700</item>
+    </style>
+    <style name="GiniHealth.Link.TextAppearance" parent="Root.GiniHealthTheme.Link.TextAppearance"/>
 
 </resources>
