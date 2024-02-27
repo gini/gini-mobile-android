@@ -99,6 +99,7 @@
                 android:nestedScrollingEnabled="false"
                 android:divider="@color/ghs_light_04"
                 android:dividerHeight="@dimen/ghs_small_1"
+                android:groupIndicator="@drawable/ghs_expandable_list_icon"
                 tools:listitem="@layout/ghs_item_faq_label"/>
         </LinearLayout>
     </ScrollView>
