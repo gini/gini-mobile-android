@@ -113,7 +113,7 @@ class MainActivity : AppCompatActivity() {
                     showMissingRequirements(requirements)
                 }
             } catch (e: Exception) {
-                Log.e("RequirementsCheck", "Failed to check requirements: $e")
+                LOG.error("Failed to check requirements: {}", e)
                 Toast.makeText(
                     this@MainActivity,
                     "Failed to check requirements. See Logcat for details.",
@@ -168,5 +168,9 @@ class MainActivity : AppCompatActivity() {
         logcatAppender.start()
         val root = LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME) as Logger
         root.addAppender(logcatAppender)
+    }
+
+    companion object {
+        private val LOG = LoggerFactory.getLogger(MainActivity::class.java)
     }
 }

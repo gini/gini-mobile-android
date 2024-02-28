@@ -12,6 +12,7 @@ import net.gini.android.health.sdk.exampleapp.invoices.ui.model.InvoiceItem
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.health.sdk.review.ReviewConfiguration
 import net.gini.android.health.sdk.review.ReviewFragment
+import org.slf4j.LoggerFactory
 import java.lang.IllegalStateException
 
 class InvoicesViewModel(
@@ -50,10 +51,7 @@ class InvoicesViewModel(
 
     fun getPaymentReviewFragment(paymentComponentViewIdentifier: String) {
         viewModelScope.launch {
-            Log.d(
-                InvoicesViewModel::class.simpleName,
-                "Getting payment review fragment for id: $paymentComponentViewIdentifier"
-            )
+            LOG.debug("Getting payment review fragment for id: {}", paymentComponentViewIdentifier)
 
             _paymentReviewFragmentFlow.value = PaymentReviewFragmentState.Loading
 
@@ -68,15 +66,20 @@ class InvoicesViewModel(
                     )
                     _paymentReviewFragmentFlow.value = PaymentReviewFragmentState.Success(paymentReviewFragment)
                 } catch (e: Exception) {
-                    Log.e(InvoicesViewModel::class.simpleName, "Error getting payment review fragment", e)
+                    LOG.error("Error getting payment review fragment", e)
                     _paymentReviewFragmentFlow.value = PaymentReviewFragmentState.Error(e)
                 }
             } else {
-                Log.e(InvoicesViewModel::class.simpleName, "Document with id $paymentComponentViewIdentifier not found")
+                LOG.error("Document with id {} not found", paymentComponentViewIdentifier)
                 _paymentReviewFragmentFlow.value = PaymentReviewFragmentState.Error(IllegalStateException("Document with id $paymentComponentViewIdentifier not found"))
             }
             _paymentReviewFragmentFlow.emit(PaymentReviewFragmentState.Idle)
         }
+    }
+
+    companion object {
+        private val LOG = LoggerFactory.getLogger(InvoicesViewModel::class.java)
+
     }
 }
 
