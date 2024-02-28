@@ -41,6 +41,7 @@ internal class FaqExpandableListAdapter(val dataSet: List<Pair<String, CharSeque
             groupView.ghsFaqAnswerLabel.movementMethod = LinkMovementMethod.getInstance()
         }
         groupView.ghsFaqAnswerLabel.text = text
+        groupView.divider2.visibility = if (p0 != dataSet.size-1) View.VISIBLE else View.GONE
         return groupView.root
     }
 

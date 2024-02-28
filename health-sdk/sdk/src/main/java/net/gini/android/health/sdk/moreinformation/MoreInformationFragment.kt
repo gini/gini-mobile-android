@@ -8,6 +8,7 @@ import android.text.TextPaint
 import android.text.method.LinkMovementMethod
 import android.text.style.TextAppearanceSpan
 import android.text.style.URLSpan
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -79,13 +80,13 @@ class MoreInformationFragment private constructor(private val paymentComponent: 
         binding.ghsFaqList.apply {
             setAdapter(FaqExpandableListAdapter(faqList))
             setOnGroupClickListener { expandableListView, _, group, _ ->
-                setListViewHeight(listView = expandableListView, group = group)
+                setListViewHeight(listView = expandableListView, group = group, isReload = false)
                 return@setOnGroupClickListener false
             }
         }
         //Set initial list view height so we can scroll full page
         binding.ghsFaqList.postDelayed({
-            setListViewHeight(listView = binding.ghsFaqList, group = -1)
+            setListViewHeight(listView = binding.ghsFaqList, group = getExpandedGroupPosition(), isReload = true)
         }, 100)
 
         viewModel.start()
@@ -102,6 +103,13 @@ class MoreInformationFragment private constructor(private val paymentComponent: 
                 }
             }
         }
+    }
+
+    private fun getExpandedGroupPosition(): Int {
+        for (i in faqList.indices) {
+            if (binding.ghsFaqList.isGroupExpanded(i)) return i
+        }
+        return -1
     }
 
     private fun updatePaymentProviderIconsAdapter(paymentProviderApps: List<PaymentProviderApp>) {
@@ -138,7 +146,8 @@ class MoreInformationFragment private constructor(private val paymentComponent: 
 
     private fun setListViewHeight(
         listView: ExpandableListView,
-        group: Int
+        group: Int,
+        isReload: Boolean
     ) {
         val listAdapter = listView.expandableListAdapter as ExpandableListAdapter
         var totalHeight = 0
@@ -151,7 +160,7 @@ class MoreInformationFragment private constructor(private val paymentComponent: 
             groupItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED)
             totalHeight += groupItem.measuredHeight
             if (group == -1) continue
-            if (listView.isGroupExpanded(i) && i != group || !listView.isGroupExpanded(i) && i == group) {
+            if ((listView.isGroupExpanded(i) && (i != group || isReload)) || !listView.isGroupExpanded(i) && i == group) {
                 for (j in 0 until listAdapter.getChildrenCount(i)) {
                     val listItem = listAdapter.getChildView(
                         i, j, false, null,

@@ -8,11 +8,11 @@
         android:id="@+id/ghs_faq_answer_label"
         style="@style/GiniHealthTheme.Typography.Body2"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/ghs_large"/>
     <com.google.android.material.divider.MaterialDivider
         android:id="@+id/divider2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/ghs_large"
         app:dividerColor="@color/ghs_dark_05"/>
 </LinearLayout>
