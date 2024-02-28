@@ -48,4 +48,5 @@ Gini is ISO 27001 certified for maximum data security and operates its own serve
     <string name="ghs_faq_answer_6">The banks that support the Gini payment function are displayed in the bank selection menu. To use it, you must have installed your bank\'s mobile banking app on the same smartphone or tablet on which you use the insurance app. If you have not installed any of the banking apps, you can download them from the Apple App Store or Google Playstore. Subsequent activation of the banking app may be necessary.</string>
     <string name="ghs_gini_link">Gini</string>
     <string name="ghs_gini_link_url">https://gini.net/en</string>
+    <string name="ghs_more_information_fragment_title">More Information</string>
 </resources>

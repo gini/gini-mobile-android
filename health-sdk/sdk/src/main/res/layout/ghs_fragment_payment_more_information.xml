@@ -11,9 +11,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:background="@color/ghs_light_01"
+            android:background="@color/ghs_dark_07"
             android:clickable="true"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
             xmlns:tools="http://schemas.android.com/tools">
 
             <androidx.recyclerview.widget.RecyclerView
@@ -86,7 +85,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/ghs_large"
-                android:layout_marginTop="@dimen/ghs_large_25"
+                android:layout_marginTop="@dimen/ghs_large_24"
                 android:text="@string/ghs_frequently_asked_questions"/>
 
             <!-- Setting RTL direction is least hacky way to set indicator on the right side   -->

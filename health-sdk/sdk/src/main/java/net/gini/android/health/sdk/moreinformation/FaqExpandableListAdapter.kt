@@ -40,7 +40,7 @@ class FaqExpandableListAdapter(val dataSet: List<Pair<String, CharSequence>>) : 
         if (text is SpannedString) {
             groupView.ghsFaqAnswerLabel.movementMethod = LinkMovementMethod.getInstance()
         }
-        groupView.ghsFaqAnswerLabel.text = getChild(p0, p1)
+        groupView.ghsFaqAnswerLabel.text = text
         return groupView.root
     }
 

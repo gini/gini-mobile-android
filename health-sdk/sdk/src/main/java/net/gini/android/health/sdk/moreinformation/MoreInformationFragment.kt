@@ -15,27 +15,30 @@ import android.widget.ExpandableListAdapter
 import android.widget.ExpandableListView
 import androidx.core.text.buildSpannedString
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.launch
 import net.gini.android.health.sdk.R
 import net.gini.android.health.sdk.databinding.GhsFragmentPaymentMoreInformationBinding
 import net.gini.android.health.sdk.databinding.GhsPaymentProviderIconHolderBinding
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
-import net.gini.android.health.sdk.paymentcomponent.PaymentProviderAppsState
 import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.health.sdk.util.autoCleared
 import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthTheme
 
-
-/**
- * Created by dani on 26/02/2024.
- */
-
 class MoreInformationFragment private constructor(val paymentComponent: PaymentComponent?) :
     Fragment() {
+    constructor() : this(paymentComponent = null)
 
     private var binding: GhsFragmentPaymentMoreInformationBinding by autoCleared()
+    private val viewModel: MoreInformationViewModel by viewModels {
+        MoreInformationViewModel.Factory(
+            paymentComponent
+        )
+    }
     private val faqList: List<Pair<String, CharSequence>> by lazy {
         listOf(
             getString(R.string.ghs_faq_1) to getString(R.string.ghs_faq_answer_1),
@@ -46,7 +49,6 @@ class MoreInformationFragment private constructor(val paymentComponent: PaymentC
             getString(R.string.ghs_faq_6) to getString(R.string.ghs_faq_answer_6)
         )
     }
-
 
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
         val inflater = super.onGetLayoutInflater(savedInstanceState)
@@ -60,9 +62,6 @@ class MoreInformationFragment private constructor(val paymentComponent: PaymentC
     ): View {
         super.onCreateView(inflater, container, savedInstanceState)
         binding = GhsFragmentPaymentMoreInformationBinding.inflate(inflater, container, false)
-        (requireActivity()).apply {
-            title = getString(R.string.ghs_more_information_underlined_part).replace(".", "")
-        }
         return binding.root
     }
 
@@ -88,14 +87,17 @@ class MoreInformationFragment private constructor(val paymentComponent: PaymentC
             setListViewHeight(listView = binding.ghsFaqList, group = -1)
         }, 100)
 
+        viewModel.start()
         viewLifecycleOwner.lifecycleScope.launch {
-            paymentComponent?.paymentProviderAppsFlow?.collect { paymentProviderAppsState ->
-                when (paymentProviderAppsState) {
-                    is PaymentProviderAppsState.Error -> {}
-                    PaymentProviderAppsState.Loading -> {}
-                    is PaymentProviderAppsState.Success -> updatePaymentProviderIconsAdapter(
-                        paymentProviderAppsState.paymentProviderApps
-                    )
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.paymentProviderAppsListFlow.collect { paymentProviderAppsListState ->
+                    when (paymentProviderAppsListState) {
+                        is MoreInformationViewModel.PaymentProviderAppsListState.Error -> {}
+                        MoreInformationViewModel.PaymentProviderAppsListState.Loading -> {}
+                        is MoreInformationViewModel.PaymentProviderAppsListState.Success -> updatePaymentProviderIconsAdapter(
+                            paymentProviderAppsListState.paymentProviderAppsList
+                        )
+                    }
                 }
             }
         }
@@ -117,7 +119,7 @@ class MoreInformationFragment private constructor(val paymentComponent: PaymentC
                 SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
             )
             setSpan(
-                TextAppearanceSpan(requireContext(), R.style.GiniHealth_Link_TextAppearance),
+                TextAppearanceSpan(requireContext(), R.style.GiniHealthTheme_Typography_Link),
                 0,
                 this.length,
                 SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE

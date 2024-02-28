@@ -107,8 +107,9 @@ class InvoicesActivity : AppCompatActivity() {
                     supportFragmentManager.beginTransaction()
                         .add(R.id.fragment_container,this, this::class.java.simpleName)
                         .addToBackStack(this::class.java.simpleName)
-                        .commitAllowingStateLoss()
+                        .commit()
                 }
+                title = getString(net.gini.android.health.sdk.R.string.ghs_more_information_fragment_title)
             }
 
             override fun onBankPickerClicked() {
@@ -127,6 +128,10 @@ class InvoicesActivity : AppCompatActivity() {
                 title = getString(R.string.title_activity_invoices)
             }
             invalidateOptionsMenu()
+        }
+
+        if (supportFragmentManager.backStackEntryCount != 0 && supportFragmentManager.fragments.last() is MoreInformationFragment) {
+            title = getString(net.gini.android.health.sdk.R.string.ghs_more_information_fragment_title)
         }
     }
 

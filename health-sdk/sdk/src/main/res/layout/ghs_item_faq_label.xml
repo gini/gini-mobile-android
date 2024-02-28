@@ -4,5 +4,5 @@
     style="@style/GiniHealthTheme.Typography.Body1"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingStart="@dimen/ghs_large_25"
-    android:paddingVertical="@dimen/ghs_large_25"/>
+    android:paddingStart="@dimen/ghs_large_24"
+    android:paddingVertical="@dimen/ghs_large_24"/>
