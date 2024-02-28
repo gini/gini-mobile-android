@@ -4,5 +4,6 @@
     <color name="ghs_payment_component_caption">@color/ghs_light_04</color>
     <color name="ghs_bank_selection_bottom_sheet_caption">@color/ghs_light_03</color>
     <color name="ghs_bank_selection_bottom_sheet_title">@color/ghs_light_02</color>
+    <color name="ghs_more_information_fragment_background">@color/ghs_light_07</color>
 
 </resources>

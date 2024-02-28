@@ -29,7 +29,7 @@ import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.health.sdk.util.autoCleared
 import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthTheme
 
-class MoreInformationFragment private constructor(val paymentComponent: PaymentComponent?) :
+class MoreInformationFragment private constructor(private val paymentComponent: PaymentComponent?) :
     Fragment() {
     constructor() : this(paymentComponent = null)
 
@@ -39,6 +39,7 @@ class MoreInformationFragment private constructor(val paymentComponent: PaymentC
             paymentComponent
         )
     }
+    //TODO - include link to privacy policy when we have it
     private val faqList: List<Pair<String, CharSequence>> by lazy {
         listOf(
             getString(R.string.ghs_faq_1) to getString(R.string.ghs_faq_answer_1),

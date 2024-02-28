@@ -42,6 +42,7 @@ class InvoicesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val binding = ActivityInvoicesBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setActivityTitle()
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -109,7 +110,6 @@ class InvoicesActivity : AppCompatActivity() {
                         .addToBackStack(this::class.java.simpleName)
                         .commit()
                 }
-                title = getString(net.gini.android.health.sdk.R.string.ghs_more_information_fragment_title)
             }
 
             override fun onBankPickerClicked() {
@@ -124,13 +124,15 @@ class InvoicesActivity : AppCompatActivity() {
 
         }
         supportFragmentManager.addOnBackStackChangedListener {
-            if (supportFragmentManager.backStackEntryCount == 0) {
-                title = getString(R.string.title_activity_invoices)
-            }
+            setActivityTitle()
             invalidateOptionsMenu()
         }
+    }
 
-        if (supportFragmentManager.backStackEntryCount != 0 && supportFragmentManager.fragments.last() is MoreInformationFragment) {
+    private fun setActivityTitle() {
+        if (supportFragmentManager.backStackEntryCount == 0) {
+            title = getString(R.string.title_activity_invoices)
+        } else if (supportFragmentManager.fragments.last() is MoreInformationFragment) {
             title = getString(net.gini.android.health.sdk.R.string.ghs_more_information_fragment_title)
         }
     }

@@ -15,7 +15,7 @@ import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthTheme
  * Created by dani on 26/02/2024.
  */
 
-class FaqExpandableListAdapter(val dataSet: List<Pair<String, CharSequence>>) : BaseExpandableListAdapter() {
+internal class FaqExpandableListAdapter(val dataSet: List<Pair<String, CharSequence>>) : BaseExpandableListAdapter() {
     override fun getGroupCount(): Int = dataSet.size
     override fun getChildrenCount(listPosition: Int): Int = 1
     override fun getGroup(listPosition: Int): Any = dataSet[listPosition].first

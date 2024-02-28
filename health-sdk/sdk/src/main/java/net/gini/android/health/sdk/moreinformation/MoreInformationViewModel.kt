@@ -13,7 +13,7 @@ import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
 import org.slf4j.LoggerFactory
 
 
-internal class MoreInformationViewModel(val paymentComponent: PaymentComponent?) : ViewModel() {
+internal class MoreInformationViewModel(private val paymentComponent: PaymentComponent?) : ViewModel() {
 
     private val _paymentProviderAppsListFlow =
         MutableStateFlow<PaymentProviderAppsListState>(PaymentProviderAppsListState.Loading)
