@@ -2,14 +2,14 @@ package net.gini.android.capture.onboarding;
 
 import android.app.Activity;
 
+import androidx.annotation.NonNull;
+
 import net.gini.android.capture.GiniCaptureBasePresenter;
 import net.gini.android.capture.GiniCaptureBaseView;
 import net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomAdapter;
 import net.gini.android.capture.view.InjectedViewAdapterInstance;
 
 import java.util.List;
-
-import androidx.annotation.NonNull;
 
 /**
  * Created by Alpar Szotyori on 20.05.2019.
@@ -40,6 +40,8 @@ interface OnboardingScreenContract {
         void hideButtons();
 
         void close();
+
+        void setPagesForTracker(List<OnboardingPage> pages);
     }
 
     abstract class Presenter extends GiniCaptureBasePresenter<View> {
