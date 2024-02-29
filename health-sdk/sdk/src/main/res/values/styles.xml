@@ -145,34 +145,6 @@
 
     <!-- TODO: replace the styles below when refactoring the Payment Review screen to use widget styles, colors and typography -->
 
-    <!-- Root styles shouldn't be overridden, instead override their descendant styles -->
-    <style name="Root.GiniHealthTheme.PaymentInputLayoutStyle" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
-        <item name="boxStrokeColor">@color/ghs_input_box_stroke_color</item>
-        <item name="boxBackgroundColor">@color/ghs_input_box_background_color</item>
-        <item name="errorIconDrawable">@null</item>
-    </style>
-
-    <!-- Style for TextInputLayouts in ReviewFragment -->
-    <style name="GiniHealth.PaymentInputLayoutStyle" parent="Root.GiniHealthTheme.PaymentInputLayoutStyle" />
-
-    <style name="Root.GiniHealthTheme.PaymentInputStyle" parent="Widget.MaterialComponents.TextInputEditText.FilledBox">
-        <item name="android:paddingTop">25dp</item>
-        <item name="android:paddingBottom">10dp</item>
-        <item name="android:paddingStart">0dp</item>
-        <item name="android:paddingEnd">0dp</item>
-        <item name="android:singleLine">true</item>
-    </style>
-
-    <!-- Style for TextInputEditTexts in ReviewFragment -->
-    <style name="GiniHealth.PaymentInputStyle" parent="Root.GiniHealthTheme.PaymentInputStyle" />
-
-    <style name="Root.GiniHealthTheme.PaymentInputStyle.Amount">
-        <item name="android:gravity">end</item>
-    </style>
-
-    <!-- Style for the amount TextInputEditText in ReviewFragment -->
-    <style name="GiniHealth.PaymentInputStyle.Amount" parent="Root.GiniHealthTheme.PaymentInputStyle.Amount" />
-
     <!-- Style for the ViewPager2 that displays the pages of the document in ReviewFragment -->
     <style name="Root.GiniHealthTheme.DocumentPagerStyle" />
     <style name="GiniHealth.DocumentPagerStyle" parent="Root.GiniHealthTheme.DocumentPagerStyle"/>
@@ -351,7 +323,7 @@
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:background">@drawable/ghs_payment_details_info_bar_background</item>
-        <item name="android:paddingBottom">@dimen/ghs_payment_details_radius</item>
+        <item name="android:paddingBottom">@dimen/ghs_medium_12</item>
     </style>
     <style name="GiniHealth.PaymentDetails.InfoBar" parent="Root.GiniHealthTheme.PaymentDetails.InfoBar" />
 

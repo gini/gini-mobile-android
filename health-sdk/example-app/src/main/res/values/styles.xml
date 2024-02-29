@@ -70,11 +70,6 @@
         <item name="cornerRadius">5dp</item>
     </style>
 
-    <style name="GiniHealth.PaymentInputStyle" parent="Root.GiniHealthTheme.PaymentInputStyle">
-        <item name="android:textSize">16sp</item>
-        <item name="hintTextAppearance">@style/PaymentInput.TextAppearance.Hint</item>
-    </style>
-
     <style name="PaymentInput.TextAppearance.Hint" parent="TextAppearance.MaterialComponents.Caption">
         <item name="android:textSize">14sp</item>
     </style>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <dimen name="ghs_zero">0dp</dimen>
     <dimen name="ghs_small">4dp</dimen>
     <dimen name="ghs_medium">8dp</dimen>
     <dimen name="ghs_medium_12">12dp</dimen>
@@ -15,10 +16,6 @@
     <dimen name="ghs_large_96">96dp</dimen>
 
     <!-- TODO: replace these with the appropriate dimension categories from above-->
-    <dimen name="ghs_indicator_radius">4dp</dimen>
-    <dimen name="ghs_tab_height">16dp</dimen>
-    <dimen name="ghs_tab_width">16dp</dimen>
-    <dimen name="ghs_payment_details_radius">12dp</dimen>
     <dimen name="ghs_payment_details_padding_horizontal">16dp</dimen>
     <dimen name="ghs_payment_details_padding_vertical">16dp</dimen>
     <dimen name="ghs_input_spacing_vertical">8dp</dimen>

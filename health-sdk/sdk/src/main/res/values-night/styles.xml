@@ -45,6 +45,10 @@
         <item name="tint">@color/ghs_light_05</item>
     </style>
 
+    <style name="GiniHealthTheme.Typography.PaymentInputLayout" parent="Root.GiniHealthTheme.Typography.PaymentInputLayout">
+        <item name="boxStrokeColor">@color/ghs_light_05</item>
+        <item name="boxBackgroundColor">@color/ghs_light_06</item>
+    </style>
     <!-- endregion -->
     
 </resources>

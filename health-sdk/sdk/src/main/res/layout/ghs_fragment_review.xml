@@ -23,7 +23,7 @@
         android:id="@+id/indicator"
         style="@style/GiniHealth.PageIndicatorStyle"
         android:layout_width="0dp"
-        android:layout_height="@dimen/ghs_tab_height"
+        android:layout_height="@dimen/ghs_large"
         android:background="@color/ghs_document_background"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/payment_details"
@@ -32,7 +32,7 @@
         app:tabBackground="@drawable/ghs_tab_pager_selector"
         app:tabGravity="center"
         app:tabIndicatorHeight="0dp"
-        app:tabMaxWidth="@dimen/ghs_tab_width"
+        app:tabMaxWidth="@dimen/ghs_large"
         app:tabMode="fixed"
         tools:visibility="visible" />
 
@@ -71,7 +71,7 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/recipient_layout"
-            style="@style/GiniHealth.PaymentInputLayoutStyle"
+            style="@style/GiniHealthTheme.Typography.PaymentInputLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
@@ -81,10 +81,10 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/recipient"
-                style="@style/GiniHealth.PaymentInputStyle"
+                style="@style/GiniHealthTheme.Typography.PaymentInputEditTextStyle"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:hint="@string/ghs_recipient_hint" />
+                android:hint="@string/ghs_recipient_hint"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <androidx.constraintlayout.widget.Barrier
@@ -96,11 +96,11 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/iban_layout"
-            style="@style/GiniHealth.PaymentInputLayoutStyle"
+            style="@style/GiniHealthTheme.Typography.PaymentInputLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/ghs_input_spacing_vertical"
-            android:layout_marginEnd="@dimen/ghs_input_spacing_horizontal"
+            android:layout_marginTop="@dimen/ghs_medium"
+            android:layout_marginEnd="@dimen/ghs_medium"
             app:layout_constraintEnd_toStartOf="@id/amount_layout"
             app:layout_constraintHorizontal_weight="@dimen/ghs_input_iban_weight"
             app:layout_constraintStart_toStartOf="parent"
@@ -109,7 +109,7 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/iban"
-                style="@style/GiniHealth.PaymentInputStyle"
+                style="@style/GiniHealthTheme.Typography.PaymentInputEditTextStyle"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:hint="@string/ghs_iban_hint"
@@ -118,7 +118,7 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/amount_layout"
-            style="@style/GiniHealth.PaymentInputLayoutStyle"
+            style="@style/GiniHealthTheme.Typography.PaymentInputLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/ghs_input_spacing_vertical"
@@ -131,7 +131,7 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/amount"
-                style="@style/GiniHealth.PaymentInputStyle.Amount"
+                style="@style/GiniHealthTheme.Typography.PaymentInputEditTextStyle.Amount"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:digits="0123456789.,"
@@ -148,7 +148,7 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/purpose_layout"
-            style="@style/GiniHealth.PaymentInputLayoutStyle"
+            style="@style/GiniHealthTheme.Typography.PaymentInputLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/ghs_input_spacing_vertical"
@@ -159,7 +159,7 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/purpose"
-                style="@style/GiniHealth.PaymentInputStyle"
+                style="@style/GiniHealthTheme.Typography.PaymentInputEditTextStyle"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:hint="@string/ghs_purpose_hint" />

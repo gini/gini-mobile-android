@@ -7,7 +7,7 @@
         <shape
             android:innerRadius="0dp"
             android:shape="ring"
-            android:thickness="@dimen/ghs_indicator_radius"
+            android:thickness="@dimen/ghs_small"
             android:useLevel="false">
             <solid android:color="@color/ghs_selected_dot" />
         </shape>

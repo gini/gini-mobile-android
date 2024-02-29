@@ -32,7 +32,7 @@
 
     <style name="Root.GiniHealthTheme.Typography.Body1" parent="TextAppearance.MaterialComponents.Body1">
         <item name="android:textSize">16sp</item>
-        <item name="android:textColor">?attr/colorOnBackground</item>
+        <item name="android:textColor">@color/ghs_accent_01</item>
     </style>
 
     <style name="Root.GiniHealthTheme.Typography.Body2" parent="TextAppearance.MaterialComponents.Body2">
@@ -68,6 +68,33 @@
         <item name="android:textColor">?attr/colorOnBackground</item>
     </style>
 
+    <style name="Root.GiniHealthTheme.Typography.PaymentInputLayout" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
+        <item name="errorIconDrawable">@null</item>
+        <item name="cornerRadius">@dimen/ghs_small</item>
+        <item name="hintTextAppearance">@style/GiniHealthTheme.Typography.Caption2</item>
+        <item name="android:textAppearance">@style/GiniHealthTheme.Typography.Body1</item>
+        <item name="boxStrokeWidth">@dimen/ghs_zero</item>
+        <item name="boxStrokeWidthFocused">@dimen/ghs_zero</item>
+        <item name="boxBackgroundColor">@android:color/transparent</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/ghs_small</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/ghs_small</item>
+        <item name="boxBackgroundMode">none</item>
+        <item name="android:background">@drawable/ghs_payment_input_edit_text_background</item>
+        <item name="android:paddingTop">@dimen/ghs_medium_12</item>
+    </style>
+
+    <style name="Root.GiniHealthTheme.Typography.PaymentInputEditTextStyle" parent="Widget.MaterialComponents.TextInputEditText.FilledBox">
+        <item name="android:paddingTop">@dimen/ghs_medium</item>
+        <item name="android:paddingBottom">@dimen/ghs_medium_12</item>
+        <item name="android:paddingStart">@dimen/ghs_medium_12</item>
+        <item name="android:paddingEnd">0dp</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="Root.GiniHealthTheme.Typography.PaymentInputEditTextStyle.Amount" parent="Root.GiniHealthTheme.Typography.PaymentInputEditTextStyle">
+        <item name="android:paddingEnd">@dimen/ghs_medium_12</item>
+    </style>
+
     <style name="GiniHealthTheme.Typography.Headline1" parent="Root.GiniHealthTheme.Typography.Headline1"/>
     <style name="GiniHealthTheme.Typography.Headline2" parent="Root.GiniHealthTheme.Typography.Headline2"/>
     <style name="GiniHealthTheme.Typography.Headline3" parent="Root.GiniHealthTheme.Typography.Headline3"/>
@@ -80,5 +107,8 @@
     <style name="GiniHealthTheme.Typography.Button.ListItem" parent="Root.GiniHealthTheme.Typography.Button.ListItem"/>
     <style name="GiniHealthTheme.Typography.Caption1" parent="Root.GiniHealthTheme.Typography.Caption1"/>
     <style name="GiniHealthTheme.Typography.Caption2" parent="Root.GiniHealthTheme.Typography.Caption2"/>
+    <style name="GiniHealthTheme.Typography.PaymentInputLayout" parent="Root.GiniHealthTheme.Typography.PaymentInputLayout"/>
+    <style name="GiniHealthTheme.Typography.PaymentInputEditTextStyle" parent="Root.GiniHealthTheme.Typography.PaymentInputEditTextStyle"/>
+    <style name="GiniHealthTheme.Typography.PaymentInputEditTextStyle.Amount" parent="Root.GiniHealthTheme.Typography.PaymentInputEditTextStyle.Amount"/>
 
 </resources>
