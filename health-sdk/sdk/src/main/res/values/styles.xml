@@ -153,7 +153,7 @@
     <style name="GiniHealth.DocumentListStyle" parent="Root.GiniHealthTheme.DocumentListStyle"/>
 
     <style name="Root.GiniHealthTheme.PagePhotoStyle">
-        <item name="android:paddingTop">@dimen/ghs_page_padding_top</item>
+        <item name="android:paddingTop">@dimen/ghs_zero</item>
     </style>
 
     <!-- Style for ImageView that displays the page of a document in ReviewFragment -->
@@ -181,9 +181,9 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:background">@drawable/ghs_payment_details_background</item>
         <item name="android:elevation">12dp</item>
-        <item name="android:paddingTop">@dimen/ghs_payment_details_padding_vertical</item>
-        <item name="android:paddingStart">@dimen/ghs_payment_details_padding_horizontal</item>
-        <item name="android:paddingEnd">@dimen/ghs_payment_details_padding_horizontal</item>
+        <item name="android:paddingTop">@dimen/ghs_large</item>
+        <item name="android:paddingStart">@dimen/ghs_large</item>
+        <item name="android:paddingEnd">@dimen/ghs_large</item>
         <item name="android:paddingBottom">0dp</item>
     </style>
 
@@ -193,7 +193,7 @@
     <style name="Root.GiniHealthTheme.BankButtonStyle" parent="Widget.MaterialComponents.Button.OutlinedButton">
         <item name="icon">@drawable/ghs_bank_icon</item>
         <item name="iconPadding">8dp</item>
-        <item name="iconSize">@dimen/ghs_bank_icon_size</item>
+        <item name="iconSize">@dimen/ghs_large_20</item>
         <item name="iconTint">@null</item>
         <item name="android:layout_height">0dp</item>
         <item name="android:layout_width">0dp</item>
@@ -213,7 +213,7 @@
     <style name="Root.GiniHealthTheme.PaymentButtonStyle" parent="Widget.MaterialComponents.Button">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginStart">@dimen/ghs_payment_button_spacing</item>
+        <item name="android:layout_marginStart">@dimen/ghs_medium</item>
         <item name="backgroundTint">@color/ghs_payment_button_background</item>
         <item name="layout_constraintHorizontal_weight">.5</item>
         <item name="android:textAllCaps">false</item>
