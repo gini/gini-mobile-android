@@ -14,6 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ExpandableListAdapter
 import android.widget.ExpandableListView
+import androidx.annotation.StringRes
 import androidx.core.text.buildSpannedString
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -72,7 +73,7 @@ class MoreInformationFragment private constructor(private val paymentComponent: 
         binding.ghsMoreInformationDetails.text = buildSpannedString {
             append(getString(R.string.ghs_more_information_details))
             append(" ")
-            append(createGiniSpannableLink())
+            append(createSpanForLink(R.string.ghs_gini_link, R.string.ghs_gini_link_url))
             append(".")
         }
         binding.ghsMoreInformationDetails.movementMethod = LinkMovementMethod.getInstance()
@@ -119,10 +120,10 @@ class MoreInformationFragment private constructor(private val paymentComponent: 
         }
     }
 
-    private fun createGiniSpannableLink(): SpannableString =
-        SpannableString(getString(R.string.ghs_gini_link)).apply {
+    private fun createSpanForLink(@StringRes placeholder: Int, @StringRes urlResource: Int) =
+        SpannableString(getString(placeholder)).apply {
             setSpan(
-                URLSpanNoUnderline(getString(R.string.ghs_gini_link_url)),
+                URLSpanNoUnderline(getString(urlResource)),
                 0,
                 this.length,
                 SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -136,10 +137,12 @@ class MoreInformationFragment private constructor(private val paymentComponent: 
         }
 
     private fun buildGiniRelatedAnswer(): SpannedString {
-        val giniLink = createGiniSpannableLink()
+        val giniLink = createSpanForLink(R.string.ghs_gini_link, R.string.ghs_gini_link_url)
+        val privacyPolicyString = createSpanForLink(R.string.ghs_privacy_policy, R.string.ghs_privacy_policy_link_url)
         val span = buildSpannedString {
             append(getString(R.string.ghs_faq_answer_4))
             replace(indexOf("%s"), indexOf("%s") + 2, giniLink)
+            replace(indexOf("%p"), indexOf("%p") + 2, privacyPolicyString)
         }
         return span
     }
