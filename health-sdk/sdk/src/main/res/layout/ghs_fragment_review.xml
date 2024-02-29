@@ -5,7 +5,7 @@
     android:id="@+id/constraint_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/ghs_document_background">
+    android:background="@color/ghs_light_07">
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/pager"
@@ -24,7 +24,7 @@
         style="@style/GiniHealth.PageIndicatorStyle"
         android:layout_width="0dp"
         android:layout_height="@dimen/ghs_large"
-        android:background="@color/ghs_document_background"
+        android:background="@color/ghs_light_07"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/payment_details"
         app:layout_constraintEnd_toEndOf="parent"
