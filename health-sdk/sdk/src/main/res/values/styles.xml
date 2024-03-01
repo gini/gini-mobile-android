@@ -141,6 +141,10 @@
     </style>
     <style name="GiniHealthTheme.Widget.BottomSheet.DragHandle" parent="Root.GiniHealthTheme.Widget.BottomSheet.DragHandle" />
 
+    <style name="Root.GiniHealthTheme.Widget.ShapeableImageView.Corners" parent="">
+        <item name="cornerSize">@dimen/ghs_small_2</item>
+        <item name="cornerFamily">rounded</item>
+    </style>
     <!-- endregion -->
 
     <!-- TODO: replace the styles below when refactoring the Payment Review screen to use widget styles, colors and typography -->

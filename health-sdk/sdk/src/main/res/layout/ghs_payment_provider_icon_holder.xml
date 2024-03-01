@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.imageview.ShapeableImageView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/ghs_payment_provider_icon"
     android:layout_width="@dimen/ghs_large_36"
     android:layout_height="@dimen/ghs_large_36"
-    android:layout_marginHorizontal="@dimen/ghs_small"/>
+    android:layout_marginHorizontal="@dimen/ghs_small_2"
+    android:padding="@dimen/ghs_small_1"
+    android:scaleType="fitXY"
+    app:shapeAppearanceOverlay="@style/Root.GiniHealthTheme.Widget.ShapeableImageView.Corners"
+    app:strokeColor="@color/ghs_payment_provider_border_color"
+    app:strokeWidth="@dimen/ghs_small_1" />
