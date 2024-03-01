@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsAnimationCompat
 import androidx.core.view.WindowInsetsCompat
@@ -54,7 +55,6 @@ import net.gini.android.health.sdk.util.setBackgroundTint
 import net.gini.android.health.sdk.util.setErrorMessage
 import net.gini.android.health.sdk.util.setTextIfDifferent
 import net.gini.android.health.sdk.util.showErrorMessage
-import org.slf4j.LoggerFactory
 
 
 /**
@@ -189,12 +189,19 @@ class ReviewFragment private constructor(
     }
 
     private fun GhsFragmentReviewBinding.showSelectedPaymentProviderApp() {
-        payment.setCompoundDrawablesWithIntrinsicBounds(
-            viewModel.paymentProviderApp.icon,
-            null,
-            null,
-            null
-        )
+        viewModel.paymentProviderApp.icon?.let { appIcon ->
+            val roundedDrawable =
+                RoundedBitmapDrawableFactory.create(requireContext().resources, appIcon.bitmap).apply {
+                    cornerRadius = resources.getDimension(R.dimen.ghs_small_2)
+                }
+
+            payment.setCompoundDrawablesWithIntrinsicBounds(
+                roundedDrawable,
+                null,
+                null,
+                null
+            )
+        }
         payment.setBackgroundTint(viewModel.paymentProviderApp.colors.backgroundColor, 255)
         payment.setTextColor(viewModel.paymentProviderApp.colors.textColor)
     }
