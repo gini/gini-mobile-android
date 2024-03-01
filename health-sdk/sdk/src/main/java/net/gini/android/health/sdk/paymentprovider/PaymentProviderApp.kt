@@ -5,11 +5,13 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.util.TypedValue
 import androidx.annotation.ColorInt
 import net.gini.android.health.api.models.PaymentProvider
 import org.slf4j.LoggerFactory
@@ -20,11 +22,15 @@ internal const val QueryUri = "$Scheme://$PaymentPath/id"
 
 internal fun getPaymentProviderAppUri(requestId: String) = "$Scheme://$PaymentPath/$requestId"
 
-internal fun PackageManager.getInstalledPaymentProviderApps(): List<InstalledPaymentProviderApp> = queryIntentActivities(getPaymentProviderAppQueryIntent(), 0)
-    .map { InstalledPaymentProviderApp.fromResolveInfo(it, this) }
+internal fun PackageManager.getInstalledPaymentProviderApps(): List<InstalledPaymentProviderApp> =
+    queryIntentActivities(getPaymentProviderAppQueryIntent(), 0)
+        .map { InstalledPaymentProviderApp.fromResolveInfo(it, this) }
 
 
-internal fun PackageManager.getPaymentProviderApps(paymentProviders: List<PaymentProvider>, context: Context): List<PaymentProviderApp> =
+internal fun PackageManager.getPaymentProviderApps(
+    paymentProviders: List<PaymentProvider>,
+    context: Context
+): List<PaymentProviderApp> =
     linkInstalledPaymentProviderAppsWithPaymentProviders(paymentProviders)
         .map { (installedApp, paymentProvider) ->
             PaymentProviderApp.fromPaymentProvider(paymentProvider, installedApp, context)
@@ -59,6 +65,17 @@ data class PaymentProviderApp(
         }
     }
 
+    fun isInstalled() = installedPaymentProviderApp != null
+
+    fun hasPlayStoreUrl() = paymentProvider.playStoreUrl != null
+
+    fun hasSamePaymentProviderId(
+        paymentProviderApp: PaymentProviderApp
+    ): Boolean =
+        paymentProvider.id == paymentProviderApp.paymentProvider.id
+
+    fun hasSamePaymentProviderId(id: String): Boolean = paymentProvider.id == id
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -83,6 +100,7 @@ data class PaymentProviderApp(
 
 
     companion object {
+        internal const val ICON_SIZE = 32f // in dp
 
         private val LOG = LoggerFactory.getLogger(PaymentProviderApp::class.java)
 
@@ -106,7 +124,19 @@ data class PaymentProviderApp(
                 name = paymentProvider.name,
                 icon = BitmapFactory.decodeByteArray(paymentProvider.icon, 0, paymentProvider.icon.size)
                     ?.let { bitmap ->
-                        BitmapDrawable(context.resources, bitmap)
+                        val iconSizePx = TypedValue.applyDimension(
+                            TypedValue.COMPLEX_UNIT_DIP,
+                            ICON_SIZE,
+                            context.resources.displayMetrics
+                        ).toInt()
+                        val scaledBitamp = Bitmap.createScaledBitmap(
+                            bitmap,
+                            iconSizePx,
+                            iconSizePx,
+                            true
+                        )
+                        bitmap.recycle()
+                        BitmapDrawable(context.resources, scaledBitamp)
                     },
                 colors = PaymentProviderAppColors(
                     backgroundColor = Color.parseColor("#${paymentProvider.colors.backgroundColorRGBHex}"),
@@ -139,9 +169,7 @@ data class InstalledPaymentProviderApp(
         if (packageName != other.packageName) return false
         if (version != other.version) return false
         if (launchIntent.action != other.launchIntent.action) return false
-        if (launchIntent.component != other.launchIntent.component) return false
-
-        return true
+        return launchIntent.component == other.launchIntent.component
     }
 
     override fun hashCode(): Int {
@@ -153,7 +181,10 @@ data class InstalledPaymentProviderApp(
 
     companion object {
 
-        internal fun fromResolveInfo(resolveInfo: ResolveInfo, packageManager: PackageManager): InstalledPaymentProviderApp {
+        internal fun fromResolveInfo(
+            resolveInfo: ResolveInfo,
+            packageManager: PackageManager
+        ): InstalledPaymentProviderApp {
             val packageName = resolveInfo.activityInfo.applicationInfo.packageName
             return InstalledPaymentProviderApp(
                 packageName = packageName,

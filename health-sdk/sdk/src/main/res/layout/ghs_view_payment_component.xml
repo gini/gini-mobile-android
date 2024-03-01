@@ -55,7 +55,7 @@
 
     <Button
         android:id="@+id/ghs_select_bank_picker"
-        style="@style/GiniHealthTheme.Widget.Button.OutlinedButton"
+        style="@style/GiniHealthTheme.Widget.Button.OutlinedButton.Picker"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/ghs_large"
@@ -64,7 +64,6 @@
         android:gravity="start|center_vertical"
         android:text="@string/ghs_select_bank"
         android:visibility="gone"
-        app:iconPadding="@dimen/ghs_large"
         app:layout_constraintBottom_toTopOf="@id/ghs_pay_invoice_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

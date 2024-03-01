@@ -11,6 +11,7 @@ internal data class PaymentProviderResponse(
     @Json(name = "minAppVersion") val minAppVersion: AppVersionResponse,
     @Json(name = "colors") val colors: Colors,
     @Json(name = "iconLocation") val iconLocation: String,
+    @Json(name = "playStoreUrlAndroid") val playStoreUrl: String?,
 )
 
 @JsonClass(generateAdapter = true)

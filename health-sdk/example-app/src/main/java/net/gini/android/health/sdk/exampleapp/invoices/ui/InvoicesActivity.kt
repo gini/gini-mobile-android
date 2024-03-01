@@ -1,6 +1,7 @@
 package net.gini.android.health.sdk.exampleapp.invoices.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
@@ -18,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import net.gini.android.health.sdk.bankselection.BankSelectionBottomSheet
 import net.gini.android.health.sdk.exampleapp.R
 import net.gini.android.health.sdk.exampleapp.databinding.ActivityInvoicesBinding
 import net.gini.android.health.sdk.exampleapp.invoices.data.UploadHardcodedInvoicesState.Failure
@@ -52,7 +54,7 @@ class InvoicesActivity : AppCompatActivity() {
                     }
                 }
                 launch {
-                    viewModel.uploadHardcodedInvoicesStateFlow.combine(viewModel.bankAppsFlow) { a, b -> a to b }
+                    viewModel.uploadHardcodedInvoicesStateFlow.combine(viewModel.paymentProviderAppsFlow) { a, b -> a to b }
                         .collect { (uploadState, bankAppsState) ->
                             if (uploadState == Loading || bankAppsState == LoadingBankApp) {
                                 binding.loadingIndicatorContainer.visibility = View.VISIBLE
@@ -76,11 +78,11 @@ class InvoicesActivity : AppCompatActivity() {
                     }
                 }
                 launch {
-                    viewModel.bankAppsFlow.collect { bankAppsState ->
-                        if (bankAppsState is Error) {
+                    viewModel.paymentProviderAppsFlow.collect { paymentProviderAppsState ->
+                        if (paymentProviderAppsState is Error) {
                             AlertDialog.Builder(this@InvoicesActivity)
                                 .setTitle(R.string.failed_to_load_bank_apps)
-                                .setMessage(bankAppsState.throwable.message)
+                                .setMessage(paymentProviderAppsState.throwable.message)
                                 .setPositiveButton(android.R.string.ok, null)
                                 .show()
                         }
@@ -96,6 +98,23 @@ class InvoicesActivity : AppCompatActivity() {
         binding.invoicesList.layoutManager = LinearLayoutManager(this)
         binding.invoicesList.adapter = InvoicesAdapter(emptyList(), viewModel.paymentComponent)
         binding.invoicesList.addItemDecoration(DividerItemDecoration(this, LinearLayout.VERTICAL))
+
+        viewModel.paymentComponent.listener = object: PaymentComponent.Listener {
+            override fun onMoreInformationClicked() {
+                Log.d(InvoicesActivity::class.simpleName, "More information clicked")
+            }
+
+            override fun onBankPickerClicked() {
+                BankSelectionBottomSheet.newInstance(viewModel.paymentComponent).apply {
+                    show(supportFragmentManager, BankSelectionBottomSheet::class.simpleName)
+                }
+            }
+
+            override fun onPayInvoiceClicked() {
+                Log.d(InvoicesActivity::class.simpleName, "Pay invoice clicked")
+            }
+
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
