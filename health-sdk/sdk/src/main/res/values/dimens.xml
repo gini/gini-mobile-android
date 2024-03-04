@@ -8,14 +8,18 @@
     <dimen name="ghs_large">16dp</dimen>
     <dimen name="ghs_large_20">20dp</dimen>
     <dimen name="ghs_large_24">24dp</dimen>
+    <dimen name="ghs_large_28">28dp</dimen>
     <dimen name="ghs_large_32">32dp</dimen>
     <dimen name="ghs_large_48">48dp</dimen>
+    <dimen name="ghs_large_50">50dp</dimen>
     <dimen name="ghs_large_56">56dp</dimen>
     <dimen name="ghs_large_64">64dp</dimen>
     <dimen name="ghs_large_80">80dp</dimen>
     <dimen name="ghs_large_96">96dp</dimen>
+    <dimen name="ghs_large_100">100dp</dimen>
 
     <item name="ghs_float_0.7" format="float" type="dimen">0.7</item>
     <item name="ghs_float_0.3" format="float" type="dimen">0.3</item>
+    <item name="ghs_float_0.5" format="float" type="dimen">0.5</item>
 
 </resources>
