@@ -21,8 +21,7 @@
     <color name="ghs_light_04">#8A8A8E</color>
     <color name="ghs_light_05">#565656</color>
     <color name="ghs_light_06">#353535</color>
-    <color name="ghs_light_07">#000000</color>
-
+    <color name="ghs_light_07">#212121</color>
     <color name="ghs_success">#B0B347</color>
 
     <color name="ghs_payment_component_caption">@color/ghs_dark_04</color>
