@@ -98,26 +98,17 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
     private fun restoreBankPickerDefaultState() {
         LOG.debug("Restoring bank picker default state")
         context?.wrappedWithGiniHealthTheme()?.let { context ->
-            binding.ghsSelectBankPicker.text = context.getString(R.string.ghs_select_bank)
-            binding.ghsSelectBankPicker.setCompoundDrawablesWithIntrinsicBounds(
-                null,
-                null,
-                ContextCompat.getDrawable(context, R.drawable.ghs_chevron_down_icon),
-                null
-            )
+            binding.ghsSelectBankPicker.ghsSelectBankButton.text = context.getString(R.string.ghs_select_bank)
+            binding.ghsSelectBankPicker.ghsPaymentProviderAppIconHolder.root.visibility = View.INVISIBLE
         }
     }
 
     private fun customizeBankPicker(paymentProviderApp: PaymentProviderApp) {
         LOG.debug("Customizing bank picker for payment provider app: {}", paymentProviderApp.name)
         context?.wrappedWithGiniHealthTheme()?.let { context ->
-            binding.ghsSelectBankPicker.text = paymentProviderApp.name
-            binding.ghsSelectBankPicker.setCompoundDrawablesWithIntrinsicBounds(
-                paymentProviderApp.icon,
-                null,
-                ContextCompat.getDrawable(context, R.drawable.ghs_chevron_down_icon),
-                null
-            )
+            binding.ghsSelectBankPicker.ghsSelectBankButton.text = paymentProviderApp.name
+            binding.ghsSelectBankPicker.ghsPaymentProviderAppIconHolder.root.visibility = View.VISIBLE
+            binding.ghsSelectBankPicker.ghsPaymentProviderAppIconHolder.ghsPaymentProviderIcon.setImageDrawable(paymentProviderApp.icon)
         }
     }
 
@@ -129,12 +120,12 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
 
     private fun enableBankPicker() {
         LOG.debug("Enabling bank picker")
-        binding.ghsSelectBankPicker.isEnabled = true
+        binding.ghsSelectBankPicker.ghsSelectBankButton.isEnabled = true
     }
 
     private fun disableBankPicker() {
         LOG.debug("Disabling bank picker")
-        binding.ghsSelectBankPicker.isEnabled = false
+        binding.ghsSelectBankPicker.ghsSelectBankButton.isEnabled = false
     }
 
     private fun enablePayInvoiceButton() {
@@ -197,7 +188,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
         binding.ghsPayInvoiceButton.visibility = VISIBLE
         binding.ghsMoreInformationLabel.visibility = VISIBLE
         binding.ghsSelectBankLabel.visibility = VISIBLE
-        binding.ghsSelectBankPicker.visibility = VISIBLE
+        binding.ghsSelectBankPicker.ghsSelectBankButton.visibility = VISIBLE
         binding.ghsInfoCircleIcon.visibility = VISIBLE
         binding.ghsPoweredByGiniLabel.visibility = VISIBLE
         binding.ghsGiniLogo.visibility = VISIBLE
@@ -208,7 +199,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
         binding.ghsPayInvoiceButton.visibility = GONE
         binding.ghsMoreInformationLabel.visibility = GONE
         binding.ghsSelectBankLabel.visibility = GONE
-        binding.ghsSelectBankPicker.visibility = GONE
+        binding.ghsSelectBankPicker.ghsSelectBankButton.visibility = GONE
         binding.ghsInfoCircleIcon.visibility = GONE
         binding.ghsPoweredByGiniLabel.visibility = GONE
         binding.ghsGiniLogo.visibility = GONE
@@ -245,7 +236,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
     }
 
     private fun addButtonInputHandlers() {
-        binding.ghsSelectBankPicker.setOnClickListener {
+        binding.ghsSelectBankPicker.root.setOnClickListener {
             if (paymentComponent == null) {
                 LOG.warn("Cannot call PaymentComponent's listener: PaymentComponent must be set before showing the PaymentComponentView")
             }

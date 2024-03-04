@@ -28,6 +28,9 @@
     <color name="ghs_bank_selection_bottom_sheet_title">@color/ghs_dark_02</color>
     <color name="ghs_more_information_fragment_background">@color/ghs_dark_07</color>
     <color name="ghs_payment_provider_border_color">@color/ghs_dark_05</color>
+    <color name="ghs_payment_input_background_color">@color/ghs_dark_05</color>
+    <color name="ghs_payment_input_border_color">@color/ghs_dark_06</color>
+    <color name="ghs_bank_selector_button_color">@color/ghs_dark_01</color>
 
     <!-- TODO: remove the colors below after refactoring the Payment Review screen to use the color palette -->
     <color name="ghs_selected_dot">#FFFFFFFF</color>
