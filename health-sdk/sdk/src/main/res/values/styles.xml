@@ -56,13 +56,13 @@
     <!-- region Widgets -->
 
     <style name="Root.GiniHealthTheme.Widget.Button.UnelevatedButton" parent="Widget.Material3.Button.UnelevatedButton">
-        <item name="cornerRadius">4dp</item>
+        <item name="cornerRadius">@dimen/ghs_small</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:autoSizeTextType">uniform</item>
         <item name="android:autoSizeMaxTextSize">16sp</item>
         <item name="android:minHeight">@dimen/ghs_large_56</item>
-        <item name="android:insetTop">0dp</item>
-        <item name="android:insetBottom">0dp</item>
+        <item name="android:insetTop">@dimen/ghs_zero</item>
+        <item name="android:insetBottom">@dimen/ghs_zero</item>
         <item name="android:backgroundTint">@color/ghs_unelevated_button_background</item>
         <item name="android:textColor">@color/ghs_unelevated_button_text</item>
     </style>
@@ -70,20 +70,20 @@
 
     <style name="Root.GiniHealthTheme.Widget.Button.IconButton" parent="Widget.Material3.Button.IconButton">
         <item name="iconTint">@color/ghs_dark_02</item>
-        <item name="android:insetTop">0dp</item>
-        <item name="android:insetBottom">0dp</item>
+        <item name="android:insetTop">@dimen/ghs_zero</item>
+        <item name="android:insetBottom">@dimen/ghs_zero</item>
     </style>
     <style name="GiniHealthTheme.Widget.Button.IconButton" parent="Root.GiniHealthTheme.Widget.Button.IconButton"/>
 
     <style name="Root.GiniHealthTheme.Widget.Button.OutlinedButton.Picker" parent="Widget.Material3.Button.OutlinedButton">
-        <item name="cornerRadius">4dp</item>
+        <item name="cornerRadius">@dimen/ghs_small</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:autoSizeTextType">uniform</item>
         <item name="android:autoSizeMaxTextSize">16sp</item>
         <item name="android:minHeight">@dimen/ghs_large_56</item>
         <item name="strokeColor">@color/ghs_dark_05</item>
-        <item name="android:insetTop">0dp</item>
-        <item name="android:insetBottom">0dp</item>
+        <item name="android:insetTop">@dimen/ghs_zero</item>
+        <item name="android:insetBottom">@dimen/ghs_zero</item>
         <item name="iconPadding">@dimen/ghs_large</item>
         <item name="materialThemeOverlay">@style/GiniHealthTheme.ThemeOverlay.Button.OutlinedButton.Picker</item>
         <item name="android:textColor">@color/ghs_outlined_button_text</item>
@@ -97,15 +97,15 @@
     <style name="GiniHealthTheme.ThemeOverlay.Button.OutlinedButton.Picker" parent="Root.GiniHealthTheme.ThemeOverlay.Button.OutlinedButton.Picker" />
 
     <style name="Root.GiniHealthTheme.Widget.Button.OutlinedButton.ListItem" parent="Widget.Material3.Button.OutlinedButton">
-        <item name="cornerRadius">4dp</item>
+        <item name="cornerRadius">@dimen/ghs_small</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:autoSizeTextType">uniform</item>
         <item name="android:autoSizeMaxTextSize">16sp</item>
         <item name="android:minHeight">@dimen/ghs_large_56</item>
         <item name="strokeColor">@color/ghs_dark_05</item>
-        <item name="strokeWidth">2dp</item>
-        <item name="android:insetTop">0dp</item>
-        <item name="android:insetBottom">0dp</item>
+        <item name="strokeWidth">@dimen/ghs_small_2</item>
+        <item name="android:insetTop">@dimen/ghs_zero</item>
+        <item name="android:insetBottom">@dimen/ghs_zero</item>
         <item name="iconPadding">@dimen/ghs_large</item>
         <item name="materialThemeOverlay">@style/GiniHealthTheme.ThemeOverlay.Button.OutlinedButton.ListItem</item>
         <item name="android:textColor">@color/ghs_outlined_button_text</item>
@@ -132,7 +132,7 @@
 
     <style name="Root.GiniHealthTheme.Widget.BottomSheet.ShapeAppearance" parent="ShapeAppearance.Material3.LargeComponent">
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">12dp</item>
+        <item name="cornerSize">@dimen/ghs_medium_12</item>
     </style>
     <style name="GiniHealthTheme.Widget.BottomSheet.ShapeAppearance" parent="Root.GiniHealthTheme.Widget.BottomSheet.ShapeAppearance" />
 
@@ -174,7 +174,7 @@
     <style name="GiniHealthTheme.PaymentInputEditTextStyle.Amount" parent="Root.GiniHealthTheme.PaymentInputEditTextStyle.Amount"/>
 
     <style name="Root.GiniHealthTheme.PageIndicatorStyle">
-        <item name="android:layout_marginBottom">16dp</item>
+        <item name="android:layout_marginBottom">@dimen/ghs_large</item>
     </style>
     <!-- Style for the page indicator under the ViewPager in ReviewFragment -->
     <style name="GiniHealthTheme.PageIndicatorStyle" parent="Root.GiniHealthTheme.PageIndicatorStyle" />
