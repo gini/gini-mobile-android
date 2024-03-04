@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <dimen name="ghs_small_2">2dp</dimen>
     <dimen name="ghs_small">4dp</dimen>
     <dimen name="ghs_medium">8dp</dimen>
     <dimen name="ghs_medium_12">12dp</dimen>

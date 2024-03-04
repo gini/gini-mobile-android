@@ -3,8 +3,8 @@ package net.gini.android.health.sdk.requirement
 import android.content.pm.PackageManager
 import net.gini.android.core.api.Resource
 import net.gini.android.health.sdk.GiniHealth
-import net.gini.android.health.sdk.review.bank.getInstalledBankApps
-import net.gini.android.health.sdk.review.bank.getInstalledBankAppsWhichHavePaymentProviders
+import net.gini.android.health.sdk.paymentprovider.getInstalledPaymentProviderApps
+import net.gini.android.health.sdk.paymentprovider.linkInstalledPaymentProviderAppsWithPaymentProviders
 
 /**
  * The [Requirement] types that are checked as preconditions for Review Screen.
@@ -49,7 +49,7 @@ internal class AtLeastOneInstalledBankAppRequirement(private val packageManager:
     RequirementCheckSync {
 
     override fun check(): Requirement? =
-        if (packageManager.getInstalledBankApps().isEmpty()) Requirement.NoBank else null
+        if (packageManager.getInstalledPaymentProviderApps().isEmpty()) Requirement.NoBank else null
 
 }
 
@@ -63,12 +63,12 @@ internal class AtLeastOneInstalledBankAppHasPaymentProviderRequirement(
             is Resource.Cancelled -> null
             is Resource.Error -> Requirement.NoBank
             is Resource.Success -> {
-                val availableBankApps =
-                    packageManager.getInstalledBankAppsWhichHavePaymentProviders(paymentProvidersResource.data)
-                if (availableBankApps.isEmpty()) {
-                    Requirement.NoBank
-                } else {
+                val isAnyBankAppInstalled =
+                    packageManager.linkInstalledPaymentProviderAppsWithPaymentProviders(paymentProvidersResource.data).any { (installedPaymentProviderApp, _) -> installedPaymentProviderApp != null }
+                if (isAnyBankAppInstalled) {
                     null
+                } else {
+                    Requirement.NoBank
                 }
             }
         }

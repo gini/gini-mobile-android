@@ -14,7 +14,7 @@ import org.koin.dsl.module
 val viewModelModule = module {
     viewModel { MainViewModel(get()) }
     viewModel { UploadViewModel(get(), get(), get()) }
-    viewModel { ReviewViewModel(get()) }
+    viewModel { ReviewViewModel(get(), get()) }
     viewModel { InvoicesViewModel(get(), get()) }
     factory { InvoicesRepository(get(), get(), get(), get()) }
     factory { InvoicesLocalDataSource(get()) }
