@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_selected="true">
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/ghs_small"/>
+            <solid android:color="?attr/colorSurface"/>
+            <stroke android:color="?attr/colorPrimary" android:width="@dimen/ghs_small_2"/>
+        </shape>
+    </item>
+    <item android:state_selected="false">
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/ghs_small"/>
+            <solid android:color="?attr/colorSurface"/>
+            <stroke android:color="@color/ghs_payment_input_background_color" android:width="@dimen/ghs_small_2"/>
+        </shape>
+    </item>
+</selector>

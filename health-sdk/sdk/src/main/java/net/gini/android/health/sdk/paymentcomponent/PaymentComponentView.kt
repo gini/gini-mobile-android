@@ -42,7 +42,9 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
             }
         }
 
-    private val binding = GhsViewPaymentComponentBinding.inflate(getLayoutInflaterWithGiniHealthTheme(), this)
+    private val binding = GhsViewPaymentComponentBinding.inflate(getLayoutInflaterWithGiniHealthTheme(), this).also {
+        it.ghsSelectBankPicker.root.background = context.getDrawable(R.drawable.ghs_bordered_background)
+    }
 
     init {
         setupMoreInformationLabelAndIcon()
