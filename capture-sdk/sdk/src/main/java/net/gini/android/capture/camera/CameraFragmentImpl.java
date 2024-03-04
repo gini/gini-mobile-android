@@ -575,7 +575,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         mCameraController.enableTapToFocus(new CameraInterface.TapToFocusListener() {
             @Override
             public void onFocusing(@NonNull final Point point, @NonNull final Size previewViewSize) {
-                showFocusIndicator(point);
+                showFocusIndicator(point, previewViewSize);
             }
 
             @Override
@@ -585,9 +585,20 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         });
     }
 
-    private void showFocusIndicator(@NonNull final Point point) {
-        mCameraFocusIndicator.setX((float) (point.x - (mCameraFocusIndicator.getWidth() / 2.0)));
-        mCameraFocusIndicator.setY(point.y);
+    private void showFocusIndicator(@NonNull final Point point, @NonNull final Size previewViewSize) {
+        final FragmentActivity activity = mFragment.getActivity();
+        if (activity == null) {
+            return;
+        }
+
+        final float offsetX = (float) (previewViewSize.width - mCameraPreviewContainer.getWidth()) / 2.0f;
+        final float centerOffsetX = (float) mCameraFocusIndicator.getWidth() / 2.0f;
+        final float offsetY = (float) (previewViewSize.height - mCameraPreviewContainer.getHeight()) / 2.0f;
+        final float centerOffsetY = (float) mCameraFocusIndicator.getHeight() / 2.0f;
+
+        mCameraFocusIndicator.setX(point.x - offsetX - centerOffsetX);
+        mCameraFocusIndicator.setY(point.y - offsetY - centerOffsetY);
+
         mCameraFocusIndicator.animate().setDuration(DEFAULT_ANIMATION_DURATION).alpha(1.0f);
     }
 
