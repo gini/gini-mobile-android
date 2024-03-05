@@ -270,7 +270,7 @@ class ReviewFragment private constructor(
         fieldsWithError.forEach { (field, validationMessage) ->
             validationMessage?.let { message ->
                 getTextInputLayout(field).apply {
-                    if (error.isNullOrEmpty()) {
+                    if (error.isNullOrEmpty() || getTag(R.id.text_input_layout_tag_is_error_enabled) == null) {
                         setErrorMessage(
                             when (message) {
                                 is ValidationMessage.Empty -> when (field) {
