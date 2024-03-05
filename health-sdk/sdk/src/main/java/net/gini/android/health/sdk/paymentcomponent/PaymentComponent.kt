@@ -1,12 +1,9 @@
 package net.gini.android.health.sdk.paymentcomponent
 
 import android.content.Context
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
 import net.gini.android.core.api.Resource
 import net.gini.android.health.api.models.PaymentProvider
 import net.gini.android.health.sdk.GiniHealth
@@ -215,7 +212,7 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
     interface Listener {
         fun onMoreInformationClicked()
         fun onBankPickerClicked()
-        fun onPayInvoiceClicked(paymentComponentViewIdentifier: String)
+        fun onPayInvoiceClicked(documentId: String)
     }
 
 }

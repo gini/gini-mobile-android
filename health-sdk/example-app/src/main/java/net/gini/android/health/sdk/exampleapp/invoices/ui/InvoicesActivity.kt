@@ -1,7 +1,6 @@
 package net.gini.android.health.sdk.exampleapp.invoices.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
@@ -11,7 +10,6 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -160,10 +158,10 @@ class InvoicesActivity : AppCompatActivity() {
                 }
             }
 
-            override fun onPayInvoiceClicked(paymentComponentViewIdentifier: String) {
+            override fun onPayInvoiceClicked(documentId: String) {
                 LOG.debug("Pay invoice clicked")
 
-                viewModel.getPaymentReviewFragment(paymentComponentViewIdentifier)
+                viewModel.getPaymentReviewFragment(documentId)
             }
         }
 
@@ -219,14 +217,14 @@ class InvoicesAdapter(
         val recipient: TextView
         val dueDate: TextView
         val amount: TextView
-        val paymentComponent: PaymentComponentView
+        val paymentComponentView: PaymentComponentView
 
         init {
             recipient = view.findViewById(R.id.recipient)
             dueDate = view.findViewById(R.id.due_date)
             amount = view.findViewById(R.id.amount)
-            this.paymentComponent = view.findViewById(R.id.payment_component)
-            this.paymentComponent.paymentComponent = paymentComponent
+            this.paymentComponentView = view.findViewById(R.id.payment_component)
+            this.paymentComponentView.paymentComponent = paymentComponent
         }
     }
 
@@ -243,9 +241,9 @@ class InvoicesAdapter(
         viewHolder.dueDate.text = invoiceItem.dueDate ?: ""
         viewHolder.amount.text = invoiceItem.amount ?: ""
 
-        viewHolder.paymentComponent.prepareForReuse()
-        viewHolder.paymentComponent.isPayable = invoiceItem.isPayable
-        viewHolder.paymentComponent.identifier = invoiceItem.documentId
+        viewHolder.paymentComponentView.prepareForReuse()
+        viewHolder.paymentComponentView.isPayable = invoiceItem.isPayable
+        viewHolder.paymentComponentView.documentId = invoiceItem.documentId
     }
 
     override fun getItemCount() = dataSet.size

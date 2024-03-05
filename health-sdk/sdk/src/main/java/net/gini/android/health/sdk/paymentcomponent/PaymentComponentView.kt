@@ -43,7 +43,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
             }
         }
 
-    var identifier: String? = null
+    var documentId: String? = null
 
     private val binding = GhsViewPaymentComponentBinding.inflate(getLayoutInflaterWithGiniHealthTheme(), this)
 
@@ -189,7 +189,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
 
     fun prepareForReuse() {
         isPayable = false
-        identifier = null
+        documentId = null
         disablePayInvoiceButton()
         restorePayInvoiceButtonDefaultState()
         restoreBankPickerDefaultState()
@@ -259,10 +259,10 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
             if (paymentComponent == null) {
                 LOG.warn("Cannot call PaymentComponent's listener: PaymentComponent must be set before showing the PaymentComponentView")
             }
-            identifier?.let { identifier ->
-                paymentComponent?.listener?.onPayInvoiceClicked(identifier)
+            documentId?.let { docId ->
+                paymentComponent?.listener?.onPayInvoiceClicked(docId)
             } ?: run {
-                LOG.warn("Cannot call PaymentComponent's listener: identifier must be set before showing the PaymentComponentView")
+                LOG.warn("Cannot call PaymentComponent's listener: documentId must be set before showing the PaymentComponentView")
             }
         }
     }
