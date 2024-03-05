@@ -81,9 +81,10 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val paymentProviderAp
                     val newEmptyValidationMessages =
                         paymentDetails.validate().filterIsInstance<ValidationMessage.Empty>()
 
-                    // Clear IBAN error, if IBAN changed
+                    // Clear IBAN error, if IBAN changed, and check validation for new iban
                     if (prevPaymentDetails != null && prevPaymentDetails.iban != paymentDetails.iban) {
                         nonEmptyValidationMessages.remove(ValidationMessage.InvalidIban)
+                        nonEmptyValidationMessages.addAll(validateIban(paymentDetails.iban).filterIsInstance<ValidationMessage.InvalidIban>())
                     }
 
                     // If the IBAN is the same as the last validated one, then revalidate it to restore the validation

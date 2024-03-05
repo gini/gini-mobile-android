@@ -355,6 +355,7 @@ class ReviewFragment private constructor(
     private fun GhsFragmentReviewBinding.setActionListeners() {
         paymentDetails.setOnClickListener { it.hideKeyboard() }
         payment.setOnClickListener {
+            requireActivity().currentFocus?.clearFocus()
             it.hideKeyboard()
             listener?.onNextClicked(viewModel.paymentProviderApp.name)
             viewModel.onPayment()

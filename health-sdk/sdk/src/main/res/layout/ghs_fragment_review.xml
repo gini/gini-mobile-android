@@ -88,7 +88,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/iban_amount_barrier_top">
+            app:layout_constraintBottom_toTopOf="@id/iban_layout">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/recipient"
@@ -103,13 +103,6 @@
                 />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <androidx.constraintlayout.widget.Barrier
-            android:id="@+id/iban_amount_barrier_top"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:barrierDirection="top"
-            app:constraint_referenced_ids="iban_layout,amount_layout" />
-
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/iban_layout"
             style="@style/GiniHealthTheme.PaymentInputLayout"
@@ -121,8 +114,7 @@
             app:layout_constraintEnd_toStartOf="@id/amount_layout"
             app:layout_constraintHorizontal_weight="@dimen/ghs_float_0.7"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/iban_amount_barrier_top"
-            app:layout_constraintBottom_toTopOf="@id/iban_amount_barrier_bottom">
+            app:layout_constraintTop_toTopOf="@id/amount_layout">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/iban"
@@ -145,8 +137,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_weight="@dimen/ghs_float_0.3"
             app:layout_constraintStart_toEndOf="@id/iban_layout"
-            app:layout_constraintTop_toBottomOf="@id/iban_amount_barrier_top"
-            app:layout_constraintBottom_toTopOf="@id/iban_amount_barrier_bottom"
+            app:layout_constraintTop_toTopOf="@id/iban_layout"
             app:suffixText="€">
 
             <com.google.android.material.textfield.TextInputEditText
