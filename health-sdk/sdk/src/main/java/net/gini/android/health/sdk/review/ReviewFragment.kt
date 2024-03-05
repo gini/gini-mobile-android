@@ -51,6 +51,7 @@ import net.gini.android.health.sdk.util.autoCleared
 import net.gini.android.health.sdk.util.clearErrorMessage
 import net.gini.android.health.sdk.util.hideErrorMessage
 import net.gini.android.health.sdk.util.hideKeyboard
+import net.gini.android.health.sdk.util.setBackground
 import net.gini.android.health.sdk.util.setBackgroundTint
 import net.gini.android.health.sdk.util.setErrorMessage
 import net.gini.android.health.sdk.util.setTextIfDifferent
@@ -266,7 +267,6 @@ class ReviewFragment private constructor(
         val (fieldsWithError, fieldsWithoutError) = PaymentField.values()
             .map { field -> field to messages.firstOrNull { it.field == field } }
             .partition { (_, message) -> message != null }
-
         fieldsWithError.forEach { (field, validationMessage) ->
             validationMessage?.let { message ->
                 getTextInputLayout(field).apply {

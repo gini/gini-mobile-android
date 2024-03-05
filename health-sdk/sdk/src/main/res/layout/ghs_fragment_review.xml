@@ -156,7 +156,7 @@
                 android:layout_height="match_parent"
                 android:paddingTop="@dimen/ghs_large_28"
                 android:paddingBottom="@dimen/ghs_medium"
-                android:paddingHorizontal="@dimen/ghs_medium_12"
+                android:paddingEnd="@dimen/ghs_medium"
                 android:digits="0123456789.,"
                 android:hint="@string/ghs_amount_hint"
                 android:inputType="numberDecimal" />

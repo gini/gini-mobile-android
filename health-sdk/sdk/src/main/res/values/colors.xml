@@ -23,6 +23,7 @@
     <color name="ghs_light_06">#353535</color>
     <color name="ghs_light_07">#212121</color>
     <color name="ghs_success">#B0B347</color>
+    <color name="ghs_error">#FA1C1C</color>
 
     <color name="ghs_payment_component_caption">@color/ghs_dark_04</color>
     <color name="ghs_bank_selection_bottom_sheet_caption">@color/ghs_dark_03</color>
