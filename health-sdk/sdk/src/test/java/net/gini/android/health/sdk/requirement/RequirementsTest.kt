@@ -12,9 +12,9 @@ import net.gini.android.core.api.Resource
 import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.api.HealthApiDocumentManager
 import net.gini.android.health.sdk.GiniHealth
-import net.gini.android.health.sdk.review.bank.packageInfosFixture
-import net.gini.android.health.sdk.review.bank.paymentProvidersFixture
-import net.gini.android.health.sdk.review.bank.resolveInfosFixture
+import net.gini.android.health.sdk.paymentprovider.packageInfosFixture
+import net.gini.android.health.sdk.paymentprovider.paymentProvidersFixture
+import net.gini.android.health.sdk.paymentprovider.resolveInfosFixture
 import org.junit.After
 import org.junit.Before
 import org.junit.Test

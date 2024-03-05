@@ -32,6 +32,7 @@ import net.gini.android.health.sdk.paymentcomponent.PaymentProviderAppsState.Err
 import net.gini.android.health.sdk.review.ReviewFragment
 import net.gini.android.health.sdk.review.ReviewFragmentListener
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.slf4j.LoggerFactory
 import net.gini.android.health.sdk.paymentcomponent.PaymentProviderAppsState.Loading as LoadingBankApp
 
 class InvoicesActivity : AppCompatActivity() {
@@ -150,7 +151,7 @@ class InvoicesActivity : AppCompatActivity() {
 
         viewModel.paymentComponent.listener = object: PaymentComponent.Listener {
             override fun onMoreInformationClicked() {
-                Log.d(InvoicesActivity::class.simpleName, "More information clicked")
+                LOG.debug("More information clicked")
             }
 
             override fun onBankPickerClicked() {
@@ -160,7 +161,7 @@ class InvoicesActivity : AppCompatActivity() {
             }
 
             override fun onPayInvoiceClicked(paymentComponentViewIdentifier: String) {
-                Log.d(InvoicesActivity::class.simpleName, "Pay invoice clicked")
+                LOG.debug("Pay invoice clicked")
 
                 viewModel.getPaymentReviewFragment(paymentComponentViewIdentifier)
             }
@@ -200,6 +201,10 @@ class InvoicesActivity : AppCompatActivity() {
 
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    companion object {
+        private val LOG = LoggerFactory.getLogger(InvoicesActivity::class.java)
     }
 }
 

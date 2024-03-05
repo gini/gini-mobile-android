@@ -31,6 +31,7 @@ import net.gini.android.health.sdk.review.ReviewFragment
 import net.gini.android.health.sdk.review.ReviewFragmentListener
 import net.gini.android.health.sdk.review.model.ResultWrapper
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.slf4j.LoggerFactory
 
 class ReviewActivity : AppCompatActivity() {
 
@@ -38,26 +39,26 @@ class ReviewActivity : AppCompatActivity() {
 
     private val reviewFragmentListener = object : ReviewFragmentListener {
         override fun onCloseReview() {
-            Log.i("review_events", "on close clicked")
+            LOG.debug("on close clicked")
             finish()
         }
 
         override fun onNextClicked(paymentProviderName: String) {
-            Log.i("review_events", "pay button clicked with payment provider: $paymentProviderName")
+            LOG.debug("pay button clicked with payment provider: {}", paymentProviderName)
             lifecycleScope.launch {
                 viewModel.giniHealth.openBankState.collect { paymentState ->
                     when (paymentState) {
                         GiniHealth.PaymentState.Loading -> {
-                            Log.i("open_bank_state", "opening bank app")
+                            LOG.debug("opening bank app")
                         }
 
                         is GiniHealth.PaymentState.Success -> {
-                            Log.i("open_bank_state", "launching bank app: ${paymentState.paymentRequest.bankApp.name}")
+                            LOG.debug("launching bank app: {}", paymentState.paymentRequest.bankApp.name)
                             cancel()
                         }
 
                         is GiniHealth.PaymentState.Error -> {
-                            Log.e("open_bank_state", "failed to open bank app: ${paymentState.throwable}")
+                            LOG.error( "failed to open bank app:", paymentState.throwable)
                             cancel()
                         }
 
@@ -204,7 +205,10 @@ class ReviewActivity : AppCompatActivity() {
     }
 
     companion object {
+        private val LOG = LoggerFactory.getLogger(ReviewActivity::class.java)
+
         private const val EXTRA_URIS = "EXTRA_URIS"
+
         fun getStartIntent(context: Context, pages: List<Uri> = emptyList()): Intent =
             Intent(context, ReviewActivity::class.java).apply {
                 putParcelableArrayListExtra(
