@@ -32,7 +32,7 @@
 
     <style name="Root.GiniHealthTheme.Typography.Body1" parent="TextAppearance.MaterialComponents.Body1">
         <item name="android:textSize">16sp</item>
-        <item name="android:textColor">@color/ghs_accent_01</item>
+        <item name="android:textColor">?attr/colorOnBackground</item>
     </style>
 
     <style name="Root.GiniHealthTheme.Typography.Body2" parent="TextAppearance.MaterialComponents.Body2">

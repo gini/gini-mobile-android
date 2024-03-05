@@ -153,24 +153,14 @@
         <item name="boxBackgroundColor">@android:color/transparent</item>
         <item name="boxCornerRadiusBottomStart">@dimen/ghs_small</item>
         <item name="boxCornerRadiusBottomEnd">@dimen/ghs_small</item>
-        <item name="android:paddingTop">@dimen/ghs_medium</item>
     </style>
     <style name="GiniHealthTheme.PaymentInputLayout" parent="Root.GiniHealthTheme.PaymentInputLayout"/>
 
     <style name="Root.GiniHealthTheme.PaymentInputEditTextStyle" parent="Widget.MaterialComponents.TextInputEditText.FilledBox">
-        <item name="android:paddingTop">@dimen/ghs_large_28</item>
-        <item name="android:paddingBottom">@dimen/ghs_medium</item>
-        <item name="android:paddingStart">@dimen/ghs_medium_12</item>
-        <item name="android:paddingEnd">@dimen/ghs_zero</item>
         <item name="android:singleLine">true</item>
         <item name="android:background">@drawable/ghs_payment_input_edit_text_background</item>
     </style>
     <style name="GiniHealthTheme.PaymentInputEditTextStyle" parent="Root.GiniHealthTheme.PaymentInputEditTextStyle"/>
-
-    <style name="Root.GiniHealthTheme.PaymentInputEditTextStyle.Amount" parent="Root.GiniHealthTheme.PaymentInputEditTextStyle">
-        <item name="android:paddingEnd">@dimen/ghs_medium_12</item>
-    </style>
-    <style name="GiniHealthTheme.PaymentInputEditTextStyle.Amount" parent="Root.GiniHealthTheme.PaymentInputEditTextStyle.Amount"/>
 
     <style name="Root.GiniHealthTheme.PageIndicatorStyle">
         <item name="android:layout_marginBottom">@dimen/ghs_large</item>
@@ -184,42 +174,15 @@
     <!-- Style for error text that is displayed when loading a page fails -->
     <style name="GiniHealthTheme.PageErrorText" parent="Root.GiniHealthTheme.PageErrorText" />
 
-    <!-- Style for the ViewPager2 that displays the pages of the document in ReviewFragment -->
-    <style name="Root.GiniHealthTheme.DocumentPagerStyle" />
-    <style name="GiniHealthTheme.DocumentPagerStyle" parent="Root.GiniHealthTheme.DocumentPagerStyle"/>
-
-    <style name="Root.GiniHealthTheme.DocumentListStyle" />
-    <style name="GiniHealthTheme.DocumentListStyle" parent="Root.GiniHealthTheme.DocumentListStyle"/>
-
-    <!-- Style for retry button that is displayed when loading a page fails -->
-    <style name="GiniHealthTheme.PageErrorRetry" parent="Widget.MaterialComponents.Button.OutlinedButton" />
-
     <style name="Root.GiniHealthTheme.PaymentDetailsCard">
-        <item name="android:layout_width">@dimen/ghs_zero</item>
-        <item name="android:layout_height">wrap_content</item>
         <item name="android:background">@drawable/ghs_payment_details_background</item>
         <item name="android:elevation">@dimen/ghs_medium_12</item>
-        <item name="android:paddingTop">@dimen/ghs_large</item>
-        <item name="android:paddingStart">@dimen/ghs_large</item>
-        <item name="android:paddingEnd">@dimen/ghs_large</item>
-        <item name="android:paddingBottom">@dimen/ghs_zero</item>
     </style>
 
      Style for the Payment Details card in ReviewFragment
     <style name="GiniHealthTheme.PaymentDetailsCard" parent="Root.GiniHealthTheme.PaymentDetailsCard" />
 
-    <style name="Root.GiniHealthTheme.PaymentButtonStyle" parent="Widget.MaterialComponents.Button">
-        <item name="android:layout_width">@dimen/ghs_zero</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="layout_constraintHorizontal_weight">@dimen/ghs_float_0.5</item>
-        <item name="android:textAllCaps">false</item>
-    </style>
-
-    <!-- Style for Pay button in ReviewFragment -->
-    <style name="GiniHealth.PaymentButtonStyle" parent="Root.GiniHealthTheme.PaymentButtonStyle" />
-
     <style name="Root.GiniHealthTheme.PaymentButtonProgressStyle">
-        <item name="android:padding">@dimen/ghs_medium</item>
         <item name="android:translationZ" tools:targetApi="lollipop">@dimen/ghs_large_100</item>
     </style>
 
@@ -237,7 +200,6 @@
 
     <style name="Root.GiniHealthTheme.PaymentDetails.InfoBar" parent="">
         <item name="android:background">@drawable/ghs_payment_details_info_bar_background</item>
-        <item name="android:paddingBottom">@dimen/ghs_medium_12</item>
     </style>
     <style name="GiniHealthTheme.PaymentDetails.InfoBar" parent="Root.GiniHealthTheme.PaymentDetails.InfoBar" />
 

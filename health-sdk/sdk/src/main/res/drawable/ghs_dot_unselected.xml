@@ -9,7 +9,7 @@
             android:shape="ring"
             android:thickness="@dimen/ghs_small"
             android:useLevel="false">
-            <solid android:color="@color/ghs_unselected_dot" />
+            <solid android:color="@color/ghs_dark_03" />
         </shape>
     </item>
 </layer-list>

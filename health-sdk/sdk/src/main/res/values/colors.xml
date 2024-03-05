@@ -31,11 +31,4 @@
     <color name="ghs_payment_input_background_color">@color/ghs_dark_05</color>
     <color name="ghs_payment_input_border_color">@color/ghs_dark_06</color>
 
-    <!-- TODO: remove the colors below after refactoring the Payment Review screen to use the color palette -->
-    <color name="ghs_selected_dot">#FFFFFFFF</color>
-    <color name="ghs_unselected_dot">#90ffffff</color>
-
-    <!-- This is used in a fragment which is not used anywhere   -->
-    <color name="ghs_list_item_separator">#E6E7ED</color>
-
 </resources>
