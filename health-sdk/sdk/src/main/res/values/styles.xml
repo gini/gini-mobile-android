@@ -163,12 +163,6 @@
     </style>
     <style name="GiniHealthTheme.PaymentInputEditTextStyle" parent="Root.GiniHealthTheme.PaymentInputEditTextStyle"/>
 
-    <style name="Root.GiniHealthTheme.PageIndicatorStyle">
-        <item name="android:layout_marginBottom">@dimen/ghs_large</item>
-    </style>
-    <!-- Style for the page indicator under the ViewPager in ReviewFragment -->
-    <style name="GiniHealthTheme.PageIndicatorStyle" parent="Root.GiniHealthTheme.PageIndicatorStyle" />
-
     <style name="Root.GiniHealthTheme.PageErrorText">
         <item name="android:textColor">@color/ghs_dark_07</item>
     </style>
