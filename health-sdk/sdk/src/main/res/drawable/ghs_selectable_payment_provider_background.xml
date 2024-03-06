@@ -11,7 +11,7 @@
         <shape android:shape="rectangle">
             <corners android:radius="@dimen/ghs_small"/>
             <solid android:color="?attr/colorSurface"/>
-            <stroke android:color="@color/ghs_payment_input_background_color" android:width="@dimen/ghs_small_2"/>
+            <stroke android:color="@color/ghs_payment_provider_border_color" android:width="@dimen/ghs_small_2"/>
         </shape>
     </item>
 </selector>

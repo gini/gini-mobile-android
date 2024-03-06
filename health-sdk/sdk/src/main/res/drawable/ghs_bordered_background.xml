@@ -2,6 +2,6 @@
 <!--TODO to be merged with same drawable from branch IPC 160-->
 <shape android:shape="rectangle" xmlns:android="http://schemas.android.com/apk/res/android">
     <corners android:radius="@dimen/ghs_small"/>
-    <stroke android:color="@color/ghs_payment_input_background_color" android:width="1dp"/>
-    <solid android:color="@color/ghs_payment_input_border_color"/>
+    <stroke android:color="@color/ghs_payment_provider_border_color" android:width="@dimen/ghs_small_1"/>
+    <solid android:color="@color/ghs_bordered_background_color"/>
 </shape>
