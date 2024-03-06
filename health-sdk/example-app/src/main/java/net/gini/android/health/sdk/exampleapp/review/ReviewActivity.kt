@@ -114,7 +114,7 @@ class ReviewActivity : AppCompatActivity() {
             }
 
             override fun onPayInvoiceClicked(documentId: String) {
-                // Get and show the payment ReviewFragment for the document id in paymentComponentViewIdentifier
+                // Get and show the payment ReviewFragment for the document id
                 lifecycleScope.launch {
                     binding.progress.visibility = View.VISIBLE
 
