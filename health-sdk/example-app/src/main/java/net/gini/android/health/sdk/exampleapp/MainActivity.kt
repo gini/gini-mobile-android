@@ -3,7 +3,6 @@ package net.gini.android.health.sdk.exampleapp
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -14,14 +13,12 @@ import ch.qos.logback.classic.LoggerContext
 import ch.qos.logback.classic.android.LogcatAppender
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder
 import com.google.android.material.tabs.TabLayoutMediator
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import net.gini.android.health.sdk.exampleapp.databinding.ActivityMainBinding
 import net.gini.android.health.sdk.exampleapp.invoices.ui.InvoicesActivity
 import net.gini.android.health.sdk.exampleapp.pager.PagerAdapter
 import net.gini.android.health.sdk.exampleapp.review.ReviewActivity
 import net.gini.android.health.sdk.exampleapp.upload.UploadActivity
-import net.gini.android.health.sdk.requirement.Requirement
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.slf4j.LoggerFactory
 import java.util.*
@@ -65,20 +62,11 @@ class MainActivity : AppCompatActivity() {
         TabLayoutMediator(binding.indicator, binding.pager) { _, _ -> }.attach()
 
         binding.upload.setOnClickListener {
-            checkRequirements(
-                before = {
-                    binding.upload.isEnabled = false
-                },
-                action = {
-                    startActivity(
-                        UploadActivity.getStartIntent(
-                            this@MainActivity,
-                            viewModel.pages.value.map { it.uri })
-                    )
-                },
-                after = {
-                    binding.upload.isEnabled = true
-                })
+            startActivity(
+                UploadActivity.getStartIntent(
+                    this@MainActivity,
+                    viewModel.pages.value.map { it.uri })
+            )
         }
 
         binding.invoicesScreen.setOnClickListener {
@@ -89,41 +77,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun importFile() {
-        checkRequirements(
-            before = {
-                binding.importFile.isEnabled = false
-            },
-            action = {
-                importLauncher.launch(arrayOf("image/*", "application/pdf"))
-            },
-            after = {
-                binding.importFile.isEnabled = true
-            })
-    }
-
-    private fun checkRequirements(before: () -> Unit = {}, action: suspend () -> Unit, after: suspend () -> Unit = {}) {
-        binding.loadingIndicator.isVisible = true
-        before()
-        lifecycleScope.launch {
-            try {
-                val requirements = viewModel.checkRequirements(packageManager)
-                if (requirements.isEmpty()) {
-                    action()
-                } else {
-                    showMissingRequirements(requirements)
-                }
-            } catch (e: Exception) {
-                LOG.error("Failed to check requirements: {}", e)
-                Toast.makeText(
-                    this@MainActivity,
-                    "Failed to check requirements. See Logcat for details.",
-                    Toast.LENGTH_LONG
-                ).show()
-            } finally {
-                binding.loadingIndicator.isVisible = false
-                after()
-            }
-        }
+        importLauncher.launch(arrayOf("image/*", "application/pdf"))
     }
 
     private fun takePhoto() {
@@ -142,16 +96,6 @@ class MainActivity : AppCompatActivity() {
             startActivity(UploadActivity.getStartIntent(this, listOf(it)))
         } ?: run {
             Toast.makeText(this, "No document received", Toast.LENGTH_LONG).show()
-        }
-    }
-
-    private fun showMissingRequirements(requirements: List<Requirement>) {
-        requirements.joinToString(separator = "\n") { requirement ->
-            when (requirement) {
-                Requirement.NoBank -> getString(R.string.no_bank)
-            }
-        }.let {
-            Toast.makeText(this, it, Toast.LENGTH_LONG).show()
         }
     }
 

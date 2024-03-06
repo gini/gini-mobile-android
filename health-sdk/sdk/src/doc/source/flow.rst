@@ -6,17 +6,8 @@ It provides a way to submit a document for reviewing its extracted payment detai
 let's the user make the payment with one of the payment providers.
 
 The recommended flow is to:
- 1. Call ``GiniHealth.checkRequirementsAsync()`` to make sure that the flow can be completed.
- 2. Call one of the overloads of ``setDocumentForReview``, to submit a document.
- 3. Display ``ReviewFragment``.
-
-Checking requirements
----------------------
-
-Requirements are not enforced, but recommended. Review Fragment will still start, but
-the flow cannot be completed if not all requirements are met.
-
-``checkRequirementsAsync()`` returns a list of missing requirements. Empty list means all requirements are met.
+ 1. Call one of the overloads of ``setDocumentForReview``, to submit a document.
+ 2. Display ``ReviewFragment``.
 
 Setting a document for review
 -----------------------------
