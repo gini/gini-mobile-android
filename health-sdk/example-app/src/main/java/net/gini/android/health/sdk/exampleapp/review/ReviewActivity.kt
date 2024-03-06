@@ -5,7 +5,6 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -114,14 +113,14 @@ class ReviewActivity : AppCompatActivity() {
                 }
             }
 
-            override fun onPayInvoiceClicked(paymentComponentViewIdentifier: String) {
-                // Get and show the payment ReviewFragment for the document id in paymentComponentViewIdentifier
+            override fun onPayInvoiceClicked(documentId: String) {
+                // Get and show the payment ReviewFragment for the document id
                 lifecycleScope.launch {
                     binding.progress.visibility = View.VISIBLE
 
                     try {
                         val reviewFragment = viewModel.paymentComponent.getPaymentReviewFragment(
-                            documentId = paymentComponentViewIdentifier,
+                            documentId = documentId,
                             configuration = ReviewConfiguration(showCloseButton = showCloseButton)
                         )
 
@@ -166,7 +165,7 @@ class ReviewActivity : AppCompatActivity() {
 
             // Configure the PaymentComponentView
             binding.paymentComponentView.isPayable = true
-            binding.paymentComponentView.identifier = documentId
+            binding.paymentComponentView.documentId = documentId
 
             // Load the payment provider apps and show an alert dialog for errors
             viewModel.paymentComponent.loadPaymentProviderApps()

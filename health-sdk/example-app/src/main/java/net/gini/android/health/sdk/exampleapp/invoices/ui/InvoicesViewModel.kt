@@ -1,6 +1,5 @@
 package net.gini.android.health.sdk.exampleapp.invoices.ui
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -49,14 +48,14 @@ class InvoicesViewModel(
         }
     }
 
-    fun getPaymentReviewFragment(paymentComponentViewIdentifier: String) {
+    fun getPaymentReviewFragment(documentId: String) {
         viewModelScope.launch {
-            LOG.debug("Getting payment review fragment for id: {}", paymentComponentViewIdentifier)
+            LOG.debug("Getting payment review fragment for id: {}", documentId)
 
             _paymentReviewFragmentFlow.value = PaymentReviewFragmentState.Loading
 
             val documentWithExtractions =
-                invoicesRepository.invoicesFlow.value.find { it.documentId == paymentComponentViewIdentifier }
+                invoicesRepository.invoicesFlow.value.find { it.documentId == documentId }
 
             if (documentWithExtractions != null) {
                 try {
@@ -70,8 +69,8 @@ class InvoicesViewModel(
                     _paymentReviewFragmentFlow.value = PaymentReviewFragmentState.Error(e)
                 }
             } else {
-                LOG.error("Document with id {} not found", paymentComponentViewIdentifier)
-                _paymentReviewFragmentFlow.value = PaymentReviewFragmentState.Error(IllegalStateException("Document with id $paymentComponentViewIdentifier not found"))
+                LOG.error("Document with id {} not found", documentId)
+                _paymentReviewFragmentFlow.value = PaymentReviewFragmentState.Error(IllegalStateException("Document with id $documentId not found"))
             }
             _paymentReviewFragmentFlow.emit(PaymentReviewFragmentState.Idle)
         }
