@@ -20,7 +20,6 @@
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/indicator"
-        style="@style/GiniHealthTheme.PageIndicatorStyle"
         android:layout_width="0dp"
         android:layout_height="@dimen/ghs_large"
         android:background="@color/ghs_light_07"
