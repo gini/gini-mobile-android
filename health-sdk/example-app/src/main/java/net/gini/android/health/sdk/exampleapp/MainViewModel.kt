@@ -1,7 +1,6 @@
 package net.gini.android.health.sdk.exampleapp
 
 import android.content.Context
-import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModel
@@ -11,7 +10,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.exampleapp.pager.PagerAdapter
-import net.gini.android.health.sdk.requirement.Requirement
 import java.io.File
 
 class MainViewModel(
@@ -40,18 +38,9 @@ class MainViewModel(
         ++currentIndex
     }
 
-    suspend fun checkRequirements(packageManager: PackageManager) = giniHealth.checkRequirementsAsync(packageManager)
-
     fun setDocumentForReview(documentId: String) {
         viewModelScope.launch {
             giniHealth.setDocumentForReview(documentId)
         }
     }
-}
-
-sealed class RequirementsCheckState {
-    object Unknown: RequirementsCheckState()
-    object Loading: RequirementsCheckState()
-    class Success(val requirements: List<Requirement>): RequirementsCheckState()
-    class Failure(val error: Exception): RequirementsCheckState()
 }

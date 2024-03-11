@@ -1,6 +1,5 @@
 package net.gini.android.health.sdk
 
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Parcelable
 import androidx.lifecycle.Lifecycle
@@ -15,10 +14,6 @@ import kotlinx.parcelize.Parcelize
 import net.gini.android.core.api.Resource
 import net.gini.android.core.api.models.Document
 import net.gini.android.health.api.GiniHealthAPI
-import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
-import net.gini.android.health.sdk.requirement.AtLeastOneInstalledBankAppRequirement
-import net.gini.android.health.sdk.requirement.Requirement
-import net.gini.android.health.sdk.requirement.RequirementsChecker
 import net.gini.android.health.sdk.review.ReviewFragment
 import net.gini.android.health.sdk.review.model.PaymentDetails
 import net.gini.android.health.sdk.review.model.PaymentRequest
@@ -35,9 +30,8 @@ import java.lang.ref.WeakReference
  * let's the user make the payment with one of the payment providers.
  *
  * The recommended flow is:
- *  1. Call [checkRequirements] to make sure that the flow can be completed.
- *  2. Call one of the overloads of [setDocumentForReview], to submit a document.
- *  3. Display [ReviewFragment].
+ *  1. Call one of the overloads of [setDocumentForReview], to submit a document.
+ *  2. Display [ReviewFragment].
  *
  * [setDocumentForReview] can be called with:
  *  1. [Document] instance in the case the upload was performed with Gini Pay Api lib ([GiniHealthAPI]).
@@ -139,29 +133,6 @@ class GiniHealth(
             }
         }
     }
-
-    /**
-     * Checks the required conditions needed to finish the payment flow to avoid unnecessary document upload.
-     * See [Requirement] for possible requirements.
-     *
-     * @return List of missing requirements. Empty list means all requirements are met.
-     */
-    @Deprecated(
-        "Please us the coroutine alternative which does a more comprehensive check.",
-        ReplaceWith("checkRequirementsAsync(packageManager)")
-    )
-    fun checkRequirements(packageManager: PackageManager): List<Requirement> = mutableListOf<Requirement>().apply {
-        AtLeastOneInstalledBankAppRequirement(packageManager).check()?.let { add(it) }
-    }
-
-    /**
-     * Checks the required conditions needed to finish the payment flow to avoid unnecessary document upload.
-     * See [Requirement] for possible requirements.
-     *
-     * @return List of missing requirements. Empty list means all requirements are met.
-     */
-    suspend fun checkRequirementsAsync(packageManager: PackageManager): List<Requirement> =
-        RequirementsChecker.withDefaultRequirements(this, packageManager).checkRequirements()
 
     /**
      * Checks whether the document is payable by fetching the document and its extractions from the
