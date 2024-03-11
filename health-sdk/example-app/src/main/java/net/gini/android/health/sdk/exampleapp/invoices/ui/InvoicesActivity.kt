@@ -28,7 +28,6 @@ import net.gini.android.health.sdk.exampleapp.invoices.ui.model.InvoiceItem
 import net.gini.android.health.sdk.moreinformation.MoreInformationFragment
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponentView
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
-import net.gini.android.health.sdk.paymentcomponent.PaymentComponentView
 import net.gini.android.health.sdk.paymentcomponent.PaymentProviderAppsState.Error
 import net.gini.android.health.sdk.review.ReviewFragment
 import net.gini.android.health.sdk.review.ReviewFragmentListener
@@ -124,7 +123,7 @@ class InvoicesActivity : AppCompatActivity() {
                                 paymentReviewFragment.listener = reviewFragmentListener
 
                                 supportFragmentManager.beginTransaction()
-                                    .replace(R.id.payment_review_fragment_container, paymentReviewFragment, REVIEW_FRAGMENT_TAG)
+                                    .replace(R.id.fragment_container, paymentReviewFragment, REVIEW_FRAGMENT_TAG)
                                     .addToBackStack(null)
                                     .commit()
                             }
@@ -135,14 +134,6 @@ class InvoicesActivity : AppCompatActivity() {
         }
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        supportFragmentManager.addOnBackStackChangedListener {
-            if (supportFragmentManager.backStackEntryCount == 0) {
-                supportActionBar?.setTitle(R.string.title_activity_invoices)
-            } else {
-                supportActionBar?.setTitle(R.string.title_payment_review)
-            }
-        }
 
         viewModel.loadInvoicesWithExtractions()
         viewModel.loadPaymentProviderApps()
@@ -178,7 +169,7 @@ class InvoicesActivity : AppCompatActivity() {
         supportFragmentManager.findFragmentByTag(REVIEW_FRAGMENT_TAG)?.let {
             (it as? ReviewFragment)?.listener = reviewFragmentListener
         }
-        
+
         supportFragmentManager.addOnBackStackChangedListener {
             setActivityTitle()
             invalidateOptionsMenu()
@@ -191,6 +182,8 @@ class InvoicesActivity : AppCompatActivity() {
         } else if (supportFragmentManager.fragments.last() is MoreInformationFragment) {
             title =
                 getString(net.gini.android.health.sdk.R.string.ghs_more_information_fragment_title)
+        } else if (supportFragmentManager.fragments.last() is ReviewFragment) {
+            title = getString(R.string.title_payment_review)
         }
     }
     private fun hideLoadingIndicator(binding: ActivityInvoicesBinding) {

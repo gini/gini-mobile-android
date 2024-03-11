@@ -7,6 +7,6 @@
     android:layout_marginHorizontal="@dimen/ghs_small_2"
     android:padding="@dimen/ghs_small_1"
     android:scaleType="fitXY"
-    app:shapeAppearanceOverlay="@style/Root.GiniHealthTheme.Widget.ShapeableImageView.Corners"
+    app:shapeAppearanceOverlay="@style/GiniHealthTheme.Widget.ShapeableImageView.Corners"
     app:strokeColor="@color/ghs_payment_provider_border_color"
     app:strokeWidth="@dimen/ghs_small_1" />
