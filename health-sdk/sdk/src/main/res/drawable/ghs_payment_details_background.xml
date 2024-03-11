@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
     <corners
-        android:topLeftRadius="@dimen/ghs_payment_details_radius"
-        android:topRightRadius="@dimen/ghs_payment_details_radius">
+        android:topLeftRadius="@dimen/ghs_medium_12"
+        android:topRightRadius="@dimen/ghs_medium_12">
     </corners>
     <solid android:color="@color/ghs_payment_details_background_color"/>
 </shape>

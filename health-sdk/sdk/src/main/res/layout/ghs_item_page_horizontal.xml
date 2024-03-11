@@ -6,11 +6,9 @@
 
     <com.github.chrisbanes.photoview.PhotoView
         android:id="@+id/image"
-        style="@style/GiniHealth.PagePhotoStyle"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:paddingBottom="@dimen/ghs_payment_details_padding_vertical"
+        android:paddingTop="@dimen/ghs_zero"
         tools:ignore="ContentDescription" />
 
     <ProgressBar

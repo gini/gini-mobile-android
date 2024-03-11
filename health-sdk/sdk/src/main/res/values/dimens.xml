@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <dimen name="ghs_zero">0dp</dimen>
     <dimen name="ghs_small_2">2dp</dimen>
     <dimen name="ghs_small">4dp</dimen>
     <dimen name="ghs_medium">8dp</dimen>
@@ -8,28 +9,18 @@
     <dimen name="ghs_large">16dp</dimen>
     <dimen name="ghs_large_20">20dp</dimen>
     <dimen name="ghs_large_24">24dp</dimen>
+    <dimen name="ghs_large_28">28dp</dimen>
     <dimen name="ghs_large_32">32dp</dimen>
     <dimen name="ghs_large_48">48dp</dimen>
+    <dimen name="ghs_large_50">50dp</dimen>
     <dimen name="ghs_large_56">56dp</dimen>
     <dimen name="ghs_large_64">64dp</dimen>
     <dimen name="ghs_large_80">80dp</dimen>
     <dimen name="ghs_large_96">96dp</dimen>
+    <dimen name="ghs_large_100">100dp</dimen>
 
-    <!-- TODO: replace these with the appropriate dimension categories from above-->
-    <dimen name="ghs_indicator_radius">4dp</dimen>
-    <dimen name="ghs_tab_height">16dp</dimen>
-    <dimen name="ghs_tab_width">16dp</dimen>
-    <dimen name="ghs_payment_details_radius">12dp</dimen>
-    <dimen name="ghs_payment_details_padding_horizontal">16dp</dimen>
-    <dimen name="ghs_payment_details_padding_vertical">16dp</dimen>
-    <dimen name="ghs_input_spacing_vertical">8dp</dimen>
-    <dimen name="ghs_input_spacing_horizontal">32dp</dimen>
-    <dimen name="ghs_payment_button_spacing">8dp</dimen>
-    <item name="ghs_input_iban_weight" format="float" type="dimen">0.7</item>
-    <item name="ghs_input_amount_weight" format="float" type="dimen">0.3</item>
-    <dimen name="ghs_bank_icon_size">20dp</dimen>
-    <dimen name="ghs_page_padding_top">0dp</dimen>
-    <dimen name="ghs_bank_edit_icon_size">10dp</dimen>
-    <dimen name="ghs_bank_edit_icon_padding">4dp</dimen>
+    <item name="ghs_float_0.7" format="float" type="dimen">0.7</item>
+    <item name="ghs_float_0.3" format="float" type="dimen">0.3</item>
+    <item name="ghs_float_0.5" format="float" type="dimen">0.5</item>
 
 </resources>

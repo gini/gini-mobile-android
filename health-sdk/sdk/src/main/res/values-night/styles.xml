@@ -44,7 +44,6 @@
     <style name="GiniHealthTheme.Widget.BottomSheet.DragHandle" parent="Root.GiniHealthTheme.Widget.BottomSheet.DragHandle">
         <item name="tint">@color/ghs_light_05</item>
     </style>
-
     <!-- endregion -->
     
 </resources>

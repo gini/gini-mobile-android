@@ -51,6 +51,7 @@ import net.gini.android.health.sdk.util.autoCleared
 import net.gini.android.health.sdk.util.clearErrorMessage
 import net.gini.android.health.sdk.util.hideErrorMessage
 import net.gini.android.health.sdk.util.hideKeyboard
+import net.gini.android.health.sdk.util.setBackground
 import net.gini.android.health.sdk.util.setBackgroundTint
 import net.gini.android.health.sdk.util.setErrorMessage
 import net.gini.android.health.sdk.util.setTextIfDifferent
@@ -151,7 +152,7 @@ class ReviewFragment private constructor(
 
         // Set info bar bottom margin programmatically to reuse radius dimension with negative sign
         binding.paymentDetailsInfoBar.updateLayoutParams<ConstraintLayout.LayoutParams> {
-            bottomMargin = -resources.getDimensionPixelSize(R.dimen.ghs_payment_details_radius)
+            bottomMargin = -resources.getDimensionPixelSize(R.dimen.ghs_medium_12)
         }
     }
 
@@ -266,11 +267,10 @@ class ReviewFragment private constructor(
         val (fieldsWithError, fieldsWithoutError) = PaymentField.values()
             .map { field -> field to messages.firstOrNull { it.field == field } }
             .partition { (_, message) -> message != null }
-
         fieldsWithError.forEach { (field, validationMessage) ->
             validationMessage?.let { message ->
                 getTextInputLayout(field).apply {
-                    if (error.isNullOrEmpty()) {
+                    if (error.isNullOrEmpty() || getTag(R.id.text_input_layout_tag_is_error_enabled) == null) {
                         setErrorMessage(
                             when (message) {
                                 is ValidationMessage.Empty -> when (field) {
@@ -355,6 +355,7 @@ class ReviewFragment private constructor(
     private fun GhsFragmentReviewBinding.setActionListeners() {
         paymentDetails.setOnClickListener { it.hideKeyboard() }
         payment.setOnClickListener {
+            requireActivity().currentFocus?.clearFocus()
             it.hideKeyboard()
             listener?.onNextClicked(viewModel.paymentProviderApp.name)
             viewModel.onPayment()
