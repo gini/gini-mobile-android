@@ -11,6 +11,7 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
@@ -23,13 +24,16 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDE
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.imageview.ShapeableImageView
 import kotlinx.coroutines.launch
 import net.gini.android.health.sdk.R
 import net.gini.android.health.sdk.databinding.GhsBottomSheetBankSelectionBinding
+import net.gini.android.health.sdk.databinding.GhsItemPaymentProviderAppBinding
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.health.sdk.util.autoCleared
 import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthTheme
+import net.gini.android.health.sdk.util.setIntervalClickListener
 import net.gini.android.health.sdk.util.setIntervalClickListener
 import net.gini.android.health.sdk.util.wrappedWithGiniHealthTheme
 import org.slf4j.LoggerFactory
@@ -145,11 +149,13 @@ internal class PaymentProviderAppsAdapter(
     val onItemClickListener: OnItemClickListener
 ) : RecyclerView.Adapter<PaymentProviderAppsAdapter.ViewHolder>() {
 
-    class ViewHolder(view: View, onClickListener: OnClickListener) : RecyclerView.ViewHolder(view) {
-        val button: MaterialButton
+    class ViewHolder(binding: GhsItemPaymentProviderAppBinding, onClickListener: OnClickListener) : RecyclerView.ViewHolder(binding.root) {
+        val button: Button
+        val iconView: ShapeableImageView
 
         init {
-            button = view.findViewById(R.id.ghs_payment_provider_app)
+            iconView = binding.ghsSelectorLayout.ghsPaymentProviderAppIconHolder.ghsPaymentProviderIcon
+            button = binding.ghsSelectorLayout.ghsSelectBankButton
             button.setIntervalClickListener { onClickListener.onClick(adapterPosition) }
         }
 
@@ -159,8 +165,7 @@ internal class PaymentProviderAppsAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view =
-            parent.getLayoutInflaterWithGiniHealthTheme().inflate(R.layout.ghs_item_payment_provider_app, parent, false)
+        val view = GhsItemPaymentProviderAppBinding.inflate(parent.getLayoutInflaterWithGiniHealthTheme(), parent, false)
         val viewHolder = ViewHolder(view, object : ViewHolder.OnClickListener {
             override fun onClick(adapterPosition: Int) {
                 onItemClickListener.onItemClick(dataSet[adapterPosition].paymentProviderApp)
@@ -173,21 +178,18 @@ internal class PaymentProviderAppsAdapter(
         val paymentProviderAppListItem = dataSet[position]
         holder.itemView.context.wrappedWithGiniHealthTheme().let { context ->
             holder.button.text = paymentProviderAppListItem.paymentProviderApp.name
+            holder.iconView.setImageDrawable(paymentProviderAppListItem.paymentProviderApp.icon)
 
             if (paymentProviderAppListItem.isSelected) {
-                val colorTypedValue = TypedValue().also {
-                    context.theme.resolveAttribute(androidx.appcompat.R.attr.colorPrimary, it, true)
-                }
-                @ColorInt val color = colorTypedValue.data
-                holder.button.strokeColor = ColorStateList.valueOf(color)
-
+                holder.itemView.isSelected = true
                 holder.button.setCompoundDrawablesWithIntrinsicBounds(
-                    paymentProviderAppListItem.paymentProviderApp.icon,
+                    null,
                     null,
                     ContextCompat.getDrawable(context, R.drawable.ghs_checkmark),
                     null
                 )
             } else {
+                holder.itemView.isSelected = false
                 val playStoreLogo: Drawable? =
                     if (paymentProviderAppListItem.paymentProviderApp.installedPaymentProviderApp == null &&
                         paymentProviderAppListItem.paymentProviderApp.paymentProvider.playStoreUrl != null
@@ -196,11 +198,8 @@ internal class PaymentProviderAppsAdapter(
                     } else {
                         null
                     }
-
-                holder.button.strokeColor = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.ghs_dark_05))
-
                 holder.button.setCompoundDrawablesWithIntrinsicBounds(
-                    paymentProviderAppListItem.paymentProviderApp.icon,
+                    null,
                     null,
                     playStoreLogo,
                     null

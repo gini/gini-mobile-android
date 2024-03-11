@@ -2,18 +2,23 @@
 <resources>
 
     <dimen name="ghs_zero">0dp</dimen>
+    <dimen name="ghs_small_1">1dp</dimen>
     <dimen name="ghs_small_2">2dp</dimen>
     <dimen name="ghs_small">4dp</dimen>
     <dimen name="ghs_medium">8dp</dimen>
     <dimen name="ghs_medium_12">12dp</dimen>
     <dimen name="ghs_large">16dp</dimen>
+    <dimen name="ghs_large_18">18dp</dimen>
     <dimen name="ghs_large_20">20dp</dimen>
+    <dimen name="ghs_large_22">22dp</dimen>
     <dimen name="ghs_large_24">24dp</dimen>
     <dimen name="ghs_large_28">28dp</dimen>
     <dimen name="ghs_large_32">32dp</dimen>
+    <dimen name="ghs_large_36">36dp</dimen>
     <dimen name="ghs_large_48">48dp</dimen>
     <dimen name="ghs_large_50">50dp</dimen>
     <dimen name="ghs_large_56">56dp</dimen>
+    <dimen name="ghs_large_60">60dp</dimen>
     <dimen name="ghs_large_64">64dp</dimen>
     <dimen name="ghs_large_80">80dp</dimen>
     <dimen name="ghs_large_96">96dp</dimen>

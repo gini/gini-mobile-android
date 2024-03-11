@@ -53,22 +53,18 @@
         app:layout_constraintTop_toBottomOf="@id/ghs_more_information_label"
         tools:visibility="visible" />
 
-    <Button
+    <include layout="@layout/ghs_payment_provider_selector_button"
         android:id="@+id/ghs_select_bank_picker"
-        style="@style/GiniHealthTheme.Widget.Button.OutlinedButton.Picker"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/ghs_large"
         android:layout_marginBottom="@dimen/ghs_medium"
-        android:drawableRight="@drawable/ghs_chevron_down_icon"
-        android:gravity="start|center_vertical"
-        android:text="@string/ghs_select_bank"
-        android:visibility="gone"
+        android:background="@drawable/ghs_bordered_background"
         app:layout_constraintBottom_toTopOf="@id/ghs_pay_invoice_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/ghs_select_bank_label"
-        tools:visibility="visible" />
+        tools:visibility="visible"/>
 
     <Button
         android:id="@+id/ghs_pay_invoice_button"

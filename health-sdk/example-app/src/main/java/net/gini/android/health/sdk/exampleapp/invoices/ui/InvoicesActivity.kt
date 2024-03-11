@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
@@ -24,8 +25,9 @@ import net.gini.android.health.sdk.exampleapp.databinding.ActivityInvoicesBindin
 import net.gini.android.health.sdk.exampleapp.invoices.data.UploadHardcodedInvoicesState.Failure
 import net.gini.android.health.sdk.exampleapp.invoices.data.UploadHardcodedInvoicesState.Loading
 import net.gini.android.health.sdk.exampleapp.invoices.ui.model.InvoiceItem
-import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
+import net.gini.android.health.sdk.moreinformation.MoreInformationFragment
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponentView
+import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.health.sdk.paymentcomponent.PaymentProviderAppsState.Error
 import net.gini.android.health.sdk.review.ReviewFragment
 import net.gini.android.health.sdk.review.ReviewFragmentListener
@@ -49,6 +51,7 @@ class InvoicesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val binding = ActivityInvoicesBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setActivityTitle()
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -120,7 +123,7 @@ class InvoicesActivity : AppCompatActivity() {
                                 paymentReviewFragment.listener = reviewFragmentListener
 
                                 supportFragmentManager.beginTransaction()
-                                    .replace(R.id.payment_review_fragment_container, paymentReviewFragment, REVIEW_FRAGMENT_TAG)
+                                    .replace(R.id.fragment_container, paymentReviewFragment, REVIEW_FRAGMENT_TAG)
                                     .addToBackStack(null)
                                     .commit()
                             }
@@ -132,14 +135,6 @@ class InvoicesActivity : AppCompatActivity() {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        supportFragmentManager.addOnBackStackChangedListener {
-            if (supportFragmentManager.backStackEntryCount == 0) {
-                supportActionBar?.setTitle(R.string.title_activity_invoices)
-            } else {
-                supportActionBar?.setTitle(R.string.title_payment_review)
-            }
-        }
-
         viewModel.loadInvoicesWithExtractions()
         viewModel.loadPaymentProviderApps()
 
@@ -149,7 +144,12 @@ class InvoicesActivity : AppCompatActivity() {
 
         viewModel.paymentComponent.listener = object: PaymentComponent.Listener {
             override fun onMoreInformationClicked() {
-                LOG.debug("More information clicked")
+                MoreInformationFragment.newInstance(viewModel.paymentComponent).apply {
+                    supportFragmentManager.beginTransaction()
+                        .add(R.id.fragment_container,this, this::class.java.simpleName)
+                        .addToBackStack(this::class.java.simpleName)
+                        .commit()
+                }
             }
 
             override fun onBankPickerClicked() {
@@ -169,8 +169,23 @@ class InvoicesActivity : AppCompatActivity() {
         supportFragmentManager.findFragmentByTag(REVIEW_FRAGMENT_TAG)?.let {
             (it as? ReviewFragment)?.listener = reviewFragmentListener
         }
+
+        supportFragmentManager.addOnBackStackChangedListener {
+            setActivityTitle()
+            invalidateOptionsMenu()
+        }
     }
 
+    private fun setActivityTitle() {
+        if (supportFragmentManager.backStackEntryCount == 0) {
+            title = getString(R.string.title_activity_invoices)
+        } else if (supportFragmentManager.fragments.last() is MoreInformationFragment) {
+            title =
+                getString(net.gini.android.health.sdk.R.string.ghs_more_information_fragment_title)
+        } else if (supportFragmentManager.fragments.last() is ReviewFragment) {
+            title = getString(R.string.title_payment_review)
+        }
+    }
     private fun hideLoadingIndicator(binding: ActivityInvoicesBinding) {
         binding.loadingIndicatorContainer.visibility = View.INVISIBLE
         binding.loadingIndicator.visibility = View.INVISIBLE
@@ -182,7 +197,9 @@ class InvoicesActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.invoices_menu, menu)
+        if (supportFragmentManager.backStackEntryCount == 0) {
+            menuInflater.inflate(R.menu.invoices_menu, menu)
+        }
         return true
     }
 

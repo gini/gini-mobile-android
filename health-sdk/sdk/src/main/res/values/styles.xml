@@ -141,6 +141,17 @@
     </style>
     <style name="GiniHealthTheme.Widget.BottomSheet.DragHandle" parent="Root.GiniHealthTheme.Widget.BottomSheet.DragHandle" />
 
+    <style name="Root.GiniHealthTheme.Widget.ShapeableImageView.Corners" parent="">
+        <item name="cornerSize">@dimen/ghs_small_2</item>
+        <item name="cornerFamily">rounded</item>
+    </style>
+    <style name="GiniHealthTheme.Widget.ShapeableImageView.Corners" parent="Root.GiniHealthTheme.Widget.ShapeableImageView.Corners"/>
+
+    <style name="Root.GiniHealthTheme.Widget.Button.TransparentBackground" parent="Root.GiniHealthTheme.Widget.Button.UnelevatedButton">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:textColor">@color/ghs_bank_selector_button_color</item>
+    </style>
+    <style name="GiniHealthTheme.Widget.Button.TransparentBackground" parent="Root.GiniHealthTheme.Widget.Button.TransparentBackground"/>
     <!-- endregion -->
 
     <style name="Root.GiniHealthTheme.PaymentInputLayout" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
@@ -208,4 +219,5 @@
         <item name="android:textColor">@color/ghs_dark_07</item>
     </style>
     <style name="GiniHealthTheme.PaymentDetails.InfoBar.TextAppearance" parent="Root.GiniHealthTheme.PaymentDetails.InfoBar.TextAppearance" />
+
 </resources>

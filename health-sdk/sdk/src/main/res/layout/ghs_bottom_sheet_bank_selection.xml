@@ -76,6 +76,7 @@
         android:layout_height="0dp"
         android:fadingEdgeLength="@dimen/ghs_large_32"
         android:requiresFadingEdge="vertical"
+        android:layout_marginHorizontal="@dimen/ghs_large"
         app:layout_constraintBottom_toTopOf="@id/ghs_powered_by_gini_label"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_default="wrap"
