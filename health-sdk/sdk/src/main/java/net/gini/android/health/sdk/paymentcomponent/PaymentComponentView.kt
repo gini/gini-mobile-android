@@ -101,6 +101,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
     private fun restoreBankPickerDefaultState() {
         LOG.debug("Restoring bank picker default state")
         context?.wrappedWithGiniHealthTheme()?.let { context ->
+            binding.ghsSelectBankPicker.ghsPaymentProviderAppIconHolder.root.visibility = View.INVISIBLE
             binding.ghsSelectBankPicker.ghsSelectBankButton.text = context.getString(R.string.ghs_select_bank)
             binding.ghsSelectBankPicker.ghsSelectBankButton.setCompoundDrawablesWithIntrinsicBounds(
                 null,
@@ -122,6 +123,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
                 null
             )
             binding.ghsSelectBankPicker.ghsPaymentProviderAppIconHolder.ghsPaymentProviderIcon.setImageDrawable(paymentProviderApp.icon)
+            binding.ghsSelectBankPicker.ghsPaymentProviderAppIconHolder.root.visibility = View.VISIBLE
         }
     }
 
@@ -250,7 +252,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
     }
 
     private fun addButtonInputHandlers() {
-        binding.ghsSelectBankPicker.root.setIntervalClickListener {
+        binding.ghsSelectBankPicker.ghsSelectBankButton.setIntervalClickListener {
             if (paymentComponent == null) {
                 LOG.warn("Cannot call PaymentComponent's listener: PaymentComponent must be set before showing the PaymentComponentView")
             }
