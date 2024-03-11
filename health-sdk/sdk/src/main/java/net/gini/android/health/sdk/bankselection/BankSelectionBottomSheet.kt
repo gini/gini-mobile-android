@@ -33,6 +33,8 @@ import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.health.sdk.util.autoCleared
 import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthTheme
+import net.gini.android.health.sdk.util.setIntervalClickListener
+import net.gini.android.health.sdk.util.setIntervalClickListener
 import net.gini.android.health.sdk.util.wrappedWithGiniHealthTheme
 import org.slf4j.LoggerFactory
 
@@ -154,7 +156,7 @@ internal class PaymentProviderAppsAdapter(
         init {
             iconView = binding.ghsSelectorLayout.ghsPaymentProviderAppIconHolder.ghsPaymentProviderIcon
             button = binding.ghsSelectorLayout.ghsSelectBankButton
-            button.setOnClickListener { onClickListener.onClick(adapterPosition) }
+            button.setIntervalClickListener { onClickListener.onClick(adapterPosition) }
         }
 
         interface OnClickListener {

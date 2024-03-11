@@ -53,7 +53,7 @@ private fun getPaymentProviderAppQueryIntent() = Intent().apply {
 
 data class PaymentProviderApp(
     val name: String,
-    val icon: Drawable?,
+    val icon: BitmapDrawable?,
     val colors: PaymentProviderAppColors,
     val paymentProvider: PaymentProvider,
     val installedPaymentProviderApp: InstalledPaymentProviderApp? = null,

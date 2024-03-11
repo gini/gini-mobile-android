@@ -68,7 +68,7 @@
 
     <Button
         android:id="@+id/ghs_pay_invoice_button"
-        style="@style/GiniHealthTheme.Widget.Button.UnelevatedButton"
+        style="@style/GiniHealthTheme.Widget.Button.OutlinedButton.Picker"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/ghs_large"

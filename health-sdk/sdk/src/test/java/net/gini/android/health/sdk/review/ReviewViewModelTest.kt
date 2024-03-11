@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runTest
 import net.gini.android.health.sdk.GiniHealth
+import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.health.sdk.preferences.UserPreferences
 import net.gini.android.health.sdk.review.model.PaymentDetails
 import net.gini.android.health.sdk.review.model.ResultWrapper
@@ -56,7 +57,7 @@ class ReviewViewModelTest {
     @Test
     fun `shows info bar on launch`() = runTest {
         // Given
-        val viewModel = ReviewViewModel(giniHealth!!).apply {
+        val viewModel = ReviewViewModel(giniHealth!!, mockk(), mockk()).apply {
             userPreferences = this@ReviewViewModelTest.userPreferences!!
         }
 
@@ -70,7 +71,7 @@ class ReviewViewModelTest {
     @Test
     fun `hides info bar after a delay`() = runTest {
         // Given
-        val viewModel = ReviewViewModel(giniHealth!!).apply {
+        val viewModel = ReviewViewModel(giniHealth!!, mockk(), mockk()).apply {
             userPreferences = this@ReviewViewModelTest.userPreferences!!
         }
 
@@ -98,7 +99,7 @@ class ReviewViewModelTest {
             )
         )
 
-        val viewModel = ReviewViewModel(giniHealth!!)
+        val viewModel = ReviewViewModel(giniHealth!!, mockk(), mockk())
 
         val validationsAsync = async { viewModel.paymentValidation.take(1).toList() }
 
@@ -124,7 +125,7 @@ class ReviewViewModelTest {
             )
         )
 
-        val viewModel = ReviewViewModel(giniHealth!!)
+        val viewModel = ReviewViewModel(giniHealth!!, mockk(), mockk())
 
         viewModel.paymentValidation.test {
             // Precondition
@@ -169,7 +170,7 @@ class ReviewViewModelTest {
                 )
             )
 
-            val viewModel = ReviewViewModel(giniHealth!!)
+            val viewModel = ReviewViewModel(giniHealth!!, mockk(), mockk())
 
             val validationsAsync = async { viewModel.paymentValidation.take(1).toList() }
 
@@ -198,7 +199,7 @@ class ReviewViewModelTest {
                 )
             )
 
-            val viewModel = ReviewViewModel(giniHealth!!)
+            val viewModel = ReviewViewModel(giniHealth!!, mockk(), mockk())
 
             viewModel.paymentValidation.test {
                 // Precondition
@@ -232,7 +233,7 @@ class ReviewViewModelTest {
                 )
             )
 
-            val viewModel = ReviewViewModel(giniHealth!!)
+            val viewModel = ReviewViewModel(giniHealth!!, mockk(), mockk())
 
             viewModel.paymentValidation.test {
                 // Precondition
@@ -266,7 +267,7 @@ class ReviewViewModelTest {
                 )
             )
 
-            val viewModel = ReviewViewModel(giniHealth!!)
+            val viewModel = ReviewViewModel(giniHealth!!, mockk(), mockk())
 
             viewModel.paymentValidation.test {
                 // When
@@ -298,7 +299,7 @@ class ReviewViewModelTest {
                 )
             )
 
-            val viewModel = ReviewViewModel(giniHealth!!)
+            val viewModel = ReviewViewModel(giniHealth!!, mockk(), mockk())
 
             viewModel.paymentValidation.test {
                 // When
@@ -330,7 +331,10 @@ class ReviewViewModelTest {
                 )
             )
 
-            val viewModel = ReviewViewModel(giniHealth!!)
+            val paymentProviderApp = mockk<PaymentProviderApp>()
+            every { paymentProviderApp.installedPaymentProviderApp } returns mockk()
+
+            val viewModel = ReviewViewModel(giniHealth!!, paymentProviderApp, mockk())
 
             // Validate all fields to also get an invalid iban validation message
             viewModel.onPayment()

@@ -1,55 +1,66 @@
 package net.gini.android.health.sdk.exampleapp.review
 
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
+import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.core.view.isGone
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentFactory
 import androidx.fragment.app.commit
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewModelScope
 import dev.chrisbanes.insetter.applyInsetter
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import net.gini.android.core.api.models.Document
 import net.gini.android.health.sdk.GiniHealth
+import net.gini.android.health.sdk.bankselection.BankSelectionBottomSheet
 import net.gini.android.health.sdk.exampleapp.R
 import net.gini.android.health.sdk.exampleapp.databinding.ActivityReviewBinding
+import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
+import net.gini.android.health.sdk.paymentcomponent.PaymentProviderAppsState
 import net.gini.android.health.sdk.review.ReviewConfiguration
 import net.gini.android.health.sdk.review.ReviewFragment
 import net.gini.android.health.sdk.review.ReviewFragmentListener
+import net.gini.android.health.sdk.review.model.ResultWrapper
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.slf4j.LoggerFactory
 
 class ReviewActivity : AppCompatActivity() {
 
     private val viewModel: ReviewViewModel by viewModel()
 
-    private val reviewFragmentListener = object: ReviewFragmentListener {
+    private val reviewFragmentListener = object : ReviewFragmentListener {
         override fun onCloseReview() {
-            Log.i("review_events", "on close clicked")
+            LOG.debug("on close clicked")
             finish()
         }
 
         override fun onNextClicked(paymentProviderName: String) {
-            Log.i("review_events", "pay button clicked with payment provider: $paymentProviderName")
+            LOG.debug("pay button clicked with payment provider: {}", paymentProviderName)
             lifecycleScope.launch {
                 viewModel.giniHealth.openBankState.collect { paymentState ->
                     when (paymentState) {
                         GiniHealth.PaymentState.Loading -> {
-                            Log.i("open_bank_state", "opening bank app")
+                            LOG.debug("opening bank app")
                         }
+
                         is GiniHealth.PaymentState.Success -> {
-                            Log.i("open_bank_state", "launching bank app: ${paymentState.paymentRequest.bankApp.name}")
+                            LOG.debug("launching bank app: {}", paymentState.paymentRequest.bankApp.name)
                             cancel()
                         }
+
                         is GiniHealth.PaymentState.Error -> {
-                            Log.e("open_bank_state", "failed to open bank app: ${paymentState.throwable}")
+                            LOG.error( "failed to open bank app:", paymentState.throwable)
                             cancel()
                         }
+
                         GiniHealth.PaymentState.NoAction -> {}
                     }
                 }
@@ -70,12 +81,6 @@ class ReviewActivity : AppCompatActivity() {
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
-        supportFragmentManager.fragmentFactory = ReviewFragmentFactory(
-            viewModel.giniHealth,
-            ReviewConfiguration(showCloseButton = showCloseButton),
-            reviewFragmentListener
-        )
-
         super.onCreate(savedInstanceState)
 
         supportActionBar?.hide()
@@ -91,32 +96,128 @@ class ReviewActivity : AppCompatActivity() {
             }
         }
 
-        if (savedInstanceState == null) {
-            supportFragmentManager.commit {
-                replace(R.id.review_fragment, ReviewFragment::class.java, null)
+        binding.reviewFragment.applyInsetter {
+            type(statusBars = true, navigationBars = true) {
+                padding(top = true, bottom = true)
+            }
+        }
+
+        // Set a listener on the PaymentComponent to receive events from the PaymentComponentView
+        viewModel.paymentComponent.listener = object : PaymentComponent.Listener {
+            override fun onMoreInformationClicked() {}
+
+            override fun onBankPickerClicked() {
+                // Show the BankSelectionBottomSheet to allow the user to select a bank app
+                BankSelectionBottomSheet.newInstance(viewModel.paymentComponent).apply {
+                    show(supportFragmentManager, BankSelectionBottomSheet::class.simpleName)
+                }
+            }
+
+            override fun onPayInvoiceClicked(documentId: String) {
+                // Get and show the payment ReviewFragment for the document id
+                lifecycleScope.launch {
+                    binding.progress.visibility = View.VISIBLE
+
+                    try {
+                        val reviewFragment = viewModel.paymentComponent.getPaymentReviewFragment(
+                            documentId = documentId,
+                            configuration = ReviewConfiguration(showCloseButton = showCloseButton)
+                        )
+
+                        reviewFragment.listener = reviewFragmentListener
+
+                        supportFragmentManager.commit {
+                            replace(R.id.review_fragment, reviewFragment, REVIEW_FRAGMENT_TAG)
+                        }
+                    } catch (e: Exception) {
+                        AlertDialog.Builder(this@ReviewActivity)
+                            .setTitle(getString(R.string.could_not_start_payment_review))
+                            .setMessage(e.message)
+                            .setPositiveButton(android.R.string.ok, null)
+                            .show()
+                    } finally {
+                        binding.progress.visibility = View.INVISIBLE
+                    }
+                }
+            }
+        }
+
+        // The PaymentComponentView needs the PaymentComponent to be set before it is shown
+        binding.paymentComponentView.paymentComponent = viewModel.paymentComponent
+
+        lifecycleScope.launch {
+            val documentId = (viewModel.giniHealth.documentFlow.value as ResultWrapper.Success<Document>).value.id
+
+            val isDocumentPayable = viewModel.giniHealth.checkIfDocumentIsPayable(documentId)
+
+            if (!isDocumentPayable) {
+                AlertDialog.Builder(this@ReviewActivity)
+                    .setTitle(R.string.document_not_payable_title)
+                    .setMessage(R.string.document_not_payable_message)
+                    .setPositiveButton(android.R.string.ok, object : DialogInterface.OnClickListener {
+                        override fun onClick(dialog: DialogInterface, which: Int) {
+                            finish()
+                        }
+                    })
+                    .show()
+                return@launch
+            }
+
+            // Configure the PaymentComponentView
+            binding.paymentComponentView.isPayable = true
+            binding.paymentComponentView.documentId = documentId
+
+            // Load the payment provider apps and show an alert dialog for errors
+            viewModel.paymentComponent.loadPaymentProviderApps()
+
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.paymentComponent.paymentProviderAppsFlow.collect { paymentProviderAppsState ->
+                    when (paymentProviderAppsState) {
+                        is PaymentProviderAppsState.Error -> {
+                            binding.progress.visibility = View.INVISIBLE
+
+                            AlertDialog.Builder(this@ReviewActivity)
+                                .setTitle(R.string.failed_to_load_bank_apps)
+                                .setMessage(paymentProviderAppsState.throwable.message)
+                                .setPositiveButton(android.R.string.ok, null)
+                                .show()
+                        }
+
+                        PaymentProviderAppsState.Loading -> {
+                            binding.progress.visibility = View.VISIBLE
+                        }
+
+                        is PaymentProviderAppsState.Success -> {
+                            binding.progress.visibility = View.INVISIBLE
+                        }
+                    }
+                }
             }
         }
 
         binding.close.setOnClickListener { finish() }
+
+        // Reattach the listener to the ReviewFragment if it is being shown (in case of configuration changes)
+        supportFragmentManager.findFragmentByTag(REVIEW_FRAGMENT_TAG)?.let {
+            (it as? ReviewFragment)?.listener = reviewFragmentListener
+        }
     }
 
     companion object {
+        private val LOG = LoggerFactory.getLogger(ReviewActivity::class.java)
+
         private const val EXTRA_URIS = "EXTRA_URIS"
-        fun getStartIntent(context: Context, pages: List<Uri> = emptyList()): Intent = Intent(context, ReviewActivity::class.java).apply {
-            putParcelableArrayListExtra(EXTRA_URIS, if (pages is ArrayList<Uri>) pages else ArrayList<Uri>().apply { addAll(pages) })
-        }
+
+        fun getStartIntent(context: Context, pages: List<Uri> = emptyList()): Intent =
+            Intent(context, ReviewActivity::class.java).apply {
+                putParcelableArrayListExtra(
+                    EXTRA_URIS,
+                    if (pages is ArrayList<Uri>) pages else ArrayList<Uri>().apply { addAll(pages) })
+            }
 
         private val Intent.pageUris: List<Uri>
             get() = getParcelableArrayListExtra<Uri>(EXTRA_URIS)?.toList() ?: emptyList()
     }
 }
 
-
-class ReviewFragmentFactory(private val giniHealth: GiniHealth,
-                            private val configuration: ReviewConfiguration,
-                            private val listener: ReviewFragmentListener
-) : FragmentFactory() {
-    override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
-        return ReviewFragment(giniHealth, configuration, listener)
-    }
-}
+private const val REVIEW_FRAGMENT_TAG = "payment_review_fragment"

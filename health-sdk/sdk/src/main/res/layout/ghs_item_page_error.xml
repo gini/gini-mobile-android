@@ -13,7 +13,7 @@
 
         <TextView
             android:id="@+id/page_error_text"
-            style="@style/GiniHealth.PageErrorText"
+            style="@style/GiniHealthTheme.PageErrorText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -21,8 +21,8 @@
 
         <Button
             android:id="@+id/page_error_retry"
+            style="Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_gravity="center_horizontal"
-            style="@style/GiniHealth.PageErrorRetry"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/ghs_snackbar_retry" />

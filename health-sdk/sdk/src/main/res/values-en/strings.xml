@@ -4,14 +4,14 @@
     <string name="ghs_purpose_hint">Purpose</string>
     <string name="ghs_recipient_hint">Recipient</string>
     <string name="ghs_iban_hint">IBAN</string>
-    <string name="ghs_pay_button">Pay</string>
+    <string name="ghs_pay_button">To banking app</string>
     <string name="ghs_bank_placeholder">Loading...</string>
     <string name="ghs_error_failed_to_load_image">Failed to load image</string>
     <string name="ghs_error_input_invalid_iban">Invalid IBAN</string>
     <string name="ghs_error_input_amount_format">Invalid format</string>
     <string name="ghs_error_input_recipient_empty">Please enter the recipient</string>
     <string name="ghs_error_input_iban_empty">Please enter the IBAN</string>
-    <string name="ghs_error_input_amount_empty"/>
+    <string name="ghs_error_input_amount_empty">Invalid</string>
     <string name="ghs_error_input_purpose_empty">Please enter the payment purpose</string>
     <string name="ghs_error_document">Failed to load document</string>
     <string name="ghs_error_payment_details">Failed to get payment details</string>

@@ -15,6 +15,7 @@ import kotlinx.parcelize.Parcelize
 import net.gini.android.core.api.Resource
 import net.gini.android.core.api.models.Document
 import net.gini.android.health.api.GiniHealthAPI
+import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.health.sdk.requirement.AtLeastOneInstalledBankAppRequirement
 import net.gini.android.health.sdk.requirement.Requirement
 import net.gini.android.health.sdk.requirement.RequirementsChecker
@@ -25,6 +26,7 @@ import net.gini.android.health.sdk.review.model.ResultWrapper
 import net.gini.android.health.sdk.review.model.getPaymentExtraction
 import net.gini.android.health.sdk.review.model.toPaymentDetails
 import net.gini.android.health.sdk.review.model.wrapToResult
+import org.slf4j.LoggerFactory
 import java.lang.ref.WeakReference
 
 /**
@@ -112,6 +114,8 @@ class GiniHealth(
      * @param paymentDetails optional [PaymentDetails] for the document corresponding to [documentId]
      */
     suspend fun setDocumentForReview(documentId: String, paymentDetails: PaymentDetails? = null) {
+        LOG.debug("Setting document for review with id: $documentId")
+
         capturedArguments = CapturedArguments.DocumentId(documentId, paymentDetails)
         _paymentFlow.value = ResultWrapper.Loading()
         _documentFlow.value = ResultWrapper.Loading()
@@ -261,6 +265,8 @@ class GiniHealth(
     }
 
     companion object {
+        private val LOG = LoggerFactory.getLogger(GiniHealth::class.java)
+
         private const val CAPTURED_ARGUMENTS_NULL = "CAPTURED_ARGUMENTS_NULL"
         private const val CAPTURED_ARGUMENTS_ID = "CAPTURED_ARGUMENTS_ID"
         private const val CAPTURED_ARGUMENTS_DOCUMENT = "CAPTURED_ARGUMENTS_DOCUMENT"

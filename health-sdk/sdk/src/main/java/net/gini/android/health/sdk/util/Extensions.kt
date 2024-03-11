@@ -131,6 +131,7 @@ internal fun TextInputLayout.setErrorMessage(@StringRes errorStringId: Int) {
     setTag(R.id.text_input_layout_tag_is_error_enabled, true)
     error = resources.getString(errorStringId).nonEmpty()
     setTag(R.id.text_input_layout_tag_error_string_id, errorStringId)
+    setBackground()
 }
 
 internal fun TextInputLayout.clearErrorMessage() {
@@ -138,17 +139,24 @@ internal fun TextInputLayout.clearErrorMessage() {
     setTag(R.id.text_input_layout_tag_is_error_enabled, false)
     error = ""
     setTag(R.id.text_input_layout_tag_error_string_id, null)
+    setBackground()
 }
 
 internal fun TextInputLayout.hideErrorMessage() {
     isErrorEnabled = false
     error = ""
+    setBackground()
 }
 
 internal fun TextInputLayout.showErrorMessage() {
     isErrorEnabled = getTag(R.id.text_input_layout_tag_is_error_enabled) as? Boolean ?: false
     error =
         (getTag(R.id.text_input_layout_tag_error_string_id) as? Int)?.let { resources.getString(it).nonEmpty() } ?: ""
+    setBackground()
+}
+
+internal fun TextInputLayout.setBackground() {
+    if (isErrorEnabled) editText?.setBackgroundResource(R.drawable.ghs_payment_input_edit_text_error_background) else editText?.setBackgroundResource(R.drawable.ghs_payment_input_edit_text_background)
 }
 
 private fun String.nonEmpty() = if (isEmpty()) " " else this
@@ -176,4 +184,8 @@ internal fun Context.wrappedWithGiniHealthTheme(): Context = ContextThemeWrapper
 
 internal fun Fragment.getLayoutInflaterWithGiniHealthTheme(inflater: LayoutInflater): LayoutInflater {
     return inflater.cloneInContext(requireContext().wrappedWithGiniHealthTheme())
+}
+
+internal fun View.setIntervalClickListener(click: View.OnClickListener?) {
+    setOnClickListener(IntervalClickListener(click))
 }
