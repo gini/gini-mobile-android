@@ -4,15 +4,14 @@ import static net.gini.android.capture.tracking.EventTrackingHelper.trackOnboard
 
 import android.app.Activity;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
+
 import net.gini.android.capture.GiniCapture;
-import net.gini.android.capture.GiniCaptureError;
 import net.gini.android.capture.internal.util.FeatureConfiguration;
 import net.gini.android.capture.tracking.OnboardingScreenEvent;
 
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.VisibleForTesting;
 
 /**
  * Created by Alpar Szotyori on 20.05.2019.
@@ -29,6 +28,7 @@ class OnboardingScreenPresenter extends OnboardingScreenContract.Presenter {
         super(activity, view);
         view.setPresenter(this);
         mPages = getDefaultPages();
+        view.setPagesForTracker(mPages);
     }
 
     private List<OnboardingPage> getDefaultPages() {

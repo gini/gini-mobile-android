@@ -52,12 +52,17 @@ android {
     }
 
     buildTypes {
+        val credentials = readLocalPropertiesToMapSilent(project, listOf("amplitudeApiKey", "mixpanelApiKey"))
         debug {
             isTestCoverageEnabled = true
+            resValue("string", "amplitude_api_key", credentials["amplitudeApiKey"] ?: "")
+            resValue("string", "mixpanel_api_key", credentials["mixpanelApiKey"] ?: "")
         }
         release {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
+            resValue("string", "amplitude_api_key", credentials["amplitudeApiKey"] ?: "")
+            resValue("string", "mixpanel_api_key", credentials["mixpanelApiKey"] ?: "")
         }
     }
 
@@ -133,6 +138,10 @@ dependencies {
 
     implementation(libs.navigation.fragment.ktx)
     implementation(libs.navigation.ui.ktx)
+
+    implementation ("com.amplitude:analytics-android:1.+")
+    implementation ("com.mixpanel.android:mixpanel-android:7.+")
+
 
     testImplementation(libs.junit)
     testImplementation(libs.truth)

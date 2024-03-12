@@ -23,9 +23,10 @@ import androidx.constraintlayout.widget.Group;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.viewpager.widget.ViewPager;
 
+import net.gini.android.capture.EventTracker;
+import net.gini.android.capture.EventTrackerBuilder;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.R;
 import net.gini.android.capture.internal.ui.ClickListenerExtKt;
@@ -40,7 +41,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import kotlin.Unit;
 
@@ -52,6 +55,8 @@ import kotlin.Unit;
 public class OnboardingFragment extends Fragment implements OnboardingScreenContract.View {
 
     private static final Logger LOG = LoggerFactory.getLogger(OnboardingFragment.class);
+
+    private EventTracker mEventTracker;
 
     private OnboardingScreenContract.Presenter mPresenter;
 
@@ -67,7 +72,6 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
 
     /**
      * @param savedInstanceState
-     *
      * @suppress
      */
     @Override
@@ -78,6 +82,8 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
         if (activity == null) {
             throw new IllegalStateException("Missing activity for fragment.");
         }
+
+        mEventTracker = EventTrackerBuilder.INSTANCE.createEventTracker(requireContext().getApplicationContext());
 
         forcePortraitOrientationOnPhones(activity);
 
@@ -113,7 +119,7 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
     @Nullable
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
-            final Bundle savedInstanceState) {
+                             final Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.gc_fragment_onboarding, container, false);
         bindViews(view);
         addInputHandlers();
@@ -132,6 +138,23 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
         if (getActivity() != null) {
             getActivity().getOnBackPressedDispatcher().onBackPressed();
         }
+    }
+
+    String pageName;
+
+    List<OnboardingPage> mPages;
+    Map<Integer, String> pageNames;
+    @Override
+    public void setPagesForTracker(List<OnboardingPage> pages) {
+        mPages = pages;
+        pageNames = new HashMap<>();
+        pageNames.put(R.string.gc_onboarding_align_corners_title, "onboarding_flat_paper");
+        pageNames.put(R.string.gc_onboarding_lighting_title, "onboarding_lighting");
+        pageNames.put(R.string.gc_onboarding_multipage_title, "onboarding_multiple_pages");
+        pageNames.put(R.string.gc_onboarding_qr_code_title, "onboarding_qr_code");
+
+        //pageName = pageNames.get(pages.get(0).getTitleResId());
+
     }
 
     private void bindViews(final View view) {
@@ -160,9 +183,18 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
     }
 
     private void addInputHandlers() {
-        ClickListenerExtKt.setIntervalClickListener(buttonNext, v -> mPresenter.showNextPage());
-        ClickListenerExtKt.setIntervalClickListener(buttonSkip, v -> mPresenter.skip());
-        ClickListenerExtKt.setIntervalClickListener(buttonGetStarted, v -> mPresenter.showNextPage());
+        ClickListenerExtKt.setIntervalClickListener(buttonNext, v -> {
+            mEventTracker.trackEvent("next_step_tapped", pageName);
+            mPresenter.showNextPage();
+        });
+        ClickListenerExtKt.setIntervalClickListener(buttonSkip, v -> {
+            mEventTracker.trackEvent("skip_tapped", pageName);
+            mPresenter.skip();
+        });
+        ClickListenerExtKt.setIntervalClickListener(buttonGetStarted, v -> {
+            mEventTracker.trackEvent("get_started_tapped", pageName);
+            mPresenter.showNextPage();
+        });
     }
 
     @Override
@@ -188,6 +220,8 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
 
     @Override
     public void scrollToPage(int pageIndex) {
+        pageName = pageNames.get(mPages.get(pageIndex).getTitleResId());
+        mEventTracker.trackEvent("screen_shown", pageName);
         mViewPager.setCurrentItem(pageIndex);
     }
 

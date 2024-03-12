@@ -1,5 +1,11 @@
 package net.gini.android.capture.review.multipage;
 
+import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
+import static net.gini.android.capture.internal.util.FileImportHelper.showAlertIfOpenWithDocumentAndAppIsDefault;
+import static net.gini.android.capture.internal.util.FragmentExtensionsKt.getLayoutInflaterWithGiniCaptureTheme;
+import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
+import static net.gini.android.capture.tracking.EventTrackingHelper.trackReviewScreenEvent;
+
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.net.Uri;
@@ -27,6 +33,8 @@ import androidx.recyclerview.widget.SnapHelper;
 import com.google.android.material.tabs.TabLayout;
 
 import net.gini.android.capture.Document;
+import net.gini.android.capture.EventTracker;
+import net.gini.android.capture.EventTrackerBuilder;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.R;
 import net.gini.android.capture.camera.CameraFragment;
@@ -64,12 +72,6 @@ import java.util.Map;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
 import kotlin.Unit;
-
-import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
-import static net.gini.android.capture.internal.util.FileImportHelper.showAlertIfOpenWithDocumentAndAppIsDefault;
-import static net.gini.android.capture.internal.util.FragmentExtensionsKt.getLayoutInflaterWithGiniCaptureTheme;
-import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
-import static net.gini.android.capture.tracking.EventTrackingHelper.trackReviewScreenEvent;
 
 /**
  * Created by Alpar Szotyori on 07.05.2018.
@@ -114,6 +116,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
     private int mScrollToPosition = -1;
     private final String KEY_SHOULD_SCROLL_TO_LAST_PAGE = "GC_SHOULD_SCROLL_TO_LAST_PAGE";
     private final String KEY_SCROLL_TO_POSITION = "GC_SHOULD_SCROLL_TO_LAST_PAGE";
+    private EventTracker mEventTracker;
 
     public static MultiPageReviewFragment newInstance() {
 
@@ -132,6 +135,8 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        mEventTracker = EventTrackerBuilder.INSTANCE.createEventTracker(this.getContext().getApplicationContext());
+        mEventTracker.trackEvent("screen_shown", "review");
         forcePortraitOrientationOnPhones(getActivity());
 
         OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
@@ -516,6 +521,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
 
                         injectedViewAdapter.setOnNavButtonClickListener(new IntervalClickListener(v -> {
                             if (getActivity() != null) {
+                                mEventTracker.trackEvent("close_tapped", "review");
                                 getActivity().getOnBackPressedDispatcher().onBackPressed();
                             }
                         }));
@@ -524,7 +530,10 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
     }
 
     private void setInputHandlers() {
-        ClickListenerExtKt.setIntervalClickListener(mButtonNext, v -> onNextButtonClicked());
+        ClickListenerExtKt.setIntervalClickListener(mButtonNext, v -> {
+            mEventTracker.trackEvent("process_tapped", "review");
+            onNextButtonClicked();
+        });
 
         if (GiniCapture.hasInstance() && !GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
             mAddPagesWrapperLayout.setVisibility(GiniCapture.getInstance().isMultiPageEnabled() ? View.VISIBLE : View.GONE);
