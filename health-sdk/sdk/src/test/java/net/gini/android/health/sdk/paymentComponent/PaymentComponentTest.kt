@@ -1,0 +1,294 @@
+package net.gini.android.health.sdk.paymentComponent
+
+import android.content.Context
+import android.content.pm.PackageManager
+import android.util.DisplayMetrics
+import androidx.test.core.app.ApplicationProvider
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import app.cash.turbine.test
+import com.google.common.truth.Truth.assertThat
+import io.mockk.coEvery
+import io.mockk.every
+import io.mockk.mockk
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.test.runTest
+import net.gini.android.core.api.Resource
+import net.gini.android.health.api.GiniHealthAPI
+import net.gini.android.health.api.HealthApiDocumentManager
+import net.gini.android.health.api.models.PaymentProvider
+import net.gini.android.health.sdk.GiniHealth
+import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
+import net.gini.android.health.sdk.paymentcomponent.PaymentComponentPreferences
+import net.gini.android.health.sdk.paymentcomponent.PaymentProviderAppsState
+import net.gini.android.health.sdk.paymentcomponent.SelectedPaymentProviderAppState
+import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
+import net.gini.android.health.sdk.review.ReviewConfiguration
+import net.gini.android.health.sdk.review.ReviewFragment
+import net.gini.android.health.sdk.test.ViewModelTestCoroutineRule
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
+import org.junit.runner.RunWith
+
+
+@ExperimentalCoroutinesApi
+@RunWith(AndroidJUnit4::class)
+class PaymentComponentTest {
+
+    @get:Rule
+    val testCoroutineRule = ViewModelTestCoroutineRule()
+
+    private lateinit var context: Context
+    private lateinit var packageManager: PackageManager
+    private lateinit var giniHealth: GiniHealth
+    private val giniHealthAPI: GiniHealthAPI = mockk(relaxed = true) { GiniHealthAPI::class.java }
+    private val documentManager: HealthApiDocumentManager = mockk { HealthApiDocumentManager::class.java }
+
+    private val paymentProvider = PaymentProvider(
+        id = "payment provider id",
+        name = "payment provider name",
+        packageName = "net.gini.android.bank.exampleapp1",
+        appVersion = "appVersion",
+        colors = PaymentProvider.Colors(
+            backgroundColorRGBHex = "112233",
+            textColoRGBHex = "ffffff"
+        ),
+        icon = byteArrayOf(),
+        playStoreUrl = ""
+        )
+
+    private val paymentProvider1 = PaymentProvider(
+        id = "payment provider id 1",
+        name = "payment provider name",
+        packageName = "net.gini.android.bank.exampleapp2",
+        appVersion = "appVersion",
+        colors = PaymentProvider.Colors(
+            backgroundColorRGBHex = "112233",
+            textColoRGBHex = "ffffff"
+        ),
+        icon = byteArrayOf(),
+        playStoreUrl = ""
+        )
+
+    private val paymentProvider2 = PaymentProvider(
+        id = "payment provider id 2",
+        name = "payment provider name",
+        packageName = "net.gini.android.bank.exampleapp3",
+        appVersion = "appVersion",
+        colors = PaymentProvider.Colors(
+            backgroundColorRGBHex = "112233",
+            textColoRGBHex = "ffffff"
+        ),
+        icon = byteArrayOf(),
+        playStoreUrl = ""
+    )
+
+    private val notInstalledPaymentProvider = PaymentProvider(
+        id = "payment provider id 3",
+        name = "payment provider name",
+        packageName = "net.gini.android.bank.exampleapp3",
+        appVersion = "appVersion",
+        colors = PaymentProvider.Colors(
+            backgroundColorRGBHex = "112233",
+            textColoRGBHex = "ffffff"
+        ),
+        icon = byteArrayOf(),
+    )
+
+    @Before
+    fun setUp() {
+        every { giniHealthAPI.documentManager } returns documentManager
+        giniHealth = GiniHealth(giniHealthAPI)
+        context = ApplicationProvider.getApplicationContext()
+        packageManager = mockk(relaxed = true)
+    }
+
+    @Test
+    fun `emits error when it cannot load payment providers`() = runTest {
+        // Given
+        coEvery { documentManager.getPaymentProviders() } returns Resource.Error()
+
+        // When
+        val paymentComponent = PaymentComponent(context, giniHealth)
+        paymentComponent.loadPaymentProviderApps()
+
+        // Then
+        paymentComponent.paymentProviderAppsFlow.test {
+            assertThat(awaitItem()).isInstanceOf(PaymentProviderAppsState.Error::class.java)
+        }
+    }
+
+    @Test
+    fun `emits error when loading payment providers is cancelled`() = runTest {
+        // Given
+        coEvery { documentManager.getPaymentProviders() } returns Resource.Cancelled()
+
+        // When
+        val paymentComponent = PaymentComponent(context, giniHealth)
+        paymentComponent.loadPaymentProviderApps()
+
+        // Then
+        paymentComponent.paymentProviderAppsFlow.test {
+            assertThat(awaitItem()).isInstanceOf(PaymentProviderAppsState.Error::class.java)
+        }
+    }
+
+    @Test
+    fun `emits payment provider apps when loaded`() = runTest {
+        // Given
+        val paymentProviderList = listOf(
+            paymentProvider,
+            paymentProvider1,
+            paymentProvider2
+        )
+
+        coEvery { documentManager.getPaymentProviders() } returns Resource.Success(paymentProviderList)
+
+        // When
+        val paymentComponent = PaymentComponent(context, giniHealth)
+        paymentComponent.loadPaymentProviderApps()
+
+        // Then
+        paymentComponent.paymentProviderAppsFlow.test {
+            val validation = awaitItem()
+            assertThat(validation).isInstanceOf(PaymentProviderAppsState.Success::class.java)
+            assertThat((validation as PaymentProviderAppsState.Success).paymentProviderApps.size).isEqualTo(3)
+
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `emits only installed payment providers`() = runTest {
+        // Given
+        val paymentProviderList = listOf(
+            paymentProvider,
+            paymentProvider1,
+            paymentProvider2,
+            notInstalledPaymentProvider
+        )
+
+        coEvery { documentManager.getPaymentProviders() } returns Resource.Success(paymentProviderList)
+
+        //When
+        val paymentComponent = PaymentComponent(context, giniHealth)
+        paymentComponent.loadPaymentProviderApps()
+
+        // Then
+        paymentComponent.paymentProviderAppsFlow.test {
+            val validation = awaitItem()
+            assertThat(validation).isInstanceOf(PaymentProviderAppsState.Success::class.java)
+            assertThat((validation as PaymentProviderAppsState.Success).paymentProviderApps.size).isEqualTo(3)
+
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `returns empty list when no payment providers installed`() = runTest {
+        // Given
+        val paymentProviderList = listOf(
+            notInstalledPaymentProvider
+        )
+
+        coEvery { documentManager.getPaymentProviders() } returns Resource.Success(paymentProviderList)
+
+        //When
+        val paymentComponent = PaymentComponent(context, giniHealth)
+        paymentComponent.loadPaymentProviderApps()
+
+        // Then
+        paymentComponent.paymentProviderAppsFlow.test {
+            val validation = awaitItem()
+            assertThat(validation).isInstanceOf(PaymentProviderAppsState.Success::class.java)
+            assertThat((validation as PaymentProviderAppsState.Success).paymentProviderApps).isEmpty()
+
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `rechecks which payment provider apps are installed`() = runTest {
+        //Given
+        val paymentProviderList = mutableListOf(
+            paymentProvider
+        )
+
+        coEvery { documentManager.getPaymentProviders() } returns Resource.Success(paymentProviderList)
+
+        //When
+        val paymentComponent = PaymentComponent(context, giniHealth)
+        paymentComponent.loadPaymentProviderApps()
+
+        // Then
+        paymentComponent.paymentProviderAppsFlow.test {
+            val validation = awaitItem()
+            assertThat(validation).isInstanceOf(PaymentProviderAppsState.Success::class.java)
+            assertThat((validation as PaymentProviderAppsState.Success).paymentProviderApps).isNotEmpty()
+
+            paymentComponent.recheckWhichPaymentProviderAppsAreInstalled()
+            val validateRecheckEmpty = awaitItem()
+            assertThat(validateRecheckEmpty).isInstanceOf(PaymentProviderAppsState.Success::class.java)
+            assertThat((validateRecheckEmpty as PaymentProviderAppsState.Success).paymentProviderApps).isNotEmpty()
+
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `sets selected payment provider`() = runTest {
+        // Given
+        val paymentProviderList = listOf(
+            paymentProvider,
+            paymentProvider1,
+            paymentProvider2,
+        )
+
+        coEvery { documentManager.getPaymentProviders() } returns Resource.Success(paymentProviderList)
+
+        val paymentComponent = PaymentComponent(context, giniHealth)
+        paymentComponent.loadPaymentProviderApps()
+
+        paymentComponent.selectedPaymentProviderAppFlow.test {
+            val noPaymentProviderSelectedValidation = awaitItem()
+
+            assertThat(noPaymentProviderSelectedValidation).isInstanceOf(SelectedPaymentProviderAppState.NothingSelected::class.java)
+            assertThat(paymentComponent.paymentProviderAppsFlow.value).isInstanceOf(PaymentProviderAppsState.Success::class.java)
+
+            //When
+            val paymentProviderToBeSelected = (paymentComponent.paymentProviderAppsFlow.value as PaymentProviderAppsState.Success).paymentProviderApps.last()
+            paymentComponent.setSelectedPaymentProviderApp(paymentProviderToBeSelected)
+
+            // Then
+            val paymentProviderSelectedValidation = awaitItem()
+            assertThat(paymentProviderSelectedValidation).isInstanceOf(SelectedPaymentProviderAppState.AppSelected::class.java)
+            assertThat((paymentProviderSelectedValidation as SelectedPaymentProviderAppState.AppSelected).paymentProviderApp.paymentProvider.id).isEqualTo(paymentProviderList.last().id)
+        }
+    }
+
+    @Test(expected = IllegalStateException::class)
+    fun `throws exception when trying to create ReviewFragment if no payment provider app is set`() = runTest {
+        // Given
+        val reviewConfiguration: ReviewConfiguration = mockk(relaxed = true)
+        val paymentComponent = PaymentComponent(context, giniHealth)
+
+        // When trying to instantiate fragment, then exception should be thrown
+        paymentComponent.getPaymentReviewFragment("", reviewConfiguration)
+    }
+
+    @Test
+    fun `instantiates review fragment if payment provider app is set`() = runTest {
+        // Given
+        val reviewConfiguration: ReviewConfiguration = mockk(relaxed = true)
+        val paymentComponent: PaymentComponent = mockk(relaxed = true)
+        val paymentProviderApp: PaymentProviderApp = mockk(relaxed = true)
+
+        // When
+        every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(SelectedPaymentProviderAppState.AppSelected(paymentProviderApp))
+
+        //Then
+        assertThat(paymentComponent.getPaymentReviewFragment("", reviewConfiguration)).isInstanceOf(ReviewFragment::class.java)
+    }
+
+}
