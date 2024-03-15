@@ -22,8 +22,6 @@ register one of your activities to respond to a deep link scheme known by the Gi
 
 You should already have a scheme and host from us. Please contact us in case you don't have them.
 
-TODO: update scheme once we updated it on the backend for the gini-mobile-test client id
-
 The following is an example for the deep link ``ginipay-business://payment-requester``:
 
 .. code-block:: xml
