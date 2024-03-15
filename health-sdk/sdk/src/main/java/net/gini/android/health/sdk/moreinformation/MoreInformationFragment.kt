@@ -15,6 +15,7 @@ import android.view.ViewGroup
 import android.widget.ExpandableListAdapter
 import android.widget.ExpandableListView
 import androidx.annotation.StringRes
+import androidx.annotation.VisibleForTesting
 import androidx.core.text.buildSpannedString
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -41,8 +42,9 @@ class MoreInformationFragment private constructor(private val paymentComponent: 
             paymentComponent
         )
     }
-    //TODO - include link to privacy policy when we have it
-    private val faqList: List<Pair<String, CharSequence>> by lazy {
+
+    @VisibleForTesting
+    internal val faqList: List<Pair<String, CharSequence>> by lazy {
         listOf(
             getString(R.string.ghs_faq_1) to getString(R.string.ghs_faq_answer_1),
             getString(R.string.ghs_faq_2) to getString(R.string.ghs_faq_answer_2),
