@@ -91,12 +91,13 @@ class MoreInformationTest {
 
     @Test
     fun `displays all FAQ questions`() {
+        val fragment = MoreInformationFragment.newInstance(paymentComponent)
         // When
         launchFragmentInContainer {
-            MoreInformationFragment.newInstance(paymentComponent)
+            fragment
         }
 
         // Then
-        onView(withId(R.id.ghs_faq_list)).check { view, _ -> assertThat ((view as ExpandableListView).adapter!!.count).isEqualTo(6) }
+        onView(withId(R.id.ghs_faq_list)).check { view, _ -> assertThat ((view as ExpandableListView).adapter!!.count).isEqualTo(fragment.faqList.size) }
     }
 }
