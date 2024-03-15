@@ -139,7 +139,7 @@ class MoreInformationFragment private constructor(private val paymentComponent: 
         }
 
     private fun buildGiniRelatedAnswer(): SpannedString {
-        val giniLink = createSpanForLink(R.string.ghs_gini_link, R.string.ghs_gini_link_url)
+        val giniLink = createSpanForLink(R.string.ghs_gini_website, R.string.ghs_gini_link_url)
         val privacyPolicyString = createSpanForLink(R.string.ghs_privacy_policy, R.string.ghs_privacy_policy_link_url)
         val span = buildSpannedString {
             append(getString(R.string.ghs_faq_answer_4))
