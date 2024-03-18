@@ -87,6 +87,13 @@ The ``PaymentComponentView`` is hidden by default and should be added to the lay
         android:layout_height="wrap_content"
         ... />
 
+When creating the view holder for the invoice item, pass the ``PaymentComponent`` instance to the view holder:
+
+.. code-block:: kotlin
+
+    val paymentComponentView = view.findViewById(R.id.payment_component)
+    paymentComponentView.paymentComponent = paymentComponent
+
 When binding the view holder of the invoice item, prepare it for reuse, set the payable state and the document id:
 
 .. code-block:: kotlin
