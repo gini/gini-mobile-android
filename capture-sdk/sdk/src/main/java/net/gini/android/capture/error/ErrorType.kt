@@ -79,12 +79,13 @@ enum class ErrorType(
     companion object {
         private fun isInvalidUserError(error: Error): Boolean {
             val errorMessage = error.cause?.message ?: return false
+            if (errorMessage.isBlank()) {
+                return false
+            }
             val responseJson = JSONObject(
-                errorMessage?.let {
-                    String(
-                        it.toByteArray(),
-                        Charset.forName("utf-8"))
-                }
+                String(
+                    errorMessage.toByteArray(),
+                    Charset.forName("utf-8"))
             )
             return responseJson[ERROR_KEY] == GRANT_VALUE
         }
