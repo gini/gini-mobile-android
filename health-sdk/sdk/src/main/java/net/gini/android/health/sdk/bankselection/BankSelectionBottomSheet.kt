@@ -38,6 +38,10 @@ import net.gini.android.health.sdk.util.setIntervalClickListener
 import net.gini.android.health.sdk.util.wrappedWithGiniHealthTheme
 import org.slf4j.LoggerFactory
 
+/**
+ * The [BankSelectionBottomSheet] displays a list of available banks for the user to choose from. If a banking app is not
+ * installed it will also display its Play Store link.
+ */
 class BankSelectionBottomSheet private constructor(private val paymentComponent: PaymentComponent?) :
     BottomSheetDialogFragment() {
 
@@ -138,6 +142,12 @@ class BankSelectionBottomSheet private constructor(private val paymentComponent:
     companion object {
         private val LOG = LoggerFactory.getLogger(BankSelectionBottomSheet::class.java)
 
+        /**
+         * Create a new instance of the [BankSelectionBottomSheet].
+         *
+         * @param paymentComponent the [PaymentComponent] which contains the list of payment provider apps and handles the
+         * payment provider app selection
+         */
         fun newInstance(paymentComponent: PaymentComponent): BankSelectionBottomSheet {
             return BankSelectionBottomSheet(paymentComponent)
         }

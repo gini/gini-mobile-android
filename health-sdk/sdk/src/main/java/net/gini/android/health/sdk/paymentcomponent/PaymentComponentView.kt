@@ -26,13 +26,43 @@ import net.gini.android.health.sdk.util.wrappedWithGiniHealthTheme
 import org.slf4j.LoggerFactory
 import kotlin.coroutines.CoroutineContext
 
+/**
+ * The [PaymentComponentView] is a custom view widget and the main entry point for users. It allows them to pick a bank
+ * and initiate the payment process. In addition, it also allows users to view more information about the payment feature.
+ *
+ * It is hidden by default and should be added to the layout of each invoice item.
+ *
+ * When creating the view holder for the invoice item, pass the [PaymentComponent] instance to the view holder:
+ *
+ * ```
+ * val paymentComponentView = view.findViewById(R.id.payment_component)
+ * paymentComponentView.paymentComponent = paymentComponent
+ * ```
+ *
+ * When binding the view holder of the invoice item, prepare the [PaymentComponentView] for reuse, set the payable state
+ * and the document id:
+ *
+ * ```
+ * viewHolder.paymentComponentView.prepareForReuse()
+ * viewHolder.paymentComponentView.isPayable = invoiceItem.isPayable
+ * viewHolder.paymentComponentView.documentId = invoiceItem.documentId
+ * ```
+ *
+ * _Note_: The [PaymentComponentView] will only be visible if its [PaymentComponentView.isPayable] property is `true`.
+ */
 class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintLayout(context, attrs) {
 
+    /**
+     * The [PaymentComponent] instance which provides the data and state for the [PaymentComponentView].
+     */
     var paymentComponent: PaymentComponent? = null
 
     var coroutineContext: CoroutineContext = Dispatchers.Main
     private var coroutineScope: CoroutineScope? = null
 
+    /**
+     * Sets the payable state of the [PaymentComponentView]. If `true`, the view will be shown, otherwise it will be hidden.
+     */
     var isPayable: Boolean = false
         set(isPayable) {
             field = isPayable
@@ -43,6 +73,9 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
             }
         }
 
+    /**
+     * The document id of the invoice item. This will be returned in the [PaymentComponent.Listener.onPayInvoiceClicked] method.
+     */
     var documentId: String? = null
 
     private val binding = GhsViewPaymentComponentBinding.inflate(getLayoutInflaterWithGiniHealthTheme(), this)
@@ -190,6 +223,9 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
         }
     }
 
+    /**
+     * Resets the internal state of the [PaymentComponentView] to its default state. This should be called before the view is reused.
+     */
     fun prepareForReuse() {
         isPayable = false
         documentId = null

@@ -19,7 +19,6 @@ import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentFactory
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
@@ -51,15 +50,15 @@ import net.gini.android.health.sdk.util.autoCleared
 import net.gini.android.health.sdk.util.clearErrorMessage
 import net.gini.android.health.sdk.util.hideErrorMessage
 import net.gini.android.health.sdk.util.hideKeyboard
-import net.gini.android.health.sdk.util.setBackground
 import net.gini.android.health.sdk.util.setBackgroundTint
 import net.gini.android.health.sdk.util.setErrorMessage
 import net.gini.android.health.sdk.util.setTextIfDifferent
 import net.gini.android.health.sdk.util.showErrorMessage
-
+import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
+import net.gini.android.health.sdk.bankselection.BankSelectionBottomSheet
 
 /**
- * Configuration for [ReviewFragment].
+ * Configuration for the [ReviewFragment].
  */
 data class ReviewConfiguration(
     /**
@@ -96,19 +95,10 @@ interface ReviewFragmentListener {
 }
 
 /**
- * TODO: update documentation
+ * The [ReviewFragment] displays an invoice’s pages and payment information extractions. It also lets users pay the
+ * invoice with the bank they selected in the [BankSelectionBottomSheet].
  *
- * Fragment that displays document pages and extractions and it lets the user pay using a payment provider.
- *
- * To instantiate it you need to create a [FragmentFactory] and set it to fragment manager:
- *
- * ```
- *  class ReviewFragmentFactory(private val giniHealth: GiniHealth) : FragmentFactory() {
- *      override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
- *          return ReviewFragment(giniHealth)
- *      }
- *  }
- * ```
+ * Instances can be created using the [PaymentComponent.getPaymentReviewFragment] method.
  */
 class ReviewFragment private constructor(
     private val giniHealth: GiniHealth? = null,
