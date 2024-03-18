@@ -57,7 +57,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
      */
     var paymentComponent: PaymentComponent? = null
 
-    var coroutineContext: CoroutineContext = Dispatchers.Main
+    internal var coroutineContext: CoroutineContext = Dispatchers.Main
     private var coroutineScope: CoroutineScope? = null
 
     /**

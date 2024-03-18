@@ -491,7 +491,7 @@ class ReviewFragment private constructor(
         }
     }
 
-    companion object {
+    internal companion object {
         fun newInstance(
             giniHealth: GiniHealth,
             configuration: ReviewConfiguration = ReviewConfiguration(),
