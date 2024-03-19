@@ -106,7 +106,7 @@ object GiniBank {
     /**
      * Shows the return reasons dialog in the return assistant, if enabled.
      */
-    var enableReturnReasons = true
+    var enableReturnReasons = false
 
     /**
      * Sets configuration for Capture feature.
