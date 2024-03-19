@@ -150,6 +150,7 @@
     <style name="Root.GiniHealthTheme.Widget.Button.TransparentBackground" parent="Root.GiniHealthTheme.Widget.Button.UnelevatedButton">
         <item name="android:background">@android:color/transparent</item>
         <item name="android:textColor">@color/ghs_bank_selector_button_color</item>
+        <item name="android:textAppearance">@style/GiniHealthTheme.Typography.Button.Picker</item>
     </style>
     <style name="GiniHealthTheme.Widget.Button.TransparentBackground" parent="Root.GiniHealthTheme.Widget.Button.TransparentBackground"/>
     <!-- endregion -->
