@@ -75,7 +75,7 @@
     </style>
     <style name="GiniHealthTheme.Widget.Button.IconButton" parent="Root.GiniHealthTheme.Widget.Button.IconButton"/>
 
-    <style name="Root.GiniHealthTheme.Widget.Button.OutlinedButton.Picker" parent="Widget.Material3.Button.OutlinedButton">
+    <style name="Root.GiniHealthTheme.Widget.Button.OutlinedButton" parent="Widget.Material3.Button.OutlinedButton">
         <item name="cornerRadius">@dimen/ghs_small</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:autoSizeTextType">uniform</item>
@@ -89,7 +89,7 @@
         <item name="android:textColor">@color/ghs_outlined_button_text</item>
         <item name="android:textAppearance">@style/GiniHealthTheme.Typography.Button.Picker</item>
     </style>
-    <style name="GiniHealthTheme.Widget.Button.OutlinedButton.Picker" parent="Root.GiniHealthTheme.Widget.Button.OutlinedButton.Picker"/>
+    <style name="GiniHealthTheme.Widget.Button.OutlinedButton" parent="Root.GiniHealthTheme.Widget.Button.OutlinedButton"/>
 
     <style name="Root.GiniHealthTheme.ThemeOverlay.Button.OutlinedButton.Picker" parent="ThemeOverlay.Material3.Button">
         <item name="colorPrimary">@color/ghs_outlined_button_background</item>
