@@ -6,7 +6,7 @@
     android:layout_height="wrap_content">
     <Button
         android:id="@+id/ghs_select_bank_button"
-        style="@style/GiniHealthTheme.PaymentProviderSelectorButton"
+        style="@style/GiniHealthTheme.Widget.Button.PaymentProviderSelector"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:drawableRight="@drawable/ghs_chevron_down_icon"
