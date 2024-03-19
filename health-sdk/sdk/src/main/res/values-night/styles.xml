@@ -28,10 +28,6 @@
         <item name="iconTint">@color/ghs_light_02</item>
     </style>
 
-    <style name="GiniHealthTheme.Widget.Button.OutlinedButton.ListItem" parent="Root.GiniHealthTheme.Widget.Button.OutlinedButton.ListItem">
-        <item name="strokeColor">@color/ghs_light_05</item>
-    </style>
-
     <style name="GiniHealthTheme.ThemeOverlay.BottomSheetDialog" parent="Root.GiniHealthTheme.ThemeOverlay.BottomSheetDialog">
         <item name="colorPrimary">@color/ghs_light_07</item>
         <item name="bottomSheetStyle">@style/GiniHealthTheme.Widget.BottomSheet</item>
