@@ -23,8 +23,8 @@ with the Gini Bank SDK's example banking app.
 End to end testing
 ------------------
 
-Install example banking app
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Example banking app
+~~~~~~~~~~~~~~~~~~~
 
 After you've set the client credentials in the Gini Bank SDK example app you can install it on your device by using the
 ``devPaymentProvider1Debug`` build flavor. This will allow the Gini Health SDK to detect it as the banking app for
@@ -34,33 +34,48 @@ the ``Gini-Test-Payment-Provider``.
     You can also install the Gini Bank SDK example app's ``devPaymentProvider2Debug`` and ``devPaymentProvider3Debug`` build
     variants to test with two additional example banking apps named ``GiniBank`` and ``Bank``.
 
-Payment Component
+Payment component
 ~~~~~~~~~~~~~~~~~
 
 By following the `flow guide <flow.html>`_ you should be showing the ``PaymentComponentView`` for each invoice in your
 app's list of invoices. The following screenshot shows a sample list of invoices where the ``PaymentComponentView`` is
-shown for each invoice:
+shown for each invoice.
 
-TODO: add screenshot of invoices list with PaymentComponentViews showing the Gini-Test-Payment-Provider.
+.. image:: images/testing/PaymentComponentViews.png
+    :alt: Screenshot of invoices list with PaymentComponentViews showing the Gini-Test-Payment-Provider.
+    :width: 200px
+    :align: center
 
-Bank Picker
+|
+
+Bank picker
 ~~~~~~~~~~~
 
 You should see the ``Gini-Test-Payment-Provider`` preselected in every ``PaymentComponentView``.  By clicking the picker
 you should see the ``BankSelectionBottomSheet`` with the list of available banking apps (including
-``Gini-Test-Payment-Provider`` and other testing and production apps):
+``Gini-Test-Payment-Provider`` and other testing and production apps).
 
-TODO: add screenshot of BankPickerBottomSheet where Gini-Test-Payment-Provider is selected.
+.. image:: images/testing/BankSelectionBottomSheet.png
+    :alt: Screenshot of BankPickerBottomSheet where Gini-Test-Payment-Provider is selected.
+    :width: 200px
+    :align: center
 
-More Information
-~~~~~~~~~~~~~~~~~
+|
+
+More information and FAQ
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 By clicking either the ``more information`` or the info icon on the ``PaymentComponentView`` you should see the
 ``MoreInformationFragment`` with information about the payment feature and an FAQ.
 
-TODO: add screenshot of the info/faq screen.
+.. image:: images/testing/MoreInformationScreen.png
+    :alt: Screenshot of the More Information and FAQ screen.
+    :width: 200px
+    :align: center
 
-Payment Review
+|
+
+Payment review
 ~~~~~~~~~~~~~~~
 
 By clicking the "Pay the invoice" button on a ``PaymentComponentView`` you should see the ``ReviewFragment``, which
@@ -68,9 +83,14 @@ shows the invoice's pages and the payment information. It also allows editing th
 banking app" button should have the icon and colors of the banking app, which was selected in the
 ``PaymentComponentView``.
 
-TODO: add screenshot of the Payment Review screen showing the Gini-Test-Payment-Provider.
+.. image:: images/testing/PaymentReviewScreen.png
+    :alt: Screenshot of the Payment Review screen showing the Gini-Test-Payment-Provider.
+    :width: 200px
+    :align: center
 
-Execute Payment
+|
+
+Execute payment
 ~~~~~~~~~~~~~~~
 
 When clicking the "To the banking app" button on the ``ReviewFragment`` you should be redirected to the example banking
@@ -78,18 +98,28 @@ app where the payment information will be fetched from Gini (including any chang
 ``ReviewFragment``). Press the "Pay" button to execute a test payment which will mark the payment as paid in the
 Gini Health API.
 
-TODO: add screenshot of the Bank SDK example app showing the same extractions as the Payment Review screen previously.
+.. image:: images/testing/BankSDKExampleAppPaymentDetails.png
+    :alt: Screenshot of the example banking app showing the same payment information as the Payment Review screen previously.
+    :width: 200px
+    :align: center
+
+|
 
 Return to your app
 ~~~~~~~~~~~~~~~~~~~
 
-After the test payment has been executed, the example banking app should show a "Return to Business" button which will take you back to your app.
+After the test payment has been executed, the example banking app should show a "Return to Business" button which should
+take you back to your app.
 
 With these steps completed you have verified that your app, the Gini Health API, the Gini Health SDK and the Gini Bank
 SDK work together correctly.
 
-TODO: add screenshot of the example banking app showing the "Return to Business" button with the same extractions as
-previously.
+.. image:: images/testing/BankSDKExampleAppReturnToBusinessApp.png
+    :alt: Screenshot of the example banking app showing the "Return to Business" button with the same extractions as previously.
+    :width: 200px
+    :align: center
+
+|
 
 Testing in production
 ---------------------
