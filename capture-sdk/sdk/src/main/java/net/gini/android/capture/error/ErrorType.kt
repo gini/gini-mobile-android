@@ -82,12 +82,17 @@ enum class ErrorType(
             if (errorMessage.isBlank()) {
                 return false
             }
-            val responseJson = JSONObject(
-                String(
-                    errorMessage.toByteArray(),
-                    Charset.forName("utf-8"))
-            )
-            return responseJson[ERROR_KEY] == GRANT_VALUE
+            return try {
+                val responseJson = JSONObject(
+                    String(
+                        errorMessage.toByteArray(),
+                        Charset.forName("utf-8")
+                    )
+                )
+                responseJson[ERROR_KEY] == GRANT_VALUE
+            } catch (e: Exception) {
+                false
+            }
         }
 
 
