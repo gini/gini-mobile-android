@@ -150,7 +150,6 @@
     <style name="Root.GiniHealthTheme.Widget.Button.TransparentBackground" parent="Root.GiniHealthTheme.Widget.Button.UnelevatedButton">
         <item name="android:background">@android:color/transparent</item>
         <item name="android:textColor">@color/ghs_bank_selector_button_color</item>
-        <item name="android:textAppearance">@style/GiniHealthTheme.Typography.Button.Picker</item>
     </style>
     <style name="GiniHealthTheme.Widget.Button.TransparentBackground" parent="Root.GiniHealthTheme.Widget.Button.TransparentBackground"/>
     <!-- endregion -->
@@ -221,4 +220,13 @@
     </style>
     <style name="GiniHealthTheme.PaymentDetails.InfoBar.TextAppearance" parent="Root.GiniHealthTheme.PaymentDetails.InfoBar.TextAppearance" />
 
+    <style name="Root.GiniHealthTheme.PaymentProviderSelectorButton" parent="GiniHealthTheme.Widget.Button.TransparentBackground">
+        <item name="android:textAppearance">@style/GiniHealthTheme.Typography.Input</item>
+    </style>
+    <style name="GiniHealthTheme.PaymentProviderSelectorButton" parent="Root.GiniHealthTheme.PaymentProviderSelectorButton"/>
+
+    <style name="Root.GiniHealthTheme.PaymentProviderPickerButton" parent="GiniHealthTheme.Widget.Button.TransparentBackground">
+        <item name="android:textAppearance">@style/GiniHealthTheme.Typography.Body1</item>
+    </style>
+    <style name="GiniHealthTheme.PaymentProviderPickerButton" parent="Root.GiniHealthTheme.PaymentProviderPickerButton"/>
 </resources>
