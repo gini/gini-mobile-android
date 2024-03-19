@@ -38,6 +38,8 @@
     <style name="Root.GiniHealthTheme.Typography.Body1" parent="TextAppearance.MaterialComponents.Body1">
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">?attr/colorOnBackground</item>
+        <!-- See "weight" here for details: https://developer.android.com/training/wearables/wff/group/part/text/font -->
+        <item name="android:textFontWeight">400</item>
         <item name="android:lineHeight">@dimen/ghs_large_22</item>
     </style>
 
@@ -87,6 +89,8 @@
     <style name="Root.GiniHealthTheme.Typography.Input" parent="TextAppearance.MaterialComponents.Button">
         <item name="android:textColor">?attr/colorOnBackground</item>
         <item name="android:textSize">14sp</item>
+        <!-- See "weight" here for details: https://developer.android.com/training/wearables/wff/group/part/text/font -->
+        <item name="android:textFontWeight">500</item>
         <item name="android:lineHeight">@dimen/ghs_large_22</item>
     </style>
 
