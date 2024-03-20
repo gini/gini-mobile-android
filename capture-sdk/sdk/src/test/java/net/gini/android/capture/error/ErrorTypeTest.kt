@@ -230,4 +230,30 @@ class ErrorTypeTest {
         // Then
         assertThat(errorType).isEqualTo(ErrorType.FILE_IMPORT_GENERIC)
     }
+
+
+    @Test
+    fun `typeFromError should return UPLOAD when status code is 400 and error message is blank - to cover the isInvalidUserError method`() {
+        // Given
+        val error = GiniError(400,null, Throwable(""))
+
+        // When
+        val errorType = ErrorType.typeFromError(error)
+
+        // Then
+        assertThat(errorType).isEqualTo(ErrorType.UPLOAD)
+    }
+
+    @Test
+    fun `typeFromError should return UPLOAD when status code is 400 and error message is not JSON - to cover the isInvalidUserError method`() {
+        // Given
+        val error = GiniError(400,null, Throwable("sdf"))
+
+        // When
+        val errorType = ErrorType.typeFromError(error)
+
+        // Then
+        assertThat(errorType).isEqualTo(ErrorType.UPLOAD)
+    }
+
 }
