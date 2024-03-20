@@ -101,7 +101,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
     private fun restoreBankPickerDefaultState() {
         LOG.debug("Restoring bank picker default state")
         context?.wrappedWithGiniHealthTheme()?.let { context ->
-            binding.ghsSelectBankPicker.ghsPaymentProviderAppIconHolder.root.visibility = View.INVISIBLE
+            binding.ghsSelectBankPicker.ghsPaymentProviderAppIconHolder.root.visibility = View.GONE
             binding.ghsSelectBankPicker.ghsSelectBankButton.text = context.getString(R.string.ghs_select_bank)
             binding.ghsSelectBankPicker.ghsSelectBankButton.setCompoundDrawablesWithIntrinsicBounds(
                 null,

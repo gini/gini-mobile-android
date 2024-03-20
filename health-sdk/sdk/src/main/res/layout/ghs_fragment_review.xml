@@ -187,7 +187,7 @@
             android:id="@+id/payment"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            style="@style/GiniHealthTheme.Widget.Button.OutlinedButton.Picker"
+            style="@style/GiniHealthTheme.Widget.Button.OutlinedButton"
             android:enabled="false"
             android:text="@string/ghs_pay_button"
             app:layout_constraintEnd_toEndOf="parent"
