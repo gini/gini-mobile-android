@@ -575,7 +575,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         mCameraController.enableTapToFocus(new CameraInterface.TapToFocusListener() {
             @Override
             public void onFocusing(@NonNull final Point point, @NonNull final Size previewViewSize) {
-                showFocusIndicator(point);
+                showFocusIndicator(point, previewViewSize);
             }
 
             @Override
@@ -585,9 +585,20 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         });
     }
 
-    private void showFocusIndicator(@NonNull final Point point) {
-        mCameraFocusIndicator.setX((float) (point.x - (mCameraFocusIndicator.getWidth() / 2.0)));
-        mCameraFocusIndicator.setY(point.y);
+    private void showFocusIndicator(@NonNull final Point point, @NonNull final Size previewViewSize) {
+        final FragmentActivity activity = mFragment.getActivity();
+        if (activity == null) {
+            return;
+        }
+
+        final float offsetX = (float) (previewViewSize.width - mCameraPreviewContainer.getWidth()) / 2.0f;
+        final float centerOffsetX = (float) mCameraFocusIndicator.getWidth() / 2.0f;
+        final float offsetY = (float) (previewViewSize.height - mCameraPreviewContainer.getHeight()) / 2.0f;
+        final float centerOffsetY = (float) mCameraFocusIndicator.getHeight() / 2.0f;
+
+        mCameraFocusIndicator.setX(point.x - offsetX - centerOffsetX);
+        mCameraFocusIndicator.setY(point.y - offsetY - centerOffsetY);
+
         mCameraFocusIndicator.animate().setDuration(DEFAULT_ANIMATION_DURATION).alpha(1.0f);
     }
 
@@ -1717,64 +1728,62 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             LOG.debug("CameraController created");
             mCameraController = createCameraController(activity);
         }
-        if (isQRCodeScanningEnabled()) {
-            mCameraController.setPreviewCallback(new CameraInterface.PreviewCallback() {
-                @Override
-                public void onPreviewFrame(@NonNull Image image, @NonNull Size imageSize, int rotation, @NonNull CameraInterface.PreviewFrameCallback previewFrameCallback) {
-                    AtomicInteger previewFrameReferenceCount = new AtomicInteger();
-                    if (ibanRecognizerFilter != null) {
-                        try {
-                            previewFrameReferenceCount.getAndIncrement();
-
-                            if (cropToCameraFrameTextRecognizer != null) {
-                                cropToCameraFrameTextRecognizer.setCameraPreviewSize(new Size(mCameraPreview.getWidth(), mCameraPreview.getHeight()));
-                                cropToCameraFrameTextRecognizer.setImageSizeAndRotation(imageSize, rotation);
-                                cropToCameraFrameTextRecognizer.setCameraFrameRect(getRectForCroppingFromImageFrame());
-                            }
-
-                            ibanRecognizerFilter.processImage(image, imageSize.width, imageSize.height, rotation, () -> {
-                                previewFrameReferenceCount.getAndDecrement();
-                                if (previewFrameReferenceCount.get() == 0) {
-                                    previewFrameCallback.onReleaseFrame();
-                                }
-                            });
-                        } catch (Exception e) {
-                            LOG.error("Failed to process image for IBAN recognition", e);
-                            previewFrameReferenceCount.getAndDecrement();
-                            if (previewFrameReferenceCount.get() == 0) {
-                                previewFrameCallback.onReleaseFrame();
-                            }
-                        }
-                    }
-
-                    if (mPaymentQRCodeReader != null) {
+        mCameraController.setPreviewCallback(new CameraInterface.PreviewCallback() {
+            @Override
+            public void onPreviewFrame(@NonNull Image image, @NonNull Size imageSize, int rotation, @NonNull CameraInterface.PreviewFrameCallback previewFrameCallback) {
+                AtomicInteger previewFrameReferenceCount = new AtomicInteger();
+                if (ibanRecognizerFilter != null) {
+                    try {
                         previewFrameReferenceCount.getAndIncrement();
 
-                        mPaymentQRCodeReader.readFromImage(image, imageSize, rotation, () -> {
+                        if (cropToCameraFrameTextRecognizer != null) {
+                            cropToCameraFrameTextRecognizer.setCameraPreviewSize(new Size(mCameraPreview.getWidth(), mCameraPreview.getHeight()));
+                            cropToCameraFrameTextRecognizer.setImageSizeAndRotation(imageSize, rotation);
+                            cropToCameraFrameTextRecognizer.setCameraFrameRect(getRectForCroppingFromImageFrame());
+                        }
+
+                        ibanRecognizerFilter.processImage(image, imageSize.width, imageSize.height, rotation, () -> {
                             previewFrameReferenceCount.getAndDecrement();
                             if (previewFrameReferenceCount.get() == 0) {
                                 previewFrameCallback.onReleaseFrame();
                             }
                         });
-                    }
-                }
-
-                @Override
-                public void onPreviewFrame(@NonNull byte[] image, @NonNull Size imageSize, int rotation) {
-                    if (mPaymentQRCodeReader != null) {
-                        mPaymentQRCodeReader.readFromByteArray(image, imageSize, rotation);
-                    }
-                    if (ibanRecognizerFilter != null) {
-                        try {
-                            ibanRecognizerFilter.processByteArray(image, imageSize.width, imageSize.height, rotation, () -> {
-                            });
-                        } catch (Exception e) {
-                            LOG.error("Failed to process image for IBAN recognition", e);
+                    } catch (Exception e) {
+                        LOG.error("Failed to process image for IBAN recognition", e);
+                        previewFrameReferenceCount.getAndDecrement();
+                        if (previewFrameReferenceCount.get() == 0) {
+                            previewFrameCallback.onReleaseFrame();
                         }
                     }
                 }
-            });
-        }
+
+                if (mPaymentQRCodeReader != null) {
+                    previewFrameReferenceCount.getAndIncrement();
+
+                    mPaymentQRCodeReader.readFromImage(image, imageSize, rotation, () -> {
+                        previewFrameReferenceCount.getAndDecrement();
+                        if (previewFrameReferenceCount.get() == 0) {
+                            previewFrameCallback.onReleaseFrame();
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onPreviewFrame(@NonNull byte[] image, @NonNull Size imageSize, int rotation) {
+                if (mPaymentQRCodeReader != null) {
+                    mPaymentQRCodeReader.readFromByteArray(image, imageSize, rotation);
+                }
+                if (ibanRecognizerFilter != null) {
+                    try {
+                        ibanRecognizerFilter.processByteArray(image, imageSize.width, imageSize.height, rotation, () -> {
+                        });
+                    } catch (Exception e) {
+                        LOG.error("Failed to process image for IBAN recognition", e);
+                    }
+                }
+            }
+        });
     }
 
     private void handleIBANsDetected(List<String> ibans) {
