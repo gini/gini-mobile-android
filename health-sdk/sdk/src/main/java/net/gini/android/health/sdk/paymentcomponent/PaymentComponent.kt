@@ -1,6 +1,7 @@
 package net.gini.android.health.sdk.paymentcomponent
 
 import android.content.Context
+import androidx.annotation.VisibleForTesting
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,7 +23,8 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
         MutableStateFlow<SelectedPaymentProviderAppState>(SelectedPaymentProviderAppState.NothingSelected)
     val selectedPaymentProviderAppFlow: StateFlow<SelectedPaymentProviderAppState> = _selectedPaymentProviderAppFlow.asStateFlow()
 
-    private val paymentComponentPreferences = PaymentComponentPreferences(context)
+    @VisibleForTesting
+    internal val paymentComponentPreferences = PaymentComponentPreferences(context)
 
     var listener: Listener? = null
 

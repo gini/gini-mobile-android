@@ -26,7 +26,6 @@ import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
 class PaymentComponentViewTest {
-    private var activity : Activity? = null
     private var context: Context? = null
     private var scenario: ActivityScenario<Activity>? = null
     private lateinit var paymentComponent: PaymentComponent
@@ -34,13 +33,14 @@ class PaymentComponentViewTest {
 
     @Before
     fun setUp() {
-        activity = Robolectric.buildActivity(Activity::class.java).create().get()
         context = ApplicationProvider.getApplicationContext()
         context!!.setTheme(R.style.GiniHealthTheme)
         paymentComponent = PaymentComponent(context!!, mockk())
         paymentComponentListener = mockk(relaxed = true)
         paymentComponent.listener = paymentComponentListener
 
+        // Needed to build the activity in which the custom component will be launched to be tested
+        Robolectric.buildActivity(Activity::class.java).create().get()
         scenario = ActivityScenario.launch(
             Intent(context, Activity::class.java)
         )
@@ -49,7 +49,6 @@ class PaymentComponentViewTest {
 
     @After
     fun tearDown() {
-        activity = null
         context = null
         scenario!!.close()
     }
