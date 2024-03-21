@@ -11,6 +11,7 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import net.gini.android.health.api.models.PaymentProvider
 import net.gini.android.health.sdk.R
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
@@ -29,6 +30,7 @@ class MoreInformationTest {
     @Before
     fun setup() {
         paymentComponent = mockk(relaxed = true)
+        every { paymentComponent!!.paymentProviderAppsFlow } returns MutableStateFlow<PaymentProviderAppsState>(mockk()).asStateFlow()
     }
 
     @Test
