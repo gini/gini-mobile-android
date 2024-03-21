@@ -11,14 +11,14 @@ Release order for :bank-api-library:library 3.1.3:
  1. :core-api-library:library 2.1.4
  2. :bank-api-library:library 3.1.3
 
-Release order for :health-api-library:library 2.1.4:
+Release order for :health-api-library:library 4.0.0:
  1. :core-api-library:library 2.1.4
- 2. :health-api-library:library 2.1.4
+ 2. :health-api-library:library 4.0.0
 
-Release order for :health-sdk:sdk 2.1.4:
+Release order for :health-sdk:sdk 4.0.0:
  1. :core-api-library:library 2.1.4
- 2. :health-api-library:library 2.1.4
- 3. :health-sdk:sdk 2.1.4
+ 2. :health-api-library:library 4.0.0
+ 3. :health-sdk:sdk 4.0.0
 
 Release order for :capture-sdk:default-network 3.10.0:
  1. :core-api-library:library 2.1.4
