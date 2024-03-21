@@ -6,6 +6,8 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.health.sdk.paymentcomponent.PaymentProviderAppsState
@@ -21,27 +23,25 @@ internal class MoreInformationViewModel(private val paymentComponent: PaymentCom
         _paymentProviderAppsListFlow.asStateFlow()
 
     fun start() {
-        viewModelScope.launch {
-            if (paymentComponent == null) {
-                LOG.warn("Cannot show payment provider apps: PaymentComponent must be set before showing the BankSelectionBottomSheet")
-                return@launch
-            }
-            LOG.debug("Collecting payment provider apps state and selected payment provider app from PaymentComponent")
-            paymentComponent.paymentProviderAppsFlow.collect { paymentProviderAppsState ->
-                when (paymentProviderAppsState) {
-                    is PaymentProviderAppsState.Error -> { processError(paymentProviderAppsState.throwable) }
-                    PaymentProviderAppsState.Loading -> {}
-                    is PaymentProviderAppsState.Success -> {
-                        if (paymentProviderAppsState.paymentProviderApps.isEmpty()) {
-                            LOG.debug("No payment provider apps received")
-                        } else {
-                            LOG.debug("Received {} payment provider apps", paymentProviderAppsState.paymentProviderApps.size)
-                        }
-                        _paymentProviderAppsListFlow.value = PaymentProviderAppsListState.Success(paymentProviderAppsState.paymentProviderApps)
+        if (paymentComponent == null) {
+            LOG.warn("Cannot show payment provider apps: PaymentComponent must be set before showing the BankSelectionBottomSheet")
+            return
+        }
+        LOG.debug("Collecting payment provider apps state and selected payment provider app from PaymentComponent")
+        paymentComponent.paymentProviderAppsFlow.onEach { paymentProviderAppsState ->
+            when (paymentProviderAppsState) {
+                is PaymentProviderAppsState.Error -> { processError(paymentProviderAppsState.throwable) }
+                PaymentProviderAppsState.Loading -> {}
+                is PaymentProviderAppsState.Success -> {
+                    if (paymentProviderAppsState.paymentProviderApps.isEmpty()) {
+                        LOG.debug("No payment provider apps received")
+                    } else {
+                        LOG.debug("Received {} payment provider apps", paymentProviderAppsState.paymentProviderApps.size)
                     }
+                    _paymentProviderAppsListFlow.value = PaymentProviderAppsListState.Success(paymentProviderAppsState.paymentProviderApps)
                 }
             }
-        }
+        }.launchIn(viewModelScope)
     }
 
     private fun processError(throwable: Throwable) {
