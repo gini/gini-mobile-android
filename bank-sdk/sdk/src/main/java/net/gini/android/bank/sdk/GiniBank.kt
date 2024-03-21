@@ -105,6 +105,7 @@ object GiniBank {
 
     /**
      * Shows the return reasons dialog in the return assistant, if enabled.
+     * Note that it is disabled by default.
      */
     var enableReturnReasons = false
 
