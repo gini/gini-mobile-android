@@ -78,7 +78,7 @@ class GiniBankTest {
     }
 
     @Test
-    fun `return reasons dialog is enabled by default`() {
-        assertThat(GiniBank.enableReturnReasons).isTrue()
+    fun `return reasons dialog is disabled by default`() {
+        assertThat(GiniBank.enableReturnReasons).isFalse()
     }
 }

@@ -23,7 +23,7 @@ enum class AddonExtraction(
     @StringRes val addonNameStringRes: Int
 ) {
     DISCOUNT("discount-addon", R.string.gbs_digital_invoice_addon_discount),
-    GIFTCARD("giftcard-addon", R.string.gbs_digital_invoice_addon_giftcard),
+    GIFTCARD("giftcard-addon", R.string.gbs_digital_invoice_addon_gift_card),
     OTHER_DISCOUNTS("other-discounts-addon", R.string.gbs_digital_invoice_addon_other_discounts),
     OTHER_CHARGES("other-charges-addon", R.string.gbs_digital_invoice_addon_other_charges),
     SHIPMENT("shipment-addon", R.string.gbs_digital_invoice_addon_shipment);
