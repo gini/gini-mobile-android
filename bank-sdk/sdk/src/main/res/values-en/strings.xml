@@ -14,7 +14,7 @@
     <string name="gbs_digital_invoice_footer_total_label">Total</string>
 
     <string name="gbs_digital_invoice_addon_discount">Discount</string>
-    <string name="gbs_digital_invoice_addon_giftcard">Giftcard</string>
+    <string name="gbs_digital_invoice_addon_gift_card">Gift card</string>
     <string name="gbs_digital_invoice_addon_other_discounts">Other discounts</string>
     <string name="gbs_digital_invoice_addon_other_charges">Other charges</string>
     <string name="gbs_digital_invoice_addon_shipment">Shipment</string>
