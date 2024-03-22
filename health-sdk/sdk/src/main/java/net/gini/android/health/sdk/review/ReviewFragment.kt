@@ -62,7 +62,7 @@ import net.gini.android.health.sdk.bankselection.BankSelectionBottomSheet
  */
 data class ReviewConfiguration(
     /**
-     * If true errors will be observed abd snackbars will be displayed.
+     * If true errors will be observed and snackbars will be displayed.
      * If false errors will be ignored, in this case the flows exposed by [GiniHealth] should be observed for errors.
      */
     val handleErrorsInternally: Boolean = true,

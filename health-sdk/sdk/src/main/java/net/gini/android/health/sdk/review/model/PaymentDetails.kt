@@ -8,6 +8,9 @@ import net.gini.android.core.api.models.SpecificExtraction
 import net.gini.android.health.sdk.review.error.NoPaymentDataExtracted
 import net.gini.android.health.sdk.util.toBackendFormat
 
+/**
+ * Represents the payment details of an invoice as extracted from a document.
+ */
 @Parcelize
 data class PaymentDetails(
     val recipient: String,
@@ -44,7 +47,7 @@ internal fun String.toAmount(): String {
 /**
  * Checks if the document is payable which looks for iban extraction.
  */
-val PaymentDetails.isPayable get() = iban.isNotEmpty()
+val PaymentDetails.isPayable get() = iban.isNotEmpty()  // It appears this is not used anymore - we could remove it at a later stage (would remove it from the documentation as well)
 
 internal fun MutableMap<String, CompoundExtraction>.withFeedback(paymentDetails: PaymentDetails): Map<String, CompoundExtraction> {
     this["payment"] = this["payment"].let { payment ->

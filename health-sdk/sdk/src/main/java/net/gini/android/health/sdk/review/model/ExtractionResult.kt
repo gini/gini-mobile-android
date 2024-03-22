@@ -2,9 +2,28 @@ package net.gini.android.health.sdk.review.model
 
 import net.gini.android.core.api.Resource
 
+/**
+ * Represents the result of processing a document to get its extractions.
+ */
+
+/**
+ * Wraps the result of the extraction request.
+ */
 sealed class ResultWrapper<out T> {
+
+    /**
+     * Request completed successfully and extractions were returned.
+     */
     class Success<T>(val value: T) : ResultWrapper<T>()
+
+    /**
+     * Request was unable to complete - returns the cause of the error
+     */
     class Error<T>(val error: Throwable) : ResultWrapper<T>()
+
+    /**
+     * Request did not complete yet.
+     */
     class Loading<T> : ResultWrapper<T>()
 }
 
