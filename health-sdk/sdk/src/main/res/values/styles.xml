@@ -164,7 +164,7 @@
         <item name="boxBackgroundColor">@android:color/transparent</item>
         <item name="boxCornerRadiusBottomStart">@dimen/ghs_small</item>
         <item name="boxCornerRadiusBottomEnd">@dimen/ghs_small</item>
-        <item name="errorTextColor">@color/ghs_error</item>
+        <item name="errorTextColor">@color/ghs_feedback_01</item>
     </style>
     <style name="GiniHealthTheme.PaymentInputLayout" parent="Root.GiniHealthTheme.PaymentInputLayout"/>
 

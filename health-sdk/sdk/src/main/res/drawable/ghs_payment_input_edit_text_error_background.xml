@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape android:shape="rectangle" xmlns:android="http://schemas.android.com/apk/res/android">
     <corners android:radius="@dimen/ghs_small"/>
-    <stroke android:color="@color/ghs_error" android:width="1dp"/>
+    <stroke android:color="@color/ghs_feedback_01" android:width="1dp"/>
     <solid android:color="@color/ghs_payment_input_border_color"/>
 </shape>
