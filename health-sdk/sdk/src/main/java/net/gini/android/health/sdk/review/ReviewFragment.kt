@@ -132,6 +132,7 @@ class ReviewFragment private constructor(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val documentPagerHeight = savedInstanceState?.getInt(PAGER_HEIGHT, -1) ?: -1
 
         viewModel.userPreferences = UserPreferences(requireContext())
 
@@ -140,7 +141,7 @@ class ReviewFragment private constructor(
             setInputListeners()
             setActionListeners()
             setKeyboardAnimation()
-            removePagerConstraint()
+            removePagerConstraintAndSetPreviousHeightIfNeeded(documentPagerHeight)
             showSelectedPaymentProviderApp()
         }
 
@@ -208,7 +209,6 @@ class ReviewFragment private constructor(
                     indicator.isVisible = pages.size > 1
                     pager.isUserInputEnabled = pages.size > 1
                 })
-                removePagerConstraint()
             }
 
             is ResultWrapper.Error -> handleError(getString(R.string.ghs_error_document)) { viewModel.retryDocumentReview() }
@@ -376,13 +376,18 @@ class ReviewFragment private constructor(
         }
     }
 
-    private fun GhsFragmentReviewBinding.removePagerConstraint() {
+    private fun GhsFragmentReviewBinding.removePagerConstraintAndSetPreviousHeightIfNeeded(savedHeight: Int) {
         root.post {
             ConstraintSet().apply {
                 clone(constraintRoot)
                 constrainHeight(R.id.pager, pager.height)
                 clear(R.id.pager, ConstraintSet.BOTTOM)
                 applyTo(constraintRoot)
+            }
+            if (savedHeight != -1) {
+                val pagerLayoutParams = binding.pager.layoutParams
+                pagerLayoutParams.height = savedHeight
+                binding.pager.layoutParams = pagerLayoutParams
             }
         }
     }
@@ -495,7 +500,13 @@ class ReviewFragment private constructor(
         }
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putInt(PAGER_HEIGHT, binding.pager.layoutParams.height)
+        super.onSaveInstanceState(outState)
+    }
+
     internal companion object {
+        private const val PAGER_HEIGHT = "pager_height"
         fun newInstance(
             giniHealth: GiniHealth,
             configuration: ReviewConfiguration = ReviewConfiguration(),

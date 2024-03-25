@@ -6,12 +6,11 @@
     android:background="@drawable/ghs_selectable_payment_provider_background"
     >
 
-    <include layout="@layout/ghs_payment_provider_selector_button"
+    <include layout="@layout/ghs_payment_provider_picker_button"
         android:id="@+id/ghs_selector_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@null"
-        android:layout_marginBottom="@dimen/ghs_medium"
         />
 
 </FrameLayout>

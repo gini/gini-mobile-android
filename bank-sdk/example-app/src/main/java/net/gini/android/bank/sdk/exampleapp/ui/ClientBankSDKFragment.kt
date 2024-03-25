@@ -101,7 +101,6 @@ class ClientBankSDKFragment :
             multiPageEnabled = true,
         )
         GiniBank.setCaptureConfiguration(requireContext(), captureConfiguration)
-        GiniBank.enableReturnReasons = true
 
     }
 

@@ -7,12 +7,12 @@
     <string name="ghs_pay_button">Zur Banking App</string>
     <string name="ghs_bank_placeholder">Wird geladen...</string>
     <string name="ghs_error_failed_to_load_image">Bild konnte nicht geladen werden</string>
-    <string name="ghs_error_input_invalid_iban">Bitte gib eine gültige IBAN an</string>
+    <string name="ghs_error_input_invalid_iban">IBAN ist ungültig.</string>
     <string name="ghs_error_input_amount_format">Ungültiges Format für Bezahlbetrag</string>
-    <string name="ghs_error_input_recipient_empty">Bitte gib einen Empfänger an</string>
-    <string name="ghs_error_input_iban_empty">Bitte gib eine IBAN an</string>
-    <string name="ghs_error_input_amount_empty">Ungültig</string>
-    <string name="ghs_error_input_purpose_empty">Bitte gib einen Verwendungszweck an</string>
+    <string name="ghs_error_input_recipient_empty">Empfänger ist notwendig.</string>
+    <string name="ghs_error_input_iban_empty">IBAN ist notwendig.</string>
+    <string name="ghs_error_input_amount_empty">Ungültig.</string>
+    <string name="ghs_error_input_purpose_empty">Verwendungszweck ist notwendig.</string>
     <string name="ghs_error_document">Dokument konnte nicht geladen werden</string>
     <string name="ghs_error_payment_details">Bezahlinformationen konnten nicht geladen werden</string>
     <string name="ghs_error_bank_not_found">Banking App konnte nicht gestartet werden</string>

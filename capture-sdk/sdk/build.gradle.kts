@@ -147,6 +147,7 @@ dependencies {
     testImplementation(libs.androidx.test.espresso.intents)
     testImplementation(libs.jUnitParams)
     testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation (libs.json.testing)
 
     debugImplementation(libs.androidx.test.core.ktx)
     debugImplementation(libs.androidx.fragment.testing)
