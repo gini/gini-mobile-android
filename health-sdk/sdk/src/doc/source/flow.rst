@@ -118,6 +118,13 @@ To instantiate it use ``MoreInformationFragment.newInstance()`` and pass in your
 
     MoreInformationFragment.newInstance(paymentComponent)
 
+.. note::
+
+    The ``MoreInformationFragment`` doesn't handle navigation related events and doesn't show a navigation bar. You are
+    free to design navigation to and from the fragment as you see fit.
+    
+    For the navigation bar title you should use the ``ghs_more_information_fragment_title`` string resource.
+
 Show the BankSelectionBottomSheet
 ---------------------------------
 
