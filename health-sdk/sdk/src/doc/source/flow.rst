@@ -109,7 +109,8 @@ When binding the view holder of the invoice item, prepare it for reuse, set the 
 Show the MoreInformationFragment
 --------------------------------
 
-The ``MoreInformationFragment`` displays information and an FAQ about the payment feature.
+The ``MoreInformationFragment`` displays information and an FAQ section about the payment feature. It requires a
+``PaymentComponent`` instance to show the icons of the available banks.
 
 To instantiate it use ``MoreInformationFragment.newInstance()`` and pass in your ``PaymentComponent`` instance:
 
