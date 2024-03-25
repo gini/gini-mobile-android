@@ -165,6 +165,9 @@ the invoice and the configuration for the screen. Also set a listener to get inf
     ``paymentComponent.getPaymentReviewFragment()`` will load the document extractions asynchronously. It's a suspend
     function and must be called from a coroutine. 
 
-``ReviewFragment`` handles errors by default, displaying snackbars for errors, but it
-can be configured to ignore them, in which case all flows of ``GiniHealth`` should
-be observed for errors.
+The ``ReviewConfiguration`` class contains the following options:
+
+- ``handleErrorsInternally``: If set to ``true``, the ``ReviewFragment`` will handle errors internally and show
+  snackbars for errors. If set to ``false``, errors will be ignored by the ``ReviewFragment``. In this case the flows
+  exposed by ``GiniHealth`` should be observed for errors. Default value is ``true``.
+- ``showCloseButton``: If set to ``true``, a floating close button will be shown in the top right corner of the screen. Default value is ``false``.
