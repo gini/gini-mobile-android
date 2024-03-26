@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * A compound extraction describes a group of extractions.
+ *
  * Created by Alpar Szotyori on 13.02.2020.
  *
  * Copyright (c) 2020 Gini GmbH.

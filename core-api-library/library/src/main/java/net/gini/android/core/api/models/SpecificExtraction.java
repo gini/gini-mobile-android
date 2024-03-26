@@ -9,6 +9,9 @@ import androidx.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A specific extraction assigns a semantic property to the extraction. It also has an additional candidates field.
+ */
 public class SpecificExtraction extends Extraction {
 
     private final String mName;

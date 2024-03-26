@@ -27,7 +27,7 @@ import java.lang.ref.WeakReference
 /**
  * [GiniHealth] is the main class for interacting with the Gini Health SDK.
  * It provides a way to submit a document for reviewing its extracted payment details and
- * let's the user make the payment with one of the payment providers.
+ * lets the user make the payment with one of the payment providers.
  *
  * The recommended flow is:
  *  1. Call one of the overloads of [setDocumentForReview], to submit a document.

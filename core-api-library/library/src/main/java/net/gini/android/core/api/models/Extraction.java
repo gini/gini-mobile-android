@@ -6,6 +6,13 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import androidx.annotation.Nullable;
 
+/**
+ * An extraction contains an entity that describes a general semantic type of the extraction, such as iban, bic, or amount.
+ * The entity also determines the format of the value containing text information.
+ *
+ * There might be an optional box element describing the position of the extraction value on the document. We refer to it as the bounding box.
+ * In most cases, the extractions without a bounding box are considered to be meta information such as doctype.
+ */
 public class Extraction implements Parcelable {
     private String mValue;
     private final String mEntity;

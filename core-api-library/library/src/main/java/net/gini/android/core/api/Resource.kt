@@ -4,7 +4,7 @@ import net.gini.android.core.api.requests.ApiException
 import java.util.concurrent.CancellationException
 
 /**
- * Represents a requested API resource. Resources can be requested successfully, with an error or they can be cancelled.
+ * Represents a requested API resource. Resource requests can be returned successfully, with an error or they can be cancelled.
  */
 sealed class Resource<T>(
     open val data: T? = null,

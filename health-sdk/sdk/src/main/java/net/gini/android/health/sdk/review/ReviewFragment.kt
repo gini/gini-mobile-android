@@ -63,7 +63,7 @@ import net.gini.android.health.sdk.bankselection.BankSelectionBottomSheet
 data class ReviewConfiguration(
     /**
      * If set to `true`, the [ReviewFragment] will handle errors internally and show snackbars for errors.
-     * If set to `false` errors will be ignored by the [ReviewFragment]. In this case the flows exposed by [GiniHealth] should be observed for errors.
+     * If set to `false`, errors will be ignored by the [ReviewFragment]. In this case the flows exposed by [GiniHealth] should be observed for errors.
      *
      * Default value is `true`.
      */
