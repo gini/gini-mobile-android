@@ -14,7 +14,7 @@
     <string name="gbs_digital_invoice_footer_total_label">Total</string>
 
     <string name="gbs_digital_invoice_addon_discount">Discount</string>
-    <string name="gbs_digital_invoice_addon_giftcard">Giftcard</string>
+    <string name="gbs_digital_invoice_addon_gift_card">Gift card</string>
     <string name="gbs_digital_invoice_addon_other_discounts">Other discounts</string>
     <string name="gbs_digital_invoice_addon_other_charges">Other charges</string>
     <string name="gbs_digital_invoice_addon_shipment">Shipment</string>
@@ -38,6 +38,6 @@
     <string name="gbs_help_edit_title">How can I edit an article?</string>
     <string name="gbs_help_edit_text">By clicking an article, you are able to edit its description, quantity and price per item. Please note that the price per item needs to include tax.</string>
     <string name="gbs_help_online_shops_title">Which online shops are supported?</string>
-    <string name="gbs_help_online_shops_text">We are currently focused on the top five online merchants in the market. More retailers will be added in the future.</string>
+    <string name="gbs_help_online_shops_text">We are currently focused on the most popular online merchants in the market. More retailers will be added in the future.</string>
     <string name="gbs_articles">Articles</string>
 </resources>

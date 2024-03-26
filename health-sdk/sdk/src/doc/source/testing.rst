@@ -66,7 +66,7 @@ More information and FAQ
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 By clicking either the ``more information`` or the info icon on the ``PaymentComponentView`` you should see the
-``MoreInformationFragment`` with information about the payment feature and an FAQ.
+``MoreInformationFragment`` with information about the payment feature and an FAQ section.
 
 .. image:: images/testing/MoreInformationScreen.png
     :alt: Screenshot of the More Information and FAQ screen.

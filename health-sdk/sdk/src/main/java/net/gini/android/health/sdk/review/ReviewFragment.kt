@@ -62,14 +62,18 @@ import net.gini.android.health.sdk.bankselection.BankSelectionBottomSheet
  */
 data class ReviewConfiguration(
     /**
-     * If true errors will be observed and snackbars will be displayed.
-     * If false errors will be ignored, in this case the flows exposed by [GiniHealth] should be observed for errors.
+     * If set to `true`, the [ReviewFragment] will handle errors internally and show snackbars for errors.
+     * If set to `false`, errors will be ignored by the [ReviewFragment]. In this case the flows exposed by [GiniHealth] should be observed for errors.
+     *
+     * Default value is `true`.
      */
     val handleErrorsInternally: Boolean = true,
 
     /**
      * Set to `true` to show a close button. Set a [ReviewFragmentListener] to be informed when the
      * button is pressed.
+     *
+     * Default value is `false`.
      */
     val showCloseButton: Boolean = false
 )
@@ -128,6 +132,7 @@ class ReviewFragment private constructor(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val documentPagerHeight = savedInstanceState?.getInt(PAGER_HEIGHT, -1) ?: -1
 
         viewModel.userPreferences = UserPreferences(requireContext())
 
@@ -136,7 +141,7 @@ class ReviewFragment private constructor(
             setInputListeners()
             setActionListeners()
             setKeyboardAnimation()
-            removePagerConstraint()
+            removePagerConstraintAndSetPreviousHeightIfNeeded(documentPagerHeight)
             showSelectedPaymentProviderApp()
         }
 
@@ -204,7 +209,6 @@ class ReviewFragment private constructor(
                     indicator.isVisible = pages.size > 1
                     pager.isUserInputEnabled = pages.size > 1
                 })
-                removePagerConstraint()
             }
 
             is ResultWrapper.Error -> handleError(getString(R.string.ghs_error_document)) { viewModel.retryDocumentReview() }
@@ -372,13 +376,18 @@ class ReviewFragment private constructor(
         }
     }
 
-    private fun GhsFragmentReviewBinding.removePagerConstraint() {
+    private fun GhsFragmentReviewBinding.removePagerConstraintAndSetPreviousHeightIfNeeded(savedHeight: Int) {
         root.post {
             ConstraintSet().apply {
                 clone(constraintRoot)
                 constrainHeight(R.id.pager, pager.height)
                 clear(R.id.pager, ConstraintSet.BOTTOM)
                 applyTo(constraintRoot)
+            }
+            if (savedHeight != -1) {
+                val pagerLayoutParams = binding.pager.layoutParams
+                pagerLayoutParams.height = savedHeight
+                binding.pager.layoutParams = pagerLayoutParams
             }
         }
     }
@@ -491,7 +500,13 @@ class ReviewFragment private constructor(
         }
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putInt(PAGER_HEIGHT, binding.pager.layoutParams.height)
+        super.onSaveInstanceState(outState)
+    }
+
     internal companion object {
+        private const val PAGER_HEIGHT = "pager_height"
         fun newInstance(
             giniHealth: GiniHealth,
             configuration: ReviewConfiguration = ReviewConfiguration(),
