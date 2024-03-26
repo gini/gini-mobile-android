@@ -115,7 +115,7 @@
     <style name="GiniHealthTheme.Widget.BottomSheet.ShapeAppearance" parent="Root.GiniHealthTheme.Widget.BottomSheet.ShapeAppearance" />
 
     <style name="Root.GiniHealthTheme.Widget.BottomSheet.DragHandle" parent="Widget.Material3.BottomSheet.DragHandle">
-        <item name="tint">@color/ghs_dark_04</item>
+        <item name="tint">@color/ghs_dark_05</item>
     </style>
     <style name="GiniHealthTheme.Widget.BottomSheet.DragHandle" parent="Root.GiniHealthTheme.Widget.BottomSheet.DragHandle" />
 
