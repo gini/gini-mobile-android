@@ -24,7 +24,6 @@
         android:layout_height="@dimen/ghs_large"
         android:background="@color/ghs_light_07"
         android:visibility="gone"
-        android:layout_marginBottom="@dimen/ghs_large"
         app:layout_constraintBottom_toTopOf="@id/payment_details"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
