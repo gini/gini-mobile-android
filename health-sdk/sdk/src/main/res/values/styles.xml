@@ -194,7 +194,7 @@
     </style>
     <style name="GiniHealthTheme.PaymentDetails.InfoBar.TextView" parent="Root.GiniHealthTheme.PaymentDetails.InfoBar.TextView" />
 
-    <style name="Root.GiniHealthTheme.PaymentDetails.InfoBar.TextAppearance" parent="TextAppearance.MaterialComponents.Body2">
+    <style name="Root.GiniHealthTheme.PaymentDetails.InfoBar.TextAppearance" parent="GiniHealthTheme.Typography.Caption1">
         <item name="android:textColor">@color/ghs_dark_07</item>
     </style>
     <style name="GiniHealthTheme.PaymentDetails.InfoBar.TextAppearance" parent="Root.GiniHealthTheme.PaymentDetails.InfoBar.TextAppearance" />
