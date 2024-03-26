@@ -200,3 +200,19 @@ You can also view the UI customisation guide in Figma `here
     src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FAJTss4k0M6R2OxH0VQepdP%2FAndroid-Gini-Health-SDK-4.0.0-UI-Customisation%3Ftype%3Ddesign%26node-id%3D8865%253A1784%26mode%3Ddesign%26t%3DK7YqsQfoIezyUS7U-1"
     allowfullscreen></iframe>
 
+Payment Review Screen
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can also view the UI customisation guide in Figma `here
+<https://www.figma.com/file/AJTss4k0M6R2OxH0VQepdP/Android-Gini-Health-SDK-4.0.0-UI-Customisation?type=design&node-id=8856%3A2344&mode=design&t=qTedJeTuklI9gPIm-1>`_.
+
+.. note::
+
+    To copy text from Figma you need to have a Figma account. If you don't have one, you can create one for free.
+
+.. raw:: html
+
+    <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
+    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FAJTss4k0M6R2OxH0VQepdP%2FAndroid-Gini-Health-SDK-4.0.0-UI-Customisation%3Ftype%3Ddesign%26node-id%3D8856%253A2344%26mode%3Ddesign%26t%3DqTedJeTuklI9gPIm-1"
+    allowfullscreen></iframe>
+
