@@ -4,5 +4,5 @@
         android:topLeftRadius="@dimen/ghs_medium_12"
         android:topRightRadius="@dimen/ghs_medium_12">
     </corners>
-    <solid android:color="@color/ghs_success"/>
+    <solid android:color="@color/ghs_success_01"/>
 </shape>
