@@ -13,21 +13,50 @@ import net.gini.android.health.sdk.paymentprovider.getPaymentProviderApps
 import net.gini.android.health.sdk.review.ReviewConfiguration
 import net.gini.android.health.sdk.review.ReviewFragment
 import org.slf4j.LoggerFactory
+import net.gini.android.health.sdk.bankselection.BankSelectionBottomSheet
+import net.gini.android.health.sdk.moreinformation.MoreInformationFragment
 
+/**
+ * The [PaymentComponent] manages the data and state used by every [PaymentComponentView], the [MoreInformationFragment],
+ * and the [BankSelectionBottomSheet].
+ *
+ * It requires a [GiniHealth] instance and a [Context] (application or activity) to be created.
+ */
 class PaymentComponent(private val context: Context, private val giniHealth: GiniHealth) {
 
     private val _paymentProviderAppsFlow = MutableStateFlow<PaymentProviderAppsState>(PaymentProviderAppsState.Loading)
+
+    /**
+     * A [StateFlow] which emits the state of the payment provider apps. See [PaymentProviderAppsState] for the possible states.
+     */
     val paymentProviderAppsFlow: StateFlow<PaymentProviderAppsState> = _paymentProviderAppsFlow.asStateFlow()
 
     private val _selectedPaymentProviderAppFlow =
         MutableStateFlow<SelectedPaymentProviderAppState>(SelectedPaymentProviderAppState.NothingSelected)
+
+    /**
+     * A [StateFlow] which emits the state of the selected payment provider app. See [SelectedPaymentProviderAppState] for the possible states.
+     */
     val selectedPaymentProviderAppFlow: StateFlow<SelectedPaymentProviderAppState> = _selectedPaymentProviderAppFlow.asStateFlow()
 
     @VisibleForTesting
     internal val paymentComponentPreferences = PaymentComponentPreferences(context)
 
+    /**
+     * A listener for the payment component. It exposes the user interactions with all of the [PaymentComponentView]s.
+     * See [Listener] for the methods you need to implement.
+     */
     var listener: Listener? = null
 
+    /**
+     * Loads the payment provider apps and selects the first installed payment provider app or nothing if no payment provider
+     * app is installed. The selection (or lack of selection) will be visible once a [PaymentComponentView] is shown.
+     *
+     * It should be sufficient to call [loadPaymentProviderApps] only once when your app starts.
+     *
+     * By collecting the [paymentProviderAppsFlow] and [selectedPaymentProviderAppFlow] you can observe the state of the
+     * loading process.
+     */
     suspend fun loadPaymentProviderApps() {
         LOG.debug("Loading payment providers")
         _paymentProviderAppsFlow.value = PaymentProviderAppsState.Loading
@@ -70,7 +99,7 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
         paymentComponentPreferences.saveSelectedPaymentProviderId(paymentProviderApp.paymentProvider.id)
     }
 
-    suspend fun recheckWhichPaymentProviderAppsAreInstalled() {
+    internal suspend fun recheckWhichPaymentProviderAppsAreInstalled() {
         LOG.debug("Rechecking which payment provider apps are installed")
         when (val paymentProviderAppsState = _paymentProviderAppsFlow.value) {
             is PaymentProviderAppsState.Success -> {
@@ -181,6 +210,12 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
         }
     }
 
+    /**
+     * Loads the extractions for the given document id and creates an instance of the [ReviewFragment] with the given
+     * configuration.
+     *
+     * You should create and show the [ReviewFragment] in the [Listener.onPayInvoiceClicked] method.
+     */
     suspend fun getPaymentReviewFragment(documentId: String, configuration: ReviewConfiguration): ReviewFragment {
         LOG.debug("Getting payment review fragment for id: {}", documentId)
 
@@ -211,21 +246,66 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
         private val LOG = LoggerFactory.getLogger(PaymentComponent::class.java)
     }
 
+    /**
+     * A listener for the [PaymentComponent]. It exposes the user interactions with all of the [PaymentComponentView]s.
+     */
     interface Listener {
+        /**
+         * Called when the user taps the "more information" link or the info icon in the [PaymentComponentView].
+         *
+         * You should show the [MoreInformationFragment] in this method.
+         */
         fun onMoreInformationClicked()
+
+        /**
+         * Called when the user taps the bank picker button in the [PaymentComponentView].
+         *
+         * You should show the [BankSelectionBottomSheet] in this method.
+         */
         fun onBankPickerClicked()
+
+        /**
+         * Called when the user taps the "pay invoice" button in the [PaymentComponentView]. The document id will be taken
+         * from the clicked PaymentComponentView's [PaymentComponentView.documentId] property.
+         *
+         * @param documentId The value in the clicked PaymentComponentView's [PaymentComponentView.documentId] property
+         */
         fun onPayInvoiceClicked(documentId: String)
     }
 
 }
 
+/**
+ * The states of the payment provider apps loading process.
+ */
 sealed class PaymentProviderAppsState {
+    /**
+     * The payment provider apps are being loaded.
+     */
     object Loading : PaymentProviderAppsState()
+
+    /**
+     * The payment provider apps were successfully loaded.
+     */
     class Success(val paymentProviderApps: List<PaymentProviderApp>) : PaymentProviderAppsState()
+
+    /**
+     * An error occurred while loading the payment provider apps.
+     */
     class Error(val throwable: Throwable) : PaymentProviderAppsState()
 }
 
+/**
+ * The states of the selected payment provider app.
+ */
 sealed class SelectedPaymentProviderAppState {
+    /**
+     * No payment provider app is selected.
+     */
     object NothingSelected : SelectedPaymentProviderAppState()
+
+    /**
+     * A payment provider app is selected.
+     */
     class AppSelected(val paymentProviderApp: PaymentProviderApp) : SelectedPaymentProviderAppState()
 }

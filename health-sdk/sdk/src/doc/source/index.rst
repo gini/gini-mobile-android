@@ -22,6 +22,7 @@ Table of contents
     setup
     authentication
     flow
+    event-tracking
     testing
     customization
     migrate-to-2-0-0

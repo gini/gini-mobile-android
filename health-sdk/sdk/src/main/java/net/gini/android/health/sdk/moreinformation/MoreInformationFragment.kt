@@ -32,6 +32,10 @@ import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.health.sdk.util.autoCleared
 import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthTheme
 
+/**
+ * The [MoreInformationFragment] displays information and an FAQ section about the payment feature. It requires a
+ * [PaymentComponent] instance to show the icons of the available payment provider apps.
+ */
 class MoreInformationFragment private constructor(private val paymentComponent: PaymentComponent?) :
     Fragment() {
     constructor() : this(paymentComponent = null)
@@ -205,6 +209,11 @@ class MoreInformationFragment private constructor(private val paymentComponent: 
     }
 
     companion object {
+        /**
+         * Create a new instance of the [MoreInformationFragment].
+         *
+         * @param paymentComponent the [PaymentComponent] instance which contains the list of payment provider apps
+         */
         fun newInstance(paymentComponent: PaymentComponent?): MoreInformationFragment =
             MoreInformationFragment(paymentComponent = paymentComponent)
     }
