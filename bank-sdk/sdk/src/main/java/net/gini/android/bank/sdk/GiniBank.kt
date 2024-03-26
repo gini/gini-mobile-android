@@ -406,6 +406,79 @@ object GiniBank {
         context.startActivity(resolvedPayment.getBusinessIntent())
     }
 
+    /**
+     * Wrapper for the processing result of a document
+     */
+    sealed class CreateDocumentFromImportedFileResult {
+        /**
+         * The document was processed successfully.
+         */
+        data class Success(val document: Document?): CreateDocumentFromImportedFileResult()
+
+        /**
+         * Document processing returned an error.
+         */
+        data class Error(val error: ImportedFileValidationException?): CreateDocumentFromImportedFileResult()
+
+        /**
+         * Document processing was cancelled.
+         */
+        object Cancelled: CreateDocumentFromImportedFileResult()
+    }
+
+    /**
+     *
+     *  API for creating documents base on files imported from another app.
+     *
+     *  @param intent - intent from which to get files
+     *  @param context - Android context
+     *  @param callback - returns the wrapped result of the file processing in the form of [CreateDocumentFromImportedFileResult]
+     */
+    fun createDocumentForImportedFiles(
+        intent: Intent,
+        context: Context,
+        callback: (CreateDocumentFromImportedFileResult) -> Unit
+    ): CancellationToken? {
+        return giniCapture?.createDocumentForImportedFiles(
+            intent,
+            context,
+            object: AsyncCallback<Document, ImportedFileValidationException> {
+                override fun onSuccess(result: Document?) {
+                    callback(CreateDocumentFromImportedFileResult.Success(result))
+                }
+
+                override fun onError(exception: ImportedFileValidationException?) {
+                    callback(CreateDocumentFromImportedFileResult.Error(exception))
+                }
+
+                override fun onCancelled() {
+                    callback(CreateDocumentFromImportedFileResult.Cancelled)
+                }
+            }
+        )
+    }
+
+    /**
+     * Starts review flow for a processed document.
+     *
+     * @param resultLauncher
+     * @param document The document to be forwarded by the result launcher.
+     */
+    fun startCaptureFlowForDocument(            // maybe we should name it `startReviewFlowForDocument` ? seeing as there is no capture flow per se
+        resultLauncher: ActivityResultLauncher<CaptureImportInput>, document: Document
+    ) {
+        resultLauncher.launch(CaptureImportInput.Forward(document))
+    }
+
+    /**
+     *  Creates a [CaptureFlowFragment] with a processed document.
+     *
+     *  @param document The document with which the fragment will be created.
+     */
+    fun createCaptureFlowFragmentForDocument(           //maybe we should name this one `createReviewFlowFragmentForDocument` ? same comment as above
+        document: Document,
+    ): CaptureFlowFragment = Internal.createCaptureFlowFragmentForOpenWithDocument(document)
+
     class Internal {
 
         companion object {
