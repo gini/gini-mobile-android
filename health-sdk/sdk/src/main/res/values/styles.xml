@@ -136,6 +136,7 @@
         <item name="errorIconDrawable">@null</item>
         <item name="cornerRadius">@dimen/ghs_small</item>
         <item name="hintTextAppearance">@style/GiniHealthTheme.Typography.Caption2</item>
+        <item name="android:textColorHint">@color/ghs_payment_input_hint</item>
         <item name="android:textAppearance">@style/GiniHealthTheme.Typography.Body1</item>
         <item name="boxStrokeWidth">@dimen/ghs_zero</item>
         <item name="boxStrokeWidthFocused">@dimen/ghs_zero</item>
@@ -163,7 +164,7 @@
         <item name="android:elevation">@dimen/ghs_medium_12</item>
     </style>
 
-     Style for the Payment Details card in ReviewFragment
+    <!-- Style for the Payment Details card in ReviewFragment-->
     <style name="GiniHealthTheme.PaymentDetailsCard" parent="Root.GiniHealthTheme.PaymentDetailsCard" />
 
     <style name="Root.GiniHealthTheme.PaymentButtonProgressStyle">

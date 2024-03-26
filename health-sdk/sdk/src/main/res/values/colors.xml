@@ -39,6 +39,7 @@
     <color name="ghs_payment_details_background_color">@color/ghs_dark_07</color>
     <color name="ghs_payment_input_border_color">@color/ghs_dark_05</color>
     <color name="ghs_payment_input_background_color">@color/ghs_dark_06</color>
+    <color name="ghs_payment_input_hint">@color/ghs_dark_04</color>
     <color name="ghs_more_information_fragment_background">@color/ghs_dark_07</color>
     <color name="ghs_payment_provider_border_color">@color/ghs_dark_05</color>
     <color name="ghs_bordered_background_color">@color/ghs_dark_06</color>
