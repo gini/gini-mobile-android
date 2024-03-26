@@ -20,7 +20,6 @@ import java.util.List;
 /**
  * A document sent for processing to the Gini API.
  */
-
 public class Document implements Parcelable {
 
     /**

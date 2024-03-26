@@ -4,9 +4,6 @@ import net.gini.android.core.api.Resource
 
 /**
  * Represents the result of processing a document to get its extractions.
- */
-
-/**
  * Wraps the result of the extraction request.
  */
 sealed class ResultWrapper<out T> {

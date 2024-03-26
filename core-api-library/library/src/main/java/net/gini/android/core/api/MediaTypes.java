@@ -6,7 +6,6 @@ import androidx.annotation.Nullable;
 /**
  *  Media Types used across the application (e.g document types, http headers)
  */
-
 public class MediaTypes {
 
     public static final String IMAGE_JPEG = "image/jpeg";

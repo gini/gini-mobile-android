@@ -13,7 +13,6 @@ import androidx.annotation.Nullable;
  * There might be an optional box element describing the position of the extraction value on the document. We refer to it as the bounding box.
  * In most cases, the extractions without a bounding box are considered to be meta information such as doctype.
  */
-
 public class Extraction implements Parcelable {
     private String mValue;
     private final String mEntity;
