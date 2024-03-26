@@ -14,5 +14,5 @@
         android:id="@+id/divider2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:dividerColor="@color/ghs_dark_05"/>
+        app:dividerColor="@color/ghs_faq_divider"/>
 </LinearLayout>
