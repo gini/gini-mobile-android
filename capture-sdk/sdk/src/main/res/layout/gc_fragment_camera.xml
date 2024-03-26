@@ -27,14 +27,22 @@
 
     </net.gini.android.capture.internal.camera.view.CameraPreviewContainer>
 
-    <ImageView
-        android:id="@+id/gc_camera_focus_indicator"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:alpha="0"
-        android:src="@drawable/gc_camera_focus_indicator"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <FrameLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="@id/gc_camera_preview_container"
+        app:layout_constraintEnd_toEndOf="@id/gc_camera_preview_container"
+        app:layout_constraintTop_toTopOf="@id/gc_camera_preview_container"
+        app:layout_constraintBottom_toBottomOf="@id/gc_camera_preview_container">
+
+        <ImageView
+            android:id="@+id/gc_camera_focus_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:alpha="0"
+            android:src="@drawable/gc_camera_focus_indicator" />
+
+    </FrameLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/gc_pane_wrapper"
@@ -212,14 +220,17 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-
     <View
         android:id="@+id/gc_activity_indicator_background"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/gc_navigation_top_bar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         android:background="@color/gc_camera_preview_shade"
-        android:visibility="gone" />
+        android:visibility="invisible"
+        tools:visibility="invisible" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/gc_camera_frame_wrapper"

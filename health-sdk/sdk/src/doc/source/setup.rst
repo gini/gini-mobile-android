@@ -11,7 +11,7 @@ build.gradle:
 .. code-block:: groovy
 
     dependencies {
-        implementation 'net.gini.android:gini-health-sdk:2.1.3'
+        implementation 'net.gini.android:gini-health-sdk:4.0.0'
     }
 
 Gini Pay Deep Link For Your App

@@ -109,3 +109,4 @@ navigation_ui_ktx = { module = "androidx.navigation:navigation-ui-ktx", version.
 navigation_safe_args = { module = "androidx.navigation:navigation-safe-args-gradle-plugin", version.ref = "navigation_component" }
 datastore-preferences = "androidx.datastore:datastore-preferences:1.0.0"
 tomlj = "org.tomlj:tomlj:1.1.1"
+json-testing = "org.json:json:20231013"

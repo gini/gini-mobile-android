@@ -33,7 +33,8 @@ import net.gini.android.health.sdk.util.autoCleared
 import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthTheme
 
 /**
- * The [MoreInformationFragment] displays information and an FAQ about the payment feature.
+ * The [MoreInformationFragment] displays information and an FAQ section about the payment feature. It requires a
+ * [PaymentComponent] instance to show the icons of the available payment provider apps.
  */
 class MoreInformationFragment private constructor(private val paymentComponent: PaymentComponent?) :
     Fragment() {

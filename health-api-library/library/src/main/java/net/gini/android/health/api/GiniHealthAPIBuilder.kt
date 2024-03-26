@@ -38,9 +38,9 @@ class GiniHealthAPIBuilder @JvmOverloads constructor(
     }
 
     /**
-     * Builds the GiniBankAPI instance with the configuration settings of the builder instance.
+     * Builds the GiniHealthAPI instance with the configuration settings of the builder instance.
      *
-     * @return The fully configured GiniBankAPI instance.
+     * @return The fully configured GiniHealthAPI instance.
      */
     override fun build(): GiniHealthAPI {
         return GiniHealthAPI(createDocumentManager(), getCredentialsStore())

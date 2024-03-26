@@ -9,7 +9,7 @@ import net.gini.android.core.api.models.SpecificExtraction
 import org.json.JSONObject
 
 /**
- * The [DocumentManager] is a high level API on top of the Gini API, which is used via the [DocumentRepository]. It
+ * The [DocumentManager] is a high level API on top of the Gini API, via which the [DocumentRepository] is used. It
  * provides high level methods to handle document related tasks easily.
  */
 abstract class DocumentManager<out DR: DocumentRepository<E>, E: ExtractionsContainer>(private val documentRepository: DR) {

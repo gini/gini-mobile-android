@@ -7,6 +7,11 @@ import android.os.Parcelable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * The box where an extraction is found.
+ *
+ * Only available on some extractions.
+ */
 public class Box implements Parcelable {
     private final int mPageNumber;
     private final double mLeft;

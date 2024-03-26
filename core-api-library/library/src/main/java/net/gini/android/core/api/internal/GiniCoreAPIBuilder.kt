@@ -36,6 +36,16 @@ import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSocketFactory
 import javax.net.ssl.TrustManager
 
+/**
+ * The [GiniCoreAPIBuilder] allows you to build and configure a [GiniCoreAPI] instance.
+ *
+ * @constructor Initializes a new builder instance.
+ * @param context your application's Context instance (Android)
+ * @param clientId your application's client ID for the Gini Health API
+ * @param clientSecret your application's client secret for the Gini Health API
+ * @param emailDomain  the email domain which is used for created Gini users
+ * @param sessionManager if not null, then the [SessionManager] instance will be used for session management. If null, then anonymous Gini users will be used.
+ */
 abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<DM,DR, E>, DR : DocumentRepository<E>, E : ExtractionsContainer>(
     private val context: Context,
     private val clientId: String,
@@ -107,6 +117,9 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
         return this
     }
 
+    /**
+     * Differentiate between different types of GiniApi's.
+     */
     abstract fun getGiniApiType(): GiniApiType
 
     /**
