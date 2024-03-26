@@ -8,6 +8,8 @@ import androidx.core.content.IntentCompat
 import androidx.fragment.app.FragmentContainerView
 import dagger.hilt.android.AndroidEntryPoint
 import net.gini.android.bank.sdk.exampleapp.R
+import net.gini.android.bank.sdk.exampleapp.core.ExampleUtil
+import net.gini.android.capture.Document
 
 private const val EXTRA_IN_OPEN_WITH_INTENT = "EXTRA_IN_OPEN_WITH_INTENT"
 
@@ -21,7 +23,13 @@ class CaptureFlowHostActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             val openWithIntent = IntentCompat.getParcelableExtra(intent, EXTRA_IN_OPEN_WITH_INTENT, Intent::class.java)
             if (openWithIntent != null) {
-                startBankSDKForOpenWith(openWithIntent)
+                if (!intent.hasExtra(ExampleUtil.DOCUMENT)) {
+                    startBankSDKForOpenWith(openWithIntent)
+                } else {
+                    intent.getParcelableExtra(ExampleUtil.DOCUMENT, Document::class.java)?.let {
+                        startBankSDKForDocument(it)
+                    }
+                }
             }
         }
     }
@@ -37,10 +45,18 @@ class CaptureFlowHostActivity : AppCompatActivity() {
             .startCaptureSDKForIntent(openWithIntent)
     }
 
+    private fun startBankSDKForDocument(document: Document) {
+        findViewById<FragmentContainerView>(R.id.fragment_host).getFragment<ClientBankSDKFragment>()
+            .startBankSDKForDocument(document)
+    }
+
     companion object {
         fun newIntent(context: Context, openWithIntent: Intent? = null) =
             Intent(context, CaptureFlowHostActivity::class.java).apply {
                 openWithIntent?.let { putExtra(EXTRA_IN_OPEN_WITH_INTENT, it) }
+                openWithIntent?.getParcelableExtra(ExampleUtil.DOCUMENT, Document::class.java)?.let {
+                    putExtra(ExampleUtil.DOCUMENT, it)
+                }
             }
     }
 

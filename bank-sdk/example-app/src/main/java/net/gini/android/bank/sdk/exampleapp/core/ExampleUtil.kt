@@ -6,6 +6,8 @@ import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.core.api.models.SpecificExtraction
 
 object ExampleUtil {
+    const val DOCUMENT = "document"
+
     fun isIntentActionViewOrSend(intent: Intent): Boolean {
         val action = intent.action
         return Intent.ACTION_VIEW == action || Intent.ACTION_SEND == action || Intent.ACTION_SEND_MULTIPLE == action
