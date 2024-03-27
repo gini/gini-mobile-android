@@ -126,6 +126,7 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
 
                     SelectedPaymentProviderAppState.NothingSelected -> {
                         LOG.debug("No payment provider app was selected")
+                        selectFirstInstalledPaymentProviderAppOrNothing(paymentProviderApps)
                     }
                 }
             }
