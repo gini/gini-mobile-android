@@ -97,7 +97,7 @@
                 android:layout_marginHorizontal="@dimen/ghs_large"
                 android:layoutDirection="rtl"
                 android:nestedScrollingEnabled="false"
-                android:divider="@color/ghs_dark_05"
+                android:divider="@color/ghs_faq_divider"
                 android:dividerHeight="@dimen/ghs_small_1"
                 android:groupIndicator="@drawable/ghs_expandable_list_icon"
                 android:scrollbars="none"
