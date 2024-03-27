@@ -10,7 +10,7 @@ information such as the document sender or the payment relevant information (amo
 also provides a secure channel for sharing payment related information between clients. 
 
 .. note::
-   The documentation for the 1.x.x version can be found `here <https://developer.gini.net/gini-mobile-android/health-sdk/sdk/1.3.2/html/index.html>`_.
+   The documentation for the 2.x.x version can be found `here <https://developer.gini.net/gini-mobile-android/health-sdk/sdk/2.1.4/html/index.html>`_.
 
 
 Table of contents
@@ -25,6 +25,5 @@ Table of contents
     event-tracking
     testing
     customization
-    migrate-to-2-0-0
     reference
     license
