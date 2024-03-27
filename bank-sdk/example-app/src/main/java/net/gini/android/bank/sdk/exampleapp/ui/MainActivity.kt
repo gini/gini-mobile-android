@@ -23,8 +23,10 @@ import net.gini.android.bank.sdk.exampleapp.databinding.ActivityMainBinding
 import net.gini.android.bank.sdk.exampleapp.ui.data.Configuration
 import net.gini.android.capture.Document
 import net.gini.android.capture.EntryPoint
+import net.gini.android.capture.camera.CameraActivity.EXTRA_IN_OPEN_WITH_DOCUMENT
 import net.gini.android.capture.util.CancellationToken
 
+const val EXTRA_IN_MAIN_ACTIVITY_OPEN_WITH_DOCUMENT = "EXTRA_IN_OPEN_WITH_DOCUMENT"
 
 /**
  * Entry point for the screen api example app.
@@ -52,8 +54,8 @@ class MainActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             if (isIntentActionViewOrSend(intent)) {
                 startGiniCaptureSdkForOpenWith(intent)
-            } else if (intent.hasExtra(ExampleUtil.DOCUMENT)) {
-                intent.getParcelableExtra(ExampleUtil.DOCUMENT, Document::class.java)?.let {
+            } else if (intent.hasExtra(EXTRA_IN_MAIN_ACTIVITY_OPEN_WITH_DOCUMENT)) {
+                intent.getParcelableExtra(EXTRA_IN_MAIN_ACTIVITY_OPEN_WITH_DOCUMENT, Document::class.java)?.let {
                     startReviewFlowForDocument(it)
                 }
             }

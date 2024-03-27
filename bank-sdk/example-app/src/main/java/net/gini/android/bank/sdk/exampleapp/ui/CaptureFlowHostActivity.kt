@@ -12,6 +12,7 @@ import net.gini.android.bank.sdk.exampleapp.core.ExampleUtil
 import net.gini.android.capture.Document
 
 private const val EXTRA_IN_OPEN_WITH_INTENT = "EXTRA_IN_OPEN_WITH_INTENT"
+private const val EXTRA_IN_OPEN_WITH_DOCUMENT = "EXTRA_IN_OPEN_WITH_DOCUMENT"
 
 @AndroidEntryPoint
 class CaptureFlowHostActivity : AppCompatActivity() {
@@ -22,13 +23,12 @@ class CaptureFlowHostActivity : AppCompatActivity() {
 
         if (savedInstanceState == null) {
             val openWithIntent = IntentCompat.getParcelableExtra(intent, EXTRA_IN_OPEN_WITH_INTENT, Intent::class.java)
-            if (openWithIntent != null) {
-                if (!intent.hasExtra(ExampleUtil.DOCUMENT)) {
-                    startBankSDKForOpenWith(openWithIntent)
-                } else {
-                    intent.getParcelableExtra(ExampleUtil.DOCUMENT, Document::class.java)?.let {
-                        startBankSDKForDocument(it)
-                    }
+            val openDocument = IntentCompat.getParcelableExtra(intent, EXTRA_IN_OPEN_WITH_DOCUMENT, Document::class.java)
+            if (openDocument != null) {
+                startBankSDKForDocument(openDocument)
+            } else if (openWithIntent != null) {
+                intent.getParcelableExtra(EXTRA_IN_OPEN_WITH_DOCUMENT, Document::class.java)?.let {
+                    startBankSDKForDocument(it)
                 }
             }
         }
@@ -54,9 +54,11 @@ class CaptureFlowHostActivity : AppCompatActivity() {
         fun newIntent(context: Context, openWithIntent: Intent? = null) =
             Intent(context, CaptureFlowHostActivity::class.java).apply {
                 openWithIntent?.let { putExtra(EXTRA_IN_OPEN_WITH_INTENT, it) }
-                openWithIntent?.getParcelableExtra(ExampleUtil.DOCUMENT, Document::class.java)?.let {
-                    putExtra(ExampleUtil.DOCUMENT, it)
-                }
+            }
+
+        fun newIntent(context: Context, openWithDocument: Document) =
+            Intent(context, CaptureFlowHostActivity::class.java).apply {
+                putExtra(EXTRA_IN_OPEN_WITH_DOCUMENT, openWithDocument)
             }
     }
 

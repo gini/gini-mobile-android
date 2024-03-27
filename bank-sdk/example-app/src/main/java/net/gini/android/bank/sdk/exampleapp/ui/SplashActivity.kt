@@ -5,11 +5,9 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContentProviderCompat.requireContext
 import dagger.hilt.android.AndroidEntryPoint
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.exampleapp.R
-import net.gini.android.bank.sdk.exampleapp.core.ExampleUtil.DOCUMENT
 import net.gini.android.bank.sdk.exampleapp.core.ExampleUtil.isIntentActionViewOrSend
 import net.gini.android.capture.Document
 
@@ -62,7 +60,7 @@ open class SplashActivity : AppCompatActivity() {
     open fun startMainActivity(document: Document) {
         startActivity(Intent(this, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
-            putExtra(DOCUMENT, document)
+            putExtra(EXTRA_IN_MAIN_ACTIVITY_OPEN_WITH_DOCUMENT, document)
         })
         finish()
     }

@@ -277,7 +277,7 @@ object GiniBank {
                 override fun onSuccess(document: Document) {
                     callback(
                         CreateCaptureFlowFragmentForIntentResult.Success(
-                            Internal.createCaptureFlowFragmentForOpenWithDocument(document)
+                            createCaptureFlowFragmentForDocument(document)
                         )
                     )
                 }
@@ -407,7 +407,7 @@ object GiniBank {
     }
 
     /**
-     * Wrapper for the processing result of a document
+     * Results of document creation from an imported pdf or image(s).
      */
     sealed class CreateDocumentFromImportedFileResult {
         /**
@@ -428,7 +428,7 @@ object GiniBank {
 
     /**
      *
-     *  API for creating documents base on files imported from another app.
+     *  Create a document based on a pdf or image(s) imported from another app.
      *
      *  @param intent - intent from which to get files
      *  @param context - Android context
@@ -459,33 +459,24 @@ object GiniBank {
     }
 
     /**
-     * Starts review flow for a processed document.
+     * Starts capture flow for a document. This method should be used with documents created by [GiniBank.createDocumentForImportedFiles] when a pdf or image was shared from another app.
      *
      * @param resultLauncher
      * @param document The document to be forwarded by the result launcher.
      */
-    fun startCaptureFlowForDocument(            // maybe we should name it `startReviewFlowForDocument` ? seeing as there is no capture flow per se
+    fun startCaptureFlowForDocument(
         resultLauncher: ActivityResultLauncher<CaptureImportInput>, document: Document
     ) {
         resultLauncher.launch(CaptureImportInput.Forward(document))
     }
 
     /**
-     *  Creates a [CaptureFlowFragment] with a processed document.
+     *  Creates a [CaptureFlowFragment] with a document. This method should be used with documents created by [GiniBank.createDocumentForImportedFiles] when a pdf or image was shared from another app.
      *
      *  @param document The document with which the fragment will be created.
      */
-    fun createCaptureFlowFragmentForDocument(           //maybe we should name this one `createReviewFlowFragmentForDocument` ? same comment as above
-        document: Document,
-    ): CaptureFlowFragment = Internal.createCaptureFlowFragmentForOpenWithDocument(document)
-
-    class Internal {
-
-        companion object {
-            fun createCaptureFlowFragmentForOpenWithDocument(openWithDocument: Document): CaptureFlowFragment {
-                check(giniCapture != null) { "Capture feature is not configured. Call setCaptureConfiguration before starting the flow." }
-                return CaptureFlowFragment.createInstance(openWithDocument)
-            }
-        }
+    fun createCaptureFlowFragmentForDocument(document: Document): CaptureFlowFragment {
+        check(giniCapture != null) { "Capture feature is not configured. Call setCaptureConfiguration before starting the flow." }
+        return CaptureFlowFragment.createInstance(document)
     }
 }

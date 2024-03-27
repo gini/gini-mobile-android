@@ -8,10 +8,7 @@ import net.gini.android.capture.Document
 
 class SplashSingleActivity : SplashActivity() {
     override fun startMainActivity(document: Document) {
-        startActivity(CaptureFlowHostActivity.newIntent(this, Intent().apply {
-            flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
-            putExtra(ExampleUtil.DOCUMENT, document)
-        }))
+        startActivity(CaptureFlowHostActivity.newIntent(this, document))
         finish()
     }
 }
