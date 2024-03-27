@@ -177,6 +177,9 @@ the invoice and the configuration for the screen. Also set a listener to get inf
     ``paymentComponent.getPaymentReviewFragment()`` will load the document extractions asynchronously. It's a suspend
     function and must be called from a coroutine. 
 
+    The ``ReviewFragment`` doesn't handle navigation related events and doesn't show a navigation bar. You are
+    free to design navigation to and from the fragment as you see fit.
+
 The ``ReviewConfiguration`` class contains the following options:
 
 - ``handleErrorsInternally``: If set to ``true``, the ``ReviewFragment`` will handle errors internally and show
