@@ -137,19 +137,21 @@
         <item name="cornerRadius">@dimen/ghs_small</item>
         <item name="hintTextAppearance">@style/GiniHealthTheme.Typography.Caption2</item>
         <item name="android:textColorHint">@color/ghs_payment_input_hint</item>
-        <item name="android:textAppearance">@style/GiniHealthTheme.Typography.Body1</item>
         <item name="boxStrokeWidth">@dimen/ghs_zero</item>
         <item name="boxStrokeWidthFocused">@dimen/ghs_zero</item>
         <item name="boxBackgroundColor">@android:color/transparent</item>
         <item name="boxCornerRadiusBottomStart">@dimen/ghs_small</item>
         <item name="boxCornerRadiusBottomEnd">@dimen/ghs_small</item>
         <item name="errorTextColor">@color/ghs_feedback_01</item>
+        <item name="errorTextAppearance">@style/GiniHealthTheme.Typography.Caption2</item>
     </style>
     <style name="GiniHealthTheme.PaymentInputLayout" parent="Root.GiniHealthTheme.PaymentInputLayout"/>
 
     <style name="Root.GiniHealthTheme.PaymentInputEditTextStyle" parent="Widget.MaterialComponents.TextInputEditText.FilledBox">
         <item name="android:singleLine">true</item>
         <item name="android:background">@drawable/ghs_payment_input_edit_text_background</item>
+        <item name="android:textAppearance">@style/GiniHealthTheme.Typography.Body1</item>
+        <item name="android:textColor">?attr/colorOnBackground</item>
     </style>
     <style name="GiniHealthTheme.PaymentInputEditTextStyle" parent="Root.GiniHealthTheme.PaymentInputEditTextStyle"/>
 
