@@ -88,14 +88,14 @@ interface ReviewFragmentListener {
     fun onCloseReview()
 
     /**
-     * Called when the next (pay) button was clicked.
+     * Called when the "to the bank" button was clicked.
      *
      * Collect the [GiniHealth.openBankState] flow to get details about the payment request creation and about the
      * selected bank app.
      *
      * @param paymentProviderName the name of the selected payment provider
      */
-    fun onNextClicked(paymentProviderName: String)
+    fun onToTheBankButtonClicked(paymentProviderName: String)
 }
 
 /**
@@ -351,7 +351,7 @@ class ReviewFragment private constructor(
         payment.setOnClickListener {
             requireActivity().currentFocus?.clearFocus()
             it.hideKeyboard()
-            listener?.onNextClicked(viewModel.paymentProviderApp.name)
+            listener?.onToTheBankButtonClicked(viewModel.paymentProviderApp.name)
             viewModel.onPayment()
         }
         close.setOnClickListener { view ->

@@ -44,7 +44,7 @@ class InvoicesActivity : AppCompatActivity() {
             supportFragmentManager.popBackStack()
         }
 
-        override fun onNextClicked(paymentProviderName: String) {}
+        override fun onToTheBankButtonClicked(paymentProviderName: String) {}
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

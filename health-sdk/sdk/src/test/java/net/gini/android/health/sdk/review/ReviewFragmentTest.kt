@@ -80,7 +80,7 @@ class ReviewFragmentTest {
 
         // Then
         verify {
-            listener.onNextClicked(any())
+            listener.onToTheBankButtonClicked(any())
         }
     }
 
@@ -112,7 +112,7 @@ class ReviewFragmentTest {
 
         // Then
         verify {
-            listener.onNextClicked(cmpEq(paymentProviderName))
+            listener.onToTheBankButtonClicked(cmpEq(paymentProviderName))
         }
     }
 

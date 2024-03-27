@@ -161,7 +161,7 @@ the invoice and the configuration for the screen. Also set a listener to get inf
             // Dismiss the ReviewFragment.
         }
 
-        override fun onNextClicked(paymentProviderName: String) {
+        override fun onToTheBankButtonClicked(paymentProviderName: String) {
             // Log or track the used payment provider name.
             // No action required, the payment process is handled by the Gini Health SDK.
         }
