@@ -143,7 +143,9 @@ Text customization is done via overriding of string resources.
 Dark mode
 ~~~~~~~~~~
 
-To customize resources for dark mode, add them to resource folders containing the -night resource qualifier.
+To customize resources for dark mode, add them to resource folders containing the ``-night`` resource qualifier. If you
+decide to customize the color palette, please ensure that the text colors are also set in contrast to the background
+colors.
 
 UI customization options
 ------------------------
