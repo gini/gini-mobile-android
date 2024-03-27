@@ -125,6 +125,11 @@ To instantiate it use ``MoreInformationFragment.newInstance()`` and pass in your
     
     For the navigation bar title you should use the ``ghs_more_information_fragment_title`` string resource.
 
+.. warning::
+
+    You need to override the ``ghs_privacy_policy_link_url`` string resource to provide a link to your company's privacy
+    policy page. This link will be shown to users in the answer to the "Who or what is Gini?" question.
+
 Show the BankSelectionBottomSheet
 ---------------------------------
 

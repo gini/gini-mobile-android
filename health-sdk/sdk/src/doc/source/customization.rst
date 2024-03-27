@@ -190,6 +190,11 @@ Payment Feature Info Screen
 You can also view the UI customisation guide in Figma `here
 <https://www.figma.com/file/AJTss4k0M6R2OxH0VQepdP/Android-Gini-Health-SDK-4.0.0-UI-Customisation?type=design&node-id=8865%3A1784&mode=design&t=K7YqsQfoIezyUS7U-1>`_.
 
+.. warning::
+
+    You need to override the ``ghs_privacy_policy_link_url`` string resource to provide a link to your company's privacy
+    policy page. This link will be shown to users in the answer to the "Who or what is Gini?" question.
+
 .. note::
 
     To copy text from Figma you need to have a Figma account. If you don't have one, you can create one for free.
