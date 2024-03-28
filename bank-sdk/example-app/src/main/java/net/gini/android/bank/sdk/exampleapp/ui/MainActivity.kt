@@ -26,8 +26,6 @@ import net.gini.android.capture.EntryPoint
 import net.gini.android.capture.camera.CameraActivity.EXTRA_IN_OPEN_WITH_DOCUMENT
 import net.gini.android.capture.util.CancellationToken
 
-const val EXTRA_IN_MAIN_ACTIVITY_OPEN_WITH_DOCUMENT = "EXTRA_IN_OPEN_WITH_DOCUMENT"
-
 /**
  * Entry point for the screen api example app.
  */
@@ -260,6 +258,7 @@ class MainActivity : AppCompatActivity() {
     companion object {
         const val CONFIGURATION_BUNDLE = "CONFIGURATION_BUNDLE"
         const val CAMERA_PERMISSION_BUNDLE = "CAMERA_PERMISSION_BUNDLE"
+        const val EXTRA_IN_MAIN_ACTIVITY_OPEN_WITH_DOCUMENT = "EXTRA_IN_OPEN_WITH_DOCUMENT"
         private const val REQUEST_CONFIGURATION = 3
     }
 }

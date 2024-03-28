@@ -60,7 +60,7 @@ open class SplashActivity : AppCompatActivity() {
     open fun startMainActivity(document: Document) {
         startActivity(Intent(this, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
-            putExtra(EXTRA_IN_MAIN_ACTIVITY_OPEN_WITH_DOCUMENT, document)
+            putExtra(MainActivity.EXTRA_IN_MAIN_ACTIVITY_OPEN_WITH_DOCUMENT, document)
         })
         finish()
     }

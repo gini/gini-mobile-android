@@ -8,11 +8,7 @@ import androidx.core.content.IntentCompat
 import androidx.fragment.app.FragmentContainerView
 import dagger.hilt.android.AndroidEntryPoint
 import net.gini.android.bank.sdk.exampleapp.R
-import net.gini.android.bank.sdk.exampleapp.core.ExampleUtil
 import net.gini.android.capture.Document
-
-private const val EXTRA_IN_OPEN_WITH_INTENT = "EXTRA_IN_OPEN_WITH_INTENT"
-private const val EXTRA_IN_OPEN_WITH_DOCUMENT = "EXTRA_IN_OPEN_WITH_DOCUMENT"
 
 @AndroidEntryPoint
 class CaptureFlowHostActivity : AppCompatActivity() {
@@ -51,6 +47,9 @@ class CaptureFlowHostActivity : AppCompatActivity() {
     }
 
     companion object {
+        private const val EXTRA_IN_OPEN_WITH_INTENT = "EXTRA_IN_OPEN_WITH_INTENT"
+        private const val EXTRA_IN_OPEN_WITH_DOCUMENT = "EXTRA_IN_OPEN_WITH_DOCUMENT"
+
         fun newIntent(context: Context, openWithIntent: Intent? = null) =
             Intent(context, CaptureFlowHostActivity::class.java).apply {
                 openWithIntent?.let { putExtra(EXTRA_IN_OPEN_WITH_INTENT, it) }
