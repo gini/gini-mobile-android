@@ -137,7 +137,7 @@ data class Configuration(
     val isReturnAssistantEnabled: Boolean = true,
 
     // 32 enable return reasons dialog
-    val isReturnReasonsEnabled: Boolean = true,
+    val isReturnReasonsEnabled: Boolean = false,
 
     // 33 Digital invoice onboarding custom illustration
     val isDigitalInvoiceOnboardingCustomIllustrationEnabled: Boolean = false,
