@@ -18,6 +18,7 @@ import net.gini.android.bank.sdk.capture.CaptureResult
 import net.gini.android.bank.sdk.capture.ResultError
 import net.gini.android.bank.sdk.exampleapp.R
 import net.gini.android.bank.sdk.exampleapp.core.PermissionHandler
+import net.gini.android.capture.Document
 import net.gini.android.capture.DocumentImportEnabledFileTypes
 import net.gini.android.capture.network.GiniCaptureDefaultNetworkService
 import net.gini.android.core.api.DocumentMetadata
@@ -139,6 +140,15 @@ class ClientBankSDKFragment :
 
     }
 
+    fun startBankSDKForDocument(document: Document) {
+        val fragment = GiniBank.createCaptureFlowFragmentForDocument(document)
+        fragment.setListener(this)
+
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_host, fragment, "fragment_host")
+            .addToBackStack(null)
+            .commit()
+    }
 
     override fun onFinishedWithResult(result: CaptureResult) {
         when (result) {

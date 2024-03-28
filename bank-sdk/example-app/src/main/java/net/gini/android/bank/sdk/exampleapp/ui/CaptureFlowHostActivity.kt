@@ -8,8 +8,7 @@ import androidx.core.content.IntentCompat
 import androidx.fragment.app.FragmentContainerView
 import dagger.hilt.android.AndroidEntryPoint
 import net.gini.android.bank.sdk.exampleapp.R
-
-private const val EXTRA_IN_OPEN_WITH_INTENT = "EXTRA_IN_OPEN_WITH_INTENT"
+import net.gini.android.capture.Document
 
 @AndroidEntryPoint
 class CaptureFlowHostActivity : AppCompatActivity() {
@@ -20,8 +19,13 @@ class CaptureFlowHostActivity : AppCompatActivity() {
 
         if (savedInstanceState == null) {
             val openWithIntent = IntentCompat.getParcelableExtra(intent, EXTRA_IN_OPEN_WITH_INTENT, Intent::class.java)
-            if (openWithIntent != null) {
-                startBankSDKForOpenWith(openWithIntent)
+            val openDocument = IntentCompat.getParcelableExtra(intent, EXTRA_IN_OPEN_WITH_DOCUMENT, Document::class.java)
+            if (openDocument != null) {
+                startBankSDKForDocument(openDocument)
+            } else if (openWithIntent != null) {
+                intent.getParcelableExtra(EXTRA_IN_OPEN_WITH_DOCUMENT, Document::class.java)?.let {
+                    startBankSDKForDocument(it)
+                }
             }
         }
     }
@@ -37,10 +41,23 @@ class CaptureFlowHostActivity : AppCompatActivity() {
             .startCaptureSDKForIntent(openWithIntent)
     }
 
+    private fun startBankSDKForDocument(document: Document) {
+        findViewById<FragmentContainerView>(R.id.fragment_host).getFragment<ClientBankSDKFragment>()
+            .startBankSDKForDocument(document)
+    }
+
     companion object {
+        private const val EXTRA_IN_OPEN_WITH_INTENT = "EXTRA_IN_OPEN_WITH_INTENT"
+        private const val EXTRA_IN_OPEN_WITH_DOCUMENT = "EXTRA_IN_OPEN_WITH_DOCUMENT"
+
         fun newIntent(context: Context, openWithIntent: Intent? = null) =
             Intent(context, CaptureFlowHostActivity::class.java).apply {
                 openWithIntent?.let { putExtra(EXTRA_IN_OPEN_WITH_INTENT, it) }
+            }
+
+        fun newIntent(context: Context, openWithDocument: Document) =
+            Intent(context, CaptureFlowHostActivity::class.java).apply {
+                putExtra(EXTRA_IN_OPEN_WITH_DOCUMENT, openWithDocument)
             }
     }
 

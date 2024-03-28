@@ -17,12 +17,14 @@ import net.gini.android.bank.sdk.capture.CaptureFlowImportContract
 import net.gini.android.bank.sdk.capture.CaptureResult
 import net.gini.android.bank.sdk.capture.ResultError
 import net.gini.android.bank.sdk.exampleapp.R
+import net.gini.android.bank.sdk.exampleapp.core.ExampleUtil
 import net.gini.android.bank.sdk.exampleapp.core.PermissionHandler
 import net.gini.android.bank.sdk.exampleapp.databinding.ActivityMainBinding
 import net.gini.android.bank.sdk.exampleapp.ui.data.Configuration
+import net.gini.android.capture.Document
 import net.gini.android.capture.EntryPoint
+import net.gini.android.capture.camera.CameraActivity.EXTRA_IN_OPEN_WITH_DOCUMENT
 import net.gini.android.capture.util.CancellationToken
-
 
 /**
  * Entry point for the screen api example app.
@@ -50,6 +52,10 @@ class MainActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             if (isIntentActionViewOrSend(intent)) {
                 startGiniCaptureSdkForOpenWith(intent)
+            } else if (intent.hasExtra(EXTRA_IN_MAIN_ACTIVITY_OPEN_WITH_DOCUMENT)) {
+                intent.getParcelableExtra(EXTRA_IN_MAIN_ACTIVITY_OPEN_WITH_DOCUMENT, Document::class.java)?.let {
+                    startReviewFlowForDocument(it)
+                }
             }
         }
     }
@@ -216,6 +222,12 @@ class MainActivity : AppCompatActivity() {
         configurationViewModel.configureGiniBank(this)
     }
 
+    private fun startReviewFlowForDocument(document: Document) {
+        GiniBank.startCaptureFlowForDocument(
+            resultLauncher = captureImportLauncher,
+            document = document
+        )
+    }
 
     override fun onActivityResult(
         requestCode: Int, resultCode: Int, data: Intent?
@@ -246,6 +258,7 @@ class MainActivity : AppCompatActivity() {
     companion object {
         const val CONFIGURATION_BUNDLE = "CONFIGURATION_BUNDLE"
         const val CAMERA_PERMISSION_BUNDLE = "CAMERA_PERMISSION_BUNDLE"
+        const val EXTRA_IN_MAIN_ACTIVITY_OPEN_WITH_DOCUMENT = "EXTRA_IN_OPEN_WITH_DOCUMENT"
         private const val REQUEST_CONFIGURATION = 3
     }
 }

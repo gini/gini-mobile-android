@@ -65,7 +65,7 @@ internal class CaptureFlowActivity : AppCompatActivity(), CaptureFlowFragmentLis
 
     private fun createFragment(openWithDocument: Document?): CaptureFlowFragment {
         val fragment = if (openWithDocument != null) {
-            GiniBank.Internal.createCaptureFlowFragmentForOpenWithDocument(openWithDocument)
+            GiniBank.createCaptureFlowFragmentForDocument(openWithDocument)
         } else {
             GiniBank.createCaptureFlowFragment()
         }
