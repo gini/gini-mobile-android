@@ -44,3 +44,23 @@ ReviewFragment
 
 To get informed of ``ReviewFragment`` events (like the user clicking the "close" or "next" button) you can implement
 the ``ReviewFragmentListener`` and set it on the fragment.
+
+.. code-block:: kotlin
+
+    val reviewConfiguration = ReviewConfiguration(...)
+
+    val paymentReviewFragment = paymentComponent.getPaymentReviewFragment(
+        documentId, reviewConfiguration
+    )
+
+    paymentReviewFragment.listener = object : ReviewFragmentListener {
+        override fun onCloseReview() {
+            // Called only when the ``ReviewConfiguration.showCloseButton`` was set to ``true``.
+            // Dismiss the ReviewFragment.
+        }
+
+        override fun onToTheBankButtonClicked(paymentProviderName: String) {
+            // Log or track the used payment provider name.
+            // No action required, the payment process is handled by the Gini Health SDK.
+        }
+    }

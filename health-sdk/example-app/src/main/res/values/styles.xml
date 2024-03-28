@@ -54,12 +54,4 @@
 
     <!-- endregion -->
 
-    <!-- region Health SDK customisation -->
-
-    <style name="PaymentInput.TextAppearance.Hint" parent="TextAppearance.MaterialComponents.Caption">
-        <item name="android:textSize">14sp</item>
-    </style>
-
-    <!-- endregion -->
-
 </resources>

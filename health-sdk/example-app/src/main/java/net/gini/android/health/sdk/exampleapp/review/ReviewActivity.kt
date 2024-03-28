@@ -42,8 +42,8 @@ class ReviewActivity : AppCompatActivity() {
             finish()
         }
 
-        override fun onNextClicked(paymentProviderName: String) {
-            LOG.debug("pay button clicked with payment provider: {}", paymentProviderName)
+        override fun onToTheBankButtonClicked(paymentProviderName: String) {
+            LOG.debug("to the bank button clicked with payment provider: {}", paymentProviderName)
             lifecycleScope.launch {
                 viewModel.giniHealth.openBankState.collect { paymentState ->
                     when (paymentState) {

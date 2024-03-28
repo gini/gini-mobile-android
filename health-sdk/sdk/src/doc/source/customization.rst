@@ -143,7 +143,9 @@ Text customization is done via overriding of string resources.
 Dark mode
 ~~~~~~~~~~
 
-To customize resources for dark mode, add them to resource folders containing the -night resource qualifier.
+To customize resources for dark mode, add them to resource folders containing the ``-night`` resource qualifier. If you
+decide to customize the color palette, please ensure that the text colors are also set in contrast to the background
+colors.
 
 UI customization options
 ------------------------
@@ -190,6 +192,11 @@ Payment Feature Info Screen
 You can also view the UI customisation guide in Figma `here
 <https://www.figma.com/file/AJTss4k0M6R2OxH0VQepdP/Android-Gini-Health-SDK-4.0.0-UI-Customisation?type=design&node-id=8865%3A1784&mode=design&t=K7YqsQfoIezyUS7U-1>`_.
 
+.. warning::
+
+    You need to override the ``ghs_privacy_policy_link_url`` string resource to provide a link to your company's privacy
+    policy page. This link will be shown to users in the answer to the "Who or what is Gini?" question.
+
 .. note::
 
     To copy text from Figma you need to have a Figma account. If you don't have one, you can create one for free.
@@ -198,5 +205,26 @@ You can also view the UI customisation guide in Figma `here
 
     <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
     src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FAJTss4k0M6R2OxH0VQepdP%2FAndroid-Gini-Health-SDK-4.0.0-UI-Customisation%3Ftype%3Ddesign%26node-id%3D8865%253A1784%26mode%3Ddesign%26t%3DK7YqsQfoIezyUS7U-1"
+    allowfullscreen></iframe>
+
+Payment Review Screen
+~~~~~~~~~~~~~~~~~~~~~
+
+You can also view the UI customisation guide in Figma `here
+<https://www.figma.com/file/AJTss4k0M6R2OxH0VQepdP/Android-Gini-Health-SDK-4.0.0-UI-Customisation?type=design&node-id=8856%3A2344&mode=design&t=qTedJeTuklI9gPIm-1>`_.
+
+.. note::
+
+    The close button in the top right corner is disabled by default. You can enable it by setting the
+    ``showCloseButton`` to ``true`` when creating a ``ReviewConfiguration``.
+
+.. note::
+
+    To copy text from Figma you need to have a Figma account. If you don't have one, you can create one for free.
+
+.. raw:: html
+
+    <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
+    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FAJTss4k0M6R2OxH0VQepdP%2FAndroid-Gini-Health-SDK-4.0.0-UI-Customisation%3Ftype%3Ddesign%26node-id%3D8856%253A2344%26mode%3Ddesign%26t%3DqTedJeTuklI9gPIm-1"
     allowfullscreen></iframe>
 

@@ -56,6 +56,7 @@ import net.gini.android.health.sdk.util.setTextIfDifferent
 import net.gini.android.health.sdk.util.showErrorMessage
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.health.sdk.bankselection.BankSelectionBottomSheet
+import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthTheme
 
 /**
  * Configuration for the [ReviewFragment].
@@ -88,14 +89,14 @@ interface ReviewFragmentListener {
     fun onCloseReview()
 
     /**
-     * Called when the next (pay) button was clicked.
+     * Called when the "to the bank" button was clicked.
      *
      * Collect the [GiniHealth.openBankState] flow to get details about the payment request creation and about the
      * selected bank app.
      *
      * @param paymentProviderName the name of the selected payment provider
      */
-    fun onNextClicked(paymentProviderName: String)
+    fun onToTheBankButtonClicked(paymentProviderName: String)
 }
 
 /**
@@ -118,6 +119,11 @@ class ReviewFragment private constructor(
     private var binding: GhsFragmentReviewBinding by autoCleared()
     private var documentPageAdapter: DocumentPageAdapter by autoCleared()
     private var isKeyboardShown = false
+
+    override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
+        val inflater = super.onGetLayoutInflater(savedInstanceState)
+        return this.getLayoutInflaterWithGiniHealthTheme(inflater)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         super.onCreateView(inflater, container, savedInstanceState)
@@ -351,7 +357,7 @@ class ReviewFragment private constructor(
         payment.setOnClickListener {
             requireActivity().currentFocus?.clearFocus()
             it.hideKeyboard()
-            listener?.onNextClicked(viewModel.paymentProviderApp.name)
+            listener?.onToTheBankButtonClicked(viewModel.paymentProviderApp.name)
             viewModel.onPayment()
         }
         close.setOnClickListener { view ->

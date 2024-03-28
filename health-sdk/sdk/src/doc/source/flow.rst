@@ -109,7 +109,7 @@ When binding the view holder of the invoice item, prepare it for reuse, set the 
 Show the MoreInformationFragment
 --------------------------------
 
-The ``MoreInformationFragment`` displays information and an FAQ section about the payment feature. It requires a
+The ``MoreInformationFragment`` shows the Payment Feature Info Screen. It displays information and an FAQ section about the payment feature. It requires a
 ``PaymentComponent`` instance to show the icons of the available banks.
 
 To instantiate it use ``MoreInformationFragment.newInstance()`` and pass in your ``PaymentComponent`` instance:
@@ -124,6 +124,11 @@ To instantiate it use ``MoreInformationFragment.newInstance()`` and pass in your
     free to design navigation to and from the fragment as you see fit.
     
     For the navigation bar title you should use the ``ghs_more_information_fragment_title`` string resource.
+
+.. warning::
+
+    You need to override the ``ghs_privacy_policy_link_url`` string resource to provide a link to your company's privacy
+    policy page. This link will be shown to users in the answer to the "Who or what is Gini?" question.
 
 Show the BankSelectionBottomSheet
 ---------------------------------
@@ -161,7 +166,7 @@ the invoice and the configuration for the screen. Also set a listener to get inf
             // Dismiss the ReviewFragment.
         }
 
-        override fun onNextClicked(paymentProviderName: String) {
+        override fun onToTheBankButtonClicked(paymentProviderName: String) {
             // Log or track the used payment provider name.
             // No action required, the payment process is handled by the Gini Health SDK.
         }
@@ -171,6 +176,9 @@ the invoice and the configuration for the screen. Also set a listener to get inf
 
     ``paymentComponent.getPaymentReviewFragment()`` will load the document extractions asynchronously. It's a suspend
     function and must be called from a coroutine. 
+
+    The ``ReviewFragment`` doesn't handle navigation related events and doesn't show a navigation bar. You are
+    free to design navigation to and from the fragment as you see fit.
 
 The ``ReviewConfiguration`` class contains the following options:
 
