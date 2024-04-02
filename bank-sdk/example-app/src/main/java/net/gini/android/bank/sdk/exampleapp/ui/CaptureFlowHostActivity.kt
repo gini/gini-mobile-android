@@ -23,9 +23,7 @@ class CaptureFlowHostActivity : AppCompatActivity() {
             if (openDocument != null) {
                 startBankSDKForDocument(openDocument)
             } else if (openWithIntent != null) {
-                intent.getParcelableExtra(EXTRA_IN_OPEN_WITH_DOCUMENT, Document::class.java)?.let {
-                    startBankSDKForDocument(it)
-                }
+                startBankSDKForOpenWith(openWithIntent)
             }
         }
     }
