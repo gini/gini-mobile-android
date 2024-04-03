@@ -14,8 +14,7 @@ It also provides secure payment information sharing between clients via payment 
 Documentation
 -------------
 
-* [Integration Guide](https://developer.gini.net/gini-mobile-android/health-api-library/library/html/)
-* [Reference Docs](https://developer.gini.net/gini-mobile-android/health-api-library/library/dokka/index.html)
+* [Integration Guide](https://developer.gini.net/gini-mobile-android/health-api-library/library)
 
 Dependencies
 ------------
