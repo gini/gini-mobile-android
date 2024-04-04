@@ -203,7 +203,7 @@ class MoreInformationFragment private constructor(private val paymentComponent: 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val context = holder.binding.root.context
             holder.binding.ghsPaymentProviderIcon.setImageDrawable(dataSet[position]?.icon)
-            holder.binding.ghsPaymentProviderIcon.contentDescription = dataSet[position]?.paymentProvider?.name + " ${context.getString(R.string.ghs_payment_provider_logo)}"
+            holder.binding.ghsPaymentProviderIcon.contentDescription = dataSet[position]?.paymentProvider?.name + " ${context.getString(R.string.ghs_payment_provider_logo_content_description)}"
         }
 
         class ViewHolder(val binding: GhsPaymentProviderIconHolderBinding) :
