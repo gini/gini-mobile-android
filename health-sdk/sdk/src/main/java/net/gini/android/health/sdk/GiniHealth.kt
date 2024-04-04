@@ -25,20 +25,9 @@ import org.slf4j.LoggerFactory
 import java.lang.ref.WeakReference
 
 /**
- * [GiniHealth] is the main class for interacting with the Gini Health SDK.
- * It provides a way to submit a document for reviewing its extracted payment details and
- * lets the user make the payment with one of the payment providers.
+ * [GiniHealth] is one of the main classes for interacting with the Gini Health SDK. It manages interaction with the Gini Health API.
  *
- * The recommended flow is:
- *  1. Call one of the overloads of [setDocumentForReview], to submit a document.
- *  2. Display [ReviewFragment].
- *
- * [setDocumentForReview] can be called with:
- *  1. [Document] instance in the case the upload was performed with Gini Pay Api lib ([GiniHealthAPI]).
- *  2. Document id, this will probably be the case when there's backend integration between the Health SDK and the Gini Health API.
- *      This method will make a network call to obtain a [Document] instance so the other one is preferred if you have the [Document] instance.
- *
- *  [documentFlow], [paymentFlow], [openBankState] are used by the ReviewFragment to observe their state, but they are public
+ *  [documentFlow], [paymentFlow], [openBankState] are used by the [ReviewFragment] to observe their state, but they are public
  *  so that they can be observed anywhere, the main purpose for this is to observe errors.
  */
 class GiniHealth(
