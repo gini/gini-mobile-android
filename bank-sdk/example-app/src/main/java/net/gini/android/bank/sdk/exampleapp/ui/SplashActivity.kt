@@ -20,12 +20,12 @@ open class SplashActivity : AppCompatActivity() {
         setContentView(R.layout.activity_splash)
         if (savedInstanceState == null && intent != null) {
             if (isIntentActionViewOrSend(intent)) {
-                startGiniCaptureSdk(intent)
+                startGiniBankSdk(intent)
             }
         }
     }
 
-    private fun startGiniCaptureSdk(intent: Intent) {
+    private fun startGiniBankSdk(intent: Intent) {
         configureGiniBank()
         GiniBank.createDocumentForImportedFiles(
             intent = intent,
@@ -60,7 +60,7 @@ open class SplashActivity : AppCompatActivity() {
     open fun startMainActivity(document: Document) {
         startActivity(Intent(this, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
-            putExtra(MainActivity.EXTRA_IN_MAIN_ACTIVITY_OPEN_WITH_DOCUMENT, document)
+            putExtra(MainActivity.EXTRA_IN_OPEN_WITH_DOCUMENT, document)
         })
         finish()
     }
