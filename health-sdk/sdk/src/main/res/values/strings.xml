@@ -52,4 +52,6 @@
     <string name="ghs_more_information_fragment_title">Mehr Informationen</string>
     <string name="ghs_privacy_policy">Datenschutzerklärung</string>
     <string name="ghs_privacy_policy_link_url"/>
+
+    <string name="ghs_payment_provider_logo">logo</string>
 </resources>

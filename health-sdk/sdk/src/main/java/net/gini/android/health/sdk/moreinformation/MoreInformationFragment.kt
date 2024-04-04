@@ -121,7 +121,7 @@ class MoreInformationFragment private constructor(private val paymentComponent: 
 
     private fun updatePaymentProviderIconsAdapter(paymentProviderApps: List<PaymentProviderApp>) {
         (binding.ghsPaymentProvidersIconsList.adapter as PaymentProvidersIconsAdapter).apply {
-            dataSet = paymentProviderApps.map { it.icon }
+            dataSet = paymentProviderApps
             notifyDataSetChanged()
         }
     }
@@ -186,7 +186,7 @@ class MoreInformationFragment private constructor(private val paymentComponent: 
         listView.requestLayout()
     }
 
-    internal class PaymentProvidersIconsAdapter(var dataSet: List<Drawable?>) :
+    internal class PaymentProvidersIconsAdapter(var dataSet: List<PaymentProviderApp?>) :
         RecyclerView.Adapter<PaymentProvidersIconsAdapter.ViewHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -201,7 +201,9 @@ class MoreInformationFragment private constructor(private val paymentComponent: 
         override fun getItemCount(): Int = dataSet.size
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            holder.binding.ghsPaymentProviderIcon.setImageDrawable(dataSet[position])
+            val context = holder.binding.root.context
+            holder.binding.ghsPaymentProviderIcon.setImageDrawable(dataSet[position]?.icon)
+            holder.binding.ghsPaymentProviderIcon.contentDescription = dataSet[position]?.paymentProvider?.name + " ${context.getString(R.string.ghs_payment_provider_logo)}"
         }
 
         class ViewHolder(val binding: GhsPaymentProviderIconHolderBinding) :
