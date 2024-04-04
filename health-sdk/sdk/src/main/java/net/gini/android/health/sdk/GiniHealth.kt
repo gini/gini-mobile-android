@@ -148,7 +148,7 @@ class GiniHealth(
             }
         return when (extractionsResource) {
             is Resource.Cancelled -> false
-            is Resource.Error -> false
+            is Resource.Error -> throw Exception(extractionsResource.exception)
             is Resource.Success -> extractionsResource.data.compoundExtractions
                 .getPaymentExtraction("iban")?.value?.isNotEmpty() ?: false
         }
