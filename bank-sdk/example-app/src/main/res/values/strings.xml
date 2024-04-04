@@ -120,5 +120,5 @@
     <string name="no_camera_permission_message">Die Kameraberechtigung ist erforderlich, um das Bank-SDK zu verwenden. Bitte gehen Sie zu den App-Einstellungen, um die Kameraberechtigung zu erteilen.</string>
 
     <string name="splash_activity">Splash Activity</string>
-    <string name="splash_single_activity">Splash Single Activity</string>
+    <string name="single_activity">Single Activity</string>
 </resources>

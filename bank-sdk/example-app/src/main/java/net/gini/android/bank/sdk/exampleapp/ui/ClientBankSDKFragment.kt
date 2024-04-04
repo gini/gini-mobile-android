@@ -18,7 +18,6 @@ import net.gini.android.bank.sdk.capture.CaptureResult
 import net.gini.android.bank.sdk.capture.ResultError
 import net.gini.android.bank.sdk.exampleapp.R
 import net.gini.android.bank.sdk.exampleapp.core.PermissionHandler
-import net.gini.android.capture.Document
 import net.gini.android.capture.DocumentImportEnabledFileTypes
 import net.gini.android.capture.network.GiniCaptureDefaultNetworkService
 import net.gini.android.core.api.DocumentMetadata
@@ -33,9 +32,7 @@ class ClientBankSDKFragment :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (savedInstanceState == null) {
-            checkCameraPermission()
-        } else {
+        if (savedInstanceState != null) {
             val captureFlowFragment =
                 requireActivity().supportFragmentManager.findFragmentByTag("fragment_host") as? CaptureFlowFragment
             captureFlowFragment?.setListener(this)
@@ -43,7 +40,7 @@ class ClientBankSDKFragment :
         (requireActivity() as AppCompatActivity).supportActionBar?.hide()
     }
 
-    private fun checkCameraPermission() {
+    fun checkCameraPermissionAndStartBankSdk() {
         permissionHandler = PermissionHandler(requireActivity())
         lifecycleScope.launch {
             if (permissionHandler.grantPermission(Manifest.permission.CAMERA)) {
@@ -115,7 +112,7 @@ class ClientBankSDKFragment :
             .commit()
     }
 
-    fun startBankSDKForIntent(openWithIntent: Intent) {
+    fun startBankSdkForIntent(openWithIntent: Intent) {
         // Bank SDK is configured in the MainActivity, but you can
         // call [overrideBankSDKConfiguration] here if you want to override the configuration
         GiniBank.createCaptureFlowFragmentForIntent(requireContext(), openWithIntent) { result ->
@@ -138,16 +135,6 @@ class ClientBankSDKFragment :
             }
         }
 
-    }
-
-    fun startBankSDKForDocument(document: Document) {
-        val fragment = GiniBank.createCaptureFlowFragmentForDocument(document)
-        fragment.setListener(this)
-
-        requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_host, fragment, "fragment_host")
-            .addToBackStack(null)
-            .commit()
     }
 
     override fun onFinishedWithResult(result: CaptureResult) {
