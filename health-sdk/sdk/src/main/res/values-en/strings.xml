@@ -52,5 +52,5 @@ Gini is ISO 27001 certified for maximum data security and operates its own serve
     <string name="ghs_more_information_fragment_title">More Information</string>
     <string name="ghs_privacy_policy">privacy policy</string>
 
-    <string name="ghs_payment_provider_logo">logo</string>
+    <string name="ghs_payment_provider_logo_content_description">logo</string>
 </resources>
