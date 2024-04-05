@@ -83,14 +83,15 @@ class BankSelectionBottomSheet private constructor(private val paymentComponent:
                         LOG.debug("Changing selected payment provider app in PaymentComponent")
                         viewModel.setSelectedPaymentProviderApp(paymentProviderApp)
                         this@BankSelectionBottomSheet.dismiss()
-                    } else if (paymentProviderApp.hasPlayStoreUrl()) {
-                        paymentProviderApp.paymentProvider.playStoreUrl?.let {
-                            LOG.debug("Opening payment provider app in Play Store")
-                            openPlayStoreUrl(it)
-                        }
-                    } else {
-                        LOG.error("No installed payment provider app and no Play Store URL")
                     }
+//                    else if (paymentProviderApp.hasPlayStoreUrl()) {
+//                        paymentProviderApp.paymentProvider.playStoreUrl?.let {
+//                            LOG.debug("Opening payment provider app in Play Store")
+//                            openPlayStoreUrl(it)
+//                        }
+//                    } else {
+//                        LOG.error("No installed payment provider app and no Play Store URL")
+//                    }
                 }
             })
 
@@ -189,32 +190,13 @@ internal class PaymentProviderAppsAdapter(
         holder.itemView.context.wrappedWithGiniHealthTheme().let { context ->
             holder.button.text = paymentProviderAppListItem.paymentProviderApp.name
             holder.iconView.setImageDrawable(paymentProviderAppListItem.paymentProviderApp.icon)
-
-            if (paymentProviderAppListItem.isSelected) {
-                holder.itemView.isSelected = true
-                holder.button.setCompoundDrawablesWithIntrinsicBounds(
-                    null,
-                    null,
-                    ContextCompat.getDrawable(context, R.drawable.ghs_checkmark),
-                    null
-                )
-            } else {
-                holder.itemView.isSelected = false
-                val playStoreLogo: Drawable? =
-                    if (paymentProviderAppListItem.paymentProviderApp.installedPaymentProviderApp == null &&
-                        paymentProviderAppListItem.paymentProviderApp.paymentProvider.playStoreUrl != null
-                    ) {
-                        ContextCompat.getDrawable(context, R.drawable.ghs_play_store_logo)
-                    } else {
-                        null
-                    }
-                holder.button.setCompoundDrawablesWithIntrinsicBounds(
-                    null,
-                    null,
-                    playStoreLogo,
-                    null
-                )
-            }
+            holder.itemView.isSelected = paymentProviderAppListItem.isSelected
+            holder.button.setCompoundDrawablesWithIntrinsicBounds(
+                null,
+                null,
+                if (paymentProviderAppListItem.isSelected) ContextCompat.getDrawable(context, R.drawable.ghs_checkmark) else null,
+                null
+            )
         }
     }
 
