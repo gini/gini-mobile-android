@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.IntentCompat
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
@@ -52,7 +53,7 @@ class MainActivity : AppCompatActivity() {
             if (isIntentActionViewOrSend(intent)) {
                 startGiniBankSdkForOpenWith(intent)
             } else if (intent.hasExtra(EXTRA_IN_OPEN_WITH_DOCUMENT)) {
-                intent.getParcelableExtra(EXTRA_IN_OPEN_WITH_DOCUMENT, Document::class.java)?.let {
+                IntentCompat.getParcelableExtra(intent, EXTRA_IN_OPEN_WITH_DOCUMENT, Document::class.java)?.let {
                     startCaptureFlowForDocument(it)
                 }
             }
