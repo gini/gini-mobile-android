@@ -53,7 +53,7 @@
     <string name="ghs_privacy_policy">Datenschutzerklärung</string>
     <string name="ghs_privacy_policy_link_url"/>
 
-    //TODO get German wording and include overridable strings in documentation
-    <string name="ghs_close_content_description">Close</string>
-    <string name="ghs_invalid_amount_content_description">Invalid amount</string>
+    //TODO include overridable strings in documentation
+    <string name="ghs_close_content_description">Schließen</string>
+    <string name="ghs_invalid_amount_content_description">Ungültiger Bezahlbetrag</string>
 </resources>
