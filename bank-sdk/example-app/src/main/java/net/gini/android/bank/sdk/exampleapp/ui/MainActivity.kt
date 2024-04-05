@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.IntentCompat
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
@@ -17,12 +18,13 @@ import net.gini.android.bank.sdk.capture.CaptureFlowImportContract
 import net.gini.android.bank.sdk.capture.CaptureResult
 import net.gini.android.bank.sdk.capture.ResultError
 import net.gini.android.bank.sdk.exampleapp.R
+import net.gini.android.bank.sdk.exampleapp.core.ExampleUtil.isIntentActionViewOrSend
 import net.gini.android.bank.sdk.exampleapp.core.PermissionHandler
 import net.gini.android.bank.sdk.exampleapp.databinding.ActivityMainBinding
 import net.gini.android.bank.sdk.exampleapp.ui.data.Configuration
+import net.gini.android.capture.Document
 import net.gini.android.capture.EntryPoint
 import net.gini.android.capture.util.CancellationToken
-
 
 /**
  * Entry point for the screen api example app.
@@ -49,7 +51,11 @@ class MainActivity : AppCompatActivity() {
         showVersions()
         if (savedInstanceState == null) {
             if (isIntentActionViewOrSend(intent)) {
-                startGiniCaptureSdkForOpenWith(intent)
+                startGiniBankSdkForOpenWith(intent)
+            } else if (intent.hasExtra(EXTRA_IN_OPEN_WITH_DOCUMENT)) {
+                IntentCompat.getParcelableExtra(intent, EXTRA_IN_OPEN_WITH_DOCUMENT, Document::class.java)?.let {
+                    startCaptureFlowForDocument(it)
+                }
             }
         }
     }
@@ -64,13 +70,8 @@ class MainActivity : AppCompatActivity() {
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         if (intent != null && isIntentActionViewOrSend(intent)) {
-            startGiniCaptureSdkForOpenWith(intent)
+            startGiniBankSdkForOpenWith(intent)
         }
-    }
-
-    private fun isIntentActionViewOrSend(intent: Intent): Boolean {
-        val action = intent.action
-        return Intent.ACTION_VIEW == action || Intent.ACTION_SEND == action || Intent.ACTION_SEND_MULTIPLE == action
     }
 
     @SuppressLint("SetTextI18n")
@@ -123,7 +124,7 @@ class MainActivity : AppCompatActivity() {
             )
         )
         if (configurationViewModel.disableCameraPermissionFlow.value) {
-            startGiniCaptureSdk()
+            startGiniBankSdk()
         } else {
             checkCameraPermission()
         }
@@ -132,7 +133,7 @@ class MainActivity : AppCompatActivity() {
     private fun checkCameraPermission(intent: Intent? = null) {
         lifecycleScope.launch {
             if (permissionHandler.grantPermission(Manifest.permission.CAMERA)) {
-                startGiniCaptureSdk()
+                startGiniBankSdk()
             } else {
                 if (intent != null) {
                     finish()
@@ -141,17 +142,17 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun startGiniCaptureSdkForOpenWith(openWithIntent: Intent) {
+    private fun startGiniBankSdkForOpenWith(openWithIntent: Intent) {
         if (configurationViewModel.configurationFlow.value.isFileImportEnabled) {
             configureGiniBank()
-            startGiniCaptureSdk(openWithIntent)
+            startGiniBankSdk(openWithIntent)
         } else {
             MaterialAlertDialogBuilder(this).setMessage(R.string.file_import_feature_is_disabled_dialog_message)
                 .setPositiveButton("OK") { dialogInterface, i -> {} }.show()
         }
     }
 
-    private fun startGiniCaptureSdk(intent: Intent? = null) {
+    private fun startGiniBankSdk(intent: Intent? = null) {
         configureGiniBank()
 
         if (intent != null) {
@@ -216,6 +217,12 @@ class MainActivity : AppCompatActivity() {
         configurationViewModel.configureGiniBank(this)
     }
 
+    private fun startCaptureFlowForDocument(document: Document) {
+        GiniBank.startCaptureFlowForDocument(
+            resultLauncher = captureImportLauncher,
+            document = document
+        )
+    }
 
     override fun onActivityResult(
         requestCode: Int, resultCode: Int, data: Intent?
@@ -246,6 +253,7 @@ class MainActivity : AppCompatActivity() {
     companion object {
         const val CONFIGURATION_BUNDLE = "CONFIGURATION_BUNDLE"
         const val CAMERA_PERMISSION_BUNDLE = "CAMERA_PERMISSION_BUNDLE"
+        const val EXTRA_IN_OPEN_WITH_DOCUMENT = "EXTRA_IN_OPEN_WITH_DOCUMENT"
         private const val REQUEST_CONFIGURATION = 3
     }
 }

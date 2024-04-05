@@ -3,45 +3,49 @@ package net.gini.android.bank.sdk.exampleapp.ui
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.IntentCompat
 import androidx.fragment.app.FragmentContainerView
 import dagger.hilt.android.AndroidEntryPoint
 import net.gini.android.bank.sdk.exampleapp.R
-
-private const val EXTRA_IN_OPEN_WITH_INTENT = "EXTRA_IN_OPEN_WITH_INTENT"
+import net.gini.android.bank.sdk.exampleapp.core.ExampleUtil.isIntentActionViewOrSend
 
 @AndroidEntryPoint
 class CaptureFlowHostActivity : AppCompatActivity() {
+
+    private val configurationViewModel: ConfigurationViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_capture_flow_host)
 
         if (savedInstanceState == null) {
-            val openWithIntent = IntentCompat.getParcelableExtra(intent, EXTRA_IN_OPEN_WITH_INTENT, Intent::class.java)
-            if (openWithIntent != null) {
-                startBankSDKForOpenWith(openWithIntent)
+            if (intent != null && isIntentActionViewOrSend(intent)) {
+                startBankSdkForOpenWith(intent)
+            } else {
+                startBankSdk()
             }
         }
     }
 
-    private fun startBankSDKForOpenWith(openWithIntent: Intent) {
+    private fun startBankSdk() {
         findViewById<FragmentContainerView>(R.id.fragment_host).getFragment<ClientBankSDKFragment>()
-            .startBankSDKForIntent(openWithIntent)
+            .checkCameraPermissionAndStartBankSdk()
     }
 
+    private fun startBankSdkForOpenWith(openWithIntent: Intent) {
+        configureGiniBank()
+        findViewById<FragmentContainerView>(R.id.fragment_host).getFragment<ClientBankSDKFragment>()
+            .startBankSdkForIntent(openWithIntent)
+    }
 
-    private fun startCaptureSDKForOpenWith(openWithIntent: Intent) {
-        findViewById<FragmentContainerView>(R.id.fragment_host).getFragment<ClientCaptureSDKFragment>()
-            .startCaptureSDKForIntent(openWithIntent)
+    private fun configureGiniBank() {
+        configurationViewModel.clearGiniCaptureNetworkInstances()
+        configurationViewModel.configureGiniBank(this)
     }
 
     companion object {
-        fun newIntent(context: Context, openWithIntent: Intent? = null) =
-            Intent(context, CaptureFlowHostActivity::class.java).apply {
-                openWithIntent?.let { putExtra(EXTRA_IN_OPEN_WITH_INTENT, it) }
-            }
+        fun newIntent(context: Context) = Intent(context, CaptureFlowHostActivity::class.java)
     }
 
 }
