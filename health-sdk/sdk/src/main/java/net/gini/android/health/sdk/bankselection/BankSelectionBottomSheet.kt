@@ -84,14 +84,15 @@ class BankSelectionBottomSheet private constructor(private val paymentComponent:
                         viewModel.setSelectedPaymentProviderApp(paymentProviderApp)
                         this@BankSelectionBottomSheet.dismiss()
                     }
-//                    else if (paymentProviderApp.hasPlayStoreUrl()) {
-//                        paymentProviderApp.paymentProvider.playStoreUrl?.let {
-//                            LOG.debug("Opening payment provider app in Play Store")
-//                            openPlayStoreUrl(it)
-//                        }
-//                    } else {
-//                        LOG.error("No installed payment provider app and no Play Store URL")
-//                    }
+                    //TODO remove commented code when we change behavior
+                    else if (paymentProviderApp.hasPlayStoreUrl()) {
+                        paymentProviderApp.paymentProvider.playStoreUrl?.let {
+                            LOG.debug("Opening payment provider app in Play Store")
+                            openPlayStoreUrl(it)
+                        }
+                    } else {
+                        LOG.error("No installed payment provider app and no Play Store URL")
+                    }
                 }
             })
 

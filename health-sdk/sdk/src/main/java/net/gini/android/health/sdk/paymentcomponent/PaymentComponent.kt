@@ -1,6 +1,7 @@
 package net.gini.android.health.sdk.paymentcomponent
 
 import android.content.Context
+import android.util.Log
 import androidx.annotation.VisibleForTesting
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,6 +24,9 @@ import net.gini.android.health.sdk.moreinformation.MoreInformationFragment
  * It requires a [GiniHealth] instance and a [Context] (application or activity) to be created.
  */
 class PaymentComponent(private val context: Context, private val giniHealth: GiniHealth) {
+
+    // Holds the state of the Payment Provider apps as received from the server - no processing is done on this list, to serve as a point of truth
+    private val _initialStatePaymentProviderAppsFlow = MutableStateFlow<PaymentProviderAppsState>(PaymentProviderAppsState.Loading)
 
     private val _paymentProviderAppsFlow = MutableStateFlow<PaymentProviderAppsState>(PaymentProviderAppsState.Loading)
 
@@ -64,11 +68,16 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
             when (val paymentProvidersResource = giniHealth.giniHealthAPI.documentManager.getPaymentProviders()) {
                 is Resource.Cancelled -> {
                     LOG.debug("Loading payment providers cancelled")
+                    _initialStatePaymentProviderAppsFlow.value = PaymentProviderAppsState.Error(Exception("Cancelled"))
                     PaymentProviderAppsState.Error(Exception("Cancelled"))
                 }
 
                 is Resource.Error -> {
                     LOG.error("Error loading payment providers", paymentProvidersResource.exception)
+                    _initialStatePaymentProviderAppsFlow.value = PaymentProviderAppsState.Error((
+                            paymentProvidersResource.exception ?: Exception(
+                                paymentProvidersResource.message
+                            )))
                     PaymentProviderAppsState.Error(
                         paymentProvidersResource.exception ?: Exception(
                             paymentProvidersResource.message
@@ -79,12 +88,16 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
                 is Resource.Success -> {
                     LOG.debug("Loaded payment providers")
                     LOG.debug("Loading installed payment provider apps")
-                    val paymentProviderApps =
-                        getPaymentProviderApps(paymentProvidersResource.data)
 
-                    selectPaymentProviderApp(paymentProviderApps)
+                    val paymentProviderApps = getPaymentProviderApps(paymentProvidersResource.data)
 
-                    PaymentProviderAppsState.Success(paymentProviderApps)
+                    _initialStatePaymentProviderAppsFlow.tryEmit(PaymentProviderAppsState.Success(paymentProviderApps))
+
+                    val sortedPaymentProviders = paymentProviderApps.sortedBy { it.installedPaymentProviderApp == null }
+
+                    selectPaymentProviderApp(sortedPaymentProviders)
+
+                    PaymentProviderAppsState.Success(sortedPaymentProviders)
                 }
             }
         } catch (e: Exception) {
@@ -99,35 +112,15 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
         paymentComponentPreferences.saveSelectedPaymentProviderId(paymentProviderApp.paymentProvider.id)
     }
 
-    internal suspend fun recheckWhichPaymentProviderAppsAreInstalled() {
+    internal fun recheckWhichPaymentProviderAppsAreInstalled() {
         LOG.debug("Rechecking which payment provider apps are installed")
-        when (val paymentProviderAppsState = _paymentProviderAppsFlow.value) {
+        when (val paymentProviderAppsState = _initialStatePaymentProviderAppsFlow.value) {
             is PaymentProviderAppsState.Success -> {
                 LOG.debug("Rechecking {} payment provider apps", paymentProviderAppsState.paymentProviderApps.size)
 
                 val paymentProviders = paymentProviderAppsState.paymentProviderApps.map { it.paymentProvider }
-                val paymentProviderApps = getPaymentProviderApps(paymentProviders)
-
+                val paymentProviderApps = getPaymentProviderApps(paymentProviders).sortedBy { it.installedPaymentProviderApp == null }
                 _paymentProviderAppsFlow.value = PaymentProviderAppsState.Success(paymentProviderApps)
-
-                when (val selectedPaymentProviderAppState = _selectedPaymentProviderAppFlow.value) {
-                    is SelectedPaymentProviderAppState.AppSelected -> {
-                        if (!isSelectedPaymentProviderAppInstalled(
-                                paymentProviderApps,
-                                selectedPaymentProviderAppState.paymentProviderApp
-                            )
-                        ) {
-                            LOG.debug("Selected payment provider app is not installed anymore. Updating selection state.")
-                            selectFirstInstalledPaymentProviderAppOrNothing(paymentProviderApps)
-                        } else {
-                            LOG.debug("Selected payment provider app is still installed")
-                        }
-                    }
-
-                    SelectedPaymentProviderAppState.NothingSelected -> {
-                        LOG.debug("No payment provider app was selected")
-                    }
-                }
             }
 
             else -> {
@@ -146,12 +139,10 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
     }
 
     private fun getPaymentProviderApps(paymentProviders: List<PaymentProvider>): List<PaymentProviderApp> {
-        val paymentProviderApps = context.packageManager.getPaymentProviderApps(
+        return context.packageManager.getPaymentProviderApps(
             paymentProviders,
             context
-        ).filter { it.isInstalled() || it.hasPlayStoreUrl() }
-
-        return paymentProviderApps
+        )
     }
 
     private suspend fun selectPaymentProviderApp(paymentProviderApps: List<PaymentProviderApp>) {
