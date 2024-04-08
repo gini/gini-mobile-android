@@ -1,7 +1,6 @@
 package net.gini.android.health.sdk.paymentcomponent
 
 import android.content.Context
-import android.util.Log
 import androidx.annotation.VisibleForTesting
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -10,12 +9,12 @@ import net.gini.android.core.api.Resource
 import net.gini.android.health.api.models.PaymentProvider
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
-import net.gini.android.health.sdk.paymentprovider.getPaymentProviderApps
 import net.gini.android.health.sdk.review.ReviewConfiguration
 import net.gini.android.health.sdk.review.ReviewFragment
 import org.slf4j.LoggerFactory
 import net.gini.android.health.sdk.bankselection.BankSelectionBottomSheet
 import net.gini.android.health.sdk.moreinformation.MoreInformationFragment
+import net.gini.android.health.sdk.paymentprovider.getPaymentProviderApps
 
 /**
  * The [PaymentComponent] manages the data and state used by every [PaymentComponentView], the [MoreInformationFragment],
@@ -89,15 +88,11 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
                     LOG.debug("Loaded payment providers")
                     LOG.debug("Loading installed payment provider apps")
 
-                    val paymentProviderApps = getPaymentProviderApps(paymentProvidersResource.data)
+                    val paymentProviderApps = getPaymentProviderAppsSorted(paymentProvidersResource.data)
 
-                    _initialStatePaymentProviderAppsFlow.tryEmit(PaymentProviderAppsState.Success(paymentProviderApps))
+                    selectPaymentProviderApp(paymentProviderApps)
 
-                    val sortedPaymentProviders = paymentProviderApps.sortedBy { it.installedPaymentProviderApp == null }
-
-                    selectPaymentProviderApp(sortedPaymentProviders)
-
-                    PaymentProviderAppsState.Success(sortedPaymentProviders)
+                    PaymentProviderAppsState.Success(paymentProviderApps)
                 }
             }
         } catch (e: Exception) {
@@ -119,7 +114,7 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
                 LOG.debug("Rechecking {} payment provider apps", paymentProviderAppsState.paymentProviderApps.size)
 
                 val paymentProviders = paymentProviderAppsState.paymentProviderApps.map { it.paymentProvider }
-                val paymentProviderApps = getPaymentProviderApps(paymentProviders).sortedBy { it.installedPaymentProviderApp == null }
+                val paymentProviderApps = getPaymentProviderAppsSorted(paymentProviders)
                 _paymentProviderAppsFlow.value = PaymentProviderAppsState.Success(paymentProviderApps)
             }
 
@@ -129,20 +124,18 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
         }
     }
 
-    private fun isSelectedPaymentProviderAppInstalled(
-        paymentProviderApps: List<PaymentProviderApp>,
-        selectedPaymentProviderApp: PaymentProviderApp
-    ): Boolean {
-        val selectedApp =
-            paymentProviderApps.find { it.hasSamePaymentProviderId(selectedPaymentProviderApp) }
-        return selectedApp != null && selectedApp.isInstalled()
-    }
+    @VisibleForTesting
+    internal fun sortPaymentProviderApps(paymentProviderList: List<PaymentProviderApp>): List<PaymentProviderApp> = paymentProviderList.sortedBy { it.installedPaymentProviderApp == null }
 
-    private fun getPaymentProviderApps(paymentProviders: List<PaymentProvider>): List<PaymentProviderApp> {
-        return context.packageManager.getPaymentProviderApps(
+    private fun getPaymentProviderAppsSorted(paymentProviders: List<PaymentProvider>): List<PaymentProviderApp> {
+        val paymentProviderApps = context.packageManager.getPaymentProviderApps(
             paymentProviders,
             context
         )
+        _initialStatePaymentProviderAppsFlow.tryEmit(PaymentProviderAppsState.Success(paymentProviderApps))
+        val sortedPaymentProviderAppsList = sortPaymentProviderApps(paymentProviderApps)
+
+        return sortedPaymentProviderAppsList
     }
 
     private suspend fun selectPaymentProviderApp(paymentProviderApps: List<PaymentProviderApp>) {

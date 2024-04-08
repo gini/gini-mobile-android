@@ -79,20 +79,8 @@ class BankSelectionBottomSheet private constructor(private val paymentComponent:
                 override fun onItemClick(paymentProviderApp: PaymentProviderApp) {
                     LOG.debug("Selected payment provider app: {}", paymentProviderApp.name)
 
-                    if (paymentProviderApp.isInstalled()) {
-                        LOG.debug("Changing selected payment provider app in PaymentComponent")
-                        viewModel.setSelectedPaymentProviderApp(paymentProviderApp)
-                        this@BankSelectionBottomSheet.dismiss()
-                    }
-                    //TODO remove commented code when we change behavior
-                    else if (paymentProviderApp.hasPlayStoreUrl()) {
-                        paymentProviderApp.paymentProvider.playStoreUrl?.let {
-                            LOG.debug("Opening payment provider app in Play Store")
-                            openPlayStoreUrl(it)
-                        }
-                    } else {
-                        LOG.error("No installed payment provider app and no Play Store URL")
-                    }
+                    viewModel.setSelectedPaymentProviderApp(paymentProviderApp)
+                    this@BankSelectionBottomSheet.dismiss()
                 }
             })
 

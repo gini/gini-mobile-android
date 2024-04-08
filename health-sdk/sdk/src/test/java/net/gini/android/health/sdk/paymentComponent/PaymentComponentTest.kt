@@ -380,4 +380,22 @@ class PaymentComponentTest {
         assertThat(paymentComponent.getPaymentReviewFragment("", reviewConfiguration)).isInstanceOf(ReviewFragment::class.java)
     }
 
+    @Test
+    fun `sort function brings installed GCP apps to the front of the line`() = runTest {
+        // Given
+        val paymentComponent = PaymentComponent(context!!, giniHealth!!)
+        val paymentProviderAppList = listOf<PaymentProviderApp>(
+            buildPaymentProviderApp(paymentProvider, false),
+            buildPaymentProviderApp(paymentProvider1, false),
+            buildPaymentProviderApp(paymentProvider2, true),
+        )
+
+        assertThat(paymentProviderAppList.indexOfFirst { it.isInstalled()}).isEqualTo(2)
+
+        // When
+        val sortedPaymentProviderAppList = paymentComponent.sortPaymentProviderApps(paymentProviderAppList)
+
+        // Then
+        assertThat(sortedPaymentProviderAppList.indexOfFirst { it.isInstalled() }).isEqualTo(0)
+    }
 }
