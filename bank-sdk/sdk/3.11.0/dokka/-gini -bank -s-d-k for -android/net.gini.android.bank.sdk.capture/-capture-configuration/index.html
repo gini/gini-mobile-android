@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>CaptureConfiguration</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script>var pathToRoot = "../../../";</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/jetbrains-mono.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer="defer"></script>
+</head>
+<body>
+<div class="navigation-wrapper" id="navigation-wrapper">
+    <div id="leftToggler"><span class="icon-toggler"></span></div>
+    <div class="library-name">
+            <a href="../../../index.html">
+                    <span>Gini Bank SDK for Android</span>
+            </a>
+    </div>
+    <div>
+    </div>
+    <div class="pull-right d-flex">
+        <button id="theme-toggle-button"><span id="theme-toggle"></span></button>
+        <div id="searchBar"></div>
+    </div>
+</div>
+<div id="container">
+    <div id="leftColumn">
+        <div id="sideMenu"></div>
+    </div>
+    <div id="main">
+<div class="main-content" id="content" pageIds="Gini Bank SDK for Android::net.gini.android.bank.sdk.capture/CaptureConfiguration///PointingToDeclaration//-1647097541">
+  <div class="breadcrumbs"><a href="../../../index.html">Gini Bank SDK for Android</a><span class="delimiter">/</span><a href="../index.html">net.gini.android.bank.sdk.capture</a><span class="delimiter">/</span><span class="current">CaptureConfiguration</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Capture</span><wbr></wbr><span><span>Configuration</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><span class="token keyword">class </span><a href="index.html">CaptureConfiguration</a></div><p class="paragraph">Configuration class for Capture feature.</p></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="Constructors">Constructors</button><button class="section-tab" data-togglable="Functions">Functions</button><button class="section-tab" data-togglable="Properties">Properties</button></div>
+    <div class="tabs-section-body">
+      <h2 class="tabbedcontent">Constructors</h2>
+      <div class="table" data-togglable="Constructors"><a data-name="-565623778%2FConstructors%2F-1647097541" anchor-label="CaptureConfiguration" id="-565623778%2FConstructors%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue TabbedContent">
+            <div class=""><span class="inline-flex">
+                <div><a href="-capture-configuration.html"><span>Capture</span><wbr></wbr><span><span>Configuration</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-565623778%2FConstructors%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword"></span><a href="index.html">CaptureConfiguration</a> <a href="-capture-configuration.html"><span class="token function">CaptureConfiguration</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword"></span><a href="../../net.gini.android.capture.network/-gini-capture-network-service/index.html">GiniCaptureNetworkService</a> networkService<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html">Boolean</a> showOnboardingAtFirstRun<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html">List</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="../../net.gini.android.capture.onboarding/-onboarding-page/index.html">OnboardingPage</a><span class="token operator">&gt;</span> onboardingPages<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html">Boolean</a> showOnboarding<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html">Boolean</a> multiPageEnabled<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="../../net.gini.android.capture/-document-import-enabled-file-types/index.html">DocumentImportEnabledFileTypes</a> documentImportEnabledFileTypes<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html">Boolean</a> fileImportEnabled<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html">Boolean</a> qrCodeScanningEnabled<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html">Boolean</a> onlyQRCodeScanningEnabled<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html">Boolean</a> supportedFormatsHelpScreenEnabled<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html">Boolean</a> flashButtonEnabled<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html">Boolean</a> flashOnByDefault<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html">Boolean</a> returnAssistantEnabled<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="../../net.gini.android.capture.tracking/-event-tracker/index.html">EventTracker</a> eventTracker<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html">List</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="../../net.gini.android.capture.help/-help-item/-custom/index.html">HelpItem.Custom</a><span class="token operator">&gt;</span> customHelpItems<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html">Boolean</a> giniErrorLoggerIsOn<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="../../net.gini.android.capture.logging/-error-logger-listener/index.html">ErrorLoggerListener</a> errorLoggerListener<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html">Integer</a> importedFileSizeBytesLimit<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="../../net.gini.android.capture.view/-navigation-bar-top-adapter/index.html">NavigationBarTopAdapter</a> navigationBarTopAdapter<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html">Boolean</a> bottomNavigationBarEnabled<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="../../net.gini.android.capture.onboarding.view/-onboarding-navigation-bar-bottom-adapter/index.html">OnboardingNavigationBarBottomAdapter</a> onboardingNavigationBarBottomAdapter<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="../../net.gini.android.capture.onboarding.view/-onboarding-illustration-adapter/index.html">OnboardingIllustrationAdapter</a> onboardingAlignCornersIllustrationAdapter<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="../../net.gini.android.capture.onboarding.view/-onboarding-illustration-adapter/index.html">OnboardingIllustrationAdapter</a> onboardingLightingIllustrationAdapter<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="../../net.gini.android.capture.onboarding.view/-onboarding-illustration-adapter/index.html">OnboardingIllustrationAdapter</a> onboardingMultiPageIllustrationAdapter<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="../../net.gini.android.capture.onboarding.view/-onboarding-illustration-adapter/index.html">OnboardingIllustrationAdapter</a> onboardingQRCodeIllustrationAdapter<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="../../net.gini.android.capture.view/-custom-loading-indicator-adapter/index.html">CustomLoadingIndicatorAdapter</a> customLoadingIndicatorAdapter<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="../../net.gini.android.capture.view/-on-button-loading-indicator-adapter/index.html">OnButtonLoadingIndicatorAdapter</a> onButtonLoadingIndicatorAdapter<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="../../net.gini.android.capture.camera.view/-camera-navigation-bar-bottom-adapter/index.html">CameraNavigationBarBottomAdapter</a> cameraNavigationBarBottomAdapter<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="../../net.gini.android.capture.review.multipage.view/-review-navigation-bar-bottom-adapter/index.html">ReviewNavigationBarBottomAdapter</a> reviewNavigationBarBottomAdapter<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="../../net.gini.android.capture.help.view/-help-navigation-bar-bottom-adapter/index.html">HelpNavigationBarBottomAdapter</a> helpNavigationBarBottomAdapter<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="../../net.gini.android.capture/-entry-point/index.html">EntryPoint</a> entryPoint<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html">Boolean</a> allowScreenshots</span></span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <h2 class="">Functions</h2>
+      <div class="table" data-togglable="Functions"><a data-name="-1296561262%2FFunctions%2F-1647097541" anchor-label="getAllowScreenshots" id="-1296561262%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-allow-screenshots.html"><span>get</span><wbr></wbr><span>Allow</span><wbr></wbr><span><span>Screenshots</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1296561262%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html">Boolean</a> <a href="get-allow-screenshots.html"><span class="token function">getAllowScreenshots</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Set whether screenshots should be allowed or not.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="54884745%2FFunctions%2F-1647097541" anchor-label="getBottomNavigationBarEnabled" id="54884745%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-bottom-navigation-bar-enabled.html"><span>get</span><wbr></wbr><span>Bottom</span><wbr></wbr><span>Navigation</span><wbr></wbr><span>Bar</span><wbr></wbr><span><span>Enabled</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="54884745%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html">Boolean</a> <a href="get-bottom-navigation-bar-enabled.html"><span class="token function">getBottomNavigationBarEnabled</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Enable/disable the bottom navigation bar.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="40817292%2FFunctions%2F-1647097541" anchor-label="getCameraNavigationBarBottomAdapter" id="40817292%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-camera-navigation-bar-bottom-adapter.html"><span>get</span><wbr></wbr><span>Camera</span><wbr></wbr><span>Navigation</span><wbr></wbr><span>Bar</span><wbr></wbr><span>Bottom</span><wbr></wbr><span><span>Adapter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="40817292%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="../../net.gini.android.capture.camera.view/-camera-navigation-bar-bottom-adapter/index.html">CameraNavigationBarBottomAdapter</a> <a href="get-camera-navigation-bar-bottom-adapter.html"><span class="token function">getCameraNavigationBarBottomAdapter</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Set an adapter implementation to show a custom bottom navigation bar on the camera screen.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-1549388874%2FFunctions%2F-1647097541" anchor-label="getCustomHelpItems" id="-1549388874%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-custom-help-items.html"><span>get</span><wbr></wbr><span>Custom</span><wbr></wbr><span>Help</span><wbr></wbr><span><span>Items</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1549388874%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html">List</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="../../net.gini.android.capture.help/-help-item/-custom/index.html">HelpItem.Custom</a><span class="token operator">&gt;</span> <a href="get-custom-help-items.html"><span class="token function">getCustomHelpItems</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">A list of <a href="../../net.gini.android.capture.help/-help-item/-custom/index.html">HelpItem.Custom</a> defining the custom help items to be shown in the Help Screen.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="253190585%2FFunctions%2F-1647097541" anchor-label="getCustomLoadingIndicatorAdapter" id="253190585%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-custom-loading-indicator-adapter.html"><span>get</span><wbr></wbr><span>Custom</span><wbr></wbr><span>Loading</span><wbr></wbr><span>Indicator</span><wbr></wbr><span><span>Adapter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="253190585%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="../../net.gini.android.capture.view/-custom-loading-indicator-adapter/index.html">CustomLoadingIndicatorAdapter</a> <a href="get-custom-loading-indicator-adapter.html"><span class="token function">getCustomLoadingIndicatorAdapter</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Set an adapter implementation to show a custom loading animation during analyse and scan.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="1779534010%2FFunctions%2F-1647097541" anchor-label="getDocumentImportEnabledFileTypes" id="1779534010%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-document-import-enabled-file-types.html"><span>get</span><wbr></wbr><span>Document</span><wbr></wbr><span>Import</span><wbr></wbr><span>Enabled</span><wbr></wbr><span>File</span><wbr></wbr><span><span>Types</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1779534010%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="../../net.gini.android.capture/-document-import-enabled-file-types/index.html">DocumentImportEnabledFileTypes</a> <a href="get-document-import-enabled-file-types.html"><span class="token function">getDocumentImportEnabledFileTypes</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Enable and configure the document import feature or disable it by passing in <a href="../../net.gini.android.capture/-document-import-enabled-file-types/-n-o-n-e/index.html">DocumentImportEnabledFileTypes.NONE</a>.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-35491816%2FFunctions%2F-1647097541" anchor-label="getEntryPoint" id="-35491816%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-entry-point.html"><span>get</span><wbr></wbr><span>Entry</span><wbr></wbr><span><span>Point</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-35491816%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="../../net.gini.android.capture/-entry-point/index.html">EntryPoint</a> <a href="get-entry-point.html"><span class="token function">getEntryPoint</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Set the entry point used for launching the SDK. See <a href="../../net.gini.android.capture/-entry-point/index.html">EntryPoint</a> for possible values.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="1694072824%2FFunctions%2F-1647097541" anchor-label="getErrorLoggerListener" id="1694072824%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-error-logger-listener.html"><span>get</span><wbr></wbr><span>Error</span><wbr></wbr><span>Logger</span><wbr></wbr><span><span>Listener</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1694072824%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="../../net.gini.android.capture.logging/-error-logger-listener/index.html">ErrorLoggerListener</a> <a href="get-error-logger-listener.html"><span class="token function">getErrorLoggerListener</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Set an <a href="../../net.gini.android.capture.logging/-error-logger-listener/index.html">ErrorLoggerListener</a> to be notified of errors.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-469625128%2FFunctions%2F-1647097541" anchor-label="getEventTracker" id="-469625128%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-event-tracker.html"><span>get</span><wbr></wbr><span>Event</span><wbr></wbr><span><span>Tracker</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-469625128%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="../../net.gini.android.capture.tracking/-event-tracker/index.html">EventTracker</a> <a href="get-event-tracker.html"><span class="token function">getEventTracker</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph"><a href="../../net.gini.android.capture.tracking/-event-tracker/index.html">EventTracker</a> instance which will be called from the different screens to inform you about the various events which can occur during the usage of the Capture feature.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="991160068%2FFunctions%2F-1647097541" anchor-label="getFileImportEnabled" id="991160068%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-file-import-enabled.html"><span>get</span><wbr></wbr><span>File</span><wbr></wbr><span>Import</span><wbr></wbr><span><span>Enabled</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="991160068%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html">Boolean</a> <a href="get-file-import-enabled.html"><span class="token function">getFileImportEnabled</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Enable/disable the file import feature.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="313423063%2FFunctions%2F-1647097541" anchor-label="getFlashButtonEnabled" id="313423063%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-flash-button-enabled.html"><span>get</span><wbr></wbr><span>Flash</span><wbr></wbr><span>Button</span><wbr></wbr><span><span>Enabled</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="313423063%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html">Boolean</a> <a href="get-flash-button-enabled.html"><span class="token function">getFlashButtonEnabled</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Enable/disable the flash button in the Camera Screen.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-1906814085%2FFunctions%2F-1647097541" anchor-label="getFlashOnByDefault" id="-1906814085%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-flash-on-by-default.html"><span>get</span><wbr></wbr><span>Flash</span><wbr></wbr><span>On</span><wbr></wbr><span>By</span><wbr></wbr><span><span>Default</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1906814085%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html">Boolean</a> <a href="get-flash-on-by-default.html"><span class="token function">getFlashOnByDefault</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Set whether the camera flash should be on or off when the SDK starts. The flash is off by default.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="1069301472%2FFunctions%2F-1647097541" anchor-label="getGiniErrorLoggerIsOn" id="1069301472%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-gini-error-logger-is-on.html"><span>get</span><wbr></wbr><span>Gini</span><wbr></wbr><span>Error</span><wbr></wbr><span>Logger</span><wbr></wbr><span>Is</span><wbr></wbr><span><span>On</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1069301472%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html">Boolean</a> <a href="get-gini-error-logger-is-on.html"><span class="token function">getGiniErrorLoggerIsOn</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Set whether the default Gini error logging implementation is on or not.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="1865014064%2FFunctions%2F-1647097541" anchor-label="getHelpNavigationBarBottomAdapter" id="1865014064%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-help-navigation-bar-bottom-adapter.html"><span>get</span><wbr></wbr><span>Help</span><wbr></wbr><span>Navigation</span><wbr></wbr><span>Bar</span><wbr></wbr><span>Bottom</span><wbr></wbr><span><span>Adapter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1865014064%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="../../net.gini.android.capture.help.view/-help-navigation-bar-bottom-adapter/index.html">HelpNavigationBarBottomAdapter</a> <a href="get-help-navigation-bar-bottom-adapter.html"><span class="token function">getHelpNavigationBarBottomAdapter</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Set an adapter implementation to show a custom bottom navigation bar on the help screen.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-1649611259%2FFunctions%2F-1647097541" anchor-label="getImportedFileSizeBytesLimit" id="-1649611259%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-imported-file-size-bytes-limit.html"><span>get</span><wbr></wbr><span>Imported</span><wbr></wbr><span>File</span><wbr></wbr><span>Size</span><wbr></wbr><span>Bytes</span><wbr></wbr><span><span>Limit</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1649611259%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html">Integer</a> <a href="get-imported-file-size-bytes-limit.html"><span class="token function">getImportedFileSizeBytesLimit</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Set a custom imported file size limit in bytes.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="250615613%2FFunctions%2F-1647097541" anchor-label="getMultiPageEnabled" id="250615613%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-multi-page-enabled.html"><span>get</span><wbr></wbr><span>Multi</span><wbr></wbr><span>Page</span><wbr></wbr><span><span>Enabled</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="250615613%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html">Boolean</a> <a href="get-multi-page-enabled.html"><span class="token function">getMultiPageEnabled</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Enable/disable the multi-page feature.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-907451221%2FFunctions%2F-1647097541" anchor-label="getNavigationBarTopAdapter" id="-907451221%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-navigation-bar-top-adapter.html"><span>get</span><wbr></wbr><span>Navigation</span><wbr></wbr><span>Bar</span><wbr></wbr><span>Top</span><wbr></wbr><span><span>Adapter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-907451221%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="../../net.gini.android.capture.view/-navigation-bar-top-adapter/index.html">NavigationBarTopAdapter</a> <a href="get-navigation-bar-top-adapter.html"><span class="token function">getNavigationBarTopAdapter</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Set an adapter implementation to show a custom top navigation bar.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="2035708751%2FFunctions%2F-1647097541" anchor-label="getNetworkService" id="2035708751%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-network-service.html"><span>get</span><wbr></wbr><span>Network</span><wbr></wbr><span><span>Service</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2035708751%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="../../net.gini.android.capture.network/-gini-capture-network-service/index.html">GiniCaptureNetworkService</a> <a href="get-network-service.html"><span class="token function">getNetworkService</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Set the <a href="../../net.gini.android.capture.network/-gini-capture-network-service/index.html">GiniCaptureNetworkService</a> instance which will be used by the library to request document related network calls (e.g. upload, analysis or deletion).</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-191643495%2FFunctions%2F-1647097541" anchor-label="getOnboardingAlignCornersIllustrationAdapter" id="-191643495%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-onboarding-align-corners-illustration-adapter.html"><span>get</span><wbr></wbr><span>Onboarding</span><wbr></wbr><span>Align</span><wbr></wbr><span>Corners</span><wbr></wbr><span>Illustration</span><wbr></wbr><span><span>Adapter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-191643495%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="../../net.gini.android.capture.onboarding.view/-onboarding-illustration-adapter/index.html">OnboardingIllustrationAdapter</a> <a href="get-onboarding-align-corners-illustration-adapter.html"><span class="token function">getOnboardingAlignCornersIllustrationAdapter</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Set an adapter implementation to show a custom illustration on the &quot;align corners&quot; onboarding page.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-627111380%2FFunctions%2F-1647097541" anchor-label="getOnboardingLightingIllustrationAdapter" id="-627111380%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-onboarding-lighting-illustration-adapter.html"><span>get</span><wbr></wbr><span>Onboarding</span><wbr></wbr><span>Lighting</span><wbr></wbr><span>Illustration</span><wbr></wbr><span><span>Adapter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-627111380%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="../../net.gini.android.capture.onboarding.view/-onboarding-illustration-adapter/index.html">OnboardingIllustrationAdapter</a> <a href="get-onboarding-lighting-illustration-adapter.html"><span class="token function">getOnboardingLightingIllustrationAdapter</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Set an adapter implementation to show a custom illustration on the &quot;lighting&quot; onboarding page.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="39736388%2FFunctions%2F-1647097541" anchor-label="getOnboardingMultiPageIllustrationAdapter" id="39736388%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-onboarding-multi-page-illustration-adapter.html"><span>get</span><wbr></wbr><span>Onboarding</span><wbr></wbr><span>Multi</span><wbr></wbr><span>Page</span><wbr></wbr><span>Illustration</span><wbr></wbr><span><span>Adapter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="39736388%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="../../net.gini.android.capture.onboarding.view/-onboarding-illustration-adapter/index.html">OnboardingIllustrationAdapter</a> <a href="get-onboarding-multi-page-illustration-adapter.html"><span class="token function">getOnboardingMultiPageIllustrationAdapter</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Set an adapter implementation to show a custom illustration on the &quot;multi-page&quot; onboarding page.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-1001995434%2FFunctions%2F-1647097541" anchor-label="getOnboardingNavigationBarBottomAdapter" id="-1001995434%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-onboarding-navigation-bar-bottom-adapter.html"><span>get</span><wbr></wbr><span>Onboarding</span><wbr></wbr><span>Navigation</span><wbr></wbr><span>Bar</span><wbr></wbr><span>Bottom</span><wbr></wbr><span><span>Adapter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1001995434%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="../../net.gini.android.capture.onboarding.view/-onboarding-navigation-bar-bottom-adapter/index.html">OnboardingNavigationBarBottomAdapter</a> <a href="get-onboarding-navigation-bar-bottom-adapter.html"><span class="token function">getOnboardingNavigationBarBottomAdapter</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Set an adapter implementation to show a custom bottom navigation bar on the onboarding screen.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="234355259%2FFunctions%2F-1647097541" anchor-label="getOnboardingPages" id="234355259%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-onboarding-pages.html"><span>get</span><wbr></wbr><span>Onboarding</span><wbr></wbr><span><span>Pages</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="234355259%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html">List</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="../../net.gini.android.capture.onboarding/-onboarding-page/index.html">OnboardingPage</a><span class="token operator">&gt;</span> <a href="get-onboarding-pages.html"><span class="token function">getOnboardingPages</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Set custom pages to be shown in the Onboarding Screen.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-1472005074%2FFunctions%2F-1647097541" anchor-label="getOnboardingQRCodeIllustrationAdapter" id="-1472005074%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-onboarding-q-r-code-illustration-adapter.html"><span>get</span><wbr></wbr><span>Onboarding</span><wbr></wbr><span>QRCode</span><wbr></wbr><span>Illustration</span><wbr></wbr><span><span>Adapter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1472005074%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="../../net.gini.android.capture.onboarding.view/-onboarding-illustration-adapter/index.html">OnboardingIllustrationAdapter</a> <a href="get-onboarding-q-r-code-illustration-adapter.html"><span class="token function">getOnboardingQRCodeIllustrationAdapter</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Set an adapter implementation to show a custom illustration on the &quot;QR code&quot; onboarding page.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-1390621063%2FFunctions%2F-1647097541" anchor-label="getOnButtonLoadingIndicatorAdapter" id="-1390621063%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-on-button-loading-indicator-adapter.html"><span>get</span><wbr></wbr><span>On</span><wbr></wbr><span>Button</span><wbr></wbr><span>Loading</span><wbr></wbr><span>Indicator</span><wbr></wbr><span><span>Adapter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1390621063%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="../../net.gini.android.capture.view/-on-button-loading-indicator-adapter/index.html">OnButtonLoadingIndicatorAdapter</a> <a href="get-on-button-loading-indicator-adapter.html"><span class="token function">getOnButtonLoadingIndicatorAdapter</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Set an adapter implementation to show a custom loading animation during analyse and scan.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-870931218%2FFunctions%2F-1647097541" anchor-label="getOnlyQRCodeScanningEnabled" id="-870931218%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-only-q-r-code-scanning-enabled.html"><span>get</span><wbr></wbr><span>Only</span><wbr></wbr><span>QRCode</span><wbr></wbr><span>Scanning</span><wbr></wbr><span><span>Enabled</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-870931218%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html">Boolean</a> <a href="get-only-q-r-code-scanning-enabled.html"><span class="token function">getOnlyQRCodeScanningEnabled</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Enable/disable only the QRCode scanning feature.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="647639490%2FFunctions%2F-1647097541" anchor-label="getQrCodeScanningEnabled" id="647639490%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-qr-code-scanning-enabled.html"><span>get</span><wbr></wbr><span>Qr</span><wbr></wbr><span>Code</span><wbr></wbr><span>Scanning</span><wbr></wbr><span><span>Enabled</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="647639490%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html">Boolean</a> <a href="get-qr-code-scanning-enabled.html"><span class="token function">getQrCodeScanningEnabled</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Enable/disable the QRCode scanning feature.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="419531939%2FFunctions%2F-1647097541" anchor-label="getReturnAssistantEnabled" id="419531939%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-return-assistant-enabled.html"><span>get</span><wbr></wbr><span>Return</span><wbr></wbr><span>Assistant</span><wbr></wbr><span><span>Enabled</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="419531939%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html">Boolean</a> <a href="get-return-assistant-enabled.html"><span class="token function">getReturnAssistantEnabled</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Enable/disable the return assistant feature.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-604250247%2FFunctions%2F-1647097541" anchor-label="getReviewNavigationBarBottomAdapter" id="-604250247%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-review-navigation-bar-bottom-adapter.html"><span>get</span><wbr></wbr><span>Review</span><wbr></wbr><span>Navigation</span><wbr></wbr><span>Bar</span><wbr></wbr><span>Bottom</span><wbr></wbr><span><span>Adapter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-604250247%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="../../net.gini.android.capture.review.multipage.view/-review-navigation-bar-bottom-adapter/index.html">ReviewNavigationBarBottomAdapter</a> <a href="get-review-navigation-bar-bottom-adapter.html"><span class="token function">getReviewNavigationBarBottomAdapter</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Set an adapter implementation to show a custom bottom navigation bar on the review screen.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="269713438%2FFunctions%2F-1647097541" anchor-label="getShowOnboarding" id="269713438%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-show-onboarding.html"><span>get</span><wbr></wbr><span>Show</span><wbr></wbr><span><span>Onboarding</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="269713438%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html">Boolean</a> <a href="get-show-onboarding.html"><span class="token function">getShowOnboarding</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Screen API only</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="1084092272%2FFunctions%2F-1647097541" anchor-label="getShowOnboardingAtFirstRun" id="1084092272%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-show-onboarding-at-first-run.html"><span>get</span><wbr></wbr><span>Show</span><wbr></wbr><span>Onboarding</span><wbr></wbr><span>At</span><wbr></wbr><span>First</span><wbr></wbr><span><span>Run</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1084092272%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html">Boolean</a> <a href="get-show-onboarding-at-first-run.html"><span class="token function">getShowOnboardingAtFirstRun</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Screen API only</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="685673790%2FFunctions%2F-1647097541" anchor-label="getSupportedFormatsHelpScreenEnabled" id="685673790%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-supported-formats-help-screen-enabled.html"><span>get</span><wbr></wbr><span>Supported</span><wbr></wbr><span>Formats</span><wbr></wbr><span>Help</span><wbr></wbr><span>Screen</span><wbr></wbr><span><span>Enabled</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="685673790%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html">Boolean</a> <a href="get-supported-formats-help-screen-enabled.html"><span class="token function">getSupportedFormatsHelpScreenEnabled</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Enable/disable the Supported Formats help screen.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <h2 class="">Properties</h2>
+      <div class="table" data-togglable="Properties"><a data-name="-1422758134%2FProperties%2F-1647097541" anchor-label="allowScreenshots" id="-1422758134%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#-1422758134%2FProperties%2F-1647097541"><span>allow</span><wbr></wbr><span><span>Screenshots</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1422758134%2FProperties%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="-1422758134%2FProperties%2F-1647097541" anchor-label="allowScreenshots" id="-1422758134%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html">Boolean</a> <a href="index.html#-1422758134%2FProperties%2F-1647097541">allowScreenshots</a></div><div class="brief "><a data-name="-1422758134%2FProperties%2F-1647097541" anchor-label="allowScreenshots" id="-1422758134%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><p class="paragraph">Set whether screenshots should be allowed or not.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="1737746177%2FProperties%2F-1647097541" anchor-label="bottomNavigationBarEnabled" id="1737746177%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#1737746177%2FProperties%2F-1647097541"><span>bottom</span><wbr></wbr><span>Navigation</span><wbr></wbr><span>Bar</span><wbr></wbr><span><span>Enabled</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1737746177%2FProperties%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="1737746177%2FProperties%2F-1647097541" anchor-label="bottomNavigationBarEnabled" id="1737746177%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html">Boolean</a> <a href="index.html#1737746177%2FProperties%2F-1647097541">bottomNavigationBarEnabled</a></div><div class="brief "><a data-name="1737746177%2FProperties%2F-1647097541" anchor-label="bottomNavigationBarEnabled" id="1737746177%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><p class="paragraph">Enable/disable the bottom navigation bar.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="1197688324%2FProperties%2F-1647097541" anchor-label="cameraNavigationBarBottomAdapter" id="1197688324%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#1197688324%2FProperties%2F-1647097541"><span>camera</span><wbr></wbr><span>Navigation</span><wbr></wbr><span>Bar</span><wbr></wbr><span>Bottom</span><wbr></wbr><span><span>Adapter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1197688324%2FProperties%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="1197688324%2FProperties%2F-1647097541" anchor-label="cameraNavigationBarBottomAdapter" id="1197688324%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="../../net.gini.android.capture.camera.view/-camera-navigation-bar-bottom-adapter/index.html">CameraNavigationBarBottomAdapter</a> <a href="index.html#1197688324%2FProperties%2F-1647097541">cameraNavigationBarBottomAdapter</a></div><div class="brief "><a data-name="1197688324%2FProperties%2F-1647097541" anchor-label="cameraNavigationBarBottomAdapter" id="1197688324%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><p class="paragraph">Set an adapter implementation to show a custom bottom navigation bar on the camera screen.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="1494581566%2FProperties%2F-1647097541" anchor-label="customHelpItems" id="1494581566%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#1494581566%2FProperties%2F-1647097541"><span>custom</span><wbr></wbr><span>Help</span><wbr></wbr><span><span>Items</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1494581566%2FProperties%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="1494581566%2FProperties%2F-1647097541" anchor-label="customHelpItems" id="1494581566%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html">List</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="../../net.gini.android.capture.help/-help-item/-custom/index.html">HelpItem.Custom</a><span class="token operator">&gt;</span> <a href="index.html#1494581566%2FProperties%2F-1647097541">customHelpItems</a></div><div class="brief "><a data-name="1494581566%2FProperties%2F-1647097541" anchor-label="customHelpItems" id="1494581566%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><p class="paragraph">A list of <a href="../../net.gini.android.capture.help/-help-item/-custom/index.html">HelpItem.Custom</a> defining the custom help items to be shown in the Help Screen.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-775134911%2FProperties%2F-1647097541" anchor-label="customLoadingIndicatorAdapter" id="-775134911%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#-775134911%2FProperties%2F-1647097541"><span>custom</span><wbr></wbr><span>Loading</span><wbr></wbr><span>Indicator</span><wbr></wbr><span><span>Adapter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-775134911%2FProperties%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="-775134911%2FProperties%2F-1647097541" anchor-label="customLoadingIndicatorAdapter" id="-775134911%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="../../net.gini.android.capture.view/-custom-loading-indicator-adapter/index.html">CustomLoadingIndicatorAdapter</a> <a href="index.html#-775134911%2FProperties%2F-1647097541">customLoadingIndicatorAdapter</a></div><div class="brief "><a data-name="-775134911%2FProperties%2F-1647097541" anchor-label="customLoadingIndicatorAdapter" id="-775134911%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><p class="paragraph">Set an adapter implementation to show a custom loading animation during analyse and scan.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-33785294%2FProperties%2F-1647097541" anchor-label="documentImportEnabledFileTypes" id="-33785294%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#-33785294%2FProperties%2F-1647097541"><span>document</span><wbr></wbr><span>Import</span><wbr></wbr><span>Enabled</span><wbr></wbr><span>File</span><wbr></wbr><span><span>Types</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-33785294%2FProperties%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="-33785294%2FProperties%2F-1647097541" anchor-label="documentImportEnabledFileTypes" id="-33785294%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="../../net.gini.android.capture/-document-import-enabled-file-types/index.html">DocumentImportEnabledFileTypes</a> <a href="index.html#-33785294%2FProperties%2F-1647097541">documentImportEnabledFileTypes</a></div><div class="brief "><a data-name="-33785294%2FProperties%2F-1647097541" anchor-label="documentImportEnabledFileTypes" id="-33785294%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><p class="paragraph">Enable and configure the document import feature or disable it by passing in <a href="../../net.gini.android.capture/-document-import-enabled-file-types/-n-o-n-e/index.html">DocumentImportEnabledFileTypes.NONE</a>.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-320156272%2FProperties%2F-1647097541" anchor-label="entryPoint" id="-320156272%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#-320156272%2FProperties%2F-1647097541"><span>entry</span><wbr></wbr><span><span>Point</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-320156272%2FProperties%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="-320156272%2FProperties%2F-1647097541" anchor-label="entryPoint" id="-320156272%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="../../net.gini.android.capture/-entry-point/index.html">EntryPoint</a> <a href="index.html#-320156272%2FProperties%2F-1647097541">entryPoint</a></div><div class="brief "><a data-name="-320156272%2FProperties%2F-1647097541" anchor-label="entryPoint" id="-320156272%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><p class="paragraph">Set the entry point used for launching the SDK. See <a href="../../net.gini.android.capture/-entry-point/index.html">EntryPoint</a> for possible values.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="259443072%2FProperties%2F-1647097541" anchor-label="errorLoggerListener" id="259443072%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#259443072%2FProperties%2F-1647097541"><span>error</span><wbr></wbr><span>Logger</span><wbr></wbr><span><span>Listener</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="259443072%2FProperties%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="259443072%2FProperties%2F-1647097541" anchor-label="errorLoggerListener" id="259443072%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="../../net.gini.android.capture.logging/-error-logger-listener/index.html">ErrorLoggerListener</a> <a href="index.html#259443072%2FProperties%2F-1647097541">errorLoggerListener</a></div><div class="brief "><a data-name="259443072%2FProperties%2F-1647097541" anchor-label="errorLoggerListener" id="259443072%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><p class="paragraph">Set an <a href="../../net.gini.android.capture.logging/-error-logger-listener/index.html">ErrorLoggerListener</a> to be notified of errors.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="845739600%2FProperties%2F-1647097541" anchor-label="eventTracker" id="845739600%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#845739600%2FProperties%2F-1647097541"><span>event</span><wbr></wbr><span><span>Tracker</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="845739600%2FProperties%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="845739600%2FProperties%2F-1647097541" anchor-label="eventTracker" id="845739600%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="../../net.gini.android.capture.tracking/-event-tracker/index.html">EventTracker</a> <a href="index.html#845739600%2FProperties%2F-1647097541">eventTracker</a></div><div class="brief "><a data-name="845739600%2FProperties%2F-1647097541" anchor-label="eventTracker" id="845739600%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><p class="paragraph"><a href="../../net.gini.android.capture.tracking/-event-tracker/index.html">EventTracker</a> instance which will be called from the different screens to inform you about the various events which can occur during the usage of the Capture feature.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="1374024332%2FProperties%2F-1647097541" anchor-label="fileImportEnabled" id="1374024332%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#1374024332%2FProperties%2F-1647097541"><span>file</span><wbr></wbr><span>Import</span><wbr></wbr><span><span>Enabled</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1374024332%2FProperties%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="1374024332%2FProperties%2F-1647097541" anchor-label="fileImportEnabled" id="1374024332%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html">Boolean</a> <a href="index.html#1374024332%2FProperties%2F-1647097541">fileImportEnabled</a></div><div class="brief "><a data-name="1374024332%2FProperties%2F-1647097541" anchor-label="fileImportEnabled" id="1374024332%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><p class="paragraph">Enable/disable the file import feature.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-702686641%2FProperties%2F-1647097541" anchor-label="flashButtonEnabled" id="-702686641%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#-702686641%2FProperties%2F-1647097541"><span>flash</span><wbr></wbr><span>Button</span><wbr></wbr><span><span>Enabled</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-702686641%2FProperties%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="-702686641%2FProperties%2F-1647097541" anchor-label="flashButtonEnabled" id="-702686641%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html">Boolean</a> <a href="index.html#-702686641%2FProperties%2F-1647097541">flashButtonEnabled</a></div><div class="brief "><a data-name="-702686641%2FProperties%2F-1647097541" anchor-label="flashButtonEnabled" id="-702686641%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><p class="paragraph">Enable/disable the flash button in the Camera Screen.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-2033010957%2FProperties%2F-1647097541" anchor-label="flashOnByDefault" id="-2033010957%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#-2033010957%2FProperties%2F-1647097541"><span>flash</span><wbr></wbr><span>On</span><wbr></wbr><span>By</span><wbr></wbr><span><span>Default</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2033010957%2FProperties%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="-2033010957%2FProperties%2F-1647097541" anchor-label="flashOnByDefault" id="-2033010957%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html">Boolean</a> <a href="index.html#-2033010957%2FProperties%2F-1647097541">flashOnByDefault</a></div><div class="brief "><a data-name="-2033010957%2FProperties%2F-1647097541" anchor-label="flashOnByDefault" id="-2033010957%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><p class="paragraph">Set whether the camera flash should be on or off when the SDK starts. The flash is off by default.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-365328280%2FProperties%2F-1647097541" anchor-label="giniErrorLoggerIsOn" id="-365328280%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#-365328280%2FProperties%2F-1647097541"><span>gini</span><wbr></wbr><span>Error</span><wbr></wbr><span>Logger</span><wbr></wbr><span>Is</span><wbr></wbr><span><span>On</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-365328280%2FProperties%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="-365328280%2FProperties%2F-1647097541" anchor-label="giniErrorLoggerIsOn" id="-365328280%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html">Boolean</a> <a href="index.html#-365328280%2FProperties%2F-1647097541">giniErrorLoggerIsOn</a></div><div class="brief "><a data-name="-365328280%2FProperties%2F-1647097541" anchor-label="giniErrorLoggerIsOn" id="-365328280%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><p class="paragraph">Set whether the default Gini error logging implementation is on or not.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="51694760%2FProperties%2F-1647097541" anchor-label="helpNavigationBarBottomAdapter" id="51694760%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#51694760%2FProperties%2F-1647097541"><span>help</span><wbr></wbr><span>Navigation</span><wbr></wbr><span>Bar</span><wbr></wbr><span>Bottom</span><wbr></wbr><span><span>Adapter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="51694760%2FProperties%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="51694760%2FProperties%2F-1647097541" anchor-label="helpNavigationBarBottomAdapter" id="51694760%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="../../net.gini.android.capture.help.view/-help-navigation-bar-bottom-adapter/index.html">HelpNavigationBarBottomAdapter</a> <a href="index.html#51694760%2FProperties%2F-1647097541">helpNavigationBarBottomAdapter</a></div><div class="brief "><a data-name="51694760%2FProperties%2F-1647097541" anchor-label="helpNavigationBarBottomAdapter" id="51694760%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><p class="paragraph">Set an adapter implementation to show a custom bottom navigation bar on the help screen.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="33250173%2FProperties%2F-1647097541" anchor-label="importedFileSizeBytesLimit" id="33250173%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#33250173%2FProperties%2F-1647097541"><span>imported</span><wbr></wbr><span>File</span><wbr></wbr><span>Size</span><wbr></wbr><span>Bytes</span><wbr></wbr><span><span>Limit</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="33250173%2FProperties%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="33250173%2FProperties%2F-1647097541" anchor-label="importedFileSizeBytesLimit" id="33250173%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html">Integer</a> <a href="index.html#33250173%2FProperties%2F-1647097541">importedFileSizeBytesLimit</a></div><div class="brief "><a data-name="33250173%2FProperties%2F-1647097541" anchor-label="importedFileSizeBytesLimit" id="33250173%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><p class="paragraph">Set a custom imported file size limit in bytes.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="124418741%2FProperties%2F-1647097541" anchor-label="multiPageEnabled" id="124418741%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#124418741%2FProperties%2F-1647097541"><span>multi</span><wbr></wbr><span>Page</span><wbr></wbr><span><span>Enabled</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="124418741%2FProperties%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="124418741%2FProperties%2F-1647097541" anchor-label="multiPageEnabled" id="124418741%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html">Boolean</a> <a href="index.html#124418741%2FProperties%2F-1647097541">multiPageEnabled</a></div><div class="brief "><a data-name="124418741%2FProperties%2F-1647097541" anchor-label="multiPageEnabled" id="124418741%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><p class="paragraph">Enable/disable the multi-page feature.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-99177933%2FProperties%2F-1647097541" anchor-label="navigationBarTopAdapter" id="-99177933%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#-99177933%2FProperties%2F-1647097541"><span>navigation</span><wbr></wbr><span>Bar</span><wbr></wbr><span>Top</span><wbr></wbr><span><span>Adapter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-99177933%2FProperties%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="-99177933%2FProperties%2F-1647097541" anchor-label="navigationBarTopAdapter" id="-99177933%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="../../net.gini.android.capture.view/-navigation-bar-top-adapter/index.html">NavigationBarTopAdapter</a> <a href="index.html#-99177933%2FProperties%2F-1647097541">navigationBarTopAdapter</a></div><div class="brief "><a data-name="-99177933%2FProperties%2F-1647097541" anchor-label="navigationBarTopAdapter" id="-99177933%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><p class="paragraph">Set an adapter implementation to show a custom top navigation bar.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-914139961%2FProperties%2F-1647097541" anchor-label="networkService" id="-914139961%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#-914139961%2FProperties%2F-1647097541"><span>network</span><wbr></wbr><span><span>Service</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-914139961%2FProperties%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="-914139961%2FProperties%2F-1647097541" anchor-label="networkService" id="-914139961%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="../../net.gini.android.capture.network/-gini-capture-network-service/index.html">GiniCaptureNetworkService</a> <a href="index.html#-914139961%2FProperties%2F-1647097541">networkService</a></div><div class="brief "><a data-name="-914139961%2FProperties%2F-1647097541" anchor-label="networkService" id="-914139961%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><p class="paragraph">Set the <a href="../../net.gini.android.capture.network/-gini-capture-network-service/index.html">GiniCaptureNetworkService</a> instance which will be used by the library to request document related network calls (e.g. upload, analysis or deletion).</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-2107788255%2FProperties%2F-1647097541" anchor-label="onboardingAlignCornersIllustrationAdapter" id="-2107788255%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#-2107788255%2FProperties%2F-1647097541"><span>onboarding</span><wbr></wbr><span>Align</span><wbr></wbr><span>Corners</span><wbr></wbr><span>Illustration</span><wbr></wbr><span><span>Adapter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2107788255%2FProperties%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="-2107788255%2FProperties%2F-1647097541" anchor-label="onboardingAlignCornersIllustrationAdapter" id="-2107788255%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="../../net.gini.android.capture.onboarding.view/-onboarding-illustration-adapter/index.html">OnboardingIllustrationAdapter</a> <a href="index.html#-2107788255%2FProperties%2F-1647097541">onboardingAlignCornersIllustrationAdapter</a></div><div class="brief "><a data-name="-2107788255%2FProperties%2F-1647097541" anchor-label="onboardingAlignCornersIllustrationAdapter" id="-2107788255%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><p class="paragraph">Set an adapter implementation to show a custom illustration on the &quot;align corners&quot; onboarding page.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-1740635724%2FProperties%2F-1647097541" anchor-label="onboardingLightingIllustrationAdapter" id="-1740635724%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#-1740635724%2FProperties%2F-1647097541"><span>onboarding</span><wbr></wbr><span>Lighting</span><wbr></wbr><span>Illustration</span><wbr></wbr><span><span>Adapter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1740635724%2FProperties%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="-1740635724%2FProperties%2F-1647097541" anchor-label="onboardingLightingIllustrationAdapter" id="-1740635724%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="../../net.gini.android.capture.onboarding.view/-onboarding-illustration-adapter/index.html">OnboardingIllustrationAdapter</a> <a href="index.html#-1740635724%2FProperties%2F-1647097541">onboardingLightingIllustrationAdapter</a></div><div class="brief "><a data-name="-1740635724%2FProperties%2F-1647097541" anchor-label="onboardingLightingIllustrationAdapter" id="-1740635724%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><p class="paragraph">Set an adapter implementation to show a custom illustration on the &quot;lighting&quot; onboarding page.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-119779908%2FProperties%2F-1647097541" anchor-label="onboardingMultiPageIllustrationAdapter" id="-119779908%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#-119779908%2FProperties%2F-1647097541"><span>onboarding</span><wbr></wbr><span>Multi</span><wbr></wbr><span>Page</span><wbr></wbr><span>Illustration</span><wbr></wbr><span><span>Adapter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-119779908%2FProperties%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="-119779908%2FProperties%2F-1647097541" anchor-label="onboardingMultiPageIllustrationAdapter" id="-119779908%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="../../net.gini.android.capture.onboarding.view/-onboarding-illustration-adapter/index.html">OnboardingIllustrationAdapter</a> <a href="index.html#-119779908%2FProperties%2F-1647097541">onboardingMultiPageIllustrationAdapter</a></div><div class="brief "><a data-name="-119779908%2FProperties%2F-1647097541" anchor-label="onboardingMultiPageIllustrationAdapter" id="-119779908%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><p class="paragraph">Set an adapter implementation to show a custom illustration on the &quot;multi-page&quot; onboarding page.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-899368242%2FProperties%2F-1647097541" anchor-label="onboardingNavigationBarBottomAdapter" id="-899368242%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#-899368242%2FProperties%2F-1647097541"><span>onboarding</span><wbr></wbr><span>Navigation</span><wbr></wbr><span>Bar</span><wbr></wbr><span>Bottom</span><wbr></wbr><span><span>Adapter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-899368242%2FProperties%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="-899368242%2FProperties%2F-1647097541" anchor-label="onboardingNavigationBarBottomAdapter" id="-899368242%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="../../net.gini.android.capture.onboarding.view/-onboarding-navigation-bar-bottom-adapter/index.html">OnboardingNavigationBarBottomAdapter</a> <a href="index.html#-899368242%2FProperties%2F-1647097541">onboardingNavigationBarBottomAdapter</a></div><div class="brief "><a data-name="-899368242%2FProperties%2F-1647097541" anchor-label="onboardingNavigationBarBottomAdapter" id="-899368242%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><p class="paragraph">Set an adapter implementation to show a custom bottom navigation bar on the onboarding screen.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-1016641597%2FProperties%2F-1647097541" anchor-label="onboardingPages" id="-1016641597%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#-1016641597%2FProperties%2F-1647097541"><span>onboarding</span><wbr></wbr><span><span>Pages</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1016641597%2FProperties%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="-1016641597%2FProperties%2F-1647097541" anchor-label="onboardingPages" id="-1016641597%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html">List</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="../../net.gini.android.capture.onboarding/-onboarding-page/index.html">OnboardingPage</a><span class="token operator">&gt;</span> <a href="index.html#-1016641597%2FProperties%2F-1647097541">onboardingPages</a></div><div class="brief "><a data-name="-1016641597%2FProperties%2F-1647097541" anchor-label="onboardingPages" id="-1016641597%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><p class="paragraph">Set custom pages to be shown in the Onboarding Screen.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="55326134%2FProperties%2F-1647097541" anchor-label="onboardingQRCodeIllustrationAdapter" id="55326134%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#55326134%2FProperties%2F-1647097541"><span>onboarding</span><wbr></wbr><span>QRCode</span><wbr></wbr><span>Illustration</span><wbr></wbr><span><span>Adapter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="55326134%2FProperties%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="55326134%2FProperties%2F-1647097541" anchor-label="onboardingQRCodeIllustrationAdapter" id="55326134%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="../../net.gini.android.capture.onboarding.view/-onboarding-illustration-adapter/index.html">OnboardingIllustrationAdapter</a> <a href="index.html#55326134%2FProperties%2F-1647097541">onboardingQRCodeIllustrationAdapter</a></div><div class="brief "><a data-name="55326134%2FProperties%2F-1647097541" anchor-label="onboardingQRCodeIllustrationAdapter" id="55326134%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><p class="paragraph">Set an adapter implementation to show a custom illustration on the &quot;QR code&quot; onboarding page.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-1768944639%2FProperties%2F-1647097541" anchor-label="onButtonLoadingIndicatorAdapter" id="-1768944639%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#-1768944639%2FProperties%2F-1647097541"><span>on</span><wbr></wbr><span>Button</span><wbr></wbr><span>Loading</span><wbr></wbr><span>Indicator</span><wbr></wbr><span><span>Adapter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1768944639%2FProperties%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="-1768944639%2FProperties%2F-1647097541" anchor-label="onButtonLoadingIndicatorAdapter" id="-1768944639%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="../../net.gini.android.capture.view/-on-button-loading-indicator-adapter/index.html">OnButtonLoadingIndicatorAdapter</a> <a href="index.html#-1768944639%2FProperties%2F-1647097541">onButtonLoadingIndicatorAdapter</a></div><div class="brief "><a data-name="-1768944639%2FProperties%2F-1647097541" anchor-label="onButtonLoadingIndicatorAdapter" id="-1768944639%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><p class="paragraph">Set an adapter implementation to show a custom loading animation during analyse and scan.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-1509382026%2FProperties%2F-1647097541" anchor-label="onlyQRCodeScanningEnabled" id="-1509382026%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#-1509382026%2FProperties%2F-1647097541"><span>only</span><wbr></wbr><span>QRCode</span><wbr></wbr><span>Scanning</span><wbr></wbr><span><span>Enabled</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1509382026%2FProperties%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="-1509382026%2FProperties%2F-1647097541" anchor-label="onlyQRCodeScanningEnabled" id="-1509382026%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html">Boolean</a> <a href="index.html#-1509382026%2FProperties%2F-1647097541">onlyQRCodeScanningEnabled</a></div><div class="brief "><a data-name="-1509382026%2FProperties%2F-1647097541" anchor-label="onlyQRCodeScanningEnabled" id="-1509382026%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><p class="paragraph">Enable/disable only the QRCode scanning feature.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="652949834%2FProperties%2F-1647097541" anchor-label="qrCodeScanningEnabled" id="652949834%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#652949834%2FProperties%2F-1647097541"><span>qr</span><wbr></wbr><span>Code</span><wbr></wbr><span>Scanning</span><wbr></wbr><span><span>Enabled</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="652949834%2FProperties%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="652949834%2FProperties%2F-1647097541" anchor-label="qrCodeScanningEnabled" id="652949834%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html">Boolean</a> <a href="index.html#652949834%2FProperties%2F-1647097541">qrCodeScanningEnabled</a></div><div class="brief "><a data-name="652949834%2FProperties%2F-1647097541" anchor-label="qrCodeScanningEnabled" id="652949834%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><p class="paragraph">Enable/disable the QRCode scanning feature.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="584152603%2FProperties%2F-1647097541" anchor-label="returnAssistantEnabled" id="584152603%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#584152603%2FProperties%2F-1647097541"><span>return</span><wbr></wbr><span>Assistant</span><wbr></wbr><span><span>Enabled</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="584152603%2FProperties%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="584152603%2FProperties%2F-1647097541" anchor-label="returnAssistantEnabled" id="584152603%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html">Boolean</a> <a href="index.html#584152603%2FProperties%2F-1647097541">returnAssistantEnabled</a></div><div class="brief "><a data-name="584152603%2FProperties%2F-1647097541" anchor-label="returnAssistantEnabled" id="584152603%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><p class="paragraph">Enable/disable the return assistant feature.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="552620785%2FProperties%2F-1647097541" anchor-label="reviewNavigationBarBottomAdapter" id="552620785%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#552620785%2FProperties%2F-1647097541"><span>review</span><wbr></wbr><span>Navigation</span><wbr></wbr><span>Bar</span><wbr></wbr><span>Bottom</span><wbr></wbr><span><span>Adapter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="552620785%2FProperties%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="552620785%2FProperties%2F-1647097541" anchor-label="reviewNavigationBarBottomAdapter" id="552620785%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="../../net.gini.android.capture.review.multipage.view/-review-navigation-bar-bottom-adapter/index.html">ReviewNavigationBarBottomAdapter</a> <a href="index.html#552620785%2FProperties%2F-1647097541">reviewNavigationBarBottomAdapter</a></div><div class="brief "><a data-name="552620785%2FProperties%2F-1647097541" anchor-label="reviewNavigationBarBottomAdapter" id="552620785%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><p class="paragraph">Set an adapter implementation to show a custom bottom navigation bar on the review screen.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="1614832022%2FProperties%2F-1647097541" anchor-label="showOnboarding" id="1614832022%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#1614832022%2FProperties%2F-1647097541"><span>show</span><wbr></wbr><span><span>Onboarding</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1614832022%2FProperties%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="1614832022%2FProperties%2F-1647097541" anchor-label="showOnboarding" id="1614832022%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html">Boolean</a> <a href="index.html#1614832022%2FProperties%2F-1647097541">showOnboarding</a></div><div class="brief "><a data-name="1614832022%2FProperties%2F-1647097541" anchor-label="showOnboarding" id="1614832022%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><p class="paragraph">Screen API only</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="370760424%2FProperties%2F-1647097541" anchor-label="showOnboardingAtFirstRun" id="370760424%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#370760424%2FProperties%2F-1647097541"><span>show</span><wbr></wbr><span>Onboarding</span><wbr></wbr><span>At</span><wbr></wbr><span>First</span><wbr></wbr><span><span>Run</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="370760424%2FProperties%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="370760424%2FProperties%2F-1647097541" anchor-label="showOnboardingAtFirstRun" id="370760424%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html">Boolean</a> <a href="index.html#370760424%2FProperties%2F-1647097541">showOnboardingAtFirstRun</a></div><div class="brief "><a data-name="370760424%2FProperties%2F-1647097541" anchor-label="showOnboardingAtFirstRun" id="370760424%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><p class="paragraph">Screen API only</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-2106029882%2FProperties%2F-1647097541" anchor-label="supportedFormatsHelpScreenEnabled" id="-2106029882%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#-2106029882%2FProperties%2F-1647097541"><span>supported</span><wbr></wbr><span>Formats</span><wbr></wbr><span>Help</span><wbr></wbr><span>Screen</span><wbr></wbr><span><span>Enabled</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2106029882%2FProperties%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="-2106029882%2FProperties%2F-1647097541" anchor-label="supportedFormatsHelpScreenEnabled" id="-2106029882%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html">Boolean</a> <a href="index.html#-2106029882%2FProperties%2F-1647097541">supportedFormatsHelpScreenEnabled</a></div><div class="brief "><a data-name="-2106029882%2FProperties%2F-1647097541" anchor-label="supportedFormatsHelpScreenEnabled" id="-2106029882%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><p class="paragraph">Enable/disable the Supported Formats help screen.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2024 Copyright</span><span
+                class="pull-right"><span>Generated by </span><a
+                href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+    </div>
+</div>
+</body>
+</html>
