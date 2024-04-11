@@ -89,7 +89,7 @@ jobs:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-          key: avd-x86_64-31-${{ github.ref_name }}
+          key: avd-x86_64-33-${{ github.ref_name }}
 
       - name: create avd and generate snapshot for caching
         if: steps.avd-cache.outputs.cache-hit != 'true'
@@ -138,6 +138,8 @@ jobs:
           script: >
             adb uninstall net.gini.android.bank.sdk.exampleapp.test ;
             ./gradlew bank-sdk:example-app:connectedDevExampleAppDebugAndroidTest
+            -PclientId="gini-mobile-test"
+            -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
 
       - name: archive instrumented test results
         if: always()
