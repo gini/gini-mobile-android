@@ -1,6 +1,8 @@
 package net.gini.android.bank.sdk.exampleapp
 
+import androidx.annotation.VisibleForTesting
 import androidx.multidex.MultiDexApplication
+import androidx.test.espresso.idling.CountingIdlingResource
 import dagger.hilt.android.HiltAndroidApp
 
 
@@ -9,4 +11,7 @@ import dagger.hilt.android.HiltAndroidApp
  */
 
 @HiltAndroidApp
-class ExampleApp : MultiDexApplication()
+class ExampleApp : MultiDexApplication() {
+
+    val idlingResourceForOpenWith = CountingIdlingResource("OpenWith")
+}

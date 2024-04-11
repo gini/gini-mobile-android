@@ -7,6 +7,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentContainerView
 import dagger.hilt.android.AndroidEntryPoint
+import net.gini.android.bank.sdk.exampleapp.ExampleApp
 import net.gini.android.bank.sdk.exampleapp.R
 import net.gini.android.bank.sdk.exampleapp.core.ExampleUtil.isIntentActionViewOrSend
 
@@ -21,6 +22,9 @@ class CaptureFlowHostActivity : AppCompatActivity() {
 
         if (savedInstanceState == null) {
             if (intent != null && isIntentActionViewOrSend(intent)) {
+                // For "open with" (file import) tests
+                (applicationContext as ExampleApp).idlingResourceForOpenWith.increment()
+
                 startBankSdkForOpenWith(intent)
             } else {
                 startBankSdk()

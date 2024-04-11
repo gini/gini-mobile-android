@@ -6,6 +6,8 @@ import androidx.core.net.toFile
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.IdlingRegistry
+import androidx.test.espresso.IdlingResource
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
@@ -14,6 +16,8 @@ import net.gini.android.bank.sdk.exampleapp.test.getAssetFileStorageUri
 import net.gini.android.bank.sdk.exampleapp.ui.CaptureFlowHostActivity
 import net.gini.android.bank.sdk.exampleapp.ui.MainActivity
 import net.gini.android.bank.sdk.exampleapp.ui.SplashActivity
+import org.junit.After
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -22,6 +26,19 @@ import org.junit.runner.RunWith
  */
 @RunWith(AndroidJUnit4::class)
 class OpenWithTest {
+
+    private var idlingResourceForOpenWith: IdlingResource? = null
+
+    @Before
+    fun setup() {
+        idlingResourceForOpenWith = ApplicationProvider.getApplicationContext<ExampleApp>().idlingResourceForOpenWith
+        IdlingRegistry.getInstance().register(idlingResourceForOpenWith)
+    }
+
+    @After
+    fun tearDown() {
+        IdlingRegistry.getInstance().unregister(idlingResourceForOpenWith)
+    }
 
     @Test
     fun opening_pdf_with_SplashActivity_launches_Bank_SDK() {
@@ -82,16 +99,14 @@ class OpenWithTest {
         }
 
         // When
-        ActivityScenario.launch<T>(intent).use {
-            // Simulate PermissionDenied scenario by deleting the file before the Bank SDK is launched (revoke permission)
-            Thread.sleep(200)
-            storageUris.forEach { it.toFile().delete() }
+        ActivityScenario.launch<T>(intent)
 
-            // Give time for the Bank SDK to launch
-            Thread.sleep(1000)
+        // Simulate PermissionDenied scenario by deleting the file before the Bank SDK is launched (revoke permission)
+        Thread.sleep(200)
+        storageUris.forEach { it.toFile().delete() }
 
-            // Then
-            onView(withId(net.gini.android.capture.R.id.gc_analysis_message)).check(matches(isDisplayed()))
+        // Then
+        onView(withId(R.id.recyclerview_extractions)).check(matches(isDisplayed()))
         }
-    }
+
 }
