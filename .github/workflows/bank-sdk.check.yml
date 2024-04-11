@@ -121,8 +121,8 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: capture-sdk-default-network-instrumented-test-results
-          path: capture-sdk/default-network/build/outputs/androidTest-results/connected
+          name: bank-sdk-instrumented-test-results
+          path: bank-sdk/sdk/build/outputs/androidTest-results/connected
 
   build-example-apps:
     runs-on: ubuntu-latest
