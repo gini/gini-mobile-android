@@ -124,6 +124,25 @@ jobs:
           name: bank-sdk-instrumented-test-results
           path: bank-sdk/sdk/build/outputs/androidTest-results/connected
 
+      - name: run example app instrumented tests
+        timeout-minutes: 20
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 33
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: >
+            adb uninstall net.gini.android.bank.sdk.exampleapp.test ;
+            ./gradlew bank-sdk:example-app:connectedDevExampleAppDebugAndroidTest
+
+      - name: archive instrumented test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: bank-sdk-example-app-instrumented-test-results
+          path: bank-sdk/example-app/build/outputs/androidTest-results/connected
+
   build-example-apps:
     runs-on: ubuntu-latest
     steps:
