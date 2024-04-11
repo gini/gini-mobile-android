@@ -146,7 +146,7 @@ class ClientBankSDKFragment :
                         result.specificExtractions
                     )
                 )
-                requireActivity().finish()
+                activity?.finish()
             }
 
             is CaptureResult.Error -> {
@@ -167,15 +167,15 @@ class ClientBankSDKFragment :
 
                     else -> {}
                 }
-                requireActivity().finish()
+                activity?.finish()
             }
 
             CaptureResult.Empty -> {
-                requireActivity().finish()
+                activity?.finish()
             }
 
             CaptureResult.Cancel -> {
-                requireActivity().finish()
+                activity?.finish()
             }
 
             CaptureResult.EnterManually -> {
@@ -184,7 +184,7 @@ class ClientBankSDKFragment :
                     "Scan exited for manual enter mode",
                     Toast.LENGTH_SHORT
                 ).show()
-                requireActivity().finish()
+                activity?.finish()
             }
         }
     }

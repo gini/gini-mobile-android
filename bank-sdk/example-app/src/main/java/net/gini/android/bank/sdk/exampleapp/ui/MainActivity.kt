@@ -54,7 +54,12 @@ class MainActivity : AppCompatActivity() {
                 startGiniBankSdkForOpenWith(intent)
             } else if (intent.hasExtra(EXTRA_IN_OPEN_WITH_DOCUMENT)) {
                 IntentCompat.getParcelableExtra(intent, EXTRA_IN_OPEN_WITH_DOCUMENT, Document::class.java)?.let {
-                    startCaptureFlowForDocument(it)
+                    // Launch the Bank SDK with a delay to allow the SplashActivity to finish.
+                    // This will lead to a PermissionDenied exception, if the files received through "open with"
+                    // were not loaded into memory before the SplashActivity was finished.
+                    binding.root.postDelayed({
+                        startCaptureFlowForDocument(it)
+                    }, 600)
                 }
             }
         }
