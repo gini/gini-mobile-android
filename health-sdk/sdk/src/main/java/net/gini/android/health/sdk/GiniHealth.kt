@@ -156,6 +156,7 @@ class GiniHealth(
 
     internal fun setOpenBankState(state: PaymentState) {
         _openBankState.value = state
+        _openBankState.value = PaymentState.NoAction
     }
 
     internal suspend fun retryDocumentReview() {
