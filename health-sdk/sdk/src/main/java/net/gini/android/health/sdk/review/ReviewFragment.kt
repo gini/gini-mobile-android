@@ -57,6 +57,7 @@ import net.gini.android.health.sdk.util.showErrorMessage
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.health.sdk.bankselection.BankSelectionBottomSheet
 import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthTheme
+import net.gini.android.health.sdk.util.wrappedWithGiniHealthTheme
 
 /**
  * Configuration for the [ReviewFragment].
@@ -346,7 +347,7 @@ class ReviewFragment private constructor(
     }
 
     private fun GhsFragmentReviewBinding.showSnackbar(text: String, onRetry: () -> Unit) {
-        Snackbar.make(root, text, Snackbar.LENGTH_INDEFINITE)
+        Snackbar.make(requireContext().wrappedWithGiniHealthTheme(), root, text, Snackbar.LENGTH_INDEFINITE)
             .setAnchorView(paymentDetails)
             .setAction(getString(R.string.ghs_snackbar_retry)) { onRetry() }
             .show()

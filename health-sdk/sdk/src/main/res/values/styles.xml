@@ -44,6 +44,9 @@
         <item name="textAppearanceBodySmall">?attr/textAppearanceCaption</item>
         <item name="textAppearanceLabelLarge">?attr/textAppearanceButton</item>
         <item name="textAppearanceLabelMedium">?attr/textAppearanceOverline</item>
+        <item name="snackbarStyle">@style/GiniHealthTheme.Widget.Snackbar</item>
+        <item name="snackbarButtonStyle">@style/GiniHealthTheme.Widget.Snackbar.Button</item>
+        <item name="snackbarTextViewStyle">@style/GiniHealthTheme.Widget.Snackbar.TextView</item>
     </style>
     <style name="GiniHealthTheme" parent="Root.GiniHealthTheme"/>
 
@@ -130,6 +133,22 @@
         <item name="android:textColor">@color/ghs_bank_selector_button_color</item>
     </style>
     <style name="GiniHealthTheme.Widget.Button.TransparentBackground" parent="Root.GiniHealthTheme.Widget.Button.TransparentBackground"/>
+
+    <style name="Root.GiniHealthTheme.Widget.Snackbar" parent="Widget.Material3.Snackbar">
+        <item name="android:backgroundTint">?attr/backgroundColor</item>
+    </style>
+    <style name="GiniHealthTheme.Widget.Snackbar" parent="Root.GiniHealthTheme.Widget.Snackbar" />
+
+    <style name="Root.GiniHealthTheme.Widget.Snackbar.Button" parent="Widget.Material3.Button.TextButton.Snackbar">
+        <item name="android:textColor">?attr/colorAccent</item>
+    </style>
+    <style name="GiniHealthTheme.Widget.Snackbar.Button" parent="Root.GiniHealthTheme.Widget.Snackbar.Button" />
+
+    <style name="Root.GiniHealthTheme.Widget.Snackbar.TextView" parent="Widget.Material3.Snackbar.TextView">
+        <item name="android:textColor">?attr/colorOnBackground</item>
+    </style>
+    <style name="GiniHealthTheme.Widget.Snackbar.TextView" parent="Root.GiniHealthTheme.Widget.Snackbar.TextView" />
+    
     <!-- endregion -->
 
     <style name="Root.GiniHealthTheme.PaymentInputLayout" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
