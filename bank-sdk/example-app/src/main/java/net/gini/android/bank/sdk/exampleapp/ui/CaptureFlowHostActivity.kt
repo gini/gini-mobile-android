@@ -7,6 +7,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentContainerView
 import dagger.hilt.android.AndroidEntryPoint
+import net.gini.android.bank.sdk.exampleapp.ExampleApp
 import net.gini.android.bank.sdk.exampleapp.R
 import net.gini.android.bank.sdk.exampleapp.core.ExampleUtil.isIntentActionViewOrSend
 
@@ -34,6 +35,9 @@ class CaptureFlowHostActivity : AppCompatActivity() {
     }
 
     private fun startBankSdkForOpenWith(openWithIntent: Intent) {
+        // For "open with" (file import) tests
+        (applicationContext as ExampleApp).incrementIdlingResourceForOpenWith()
+
         configureGiniBank()
         findViewById<FragmentContainerView>(R.id.fragment_host).getFragment<ClientBankSDKFragment>()
             .startBankSdkForIntent(openWithIntent)

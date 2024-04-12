@@ -9,6 +9,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.IntentCompat
 import androidx.lifecycle.lifecycleScope
+import androidx.test.espresso.idling.CountingIdlingResource
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -17,6 +18,7 @@ import net.gini.android.bank.sdk.capture.CaptureFlowContract
 import net.gini.android.bank.sdk.capture.CaptureFlowImportContract
 import net.gini.android.bank.sdk.capture.CaptureResult
 import net.gini.android.bank.sdk.capture.ResultError
+import net.gini.android.bank.sdk.exampleapp.ExampleApp
 import net.gini.android.bank.sdk.exampleapp.R
 import net.gini.android.bank.sdk.exampleapp.core.ExampleUtil.isIntentActionViewOrSend
 import net.gini.android.bank.sdk.exampleapp.core.PermissionHandler
@@ -54,7 +56,12 @@ class MainActivity : AppCompatActivity() {
                 startGiniBankSdkForOpenWith(intent)
             } else if (intent.hasExtra(EXTRA_IN_OPEN_WITH_DOCUMENT)) {
                 IntentCompat.getParcelableExtra(intent, EXTRA_IN_OPEN_WITH_DOCUMENT, Document::class.java)?.let {
-                    startCaptureFlowForDocument(it)
+                    // Launch the Bank SDK with a delay to allow the SplashActivity to finish.
+                    // This will lead to a PermissionDenied exception, if the files received through "open with"
+                    // were not loaded into memory before the SplashActivity was finished.
+                    binding.root.postDelayed({
+                        startCaptureFlowForDocument(it)
+                    }, 600)
                 }
             }
         }
@@ -144,6 +151,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun startGiniBankSdkForOpenWith(openWithIntent: Intent) {
         if (configurationViewModel.configurationFlow.value.isFileImportEnabled) {
+            // For "open with" (file import) tests
+            (applicationContext as ExampleApp).incrementIdlingResourceForOpenWith()
+
             configureGiniBank()
             startGiniBankSdk(openWithIntent)
         } else {

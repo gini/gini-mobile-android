@@ -18,6 +18,7 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint
 import net.gini.android.bank.sdk.GiniBank
+import net.gini.android.bank.sdk.exampleapp.ExampleApp
 import net.gini.android.bank.sdk.exampleapp.R
 import net.gini.android.bank.sdk.exampleapp.core.di.GiniCaptureNetworkServiceDebugDisabled
 import net.gini.android.bank.sdk.exampleapp.core.di.GiniCaptureNetworkServiceDebugEnabled
@@ -66,6 +67,9 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
         readExtras()
         showAnalyzedDocumentId()
         setUpRecyclerView(binding)
+
+        // For "open with" (file import) tests
+        (applicationContext as ExampleApp).decrementIdlingResourceForOpenWith()
     }
 
     private fun showAnalyzedDocumentId() {

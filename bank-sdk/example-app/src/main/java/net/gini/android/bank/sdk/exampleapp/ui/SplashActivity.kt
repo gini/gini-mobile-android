@@ -7,6 +7,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import dagger.hilt.android.AndroidEntryPoint
 import net.gini.android.bank.sdk.GiniBank
+import net.gini.android.bank.sdk.exampleapp.ExampleApp
 import net.gini.android.bank.sdk.exampleapp.R
 import net.gini.android.bank.sdk.exampleapp.core.ExampleUtil.isIntentActionViewOrSend
 import net.gini.android.capture.Document
@@ -20,6 +21,9 @@ open class SplashActivity : AppCompatActivity() {
         setContentView(R.layout.activity_splash)
         if (savedInstanceState == null && intent != null) {
             if (isIntentActionViewOrSend(intent)) {
+                // For "open with" (file import) tests
+                (applicationContext as ExampleApp).incrementIdlingResourceForOpenWith()
+
                 startGiniBankSdk(intent)
             }
         }

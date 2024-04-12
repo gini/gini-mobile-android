@@ -141,6 +141,14 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    sourceSets {
+        getByName("debug") {
+            assets.srcDirs("${projectDir}/src/androidTest/assets")
+        }
+    }
+    testOptions {
+        execution = "ANDROIDX_TEST_ORCHESTRATOR"
+    }
 }
 
 // after upgrading to AGP 8, we need this, otherwise, gradle will complain to use the same jdk version as your machine (17 which is bundled with Android Studio)
@@ -184,6 +192,7 @@ dependencies {
     kapt(libs.hilt.compiler)
 
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.test.espresso.idlingresource)
 
     testImplementation(libs.junit)
 
@@ -197,6 +206,8 @@ dependencies {
     androidTestImplementation(libs.mockito.android)
     androidTestImplementation(libs.androidx.multidex)
     androidTestImplementation(libs.androidx.test.junit)
+
+    androidTestUtil(libs.androidx.test.orchestrator)
 }
 
 // this is needed because of Dagger-Hilt
