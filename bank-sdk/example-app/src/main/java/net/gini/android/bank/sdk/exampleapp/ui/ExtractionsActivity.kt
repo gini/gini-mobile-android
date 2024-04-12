@@ -69,7 +69,7 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
         setUpRecyclerView(binding)
 
         // For "open with" (file import) tests
-        (applicationContext as ExampleApp).idlingResourceForOpenWith.decrement()
+        (applicationContext as ExampleApp).decrementIdlingResourceForOpenWith()
     }
 
     private fun showAnalyzedDocumentId() {

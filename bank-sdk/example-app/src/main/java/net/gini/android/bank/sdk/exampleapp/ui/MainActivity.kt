@@ -53,9 +53,6 @@ class MainActivity : AppCompatActivity() {
         showVersions()
         if (savedInstanceState == null) {
             if (isIntentActionViewOrSend(intent)) {
-                // For "open with" (file import) tests
-                (applicationContext as ExampleApp).idlingResourceForOpenWith.increment()
-
                 startGiniBankSdkForOpenWith(intent)
             } else if (intent.hasExtra(EXTRA_IN_OPEN_WITH_DOCUMENT)) {
                 IntentCompat.getParcelableExtra(intent, EXTRA_IN_OPEN_WITH_DOCUMENT, Document::class.java)?.let {
@@ -154,6 +151,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun startGiniBankSdkForOpenWith(openWithIntent: Intent) {
         if (configurationViewModel.configurationFlow.value.isFileImportEnabled) {
+            // For "open with" (file import) tests
+            (applicationContext as ExampleApp).incrementIdlingResourceForOpenWith()
+
             configureGiniBank()
             startGiniBankSdk(openWithIntent)
         } else {

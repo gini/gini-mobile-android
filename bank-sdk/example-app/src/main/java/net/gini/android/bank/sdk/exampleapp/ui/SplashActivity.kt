@@ -22,7 +22,7 @@ open class SplashActivity : AppCompatActivity() {
         if (savedInstanceState == null && intent != null) {
             if (isIntentActionViewOrSend(intent)) {
                 // For "open with" (file import) tests
-                (applicationContext as ExampleApp).idlingResourceForOpenWith.increment()
+                (applicationContext as ExampleApp).incrementIdlingResourceForOpenWith()
 
                 startGiniBankSdk(intent)
             }

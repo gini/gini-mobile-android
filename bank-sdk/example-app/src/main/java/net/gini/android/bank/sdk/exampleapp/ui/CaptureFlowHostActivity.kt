@@ -22,9 +22,6 @@ class CaptureFlowHostActivity : AppCompatActivity() {
 
         if (savedInstanceState == null) {
             if (intent != null && isIntentActionViewOrSend(intent)) {
-                // For "open with" (file import) tests
-                (applicationContext as ExampleApp).idlingResourceForOpenWith.increment()
-
                 startBankSdkForOpenWith(intent)
             } else {
                 startBankSdk()
@@ -38,6 +35,9 @@ class CaptureFlowHostActivity : AppCompatActivity() {
     }
 
     private fun startBankSdkForOpenWith(openWithIntent: Intent) {
+        // For "open with" (file import) tests
+        (applicationContext as ExampleApp).incrementIdlingResourceForOpenWith()
+
         configureGiniBank()
         findViewById<FragmentContainerView>(R.id.fragment_host).getFragment<ClientBankSDKFragment>()
             .startBankSdkForIntent(openWithIntent)

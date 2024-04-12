@@ -13,5 +13,18 @@ import dagger.hilt.android.HiltAndroidApp
 @HiltAndroidApp
 class ExampleApp : MultiDexApplication() {
 
-    val idlingResourceForOpenWith = CountingIdlingResource("OpenWith")
+    @VisibleForTesting
+    internal val idlingResourceForOpenWith = CountingIdlingResource("OpenWith")
+
+    fun incrementIdlingResourceForOpenWith() {
+        idlingResourceForOpenWith.increment()
+    }
+
+    fun decrementIdlingResourceForOpenWith() {
+        try {
+            idlingResourceForOpenWith.decrement()
+        } catch (e: IllegalStateException) {
+            // ignore
+        }
+    }
 }
