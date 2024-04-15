@@ -1,0 +1,771 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Features &mdash; Gini Capture SDK for Android 2.0 documentation</title>
+  
+
+  
+  
+
+  
+  <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,400italic,600italic|Source+Code+Pro|Roboto+Slab:400,700" rel="stylesheet" type="text/css" />
+
+  
+  
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:'./',
+        VERSION:'2.0',
+        COLLAPSE_INDEX:false,
+        FILE_SUFFIX:'.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/language_data.js"></script>
+
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+    <script type="text/javascript">
+        jQuery(function () {
+            SphinxRtdTheme.StickyNav.enable();
+        });
+    </script>
+  
+
+  
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Gini Capture SDK for Android 2.0 documentation" href="index.html"/>
+        <link rel="next" title="Customization Guide" href="customization-guide.html"/>
+        <link rel="prev" title="Integration" href="integration.html"/> 
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="index.html" id="gini-logo">
+          <img src="_static/logo.png" />
+        </a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="getting-started.html#requirements">Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting-started.html#installation">Installation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="integration.html">Integration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="integration.html#android-manifest">Android Manifest</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#permissions">Permissions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#predictive-back-gesture">Predictive Back Gesture</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="integration.html#requirements-check">Requirements Check</a></li>
+<li class="toctree-l2"><a class="reference internal" href="integration.html#configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="integration.html#tablet-support">Tablet Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="integration.html#networking">Networking</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#default-implementation">Default Implementation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#custom-implementation">Custom Implementation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="integration.html#cleanup-and-sending-feedback">Cleanup and Sending Feedback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="integration.html#capturing-documents">Capturing documents</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Features</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#document-capture">Document Capture</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#onboarding">Onboarding</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#single-page">Single Page</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#multi-page">Multi-Page</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#camera">Camera</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#qr-code-scanning">QR Code Scanning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#only-qr-code-scanning">Only QR Code Scanning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#help">Help</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#disable-supported-formats-help-screen">Disable Supported Formats Help Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#no-results">No Results</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#error">Error</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#document-import">Document Import</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#android-manifest">Android Manifest</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#intercepting-the-imported-document">Intercepting the imported document</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#file-import-open-with">File Import (Open With)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#registering-pdf-and-image-file-types">Registering pdf and image file types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#handling-imported-files">Handling Imported Files</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#event-tracking">Event Tracking</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#events">Events</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#error-logging">Error Logging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#accessibility">Accessibility</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="customization-guide.html">Customization Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#overview-of-ui-customization-options">Overview of UI Customization Options</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#styles">Styles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#colors">Colors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#images">Images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#typography">Typography</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#text">Text</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#custom-ui-elements">Custom UI Elements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#dark-mode">Dark mode</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#onboarding-screen">Onboarding Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#ui-customization">UI Customization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id1">Bottom Navigation Bar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#custom-onboarding-pages">Custom Onboarding Pages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#custom-illustration-views">Custom Illustration Views</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#camera-screen">Camera Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id2">UI Customization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id3">Bottom Navigation Bar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#custom-loading-indicator">Custom Loading Indicator</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#review-screen">Review Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id4">UI Customization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id5">Bottom Navigation Bar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#custom-process-button-loading-indicator">Custom “Process” Button Loading Indicator</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#analysis-screen">Analysis Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id6">UI Customization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id7">Custom Loading Indicator</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#help-screen">Help Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id8">UI Customization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id9">Bottom Navigation Bar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#custom-help-screens">Custom Help Screens</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#no-results-screen">No Results Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id10">UI Customization</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization-guide.html#error-screen">Error Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization-guide.html#id11">UI Customization</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="migrate-to-2-0-0.html">Migrate to 2.0.0</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="migrate-to-2-0-0.html#default-networking-implementation">Default Networking Implementation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-2-0-0.html#ginicapturedefaultnetworkservice-builder">GiniCaptureDefaultNetworkService.Builder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-2-0-0.html#sessionmanager">SessionManager</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="migrate-to-3-0-0.html">Migrate to 3.0.0</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="migrate-to-3-0-0.html#migrate-from-component-api">Migrate from Component API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrate-to-3-0-0.html#migrate-from-screen-api">Migrate from Screen API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrate-to-3-0-0.html#migrate-file-import-open-with">Migrate File Import (“open with”)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrate-to-3-0-0.html#migrate-cleanup-step-and-feedback-sending">Migrate Cleanup Step and Feedback Sending</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#default-networking-implementation">Default Networking Implementation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#custom-networking-implementation">Custom Networking Implementation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="migrate-to-3-0-0.html#overview-of-new-ui-customization-options">Overview of New UI Customization Options</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#styles">Styles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#colors">Colors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#images">Images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#typography">Typography</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#text">Text</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#ui-elements">UI Elements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#dark-mode">Dark mode</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="migrate-to-3-0-0.html#migrate-to-the-new-ui">Migrate to the new UI</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#back-buttons">Back Buttons</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#onboarding-screen">Onboarding Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#camera-screen">Camera Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#qr-code-scanner">QR Code Scanner</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#review-screen">Review Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#help-screen">Help Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#analysis-screen">Analysis Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#error-screen">Error Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#no-results-screen">No Results Screen</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">Reference Docs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="license.html#licenses-and-acknowledgements-for-incorporated-software">Licenses and Acknowledgements for Incorporated Software</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="license.html#apache-commons-imaging">Apache Commons Imaging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license.html#touchimageview">TouchImageView</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license.html#simple-logging-facade-for-java-slf4j">Simple Logging Facade for Java (SLF4J)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license.html#jersey-repackaged-jsr166e">Jersey Repackaged JSR166e</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Gini Capture SDK for Android</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Features</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="features">
+<h1>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h1>
+<p>The Gini Capture SDK provides various features you can enable and configure. All the features are configured during
+creation of a new <code class="docutils literal notranslate"><span class="pre">GiniCapture</span></code> instance. Specifically the <code class="docutils literal notranslate"><span class="pre">GiniCapture.Builder</span></code> is used to configure the Gini
+Capture SDK. It’s <a class="reference external" href="https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/3.10.2/dokka/sdk/net.gini.android.capture/-gini-capture/-builder/index.html">reference documentation</a> lists all the options.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Some features require additional contractual agreements and may not be used without prior confirmation. Please get
+in touch with us in case you are not sure which features your contract includes.</p>
+</div>
+<p>The following sections list all the features along with the related configuration options.</p>
+<div class="section" id="document-capture">
+<h2>Document Capture<a class="headerlink" href="#document-capture" title="Permalink to this headline">¶</a></h2>
+<p>This is the core feature of the Gini Capture SDK. It enables your app to capture documents with the camera and prepares
+them to be analyzed by the Gini Bank API.</p>
+<div class="section" id="onboarding">
+<h3>Onboarding<a class="headerlink" href="#onboarding" title="Permalink to this headline">¶</a></h3>
+<p>The onboarding feature presents essential information to the user on how to best capture documents.</p>
+<p>You can customize the onboarding in the following ways:</p>
+<ul class="simple">
+<li><dl class="first docutils">
+<dt>Disable showing the onboarding at first run:</dt>
+<dd>By default the onboarding is shown at first run. To disable this pass <code class="docutils literal notranslate"><span class="pre">false</span></code> to
+<code class="docutils literal notranslate"><span class="pre">GiniCapture.Builder.setShouldShowOnboardingAtFirstRun()</span></code>.</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Force show the onboarding:</dt>
+<dd>If you wish to show the onboarding after the first run then pass <code class="docutils literal notranslate"><span class="pre">true</span></code> to
+<code class="docutils literal notranslate"><span class="pre">GiniCapture.Builder.setShouldShowOnboarding()</span></code>.</dd>
+</dl>
+</li>
+</ul>
+</div>
+<div class="section" id="single-page">
+<h3>Single Page<a class="headerlink" href="#single-page" title="Permalink to this headline">¶</a></h3>
+<p>By default, the Gini Capture SDK is configured to capture single page documents. No further configuration is required for
+this.</p>
+</div>
+<div class="section" id="multi-page">
+<h3>Multi-Page<a class="headerlink" href="#multi-page" title="Permalink to this headline">¶</a></h3>
+<p>The multi-page feature allows the SDK to capture documents with multiple pages.</p>
+<p>To enable this simply pass <code class="docutils literal notranslate"><span class="pre">true</span></code> to <code class="docutils literal notranslate"><span class="pre">GiniCapture.Builder.setMultiPageEnabled()</span></code>.</p>
+</div>
+<div class="section" id="camera">
+<h3>Camera<a class="headerlink" href="#camera" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><dl class="first docutils">
+<dt>Enable the flash toggle button:</dt>
+<dd>To allow users toggle the camera flash pass <code class="docutils literal notranslate"><span class="pre">true</span></code> to <code class="docutils literal notranslate"><span class="pre">GiniCapture.Builder.setFlashButtonEnabled()</span></code>.</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Turn off flash by default:</dt>
+<dd>Flash is on by default, and you can turn it off by passing <code class="docutils literal notranslate"><span class="pre">false</span></code> to <code class="docutils literal notranslate"><span class="pre">GiniCapture.Builder.setFlashOnByDefault()</span></code>.</dd>
+</dl>
+</li>
+</ul>
+</div>
+<div class="section" id="qr-code-scanning">
+<h3>QR Code Scanning<a class="headerlink" href="#qr-code-scanning" title="Permalink to this headline">¶</a></h3>
+<p>By using the Google Mobile Vision API the SDK can read payment data from QR Codes. We support the <a class="reference external" href="http://www.bezahlcode.de/">BezahlCode</a> , <a class="reference external" href="https://www.europeanpaymentscouncil.eu/document-library/guidance-documents/quick-response-code-guidelines-enable-data-capture-initiation">EPC069-12</a>
+(<a class="reference external" href="https://www.stuzza.at/de/zahlungsverkehr/qr-code.html">Stuzza (AT)</a> and <a class="reference external" href="https://www.girocode.de/rechnungsempfaenger/">GiroCode (DE)</a>) and <a class="reference external" href="https://eservice.stuzza.at/de/eps-ueberweisung-dokumentation/category/5-dokumentation.html">EPS</a> formats.</p>
+<p>When a supported QR code is detected with valid payment data, white camera frame will turn into the green color with proper message that QR code is detected.</p>
+<p>If the QR code does not have a supported payment format, white camera frame will turn into the yellow color with proper message that QR code is not supported.</p>
+<p>Payment information extraction starts immediately after supported QR code is successfully scanned. The extractions are
+returned in the result of the <code class="docutils literal notranslate"><span class="pre">CameraActivity</span></code>.</p>
+<p>QR Code Scanning is available on devices running Android with Google Play Services installed.</p>
+<p>To enable this feature simply pass <code class="docutils literal notranslate"><span class="pre">true</span></code> to <code class="docutils literal notranslate"><span class="pre">GiniCapture.Builder.setQRCodeScanningEnabled</span></code>.</p>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">When your application is installed Google Mobile Services will download libraries to the device in order to do QR
+code detection. If another app already uses QR code detection on the device the library won’t be downloaded again.
+Under certain circumstances (user not online, slow connection or lack of sufficient storage space) the libraries
+will not be ready at the time your app starts the camera screen and QR code detection will be silently disabled
+until the next time the camera screen starts.</p>
+</div>
+</div>
+<div class="section" id="only-qr-code-scanning">
+<h3>Only QR Code Scanning<a class="headerlink" href="#only-qr-code-scanning" title="Permalink to this headline">¶</a></h3>
+<p>The SDK supports QR code only scanning mode. To enable this feature simply pass <code class="docutils literal notranslate"><span class="pre">true</span></code> to <code class="docutils literal notranslate"><span class="pre">GiniCapture.Builder.setOnlyQRCodeScanning()</span></code>.
+Enabling this feature removes all UI elements related to taking pictures from the Camera screen and leaves only QR code-related UI elements.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">To use this feature <code class="docutils literal notranslate"><span class="pre">setQRCodeScanningEnabled</span></code> must be set to <code class="docutils literal notranslate"><span class="pre">true</span></code> otherwise <code class="docutils literal notranslate"><span class="pre">setOnlyQRCodeScanning</span></code> will be ignored.</p>
+</div>
+</div>
+<div class="section" id="help">
+<h3>Help<a class="headerlink" href="#help" title="Permalink to this headline">¶</a></h3>
+<p>The SDK includes help screens to aid users in getting the best results.</p>
+</div>
+<div class="section" id="disable-supported-formats-help-screen">
+<h3>Disable Supported Formats Help Screen<a class="headerlink" href="#disable-supported-formats-help-screen" title="Permalink to this headline">¶</a></h3>
+<p>You can disable the supported formats help screen by passing <code class="docutils literal notranslate"><span class="pre">false</span></code> to
+<code class="docutils literal notranslate"><span class="pre">GiniCapture.Builder.setSupportedFormatsHelpScreenEnabled()</span></code>.</p>
+</div>
+<div class="section" id="no-results">
+<h3>No Results<a class="headerlink" href="#no-results" title="Permalink to this headline">¶</a></h3>
+<p>In case analysis finished without results, the SDK shows a no results screen with helpful tips and allows the user to
+either retake the image or exit the SDK to enter the information manually.</p>
+</div>
+<div class="section" id="error">
+<h3>Error<a class="headerlink" href="#error" title="Permalink to this headline">¶</a></h3>
+<p>The SDK shows an error screen, if an error was encountered during analysis. The screen shows error details and allows
+the user to either return to the camera or exit the SDK to enter the information manually.</p>
+</div>
+</div>
+<div class="section" id="document-import">
+<h2>Document Import<a class="headerlink" href="#document-import" title="Permalink to this headline">¶</a></h2>
+<p>This feature enables the Gini Capture SDK to import documents from the camera screen. When it’s enabled an additional
+button is shown next to the camera trigger. Using this button allows the user to pick either an image or a pdf from the
+device.</p>
+<p>You can specify the document types the user will be able to select when enabling this feature. You can enable only
+images, only PDFs or both images and PDFs.</p>
+<p>To enable it simply pass a <code class="docutils literal notranslate"><span class="pre">DocumentImportEnabledFileTypes</span></code> enum value to
+<code class="docutils literal notranslate"><span class="pre">GiniCapture.Builder.setDocumentImportEnabledFileTypes()</span></code>.</p>
+<div class="section" id="android-manifest">
+<h3>Android Manifest<a class="headerlink" href="#android-manifest" title="Permalink to this headline">¶</a></h3>
+<p>You need to declare the <code class="docutils literal notranslate"><span class="pre">READ_EXTERNAL_STORAGE</span></code> permission in your app’s <code class="docutils literal notranslate"><span class="pre">AndroidManifest.xml</span></code>:</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;manifest</span> <span class="na">xmlns:android=</span><span class="s">&quot;http://schemas.android.com/apk/res/android&quot;</span>
+    <span class="na">package=</span><span class="s">&quot;...&quot;</span><span class="nt">&gt;</span>
+
+    <span class="nt">&lt;uses-permission</span> <span class="na">android:name=</span><span class="s">&quot;android.permission.READ_EXTERNAL_STORAGE&quot;</span> <span class="nt">/&gt;</span>
+
+<span class="nt">&lt;/manifest&gt;</span>
+</pre></div>
+</div>
+<p>When targeting Android 13 and later you will also have to declare the <code class="docutils literal notranslate"><span class="pre">READ_MEDIA_IMAGES</span></code> permission:</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;manifest</span> <span class="na">xmlns:android=</span><span class="s">&quot;http://schemas.android.com/apk/res/android&quot;</span>
+    <span class="na">package=</span><span class="s">&quot;...&quot;</span><span class="nt">&gt;</span>
+
+    <span class="nt">&lt;uses-permission</span> <span class="na">android:name=</span><span class="s">&quot;android.permission.READ_MEDIA_IMAGES&quot;</span> <span class="nt">/&gt;</span>
+
+<span class="nt">&lt;/manifest&gt;</span>
+</pre></div>
+</div>
+<p>If the permission has not been granted the Gini Capture SDK will prompt the user to grant the permission when they use
+the document import feature.</p>
+<p>You will also need to declare that your app queries for apps that can handle intents to pick or open image and pdf
+documents (you can read more about package visibility filtering introduced in Android 11
+<a class="reference external" href="https://developer.android.com/training/package-visibility">here</a>) :</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;queries&gt;</span>
+    <span class="nt">&lt;intent&gt;</span>
+        <span class="nt">&lt;action</span> <span class="na">android:name=</span><span class="s">&quot;android.intent.action.PICK&quot;</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;data</span> <span class="na">android:mimeType=</span><span class="s">&quot;image/*&quot;</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/intent&gt;</span>
+    <span class="nt">&lt;intent&gt;</span>
+        <span class="nt">&lt;action</span> <span class="na">android:name=</span><span class="s">&quot;android.intent.action.OPEN_DOCUMENT&quot;</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;data</span> <span class="na">android:mimeType=</span><span class="s">&quot;image/*&quot;</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/intent&gt;</span>
+    <span class="nt">&lt;intent&gt;</span>
+        <span class="nt">&lt;action</span> <span class="na">android:name=</span><span class="s">&quot;android.intent.action.OPEN_DOCUMENT&quot;</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;data</span> <span class="na">android:mimeType=</span><span class="s">&quot;application/pdf&quot;</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/intent&gt;</span>
+<span class="nt">&lt;/queries&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="intercepting-the-imported-document">
+<h3>Intercepting the imported document<a class="headerlink" href="#intercepting-the-imported-document" title="Permalink to this headline">¶</a></h3>
+<p>You can intercept the imported document and deny the Gini Capture SDK from using it.</p>
+<p>You need to subclass the <code class="docutils literal notranslate"><span class="pre">CameraActivity</span></code> and override the
+<code class="docutils literal notranslate"><span class="pre">onCheckImportedDocument</span></code> method. See it’s <a class="reference external" href="https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/3.10.2/dokka/sdk/net.gini.android.capture.camera/-camera-activity/on-check-imported-document.html">reference documentation</a> for details.</p>
+</div>
+</div>
+<div class="section" id="file-import-open-with">
+<h2>File Import (Open With)<a class="headerlink" href="#file-import-open-with" title="Permalink to this headline">¶</a></h2>
+<p>The file import (or “open with”) feature allows importing of files from other apps via Android’s “open with” or “share”
+functionality.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">We are using the term <code class="docutils literal notranslate"><span class="pre">file</span> <span class="pre">import</span></code> to refer to the “open with” feature within the Gini Capture SDK. From the
+point of view of the SDK files are imported into the SDK from an outside source. It is not aware and cannot set
+configuration related to enabling the client app to receive files via Android’s “open with” or “share”
+functionality.</p>
+</div>
+<p>To enable it pass <code class="docutils literal notranslate"><span class="pre">true</span></code> to <code class="docutils literal notranslate"><span class="pre">GiniCapture.Builder.setFileImportEnabled()</span></code>.</p>
+<p>In addition to enabling it your app needs to declare intent filters for receiving PDFs and/or images from other apps and
+then forward the incoming intent to the Gini Capture SDK.</p>
+<div class="section" id="registering-pdf-and-image-file-types">
+<h3>Registering pdf and image file types<a class="headerlink" href="#registering-pdf-and-image-file-types" title="Permalink to this headline">¶</a></h3>
+<p>Add the following intent filter to the activity in your <code class="docutils literal notranslate"><span class="pre">AndroidManifest.xml</span></code> you wish to receive incoming PDFs and
+images:</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;activity</span> <span class="na">android:name=</span><span class="s">&quot;.ui.MyActivity&quot;</span><span class="nt">&gt;</span>
+    <span class="c">&lt;!-- Receiving images: --&gt;</span>
+    <span class="nt">&lt;intent-filter</span>
+        <span class="na">android:label=</span><span class="s">&quot;@string/label_for_image_open_with&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;action</span> <span class="na">android:name=</span><span class="s">&quot;android.intent.action.VIEW&quot;</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;action</span> <span class="na">android:name=</span><span class="s">&quot;android.intent.action.SEND&quot;</span> <span class="nt">/&gt;</span>
+        <span class="c">&lt;!-- The below SEND_MULTIPLE action is only needed if you enabled scanning of multi-page documents: --&gt;</span>
+        <span class="nt">&lt;action</span> <span class="na">android:name=</span><span class="s">&quot;android.intent.action.SEND_MULTIPLE&quot;</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;category</span> <span class="na">android:name=</span><span class="s">&quot;android.intent.category.DEFAULT&quot;</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;data</span> <span class="na">android:mimeType=</span><span class="s">&quot;image/*&quot;</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/intent-filter&gt;</span>
+    <span class="c">&lt;!-- Receiving pdfs: --&gt;</span>
+    <span class="nt">&lt;intent-filter</span>
+        <span class="na">android:label=</span><span class="s">&quot;@string/label_for_pdf_open_with&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;action</span> <span class="na">android:name=</span><span class="s">&quot;android.intent.action.VIEW&quot;</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;action</span> <span class="na">android:name=</span><span class="s">&quot;android.intent.action.SEND&quot;</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;category</span> <span class="na">android:name=</span><span class="s">&quot;android.intent.category.DEFAULT&quot;</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;data</span> <span class="na">android:mimeType=</span><span class="s">&quot;application/pdf&quot;</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/intent-filter&gt;</span>
+<span class="nt">&lt;/activity&gt;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">We recommend adding <a class="reference external" href="https://developer.android.com/reference/android/content/Intent.html#ACTION_VIEW">ACTION_VIEW</a>
+to the intent filter to also allow users to send pdfs and images to your app from apps that don’t implement sharing
+with <a class="reference external" href="https://developer.android.com/reference/android/content/Intent.html#ACTION_SEND">ACTION_SEND</a> but enable
+viewing the pdf or file with other apps.</p>
+</div>
+</div>
+<div class="section" id="handling-imported-files">
+<h3>Handling Imported Files<a class="headerlink" href="#handling-imported-files" title="Permalink to this headline">¶</a></h3>
+<p>When your app is requested to handle a pdf or an image your activity (declaring the intent filter shown above) is
+launched or resumed (<code class="docutils literal notranslate"><span class="pre">onNewIntent()</span></code>) with an Intent having <code class="docutils literal notranslate"><span class="pre">ACTION_VIEW</span></code> or <code class="docutils literal notranslate"><span class="pre">ACTION_SEND</span></code>.</p>
+<p>We recommend checking whether the Intent has the required action before proceeding with it:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">String</span> <span class="n">action</span> <span class="o">=</span> <span class="n">intent</span><span class="p">.</span><span class="na">getAction</span><span class="p">();</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">Intent</span><span class="p">.</span><span class="na">ACTION_VIEW</span><span class="p">.</span><span class="na">equals</span><span class="p">(</span><span class="n">action</span><span class="p">)</span> <span class="o">||</span> <span class="n">Intent</span><span class="p">.</span><span class="na">ACTION_SEND</span><span class="p">.</span><span class="na">equals</span><span class="p">(</span><span class="n">action</span><span class="p">))</span> <span class="p">{</span>
+    <span class="p">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>You need to create an Intent for launching the Gini Capture SDK with
+<code class="docutils literal notranslate"><span class="pre">GiniCapture.getInstance().createIntentForImportedFile()</span></code> or if you enabled scanning of multi-page documents
+<code class="docutils literal notranslate"><span class="pre">GiniCapture.getInstance().createIntentForImportedFiles()</span></code>. The first method will throw an
+<code class="docutils literal notranslate"><span class="pre">ImportedFileValidationException</span></code>, if the file was invalid and the latter will return the same exception in the
+callback.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">startGiniCaptureSDKForImportedFile</span><span class="p">(</span><span class="kd">final</span> <span class="n">Intent</span> <span class="n">importedFileIntent</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Configure the Gini Capture SDK first</span>
+    <span class="n">configureGiniCapture</span><span class="p">();</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">GiniCapture</span><span class="p">.</span><span class="na">hasInstance</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="n">GiniCapture</span><span class="p">.</span><span class="na">getInstance</span><span class="p">().</span><span class="na">isMultiPageEnabled</span><span class="p">())</span> <span class="p">{</span>
+        <span class="n">mFileImportCancellationToken</span> <span class="o">=</span> <span class="n">GiniCapture</span><span class="p">.</span><span class="na">getInstance</span><span class="p">().</span><span class="na">createIntentForImportedFiles</span><span class="p">(</span>
+                <span class="n">importedFileIntent</span><span class="p">,</span> <span class="p">(</span><span class="n">Context</span><span class="p">)</span> <span class="k">this</span><span class="p">,</span>
+                <span class="k">new</span> <span class="n">AsyncCallback</span><span class="o">&lt;</span><span class="n">Intent</span><span class="p">,</span> <span class="n">ImportedFileValidationException</span><span class="o">&gt;</span><span class="p">()</span> <span class="p">{</span>
+                    <span class="nd">@Override</span>
+                    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onSuccess</span><span class="p">(</span><span class="kd">final</span> <span class="n">Intent</span> <span class="n">result</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="n">mFileImportCancellationToken</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+                        <span class="n">startActivityForResult</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">REQUEST_SCAN</span><span class="p">);</span>
+                    <span class="p">}</span>
+
+                    <span class="nd">@Override</span>
+                    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onError</span><span class="p">(</span><span class="kd">final</span> <span class="n">ImportedFileValidationException</span> <span class="n">exception</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="n">mFileImportCancellationToken</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+                        <span class="n">handleFileImportError</span><span class="p">(</span><span class="n">exception</span><span class="p">);</span>
+                    <span class="p">}</span>
+
+                    <span class="nd">@Override</span>
+                    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onCancelled</span><span class="p">()</span> <span class="p">{</span>
+                        <span class="n">mFileImportCancellationToken</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+                    <span class="p">}</span>
+                <span class="p">});</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="k">try</span> <span class="p">{</span>
+            <span class="kd">final</span> <span class="n">Intent</span> <span class="n">giniCaptureIntent</span> <span class="o">=</span>
+                    <span class="n">GiniCapture</span><span class="p">.</span><span class="na">createIntentForImportedFile</span><span class="p">(</span>
+                            <span class="n">importedFileIntent</span><span class="p">,</span>
+                            <span class="p">(</span><span class="n">Context</span><span class="p">)</span> <span class="k">this</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="kc">null</span><span class="p">);</span>
+            <span class="n">startActivityForResult</span><span class="p">(</span><span class="n">giniCaptureIntent</span><span class="p">,</span> <span class="n">REQUEST_SCAN</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="kd">final</span> <span class="n">ImportedFileValidationException</span> <span class="n">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">e</span><span class="p">.</span><span class="na">printStackTrace</span><span class="p">();</span>
+            <span class="n">handleFileImportError</span><span class="p">(</span><span class="n">e</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">handleFileImportError</span><span class="p">(</span><span class="kd">final</span> <span class="n">ImportedFileValidationException</span> <span class="n">exception</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">String</span> <span class="n">message</span> <span class="o">=</span> <span class="p">...</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">exception</span><span class="p">.</span><span class="na">getValidationError</span><span class="p">()</span> <span class="o">!=</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// Get the default message</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="n">getString</span><span class="p">(</span><span class="n">exception</span><span class="p">.</span><span class="na">getValidationError</span><span class="p">().</span><span class="na">getTextResource</span><span class="p">());</span>
+        <span class="c1">// Or use custom messages</span>
+        <span class="k">switch</span> <span class="p">(</span><span class="n">exception</span><span class="p">.</span><span class="na">getValidationError</span><span class="p">())</span> <span class="p">{</span>
+            <span class="k">case</span> <span class="n">TYPE_NOT_SUPPORTED</span><span class="p">:</span>
+                <span class="n">message</span> <span class="o">=</span> <span class="p">...</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="n">SIZE_TOO_LARGE</span><span class="p">:</span>
+                <span class="n">message</span> <span class="o">=</span> <span class="p">...</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="n">TOO_MANY_PDF_PAGES</span><span class="p">:</span>
+                <span class="n">message</span> <span class="o">=</span> <span class="p">...</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="n">PASSWORD_PROTECTED_PDF</span><span class="p">:</span>
+                <span class="n">message</span> <span class="o">=</span> <span class="p">...</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="n">TOO_MANY_DOCUMENT_PAGES</span><span class="p">:</span>
+                <span class="n">message</span> <span class="o">=</span> <span class="p">...</span>
+                <span class="k">break</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">new</span> <span class="n">AlertDialog</span><span class="p">.</span><span class="na">Builder</span><span class="p">((</span><span class="n">Context</span><span class="p">)</span> <span class="k">this</span><span class="p">)</span>
+            <span class="p">.</span><span class="na">setMessage</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+            <span class="p">.</span><span class="na">setPositiveButton</span><span class="p">(</span><span class="s">&quot;OK&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">dialogInterface</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">finish</span><span class="p">())</span>
+            <span class="p">.</span><span class="na">show</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="event-tracking">
+<h2>Event Tracking<a class="headerlink" href="#event-tracking" title="Permalink to this headline">¶</a></h2>
+<p>You have the possibility to track various events which occur during the usage of the Gini Capture SDK.</p>
+<p>To subscribe to the events you need to implement the <code class="docutils literal notranslate"><span class="pre">EventTracker</span></code> interface and pass it to the builder when creating
+a new <code class="docutils literal notranslate"><span class="pre">GiniCapture</span></code> instance:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">GiniCapture</span><span class="p">.</span><span class="na">newInstance</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+    <span class="p">.</span><span class="na">setEventTracker</span><span class="p">(</span><span class="k">new</span> <span class="n">MyEventTracker</span><span class="p">());</span>
+    <span class="p">.</span><span class="na">build</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>In <code class="docutils literal notranslate"><span class="pre">MyEventTracker</span></code> you can handle the events you are interested in.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nc">MyEventTracker</span> <span class="kd">implements</span> <span class="n">EventTracker</span> <span class="p">{</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onCameraScreenEvent</span><span class="p">(</span><span class="kd">final</span> <span class="n">Event</span><span class="o">&lt;</span><span class="n">CameraScreenEvent</span><span class="o">&gt;</span> <span class="n">event</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">switch</span> <span class="p">(</span><span class="n">event</span><span class="p">.</span><span class="na">getType</span><span class="p">())</span> <span class="p">{</span>
+            <span class="k">case</span> <span class="n">TAKE_PICTURE</span><span class="p">:</span>
+                <span class="c1">// handle the picture taken event</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="n">HELP</span><span class="p">:</span>
+                <span class="c1">// handle the show help event</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="n">EXIT</span><span class="p">:</span>
+                <span class="c1">// handle the exit event</span>
+                <span class="k">break</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onOnboardingScreenEvent</span><span class="p">(</span><span class="kd">final</span> <span class="n">Event</span><span class="o">&lt;</span><span class="n">OnboardingScreenEvent</span><span class="o">&gt;</span> <span class="n">event</span><span class="p">)</span> <span class="p">{</span>
+        <span class="p">(...)</span>
+    <span class="p">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onAnalysisScreenEvent</span><span class="p">(</span><span class="kd">final</span> <span class="n">Event</span><span class="o">&lt;</span><span class="n">AnalysisScreenEvent</span><span class="o">&gt;</span> <span class="n">event</span><span class="p">)</span> <span class="p">{</span>
+        <span class="p">(...)</span>
+    <span class="p">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onReviewScreenEvent</span><span class="p">(</span><span class="kd">final</span> <span class="n">Event</span><span class="o">&lt;</span><span class="n">ReviewScreenEvent</span><span class="o">&gt;</span> <span class="n">event</span><span class="p">)</span> <span class="p">{</span>
+        <span class="p">(...)</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="events">
+<h3>Events<a class="headerlink" href="#events" title="Permalink to this headline">¶</a></h3>
+<p>Event types are partitioned into different domains according to the screens that they appear on. Each domain has a
+number of event types. Some events may supply additional details in a map.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="14%" />
+<col width="39%" />
+<col width="31%" />
+<col width="15%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Domain</th>
+<th class="head">Event enum value and details map keys</th>
+<th class="head">Comment</th>
+<th class="head">Introduced in (updated in)</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Onboarding</td>
+<td><code class="docutils literal notranslate"><span class="pre">OnboardingScreenEvent.START</span></code></td>
+<td>Onboarding started</td>
+<td>1.0.0</td>
+</tr>
+<tr class="row-odd"><td>Onboarding</td>
+<td><code class="docutils literal notranslate"><span class="pre">OnboardingScreenEvent.FINISH</span></code></td>
+<td>User completes onboarding</td>
+<td>1.0.0</td>
+</tr>
+<tr class="row-even"><td>Camera Screen</td>
+<td><code class="docutils literal notranslate"><span class="pre">CameraScreenEvent.EXIT</span></code></td>
+<td>User closes the camera screen</td>
+<td>1.0.0</td>
+</tr>
+<tr class="row-odd"><td>Camera Screen</td>
+<td><code class="docutils literal notranslate"><span class="pre">CameraScreenEvent.HELP</span></code></td>
+<td>User taps “Help” on the camera screen</td>
+<td>1.0.0</td>
+</tr>
+<tr class="row-even"><td>Camera Screen</td>
+<td><code class="docutils literal notranslate"><span class="pre">CameraScreenEvent.TAKE_PICTURE</span></code></td>
+<td>User takes a picture</td>
+<td>1.0.0</td>
+</tr>
+<tr class="row-odd"><td>Review Screen</td>
+<td><code class="docutils literal notranslate"><span class="pre">ReviewScreenEvent.BACK</span></code></td>
+<td>User goes back from the review screen</td>
+<td>1.0.0</td>
+</tr>
+<tr class="row-even"><td>Review Screen</td>
+<td><code class="docutils literal notranslate"><span class="pre">ReviewScreenEvent.NEXT</span></code></td>
+<td>User advances from the review screen</td>
+<td>1.0.0</td>
+</tr>
+<tr class="row-odd"><td>Review Screen</td>
+<td><code class="docutils literal notranslate"><span class="pre">ReviewScreenEvent.UPLOAD_ERROR</span></code>
+<code class="docutils literal notranslate"><span class="pre">ReviewScreenEvent.UPLOAD_ERROR_DETAILS_MAP_KEY.MESSAGE</span></code>
+<code class="docutils literal notranslate"><span class="pre">ReviewScreenEvent.UPLOAD_ERROR_DETAILS_MAP_KEY.ERROR_OBJECT</span></code></td>
+<td>Upload error in the review screen</td>
+<td>1.0.0</td>
+</tr>
+<tr class="row-even"><td>Analysis Screen</td>
+<td><code class="docutils literal notranslate"><span class="pre">AnalysisScreenEvent.CANCEL</span></code></td>
+<td>User cancels the process during analysis</td>
+<td>1.0.0</td>
+</tr>
+<tr class="row-odd"><td>Analysis Screen</td>
+<td><code class="docutils literal notranslate"><span class="pre">AnalysisScreenEvent.ERROR</span></code>
+<code class="docutils literal notranslate"><span class="pre">AnalysisScreenEvent.ERROR_DETAILS_MAP_KEY.MESSAGE</span></code>
+<code class="docutils literal notranslate"><span class="pre">AnalysisScreenEvent.ERROR_DETAILS_MAP_KEY.ERROR_OBJECT</span></code></td>
+<td>The analysis ended with an error.</td>
+<td>1.0.0</td>
+</tr>
+<tr class="row-even"><td>Analysis Screen</td>
+<td><code class="docutils literal notranslate"><span class="pre">AnalysisScreenEvent.RETRY</span></code></td>
+<td>The user decides to retry after an analysis error.</td>
+<td>1.0.0</td>
+</tr>
+</tbody>
+</table>
+<p>The supported events are listed for each screen in a dedicated enum. You can view these enums in our
+<a class="reference external" href="https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/3.10.2/dokka/sdk/net.gini.android.capture.tracking/index.html">reference documentation</a>.</p>
+</div>
+</div>
+<div class="section" id="error-logging">
+<h2>Error Logging<a class="headerlink" href="#error-logging" title="Permalink to this headline">¶</a></h2>
+<p>The SDK logs errors to the Gini Bank API when the default networking implementation is used (see the <a class="reference external" href="integration.html#default-implementation">Default networking
+implementation</a> section).</p>
+<p>You can disable the default error logging by passing <code class="docutils literal notranslate"><span class="pre">false</span></code> to <code class="docutils literal notranslate"><span class="pre">GiniCapture.Builder.setGiniErrorLoggerIsOn()</span></code>.</p>
+<p>If you would like to get informed of error logging events you can pass your implementation of the
+<code class="docutils literal notranslate"><span class="pre">ErrorLoggerListener</span></code> interface to <code class="docutils literal notranslate"><span class="pre">GiniCapture.Builder</span></code>:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">GiniCapture</span><span class="p">.</span><span class="na">newInstance</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+    <span class="p">.</span><span class="na">setCustomErrorLoggerListener</span><span class="p">(</span><span class="k">new</span> <span class="n">MyErrorLoggerListener</span><span class="p">())</span>
+    <span class="p">.</span><span class="na">build</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="accessibility">
+<h2>Accessibility<a class="headerlink" href="#accessibility" title="Permalink to this headline">¶</a></h2>
+<p>The SDK conforms to the following accessibility features:</p>
+<ul class="simple">
+<li>UI is zoomable using Android’s screen magnification feature.</li>
+<li>TalkBack screen reader support: all non-textual UI elements (e.g., icons and images) have content descriptions.</li>
+<li>Touchable elements (e.g., buttons and switches) have a minimum size of 48dp x 48dp.</li>
+<li>Font sizes can be increased in Android’s accessibility settings.</li>
+<li>Default color palette has sufficient color contrast.</li>
+<li>Color contrast can be increased in Android’s accessibility settings.</li>
+</ul>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">When customizing the SDK’s UI you can override accessibility conformance by changing colors, images and injecting
+custom UI elements. We strongly advise you to make your customizations accessibility friendly as well.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="customization-guide.html" class="btn btn-neutral float-right" title="Customization Guide">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="integration.html" class="btn btn-neutral" title="Integration"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+    </p>
+  </div>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  
+</body>
+</html>
