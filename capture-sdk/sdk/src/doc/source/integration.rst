@@ -138,7 +138,7 @@ To use it add the ``gini-capture-network-lib`` dependency to your app's ``build.
 
     dependencies {
         ...
-        implementation 'net.gini.android:gini-capture-sdk-default-network:3.6.0'
+        implementation 'net.gini.android:gini-capture-sdk-default-network:3.10.2'
     }
 
 For the Gini Capture SDK to be aware of the default implementation create an instance and pass
