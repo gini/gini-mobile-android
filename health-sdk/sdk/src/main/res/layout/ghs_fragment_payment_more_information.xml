@@ -55,6 +55,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/ghs_large"
+                    android:contentDescription="@string/ghs_gini_link"
                     app:layout_constraintBottom_toBottomOf="@id/ghs_powered_by_gini_label"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/ghs_powered_by_gini_label"
