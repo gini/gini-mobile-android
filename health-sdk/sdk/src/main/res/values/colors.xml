@@ -45,5 +45,6 @@
     <color name="ghs_bordered_background_color">@color/ghs_dark_06</color>
     <color name="ghs_bank_selector_button_color">@color/ghs_dark_01</color>
     <color name="ghs_faq_divider">@color/ghs_dark_05</color>
+    <color name="ghs_bottom_sheet_scrim">#000</color>
 
 </resources>

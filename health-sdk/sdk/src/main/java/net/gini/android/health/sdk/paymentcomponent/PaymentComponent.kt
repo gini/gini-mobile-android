@@ -107,7 +107,7 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
         paymentComponentPreferences.saveSelectedPaymentProviderId(paymentProviderApp.paymentProvider.id)
     }
 
-    internal fun recheckWhichPaymentProviderAppsAreInstalled() {
+    internal suspend fun recheckWhichPaymentProviderAppsAreInstalled() {
         LOG.debug("Rechecking which payment provider apps are installed")
         when (val paymentProviderAppsState = _initialStatePaymentProviderAppsFlow.value) {
             is PaymentProviderAppsState.Success -> {
@@ -199,6 +199,10 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
      * configuration.
      *
      * You should create and show the [ReviewFragment] in the [Listener.onPayInvoiceClicked] method.
+     *
+     * @param documentId The document id for which the extractions should be loaded
+     * @param configuration The configuration for the [ReviewFragment]
+     * @throws IllegalStateException If no payment provider app has been selected
      */
     suspend fun getPaymentReviewFragment(documentId: String, configuration: ReviewConfiguration): ReviewFragment {
         LOG.debug("Getting payment review fragment for id: {}", documentId)

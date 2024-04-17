@@ -38,7 +38,9 @@ public final class DocumentFactory {
             throw new IllegalArgumentException("Intent data must contain a Uri");
         }
         if (hasMimeType(intent, context, MimeType.APPLICATION_PDF.asString())) {
-            return PdfDocument.fromIntent(intent, importMethod);
+            final PdfDocument pdfDocument = PdfDocument.fromIntent(intent, importMethod);
+            pdfDocument.loadFilename(context);
+            return pdfDocument;
         } else if (hasMimeTypeWithPrefix(intent, context,
                 MimeType.IMAGE_PREFIX.asString())) {
             return ImageDocument.fromIntent(intent, context, deviceOrientation, deviceType,
