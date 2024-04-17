@@ -9,12 +9,12 @@ import net.gini.android.core.api.Resource
 import net.gini.android.health.api.models.PaymentProvider
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
-import net.gini.android.health.sdk.paymentprovider.getPaymentProviderApps
 import net.gini.android.health.sdk.review.ReviewConfiguration
 import net.gini.android.health.sdk.review.ReviewFragment
 import org.slf4j.LoggerFactory
 import net.gini.android.health.sdk.bankselection.BankSelectionBottomSheet
 import net.gini.android.health.sdk.moreinformation.MoreInformationFragment
+import net.gini.android.health.sdk.paymentprovider.getPaymentProviderApps
 
 /**
  * The [PaymentComponent] manages the data and state used by every [PaymentComponentView], the [MoreInformationFragment],
@@ -23,6 +23,9 @@ import net.gini.android.health.sdk.moreinformation.MoreInformationFragment
  * It requires a [GiniHealth] instance and a [Context] (application or activity) to be created.
  */
 class PaymentComponent(private val context: Context, private val giniHealth: GiniHealth) {
+
+    // Holds the state of the Payment Provider apps as received from the server - no processing is done on this list, to serve as a point of truth
+    private val _initialStatePaymentProviderAppsFlow = MutableStateFlow<PaymentProviderAppsState>(PaymentProviderAppsState.Loading)
 
     private val _paymentProviderAppsFlow = MutableStateFlow<PaymentProviderAppsState>(PaymentProviderAppsState.Loading)
 
@@ -64,11 +67,16 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
             when (val paymentProvidersResource = giniHealth.giniHealthAPI.documentManager.getPaymentProviders()) {
                 is Resource.Cancelled -> {
                     LOG.debug("Loading payment providers cancelled")
+                    _initialStatePaymentProviderAppsFlow.value = PaymentProviderAppsState.Error(Exception("Cancelled"))
                     PaymentProviderAppsState.Error(Exception("Cancelled"))
                 }
 
                 is Resource.Error -> {
                     LOG.error("Error loading payment providers", paymentProvidersResource.exception)
+                    _initialStatePaymentProviderAppsFlow.value = PaymentProviderAppsState.Error((
+                            paymentProvidersResource.exception ?: Exception(
+                                paymentProvidersResource.message
+                            )))
                     PaymentProviderAppsState.Error(
                         paymentProvidersResource.exception ?: Exception(
                             paymentProvidersResource.message
@@ -79,8 +87,8 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
                 is Resource.Success -> {
                     LOG.debug("Loaded payment providers")
                     LOG.debug("Loading installed payment provider apps")
-                    val paymentProviderApps =
-                        getPaymentProviderApps(paymentProvidersResource.data)
+
+                    val paymentProviderApps = getPaymentProviderAppsSorted(paymentProvidersResource.data)
 
                     selectPaymentProviderApp(paymentProviderApps)
 
@@ -99,36 +107,15 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
         paymentComponentPreferences.saveSelectedPaymentProviderId(paymentProviderApp.paymentProvider.id)
     }
 
-    internal suspend fun recheckWhichPaymentProviderAppsAreInstalled() {
+    internal fun recheckWhichPaymentProviderAppsAreInstalled() {
         LOG.debug("Rechecking which payment provider apps are installed")
-        when (val paymentProviderAppsState = _paymentProviderAppsFlow.value) {
+        when (val paymentProviderAppsState = _initialStatePaymentProviderAppsFlow.value) {
             is PaymentProviderAppsState.Success -> {
                 LOG.debug("Rechecking {} payment provider apps", paymentProviderAppsState.paymentProviderApps.size)
 
                 val paymentProviders = paymentProviderAppsState.paymentProviderApps.map { it.paymentProvider }
-                val paymentProviderApps = getPaymentProviderApps(paymentProviders)
-
+                val paymentProviderApps = getPaymentProviderAppsSorted(paymentProviders)
                 _paymentProviderAppsFlow.value = PaymentProviderAppsState.Success(paymentProviderApps)
-
-                when (val selectedPaymentProviderAppState = _selectedPaymentProviderAppFlow.value) {
-                    is SelectedPaymentProviderAppState.AppSelected -> {
-                        if (!isSelectedPaymentProviderAppInstalled(
-                                paymentProviderApps,
-                                selectedPaymentProviderAppState.paymentProviderApp
-                            )
-                        ) {
-                            LOG.debug("Selected payment provider app is not installed anymore. Updating selection state.")
-                            selectFirstInstalledPaymentProviderAppOrNothing(paymentProviderApps)
-                        } else {
-                            LOG.debug("Selected payment provider app is still installed")
-                        }
-                    }
-
-                    SelectedPaymentProviderAppState.NothingSelected -> {
-                        LOG.debug("No payment provider app was selected")
-                        selectFirstInstalledPaymentProviderAppOrNothing(paymentProviderApps)
-                    }
-                }
             }
 
             else -> {
@@ -137,22 +124,18 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
         }
     }
 
-    private fun isSelectedPaymentProviderAppInstalled(
-        paymentProviderApps: List<PaymentProviderApp>,
-        selectedPaymentProviderApp: PaymentProviderApp
-    ): Boolean {
-        val selectedApp =
-            paymentProviderApps.find { it.hasSamePaymentProviderId(selectedPaymentProviderApp) }
-        return selectedApp != null && selectedApp.isInstalled()
-    }
+    @VisibleForTesting
+    internal fun sortPaymentProviderApps(paymentProviderList: List<PaymentProviderApp>): List<PaymentProviderApp> = paymentProviderList.sortedBy { it.installedPaymentProviderApp == null }
 
-    private fun getPaymentProviderApps(paymentProviders: List<PaymentProvider>): List<PaymentProviderApp> {
+    private fun getPaymentProviderAppsSorted(paymentProviders: List<PaymentProvider>): List<PaymentProviderApp> {
         val paymentProviderApps = context.packageManager.getPaymentProviderApps(
             paymentProviders,
             context
-        ).filter { it.isInstalled() || it.hasPlayStoreUrl() }
+        )
+        _initialStatePaymentProviderAppsFlow.tryEmit(PaymentProviderAppsState.Success(paymentProviderApps))
+        val sortedPaymentProviderAppsList = sortPaymentProviderApps(paymentProviderApps)
 
-        return paymentProviderApps
+        return sortedPaymentProviderAppsList
     }
 
     private suspend fun selectPaymentProviderApp(paymentProviderApps: List<PaymentProviderApp>) {
