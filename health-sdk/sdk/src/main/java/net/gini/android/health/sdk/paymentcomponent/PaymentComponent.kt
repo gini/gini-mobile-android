@@ -107,7 +107,7 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
         paymentComponentPreferences.saveSelectedPaymentProviderId(paymentProviderApp.paymentProvider.id)
     }
 
-    internal suspend fun recheckWhichPaymentProviderAppsAreInstalled() {
+    internal fun recheckWhichPaymentProviderAppsAreInstalled() {
         LOG.debug("Rechecking which payment provider apps are installed")
         when (val paymentProviderAppsState = _initialStatePaymentProviderAppsFlow.value) {
             is PaymentProviderAppsState.Success -> {
