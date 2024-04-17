@@ -7,6 +7,7 @@ import android.net.Uri;
 import androidx.annotation.NonNull;
 
 import net.gini.android.capture.document.DocumentFactory;
+import net.gini.android.capture.document.GiniCaptureDocument;
 import net.gini.android.capture.document.ImageMultiPageDocument;
 import net.gini.android.capture.internal.util.DeviceHelper;
 import net.gini.android.capture.internal.util.FileImportValidator;
@@ -30,8 +31,8 @@ public final class GiniCaptureFileImport {
     private final GiniCapture mGiniCapture;
 
     @NonNull
-    private static Document createDocumentForImportedFile(@NonNull final Intent intent,
-            @NonNull final Context context) throws ImportedFileValidationException {
+    private static GiniCaptureDocument createDocumentForImportedFile(@NonNull final Intent intent,
+                                                                     @NonNull final Context context) throws ImportedFileValidationException {
         final Uri uri = IntentHelper.getUri(intent);
         if (uri == null) {
             throw new ImportedFileValidationException("Intent data did not contain a Uri");
@@ -77,9 +78,25 @@ public final class GiniCaptureFileImport {
         if (uris.size() == 1 && UriHelper.hasMimeType(uris.get(0), context,
                 MimeType.APPLICATION_PDF.asString())) {
             try {
-                final Document document = createDocumentForImportedFile(intent,
+                final GiniCaptureDocument document = createDocumentForImportedFile(intent,
                         context);
-                callback.onSuccess(document);
+                document.loadData(context, new AsyncCallback<byte[], Exception>() {
+                    @Override
+                    public void onSuccess(byte[] result) {
+                        callback.onSuccess(document);
+                    }
+
+                    @Override
+                    public void onError(Exception exception) {
+                        callback.onError(new ImportedFileValidationException("Could not load data from Uri:" + exception.getMessage()));
+                    }
+
+                    @Override
+                    public void onCancelled() {
+                        callback.onCancelled();
+                    }
+                });
+
             } catch (final ImportedFileValidationException e) {
                 callback.onError(e);
             }

@@ -36,23 +36,6 @@ jobs:
           ruby-version: '3.2.0'
           bundler-cache: true
 
-      - name: "publish to gini's maven repo at https://repo.gini.net/nexus/content/repositories/open"
-        uses: maierj/fastlane-action@v3.0.0
-        with:
-          lane: 'publish_to_maven_repo'
-          options: >
-            { 
-              "repo_url": "https://repo.gini.net/nexus/content/repositories/open",
-              "repo_user": "jenkins",
-              "repo_password": "${{ secrets.GINI_EXTERNAL_NEXUS_PASSWORD }}",
-              "project_id": "capture-sdk",
-              "module_id": "${{ matrix.module-id }}",
-              "build_number": "${{ github.run_number }}",
-              "git_tag": "${{ github.ref }}",
-              "signing_key_base64": "${{ secrets.MAVEN_CENTRAL_SIGNING_KEY_BASE64 }}",
-              "signing_password": "${{ secrets.MAVEN_CENTRAL_SIGNING_PASSWORD }}"
-            }
-
       - name: "publish to Maven Central staging repo at https://oss.sonatype.org/service/local/staging/deploy/maven2/"
         uses: maierj/fastlane-action@v3.0.0
         with:

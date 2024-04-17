@@ -32,6 +32,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
+        android:contentDescription="@string/ghs_more_information_fragment_title"
         app:icon="@drawable/ghs_info_circle_icon"
         app:layout_constraintBottom_toBottomOf="@id/ghs_more_information_label"
         app:layout_constraintEnd_toEndOf="parent"

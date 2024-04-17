@@ -252,13 +252,7 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
     @Nullable
     @VisibleForTesting
     String getPdfFilename(final PdfDocument pdfDocument) {
-        final Uri uri = pdfDocument.getUri();
-        try {
-            return UriHelper.getFilenameFromUri(uri, getActivity());
-        } catch (final IllegalStateException e) {
-            ErrorLogger.log(new ErrorLog("Failed to get pdf filename", e));
-        }
-        return null;
+        return pdfDocument.getFilename();
     }
 
     @VisibleForTesting

@@ -126,6 +126,7 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
 
                     SelectedPaymentProviderAppState.NothingSelected -> {
                         LOG.debug("No payment provider app was selected")
+                        selectFirstInstalledPaymentProviderAppOrNothing(paymentProviderApps)
                     }
                 }
             }
@@ -215,6 +216,10 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
      * configuration.
      *
      * You should create and show the [ReviewFragment] in the [Listener.onPayInvoiceClicked] method.
+     *
+     * @param documentId The document id for which the extractions should be loaded
+     * @param configuration The configuration for the [ReviewFragment]
+     * @throws IllegalStateException If no payment provider app has been selected
      */
     suspend fun getPaymentReviewFragment(documentId: String, configuration: ReviewConfiguration): ReviewFragment {
         LOG.debug("Getting payment review fragment for id: {}", documentId)

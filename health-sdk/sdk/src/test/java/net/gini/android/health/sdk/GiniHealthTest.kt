@@ -1,6 +1,7 @@
 package net.gini.android.health.sdk
 
 import android.net.Uri
+import com.google.common.truth.Truth
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -160,5 +161,39 @@ class GiniHealthTest {
         coEvery { documentManager.getDocument(any<String>()) } returns Resource.Success(document)
 
         assertFalse(giniHealth.checkIfDocumentIsPayable(document.id))
+    }
+
+    @Test
+    fun `Document payable check throws an exception if get document API call fails`() = runTest {
+        coEvery { documentManager.getAllExtractionsWithPolling(any()) } returns Resource.Success(extractions)
+        coEvery { documentManager.getDocument(any<String>()) } returns Resource.Error(exception = Exception("Failed to get document"))
+
+        var exception: Exception? = null
+
+        try {
+            giniHealth.checkIfDocumentIsPayable(document.id)
+        } catch (e: Exception) {
+            exception = e
+        }
+
+        assertNotNull(exception)
+        Truth.assertThat(exception!!.message).contains("Failed to get document")
+    }
+
+    @Test
+    fun `Document payable check throws an exception if get extractions API call fails`() = runTest {
+        coEvery { documentManager.getAllExtractionsWithPolling(any()) } returns Resource.Error(exception = Exception("Failed to get extractions"))
+        coEvery { documentManager.getDocument(any<String>()) } returns Resource.Success(document)
+
+        var exception: Exception? = null
+
+        try {
+            giniHealth.checkIfDocumentIsPayable(document.id)
+        } catch (e: Exception) {
+            exception = e
+        }
+
+        assertNotNull(exception)
+        Truth.assertThat(exception!!.message).contains("Failed to get extractions")
     }
 }
