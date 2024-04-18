@@ -52,4 +52,8 @@
     <string name="ghs_more_information_fragment_title">Mehr Informationen</string>
     <string name="ghs_privacy_policy">Datenschutzerklärung</string>
     <string name="ghs_privacy_policy_link_url"/>
+
+    <!--  Install App  -->
+    <string name="ghs_install_app_detail">Hinweise: Bitte aktualisieren oder installieren Sie zunächst die %s-App aus dem Google Play Store.</string>
+    <string name="ghs_install_app_title">Rechnungsdaten bereit zum Teilen mit der %s</string>
 </resources>
