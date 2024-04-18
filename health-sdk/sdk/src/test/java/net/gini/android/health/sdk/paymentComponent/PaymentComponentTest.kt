@@ -26,6 +26,7 @@ import net.gini.android.health.sdk.paymentcomponent.PaymentProviderAppsState
 import net.gini.android.health.sdk.paymentcomponent.SelectedPaymentProviderAppState
 import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.health.sdk.paymentprovider.PaymentProviderAppColors
+import net.gini.android.health.sdk.paymentprovider.getInstalledPaymentProviderApps
 import net.gini.android.health.sdk.paymentprovider.getPaymentProviderApps
 import net.gini.android.health.sdk.review.ReviewConfiguration
 import net.gini.android.health.sdk.review.ReviewFragment
@@ -197,24 +198,24 @@ class PaymentComponentTest {
     }
 
     @Test
-    fun `doesn't emit payment providers which are not installed and which don't have a Play Store url`() = runTest {
+    fun `installed payment providers are prioritized to top of list`() = runTest {
         // Given
         val paymentProviderList = listOf(
             paymentProvider,
             paymentProvider1,
-            paymentProvider2,
-            noPlayStoreUrlPaymentProvider
+            paymentProvider2
         )
 
         coEvery { documentManager.getPaymentProviders() } returns Resource.Success(paymentProviderList)
 
         val paymentProviderAppList = listOf<PaymentProviderApp>(
-            buildPaymentProviderApp(paymentProvider, true),
-            buildPaymentProviderApp(paymentProvider1, true),
-            buildPaymentProviderApp(paymentProvider2, true),
-            buildPaymentProviderApp(noPlayStoreUrlPaymentProvider, false)
+            buildPaymentProviderApp(paymentProvider, false),
+            buildPaymentProviderApp(paymentProvider1, false),
+            buildPaymentProviderApp(paymentProvider2, false),
         )
         val mockedContext = createMockedContextAndSetDependencies(paymentProviderList, paymentProviderAppList)
+        mockkStatic(PackageManager::getInstalledPaymentProviderApps)
+        every { mockedContext.packageManager.getInstalledPaymentProviderApps() } returns emptyList()
 
         //When
         val paymentComponent = PaymentComponent(mockedContext, giniHealth!!)
@@ -225,56 +226,44 @@ class PaymentComponentTest {
             val validation = awaitItem()
             assertThat(validation).isInstanceOf(PaymentProviderAppsState.Success::class.java)
             assertThat((validation as PaymentProviderAppsState.Success).paymentProviderApps.size).isEqualTo(3)
+            assertThat(validation.paymentProviderApps.indexOfFirst { it.paymentProvider.id == paymentProvider2.id }).isEqualTo(2)
+            assertThat(validation.paymentProviderApps.filter { it.isInstalled() }).isEmpty()
+
+            val paymentProviderAppListWithInstalled = listOf<PaymentProviderApp>(
+                buildPaymentProviderApp(paymentProvider, false),
+                buildPaymentProviderApp(paymentProvider1, false),
+                buildPaymentProviderApp(paymentProvider2, true),
+            )
+            every { mockedContext.packageManager.getPaymentProviderApps(paymentProviderList, mockedContext) } returns paymentProviderAppListWithInstalled
+
+            paymentComponent.recheckWhichPaymentProviderAppsAreInstalled()
+            val installedIsFirstItemValidation = awaitItem()
+
+            assertThat(installedIsFirstItemValidation).isInstanceOf(PaymentProviderAppsState.Success::class.java)
+            assertThat((installedIsFirstItemValidation as PaymentProviderAppsState.Success).paymentProviderApps.size).isEqualTo(3)
+            assertThat(installedIsFirstItemValidation.paymentProviderApps.indexOfFirst { it.paymentProvider.id == paymentProvider2.id }).isEqualTo(0)
 
             cancelAndConsumeRemainingEvents()
         }
     }
 
     @Test
-    fun `emits payment provider if it's not installed but has Play Store url`() = runTest {
-        // Given
-        val paymentProviderList = listOf(
-            paymentProvider
-        )
-
-        coEvery { documentManager.getPaymentProviders() } returns Resource.Success(paymentProviderList)
-
-        val paymentProviderAppList = listOf(buildPaymentProviderApp(paymentProvider, false))
-        val mockedContext = createMockedContextAndSetDependencies(paymentProviderList, paymentProviderAppList)
-
-        //When
-        val paymentComponent = PaymentComponent(mockedContext, giniHealth!!)
-        paymentComponent.loadPaymentProviderApps()
-
-        // Then
-        paymentComponent.paymentProviderAppsFlow.test {
-            val validation = awaitItem()
-            assertThat(validation).isInstanceOf(PaymentProviderAppsState.Success::class.java)
-            assertThat((validation as PaymentProviderAppsState.Success).paymentProviderApps.size).isEqualTo(1)
-
-            cancelAndConsumeRemainingEvents()
-        }
-    }
-
-    @Test
-    fun `emits payment provider if it has Play Store URL and is installed`() = runTest {
+    fun `sorting of installed GPC apps is stable`() = runTest {
         // Given
         val paymentProviderList = listOf(
             paymentProvider,
             paymentProvider1,
-            paymentProvider2,
-            noPlayStoreUrlPaymentProvider
+            paymentProvider2
         )
 
         coEvery { documentManager.getPaymentProviders() } returns Resource.Success(paymentProviderList)
 
-        val paymentProviderAppsList = listOf(
-            buildPaymentProviderApp(paymentProvider, true),
-            buildPaymentProviderApp(paymentProvider1, true),
-            buildPaymentProviderApp(paymentProvider2, true),
-            buildPaymentProviderApp(noPlayStoreUrlPaymentProvider, false)
+        val paymentProviderAppList = listOf<PaymentProviderApp>(
+            buildPaymentProviderApp(paymentProvider, false),
+            buildPaymentProviderApp(paymentProvider1, false),
+            buildPaymentProviderApp(paymentProvider2, false),
         )
-        val mockedContext = createMockedContextAndSetDependencies(paymentProviderList, paymentProviderAppsList)
+        val mockedContext = createMockedContextAndSetDependencies(paymentProviderList, paymentProviderAppList)
 
         //When
         val paymentComponent = PaymentComponent(mockedContext, giniHealth!!)
@@ -285,29 +274,24 @@ class PaymentComponentTest {
             val validation = awaitItem()
             assertThat(validation).isInstanceOf(PaymentProviderAppsState.Success::class.java)
             assertThat((validation as PaymentProviderAppsState.Success).paymentProviderApps.size).isEqualTo(3)
+            assertThat(validation.paymentProviderApps.indexOfFirst { it.paymentProvider.id == paymentProvider1.id }).isEqualTo(1)
+            assertThat(validation.paymentProviderApps.indexOfFirst { it.paymentProvider.id == paymentProvider2.id }).isEqualTo(2)
+            assertThat(validation.paymentProviderApps.filter { it.isInstalled() }).isEmpty()
 
-            cancelAndConsumeRemainingEvents()
-        }
-    }
+            val paymentProviderAppListWithInstalled = listOf<PaymentProviderApp>(
+                buildPaymentProviderApp(paymentProvider, false),
+                buildPaymentProviderApp(paymentProvider1, true),
+                buildPaymentProviderApp(paymentProvider2, true),
+            )
+            every { mockedContext.packageManager.getPaymentProviderApps(paymentProviderList, mockedContext) } returns paymentProviderAppListWithInstalled
 
-    @Test
-    fun `returns empty list when no payment providers installed`() = runTest {
-        // Given
-        val paymentProviderList = listOf(
-            noPlayStoreUrlPaymentProvider
-        )
+            paymentComponent.recheckWhichPaymentProviderAppsAreInstalled()
+            val installedIsFirstItemValidation = awaitItem()
 
-        coEvery { documentManager.getPaymentProviders() } returns Resource.Success(paymentProviderList)
-
-        //When
-        val paymentComponent = PaymentComponent(context!!, giniHealth!!)
-        paymentComponent.loadPaymentProviderApps()
-
-        // Then
-        paymentComponent.paymentProviderAppsFlow.test {
-            val validation = awaitItem()
-            assertThat(validation).isInstanceOf(PaymentProviderAppsState.Success::class.java)
-            assertThat((validation as PaymentProviderAppsState.Success).paymentProviderApps).isEmpty()
+            assertThat(installedIsFirstItemValidation).isInstanceOf(PaymentProviderAppsState.Success::class.java)
+            assertThat((installedIsFirstItemValidation as PaymentProviderAppsState.Success).paymentProviderApps.size).isEqualTo(3)
+            assertThat(installedIsFirstItemValidation.paymentProviderApps.indexOfFirst { it.paymentProvider.id == paymentProvider1.id }).isEqualTo(0)
+            assertThat(installedIsFirstItemValidation.paymentProviderApps.indexOfFirst { it.paymentProvider.id == paymentProvider2.id }).isEqualTo(1)
 
             cancelAndConsumeRemainingEvents()
         }
@@ -396,4 +380,22 @@ class PaymentComponentTest {
         assertThat(paymentComponent.getPaymentReviewFragment("", reviewConfiguration)).isInstanceOf(ReviewFragment::class.java)
     }
 
+    @Test
+    fun `sort function brings installed GCP apps to the front of the line`() = runTest {
+        // Given
+        val paymentComponent = PaymentComponent(context!!, giniHealth!!)
+        val paymentProviderAppList = listOf<PaymentProviderApp>(
+            buildPaymentProviderApp(paymentProvider, false),
+            buildPaymentProviderApp(paymentProvider1, false),
+            buildPaymentProviderApp(paymentProvider2, true),
+        )
+
+        assertThat(paymentProviderAppList.indexOfFirst { it.isInstalled()}).isEqualTo(2)
+
+        // When
+        val sortedPaymentProviderAppList = paymentComponent.sortPaymentProviderApps(paymentProviderAppList)
+
+        // Then
+        assertThat(sortedPaymentProviderAppList.indexOfFirst { it.isInstalled() }).isEqualTo(0)
+    }
 }
