@@ -398,4 +398,38 @@ class PaymentComponentTest {
         // Then
         assertThat(sortedPaymentProviderAppList.indexOfFirst { it.isInstalled() }).isEqualTo(0)
     }
+
+    @Test
+    fun `check payment provider app is installed`() = runTest {
+        // Given
+        val paymentProviderList = listOf(
+            paymentProvider,
+            paymentProvider1,
+            paymentProvider2
+        )
+
+        coEvery { documentManager.getPaymentProviders() } returns Resource.Success(paymentProviderList)
+
+        val paymentProviderAppList = listOf<PaymentProviderApp>(
+            buildPaymentProviderApp(paymentProvider, false),
+            buildPaymentProviderApp(paymentProvider1, false),
+            buildPaymentProviderApp(paymentProvider2, true),
+        )
+        val mockedContext = createMockedContextAndSetDependencies(paymentProviderList, paymentProviderAppList)
+
+        //When
+        val paymentComponent = PaymentComponent(mockedContext, giniHealth!!)
+        paymentComponent.loadPaymentProviderApps()
+
+        paymentComponent.paymentProviderAppsFlow.test {
+            val paymentProviderApps = awaitItem()
+
+            assertThat(paymentProviderApps).isInstanceOf(PaymentProviderAppsState.Success::class.java)
+            assertThat((paymentProviderApps as PaymentProviderAppsState.Success).paymentProviderApps).isNotEmpty()
+
+            // Then
+            assertThat(paymentComponent.isPaymentProviderAppInstalled(paymentProvider.id)).isEqualTo(false)
+            assertThat(paymentComponent.isPaymentProviderAppInstalled(paymentProvider2.id)).isEqualTo(true)
+        }
+    }
 }
