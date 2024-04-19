@@ -28,3 +28,5 @@ internal fun Context.generateBitmapDrawableIcon(icon: ByteArray, iconSize: Int):
             BitmapDrawable(this.resources, scaledBitmap)
         }
 }
+
+internal fun Context.getFontScale() = resources.configuration.fontScale

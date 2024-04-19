@@ -277,7 +277,7 @@ object GiniBank {
                 override fun onSuccess(document: Document) {
                     callback(
                         CreateCaptureFlowFragmentForIntentResult.Success(
-                            Internal.createCaptureFlowFragmentForOpenWithDocument(document)
+                            createCaptureFlowFragmentForDocument(document)
                         )
                     )
                 }
@@ -406,13 +406,77 @@ object GiniBank {
         context.startActivity(resolvedPayment.getBusinessIntent())
     }
 
-    class Internal {
+    /**
+     * Results of document creation from an imported pdf or image(s).
+     */
+    sealed class CreateDocumentFromImportedFileResult {
+        /**
+         * The document was processed successfully.
+         */
+        data class Success(val document: Document?): CreateDocumentFromImportedFileResult()
 
-        companion object {
-            fun createCaptureFlowFragmentForOpenWithDocument(openWithDocument: Document): CaptureFlowFragment {
-                check(giniCapture != null) { "Capture feature is not configured. Call setCaptureConfiguration before starting the flow." }
-                return CaptureFlowFragment.createInstance(openWithDocument)
+        /**
+         * Document processing returned an error.
+         */
+        data class Error(val error: ImportedFileValidationException?): CreateDocumentFromImportedFileResult()
+
+        /**
+         * Document processing was cancelled.
+         */
+        object Cancelled: CreateDocumentFromImportedFileResult()
+    }
+
+    /**
+     *
+     *  Create a document based on a pdf or image(s) imported from another app.
+     *
+     *  @param intent - intent from which to get files
+     *  @param context - Android context
+     *  @param callback - returns the wrapped result of the file processing in the form of [CreateDocumentFromImportedFileResult]
+     */
+    fun createDocumentForImportedFiles(
+        intent: Intent,
+        context: Context,
+        callback: (CreateDocumentFromImportedFileResult) -> Unit
+    ): CancellationToken? {
+        return giniCapture?.createDocumentForImportedFiles(
+            intent,
+            context,
+            object: AsyncCallback<Document, ImportedFileValidationException> {
+                override fun onSuccess(result: Document?) {
+                    callback(CreateDocumentFromImportedFileResult.Success(result))
+                }
+
+                override fun onError(exception: ImportedFileValidationException?) {
+                    callback(CreateDocumentFromImportedFileResult.Error(exception))
+                }
+
+                override fun onCancelled() {
+                    callback(CreateDocumentFromImportedFileResult.Cancelled)
+                }
             }
-        }
+        )
+    }
+
+    /**
+     * Starts capture flow for a document. This method should be used with documents created by [GiniBank.createDocumentForImportedFiles] when a pdf or image was shared from another app.
+     *
+     * @param resultLauncher
+     * @param document The document to be forwarded by the result launcher.
+     */
+    fun startCaptureFlowForDocument(
+        resultLauncher: ActivityResultLauncher<CaptureImportInput>, document: Document
+    ) {
+        resultLauncher.launch(CaptureImportInput.Forward(document))
+    }
+
+    /**
+     *  Creates a [CaptureFlowFragment] with a document. This method should be used with documents created by [GiniBank.createDocumentForImportedFiles] when a pdf or image was shared from another app.
+     *
+     *  @param document The document with which the fragment will be created.
+     */
+    fun createCaptureFlowFragmentForDocument(document: Document): CaptureFlowFragment {
+        check(giniCapture != null) { "Capture feature is not configured. Call setCaptureConfiguration before starting the flow." }
+        return CaptureFlowFragment.createInstance(document)
     }
 }

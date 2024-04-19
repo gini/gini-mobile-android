@@ -83,8 +83,8 @@ public final class UriHelper {
      * @param uri     a {@link Uri} pointing to a file
      * @param context Android context
      * @return the filename
-     * @throws IllegalStateException if the Uri is not pointing to a file or the filename was not
-     *                               available
+     * @throws IllegalStateException if the Uri is not pointing to a file or the filename was not available
+     * @throws SecurityException if it is not permitted to read the Uri
      */
     @NonNull
     public static String getFilenameFromUri(@NonNull final Uri uri,

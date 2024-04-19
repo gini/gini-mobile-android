@@ -1,14 +1,19 @@
 package net.gini.android.capture.document;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Parcel;
 
 import net.gini.android.capture.internal.util.MimeType;
+import net.gini.android.capture.logging.ErrorLog;
+import net.gini.android.capture.logging.ErrorLogger;
 import net.gini.android.capture.util.IntentHelper;
+import net.gini.android.capture.util.UriHelper;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
 /**
@@ -18,6 +23,9 @@ import androidx.annotation.VisibleForTesting;
  *
  */
 public class PdfDocument extends GiniCaptureDocument {
+
+    @Nullable
+    private String filename = null;
 
     /**
      * Creates an instance using the resource pointed to by the Intent's Uri.
@@ -49,6 +57,35 @@ public class PdfDocument extends GiniCaptureDocument {
     }
 
     /**
+     * Get the filename of the PDF.
+     *
+     * @return the filename or null if it couldn't be determined
+     */
+    @Nullable
+    public String getFilename() {
+        return filename;
+    }
+
+    /**
+     * Loads the filename of the PDF from the Uri. If the filename can't be determined it will be null.
+     *
+     * @param context Android context
+     */
+    public void loadFilename(@NonNull final Context context) {
+        final Uri uri = getUri();
+        if (uri == null) {
+            filename = null;
+            return;
+        }
+        try {
+            filename = UriHelper.getFilenameFromUri(uri, context);
+        } catch (final IllegalStateException | SecurityException e) {
+            ErrorLogger.log(new ErrorLog("Failed to get pdf filename", e));
+            filename = null;
+        }
+    }
+
+    /**
      * Internal use only.
      *
      * @suppress
@@ -66,6 +103,7 @@ public class PdfDocument extends GiniCaptureDocument {
     @Override
     public void writeToParcel(final Parcel dest, final int flags) {
         super.writeToParcel(dest, flags);
+        dest.writeString(filename);
     }
 
     /**
@@ -92,5 +130,6 @@ public class PdfDocument extends GiniCaptureDocument {
      */
     private PdfDocument(final Parcel in) {
         super(in);
+        filename = in.readString();
     }
 }

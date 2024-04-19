@@ -32,9 +32,7 @@ class ClientBankSDKFragment :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (savedInstanceState == null) {
-            checkCameraPermission()
-        } else {
+        if (savedInstanceState != null) {
             val captureFlowFragment =
                 requireActivity().supportFragmentManager.findFragmentByTag("fragment_host") as? CaptureFlowFragment
             captureFlowFragment?.setListener(this)
@@ -42,7 +40,7 @@ class ClientBankSDKFragment :
         (requireActivity() as AppCompatActivity).supportActionBar?.hide()
     }
 
-    private fun checkCameraPermission() {
+    fun checkCameraPermissionAndStartBankSdk() {
         permissionHandler = PermissionHandler(requireActivity())
         lifecycleScope.launch {
             if (permissionHandler.grantPermission(Manifest.permission.CAMERA)) {
@@ -114,7 +112,7 @@ class ClientBankSDKFragment :
             .commit()
     }
 
-    fun startBankSDKForIntent(openWithIntent: Intent) {
+    fun startBankSdkForIntent(openWithIntent: Intent) {
         // Bank SDK is configured in the MainActivity, but you can
         // call [overrideBankSDKConfiguration] here if you want to override the configuration
         GiniBank.createCaptureFlowFragmentForIntent(requireContext(), openWithIntent) { result ->
@@ -139,7 +137,6 @@ class ClientBankSDKFragment :
 
     }
 
-
     override fun onFinishedWithResult(result: CaptureResult) {
         when (result) {
             is CaptureResult.Success -> {
@@ -149,7 +146,7 @@ class ClientBankSDKFragment :
                         result.specificExtractions
                     )
                 )
-                requireActivity().finish()
+                activity?.finish()
             }
 
             is CaptureResult.Error -> {
@@ -170,15 +167,15 @@ class ClientBankSDKFragment :
 
                     else -> {}
                 }
-                requireActivity().finish()
+                activity?.finish()
             }
 
             CaptureResult.Empty -> {
-                requireActivity().finish()
+                activity?.finish()
             }
 
             CaptureResult.Cancel -> {
-                requireActivity().finish()
+                activity?.finish()
             }
 
             CaptureResult.EnterManually -> {
@@ -187,7 +184,7 @@ class ClientBankSDKFragment :
                     "Scan exited for manual enter mode",
                     Toast.LENGTH_SHORT
                 ).show()
-                requireActivity().finish()
+                activity?.finish()
             }
         }
     }
