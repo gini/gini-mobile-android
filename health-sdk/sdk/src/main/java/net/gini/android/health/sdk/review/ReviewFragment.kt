@@ -1,11 +1,14 @@
 package net.gini.android.health.sdk.review
 
 import android.content.ActivityNotFoundException
+import android.content.Context.ACCESSIBILITY_SERVICE
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.accessibility.AccessibilityManager
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
@@ -58,6 +61,7 @@ import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.health.sdk.bankselection.BankSelectionBottomSheet
 import net.gini.android.health.sdk.review.installApp.InstallAppBottomSheet
 import net.gini.android.health.sdk.review.installApp.InstallAppForwardListener
+import net.gini.android.health.sdk.util.extensions.getFontScale
 import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthTheme
 
 /**
@@ -353,10 +357,12 @@ class ReviewFragment private constructor(
     }
 
     private fun GhsFragmentReviewBinding.showSnackbar(text: String, onRetry: () -> Unit) {
-        Snackbar.make(root, text, Snackbar.LENGTH_INDEFINITE)
-            .setAnchorView(paymentDetails)
-            .setAction(getString(R.string.ghs_snackbar_retry)) { onRetry() }
-            .show()
+        Snackbar.make(root, text, Snackbar.LENGTH_INDEFINITE).apply {
+            if (requireContext().getFontScale() < 1.5) anchorView = paymentDetailsScrollview
+            setTextMaxLines(2)
+            setAction(getString(R.string.ghs_snackbar_retry)) { onRetry() }
+            show()
+        }
     }
 
     private fun GhsFragmentReviewBinding.setActionListeners() {
@@ -489,7 +495,7 @@ class ReviewFragment private constructor(
                     })
                 })
                 paymentDetailsInfoBar.updateLayoutParams<ConstraintLayout.LayoutParams> {
-                    bottomToTop = paymentDetails.id
+                    bottomToTop = paymentDetailsScrollview.id
                     topToTop = ConstraintLayout.LayoutParams.UNSET
                 }
             }
@@ -509,7 +515,7 @@ class ReviewFragment private constructor(
                     })
                 })
                 paymentDetailsInfoBar.updateLayoutParams<ConstraintLayout.LayoutParams> {
-                    topToTop = paymentDetails.id
+                    topToTop = paymentDetailsScrollview.id
                     bottomToTop = ConstraintLayout.LayoutParams.UNSET
                 }
             }
