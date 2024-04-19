@@ -82,7 +82,7 @@ internal class InstallAppBottomSheet private constructor(
             binding.ghsPaymentProviderIcon.ghsPaymentProviderIcon.setImageDrawable(
                 paymentProviderApp.icon
             )
-//            binding.ghsPaymentProviderIcon.ghsPaymentProviderIcon.contentDescription = "${paymentProviderApp.name} ${getString(R.string.logo)}"
+            binding.ghsPaymentProviderIcon.ghsPaymentProviderIcon.contentDescription = "${paymentProviderApp.name} ${getString(R.string.ghs_payment_provider_logo_content_description)}"
             binding.ghsInstallAppTitle.text = String.format(
                 getString(net.gini.android.health.sdk.R.string.ghs_install_app_title),
                 paymentProviderApp.paymentProvider.name
