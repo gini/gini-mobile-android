@@ -94,7 +94,8 @@
 <li class="toctree-l1"><a class="reference internal" href="authentication.html">Authentication</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Flow</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#create-the-ginihealth-instance">Create the GiniHealth instance</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#check-which-invoices-are-payable">Check which invoices are payable</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#upload-documents">Upload documents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#check-which-documents-invoices-are-payable">Check which documents/invoices are payable</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#create-the-paymentcomponent-instance">Create the PaymentComponent instance</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#add-a-listener-to-the-paymentcomponent">Add a listener to the PaymentComponent</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#load-payment-providers">Load payment providers</a></li>
@@ -198,14 +199,15 @@ manages interaction with the Gini Health API and <code class="docutils literal n
 <p class="topic-title">The recommended flow is:</p>
 <ul class="simple">
 <li><a class="reference internal" href="#create-the-ginihealth-instance" id="id1">Create the GiniHealth instance</a></li>
-<li><a class="reference internal" href="#check-which-invoices-are-payable" id="id2">Check which invoices are payable</a></li>
-<li><a class="reference internal" href="#create-the-paymentcomponent-instance" id="id3">Create the PaymentComponent instance</a></li>
-<li><a class="reference internal" href="#add-a-listener-to-the-paymentcomponent" id="id4">Add a listener to the PaymentComponent</a></li>
-<li><a class="reference internal" href="#load-payment-providers" id="id5">Load payment providers</a></li>
-<li><a class="reference internal" href="#show-the-paymentcomponentviews" id="id6">Show the PaymentComponentViews</a></li>
-<li><a class="reference internal" href="#show-the-moreinformationfragment" id="id7">Show the MoreInformationFragment</a></li>
-<li><a class="reference internal" href="#show-the-bankselectionbottomsheet" id="id8">Show the BankSelectionBottomSheet</a></li>
-<li><a class="reference internal" href="#show-the-reviewfragment" id="id9">Show the ReviewFragment</a></li>
+<li><a class="reference internal" href="#upload-documents" id="id2">Upload documents</a></li>
+<li><a class="reference internal" href="#check-which-documents-invoices-are-payable" id="id3">Check which documents/invoices are payable</a></li>
+<li><a class="reference internal" href="#create-the-paymentcomponent-instance" id="id4">Create the PaymentComponent instance</a></li>
+<li><a class="reference internal" href="#add-a-listener-to-the-paymentcomponent" id="id5">Add a listener to the PaymentComponent</a></li>
+<li><a class="reference internal" href="#load-payment-providers" id="id6">Load payment providers</a></li>
+<li><a class="reference internal" href="#show-the-paymentcomponentviews" id="id7">Show the PaymentComponentViews</a></li>
+<li><a class="reference internal" href="#show-the-moreinformationfragment" id="id8">Show the MoreInformationFragment</a></li>
+<li><a class="reference internal" href="#show-the-bankselectionbottomsheet" id="id9">Show the BankSelectionBottomSheet</a></li>
+<li><a class="reference internal" href="#show-the-reviewfragment" id="id10">Show the ReviewFragment</a></li>
 </ul>
 </div>
 <div class="section" id="create-the-ginihealth-instance">
@@ -221,14 +223,73 @@ SDK provides the following two helper methods for creating the  <code class="doc
 </pre></div>
 </div>
 </div>
-<div class="section" id="check-which-invoices-are-payable">
-<h2><a class="toc-backref" href="#id2">Check which invoices are payable</a><a class="headerlink" href="#check-which-invoices-are-payable" title="Permalink to this headline">¶</a></h2>
-<p>Call <code class="docutils literal notranslate"><span class="pre">giniHealth.checkIfDocumentIsPayable()</span></code> for each invoice to check whether it is payable. We recommend performing
-this check only once right after the invoice has been uploaded and processed by Gini’s Health API. You can then store
-the <code class="docutils literal notranslate"><span class="pre">isPayable</span></code> state in your own data model.</p>
+<div class="section" id="upload-documents">
+<h2><a class="toc-backref" href="#id2">Upload documents</a><a class="headerlink" href="#upload-documents" title="Permalink to this headline">¶</a></h2>
+<p>Uploading documents is achieved via the <code class="docutils literal notranslate"><span class="pre">GiniHealthAPI</span></code> instance’s <code class="docutils literal notranslate"><span class="pre">documentManager</span></code>. You can access it by using the
+<code class="docutils literal notranslate"><span class="pre">giniHealth.giniHealthAPI.documentManager</span></code> property.</p>
+<p>For each document page a <em>partial document</em> needs to be created. The following example shows how to create a new partial
+document from a byte array containing a JPEG image:</p>
+<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="c1">// Assuming `imageBytes` is an instance of a byte array containing a JPEG image,</span>
+<span class="c1">// e.g. from a picture taken by the camera</span>
+
+<span class="n">coroutineScope</span><span class="p">.</span><span class="n">launch</span> <span class="p">{</span>
+    <span class="c1">// Create a partial document by uploading the document data</span>
+    <span class="k">val</span> <span class="py">partialDocumentResource</span> <span class="p">=</span>
+        <span class="n">giniHealth</span><span class="p">.</span><span class="n">giniHealthApi</span><span class="p">.</span><span class="n">documentManager</span><span class="p">.</span><span class="n">createPartialDocument</span><span class="p">(</span><span class="n">imageBytes</span><span class="p">,</span> <span class="s">&quot;image/jpeg&quot;</span><span class="p">,</span> <span class="s">&quot;document_page_1.jpg&quot;</span><span class="p">)</span>
+
+    <span class="k">when</span> <span class="p">(</span><span class="n">partialDocumentResource</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">is</span> <span class="n">Resource</span><span class="p">.</span><span class="n">Success</span> <span class="p">-&gt;</span> <span class="p">{</span>
+            <span class="c1">// Use the partial document</span>
+            <span class="k">val</span> <span class="py">partialDocument</span> <span class="p">=</span> <span class="n">partialDocumentResource</span><span class="p">.</span><span class="k">data</span>
+        <span class="p">}</span>
+        <span class="k">is</span> <span class="n">Resource</span><span class="p">.</span><span class="n">Error</span> <span class="p">-&gt;</span> <span class="c1">// Handle error</span>
+        <span class="k">is</span> <span class="n">Resource</span><span class="p">.</span><span class="n">Cancelled</span> <span class="p">-&gt;</span> <span class="c1">// Handle cancellation</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>After all partial documents have been created you can create a <em>composite document</em> from the partials to bundle them
+into one final document:</p>
+<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="c1">// Assuming `partialDocuments` is a list of `Documents` which were</span>
+<span class="c1">// returned by `createPartialDocument(...)` calls</span>
+
+<span class="n">coroutineScope</span><span class="p">.</span><span class="n">launch</span> <span class="p">{</span>
+    <span class="c1">// Create a composite document by uploading the document data</span>
+    <span class="k">val</span> <span class="py">compositeDocumentResource</span> <span class="p">=</span>
+        <span class="n">giniHealth</span><span class="p">.</span><span class="n">giniHealthApi</span><span class="p">.</span><span class="n">documentManager</span><span class="p">.</span><span class="n">createCompositeDocument</span><span class="p">(</span><span class="n">partialDocuments</span><span class="p">)</span>
+
+    <span class="k">when</span> <span class="p">(</span><span class="n">compositeDocumentResource</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">is</span> <span class="n">Resource</span><span class="p">.</span><span class="n">Success</span> <span class="p">-&gt;</span> <span class="p">{</span>
+            <span class="c1">// Use the composite document</span>
+            <span class="k">val</span> <span class="py">compositeDocument</span> <span class="p">=</span> <span class="n">compositeDocumentResource</span><span class="p">.</span><span class="k">data</span>
+        <span class="p">}</span>
+        <span class="k">is</span> <span class="n">Resource</span><span class="p">.</span><span class="n">Error</span> <span class="p">-&gt;</span> <span class="c1">// Handle error</span>
+        <span class="k">is</span> <span class="n">Resource</span><span class="p">.</span><span class="n">Cancelled</span> <span class="p">-&gt;</span> <span class="c1">// Handle cancellation</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="check-which-documents-invoices-are-payable">
+<h2><a class="toc-backref" href="#id3">Check which documents/invoices are payable</a><a class="headerlink" href="#check-which-documents-invoices-are-payable" title="Permalink to this headline">¶</a></h2>
+<p>Call <code class="docutils literal notranslate"><span class="pre">giniHealth.checkIfDocumentIsPayable()</span></code> with the composite document id for each invoice to check whether it is
+payable. We recommend performing this check only once right after the invoice has been uploaded and processed by Gini’s
+Health API. You can then store the <code class="docutils literal notranslate"><span class="pre">isPayable</span></code> state in your own data model.</p>
+<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="c1">// Assuming `compositeDocument` is `Document` returned by `createCompositeDocument(...)`</span>
+
+<span class="n">coroutineScope</span><span class="p">.</span><span class="n">launch</span> <span class="p">{</span>
+    <span class="k">try</span> <span class="p">{</span>
+        <span class="c1">// Check whether the composite document is payable</span>
+        <span class="k">val</span> <span class="py">isPayable</span> <span class="p">=</span> <span class="n">giniHealth</span><span class="p">.</span><span class="n">checkIfDocumentIsPayable</span><span class="p">(</span><span class="n">compositeDocument</span><span class="p">.</span><span class="n">id</span><span class="p">)</span>
+    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="n">Exception</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// Handle error</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="create-the-paymentcomponent-instance">
-<h2><a class="toc-backref" href="#id3">Create the PaymentComponent instance</a><a class="headerlink" href="#create-the-paymentcomponent-instance" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id4">Create the PaymentComponent instance</a><a class="headerlink" href="#create-the-paymentcomponent-instance" title="Permalink to this headline">¶</a></h2>
 <p>For creating an instance of the <code class="docutils literal notranslate"><span class="pre">PaymentComponent</span></code> you need to pass in the Android context (either the application or
 an activity context) and the <code class="docutils literal notranslate"><span class="pre">GiniHealth</span></code> instance:</p>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="k">val</span> <span class="py">paymentComponent</span> <span class="p">=</span> <span class="n">PaymentComponent</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">giniHealth</span><span class="p">)</span>
@@ -236,7 +297,7 @@ an activity context) and the <code class="docutils literal notranslate"><span cl
 </div>
 </div>
 <div class="section" id="add-a-listener-to-the-paymentcomponent">
-<h2><a class="toc-backref" href="#id4">Add a listener to the PaymentComponent</a><a class="headerlink" href="#add-a-listener-to-the-paymentcomponent" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id5">Add a listener to the PaymentComponent</a><a class="headerlink" href="#add-a-listener-to-the-paymentcomponent" title="Permalink to this headline">¶</a></h2>
 <p>Set a listener on the <code class="docutils literal notranslate"><span class="pre">PaymentComponent</span></code> to get informed of events from every <code class="docutils literal notranslate"><span class="pre">PaymentComponentView</span></code>:</p>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">paymentComponent</span><span class="p">.</span><span class="n">listener</span> <span class="p">=</span> <span class="k">object</span><span class="p">:</span> <span class="n">PaymentComponent</span><span class="p">.</span><span class="n">Listener</span> <span class="p">{</span>
         <span class="k">override</span> <span class="k">fun</span> <span class="nf">onMoreInformationClicked</span><span class="p">()</span> <span class="p">{</span>
@@ -255,7 +316,7 @@ an activity context) and the <code class="docutils literal notranslate"><span cl
 </div>
 </div>
 <div class="section" id="load-payment-providers">
-<h2><a class="toc-backref" href="#id5">Load payment providers</a><a class="headerlink" href="#load-payment-providers" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id6">Load payment providers</a><a class="headerlink" href="#load-payment-providers" title="Permalink to this headline">¶</a></h2>
 <p>Call <code class="docutils literal notranslate"><span class="pre">paymentComponent.loadPaymentProviderApps()</span></code> to load the available payment providers from the Gini Health API and
 to check which ones are installed on the user’s device.</p>
 <div class="admonition note">
@@ -264,7 +325,7 @@ to check which ones are installed on the user’s device.</p>
 </div>
 </div>
 <div class="section" id="show-the-paymentcomponentviews">
-<h2><a class="toc-backref" href="#id6">Show the PaymentComponentViews</a><a class="headerlink" href="#show-the-paymentcomponentviews" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id7">Show the PaymentComponentViews</a><a class="headerlink" href="#show-the-paymentcomponentviews" title="Permalink to this headline">¶</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">PaymentComponentView</span></code> is a custom view widget and the main entry point for users. It allows them to pick a bank
 and initiate the payment process. In addition, it also allows users to view more information about the payment feature.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">PaymentComponentView</span></code> is hidden by default and should be added to the layout of each invoice item:</p>
@@ -292,7 +353,7 @@ and initiate the payment process. In addition, it also allows users to view more
 </div>
 </div>
 <div class="section" id="show-the-moreinformationfragment">
-<h2><a class="toc-backref" href="#id7">Show the MoreInformationFragment</a><a class="headerlink" href="#show-the-moreinformationfragment" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id8">Show the MoreInformationFragment</a><a class="headerlink" href="#show-the-moreinformationfragment" title="Permalink to this headline">¶</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">MoreInformationFragment</span></code> shows the Payment Feature Info Screen. It displays information and an FAQ section about the payment feature. It requires a
 <code class="docutils literal notranslate"><span class="pre">PaymentComponent</span></code> instance to show the icons of the available banks.</p>
 <p>To instantiate it use <code class="docutils literal notranslate"><span class="pre">MoreInformationFragment.newInstance()</span></code> and pass in your <code class="docutils literal notranslate"><span class="pre">PaymentComponent</span></code> instance:</p>
@@ -312,7 +373,7 @@ policy page. This link will be shown to users in the answer to the “Who or wha
 </div>
 </div>
 <div class="section" id="show-the-bankselectionbottomsheet">
-<h2><a class="toc-backref" href="#id8">Show the BankSelectionBottomSheet</a><a class="headerlink" href="#show-the-bankselectionbottomsheet" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id9">Show the BankSelectionBottomSheet</a><a class="headerlink" href="#show-the-bankselectionbottomsheet" title="Permalink to this headline">¶</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">BankSelectionBottomSheet</span></code> displays a list of available banks for the user to choose from. If a banking app is not
 installed it will also display its Play Store link.</p>
 <p>To instantiate it use <code class="docutils literal notranslate"><span class="pre">BankSelectionBottomSheet.newInstance()</span></code> and pass in your <code class="docutils literal notranslate"><span class="pre">PaymentComponent</span></code> instance:</p>
@@ -321,7 +382,7 @@ installed it will also display its Play Store link.</p>
 </div>
 </div>
 <div class="section" id="show-the-reviewfragment">
-<h2><a class="toc-backref" href="#id9">Show the ReviewFragment</a><a class="headerlink" href="#show-the-reviewfragment" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id10">Show the ReviewFragment</a><a class="headerlink" href="#show-the-reviewfragment" title="Permalink to this headline">¶</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">ReviewFragment</span></code> displays an invoice’s pages and extractions. It also lets users pay the invoice with the bank
 they selected in the <code class="docutils literal notranslate"><span class="pre">BankSelectionBottomSheet</span></code>.</p>
 <p>To instantiate it use <code class="docutils literal notranslate"><span class="pre">paymentComponent.getPaymentReviewFragment()</span></code> and pass in the Gini Health API’s document id of

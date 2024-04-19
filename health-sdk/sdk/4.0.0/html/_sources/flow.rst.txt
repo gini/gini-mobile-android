@@ -23,12 +23,77 @@ After that you can create an instance of ``GiniHealth``:
 
     val giniHealth = GiniHealth(giniHealthApi)
 
-Check which invoices are payable
---------------------------------
+Upload documents
+----------------
 
-Call ``giniHealth.checkIfDocumentIsPayable()`` for each invoice to check whether it is payable. We recommend performing
-this check only once right after the invoice has been uploaded and processed by Gini's Health API. You can then store
-the ``isPayable`` state in your own data model.
+Uploading documents is achieved via the ``GiniHealthAPI`` instance's ``documentManager``. You can access it by using the
+``giniHealth.giniHealthAPI.documentManager`` property. 
+
+For each document page a *partial document* needs to be created. The following example shows how to create a new partial
+document from a byte array containing a JPEG image:
+
+.. code-block:: kotlin
+
+    // Assuming `imageBytes` is an instance of a byte array containing a JPEG image,
+    // e.g. from a picture taken by the camera
+
+    coroutineScope.launch {
+        // Create a partial document by uploading the document data
+        val partialDocumentResource =
+            giniHealth.giniHealthApi.documentManager.createPartialDocument(imageBytes, "image/jpeg", "document_page_1.jpg")
+
+        when (partialDocumentResource) {
+            is Resource.Success -> {
+                // Use the partial document
+                val partialDocument = partialDocumentResource.data
+            }
+            is Resource.Error -> // Handle error
+            is Resource.Cancelled -> // Handle cancellation
+        }
+    }
+
+After all partial documents have been created you can create a *composite document* from the partials to bundle them
+into one final document:
+
+.. code-block:: kotlin
+    
+    // Assuming `partialDocuments` is a list of `Documents` which were 
+    // returned by `createPartialDocument(...)` calls
+
+    coroutineScope.launch {
+        // Create a composite document by uploading the document data
+        val compositeDocumentResource =
+            giniHealth.giniHealthApi.documentManager.createCompositeDocument(partialDocuments)
+
+        when (compositeDocumentResource) {
+            is Resource.Success -> {
+                // Use the composite document
+                val compositeDocument = compositeDocumentResource.data
+            }
+            is Resource.Error -> // Handle error
+            is Resource.Cancelled -> // Handle cancellation
+        }
+    }
+
+Check which documents/invoices are payable
+------------------------------------------
+
+Call ``giniHealth.checkIfDocumentIsPayable()`` with the composite document id for each invoice to check whether it is
+payable. We recommend performing this check only once right after the invoice has been uploaded and processed by Gini's
+Health API. You can then store the ``isPayable`` state in your own data model.
+
+.. code-block:: kotlin
+    
+    // Assuming `compositeDocument` is `Document` returned by `createCompositeDocument(...)`
+
+    coroutineScope.launch {
+        try {
+            // Check whether the composite document is payable
+            val isPayable = giniHealth.checkIfDocumentIsPayable(compositeDocument.id)
+        } catch (e: Exception) {
+            // Handle error
+        }
+    }
 
 Create the PaymentComponent instance
 ------------------------------------
