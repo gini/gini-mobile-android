@@ -14,5 +14,7 @@
     <color name="ghs_payment_input_background_color">@color/ghs_light_06</color>
     <color name="ghs_faq_divider">@color/ghs_light_05</color>
     <color name="ghs_bottom_sheet_scrim">#fff</color>
+    <color name="ghs_install_app_title_color">@color/ghs_light_02</color>
+    <color name="ghs_install_app_details_color">@color/ghs_light_03</color>
 
 </resources>

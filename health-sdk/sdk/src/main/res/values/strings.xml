@@ -56,4 +56,6 @@
     <!--  Install App  -->
     <string name="ghs_install_app_detail">Hinweise: Bitte aktualisieren oder installieren Sie zunächst die %s-App aus dem Google Play Store.</string>
     <string name="ghs_install_app_title">Rechnungsdaten bereit zum Teilen mit der %s</string>
+    <string name="ghs_install_app_tap_to_continue">Tipp: Tippen Sie auf \'Weiter\', um die Zahlung in der %s-App abzuschließen.</string>
+    <string name="ghs_forward">Weiter</string>
 </resources>

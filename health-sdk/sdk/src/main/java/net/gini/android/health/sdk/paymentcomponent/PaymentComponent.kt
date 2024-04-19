@@ -216,7 +216,8 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
                 return ReviewFragment.newInstance(
                     giniHealth,
                     configuration = configuration,
-                    paymentProviderApp = selectedPaymentProviderAppState.paymentProviderApp
+                    paymentProviderApp = selectedPaymentProviderAppState.paymentProviderApp,
+                    paymentComponent = this@PaymentComponent
                 )
             }
 
@@ -228,6 +229,11 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
                 throw exception
             }
         }
+    }
+
+    internal fun isPaymentProviderAppInstalled(paymentProviderAppId: String): Boolean {
+        if (_paymentProviderAppsFlow.value is PaymentProviderAppsState.Success) return (_paymentProviderAppsFlow.value as PaymentProviderAppsState.Success).paymentProviderApps.any { it.paymentProvider.id == paymentProviderAppId && it.installedPaymentProviderApp != null }
+        return false
     }
 
     private companion object {

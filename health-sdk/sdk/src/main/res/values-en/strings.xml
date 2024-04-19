@@ -55,4 +55,6 @@ Gini is ISO 27001 certified for maximum data security and operates its own serve
     <!--  Install App  -->
     <string name="ghs_install_app_detail">Notes: Please first update or install the %s app from the Google Play Store.</string>
     <string name="ghs_install_app_title">Invoice data ready to share with the %s bank</string>
+    <string name="ghs_install_app_tap_to_continue">Tip: Tap \'Forward\' to complete the payment in the %s app.</string>
+    <string name="ghs_forward">Forward</string>
 </resources>

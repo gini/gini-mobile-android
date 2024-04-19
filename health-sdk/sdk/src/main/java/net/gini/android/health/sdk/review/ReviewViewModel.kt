@@ -10,11 +10,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import net.gini.android.core.api.Resource
 import net.gini.android.core.api.models.Document
 import net.gini.android.health.api.models.PaymentRequestInput
 import net.gini.android.health.sdk.GiniHealth
+import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
+import net.gini.android.health.sdk.paymentcomponent.PaymentProviderAppsState
 import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.health.sdk.preferences.UserPreferences
 import net.gini.android.health.sdk.review.model.PaymentDetails
@@ -26,7 +29,7 @@ import net.gini.android.health.sdk.util.adjustToLocalDecimalSeparation
 import net.gini.android.health.sdk.util.toBackendFormat
 import net.gini.android.health.sdk.util.withPrev
 
-internal class ReviewViewModel(val giniHealth: GiniHealth, val paymentProviderApp: PaymentProviderApp, val configuration: ReviewConfiguration) : ViewModel() {
+internal class ReviewViewModel(val giniHealth: GiniHealth, private var paymentProviderApp: PaymentProviderApp, val configuration: ReviewConfiguration, val paymentComponent: PaymentComponent) : ViewModel() {
 
     internal var userPreferences: UserPreferences? = null
 
@@ -95,6 +98,19 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val paymentProviderAp
                     // Emit all new empty validation messages along with other existing validation messages
                     _paymentValidation.tryEmit(newEmptyValidationMessages + nonEmptyValidationMessages)
                 }
+        }
+        viewModelScope.launch {
+            paymentComponent.paymentProviderAppsFlow.collect { paymentProviderAppsState ->
+                when (paymentProviderAppsState) {
+                    is PaymentProviderAppsState.Success -> {
+                        val reloadedPaymentProvider = paymentProviderAppsState.paymentProviderApps.firstOrNull { it.paymentProvider.id == paymentProviderApp.paymentProvider.id }
+                        reloadedPaymentProvider?.let {
+                            paymentProviderApp = it
+                        }
+                    }
+                    else -> {}
+                }
+            }
         }
     }
 
@@ -202,11 +218,13 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val paymentProviderAp
         }
     }
 
-    class Factory(private val giniHealth: GiniHealth, private val paymentProviderApp: PaymentProviderApp, private val configuration: ReviewConfiguration) :
+    fun getPaymentProviderApp() = paymentProviderApp
+
+    class Factory(private val giniHealth: GiniHealth, private val paymentProviderApp: PaymentProviderApp, private val configuration: ReviewConfiguration, private val paymentComponent: PaymentComponent) :
         ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return ReviewViewModel(giniHealth, paymentProviderApp, configuration) as T
+            return ReviewViewModel(giniHealth, paymentProviderApp, configuration, paymentComponent) as T
         }
     }
 
