@@ -231,6 +231,11 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
         }
     }
 
+    /**
+     * Checks if a given payment provider is installed.
+     *
+     * @param paymentProviderAppId the app id of the payment provider
+     */
     internal fun isPaymentProviderAppInstalled(paymentProviderAppId: String): Boolean {
         if (_paymentProviderAppsFlow.value is PaymentProviderAppsState.Success) return (_paymentProviderAppsFlow.value as PaymentProviderAppsState.Success).paymentProviderApps.any { it.paymentProvider.id == paymentProviderAppId && it.installedPaymentProviderApp != null }
         return false

@@ -25,7 +25,9 @@ import net.gini.android.health.sdk.util.setBackgroundTint
 import net.gini.android.health.sdk.util.wrappedWithGiniHealthTheme
 import org.slf4j.LoggerFactory
 
-
+/**
+ * Interface for forwarding the request to redirect to bank app.
+ */
 interface InstallAppForwardListener {
     fun onForwardToBankSelected()
 }
@@ -161,7 +163,9 @@ internal class InstallAppBottomSheet private constructor(
         /**
          * Create a new instance of the [InstallAppBottomSheet].
          *
+         * @param paymentComponent the [PaymentComponent] which is needed to check the installation state of the payment provider app
          * @param paymentProviderApp the [PaymentProviderApp] which needs to be installed in order to be used to make the payment
+         * @param listener the [InstallAppForwardListener] which will forward redirect requests
          */
         fun newInstance(
             paymentComponent: PaymentComponent,
