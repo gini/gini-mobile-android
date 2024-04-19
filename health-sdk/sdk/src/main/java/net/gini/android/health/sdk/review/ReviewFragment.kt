@@ -61,6 +61,7 @@ import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.health.sdk.bankselection.BankSelectionBottomSheet
 import net.gini.android.health.sdk.util.extensions.getFontScale
 import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthTheme
+import net.gini.android.health.sdk.util.wrappedWithGiniHealthTheme
 
 /**
  * Configuration for the [ReviewFragment].
@@ -350,8 +351,11 @@ class ReviewFragment private constructor(
     }
 
     private fun GhsFragmentReviewBinding.showSnackbar(text: String, onRetry: () -> Unit) {
-        Snackbar.make(root, text, Snackbar.LENGTH_INDEFINITE).apply {
-            if (requireContext().getFontScale() < 1.5) anchorView = paymentDetailsScrollview
+        val context = requireContext().wrappedWithGiniHealthTheme()
+        Snackbar.make(context, root, text, Snackbar.LENGTH_INDEFINITE).apply {
+            if (context.getFontScale() < 1.5) {
+                anchorView = paymentDetailsScrollview
+            }
             setTextMaxLines(2)
             setAction(getString(R.string.ghs_snackbar_retry)) { onRetry() }
             show()
