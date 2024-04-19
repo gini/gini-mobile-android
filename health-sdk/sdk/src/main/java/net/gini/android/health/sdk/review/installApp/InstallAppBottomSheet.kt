@@ -77,7 +77,6 @@ internal class InstallAppBottomSheet private constructor(
 
     override fun onResume() {
         super.onResume()
-        paymentComponent?.recheckWhichPaymentProviderAppsAreInstalled()
         viewModel.paymentProviderApp?.let { paymentProviderApp ->
             binding.ghsPaymentProviderIcon.ghsPaymentProviderIcon.setImageDrawable(
                 paymentProviderApp.icon

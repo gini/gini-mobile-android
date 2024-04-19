@@ -164,9 +164,7 @@ class ReviewFragment private constructor(
     private fun GhsFragmentReviewBinding.setStateListeners() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                launch {
-                    paymentComponent?.recheckWhichPaymentProviderAppsAreInstalled()
-                }
+                paymentComponent?.recheckWhichPaymentProviderAppsAreInstalled()
             }
         }
         viewLifecycleOwner.lifecycleScope.launch {
