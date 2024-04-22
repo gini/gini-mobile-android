@@ -400,7 +400,7 @@ class PaymentComponentTest {
     }
 
     @Test
-    fun `check payment provider app is installed`() = runTest {
+    fun `updates selected payment provider app`() = runTest {
         // Given
         val paymentProviderList = listOf(
             paymentProvider,
@@ -413,23 +413,35 @@ class PaymentComponentTest {
         val paymentProviderAppList = listOf<PaymentProviderApp>(
             buildPaymentProviderApp(paymentProvider, false),
             buildPaymentProviderApp(paymentProvider1, false),
-            buildPaymentProviderApp(paymentProvider2, true),
+            buildPaymentProviderApp(paymentProvider2, false),
         )
         val mockedContext = createMockedContextAndSetDependencies(paymentProviderList, paymentProviderAppList)
 
-        //When
         val paymentComponent = PaymentComponent(mockedContext, giniHealth!!)
         paymentComponent.loadPaymentProviderApps()
+        paymentComponent.setSelectedPaymentProviderApp(paymentProviderAppList[0])
 
-        paymentComponent.paymentProviderAppsFlow.test {
-            val paymentProviderApps = awaitItem()
+        paymentComponent.selectedPaymentProviderAppFlow.test {
+            var selectedPaymentProviderAppState = awaitItem()
 
-            assertThat(paymentProviderApps).isInstanceOf(PaymentProviderAppsState.Success::class.java)
-            assertThat((paymentProviderApps as PaymentProviderAppsState.Success).paymentProviderApps).isNotEmpty()
+            assertThat(selectedPaymentProviderAppState).isInstanceOf(SelectedPaymentProviderAppState.AppSelected::class.java)
+            assertThat((selectedPaymentProviderAppState as SelectedPaymentProviderAppState.AppSelected).paymentProviderApp.isInstalled()).isFalse()
+
+            val paymentProviderAppListWithInstalled = listOf(
+                buildPaymentProviderApp(paymentProvider, true),
+                buildPaymentProviderApp(paymentProvider1, false),
+                buildPaymentProviderApp(paymentProvider2, false),
+            )
+            every { mockedContext.packageManager.getPaymentProviderApps(paymentProviderList, mockedContext) } returns paymentProviderAppListWithInstalled
+
+            // When
+            paymentComponent.recheckWhichPaymentProviderAppsAreInstalled()
 
             // Then
-            assertThat(paymentComponent.isPaymentProviderAppInstalled(paymentProvider.id)).isEqualTo(false)
-            assertThat(paymentComponent.isPaymentProviderAppInstalled(paymentProvider2.id)).isEqualTo(true)
+            selectedPaymentProviderAppState = awaitItem()
+            assertThat((selectedPaymentProviderAppState as SelectedPaymentProviderAppState.AppSelected).paymentProviderApp.isInstalled()).isTrue()
+
+            cancelAndConsumeRemainingEvents()
         }
     }
 }

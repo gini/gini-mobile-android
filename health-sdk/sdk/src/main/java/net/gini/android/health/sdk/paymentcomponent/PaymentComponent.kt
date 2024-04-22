@@ -115,6 +115,7 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
 
                 val paymentProviders = paymentProviderAppsState.paymentProviderApps.map { it.paymentProvider }
                 val paymentProviderApps = getPaymentProviderAppsSorted(paymentProviders)
+                updateSelectedPaymentProviderApp(paymentProviderApps)
                 _paymentProviderAppsFlow.value = PaymentProviderAppsState.Success(paymentProviderApps)
             }
 
@@ -162,6 +163,17 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
             _selectedPaymentProviderAppFlow.value = SelectedPaymentProviderAppState.NothingSelected
 
             paymentComponentPreferences.deleteSelectedPaymentProviderId()
+        }
+    }
+
+    private fun updateSelectedPaymentProviderApp(paymentProviderApps: List<PaymentProviderApp>) {
+        if (_selectedPaymentProviderAppFlow.value is SelectedPaymentProviderAppState.AppSelected) {
+            val selectedPaymentProviderApp =
+                (_selectedPaymentProviderAppFlow.value as SelectedPaymentProviderAppState.AppSelected).paymentProviderApp
+            paymentProviderApps.firstOrNull { it.hasSamePaymentProviderId(selectedPaymentProviderApp) }
+                ?.let {
+                    _selectedPaymentProviderAppFlow.value = SelectedPaymentProviderAppState.AppSelected(it)
+                }
         }
     }
 
