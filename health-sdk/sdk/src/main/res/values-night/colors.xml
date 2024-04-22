@@ -15,4 +15,10 @@
     <color name="ghs_faq_divider">@color/ghs_light_05</color>
     <color name="ghs_bottom_sheet_scrim">#fff</color>
 
+    <!--  Open With  -->
+    <color name="ghs_open_with_title">@color/ghs_light_02</color>
+    <color name="ghs_open_with_details">@color/ghs_light_03</color>
+    <color name="ghs_open_with_apps_background">@color/ghs_light_05</color>
+    <color name="ghs_open_with_app_placeholder">@color/ghs_light_07</color>
+
 </resources>
