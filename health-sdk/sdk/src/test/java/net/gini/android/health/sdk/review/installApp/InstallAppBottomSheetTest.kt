@@ -10,9 +10,11 @@ import com.google.common.truth.Truth
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import net.gini.android.health.sdk.R
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
+import net.gini.android.health.sdk.paymentcomponent.SelectedPaymentProviderAppState
 import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
 import org.junit.Before
 import org.junit.Test
@@ -37,12 +39,12 @@ class InstallAppBottomSheetTest {
     @Test
     fun `get it on play store button visible if bank app not installed`() = runTest {
         every { paymentProviderApp.isInstalled() } returns false
-        every { paymentComponent.isPaymentProviderAppInstalled(any()) } returns false
+        every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
+            SelectedPaymentProviderAppState.AppSelected(paymentProviderApp))
 
         // Given
         val bottomSheet = InstallAppBottomSheet.newInstance(
             paymentComponent,
-            paymentProviderApp,
             mockk()
         )
 
@@ -59,11 +61,10 @@ class InstallAppBottomSheetTest {
     fun `forward button visible if bank app not installed`() = runTest {
         // Given
         every { paymentProviderApp.isInstalled() } returns true
-        every { paymentComponent.isPaymentProviderAppInstalled(any()) } returns true
+        every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(SelectedPaymentProviderAppState.AppSelected(paymentProviderApp))
 
         val bottomSheet = InstallAppBottomSheet.newInstance(
             paymentComponent,
-            paymentProviderApp,
             mockk()
         )
 
@@ -80,14 +81,13 @@ class InstallAppBottomSheetTest {
     fun `redirect to bank called when tapping on forward button`() = runTest {
         // Given
         every { paymentProviderApp.isInstalled() } returns true
-        every { paymentComponent.isPaymentProviderAppInstalled(any()) } returns true
+        every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(SelectedPaymentProviderAppState.AppSelected(paymentProviderApp))
 
         val listener: InstallAppForwardListener = mockk()
         every { listener.onForwardToBankSelected() } returns mockk()
 
         val bottomSheet = InstallAppBottomSheet.newInstance(
             paymentComponent,
-            paymentProviderApp,
             listener
         )
 
