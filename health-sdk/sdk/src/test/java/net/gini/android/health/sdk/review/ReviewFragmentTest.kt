@@ -18,11 +18,13 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.R
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
+import net.gini.android.health.sdk.paymentcomponent.SelectedPaymentProviderAppState
 import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
 import org.junit.Before
 import org.junit.Test
@@ -75,11 +77,13 @@ class ReviewFragmentTest {
     fun `calls onNextClicked() listener when 'Next' ('Pay') button is clicked`() {
         // Given
         every { viewModel.isPaymentButtonEnabled } returns flowOf(true)
-        every { viewModel.getPaymentProviderApp() } returns mockk(relaxed = true)
-        every { viewModel.getPaymentProviderApp().isInstalled() } returns true
 
         val paymentComponent = mockk<PaymentComponent>(relaxed = true)
         every { paymentComponent.recheckWhichPaymentProviderAppsAreInstalled() } returns mockk(relaxed = true)
+
+        val paymentProviderApp: PaymentProviderApp = mockk(relaxed = true)
+        every { paymentProviderApp.isInstalled() } returns true
+        every { viewModel.paymentProviderApp } returns MutableStateFlow(paymentProviderApp)
 
         val listener = mockk<ReviewFragmentListener>(relaxed = true)
         launchFragmentInContainer(themeResId = R.style.GiniHealthTheme) {
@@ -87,7 +91,6 @@ class ReviewFragmentTest {
                 giniHealth = mockk(relaxed = true),
                 listener = listener,
                 viewModelFactory = viewModelFactory,
-                paymentProviderApp = mockk(),
                 paymentComponent = paymentComponent
             )
         }
@@ -112,13 +115,12 @@ class ReviewFragmentTest {
 
         val paymentComponent = mockk<PaymentComponent>()
         every { paymentComponent.recheckWhichPaymentProviderAppsAreInstalled() } returns Unit
-        every { paymentComponent.isPaymentProviderAppInstalled(any()) } returns true
 
         viewModel = mockk(relaxed = true)
         configureMockViewModel(viewModel)
         every { viewModel.paymentComponent } returns paymentComponent
-        every { viewModel.getPaymentProviderApp() } returns paymentProviderApp
         every { viewModel.isPaymentButtonEnabled } returns flowOf(true)
+        every { viewModel.paymentProviderApp } returns MutableStateFlow(paymentProviderApp)
 
         val listener = mockk<ReviewFragmentListener>(relaxed = true)
 
@@ -127,7 +129,6 @@ class ReviewFragmentTest {
                 giniHealth = mockk(relaxed = true),
                 listener = listener,
                 viewModelFactory = viewModelFactory,
-                paymentProviderApp = paymentProviderApp,
                 paymentComponent = paymentComponent
             )
         }
@@ -152,20 +153,21 @@ class ReviewFragmentTest {
 
         val paymentComponent = mockk<PaymentComponent>()
         every { paymentComponent.recheckWhichPaymentProviderAppsAreInstalled() } returns Unit
-        every { paymentComponent.isPaymentProviderAppInstalled(any()) } returns false
+        every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
+            SelectedPaymentProviderAppState.AppSelected(paymentProviderApp)
+        )
 
         viewModel = mockk(relaxed = true)
         configureMockViewModel(viewModel)
         every { viewModel.paymentComponent } returns paymentComponent
-        every { viewModel.getPaymentProviderApp() } returns paymentProviderApp
         every { viewModel.isPaymentButtonEnabled } returns flowOf(true)
+        every { viewModel.paymentProviderApp } returns MutableStateFlow(paymentProviderApp)
 
         val listener = mockk<ReviewFragmentListener>(relaxed = true)
         val fragment = ReviewFragment.newInstance(
             giniHealth = mockk(relaxed = true),
             listener = listener,
             viewModelFactory = viewModelFactory,
-            paymentProviderApp = paymentProviderApp,
             paymentComponent = paymentComponent
         )
 

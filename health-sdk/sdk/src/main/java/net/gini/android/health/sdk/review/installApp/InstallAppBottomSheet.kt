@@ -12,13 +12,19 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import kotlinx.coroutines.launch
 import net.gini.android.health.sdk.R
 import net.gini.android.health.sdk.databinding.GhsBottomSheetInstallAppBinding
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
+import net.gini.android.health.sdk.paymentcomponent.SelectedPaymentProviderAppState
 import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
+import net.gini.android.health.sdk.review.ReviewViewModel
 import net.gini.android.health.sdk.util.autoCleared
 import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthTheme
 import net.gini.android.health.sdk.util.setBackgroundTint
@@ -34,16 +40,15 @@ interface InstallAppForwardListener {
 
 internal class InstallAppBottomSheet private constructor(
     private val paymentComponent: PaymentComponent?,
-    private val paymentProviderApp: PaymentProviderApp?,
     private val listener: InstallAppForwardListener?
 ) :
     BottomSheetDialogFragment() {
-    constructor() : this(null, null, null)
+    constructor() : this(null, null)
 
     private var binding: GhsBottomSheetInstallAppBinding by autoCleared()
     private val viewModel: InstallAppViewModel by viewModels {
         InstallAppViewModel.Factory(
-            paymentProviderApp
+            paymentComponent
         )
     }
 
@@ -77,36 +82,46 @@ internal class InstallAppBottomSheet private constructor(
         return binding.root
     }
 
-    override fun onResume() {
-        super.onResume()
-        viewModel.paymentProviderApp?.let { paymentProviderApp ->
-            binding.ghsPaymentProviderIcon.ghsPaymentProviderIcon.setImageDrawable(
-                paymentProviderApp.icon
-            )
-            binding.ghsPaymentProviderIcon.ghsPaymentProviderIcon.contentDescription = "${paymentProviderApp.name} ${getString(R.string.ghs_payment_provider_logo_content_description)}"
-            binding.ghsInstallAppTitle.text = String.format(
-                getString(net.gini.android.health.sdk.R.string.ghs_install_app_title),
-                paymentProviderApp.paymentProvider.name
-            )
-            binding.ghsInstallAppDetails.text = String.format(
-                getString(net.gini.android.health.sdk.R.string.ghs_install_app_detail),
-                paymentProviderApp.paymentProvider.name
-            )
-            binding.ghsPlayStoreLogo.setOnClickListener {
-                paymentProviderApp.paymentProvider.playStoreUrl?.let { openPlayStoreUrl(it) }
-            }
-            if (paymentComponent?.isPaymentProviderAppInstalled(paymentProviderApp.paymentProvider.id) == true) {
-                updateUI()
-            } else {
-                resetUI()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                viewModel.paymentProviderApp.collect { paymentProviderApp ->
+                    if (paymentProviderApp != null) {
+                        binding.ghsPaymentProviderIcon.ghsPaymentProviderIcon.setImageDrawable(
+                            paymentProviderApp.icon
+                        )
+                        binding.ghsPaymentProviderIcon.ghsPaymentProviderIcon.contentDescription =
+                            "${paymentProviderApp.name} ${getString(R.string.ghs_payment_provider_logo_content_description)}"
+                        binding.ghsInstallAppTitle.text = String.format(
+                            getString(net.gini.android.health.sdk.R.string.ghs_install_app_title),
+                            paymentProviderApp.paymentProvider.name
+                        )
+                        binding.ghsInstallAppDetails.text = String.format(
+                            getString(net.gini.android.health.sdk.R.string.ghs_install_app_detail),
+                            paymentProviderApp.paymentProvider.name
+                        )
+                        binding.ghsPlayStoreLogo.setOnClickListener {
+                            paymentProviderApp.paymentProvider.playStoreUrl?.let { openPlayStoreUrl(it) }
+                        }
+                        if (paymentProviderApp.isInstalled()) {
+                            updateUI(paymentProviderApp)
+                        } else {
+                            resetUI()
+                        }
+                    } else {
+                        LOG.error("No selected payment provider app")
+                    }
+                }
             }
         }
     }
 
-    private fun updateUI() {
+    private fun updateUI(paymentProviderApp: PaymentProviderApp) {
         binding.ghsInstallAppDetails.text = String.format(
             getString(R.string.ghs_install_app_tap_to_continue),
-            viewModel.paymentProviderApp?.paymentProvider?.name
+            paymentProviderApp.paymentProvider.name
         )
         binding.ghsPlayStoreLogo.visibility = View.GONE
         changeBottomConstraintOfDetailsLabel(
@@ -114,7 +129,7 @@ internal class InstallAppBottomSheet private constructor(
             resources.getDimension(R.dimen.ghs_large_24).toInt()
         )
         binding.ghsForwardButton.apply {
-            viewModel.paymentProviderApp?.let { paymentProviderApp ->
+            paymentProviderApp.let { paymentProviderApp ->
                 setBackgroundTint(paymentProviderApp.colors.backgroundColor, 255)
                 setTextColor(paymentProviderApp.colors.textColor)
             }
@@ -169,10 +184,9 @@ internal class InstallAppBottomSheet private constructor(
          */
         fun newInstance(
             paymentComponent: PaymentComponent,
-            paymentProviderApp: PaymentProviderApp,
             listener: InstallAppForwardListener
         ): InstallAppBottomSheet {
-            return InstallAppBottomSheet(paymentComponent, paymentProviderApp, listener)
+            return InstallAppBottomSheet(paymentComponent, listener)
         }
     }
 

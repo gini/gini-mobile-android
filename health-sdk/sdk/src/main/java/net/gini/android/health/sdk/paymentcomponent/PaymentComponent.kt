@@ -115,6 +115,7 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
 
                 val paymentProviders = paymentProviderAppsState.paymentProviderApps.map { it.paymentProvider }
                 val paymentProviderApps = getPaymentProviderAppsSorted(paymentProviders)
+                updateSelectedPaymentProviderApp(paymentProviderApps)
                 _paymentProviderAppsFlow.value = PaymentProviderAppsState.Success(paymentProviderApps)
             }
 
@@ -165,6 +166,17 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
         }
     }
 
+    private fun updateSelectedPaymentProviderApp(paymentProviderApps: List<PaymentProviderApp>) {
+        if (_selectedPaymentProviderAppFlow.value is SelectedPaymentProviderAppState.AppSelected) {
+            val selectedPaymentProviderApp =
+                (_selectedPaymentProviderAppFlow.value as SelectedPaymentProviderAppState.AppSelected).paymentProviderApp
+            paymentProviderApps.firstOrNull { it.hasSamePaymentProviderId(selectedPaymentProviderApp) }
+                ?.let {
+                    _selectedPaymentProviderAppFlow.value = SelectedPaymentProviderAppState.AppSelected(it)
+                }
+        }
+    }
+
     private suspend fun getPreviouslySelectedPaymentProviderApp(paymentProviderApps: List<PaymentProviderApp>): PaymentProviderApp? {
         return paymentComponentPreferences.getSelectedPaymentProviderId()?.let { previouslySelectedPaymentProviderId ->
             paymentProviderApps.find { it.hasSamePaymentProviderId(previouslySelectedPaymentProviderId) }
@@ -211,12 +223,11 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
 
         when (val selectedPaymentProviderAppState = _selectedPaymentProviderAppFlow.value) {
             is SelectedPaymentProviderAppState.AppSelected -> {
-                LOG.debug("Creating ReviewFragment with selected payment provider app: {}", selectedPaymentProviderAppState.paymentProviderApp.name)
+                LOG.debug("Creating ReviewFragment for selected payment provider app: {}", selectedPaymentProviderAppState.paymentProviderApp.name)
 
                 return ReviewFragment.newInstance(
                     giniHealth,
                     configuration = configuration,
-                    paymentProviderApp = selectedPaymentProviderAppState.paymentProviderApp,
                     paymentComponent = this@PaymentComponent
                 )
             }
@@ -229,16 +240,6 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
                 throw exception
             }
         }
-    }
-
-    /**
-     * Checks if a given payment provider is installed.
-     *
-     * @param paymentProviderAppId the app id of the payment provider
-     */
-    internal fun isPaymentProviderAppInstalled(paymentProviderAppId: String): Boolean {
-        if (_paymentProviderAppsFlow.value is PaymentProviderAppsState.Success) return (_paymentProviderAppsFlow.value as PaymentProviderAppsState.Success).paymentProviderApps.any { it.paymentProvider.id == paymentProviderAppId && it.installedPaymentProviderApp != null }
-        return false
     }
 
     private companion object {

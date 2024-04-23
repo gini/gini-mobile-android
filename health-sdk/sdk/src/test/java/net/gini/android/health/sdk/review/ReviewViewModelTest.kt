@@ -18,6 +18,7 @@ import kotlinx.coroutines.test.runTest
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.health.sdk.paymentcomponent.PaymentProviderAppsState
+import net.gini.android.health.sdk.paymentcomponent.SelectedPaymentProviderAppState
 import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.health.sdk.preferences.UserPreferences
 import net.gini.android.health.sdk.review.model.PaymentDetails
@@ -59,11 +60,9 @@ class ReviewViewModelTest {
     @Test
     fun `shows info bar on launch`() = runTest {
         val paymentComponent = mockk<PaymentComponent>(relaxed = true)
-        every { paymentComponent.paymentProviderAppsFlow } returns MutableStateFlow(PaymentProviderAppsState.Success(
-            listOf()
-        ))
+        every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(SelectedPaymentProviderAppState.AppSelected(mockk()))
         // Given
-        val viewModel = ReviewViewModel(giniHealth!!, mockk(), mockk(), paymentComponent).apply {
+        val viewModel = ReviewViewModel(giniHealth!!, mockk(), paymentComponent).apply {
             userPreferences = this@ReviewViewModelTest.userPreferences!!
         }
 
@@ -77,12 +76,10 @@ class ReviewViewModelTest {
     @Test
     fun `hides info bar after a delay`() = runTest {
         val paymentComponent = mockk<PaymentComponent>(relaxed = true)
-        every { paymentComponent.paymentProviderAppsFlow } returns MutableStateFlow(PaymentProviderAppsState.Success(
-            listOf()
-        ))
+        every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(SelectedPaymentProviderAppState.AppSelected(mockk()))
 
         // Given
-        val viewModel = ReviewViewModel(giniHealth!!, mockk(), mockk(), paymentComponent).apply {
+        val viewModel = ReviewViewModel(giniHealth!!, mockk(), paymentComponent).apply {
             userPreferences = this@ReviewViewModelTest.userPreferences!!
         }
 
@@ -111,11 +108,9 @@ class ReviewViewModelTest {
         )
 
         val paymentComponent = mockk<PaymentComponent>(relaxed = true)
-        every { paymentComponent.paymentProviderAppsFlow } returns MutableStateFlow(PaymentProviderAppsState.Success(
-            listOf()
-        ))
+        every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(SelectedPaymentProviderAppState.AppSelected(mockk()))
 
-        val viewModel = ReviewViewModel(giniHealth!!, mockk(), mockk(), paymentComponent)
+        val viewModel = ReviewViewModel(giniHealth!!, mockk(), paymentComponent)
 
         val validationsAsync = async { viewModel.paymentValidation.take(1).toList() }
 
@@ -142,11 +137,9 @@ class ReviewViewModelTest {
         )
 
         val paymentComponent = mockk<PaymentComponent>(relaxed = true)
-        every { paymentComponent.paymentProviderAppsFlow } returns MutableStateFlow(PaymentProviderAppsState.Success(
-            listOf()
-        ))
+        every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(SelectedPaymentProviderAppState.AppSelected(mockk()))
 
-        val viewModel = ReviewViewModel(giniHealth!!, mockk(), mockk(), paymentComponent)
+        val viewModel = ReviewViewModel(giniHealth!!, mockk(), paymentComponent)
 
         viewModel.paymentValidation.test {
             // Precondition
@@ -192,11 +185,9 @@ class ReviewViewModelTest {
             )
 
             val paymentComponent = mockk<PaymentComponent>(relaxed = true)
-            every { paymentComponent.paymentProviderAppsFlow } returns MutableStateFlow(PaymentProviderAppsState.Success(
-                listOf()
-            ))
+            every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(SelectedPaymentProviderAppState.AppSelected(mockk()))
 
-            val viewModel = ReviewViewModel(giniHealth!!, mockk(), mockk(), paymentComponent)
+            val viewModel = ReviewViewModel(giniHealth!!, mockk(), paymentComponent)
 
             val validationsAsync = async { viewModel.paymentValidation.take(1).toList() }
 
@@ -226,11 +217,9 @@ class ReviewViewModelTest {
             )
 
             val paymentComponent = mockk<PaymentComponent>(relaxed = true)
-            every { paymentComponent.paymentProviderAppsFlow } returns MutableStateFlow(PaymentProviderAppsState.Success(
-                listOf()
-            ))
+            every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(SelectedPaymentProviderAppState.AppSelected(mockk()))
 
-            val viewModel = ReviewViewModel(giniHealth!!, mockk(), mockk(), paymentComponent)
+            val viewModel = ReviewViewModel(giniHealth!!, mockk(), paymentComponent)
 
             viewModel.paymentValidation.test {
                 // Precondition
@@ -265,11 +254,9 @@ class ReviewViewModelTest {
             )
 
             val paymentComponent = mockk<PaymentComponent>(relaxed = true)
-            every { paymentComponent.paymentProviderAppsFlow } returns MutableStateFlow(PaymentProviderAppsState.Success(
-                listOf()
-            ))
+            every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(SelectedPaymentProviderAppState.AppSelected(mockk()))
 
-            val viewModel = ReviewViewModel(giniHealth!!, mockk(), mockk(), paymentComponent)
+            val viewModel = ReviewViewModel(giniHealth!!, mockk(), paymentComponent)
 
             viewModel.paymentValidation.test {
                 // Precondition
@@ -304,11 +291,9 @@ class ReviewViewModelTest {
             )
 
             val paymentComponent = mockk<PaymentComponent>(relaxed = true)
-            every { paymentComponent.paymentProviderAppsFlow } returns MutableStateFlow(PaymentProviderAppsState.Success(
-                listOf()
-            ))
+            every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(SelectedPaymentProviderAppState.AppSelected(mockk()))
 
-            val viewModel = ReviewViewModel(giniHealth!!, mockk(), mockk(), paymentComponent)
+            val viewModel = ReviewViewModel(giniHealth!!, mockk(), paymentComponent)
 
             viewModel.paymentValidation.test {
                 // When
@@ -341,11 +326,9 @@ class ReviewViewModelTest {
             )
 
             val paymentComponent = mockk<PaymentComponent>(relaxed = true)
-            every { paymentComponent.paymentProviderAppsFlow } returns MutableStateFlow(PaymentProviderAppsState.Success(
-                listOf()
-            ))
+            every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(SelectedPaymentProviderAppState.AppSelected(mockk()))
 
-            val viewModel = ReviewViewModel(giniHealth!!, mockk(), mockk(), paymentComponent)
+            val viewModel = ReviewViewModel(giniHealth!!, mockk(), paymentComponent)
 
             viewModel.paymentValidation.test {
                 // When
@@ -381,11 +364,10 @@ class ReviewViewModelTest {
             every { paymentProviderApp.installedPaymentProviderApp } returns mockk()
 
             val paymentComponent = mockk<PaymentComponent>(relaxed = true)
-            every { paymentComponent.paymentProviderAppsFlow } returns MutableStateFlow(PaymentProviderAppsState.Success(
-                listOf()
-            ))
+            every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
+                SelectedPaymentProviderAppState.AppSelected(paymentProviderApp))
 
-            val viewModel = ReviewViewModel(giniHealth!!, paymentProviderApp, mockk(), paymentComponent)
+            val viewModel = ReviewViewModel(giniHealth!!, mockk(), paymentComponent)
 
             // Validate all fields to also get an invalid iban validation message
             viewModel.onPayment()
