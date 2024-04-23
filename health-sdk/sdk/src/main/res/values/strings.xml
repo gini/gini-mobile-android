@@ -58,9 +58,9 @@
     <string name="ghs_invalid_amount_content_description">Ungültiger Bezahlbetrag</string>
 
     <!--  Open With bottom sheet  -->
-    <string name="ghs_open_with_title">Rechnungsdaten bereit zum Teilen mit der DKB</string>
-    <string name="ghs_open_with_details">Im nächsten Schritt wählen Sie die DKB-App auf der Seite aus, um Ihre Zahlung in der Banking-App abzuschließen.</string>
-    <string name="ghs_open_with_info">Tipp: Scrollen Sie, bis Sie die DKB-App finden. Wenn Sie die DKB-App noch nicht installiert haben, </string>
+    <string name="ghs_open_with_title">Rechnungsdaten bereit zum Teilen mit der %s</string>
+    <string name="ghs_open_with_details">Im nächsten Schritt wählen Sie die %s-App auf der Seite aus, um Ihre Zahlung in der Banking-App abzuschließen.</string>
+    <string name="ghs_open_with_info">Tipp: Scrollen Sie, bis Sie die %s-App finden. Wenn Sie die DKB-App noch nicht installiert haben,</string>
     <string name="ghs_open_with_download_app">laden Sie sie im Store herunter</string>
     <string name="ghs_open_with_app">App</string>
     <string name="ghs_forward">Weiter</string>

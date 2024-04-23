@@ -2,6 +2,7 @@ package net.gini.android.health.sdk.review
 
 import android.content.ActivityNotFoundException
 import android.content.Context.ACCESSIBILITY_SERVICE
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -59,6 +60,8 @@ import net.gini.android.health.sdk.util.setTextIfDifferent
 import net.gini.android.health.sdk.util.showErrorMessage
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.health.sdk.bankselection.BankSelectionBottomSheet
+import net.gini.android.health.sdk.review.openWith.OpenWithBottomSheet
+import net.gini.android.health.sdk.review.openWith.OpenWithForwardInterface
 import net.gini.android.health.sdk.util.extensions.getFontScale
 import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthTheme
 import net.gini.android.health.sdk.util.wrappedWithGiniHealthTheme
@@ -367,8 +370,12 @@ class ReviewFragment private constructor(
         payment.setOnClickListener {
             requireActivity().currentFocus?.clearFocus()
             it.hideKeyboard()
-            listener?.onToTheBankButtonClicked(viewModel.paymentProviderApp.name)
-            viewModel.onPayment()
+            if (viewModel.paymentProviderApp.paymentProvider.gpcSupported) {
+                listener?.onToTheBankButtonClicked(viewModel.paymentProviderApp.name)
+                viewModel.onPayment()
+            } else {
+                showOpenWithDialog()
+            }
         }
         close.setOnClickListener { view ->
             if (isKeyboardShown) {
@@ -513,6 +520,19 @@ class ReviewFragment private constructor(
                     bottomToTop = ConstraintLayout.LayoutParams.UNSET
                 }
             }
+        }
+    }
+
+    private fun showOpenWithDialog() {
+        OpenWithBottomSheet.newInstance(viewModel.paymentProviderApp, object: OpenWithForwardInterface {
+            override fun onForwardSelected() {
+//                val shareIntent = Intent(Intent.ACTION_SEND).apply {
+//                    type = "application/pdf"
+//                }
+//                startActivity(Intent.createChooser(shareIntent, "Select app to share with"))
+            }
+        }).also {
+            it.show(requireActivity().supportFragmentManager, it::class.java.name)
         }
     }
 

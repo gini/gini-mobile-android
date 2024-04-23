@@ -10,13 +10,11 @@
         android:layout_width="@dimen/ghs_large_36"
         android:layout_height="@dimen/ghs_large_36"
         android:id="@+id/ghs_app_icon"
-        android:background="@color/ghs_open_with_apps_background"
+        android:background="@color/ghs_open_with_app_placeholder"
         android:elevation="5dp"
         android:layout_gravity="center_horizontal"
-        app:cornerSize="@dimen/ghs_large"
-        app:cornerFamily="rounded"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:scaleType="fitCenter"
+        app:shapeAppearanceOverlay="@style/GiniHealthTheme.Widget.RoundShapeableImageView.Corners"
         />
 
     <TextView
@@ -25,10 +23,10 @@
         android:id="@+id/ghs_app_name"
         android:layout_marginTop="@dimen/ghs_medium_10"
         android:maxLines="2"
-        android:ellipsize="marquee"
         android:text="@string/ghs_open_with_app"
         style="@style/GiniHealthTheme.Typography.Caption2"
         android:textColor="@color/ghs_open_with_details"
-        android:gravity="center_horizontal"/>
+        android:gravity="center_horizontal"
+        android:paddingHorizontal="@dimen/ghs_small_1"/>
     
 </LinearLayout>

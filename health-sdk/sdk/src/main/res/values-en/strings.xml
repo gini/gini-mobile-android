@@ -57,9 +57,10 @@ Gini is ISO 27001 certified for maximum data security and operates its own serve
     <string name="ghs_invalid_amount_content_description">Invalid amount</string>
 
     <!--  Open With bottom sheet  -->
-    <string name="ghs_open_with_title">Invoice data ready to share with the DKB bank</string>
-    <string name="ghs_open_with_details">In the next step, select the DKB app to open and complete your payment in the banking app.</string>
-    <string name="ghs_open_with_info">Tip: if you dont see the app scroll until you find the DKB app. If you haven\'t installed the DKB app yet, </string>
-    <string name="ghs_open_with_download_app">download it from the store.</string>
+    <string name="ghs_open_with_title">Invoice data ready to share with the %s bank</string>
+    <string name="ghs_open_with_details">In the next step, select the %s app to open and complete your payment in the banking app.</string>
+    <string name="ghs_open_with_info">Tip: if you don\'t see the app scroll until you find the %s app. If you haven\'t installed the %s app yet,</string>
+    <string name="ghs_open_with_download_app">download it from the store</string>
     <string name="ghs_forward">Forward</string>
+    <string name="ghs_sharing_file">Sharing 1 file</string>
 </resources>
