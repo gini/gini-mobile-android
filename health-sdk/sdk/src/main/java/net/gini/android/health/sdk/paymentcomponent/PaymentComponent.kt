@@ -147,13 +147,13 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
                 val previouslySelectedPaymentProviderApp =
                     getPreviouslySelectedPaymentProviderApp(paymentProviderApps)
 
-                if (previouslySelectedPaymentProviderApp != null && previouslySelectedPaymentProviderApp.isInstalled()) {
+                if (previouslySelectedPaymentProviderApp != null) {
                     LOG.debug("Using previously selected payment provider app: {}", previouslySelectedPaymentProviderApp.name)
 
                     _selectedPaymentProviderAppFlow.value =
                         SelectedPaymentProviderAppState.AppSelected(previouslySelectedPaymentProviderApp)
                 } else {
-                    LOG.debug("Previously selected payment provider app is not installed")
+                    LOG.debug("Previously selected payment provider app is not available anymore")
 
                     selectFirstInstalledPaymentProviderAppOrNothing(paymentProviderApps)
                 }

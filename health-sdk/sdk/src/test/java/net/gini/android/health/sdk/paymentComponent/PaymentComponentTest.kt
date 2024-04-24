@@ -22,6 +22,7 @@ import net.gini.android.health.api.HealthApiDocumentManager
 import net.gini.android.health.api.models.PaymentProvider
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
+import net.gini.android.health.sdk.paymentcomponent.PaymentComponentPreferences
 import net.gini.android.health.sdk.paymentcomponent.PaymentProviderAppsState
 import net.gini.android.health.sdk.paymentcomponent.SelectedPaymentProviderAppState
 import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
@@ -336,6 +337,9 @@ class PaymentComponentTest {
 
         coEvery { documentManager.getPaymentProviders() } returns Resource.Success(paymentProviderList)
 
+        val paymentComponentPreferences = PaymentComponentPreferences(context!!)
+        paymentComponentPreferences.deleteSelectedPaymentProviderId()
+
         val paymentComponent = PaymentComponent(context!!, giniHealth!!)
         paymentComponent.loadPaymentProviderApps()
 
@@ -353,7 +357,56 @@ class PaymentComponentTest {
             val paymentProviderSelectedValidation = awaitItem()
             assertThat(paymentProviderSelectedValidation).isInstanceOf(SelectedPaymentProviderAppState.AppSelected::class.java)
             assertThat((paymentProviderSelectedValidation as SelectedPaymentProviderAppState.AppSelected).paymentProviderApp.paymentProvider.id).isEqualTo(paymentProviderList.last().id)
+
+            cancelAndConsumeRemainingEvents()
         }
+
+        paymentComponentPreferences.deleteSelectedPaymentProviderId()
+    }
+
+    @Test
+    fun `restores previously selected payment provider`() = runTest {
+        // Given
+        val paymentProviderList = listOf(
+            paymentProvider,
+            paymentProvider1,
+            paymentProvider2,
+        )
+
+        coEvery { documentManager.getPaymentProviders() } returns Resource.Success(paymentProviderList)
+
+        val paymentComponentPreferences = PaymentComponentPreferences(context!!)
+        paymentComponentPreferences.deleteSelectedPaymentProviderId()
+
+        val paymentComponent = PaymentComponent(context!!, giniHealth!!)
+        paymentComponent.loadPaymentProviderApps()
+
+        paymentComponent.selectedPaymentProviderAppFlow.test {
+            val noPaymentProviderSelectedValidation = awaitItem()
+
+            assertThat(noPaymentProviderSelectedValidation).isInstanceOf(SelectedPaymentProviderAppState.NothingSelected::class.java)
+            assertThat(paymentComponent.paymentProviderAppsFlow.value).isInstanceOf(PaymentProviderAppsState.Success::class.java)
+
+            val paymentProviderToBeSelected = (paymentComponent.paymentProviderAppsFlow.value as PaymentProviderAppsState.Success).paymentProviderApps.last()
+            paymentComponent.setSelectedPaymentProviderApp(paymentProviderToBeSelected)
+
+            cancelAndConsumeRemainingEvents()
+        }
+
+        // When
+        val newPaymentComponent = PaymentComponent(context!!, giniHealth!!)
+        newPaymentComponent.loadPaymentProviderApps()
+
+        paymentComponent.selectedPaymentProviderAppFlow.test {
+            // Then
+            val paymentProviderSelectedValidation = awaitItem()
+            assertThat(paymentProviderSelectedValidation).isInstanceOf(SelectedPaymentProviderAppState.AppSelected::class.java)
+            assertThat((paymentProviderSelectedValidation as SelectedPaymentProviderAppState.AppSelected).paymentProviderApp.paymentProvider.id).isEqualTo(paymentProviderList.last().id)
+
+            cancelAndConsumeRemainingEvents()
+        }
+
+        paymentComponentPreferences.deleteSelectedPaymentProviderId()
     }
 
     @Test(expected = IllegalStateException::class)
@@ -410,6 +463,9 @@ class PaymentComponentTest {
 
         coEvery { documentManager.getPaymentProviders() } returns Resource.Success(paymentProviderList)
 
+        val paymentComponentPreferences = PaymentComponentPreferences(context!!)
+        paymentComponentPreferences.deleteSelectedPaymentProviderId()
+
         val paymentProviderAppList = listOf<PaymentProviderApp>(
             buildPaymentProviderApp(paymentProvider, false),
             buildPaymentProviderApp(paymentProvider1, false),
@@ -443,5 +499,7 @@ class PaymentComponentTest {
 
             cancelAndConsumeRemainingEvents()
         }
+
+        paymentComponentPreferences.deleteSelectedPaymentProviderId()
     }
 }
