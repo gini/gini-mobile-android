@@ -73,36 +73,21 @@
         android:src="@drawable/ghs_play_store_logo"
         android:background="@null"
         android:visibility="visible"
+        android:contentDescription="@string/ghs_play_store_content_description"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/ghs_powered_by_gini_label"
+        app:layout_constraintBottom_toTopOf="@id/ghs_powered_by_gini_layout"
         android:layout_marginBottom="@dimen/ghs_large"/>
 
-    <TextView
-        android:id="@+id/ghs_powered_by_gini_label"
-        style="@style/GiniHealthTheme.Typography.Caption2"
+    <include layout="@layout/ghs_powered_by_gini"
+        android:id="@+id/ghs_powered_by_gini_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/ghs_small"
-        android:layout_marginBottom="@dimen/ghs_large"
-        android:text="@string/ghs_payment_powered_by_label"
-        android:textColor="@color/ghs_payment_component_caption"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/ghs_gini_logo"
-        app:layout_constraintHorizontal_bias="1"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/payment" />
-
-    <ImageView
-        android:id="@+id/ghs_gini_logo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/ghs_large"
-        app:layout_constraintBottom_toBottomOf="@id/ghs_powered_by_gini_label"
+        app:layout_constraintTop_toBottomOf="@id/payment"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/ghs_powered_by_gini_label"
-        app:layout_constraintTop_toTopOf="@id/ghs_powered_by_gini_label"
-        app:srcCompat="@drawable/ghs_gini_logo" />
+        android:layout_marginBottom="@dimen/ghs_large"
+        android:layout_marginEnd="@dimen/ghs_large"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
