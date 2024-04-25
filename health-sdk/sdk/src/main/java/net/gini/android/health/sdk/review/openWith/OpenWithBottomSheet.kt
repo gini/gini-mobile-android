@@ -28,6 +28,9 @@ import net.gini.android.health.sdk.util.GhsBottomSheetDialogFragment
 import net.gini.android.health.sdk.util.autoCleared
 import net.gini.android.health.sdk.util.setBackgroundTint
 
+/**
+ * Interface for forwarding the request to share a PDF document
+ */
 internal interface OpenWithForwardInterface {
     fun onForwardSelected()
 }
@@ -92,6 +95,12 @@ internal class OpenWithBottomSheet private constructor(paymentProviderApp: Payme
     }
 
     companion object {
+        /**
+         * Create a new instance of the [OpenWithBottomSheet].
+         *
+         * @param paymentProviderApp the [PaymentProviderApp] which the user needs ti identify in the 'Share PDF' screen
+         * @param listener the [OpenWithForwardInterface] which will forward requests
+         */
         fun newInstance(paymentProviderApp: PaymentProviderApp, listener: OpenWithForwardInterface) = OpenWithBottomSheet(paymentProviderApp = paymentProviderApp, listener = listener)
     }
 }
