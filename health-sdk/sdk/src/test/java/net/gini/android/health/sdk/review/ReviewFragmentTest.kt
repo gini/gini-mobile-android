@@ -7,19 +7,22 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.google.common.truth.Truth
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
-import net.gini.android.health.api.models.PaymentProvider
+import kotlinx.coroutines.test.runTest
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.R
 import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.shadows.ShadowDialog
+
 
 /**
  * Created by Alpár Szotyori on 14.12.21.
@@ -119,4 +122,28 @@ class ReviewFragmentTest {
         }
     }
 
+    @Test
+    fun `displays 'Open With' dialog when 'Pay' button is clicked and payment provider does not support 'GPC'`() = runTest {
+        // Given
+        viewModel = mockk(relaxed = true)
+        configureMockViewModel(viewModel)
+        every { viewModel.isPaymentButtonEnabled } returns flowOf(true)
+        every { viewModel.onPaymentButtonTapped() } returns ReviewViewModel.PaymentNextStep.ShowOpenWithSheet
+
+        launchFragmentInContainer(themeResId = R.style.GiniHealthTheme) {
+            ReviewFragment.newInstance(
+                giniHealth = mockk(relaxed = true),
+                listener = mockk(relaxed = true),
+                viewModelFactory = viewModelFactory,
+                paymentProviderApp = mockk(relaxed = true)
+            )
+        }
+
+        // When
+        onView(withId(R.id.payment)).perform(click())
+
+        // Then
+        val dialog = ShadowDialog.getLatestDialog()
+        Truth.assertThat(dialog.isShowing)
+    }
 }

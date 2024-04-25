@@ -1,13 +1,16 @@
 package net.gini.android.health.sdk.review
 
+import android.content.Context
+import androidx.test.core.app.ApplicationProvider.getApplicationContext
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
@@ -20,11 +23,13 @@ import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.health.sdk.preferences.UserPreferences
 import net.gini.android.health.sdk.review.model.PaymentDetails
 import net.gini.android.health.sdk.review.model.ResultWrapper
+import net.gini.android.health.sdk.review.openWith.OpenWithPreferences
 import net.gini.android.health.sdk.test.ViewModelTestCoroutineRule
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
 
 /**
  * Created by Alpár Szotyori on 13.12.21.
@@ -33,6 +38,7 @@ import org.junit.Test
  */
 
 @ExperimentalCoroutinesApi
+@RunWith(AndroidJUnit4::class)
 class ReviewViewModelTest {
 
     @get:Rule
@@ -40,18 +46,21 @@ class ReviewViewModelTest {
 
     private var giniHealth: GiniHealth? = null
     private var userPreferences: UserPreferences? = null
+    private var context: Context? = null
 
     @Before
     fun setup() {
         giniHealth = mockk(relaxed = true)
         every { giniHealth!!.paymentFlow } returns MutableStateFlow<ResultWrapper<PaymentDetails>>(mockk()).asStateFlow()
         userPreferences = mockk(relaxed = true)
+        context = getApplicationContext()
     }
 
     @After
     fun tearDown() {
         giniHealth = null
         userPreferences = null
+        context = null
     }
 
     @Test
@@ -353,4 +362,71 @@ class ReviewViewModelTest {
             }
         }
 
+    @Test
+    fun `increments 'Open With' counter`() = runTest {
+        // Given
+        val paymentProviderApp = mockk<PaymentProviderApp>()
+        every { paymentProviderApp.paymentProvider.id } returns "123"
+
+        val openWithPreferences= OpenWithPreferences(context!!)
+
+        val viewModel = ReviewViewModel(giniHealth!!, paymentProviderApp, mockk()).apply {
+            this.openWithPreferences = openWithPreferences
+        }
+
+        // When
+        viewModel.incrementOpenWithCounter()
+
+        // Then
+        coVerify { openWithPreferences.incrementCountForPaymentProviderId(paymentProviderApp.paymentProvider.id) }
+    }
+
+    @Test
+    fun `returns 'RedirectToBank' when payment provider app supports GPC`() = runTest {
+        // Given
+        val paymentProviderApp = mockk<PaymentProviderApp>()
+        every { paymentProviderApp.paymentProvider.gpcSupported } returns true
+
+        val viewModel = ReviewViewModel(giniHealth!!, paymentProviderApp, mockk())
+
+        // When
+        val onPayment = viewModel.onPaymentButtonTapped()
+
+        // Then
+        assertThat(onPayment).isEqualTo(ReviewViewModel.PaymentNextStep.RedirectToBank)
+    }
+
+    @Test
+    fun `returns 'ShowOpenWith' when payment provider app does not support GPC`() = runTest {
+        // Given
+        val paymentProviderApp = mockk<PaymentProviderApp>()
+        every { paymentProviderApp.paymentProvider.gpcSupported } returns false
+
+        val viewModel = ReviewViewModel(giniHealth!!, paymentProviderApp, mockk())
+
+        // When
+        val onPayment = viewModel.onPaymentButtonTapped()
+
+        // Then
+        assertThat(onPayment).isEqualTo(ReviewViewModel.PaymentNextStep.ShowOpenWithSheet)
+    }
+
+    @Test
+    fun `returns 'OpenSharePdf' when payment provider app does not support GPC and 'Open With' was shown 3 times`() = runTest {
+        // Given
+        val paymentProviderApp = mockk<PaymentProviderApp>()
+        every { paymentProviderApp.paymentProvider.gpcSupported } returns false
+        every { paymentProviderApp.paymentProvider.id } returns "123"
+
+        val openWithPreferences = mockk<OpenWithPreferences>()
+        every { openWithPreferences.getLiveCountForPaymentProviderId(any()) } returns flowOf(3)
+
+        val viewModel = ReviewViewModel(giniHealth!!, paymentProviderApp, mockk()).apply {
+            this.openWithPreferences = openWithPreferences
+        }
+        viewModel.startObservingOpenWithCount()
+
+        val onPayment = viewModel.onPaymentButtonTapped()
+        assertThat(onPayment).isEqualTo(ReviewViewModel.PaymentNextStep.OpenSharePdf)
+    }
 }
