@@ -57,6 +57,8 @@ import net.gini.android.health.sdk.util.setTextIfDifferent
 import net.gini.android.health.sdk.util.showErrorMessage
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.health.sdk.bankselection.BankSelectionBottomSheet
+import net.gini.android.health.sdk.review.installApp.InstallAppBottomSheet
+import net.gini.android.health.sdk.review.installApp.InstallAppForwardListener
 import net.gini.android.health.sdk.review.openWith.OpenWithBottomSheet
 import net.gini.android.health.sdk.review.openWith.OpenWithForwardInterface
 import net.gini.android.health.sdk.review.openWith.OpenWithPreferences
@@ -112,10 +114,8 @@ interface ReviewFragmentListener {
  * Instances can be created using the [PaymentComponent.getPaymentReviewFragment] method.
  */
 class ReviewFragment private constructor(
-    private val giniHealth: GiniHealth? = null,
-    private val configuration: ReviewConfiguration? = null,
     var listener: ReviewFragmentListener? = null,
-    private val paymentProviderApp: PaymentProviderApp? = null,
+    private val paymentComponent: PaymentComponent? = null,
     private val viewModelFactory: ViewModelProvider.Factory? = null,
 ) : Fragment() {
 
@@ -153,10 +153,8 @@ class ReviewFragment private constructor(
         with(binding) {
             setStateListeners()
             setInputListeners()
-            setActionListeners()
             setKeyboardAnimation()
             removePagerConstraintAndSetPreviousHeightIfNeeded(documentPagerHeight)
-            showSelectedPaymentProviderApp()
         }
 
         // Set info bar bottom margin programmatically to reuse radius dimension with negative sign
@@ -166,6 +164,11 @@ class ReviewFragment private constructor(
     }
 
     private fun GhsFragmentReviewBinding.setStateListeners() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                viewModel.paymentComponent.recheckWhichPaymentProviderAppsAreInstalled()
+            }
+        }
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
@@ -194,12 +197,20 @@ class ReviewFragment private constructor(
                         if (visible) showInfoBar() else hideInfoBarAnimated()
                     }
                 }
+                launch {
+                    viewModel.paymentProviderApp.collect { paymentProviderApp ->
+                        if (paymentProviderApp != null) {
+                            showSelectedPaymentProviderApp(paymentProviderApp)
+                            setActionListeners(paymentProviderApp)
+                        }
+                    }
+                }
             }
         }
     }
 
-    private fun GhsFragmentReviewBinding.showSelectedPaymentProviderApp() {
-        viewModel.paymentProviderApp.icon?.let { appIcon ->
+    private fun GhsFragmentReviewBinding.showSelectedPaymentProviderApp(paymentProviderApp: PaymentProviderApp) {
+        paymentProviderApp.icon?.let { appIcon ->
             val roundedDrawable =
                 RoundedBitmapDrawableFactory.create(requireContext().resources, appIcon.bitmap).apply {
                     cornerRadius = resources.getDimension(R.dimen.ghs_small_2)
@@ -212,8 +223,8 @@ class ReviewFragment private constructor(
                 null
             )
         }
-        payment.setBackgroundTint(viewModel.paymentProviderApp.colors.backgroundColor, 255)
-        payment.setTextColor(viewModel.paymentProviderApp.colors.textColor)
+        payment.setBackgroundTint(paymentProviderApp.colors.backgroundColor, 255)
+        payment.setTextColor(paymentProviderApp.colors.textColor)
     }
 
     private fun GhsFragmentReviewBinding.handleDocumentResult(documentResult: ResultWrapper<Document>) {
@@ -365,13 +376,19 @@ class ReviewFragment private constructor(
         }
     }
 
-    private fun GhsFragmentReviewBinding.setActionListeners() {
+    private fun GhsFragmentReviewBinding.setActionListeners(paymentProviderApp: PaymentProviderApp) {
         paymentDetails.setOnClickListener { it.hideKeyboard() }
         payment.setOnClickListener {
             requireActivity().currentFocus?.clearFocus()
             it.hideKeyboard()
             val nextStep = viewModel.onPaymentButtonTapped()
             handlePaymentNextStep(nextStep)
+            //todo handle this
+            if (paymentProviderApp.isInstalled()) {
+                redirectToBankApp(paymentProviderApp)
+            } else {
+                showInstallAppDialog(paymentProviderApp)
+            }
         }
         close.setOnClickListener { view ->
             if (isKeyboardShown) {
@@ -519,6 +536,20 @@ class ReviewFragment private constructor(
         }
     }
 
+    private fun showInstallAppDialog(paymentProviderApp: PaymentProviderApp) {
+        val dialog = InstallAppBottomSheet.newInstance(viewModel.paymentComponent, object : InstallAppForwardListener {
+            override fun onForwardToBankSelected() {
+                redirectToBankApp(paymentProviderApp)
+            }
+        })
+        dialog.show(requireActivity().supportFragmentManager, InstallAppBottomSheet::class.simpleName)
+    }
+
+    private fun redirectToBankApp(paymentProviderApp: PaymentProviderApp) {
+        listener?.onToTheBankButtonClicked(paymentProviderApp.name ?: "")
+        viewModel.onPayment()
+    }
+
     private fun showOpenWithDialog() {
         OpenWithBottomSheet.newInstance(viewModel.paymentProviderApp, object: OpenWithForwardInterface {
             override fun onForwardSelected() {
@@ -560,8 +591,8 @@ class ReviewFragment private constructor(
             giniHealth: GiniHealth,
             configuration: ReviewConfiguration = ReviewConfiguration(),
             listener: ReviewFragmentListener? = null,
-            paymentProviderApp: PaymentProviderApp,
-            viewModelFactory: ViewModelProvider.Factory = ReviewViewModel.Factory(giniHealth, paymentProviderApp, configuration)
-        ): ReviewFragment = ReviewFragment(giniHealth, configuration, listener, paymentProviderApp, viewModelFactory)
+            paymentComponent: PaymentComponent,
+            viewModelFactory: ViewModelProvider.Factory = ReviewViewModel.Factory(giniHealth, configuration, paymentComponent),
+        ): ReviewFragment = ReviewFragment(listener, paymentComponent, viewModelFactory)
     }
 }

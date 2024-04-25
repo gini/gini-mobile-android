@@ -57,11 +57,16 @@
     <string name="ghs_close_content_description">Schließen</string>
     <string name="ghs_invalid_amount_content_description">Ungültiger Bezahlbetrag</string>
 
+    <!--  Install App  -->
+    <string name="ghs_install_app_detail">Hinweis: Bitte aktualisieren oder installieren Sie zunächst die %s-App aus dem Google Play Store.</string>
+    <string name="ghs_install_app_title">Rechnungsdaten bereit zum Teilen mit der %s</string>
+    <string name="ghs_install_app_tap_to_continue">Tipp: Tippen Sie auf \'Weiter\', um die Zahlung in der %s-App abzuschließen.</string>
+    <string name="ghs_forward">Weiter</string>
+
     <!--  Open With bottom sheet  -->
     <string name="ghs_open_with_title">Rechnungsdaten bereit zum Teilen mit der %s</string>
     <string name="ghs_open_with_details">Im nächsten Schritt wählen Sie die %s-App auf der Seite aus, um Ihre Zahlung in der Banking-App abzuschließen.</string>
     <string name="ghs_open_with_info">Tipp: Scrollen Sie, bis Sie die %s-App finden. Wenn Sie die DKB-App noch nicht installiert haben,</string>
     <string name="ghs_open_with_download_app">laden Sie sie im Store herunter</string>
     <string name="ghs_open_with_app">App</string>
-    <string name="ghs_forward">Weiter</string>
 </resources>

@@ -46,6 +46,8 @@
     <color name="ghs_bank_selector_button_color">@color/ghs_dark_01</color>
     <color name="ghs_faq_divider">@color/ghs_dark_05</color>
     <color name="ghs_bottom_sheet_scrim">#000</color>
+    <color name="ghs_install_app_title_color">@color/ghs_dark_02</color>
+    <color name="ghs_install_app_details_color">@color/ghs_dark_03</color>
 
     <!--  Open With  -->
     <color name="ghs_open_with_title">@color/ghs_dark_02</color>
