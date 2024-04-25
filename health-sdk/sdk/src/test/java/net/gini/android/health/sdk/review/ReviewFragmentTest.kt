@@ -13,6 +13,7 @@ import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
+import net.gini.android.health.api.models.PaymentProvider
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.R
 import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
@@ -64,6 +65,7 @@ class ReviewFragmentTest {
     fun `calls onNextClicked() listener when 'Next' ('Pay') button is clicked`() {
         // Given
         every { viewModel.isPaymentButtonEnabled } returns flowOf(true)
+        every { viewModel.onPaymentButtonTapped() } returns ReviewViewModel.PaymentNextStep.RedirectToBank
 
         val listener = mockk<ReviewFragmentListener>(relaxed = true)
         launchFragmentInContainer(themeResId = R.style.GiniHealthTheme) {
@@ -95,6 +97,7 @@ class ReviewFragmentTest {
         configureMockViewModel(viewModel)
         every { viewModel.paymentProviderApp } returns paymentProviderApp
         every { viewModel.isPaymentButtonEnabled } returns flowOf(true)
+        every { viewModel.onPaymentButtonTapped() } returns ReviewViewModel.PaymentNextStep.RedirectToBank
 
         val listener = mockk<ReviewFragmentListener>(relaxed = true)
 
