@@ -43,10 +43,11 @@ interface InstallAppForwardListener {
 
 internal class InstallAppBottomSheet private constructor(
     private val paymentComponent: PaymentComponent?,
-    private val listener: InstallAppForwardListener?
+    private val listener: InstallAppForwardListener?,
+    private val minHeight: Int?
 ) :
     GhsBottomSheetDialogFragment() {
-    constructor() : this(null, null)
+    constructor() : this(null, null, null)
 
     private var binding: GhsBottomSheetInstallAppBinding by autoCleared()
     private val viewModel: InstallAppViewModel by viewModels {
@@ -61,6 +62,9 @@ internal class InstallAppBottomSheet private constructor(
         savedInstanceState: Bundle?
     ): View {
         binding = GhsBottomSheetInstallAppBinding.inflate(inflater, container, false)
+        minHeight?.let {
+            binding.root.minHeight = it
+        }
         return binding.root
     }
 
@@ -165,9 +169,10 @@ internal class InstallAppBottomSheet private constructor(
          */
         fun newInstance(
             paymentComponent: PaymentComponent,
-            listener: InstallAppForwardListener
+            listener: InstallAppForwardListener,
+            minHeight: Int
         ): InstallAppBottomSheet {
-            return InstallAppBottomSheet(paymentComponent, listener)
+            return InstallAppBottomSheet(paymentComponent, listener, minHeight)
         }
     }
 

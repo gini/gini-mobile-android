@@ -64,7 +64,7 @@
         android:layout_marginHorizontal="@dimen/ghs_large"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/ghs_powered_by_gini_label"/>
+        app:layout_constraintBottom_toTopOf="@id/ghs_powered_by_gini_layout"/>
 
     <ImageButton
         android:id="@+id/ghs_play_store_logo"

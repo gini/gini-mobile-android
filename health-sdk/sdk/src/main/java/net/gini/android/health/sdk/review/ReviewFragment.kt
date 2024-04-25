@@ -535,7 +535,7 @@ class ReviewFragment private constructor(
             override fun onForwardToBankSelected() {
                 redirectToBankApp(paymentProviderApp)
             }
-        })
+        }, binding.paymentDetailsScrollview.height)
         dialog.show(requireActivity().supportFragmentManager, InstallAppBottomSheet::class.simpleName)
     }
 
