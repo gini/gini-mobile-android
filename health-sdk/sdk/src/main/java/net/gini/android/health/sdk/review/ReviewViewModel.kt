@@ -15,6 +15,8 @@ import net.gini.android.core.api.Resource
 import net.gini.android.core.api.models.Document
 import net.gini.android.health.api.models.PaymentRequestInput
 import net.gini.android.health.sdk.GiniHealth
+import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
+import net.gini.android.health.sdk.paymentcomponent.SelectedPaymentProviderAppState
 import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.health.sdk.preferences.UserPreferences
 import net.gini.android.health.sdk.review.model.PaymentDetails
@@ -25,8 +27,9 @@ import net.gini.android.health.sdk.review.pager.DocumentPageAdapter
 import net.gini.android.health.sdk.util.adjustToLocalDecimalSeparation
 import net.gini.android.health.sdk.util.toBackendFormat
 import net.gini.android.health.sdk.util.withPrev
+import org.slf4j.LoggerFactory
 
-internal class ReviewViewModel(val giniHealth: GiniHealth, val paymentProviderApp: PaymentProviderApp, val configuration: ReviewConfiguration) : ViewModel() {
+internal class ReviewViewModel(val giniHealth: GiniHealth, val configuration: ReviewConfiguration, val paymentComponent: PaymentComponent) : ViewModel() {
 
     internal var userPreferences: UserPreferences? = null
 
@@ -40,6 +43,9 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val paymentProviderAp
 
     private var _isInfoBarVisible = MutableStateFlow(true)
     var isInfoBarVisible: StateFlow<Boolean> = _isInfoBarVisible
+
+    private val _paymentProviderApp = MutableStateFlow<PaymentProviderApp?>(null)
+    val paymentProviderApp: StateFlow<PaymentProviderApp?> = _paymentProviderApp
 
     val isPaymentButtonEnabled: Flow<Boolean> =
         combine(giniHealth.openBankState, paymentDetails) { paymentState, paymentDetails ->
@@ -96,6 +102,19 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val paymentProviderAp
                     _paymentValidation.tryEmit(newEmptyValidationMessages + nonEmptyValidationMessages)
                 }
         }
+        viewModelScope.launch {
+            paymentComponent.selectedPaymentProviderAppFlow.collect { selectedPaymentProviderAppState ->
+                when (selectedPaymentProviderAppState) {
+                    is SelectedPaymentProviderAppState.AppSelected -> {
+                        _paymentProviderApp.value = selectedPaymentProviderAppState.paymentProviderApp
+                    }
+
+                    SelectedPaymentProviderAppState.NothingSelected -> {
+                        LOG.error("No selected payment provider app")
+                    }
+                }
+            }
+        }
     }
 
     fun getPages(document: Document): List<DocumentPageAdapter.Page> {
@@ -128,6 +147,12 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val paymentProviderAp
     }
 
     private suspend fun getPaymentRequest(): PaymentRequest {
+        val paymentProviderApp = paymentProviderApp.value
+        if (paymentProviderApp == null) {
+            LOG.error("Cannot create PaymentRequest: No selected payment provider app")
+            throw Exception("Cannot create PaymentRequest: No selected payment provider app")
+        }
+
         return when (val createPaymentRequestResource = giniHealth.giniHealthAPI.documentManager.createPaymentRequest(
             PaymentRequestInput(
                 paymentProvider = paymentProviderApp.paymentProvider.id,
@@ -145,7 +170,15 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val paymentProviderAp
     }
 
     fun onPayment() {
+        val paymentProviderApp = paymentProviderApp.value
+        if (paymentProviderApp == null) {
+            LOG.error("No selected payment provider app")
+            giniHealth.setOpenBankState(GiniHealth.PaymentState.Error(Exception("No selected payment provider app")))
+            return
+        }
+
         if (paymentProviderApp.installedPaymentProviderApp == null) {
+            LOG.error("Payment provider app not installed")
             giniHealth.setOpenBankState(GiniHealth.PaymentState.Error(Exception("Payment provider app not installed")))
             return
         }
@@ -202,16 +235,17 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val paymentProviderAp
         }
     }
 
-    class Factory(private val giniHealth: GiniHealth, private val paymentProviderApp: PaymentProviderApp, private val configuration: ReviewConfiguration) :
+    class Factory(private val giniHealth: GiniHealth, private val configuration: ReviewConfiguration, private val paymentComponent: PaymentComponent) :
         ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return ReviewViewModel(giniHealth, paymentProviderApp, configuration) as T
+            return ReviewViewModel(giniHealth, configuration, paymentComponent) as T
         }
     }
 
     companion object {
         const val SHOW_INFO_BAR_MS = 3000L
+        private val LOG = LoggerFactory.getLogger(ReviewViewModel::class.java)
     }
 }
 

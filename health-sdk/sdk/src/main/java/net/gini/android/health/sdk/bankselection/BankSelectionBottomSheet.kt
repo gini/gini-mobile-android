@@ -91,12 +91,6 @@ class BankSelectionBottomSheet private constructor(private val paymentComponent:
         return binding.root
     }
 
-    private fun openPlayStoreUrl(playStoreUrl: String) {
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(playStoreUrl))
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        startActivity(intent)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
