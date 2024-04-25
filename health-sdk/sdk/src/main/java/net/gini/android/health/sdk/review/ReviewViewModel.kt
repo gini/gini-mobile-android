@@ -8,6 +8,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
@@ -21,6 +22,7 @@ import net.gini.android.health.sdk.review.model.PaymentDetails
 import net.gini.android.health.sdk.review.model.PaymentRequest
 import net.gini.android.health.sdk.review.model.ResultWrapper
 import net.gini.android.health.sdk.review.model.withFeedback
+import net.gini.android.health.sdk.review.openWith.OpenWithPreferences
 import net.gini.android.health.sdk.review.pager.DocumentPageAdapter
 import net.gini.android.health.sdk.util.adjustToLocalDecimalSeparation
 import net.gini.android.health.sdk.util.toBackendFormat
@@ -29,6 +31,7 @@ import net.gini.android.health.sdk.util.withPrev
 internal class ReviewViewModel(val giniHealth: GiniHealth, val paymentProviderApp: PaymentProviderApp, val configuration: ReviewConfiguration) : ViewModel() {
 
     internal var userPreferences: UserPreferences? = null
+    internal var openWithPreferences: OpenWithPreferences? = null
 
     private val _paymentDetails = MutableStateFlow(PaymentDetails("", "", "", ""))
     val paymentDetails: StateFlow<PaymentDetails> = _paymentDetails
@@ -40,6 +43,8 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val paymentProviderAp
 
     private var _isInfoBarVisible = MutableStateFlow(true)
     var isInfoBarVisible: StateFlow<Boolean> = _isInfoBarVisible
+
+    private var openWithCounter: Int = 0
 
     val isPaymentButtonEnabled: Flow<Boolean> =
         combine(giniHealth.openBankState, paymentDetails) { paymentState, paymentDetails ->
@@ -95,6 +100,14 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val paymentProviderAp
                     // Emit all new empty validation messages along with other existing validation messages
                     _paymentValidation.tryEmit(newEmptyValidationMessages + nonEmptyValidationMessages)
                 }
+        }
+    }
+
+    fun startObservingOpenWithCount() {
+        viewModelScope.launch {
+            openWithPreferences?.getLiveCountForPaymentProviderId(paymentProviderApp.paymentProvider.id)?.collectLatest {
+                openWithCounter = it ?: 0
+            }
         }
     }
 
@@ -202,6 +215,27 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val paymentProviderAp
         }
     }
 
+    fun incrementOpenWithCounter() = viewModelScope.launch {
+        openWithPreferences?.incrementCountForPaymentProviderId(paymentProviderApp.paymentProvider.id)
+    }
+
+    fun onPaymentButtonTapped(): PaymentNextStep {
+        if (paymentProviderApp.paymentProvider.gpcSupported) {
+            //todo here we'll add check for installed after merging
+            return PaymentNextStep.RedirectToBank
+        }
+        return checkOpenWithCounter()
+    }
+
+    private fun checkOpenWithCounter(): PaymentNextStep = if (openWithCounter < SHOW_OPEN_WITH_TIMES) PaymentNextStep.ShowOpenWithSheet else PaymentNextStep.OpenSharePdf
+
+    sealed class PaymentNextStep {
+        object RedirectToBank: PaymentNextStep()
+        object ShowOpenWithSheet: PaymentNextStep()
+        object OpenSharePdf: PaymentNextStep()
+
+    }
+
     class Factory(private val giniHealth: GiniHealth, private val paymentProviderApp: PaymentProviderApp, private val configuration: ReviewConfiguration) :
         ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
@@ -212,6 +246,7 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val paymentProviderAp
 
     companion object {
         const val SHOW_INFO_BAR_MS = 3000L
+        const val SHOW_OPEN_WITH_TIMES = 3
     }
 }
 

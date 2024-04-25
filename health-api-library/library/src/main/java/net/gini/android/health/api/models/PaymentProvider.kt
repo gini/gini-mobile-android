@@ -32,7 +32,7 @@ data class PaymentProvider(
      * If the payment provider supports Gini Pay Connect integration
      */
     // TODO remove default value when backend is done
-    val gpcSupported: Boolean = false
+    val gpcSupported: Boolean
 ) {
 
     override fun equals(other: Any?): Boolean {
@@ -81,5 +81,5 @@ internal fun PaymentProviderResponse.toPaymentProvider(icon: ByteArray) = Paymen
     ),
     icon = icon,
     playStoreUrl = playStoreUrl,
-    gpcSupported = gpcSupported ?: false,
+    gpcSupported = gpcSupported ?: true,
 )

@@ -48,7 +48,10 @@ internal class OpenWithBottomSheet private constructor(paymentProviderApp: Payme
         binding.ghsAppLayout.ghsAppIcon.setImageDrawable(viewModel.paymentProviderApp?.icon)
         viewModel.paymentProviderApp?.let { paymentProviderApp ->
             with(binding.ghsForwardButton) {
-                setOnClickListener { listener?.onForwardSelected() }
+                setOnClickListener {
+                    dismiss()
+                    listener?.onForwardSelected()
+                }
                 setBackgroundTint(paymentProviderApp.colors.backgroundColor, 255)
                 setTextColor(paymentProviderApp.colors.textColor)
             }
