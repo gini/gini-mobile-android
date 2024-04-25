@@ -76,7 +76,7 @@
         android:requiresFadingEdge="vertical"
         android:layout_marginHorizontal="@dimen/ghs_large"
         android:layout_marginTop="@dimen/ghs_large"
-        app:layout_constraintBottom_toTopOf="@id/ghs_powered_by_gini_label"
+        app:layout_constraintBottom_toTopOf="@id/ghs_powered_by_gini_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_default="wrap"
         app:layout_constraintStart_toStartOf="parent"
@@ -85,6 +85,7 @@
         tools:listitem="@layout/ghs_item_payment_provider_app" />
 
     <include layout="@layout/ghs_powered_by_gini"
+        android:id="@+id/ghs_powered_by_gini_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
