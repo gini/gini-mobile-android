@@ -10,7 +10,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.startActivity
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -25,6 +27,7 @@ import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.health.sdk.paymentcomponent.SelectedPaymentProviderAppState
 import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.health.sdk.review.ReviewViewModel
+import net.gini.android.health.sdk.util.GhsBottomSheetDialogFragment
 import net.gini.android.health.sdk.util.autoCleared
 import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthTheme
 import net.gini.android.health.sdk.util.setBackgroundTint
@@ -42,7 +45,7 @@ internal class InstallAppBottomSheet private constructor(
     private val paymentComponent: PaymentComponent?,
     private val listener: InstallAppForwardListener?
 ) :
-    BottomSheetDialogFragment() {
+    GhsBottomSheetDialogFragment() {
     constructor() : this(null, null)
 
     private var binding: GhsBottomSheetInstallAppBinding by autoCleared()
@@ -50,27 +53,6 @@ internal class InstallAppBottomSheet private constructor(
         InstallAppViewModel.Factory(
             paymentComponent
         )
-    }
-
-    override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
-        val inflater = super.onGetLayoutInflater(savedInstanceState)
-        return this.getLayoutInflaterWithGiniHealthTheme(inflater)
-    }
-
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val wrappedContext = requireContext().wrappedWithGiniHealthTheme()
-        val dialog = BottomSheetDialog(wrappedContext, theme)
-
-        val colorDrawable =
-            ColorDrawable(ContextCompat.getColor(wrappedContext, R.color.ghs_bottom_sheet_scrim))
-        colorDrawable.alpha = 102 // 40% alpha
-        dialog.window?.setBackgroundDrawable(colorDrawable)
-
-        dialog.behavior.isFitToContents = true
-        dialog.behavior.skipCollapsed = true
-        dialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
-
-        return dialog
     }
 
     override fun onCreateView(
@@ -179,7 +161,6 @@ internal class InstallAppBottomSheet private constructor(
          * Create a new instance of the [InstallAppBottomSheet].
          *
          * @param paymentComponent the [PaymentComponent] which is needed to check the installation state of the payment provider app
-         * @param paymentProviderApp the [PaymentProviderApp] which needs to be installed in order to be used to make the payment
          * @param listener the [InstallAppForwardListener] which will forward redirect requests
          */
         fun newInstance(

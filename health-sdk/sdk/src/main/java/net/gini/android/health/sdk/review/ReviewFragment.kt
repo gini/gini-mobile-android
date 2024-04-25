@@ -383,12 +383,6 @@ class ReviewFragment private constructor(
             it.hideKeyboard()
             val nextStep = viewModel.onPaymentButtonTapped()
             handlePaymentNextStep(nextStep)
-            //todo handle this
-            if (paymentProviderApp.isInstalled()) {
-                redirectToBankApp(paymentProviderApp)
-            } else {
-                showInstallAppDialog(paymentProviderApp)
-            }
         }
         close.setOnClickListener { view ->
             if (isKeyboardShown) {
@@ -550,8 +544,8 @@ class ReviewFragment private constructor(
         viewModel.onPayment()
     }
 
-    private fun showOpenWithDialog() {
-        OpenWithBottomSheet.newInstance(viewModel.paymentProviderApp, object: OpenWithForwardInterface {
+    private fun showOpenWithDialog(paymentProviderApp: PaymentProviderApp) {
+        OpenWithBottomSheet.newInstance(paymentProviderApp, object: OpenWithForwardInterface {
             override fun onForwardSelected() {
                 startSharePdfIntent()
             }
@@ -573,10 +567,13 @@ class ReviewFragment private constructor(
         when (paymentNextStep) {
             ReviewViewModel.PaymentNextStep.OpenSharePdf -> startSharePdfIntent()
             ReviewViewModel.PaymentNextStep.RedirectToBank -> {
-                listener?.onToTheBankButtonClicked(viewModel.paymentProviderApp.name)
-                viewModel.onPayment()
+                viewModel.paymentProviderApp.value?.name?.let {
+                    listener?.onToTheBankButtonClicked(it)
+                    viewModel.onPayment()
+                }
             }
-            ReviewViewModel.PaymentNextStep.ShowOpenWithSheet -> showOpenWithDialog()
+            ReviewViewModel.PaymentNextStep.ShowOpenWithSheet -> viewModel.paymentProviderApp.value?.let { showOpenWithDialog(it) }
+            ReviewViewModel.PaymentNextStep.ShowInstallApp -> viewModel.paymentProviderApp.value?.let { showInstallAppDialog(it) }
         }
     }
 

@@ -123,9 +123,11 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val configuration: Re
     }
 
     fun startObservingOpenWithCount() {
-        viewModelScope.launch {
-            openWithPreferences?.getLiveCountForPaymentProviderId(paymentProviderApp.paymentProvider.id)?.collectLatest {
-                openWithCounter = it ?: 0
+        paymentProviderApp.value?.paymentProvider?.id?.let { paymentProviderAppId ->
+            viewModelScope.launch {
+                openWithPreferences?.getLiveCountForPaymentProviderId(paymentProviderAppId)?.collectLatest {
+                    openWithCounter = it ?: 0
+                }
             }
         }
     }
@@ -249,13 +251,15 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val configuration: Re
     }
 
     fun incrementOpenWithCounter() = viewModelScope.launch {
-        openWithPreferences?.incrementCountForPaymentProviderId(paymentProviderApp.paymentProvider.id)
+        paymentProviderApp.value?.paymentProvider?.id?.let {  paymentProviderAppId ->
+            openWithPreferences?.incrementCountForPaymentProviderId(paymentProviderAppId)
+        }
     }
 
     fun onPaymentButtonTapped(): PaymentNextStep {
-        if (paymentProviderApp.paymentProvider.gpcSupported) {
-            //todo here we'll add check for installed after merging
-            return PaymentNextStep.RedirectToBank
+        if (paymentProviderApp.value?.paymentProvider?.gpcSupported == true) {
+            return if (paymentProviderApp.value?.isInstalled() == true) PaymentNextStep.RedirectToBank
+            else PaymentNextStep.ShowInstallApp
         }
         return checkOpenWithCounter()
     }
@@ -266,7 +270,7 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val configuration: Re
         object RedirectToBank: PaymentNextStep()
         object ShowOpenWithSheet: PaymentNextStep()
         object OpenSharePdf: PaymentNextStep()
-
+        object ShowInstallApp: PaymentNextStep()
     }
 
     class Factory(private val giniHealth: GiniHealth, private val configuration: ReviewConfiguration, private val paymentComponent: PaymentComponent) :

@@ -402,8 +402,11 @@ class ReviewViewModelTest {
         every { paymentProviderApp.paymentProvider.id } returns "123"
 
         val openWithPreferences= OpenWithPreferences(context!!)
+        val paymentComponent = mockk<PaymentComponent>(relaxed = true)
+        every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
+            SelectedPaymentProviderAppState.AppSelected(paymentProviderApp))
 
-        val viewModel = ReviewViewModel(giniHealth!!, paymentProviderApp, mockk()).apply {
+        val viewModel = ReviewViewModel(giniHealth!!, mockk(), paymentComponent).apply {
             this.openWithPreferences = openWithPreferences
         }
 
@@ -415,12 +418,17 @@ class ReviewViewModelTest {
     }
 
     @Test
-    fun `returns 'RedirectToBank' when payment provider app supports GPC`() = runTest {
+    fun `returns 'RedirectToBank' when payment provider app supports GPC and is installed`() = runTest {
         // Given
         val paymentProviderApp = mockk<PaymentProviderApp>()
         every { paymentProviderApp.paymentProvider.gpcSupported } returns true
+        every { paymentProviderApp.isInstalled() } returns true
 
-        val viewModel = ReviewViewModel(giniHealth!!, paymentProviderApp, mockk())
+        val paymentComponent = mockk<PaymentComponent>(relaxed = true)
+        every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
+            SelectedPaymentProviderAppState.AppSelected(paymentProviderApp))
+
+        val viewModel = ReviewViewModel(giniHealth!!, mockk(), paymentComponent)
 
         // When
         val onPayment = viewModel.onPaymentButtonTapped()
@@ -435,7 +443,11 @@ class ReviewViewModelTest {
         val paymentProviderApp = mockk<PaymentProviderApp>()
         every { paymentProviderApp.paymentProvider.gpcSupported } returns false
 
-        val viewModel = ReviewViewModel(giniHealth!!, paymentProviderApp, mockk())
+        val paymentComponent = mockk<PaymentComponent>(relaxed = true)
+        every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
+            SelectedPaymentProviderAppState.AppSelected(paymentProviderApp))
+
+        val viewModel = ReviewViewModel(giniHealth!!, mockk(), paymentComponent)
 
         // When
         val onPayment = viewModel.onPaymentButtonTapped()
@@ -454,7 +466,11 @@ class ReviewViewModelTest {
         val openWithPreferences = mockk<OpenWithPreferences>()
         every { openWithPreferences.getLiveCountForPaymentProviderId(any()) } returns flowOf(3)
 
-        val viewModel = ReviewViewModel(giniHealth!!, paymentProviderApp, mockk()).apply {
+        val paymentComponent = mockk<PaymentComponent>(relaxed = true)
+        every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
+            SelectedPaymentProviderAppState.AppSelected(paymentProviderApp))
+
+        val viewModel = ReviewViewModel(giniHealth!!, mockk(), paymentComponent).apply {
             this.openWithPreferences = openWithPreferences
         }
         viewModel.startObservingOpenWithCount()
