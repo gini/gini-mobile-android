@@ -5,10 +5,7 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.google.common.truth.Truth
-import io.mockk.Runs
 import io.mockk.every
-import io.mockk.just
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.test.runTest
@@ -21,7 +18,7 @@ class OpenWithBottomSheetTest {
     @Test
     fun `listener method called when 'Forward' button tapped`() = runTest {
         // Given
-        val listener: OpenWithForwardInterface = mockk()
+        val listener: OpenWithForwardListener = mockk()
         every { listener.onForwardSelected() } returns mockk()
 
         launchFragmentInContainer(themeResId = R.style.GiniHealthTheme) {

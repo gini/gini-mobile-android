@@ -60,7 +60,7 @@ import net.gini.android.health.sdk.bankselection.BankSelectionBottomSheet
 import net.gini.android.health.sdk.review.installApp.InstallAppBottomSheet
 import net.gini.android.health.sdk.review.installApp.InstallAppForwardListener
 import net.gini.android.health.sdk.review.openWith.OpenWithBottomSheet
-import net.gini.android.health.sdk.review.openWith.OpenWithForwardInterface
+import net.gini.android.health.sdk.review.openWith.OpenWithForwardListener
 import net.gini.android.health.sdk.review.openWith.OpenWithPreferences
 import net.gini.android.health.sdk.util.extensions.getFontScale
 import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthTheme
@@ -545,7 +545,7 @@ class ReviewFragment private constructor(
     }
 
     private fun showOpenWithDialog(paymentProviderApp: PaymentProviderApp) {
-        OpenWithBottomSheet.newInstance(paymentProviderApp, object: OpenWithForwardInterface {
+        OpenWithBottomSheet.newInstance(paymentProviderApp, object: OpenWithForwardListener {
             override fun onForwardSelected() {
                 startSharePdfIntent()
             }

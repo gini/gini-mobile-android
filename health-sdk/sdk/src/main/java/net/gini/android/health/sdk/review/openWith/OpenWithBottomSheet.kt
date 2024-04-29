@@ -4,9 +4,7 @@ import android.content.Intent
 import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
-import android.text.Html
 import android.text.SpannableString
-import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.SpannedString
 import android.text.TextUtils
@@ -14,7 +12,6 @@ import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
-import android.text.style.UnderlineSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,10 +28,10 @@ import net.gini.android.health.sdk.util.setBackgroundTint
 /**
  * Interface for forwarding the request to share a PDF document
  */
-internal interface OpenWithForwardInterface {
+internal interface OpenWithForwardListener {
     fun onForwardSelected()
 }
-internal class OpenWithBottomSheet private constructor(paymentProviderApp: PaymentProviderApp?, private val listener: OpenWithForwardInterface?) : GhsBottomSheetDialogFragment() {
+internal class OpenWithBottomSheet private constructor(paymentProviderApp: PaymentProviderApp?, private val listener: OpenWithForwardListener?) : GhsBottomSheetDialogFragment() {
 
     constructor(): this(null, null)
 
@@ -99,8 +96,8 @@ internal class OpenWithBottomSheet private constructor(paymentProviderApp: Payme
          * Create a new instance of the [OpenWithBottomSheet].
          *
          * @param paymentProviderApp the [PaymentProviderApp] which the user needs ti identify in the 'Share PDF' screen
-         * @param listener the [OpenWithForwardInterface] which will forward requests
+         * @param listener the [OpenWithForwardListener] which will forward requests
          */
-        fun newInstance(paymentProviderApp: PaymentProviderApp, listener: OpenWithForwardInterface) = OpenWithBottomSheet(paymentProviderApp = paymentProviderApp, listener = listener)
+        fun newInstance(paymentProviderApp: PaymentProviderApp, listener: OpenWithForwardListener) = OpenWithBottomSheet(paymentProviderApp = paymentProviderApp, listener = listener)
     }
 }
