@@ -152,10 +152,6 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
 
                     _selectedPaymentProviderAppFlow.value =
                         SelectedPaymentProviderAppState.AppSelected(previouslySelectedPaymentProviderApp)
-                } else {
-                    LOG.debug("Previously selected payment provider app is not available anymore")
-
-                    selectFirstInstalledPaymentProviderAppOrNothing(paymentProviderApps)
                 }
             }
         } else {
@@ -180,29 +176,6 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
     private suspend fun getPreviouslySelectedPaymentProviderApp(paymentProviderApps: List<PaymentProviderApp>): PaymentProviderApp? {
         return paymentComponentPreferences.getSelectedPaymentProviderId()?.let { previouslySelectedPaymentProviderId ->
             paymentProviderApps.find { it.hasSamePaymentProviderId(previouslySelectedPaymentProviderId) }
-        }
-    }
-
-    private suspend fun selectFirstInstalledPaymentProviderAppOrNothing(paymentProviderApps: List<PaymentProviderApp>) {
-        LOG.debug("Selecting first installed payment provider app or nothing")
-
-        val firstInstalledPaymentProviderApp =
-            paymentProviderApps.find { it.isInstalled() }
-        
-        if (firstInstalledPaymentProviderApp != null) {
-            LOG.debug(
-                "First payment provider app is installed: {}",
-                firstInstalledPaymentProviderApp.name
-            )
-            _selectedPaymentProviderAppFlow.value =
-                SelectedPaymentProviderAppState.AppSelected(firstInstalledPaymentProviderApp)
-
-            paymentComponentPreferences.saveSelectedPaymentProviderId(firstInstalledPaymentProviderApp.paymentProvider.id)
-        } else {
-            LOG.debug("No installed payment provider app found")
-            _selectedPaymentProviderAppFlow.value = SelectedPaymentProviderAppState.NothingSelected
-
-            paymentComponentPreferences.deleteSelectedPaymentProviderId()
         }
     }
 
