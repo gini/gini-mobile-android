@@ -21,8 +21,8 @@
     <string name="ghs_payment_details_info_bar_text">Please check the prefilled values</string>
 
     <string name="ghs_more_information_label">Transfer payment data to the banking app and pay there directly.</string>
-    <string name="ghs_more_information_underlined_part">More information.</string>
-    <string name="ghs_select_bank_label">Select your bank</string>
+    <string name="ghs_more_information_underlined_part"><u>More information.</u></string>
+    <string name="ghs_select_bank_label">Select your bank to pay</string>
     <string name="ghs_select_bank">Select Bank</string>
     <string name="ghs_pay_invoice_button">Pay the invoice</string>
     <string name="ghs_payment_powered_by_label">Powered by</string>

@@ -13,6 +13,8 @@ import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.runTest
 import net.gini.android.health.sdk.R
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
@@ -61,30 +63,7 @@ class PaymentComponentViewTest {
             paymentComponentView.paymentComponent = paymentComponent
 
             // When
-            (paymentComponentView.findViewById(R.id.ghs_info_circle_icon) as Button).performClick()
-            // Then
-            verify {
-                paymentComponentListener.onMoreInformationClicked()
-            }
-        }
-    }
-
-    @Test
-    fun `calls onMoreInformation method of listener when clicking on more information label`() = runTest {
-        // Given
-        scenario?.onActivity { activity ->
-            val paymentComponentView = PaymentComponentView(activity, null)
-            paymentComponentView.paymentComponent = paymentComponent
-
-            val moreInformationLabel = paymentComponentView.findViewById(R.id.ghs_more_information_label) as TextView
-
-            // When
-            val spannableString = moreInformationLabel.text as SpannableString
-            val spans = spannableString.getSpans(0, spannableString.length, ClickableSpan::class.java)
-
-            Truth.assertThat(spans.size).isEqualTo(1)
-            spans[0].onClick(moreInformationLabel)
-
+            (paymentComponentView.findViewById(R.id.ghs_more_information) as TextView).performClick()
             // Then
             verify {
                 paymentComponentListener.onMoreInformationClicked()
@@ -101,6 +80,7 @@ class PaymentComponentViewTest {
 
             // When
             (paymentComponentView.findViewById(R.id.ghs_select_bank_button) as Button).performClick()
+
             // Then
             verify {
                 paymentComponentListener.onBankPickerClicked()
@@ -130,9 +110,11 @@ class PaymentComponentViewTest {
             val paymentComponentView = PaymentComponentView(activity, null)
             paymentComponentView.paymentComponent = paymentComponent
             paymentComponentView.documentId = "123"
+            paymentComponentView.coroutineScope = CoroutineScope(Dispatchers.Default)
 
             // When
             (paymentComponentView.findViewById(R.id.ghs_pay_invoice_button) as Button).performClick()
+
             // Then
             verify {
                 paymentComponentListener.onPayInvoiceClicked("123")

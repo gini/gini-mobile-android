@@ -46,4 +46,7 @@ internal class PaymentComponentPreferences(private val context: Context) {
         }.firstOrNull() ?: false
     }
 
+    suspend fun clearData() {
+        context.dataStore.edit { it.clear() }
+    }
 }

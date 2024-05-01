@@ -13,8 +13,15 @@ import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.spyk
 import io.mockk.unmockkAll
+import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.TestCoroutineScope
+import kotlinx.coroutines.test.createTestCoroutineScope
+import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.test.runTest
 import net.gini.android.core.api.Resource
 import net.gini.android.health.api.GiniHealthAPI
@@ -33,6 +40,7 @@ import net.gini.android.health.sdk.review.ReviewConfiguration
 import net.gini.android.health.sdk.review.ReviewFragment
 import net.gini.android.health.sdk.test.ViewModelTestCoroutineRule
 import net.gini.android.health.sdk.util.extensions.generateBitmapDrawableIcon
+import okhttp3.internal.cache2.Relay.Companion.edit
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -50,6 +58,9 @@ class PaymentComponentTest {
     private var giniHealth: GiniHealth? = null
     private val giniHealthAPI: GiniHealthAPI = mockk(relaxed = true) { GiniHealthAPI::class.java }
     private val documentManager: HealthApiDocumentManager = mockk { HealthApiDocumentManager::class.java }
+    private val testCoroutineDispatcher = StandardTestDispatcher()
+    private val testCoroutineScope =
+        createTestCoroutineScope(testCoroutineDispatcher + Job())
 
     private val paymentProvider = PaymentProvider(
         id = "payment provider id",
@@ -111,6 +122,11 @@ class PaymentComponentTest {
 
     @After
     fun tearDown() {
+        testCoroutineScope.runTest {
+            PaymentComponentPreferences(context!!).apply {
+                clearData()
+            }
+        }
         giniHealth = null
         context = null
         unmockkAll()
@@ -502,4 +518,58 @@ class PaymentComponentTest {
 
         paymentComponentPreferences.deleteSelectedPaymentProviderId()
     }
+
+    @Test
+    fun `rechecks returning user`() = runTest {
+        // Given
+        val paymentComponent = PaymentComponent(context!!, giniHealth!!)
+//        val paymentComponentPreferences = PaymentComponentPreferences(context!!)
+
+        paymentComponent.checkReturningUser()
+
+        paymentComponent.returningUserFlow.test {
+            assertThat(awaitItem()).isEqualTo(false)
+
+            // When
+//            paymentComponentPreferences.saveReturningUser()
+            paymentComponent.paymentComponentPreferences.saveReturningUser()
+            paymentComponent.checkReturningUser()
+
+            // Then
+            assertThat(awaitItem()).isEqualTo(true)
+        }
+    }
+
+    @Test
+    fun `calls to save returning user`() = runTest {
+        // Given
+        val paymentComponent = PaymentComponent(context!!, giniHealth!!)
+
+        paymentComponent.checkReturningUser()
+
+        paymentComponent.returningUserFlow.test {
+            assertThat(awaitItem()).isEqualTo(false)
+
+            // When
+            paymentComponent.onPayInvoiceClicked("123")
+            paymentComponent.checkReturningUser()
+
+            // Then
+            assertThat(awaitItem()).isEqualTo(true)
+        }
+    }
+
+    @Test
+    fun `forwards onPay call to listener`() = runTest {
+        // Given
+        val paymentComponent = PaymentComponent(context!!, giniHealth!!)
+        paymentComponent.listener = mockk(relaxed = true)
+
+        // When
+        paymentComponent.onPayInvoiceClicked("123")
+
+        // Then
+        verify { paymentComponent.listener?.onPayInvoiceClicked("123") }
+    }
+
 }

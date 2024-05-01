@@ -1,7 +1,9 @@
 package net.gini.android.health.sdk.paymentcomponent
 
 import android.content.Context
+import android.util.Log
 import androidx.annotation.VisibleForTesting
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -41,6 +43,13 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
      * A [StateFlow] which emits the state of the selected payment provider app. See [SelectedPaymentProviderAppState] for the possible states.
      */
     val selectedPaymentProviderAppFlow: StateFlow<SelectedPaymentProviderAppState> = _selectedPaymentProviderAppFlow.asStateFlow()
+
+    private val _returningUserFlow = MutableStateFlow(false)
+
+    /**
+     * A [StateFlow] which emits whether the user is a returning one or not.
+     */
+    val returningUserFlow: StateFlow<Boolean> = _returningUserFlow
 
     @VisibleForTesting
     internal val paymentComponentPreferences = PaymentComponentPreferences(context)
@@ -213,6 +222,17 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
                 throw exception
             }
         }
+    }
+
+    internal suspend fun onPayInvoiceClicked(documentId: String) {
+        paymentComponentPreferences.saveReturningUser()
+        listener?.onPayInvoiceClicked(documentId)
+        delay(500)
+        checkReturningUser()
+    }
+
+    internal suspend fun checkReturningUser() {
+        _returningUserFlow.value = paymentComponentPreferences.getReturningUser()
     }
 
     private companion object {
