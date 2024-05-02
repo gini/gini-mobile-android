@@ -3,6 +3,7 @@ package net.gini.android.health.sdk.bankselection
 import android.app.Dialog
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.graphics.Paint
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
@@ -88,6 +89,13 @@ class BankSelectionBottomSheet private constructor(private val paymentComponent:
             dismiss()
         }
 
+        binding.ghsMoreInformationLabel.apply {
+            paintFlags = binding.ghsMoreInformationLabel.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+            setOnClickListener {
+                paymentComponent?.listener?.onMoreInformationClicked()
+                dismiss()
+            }
+        }
         return binding.root
     }
 

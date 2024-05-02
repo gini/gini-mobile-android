@@ -85,6 +85,23 @@
         tools:listitem="@layout/ghs_item_payment_provider_app" />
 
     <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/ghs_more_information_label"
+        style="@style/GiniHealthTheme.Typography.Caption2"
+        android:layout_marginStart="@dimen/ghs_large"
+        android:drawableStart="@drawable/ghs_info_circle_icon"
+        android:drawableTint="@color/ghs_more_information_color"
+        android:drawablePadding="@dimen/ghs_medium"
+        android:text="@string/ghs_more_information_underlined_part"
+        android:textColor="@color/ghs_payment_component_caption"
+        android:gravity="center_vertical"
+        app:layout_constraintTop_toTopOf="@id/ghs_powered_by_gini_label"
+        app:layout_constraintBottom_toBottomOf="@id/ghs_powered_by_gini_label"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+
+    <TextView
         android:id="@+id/ghs_powered_by_gini_label"
         style="@style/GiniHealthTheme.Typography.Caption2"
         android:layout_width="wrap_content"
@@ -95,9 +112,6 @@
         android:textColor="@color/ghs_payment_component_caption"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/ghs_gini_logo"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/ghs_payment_provider_apps_list" />
 
     <ImageView
@@ -107,7 +121,6 @@
         android:layout_marginEnd="@dimen/ghs_large"
         app:layout_constraintBottom_toBottomOf="@id/ghs_powered_by_gini_label"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/ghs_powered_by_gini_label"
         app:layout_constraintTop_toTopOf="@id/ghs_powered_by_gini_label"
         app:srcCompat="@drawable/ghs_gini_logo" />
 
