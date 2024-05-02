@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.TestCoroutineScope
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.createTestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.test.runTest
@@ -60,7 +61,7 @@ class PaymentComponentTest {
     private val documentManager: HealthApiDocumentManager = mockk { HealthApiDocumentManager::class.java }
     private val testCoroutineDispatcher = StandardTestDispatcher()
     private val testCoroutineScope =
-        createTestCoroutineScope(testCoroutineDispatcher + Job())
+        TestScope(testCoroutineDispatcher + Job())
 
     private val paymentProvider = PaymentProvider(
         id = "payment provider id",
