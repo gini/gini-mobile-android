@@ -2,6 +2,7 @@ package net.gini.android.health.sdk.paymentcomponent
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import androidx.annotation.VisibleForTesting
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -88,6 +89,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
             LOG.debug("Creating coroutine scope")
             coroutineScope = CoroutineScope(coroutineContext)
         }
+        checkPaymentComponentHeight()
         coroutineScope?.launch {
             if (paymentComponent == null) {
                 LOG.warn("Cannot show payment provider apps: PaymentComponent must be set before showing the PaymentComponentView")
@@ -137,6 +139,12 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
                     }
                 }
             }
+        }
+    }
+
+    private fun checkPaymentComponentHeight() {
+        if (resources.getDimension(R.dimen.ghs_payment_component_height) > resources.getDimension(R.dimen.ghs_accessibility_min_height)) {
+            binding.ghsSelectBankPicker.layoutParams.height = resources.getDimension(R.dimen.ghs_payment_component_height).toInt()
         }
     }
 
