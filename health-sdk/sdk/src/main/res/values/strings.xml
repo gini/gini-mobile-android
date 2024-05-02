@@ -56,6 +56,7 @@
     <string name="ghs_payment_provider_logo_content_description">logo</string>
     <string name="ghs_close_content_description">Schließen</string>
     <string name="ghs_invalid_amount_content_description">Ungültiger Bezahlbetrag</string>
+    <string name="ghs_select_bank_content_description">Bank Auswählen</string>
 
     <!--  Install App  -->
     <string name="ghs_install_app_detail">Hinweis: Bitte aktualisieren oder installieren Sie zunächst die %s-App aus dem Google Play Store.</string>

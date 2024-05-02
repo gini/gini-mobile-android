@@ -175,6 +175,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
             )
             binding.ghsPaymentProviderAppIconHolder.ghsPaymentProviderIcon.setImageDrawable(paymentProviderApp.icon)
             binding.ghsPaymentProviderAppIconHolder.root.visibility = View.VISIBLE
+            binding.ghsPaymentProviderAppIconHolder.root.contentDescription = paymentProviderApp.name
         }
     }
 
