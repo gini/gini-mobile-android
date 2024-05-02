@@ -75,21 +75,39 @@ class HealthApiDocumentRepository(
     suspend fun getPaymentProviders(): Resource<List<PaymentProvider>> {
         return withAccessToken { accessToken ->
             wrapInResource {
-                documentRemoteSource.getPaymentProviders(accessToken).toMutableList().apply { add(0, PaymentProviderResponse(
-                    id = "com.gini.android.fake",
-                    name = "Open With Tester",
-                    gpcSupported = false,
-                    minAppVersion = AppVersionResponse(
-                        android = "1.0.0"
-                    ),
-                    colors = Colors(
-                        background = "D9B965",
-                        text = "FFFFFF"
-                    ),
-                    iconLocation = "https://health-api.gini.net/paymentProviders/f7d06ee0-51fd-11ec-8216-97f0937beb16/icon",
-                    playStoreUrl = "https://play.google.com/store/apps/details?id=net.gini.android.fake",
-                    packageNameAndroid = ""
-                )) }
+                documentRemoteSource.getPaymentProviders(accessToken).toMutableList().apply {
+                    add(0, PaymentProviderResponse(
+                        id = "com.gini.android.fake",
+                        name = "Open With Tester",
+                        gpcSupported = false,
+                        minAppVersion = AppVersionResponse(
+                            android = "1.0.0"
+                        ),
+                        colors = Colors(
+                            background = "D9B965",
+                            text = "FFFFFF"
+                        ),
+                        iconLocation = "https://health-api.gini.net/paymentProviders/f7d06ee0-51fd-11ec-8216-97f0937beb16/icon",
+                        playStoreUrl = "https://play.google.com/store/apps/details?id=net.gini.android.fake",
+                        packageNameAndroid = ""
+                    ))
+                    add(0, PaymentProviderResponse(
+                        id = "com.gini.android.fake2",
+                        name = "Open With Tester 2",
+                        gpcSupported = false,
+                        minAppVersion = AppVersionResponse(
+                            android = "1.0.0"
+                        ),
+                        colors = Colors(
+                            background = "D9B965",
+                            text = "FFFFFF"
+                        ),
+                        iconLocation = "https://health-api.gini.net/paymentProviders/f7d06ee0-51fd-11ec-8216-97f0937beb16/icon",
+                        playStoreUrl = "https://play.google.com/store/apps/details?id=net.gini.android.fake",
+                        packageNameAndroid = ""
+                    ))
+
+                }
                     .map { paymentProviderResponse ->
                     val icon = documentRemoteSource.getFile(accessToken, paymentProviderResponse.iconLocation)
                     paymentProviderResponse.toPaymentProvider(icon)
