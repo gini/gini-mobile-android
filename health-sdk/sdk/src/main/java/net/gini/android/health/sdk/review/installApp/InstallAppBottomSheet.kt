@@ -110,10 +110,6 @@ internal class InstallAppBottomSheet private constructor(
             paymentProviderApp.paymentProvider.name
         )
         binding.ghsPlayStoreLogo.visibility = View.GONE
-        changeBottomConstraintOfDetailsLabel(
-            R.id.ghs_forward_button,
-            resources.getDimension(R.dimen.ghs_large_24).toInt()
-        )
         binding.ghsForwardButton.apply {
             paymentProviderApp.let { paymentProviderApp ->
                 setBackgroundTint(paymentProviderApp.colors.backgroundColor, 255)
@@ -130,26 +126,7 @@ internal class InstallAppBottomSheet private constructor(
 
     private fun resetUI() {
         binding.ghsForwardButton.visibility = View.GONE
-        changeBottomConstraintOfDetailsLabel(
-            R.id.ghs_play_store_logo,
-            resources.getDimension(R.dimen.ghs_medium).toInt()
-        )
         binding.ghsPlayStoreLogo.visibility = View.VISIBLE
-    }
-
-    private fun changeBottomConstraintOfDetailsLabel(itemToConstrainTo: Int, margin: Int) {
-        val constraintLayout: ConstraintLayout = binding.root
-        val constraintSet = ConstraintSet()
-        constraintSet.clone(constraintLayout)
-        constraintSet.clear(R.id.ghs_install_app_details, ConstraintSet.BOTTOM)
-        constraintSet.connect(
-            R.id.ghs_install_app_details,
-            ConstraintSet.BOTTOM,
-            itemToConstrainTo,
-            ConstraintSet.TOP,
-            margin
-        )
-        constraintSet.applyTo(constraintLayout)
     }
 
     private fun openPlayStoreUrl(playStoreUrl: String) {

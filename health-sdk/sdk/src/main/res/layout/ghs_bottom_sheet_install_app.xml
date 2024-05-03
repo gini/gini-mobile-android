@@ -19,10 +19,9 @@
         android:layout_height="wrap_content"
         android:text="@string/ghs_install_app_title"
         style="@style/GiniHealthTheme.Typography.Subtitle1"
-        android:layout_marginBottom="@dimen/ghs_medium_12"
         android:layout_marginHorizontal="@dimen/ghs_large"
         android:textColor="@color/ghs_install_app_title_color"
-        app:layout_constraintBottom_toTopOf="@id/ghs_payment_provider_icon"
+        app:layout_constraintTop_toBottomOf="@id/drag_handle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         />
@@ -31,9 +30,10 @@
         android:id="@+id/ghs_payment_provider_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/ghs_large"
+        android:layout_marginTop="@dimen/ghs_medium_12"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ghs_install_app_title"
         app:layout_constraintBottom_toTopOf="@id/ghs_install_app_details"/>
 
     <TextView
@@ -46,11 +46,11 @@
         android:drawableTint="@color/ghs_install_app_details_color"
         android:textColor="@color/ghs_install_app_details_color"
         style="@style/GiniHealthTheme.Typography.Caption1"
-        android:layout_marginBottom="@dimen/ghs_medium"
         android:layout_marginHorizontal="@dimen/ghs_large"
+        android:layout_marginTop="@dimen/ghs_large"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/ghs_play_store_logo"
+        app:layout_constraintTop_toBottomOf="@id/ghs_payment_provider_icon"
         />
 
     <Button
@@ -64,12 +64,13 @@
         android:layout_marginHorizontal="@dimen/ghs_large"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/ghs_powered_by_gini_layout"/>
+        app:layout_constraintBottom_toTopOf="@id/ghs_powered_by_gini_layout"
+        app:layout_constraintTop_toBottomOf="@id/ghs_install_app_details"/>
 
     <ImageButton
         android:id="@+id/ghs_play_store_logo"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:src="@drawable/ghs_play_store_logo"
         android:background="@null"
         android:visibility="visible"
@@ -77,14 +78,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@id/ghs_powered_by_gini_layout"
-        android:layout_marginBottom="@dimen/ghs_large"/>
+        app:layout_constraintTop_toBottomOf="@id/ghs_install_app_details"
+        />
 
     <include layout="@layout/ghs_powered_by_gini"
         android:id="@+id/ghs_powered_by_gini_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/payment"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginBottom="@dimen/ghs_large"
         android:layout_marginEnd="@dimen/ghs_large"
