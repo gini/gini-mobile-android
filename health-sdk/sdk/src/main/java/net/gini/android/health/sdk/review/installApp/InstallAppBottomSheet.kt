@@ -10,7 +10,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.startActivity
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -25,6 +27,7 @@ import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.health.sdk.paymentcomponent.SelectedPaymentProviderAppState
 import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.health.sdk.review.ReviewViewModel
+import net.gini.android.health.sdk.util.GhsBottomSheetDialogFragment
 import net.gini.android.health.sdk.util.autoCleared
 import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthTheme
 import net.gini.android.health.sdk.util.setBackgroundTint
@@ -40,10 +43,11 @@ interface InstallAppForwardListener {
 
 internal class InstallAppBottomSheet private constructor(
     private val paymentComponent: PaymentComponent?,
-    private val listener: InstallAppForwardListener?
+    private val listener: InstallAppForwardListener?,
+    private val minHeight: Int?
 ) :
-    BottomSheetDialogFragment() {
-    constructor() : this(null, null)
+    GhsBottomSheetDialogFragment() {
+    constructor() : this(null, null, null)
 
     private var binding: GhsBottomSheetInstallAppBinding by autoCleared()
     private val viewModel: InstallAppViewModel by viewModels {
@@ -52,33 +56,15 @@ internal class InstallAppBottomSheet private constructor(
         )
     }
 
-    override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
-        val inflater = super.onGetLayoutInflater(savedInstanceState)
-        return this.getLayoutInflaterWithGiniHealthTheme(inflater)
-    }
-
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val wrappedContext = requireContext().wrappedWithGiniHealthTheme()
-        val dialog = BottomSheetDialog(wrappedContext, theme)
-
-        val colorDrawable =
-            ColorDrawable(ContextCompat.getColor(wrappedContext, R.color.ghs_bottom_sheet_scrim))
-        colorDrawable.alpha = 102 // 40% alpha
-        dialog.window?.setBackgroundDrawable(colorDrawable)
-
-        dialog.behavior.isFitToContents = true
-        dialog.behavior.skipCollapsed = true
-        dialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
-
-        return dialog
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = GhsBottomSheetInstallAppBinding.inflate(inflater, container, false)
+        minHeight?.let {
+            binding.root.minHeight = it
+        }
         return binding.root
     }
 
@@ -124,10 +110,6 @@ internal class InstallAppBottomSheet private constructor(
             paymentProviderApp.paymentProvider.name
         )
         binding.ghsPlayStoreLogo.visibility = View.GONE
-        changeBottomConstraintOfDetailsLabel(
-            R.id.ghs_forward_button,
-            resources.getDimension(R.dimen.ghs_large_24).toInt()
-        )
         binding.ghsForwardButton.apply {
             paymentProviderApp.let { paymentProviderApp ->
                 setBackgroundTint(paymentProviderApp.colors.backgroundColor, 255)
@@ -144,26 +126,7 @@ internal class InstallAppBottomSheet private constructor(
 
     private fun resetUI() {
         binding.ghsForwardButton.visibility = View.GONE
-        changeBottomConstraintOfDetailsLabel(
-            R.id.ghs_play_store_logo,
-            resources.getDimension(R.dimen.ghs_medium).toInt()
-        )
         binding.ghsPlayStoreLogo.visibility = View.VISIBLE
-    }
-
-    private fun changeBottomConstraintOfDetailsLabel(itemToConstrainTo: Int, margin: Int) {
-        val constraintLayout: ConstraintLayout = binding.root
-        val constraintSet = ConstraintSet()
-        constraintSet.clone(constraintLayout)
-        constraintSet.clear(R.id.ghs_install_app_details, ConstraintSet.BOTTOM)
-        constraintSet.connect(
-            R.id.ghs_install_app_details,
-            ConstraintSet.BOTTOM,
-            itemToConstrainTo,
-            ConstraintSet.TOP,
-            margin
-        )
-        constraintSet.applyTo(constraintLayout)
     }
 
     private fun openPlayStoreUrl(playStoreUrl: String) {
@@ -179,14 +142,14 @@ internal class InstallAppBottomSheet private constructor(
          * Create a new instance of the [InstallAppBottomSheet].
          *
          * @param paymentComponent the [PaymentComponent] which is needed to check the installation state of the payment provider app
-         * @param paymentProviderApp the [PaymentProviderApp] which needs to be installed in order to be used to make the payment
          * @param listener the [InstallAppForwardListener] which will forward redirect requests
          */
         fun newInstance(
             paymentComponent: PaymentComponent,
-            listener: InstallAppForwardListener
+            listener: InstallAppForwardListener,
+            minHeight: Int
         ): InstallAppBottomSheet {
-            return InstallAppBottomSheet(paymentComponent, listener)
+            return InstallAppBottomSheet(paymentComponent, listener, minHeight)
         }
     }
 

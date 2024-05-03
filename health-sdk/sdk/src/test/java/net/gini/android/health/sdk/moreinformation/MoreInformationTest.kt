@@ -50,6 +50,7 @@ class MoreInformationTest {
                             appVersion = "appVersion",
                             colors = PaymentProvider.Colors(backgroundColorRGBHex = "", textColoRGBHex = ""),
                             icon = ByteArray(0),
+                            gpcSupported = true,
                         )
                     ),
                     PaymentProviderApp(
@@ -63,6 +64,7 @@ class MoreInformationTest {
                             appVersion = "appVersion",
                             colors = PaymentProvider.Colors(backgroundColorRGBHex = "", textColoRGBHex = ""),
                             icon = ByteArray(0),
+                            gpcSupported = true,
                         )
                     ),
                     PaymentProviderApp(
@@ -76,6 +78,7 @@ class MoreInformationTest {
                             appVersion = "appVersion",
                             colors = PaymentProvider.Colors(backgroundColorRGBHex = "", textColoRGBHex = ""),
                             icon = ByteArray(0),
+                            gpcSupported = true
                         )
                     )
                 )

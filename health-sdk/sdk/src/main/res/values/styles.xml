@@ -128,6 +128,13 @@
     </style>
     <style name="GiniHealthTheme.Widget.ShapeableImageView.Corners" parent="Root.GiniHealthTheme.Widget.ShapeableImageView.Corners"/>
 
+    <style name="Root.GiniHealthTheme.Widget.RoundShapeableImageView.Corners" parent="">
+        <item name="cornerSize">50%</item>
+        <item name="cornerFamily">rounded</item>
+    </style>
+    <style name="GiniHealthTheme.Widget.RoundShapeableImageView.Corners" parent="Root.GiniHealthTheme.Widget.RoundShapeableImageView.Corners"/>
+
+
     <style name="Root.GiniHealthTheme.Widget.Button.TransparentBackground" parent="Root.GiniHealthTheme.Widget.Button.UnelevatedButton">
         <item name="android:background">@android:color/transparent</item>
         <item name="android:textColor">@color/ghs_bank_selector_button_color</item>
