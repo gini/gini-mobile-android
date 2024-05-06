@@ -1,5 +1,19 @@
 package net.gini.android.capture.camera;
 
+import static net.gini.android.capture.camera.CameraFragment.REQUEST_KEY;
+import static net.gini.android.capture.camera.CameraFragment.RESULT_KEY_SHOULD_SCROLL_TO_LAST_PAGE;
+import static net.gini.android.capture.document.ImageDocument.ImportMethod;
+import static net.gini.android.capture.internal.network.NetworkRequestsManager.isCancellation;
+import static net.gini.android.capture.internal.qrcode.EPSPaymentParser.EXTRACTION_ENTITY_NAME;
+import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
+import static net.gini.android.capture.internal.util.AndroidHelper.isMarshmallowOrLater;
+import static net.gini.android.capture.internal.util.FeatureConfiguration.getDocumentImportEnabledFileTypes;
+import static net.gini.android.capture.internal.util.FeatureConfiguration.isMultiPageEnabled;
+import static net.gini.android.capture.internal.util.FeatureConfiguration.isQRCodeScanningEnabled;
+import static net.gini.android.capture.internal.util.FileImportValidator.FILE_SIZE_LIMIT;
+import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
+import static net.gini.android.capture.tracking.EventTrackingHelper.trackCameraScreenEvent;
+
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
@@ -38,6 +52,8 @@ import net.gini.android.capture.AsyncCallback;
 import net.gini.android.capture.Document;
 import net.gini.android.capture.DocumentImportEnabledFileTypes;
 import net.gini.android.capture.EntryPoint;
+import net.gini.android.capture.EventTracker;
+import net.gini.android.capture.EventTrackerBuilder;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.GiniCaptureError;
 import net.gini.android.capture.ImportImageFileUrisAsyncTask;
@@ -95,7 +111,6 @@ import net.gini.android.capture.requirements.CameraHolder;
 import net.gini.android.capture.requirements.CameraResolutionRequirement;
 import net.gini.android.capture.requirements.CameraXHolder;
 import net.gini.android.capture.requirements.RequirementReport;
-import net.gini.android.capture.review.multipage.MultiPageReviewFragmentDirections;
 import net.gini.android.capture.tracking.AnalysisScreenEvent;
 import net.gini.android.capture.tracking.CameraScreenEvent;
 import net.gini.android.capture.util.IntentHelper;
@@ -117,21 +132,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
 import kotlin.Unit;
-
-import static net.gini.android.capture.GiniCaptureError.ErrorCode.MISSING_GINI_CAPTURE_INSTANCE;
-import static net.gini.android.capture.camera.CameraFragment.REQUEST_KEY;
-import static net.gini.android.capture.camera.CameraFragment.RESULT_KEY_SHOULD_SCROLL_TO_LAST_PAGE;
-import static net.gini.android.capture.document.ImageDocument.ImportMethod;
-import static net.gini.android.capture.internal.network.NetworkRequestsManager.isCancellation;
-import static net.gini.android.capture.internal.qrcode.EPSPaymentParser.EXTRACTION_ENTITY_NAME;
-import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
-import static net.gini.android.capture.internal.util.AndroidHelper.isMarshmallowOrLater;
-import static net.gini.android.capture.internal.util.FeatureConfiguration.getDocumentImportEnabledFileTypes;
-import static net.gini.android.capture.internal.util.FeatureConfiguration.isMultiPageEnabled;
-import static net.gini.android.capture.internal.util.FeatureConfiguration.isQRCodeScanningEnabled;
-import static net.gini.android.capture.internal.util.FileImportValidator.FILE_SIZE_LIMIT;
-import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
-import static net.gini.android.capture.tracking.EventTrackingHelper.trackCameraScreenEvent;
 
 /**
  * Internal use only.
@@ -187,6 +187,8 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private CameraInterface mCameraController;
     private ImageMultiPageDocument mMultiPageDocument;
     private PaymentQRCodeReader mPaymentQRCodeReader;
+    private EventTracker mEventTracker;
+
 
     private ConstraintLayout mLayoutRoot;
     private ViewGroup mCameraPreviewContainer;
@@ -340,6 +342,8 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                       final Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.gc_fragment_camera, container, false);
+        mEventTracker = EventTrackerBuilder.INSTANCE.createEventTracker(this.mFragment.getActivity().getApplicationContext());
+        mEventTracker.trackEvent("screen_shown", "camera");
 
         bindViews(view);
         preventPaneClickThrough();
@@ -867,6 +871,10 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     }
 
     private void setInputHandlers() {
+        ClickListenerExtKt.setIntervalClickListener(mButtonCameraTrigger, v -> {
+            mEventTracker.trackEvent("capture_tapped", "camera");
+            onCameraTriggerClicked();
+        });
         ClickListenerExtKt.setIntervalClickListener(mButtonCameraTrigger, v -> onCameraTriggerClicked());
 
         ClickListenerExtKt.setIntervalClickListener(mButtonCameraFlashTrigger, v -> {

@@ -52,12 +52,15 @@ android {
     }
 
     buildTypes {
+        val credentials = readLocalPropertiesToMapSilent(project, listOf("mixpanelApiKey"))
         debug {
             isTestCoverageEnabled = true
+            resValue("string", "mixpanel_api_key", credentials["mixpanelApiKey"] ?: "")
         }
         release {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
+            resValue("string", "mixpanel_api_key", credentials["mixpanelApiKey"] ?: "")
         }
     }
 
@@ -133,6 +136,7 @@ dependencies {
 
     implementation(libs.navigation.fragment.ktx)
     implementation(libs.navigation.ui.ktx)
+    implementation (libs.mixpanel)
 
     testImplementation(libs.junit)
     testImplementation(libs.truth)
