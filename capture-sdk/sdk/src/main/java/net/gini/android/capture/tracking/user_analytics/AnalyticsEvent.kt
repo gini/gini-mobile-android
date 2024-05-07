@@ -1,4 +1,4 @@
-package net.gini.android.capture.events
+package net.gini.android.capture.tracking.user_analytics
 
 
 enum class AnalyticsEvent(val eventName: String) {
