@@ -48,12 +48,12 @@ import androidx.core.os.BundleCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.navigation.NavDestination;
 
+import net.gini.android.capture.AnalyticsEventTracker;
+import net.gini.android.capture.AnalyticsEventTrackerBuilder;
 import net.gini.android.capture.AsyncCallback;
 import net.gini.android.capture.Document;
 import net.gini.android.capture.DocumentImportEnabledFileTypes;
 import net.gini.android.capture.EntryPoint;
-import net.gini.android.capture.EventTracker;
-import net.gini.android.capture.EventTrackerBuilder;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.GiniCaptureError;
 import net.gini.android.capture.ImportImageFileUrisAsyncTask;
@@ -68,6 +68,8 @@ import net.gini.android.capture.document.ImageMultiPageDocument;
 import net.gini.android.capture.document.QRCodeDocument;
 import net.gini.android.capture.error.ErrorFragment;
 import net.gini.android.capture.error.ErrorType;
+import net.gini.android.capture.events.AnalyticsEvent;
+import net.gini.android.capture.events.AnalyticsScreen;
 import net.gini.android.capture.internal.camera.api.CameraException;
 import net.gini.android.capture.internal.camera.api.CameraInterface;
 import net.gini.android.capture.internal.camera.api.OldCameraController;
@@ -187,7 +189,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private CameraInterface mCameraController;
     private ImageMultiPageDocument mMultiPageDocument;
     private PaymentQRCodeReader mPaymentQRCodeReader;
-    private EventTracker mEventTracker;
+    private AnalyticsEventTracker mAnalyticsEventTracker;
 
 
     private ConstraintLayout mLayoutRoot;
@@ -342,8 +344,8 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                       final Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.gc_fragment_camera, container, false);
-        mEventTracker = EventTrackerBuilder.INSTANCE.createEventTracker(this.mFragment.getActivity().getApplicationContext());
-        mEventTracker.trackEvent("screen_shown", "camera");
+        mAnalyticsEventTracker = AnalyticsEventTrackerBuilder.INSTANCE.createAnalyticsEventTracker(this.mFragment.getActivity().getApplicationContext());
+        mAnalyticsEventTracker.trackEvent(AnalyticsEvent.SCREEN_SHOWN, AnalyticsScreen.CAMERA);
 
         bindViews(view);
         preventPaneClickThrough();
@@ -872,7 +874,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private void setInputHandlers() {
         ClickListenerExtKt.setIntervalClickListener(mButtonCameraTrigger, v -> {
-            mEventTracker.trackEvent("capture_tapped", "camera");
+            mAnalyticsEventTracker.trackEvent(AnalyticsEvent.CAPTURE_TAPPED, AnalyticsScreen.CAMERA);
             onCameraTriggerClicked();
         });
         ClickListenerExtKt.setIntervalClickListener(mButtonCameraTrigger, v -> onCameraTriggerClicked());
