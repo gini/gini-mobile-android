@@ -18,11 +18,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.TestScope
-import kotlinx.coroutines.test.createTestCoroutineScope
-import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.test.runTest
 import net.gini.android.core.api.Resource
 import net.gini.android.health.api.GiniHealthAPI
@@ -41,7 +37,6 @@ import net.gini.android.health.sdk.review.ReviewConfiguration
 import net.gini.android.health.sdk.review.ReviewFragment
 import net.gini.android.health.sdk.test.ViewModelTestCoroutineRule
 import net.gini.android.health.sdk.util.extensions.generateBitmapDrawableIcon
-import okhttp3.internal.cache2.Relay.Companion.edit
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -524,7 +519,6 @@ class PaymentComponentTest {
     fun `rechecks returning user`() = runTest {
         // Given
         val paymentComponent = PaymentComponent(context!!, giniHealth!!)
-//        val paymentComponentPreferences = PaymentComponentPreferences(context!!)
 
         paymentComponent.checkReturningUser()
 
@@ -532,7 +526,6 @@ class PaymentComponentTest {
             assertThat(awaitItem()).isEqualTo(false)
 
             // When
-//            paymentComponentPreferences.saveReturningUser()
             paymentComponent.paymentComponentPreferences.saveReturningUser()
             paymentComponent.checkReturningUser()
 

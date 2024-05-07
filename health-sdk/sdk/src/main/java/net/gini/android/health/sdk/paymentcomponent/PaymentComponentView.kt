@@ -143,7 +143,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
     }
 
     private fun checkPaymentComponentHeight() {
-        if (resources.getDimension(R.dimen.ghs_payment_component_height) > resources.getDimension(R.dimen.ghs_accessibility_min_height)) {
+        if (resources.getDimension(R.dimen.ghs_payment_component_height) >= resources.getDimension(R.dimen.ghs_accessibility_min_height)) {
             binding.ghsSelectBankPicker.layoutParams.height = resources.getDimension(R.dimen.ghs_payment_component_height).toInt()
         }
     }

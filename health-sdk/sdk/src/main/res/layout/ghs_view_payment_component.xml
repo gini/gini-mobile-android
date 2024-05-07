@@ -57,7 +57,7 @@
             android:layout_marginHorizontal="@dimen/ghs_large"
             android:clickable="false"
             android:gravity="start|center_vertical"
-            android:padding="@dimen/ghs_large"
+            android:paddingHorizontal="@dimen/ghs_large"
             android:contentDescription="@string/ghs_select_bank_content_description"
             app:layout_constraintHorizontal_chainStyle="spread_inside"
             app:layout_constraintHorizontal_weight="1"
@@ -82,7 +82,7 @@
             app:layout_constraintTop_toTopOf="@id/ghs_background_view"
             app:layout_constraintBottom_toBottomOf="@id/ghs_background_view"
             app:layout_constraintStart_toEndOf="@id/ghs_select_bank_button"
-            app:layout_constraintHorizontal_weight="2.5"
+            app:layout_constraintHorizontal_weight="2.8"
             />
     </androidx.constraintlayout.widget.ConstraintLayout>
 

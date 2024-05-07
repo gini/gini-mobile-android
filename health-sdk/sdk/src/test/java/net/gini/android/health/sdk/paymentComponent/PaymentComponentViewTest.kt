@@ -3,8 +3,6 @@ package net.gini.android.health.sdk.paymentComponent
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.text.SpannableString
-import android.text.style.ClickableSpan
 import android.widget.Button
 import android.widget.TextView
 import androidx.lifecycle.Lifecycle
