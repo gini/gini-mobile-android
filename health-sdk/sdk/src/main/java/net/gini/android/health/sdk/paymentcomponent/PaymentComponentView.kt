@@ -248,16 +248,14 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
         LOG.debug("Showing payment component")
         binding.ghsSelectBankLabel.visibility = VISIBLE
         binding.ghsSelectBankPicker.visibility = VISIBLE
-        binding.ghsPoweredByGiniLabel.visibility = VISIBLE
-        binding.ghsGiniLogo.visibility = VISIBLE
+        binding.ghsPoweredByGini.visibility = VISIBLE
     }
 
     private fun hide() {
         LOG.debug("Hiding payment component")
         binding.ghsSelectBankLabel.visibility = GONE
         binding.ghsSelectBankPicker.visibility = GONE
-        binding.ghsPoweredByGiniLabel.visibility = GONE
-        binding.ghsGiniLogo.visibility = GONE
+        binding.ghsPoweredByGini.visibility = GONE
     }
 
     private fun addButtonInputHandlers() {

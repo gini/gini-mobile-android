@@ -95,7 +95,7 @@
         android:layout_marginEnd="@dimen/ghs_large"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/ghs_pay_invoice_button">
+        app:layout_constraintTop_toBottomOf="@id/ghs_select_bank_picker">
         <include layout="@layout/ghs_powered_by_gini"/>
     </FrameLayout>
 
@@ -104,8 +104,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/ghs_powered_by_gini_label"
-        app:layout_constraintBottom_toBottomOf="@id/ghs_powered_by_gini_label"
+        app:layout_constraintTop_toTopOf="@id/ghs_powered_by_gini"
+        app:layout_constraintBottom_toBottomOf="@id/ghs_powered_by_gini"
         style="@style/GiniHealthTheme.Typography.Caption2"
         android:layout_marginStart="@dimen/ghs_large"
         android:drawableStart="@drawable/ghs_info_circle_icon"
@@ -114,6 +114,6 @@
         android:text="@string/ghs_more_information_underlined_part"
         android:textColor="@color/ghs_payment_component_caption"
         android:gravity="center_vertical"
-        android:visibility="gone"
+        android:visibility="visible"
         />
 </merge>
