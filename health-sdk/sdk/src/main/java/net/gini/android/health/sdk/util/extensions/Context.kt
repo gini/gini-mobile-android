@@ -24,7 +24,7 @@ internal fun Context.generateBitmapDrawableIcon(icon: ByteArray, iconSize: Int):
                 iconSizePx,
                 true
             )
-            bitmap.recycle()
+            if (bitmap.width != iconSizePx) bitmap.recycle()
             BitmapDrawable(this.resources, scaledBitmap)
         }
 }
