@@ -1,6 +1,7 @@
 package net.gini.android.health.sdk.review
 
 import android.content.ActivityNotFoundException
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -58,6 +59,9 @@ import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.health.sdk.bankselection.BankSelectionBottomSheet
 import net.gini.android.health.sdk.review.installApp.InstallAppBottomSheet
 import net.gini.android.health.sdk.review.installApp.InstallAppForwardListener
+import net.gini.android.health.sdk.review.openWith.OpenWithBottomSheet
+import net.gini.android.health.sdk.review.openWith.OpenWithForwardListener
+import net.gini.android.health.sdk.review.openWith.OpenWithPreferences
 import net.gini.android.health.sdk.util.extensions.getFontScale
 import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthTheme
 import net.gini.android.health.sdk.util.wrappedWithGiniHealthTheme
@@ -143,6 +147,8 @@ class ReviewFragment private constructor(
         val documentPagerHeight = savedInstanceState?.getInt(PAGER_HEIGHT, -1) ?: -1
 
         viewModel.userPreferences = UserPreferences(requireContext())
+        viewModel.openWithPreferences = OpenWithPreferences(requireContext())
+        viewModel.startObservingOpenWithCount()
 
         with(binding) {
             setStateListeners()
@@ -375,11 +381,8 @@ class ReviewFragment private constructor(
         payment.setOnClickListener {
             requireActivity().currentFocus?.clearFocus()
             it.hideKeyboard()
-            if (paymentProviderApp.isInstalled()) {
-                redirectToBankApp(paymentProviderApp)
-            } else {
-                showInstallAppDialog(paymentProviderApp)
-            }
+            val nextStep = viewModel.onPaymentButtonTapped()
+            handlePaymentNextStep(nextStep)
         }
         close.setOnClickListener { view ->
             if (isKeyboardShown) {
@@ -532,13 +535,46 @@ class ReviewFragment private constructor(
             override fun onForwardToBankSelected() {
                 redirectToBankApp(paymentProviderApp)
             }
-        })
+        }, binding.paymentDetailsScrollview.height)
         dialog.show(requireActivity().supportFragmentManager, InstallAppBottomSheet::class.simpleName)
     }
 
     private fun redirectToBankApp(paymentProviderApp: PaymentProviderApp) {
         listener?.onToTheBankButtonClicked(paymentProviderApp.name ?: "")
         viewModel.onPayment()
+    }
+
+    private fun showOpenWithDialog(paymentProviderApp: PaymentProviderApp) {
+        OpenWithBottomSheet.newInstance(paymentProviderApp, object: OpenWithForwardListener {
+            override fun onForwardSelected() {
+                startSharePdfIntent()
+            }
+        }).also {
+            it.show(requireActivity().supportFragmentManager, it::class.java.name)
+        }
+        viewModel.incrementOpenWithCounter()
+    }
+
+    private fun startSharePdfIntent() {
+        //TODO link with downloaded PDF file after backend is ready
+        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+            type = "application/pdf"
+        }
+        startActivity(Intent.createChooser(shareIntent, ""))
+    }
+
+    private fun handlePaymentNextStep(paymentNextStep: ReviewViewModel.PaymentNextStep) {
+        when (paymentNextStep) {
+            ReviewViewModel.PaymentNextStep.OpenSharePdf -> startSharePdfIntent()
+            ReviewViewModel.PaymentNextStep.RedirectToBank -> {
+                viewModel.paymentProviderApp.value?.name?.let {
+                    listener?.onToTheBankButtonClicked(it)
+                    viewModel.onPayment()
+                }
+            }
+            ReviewViewModel.PaymentNextStep.ShowOpenWithSheet -> viewModel.paymentProviderApp.value?.let { showOpenWithDialog(it) }
+            ReviewViewModel.PaymentNextStep.ShowInstallApp -> viewModel.paymentProviderApp.value?.let { showInstallAppDialog(it) }
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

@@ -242,8 +242,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
         binding.ghsSelectBankLabel.visibility = VISIBLE
         binding.ghsSelectBankPicker.root.visibility = VISIBLE
         binding.ghsInfoCircleIcon.visibility = VISIBLE
-        binding.ghsPoweredByGiniLabel.visibility = VISIBLE
-        binding.ghsGiniLogo.visibility = VISIBLE
+        binding.ghsPoweredByGini.visibility = VISIBLE
     }
 
     private fun hide() {
@@ -253,8 +252,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
         binding.ghsSelectBankLabel.visibility = GONE
         binding.ghsSelectBankPicker.root.visibility = GONE
         binding.ghsInfoCircleIcon.visibility = GONE
-        binding.ghsPoweredByGiniLabel.visibility = GONE
-        binding.ghsGiniLogo.visibility = GONE
+        binding.ghsPoweredByGini.visibility = GONE
     }
 
     private fun addMoreInformationUnderlinedClickableText(clickListener: () -> Unit) {
