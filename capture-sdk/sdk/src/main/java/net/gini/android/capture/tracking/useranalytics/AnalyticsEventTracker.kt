@@ -2,8 +2,8 @@ package net.gini.android.capture
 
 import android.content.Context
 import com.mixpanel.android.mpmetrics.MixpanelAPI
-import net.gini.android.capture.tracking.user_analytics.AnalyticsEvent
-import net.gini.android.capture.tracking.user_analytics.AnalyticsScreen
+import net.gini.android.capture.tracking.useranalytics.AnalyticsEvent
+import net.gini.android.capture.tracking.useranalytics.AnalyticsScreen
 import org.json.JSONObject
 
 interface AnalyticsEventTracker {

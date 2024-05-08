@@ -111,4 +111,4 @@ navigation_safe_args = { module = "androidx.navigation:navigation-safe-args-grad
 datastore-preferences = "androidx.datastore:datastore-preferences:1.0.0"
 tomlj = "org.tomlj:tomlj:1.1.1"
 json-testing = "org.json:json:20231013"
-mixpanel = "com.mixpanel.android:mixpanel-android:7.+"
+mixpanel = "com.mixpanel.android:mixpanel-android:7.5.2"
