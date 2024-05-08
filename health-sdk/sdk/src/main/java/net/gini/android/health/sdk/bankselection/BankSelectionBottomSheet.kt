@@ -31,6 +31,7 @@ import net.gini.android.health.sdk.databinding.GhsBottomSheetBankSelectionBindin
 import net.gini.android.health.sdk.databinding.GhsItemPaymentProviderAppBinding
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
+import net.gini.android.health.sdk.util.GhsBottomSheetDialogFragment
 import net.gini.android.health.sdk.util.autoCleared
 import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthTheme
 import net.gini.android.health.sdk.util.setIntervalClickListener
@@ -43,32 +44,12 @@ import org.slf4j.LoggerFactory
  * installed it will also display its Play Store link.
  */
 class BankSelectionBottomSheet private constructor(private val paymentComponent: PaymentComponent?) :
-    BottomSheetDialogFragment() {
+    GhsBottomSheetDialogFragment() {
 
     constructor() : this(null)
 
     private var binding: GhsBottomSheetBankSelectionBinding by autoCleared()
     private val viewModel: BankSelectionViewModel by viewModels { BankSelectionViewModel.Factory(paymentComponent) }
-
-    override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
-        val inflater = super.onGetLayoutInflater(savedInstanceState)
-        return this.getLayoutInflaterWithGiniHealthTheme(inflater)
-    }
-
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val wrappedContext = requireContext().wrappedWithGiniHealthTheme()
-        val dialog = BottomSheetDialog(wrappedContext, theme)
-
-        val colorDrawable = ColorDrawable(ContextCompat.getColor(wrappedContext, R.color.ghs_bottom_sheet_scrim))
-        colorDrawable.alpha = 102 // 40% alpha
-        dialog.window?.setBackgroundDrawable(colorDrawable)
-
-        dialog.behavior.isFitToContents = true
-        dialog.behavior.skipCollapsed = true
-        dialog.behavior.state = STATE_EXPANDED
-
-        return dialog
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = GhsBottomSheetBankSelectionBinding.inflate(inflater, container, false)

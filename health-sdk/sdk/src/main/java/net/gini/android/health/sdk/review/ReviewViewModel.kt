@@ -8,6 +8,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
@@ -23,6 +24,7 @@ import net.gini.android.health.sdk.review.model.PaymentDetails
 import net.gini.android.health.sdk.review.model.PaymentRequest
 import net.gini.android.health.sdk.review.model.ResultWrapper
 import net.gini.android.health.sdk.review.model.withFeedback
+import net.gini.android.health.sdk.review.openWith.OpenWithPreferences
 import net.gini.android.health.sdk.review.pager.DocumentPageAdapter
 import net.gini.android.health.sdk.util.adjustToLocalDecimalSeparation
 import net.gini.android.health.sdk.util.toBackendFormat
@@ -32,6 +34,7 @@ import org.slf4j.LoggerFactory
 internal class ReviewViewModel(val giniHealth: GiniHealth, val configuration: ReviewConfiguration, val paymentComponent: PaymentComponent) : ViewModel() {
 
     internal var userPreferences: UserPreferences? = null
+    internal var openWithPreferences: OpenWithPreferences? = null
 
     private val _paymentDetails = MutableStateFlow(PaymentDetails("", "", "", ""))
     val paymentDetails: StateFlow<PaymentDetails> = _paymentDetails
@@ -46,6 +49,8 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val configuration: Re
 
     private val _paymentProviderApp = MutableStateFlow<PaymentProviderApp?>(null)
     val paymentProviderApp: StateFlow<PaymentProviderApp?> = _paymentProviderApp
+
+    private var openWithCounter: Int = 0
 
     val isPaymentButtonEnabled: Flow<Boolean> =
         combine(giniHealth.openBankState, paymentDetails) { paymentState, paymentDetails ->
@@ -112,6 +117,16 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val configuration: Re
                     SelectedPaymentProviderAppState.NothingSelected -> {
                         LOG.error("No selected payment provider app")
                     }
+                }
+            }
+        }
+    }
+
+    fun startObservingOpenWithCount() {
+        paymentProviderApp.value?.paymentProvider?.id?.let { paymentProviderAppId ->
+            viewModelScope.launch {
+                openWithPreferences?.getLiveCountForPaymentProviderId(paymentProviderAppId)?.collectLatest {
+                    openWithCounter = it ?: 0
                 }
             }
         }
@@ -235,6 +250,29 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val configuration: Re
         }
     }
 
+    fun incrementOpenWithCounter() = viewModelScope.launch {
+        paymentProviderApp.value?.paymentProvider?.id?.let {  paymentProviderAppId ->
+            openWithPreferences?.incrementCountForPaymentProviderId(paymentProviderAppId)
+        }
+    }
+
+    fun onPaymentButtonTapped(): PaymentNextStep {
+        if (paymentProviderApp.value?.paymentProvider?.gpcSupported == true) {
+            return if (paymentProviderApp.value?.isInstalled() == true) PaymentNextStep.RedirectToBank
+            else PaymentNextStep.ShowInstallApp
+        }
+        return checkOpenWithCounter()
+    }
+
+    private fun checkOpenWithCounter(): PaymentNextStep = if (openWithCounter < SHOW_OPEN_WITH_TIMES) PaymentNextStep.ShowOpenWithSheet else PaymentNextStep.OpenSharePdf
+
+    sealed class PaymentNextStep {
+        object RedirectToBank: PaymentNextStep()
+        object ShowOpenWithSheet: PaymentNextStep()
+        object OpenSharePdf: PaymentNextStep()
+        object ShowInstallApp: PaymentNextStep()
+    }
+
     class Factory(private val giniHealth: GiniHealth, private val configuration: ReviewConfiguration, private val paymentComponent: PaymentComponent) :
         ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
@@ -246,6 +284,7 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val configuration: Re
     companion object {
         const val SHOW_INFO_BAR_MS = 3000L
         private val LOG = LoggerFactory.getLogger(ReviewViewModel::class.java)
+        const val SHOW_OPEN_WITH_TIMES = 3
     }
 }
 

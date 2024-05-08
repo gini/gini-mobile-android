@@ -69,7 +69,8 @@ val paymentProvidersFixture = installedPaymentProviderAppsFixture.map { installe
             backgroundColorRGBHex = "112233",
             textColoRGBHex = "ffffff"
         ),
-        icon = byteArrayOf()
+        icon = byteArrayOf(),
+        gpcSupported = true
     )
 }
 

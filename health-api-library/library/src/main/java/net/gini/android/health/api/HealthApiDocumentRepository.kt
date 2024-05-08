@@ -18,6 +18,9 @@ import net.gini.android.health.api.models.PaymentRequestInput
 import net.gini.android.health.api.models.getPageByPageNumber
 import net.gini.android.health.api.models.toPageList
 import net.gini.android.health.api.models.toPaymentProvider
+import net.gini.android.health.api.response.AppVersionResponse
+import net.gini.android.health.api.response.Colors
+import net.gini.android.health.api.response.PaymentProviderResponse
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody

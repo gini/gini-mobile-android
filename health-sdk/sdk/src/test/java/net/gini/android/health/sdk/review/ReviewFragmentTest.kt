@@ -77,6 +77,7 @@ class ReviewFragmentTest {
     fun `calls onNextClicked() listener when 'Next' ('Pay') button is clicked`() {
         // Given
         every { viewModel.isPaymentButtonEnabled } returns flowOf(true)
+        every { viewModel.onPaymentButtonTapped() } returns ReviewViewModel.PaymentNextStep.RedirectToBank
 
         val paymentComponent = mockk<PaymentComponent>(relaxed = true)
         every { paymentComponent.recheckWhichPaymentProviderAppsAreInstalled() } returns mockk(relaxed = true)
@@ -121,6 +122,7 @@ class ReviewFragmentTest {
         every { viewModel.paymentComponent } returns paymentComponent
         every { viewModel.isPaymentButtonEnabled } returns flowOf(true)
         every { viewModel.paymentProviderApp } returns MutableStateFlow(paymentProviderApp)
+        every { viewModel.onPaymentButtonTapped() } returns ReviewViewModel.PaymentNextStep.RedirectToBank
 
         val listener = mockk<ReviewFragmentListener>(relaxed = true)
 
@@ -162,6 +164,7 @@ class ReviewFragmentTest {
         every { viewModel.paymentComponent } returns paymentComponent
         every { viewModel.isPaymentButtonEnabled } returns flowOf(true)
         every { viewModel.paymentProviderApp } returns MutableStateFlow(paymentProviderApp)
+        every { viewModel.onPaymentButtonTapped() } returns ReviewViewModel.PaymentNextStep.ShowInstallApp
 
         val listener = mockk<ReviewFragmentListener>(relaxed = true)
         val fragment = ReviewFragment.newInstance(
@@ -183,4 +186,41 @@ class ReviewFragmentTest {
         Truth.assertThat(dialog.isShowing)
     }
 
+    @Test
+    fun `displays 'Open With' dialog when 'Pay' button is clicked and payment provider does not support 'GPC'`() = runTest {
+        // Given
+        val paymentProviderName = "Test Bank App"
+        val paymentProviderApp: PaymentProviderApp = mockk(relaxed = true)
+        every { paymentProviderApp.name } returns paymentProviderName
+        every { paymentProviderApp.isInstalled() } returns false
+
+        val paymentComponent = mockk<PaymentComponent>()
+        every { paymentComponent.recheckWhichPaymentProviderAppsAreInstalled() } returns Unit
+        every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
+            SelectedPaymentProviderAppState.AppSelected(paymentProviderApp)
+        )
+
+        viewModel = mockk(relaxed = true)
+        configureMockViewModel(viewModel)
+        every { viewModel.paymentComponent } returns paymentComponent
+        every { viewModel.paymentProviderApp } returns MutableStateFlow(paymentProviderApp)
+        every { viewModel.isPaymentButtonEnabled } returns flowOf(true)
+        every { viewModel.onPaymentButtonTapped() } returns ReviewViewModel.PaymentNextStep.ShowOpenWithSheet
+
+        launchFragmentInContainer(themeResId = R.style.GiniHealthTheme) {
+            ReviewFragment.newInstance(
+                giniHealth = mockk(relaxed = true),
+                listener = mockk(relaxed = true),
+                viewModelFactory = viewModelFactory,
+                paymentComponent = paymentComponent
+            )
+        }
+
+        // When
+        onView(withId(R.id.payment)).perform(click())
+
+        // Then
+        val dialog = ShadowDialog.getLatestDialog()
+        Truth.assertThat(dialog.isShowing)
+    }
 }

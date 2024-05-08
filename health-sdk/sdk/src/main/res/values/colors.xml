@@ -51,4 +51,10 @@
     <color name="ghs_select_bank_and_pay_color">@color/ghs_dark_01</color>
     <color name="ghs_info_button_tint">@color/ghs_dark_02</color>
 
+    <!--  Open With  -->
+    <color name="ghs_open_with_title">@color/ghs_dark_02</color>
+    <color name="ghs_open_with_details">@color/ghs_dark_03</color>
+    <color name="ghs_open_with_apps_background">@color/ghs_dark_05</color>
+    <color name="ghs_open_with_app_placeholder">@color/ghs_dark_07</color>
+
 </resources>

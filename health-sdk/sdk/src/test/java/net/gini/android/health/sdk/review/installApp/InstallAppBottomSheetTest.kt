@@ -45,7 +45,8 @@ class InstallAppBottomSheetTest {
         // Given
         val bottomSheet = InstallAppBottomSheet.newInstance(
             paymentComponent,
-            mockk()
+            mockk(),
+            0
         )
 
         // When
@@ -65,7 +66,8 @@ class InstallAppBottomSheetTest {
 
         val bottomSheet = InstallAppBottomSheet.newInstance(
             paymentComponent,
-            mockk()
+            mockk(),
+            0
         )
 
         // When
@@ -88,7 +90,8 @@ class InstallAppBottomSheetTest {
 
         val bottomSheet = InstallAppBottomSheet.newInstance(
             paymentComponent,
-            listener
+            listener,
+            0
         )
 
         launchFragmentInContainer(themeResId = R.style.GiniHealthTheme) {

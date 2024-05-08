@@ -58,6 +58,7 @@ class BankSelectionViewModelTest {
             appVersion = "appVersion",
             colors = PaymentProvider.Colors(backgroundColorRGBHex = "", textColoRGBHex = ""),
             icon = ByteArray(0),
+            gpcSupported = true
         )
     )
 
@@ -72,6 +73,7 @@ class BankSelectionViewModelTest {
             appVersion = "appVersion",
             colors = PaymentProvider.Colors(backgroundColorRGBHex = "", textColoRGBHex = ""),
             icon = ByteArray(0),
+            gpcSupported = true
         )
     )
 
@@ -86,6 +88,7 @@ class BankSelectionViewModelTest {
             appVersion = "appVersion",
             colors = PaymentProvider.Colors(backgroundColorRGBHex = "", textColoRGBHex = ""),
             icon = ByteArray(0),
+            gpcSupported = true
         )
     )
 

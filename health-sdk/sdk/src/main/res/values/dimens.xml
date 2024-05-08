@@ -6,6 +6,7 @@
     <dimen name="ghs_small_2">2dp</dimen>
     <dimen name="ghs_small">4dp</dimen>
     <dimen name="ghs_medium">8dp</dimen>
+    <dimen name="ghs_medium_10">10dp</dimen>
     <dimen name="ghs_medium_12">12dp</dimen>
     <dimen name="ghs_large">16dp</dimen>
     <dimen name="ghs_large_18">18dp</dimen>
