@@ -24,7 +24,7 @@ import net.gini.android.core.api.models.ExtractionsContainer
  * @param sessionManager if not null, then the [SessionManager] instance will be used for session management. If null, then anonymous Gini users will be used.
  */
 class GiniHealthAPIBuilder @JvmOverloads constructor(
-    context: Context,
+    private val context: Context,
     clientId: String = "",
     clientSecret: String = "",
     emailDomain: String = "",
@@ -51,7 +51,7 @@ class GiniHealthAPIBuilder @JvmOverloads constructor(
     }
 
     private fun createDocumentRemoteSource(): HealthApiDocumentRemoteSource {
-        return HealthApiDocumentRemoteSource(Dispatchers.IO, getApiRetrofit().create(HealthApiDocumentService::class.java), healthApiType, getApiBaseUrl() ?: "")
+        return HealthApiDocumentRemoteSource(Dispatchers.IO, getApiRetrofit().create(HealthApiDocumentService::class.java), healthApiType, getApiBaseUrl() ?: "", HardcodedFilesLocalDataSource(context = context))
     }
 
     override fun createDocumentRepository(): HealthApiDocumentRepository {

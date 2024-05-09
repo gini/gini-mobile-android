@@ -25,7 +25,8 @@ class HealthApiDocumentRemoteSource internal constructor(
     override var coroutineContext: CoroutineContext,
     private val documentService: HealthApiDocumentService,
     private val giniApiType: GiniHealthApiType,
-    baseUriString: String
+    baseUriString: String,
+    private val hardcodedFilesLocalDataSource: HardcodedFilesLocalDataSource,   //TODO remove this when we get file from BE
 ): DocumentRemoteSource(coroutineContext, documentService, giniApiType, baseUriString) {
 
     internal suspend fun getPages(accessToken: String, documentId: String): List<PageResponse> = withContext(coroutineContext) {
@@ -59,5 +60,17 @@ class HealthApiDocumentRemoteSource internal constructor(
 
         response.headers()["location"]?.substringAfterLast("/")
             ?: throw ApiException.forResponse("Location is missing from header", response)
+    }
+
+    //TODO replace with actual API call parameters when backend is ready
+    suspend fun getPaymentRequestDocument(accessToken: String, location: String): ByteArray = withContext(coroutineContext) {
+        val response = SafeApiRequest.apiRequest {
+            documentService.getPaymentRequestDocument(
+                bearerHeaderMap(accessToken, contentType = giniApiType.giniPaymentRequestDocumentMediaType),
+                location
+            )
+        }
+        hardcodedFilesLocalDataSource.loadTestPdf()
+//        response.body() ?: throw ApiException.forResponse("Empty response body", response)
     }
 }

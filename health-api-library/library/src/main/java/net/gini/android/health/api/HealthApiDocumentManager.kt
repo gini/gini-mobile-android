@@ -65,4 +65,8 @@ class HealthApiDocumentManager(private val documentRepository: HealthApiDocument
         paymentRequestInput: PaymentRequestInput,
             ): Resource<String> = documentRepository.createPaymentRequest(paymentRequestInput)
 
+
+    suspend fun getPaymentRequestDocument(
+        location: String
+    ): Resource<ByteArray> = documentRepository.getPaymentRequestDocument(location)
 }

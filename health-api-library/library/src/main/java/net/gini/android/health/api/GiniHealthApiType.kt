@@ -16,7 +16,8 @@ class GiniHealthApiType @JvmOverloads constructor(
     override val baseUrl: String = "https://health-api.gini.net/",
     override val giniJsonMediaType: String = "application/vnd.gini.v$apiVersion+json",
     override val giniPartialMediaType: String = "application/vnd.gini.v$apiVersion.partial",
-    override val giniCompositeJsonMediaType: String = "application/vnd.gini.v$apiVersion.composite+json"
+    override val giniCompositeJsonMediaType: String = "application/vnd.gini.v$apiVersion.composite+json",
+    override val giniPaymentRequestDocumentMediaType: String = "application/vnd.gini.v$apiVersion+qr+pdf"
 ) : GiniApiType {
 
     override fun equals(other: Any?): Boolean {
@@ -30,6 +31,7 @@ class GiniHealthApiType @JvmOverloads constructor(
         if (giniJsonMediaType != other.giniJsonMediaType) return false
         if (giniPartialMediaType != other.giniPartialMediaType) return false
         if (giniCompositeJsonMediaType != other.giniCompositeJsonMediaType) return false
+        if (giniPaymentRequestDocumentMediaType != other.giniPaymentRequestDocumentMediaType) return false
 
         return true
     }
@@ -40,6 +42,7 @@ class GiniHealthApiType @JvmOverloads constructor(
         result = 31 * result + giniJsonMediaType.hashCode()
         result = 31 * result + giniPartialMediaType.hashCode()
         result = 31 * result + giniCompositeJsonMediaType.hashCode()
+        result = 31 * result + giniPaymentRequestDocumentMediaType.hashCode()
         return result
     }
 }

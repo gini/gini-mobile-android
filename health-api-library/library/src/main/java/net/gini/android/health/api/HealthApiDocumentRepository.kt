@@ -114,4 +114,12 @@ class HealthApiDocumentRepository(
             }
         }
     }
+
+    // TODO - what params do we need to send
+    suspend fun getPaymentRequestDocument(location: String): Resource<ByteArray> =
+        withAccessToken { accessToken ->
+            wrapInResource {
+                documentRemoteSource.getPaymentRequestDocument(accessToken, location)
+            }
+        }
 }

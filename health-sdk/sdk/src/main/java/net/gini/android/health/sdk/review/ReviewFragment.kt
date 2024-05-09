@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.content.FileProvider
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsAnimationCompat
@@ -65,6 +66,7 @@ import net.gini.android.health.sdk.review.openWith.OpenWithPreferences
 import net.gini.android.health.sdk.util.extensions.getFontScale
 import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthTheme
 import net.gini.android.health.sdk.util.wrappedWithGiniHealthTheme
+import java.io.File
 
 /**
  * Configuration for the [ReviewFragment].
@@ -203,6 +205,11 @@ class ReviewFragment private constructor(
                             showSelectedPaymentProviderApp(paymentProviderApp)
                             setActionListeners(paymentProviderApp)
                         }
+                    }
+                }
+                launch {
+                    viewModel.paymentNextStep.collect { paymentNextStep ->
+                        handlePaymentNextStep(paymentNextStep)
                     }
                 }
             }
@@ -381,8 +388,7 @@ class ReviewFragment private constructor(
         payment.setOnClickListener {
             requireActivity().currentFocus?.clearFocus()
             it.hideKeyboard()
-            val nextStep = viewModel.onPaymentButtonTapped()
-            handlePaymentNextStep(nextStep)
+            viewModel.onPaymentButtonTapped()
         }
         close.setOnClickListener { view ->
             if (isKeyboardShown) {
@@ -547,7 +553,7 @@ class ReviewFragment private constructor(
     private fun showOpenWithDialog(paymentProviderApp: PaymentProviderApp) {
         OpenWithBottomSheet.newInstance(paymentProviderApp, object: OpenWithForwardListener {
             override fun onForwardSelected() {
-                startSharePdfIntent()
+                viewModel.onPaymentButtonTapped()
             }
         }).also {
             it.show(requireActivity().supportFragmentManager, it::class.java.name)
@@ -555,17 +561,26 @@ class ReviewFragment private constructor(
         viewModel.incrementOpenWithCounter()
     }
 
-    private fun startSharePdfIntent() {
-        //TODO link with downloaded PDF file after backend is ready
+    private fun startSharePdfIntent(paymentRequestFile: File) {
+        val uriForFile = FileProvider.getUriForFile(
+            requireContext(),
+            requireContext().packageName + ".fileprovider",
+            paymentRequestFile
+        )
         val shareIntent = Intent(Intent.ACTION_SEND).apply {
             type = "application/pdf"
+            flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+            putExtra(Intent.EXTRA_STREAM, uriForFile)
         }
-        startActivity(Intent.createChooser(shareIntent, ""))
+        startActivity(Intent.createChooser(shareIntent, uriForFile.lastPathSegment))
     }
 
     private fun handlePaymentNextStep(paymentNextStep: ReviewViewModel.PaymentNextStep) {
         when (paymentNextStep) {
-            ReviewViewModel.PaymentNextStep.OpenSharePdf -> startSharePdfIntent()
+            ReviewViewModel.PaymentNextStep.DownloadPaymentRequestFile -> {
+                binding.loading.isVisible = true
+                viewModel.getFileAsByteArray(requireContext().externalCacheDir)
+            }
             ReviewViewModel.PaymentNextStep.RedirectToBank -> {
                 viewModel.paymentProviderApp.value?.name?.let {
                     listener?.onToTheBankButtonClicked(it)
@@ -574,6 +589,10 @@ class ReviewFragment private constructor(
             }
             ReviewViewModel.PaymentNextStep.ShowOpenWithSheet -> viewModel.paymentProviderApp.value?.let { showOpenWithDialog(it) }
             ReviewViewModel.PaymentNextStep.ShowInstallApp -> viewModel.paymentProviderApp.value?.let { showInstallAppDialog(it) }
+            is ReviewViewModel.PaymentNextStep.OpenSharePdf -> {
+                binding.loading.isVisible = false
+                startSharePdfIntent(paymentNextStep.file)
+            }
         }
     }
 
