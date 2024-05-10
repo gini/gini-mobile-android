@@ -1,7 +1,7 @@
 package net.gini.android.capture.tracking.useranalytics
 
 
-enum class AnalyticsEvent(val eventName: String) {
+enum class UserAnalyticsEvent(val eventName: String) {
     SCREEN_SHOWN("screen_shown"),
     NEXT_STEP_TAPPED("next_step_tapped"),
     CLOSE_TAPPED("close_tapped"),

@@ -1,6 +1,6 @@
 package net.gini.android.capture.tracking.useranalytics
 
-enum class AnalyticsScreen(val screenName: String) {
+enum class UserAnalyticsScreen(val screenName: String) {
     CAMERA("camera"),
     REVIEW("review"),
     ANALYSIS("analysis"),

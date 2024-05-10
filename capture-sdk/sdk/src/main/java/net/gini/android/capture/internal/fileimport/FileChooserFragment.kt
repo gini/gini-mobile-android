@@ -6,7 +6,6 @@ import android.app.Activity.RESULT_OK
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import android.os.Build
 import android.os.Bundle
@@ -22,6 +21,8 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.parcelize.Parcelize
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTrackerBuilder.createAnalyticsEventTracker
 import net.gini.android.capture.DocumentImportEnabledFileTypes
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.GiniCaptureError
@@ -39,6 +40,8 @@ import net.gini.android.capture.internal.util.MimeType
 import net.gini.android.capture.internal.util.autoCleared
 import net.gini.android.capture.internal.util.disallowScreenshots
 import net.gini.android.capture.internal.util.getLayoutInflaterWithGiniCaptureTheme
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen
 
 private const val ARG_DOCUMENT_IMPORT_FILE_TYPES = "GC_EXTRA_IN_DOCUMENT_IMPORT_FILE_TYPES"
 private const val GRID_SPAN_COUNT_PHONE = 3
@@ -51,12 +54,18 @@ private const val REQ_CODE_CHOOSE_FILE = 1
 class FileChooserFragment : BottomSheetDialogFragment() {
     private var docImportEnabledFileTypes: DocumentImportEnabledFileTypes? = null
     private var binding: GcFragmentFileChooserBinding by autoCleared()
+    private lateinit var mUserAnalyticsEventTracker: UserAnalyticsEventTracker
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        mUserAnalyticsEventTracker =
+            createAnalyticsEventTracker(this.requireActivity().applicationContext)
         arguments?.let {
             docImportEnabledFileTypes = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                it.getSerializable(ARG_DOCUMENT_IMPORT_FILE_TYPES, DocumentImportEnabledFileTypes::class.java)
+                it.getSerializable(
+                    ARG_DOCUMENT_IMPORT_FILE_TYPES,
+                    DocumentImportEnabledFileTypes::class.java
+                )
             } else {
                 it.getSerializable(ARG_DOCUMENT_IMPORT_FILE_TYPES) as? DocumentImportEnabledFileTypes
             }
@@ -95,7 +104,8 @@ class FileChooserFragment : BottomSheetDialogFragment() {
     }
 
     private fun setupFileProvidersView() {
-        binding.gcFileProviders.layoutManager = GridLayoutManager(requireContext(), getGridSpanCount())
+        binding.gcFileProviders.layoutManager =
+            GridLayoutManager(requireContext(), getGridSpanCount())
     }
 
     private fun getGridSpanCount(): Int =
@@ -129,7 +139,23 @@ class FileChooserFragment : BottomSheetDialogFragment() {
         providerItems.addAll(pdfProviderItems)
         (binding.gcFileProviders.layoutManager as GridLayoutManager).spanSizeLookup =
             ProvidersSpanSizeLookup(providerItems, getGridSpanCount())
-        binding.gcFileProviders.adapter = ProvidersAdapter(requireContext(), providerItems) { item -> launchApp(item) }
+        binding.gcFileProviders.adapter =
+            ProvidersAdapter(requireContext(), providerItems) { item ->
+                if (item in imageProviderItems) {
+                    mUserAnalyticsEventTracker.trackEvent(
+                        UserAnalyticsEvent.UPLOAD_PHOTOS_TAPPED,
+                        UserAnalyticsScreen.CAMERA
+                    )
+
+                } else {
+                    mUserAnalyticsEventTracker.trackEvent(
+                        UserAnalyticsEvent.UPLOAD_DOCUMENTS_TAPPED,
+                        UserAnalyticsScreen.CAMERA
+                    )
+
+                }
+                launchApp(item)
+            }
     }
 
     private fun launchApp(item: ProvidersAppItem) {
