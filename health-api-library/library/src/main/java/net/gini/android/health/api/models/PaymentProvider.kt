@@ -31,7 +31,11 @@ data class PaymentProvider(
     /**
      * If the payment provider supports Gini Pay Connect integration
      */
-    val gpcSupportedPlatforms: List<String>
+    val gpcSupportedPlatforms: List<String>,
+    /**
+     * If the payment provider supports PDF sharing
+     */
+    val openWithSupportedPlatforms: List<String>
 ) {
 
     override fun equals(other: Any?): Boolean {
@@ -83,4 +87,5 @@ internal fun PaymentProviderResponse.toPaymentProvider(icon: ByteArray) = Paymen
     icon = icon,
     playStoreUrl = playStoreUrl,
     gpcSupportedPlatforms = gpcSupportedPlatforms ?: listOf("android"),
+    openWithSupportedPlatforms = openWithSupportedPlatforms ?: listOf("android")
 )
