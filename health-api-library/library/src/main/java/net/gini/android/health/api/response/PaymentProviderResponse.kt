@@ -12,7 +12,8 @@ internal data class PaymentProviderResponse(
     @Json(name = "colors") val colors: Colors,
     @Json(name = "iconLocation") val iconLocation: String,
     @Json(name = "playStoreUrlAndroid") val playStoreUrl: String?,
-    @Json(name = "gpc_supported") val gpcSupported: Boolean?,
+    @Json(name = "gpcSupportedPlatforms") val gpcSupportedPlatforms: List<String>?,
+    @Json(name = "openWithSupportedPlatforms") val openWithSupportedPlatforms: List<String>?
 )
 
 @JsonClass(generateAdapter = true)
