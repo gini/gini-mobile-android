@@ -7,6 +7,7 @@ import org.json.JSONObject
 
 interface UserAnalyticsEventTracker {
     fun trackEvent(eventName: UserAnalyticsEvent, screen: UserAnalyticsScreen)
+    fun trackEventWithProperties(eventName: UserAnalyticsEvent, screen: UserAnalyticsScreen, additionalProperties: Map<String, String>)
 }
 
 
@@ -39,6 +40,17 @@ private class MixPanelUserAnalyticsEventTracker(context: Context) : UserAnalytic
     override fun trackEvent(eventName: UserAnalyticsEvent, screen: UserAnalyticsScreen) {
         val props = JSONObject()
         props.put("screen", screen.screenName)
+        mixpanelAPI.track(eventName.eventName, props)
+    }
+
+    override fun trackEventWithProperties(
+        eventName: UserAnalyticsEvent,
+        screen: UserAnalyticsScreen,
+        additionalProperties: Map<String, String>
+    ) {
+        val props = JSONObject()
+        props.put("screen", screen.screenName)
+        props.put(additionalProperties.keys.first(), additionalProperties.values.first())
         mixpanelAPI.track(eventName.eventName, props)
     }
 }

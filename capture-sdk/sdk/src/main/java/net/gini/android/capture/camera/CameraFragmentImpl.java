@@ -890,8 +890,8 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         });
 
         ClickListenerExtKt.setIntervalClickListener(mButtonCameraFlashTrigger, v -> {
+            mUserAnalyticsEventTracker.trackEventWithProperties(UserAnalyticsEvent.FLASH_TAPPED, UserAnalyticsScreen.CAMERA, Collections.singletonMap("flash_active", String.valueOf(mCameraController.isFlashEnabled())));
             mIsFlashEnabled = !mCameraController.isFlashEnabled();
-            mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.FLASH_TAPPED, UserAnalyticsScreen.CAMERA);
             updateCameraFlashState();
         });
 
@@ -902,7 +902,8 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
         ClickListenerExtKt.setIntervalClickListener(mPhotoThumbnail, v -> {
             if (mFragment.getActivity() != null) {
-                mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.MULTIPLE_PAGES_CAPTURED_TAPPED, UserAnalyticsScreen.CAMERA);
+                mUserAnalyticsEventTracker.trackEventWithProperties(UserAnalyticsEvent.MULTIPLE_PAGES_CAPTURED_TAPPED, UserAnalyticsScreen.CAMERA,
+                        Collections.singletonMap("document_page_number", String.valueOf(mMultiPageDocument.getDocuments().size())));
                 mFragment.getActivity().getOnBackPressedDispatcher().onBackPressed();
             }
         });
@@ -1397,7 +1398,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     }
 
     private void showGenericInvalidFileError(ErrorType errorType) {
-        mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.ERROR_DIALOG_SHOWN, UserAnalyticsScreen.CAMERA);
+        mUserAnalyticsEventTracker.trackEventWithProperties(UserAnalyticsEvent.ERROR_DIALOG_SHOWN, UserAnalyticsScreen.CAMERA, Collections.singletonMap("error_message", mFragment.getActivity().getResources().getString(errorType.getTitleTextResource())));
         final Activity activity = mFragment.getActivity();
         if (activity == null) {
             return;
