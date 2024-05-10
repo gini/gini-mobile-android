@@ -280,6 +280,10 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val configuration: Re
         if (openWithCounter < SHOW_OPEN_WITH_TIMES) _paymentNextStep.tryEmit(PaymentNextStep.ShowOpenWithSheet) else _paymentNextStep.tryEmit(PaymentNextStep.DownloadPaymentRequestFile)
     }
 
+    fun onForwardToSharePdfTapped() {
+        _paymentNextStep.tryEmit(PaymentNextStep.DownloadPaymentRequestFile)
+    }
+
     fun getFileAsByteArray(externalCacheDir: File?) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {

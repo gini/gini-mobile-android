@@ -553,7 +553,7 @@ class ReviewFragment private constructor(
     private fun showOpenWithDialog(paymentProviderApp: PaymentProviderApp) {
         OpenWithBottomSheet.newInstance(paymentProviderApp, object: OpenWithForwardListener {
             override fun onForwardSelected() {
-                viewModel.onPaymentButtonTapped()
+                viewModel.onForwardToSharePdfTapped()
             }
         }).also {
             it.show(requireActivity().supportFragmentManager, it::class.java.name)
