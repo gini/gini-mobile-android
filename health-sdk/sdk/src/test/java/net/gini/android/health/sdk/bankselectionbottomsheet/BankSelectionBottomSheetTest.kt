@@ -40,7 +40,7 @@ class BankSelectionBottomSheetTest {
             appVersion = "appVersion",
             colors = PaymentProvider.Colors(backgroundColorRGBHex = "", textColoRGBHex = ""),
             icon = ByteArray(0),
-            gpcSupported = true
+            gpcSupportedPlatforms = listOf("android")
         )
     )
 
@@ -55,7 +55,7 @@ class BankSelectionBottomSheetTest {
             appVersion = "appVersion",
             colors = PaymentProvider.Colors(backgroundColorRGBHex = "", textColoRGBHex = ""),
             icon = ByteArray(0),
-            gpcSupported = true
+            gpcSupportedPlatforms = listOf("android")
         )
     )
 
@@ -70,7 +70,7 @@ class BankSelectionBottomSheetTest {
             appVersion = "appVersion",
             colors = PaymentProvider.Colors(backgroundColorRGBHex = "", textColoRGBHex = ""),
             icon = ByteArray(0),
-            gpcSupported = true
+            gpcSupportedPlatforms = listOf()
         )
     )
 

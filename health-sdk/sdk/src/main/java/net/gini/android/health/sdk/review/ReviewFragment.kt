@@ -63,6 +63,7 @@ import net.gini.android.health.sdk.review.installApp.InstallAppForwardListener
 import net.gini.android.health.sdk.review.openWith.OpenWithBottomSheet
 import net.gini.android.health.sdk.review.openWith.OpenWithForwardListener
 import net.gini.android.health.sdk.review.openWith.OpenWithPreferences
+import net.gini.android.health.sdk.util.HealthSDKFileProvider
 import net.gini.android.health.sdk.util.extensions.getFontScale
 import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthTheme
 import net.gini.android.health.sdk.util.wrappedWithGiniHealthTheme
@@ -553,7 +554,7 @@ class ReviewFragment private constructor(
     private fun showOpenWithDialog(paymentProviderApp: PaymentProviderApp) {
         OpenWithBottomSheet.newInstance(paymentProviderApp, object: OpenWithForwardListener {
             override fun onForwardSelected() {
-                viewModel.onPaymentButtonTapped()
+                viewModel.onForwardToSharePdfTapped()
             }
         }).also {
             it.show(requireActivity().supportFragmentManager, it::class.java.name)
@@ -564,7 +565,7 @@ class ReviewFragment private constructor(
     private fun startSharePdfIntent(paymentRequestFile: File) {
         val uriForFile = FileProvider.getUriForFile(
             requireContext(),
-            requireContext().packageName + ".fileprovider",
+            requireContext().packageName+".health.sdk.fileprovider",
             paymentRequestFile
         )
         val shareIntent = Intent(Intent.ACTION_SEND).apply {
