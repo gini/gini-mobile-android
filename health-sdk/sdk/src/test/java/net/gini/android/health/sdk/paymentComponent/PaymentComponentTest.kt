@@ -62,7 +62,7 @@ class PaymentComponentTest {
         ),
         icon = byteArrayOf(),
         playStoreUrl = "",
-        gpcSupported = true
+        gpcSupportedPlatforms = listOf("android")
         )
 
     private val paymentProvider1 = PaymentProvider(
@@ -76,7 +76,7 @@ class PaymentComponentTest {
         ),
         icon = byteArrayOf(),
         playStoreUrl = "",
-        gpcSupported = true
+        gpcSupportedPlatforms = listOf("android")
         )
 
     private val paymentProvider2 = PaymentProvider(
@@ -90,7 +90,7 @@ class PaymentComponentTest {
         ),
         icon = byteArrayOf(),
         playStoreUrl = "",
-        gpcSupported = true
+        gpcSupportedPlatforms = listOf("android")
     )
 
     private val noPlayStoreUrlPaymentProvider = PaymentProvider(
@@ -103,7 +103,7 @@ class PaymentComponentTest {
             textColoRGBHex = "ffffff"
         ),
         icon = byteArrayOf(),
-        gpcSupported = true
+        gpcSupportedPlatforms = listOf("android")
     )
 
     @Before
