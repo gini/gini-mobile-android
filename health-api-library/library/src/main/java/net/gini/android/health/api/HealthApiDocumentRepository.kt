@@ -1,6 +1,7 @@
 package net.gini.android.health.api
 
 import android.net.Uri
+import android.util.Log
 import android.util.Size
 import net.gini.android.core.api.DocumentRepository
 import net.gini.android.core.api.Resource
@@ -71,7 +72,7 @@ class HealthApiDocumentRepository(
         documentRemoteSource.getPages(accessToken, documentId)
             .toPageList(documentRemoteSource.baseUri)
 
-    // TODO remove mock payment provider when backend ready
+    // TODO remove mock payment provider when backend ready and move fitering before mapping
     suspend fun getPaymentProviders(): Resource<List<PaymentProvider>> {
         return withAccessToken { accessToken ->
             wrapInResource {
@@ -111,7 +112,7 @@ class HealthApiDocumentRepository(
 
                     add(0, PaymentProviderResponse(
                         id = "com.gini.android.fake.openWith",
-                        name = "Open With Tester Supported",
+                        name = "Open With Supported Tester",
                         gpcSupportedPlatforms = listOf(),
                         minAppVersion = AppVersionResponse(
                             android = "1.0.0"
@@ -129,7 +130,8 @@ class HealthApiDocumentRepository(
                     .map { paymentProviderResponse ->
                     val icon = documentRemoteSource.getFile(accessToken, paymentProviderResponse.iconLocation)
                     paymentProviderResponse.toPaymentProvider(icon)
-                }
+                    }
+                    .filter { it.gpcSupportedPlatforms.contains("android") || it.openWithSupportedPlatforms.contains("android") }
             }
         }
     }
