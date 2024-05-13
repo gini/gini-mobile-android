@@ -1,7 +1,6 @@
 package net.gini.android.health.sdk.paymentcomponent
 
 import android.content.Context
-import android.util.Log
 import androidx.annotation.VisibleForTesting
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -90,6 +89,7 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
                     LOG.debug("Loading installed payment provider apps")
 
                     val paymentProviderApps = getPaymentProviderAppsSorted(paymentProvidersResource.data)
+
                     selectPaymentProviderApp(paymentProviderApps)
 
                     PaymentProviderAppsState.Success(paymentProviderApps)

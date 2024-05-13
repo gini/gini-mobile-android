@@ -1,16 +1,11 @@
 package net.gini.android.health.api
 
-import android.net.Uri
-import android.util.Log
 import android.util.Size
 import net.gini.android.core.api.DocumentRepository
 import net.gini.android.core.api.Resource
 import net.gini.android.core.api.Resource.Companion.wrapInResource
 import net.gini.android.core.api.authorization.SessionManager
-import net.gini.android.core.api.authorization.apimodels.SessionToken
 import net.gini.android.core.api.models.CompoundExtraction
-import net.gini.android.core.api.models.Document
-import net.gini.android.core.api.models.Extraction
 import net.gini.android.core.api.models.ExtractionsContainer
 import net.gini.android.core.api.models.SpecificExtraction
 import net.gini.android.health.api.models.Page
@@ -22,11 +17,6 @@ import net.gini.android.health.api.models.toPaymentProvider
 import net.gini.android.health.api.response.AppVersionResponse
 import net.gini.android.health.api.response.Colors
 import net.gini.android.health.api.response.PaymentProviderResponse
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
-import org.json.JSONArray
-import org.json.JSONException
 import org.json.JSONObject
 
 /**
