@@ -10,7 +10,6 @@ fun File.createTempPdfFile(byteArray: ByteArray, fileName: String): File {
      FileOutputStream(file, false).use { outputStream ->
          outputStream.write(byteArray)
          outputStream.flush()
-         outputStream.close()
      }
 
     return file

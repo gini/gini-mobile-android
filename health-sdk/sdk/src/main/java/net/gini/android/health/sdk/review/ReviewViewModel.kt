@@ -278,8 +278,9 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val configuration: Re
             else _paymentNextStep.tryEmit(PaymentNextStep.ShowInstallApp)
             return
         }
-        if (openWithCounter < SHOW_OPEN_WITH_TIMES) _paymentNextStep.tryEmit(PaymentNextStep.ShowOpenWithSheet)
-        else {
+        if (openWithCounter < SHOW_OPEN_WITH_TIMES) {
+            _paymentNextStep.tryEmit(PaymentNextStep.ShowOpenWithSheet)
+        } else {
             _paymentNextStep.tryEmit(PaymentNextStep.SetLoadingVisibility(true))
             getFileAsByteArray(externalCacheDir)
         }
