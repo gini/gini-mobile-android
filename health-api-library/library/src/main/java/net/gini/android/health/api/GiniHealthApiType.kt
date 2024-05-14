@@ -17,7 +17,7 @@ class GiniHealthApiType @JvmOverloads constructor(
     override val giniJsonMediaType: String = "application/vnd.gini.v$apiVersion+json",
     override val giniPartialMediaType: String = "application/vnd.gini.v$apiVersion.partial",
     override val giniCompositeJsonMediaType: String = "application/vnd.gini.v$apiVersion.composite+json",
-    override val giniPaymentRequestDocumentMediaType: String = "application/vnd.gini.v$apiVersion+qr+pdf"
+    val giniPaymentRequestDocumentMediaType: String = "application/vnd.gini.v$apiVersion+qr+pdf"
 ) : GiniApiType {
 
     override fun equals(other: Any?): Boolean {

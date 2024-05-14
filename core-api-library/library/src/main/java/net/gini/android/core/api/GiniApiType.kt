@@ -14,5 +14,4 @@ interface GiniApiType {
     val giniJsonMediaType: String
     val giniPartialMediaType: String
     val giniCompositeJsonMediaType: String
-    val giniPaymentRequestDocumentMediaType: String
 }

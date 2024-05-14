@@ -389,7 +389,7 @@ class ReviewFragment private constructor(
         payment.setOnClickListener {
             requireActivity().currentFocus?.clearFocus()
             it.hideKeyboard()
-            viewModel.onPaymentButtonTapped()
+            viewModel.onPaymentButtonTapped(requireContext().externalCacheDir)
         }
         close.setOnClickListener { view ->
             if (isKeyboardShown) {
@@ -554,7 +554,7 @@ class ReviewFragment private constructor(
     private fun showOpenWithDialog(paymentProviderApp: PaymentProviderApp) {
         OpenWithBottomSheet.newInstance(paymentProviderApp, object: OpenWithForwardListener {
             override fun onForwardSelected() {
-                viewModel.onForwardToSharePdfTapped()
+                viewModel.onForwardToSharePdfTapped(requireContext().externalCacheDir)
             }
         }).also {
             it.show(requireActivity().supportFragmentManager, it::class.java.name)
@@ -578,9 +578,8 @@ class ReviewFragment private constructor(
 
     private fun handlePaymentNextStep(paymentNextStep: ReviewViewModel.PaymentNextStep) {
         when (paymentNextStep) {
-            ReviewViewModel.PaymentNextStep.DownloadPaymentRequestFile -> {
-                binding.loading.isVisible = true
-                viewModel.getFileAsByteArray(requireContext().externalCacheDir)
+            is ReviewViewModel.PaymentNextStep.SetLoadingVisibility -> {
+                binding.loading.isVisible = paymentNextStep.isVisible
             }
             ReviewViewModel.PaymentNextStep.RedirectToBank -> {
                 viewModel.paymentProviderApp.value?.name?.let {

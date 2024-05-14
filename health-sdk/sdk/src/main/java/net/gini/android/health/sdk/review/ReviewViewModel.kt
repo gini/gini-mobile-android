@@ -62,7 +62,7 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val configuration: Re
 
     private val _paymentNextStep = MutableSharedFlow<PaymentNextStep>(
         extraBufferCapacity = 1,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST)
+    )
     val paymentNextStep: SharedFlow<PaymentNextStep> = _paymentNextStep
 
     private var openWithCounter: Int = 0
@@ -271,20 +271,25 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val configuration: Re
         }
     }
 
-    fun onPaymentButtonTapped() {
+    fun onPaymentButtonTapped(externalCacheDir: File?) {
         if (paymentProviderApp.value?.paymentProvider?.gpcSupported() == true) {
             if (paymentProviderApp.value?.isInstalled() == true) _paymentNextStep.tryEmit(PaymentNextStep.RedirectToBank)
             else _paymentNextStep.tryEmit(PaymentNextStep.ShowInstallApp)
             return
         }
-        if (openWithCounter < SHOW_OPEN_WITH_TIMES) _paymentNextStep.tryEmit(PaymentNextStep.ShowOpenWithSheet) else _paymentNextStep.tryEmit(PaymentNextStep.DownloadPaymentRequestFile)
+        if (openWithCounter < SHOW_OPEN_WITH_TIMES) _paymentNextStep.tryEmit(PaymentNextStep.ShowOpenWithSheet)
+        else {
+            _paymentNextStep.tryEmit(PaymentNextStep.SetLoadingVisibility(true))
+            getFileAsByteArray(externalCacheDir)
+        }
     }
 
-    fun onForwardToSharePdfTapped() {
-        _paymentNextStep.tryEmit(PaymentNextStep.DownloadPaymentRequestFile)
+    fun onForwardToSharePdfTapped(externalCacheDir: File?) {
+        _paymentNextStep.tryEmit(PaymentNextStep.SetLoadingVisibility(true))
+        getFileAsByteArray(externalCacheDir)
     }
 
-    fun getFileAsByteArray(externalCacheDir: File?) {
+    private fun getFileAsByteArray(externalCacheDir: File?) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 val byteArrayResource = async {  giniHealth.giniHealthAPI.documentManager.getPaymentRequestDocument("https://health-api.gini.net/paymentProviders/f7d06ee0-51fd-11ec-8216-97f0937beb16/icon") }.await()
@@ -304,9 +309,10 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val configuration: Re
     sealed class PaymentNextStep {
         object RedirectToBank: PaymentNextStep()
         object ShowOpenWithSheet: PaymentNextStep()
-        object DownloadPaymentRequestFile: PaymentNextStep()
         data class OpenSharePdf(val file: File): PaymentNextStep()
         object ShowInstallApp: PaymentNextStep()
+
+        data class SetLoadingVisibility(val isVisible: Boolean): PaymentNextStep()
     }
 
     class Factory(private val giniHealth: GiniHealth, private val configuration: ReviewConfiguration, private val paymentComponent: PaymentComponent) :
