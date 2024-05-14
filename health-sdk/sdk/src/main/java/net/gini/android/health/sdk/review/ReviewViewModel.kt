@@ -257,7 +257,7 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val configuration: Re
     }
 
     fun onPaymentButtonTapped(): PaymentNextStep {
-        if (paymentProviderApp.value?.paymentProvider?.gpcSupported == true) {
+        if (paymentProviderApp.value?.paymentProvider?.gpcSupported() == true) {
             return if (paymentProviderApp.value?.isInstalled() == true) PaymentNextStep.RedirectToBank
             else PaymentNextStep.ShowInstallApp
         }
