@@ -21,8 +21,6 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.parcelize.Parcelize
-import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker
-import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTrackerBuilder.createAnalyticsEventTracker
 import net.gini.android.capture.DocumentImportEnabledFileTypes
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.GiniCaptureError
@@ -41,6 +39,8 @@ import net.gini.android.capture.internal.util.autoCleared
 import net.gini.android.capture.internal.util.disallowScreenshots
 import net.gini.android.capture.internal.util.getLayoutInflaterWithGiniCaptureTheme
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTrackerBuilder
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen
 
 private const val ARG_DOCUMENT_IMPORT_FILE_TYPES = "GC_EXTRA_IN_DOCUMENT_IMPORT_FILE_TYPES"
@@ -59,7 +59,7 @@ class FileChooserFragment : BottomSheetDialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mUserAnalyticsEventTracker =
-            createAnalyticsEventTracker(this.requireActivity().applicationContext)
+            UserAnalyticsEventTrackerBuilder.getAnalyticsEventTracker()
         arguments?.let {
             docImportEnabledFileTypes = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 it.getSerializable(

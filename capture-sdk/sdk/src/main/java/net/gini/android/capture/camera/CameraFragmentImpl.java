@@ -351,7 +351,8 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                       final Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.gc_fragment_camera, container, false);
-        mUserAnalyticsEventTracker = UserAnalyticsEventTrackerBuilder.INSTANCE.createAnalyticsEventTracker(this.mFragment.getActivity().getApplicationContext());
+        UserAnalyticsEventTrackerBuilder.INSTANCE.createAnalyticsEventTracker(this.mFragment.getActivity().getApplicationContext());
+        mUserAnalyticsEventTracker = UserAnalyticsEventTrackerBuilder.INSTANCE.getAnalyticsEventTracker();
         mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.SCREEN_SHOWN, UserAnalyticsScreen.CAMERA);
 
         bindViews(view);

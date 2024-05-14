@@ -1,5 +1,8 @@
 package net.gini.android.capture.analysis;
 
+import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
+import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
+
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
@@ -23,7 +26,6 @@ import androidx.fragment.app.FragmentActivity;
 
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
-import net.gini.android.capture.GiniCaptureFragment;
 import net.gini.android.capture.R;
 import net.gini.android.capture.error.ErrorFragment;
 import net.gini.android.capture.error.ErrorType;
@@ -31,7 +33,10 @@ import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.ui.IntervalClickListener;
 import net.gini.android.capture.internal.util.Size;
 import net.gini.android.capture.tracking.AnalysisScreenEvent;
-import net.gini.android.capture.tracking.CameraScreenEvent;
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent;
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker;
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTrackerBuilder;
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen;
 import net.gini.android.capture.view.CustomLoadingIndicatorAdapter;
 import net.gini.android.capture.view.InjectedViewAdapterHolder;
 import net.gini.android.capture.view.InjectedViewContainer;
@@ -41,14 +46,11 @@ import net.gini.android.capture.view.NavigationBarTopAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
 import java.util.List;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
 import kotlin.Unit;
-
-import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
-import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
-import static net.gini.android.capture.tracking.EventTrackingHelper.trackCameraScreenEvent;
 
 /**
  * Main logic implementation for analysis UI presented by {@link AnalysisFragment}
@@ -66,6 +68,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     private InjectedViewContainer<NavigationBarTopAdapter> topAdapterInjectedViewContainer;
     private InjectedViewContainer<CustomLoadingIndicatorAdapter> injectedLoadingIndicatorContainer;
     private boolean isScanAnimationActive;
+    private UserAnalyticsEventTracker mUserAnalyticsEventTracker;
 
     AnalysisFragmentImpl(final FragmentImplCallback fragment,
                          @NonNull final Document document,
@@ -80,6 +83,24 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     @VisibleForTesting
     void createPresenter(@NonNull final Activity activity, @NonNull final Document document,
                          final String documentAnalysisErrorMessage) {
+        mUserAnalyticsEventTracker = UserAnalyticsEventTrackerBuilder.INSTANCE.getAnalyticsEventTracker();
+        String userAnalysisDocumentType = "unknown";
+        switch (document.getType()) {
+            case IMAGE:
+            case IMAGE_MULTI_PAGE:
+                userAnalysisDocumentType = "image";
+                break;
+            case PDF:
+            case PDF_MULTI_PAGE:
+                userAnalysisDocumentType = "pdf";
+                break;
+            case QRCode:
+            case QR_CODE_MULTI_PAGE:
+                userAnalysisDocumentType = "qrcode";
+                break;
+        }
+        mUserAnalyticsEventTracker.trackEventWithProperties(UserAnalyticsEvent.SCREEN_SHOWN, UserAnalyticsScreen.ANALYSIS, Collections.singletonMap("document_type", userAnalysisDocumentType));
+
         new AnalysisScreenPresenter(activity, this, document,
                 documentAnalysisErrorMessage);
     }
@@ -284,6 +305,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
             @Override
             public void handleOnBackPressed() {
                 trackAnalysisScreenEvent(AnalysisScreenEvent.CANCEL);
+                mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.CLOSE_TAPPED, UserAnalyticsScreen.ANALYSIS);
                 setEnabled(false);
                 remove();
                 mFragment.getActivity().getOnBackPressedDispatcher().onBackPressed();

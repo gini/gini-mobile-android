@@ -12,11 +12,18 @@ interface UserAnalyticsEventTracker {
 
 
 object UserAnalyticsEventTrackerBuilder {
+
+    private lateinit var eventTracker: UserAnalyticsEventTracker
+
     fun createAnalyticsEventTracker(
         applicationContext: Context
-    ): UserAnalyticsEventTracker {
-        return createAnalyticsEventTracker(EventTrackerPlatform.MIXPANEL, applicationContext)
+    ) {
+        eventTracker = createAnalyticsEventTracker(EventTrackerPlatform.MIXPANEL, applicationContext)
     }
+
+
+    fun getAnalyticsEventTracker(
+    ) = eventTracker
 
     private fun createAnalyticsEventTracker(
         platform: EventTrackerPlatform,
