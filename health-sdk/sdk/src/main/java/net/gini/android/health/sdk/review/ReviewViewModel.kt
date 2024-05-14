@@ -1,6 +1,7 @@
 package net.gini.android.health.sdk.review
 
 import android.content.Context
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -289,7 +290,8 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val configuration: Re
         getFileAsByteArray(externalCacheDir)
     }
 
-    private fun getFileAsByteArray(externalCacheDir: File?) {
+    @VisibleForTesting
+    internal fun getFileAsByteArray(externalCacheDir: File?) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 val byteArrayResource = async {  giniHealth.giniHealthAPI.documentManager.getPaymentRequestDocument("https://health-api.gini.net/paymentProviders/f7d06ee0-51fd-11ec-8216-97f0937beb16/icon") }.await()

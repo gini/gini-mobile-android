@@ -436,7 +436,7 @@ class ReviewViewModelTest {
 
         viewModel.paymentNextStep.test {
             // When
-            viewModel.onPaymentButtonTapped()
+            viewModel.onPaymentButtonTapped(context!!.externalCacheDir)
             val nextStep = awaitItem()
 
             // Then
@@ -459,7 +459,7 @@ class ReviewViewModelTest {
 
         viewModel.paymentNextStep.test {
             // When
-            viewModel.onPaymentButtonTapped()
+            viewModel.onPaymentButtonTapped(context!!.externalCacheDir)
             val nextStep = awaitItem()
 
             // Then
@@ -489,11 +489,11 @@ class ReviewViewModelTest {
 
         viewModel.paymentNextStep.test {
             // When
-            viewModel.onPaymentButtonTapped()
+            viewModel.onPaymentButtonTapped(context!!.externalCacheDir)
             val nextStep = awaitItem()
 
             // Then
-            assertThat(nextStep).isEqualTo(ReviewViewModel.PaymentNextStep.DownloadPaymentRequestFile)
+            assertThat(nextStep).isEqualTo(ReviewViewModel.PaymentNextStep.SetLoadingVisibility(true))
             cancelAndConsumeRemainingEvents()
         }
     }

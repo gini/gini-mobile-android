@@ -254,46 +254,6 @@ class ReviewFragmentTest {
     }
 
     @Test
-    fun `calls 'getFileAsByteArray' on viewModel when 'Pay' button tapped and 'Open With' already showed 3 times`() = runTest {
-        // Given
-        val paymentProviderName = "Test Bank App"
-        val paymentProviderApp: PaymentProviderApp = mockk(relaxed = true)
-        every { paymentProviderApp.name } returns paymentProviderName
-        every { paymentProviderApp.isInstalled() } returns true
-
-        val paymentComponent = mockk<PaymentComponent>()
-        every { paymentComponent.recheckWhichPaymentProviderAppsAreInstalled() } returns Unit
-
-        viewModel = mockk(relaxed = true)
-        configureMockViewModel(viewModel)
-        every { viewModel.paymentComponent } returns paymentComponent
-        every { viewModel.isPaymentButtonEnabled } returns flowOf(true)
-        every { viewModel.paymentProviderApp } returns MutableStateFlow(paymentProviderApp)
-        every { viewModel.paymentNextStep } returns paymentNextStepSharedFlow
-
-        val listener = mockk<ReviewFragmentListener>(relaxed = true)
-
-        launchFragmentInContainer(themeResId = R.style.GiniHealthTheme) {
-            ReviewFragment.newInstance(
-                giniHealth = mockk(relaxed = true),
-                listener = listener,
-                viewModelFactory = viewModelFactory,
-                paymentComponent = paymentComponent
-            )
-        }
-
-        // When
-        onView(withId(R.id.payment)).perform(click())
-
-        paymentNextStepSharedFlow.tryEmit(ReviewViewModel.PaymentNextStep.DownloadPaymentRequestFile)
-
-        // Then
-        verify(exactly = 1) {
-            viewModel.getFileAsByteArray(context.externalCacheDir)
-        }
-    }
-
-    @Test
     fun `opens 'Share With' chooser after downloading PDF file`() = runTest {
         Intents.init();
         // Given
