@@ -3,6 +3,7 @@ package net.gini.android.health.api.models
 import net.gini.android.health.api.response.PaymentProviderResponse
 import java.util.Locale
 
+const val ANDROID_PLATFORM = "android"
 /**
  * A payment provider is a Gini partner which integrated Gini Pay Connect (via Gini Bank SDK) into their mobile apps.
  */
@@ -74,10 +75,6 @@ data class PaymentProvider(
         val backgroundColorRGBHex: String,
         val textColoRGBHex: String,
     )
-
-    companion object {
-        const val ANDROID_PLATFORM = "android"
-    }
 }
 
 internal fun PaymentProviderResponse.toPaymentProvider(icon: ByteArray) = PaymentProvider(
