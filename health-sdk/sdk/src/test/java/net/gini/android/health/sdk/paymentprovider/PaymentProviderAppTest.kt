@@ -70,7 +70,8 @@ val paymentProvidersFixture = installedPaymentProviderAppsFixture.map { installe
             textColoRGBHex = "ffffff"
         ),
         icon = byteArrayOf(),
-        gpcSupported = true
+        gpcSupportedPlatforms = listOf("android"),
+        openWithSupportedPlatforms = listOf("android")
     )
 }
 

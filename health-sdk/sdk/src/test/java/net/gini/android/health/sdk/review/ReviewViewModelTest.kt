@@ -421,7 +421,7 @@ class ReviewViewModelTest {
     fun `returns 'RedirectToBank' when payment provider app supports GPC and is installed`() = runTest {
         // Given
         val paymentProviderApp = mockk<PaymentProviderApp>()
-        every { paymentProviderApp.paymentProvider.gpcSupported } returns true
+        every { paymentProviderApp.paymentProvider.gpcSupported() } returns true
         every { paymentProviderApp.isInstalled() } returns true
 
         val paymentComponent = mockk<PaymentComponent>(relaxed = true)
@@ -441,7 +441,7 @@ class ReviewViewModelTest {
     fun `returns 'ShowOpenWith' when payment provider app does not support GPC`() = runTest {
         // Given
         val paymentProviderApp = mockk<PaymentProviderApp>()
-        every { paymentProviderApp.paymentProvider.gpcSupported } returns false
+        every { paymentProviderApp.paymentProvider.gpcSupported() } returns false
 
         val paymentComponent = mockk<PaymentComponent>(relaxed = true)
         every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
@@ -460,7 +460,7 @@ class ReviewViewModelTest {
     fun `returns 'OpenSharePdf' when payment provider app does not support GPC and 'Open With' was shown 3 times`() = runTest {
         // Given
         val paymentProviderApp = mockk<PaymentProviderApp>()
-        every { paymentProviderApp.paymentProvider.gpcSupported } returns false
+        every { paymentProviderApp.paymentProvider.gpcSupported() } returns false
         every { paymentProviderApp.paymentProvider.id } returns "123"
 
         val openWithPreferences = mockk<OpenWithPreferences>()
