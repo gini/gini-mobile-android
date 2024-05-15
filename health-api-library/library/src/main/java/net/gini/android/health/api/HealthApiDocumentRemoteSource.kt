@@ -62,15 +62,13 @@ class HealthApiDocumentRemoteSource internal constructor(
             ?: throw ApiException.forResponse("Location is missing from header", response)
     }
 
-    //TODO replace with actual API call parameters when backend is ready
-    suspend fun getPaymentRequestDocument(accessToken: String, location: String): ByteArray = withContext(coroutineContext) {
+    suspend fun getPaymentRequestDocument(accessToken: String, paymentRequestId: String): ByteArray = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             documentService.getPaymentRequestDocument(
-                bearerHeaderMap(accessToken, contentType = giniApiType.giniPaymentRequestDocumentMediaType),
-                location
+                bearerHeaderMap(accessToken, contentType = giniApiType.giniPaymentRequestDocumentMediaType, accept = giniApiType.giniPaymentRequestDocumentMediaType),
+                paymentRequestId
             )
         }
-        hardcodedFilesLocalDataSource.loadTestPdf()
-//        response.body() ?: throw ApiException.forResponse("Empty response body", response)
+        response.body()?.bytes() ?: throw ApiException.forResponse("Empty response body", response)
     }
 }

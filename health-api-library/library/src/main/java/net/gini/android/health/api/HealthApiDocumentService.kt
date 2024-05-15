@@ -31,6 +31,6 @@ internal interface HealthApiDocumentService: DocumentService {
     @POST("/paymentRequests")
     suspend fun createPaymentRequest(@HeaderMap bearer: Map<String, String>, @Body body: PaymentRequestBody): Response<ResponseBody>
 
-    @GET
-    suspend fun getPaymentRequestDocument(@HeaderMap bearer: Map<String, String>, @Url location: String): Response<ResponseBody>
+    @GET("/paymentRequests/{paymentRequestId}")
+    suspend fun getPaymentRequestDocument(@HeaderMap bearer: Map<String, String>, @Path("paymentRequestId") paymentRequestId: String): Response<ResponseBody>
 }

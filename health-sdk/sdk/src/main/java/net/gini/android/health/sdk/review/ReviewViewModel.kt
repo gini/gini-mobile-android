@@ -295,12 +295,13 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val configuration: Re
     internal fun getFileAsByteArray(externalCacheDir: File?) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                val byteArrayResource = async {  giniHealth.giniHealthAPI.documentManager.getPaymentRequestDocument("https://health-api.gini.net/paymentProviders/f7d06ee0-51fd-11ec-8216-97f0937beb16/icon") }.await()
+                val paymentRequest = async { getPaymentRequest() }.await()
+                val byteArrayResource = async {  giniHealth.giniHealthAPI.documentManager.getPaymentRequestDocument(paymentRequest.id) }.await()
                 when (byteArrayResource) {
-                    is Resource.Cancelled -> TODO()
-                    is Resource.Error -> TODO()
+                    is Resource.Cancelled -> throw Exception("Cancelled")
+                    is Resource.Error -> throw Exception(byteArrayResource.exception)
                     is Resource.Success -> {
-                        val newFile = externalCacheDir?.createTempPdfFile(byteArrayResource.data, "test-pdf")
+                        val newFile = externalCacheDir?.createTempPdfFile(byteArrayResource.data, "payment-request")
                         newFile?.let {
                             _paymentNextStep.tryEmit(PaymentNextStep.OpenSharePdf(it))
                         }

@@ -512,6 +512,18 @@ class ReviewViewModelTest {
         every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
             SelectedPaymentProviderAppState.AppSelected(paymentProviderApp))
 
+        every { giniHealth!!.paymentFlow } returns MutableStateFlow(
+            ResultWrapper.Success(
+                PaymentDetails(
+                    recipient = "",
+                    iban = "iban",
+                    amount = "1.3",
+                    purpose = "purpose",
+                    extractions = null
+                )
+            )
+        )
+
         val mockByteArray = byteArrayOf()
         val mockPdfFile: File = mockk()
 
@@ -519,6 +531,7 @@ class ReviewViewModelTest {
         mockkStatic(File::createTempPdfFile)
         every { cacheDir.createTempPdfFile(mockByteArray, any()) } returns mockPdfFile
 
+        coEvery { giniHealth!!.giniHealthAPI.documentManager.createPaymentRequest(any()) } returns Resource.Success("")
         coEvery { giniHealth!!.giniHealthAPI.documentManager.getPaymentRequestDocument(any()) } returns Resource.Success(mockByteArray)
 
         val viewModel = ReviewViewModel(giniHealth!!, mockk(), paymentComponent).apply {
