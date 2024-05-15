@@ -26,7 +26,6 @@ class HealthApiDocumentRemoteSource internal constructor(
     private val documentService: HealthApiDocumentService,
     private val giniApiType: GiniHealthApiType,
     baseUriString: String,
-    private val hardcodedFilesLocalDataSource: HardcodedFilesLocalDataSource,   //TODO remove this when we get file from BE
 ): DocumentRemoteSource(coroutineContext, documentService, giniApiType, baseUriString) {
 
     internal suspend fun getPages(accessToken: String, documentId: String): List<PageResponse> = withContext(coroutineContext) {

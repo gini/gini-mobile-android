@@ -24,14 +24,14 @@ class GiniHealthAPIBuilderTest {
         val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
 
         var healthAPIBuilder = GiniHealthAPIBuilder(targetContext, "", "", "")
-        assertEquals(healthAPIBuilder.getGiniApiType(), GiniHealthApiType( apiVersion = 3))
+        assertEquals(healthAPIBuilder.getGiniApiType(), GiniHealthApiType( apiVersion = 4))
 
         healthAPIBuilder = GiniHealthAPIBuilder(targetContext, sessionManager = object: SessionManager {
             override suspend fun getSession(): Resource<Session> {
                 return mock()
             }
         })
-        assertEquals(healthAPIBuilder.getGiniApiType(), GiniHealthApiType(apiVersion = 3))
+        assertEquals(healthAPIBuilder.getGiniApiType(), GiniHealthApiType(apiVersion = 4 ))
     }
 
 }

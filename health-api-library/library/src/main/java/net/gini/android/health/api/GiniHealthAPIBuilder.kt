@@ -51,7 +51,7 @@ class GiniHealthAPIBuilder @JvmOverloads constructor(
     }
 
     private fun createDocumentRemoteSource(): HealthApiDocumentRemoteSource {
-        return HealthApiDocumentRemoteSource(Dispatchers.IO, getApiRetrofit().create(HealthApiDocumentService::class.java), healthApiType, getApiBaseUrl() ?: "", HardcodedFilesLocalDataSource(context = context))
+        return HealthApiDocumentRemoteSource(Dispatchers.IO, getApiRetrofit().create(HealthApiDocumentService::class.java), healthApiType, getApiBaseUrl() ?: "")
     }
 
     override fun createDocumentRepository(): HealthApiDocumentRepository {
