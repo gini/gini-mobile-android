@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -18,6 +19,9 @@ import net.gini.android.capture.R;
 import net.gini.android.capture.document.ImageDocument;
 import net.gini.android.capture.internal.camera.photo.Photo;
 import net.gini.android.capture.review.RotatableTouchImageViewContainer;
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent;
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTrackerBuilder;
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen;
 
 public class ZoomInPreviewFragment extends Fragment {
 
@@ -54,6 +58,7 @@ public class ZoomInPreviewFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.gc_fragment_zoom_in_preview, container, false);
         setupInputHandlers(view);
+        UserAnalyticsEventTrackerBuilder.INSTANCE.getAnalyticsEventTracker().trackEvent(UserAnalyticsEvent.SCREEN_SHOWN, UserAnalyticsScreen.REVIEW_ZOOM);
         return view;
     }
 
@@ -63,7 +68,20 @@ public class ZoomInPreviewFragment extends Fragment {
                 getActivity().getOnBackPressedDispatcher().onBackPressed();
             }
         });
+        handleOnBackPressed();
     }
+
+    private void handleOnBackPressed() {
+        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                UserAnalyticsEventTrackerBuilder.INSTANCE.getAnalyticsEventTracker().trackEvent(UserAnalyticsEvent.CLOSE_TAPPED, UserAnalyticsScreen.REVIEW_ZOOM);
+                remove();
+                requireActivity().getOnBackPressedDispatcher().onBackPressed();
+            }
+        });
+    }
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {

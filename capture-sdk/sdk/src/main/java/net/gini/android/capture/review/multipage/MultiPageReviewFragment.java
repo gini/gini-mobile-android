@@ -119,7 +119,6 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
     private final String KEY_SHOULD_SCROLL_TO_LAST_PAGE = "GC_SHOULD_SCROLL_TO_LAST_PAGE";
     private final String KEY_SCROLL_TO_POSITION = "GC_SHOULD_SCROLL_TO_LAST_PAGE";
     private UserAnalyticsEventTracker mUserAnalyticsEventTracker;
-    private boolean swipePagesSentByUserAnalytics = false;
 
     public static MultiPageReviewFragment newInstance() {
 
@@ -369,10 +368,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
                         int position = mRecyclerView.getChildAdapterPosition(viewAtPosition);
                         updateTabIndicatorPosition(position);
                         setScrollToPosition(position);
-                        if (!swipePagesSentByUserAnalytics) {
-                            UserAnalyticsEventTrackerBuilder.INSTANCE.getAnalyticsEventTracker().trackEvent(UserAnalyticsEvent.PAGE_SWIPED, UserAnalyticsScreen.REVIEW);
-                            swipePagesSentByUserAnalytics = true;
-                        }
+                        UserAnalyticsEventTrackerBuilder.INSTANCE.getAnalyticsEventTracker().trackEvent(UserAnalyticsEvent.PAGE_SWIPED, UserAnalyticsScreen.REVIEW);
                         if (position < mMultiPageDocument.getDocuments().size() - 1)
                             mShouldScrollToLastPage = false;
                     }
@@ -960,7 +956,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
     @Override
     public void onPageClicked(@NonNull ImageDocument document) {
         mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.FULL_SCREEN_PAGE_TAPPED, UserAnalyticsScreen.REVIEW);
-        NavHostFragment.findNavController(this).navigate( MultiPageReviewFragmentDirections.toZoomInPreviewFragment(document));
+        NavHostFragment.findNavController(this).navigate(MultiPageReviewFragmentDirections.toZoomInPreviewFragment(document));
     }
 
 }

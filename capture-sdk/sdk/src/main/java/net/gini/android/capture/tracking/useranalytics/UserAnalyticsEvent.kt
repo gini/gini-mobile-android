@@ -29,4 +29,5 @@ enum class UserAnalyticsEvent(val eventName: String) {
     DRAG_TO_DISMISS("drag_to_dismiss"),
     SAVE_TAPPED("save_tapped"),
     FULL_SCREEN_PAGE_TAPPED("full_screen_page_tapped"),
+    PREVIEW_ZOOMED("preview_zoomed"),
 }

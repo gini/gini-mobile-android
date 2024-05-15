@@ -35,6 +35,10 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.OverScroller;
 import android.widget.Scroller;
 
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent;
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTrackerBuilder;
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen;
+
 public class TouchImageView extends androidx.appcompat.widget.AppCompatImageView {
 
     private static final String DEBUG = "DEBUG";
@@ -928,6 +932,7 @@ public class TouchImageView extends androidx.appcompat.widget.AppCompatImageView
         @Override
         public void onScaleEnd(final ScaleGestureDetector detector) {
             super.onScaleEnd(detector);
+            UserAnalyticsEventTrackerBuilder.INSTANCE.getAnalyticsEventTracker().trackEvent(UserAnalyticsEvent.PREVIEW_ZOOMED, UserAnalyticsScreen.REVIEW_ZOOM);
             setState(State.NONE);
             boolean animateToZoomBoundary = false;
             float targetZoom = normalizedScale;
