@@ -84,15 +84,32 @@
         tools:itemCount="13"
         tools:listitem="@layout/ghs_item_payment_provider_app" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/ghs_more_information_label"
+        style="@style/GiniHealthTheme.Typography.Caption2"
+        android:layout_marginStart="@dimen/ghs_large"
+        android:drawableStart="@drawable/ghs_info_circle_icon"
+        android:drawableTint="@color/ghs_more_information_color"
+        android:drawablePadding="@dimen/ghs_medium"
+        android:text="@string/ghs_more_information_underlined_part"
+        android:textColor="@color/ghs_payment_component_caption"
+        android:gravity="center_vertical"
+        app:layout_constraintTop_toTopOf="@id/ghs_powered_by_gini_layout"
+        app:layout_constraintBottom_toBottomOf="@id/ghs_powered_by_gini_layout"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+
     <include layout="@layout/ghs_powered_by_gini"
         android:id="@+id/ghs_powered_by_gini_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/ghs_payment_provider_apps_list"
         android:layout_marginVertical="@dimen/ghs_large"
-    />
+        android:layout_marginEnd="@dimen/ghs_large"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
