@@ -13,6 +13,9 @@ import net.gini.android.capture.document.ImageMultiPageDocument
 import net.gini.android.capture.internal.camera.photo.Photo
 import net.gini.android.capture.internal.ui.setIntervalClickListener
 import net.gini.android.capture.review.RotatableImageViewContainer
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTrackerBuilder.getAnalyticsEventTracker
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen
 
 class PreviewPagesAdapter(
     private val multiPageDocument: ImageMultiPageDocument,
@@ -22,12 +25,17 @@ class PreviewPagesAdapter(
 
     inner class PagesViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
 
-        val mImageViewContainer: RotatableImageViewContainer? = view.findViewById(R.id.gc_image_container)
+        val mImageViewContainer: RotatableImageViewContainer? =
+            view.findViewById(R.id.gc_image_container)
         private val mDeletePage: ImageButton? = view.findViewById(R.id.gc_button_delete)
 
         init {
 
             mDeletePage?.setIntervalClickListener {
+                getAnalyticsEventTracker().trackEvent(
+                    UserAnalyticsEvent.DELETE_PAGES_TAPPED,
+                    UserAnalyticsScreen.REVIEW
+                )
                 previewFragmentListener.onDeleteDocument(multiPageDocument.documents[absoluteAdapterPosition])
             }
 
@@ -59,7 +67,10 @@ class PreviewPagesAdapter(
 
                     override fun onSuccess(result: Photo?) {
                         holder.mImageViewContainer?.imageView?.setImageBitmap(result?.bitmapPreview)
-                        holder.mImageViewContainer?.rotateImageView(result?.rotationForDisplay ?: 0, false);
+                        holder.mImageViewContainer?.rotateImageView(
+                            result?.rotationForDisplay ?: 0,
+                            false
+                        )
                     }
 
                     override fun onError(exception: Exception?) {

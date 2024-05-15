@@ -385,7 +385,9 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         activity.getOnBackPressedDispatcher().addCallback(mFragment.getViewLifecycleOwner(), new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.CLOSE_TAPPED, UserAnalyticsScreen.CAMERA);
+                if (!addPages) {
+                    mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.CLOSE_TAPPED, UserAnalyticsScreen.CAMERA);
+                }
                 trackCameraScreenEvent(CameraScreenEvent.EXIT);
                 setEnabled(false);
                 remove();

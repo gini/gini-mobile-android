@@ -8,7 +8,7 @@ enum class UserAnalyticsEvent(val eventName: String) {
     GET_STARTED_TAPPED("get_started_tapped"),
     BACK_TAPPED("back_tapped"),
     HELP_ITEM_TAPPED("help_item_tapped"),
-    SWIPE_PAGES("swipe_pages"),
+    PAGE_SWIPED("page_swiped"),
     SKIP_TAPPED("skip_tapped"),
     CAPTURE_TAPPED("capture_tapped"),
     IMPORT_FILES_TAPPED("import_files_tapped"),
@@ -28,4 +28,5 @@ enum class UserAnalyticsEvent(val eventName: String) {
     BACK_TO_CAMERA_TAPPED("back_to_camera_tapped"),
     DRAG_TO_DISMISS("drag_to_dismiss"),
     SAVE_TAPPED("save_tapped"),
+    FULL_SCREEN_PAGE_TAPPED("full_screen_page_tapped"),
 }
