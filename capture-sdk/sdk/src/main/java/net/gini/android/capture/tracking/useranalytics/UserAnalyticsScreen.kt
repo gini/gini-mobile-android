@@ -5,6 +5,7 @@ enum class UserAnalyticsScreen(val screenName: String) {
     REVIEW("review"),
     REVIEW_ZOOM("review_zoom"),
     ANALYSIS("analysis"),
+    NO_RESULTS("no_results"),
     HELP("help"),
     ERROR("error")
 }

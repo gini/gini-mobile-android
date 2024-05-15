@@ -1,11 +1,16 @@
 package net.gini.android.capture.noresults;
 
+import static android.view.View.GONE;
+import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
+import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -14,7 +19,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import net.gini.android.capture.Document;
 import net.gini.android.capture.EnterManuallyButtonListener;
 import net.gini.android.capture.GiniCapture;
-import net.gini.android.capture.GiniCaptureFragment;
 import net.gini.android.capture.R;
 import net.gini.android.capture.document.ImageMultiPageDocument;
 import net.gini.android.capture.help.PhotoTipsAdapter;
@@ -23,14 +27,14 @@ import net.gini.android.capture.internal.ui.ClickListenerExtKt;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.ui.IntervalClickListener;
 import net.gini.android.capture.tracking.AnalysisScreenEvent;
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent;
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker;
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTrackerBuilder;
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen;
 import net.gini.android.capture.view.InjectedViewAdapterHolder;
 import net.gini.android.capture.view.InjectedViewContainer;
 import net.gini.android.capture.view.NavButtonType;
 import net.gini.android.capture.view.NavigationBarTopAdapter;
-
-import static android.view.View.GONE;
-import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
-import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
 
 /**
  * Main logic implementation for no results UI presented by {@link NoResultsFragment}.
@@ -46,6 +50,7 @@ class NoResultsFragmentImpl {
     private final Document mDocument;
     private EnterManuallyButtonListener mListener;
     private TextView mTitleTextView;
+    private UserAnalyticsEventTracker mUserAnalyticsEventTracker;
 
     private InjectedViewContainer<NavigationBarTopAdapter> topAdapterInjectedViewContainer;
 
@@ -76,8 +81,12 @@ class NoResultsFragmentImpl {
                       final Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.gc_fragment_noresults, container, false);
         final View retakeImagesButton = view.findViewById(R.id.gc_button_no_results_retake_images);
+        handleOnBackPressed();
+        mUserAnalyticsEventTracker = UserAnalyticsEventTrackerBuilder.INSTANCE.getAnalyticsEventTracker();
+        mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.SCREEN_SHOWN, UserAnalyticsScreen.NO_RESULTS);
         if (shouldAllowRetakeImages()) {
             ClickListenerExtKt.setIntervalClickListener(retakeImagesButton, v -> {
+                mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.RETAKE_IMAGES_TAPPED, UserAnalyticsScreen.NO_RESULTS);
                 trackAnalysisScreenEvent(AnalysisScreenEvent.RETRY);
                 mFragment.findNavController().navigate(NoResultsFragmentDirections.toCameraFragment());
 
@@ -88,6 +97,7 @@ class NoResultsFragmentImpl {
 
         final View enterManuallyButton = view.findViewById(R.id.gc_button_no_results_enter_manually);
         ClickListenerExtKt.setIntervalClickListener(enterManuallyButton, v -> {
+            mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.ENTER_MANUALLY_TAPPED, UserAnalyticsScreen.NO_RESULTS);
             mListener.onEnterManuallyPressed();
         });
 
@@ -101,6 +111,17 @@ class NoResultsFragmentImpl {
         setUpList(view);
 
         return view;
+    }
+
+    private void handleOnBackPressed() {
+        mFragment.getActivity().getOnBackPressedDispatcher().addCallback(mFragment.getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.CLOSE_TAPPED, UserAnalyticsScreen.NO_RESULTS);
+                remove();
+                mFragment.getActivity().getOnBackPressedDispatcher().onBackPressed();
+            }
+        });
     }
 
     private boolean isDocumentFromCameraScreen(Document document) {
