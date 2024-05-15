@@ -48,6 +48,8 @@
     <color name="ghs_bottom_sheet_scrim">#000</color>
     <color name="ghs_install_app_title_color">@color/ghs_dark_02</color>
     <color name="ghs_install_app_details_color">@color/ghs_dark_03</color>
+    <color name="ghs_select_bank_and_pay_color">@color/ghs_dark_01</color>
+    <color name="ghs_info_button_tint">@color/ghs_dark_02</color>
     <color name="ghs_more_information_color">@color/ghs_dark_02</color>
 
     <!--  Open With  -->

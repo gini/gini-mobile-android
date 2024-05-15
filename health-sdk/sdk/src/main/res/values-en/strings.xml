@@ -21,9 +21,9 @@
     <string name="ghs_payment_details_info_bar_text">Please check the prefilled values</string>
 
     <string name="ghs_more_information_label">Transfer payment data to the banking app and pay there directly.</string>
-    <string name="ghs_more_information_underlined_part">More information.</string>
-    <string name="ghs_select_bank_label">Select your bank</string>
-    <string name="ghs_select_bank">Select Bank</string>
+    <string name="ghs_more_information_underlined_part"><u>More information.</u></string>
+    <string name="ghs_select_bank_label">Select your bank to pay</string>
+    <string name="ghs_select_bank">Your Bank</string>
     <string name="ghs_pay_invoice_button">Pay the invoice</string>
     <string name="ghs_payment_powered_by_label">Powered by</string>
     <string name="ghs_payment_provider_apps_list_description">You can only pay the bill if you have an account with one of the banks listed below.</string>
@@ -56,6 +56,7 @@ Gini is ISO 27001 certified for maximum data security and operates its own serve
     <string name="ghs_close_content_description">Close</string>
     <string name="ghs_invalid_amount_content_description">Invalid amount</string>
     <string name="ghs_powered_by_gini_content_description">Powered by Gini</string>
+    <string name="ghs_select_bank_content_description">Select Bank</string>
 
     <!--  Install App  -->
     <string name="ghs_install_app_detail">Note: You must first update or install the %s app from the Google Play Store.</string>

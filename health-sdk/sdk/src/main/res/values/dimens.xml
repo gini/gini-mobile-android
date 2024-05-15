@@ -25,6 +25,9 @@
     <dimen name="ghs_large_96">96dp</dimen>
     <dimen name="ghs_large_100">100dp</dimen>
 
+    <dimen name="ghs_accessibility_min_height">44dp</dimen>
+    <dimen name="ghs_payment_component_height">0dp</dimen>
+
     <item name="ghs_float_0.7" format="float" type="dimen">0.7</item>
     <item name="ghs_float_0.3" format="float" type="dimen">0.3</item>
     <item name="ghs_float_0.5" format="float" type="dimen">0.5</item>
