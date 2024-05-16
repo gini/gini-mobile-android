@@ -30,10 +30,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: setup java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
@@ -44,7 +44,7 @@ jobs:
 
       - name: archive unit test results
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: capture-sdk-unit-test-results
           path: capture-sdk/sdk/build/reports/tests
@@ -57,7 +57,7 @@ jobs:
 #
 #      - name: archive unit test coverage report
 #        if: always()
-#        uses: actions/upload-artifact@v3
+#        uses: actions/upload-artifact@v4
 #        with:
 #          name: capture-sdk-unit-test-coverage
 #          path: capture-sdk/sdk/build/jacoco/jacocoHtml
@@ -66,10 +66,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: setup java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
@@ -80,7 +80,7 @@ jobs:
 
       - name: archive unit test results
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: capture-sdk-default-network-unit-test-results
           path: capture-sdk/default-network/build/reports/tests
@@ -93,7 +93,7 @@ jobs:
 #
 #      - name: archive unit test coverage report
 #        if: always()
-#        uses: actions/upload-artifact@v3
+#        uses: actions/upload-artifact@v4
 #        with:
 #          name: capture-sdk-default-network-unit-test-coverage
 #          path: capture-sdk/default-network/build/jacoco/jacocoHtml
@@ -102,10 +102,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: setup java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
@@ -156,7 +156,7 @@ jobs:
 
       - name: archive instrumented test results
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: capture-sdk-default-network-instrumented-test-results
           path: capture-sdk/default-network/build/outputs/androidTest-results/connected
@@ -165,9 +165,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-java@v3
+      - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
@@ -177,7 +177,7 @@ jobs:
         run: ./gradlew capture-sdk:sdk:checkstyle
 
       - name: archive checkstyle report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: capture-sdk-checkstyle-report
           path: capture-sdk/sdk/build/reports/checkstyle/*.html
@@ -186,9 +186,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-java@v3
+      - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
@@ -198,7 +198,7 @@ jobs:
         run: ./gradlew capture-sdk:sdk:pmd
 
       - name: archive pmd report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: capture-sdk-pmd-report
           path: capture-sdk/sdk/build/reports/pmd/*.html
@@ -207,9 +207,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-java@v3
+      - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
@@ -219,7 +219,7 @@ jobs:
         run: ./gradlew capture-sdk:sdk:lint
 
       - name: archive android lint report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: capture-sdk-android-lint-report
           path: capture-sdk/sdk/build/reports/lint-results*.html
@@ -228,9 +228,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-java@v3
+      - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
@@ -240,7 +240,7 @@ jobs:
         run: ./gradlew capture-sdk:sdk:detekt
 
       - name: archive detekt report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: capture-sdk-detekt-report
           path: capture-sdk/sdk/build/reports/detekt/*.html
@@ -249,9 +249,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-java@v3
+      - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
@@ -261,7 +261,7 @@ jobs:
         run: ./gradlew capture-sdk:sdk:ktlintCheck
 
       - name: archive ktlint report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: capture-sdk-ktlint-report
           path: capture-sdk/sdk/build/reports/ktlint/**/*.html
