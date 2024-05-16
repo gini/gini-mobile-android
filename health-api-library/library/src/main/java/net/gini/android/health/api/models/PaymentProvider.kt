@@ -66,7 +66,7 @@ data class PaymentProvider(
         return result
     }
 
-    fun gpcSupported(): Boolean = gpcSupportedPlatforms.map { it.lowercase(Locale.getDefault()) }.contains(ANDROID_PLATFORM)
+    fun gpcSupported(): Boolean = gpcSupportedPlatforms.map { it.lowercase(Locale.ENGLISH) }.contains(ANDROID_PLATFORM)
 
     /**
      * A payment provider's color scheme.

@@ -18,8 +18,8 @@ internal data class PaymentProviderResponse(
     @Json(name = "openWithSupportedPlatforms") val openWithSupportedPlatforms: List<String>?
 ) {
 
-    fun isEnabled(): Boolean = (gpcSupportedPlatforms?.map { it.lowercase(Locale.getDefault()) }?.contains(ANDROID_PLATFORM) == true )
-            || (openWithSupportedPlatforms?.map { it.lowercase(Locale.getDefault()) }?.contains(ANDROID_PLATFORM) == true)
+    fun isEnabled(): Boolean = (gpcSupportedPlatforms?.map { it.lowercase(Locale.ENGLISH) }?.contains(ANDROID_PLATFORM) == true )
+            || (openWithSupportedPlatforms?.map { it.lowercase(Locale.ENGLISH) }?.contains(ANDROID_PLATFORM) == true)
 }
 
 @JsonClass(generateAdapter = true)

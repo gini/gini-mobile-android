@@ -88,8 +88,7 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
                     LOG.debug("Loaded payment providers")
                     LOG.debug("Loading installed payment provider apps")
 
-                    val supportedPaymentProviderApps = paymentProvidersResource.data.filter { it.gpcSupportedPlatforms?.contains("android") == true || it.openWithSupportedPlatforms?.contains("android") == true }
-                    val paymentProviderApps = getPaymentProviderAppsSorted(supportedPaymentProviderApps)
+                    val paymentProviderApps = getPaymentProviderAppsSorted(paymentProvidersResource.data)
 
                     selectPaymentProviderApp(paymentProviderApps)
 
