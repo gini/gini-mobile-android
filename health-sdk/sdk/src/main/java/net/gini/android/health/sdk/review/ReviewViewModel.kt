@@ -305,7 +305,7 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val configuration: Re
                         giniHealth.setOpenBankState(GiniHealth.PaymentState.Error(Exception("Cancelled")))
                     }
                     is Resource.Error -> {
-                        giniHealth.setOpenBankState(GiniHealth.PaymentState.Error(Throwable(byteArrayResource.exception)))
+                        giniHealth.setOpenBankState(GiniHealth.PaymentState.Error(byteArrayResource.exception ?: Exception("Error")))
                     }
                     is Resource.Success -> {
                         giniHealth.setOpenBankState(GiniHealth.PaymentState.Success(paymentRequest))
