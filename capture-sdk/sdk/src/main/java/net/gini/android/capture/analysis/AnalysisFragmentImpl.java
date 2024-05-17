@@ -36,6 +36,8 @@ import net.gini.android.capture.tracking.AnalysisScreenEvent;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTrackerBuilder;
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsExtraProperties;
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsHelperKt;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen;
 import net.gini.android.capture.view.CustomLoadingIndicatorAdapter;
 import net.gini.android.capture.view.InjectedViewAdapterHolder;
@@ -83,26 +85,16 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     @VisibleForTesting
     void createPresenter(@NonNull final Activity activity, @NonNull final Document document,
                          final String documentAnalysisErrorMessage) {
-        mUserAnalyticsEventTracker = UserAnalyticsEventTrackerBuilder.INSTANCE.getAnalyticsEventTracker();
-        String userAnalysisDocumentType = "unknown";
-        switch (document.getType()) {
-            case IMAGE:
-            case IMAGE_MULTI_PAGE:
-                userAnalysisDocumentType = "image";
-                break;
-            case PDF:
-            case PDF_MULTI_PAGE:
-                userAnalysisDocumentType = "pdf";
-                break;
-            case QRCode:
-            case QR_CODE_MULTI_PAGE:
-                userAnalysisDocumentType = "qrcode";
-                break;
-        }
-        mUserAnalyticsEventTracker.trackEventWithProperties(UserAnalyticsEvent.SCREEN_SHOWN, UserAnalyticsScreen.ANALYSIS, Collections.singletonMap("document_type", userAnalysisDocumentType));
 
+        addUserAnalyticEvents(document);
         new AnalysisScreenPresenter(activity, this, document,
                 documentAnalysisErrorMessage);
+    }
+
+    private void addUserAnalyticEvents(@NonNull Document document) {
+        mUserAnalyticsEventTracker = UserAnalyticsEventTrackerBuilder.INSTANCE.getAnalyticsEventTracker();
+        String userAnalysisDocumentType = UserAnalyticsHelperKt.getDocumentTypeForUserAnalytics(document);
+        mUserAnalyticsEventTracker.trackEventWithProperties(UserAnalyticsEvent.SCREEN_SHOWN, UserAnalyticsScreen.ANALYSIS, Collections.singletonList(Collections.singletonMap(UserAnalyticsExtraProperties.DOCUMENT_TYPE.getPropertyName(), userAnalysisDocumentType)));
     }
 
     @Override

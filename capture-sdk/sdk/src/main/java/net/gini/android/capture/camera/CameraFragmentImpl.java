@@ -114,6 +114,7 @@ import net.gini.android.capture.tracking.CameraScreenEvent;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTrackerBuilder;
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsExtraProperties;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen;
 import net.gini.android.capture.util.IntentHelper;
 import net.gini.android.capture.util.UriHelper;
@@ -893,7 +894,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         });
 
         ClickListenerExtKt.setIntervalClickListener(mButtonCameraFlashTrigger, v -> {
-            mUserAnalyticsEventTracker.trackEventWithProperties(UserAnalyticsEvent.FLASH_TAPPED, UserAnalyticsScreen.CAMERA, Collections.singletonMap("flash_active", String.valueOf(mCameraController.isFlashEnabled())));
+            mUserAnalyticsEventTracker.trackEventWithProperties(UserAnalyticsEvent.FLASH_TAPPED, UserAnalyticsScreen.CAMERA, Collections.singletonList(Collections.singletonMap(UserAnalyticsExtraProperties.FLASH_ACTIVE.getPropertyName(), String.valueOf(mCameraController.isFlashEnabled()))));
             mIsFlashEnabled = !mCameraController.isFlashEnabled();
             updateCameraFlashState();
         });
@@ -906,7 +907,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         ClickListenerExtKt.setIntervalClickListener(mPhotoThumbnail, v -> {
             if (mFragment.getActivity() != null) {
                 mUserAnalyticsEventTracker.trackEventWithProperties(UserAnalyticsEvent.MULTIPLE_PAGES_CAPTURED_TAPPED, UserAnalyticsScreen.CAMERA,
-                        Collections.singletonMap("document_page_number", String.valueOf(mMultiPageDocument.getDocuments().size())));
+                        Collections.singletonList(Collections.singletonMap(UserAnalyticsExtraProperties.DOCUMENT_PAGE_NUMBER.getPropertyName(), String.valueOf(mMultiPageDocument.getDocuments().size()))));
                 mFragment.getActivity().getOnBackPressedDispatcher().onBackPressed();
             }
         });
@@ -1401,7 +1402,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     }
 
     private void showGenericInvalidFileError(ErrorType errorType) {
-        mUserAnalyticsEventTracker.trackEventWithProperties(UserAnalyticsEvent.ERROR_DIALOG_SHOWN, UserAnalyticsScreen.CAMERA, Collections.singletonMap("error_message", mFragment.getActivity().getResources().getString(errorType.getTitleTextResource())));
+        mUserAnalyticsEventTracker.trackEventWithProperties(UserAnalyticsEvent.ERROR_DIALOG_SHOWN, UserAnalyticsScreen.CAMERA, Collections.singletonList(Collections.singletonMap(UserAnalyticsExtraProperties.ERROR_MESSAGE.getPropertyName(), mFragment.getActivity().getResources().getString(errorType.getTitleTextResource()))));
         final Activity activity = mFragment.getActivity();
         if (activity == null) {
             return;

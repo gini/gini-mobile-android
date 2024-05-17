@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import net.gini.android.capture.Document
 import net.gini.android.capture.EnterManuallyButtonListener
 import net.gini.android.capture.GiniCapture
@@ -18,6 +19,13 @@ import net.gini.android.capture.internal.ui.setIntervalClickListener
 import net.gini.android.capture.internal.util.ActivityHelper
 import net.gini.android.capture.tracking.AnalysisScreenEvent
 import net.gini.android.capture.tracking.EventTrackingHelper
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTrackerBuilder.getAnalyticsEventTracker
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsExtraProperties
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen
+import net.gini.android.capture.tracking.useranalytics.getDocumentTypeForUserAnalytics
+import net.gini.android.capture.tracking.useranalytics.getErrorTypeForUserAnalytics
 import net.gini.android.capture.view.InjectedViewAdapterHolder
 import net.gini.android.capture.view.InjectedViewContainer
 import net.gini.android.capture.view.NavButtonType
@@ -38,6 +46,7 @@ class ErrorFragmentImpl(
 
     private var enterManuallyButtonListener: EnterManuallyButtonListener? = null
     private lateinit var retakeImagesButton: Button
+    private lateinit var mUserAnalyticsEventTracker: UserAnalyticsEventTracker
 
     fun onCreate(savedInstanceState: Bundle?) {
         ActivityHelper.forcePortraitOrientationOnPhones(fragmentCallback.activity)
@@ -46,6 +55,7 @@ class ErrorFragmentImpl(
         if (GiniCapture.hasInstance()) {
             GiniCapture.getInstance().internal().imageMultiPageDocumentMemoryStore.clear()
         }
+        mUserAnalyticsEventTracker = getAnalyticsEventTracker()
     }
 
     fun onCreateView(
@@ -55,20 +65,33 @@ class ErrorFragmentImpl(
     ): View {
         val view: View = inflater.inflate(R.layout.gc_fragment_error, container, false)
         retakeImagesButton = view.findViewById(R.id.gc_button_error_retake_images)
+        handleOnBackPressed()
+        addAnalyticEvents()
 
         setInjectedTopBarContainer(view)
 
         if (shouldAllowRetakeImages()) {
             retakeImagesButton.setIntervalClickListener {
+                mUserAnalyticsEventTracker.trackEvent(
+                    UserAnalyticsEvent.BACK_TO_CAMERA_TAPPED,
+                    UserAnalyticsScreen.ERROR
+                )
                 EventTrackingHelper.trackAnalysisScreenEvent(AnalysisScreenEvent.RETRY)
-                fragmentCallback.findNavController().navigate(ErrorFragmentDirections.toCameraFragment())
+                fragmentCallback.findNavController()
+                    .navigate(ErrorFragmentDirections.toCameraFragment())
             }
         } else {
             retakeImagesButton.visibility = View.GONE
         }
 
         val enterManuallyButton = view.findViewById<View>(R.id.gc_button_error_enter_manually)
-        enterManuallyButton.setIntervalClickListener { enterManuallyButtonListener?.onEnterManuallyPressed() }
+        enterManuallyButton.setIntervalClickListener {
+            mUserAnalyticsEventTracker.trackEvent(
+                UserAnalyticsEvent.ENTER_MANUALLY_TAPPED,
+                UserAnalyticsScreen.ERROR
+            )
+            enterManuallyButtonListener?.onEnterManuallyPressed()
+        }
 
         customError?.let {
             view.findViewById<TextView>(R.id.gc_error_header).text = it
@@ -86,11 +109,29 @@ class ErrorFragmentImpl(
         return view
     }
 
+    private fun addAnalyticEvents() {
+        mUserAnalyticsEventTracker.trackEventWithProperties(
+            UserAnalyticsEvent.SCREEN_SHOWN,
+            UserAnalyticsScreen.ERROR,
+            listOf(
+                mapOf(
+                    UserAnalyticsExtraProperties.DOCUMENT_TYPE.propertyName to document?.getDocumentTypeForUserAnalytics()
+                        .toString()
+                ),
+                mapOf(UserAnalyticsExtraProperties.PARTIAL_DOCUMENT_ID.propertyName to document?.id.toString()),
+                mapOf(UserAnalyticsExtraProperties.ERROR_TYPE.propertyName to errorType?.getErrorTypeForUserAnalytics().toString()),
+                mapOf(UserAnalyticsExtraProperties.ERROR_MESSAGE.propertyName to customError.toString())
+            )
+        )
+    }
+
     private fun setInjectedTopBarContainer(view: View) {
         val topBarContainer =
             view.findViewById<InjectedViewContainer<NavigationBarTopAdapter>>(R.id.gc_injected_navigation_bar_container_top)
         if (GiniCapture.hasInstance()) {
-            topBarContainer.injectedViewAdapterHolder = InjectedViewAdapterHolder(GiniCapture.getInstance().internal().navigationBarTopAdapterInstance) { injectedViewAdapter ->
+            topBarContainer.injectedViewAdapterHolder = InjectedViewAdapterHolder(
+                GiniCapture.getInstance().internal().navigationBarTopAdapterInstance
+            ) { injectedViewAdapter ->
                 injectedViewAdapter.apply {
                     setTitle(fragmentCallback.activity?.getString(R.string.gc_title_error) ?: "")
 
@@ -103,13 +144,30 @@ class ErrorFragmentImpl(
         }
     }
 
+    private fun handleOnBackPressed() {
+        fragmentCallback.getActivity()?.onBackPressedDispatcher
+            ?.addCallback(
+                fragmentCallback.getViewLifecycleOwner(),
+                object : OnBackPressedCallback(true) {
+                    override fun handleOnBackPressed() {
+                        mUserAnalyticsEventTracker.trackEvent(
+                            UserAnalyticsEvent.CLOSE_TAPPED,
+                            UserAnalyticsScreen.ERROR
+                        )
+                        remove()
+                        fragmentCallback.getActivity()?.onBackPressedDispatcher?.onBackPressed()
+                    }
+                })
+    }
+
     fun setListener(enterManuallyButtonListener: EnterManuallyButtonListener?) {
         this.enterManuallyButtonListener = enterManuallyButtonListener ?: defaultListener
     }
 
     private fun shouldAllowRetakeImages(): Boolean {
         if (document == null) {
-            retakeImagesButton.text = fragmentCallback.activity?.getString(R.string.gc_error_back_to_camera)
+            retakeImagesButton.text =
+                fragmentCallback.activity?.getString(R.string.gc_error_back_to_camera)
             return true
         }
 
