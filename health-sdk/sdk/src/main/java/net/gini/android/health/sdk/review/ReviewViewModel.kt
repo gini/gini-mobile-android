@@ -1,6 +1,7 @@
 package net.gini.android.health.sdk.review
 
 import android.content.Context
+import android.util.Log
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -217,9 +218,7 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val configuration: Re
         viewModelScope.launch {
             val valid = validatePaymentDetails(paymentDetails.value)
             if (valid) {
-                giniHealth.setOpenBankState(GiniHealth.PaymentState.Loading)
-                // TODO: first get the payment request and handle error before proceeding
-                sendFeedback()
+                sendFeedbackAndStartLoading()
                 giniHealth.setOpenBankState(
                     try {
                         GiniHealth.PaymentState.Success(getPaymentRequest())
@@ -295,12 +294,26 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val configuration: Re
     internal fun getFileAsByteArray(externalCacheDir: File?) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                val paymentRequest = async { getPaymentRequest() }.await()
+                sendFeedbackAndStartLoading()
+                val paymentRequest = try {
+                    getPaymentRequest()
+                } catch (throwable: Throwable) {
+                    GiniHealth.PaymentState.Error(throwable)
+                    _paymentNextStep.tryEmit(PaymentNextStep.OpenSharePdfError(throwable.message ?: "Error getting payment request"))
+                    return@withContext
+                }
                 val byteArrayResource = async {  giniHealth.giniHealthAPI.documentManager.getPaymentRequestDocument(paymentRequest.id) }.await()
                 when (byteArrayResource) {
-                    is Resource.Cancelled -> throw Exception("Cancelled")
-                    is Resource.Error -> throw Exception(byteArrayResource.exception)
+                    is Resource.Cancelled -> {
+                        GiniHealth.PaymentState.Error(Exception("Cancelled"))
+                        _paymentNextStep.tryEmit(PaymentNextStep.OpenSharePdfError("Cancelled"))
+                    }
+                    is Resource.Error -> {
+                        GiniHealth.PaymentState.Error(Exception(byteArrayResource.exception))
+                        _paymentNextStep.tryEmit(PaymentNextStep.OpenSharePdfError(byteArrayResource.exception?.message ?: "Error getting payment request file"))
+                    }
                     is Resource.Success -> {
+                        giniHealth.setOpenBankState(GiniHealth.PaymentState.Success(paymentRequest))
                         val newFile = externalCacheDir?.createTempPdfFile(byteArrayResource.data, "payment-request")
                         newFile?.let {
                             _paymentNextStep.tryEmit(PaymentNextStep.OpenSharePdf(it))
@@ -310,12 +323,19 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val configuration: Re
             }
         }
     }
+
+    private fun sendFeedbackAndStartLoading() {
+        giniHealth.setOpenBankState(GiniHealth.PaymentState.Loading)
+        // TODO: first get the payment request and handle error before proceeding
+        sendFeedback()
+    }
+
     sealed class PaymentNextStep {
         object RedirectToBank: PaymentNextStep()
         object ShowOpenWithSheet: PaymentNextStep()
-        data class OpenSharePdf(val file: File): PaymentNextStep()
         object ShowInstallApp: PaymentNextStep()
-
+        data class OpenSharePdfError(val error: String): PaymentNextStep()
+        data class OpenSharePdf(val file: File): PaymentNextStep()
         data class SetLoadingVisibility(val isVisible: Boolean): PaymentNextStep()
     }
 

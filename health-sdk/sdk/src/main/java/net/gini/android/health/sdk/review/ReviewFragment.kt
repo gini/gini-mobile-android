@@ -4,9 +4,11 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.FileProvider
@@ -344,6 +346,7 @@ class ReviewFragment private constructor(
         }
         when (paymentState) {
             is GiniHealth.PaymentState.Success -> {
+                if (viewModel.paymentProviderApp.value?.paymentProvider?.gpcSupported() == false) return
                 try {
                     val intent =
                         paymentState.paymentRequest.bankApp.getIntent(paymentState.paymentRequest.id)
@@ -593,6 +596,7 @@ class ReviewFragment private constructor(
                 binding.loading.isVisible = false
                 startSharePdfIntent(paymentNextStep.file)
             }
+            is ReviewViewModel.PaymentNextStep.OpenSharePdfError -> Toast.makeText(requireContext(), "Share PDF failed with error: ${paymentNextStep.error}", Toast.LENGTH_LONG).show()
         }
     }
 
