@@ -4,11 +4,9 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.FileProvider
@@ -43,31 +41,30 @@ import kotlinx.coroutines.launch
 import net.gini.android.core.api.models.Document
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.R
+import net.gini.android.health.sdk.bankselection.BankSelectionBottomSheet
 import net.gini.android.health.sdk.databinding.GhsFragmentReviewBinding
+import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.health.sdk.preferences.UserPreferences
+import net.gini.android.health.sdk.review.installApp.InstallAppBottomSheet
+import net.gini.android.health.sdk.review.installApp.InstallAppForwardListener
 import net.gini.android.health.sdk.review.model.PaymentDetails
 import net.gini.android.health.sdk.review.model.ResultWrapper
+import net.gini.android.health.sdk.review.openWith.OpenWithBottomSheet
+import net.gini.android.health.sdk.review.openWith.OpenWithForwardListener
+import net.gini.android.health.sdk.review.openWith.OpenWithPreferences
 import net.gini.android.health.sdk.review.pager.DocumentPageAdapter
 import net.gini.android.health.sdk.util.amountWatcher
 import net.gini.android.health.sdk.util.autoCleared
 import net.gini.android.health.sdk.util.clearErrorMessage
+import net.gini.android.health.sdk.util.extensions.getFontScale
+import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthTheme
 import net.gini.android.health.sdk.util.hideErrorMessage
 import net.gini.android.health.sdk.util.hideKeyboard
 import net.gini.android.health.sdk.util.setBackgroundTint
 import net.gini.android.health.sdk.util.setErrorMessage
 import net.gini.android.health.sdk.util.setTextIfDifferent
 import net.gini.android.health.sdk.util.showErrorMessage
-import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
-import net.gini.android.health.sdk.bankselection.BankSelectionBottomSheet
-import net.gini.android.health.sdk.review.installApp.InstallAppBottomSheet
-import net.gini.android.health.sdk.review.installApp.InstallAppForwardListener
-import net.gini.android.health.sdk.review.openWith.OpenWithBottomSheet
-import net.gini.android.health.sdk.review.openWith.OpenWithForwardListener
-import net.gini.android.health.sdk.review.openWith.OpenWithPreferences
-import net.gini.android.health.sdk.util.HealthSDKFileProvider
-import net.gini.android.health.sdk.util.extensions.getFontScale
-import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthTheme
 import net.gini.android.health.sdk.util.wrappedWithGiniHealthTheme
 import java.io.File
 
@@ -363,7 +360,9 @@ class ReviewFragment private constructor(
                 }
             }
             // TODO: use more informative error messages (include error details)
-            is GiniHealth.PaymentState.Error -> handleError(getString(R.string.ghs_error_open_bank)) { viewModel.onPayment() }
+            is GiniHealth.PaymentState.Error -> {
+                handleError(getString(R.string.ghs_generic_error_message)) { viewModel.onPaymentButtonTapped(requireContext().externalCacheDir) }
+            }
             else -> { // Loading is already handled
             }
         }
@@ -596,7 +595,6 @@ class ReviewFragment private constructor(
                 binding.loading.isVisible = false
                 startSharePdfIntent(paymentNextStep.file)
             }
-            is ReviewViewModel.PaymentNextStep.OpenSharePdfError -> Toast.makeText(requireContext(), "Share PDF failed with error: ${paymentNextStep.error}", Toast.LENGTH_LONG).show()
         }
     }
 
