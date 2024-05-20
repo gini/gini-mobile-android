@@ -7,11 +7,15 @@ import net.gini.android.core.api.models.ExtractionsContainer
 @JsonClass(generateAdapter = true)
 data class DocumentWithExtractions(
     val documentId: String,
-    val recipient: String?,
-    val amount: String?,
+    var recipient: String?,
+    var amount: String?,
     val dueDate: String?,
     val isPayable: Boolean = false
 ) {
+
+    fun shouldUpdate(amount: String?, recipient: String?) =
+        !this.amount.equals(amount, true) ||
+                !this.recipient.equals(recipient, true)
 
     companion object {
         fun fromDocumentAndExtractions(

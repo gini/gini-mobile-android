@@ -5,13 +5,14 @@ import kotlinx.coroutines.flow.asStateFlow
 import net.gini.android.core.api.MediaTypes
 import net.gini.android.core.api.Resource
 import net.gini.android.core.api.models.Document
+import net.gini.android.core.api.models.ExtractionsContainer
 import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.exampleapp.invoices.data.model.DocumentWithExtractions
 
 class InvoicesRepository(
     private val giniHealthAPI: GiniHealthAPI,
-    private val giniHealth: GiniHealth,
+    val giniHealth: GiniHealth,
     private val hardcodedInvoicesLocalDataSource: HardcodedInvoicesLocalDataSource,
     private val invoicesLocalDataSource: InvoicesLocalDataSource
 ) {
@@ -34,27 +35,17 @@ class InvoicesRepository(
 
         val hardcodedInvoices = hardcodedInvoicesLocalDataSource.getHardcodedInvoices()
         val createdResources = hardcodedInvoices.map { invoiceBytes ->
-            var document: Document? = null
             giniHealthAPI.documentManager.createPartialDocument(
                 invoiceBytes,
                 MediaTypes.IMAGE_JPEG
             ).mapSuccess { partialDocumentResource ->
                 giniHealthAPI.documentManager.createCompositeDocument(listOf(partialDocumentResource.data))
             }.mapSuccess { compositeDocumentResource ->
-                document = compositeDocumentResource.data
-                giniHealthAPI.documentManager.getAllExtractionsWithPolling(compositeDocumentResource.data)
-            }.mapSuccess { extractionsResource ->
-                document?.let { doc ->
-                    val isPayable = giniHealth.checkIfDocumentIsPayable(doc.id)
-                    documentsWithExtractions.add(
-                        DocumentWithExtractions.fromDocumentAndExtractions(
-                            doc,
-                            extractionsResource.data,
-                            isPayable
-                        )
-                    )
+                val documentWithExtractions = getDocumentWithExtraction(compositeDocumentResource.data)
+                documentWithExtractions.first?.let { doc ->
+                    documentsWithExtractions.add(doc)
                 }
-                extractionsResource
+                documentWithExtractions.second
             }
         }
 
@@ -75,6 +66,28 @@ class InvoicesRepository(
         }
 
         _uploadHardcodedInvoicesStateFlow.value = UploadHardcodedInvoicesState.Idle
+    }
+
+    suspend fun requestDocumentExtractionAndSaveToLocal(document: Document) {
+        val documentWithExtractions = getDocumentWithExtraction(document)
+        documentWithExtractions.first?.let { doc ->
+            invoicesLocalDataSource.updateInvoice(doc)
+        }
+    }
+
+    private suspend fun getDocumentWithExtraction(document: Document): Pair<DocumentWithExtractions?, Resource<ExtractionsContainer>> {
+        return when (val extractionsResource = giniHealthAPI.documentManager.getAllExtractionsWithPolling(document)) {
+            is Resource.Success -> {
+                val isPayable = giniHealth.checkIfDocumentIsPayable(document.id)
+                val documentWithExtractions = DocumentWithExtractions.fromDocumentAndExtractions(
+                    document,
+                    extractionsResource.data,
+                    isPayable
+                )
+                Pair(documentWithExtractions, extractionsResource)
+            }
+            else -> Pair(null, extractionsResource)
+        }
     }
 }
 
