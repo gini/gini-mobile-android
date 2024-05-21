@@ -13,10 +13,6 @@
     <string name="ghs_error_input_iban_empty">IBAN is required.</string>
     <string name="ghs_error_input_amount_empty">Invalid.</string>
     <string name="ghs_error_input_purpose_empty">Purpose is required.</string>
-    <string name="ghs_error_document">Failed to load document</string>
-    <string name="ghs_error_payment_details">Failed to get payment details</string>
-    <string name="ghs_error_bank_not_found">Failed to start Bank app</string>
-    <string name="ghs_error_open_bank">Failed to make payment request</string>
     <string name="ghs_snackbar_retry">Retry</string>
     <string name="ghs_payment_details_info_bar_text">Please check the prefilled values</string>
 

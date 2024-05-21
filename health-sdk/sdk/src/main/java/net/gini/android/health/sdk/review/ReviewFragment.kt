@@ -243,7 +243,7 @@ class ReviewFragment private constructor(
                 })
             }
 
-            is ResultWrapper.Error -> handleError(getString(R.string.ghs_error_document)) { viewModel.retryDocumentReview() }
+            is ResultWrapper.Error -> handleError(getString(R.string.ghs_generic_error_message)) { viewModel.retryDocumentReview() }
             else -> { // Loading state handled by payment details
             }
         }
@@ -252,7 +252,7 @@ class ReviewFragment private constructor(
     private fun GhsFragmentReviewBinding.handlePaymentResult(paymentResult: ResultWrapper<PaymentDetails>) {
         binding.loading.isVisible = paymentResult is ResultWrapper.Loading
         if (paymentResult is ResultWrapper.Error) {
-            handleError(getString(R.string.ghs_error_payment_details)) { viewModel.retryDocumentReview() }
+            handleError(getString(R.string.ghs_generic_error_message)) { viewModel.retryDocumentReview() }
         }
     }
 
@@ -351,15 +351,12 @@ class ReviewFragment private constructor(
                         startActivity(intent)
                         viewModel.onBankOpened()
                     } else {
-                        // TODO: use more informative error messages (include selected bank app name)
-                        handleError(getString(R.string.ghs_error_bank_not_found)) { viewModel.onPayment() }
+                        handleError(getString(R.string.ghs_generic_error_message)) { viewModel.onPayment() }
                     }
                 } catch (exception: ActivityNotFoundException) {
-                    // TODO: use more informative error messages (include selected bank app name)
-                    handleError(getString(R.string.ghs_error_bank_not_found)) { viewModel.onPayment() }
+                    handleError(getString(R.string.ghs_generic_error_message)) { viewModel.onPayment() }
                 }
             }
-            // TODO: use more informative error messages (include error details)
             is GiniHealth.PaymentState.Error -> {
                 handleError(getString(R.string.ghs_generic_error_message)) { viewModel.onPaymentButtonTapped(requireContext().externalCacheDir) }
             }
