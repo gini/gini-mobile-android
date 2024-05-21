@@ -31,7 +31,7 @@ class GiniHealthAPIBuilder @JvmOverloads constructor(
     sessionManager: SessionManager? = null
 ) : GiniCoreAPIBuilder<HealthApiDocumentManager, GiniHealthAPI, HealthApiDocumentRepository, ExtractionsContainer>(context, clientId, clientSecret, emailDomain, sessionManager) {
 
-    private val healthApiType = GiniHealthApiType(3)
+    private val healthApiType = GiniHealthApiType(4)
 
     override fun getGiniApiType(): GiniApiType {
         return healthApiType
