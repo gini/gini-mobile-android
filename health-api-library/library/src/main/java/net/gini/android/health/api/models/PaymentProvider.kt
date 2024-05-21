@@ -1,6 +1,7 @@
 package net.gini.android.health.api.models
 
 import net.gini.android.health.api.response.PaymentProviderResponse
+import java.util.Locale
 
 const val ANDROID_PLATFORM = "android"
 /**
