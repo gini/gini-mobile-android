@@ -62,10 +62,14 @@ class HealthApiDocumentRepository(
     suspend fun getPaymentProviders(): Resource<List<PaymentProvider>> {
         return withAccessToken { accessToken ->
             wrapInResource {
-                documentRemoteSource.getPaymentProviders(accessToken).map { paymentProviderResponse ->
-                    val icon = documentRemoteSource.getFile(accessToken, paymentProviderResponse.iconLocation)
-                    paymentProviderResponse.toPaymentProvider(icon)
-                }
+                documentRemoteSource.getPaymentProviders(accessToken)
+                    .filter { paymentProvider ->
+                        paymentProvider.isEnabled()
+                    }
+                    .map { paymentProviderResponse ->
+                        val icon = documentRemoteSource.getFile(accessToken, paymentProviderResponse.iconLocation)
+                        paymentProviderResponse.toPaymentProvider(icon)
+                    }
             }
         }
     }

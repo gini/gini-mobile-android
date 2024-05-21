@@ -2,6 +2,7 @@ package net.gini.android.health.api.models
 
 import net.gini.android.health.api.response.PaymentProviderResponse
 
+const val ANDROID_PLATFORM = "android"
 /**
  * A payment provider is a Gini partner which integrated Gini Pay Connect (via Gini Bank SDK) into their mobile apps.
  */
@@ -31,7 +32,11 @@ data class PaymentProvider(
     /**
      * If the payment provider supports Gini Pay Connect integration
      */
-    val gpcSupportedPlatforms: List<String>
+    val gpcSupportedPlatforms: List<String>,
+    /**
+     * If the payment provider supports PDF sharing
+     */
+    val openWithSupportedPlatforms: List<String>
 ) {
 
     override fun equals(other: Any?): Boolean {
@@ -60,7 +65,7 @@ data class PaymentProvider(
         return result
     }
 
-    fun gpcSupported(): Boolean = gpcSupportedPlatforms.contains("android")
+    fun gpcSupported(): Boolean = gpcSupportedPlatforms.map { it.lowercase(Locale.ENGLISH) }.contains(ANDROID_PLATFORM)
 
     /**
      * A payment provider's color scheme.
@@ -83,4 +88,5 @@ internal fun PaymentProviderResponse.toPaymentProvider(icon: ByteArray) = Paymen
     icon = icon,
     playStoreUrl = playStoreUrl,
     gpcSupportedPlatforms = gpcSupportedPlatforms ?: listOf("android"),
+    openWithSupportedPlatforms = openWithSupportedPlatforms ?: listOf("android")
 )

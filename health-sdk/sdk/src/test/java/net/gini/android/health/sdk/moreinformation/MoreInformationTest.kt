@@ -51,6 +51,7 @@ class MoreInformationTest {
                             colors = PaymentProvider.Colors(backgroundColorRGBHex = "", textColoRGBHex = ""),
                             icon = ByteArray(0),
                             gpcSupportedPlatforms = listOf("android"),
+                            openWithSupportedPlatforms = listOf("android")
                         )
                     ),
                     PaymentProviderApp(
@@ -65,6 +66,7 @@ class MoreInformationTest {
                             colors = PaymentProvider.Colors(backgroundColorRGBHex = "", textColoRGBHex = ""),
                             icon = ByteArray(0),
                             gpcSupportedPlatforms = listOf("android"),
+                            openWithSupportedPlatforms = listOf("android")
                         )
                     ),
                     PaymentProviderApp(
@@ -78,7 +80,8 @@ class MoreInformationTest {
                             appVersion = "appVersion",
                             colors = PaymentProvider.Colors(backgroundColorRGBHex = "", textColoRGBHex = ""),
                             icon = ByteArray(0),
-                            gpcSupportedPlatforms = listOf("android")
+                            gpcSupportedPlatforms = listOf("android"),
+                            openWithSupportedPlatforms = listOf("android")
                         )
                     )
                 )

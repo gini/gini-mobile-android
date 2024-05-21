@@ -116,6 +116,7 @@ class HealthApiDocumentRemoteSourceTest {
                         Colors("", ""),
                         "",
                         "",
+                        listOf(),
                         listOf()
                     )
                 )
@@ -127,7 +128,7 @@ class HealthApiDocumentRemoteSourceTest {
             documentId: String
         ): Response<PaymentProviderResponse> {
             bearerAuthHeader = bearer["Authorization"]
-            return Response.success(PaymentProviderResponse("", "", "", AppVersionResponse(""), Colors("", ""), "", "", listOf()))
+            return Response.success(PaymentProviderResponse("", "", "", AppVersionResponse(""), Colors("", ""), "", "", listOf("android"), listOf()))
         }
 
         override suspend fun createPaymentRequest(

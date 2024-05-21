@@ -31,7 +31,7 @@ class GiniHealthAPIBuilderTest {
                 return mock()
             }
         })
-        assertEquals(healthAPIBuilder.getGiniApiType(), GiniHealthApiType(apiVersion = 4 ))
+        assertEquals(healthAPIBuilder.getGiniApiType(), GiniHealthApiType(apiVersion = 4))
     }
 
 }
