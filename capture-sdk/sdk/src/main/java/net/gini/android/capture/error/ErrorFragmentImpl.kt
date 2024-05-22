@@ -66,7 +66,7 @@ class ErrorFragmentImpl(
         val view: View = inflater.inflate(R.layout.gc_fragment_error, container, false)
         retakeImagesButton = view.findViewById(R.id.gc_button_error_retake_images)
         handleOnBackPressed()
-        addAnalyticEvents()
+        addUserAnalyticEvents()
 
         setInjectedTopBarContainer(view)
 
@@ -109,7 +109,7 @@ class ErrorFragmentImpl(
         return view
     }
 
-    private fun addAnalyticEvents() {
+    private fun addUserAnalyticEvents() {
         mUserAnalyticsEventTracker.trackEventWithProperties(
             UserAnalyticsEvent.SCREEN_SHOWN,
             UserAnalyticsScreen.ERROR,

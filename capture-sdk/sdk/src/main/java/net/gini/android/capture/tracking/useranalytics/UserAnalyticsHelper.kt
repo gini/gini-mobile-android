@@ -16,7 +16,7 @@ fun Document.getDocumentTypeForUserAnalytics(): String {
 
 fun ErrorType.getErrorTypeForUserAnalytics(): String {
     return when (this) {
-        ErrorType.GENERAL -> "general"
+        ErrorType.GENERAL -> "unknown"
         ErrorType.NO_CONNECTION -> "no_internet"
         ErrorType.AUTH -> "unauthorized"
         ErrorType.UPLOAD -> "upload"
