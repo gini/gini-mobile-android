@@ -24,7 +24,7 @@ import net.gini.android.core.api.models.ExtractionsContainer
  * @param sessionManager if not null, then the [SessionManager] instance will be used for session management. If null, then anonymous Gini users will be used.
  */
 class GiniHealthAPIBuilder @JvmOverloads constructor(
-    context: Context,
+    private val context: Context,
     clientId: String = "",
     clientSecret: String = "",
     emailDomain: String = "",

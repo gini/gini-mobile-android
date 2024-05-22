@@ -2,6 +2,18 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="net.gini.android.health.sdk">
 
+    <application>
+        <provider
+            android:name=".util.HealthSDKFileProvider"
+            android:authorities="${applicationId}.health.sdk.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+    </application>
+
     <queries>
         <intent>
             <action android:name="android.intent.action.VIEW"/>

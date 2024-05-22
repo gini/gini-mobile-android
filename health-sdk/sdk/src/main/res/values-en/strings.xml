@@ -13,10 +13,6 @@
     <string name="ghs_error_input_iban_empty">IBAN is required.</string>
     <string name="ghs_error_input_amount_empty">Invalid.</string>
     <string name="ghs_error_input_purpose_empty">Purpose is required.</string>
-    <string name="ghs_error_document">Failed to load document</string>
-    <string name="ghs_error_payment_details">Failed to get payment details</string>
-    <string name="ghs_error_bank_not_found">Failed to start Bank app</string>
-    <string name="ghs_error_open_bank">Failed to make payment request</string>
     <string name="ghs_snackbar_retry">Retry</string>
     <string name="ghs_payment_details_info_bar_text">Please check the prefilled values</string>
 
@@ -71,4 +67,6 @@ Gini is ISO 27001 certified for maximum data security and operates its own serve
     <string name="ghs_open_with_info">Tip: if you don\'t see the app scroll until you find the %s app. If you haven\'t installed the %s app yet,</string>
     <string name="ghs_open_with_download_app">download it from the store</string>
     <string name="ghs_sharing_file">Sharing 1 file</string>
+
+    <string name="ghs_generic_error_message">Oops, something went wrong. Please try again.</string>
 </resources>

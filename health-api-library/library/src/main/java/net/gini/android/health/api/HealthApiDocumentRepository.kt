@@ -14,9 +14,6 @@ import net.gini.android.health.api.models.PaymentRequestInput
 import net.gini.android.health.api.models.getPageByPageNumber
 import net.gini.android.health.api.models.toPageList
 import net.gini.android.health.api.models.toPaymentProvider
-import net.gini.android.health.api.response.AppVersionResponse
-import net.gini.android.health.api.response.Colors
-import net.gini.android.health.api.response.PaymentProviderResponse
 import org.json.JSONObject
 
 /**
@@ -93,4 +90,11 @@ class HealthApiDocumentRepository(
             }
         }
     }
+
+    suspend fun getPaymentRequestDocument(paymentRequestId: String): Resource<ByteArray> =
+        withAccessToken { accessToken ->
+            wrapInResource {
+                documentRemoteSource.getPaymentRequestDocument(accessToken, paymentRequestId)
+            }
+        }
 }

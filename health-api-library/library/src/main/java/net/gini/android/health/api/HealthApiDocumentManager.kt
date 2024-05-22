@@ -65,4 +65,14 @@ class HealthApiDocumentManager(private val documentRepository: HealthApiDocument
         paymentRequestInput: PaymentRequestInput,
             ): Resource<String> = documentRepository.createPaymentRequest(paymentRequestInput)
 
+
+    /**
+     * Returns a QR code in PDF format which can be shared to payment providers
+     *
+     * @param paymentRequestId the generated payment request id for which the QR code should be generated
+     * @return [Resource] with the byte array corresponding to the [PaymentRequest]
+     */
+    suspend fun getPaymentRequestDocument(
+        paymentRequestId: String
+    ): Resource<ByteArray> = documentRepository.getPaymentRequestDocument(paymentRequestId)
 }
