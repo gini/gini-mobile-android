@@ -2,11 +2,11 @@ package net.gini.android.health.sdk.exampleapp.invoices.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.exampleapp.invoices.data.InvoicesRepository
 import net.gini.android.health.sdk.exampleapp.invoices.ui.model.InvoiceItem
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
@@ -31,24 +31,20 @@ class InvoicesViewModel(
     val _paymentReviewFragmentFlow = MutableStateFlow<PaymentReviewFragmentState>(PaymentReviewFragmentState.Idle)
     val paymentReviewFragmentStateFlow = _paymentReviewFragmentFlow.asStateFlow()
 
-    init {
+    val openBankState = invoicesRepository.giniHealth.openBankState
+
+    fun updateDocument() {
         viewModelScope.launch {
-            with(invoicesRepository.giniHealth) {
-                openBankState.collect { paymentState ->
-                    when (paymentState) {
-                        is GiniHealth.PaymentState.Success -> {
-                            invoicesRepository.requestDocumentExtractionAndSaveToLocal((documentFlow.value as ResultWrapper.Success).value)
-                        }
-                        else -> {}
-                    }
-                }
+            with(invoicesRepository) {
+                requestDocumentExtractionAndSaveToLocal((giniHealth.documentFlow.value as ResultWrapper.Success).value)
             }
         }
     }
 
     fun loadInvoicesWithExtractions() {
         viewModelScope.launch {
-            invoicesRepository.loadInvoicesWithExtractions()
+            async { invoicesRepository.loadInvoicesWithExtractions() }.await()
+            invoicesRepository.refreshInvoices()
         }
     }
 

@@ -1,5 +1,6 @@
 package net.gini.android.health.sdk.exampleapp.invoices.data
 
+import android.net.Uri
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import net.gini.android.core.api.MediaTypes
@@ -9,6 +10,7 @@ import net.gini.android.core.api.models.ExtractionsContainer
 import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.exampleapp.invoices.data.model.DocumentWithExtractions
+import java.util.Date
 
 class InvoicesRepository(
     private val giniHealthAPI: GiniHealthAPI,
@@ -68,12 +70,36 @@ class InvoicesRepository(
         _uploadHardcodedInvoicesStateFlow.value = UploadHardcodedInvoicesState.Idle
     }
 
+    suspend fun refreshInvoices() {
+        _uploadHardcodedInvoicesStateFlow.value = UploadHardcodedInvoicesState.Loading
+        val documentsWithExtractions = mutableListOf<DocumentWithExtractions>()
+        invoicesFlow.value.forEach { document ->
+            val emptyDocument = createEmptyDocument(document.documentId)
+            giniHealthAPI.documentManager.getAllExtractions(createEmptyDocument(documentId = document.documentId)).mapSuccess {
+                val isPayable = giniHealth.checkIfDocumentIsPayable(emptyDocument.id)
+                val documentWithExtractions = DocumentWithExtractions.fromDocumentAndExtractions(
+                    emptyDocument,
+                    it.data,
+                    isPayable
+                )
+                documentsWithExtractions.add(documentWithExtractions)
+                it
+            }
+        }
+        invoicesLocalDataSource.refreshInvoices(documentsWithExtractions)
+        _uploadHardcodedInvoicesStateFlow.value = UploadHardcodedInvoicesState.Success
+    }
+
     suspend fun requestDocumentExtractionAndSaveToLocal(document: Document) {
         val documentWithExtractions = getDocumentWithExtraction(document)
         documentWithExtractions.first?.let { doc ->
             invoicesLocalDataSource.updateInvoice(doc)
         }
     }
+
+    private fun createEmptyDocument(documentId: String) = Document(
+        documentId, Document.ProcessingState.COMPLETED, "", 0, Date(), Document.SourceClassification.UNKNOWN, Uri.EMPTY, emptyList(), emptyList()
+    )
 
     private suspend fun getDocumentWithExtraction(document: Document): Pair<DocumentWithExtractions?, Resource<ExtractionsContainer>> {
         return when (val extractionsResource = giniHealthAPI.documentManager.getAllExtractionsWithPolling(document)) {
