@@ -37,6 +37,7 @@ import net.gini.android.capture.tracking.Event;
 import net.gini.android.capture.tracking.EventTracker;
 import net.gini.android.capture.tracking.OnboardingScreenEvent;
 import net.gini.android.capture.tracking.ReviewScreenEvent;
+import net.gini.android.capture.tracking.useranalytics.UserAnalytics;
 import net.gini.android.capture.util.CancellationToken;
 import net.gini.android.capture.view.CustomLoadingIndicatorAdapter;
 import net.gini.android.capture.view.DefaultLoadingIndicatorAdapter;
@@ -185,6 +186,7 @@ public class GiniCapture {
             }
             cleanup(context);
         }
+        UserAnalytics.INSTANCE.initialize(context);
         return new Builder();
     }
 
@@ -298,6 +300,7 @@ public class GiniCapture {
         sInstance.mImageMultiPageDocumentMemoryStore.clear();
         sInstance.internal().setReviewScreenAnalysisError(null);
         sInstance = null; // NOPMD
+        UserAnalytics.INSTANCE.cleanup();
         ImageDiskStore.clear(context);
     }
 

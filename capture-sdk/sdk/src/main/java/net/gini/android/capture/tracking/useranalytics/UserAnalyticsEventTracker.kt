@@ -7,23 +7,32 @@ import org.json.JSONObject
 
 interface UserAnalyticsEventTracker {
     fun trackEvent(eventName: UserAnalyticsEvent, screen: UserAnalyticsScreen)
-    fun trackEventWithProperties(eventName: UserAnalyticsEvent, screen: UserAnalyticsScreen, additionalProperties: List<Map<String, String>>)
+
+    fun trackEvent(
+        eventName: UserAnalyticsEvent,
+        screen: UserAnalyticsScreen,
+        properties: Map<UserAnalyticsExtraProperties, Any>
+    )
 }
 
 
-object UserAnalyticsEventTrackerBuilder {
+object UserAnalytics {
 
-    private lateinit var eventTracker: UserAnalyticsEventTracker
+    private var eventTracker: UserAnalyticsEventTracker? = null
 
-    fun createAnalyticsEventTracker(
-        applicationContext: Context
-    ) {
-        eventTracker = createAnalyticsEventTracker(EventTrackerPlatform.MIXPANEL, applicationContext)
+    fun initialize(applicationContext: Context) {
+        eventTracker =
+            createAnalyticsEventTracker(EventTrackerPlatform.MIXPANEL, applicationContext)
     }
 
-
     fun getAnalyticsEventTracker(
-    ) = eventTracker
+    ) = eventTracker ?: throw IllegalStateException(
+        "You need to initialize analytics by calling `UserAnalytics.initialize(...)`"
+    )
+
+    fun cleanup() {
+        eventTracker = null
+    }
 
     private fun createAnalyticsEventTracker(
         platform: EventTrackerPlatform,
@@ -41,26 +50,24 @@ private class MixPanelUserAnalyticsEventTracker(context: Context) : UserAnalytic
     private val mixpanelAPI: MixpanelAPI
 
     init {
-        mixpanelAPI = MixpanelAPI.getInstance(context, context.getString(R.string.mixpanel_api_key), false)
+        mixpanelAPI =
+            MixpanelAPI.getInstance(context, context.getString(R.string.mixpanel_api_key), false)
     }
 
     override fun trackEvent(eventName: UserAnalyticsEvent, screen: UserAnalyticsScreen) {
-        val props = JSONObject()
-        props.put("screen", screen.screenName)
-        mixpanelAPI.track(eventName.eventName, props)
+        trackEvent(eventName, screen, emptyMap())
     }
 
-    override fun trackEventWithProperties(
+    override fun trackEvent(
         eventName: UserAnalyticsEvent,
         screen: UserAnalyticsScreen,
-        additionalProperties: List<Map<String, String>>
+        properties: Map<UserAnalyticsExtraProperties, Any>
     ) {
-        val props = JSONObject()
-        props.put("screen", screen.screenName)
-        for (property in additionalProperties) {
-            props.put(property.keys.first(), property.values.first())
-        }
-        mixpanelAPI.track(eventName.eventName, props)
+        val defaultProperties = mapOf<String, Any>(
+            UserAnalyticsExtraProperties.SCREEN.propertyName to screen.screenName
+        )
+        val finalProperties = defaultProperties.plus(properties.mapKeys { it.key.propertyName })
+        mixpanelAPI.trackMap(eventName.eventName, finalProperties)
     }
 }
 

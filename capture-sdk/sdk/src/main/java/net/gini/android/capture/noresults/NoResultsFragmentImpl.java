@@ -29,7 +29,7 @@ import net.gini.android.capture.internal.ui.IntervalClickListener;
 import net.gini.android.capture.tracking.AnalysisScreenEvent;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker;
-import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTrackerBuilder;
+import net.gini.android.capture.tracking.useranalytics.UserAnalytics;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen;
 import net.gini.android.capture.view.InjectedViewAdapterHolder;
 import net.gini.android.capture.view.InjectedViewContainer;
@@ -82,7 +82,7 @@ class NoResultsFragmentImpl {
         final View view = inflater.inflate(R.layout.gc_fragment_noresults, container, false);
         final View retakeImagesButton = view.findViewById(R.id.gc_button_no_results_retake_images);
         handleOnBackPressed();
-        mUserAnalyticsEventTracker = UserAnalyticsEventTrackerBuilder.INSTANCE.getAnalyticsEventTracker();
+        mUserAnalyticsEventTracker = UserAnalytics.INSTANCE.getAnalyticsEventTracker();
         mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.SCREEN_SHOWN, UserAnalyticsScreen.NO_RESULTS);
         if (shouldAllowRetakeImages()) {
             ClickListenerExtKt.setIntervalClickListener(retakeImagesButton, v -> {

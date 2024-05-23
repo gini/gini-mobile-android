@@ -21,7 +21,7 @@ import net.gini.android.capture.tracking.AnalysisScreenEvent
 import net.gini.android.capture.tracking.EventTrackingHelper
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker
-import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTrackerBuilder.getAnalyticsEventTracker
+import net.gini.android.capture.tracking.useranalytics.UserAnalytics.getAnalyticsEventTracker
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsExtraProperties
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen
 import net.gini.android.capture.tracking.useranalytics.getDocumentTypeForUserAnalytics
@@ -110,18 +110,19 @@ class ErrorFragmentImpl(
     }
 
     private fun addUserAnalyticEvents() {
-        mUserAnalyticsEventTracker.trackEventWithProperties(
+        mUserAnalyticsEventTracker.trackEvent(
             UserAnalyticsEvent.SCREEN_SHOWN,
             UserAnalyticsScreen.ERROR,
-            listOf(
-                mapOf(
-                    UserAnalyticsExtraProperties.DOCUMENT_TYPE.propertyName to document?.getDocumentTypeForUserAnalytics()
-                        .toString()
-                ),
-                mapOf(UserAnalyticsExtraProperties.PARTIAL_DOCUMENT_ID.propertyName to document?.id.toString()),
-                mapOf(UserAnalyticsExtraProperties.ERROR_TYPE.propertyName to errorType?.getErrorTypeForUserAnalytics().toString()),
-                mapOf(UserAnalyticsExtraProperties.ERROR_MESSAGE.propertyName to customError.toString())
-            )
+            mapOf(
+                UserAnalyticsExtraProperties.DOCUMENT_TYPE
+                        to document?.getDocumentTypeForUserAnalytics().toString(),
+                UserAnalyticsExtraProperties.PARTIAL_DOCUMENT_ID
+                        to document?.id.toString(),
+                UserAnalyticsExtraProperties.ERROR_TYPE
+                        to errorType?.getErrorTypeForUserAnalytics().toString(),
+                UserAnalyticsExtraProperties.ERROR_MESSAGE
+                        to customError.toString()
+            ),
         )
     }
 

@@ -40,7 +40,7 @@ import net.gini.android.capture.internal.util.disallowScreenshots
 import net.gini.android.capture.internal.util.getLayoutInflaterWithGiniCaptureTheme
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker
-import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTrackerBuilder
+import net.gini.android.capture.tracking.useranalytics.UserAnalytics
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen
 
 private const val ARG_DOCUMENT_IMPORT_FILE_TYPES = "GC_EXTRA_IN_DOCUMENT_IMPORT_FILE_TYPES"
@@ -59,7 +59,7 @@ class FileChooserFragment : BottomSheetDialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mUserAnalyticsEventTracker =
-            UserAnalyticsEventTrackerBuilder.getAnalyticsEventTracker()
+            UserAnalytics.getAnalyticsEventTracker()
         arguments?.let {
             docImportEnabledFileTypes = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 it.getSerializable(

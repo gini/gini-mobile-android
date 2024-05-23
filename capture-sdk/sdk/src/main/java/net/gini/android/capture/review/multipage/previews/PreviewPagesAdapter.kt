@@ -14,7 +14,7 @@ import net.gini.android.capture.internal.camera.photo.Photo
 import net.gini.android.capture.internal.ui.setIntervalClickListener
 import net.gini.android.capture.review.RotatableImageViewContainer
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
-import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTrackerBuilder.getAnalyticsEventTracker
+import net.gini.android.capture.tracking.useranalytics.UserAnalytics.getAnalyticsEventTracker
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen
 
 class PreviewPagesAdapter(

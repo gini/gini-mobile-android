@@ -113,7 +113,7 @@ import net.gini.android.capture.tracking.AnalysisScreenEvent;
 import net.gini.android.capture.tracking.CameraScreenEvent;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker;
-import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTrackerBuilder;
+import net.gini.android.capture.tracking.useranalytics.UserAnalytics;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsExtraProperties;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen;
 import net.gini.android.capture.util.IntentHelper;
@@ -336,6 +336,9 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         if (savedInstanceState != null) {
             restoreSavedState(savedInstanceState);
         }
+        // TODO Remove it after migration to GiniCapture.initialize(context) - next major release (from version 3 to 4)
+        UserAnalytics.INSTANCE.initialize(this.mFragment.getActivity().getApplicationContext());
+
     }
 
     private void initFlashState() {
@@ -352,8 +355,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                       final Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.gc_fragment_camera, container, false);
-        UserAnalyticsEventTrackerBuilder.INSTANCE.createAnalyticsEventTracker(this.mFragment.getActivity().getApplicationContext());
-        mUserAnalyticsEventTracker = UserAnalyticsEventTrackerBuilder.INSTANCE.getAnalyticsEventTracker();
+        mUserAnalyticsEventTracker = UserAnalytics.INSTANCE.getAnalyticsEventTracker();
         mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.SCREEN_SHOWN, UserAnalyticsScreen.CAMERA);
 
         bindViews(view);
@@ -894,7 +896,11 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         });
 
         ClickListenerExtKt.setIntervalClickListener(mButtonCameraFlashTrigger, v -> {
-            mUserAnalyticsEventTracker.trackEventWithProperties(UserAnalyticsEvent.FLASH_TAPPED, UserAnalyticsScreen.CAMERA, Collections.singletonList(Collections.singletonMap(UserAnalyticsExtraProperties.FLASH_ACTIVE.getPropertyName(), String.valueOf(mCameraController.isFlashEnabled()))));
+            mUserAnalyticsEventTracker.trackEvent(
+                    UserAnalyticsEvent.FLASH_TAPPED,
+                    UserAnalyticsScreen.CAMERA,
+                    Collections.singletonMap(UserAnalyticsExtraProperties.FLASH_ACTIVE, String.valueOf(mCameraController.isFlashEnabled())))
+            ;
             mIsFlashEnabled = !mCameraController.isFlashEnabled();
             updateCameraFlashState();
         });
@@ -906,8 +912,8 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
         ClickListenerExtKt.setIntervalClickListener(mPhotoThumbnail, v -> {
             if (mFragment.getActivity() != null) {
-                mUserAnalyticsEventTracker.trackEventWithProperties(UserAnalyticsEvent.MULTIPLE_PAGES_CAPTURED_TAPPED, UserAnalyticsScreen.CAMERA,
-                        Collections.singletonList(Collections.singletonMap(UserAnalyticsExtraProperties.DOCUMENT_PAGE_NUMBER.getPropertyName(), String.valueOf(mMultiPageDocument.getDocuments().size()))));
+                mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.MULTIPLE_PAGES_CAPTURED_TAPPED, UserAnalyticsScreen.CAMERA,
+                        Collections.singletonMap(UserAnalyticsExtraProperties.DOCUMENT_PAGE_NUMBER, String.valueOf(mMultiPageDocument.getDocuments().size())));
                 mFragment.getActivity().getOnBackPressedDispatcher().onBackPressed();
             }
         });
@@ -1402,7 +1408,11 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     }
 
     private void showGenericInvalidFileError(ErrorType errorType) {
-        mUserAnalyticsEventTracker.trackEventWithProperties(UserAnalyticsEvent.ERROR_DIALOG_SHOWN, UserAnalyticsScreen.CAMERA, Collections.singletonList(Collections.singletonMap(UserAnalyticsExtraProperties.ERROR_MESSAGE.getPropertyName(), mFragment.getActivity().getResources().getString(errorType.getTitleTextResource()))));
+        mUserAnalyticsEventTracker.trackEvent(
+                UserAnalyticsEvent.ERROR_DIALOG_SHOWN,
+                UserAnalyticsScreen.CAMERA,
+                Collections.singletonMap(UserAnalyticsExtraProperties.ERROR_MESSAGE, mFragment.getActivity().getResources().getString(errorType.getTitleTextResource()))
+        );
         final Activity activity = mFragment.getActivity();
         if (activity == null) {
             return;

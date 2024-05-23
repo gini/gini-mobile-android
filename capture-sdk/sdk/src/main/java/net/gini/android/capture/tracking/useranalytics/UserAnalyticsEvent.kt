@@ -6,7 +6,6 @@ enum class UserAnalyticsEvent(val eventName: String) {
     NEXT_STEP_TAPPED("next_step_tapped"),
     CLOSE_TAPPED("close_tapped"),
     GET_STARTED_TAPPED("get_started_tapped"),
-    BACK_TAPPED("back_tapped"),
     HELP_ITEM_TAPPED("help_item_tapped"),
     PAGE_SWIPED("page_swiped"),
     SKIP_TAPPED("skip_tapped"),
