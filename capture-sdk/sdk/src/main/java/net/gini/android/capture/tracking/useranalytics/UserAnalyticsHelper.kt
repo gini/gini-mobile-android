@@ -30,5 +30,3 @@ fun ErrorType.getErrorTypeForUserAnalytics(): String {
         ErrorType.FILE_IMPORT_PASSWORD -> "file_import_password"
     }
 }
-
-

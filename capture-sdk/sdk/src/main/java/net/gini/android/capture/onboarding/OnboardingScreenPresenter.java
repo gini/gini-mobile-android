@@ -4,28 +4,42 @@ import static net.gini.android.capture.tracking.EventTrackingHelper.trackOnboard
 
 import android.app.Activity;
 
-import net.gini.android.capture.GiniCapture;
-import net.gini.android.capture.GiniCaptureError;
-import net.gini.android.capture.internal.util.FeatureConfiguration;
-import net.gini.android.capture.tracking.OnboardingScreenEvent;
-
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 
+import net.gini.android.capture.GiniCapture;
+import net.gini.android.capture.internal.util.FeatureConfiguration;
+import net.gini.android.capture.tracking.OnboardingScreenEvent;
+import net.gini.android.capture.tracking.useranalytics.UserAnalytics;
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent;
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsExtraProperties;
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsMappersKt;
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreenKt;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Created by Alpar Szotyori on 20.05.2019.
- *
+ * <p>
  * Copyright (c) 2019 Gini GmbH.
  */
 class OnboardingScreenPresenter extends OnboardingScreenContract.Presenter {
 
     private List<OnboardingPage> mPages;
     private int mCurrentPageIndex;
+    // used only for user analytics tracking
+    private SwipedORTapped swipedORTapped = SwipedORTapped.SWIPED;
+    private enum SwipedORTapped {
+        SWIPED,
+        TAPPED
+    }
+
 
     OnboardingScreenPresenter(@NonNull final Activity activity,
-            @NonNull final OnboardingScreenContract.View view) {
+                              @NonNull final OnboardingScreenContract.View view) {
         super(activity, view);
         view.setPresenter(this);
         mPages = getDefaultPages();
@@ -43,6 +57,7 @@ class OnboardingScreenPresenter extends OnboardingScreenContract.Presenter {
     @Override
     public void showNextPage() {
         if (isOnLastPage()) {
+            addUserAnalyticsEvent(mCurrentPageIndex, UserAnalyticsEvent.GET_STARTED_TAPPED);
             getView().close();
             trackOnboardingScreenEvent(OnboardingScreenEvent.FINISH);
         } else {
@@ -50,8 +65,10 @@ class OnboardingScreenPresenter extends OnboardingScreenContract.Presenter {
         }
     }
 
+
     @Override
     public void skip() {
+        addUserAnalyticsEvent(mCurrentPageIndex, UserAnalyticsEvent.SKIP_TAPPED);
         getView().close();
         trackOnboardingScreenEvent(OnboardingScreenEvent.FINISH);
     }
@@ -61,6 +78,8 @@ class OnboardingScreenPresenter extends OnboardingScreenContract.Presenter {
     }
 
     private void scrollToNextPage() {
+        addUserAnalyticsEvent(mCurrentPageIndex, UserAnalyticsEvent.NEXT_STEP_TAPPED);
+        swipedORTapped = SwipedORTapped.TAPPED;
         final int nextPageIndex = mCurrentPageIndex + 1;
         if (nextPageIndex < mPages.size()) {
             getView().scrollToPage(nextPageIndex);
@@ -69,9 +88,40 @@ class OnboardingScreenPresenter extends OnboardingScreenContract.Presenter {
 
     @Override
     void onScrolledToPage(final int pageIndex) {
+        if (swipedORTapped == SwipedORTapped.SWIPED) {
+            addUserAnalyticsEvent(mCurrentPageIndex, UserAnalyticsEvent.PAGE_SWIPED);
+        }
+        addUserAnalyticsEvent(pageIndex, UserAnalyticsEvent.SCREEN_SHOWN);
         mCurrentPageIndex = pageIndex;
         getView().activatePageIndicatorForPage(mCurrentPageIndex);
         updateButtons();
+        swipedORTapped = SwipedORTapped.SWIPED;
+    }
+
+    private void addUserAnalyticsEvent(int pageIndex, UserAnalyticsEvent event) {
+        List<OnboardingPage> customPages = null;
+        if (GiniCapture.hasInstance()) {
+            customPages = GiniCapture.getInstance().getCustomOnboardingPages();
+        }
+
+        boolean hasCustomItems = customPages != null && !customPages.isEmpty();
+        if (customPages == null) {
+            UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(
+                    event,
+                    UserAnalyticsScreenKt.getOnboardingScreenNameForUserAnalytics(mPages.get(pageIndex).getTitleResId()),
+                    Collections.singletonMap(UserAnalyticsExtraProperties.ONBOARDING_HAS_CUSTOM_ITEMS, UserAnalyticsMappersKt.mapToAnalyticsValue(hasCustomItems))
+            );
+        } else {
+            Map<UserAnalyticsExtraProperties, Object> eventProperties = new HashMap<>();
+            eventProperties.put(UserAnalyticsExtraProperties.CUSTOM_ONBOARDING_TITLE, String.valueOf(mPages.get(pageIndex).getTitleResId()));
+            eventProperties.put(UserAnalyticsExtraProperties.ONBOARDING_HAS_CUSTOM_ITEMS, UserAnalyticsMappersKt.mapToAnalyticsValue(hasCustomItems));
+            
+            UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(
+                    event,
+                    UserAnalyticsScreenKt.getOnboardingScreenNameForUserAnalytics(pageIndex),
+                    eventProperties
+            );
+        }
     }
 
     private void updateButtons() {
@@ -105,6 +155,7 @@ class OnboardingScreenPresenter extends OnboardingScreenContract.Presenter {
         updateButtons();
 
         trackOnboardingScreenEvent(OnboardingScreenEvent.START);
+        addUserAnalyticsEvent(mCurrentPageIndex, UserAnalyticsEvent.SCREEN_SHOWN);
     }
 
     private void setupNavigationBarBottom() {

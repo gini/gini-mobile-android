@@ -23,7 +23,6 @@ import androidx.constraintlayout.widget.Group;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.viewpager.widget.ViewPager;
 
 import net.gini.android.capture.GiniCapture;

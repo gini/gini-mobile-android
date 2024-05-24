@@ -3,7 +3,6 @@ package net.gini.android.capture.tracking.useranalytics
 import android.content.Context
 import com.mixpanel.android.mpmetrics.MixpanelAPI
 import net.gini.android.capture.R
-import org.json.JSONObject
 
 interface UserAnalyticsEventTracker {
     fun trackEvent(eventName: UserAnalyticsEvent, screen: UserAnalyticsScreen)

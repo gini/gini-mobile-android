@@ -12,6 +12,8 @@ enum class UserAnalyticsExtraProperties(val propertyName: String) {
     // region Help Screen
     HAS_CUSTOM_ITEMS("has_custom_items"),
     HELP_ITEMS("help_items"),
-    ITEM_TAPPED("item_tapped")
+    ITEM_TAPPED("item_tapped"),
     // endregion
+    CUSTOM_ONBOARDING_TITLE("custom_onboarding_title"),
+    ONBOARDING_HAS_CUSTOM_ITEMS("has_custom_items"),
 }
