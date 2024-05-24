@@ -1,11 +1,13 @@
 package net.gini.android.capture.analysis
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.lifecycle.Lifecycle
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.spy
 import com.nhaarman.mockitokotlin2.verify
@@ -33,7 +35,8 @@ class AnalysisFragmentTest {
     fun `triggers Cancel event when back was pressed`() {
         // Given
         val eventTracker = spy<EventTracker>()
-        GiniCapture.Builder().setEventTracker(eventTracker).build()
+        GiniCapture.newInstance(InstrumentationRegistry.getInstrumentation().context)
+            .setEventTracker(eventTracker).build()
         GiniCapture.getInstance().internal().imageMultiPageDocumentMemoryStore.setMultiPageDocument(mock())
 
         val bundle = Bundle().apply {

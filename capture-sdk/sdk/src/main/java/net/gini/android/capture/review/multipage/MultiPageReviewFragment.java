@@ -58,7 +58,7 @@ import net.gini.android.capture.tracking.ReviewScreenEvent;
 import net.gini.android.capture.tracking.ReviewScreenEvent.UPLOAD_ERROR_DETAILS_MAP_KEY;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker;
-import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTrackerBuilder;
+import net.gini.android.capture.tracking.useranalytics.UserAnalytics;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen;
 import net.gini.android.capture.view.InjectedViewAdapterHolder;
 import net.gini.android.capture.view.InjectedViewContainer;
@@ -138,7 +138,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
         super.onCreate(savedInstanceState);
 
         forcePortraitOrientationOnPhones(getActivity());
-        mUserAnalyticsEventTracker = UserAnalyticsEventTrackerBuilder.INSTANCE.getAnalyticsEventTracker();
+        mUserAnalyticsEventTracker = UserAnalytics.INSTANCE.getAnalyticsEventTracker();
         mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.SCREEN_SHOWN, UserAnalyticsScreen.REVIEW);
         OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
             @Override
@@ -368,7 +368,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
                         int position = mRecyclerView.getChildAdapterPosition(viewAtPosition);
                         updateTabIndicatorPosition(position);
                         setScrollToPosition(position);
-                        UserAnalyticsEventTrackerBuilder.INSTANCE.getAnalyticsEventTracker().trackEvent(UserAnalyticsEvent.PAGE_SWIPED, UserAnalyticsScreen.REVIEW);
+                        UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(UserAnalyticsEvent.PAGE_SWIPED, UserAnalyticsScreen.REVIEW);
                         if (position < mMultiPageDocument.getDocuments().size() - 1)
                             mShouldScrollToLastPage = false;
                     }

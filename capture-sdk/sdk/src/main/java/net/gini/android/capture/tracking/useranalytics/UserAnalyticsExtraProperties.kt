@@ -8,4 +8,10 @@ enum class UserAnalyticsExtraProperties(val propertyName: String) {
     ERROR_TYPE("error_type"),
     ERROR_MESSAGE("error_message"),
     FLASH_ACTIVE("flash_active"),
+    SCREEN("screen"),
+    // region Help Screen
+    HAS_CUSTOM_ITEMS("has_custom_items"),
+    HELP_ITEMS("help_items"),
+    ITEM_TAPPED("item_tapped")
+    // endregion
 }

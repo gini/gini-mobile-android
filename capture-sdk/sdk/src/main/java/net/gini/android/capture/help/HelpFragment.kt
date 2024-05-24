@@ -14,6 +14,11 @@ import net.gini.android.capture.databinding.GcFragmentHelpBinding
 import net.gini.android.capture.internal.ui.IntervalClickListener
 import net.gini.android.capture.internal.util.autoCleared
 import net.gini.android.capture.internal.util.getLayoutInflaterWithGiniCaptureTheme
+import net.gini.android.capture.tracking.useranalytics.UserAnalytics
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsExtraProperties
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen
+import net.gini.android.capture.tracking.useranalytics.mapToAnalyticsValue
 import net.gini.android.capture.view.InjectedViewAdapterHolder
 import net.gini.android.capture.view.NavButtonType
 
@@ -22,6 +27,9 @@ import net.gini.android.capture.view.NavButtonType
  */
 class HelpFragment : Fragment() {
     private var binding: GcFragmentHelpBinding by autoCleared()
+
+    private val userAnalyticsEventTracker by lazy { UserAnalytics.getAnalyticsEventTracker() }
+    private val helpItemsAdapter by lazy { HelpItemsAdapter { helpItem -> launchHelpScreen(helpItem) } }
 
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
         val inflater = super.onGetLayoutInflater(savedInstanceState)
@@ -37,17 +45,20 @@ class HelpFragment : Fragment() {
         setupTopBarNavigation()
         setupBottomBarNavigation()
         handleOnBackPressed()
+        trackHelpOpenEvent()
         return binding.root
     }
 
     private fun handleOnBackPressed() {
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                findNavController().navigate(HelpFragmentDirections.toCameraFragment())
-                isEnabled = false
-                remove()
-            }
-        })
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    navigateBackToCamera()
+                    isEnabled = false
+                    remove()
+                }
+            })
     }
 
 
@@ -67,7 +78,10 @@ class HelpFragment : Fragment() {
     private fun setUpHelpItems() {
         binding.gcHelpItems.apply {
             layoutManager = LinearLayoutManager(requireContext())
-            adapter = HelpItemsAdapter { helpItem -> launchHelpScreen(helpItem) }
+            adapter = HelpItemsAdapter { helpItem ->
+                trackHelpItemTappedEvent(helpItem)
+                launchHelpScreen(helpItem)
+            }
         }
     }
 
@@ -83,7 +97,7 @@ class HelpFragment : Fragment() {
                     injectedViewAdapter.setNavButtonType(navType)
                     injectedViewAdapter.setTitle(getString(R.string.gc_title_help))
                     injectedViewAdapter.setOnNavButtonClickListener(IntervalClickListener {
-                        findNavController().navigate(HelpFragmentDirections.toCameraFragment())
+                        navigateBackToCamera()
                     })
                 }
         }
@@ -96,7 +110,7 @@ class HelpFragment : Fragment() {
                 GiniCapture.getInstance().internal().helpNavigationBarBottomAdapterInstance
             ) { injectedViewAdapter ->
                 injectedViewAdapter.setOnBackClickListener(IntervalClickListener {
-                    findNavController().navigate(HelpFragmentDirections.toCameraFragment())
+                    navigateBackToCamera()
                 })
             }
         }
@@ -110,6 +124,43 @@ class HelpFragment : Fragment() {
             is HelpItem.Custom -> requireActivity().startActivity(helpItem.intent)
         }
     }
+
+    private fun navigateBackToCamera() {
+        trackBackTappedEvent()
+        findNavController().navigate(HelpFragmentDirections.toCameraFragment())
+    }
+
+    // region Analytics
+
+    private fun trackHelpOpenEvent() = runCatching {
+        val hasCustomItems = GiniCapture.hasInstance() &&
+                GiniCapture.getInstance().customHelpItems.isNotEmpty()
+
+        val helpItems = helpItemsAdapter.items.map { "\"${getString(it.title)}\"" }
+
+        userAnalyticsEventTracker.trackEvent(
+            UserAnalyticsEvent.SCREEN_SHOWN, UserAnalyticsScreen.HELP, mapOf(
+                UserAnalyticsExtraProperties.HAS_CUSTOM_ITEMS to hasCustomItems.mapToAnalyticsValue(),
+                UserAnalyticsExtraProperties.HELP_ITEMS to helpItems.toString(),
+            )
+        )
+    }
+
+    private fun trackBackTappedEvent() = runCatching {
+        userAnalyticsEventTracker.trackEvent(
+            UserAnalyticsEvent.CLOSE_TAPPED, UserAnalyticsScreen.HELP
+        )
+    }
+
+    private fun trackHelpItemTappedEvent(helpItem: HelpItem) = runCatching {
+        userAnalyticsEventTracker.trackEvent(
+            UserAnalyticsEvent.HELP_ITEM_TAPPED,
+            UserAnalyticsScreen.HELP,
+            mapOf(UserAnalyticsExtraProperties.ITEM_TAPPED to getString(helpItem.title))
+        )
+    }
+
+    // endregion
 
     companion object {
         @JvmStatic

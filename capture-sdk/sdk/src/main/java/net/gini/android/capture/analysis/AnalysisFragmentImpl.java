@@ -35,7 +35,7 @@ import net.gini.android.capture.internal.util.Size;
 import net.gini.android.capture.tracking.AnalysisScreenEvent;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker;
-import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTrackerBuilder;
+import net.gini.android.capture.tracking.useranalytics.UserAnalytics;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsExtraProperties;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsHelperKt;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen;
@@ -70,7 +70,6 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     private InjectedViewContainer<NavigationBarTopAdapter> topAdapterInjectedViewContainer;
     private InjectedViewContainer<CustomLoadingIndicatorAdapter> injectedLoadingIndicatorContainer;
     private boolean isScanAnimationActive;
-    private UserAnalyticsEventTracker mUserAnalyticsEventTracker;
 
     AnalysisFragmentImpl(final FragmentImplCallback fragment,
                          @NonNull final Document document,
@@ -92,9 +91,12 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     }
 
     private void addUserAnalyticEvents(@NonNull Document document) {
-        mUserAnalyticsEventTracker = UserAnalyticsEventTrackerBuilder.INSTANCE.getAnalyticsEventTracker();
         String userAnalysisDocumentType = UserAnalyticsHelperKt.getDocumentTypeForUserAnalytics(document);
-        mUserAnalyticsEventTracker.trackEventWithProperties(UserAnalyticsEvent.SCREEN_SHOWN, UserAnalyticsScreen.ANALYSIS, Collections.singletonList(Collections.singletonMap(UserAnalyticsExtraProperties.DOCUMENT_TYPE.getPropertyName(), userAnalysisDocumentType)));
+        UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(
+                UserAnalyticsEvent.SCREEN_SHOWN,
+                UserAnalyticsScreen.ANALYSIS,
+                Collections.singletonMap(UserAnalyticsExtraProperties.DOCUMENT_TYPE, userAnalysisDocumentType)
+        );
     }
 
     @Override
@@ -297,7 +299,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
             @Override
             public void handleOnBackPressed() {
                 trackAnalysisScreenEvent(AnalysisScreenEvent.CANCEL);
-                mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.CLOSE_TAPPED, UserAnalyticsScreen.ANALYSIS);
+                UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(UserAnalyticsEvent.CLOSE_TAPPED, UserAnalyticsScreen.ANALYSIS);
                 setEnabled(false);
                 remove();
                 mFragment.getActivity().getOnBackPressedDispatcher().onBackPressed();
