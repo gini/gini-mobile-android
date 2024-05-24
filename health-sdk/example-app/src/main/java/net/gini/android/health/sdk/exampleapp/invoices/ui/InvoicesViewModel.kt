@@ -2,6 +2,7 @@ package net.gini.android.health.sdk.exampleapp.invoices.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
@@ -11,8 +12,8 @@ import net.gini.android.health.sdk.exampleapp.invoices.ui.model.InvoiceItem
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.health.sdk.review.ReviewConfiguration
 import net.gini.android.health.sdk.review.ReviewFragment
+import net.gini.android.health.sdk.review.model.ResultWrapper
 import org.slf4j.LoggerFactory
-import java.lang.IllegalStateException
 
 class InvoicesViewModel(
     private val invoicesRepository: InvoicesRepository,
@@ -30,9 +31,20 @@ class InvoicesViewModel(
     val _paymentReviewFragmentFlow = MutableStateFlow<PaymentReviewFragmentState>(PaymentReviewFragmentState.Idle)
     val paymentReviewFragmentStateFlow = _paymentReviewFragmentFlow.asStateFlow()
 
+    val openBankState = invoicesRepository.giniHealth.openBankState
+
+    fun updateDocument() {
+        viewModelScope.launch {
+            with(invoicesRepository) {
+                requestDocumentExtractionAndSaveToLocal((giniHealth.documentFlow.value as ResultWrapper.Success).value)
+            }
+        }
+    }
+
     fun loadInvoicesWithExtractions() {
         viewModelScope.launch {
-            invoicesRepository.loadInvoicesWithExtractions()
+            async { invoicesRepository.loadInvoicesWithExtractions() }.await()
+            invoicesRepository.refreshInvoices()
         }
     }
 
