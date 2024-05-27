@@ -1185,7 +1185,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             final Bundle resultBundle = new Bundle();
             resultBundle.putBoolean(RESULT_KEY_SHOULD_SCROLL_TO_LAST_PAGE, shouldScrollToLastPage);
             mFragment.getParentFragmentManager().setFragmentResult(REQUEST_KEY, resultBundle);
-            onBackPressed();
+            mFragment.findNavController().popBackStack();
         } else {
             mFragment.findNavController().navigate(CameraFragmentDirections.toReviewFragment(shouldScrollToLastPage));
         }

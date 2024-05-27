@@ -1,7 +1,6 @@
 package net.gini.android.capture
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -187,7 +186,6 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
     }
 
     override fun onCancelFlow() {
-        Log.e("", "---- gini capture fragm on cancel flow")
         onDefaultPDFAppAlertDialogCancelled()
     }
 
@@ -216,9 +214,10 @@ class CaptureFragmentFactory(
 
             AnalysisFragment::class.java.name -> return AnalysisFragment()
                 .apply {
-                setListener(
-                    analysisFragmentListener
-                )
+                    setListener(
+                        analysisFragmentListener
+                    )
+                    setCancelListener(cancelListener)
             }
 
             ErrorFragment::class.java.name -> return ErrorFragment().apply {

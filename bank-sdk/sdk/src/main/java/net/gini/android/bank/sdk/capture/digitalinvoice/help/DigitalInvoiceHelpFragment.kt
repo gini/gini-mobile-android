@@ -5,13 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.databinding.GbsFragmentDigitalInvoiceHelpBinding
 import net.gini.android.bank.sdk.util.autoCleared
+import net.gini.android.bank.sdk.util.getLayoutInflaterWithGiniCaptureTheme
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.internal.ui.IntervalClickListener
-import net.gini.android.bank.sdk.util.getLayoutInflaterWithGiniCaptureTheme
 import net.gini.android.capture.view.InjectedViewAdapterHolder
 import net.gini.android.capture.view.NavButtonType
 
@@ -56,7 +57,7 @@ class DigitalInvoiceHelpFragment : Fragment() {
                 injectedAdapterView.setTitle(getString(net.gini.android.capture.R.string.gc_title_help))
 
                 injectedAdapterView.setOnNavButtonClickListener(IntervalClickListener {
-                    activity?.onBackPressedDispatcher?.onBackPressed()
+                    NavHostFragment.findNavController(this).popBackStack()
                 })
             }
         }
@@ -68,7 +69,7 @@ class DigitalInvoiceHelpFragment : Fragment() {
             injectedViewContainer.injectedViewAdapterHolder =
                 InjectedViewAdapterHolder(GiniBank.digitalInvoiceHelpNavigationBarBottomAdapterInstance) { injectedViewAdapter ->
                     injectedViewAdapter.setOnBackButtonClickListener(IntervalClickListener {
-                        activity?.onBackPressedDispatcher?.onBackPressed()
+                        NavHostFragment.findNavController(this).popBackStack()
                     })
                 }
         }

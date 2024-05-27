@@ -1,5 +1,8 @@
 package net.gini.android.capture.analysis;
 
+import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
+import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
+
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
@@ -23,7 +26,6 @@ import androidx.fragment.app.FragmentActivity;
 
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
-import net.gini.android.capture.GiniCaptureFragment;
 import net.gini.android.capture.R;
 import net.gini.android.capture.error.ErrorFragment;
 import net.gini.android.capture.error.ErrorType;
@@ -31,7 +33,7 @@ import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.ui.IntervalClickListener;
 import net.gini.android.capture.internal.util.Size;
 import net.gini.android.capture.tracking.AnalysisScreenEvent;
-import net.gini.android.capture.tracking.CameraScreenEvent;
+import net.gini.android.capture.util.CancelListener;
 import net.gini.android.capture.view.CustomLoadingIndicatorAdapter;
 import net.gini.android.capture.view.InjectedViewAdapterHolder;
 import net.gini.android.capture.view.InjectedViewContainer;
@@ -46,10 +48,6 @@ import java.util.List;
 import jersey.repackaged.jsr166e.CompletableFuture;
 import kotlin.Unit;
 
-import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
-import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
-import static net.gini.android.capture.tracking.EventTrackingHelper.trackCameraScreenEvent;
-
 /**
  * Main logic implementation for analysis UI presented by {@link AnalysisFragment}
  */
@@ -58,6 +56,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     protected static final Logger LOG = LoggerFactory.getLogger(AnalysisFragmentImpl.class);
 
     private final FragmentImplCallback mFragment;
+    private final CancelListener mCancelListener;
     private TextView mAnalysisMessageTextView;
     private ImageView mImageDocumentView;
     private ConstraintLayout mLayoutRoot;
@@ -68,12 +67,14 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     private boolean isScanAnimationActive;
 
     AnalysisFragmentImpl(final FragmentImplCallback fragment,
+                         final CancelListener cancelListener,
                          @NonNull final Document document,
                          final String documentAnalysisErrorMessage) {
         mFragment = fragment;
         if (mFragment.getActivity() == null) {
             throw new IllegalStateException("Missing activity for fragment.");
         }
+        mCancelListener = cancelListener;
         createPresenter(mFragment.getActivity(), document, documentAnalysisErrorMessage); // NOPMD - overridable for testing
     }
 
@@ -249,9 +250,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
                 injectedViewAdapter.setTitle(mFragment.getActivity().getResources().getString(R.string.gc_title_analysis));
 
                 injectedViewAdapter.setOnNavButtonClickListener(new IntervalClickListener(v -> {
-                    if (mFragment.getActivity() != null) {
-                        mFragment.getActivity().getOnBackPressedDispatcher().onBackPressed();
-                    }
+                    onBack();
                 }));
             }));
         }
@@ -283,12 +282,17 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
         activity.getOnBackPressedDispatcher().addCallback(mFragment.getViewLifecycleOwner(), new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                trackAnalysisScreenEvent(AnalysisScreenEvent.CANCEL);
                 setEnabled(false);
                 remove();
-                mFragment.getActivity().getOnBackPressedDispatcher().onBackPressed();
+                onBack();
             }
         });
+    }
+
+    private void onBack() {
+        trackAnalysisScreenEvent(AnalysisScreenEvent.CANCEL);
+        boolean popBackStack = mFragment.findNavController().popBackStack();
+        if (!popBackStack) mCancelListener.onCancelFlow();
     }
 
     public void onResume() {
