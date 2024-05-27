@@ -1,26 +1,30 @@
 package net.gini.android.capture.analysis;
 
-import static com.google.common.truth.Truth.assertThat;
-
-import static net.gini.android.capture.analysis.BitmapMatcher.withBitmap;
-import static net.gini.android.capture.analysis.RotationMatcher.withRotation;
-import static net.gini.android.capture.test.Helpers.getTestJpeg;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static com.google.common.truth.Truth.assertThat;
+import static net.gini.android.capture.analysis.BitmapMatcher.withBitmap;
+import static net.gini.android.capture.analysis.RotationMatcher.withRotation;
+import static net.gini.android.capture.test.Helpers.getTestJpeg;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.Lifecycle;
+import androidx.test.core.app.ActivityScenario;
+import androidx.test.espresso.matcher.ViewMatchers;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
 
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
@@ -32,6 +36,7 @@ import net.gini.android.capture.internal.camera.photo.PhotoFactory;
 import net.gini.android.capture.internal.util.Size;
 import net.gini.android.capture.network.GiniCaptureNetworkService;
 import net.gini.android.capture.test.FragmentImplFactory;
+import net.gini.android.capture.util.CancelListener;
 import net.gini.android.capture.view.DefaultLoadingIndicatorAdapter;
 
 import org.junit.After;
@@ -43,13 +48,6 @@ import org.robolectric.annotation.Implements;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
-
-import androidx.annotation.NonNull;
-import androidx.lifecycle.Lifecycle;
-import androidx.test.core.app.ActivityScenario;
-import androidx.test.espresso.matcher.ViewMatchers;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.platform.app.InstrumentationRegistry;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
 
@@ -115,6 +113,12 @@ public class AnalysisFragmentImplTest {
                                 Document.Source.newCameraSource(), Document.ImportMethod.NONE);
                         final AnalysisFragmentImpl analysisFragmentImpl = new AnalysisFragmentImpl(
                                 fragment,
+                                new CancelListener() {
+                                    @Override
+                                    public void onCancelFlow() {
+
+                                    }
+                                },
                                 document, null) {
 
                             @Override
