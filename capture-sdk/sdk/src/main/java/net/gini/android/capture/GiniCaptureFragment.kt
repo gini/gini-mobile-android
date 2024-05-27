@@ -1,6 +1,7 @@
 package net.gini.android.capture
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,12 +24,16 @@ import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.noresults.NoResultsFragment
+import net.gini.android.capture.review.multipage.MultiPageReviewFragment
+import net.gini.android.capture.util.CancelListener
 
 class GiniCaptureFragment(private val openWithDocument: Document? = null) :
     Fragment(),
     CameraFragmentListener,
     AnalysisFragmentListener,
-    EnterManuallyButtonListener{
+    EnterManuallyButtonListener,
+    CancelListener
+{
 
     private lateinit var navController: NavController
     private lateinit var giniCaptureFragmentListener: GiniCaptureFragmentListener
@@ -45,7 +50,11 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        childFragmentManager.fragmentFactory = CaptureFragmentFactory(this, this, this)
+        childFragmentManager.fragmentFactory = CaptureFragmentFactory(
+            cameraListener = this,
+            analysisFragmentListener = this,
+            enterManuallyButtonListener = this,
+            cancelListener = this)
         super.onCreate(savedInstanceState)
         if (GiniCapture.hasInstance() && !GiniCapture.getInstance().allowScreenshots) {
             requireActivity().window.disallowScreenshots()
@@ -177,19 +186,24 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
         giniCaptureFragmentListener.onFinishedWithResult(CaptureSDKResult.EnterManually)
     }
 
+    override fun onCancelFlow() {
+        Log.e("", "---- gini capture fragm on cancel flow")
+        onDefaultPDFAppAlertDialogCancelled()
+    }
+
     companion object {
         @JvmStatic
         fun createInstance(document: Document? = null): GiniCaptureFragment {
             return GiniCaptureFragment(document)
         }
     }
-
 }
 
 class CaptureFragmentFactory(
     private val cameraListener: CameraFragmentListener,
     private val analysisFragmentListener: AnalysisFragmentListener,
-    private val enterManuallyButtonListener: EnterManuallyButtonListener
+    private val enterManuallyButtonListener: EnterManuallyButtonListener,
+    private val cancelListener: CancelListener
 ) : FragmentFactory() {
     override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
         when (className) {
@@ -197,6 +211,7 @@ class CaptureFragmentFactory(
                 setListener(
                     cameraListener
                 )
+                setCancelListener(cancelListener)
             }
 
             AnalysisFragment::class.java.name -> return AnalysisFragment()
@@ -207,17 +222,22 @@ class CaptureFragmentFactory(
             }
 
             ErrorFragment::class.java.name -> return ErrorFragment().apply {
-                setListener(
-                    enterManuallyButtonListener
+                setListeners(
+                    listener = enterManuallyButtonListener,
+                    cancelListener = cancelListener
                 )
             }
 
             NoResultsFragment::class.java.name -> return NoResultsFragment()
                 .apply {
-                    setListener(
-                        enterManuallyButtonListener
+                    setListeners(
+                        enterManuallyButtonListener, cancelListener
                     )
                 }
+
+            MultiPageReviewFragment::class.java.name -> return MultiPageReviewFragment().apply {
+                setCancelListener(cancelListener)
+            }
 
             else -> return super.instantiate(classLoader, className)
         }

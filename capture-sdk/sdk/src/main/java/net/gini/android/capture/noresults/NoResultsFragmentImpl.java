@@ -1,6 +1,11 @@
 package net.gini.android.capture.noresults;
 
+import static android.view.View.GONE;
+import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
+import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
+
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +19,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import net.gini.android.capture.Document;
 import net.gini.android.capture.EnterManuallyButtonListener;
 import net.gini.android.capture.GiniCapture;
-import net.gini.android.capture.GiniCaptureFragment;
 import net.gini.android.capture.R;
 import net.gini.android.capture.document.ImageMultiPageDocument;
 import net.gini.android.capture.help.PhotoTipsAdapter;
@@ -23,14 +27,11 @@ import net.gini.android.capture.internal.ui.ClickListenerExtKt;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.ui.IntervalClickListener;
 import net.gini.android.capture.tracking.AnalysisScreenEvent;
+import net.gini.android.capture.util.CancelListener;
 import net.gini.android.capture.view.InjectedViewAdapterHolder;
 import net.gini.android.capture.view.InjectedViewContainer;
 import net.gini.android.capture.view.NavButtonType;
 import net.gini.android.capture.view.NavigationBarTopAdapter;
-
-import static android.view.View.GONE;
-import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
-import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
 
 /**
  * Main logic implementation for no results UI presented by {@link NoResultsFragment}.
@@ -44,15 +45,18 @@ class NoResultsFragmentImpl {
 
     private final FragmentImplCallback mFragment;
     private final Document mDocument;
+    private final CancelListener mCancelListener;
     private EnterManuallyButtonListener mListener;
     private TextView mTitleTextView;
 
     private InjectedViewContainer<NavigationBarTopAdapter> topAdapterInjectedViewContainer;
 
     NoResultsFragmentImpl(@NonNull final FragmentImplCallback fragment,
-                          @NonNull final Document document) {
+                          @NonNull final Document document,
+                          @NonNull final CancelListener cancelListener) {
         mFragment = fragment;
         mDocument = document;
+        mCancelListener = cancelListener;
     }
 
     void setListener(@Nullable final EnterManuallyButtonListener listener) {
@@ -155,7 +159,7 @@ class NoResultsFragmentImpl {
                         injectedViewAdapter.setNavButtonType(NavButtonType.CLOSE);
                         injectedViewAdapter.setOnNavButtonClickListener(new IntervalClickListener(view -> {
                             if (mFragment.getActivity() != null) {
-                                mFragment.getActivity().getOnBackPressedDispatcher().onBackPressed();
+                                mCancelListener.onCancelFlow();
                             }
                         }));
                     })

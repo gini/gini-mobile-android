@@ -15,6 +15,7 @@ import net.gini.android.capture.R
 import net.gini.android.capture.internal.ui.FragmentImplCallback
 import net.gini.android.capture.internal.util.AlertDialogHelperCompat
 import net.gini.android.capture.internal.util.getLayoutInflaterWithGiniCaptureTheme
+import net.gini.android.capture.util.CancelListener
 
 /**
  * Internal use only.
@@ -38,6 +39,7 @@ class ErrorFragment : Fragment(), FragmentImplCallback {
 
     private lateinit var fragmentImpl: ErrorFragmentImpl
     private lateinit var listener: EnterManuallyButtonListener
+    private lateinit var cancelListener: CancelListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,11 +62,12 @@ class ErrorFragment : Fragment(), FragmentImplCallback {
         return fragmentImpl.onCreateView(inflater, container, savedInstanceState)
     }
 
-    fun setListener(
-        listener: EnterManuallyButtonListener
+    fun setListeners(
+        listener: EnterManuallyButtonListener,
+        cancelListener: CancelListener
     ) {
         this.listener = listener
-
+        this.cancelListener = cancelListener
     }
 
     override fun showAlertDialog(
@@ -92,14 +95,14 @@ class ErrorFragment : Fragment(), FragmentImplCallback {
         return NavHostFragment.findNavController(this)
     }
 
-    fun createFragmentImpl(
+    private fun createFragmentImpl(
         fragment: FragmentImplCallback,
         arguments: Bundle?
     ): ErrorFragmentImpl {
         val document = arguments?.getParcelable<Document>(ARGS_DOCUMENT)
         val error = arguments?.getSerializable(ARGS_ERROR) as? ErrorType
         val customError = arguments?.getString(ARGS_CUSTOM_ERROR)
-        return ErrorFragmentImpl(fragment, document, error, customError)
+        return ErrorFragmentImpl(fragment, cancelListener, document, error, customError)
     }
 
     companion object {

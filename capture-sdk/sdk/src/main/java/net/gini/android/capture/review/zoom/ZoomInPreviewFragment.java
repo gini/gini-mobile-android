@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 
 import net.gini.android.capture.AsyncCallback;
 import net.gini.android.capture.GiniCapture;
@@ -58,11 +59,7 @@ public class ZoomInPreviewFragment extends Fragment {
     }
 
     private void setupInputHandlers(View view) {
-        view.findViewById(R.id.gc_action_close).setOnClickListener(v -> {
-            if (getActivity() != null) {
-                getActivity().getOnBackPressedDispatcher().onBackPressed();
-            }
-        });
+        view.findViewById(R.id.gc_action_close).setOnClickListener(v -> NavHostFragment.findNavController(this).popBackStack());
     }
 
     @Override
