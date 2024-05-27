@@ -78,7 +78,6 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
         if (activity == null) {
             throw new IllegalStateException("Missing activity for fragment.");
         }
-
         forcePortraitOrientationOnPhones(activity);
 
         initPresenter(activity, getCustomOnboardingPages());
@@ -129,9 +128,7 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
 
     @Override
     public void close() {
-        if (getActivity() != null) {
-            getActivity().getOnBackPressedDispatcher().onBackPressed();
-        }
+        NavHostFragment.findNavController(this).popBackStack();
     }
 
     private void bindViews(final View view) {
