@@ -114,6 +114,6 @@
         android:text="@string/ghs_more_information_underlined_part"
         android:textColor="@color/ghs_payment_component_caption"
         android:gravity="center_vertical"
-        android:visibility="visible"
+        android:visibility="gone"
         />
 </merge>
