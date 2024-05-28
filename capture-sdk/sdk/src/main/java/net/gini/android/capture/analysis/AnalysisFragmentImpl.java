@@ -290,9 +290,11 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     }
 
     private void onBack() {
-        trackAnalysisScreenEvent(AnalysisScreenEvent.CANCEL);
         boolean popBackStack = mFragment.findNavController().popBackStack();
-        if (!popBackStack) mCancelListener.onCancelFlow();
+        if (!popBackStack) {
+            trackAnalysisScreenEvent(AnalysisScreenEvent.CANCEL);
+            mCancelListener.onCancelFlow();
+        }
     }
 
     public void onResume() {

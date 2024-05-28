@@ -938,9 +938,11 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
     }
 
     private void onBack() {
-        trackReviewScreenEvent(ReviewScreenEvent.BACK);
         boolean popBackStack = NavHostFragment.findNavController(this).popBackStack();
-        if (!popBackStack) mCancelListener.onCancelFlow();
+        if (!popBackStack) {
+            trackReviewScreenEvent(ReviewScreenEvent.BACK);
+            mCancelListener.onCancelFlow();
+        }
     }
 
     @Override

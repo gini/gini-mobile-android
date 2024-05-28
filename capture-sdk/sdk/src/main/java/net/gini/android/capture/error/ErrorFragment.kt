@@ -64,9 +64,13 @@ class ErrorFragment : Fragment(), FragmentImplCallback {
 
     fun setListeners(
         listener: EnterManuallyButtonListener,
-        cancelListener: CancelListener
     ) {
         this.listener = listener
+    }
+
+    fun setCancelListener(
+        cancelListener: CancelListener
+    ) {
         this.cancelListener = cancelListener
     }
 

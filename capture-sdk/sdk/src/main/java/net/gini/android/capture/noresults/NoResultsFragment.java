@@ -32,8 +32,11 @@ public class NoResultsFragment extends Fragment implements FragmentImplCallback 
     private NoResultsFragmentImpl mFragmentImpl;
     private final String ARGS_DOCUMENT = "GC_ARGS_DOCUMENT";
 
-    public void setListeners(@Nullable final EnterManuallyButtonListener listener, @Nullable final CancelListener cancelListener) {
+    public void setListeners(@Nullable final EnterManuallyButtonListener listener) {
         mListener = listener;
+    }
+
+    public void setCancelListener(@NonNull final CancelListener cancelListener) {
         mCancelListener = cancelListener;
     }
 

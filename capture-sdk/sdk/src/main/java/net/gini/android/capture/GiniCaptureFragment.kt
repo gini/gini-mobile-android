@@ -223,6 +223,8 @@ class CaptureFragmentFactory(
             ErrorFragment::class.java.name -> return ErrorFragment().apply {
                 setListeners(
                     listener = enterManuallyButtonListener,
+                )
+                setCancelListener(
                     cancelListener = cancelListener
                 )
             }
@@ -230,7 +232,10 @@ class CaptureFragmentFactory(
             NoResultsFragment::class.java.name -> return NoResultsFragment()
                 .apply {
                     setListeners(
-                        enterManuallyButtonListener, cancelListener
+                        enterManuallyButtonListener
+                    )
+                    setCancelListener(
+                        cancelListener
                     )
                 }
 

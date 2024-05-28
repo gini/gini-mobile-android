@@ -1,7 +1,6 @@
 package net.gini.android.capture.help
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,7 +38,6 @@ class SupportedFormatsHelpFragment : Fragment() {
         setUpFormatsList()
         setupBottomBarNavigation()
         setupTopBarNavigation()
-        Log.e("", "---- supported help formats")
         return binding.root
     }
 
@@ -63,7 +61,6 @@ class SupportedFormatsHelpFragment : Fragment() {
                 injectedViewAdapter.setTitle(getString(R.string.gc_title_supported_formats))
                 injectedViewAdapter.setOnNavButtonClickListener(IntervalClickListener {
                     NavHostFragment.findNavController(this@SupportedFormatsHelpFragment).popBackStack()
-//                    activity?.onBackPressedDispatcher?.onBackPressed()
                 })
             }
         }
