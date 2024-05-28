@@ -70,6 +70,12 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
             }
         }
 
+    private var isReturning: Boolean = false
+        set(isReturning) {
+            field = isReturning
+            changeLabelsVisibilityIfNeeded()
+        }
+
     /**
      * The document id of the invoice item. This will be returned in the [PaymentComponent.Listener.onPayInvoiceClicked] method.
      */
@@ -132,9 +138,8 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
                     }
                 }
                 launch {
-                    pc.returningUserFlow.collect { isReturning ->
-                        binding.ghsMoreInformation.visibility = if (isReturning) View.GONE else View.VISIBLE
-                        binding.ghsSelectBankLabel.visibility = if (isReturning) View.GONE else View.VISIBLE
+                    pc.returningUserFlow.collect { returningUser ->
+                        isReturning = returningUser
                     }
                 }
             }
@@ -246,9 +251,9 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
 
     private fun show() {
         LOG.debug("Showing payment component")
-        binding.ghsSelectBankLabel.visibility = VISIBLE
         binding.ghsSelectBankPicker.visibility = VISIBLE
         binding.ghsPoweredByGini.visibility = VISIBLE
+        changeLabelsVisibilityIfNeeded()
     }
 
     private fun hide() {
@@ -256,6 +261,12 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
         binding.ghsSelectBankLabel.visibility = GONE
         binding.ghsSelectBankPicker.visibility = GONE
         binding.ghsPoweredByGini.visibility = GONE
+        binding.ghsMoreInformation.visibility = GONE
+    }
+
+    private fun changeLabelsVisibilityIfNeeded() {
+        binding.ghsSelectBankLabel.visibility = if (isReturning || !isPayable) View.GONE else View.VISIBLE
+        binding.ghsMoreInformation.visibility = if (isReturning || !isPayable) View.GONE else View.VISIBLE
     }
 
     private fun addButtonInputHandlers() {
