@@ -14,6 +14,9 @@ import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
+import net.gini.android.capture.tracking.useranalytics.UserAnalytics
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen
 import java.math.BigDecimal
 
 /**
@@ -48,6 +51,7 @@ internal class DigitalInvoiceScreenPresenter(
             !oncePerInstallEventStore.containsEvent(OncePerInstallEvent.SHOW_DIGITAL_INVOICE_ONBOARDING)
 
     private val digitalInvoice: DigitalInvoice
+    private val userAnalyticsEventTracker by lazy { UserAnalytics.getAnalyticsEventTracker() }
 
     init {
         view.setPresenter(this)
@@ -138,6 +142,8 @@ internal class DigitalInvoiceScreenPresenter(
             simpleBusEventStore.saveEvent(BusEvent.DISMISS_ONBOARDING_FRAGMENT, false)
             onboardingDisplayed = true
             view.showOnboarding()
+        } else {
+            trackScreenShownEvent()
         }
     }
 
@@ -168,5 +174,12 @@ internal class DigitalInvoiceScreenPresenter(
                 animateListScroll()
             }
         }
+    }
+
+    private fun trackScreenShownEvent() = runCatching {
+        userAnalyticsEventTracker.trackEvent(
+            UserAnalyticsEvent.SCREEN_SHOWN,
+            UserAnalyticsScreen.RETURN_ASSISTANT
+        )
     }
 }
