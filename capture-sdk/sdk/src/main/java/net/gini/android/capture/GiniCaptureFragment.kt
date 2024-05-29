@@ -15,6 +15,7 @@ import net.gini.android.capture.camera.CameraFragment
 import net.gini.android.capture.camera.CameraFragmentDirections
 import net.gini.android.capture.camera.CameraFragmentListener
 import net.gini.android.capture.error.ErrorFragment
+import net.gini.android.capture.internal.util.CancelListener
 import net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboarding
 import net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboardingAtFirstRun
 import net.gini.android.capture.internal.util.disallowScreenshots
@@ -24,7 +25,6 @@ import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.noresults.NoResultsFragment
 import net.gini.android.capture.review.multipage.MultiPageReviewFragment
-import net.gini.android.capture.util.CancelListener
 
 class GiniCaptureFragment(private val openWithDocument: Document? = null) :
     Fragment(),
@@ -165,8 +165,7 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
     }
 
     override fun onDefaultPDFAppAlertDialogCancelled() {
-        didFinishWithResult = true
-        giniCaptureFragmentListener.onFinishedWithResult(CaptureSDKResult.Cancel)
+        finishWithCancel()
     }
 
     override fun onExtractionsAvailable(extractions: MutableMap<String, GiniCaptureSpecificExtraction>) {
@@ -186,7 +185,12 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
     }
 
     override fun onCancelFlow() {
-        onDefaultPDFAppAlertDialogCancelled()
+        finishWithCancel()
+    }
+
+    private fun finishWithCancel() {
+        didFinishWithResult = true
+        giniCaptureFragmentListener.onFinishedWithResult(CaptureSDKResult.Cancel)
     }
 
     companion object {
@@ -221,7 +225,7 @@ class CaptureFragmentFactory(
             }
 
             ErrorFragment::class.java.name -> return ErrorFragment().apply {
-                setListeners(
+                setListener(
                     listener = enterManuallyButtonListener,
                 )
                 setCancelListener(

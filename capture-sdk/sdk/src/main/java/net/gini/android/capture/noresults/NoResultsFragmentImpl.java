@@ -5,7 +5,6 @@ import static net.gini.android.capture.internal.util.ActivityHelper.forcePortrai
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +26,7 @@ import net.gini.android.capture.internal.ui.ClickListenerExtKt;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.ui.IntervalClickListener;
 import net.gini.android.capture.tracking.AnalysisScreenEvent;
-import net.gini.android.capture.util.CancelListener;
+import net.gini.android.capture.internal.util.CancelListener;
 import net.gini.android.capture.view.InjectedViewAdapterHolder;
 import net.gini.android.capture.view.InjectedViewContainer;
 import net.gini.android.capture.view.NavButtonType;

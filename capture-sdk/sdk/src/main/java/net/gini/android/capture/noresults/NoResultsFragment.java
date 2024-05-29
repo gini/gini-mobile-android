@@ -22,7 +22,7 @@ import net.gini.android.capture.EnterManuallyButtonListener;
 import net.gini.android.capture.R;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.util.AlertDialogHelperCompat;
-import net.gini.android.capture.util.CancelListener;
+import net.gini.android.capture.internal.util.CancelListener;
 
 /**
  * Internal use only.

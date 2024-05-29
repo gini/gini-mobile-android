@@ -18,7 +18,7 @@ import net.gini.android.capture.internal.ui.setIntervalClickListener
 import net.gini.android.capture.internal.util.ActivityHelper
 import net.gini.android.capture.tracking.AnalysisScreenEvent
 import net.gini.android.capture.tracking.EventTrackingHelper
-import net.gini.android.capture.util.CancelListener
+import net.gini.android.capture.internal.util.CancelListener
 import net.gini.android.capture.view.InjectedViewAdapterHolder
 import net.gini.android.capture.view.InjectedViewContainer
 import net.gini.android.capture.view.NavButtonType

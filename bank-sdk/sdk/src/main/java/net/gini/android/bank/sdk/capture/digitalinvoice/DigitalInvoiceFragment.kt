@@ -29,7 +29,7 @@ import net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrient
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
-import net.gini.android.capture.util.CancelListener
+import net.gini.android.capture.internal.util.CancelListener
 import net.gini.android.capture.view.InjectedViewAdapterHolder
 import net.gini.android.capture.view.NavButtonType
 

@@ -1,4 +1,4 @@
-package net.gini.android.capture.util
+package net.gini.android.capture.internal.util
 
 /**
  * Internal use only.

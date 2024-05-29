@@ -56,7 +56,7 @@ import net.gini.android.capture.review.multipage.view.ReviewNavigationBarBottomA
 import net.gini.android.capture.tracking.AnalysisScreenEvent;
 import net.gini.android.capture.tracking.ReviewScreenEvent;
 import net.gini.android.capture.tracking.ReviewScreenEvent.UPLOAD_ERROR_DETAILS_MAP_KEY;
-import net.gini.android.capture.util.CancelListener;
+import net.gini.android.capture.internal.util.CancelListener;
 import net.gini.android.capture.view.InjectedViewAdapterHolder;
 import net.gini.android.capture.view.InjectedViewContainer;
 import net.gini.android.capture.view.NavButtonType;

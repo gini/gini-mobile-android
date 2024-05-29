@@ -8,7 +8,7 @@ import androidx.annotation.Nullable;
 
 import net.gini.android.capture.Document;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
-import net.gini.android.capture.util.CancelListener;
+import net.gini.android.capture.internal.util.CancelListener;
 
 /**
  * Helper class for setting arguments to analysis fragment

@@ -25,7 +25,7 @@ import net.gini.android.capture.GiniCaptureFragmentListener
 import net.gini.android.capture.camera.CameraFragmentListener
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
-import net.gini.android.capture.util.CancelListener
+import net.gini.android.capture.internal.util.CancelListener
 
 class CaptureFlowFragment(private val openWithDocument: Document? = null) :
     Fragment(),
@@ -181,7 +181,10 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
 
     override fun onCancelFlow() {
         val popBackStack = navController.popBackStack()
-        if (!popBackStack) captureFlowFragmentListener.onFinishedWithResult(CaptureResult.Cancel)
+        if (!popBackStack) {
+            didFinishWithResult = true
+            captureFlowFragmentListener.onFinishedWithResult(CaptureResult.Cancel)
+        }
     }
 
     internal companion object {

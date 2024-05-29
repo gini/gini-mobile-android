@@ -17,7 +17,7 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.util.AlertDialogHelperCompat;
-import net.gini.android.capture.util.CancelListener;
+import net.gini.android.capture.internal.util.CancelListener;
 
 /**
  * Internal use only.
@@ -48,7 +48,7 @@ public class CameraFragment extends Fragment implements CameraFragmentInterface,
         super.onCreate(savedInstanceState);
         readArguments();
         mFragmentImpl = createFragmentImpl();
-        setListeners(mFragmentImpl, mListener, mCancelListener);
+        setListener(mFragmentImpl, mListener);
         mFragmentImpl.onCreate(savedInstanceState);
     }
 
@@ -59,7 +59,7 @@ public class CameraFragment extends Fragment implements CameraFragmentInterface,
         }
     }
 
-    private void setListeners(@NonNull final CameraFragmentImpl fragmentImpl, @Nullable final CameraFragmentListener listener, @Nullable final CancelListener cancelListener) {
+    private void setListener(@NonNull final CameraFragmentImpl fragmentImpl, @Nullable final CameraFragmentListener listener) {
         if (listener != null) {
             fragmentImpl.setListener(listener);
         } else {
@@ -68,8 +68,6 @@ public class CameraFragment extends Fragment implements CameraFragmentInterface,
                             + "You can set it with CameraFragmentCompat#setListener() or "
                             + "by making the host activity implement the CameraFragmentListener.");
         }
-
-        mCancelListener = cancelListener;
     }
 
     protected CameraFragmentImpl createFragmentImpl() {

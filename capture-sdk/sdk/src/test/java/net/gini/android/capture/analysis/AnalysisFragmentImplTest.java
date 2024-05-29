@@ -36,7 +36,7 @@ import net.gini.android.capture.internal.camera.photo.PhotoFactory;
 import net.gini.android.capture.internal.util.Size;
 import net.gini.android.capture.network.GiniCaptureNetworkService;
 import net.gini.android.capture.test.FragmentImplFactory;
-import net.gini.android.capture.util.CancelListener;
+import net.gini.android.capture.internal.util.CancelListener;
 import net.gini.android.capture.view.DefaultLoadingIndicatorAdapter;
 
 import org.junit.After;

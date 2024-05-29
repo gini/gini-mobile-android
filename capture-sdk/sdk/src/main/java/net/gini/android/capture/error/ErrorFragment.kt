@@ -14,8 +14,8 @@ import net.gini.android.capture.EnterManuallyButtonListener
 import net.gini.android.capture.R
 import net.gini.android.capture.internal.ui.FragmentImplCallback
 import net.gini.android.capture.internal.util.AlertDialogHelperCompat
+import net.gini.android.capture.internal.util.CancelListener
 import net.gini.android.capture.internal.util.getLayoutInflaterWithGiniCaptureTheme
-import net.gini.android.capture.util.CancelListener
 
 /**
  * Internal use only.
@@ -62,7 +62,7 @@ class ErrorFragment : Fragment(), FragmentImplCallback {
         return fragmentImpl.onCreateView(inflater, container, savedInstanceState)
     }
 
-    fun setListeners(
+    fun setListener(
         listener: EnterManuallyButtonListener,
     ) {
         this.listener = listener

@@ -33,7 +33,7 @@ import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.ui.IntervalClickListener;
 import net.gini.android.capture.internal.util.Size;
 import net.gini.android.capture.tracking.AnalysisScreenEvent;
-import net.gini.android.capture.util.CancelListener;
+import net.gini.android.capture.internal.util.CancelListener;
 import net.gini.android.capture.view.CustomLoadingIndicatorAdapter;
 import net.gini.android.capture.view.InjectedViewAdapterHolder;
 import net.gini.android.capture.view.InjectedViewContainer;

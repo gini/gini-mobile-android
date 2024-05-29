@@ -19,7 +19,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import net.gini.android.capture.Document;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.util.AlertDialogHelperCompat;
-import net.gini.android.capture.util.CancelListener;
+import net.gini.android.capture.internal.util.CancelListener;
 
 /**
  * Internal use only.
