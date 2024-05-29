@@ -10,6 +10,7 @@ import jersey.repackaged.jsr166e.CompletableFuture
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.internal.camera.api.CameraInterface
 import net.gini.android.capture.internal.ui.FragmentImplCallback
+import net.gini.android.capture.internal.util.CancelListener
 import net.gini.android.capture.tracking.CameraScreenEvent
 import net.gini.android.capture.tracking.Event
 import net.gini.android.capture.tracking.EventTracker
@@ -31,7 +32,7 @@ class CameraFragmentImplTest {
         val eventTracker = spy<EventTracker>()
         GiniCapture.Builder().setEventTracker(eventTracker).build()
 
-        val fragmentImpl = object: CameraFragmentImpl(mock(), mock(), false) {
+        val fragmentImpl = object: CameraFragmentImpl(mock(), mock<CancelListener>(), false) {
             override fun createCameraController(activity: Activity?): CameraInterface {
                 return mock<CameraInterface>().apply {
                     whenever(isPreviewRunning).thenReturn(true)
