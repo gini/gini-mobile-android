@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>PaymentComponent</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script>var pathToRoot = "../../../";</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/jetbrains-mono.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer="defer"></script>
+</head>
+<body>
+<div class="navigation-wrapper" id="navigation-wrapper">
+    <div id="leftToggler"><span class="icon-toggler"></span></div>
+    <div class="library-name">
+            <a href="../../../index.html">
+                    <span>Gini Health SDK for Android</span>
+            </a>
+    </div>
+    <div>
+    </div>
+    <div class="pull-right d-flex">
+        <button id="theme-toggle-button"><span id="theme-toggle"></span></button>
+        <div id="searchBar"></div>
+    </div>
+</div>
+<div id="container">
+    <div id="leftColumn">
+        <div id="sideMenu"></div>
+    </div>
+    <div id="main">
+<div class="main-content" id="content" pageIds="Gini Health SDK for Android::net.gini.android.health.sdk.paymentcomponent/PaymentComponent///PointingToDeclaration//1426029261">
+  <div class="breadcrumbs"><a href="../../../index.html">Gini Health SDK for Android</a><span class="delimiter">/</span><a href="../index.html">net.gini.android.health.sdk.paymentcomponent</a><span class="delimiter">/</span><span class="current">PaymentComponent</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Payment</span><wbr></wbr><span><span>Component</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><span class="token keyword">class </span><a href="index.html">PaymentComponent</a></div><p class="paragraph">The <a href="index.html">PaymentComponent</a> manages the data and state used by every <a href="../-payment-component-view/index.html">PaymentComponentView</a>, the <a href="../../net.gini.android.health.sdk.moreinformation/-more-information-fragment/index.html">MoreInformationFragment</a>, and the <a href="../../net.gini.android.health.sdk.bankselection/-bank-selection-bottom-sheet/index.html">BankSelectionBottomSheet</a>.</p><p class="paragraph">It requires a <a href="../../net.gini.android.health.sdk/-gini-health/index.html">GiniHealth</a> instance and a <a href="https://developer.android.com/reference/kotlin/android/content/Context.html">Context</a> (application or activity) to be created.</p></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="Types">Types</button><button class="section-tab" data-togglable="Constructors">Constructors</button><button class="section-tab" data-togglable="Functions">Functions</button><button class="section-tab" data-togglable="Properties">Properties</button></div>
+    <div class="tabs-section-body">
+      <h2 class="tabbedcontent">Constructors</h2>
+      <div class="table" data-togglable="Constructors"><a data-name="-2094609897%2FConstructors%2F1426029261" anchor-label="PaymentComponent" id="-2094609897%2FConstructors%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
+          <div class="main-subrow keyValue TabbedContent">
+            <div class=""><span class="inline-flex">
+                <div><a href="-payment-component.html"><span>Payment</span><wbr></wbr><span><span>Component</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2094609897%2FConstructors%2F1426029261"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword"></span><a href="index.html">PaymentComponent</a> <a href="-payment-component.html"><span class="token function">PaymentComponent</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/android/content/Context.html">Context</a> context<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="../../net.gini.android.health.sdk/-gini-health/index.html">GiniHealth</a> giniHealth</span></span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <h2 class="">Types</h2>
+      <div class="table" data-togglable="Types"><a data-name="-2126032137%2FClasslikes%2F1426029261" anchor-label="Listener" id="-2126032137%2FClasslikes%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="-listener/index.html"><span><span>Listener</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2126032137%2FClasslikes%2F1426029261"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">public </span><span class="token keyword">interface </span><a href="-listener/index.html">Listener</a></div><div class="brief "><p class="paragraph">A listener for the <a href="index.html">PaymentComponent</a>. It exposes the user interactions with all of the <a href="../-payment-component-view/index.html">PaymentComponentView</a>s.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <h2 class="">Functions</h2>
+      <div class="table" data-togglable="Functions"><a data-name="-1439859974%2FFunctions%2F1426029261" anchor-label="getListener" id="-1439859974%2FFunctions%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-listener.html"><span>get</span><wbr></wbr><span><span>Listener</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1439859974%2FFunctions%2F1426029261"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="-listener/index.html">PaymentComponent.Listener</a> <a href="get-listener.html"><span class="token function">getListener</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">A listener for the payment component. It exposes the user interactions with all of the <a href="../-payment-component-view/index.html">PaymentComponentView</a>s. See <a href="-listener/index.html">Listener</a> for the methods you need to implement.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-890711019%2FFunctions%2F1426029261" anchor-label="getPaymentProviderAppsFlow" id="-890711019%2FFunctions%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-payment-provider-apps-flow.html"><span>get</span><wbr></wbr><span>Payment</span><wbr></wbr><span>Provider</span><wbr></wbr><span>Apps</span><wbr></wbr><span><span>Flow</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-890711019%2FFunctions%2F1426029261"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><span class="token keyword"></span><a href="../-payment-provider-apps-state/index.html">PaymentProviderAppsState</a><span class="token operator">&gt;</span> <a href="get-payment-provider-apps-flow.html"><span class="token function">getPaymentProviderAppsFlow</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">A <span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span> which emits the state of the payment provider apps. See <a href="../-payment-provider-apps-state/index.html">PaymentProviderAppsState</a> for the possible states.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-242609046%2FFunctions%2F1426029261" anchor-label="getPaymentReviewFragment" id="-242609046%2FFunctions%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-payment-review-fragment.html"><span>get</span><wbr></wbr><span>Payment</span><wbr></wbr><span>Review</span><wbr></wbr><span><span>Fragment</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-242609046%2FFunctions%2F1426029261"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="../../net.gini.android.health.sdk.review/-review-fragment/index.html">ReviewFragment</a> <a href="get-payment-review-fragment.html"><span class="token function">getPaymentReviewFragment</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> documentId<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="../../net.gini.android.health.sdk.review/-review-configuration/index.html">ReviewConfiguration</a> configuration</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Loads the extractions for the given document id and creates an instance of the <a href="../../net.gini.android.health.sdk.review/-review-fragment/index.html">ReviewFragment</a> with the given configuration.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-2106464927%2FFunctions%2F1426029261" anchor-label="getReturningUserFlow" id="-2106464927%2FFunctions%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-returning-user-flow.html"><span>get</span><wbr></wbr><span>Returning</span><wbr></wbr><span>User</span><wbr></wbr><span><span>Flow</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2106464927%2FFunctions%2F1426029261"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/Boolean.html">Boolean</a><span class="token operator">&gt;</span> <a href="get-returning-user-flow.html"><span class="token function">getReturningUserFlow</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">A <span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span> which emits whether the user is a returning one or not.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="307608699%2FFunctions%2F1426029261" anchor-label="getSelectedPaymentProviderAppFlow" id="307608699%2FFunctions%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-selected-payment-provider-app-flow.html"><span>get</span><wbr></wbr><span>Selected</span><wbr></wbr><span>Payment</span><wbr></wbr><span>Provider</span><wbr></wbr><span>App</span><wbr></wbr><span><span>Flow</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="307608699%2FFunctions%2F1426029261"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><span class="token keyword"></span><a href="../-selected-payment-provider-app-state/index.html">SelectedPaymentProviderAppState</a><span class="token operator">&gt;</span> <a href="get-selected-payment-provider-app-flow.html"><span class="token function">getSelectedPaymentProviderAppFlow</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">A <span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span> which emits the state of the selected payment provider app. See <a href="../-selected-payment-provider-app-state/index.html">SelectedPaymentProviderAppState</a> for the possible states.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="374460001%2FFunctions%2F1426029261" anchor-label="loadPaymentProviderApps" id="374460001%2FFunctions%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="load-payment-provider-apps.html"><span>load</span><wbr></wbr><span>Payment</span><wbr></wbr><span>Provider</span><wbr></wbr><span><span>Apps</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="374460001%2FFunctions%2F1426029261"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html">Unit</a> <a href="load-payment-provider-apps.html"><span class="token function">loadPaymentProviderApps</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Loads the payment provider apps and selects the first installed payment provider app or nothing if no payment provider app is installed. The selection (or lack of selection) will be visible once a <a href="../-payment-component-view/index.html">PaymentComponentView</a> is shown.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="16350032%2FFunctions%2F1426029261" anchor-label="setListener" id="16350032%2FFunctions%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="set-listener.html"><span>set</span><wbr></wbr><span><span>Listener</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="16350032%2FFunctions%2F1426029261"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html">Unit</a> <a href="set-listener.html"><span class="token function">setListener</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword"></span><a href="-listener/index.html">PaymentComponent.Listener</a> listener</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">A listener for the payment component. It exposes the user interactions with all of the <a href="../-payment-component-view/index.html">PaymentComponentView</a>s. See <a href="-listener/index.html">Listener</a> for the methods you need to implement.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <h2 class="">Properties</h2>
+      <div class="table" data-togglable="Properties"><a data-name="-1454644030%2FProperties%2F1426029261" anchor-label="listener" id="-1454644030%2FProperties%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#-1454644030%2FProperties%2F1426029261"><span><span>listener</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1454644030%2FProperties%2F1426029261"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><a data-name="-1454644030%2FProperties%2F1426029261" anchor-label="listener" id="-1454644030%2FProperties%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword"></span><a href="-listener/index.html">PaymentComponent.Listener</a> <a href="index.html#-1454644030%2FProperties%2F1426029261">listener</a></div><div class="brief "><a data-name="-1454644030%2FProperties%2F1426029261" anchor-label="listener" id="-1454644030%2FProperties%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a><p class="paragraph">A listener for the payment component. It exposes the user interactions with all of the <a href="../-payment-component-view/index.html">PaymentComponentView</a>s. See <a href="-listener/index.html">Listener</a> for the methods you need to implement.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-100622003%2FProperties%2F1426029261" anchor-label="paymentProviderAppsFlow" id="-100622003%2FProperties%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#-100622003%2FProperties%2F1426029261"><span>payment</span><wbr></wbr><span>Provider</span><wbr></wbr><span>Apps</span><wbr></wbr><span><span>Flow</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-100622003%2FProperties%2F1426029261"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><a data-name="-100622003%2FProperties%2F1426029261" anchor-label="paymentProviderAppsFlow" id="-100622003%2FProperties%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><span class="token keyword"></span><a href="../-payment-provider-apps-state/index.html">PaymentProviderAppsState</a><span class="token operator">&gt;</span> <a href="index.html#-100622003%2FProperties%2F1426029261">paymentProviderAppsFlow</a></div><div class="brief "><a data-name="-100622003%2FProperties%2F1426029261" anchor-label="paymentProviderAppsFlow" id="-100622003%2FProperties%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a><p class="paragraph">A <span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span> which emits the state of the payment provider apps. See <a href="../-payment-provider-apps-state/index.html">PaymentProviderAppsState</a> for the possible states.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-1646658407%2FProperties%2F1426029261" anchor-label="returningUserFlow" id="-1646658407%2FProperties%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#-1646658407%2FProperties%2F1426029261"><span>returning</span><wbr></wbr><span>User</span><wbr></wbr><span><span>Flow</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1646658407%2FProperties%2F1426029261"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><a data-name="-1646658407%2FProperties%2F1426029261" anchor-label="returningUserFlow" id="-1646658407%2FProperties%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/Boolean.html">Boolean</a><span class="token operator">&gt;</span> <a href="index.html#-1646658407%2FProperties%2F1426029261">returningUserFlow</a></div><div class="brief "><a data-name="-1646658407%2FProperties%2F1426029261" anchor-label="returningUserFlow" id="-1646658407%2FProperties%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a><p class="paragraph">A <span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span> which emits whether the user is a returning one or not.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="361701443%2FProperties%2F1426029261" anchor-label="selectedPaymentProviderAppFlow" id="361701443%2FProperties%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#361701443%2FProperties%2F1426029261"><span>selected</span><wbr></wbr><span>Payment</span><wbr></wbr><span>Provider</span><wbr></wbr><span>App</span><wbr></wbr><span><span>Flow</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="361701443%2FProperties%2F1426029261"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><a data-name="361701443%2FProperties%2F1426029261" anchor-label="selectedPaymentProviderAppFlow" id="361701443%2FProperties%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><span class="token keyword"></span><a href="../-selected-payment-provider-app-state/index.html">SelectedPaymentProviderAppState</a><span class="token operator">&gt;</span> <a href="index.html#361701443%2FProperties%2F1426029261">selectedPaymentProviderAppFlow</a></div><div class="brief "><a data-name="361701443%2FProperties%2F1426029261" anchor-label="selectedPaymentProviderAppFlow" id="361701443%2FProperties%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a><p class="paragraph">A <span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span> which emits the state of the selected payment provider app. See <a href="../-selected-payment-provider-app-state/index.html">SelectedPaymentProviderAppState</a> for the possible states.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2024 Copyright</span><span
+                class="pull-right"><span>Generated by </span><a
+                href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+    </div>
+</div>
+</body>
+</html>
