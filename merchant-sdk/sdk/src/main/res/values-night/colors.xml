@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="ghs_payment_component_caption">@color/ghs_light_04</color>
+    <color name="ghs_bank_selection_bottom_sheet_caption">@color/ghs_light_03</color>
+    <color name="ghs_bank_selection_bottom_sheet_title">@color/ghs_light_02</color>
+    <color name="ghs_more_information_fragment_background">@color/ghs_light_07</color>
+    <color name="ghs_payment_provider_border_color">@color/ghs_light_05</color>
+    <color name="ghs_payment_input_border_color">@color/ghs_light_05</color>
+    <color name="ghs_payment_input_hint">@color/ghs_light_04</color>
+    <color name="ghs_bordered_background_color">@color/ghs_light_06</color>
+    <color name="ghs_bank_selector_button_color">@color/ghs_light_01</color>
+    <color name="ghs_payment_details_background_color">@color/ghs_light_07</color>
+    <color name="ghs_payment_input_background_color">@color/ghs_light_06</color>
+    <color name="ghs_faq_divider">@color/ghs_light_05</color>
+    <color name="ghs_bottom_sheet_scrim">#fff</color>
+    <color name="ghs_install_app_title_color">@color/ghs_light_02</color>
+    <color name="ghs_install_app_details_color">@color/ghs_light_03</color>
+    <color name="ghs_select_bank_and_pay_color">@color/ghs_light_01</color>
+    <color name="ghs_info_button_tint">@color/ghs_light_02</color>
+    <color name="ghs_more_information_color">@color/ghs_light_02</color>
+
+    <!--  Open With  -->
+    <color name="ghs_open_with_title">@color/ghs_light_02</color>
+    <color name="ghs_open_with_details">@color/ghs_light_03</color>
+    <color name="ghs_open_with_apps_background">@color/ghs_light_05</color>
+    <color name="ghs_open_with_app_placeholder">@color/ghs_light_07</color>
+
+</resources>

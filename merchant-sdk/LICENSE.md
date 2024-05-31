@@ -1,0 +1,1 @@
+Moved to https://developer.gini.net/gini-mobile-android/health-sdk/sdk/html/license.html

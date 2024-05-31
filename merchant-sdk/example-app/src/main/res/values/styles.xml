@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- region App themes and styles -->
+
+    <style name="Root.AppTheme" parent="Theme.Material3.DayNight">
+        <item name="android:windowBackground">@color/ghs_color_01</item>
+        <item name="colorPrimary">@color/ghs_accent_01</item>
+        <item name="colorAccent">?attr/colorPrimary</item>
+        <item name="actionBarStyle">@style/ActionBar</item>
+        <item name="colorPrimaryDark">@color/ghs_color_02</item>
+        <item name="colorOnPrimary">@color/ghs_color_01</item>
+        <item name="backgroundColor">@color/ghs_color_02</item>
+        <item name="colorOnBackground">@color/ghs_color_contrast_02</item>
+        <item name="dividerColor">@color/ghs_color_03</item>
+        <item name="colorSurface">@color/ghs_color_03</item>
+        <item name="colorOnSurface">?attr/colorOnBackground</item>
+        <item name="colorSurfaceInverse">@color/ghs_color_contrast_03</item>
+        <item name="colorOnSurfaceInverse">@color/ghs_color_02</item>
+        <item name="colorSurfaceVariant">@color/ghs_color_01</item>
+        <item name="colorOnSurfaceVariant">?attr/colorOnBackground</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
+    <style name="AppTheme" parent="Root.AppTheme" />
+
+    <style name="Root.ActionBar" parent="Widget.Material3.ActionBar.Solid">
+        <item name="background">?attr/colorSurface</item>na
+    </style>
+
+    <style name="ActionBar" parent="Root.ActionBar" />
+
+    <style name="Typography.Headline5" parent="TextAppearance.MaterialComponents.Headline5">
+        <item name="android:textColor">@color/ghs_color_contrast_01</item>
+    </style>
+
+    <style name="Typography.Headline6" parent="TextAppearance.MaterialComponents.Headline6">
+        <item name="android:textColor">@color/ghs_color_contrast_01</item>
+    </style>
+
+    <style name="Typography.Body1" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="android:textColor">@color/ghs_color_contrast_01</item>
+    </style>
+
+    <style name="Widget.Button" parent="Widget.Material3.Button">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.Button</item>
+        <item name="cornerRadius">4dp</item>
+    </style>
+
+    <style name="ThemeOverlay.Button" parent="ThemeOverlay.Material3.Button">
+        <item name="colorContainer">@color/ghs_color_04</item>
+        <item name="colorOnContainer">@color/ghs_color_contrast_01</item>
+    </style>
+
+    <!-- endregion -->
+
+</resources>
