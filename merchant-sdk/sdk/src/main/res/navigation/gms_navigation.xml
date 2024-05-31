@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/gms_navigation"
+    app:startDestination="@id/paymentComponentBottomSheet"
+    >
+
+    <dialog
+        android:id="@+id/bankSelectionBottomSheet"
+        android:name="net.gini.android.merchant.sdk.bankselection.BankSelectionBottomSheet"
+        android:label="BankSelectionBottomSheet" >
+        <action
+            android:id="@+id/action_bankSelectionBottomSheet_to_moreInformationFragment"
+            app:destination="@id/moreInformationFragment" />
+    </dialog>
+    <dialog
+        android:id="@+id/paymentComponentBottomSheet"
+        android:name="net.gini.android.merchant.sdk.paymentComponentBottomSheet.PaymentComponentBottomSheet"
+        android:label="PaymentComponentBottomSheet" >
+        <action
+            android:id="@+id/action_paymentComponentBottomSheet_to_moreInformationFragment"
+            app:destination="@id/moreInformationFragment" />
+        <action
+            android:id="@+id/action_paymentComponentBottomSheet_to_bankSelectionBottomSheet"
+            app:destination="@id/bankSelectionBottomSheet" />
+        <action
+            android:id="@+id/action_paymentComponentBottomSheet_to_reviewFragment"
+            app:destination="@id/reviewFragment" />
+    </dialog>
+    <fragment
+        android:id="@+id/moreInformationFragment"
+        android:name="net.gini.android.merchant.sdk.moreinformation.MoreInformationFragment"
+        android:label="MoreInformationFragment"
+        tools:layout="@layout/ghs_fragment_payment_more_information"
+        />
+    <fragment
+        android:id="@+id/reviewFragment"
+        android:name="net.gini.android.merchant.sdk.review.ReviewFragment"
+        android:label="ReviewFragment" />
+</navigation>

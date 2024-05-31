@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
+
+    <TextView
+        android:id="@+id/ghs_select_bank_label"
+        style="@style/GiniHealthTheme.Typography.Subtitle2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/ghs_large"
+        android:text="@string/ghs_select_bank_label"
+        android:textColor="@color/ghs_select_bank_and_pay_color"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/ghs_select_bank_picker"
+        android:layout_marginTop="@dimen/ghs_small"
+        android:minHeight="@dimen/ghs_accessibility_min_height"
+        app:layout_constraintTop_toBottomOf="@id/ghs_select_bank_label"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:id="@+id/ghs_background_view"
+            android:background="@drawable/ghs_bordered_background"
+            app:layout_constraintStart_toStartOf="@id/ghs_select_bank_button"
+            app:layout_constraintEnd_toEndOf="@id/ghs_select_bank_button"
+            app:layout_constraintTop_toTopOf="@id/ghs_select_bank_button"
+            app:layout_constraintBottom_toBottomOf="@id/ghs_select_bank_button"/>
+
+        <include android:id="@+id/ghs_payment_provider_app_icon_holder"
+            layout="@layout/ghs_payment_provider_icon_holder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/ghs_medium"
+            app:layout_constraintStart_toStartOf="@id/ghs_select_bank_button"
+            app:layout_constraintTop_toTopOf="@id/ghs_select_bank_button"
+            app:layout_constraintBottom_toBottomOf="@id/ghs_select_bank_button"
+            />
+
+        <Button
+            android:id="@+id/ghs_select_bank_button"
+            style="@style/GiniHealthTheme.Widget.Button.PaymentProviderSelector"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:drawableRight="@drawable/ghs_chevron_down_icon"
+            android:layout_marginHorizontal="@dimen/ghs_large"
+            android:clickable="false"
+            android:gravity="start|center_vertical"
+            android:paddingHorizontal="@dimen/ghs_large"
+            android:contentDescription="@string/ghs_select_bank_content_description"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/ghs_pay_invoice_button"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
+        <Button
+            android:id="@+id/ghs_pay_invoice_button"
+            style="@style/GiniHealthTheme.Widget.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="@dimen/ghs_large"
+            android:layout_marginStart="-4dp"
+            android:text="@string/ghs_pay_invoice_button"
+            android:visibility="visible"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:ellipsize="end"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/ghs_background_view"
+            app:layout_constraintBottom_toBottomOf="@id/ghs_background_view"
+            app:layout_constraintStart_toEndOf="@id/ghs_select_bank_button"
+            app:layout_constraintHorizontal_weight="2.8"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <FrameLayout
+        android:id="@+id/ghs_powered_by_gini"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/ghs_small"
+        android:layout_marginBottom="@dimen/ghs_medium"
+        android:layout_marginEnd="@dimen/ghs_large"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ghs_select_bank_picker">
+        <include layout="@layout/ghs_powered_by_gini"/>
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/ghs_more_information"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/ghs_powered_by_gini"
+        app:layout_constraintBottom_toBottomOf="@id/ghs_powered_by_gini"
+        style="@style/GiniHealthTheme.Typography.Caption2"
+        android:layout_marginStart="@dimen/ghs_large"
+        android:drawableStart="@drawable/ghs_info_circle_icon"
+        android:drawablePadding="@dimen/ghs_medium"
+        android:drawableTint="@color/ghs_info_button_tint"
+        android:text="@string/ghs_more_information_underlined_part"
+        android:textColor="@color/ghs_payment_component_caption"
+        android:gravity="center_vertical"
+        android:visibility="visible"
+        />
+</merge>

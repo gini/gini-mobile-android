@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="ic_launcher_background">#FED023</color>
+
+    <color name="blue_light">#D1EEF8</color>
+    <color name="blue_dark">#274FBB</color>
+    <color name="blue">#368BD5</color>
+    <color name="red">#D9004B</color>
+    <color name="yellow">#F4C50A</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="black30">#30000000</color>
+    <color name="black80">#CC000000</color>
+    <color name="gray10">#E6E7ED</color>
+
+    <color name="ghs_input_stroke_default">@color/gray10</color>
+    <color name="ghs_input_stroke_active">@color/blue</color>
+
+    <color name="ghs_color_01">#FFFFFF</color>
+    <color name="ghs_color_02">#F2F2F2</color>
+    <color name="ghs_color_03">#E5E5E5</color>
+    <color name="ghs_color_04">#D9D9D9</color>
+    <color name="ghs_color_05">#CCCCCC</color>
+    <color name="ghs_color_06">#BFBFBF</color>
+
+    <color name="ghs_color_contrast_01">#000000</color>
+    <color name="ghs_color_contrast_02">#121212</color>
+    <color name="ghs_color_contrast_03">#313131</color>
+    <color name="ghs_color_contrast_04">#4A4A4A</color>
+    <color name="ghs_color_contrast_05">#626262</color>
+    <color name="ghs_color_contrast_06">#7A7A7A</color>
+</resources>
