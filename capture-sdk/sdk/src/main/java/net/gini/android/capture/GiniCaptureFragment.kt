@@ -23,6 +23,7 @@ import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.noresults.NoResultsFragment
+import net.gini.android.capture.tracking.useranalytics.UserAnalytics
 
 class GiniCaptureFragment(private val openWithDocument: Document? = null) :
     Fragment(),
