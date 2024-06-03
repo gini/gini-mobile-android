@@ -8,6 +8,8 @@ enum class UserAnalyticsExtraProperties(val propertyName: String) {
     ERROR_TYPE("error_type"),
     ERROR_MESSAGE("error_message"),
     FLASH_ACTIVE("flash_active"),
+    IBAN_DETECTION_LAYER_VISIBLE("iban_detection_layer_visible"),
+    QR_CODE_VALID("qr_code_valid"),
     SCREEN("screen"),
     // region Help Screen
     HAS_CUSTOM_ITEMS("has_custom_items"),
