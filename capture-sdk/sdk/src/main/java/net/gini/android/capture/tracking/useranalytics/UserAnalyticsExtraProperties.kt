@@ -16,4 +16,9 @@ enum class UserAnalyticsExtraProperties(val propertyName: String) {
     // endregion
     CUSTOM_ONBOARDING_TITLE("custom_onboarding_title"),
     ONBOARDING_HAS_CUSTOM_ITEMS("has_custom_items"),
+
+    // region Return Assistant
+    SWITCH_ACTIVE("switch_active"),
+    ITEMS_CHANGED("items_changed"),
+    // endregion
 }

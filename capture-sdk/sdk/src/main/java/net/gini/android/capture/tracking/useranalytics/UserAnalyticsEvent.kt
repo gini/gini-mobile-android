@@ -19,7 +19,7 @@ enum class UserAnalyticsEvent(val eventName: String) {
     ERROR_DIALOG_SHOWN("error_dialog_shown"),
     QR_CODE_SCANNED("qr_code_scanned"),
     IBAN_DETECTED("iban_detected"),
-    PROCESS_TAPPED("process_tapped"),
+    PROCEED_TAPPED("proceed_tapped"),
     ADD_PAGES_TAPPED("add_pages_tapped"),
     DELETE_PAGES_TAPPED("delete_pages_tapped"),
     ENTER_MANUALLY_TAPPED("enter_manually_tapped"),
@@ -29,4 +29,8 @@ enum class UserAnalyticsEvent(val eventName: String) {
     SAVE_TAPPED("save_tapped"),
     FULL_SCREEN_PAGE_TAPPED("full_screen_page_tapped"),
     PREVIEW_ZOOMED("preview_zoomed"),
+    // region Return Assistant
+    ITEM_SWITCH_TAPPED("item_switch_tapped"),
+    EDIT_TAPPED("edit_tapped"),
+    // endregion
 }
