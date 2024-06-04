@@ -4,21 +4,27 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentFactory
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 import net.gini.android.merchant.sdk.bankselection.BankSelectionBottomSheet
 import net.gini.android.merchant.sdk.databinding.GmsFragmentContainerBinding
 import net.gini.android.merchant.sdk.moreinformation.MoreInformationFragment
 import net.gini.android.merchant.sdk.paymentComponentBottomSheet.PaymentComponentBottomSheet
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
+import net.gini.android.merchant.sdk.paymentcomponent.SelectedPaymentProviderAppState
+import net.gini.android.merchant.sdk.review.ReviewConfiguration
+import net.gini.android.merchant.sdk.review.ReviewFragment
 import net.gini.android.merchant.sdk.util.BackListener
 import net.gini.android.merchant.sdk.util.autoCleared
 import net.gini.android.merchant.sdk.util.getLayoutInflaterWithGiniMerchantTheme
 
 
-class ContainerFragment private constructor(private val paymentComponent: PaymentComponent?) : Fragment(), BackListener {
+class ContainerFragment private constructor(private val paymentComponent: PaymentComponent?, private val documentId: String) : Fragment(), BackListener {
 
 //    constructor(): this()
     private var binding: GmsFragmentContainerBinding by autoCleared()
@@ -29,26 +35,52 @@ class ContainerFragment private constructor(private val paymentComponent: Paymen
 
     private val paymentComponentListener = object: PaymentComponent.Listener {
         override fun onMoreInformationClicked() {
+            viewModel.addToBackStack(ContainerViewModel.DisplayedScreen.MoreInformationFragment)
+            childFragmentManager.beginTransaction()
+                .add(binding.gmsFragmentContainerView.id, MoreInformationFragment.newInstance(paymentComponent!!, this@ContainerFragment))
+                .addToBackStack(MoreInformationFragment::class.java.name)
+                .commit()
         }
 
         override fun onBankPickerClicked() {
-            TODO("Not yet implemented")
+            viewModel.addToBackStack(ContainerViewModel.DisplayedScreen.BankSelectionBottomSheet)
+            BankSelectionBottomSheet.newInstance(paymentComponent!!, backListener = this@ContainerFragment).show(childFragmentManager, BankSelectionBottomSheet::class.java.name)
         }
 
         override fun onPayInvoiceClicked(documentId: String) {
-            TODO("Not yet implemented")
+            viewModel.addToBackStack(ContainerViewModel.DisplayedScreen.ReviewFragment)
+            viewModel.viewModelScope.launch {
+                val reviewFragment = paymentComponent?.getPaymentReviewFragment(documentId, ReviewConfiguration())
+                reviewFragment?.let {
+                    it.setBackListener(this@ContainerFragment)
+                    childFragmentManager.beginTransaction()
+                        .add(binding.gmsFragmentContainerView.id, it)
+                        .addToBackStack(ReviewFragment::class.java.name)
+                        .commit()
+                }
+            }
         }
     }
 
-    private val backPressHandler = object : OnBackPressedCallback(true) {
-        override fun handleOnBackPressed() {
-        }
-    }
+    private fun handleBackFlow() {
+        childFragmentManager.popBackStackImmediate()
+        viewModel.popBackStack()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        childFragmentManager.fragmentFactory = ContainerFragmentFactory(viewModel.paymentComponentFlow.value, this)
-        requireActivity().onBackPressedDispatcher.addCallback(this, backPressHandler)
-        super.onCreate(savedInstanceState)
+        if (childFragmentManager.backStackEntryCount == 0) {
+            when (viewModel.getLastBackstackEntry()) {
+                ContainerViewModel.DisplayedScreen.BankSelectionBottomSheet -> {
+                    BankSelectionBottomSheet.newInstance(paymentComponent!!, this).show(childFragmentManager, BankSelectionBottomSheet::class.java.name)
+                }
+                ContainerViewModel.DisplayedScreen.Nothing -> {
+                    paymentComponent?.listener = originalPaymentComponentListener
+                    requireActivity().supportFragmentManager.popBackStack()
+                }
+                ContainerViewModel.DisplayedScreen.PaymentComponentBottomSheet -> PaymentComponentBottomSheet.newInstance(paymentComponent!!, documentId = documentId,this).show(childFragmentManager, PaymentComponentBottomSheet::class.java.name)
+                else -> {
+
+                }
+            }
+        }
     }
 
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
@@ -63,54 +95,30 @@ class ContainerFragment private constructor(private val paymentComponent: Paymen
     ): View {
         super.onCreateView(inflater, container, savedInstanceState)
         binding = GmsFragmentContainerBinding.inflate(inflater, container, false)
-        parentFragmentManager.beginTransaction()
-            .setPrimaryNavigationFragment(this)
-            .commit()
         originalPaymentComponentListener = paymentComponent?.listener
         paymentComponent?.listener = paymentComponentListener
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                paymentComponent!!.selectedPaymentProviderAppFlow.collect {
+                    if (it is SelectedPaymentProviderAppState.AppSelected) {
+                        if (viewModel.paymentProviderAppChanged(it.paymentProviderApp)) {
+                            handleBackFlow()
+                        }
+                    }
+                }
+            }
+        }
+        PaymentComponentBottomSheet.newInstance(paymentComponent!!, documentId = documentId, backListener = this@ContainerFragment).show(childFragmentManager, PaymentComponentBottomSheet::class.java.name)
+        viewModel.addToBackStack(ContainerViewModel.DisplayedScreen.PaymentComponentBottomSheet)
         return binding.root
     }
 
-    internal class ContainerFragmentFactory(
-        private val paymentComponent: PaymentComponent?,
-        private val backListener: BackListener
-    ): FragmentFactory() {
-        override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
-            when (className) {
-                PaymentComponentBottomSheet::class.java.name -> {
-                    return PaymentComponentBottomSheet.newInstance(paymentComponent).apply {
-                        setBackListener(backListener)
-                    }
-                }
-                MoreInformationFragment::class.java.name -> {
-                    return MoreInformationFragment.newInstance(paymentComponent)
-                }
-                BankSelectionBottomSheet::class.java.name -> {
-                    return BankSelectionBottomSheet.newInstance(paymentComponent!!)
-                }
-                else -> return super.instantiate(classLoader, className)
-            }
-        }
+    override fun backCalled() {
+        handleBackFlow()
     }
-
-//    class CustomNavHostFragment: NavHostFragment() {
-//        override fun onCreateNavHostController(navHostController: NavHostController) {
-////            super.onCreateNavHostController(navHostController)
-//            Log.e("", "----- creating custom nav host fragment")
-////            navHostController.setOnBackPressedDispatcher(OnBackPressedDispatcher {
-////
-////                Log.e("", "----- in on back pressed dispatcher")
-////            })
-//            super.onCreateNavHostController(navHostController)
-//        }
-//    }
 
     companion object {
-        fun newInstance(paymentComponent: PaymentComponent) = ContainerFragment(paymentComponent)
-    }
-
-    override fun backCalled() {
-
+        fun newInstance(paymentComponent: PaymentComponent, documentId: String) = ContainerFragment(paymentComponent, documentId)
     }
 }
 

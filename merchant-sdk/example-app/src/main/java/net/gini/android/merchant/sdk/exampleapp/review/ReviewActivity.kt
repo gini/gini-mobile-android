@@ -121,7 +121,7 @@ class ReviewActivity : AppCompatActivity() {
                     try {
                         val reviewFragment = viewModel.paymentComponent.getPaymentReviewFragment(
                             documentId = documentId,
-                            configuration = ReviewConfiguration(showCloseButton = showCloseButton)
+                            configuration = ReviewConfiguration(showCloseButton = showCloseButton),
                         )
 
                         reviewFragment.listener = reviewFragmentListener
