@@ -3,7 +3,9 @@ package net.gini.android.merchant.sdk.util
 import android.app.Dialog
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -11,13 +13,14 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import net.gini.android.merchant.sdk.R
 
 
-open class GhsBottomSheetDialogFragment : BottomSheetDialogFragment() {
+open class GhsBottomSheetDialogFragment(private val cancelListener: BackListener? = null) : BottomSheetDialogFragment() {
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
         val inflater = super.onGetLayoutInflater(savedInstanceState)
         return this.getLayoutInflaterWithGiniHealthTheme(inflater)
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        Log.e("", "----- in on create dialog ghs bottom sheet")
         val wrappedContext = requireContext().wrappedWithGiniHealthTheme()
         val dialog = BottomSheetDialog(wrappedContext, theme)
 
@@ -28,6 +31,17 @@ open class GhsBottomSheetDialogFragment : BottomSheetDialogFragment() {
         dialog.behavior.isFitToContents = true
         dialog.behavior.skipCollapsed = true
         dialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
+
+        cancelListener?.let { cancelListener ->
+            dialog.onBackPressedDispatcher.addCallback(object: OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    Log.e("", "---- ghs on back intercepted")
+                    dismiss()
+                    cancelListener.backCalled()
+                    remove()
+                }
+            })
+        }
 
         return dialog
     }

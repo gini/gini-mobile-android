@@ -5,22 +5,27 @@
     android:id="@+id/gms_navigation"
     app:startDestination="@id/paymentComponentBottomSheet"
     >
-
     <dialog
         android:id="@+id/bankSelectionBottomSheet"
         android:name="net.gini.android.merchant.sdk.bankselection.BankSelectionBottomSheet"
-        android:label="BankSelectionBottomSheet" >
+        android:label="BankSelectionBottomSheet">
         <action
             android:id="@+id/action_bankSelectionBottomSheet_to_moreInformationFragment"
-            app:destination="@id/moreInformationFragment" />
+            app:destination="@id/moreInformationFragment"
+            app:popUpTo="@id/bankSelectionBottomSheet"
+            app:popUpToInclusive="true"/>
     </dialog>
     <dialog
         android:id="@+id/paymentComponentBottomSheet"
         android:name="net.gini.android.merchant.sdk.paymentComponentBottomSheet.PaymentComponentBottomSheet"
-        android:label="PaymentComponentBottomSheet" >
+        android:label="PaymentComponentBottomSheet"
+        >
         <action
             android:id="@+id/action_paymentComponentBottomSheet_to_moreInformationFragment"
-            app:destination="@id/moreInformationFragment" />
+            app:destination="@id/moreInformationFragment"
+            app:popUpTo="@id/paymentComponentBottomSheet"
+            app:popUpToInclusive="true"
+            />
         <action
             android:id="@+id/action_paymentComponentBottomSheet_to_bankSelectionBottomSheet"
             app:destination="@id/bankSelectionBottomSheet" />
@@ -33,7 +38,18 @@
         android:name="net.gini.android.merchant.sdk.moreinformation.MoreInformationFragment"
         android:label="MoreInformationFragment"
         tools:layout="@layout/ghs_fragment_payment_more_information"
-        />
+        >
+        <action
+            android:id="@+id/action_moreInformationFragment_to_paymentComponentBottomSheet"
+            app:destination="@id/paymentComponentBottomSheet"
+            app:popUpToInclusive="true"
+            app:popUpTo="@id/moreInformationFragment"/>
+        <action
+            android:id="@+id/action_moreInformationFragment_to_bankSelectionBottomSheet"
+            app:destination="@id/bankSelectionBottomSheet"
+            app:popUpToInclusive="true"
+            app:popUpTo="@id/bankSelectionBottomSheet"/>
+    </fragment>
     <fragment
         android:id="@+id/reviewFragment"
         android:name="net.gini.android.merchant.sdk.review.ReviewFragment"

@@ -263,8 +263,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
             if (paymentComponent == null) {
                 LOG.warn("Cannot call PaymentComponent's listener: PaymentComponent must be set before showing the PaymentComponentView")
             }
-            paymentComponent?.listener?.onStartIntegratedFlow()
-//            paymentComponent?.listener?.onBankPickerClicked()
+            paymentComponent?.listener?.onBankPickerClicked()
         }
         binding.ghsPayInvoiceButton.setIntervalClickListener {
             if (paymentComponent == null) {

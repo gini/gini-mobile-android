@@ -73,7 +73,7 @@ class InvoicesViewModel(
                 try {
                     val paymentReviewFragment = paymentComponent.getPaymentReviewFragment(
                         documentWithExtractions.documentId,
-                        ReviewConfiguration(showCloseButton = true)
+                        ReviewConfiguration(showCloseButton = true),
                     )
                     _paymentReviewFragmentFlow.value = PaymentReviewFragmentState.Success(paymentReviewFragment)
                 } catch (e: Exception) {

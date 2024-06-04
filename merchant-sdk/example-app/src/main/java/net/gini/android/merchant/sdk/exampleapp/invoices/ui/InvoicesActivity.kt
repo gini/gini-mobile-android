@@ -6,6 +6,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
@@ -148,7 +149,14 @@ class InvoicesActivity : AppCompatActivity() {
         viewModel.loadPaymentProviderApps()
 
         binding.invoicesList.layoutManager = LinearLayoutManager(this)
-        binding.invoicesList.adapter = InvoicesAdapter(emptyList(), viewModel.paymentComponent)
+        binding.invoicesList.adapter = InvoicesAdapter(emptyList(), viewModel.paymentComponent) {
+            ContainerFragment.newInstance(paymentComponent = viewModel.paymentComponent, documentId= it).apply {
+                supportFragmentManager.beginTransaction()
+                    .add(R.id.fragment_container, this, this::class.java.simpleName)
+                    .addToBackStack(this::class.java.simpleName)
+                    .commit()
+            }
+        }
         binding.invoicesList.addItemDecoration(DividerItemDecoration(this, LinearLayout.VERTICAL))
 
         viewModel.paymentComponent.listener = object: PaymentComponent.Listener {
@@ -171,15 +179,6 @@ class InvoicesActivity : AppCompatActivity() {
                 LOG.debug("Pay invoice clicked")
 
                 viewModel.getPaymentReviewFragment(documentId)
-            }
-
-            override fun onStartIntegratedFlow() {
-                ContainerFragment.newInstance(paymentComponent = viewModel.paymentComponent).apply {
-                    supportFragmentManager.beginTransaction()
-                        .add(R.id.fragment_container,this, this::class.java.simpleName)
-                        .addToBackStack(this::class.java.simpleName)
-                        .commit()
-                }
             }
         }
 
@@ -243,7 +242,8 @@ class InvoicesActivity : AppCompatActivity() {
 
 class InvoicesAdapter(
     var dataSet: List<InvoiceItem>,
-    private val paymentComponent: PaymentComponent
+    private val paymentComponent: PaymentComponent,
+    private val payNowListener: (String) -> Unit
 ) :
     RecyclerView.Adapter<InvoicesAdapter.ViewHolder>() {
 
@@ -253,11 +253,13 @@ class InvoicesAdapter(
         val dueDate: TextView
         val amount: TextView
         val paymentComponentView: PaymentComponentView
+        val payNowButton: Button
 
         init {
             recipient = view.findViewById(R.id.recipient)
             dueDate = view.findViewById(R.id.due_date)
             amount = view.findViewById(R.id.amount)
+            payNowButton = view.findViewById(R.id.gms_pay_now)
             this.paymentComponentView = view.findViewById(R.id.payment_component)
             this.paymentComponentView.paymentComponent = paymentComponent
         }
@@ -266,7 +268,11 @@ class InvoicesAdapter(
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(viewGroup.context)
             .inflate(R.layout.item_invoice, viewGroup, false)
-        return ViewHolder(view, paymentComponent)
+        return ViewHolder(view, paymentComponent).also {  vh ->
+            vh.payNowButton.setOnClickListener {
+                payNowListener(dataSet[vh.adapterPosition].documentId)
+            }
+        }
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {

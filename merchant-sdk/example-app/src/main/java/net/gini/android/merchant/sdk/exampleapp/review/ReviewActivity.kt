@@ -104,9 +104,6 @@ class ReviewActivity : AppCompatActivity() {
 
         // Set a listener on the PaymentComponent to receive events from the PaymentComponentView
         viewModel.paymentComponent.listener = object : PaymentComponent.Listener {
-            override fun onStartIntegratedFlow() {
-
-            }
             override fun onMoreInformationClicked() {}
 
             override fun onBankPickerClicked() {
@@ -124,7 +121,7 @@ class ReviewActivity : AppCompatActivity() {
                     try {
                         val reviewFragment = viewModel.paymentComponent.getPaymentReviewFragment(
                             documentId = documentId,
-                            configuration = ReviewConfiguration(showCloseButton = showCloseButton)
+                            configuration = ReviewConfiguration(showCloseButton = showCloseButton),
                         )
 
                         reviewFragment.listener = reviewFragmentListener

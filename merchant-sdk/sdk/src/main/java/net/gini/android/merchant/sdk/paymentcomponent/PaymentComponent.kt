@@ -197,7 +197,6 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
      */
     suspend fun getPaymentReviewFragment(documentId: String, configuration: ReviewConfiguration): ReviewFragment {
         LOG.debug("Getting payment review fragment for id: {}", documentId)
-
         giniHealth.setDocumentForReview(documentId)
 
         when (val selectedPaymentProviderAppState = _selectedPaymentProviderAppFlow.value) {
@@ -261,8 +260,6 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
          * @param documentId The value in the clicked PaymentComponentView's [PaymentComponentView.documentId] property
          */
         fun onPayInvoiceClicked(documentId: String)
-
-        fun onStartIntegratedFlow()
     }
 
 }

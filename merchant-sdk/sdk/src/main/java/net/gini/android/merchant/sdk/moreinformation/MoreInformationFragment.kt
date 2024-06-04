@@ -1,6 +1,5 @@
 package net.gini.android.merchant.sdk.moreinformation
 
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.SpannedString
@@ -8,12 +7,12 @@ import android.text.TextPaint
 import android.text.method.LinkMovementMethod
 import android.text.style.TextAppearanceSpan
 import android.text.style.URLSpan
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ExpandableListAdapter
 import android.widget.ExpandableListView
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.StringRes
 import androidx.annotation.VisibleForTesting
 import androidx.core.text.buildSpannedString
@@ -29,6 +28,7 @@ import net.gini.android.merchant.sdk.databinding.GhsFragmentPaymentMoreInformati
 import net.gini.android.merchant.sdk.databinding.GhsPaymentProviderIconHolderBinding
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
+import net.gini.android.merchant.sdk.util.BackListener
 import net.gini.android.merchant.sdk.util.autoCleared
 import net.gini.android.merchant.sdk.util.getLayoutInflaterWithGiniHealthTheme
 
@@ -36,7 +36,7 @@ import net.gini.android.merchant.sdk.util.getLayoutInflaterWithGiniHealthTheme
  * The [MoreInformationFragment] displays information and an FAQ section about the payment feature. It requires a
  * [PaymentComponent] instance to show the icons of the available payment provider apps.
  */
-class MoreInformationFragment private constructor(private val paymentComponent: PaymentComponent?) :
+class MoreInformationFragment private constructor(private val paymentComponent: PaymentComponent?, private val backListener: BackListener? = null) :
     Fragment() {
     constructor() : this(paymentComponent = null)
 
@@ -109,6 +109,16 @@ class MoreInformationFragment private constructor(private val paymentComponent: 
                     }
                 }
             }
+        }
+
+        backListener?.let {
+            requireActivity().onBackPressedDispatcher.addCallback(object: OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    isEnabled = false
+                    remove()
+                    backListener.backCalled()
+                }
+            })
         }
     }
 
@@ -219,6 +229,9 @@ class MoreInformationFragment private constructor(private val paymentComponent: 
          */
         fun newInstance(paymentComponent: PaymentComponent?): MoreInformationFragment =
             MoreInformationFragment(paymentComponent = paymentComponent)
+
+        fun newInstance(paymentComponent: PaymentComponent?, backListener: BackListener): MoreInformationFragment =
+            MoreInformationFragment(paymentComponent = paymentComponent, backListener = backListener)
     }
 
     private class URLSpanNoUnderline(url: String?) : URLSpan(url) {
