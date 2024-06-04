@@ -1,19 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-<!--    xmlns:app="http://schemas.android.com/apk/res-auto"-->
-<!--    android:layout_width="match_parent"-->
-<!--    android:layout_height="match_parent"-->
-<!--    android:background="@color/ghs_container_fragment_background">-->
 
-    <androidx.fragment.app.FragmentContainerView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/ghs_fragment_container_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:defaultNavHost="true"
-        android:name="androidx.navigation.fragment.NavHostFragment"
-        />
-<!--    app:navGraph="@navigation/gms_navigation"-->
-
-<!--</FrameLayout>-->
+<androidx.fragment.app.FragmentContainerView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ghs_fragment_container_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    />

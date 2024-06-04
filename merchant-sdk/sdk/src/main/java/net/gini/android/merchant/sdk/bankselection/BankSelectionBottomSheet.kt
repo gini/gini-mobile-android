@@ -104,7 +104,6 @@ class BankSelectionBottomSheet private constructor(private val paymentComponent:
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        Log.e("", "----- in on create dialog")
         return super.onCreateDialog(savedInstanceState)
     }
 

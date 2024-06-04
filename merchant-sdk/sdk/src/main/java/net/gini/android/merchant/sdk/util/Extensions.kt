@@ -186,6 +186,6 @@ internal fun Fragment.getLayoutInflaterWithGiniHealthTheme(inflater: LayoutInfla
     return inflater.cloneInContext(requireContext().wrappedWithGiniHealthTheme())
 }
 
-internal fun View.setIntervalClickListener(click: View.OnClickListener?) {
+fun View.setIntervalClickListener(click: View.OnClickListener?) {
     setOnClickListener(IntervalClickListener(click))
 }

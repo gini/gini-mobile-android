@@ -3,7 +3,6 @@ package net.gini.android.merchant.sdk.util
 import android.app.Dialog
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
@@ -20,7 +19,6 @@ open class GhsBottomSheetDialogFragment(private val cancelListener: BackListener
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        Log.e("", "----- in on create dialog ghs bottom sheet")
         val wrappedContext = requireContext().wrappedWithGiniHealthTheme()
         val dialog = BottomSheetDialog(wrappedContext, theme)
 
@@ -35,7 +33,6 @@ open class GhsBottomSheetDialogFragment(private val cancelListener: BackListener
         cancelListener?.let { cancelListener ->
             dialog.onBackPressedDispatcher.addCallback(object: OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    Log.e("", "---- ghs on back intercepted")
                     dismiss()
                     cancelListener.backCalled()
                     remove()

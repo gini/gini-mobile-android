@@ -102,8 +102,6 @@ tasks.withType(type = org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 }
 
 dependencies {
-    implementation(libs.androidx.navigation.fragment.ktx)
-    implementation(libs.androidx.navigation.ui.ktx)
     val healthApiLibrary = project(":health-api-library:library")
     if (properties["createSBOM"] == "true") {
         apiProjectDependencyForSBOM(healthApiLibrary)
