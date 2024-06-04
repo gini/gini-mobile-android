@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import net.gini.android.capture.GiniCapture
@@ -59,7 +60,7 @@ class SupportedFormatsHelpFragment : Fragment() {
                 )
                 injectedViewAdapter.setTitle(getString(R.string.gc_title_supported_formats))
                 injectedViewAdapter.setOnNavButtonClickListener(IntervalClickListener {
-                    activity?.onBackPressedDispatcher?.onBackPressed()
+                    NavHostFragment.findNavController(this@SupportedFormatsHelpFragment).popBackStack()
                 })
             }
         }
@@ -72,7 +73,7 @@ class SupportedFormatsHelpFragment : Fragment() {
                 GiniCapture.getInstance().internal().helpNavigationBarBottomAdapterInstance
             ) { injectedViewAdapter: HelpNavigationBarBottomAdapter ->
                 injectedViewAdapter.setOnBackClickListener(IntervalClickListener {
-                    activity?.onBackPressedDispatcher?.onBackPressed()
+                    NavHostFragment.findNavController(this@SupportedFormatsHelpFragment).popBackStack()
                 })
             }
         }

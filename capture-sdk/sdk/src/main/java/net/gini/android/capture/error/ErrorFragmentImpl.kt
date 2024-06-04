@@ -18,6 +18,7 @@ import net.gini.android.capture.internal.ui.setIntervalClickListener
 import net.gini.android.capture.internal.util.ActivityHelper
 import net.gini.android.capture.tracking.AnalysisScreenEvent
 import net.gini.android.capture.tracking.EventTrackingHelper
+import net.gini.android.capture.internal.util.CancelListener
 import net.gini.android.capture.view.InjectedViewAdapterHolder
 import net.gini.android.capture.view.InjectedViewContainer
 import net.gini.android.capture.view.NavButtonType
@@ -29,6 +30,7 @@ import net.gini.android.capture.view.NavigationBarTopAdapter
  */
 class ErrorFragmentImpl(
     private val fragmentCallback: FragmentImplCallback,
+    private val cancelListener: CancelListener,
     private val document: Document?,
     private val errorType: ErrorType?,
     private val customError: String?
@@ -93,10 +95,9 @@ class ErrorFragmentImpl(
             topBarContainer.injectedViewAdapterHolder = InjectedViewAdapterHolder(GiniCapture.getInstance().internal().navigationBarTopAdapterInstance) { injectedViewAdapter ->
                 injectedViewAdapter.apply {
                     setTitle(fragmentCallback.activity?.getString(R.string.gc_title_error) ?: "")
-
                     setNavButtonType(NavButtonType.CLOSE)
                     setOnNavButtonClickListener(IntervalClickListener {
-                        fragmentCallback.activity?.onBackPressedDispatcher?.onBackPressed()
+                        cancelListener.onCancelFlow()
                     })
                 }
             }

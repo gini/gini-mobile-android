@@ -3,11 +3,12 @@ package net.gini.android.capture.analysis;
 import android.content.Context;
 import android.os.Bundle;
 
-import net.gini.android.capture.Document;
-import net.gini.android.capture.internal.ui.FragmentImplCallback;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import net.gini.android.capture.Document;
+import net.gini.android.capture.internal.ui.FragmentImplCallback;
+import net.gini.android.capture.internal.util.CancelListener;
 
 /**
  * Helper class for setting arguments to analysis fragment
@@ -28,13 +29,13 @@ final class AnalysisFragmentHelper {
         return arguments;
     }
 
-    static AnalysisFragmentImpl createFragmentImpl(@NonNull final FragmentImplCallback fragment,
-            @NonNull final Bundle arguments) {
+    static AnalysisFragmentImpl createFragmentImpl(@NonNull final FragmentImplCallback fragment, @NonNull CancelListener cancelListener,
+                                                   @NonNull final Bundle arguments) {
         final Document document = arguments.getParcelable(ARGS_DOCUMENT);
         if (document != null) {
             final String analysisErrorMessage = arguments.getString(
                     ARGS_DOCUMENT_ANALYSIS_ERROR_MESSAGE);
-            return new AnalysisFragmentImpl(fragment, document, analysisErrorMessage);
+            return new AnalysisFragmentImpl(fragment, cancelListener, document, analysisErrorMessage);
         } else {
             throw new IllegalStateException(
                     "AnalysisFragmentCompat requires a Document. Use the createInstance() method of these classes for instantiating.");

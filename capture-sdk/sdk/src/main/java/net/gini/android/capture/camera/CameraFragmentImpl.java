@@ -1,5 +1,19 @@
 package net.gini.android.capture.camera;
 
+import static net.gini.android.capture.camera.CameraFragment.REQUEST_KEY;
+import static net.gini.android.capture.camera.CameraFragment.RESULT_KEY_SHOULD_SCROLL_TO_LAST_PAGE;
+import static net.gini.android.capture.document.ImageDocument.ImportMethod;
+import static net.gini.android.capture.internal.network.NetworkRequestsManager.isCancellation;
+import static net.gini.android.capture.internal.qrcode.EPSPaymentParser.EXTRACTION_ENTITY_NAME;
+import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
+import static net.gini.android.capture.internal.util.AndroidHelper.isMarshmallowOrLater;
+import static net.gini.android.capture.internal.util.FeatureConfiguration.getDocumentImportEnabledFileTypes;
+import static net.gini.android.capture.internal.util.FeatureConfiguration.isMultiPageEnabled;
+import static net.gini.android.capture.internal.util.FeatureConfiguration.isQRCodeScanningEnabled;
+import static net.gini.android.capture.internal.util.FileImportValidator.FILE_SIZE_LIMIT;
+import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
+import static net.gini.android.capture.tracking.EventTrackingHelper.trackCameraScreenEvent;
+
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
@@ -80,6 +94,7 @@ import net.gini.android.capture.internal.ui.IntervalClickListener;
 import net.gini.android.capture.internal.ui.IntervalToolbarMenuItemIntervalClickListener;
 import net.gini.android.capture.internal.ui.ViewStubSafeInflater;
 import net.gini.android.capture.internal.util.ApplicationHelper;
+import net.gini.android.capture.internal.util.CancelListener;
 import net.gini.android.capture.internal.util.ContextHelper;
 import net.gini.android.capture.internal.util.DeviceHelper;
 import net.gini.android.capture.internal.util.FileImportValidator;
@@ -95,7 +110,6 @@ import net.gini.android.capture.requirements.CameraHolder;
 import net.gini.android.capture.requirements.CameraResolutionRequirement;
 import net.gini.android.capture.requirements.CameraXHolder;
 import net.gini.android.capture.requirements.RequirementReport;
-import net.gini.android.capture.review.multipage.MultiPageReviewFragmentDirections;
 import net.gini.android.capture.tracking.AnalysisScreenEvent;
 import net.gini.android.capture.tracking.CameraScreenEvent;
 import net.gini.android.capture.util.IntentHelper;
@@ -117,21 +131,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
 import kotlin.Unit;
-
-import static net.gini.android.capture.GiniCaptureError.ErrorCode.MISSING_GINI_CAPTURE_INSTANCE;
-import static net.gini.android.capture.camera.CameraFragment.REQUEST_KEY;
-import static net.gini.android.capture.camera.CameraFragment.RESULT_KEY_SHOULD_SCROLL_TO_LAST_PAGE;
-import static net.gini.android.capture.document.ImageDocument.ImportMethod;
-import static net.gini.android.capture.internal.network.NetworkRequestsManager.isCancellation;
-import static net.gini.android.capture.internal.qrcode.EPSPaymentParser.EXTRACTION_ENTITY_NAME;
-import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
-import static net.gini.android.capture.internal.util.AndroidHelper.isMarshmallowOrLater;
-import static net.gini.android.capture.internal.util.FeatureConfiguration.getDocumentImportEnabledFileTypes;
-import static net.gini.android.capture.internal.util.FeatureConfiguration.isMultiPageEnabled;
-import static net.gini.android.capture.internal.util.FeatureConfiguration.isQRCodeScanningEnabled;
-import static net.gini.android.capture.internal.util.FileImportValidator.FILE_SIZE_LIMIT;
-import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
-import static net.gini.android.capture.tracking.EventTrackingHelper.trackCameraScreenEvent;
 
 /**
  * Internal use only.
@@ -171,6 +170,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private static final String IS_FLASH_ENABLED_KEY = "IS_FLASH_ENABLED_KEY";
 
     private final FragmentImplCallback mFragment;
+    private final CancelListener mCancelListener;
     private final boolean addPages;
 
     @VisibleForTesting
@@ -223,8 +223,9 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private IBANRecognizerFilter ibanRecognizerFilter;
     private CropToCameraFrameTextRecognizer cropToCameraFrameTextRecognizer;
 
-    CameraFragmentImpl(@NonNull final FragmentImplCallback fragment, final boolean addPages) {
+    CameraFragmentImpl(@NonNull final FragmentImplCallback fragment, @NonNull final CancelListener cancelListener,final boolean addPages) {
         mFragment = fragment;
+        mCancelListener = cancelListener;
         this.addPages = addPages;
     }
 
@@ -371,10 +372,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         activity.getOnBackPressedDispatcher().addCallback(mFragment.getViewLifecycleOwner(), new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                trackCameraScreenEvent(CameraScreenEvent.EXIT);
-                setEnabled(false);
-                remove();
-                mFragment.getActivity().getOnBackPressedDispatcher().onBackPressed();
+                onBackPressed();
             }
         });
     }
@@ -762,9 +760,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                 }
 
                 injectedViewAdapter.setOnNavButtonClickListener(new IntervalClickListener(v -> {
-                    if (mFragment.getActivity() != null) {
-                        mFragment.getActivity().getOnBackPressedDispatcher().onBackPressed();
-                    }
+                    onBackPressed();
                 }));
             }));
 
@@ -781,9 +777,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                         injectedViewAdapter.setBackButtonVisibility(isEmpty ? View.GONE : View.VISIBLE);
 
                         injectedViewAdapter.setOnBackButtonClickListener(new IntervalClickListener(v -> {
-                            if (mFragment.getActivity() != null) {
-                                mFragment.getActivity().getOnBackPressedDispatcher().onBackPressed();
-                            }
+                            onBackPressed();
                         }));
 
                         injectedViewAdapter.setOnHelpButtonClickListener(new IntervalClickListener(v -> startHelpActivity()));
@@ -877,9 +871,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         ClickListenerExtKt.setIntervalClickListener(mButtonImportDocument, v -> showFileChooser());
 
         ClickListenerExtKt.setIntervalClickListener(mPhotoThumbnail, v -> {
-            if (mFragment.getActivity() != null) {
-                mFragment.getActivity().getOnBackPressedDispatcher().onBackPressed();
-            }
+            onBackPressed();
         });
     }
 
@@ -1193,7 +1185,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             final Bundle resultBundle = new Bundle();
             resultBundle.putBoolean(RESULT_KEY_SHOULD_SCROLL_TO_LAST_PAGE, shouldScrollToLastPage);
             mFragment.getParentFragmentManager().setFragmentResult(REQUEST_KEY, resultBundle);
-            mFragment.getActivity().getOnBackPressedDispatcher().onBackPressed();
+            mFragment.findNavController().popBackStack();
         } else {
             mFragment.findNavController().navigate(CameraFragmentDirections.toReviewFragment(shouldScrollToLastPage));
         }
@@ -1853,5 +1845,13 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             LOG.error(message);
         }
         mListener.onError(new GiniCaptureError(errorCode, errorMessage));
+    }
+
+    private void onBackPressed() {
+        boolean popSuccess = mFragment.findNavController().popBackStack();
+        if (!popSuccess) {
+            trackCameraScreenEvent(CameraScreenEvent.EXIT);
+            mCancelListener.onCancelFlow();
+        }
     }
 }
