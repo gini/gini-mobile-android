@@ -24,9 +24,9 @@ import net.gini.android.merchant.sdk.util.autoCleared
 import net.gini.android.merchant.sdk.util.getLayoutInflaterWithGiniMerchantTheme
 
 
-class ContainerFragment private constructor(private val paymentComponent: PaymentComponent?, private val documentId: String) : Fragment(), BackListener {
+class ContainerFragment private constructor(paymentComponent: PaymentComponent?, private val documentId: String) : Fragment(), BackListener {
 
-//    constructor(): this()
+    constructor(): this(null, "")
     private var binding: GmsFragmentContainerBinding by autoCleared()
     private val viewModel by viewModels<ContainerViewModel> {
         ContainerViewModel.Factory(paymentComponent)
@@ -69,13 +69,15 @@ class ContainerFragment private constructor(private val paymentComponent: Paymen
         if (childFragmentManager.backStackEntryCount == 0) {
             when (viewModel.getLastBackstackEntry()) {
                 ContainerViewModel.DisplayedScreen.BankSelectionBottomSheet -> {
-                    BankSelectionBottomSheet.newInstance(paymentComponent!!, this).show(childFragmentManager, BankSelectionBottomSheet::class.java.name)
+                    viewModel.paymentComponent?.let {
+                        BankSelectionBottomSheet.newInstance(it, this).show(childFragmentManager, BankSelectionBottomSheet::class.java.name)
+                    }
                 }
                 ContainerViewModel.DisplayedScreen.Nothing -> {
-                    paymentComponent?.listener = originalPaymentComponentListener
+                    viewModel.paymentComponent?.listener = originalPaymentComponentListener
                     requireActivity().supportFragmentManager.popBackStack()
                 }
-                ContainerViewModel.DisplayedScreen.PaymentComponentBottomSheet -> PaymentComponentBottomSheet.newInstance(paymentComponent!!, documentId = documentId,this).show(childFragmentManager, PaymentComponentBottomSheet::class.java.name)
+                ContainerViewModel.DisplayedScreen.PaymentComponentBottomSheet -> PaymentComponentBottomSheet.newInstance(viewModel.paymentComponent, documentId = documentId,this).show(childFragmentManager, PaymentComponentBottomSheet::class.java.name)
                 else -> {
 
                 }
@@ -95,11 +97,11 @@ class ContainerFragment private constructor(private val paymentComponent: Paymen
     ): View {
         super.onCreateView(inflater, container, savedInstanceState)
         binding = GmsFragmentContainerBinding.inflate(inflater, container, false)
-        originalPaymentComponentListener = paymentComponent?.listener
-        paymentComponent?.listener = paymentComponentListener
+        originalPaymentComponentListener = viewModel.paymentComponent?.listener
+        viewModel.paymentComponent?.listener = paymentComponentListener
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                paymentComponent!!.selectedPaymentProviderAppFlow.collect {
+                viewModel.paymentComponent?.selectedPaymentProviderAppFlow?.collect {
                     if (it is SelectedPaymentProviderAppState.AppSelected) {
                         if (viewModel.paymentProviderAppChanged(it.paymentProviderApp)) {
                             handleBackFlow()
@@ -108,7 +110,7 @@ class ContainerFragment private constructor(private val paymentComponent: Paymen
                 }
             }
         }
-        PaymentComponentBottomSheet.newInstance(paymentComponent!!, documentId = documentId, backListener = this@ContainerFragment).show(childFragmentManager, PaymentComponentBottomSheet::class.java.name)
+        PaymentComponentBottomSheet.newInstance(viewModel.paymentComponent, documentId = documentId, backListener = this@ContainerFragment).show(childFragmentManager, PaymentComponentBottomSheet::class.java.name)
         viewModel.addToBackStack(ContainerViewModel.DisplayedScreen.PaymentComponentBottomSheet)
         return binding.root
     }

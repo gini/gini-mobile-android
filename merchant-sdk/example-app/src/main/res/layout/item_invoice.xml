@@ -27,7 +27,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/gms_large"
         android:layout_marginBottom="@dimen/gms_medium"
-        app:layout_constraintBottom_toTopOf="@id/payment_component"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/recipient"
         tools:text="Due Date" />
@@ -41,25 +40,9 @@
         android:layout_marginEnd="@dimen/gms_large"
         android:textAlignment="textEnd"
         android:textColor="@color/gms_accent_01"
-        app:layout_constraintBottom_toTopOf="@id/payment_component"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/recipient"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Amount" />
-
-    <net.gini.android.merchant.sdk.paymentcomponent.PaymentComponentView
-        android:id="@+id/payment_component"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/due_date" />
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/gms_pay_now"
-        android:text="Pay now"
-        app:layout_constraintTop_toBottomOf="@id/payment_component"
-        app:layout_constraintStart_toStartOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,42 +2,39 @@ package net.gini.android.merchant.sdk.integratedFlow
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import kotlinx.coroutines.flow.MutableStateFlow
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.merchant.sdk.paymentcomponent.SelectedPaymentProviderAppState
 import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
 import java.util.Stack
 
 
-internal class ContainerViewModel(private val paymentComponent: PaymentComponent?) : ViewModel() {
-    private val _paymentComponent = MutableStateFlow<PaymentComponent?>(null)
+internal class ContainerViewModel(val paymentComponent: PaymentComponent?) : ViewModel() {
 
-    private val _backstack: Stack<DisplayedScreen> = Stack<DisplayedScreen>().also { it.add(DisplayedScreen.Nothing) }
-    private var _initialSelectedPaymentProvider: PaymentProviderApp? = null
+    private val backstack: Stack<DisplayedScreen> = Stack<DisplayedScreen>().also { it.add(DisplayedScreen.Nothing) }
+    private var initialSelectedPaymentProvider: PaymentProviderApp? = null
 
     init {
-        _paymentComponent.value = paymentComponent
         when (paymentComponent?.selectedPaymentProviderAppFlow?.value) {
             is SelectedPaymentProviderAppState.AppSelected -> {
-                _initialSelectedPaymentProvider = (paymentComponent.selectedPaymentProviderAppFlow.value as SelectedPaymentProviderAppState.AppSelected) .paymentProviderApp
+                initialSelectedPaymentProvider = (paymentComponent.selectedPaymentProviderAppFlow.value as SelectedPaymentProviderAppState.AppSelected) .paymentProviderApp
             }
             else -> {}
         }
     }
 
     fun addToBackStack(destination: DisplayedScreen) {
-        _backstack.add(destination)
+        backstack.add(destination)
     }
 
     fun popBackStack() {
-        _backstack.pop()
+        backstack.pop()
     }
 
-    fun getLastBackstackEntry() = _backstack.peek()
+    fun getLastBackstackEntry() = backstack.peek()
 
     fun paymentProviderAppChanged(paymentProviderApp: PaymentProviderApp): Boolean {
-        if (_initialSelectedPaymentProvider?.paymentProvider?.id != paymentProviderApp.paymentProvider.id) {
-            _initialSelectedPaymentProvider = paymentProviderApp
+        if (initialSelectedPaymentProvider?.paymentProvider?.id != paymentProviderApp.paymentProvider.id) {
+            initialSelectedPaymentProvider = paymentProviderApp
             return true
         }
         return false

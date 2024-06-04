@@ -1,9 +1,7 @@
 package net.gini.android.merchant.sdk.bankselection
 
-import android.app.Dialog
 import android.graphics.Paint
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,8 +22,6 @@ import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.util.BackListener
 import net.gini.android.merchant.sdk.util.GmsBottomSheetDialogFragment
-import net.gini.android.merchant.sdk.util.BackListener
-import net.gini.android.merchant.sdk.util.GhsBottomSheetDialogFragment
 import net.gini.android.merchant.sdk.util.autoCleared
 import net.gini.android.merchant.sdk.util.getLayoutInflaterWithGiniMerchantTheme
 import net.gini.android.merchant.sdk.util.setIntervalClickListener
@@ -36,8 +32,8 @@ import org.slf4j.LoggerFactory
  * The [BankSelectionBottomSheet] displays a list of available banks for the user to choose from. If a banking app is not
  * installed it will also display its Play Store link.
  */
-class BankSelectionBottomSheet private constructor(private val paymentComponent: PaymentComponent?, private val backListener: BackListener? = null) :
-    GmsBottomSheetDialogFragment() {
+class BankSelectionBottomSheet private constructor(private val paymentComponent: PaymentComponent?, backListener: BackListener? = null) :
+    GmsBottomSheetDialogFragment(backListener) {
 
     constructor() : this(null)
 
@@ -104,10 +100,6 @@ class BankSelectionBottomSheet private constructor(private val paymentComponent:
         viewModel.recheckWhichPaymentProviderAppsAreInstalled()
     }
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return super.onCreateDialog(savedInstanceState)
-    }
-
     companion object {
         private val LOG = LoggerFactory.getLogger(BankSelectionBottomSheet::class.java)
 
@@ -117,13 +109,9 @@ class BankSelectionBottomSheet private constructor(private val paymentComponent:
          * @param paymentComponent the [PaymentComponent] which contains the list of payment provider apps and handles the
          * payment provider app selection
          */
-        fun newInstance(paymentComponent: PaymentComponent): BankSelectionBottomSheet {
-            return BankSelectionBottomSheet(paymentComponent)
+        fun newInstance(paymentComponent: PaymentComponent, backListener: BackListener? = null): BankSelectionBottomSheet {
+            return BankSelectionBottomSheet(paymentComponent, backListener)
         }
-
-        internal fun newInstance(paymentComponent: PaymentComponent, backListener: BackListener) =
-             BankSelectionBottomSheet(paymentComponent, backListener)
-
     }
 }
 

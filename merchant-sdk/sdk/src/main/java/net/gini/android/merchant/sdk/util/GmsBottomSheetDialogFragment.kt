@@ -12,7 +12,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import net.gini.android.merchant.sdk.R
 
 
-open class GmsBottomSheetDialogFragment private constructor(private val cancelListener: BackListener? = null) : BottomSheetDialogFragment() {
+open class GmsBottomSheetDialogFragment (private val cancelListener: BackListener? = null) : BottomSheetDialogFragment() {
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
         val inflater = super.onGetLayoutInflater(savedInstanceState)
         return this.getLayoutInflaterWithGiniMerchantTheme(inflater)

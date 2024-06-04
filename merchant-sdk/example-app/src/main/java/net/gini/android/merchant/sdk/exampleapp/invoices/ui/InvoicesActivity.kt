@@ -6,11 +6,11 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -25,9 +25,9 @@ import net.gini.android.merchant.sdk.exampleapp.R
 import net.gini.android.merchant.sdk.exampleapp.databinding.ActivityInvoicesBinding
 import net.gini.android.merchant.sdk.exampleapp.invoices.data.UploadHardcodedInvoicesState
 import net.gini.android.merchant.sdk.exampleapp.invoices.ui.model.InvoiceItem
+import net.gini.android.merchant.sdk.integratedFlow.ContainerFragment
 import net.gini.android.merchant.sdk.moreinformation.MoreInformationFragment
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
-import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponentView
 import net.gini.android.merchant.sdk.review.ReviewFragment
 import net.gini.android.merchant.sdk.review.ReviewFragmentListener
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -148,13 +148,8 @@ class InvoicesActivity : AppCompatActivity() {
         viewModel.loadPaymentProviderApps()
 
         binding.invoicesList.layoutManager = LinearLayoutManager(this)
-        binding.invoicesList.adapter = InvoicesAdapter(emptyList(), viewModel.paymentComponent) {
-            ContainerFragment.newInstance(paymentComponent = viewModel.paymentComponent, documentId= it).apply {
-                supportFragmentManager.beginTransaction()
-                    .add(R.id.fragment_container, this, this::class.java.simpleName)
-                    .addToBackStack(this::class.java.simpleName)
-                    .commit()
-            }
+        binding.invoicesList.adapter = InvoicesAdapter(emptyList()) { invoiceItem ->
+            showInvoiceDetailsFragment(invoiceItem)
         }
         binding.invoicesList.addItemDecoration(DividerItemDecoration(this, LinearLayout.VERTICAL))
 
@@ -200,6 +195,8 @@ class InvoicesActivity : AppCompatActivity() {
                 getString(net.gini.android.merchant.sdk.R.string.gms_more_information_fragment_title)
         } else if (supportFragmentManager.fragments.last() is ReviewFragment) {
             title = getString(R.string.title_payment_review)
+        } else if (supportFragmentManager.fragments.last() is InvoiceDetailsFragment) {
+            title = "Invoice details"
         }
     }
     private fun hideLoadingIndicator(binding: ActivityInvoicesBinding) {
@@ -210,6 +207,27 @@ class InvoicesActivity : AppCompatActivity() {
     private fun showLoadingIndicator(binding: ActivityInvoicesBinding) {
         binding.loadingIndicatorContainer.visibility = View.VISIBLE
         binding.loadingIndicator.visibility = View.VISIBLE
+    }
+
+    private fun showInvoiceDetailsFragment(invoiceItem: InvoiceItem) {
+        InvoiceDetailsFragment.newInstance(invoiceItem = invoiceItem) { documentId ->
+            startIntegratedPaymentFlow(documentId)
+        }.apply {
+            add()
+        }
+    }
+
+    private fun startIntegratedPaymentFlow(documentId: String) {
+        ContainerFragment.newInstance(paymentComponent = viewModel.paymentComponent, documentId= documentId).apply {
+            add()
+        }
+    }
+
+    private fun Fragment.add() {
+        supportFragmentManager.beginTransaction()
+            .add(R.id.fragment_container, this, this::class.java.simpleName)
+            .addToBackStack(this::class.java.simpleName)
+            .commit()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -241,35 +259,29 @@ class InvoicesActivity : AppCompatActivity() {
 
 class InvoicesAdapter(
     var dataSet: List<InvoiceItem>,
-    private val paymentComponent: PaymentComponent,
-    private val payNowListener: (String) -> Unit
+    private val openInvoiceDetails: (InvoiceItem) -> Unit
 ) :
     RecyclerView.Adapter<InvoicesAdapter.ViewHolder>() {
 
-    class ViewHolder(view: View, paymentComponent: PaymentComponent) :
+    class ViewHolder(view: View) :
         RecyclerView.ViewHolder(view) {
         val recipient: TextView
         val dueDate: TextView
         val amount: TextView
-        val paymentComponentView: PaymentComponentView
-        val payNowButton: Button
 
         init {
             recipient = view.findViewById(R.id.recipient)
             dueDate = view.findViewById(R.id.due_date)
             amount = view.findViewById(R.id.amount)
-            payNowButton = view.findViewById(R.id.gms_pay_now)
-            this.paymentComponentView = view.findViewById(R.id.payment_component)
-            this.paymentComponentView.paymentComponent = paymentComponent
         }
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(viewGroup.context)
             .inflate(R.layout.item_invoice, viewGroup, false)
-        return ViewHolder(view, paymentComponent).also {  vh ->
-            vh.payNowButton.setOnClickListener {
-                payNowListener(dataSet[vh.adapterPosition].documentId)
+        return ViewHolder(view).also {  vh ->
+            vh.itemView.setOnClickListener {
+                openInvoiceDetails(dataSet[vh.adapterPosition])
             }
         }
     }
@@ -281,9 +293,6 @@ class InvoicesAdapter(
         viewHolder.dueDate.text = invoiceItem.dueDate ?: ""
         viewHolder.amount.text = invoiceItem.amount ?: ""
 
-        viewHolder.paymentComponentView.prepareForReuse()
-        viewHolder.paymentComponentView.isPayable = invoiceItem.isPayable
-        viewHolder.paymentComponentView.documentId = invoiceItem.documentId
     }
 
     override fun getItemCount() = dataSet.size
