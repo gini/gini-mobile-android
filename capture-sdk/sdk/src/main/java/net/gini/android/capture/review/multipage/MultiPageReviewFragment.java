@@ -666,7 +666,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
     @VisibleForTesting
     void onNextButtonClicked() {
         trackReviewScreenEvent(ReviewScreenEvent.NEXT);
-        mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.PROCESS_TAPPED, UserAnalyticsScreen.REVIEW);
+        mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.PROCEED_TAPPED, UserAnalyticsScreen.REVIEW);
         mNextClicked = true;
         NavHostFragment.findNavController(this).navigate(MultiPageReviewFragmentDirections.toAnalysisFragment(mMultiPageDocument, ""));
     }

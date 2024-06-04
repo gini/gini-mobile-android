@@ -8,6 +8,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.addCallback
 import androidx.core.os.BundleCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -29,6 +31,11 @@ import net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrient
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
+import net.gini.android.capture.tracking.useranalytics.UserAnalytics
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsExtraProperties
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen
+import net.gini.android.capture.tracking.useranalytics.mapToAnalyticsValue
 import net.gini.android.capture.view.InjectedViewAdapterHolder
 import net.gini.android.capture.view.NavButtonType
 
@@ -71,6 +78,8 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
     private var returnReasons: List<GiniCaptureReturnReason> = emptyList()
     private var isInaccurateExtraction: Boolean = false
     private var footerDetails: DigitalInvoiceScreenContract.FooterDetails? = null
+    private val userAnalyticsEventTracker by lazy { UserAnalytics.getAnalyticsEventTracker() }
+    private var onBackPressedCallback: OnBackPressedCallback? = null
 
     companion object {
         internal fun getExtractionsBundle(extractions: Map<String, GiniCaptureSpecificExtraction>): Bundle =
@@ -186,6 +195,22 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
         presenter?.onViewCreated()
     }
 
+    override fun onResume() {
+        super.onResume()
+        onBackPressedCallback?.isEnabled = false
+        onBackPressedCallback = activity?.onBackPressedDispatcher?.addCallback {
+            if (this@DigitalInvoiceFragment.isVisible) {
+                trackCloseTappedEvent()
+            }
+            isEnabled = false
+            activity?.onBackPressedDispatcher?.onBackPressed()
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        onBackPressedCallback?.isEnabled = false
+    }
 
     private fun initTopNavigationBar() {
         if (GiniCapture.hasInstance()) {
@@ -207,6 +232,7 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
                 }
 
                 injectedViewAdapter.setOnNavButtonClickListener {
+                    trackCloseTappedEvent()
                     activity?.onBackPressedDispatcher?.onBackPressed()
                 }
             }
@@ -214,6 +240,7 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
     }
 
     private fun showHelp() {
+        trackHelpTappedEvent()
         findNavController().navigate(DigitalInvoiceFragmentDirections.toDigitalInvoiceHelpFragment())
     }
 
@@ -231,6 +258,7 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
 
                     injectedViewAdapter.setOnProceedClickListener {
                         presenter?.pay()
+                        trackProceedTapped()
                     }
 
                     footerDetails?.let {
@@ -271,6 +299,7 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
 
     override fun payButtonClicked() {
         presenter?.pay()
+        trackProceedTapped()
     }
 
     /**
@@ -450,6 +479,7 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
      */
     override fun onLineItemClicked(lineItem: SelectableLineItem) {
         presenter?.editLineItem(lineItem)
+        trackItemEditTappedTappedEvent()
     }
 
     /**
@@ -459,6 +489,7 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
      */
     override fun onLineItemSelected(lineItem: SelectableLineItem) {
         presenter?.selectLineItem(lineItem)
+        trackItemSwitchTappedTappedEvent(lineItem.selected)
     }
 
     /**
@@ -468,5 +499,45 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
      */
     override fun onLineItemDeselected(lineItem: SelectableLineItem) {
         presenter?.deselectLineItem(lineItem)
+        trackItemSwitchTappedTappedEvent(lineItem.selected)
+    }
+
+    // region Analytics
+
+    private fun trackCloseTappedEvent() = runCatching {
+        userAnalyticsEventTracker.trackEvent(
+            UserAnalyticsEvent.CLOSE_TAPPED,
+            UserAnalyticsScreen.RETURN_ASSISTANT,
+        )
+    }
+
+    private fun trackHelpTappedEvent() = runCatching {
+        userAnalyticsEventTracker.trackEvent(
+            UserAnalyticsEvent.HELP_TAPPED,
+            UserAnalyticsScreen.RETURN_ASSISTANT,
+        )
+    }
+
+    private fun trackItemSwitchTappedTappedEvent(selected: Boolean) = runCatching {
+        userAnalyticsEventTracker.trackEvent(
+            UserAnalyticsEvent.ITEM_SWITCH_TAPPED,
+            UserAnalyticsScreen.RETURN_ASSISTANT,
+            mapOf(UserAnalyticsExtraProperties.SWITCH_ACTIVE to selected.mapToAnalyticsValue())
+        )
+    }
+
+    private fun trackItemEditTappedTappedEvent() = runCatching {
+        userAnalyticsEventTracker.trackEvent(
+            UserAnalyticsEvent.EDIT_TAPPED,
+            UserAnalyticsScreen.RETURN_ASSISTANT,
+        )
+    }
+
+    private fun trackProceedTapped() = runCatching {
+        userAnalyticsEventTracker.trackEvent(
+            UserAnalyticsEvent.PROCEED_TAPPED, UserAnalyticsScreen.RETURN_ASSISTANT
+        )
     }
 }
+    // endregion
+

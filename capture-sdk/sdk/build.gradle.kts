@@ -152,6 +152,7 @@ dependencies {
     testImplementation(libs.jUnitParams)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation (libs.json.testing)
+    testImplementation(libs.mockk)
 
     debugImplementation(libs.androidx.test.core.ktx)
     debugImplementation(libs.androidx.fragment.testing)

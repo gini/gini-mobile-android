@@ -19,6 +19,8 @@ enum class UserAnalyticsScreen(val screenName: String) {
     ONBOARDING_CUSTOM_3("onboarding_custom_3"),
     ONBOARDING_CUSTOM_4("onboarding_custom_4"),
     ONBOARDING_CUSTOM_5("onboarding_custom_5"),
+    RETURN_ASSISTANT("return_assistant"),
+    EDIT_RETURN_ASSISTANT("edit_return_assistant")
 }
 
 
