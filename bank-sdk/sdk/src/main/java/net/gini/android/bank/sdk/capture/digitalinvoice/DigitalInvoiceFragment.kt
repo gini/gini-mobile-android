@@ -8,6 +8,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.addCallback
 import androidx.core.os.BundleCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -77,6 +79,7 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
     private var isInaccurateExtraction: Boolean = false
     private var footerDetails: DigitalInvoiceScreenContract.FooterDetails? = null
     private val userAnalyticsEventTracker by lazy { UserAnalytics.getAnalyticsEventTracker() }
+    private var onBackPressedCallback: OnBackPressedCallback? = null
 
     companion object {
         internal fun getExtractionsBundle(extractions: Map<String, GiniCaptureSpecificExtraction>): Bundle =
@@ -192,6 +195,22 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
         presenter?.onViewCreated()
     }
 
+    override fun onResume() {
+        super.onResume()
+        onBackPressedCallback?.isEnabled = false
+        onBackPressedCallback = activity?.onBackPressedDispatcher?.addCallback {
+            if (this@DigitalInvoiceFragment.isVisible) {
+                trackCloseTappedEvent()
+            }
+            isEnabled = false
+            activity?.onBackPressedDispatcher?.onBackPressed()
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        onBackPressedCallback?.isEnabled = false
+    }
 
     private fun initTopNavigationBar() {
         if (GiniCapture.hasInstance()) {
