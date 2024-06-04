@@ -1,0 +1,612 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Customization Guide &mdash; Gini Capture SDK for Android 2.0 documentation</title>
+  
+
+  
+  
+
+  
+  <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,400italic,600italic|Source+Code+Pro|Roboto+Slab:400,700" rel="stylesheet" type="text/css" />
+
+  
+  
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:'./',
+        VERSION:'2.0',
+        COLLAPSE_INDEX:false,
+        FILE_SUFFIX:'.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/language_data.js"></script>
+
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+    <script type="text/javascript">
+        jQuery(function () {
+            SphinxRtdTheme.StickyNav.enable();
+        });
+    </script>
+  
+
+  
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Gini Capture SDK for Android 2.0 documentation" href="index.html"/>
+        <link rel="next" title="Migrate to 2.0.0" href="migrate-to-2-0-0.html"/>
+        <link rel="prev" title="Features" href="features.html"/> 
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="index.html" id="gini-logo">
+          <img src="_static/logo.png" />
+        </a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="getting-started.html#requirements">Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting-started.html#installation">Installation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="integration.html">Integration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="integration.html#android-manifest">Android Manifest</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#permissions">Permissions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#predictive-back-gesture">Predictive Back Gesture</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="integration.html#requirements-check">Requirements Check</a></li>
+<li class="toctree-l2"><a class="reference internal" href="integration.html#configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="integration.html#tablet-support">Tablet Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="integration.html#networking">Networking</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#default-implementation">Default Implementation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="integration.html#custom-implementation">Custom Implementation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="integration.html#cleanup-and-sending-feedback">Cleanup and Sending Feedback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="integration.html#capturing-documents">Capturing documents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="features.html">Features</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="features.html#document-capture">Document Capture</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="features.html#onboarding">Onboarding</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features.html#single-page">Single Page</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features.html#multi-page">Multi-Page</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features.html#camera">Camera</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features.html#qr-code-scanning">QR Code Scanning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features.html#only-qr-code-scanning">Only QR Code Scanning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features.html#help">Help</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features.html#disable-supported-formats-help-screen">Disable Supported Formats Help Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features.html#no-results">No Results</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features.html#error">Error</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#document-import">Document Import</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="features.html#android-manifest">Android Manifest</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features.html#intercepting-the-imported-document">Intercepting the imported document</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#file-import-open-with">File Import (Open With)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="features.html#registering-pdf-and-image-file-types">Registering pdf and image file types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="features.html#handling-imported-files">Handling Imported Files</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#event-tracking">Event Tracking</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="features.html#events">Events</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#error-logging">Error Logging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#accessibility">Accessibility</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Customization Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#overview-of-ui-customization-options">Overview of UI Customization Options</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#styles">Styles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#colors">Colors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#images">Images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#typography">Typography</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#text">Text</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#custom-ui-elements">Custom UI Elements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dark-mode">Dark mode</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#onboarding-screen">Onboarding Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#ui-customization">UI Customization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id1">Bottom Navigation Bar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#custom-onboarding-pages">Custom Onboarding Pages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#custom-illustration-views">Custom Illustration Views</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#camera-screen">Camera Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">UI Customization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">Bottom Navigation Bar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#custom-loading-indicator">Custom Loading Indicator</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#review-screen">Review Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id4">UI Customization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">Bottom Navigation Bar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#custom-process-button-loading-indicator">Custom “Process” Button Loading Indicator</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#analysis-screen">Analysis Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id6">UI Customization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">Custom Loading Indicator</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#help-screen">Help Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id8">UI Customization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">Bottom Navigation Bar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#custom-help-screens">Custom Help Screens</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#no-results-screen">No Results Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id10">UI Customization</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#error-screen">Error Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id11">UI Customization</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="migrate-to-2-0-0.html">Migrate to 2.0.0</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="migrate-to-2-0-0.html#default-networking-implementation">Default Networking Implementation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-2-0-0.html#ginicapturedefaultnetworkservice-builder">GiniCaptureDefaultNetworkService.Builder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-2-0-0.html#sessionmanager">SessionManager</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="migrate-to-3-0-0.html">Migrate to 3.0.0</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="migrate-to-3-0-0.html#migrate-from-component-api">Migrate from Component API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrate-to-3-0-0.html#migrate-from-screen-api">Migrate from Screen API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrate-to-3-0-0.html#migrate-file-import-open-with">Migrate File Import (“open with”)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrate-to-3-0-0.html#migrate-cleanup-step-and-feedback-sending">Migrate Cleanup Step and Feedback Sending</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#default-networking-implementation">Default Networking Implementation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#custom-networking-implementation">Custom Networking Implementation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="migrate-to-3-0-0.html#overview-of-new-ui-customization-options">Overview of New UI Customization Options</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#styles">Styles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#colors">Colors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#images">Images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#typography">Typography</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#text">Text</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#ui-elements">UI Elements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#dark-mode">Dark mode</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="migrate-to-3-0-0.html#migrate-to-the-new-ui">Migrate to the new UI</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#back-buttons">Back Buttons</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#onboarding-screen">Onboarding Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#camera-screen">Camera Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#qr-code-scanner">QR Code Scanner</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#review-screen">Review Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#help-screen">Help Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#analysis-screen">Analysis Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#error-screen">Error Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-3-0-0.html#no-results-screen">No Results Screen</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">Reference Docs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="license.html#licenses-and-acknowledgements-for-incorporated-software">Licenses and Acknowledgements for Incorporated Software</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="license.html#apache-commons-imaging">Apache Commons Imaging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license.html#touchimageview">TouchImageView</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license.html#simple-logging-facade-for-java-slf4j">Simple Logging Facade for Java (SLF4J)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license.html#jersey-repackaged-jsr166e">Jersey Repackaged JSR166e</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Gini Capture SDK for Android</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Customization Guide</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="customization-guide">
+<h1>Customization Guide<a class="headerlink" href="#customization-guide" title="Permalink to this headline">¶</a></h1>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><a class="reference internal" href="#overview-of-ui-customization-options" id="id12">Overview of UI Customization Options</a></li>
+<li><a class="reference internal" href="#onboarding-screen" id="id13">Onboarding Screen</a></li>
+<li><a class="reference internal" href="#camera-screen" id="id14">Camera Screen</a></li>
+<li><a class="reference internal" href="#review-screen" id="id15">Review Screen</a></li>
+<li><a class="reference internal" href="#analysis-screen" id="id16">Analysis Screen</a></li>
+<li><a class="reference internal" href="#help-screen" id="id17">Help Screen</a></li>
+<li><a class="reference internal" href="#no-results-screen" id="id18">No Results Screen</a></li>
+<li><a class="reference internal" href="#error-screen" id="id19">Error Screen</a></li>
+</ul>
+</div>
+<p>UI customization is provided mostly via overriding of app resources: theme, styles, dimensions, strings,
+colors, texts, etc.</p>
+<p>We provide global customization options which are applied on all screens consistently. Screen specific customizations
+are only needed for images and texts.</p>
+<div class="section" id="overview-of-ui-customization-options">
+<h2><a class="toc-backref" href="#id12">Overview of UI Customization Options</a><a class="headerlink" href="#overview-of-ui-customization-options" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="styles">
+<h3>Styles<a class="headerlink" href="#styles" title="Permalink to this headline">¶</a></h3>
+<p>We leverage the power of Material Design to configure a theme for the SDK with a global color palette and typography
+that is applied on all the screens.</p>
+<p>Using global styles for the various widgets we enable you to customize them in a single place. They are then
+consistently applied on all screens.</p>
+<div class="section" id="theme">
+<h4>Theme<a class="headerlink" href="#theme" title="Permalink to this headline">¶</a></h4>
+<p>The theme style is based on Material Design v3 and is named <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme</span></code>. To override the theme in your
+application use <code class="docutils literal notranslate"><span class="pre">Root.GiniCaptureTheme</span></code> as the parent:</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;style</span> <span class="na">name=</span><span class="s">&quot;GiniCaptureTheme&quot;</span> <span class="na">parent=</span><span class="s">&quot;Root.GiniCaptureTheme&quot;</span><span class="nt">&gt;</span>
+  (...)
+<span class="nt">&lt;/style&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="widgets">
+<h4>Widgets<a class="headerlink" href="#widgets" title="Permalink to this headline">¶</a></h4>
+<p>The style of buttons and other widgets is based on Material Design v2. To override them in your application use the
+root style as the parent, for example:</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;style</span> <span class="na">name=</span><span class="s">&quot;GiniCaptureTheme.Widget.Button.OutlinedButton&quot;</span> <span class="na">parent=</span><span class="s">&quot;Root.GiniCaptureTheme.Widget.Button.OutlinedButton&quot;</span><span class="nt">&gt;</span>
+  (...)
+<span class="nt">&lt;/style&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="colors">
+<h3>Colors<a class="headerlink" href="#colors" title="Permalink to this headline">¶</a></h3>
+<p>We are providing a global color palette which you are free to override. The custom colors will be then applied on all screens.</p>
+<p>You can find the names of the color resources in the color palette below.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you have overridden the <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme</span></code> then the theme colors you have set there will override the color
+palette customization.</p>
+</div>
+<p>You can view our color palette here:</p>
+<iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
+src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FzyN1EkRlqN4QyXLBIFn8or%2FAndroid-Gini-Capture-SDK-3.2.1-UI-Customisation%3Ftype%3Ddesign%26node-id%3D40%253A491%26mode%3Ddesign%26t%3DY2bMNVnWxZALPnHV-1"
+allowfullscreen></iframe></div>
+<div class="section" id="images">
+<h3>Images<a class="headerlink" href="#images" title="Permalink to this headline">¶</a></h3>
+<p>Customizing of images is done via overriding of drawable resources. You can find the drawable
+resource names in the <a class="reference internal" href="#screen-customization"><span class="std std-ref">screen-by-screen UI customization section</span></a>.</p>
+<p>We are using mostly vector drawables. Unfortunately due to the limitations of vector drawables some images had to be
+added as PNGs.</p>
+<p>If you use vector drawables please add them to the <cite>drawable-anydpi</cite> folder so that they also override any density
+specific PNGs.</p>
+</div>
+<div class="section" id="typography">
+<h3>Typography<a class="headerlink" href="#typography" title="Permalink to this headline">¶</a></h3>
+<p>We provide a global typography based on text appearance styles from Material Design v2. To override them in your
+application use the root style as the parent, for example:</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;style</span> <span class="na">name=</span><span class="s">&quot;GiniCaptureTheme.Typography.Body1&quot;</span> <span class="na">parent=</span><span class="s">&quot;Root.GiniCaptureTheme.Typography.Body1&quot;</span><span class="nt">&gt;</span>
+    (...)
+<span class="nt">&lt;/style&gt;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you have overriden the <code class="docutils literal notranslate"><span class="pre">GiniCaptureTheme</span></code> then the text appearances you have set there will override the
+typography customization. Same applies to overriden widget styles where you have set a custom text appearance.</p>
+</div>
+<p>You can preview our typography along with their style resource names below:</p>
+<iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
+src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FzyN1EkRlqN4QyXLBIFn8or%2FAndroid-Gini-Capture-SDK-3.2.1-UI-Customisation%3Ftype%3Ddesign%26node-id%3D40%253A492%26mode%3Ddesign%26t%3DY2bMNVnWxZALPnHV-1"
+allowfullscreen></iframe></div>
+<div class="section" id="text">
+<h3>Text<a class="headerlink" href="#text" title="Permalink to this headline">¶</a></h3>
+<p>Text customization is done via overriding of string resources.</p>
+</div>
+<div class="section" id="custom-ui-elements">
+<h3>Custom UI Elements<a class="headerlink" href="#custom-ui-elements" title="Permalink to this headline">¶</a></h3>
+<p>Certain elements of the UI can be fully customized via UI injection. It utilizes view adapter interfaces which you
+can implement and pass to <code class="docutils literal notranslate"><span class="pre">GiniCapture</span></code> when configuring the SDK. These interfaces declare the contract the injected
+view has to fulfill and allow the SDK to ask for your view instance when needed.</p>
+<div class="section" id="top-navigation-bar">
+<h4>Top Navigation Bar<a class="headerlink" href="#top-navigation-bar" title="Permalink to this headline">¶</a></h4>
+<p>To inject your own navigation bar view implement the <code class="docutils literal notranslate"><span class="pre">NavigationBarTopAdapter</span></code> and pass it to
+<code class="docutils literal notranslate"><span class="pre">GiniCapture.newInstance(context).setNavigationBarTopAdapter()</span></code>. Your view will then be displayed on all screens as the top
+navigation bar.</p>
+</div>
+<div class="section" id="bottom-navigation-bar">
+<h4>Bottom Navigation Bar<a class="headerlink" href="#bottom-navigation-bar" title="Permalink to this headline">¶</a></h4>
+<p>You can opt to show a bottom navigation bar. To enable it pass <code class="docutils literal notranslate"><span class="pre">true</span></code> to
+<code class="docutils literal notranslate"><span class="pre">GiniCapture.newInstance(context).setBottomNavigationBarEnabled()</span></code>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The top navigation bar will still be used, but its functionality will be limited to showing the screen’s title and
+an optional close button. Please inject a custom top navigation bar if your design requires it even if you have
+enabled the bottom navigation bar.</p>
+</div>
+<p>Each screen has a slightly different bottom navigation bar because they contain screen specific call-to-action buttons.</p>
+<p>To inject your own views implement each screen’s view adapter interface (e.g., <code class="docutils literal notranslate"><span class="pre">OnboardingNavigationBarBottomAdapter</span></code>)
+and pass it to <code class="docutils literal notranslate"><span class="pre">GiniCapture</span></code> (e.g., <code class="docutils literal notranslate"><span class="pre">GiniCapture.newInstance(context).setOnboardingNavigationBarBottomAdapter()</span></code>). Your
+view will then be displayed on the relevant screen.</p>
+</div>
+</div>
+<div class="section" id="dark-mode">
+<h3>Dark mode<a class="headerlink" href="#dark-mode" title="Permalink to this headline">¶</a></h3>
+<p>To customize resources for dark mode add them to resource folders containing the <code class="docutils literal notranslate"><span class="pre">-night</span></code> resource qualifier.</p>
+</div>
+</div>
+<div class="section" id="onboarding-screen">
+<span id="screen-customization"></span><h2><a class="toc-backref" href="#id13">Onboarding Screen</a><a class="headerlink" href="#onboarding-screen" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="ui-customization">
+<h3>UI Customization<a class="headerlink" href="#ui-customization" title="Permalink to this headline">¶</a></h3>
+<iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
+src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FzyN1EkRlqN4QyXLBIFn8or%2FAndroid-Gini-Capture-SDK-3.2.1-UI-Customisation%3Ftype%3Ddesign%26node-id%3D40%253A584%26mode%3Ddesign%26t%3DY2bMNVnWxZALPnHV-1"
+allowfullscreen></iframe></div>
+<div class="section" id="id1">
+<h3>Bottom Navigation Bar<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>You can inject your own view for the bottom navigation bar, if you set
+<code class="docutils literal notranslate"><span class="pre">GiniCapture.newInstance(context).setBottomNavigationBarEnabled()</span></code> to <code class="docutils literal notranslate"><span class="pre">true</span></code> and pass a custom
+<code class="docutils literal notranslate"><span class="pre">OnboardingNavigationBarBottomAdapter</span></code> implementation to <code class="docutils literal notranslate"><span class="pre">GiniCapture.Builder</span></code>:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">OnboardingNavigationBarBottomAdapter</span> <span class="n">customOnboardingNavigationBarBottomAdapter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CustomOnboardingNavigationBarBottomAdapter</span><span class="p">();</span>
+
+<span class="n">GiniCapture</span><span class="p">.</span><span class="na">newInstance</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+        <span class="p">.</span><span class="na">setOnboardingNavigationBarBottomAdapter</span><span class="p">(</span><span class="n">customOnboardingNavigationBarBottomAdapter</span><span class="p">)</span>
+        <span class="p">.</span><span class="na">build</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="custom-onboarding-pages">
+<h3>Custom Onboarding Pages<a class="headerlink" href="#custom-onboarding-pages" title="Permalink to this headline">¶</a></h3>
+<p>If you wish to show different onboarding pages then pass a list of <code class="docutils literal notranslate"><span class="pre">OnboardingPage</span></code> objects to
+<code class="docutils literal notranslate"><span class="pre">GiniCapture.Builder.setCustomOnboardingPages()</span></code>.</p>
+</div>
+<div class="section" id="custom-illustration-views">
+<h3>Custom Illustration Views<a class="headerlink" href="#custom-illustration-views" title="Permalink to this headline">¶</a></h3>
+<p>You can inject your own views for the illustrations. For example if you need to animate the illustrations on the
+onboarding pages implement the <code class="docutils literal notranslate"><span class="pre">OnboardingIllustrationAdapter</span></code> interface to inject a view that can animate images
+(e.g., <a class="reference external" href="https://github.com/airbnb/lottie-android">Lottie</a>) and pass it to the relevant onboarding illustration adapter
+setters (e.g., <code class="docutils literal notranslate"><span class="pre">setOnboardingAlignCornersIllustrationAdapter()</span></code>) when building the <code class="docutils literal notranslate"><span class="pre">GiniCapture</span></code> instance. The
+<a class="reference external" href="https://developer.gini.net/gini-mobile-android/capture-sdk/sdk/3.10.3/dokka/sdk/net.gini.android.capture/-gini-capture/-builder/index.html">reference documentation</a> of
+<code class="docutils literal notranslate"><span class="pre">GiniCapture.Builder</span></code> lists all the setters.</p>
+</div>
+</div>
+<div class="section" id="camera-screen">
+<h2><a class="toc-backref" href="#id14">Camera Screen</a><a class="headerlink" href="#camera-screen" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id2">
+<h3>UI Customization<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
+src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FzyN1EkRlqN4QyXLBIFn8or%2FAndroid-Gini-Capture-SDK-3.2.1-UI-Customisation%3Ftype%3Ddesign%26node-id%3D92%253A3712%26mode%3Ddesign%26t%3DY2bMNVnWxZALPnHV-1"
+allowfullscreen></iframe></div>
+<div class="section" id="id3">
+<h3>Bottom Navigation Bar<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>You can inject your own view for the bottom navigation bar, if you set
+<code class="docutils literal notranslate"><span class="pre">GiniCapture.newInstance(context).setBottomNavigationBarEnabled()</span></code> to <code class="docutils literal notranslate"><span class="pre">true</span></code> and pass a custom
+<code class="docutils literal notranslate"><span class="pre">CameraNavigationBarBottomAdapter</span></code> implementation to <code class="docutils literal notranslate"><span class="pre">GiniCapture.Builder</span></code>:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">CameraNavigationBarBottomAdapter</span> <span class="n">customCameraNavigationBarBottomAdapter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CustomCameraNavigationBarBottomAdapter</span><span class="p">();</span>
+
+<span class="n">GiniCapture</span><span class="p">.</span><span class="na">newInstance</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+        <span class="p">.</span><span class="na">setCameraNavigationBarBottomAdapter</span><span class="p">(</span><span class="n">customCameraNavigationBarBottomAdapter</span><span class="p">)</span>
+        <span class="p">.</span><span class="na">build</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="custom-loading-indicator">
+<h3>Custom Loading Indicator<a class="headerlink" href="#custom-loading-indicator" title="Permalink to this headline">¶</a></h3>
+<p>There is a default loading indicator which shows that image is being processed. You can show your own activity indicator
+by implementing the <code class="docutils literal notranslate"><span class="pre">CustomLoadingIndicatorAdapter</span></code> interface and passing it to <code class="docutils literal notranslate"><span class="pre">GiniCapture</span></code>:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">CustomLoadingIndicatorAdapter</span> <span class="n">customLoadingIndicatorAdapter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">MyCustomLoadingIndicatorAdapter</span><span class="p">();</span>
+
+<span class="n">GiniCapture</span><span class="p">.</span><span class="na">newInstance</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+        <span class="p">.</span><span class="na">setLoadingIndicatorAdapter</span><span class="p">(</span><span class="n">customLoadingIndicatorAdapter</span><span class="p">)</span>
+        <span class="p">.</span><span class="na">build</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="review-screen">
+<h2><a class="toc-backref" href="#id15">Review Screen</a><a class="headerlink" href="#review-screen" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id4">
+<h3>UI Customization<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
+src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FzyN1EkRlqN4QyXLBIFn8or%2FAndroid-Gini-Capture-SDK-3.2.1-UI-Customisation%3Ftype%3Ddesign%26node-id%3D143%253A4156%26mode%3Ddesign%26t%3DY2bMNVnWxZALPnHV-1"
+allowfullscreen></iframe></div>
+<div class="section" id="id5">
+<h3>Bottom Navigation Bar<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<p>You can inject your own view for the bottom navigation bar, if you set
+<code class="docutils literal notranslate"><span class="pre">GiniCapture.newInstance(context).setBottomNavigationBarEnabled()</span></code> to <code class="docutils literal notranslate"><span class="pre">true</span></code> and pass a custom
+<code class="docutils literal notranslate"><span class="pre">CameraNavigationBarBottomAdapter</span></code> implementation to <code class="docutils literal notranslate"><span class="pre">GiniCapture.Builder</span></code>:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">ReviewNavigationBarBottomAdapter</span> <span class="n">customReviewNavigationBarBottomAdapter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CustomReviewNavigationBarBottomAdapter</span><span class="p">();</span>
+
+<span class="n">GiniCapture</span><span class="p">.</span><span class="na">newInstance</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+        <span class="p">.</span><span class="na">setReviewBottomBarNavigationAdapter</span><span class="p">(</span><span class="n">customReviewNavigationBarBottomAdapter</span><span class="p">)</span>
+        <span class="p">.</span><span class="na">build</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="custom-process-button-loading-indicator">
+<h3>Custom “Process” Button Loading Indicator<a class="headerlink" href="#custom-process-button-loading-indicator" title="Permalink to this headline">¶</a></h3>
+<p>There is a default loading indicator on the “Process” button which shows that the upload is in progress. You can show
+your own activity indicator by implementing the <code class="docutils literal notranslate"><span class="pre">OnButtonLoadingIndicatorAdapter</span></code> interface and passing it to
+<code class="docutils literal notranslate"><span class="pre">GiniCapture</span></code>:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">OnButtonLoadingIndicatorAdapter</span> <span class="n">customOnButtonLoadingIndicatorAdapter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CustomOnButtonLoadingIndicatorAdapter</span><span class="p">();</span>
+
+<span class="n">GiniCapture</span><span class="p">.</span><span class="na">newInstance</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+        <span class="p">.</span><span class="na">setOnButtonLoadingIndicatorAdapter</span><span class="p">(</span><span class="n">customOnButtonLoadingIndicatorAdapter</span><span class="p">)</span>
+        <span class="p">.</span><span class="na">build</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="analysis-screen">
+<h2><a class="toc-backref" href="#id16">Analysis Screen</a><a class="headerlink" href="#analysis-screen" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id6">
+<h3>UI Customization<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
+src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FzyN1EkRlqN4QyXLBIFn8or%2FAndroid-Gini-Capture-SDK-3.2.1-UI-Customisation%3Ftype%3Ddesign%26node-id%3D7%253A18496%26mode%3Ddesign%26t%3DY2bMNVnWxZALPnHV-1"
+allowfullscreen></iframe><div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This screen does not show a bottom navigation bar even if the value passed to <code class="docutils literal notranslate"><span class="pre">GiniCapture.newInstance(context).setBottomNavigationBarEnabled()</span></code> is <code class="docutils literal notranslate"><span class="pre">true</span></code>.</p>
+</div>
+</div>
+<div class="section" id="id7">
+<h3>Custom Loading Indicator<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<p>You can show a customized activity indicator on this screen. You can pass your custom <code class="docutils literal notranslate"><span class="pre">CustomLoadingIndicatorAdapter</span></code> implementation to
+<code class="docutils literal notranslate"><span class="pre">GiniCapture.Builder</span></code> :</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">CustomLoadingIndicatorAdapter</span> <span class="n">customLoadingIndicatorAdapter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">MyCustomLoadingIndicatorAdapter</span><span class="p">();</span>
+
+<span class="n">GiniCapture</span><span class="p">.</span><span class="na">newInstance</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+        <span class="p">.</span><span class="na">setLoadingIndicatorAdapter</span><span class="p">(</span><span class="n">customLoadingIndicatorAdapter</span><span class="p">)</span>
+        <span class="p">.</span><span class="na">build</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="help-screen">
+<h2><a class="toc-backref" href="#id17">Help Screen</a><a class="headerlink" href="#help-screen" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id8">
+<h3>UI Customization<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
+src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FzyN1EkRlqN4QyXLBIFn8or%2FAndroid-Gini-Capture-SDK-3.2.1-UI-Customisation%3Ftype%3Ddesign%26node-id%3D9%253A4645%26mode%3Ddesign%26t%3DY2bMNVnWxZALPnHV-1"
+allowfullscreen></iframe></div>
+<div class="section" id="id9">
+<h3>Bottom Navigation Bar<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
+<p>You can inject your own view for the bottom navigation bar. You can pass your custom <code class="docutils literal notranslate"><span class="pre">HelpNavigationBarBottomAdapter</span></code> implementation to
+<code class="docutils literal notranslate"><span class="pre">GiniCapture.Builder</span></code>:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">HelpNavigationBarBottomAdapter</span> <span class="n">customHelpNavigationBarBottomAdapter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CustomHelpNavigationBarBottomAdapter</span><span class="p">();</span>
+
+<span class="n">GiniCapture</span><span class="p">.</span><span class="na">newInstance</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+        <span class="p">.</span><span class="na">setHelpNavigationBarBottomAdapter</span><span class="p">(</span><span class="n">customHelpNavigationBarBottomAdapter</span><span class="p">)</span>
+        <span class="p">.</span><span class="na">build</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="custom-help-screens">
+<h3>Custom Help Screens<a class="headerlink" href="#custom-help-screens" title="Permalink to this headline">¶</a></h3>
+<p>You can show your own help screens. They will be appended to the list on the main help screen.</p>
+<p>You can pass the title and activity for each screen to the
+<code class="docutils literal notranslate"><span class="pre">GiniCapture.Builder</span></code> using a list of <code class="docutils literal notranslate"><span class="pre">HelpItem.Custom</span></code> objects:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">List</span><span class="o">&lt;</span><span class="n">HelpItem</span><span class="p">.</span><span class="na">Custom</span><span class="o">&gt;</span> <span class="n">customHelpItems</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+
+<span class="n">customHelpItems</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="k">new</span> <span class="n">HelpItem</span><span class="p">.</span><span class="na">Custom</span><span class="p">(</span><span class="n">R</span><span class="p">.</span><span class="na">string</span><span class="p">.</span><span class="na">custom_help_screen_title</span><span class="p">,</span>
+        <span class="k">new</span> <span class="n">Intent</span><span class="p">((</span><span class="n">Context</span><span class="p">)</span> <span class="k">this</span><span class="p">,</span> <span class="n">CustomHelpActivity</span><span class="p">.</span><span class="na">class</span><span class="p">)));</span>
+
+<span class="n">GiniCapture</span><span class="p">.</span><span class="na">newInstance</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+        <span class="p">.</span><span class="na">setCustomHelpItems</span><span class="p">(</span><span class="n">customHelpItems</span><span class="p">)</span>
+        <span class="p">.</span><span class="na">build</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="no-results-screen">
+<h2><a class="toc-backref" href="#id18">No Results Screen</a><a class="headerlink" href="#no-results-screen" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id10">
+<h3>UI Customization<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
+<iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
+src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FzyN1EkRlqN4QyXLBIFn8or%2FAndroid-Gini-Capture-SDK-3.2.1-UI-Customisation%3Ftype%3Ddesign%26node-id%3D10%253A2540%26mode%3Ddesign%26t%3DY2bMNVnWxZALPnHV-1"
+allowfullscreen></iframe></div>
+</div>
+<div class="section" id="error-screen">
+<h2><a class="toc-backref" href="#id19">Error Screen</a><a class="headerlink" href="#error-screen" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id11">
+<h3>UI Customization<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h3>
+<iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
+src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FzyN1EkRlqN4QyXLBIFn8or%2FAndroid-Gini-Capture-SDK-3.2.1-UI-Customisation%3Ftype%3Ddesign%26node-id%3D9%253A5075%26mode%3Ddesign%26t%3DY2bMNVnWxZALPnHV-1"
+allowfullscreen></iframe></div>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="migrate-to-2-0-0.html" class="btn btn-neutral float-right" title="Migrate to 2.0.0">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="features.html" class="btn btn-neutral" title="Features"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+    </p>
+  </div>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  
+</body>
+</html>
