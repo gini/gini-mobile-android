@@ -26,16 +26,20 @@ import net.gini.android.capture.help.SupportedFormatsAdapter;
 import net.gini.android.capture.internal.ui.ClickListenerExtKt;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.ui.IntervalClickListener;
-import net.gini.android.capture.tracking.AnalysisScreenEvent;
 import net.gini.android.capture.internal.util.CancelListener;
+import net.gini.android.capture.tracking.AnalysisScreenEvent;
+import net.gini.android.capture.tracking.useranalytics.UserAnalytics;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker;
-import net.gini.android.capture.tracking.useranalytics.UserAnalytics;
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsExtraProperties;
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsHelperKt;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen;
 import net.gini.android.capture.view.InjectedViewAdapterHolder;
 import net.gini.android.capture.view.InjectedViewContainer;
 import net.gini.android.capture.view.NavButtonType;
 import net.gini.android.capture.view.NavigationBarTopAdapter;
+
+import java.util.HashMap;
 
 /**
  * Main logic implementation for no results UI presented by {@link NoResultsFragment}.
@@ -87,7 +91,12 @@ class NoResultsFragmentImpl {
         final View retakeImagesButton = view.findViewById(R.id.gc_button_no_results_retake_images);
         handleOnBackPressed();
         mUserAnalyticsEventTracker = UserAnalytics.INSTANCE.getAnalyticsEventTracker();
-        mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.SCREEN_SHOWN, UserAnalyticsScreen.NO_RESULTS);
+        mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.SCREEN_SHOWN, UserAnalyticsScreen.NO_RESULTS,
+                new HashMap<UserAnalyticsExtraProperties, String>() {{
+                    put(UserAnalyticsExtraProperties.DOCUMENT_ID, mDocument.getId());
+                    put(UserAnalyticsExtraProperties.DOCUMENT_TYPE, UserAnalyticsHelperKt.getDocumentTypeForUserAnalytics(mDocument));
+                }}
+        );
         if (shouldAllowRetakeImages()) {
             ClickListenerExtKt.setIntervalClickListener(retakeImagesButton, v -> {
                 mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.RETAKE_IMAGES_TAPPED, UserAnalyticsScreen.NO_RESULTS);

@@ -297,11 +297,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     }
 
     private void showQRCodeView(PaymentQRCodeData data, String qrCodeContent) {
-        if (shouldSendUserAnalyticsTrackerForQrCodes) {
-            mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.MULTIPLE_PAGES_CAPTURED_TAPPED, UserAnalyticsScreen.CAMERA);
-            shouldSendUserAnalyticsTrackerForQrCodes = false;
-        }
-
         if (data == null) {
             mQRCodeContent = qrCodeContent;
             showUnsupportedQRCodePopup();
@@ -948,29 +943,28 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             case BEZAHL_CODE:
                 QRCodeDocument mQRCodeDocument = QRCodeDocument.fromPaymentQRCodeData(
                         paymentQRCodeData);
-                mUserAnalyticsEventTracker.trackEvent(
-                        UserAnalyticsEvent.QR_CODE_SCANNED,
-                        UserAnalyticsScreen.CAMERA,
-                        Collections.singletonMap(UserAnalyticsExtraProperties.QR_CODE_VALID, UserAnalyticsMappersKt.mapToAnalyticsValue(true))
-                );
+                sendQRCodeScannedEventToUserAnalytics(true);
                 analyzeQRCode(mQRCodeDocument);
                 break;
             case EPS_PAYMENT:
-                mUserAnalyticsEventTracker.trackEvent(
-                        UserAnalyticsEvent.QR_CODE_SCANNED,
-                        UserAnalyticsScreen.CAMERA,
-                        Collections.singletonMap(UserAnalyticsExtraProperties.QR_CODE_VALID, UserAnalyticsMappersKt.mapToAnalyticsValue(true))
-                );
+                sendQRCodeScannedEventToUserAnalytics(true);
                 handleEPSPaymentQRCode(paymentQRCodeData);
                 break;
             default:
-                mUserAnalyticsEventTracker.trackEvent(
-                        UserAnalyticsEvent.QR_CODE_SCANNED,
-                        UserAnalyticsScreen.CAMERA,
-                        Collections.singletonMap(UserAnalyticsExtraProperties.QR_CODE_VALID, UserAnalyticsMappersKt.mapToAnalyticsValue(false))
-                );
+                sendQRCodeScannedEventToUserAnalytics(false);
                 LOG.error("Unknown payment QR Code format: {}", paymentQRCodeData);
                 break;
+        }
+    }
+
+    private void sendQRCodeScannedEventToUserAnalytics(boolean validQRCode) {
+        if (shouldSendUserAnalyticsTrackerForQrCodes) {
+            mUserAnalyticsEventTracker.trackEvent(
+                    UserAnalyticsEvent.QR_CODE_SCANNED,
+                    UserAnalyticsScreen.CAMERA,
+                    Collections.singletonMap(UserAnalyticsExtraProperties.QR_CODE_VALID, UserAnalyticsMappersKt.mapToAnalyticsValue(validQRCode))
+            );
+            shouldSendUserAnalyticsTrackerForQrCodes = false;
         }
     }
 
