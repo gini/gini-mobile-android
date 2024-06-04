@@ -21,16 +21,16 @@ sealed class UserAnalyticsUserProperty(val propertyName: String, val value: Stri
 
     sealed class Accessibility {
         data class GrayscaleEnabled(private val isEnabled: Boolean) :
-            UserAnalyticsUserProperty("is_grayscale_enabled", isEnabled.mapToAnalyticsValue())
+            UserAnalyticsUserProperty("grayscale_enabled", isEnabled.mapToAnalyticsValue())
 
         data class BoldTextEnabled(private val isEnabled: Boolean) :
-            UserAnalyticsUserProperty("is_bold_text_enabled", isEnabled.mapToAnalyticsValue())
+            UserAnalyticsUserProperty("bold_text_enabled", isEnabled.mapToAnalyticsValue())
 
         data class SpeakSelectionEnabled(private val isEnabled: Boolean) :
-            UserAnalyticsUserProperty("is_speak_selection_enabled", isEnabled.mapToAnalyticsValue())
+            UserAnalyticsUserProperty("speak_selection_enabled", isEnabled.mapToAnalyticsValue())
 
         data class SpeakScreenEnabled(private val isEnabled: Boolean) :
-            UserAnalyticsUserProperty("is_speak_screen_enabled", isEnabled.mapToAnalyticsValue())
+            UserAnalyticsUserProperty("speak_screen_enabled", isEnabled.mapToAnalyticsValue())
     }
 
     fun getPair() = propertyName to value

@@ -21,6 +21,7 @@ import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsU
 internal class CaptureFlowActivity : AppCompatActivity(), CaptureFlowFragmentListener {
 
     private val userAnalyticsEventTracker by lazy { UserAnalytics.getAnalyticsEventTracker() }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.gbs_activity_capture_flow)
@@ -29,7 +30,6 @@ internal class CaptureFlowActivity : AppCompatActivity(), CaptureFlowFragmentLis
         } else {
             restoreFragmentListener()
         }
-
     }
 
     private fun handleInput() {
@@ -53,8 +53,7 @@ internal class CaptureFlowActivity : AppCompatActivity(), CaptureFlowFragmentLis
             intent,
             EXTRA_IN_CAPTURE_IMPORT_INPUT,
             CaptureImportInput::class.java
-        )
-            ?: CaptureImportInput.Default
+        ) ?: CaptureImportInput.Default
 
     private fun initFragment(document: Document? = null) {
         setAnalyticsEntryPointProperty(document != null)

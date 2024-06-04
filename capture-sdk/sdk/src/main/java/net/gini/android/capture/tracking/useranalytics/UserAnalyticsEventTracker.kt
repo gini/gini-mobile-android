@@ -4,10 +4,8 @@ import android.accessibilityservice.AccessibilityServiceInfo
 import android.content.Context
 import android.content.Context.ACCESSIBILITY_SERVICE
 import android.provider.Settings
-import android.util.Log
 import android.view.accessibility.AccessibilityManager
 import com.mixpanel.android.mpmetrics.MixpanelAPI
-import kotlinx.coroutines.sync.Mutex
 import net.gini.android.capture.R
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsUserProperty
 
@@ -61,10 +59,6 @@ private class MixPanelUserAnalyticsEventTracker(context: Context) : UserAnalytic
 
     private val mixpanelAPI: MixpanelAPI
 
-    private val userProperties = mutableMapOf<String, Any>()
-
-    private val userPropertiesMutex = Mutex()
-
     init {
         mixpanelAPI =
             MixpanelAPI.getInstance(context, context.getString(R.string.mixpanel_api_key), false)
@@ -75,8 +69,7 @@ private class MixPanelUserAnalyticsEventTracker(context: Context) : UserAnalytic
         }.getOrNull()?.let {
             mixpanelAPI.identify(it)
         }
-
-
+        
         trackAccessibilityProperties(context)
     }
 
