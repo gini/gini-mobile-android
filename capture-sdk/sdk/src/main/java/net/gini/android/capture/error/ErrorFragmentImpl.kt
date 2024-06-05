@@ -117,13 +117,13 @@ class ErrorFragmentImpl(
             UserAnalyticsScreen.ERROR,
             mapOf(
                 UserAnalyticsExtraProperties.DOCUMENT_TYPE
-                        to document?.getDocumentTypeForUserAnalytics().toString(),
-                UserAnalyticsExtraProperties.PARTIAL_DOCUMENT_ID
+                        to  document?.getDocumentTypeForUserAnalytics().toString(),
+                UserAnalyticsExtraProperties.DOCUMENT_ID
                         to document?.id.toString(),
                 UserAnalyticsExtraProperties.ERROR_TYPE
                         to errorType?.getErrorTypeForUserAnalytics().toString(),
                 UserAnalyticsExtraProperties.ERROR_MESSAGE
-                        to customError.toString()
+                        to (customError ?: fragmentCallback.activity?.getString(errorType?.titleTextResource ?: 0).toString())
             ),
         )
     }

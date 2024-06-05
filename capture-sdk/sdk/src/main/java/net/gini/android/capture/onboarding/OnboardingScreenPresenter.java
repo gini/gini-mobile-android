@@ -16,7 +16,6 @@ import net.gini.android.capture.tracking.useranalytics.UserAnalyticsExtraPropert
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsMappersKt;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreenKt;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -105,20 +104,22 @@ class OnboardingScreenPresenter extends OnboardingScreenContract.Presenter {
         }
 
         boolean hasCustomItems = customPages != null && !customPages.isEmpty();
-        if (customPages == null) {
-            UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(
-                    event,
-                    UserAnalyticsScreenKt.getOnboardingScreenNameForUserAnalytics(mPages.get(pageIndex).getTitleResId()),
-                    Collections.singletonMap(UserAnalyticsExtraProperties.ONBOARDING_HAS_CUSTOM_ITEMS, UserAnalyticsMappersKt.mapToAnalyticsValue(hasCustomItems))
-            );
-        } else {
-            Map<UserAnalyticsExtraProperties, Object> eventProperties = new HashMap<>();
-            eventProperties.put(UserAnalyticsExtraProperties.CUSTOM_ONBOARDING_TITLE, String.valueOf(mPages.get(pageIndex).getTitleResId()));
+        Map<UserAnalyticsExtraProperties, Object> eventProperties = new HashMap<>();
+
+        if (event == UserAnalyticsEvent.SCREEN_SHOWN) {
             eventProperties.put(UserAnalyticsExtraProperties.ONBOARDING_HAS_CUSTOM_ITEMS, UserAnalyticsMappersKt.mapToAnalyticsValue(hasCustomItems));
-            
+        }
+        if (hasCustomItems) {
+            eventProperties.put(UserAnalyticsExtraProperties.CUSTOM_ONBOARDING_TITLE, String.valueOf(mPages.get(pageIndex).getTitleResId()));
             UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(
                     event,
                     UserAnalyticsScreenKt.getOnboardingScreenNameForUserAnalytics(pageIndex),
+                    eventProperties
+            );
+        } else {
+            UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(
+                    event,
+                    UserAnalyticsScreenKt.getOnboardingScreenNameForUserAnalytics(mPages.get(pageIndex).getTitleResId()),
                     eventProperties
             );
         }

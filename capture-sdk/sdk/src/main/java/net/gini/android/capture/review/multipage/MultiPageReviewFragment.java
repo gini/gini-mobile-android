@@ -48,6 +48,7 @@ import net.gini.android.capture.internal.network.NetworkRequestsManager;
 import net.gini.android.capture.internal.ui.ClickListenerExtKt;
 import net.gini.android.capture.internal.ui.IntervalClickListener;
 import net.gini.android.capture.internal.util.AlertDialogHelperCompat;
+import net.gini.android.capture.internal.util.CancelListener;
 import net.gini.android.capture.internal.util.FileImportHelper;
 import net.gini.android.capture.review.multipage.previews.MiddlePageManager;
 import net.gini.android.capture.review.multipage.previews.PreviewFragmentListener;
@@ -56,11 +57,11 @@ import net.gini.android.capture.review.multipage.view.ReviewNavigationBarBottomA
 import net.gini.android.capture.tracking.AnalysisScreenEvent;
 import net.gini.android.capture.tracking.ReviewScreenEvent;
 import net.gini.android.capture.tracking.ReviewScreenEvent.UPLOAD_ERROR_DETAILS_MAP_KEY;
+import net.gini.android.capture.tracking.useranalytics.UserAnalytics;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker;
-import net.gini.android.capture.tracking.useranalytics.UserAnalytics;
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsExtraProperties;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen;
-import net.gini.android.capture.internal.util.CancelListener;
 import net.gini.android.capture.view.InjectedViewAdapterHolder;
 import net.gini.android.capture.view.InjectedViewContainer;
 import net.gini.android.capture.view.NavButtonType;
@@ -70,6 +71,7 @@ import net.gini.android.capture.view.OnButtonLoadingIndicatorAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -670,7 +672,11 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
     @VisibleForTesting
     void onNextButtonClicked() {
         trackReviewScreenEvent(ReviewScreenEvent.NEXT);
-        mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.PROCEED_TAPPED, UserAnalyticsScreen.REVIEW);
+        mUserAnalyticsEventTracker.trackEvent(
+                UserAnalyticsEvent.PROCEED_TAPPED,
+                UserAnalyticsScreen.REVIEW,
+                Collections.singletonMap(UserAnalyticsExtraProperties.DOCUMENT_PAGE_NUMBER, String.valueOf(mMultiPageDocument.getDocuments().size()))
+        );
         mNextClicked = true;
         NavHostFragment.findNavController(this).navigate(MultiPageReviewFragmentDirections.toAnalysisFragment(mMultiPageDocument, ""));
     }
