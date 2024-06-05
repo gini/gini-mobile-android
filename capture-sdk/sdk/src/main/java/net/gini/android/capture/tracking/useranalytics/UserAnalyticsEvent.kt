@@ -33,4 +33,7 @@ enum class UserAnalyticsEvent(val eventName: String) {
     ITEM_SWITCH_TAPPED("item_switch_tapped"),
     EDIT_TAPPED("edit_tapped"),
     // endregion
+    // region Camera Permission
+    GIVE_ACCESS_TAPPED("give_access_tapped"),
+    // endregion
 }

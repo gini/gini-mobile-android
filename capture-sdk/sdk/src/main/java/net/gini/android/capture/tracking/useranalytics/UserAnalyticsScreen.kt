@@ -4,6 +4,7 @@ import net.gini.android.capture.R
 
 enum class UserAnalyticsScreen(val screenName: String) {
     CAMERA("camera"),
+    CAMERA_ACCESS("camera_access"),
     REVIEW("review"),
     REVIEW_ZOOM("review_zoom"),
     ANALYSIS("analysis"),
