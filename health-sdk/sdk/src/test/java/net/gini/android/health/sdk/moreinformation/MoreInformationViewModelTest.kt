@@ -58,7 +58,8 @@ class MoreInformationViewModelTest {
                             appVersion = "appVersion",
                             colors = PaymentProvider.Colors(backgroundColorRGBHex = "", textColoRGBHex = ""),
                             icon = ByteArray(0),
-                            gpcSupported = true
+                            gpcSupportedPlatforms = listOf("android"),
+                            openWithSupportedPlatforms = listOf("android")
                         )
                     )
                 )

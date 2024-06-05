@@ -12,6 +12,7 @@ import retrofit2.http.GET
 import retrofit2.http.HeaderMap
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Url
 
 internal interface HealthApiDocumentService: DocumentService {
 
@@ -29,4 +30,7 @@ internal interface HealthApiDocumentService: DocumentService {
 
     @POST("/paymentRequests")
     suspend fun createPaymentRequest(@HeaderMap bearer: Map<String, String>, @Body body: PaymentRequestBody): Response<ResponseBody>
+
+    @GET("/paymentRequests/{paymentRequestId}")
+    suspend fun getPaymentRequestDocument(@HeaderMap bearer: Map<String, String>, @Path("paymentRequestId") paymentRequestId: String): Response<ResponseBody>
 }

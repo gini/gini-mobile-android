@@ -5,20 +5,17 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.*
 import jersey.repackaged.jsr166e.CompletableFuture
 import net.gini.android.capture.GiniCapture
-import net.gini.android.capture.GiniCaptureError
-import net.gini.android.capture.GiniCaptureHelper
 import net.gini.android.capture.internal.camera.api.CameraInterface
 import net.gini.android.capture.internal.ui.FragmentImplCallback
+import net.gini.android.capture.internal.util.CancelListener
 import net.gini.android.capture.tracking.CameraScreenEvent
 import net.gini.android.capture.tracking.Event
 import net.gini.android.capture.tracking.EventTracker
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mockito
 
 /**
  * Created by Alpar Szotyori on 02.03.2020.
@@ -35,7 +32,7 @@ class CameraFragmentImplTest {
         val eventTracker = spy<EventTracker>()
         GiniCapture.Builder().setEventTracker(eventTracker).build()
 
-        val fragmentImpl = object: CameraFragmentImpl(mock(), false) {
+        val fragmentImpl = object: CameraFragmentImpl(mock(), mock<CancelListener>(), false) {
             override fun createCameraController(activity: Activity?): CameraInterface {
                 return mock<CameraInterface>().apply {
                     whenever(isPreviewRunning).thenReturn(true)
@@ -89,7 +86,7 @@ class CameraFragmentImplTest {
         })
         whenever(fragmentCallbackStub.findNavController()).thenReturn(mock())
 
-        val fragmentImpl = CameraFragmentImpl(fragmentCallbackStub, false)
+        val fragmentImpl = CameraFragmentImpl(fragmentCallbackStub, mock(),false)
 
         // When
         fragmentImpl.startHelpActivity()

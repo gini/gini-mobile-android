@@ -1,17 +1,23 @@
 package net.gini.android.health.sdk.review
 
+import android.content.Context
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import net.gini.android.core.api.Resource
 import net.gini.android.core.api.models.Document
 import net.gini.android.health.api.models.PaymentRequestInput
@@ -27,14 +33,18 @@ import net.gini.android.health.sdk.review.model.withFeedback
 import net.gini.android.health.sdk.review.openWith.OpenWithPreferences
 import net.gini.android.health.sdk.review.pager.DocumentPageAdapter
 import net.gini.android.health.sdk.util.adjustToLocalDecimalSeparation
+import net.gini.android.health.sdk.util.extensions.createTempPdfFile
 import net.gini.android.health.sdk.util.toBackendFormat
 import net.gini.android.health.sdk.util.withPrev
 import org.slf4j.LoggerFactory
+import java.io.File
+
 
 internal class ReviewViewModel(val giniHealth: GiniHealth, val configuration: ReviewConfiguration, val paymentComponent: PaymentComponent) : ViewModel() {
 
     internal var userPreferences: UserPreferences? = null
     internal var openWithPreferences: OpenWithPreferences? = null
+    internal var context: Context? = null
 
     private val _paymentDetails = MutableStateFlow(PaymentDetails("", "", "", ""))
     val paymentDetails: StateFlow<PaymentDetails> = _paymentDetails
@@ -49,6 +59,11 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val configuration: Re
 
     private val _paymentProviderApp = MutableStateFlow<PaymentProviderApp?>(null)
     val paymentProviderApp: StateFlow<PaymentProviderApp?> = _paymentProviderApp
+
+    private val _paymentNextStep = MutableSharedFlow<PaymentNextStep>(
+        extraBufferCapacity = 1,
+    )
+    val paymentNextStep: SharedFlow<PaymentNextStep> = _paymentNextStep
 
     private var openWithCounter: Int = 0
 
@@ -201,9 +216,7 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val configuration: Re
         viewModelScope.launch {
             val valid = validatePaymentDetails(paymentDetails.value)
             if (valid) {
-                giniHealth.setOpenBankState(GiniHealth.PaymentState.Loading)
-                // TODO: first get the payment request and handle error before proceeding
-                sendFeedback()
+                sendFeedbackAndStartLoading()
                 giniHealth.setOpenBankState(
                     try {
                         GiniHealth.PaymentState.Success(getPaymentRequest())
@@ -256,21 +269,68 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val configuration: Re
         }
     }
 
-    fun onPaymentButtonTapped(): PaymentNextStep {
-        if (paymentProviderApp.value?.paymentProvider?.gpcSupported == true) {
-            return if (paymentProviderApp.value?.isInstalled() == true) PaymentNextStep.RedirectToBank
-            else PaymentNextStep.ShowInstallApp
+    fun onPaymentButtonTapped(externalCacheDir: File?) {
+        if (paymentProviderApp.value?.paymentProvider?.gpcSupported() == true) {
+            if (paymentProviderApp.value?.isInstalled() == true) _paymentNextStep.tryEmit(PaymentNextStep.RedirectToBank)
+            else _paymentNextStep.tryEmit(PaymentNextStep.ShowInstallApp)
+            return
         }
-        return checkOpenWithCounter()
+        if (openWithCounter < SHOW_OPEN_WITH_TIMES) {
+            _paymentNextStep.tryEmit(PaymentNextStep.ShowOpenWithSheet)
+        } else {
+            _paymentNextStep.tryEmit(PaymentNextStep.SetLoadingVisibility(true))
+            getFileAsByteArray(externalCacheDir)
+        }
     }
 
-    private fun checkOpenWithCounter(): PaymentNextStep = if (openWithCounter < SHOW_OPEN_WITH_TIMES) PaymentNextStep.ShowOpenWithSheet else PaymentNextStep.OpenSharePdf
+    fun onForwardToSharePdfTapped(externalCacheDir: File?) {
+        _paymentNextStep.tryEmit(PaymentNextStep.SetLoadingVisibility(true))
+        getFileAsByteArray(externalCacheDir)
+    }
+
+    @VisibleForTesting
+    internal fun getFileAsByteArray(externalCacheDir: File?) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                sendFeedbackAndStartLoading()
+                val paymentRequest = try {
+                    getPaymentRequest()
+                } catch (throwable: Throwable) {
+                    giniHealth.setOpenBankState(GiniHealth.PaymentState.Error(throwable))
+                    return@withContext
+                }
+                val byteArrayResource = async {  giniHealth.giniHealthAPI.documentManager.getPaymentRequestDocument(paymentRequest.id) }.await()
+                when (byteArrayResource) {
+                    is Resource.Cancelled -> {
+                        giniHealth.setOpenBankState(GiniHealth.PaymentState.Error(Exception("Cancelled")))
+                    }
+                    is Resource.Error -> {
+                        giniHealth.setOpenBankState(GiniHealth.PaymentState.Error(byteArrayResource.exception ?: Exception("Error")))
+                    }
+                    is Resource.Success -> {
+                        giniHealth.setOpenBankState(GiniHealth.PaymentState.Success(paymentRequest))
+                        val newFile = externalCacheDir?.createTempPdfFile(byteArrayResource.data, "payment-request")
+                        newFile?.let {
+                            _paymentNextStep.tryEmit(PaymentNextStep.OpenSharePdf(it))
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun sendFeedbackAndStartLoading() {
+        giniHealth.setOpenBankState(GiniHealth.PaymentState.Loading)
+        // TODO: first get the payment request and handle error before proceeding
+        sendFeedback()
+    }
 
     sealed class PaymentNextStep {
         object RedirectToBank: PaymentNextStep()
         object ShowOpenWithSheet: PaymentNextStep()
-        object OpenSharePdf: PaymentNextStep()
         object ShowInstallApp: PaymentNextStep()
+        data class OpenSharePdf(val file: File): PaymentNextStep()
+        data class SetLoadingVisibility(val isVisible: Boolean): PaymentNextStep()
     }
 
     class Factory(private val giniHealth: GiniHealth, private val configuration: ReviewConfiguration, private val paymentComponent: PaymentComponent) :

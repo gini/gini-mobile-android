@@ -1,16 +1,11 @@
 package net.gini.android.health.sdk.paymentcomponent
 
 import android.content.Context
-import android.text.method.LinkMovementMethod
-import android.text.style.ClickableSpan
 import android.util.AttributeSet
 import android.view.View
+import androidx.annotation.VisibleForTesting
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import androidx.core.text.bold
-import androidx.core.text.buildSpannedString
-import androidx.core.text.color
-import androidx.core.text.inSpans
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -58,7 +53,9 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
     var paymentComponent: PaymentComponent? = null
 
     internal var coroutineContext: CoroutineContext = Dispatchers.Main
-    private var coroutineScope: CoroutineScope? = null
+
+    @VisibleForTesting
+    internal var coroutineScope: CoroutineScope? = null
 
     /**
      * Sets the payable state of the [PaymentComponentView]. If `true`, the view will be shown, otherwise it will be hidden.
@@ -73,6 +70,12 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
             }
         }
 
+    private var isReturning: Boolean = false
+        set(isReturning) {
+            field = isReturning
+            changeLabelsVisibilityIfNeeded()
+        }
+
     /**
      * The document id of the invoice item. This will be returned in the [PaymentComponent.Listener.onPayInvoiceClicked] method.
      */
@@ -81,7 +84,6 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
     private val binding = GhsViewPaymentComponentBinding.inflate(getLayoutInflaterWithGiniHealthTheme(), this)
 
     init {
-        setupMoreInformationLabelAndIcon()
         addButtonInputHandlers()
     }
 
@@ -92,51 +94,71 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
             LOG.debug("Creating coroutine scope")
             coroutineScope = CoroutineScope(coroutineContext)
         }
+        checkPaymentComponentHeight()
         coroutineScope?.launch {
             if (paymentComponent == null) {
                 LOG.warn("Cannot show payment provider apps: PaymentComponent must be set before showing the PaymentComponentView")
                 return@launch
             }
+            paymentComponent?.checkReturningUser()
             paymentComponent?.let { pc ->
                 LOG.debug("Collecting payment provider apps state and selected payment provider app from PaymentComponent")
+                launch {
+                    pc.selectedPaymentProviderAppFlow.combine(pc.paymentProviderAppsFlow) { selectedPaymentProviderAppState, paymentProviderAppsState ->
+                        selectedPaymentProviderAppState to paymentProviderAppsState
+                    }.collect { (selectedPaymentProviderAppState, paymentProviderAppsState) ->
+                        LOG.debug(
+                            "Received selected payment provider app state: {}",
+                            selectedPaymentProviderAppState
+                        )
+                        LOG.debug(
+                            "Received payment provider apps state: {}",
+                            paymentProviderAppsState
+                        )
+                        if (paymentProviderAppsState is PaymentProviderAppsState.Success) {
+                            when (selectedPaymentProviderAppState) {
+                                is SelectedPaymentProviderAppState.AppSelected -> {
+                                    enableBankPicker()
+                                    customizeBankPicker(selectedPaymentProviderAppState.paymentProviderApp)
+                                    customizePayInvoiceButton(selectedPaymentProviderAppState.paymentProviderApp)
+                                    enablePayInvoiceButton()
+                                }
 
-                pc.selectedPaymentProviderAppFlow.combine(pc.paymentProviderAppsFlow) { selectedPaymentProviderAppState, paymentProviderAppsState ->
-                    selectedPaymentProviderAppState to paymentProviderAppsState
-                }.collect { (selectedPaymentProviderAppState, paymentProviderAppsState) ->
-                    LOG.debug("Received selected payment provider app state: {}", selectedPaymentProviderAppState)
-                    LOG.debug("Received payment provider apps state: {}", paymentProviderAppsState)
-
-                    if (paymentProviderAppsState is PaymentProviderAppsState.Success) {
-                        when (selectedPaymentProviderAppState) {
-                            is SelectedPaymentProviderAppState.AppSelected -> {
-                                enableBankPicker()
-                                customizeBankPicker(selectedPaymentProviderAppState.paymentProviderApp)
-                                customizePayInvoiceButton(selectedPaymentProviderAppState.paymentProviderApp)
-                                enablePayInvoiceButton()
+                                SelectedPaymentProviderAppState.NothingSelected -> {
+                                    enableBankPicker()
+                                    restoreBankPickerDefaultState()
+                                    restorePayInvoiceButtonDefaultState()
+                                    disablePayInvoiceButton()
+                                }
                             }
-
-                            SelectedPaymentProviderAppState.NothingSelected -> {
-                                enableBankPicker()
-                                restoreBankPickerDefaultState()
-                                restorePayInvoiceButtonDefaultState()
-                                disablePayInvoiceButton()
-                            }
+                        } else {
+                            disableBankPicker()
+                            disablePayInvoiceButton()
                         }
-                    } else {
-                        disableBankPicker()
-                        disablePayInvoiceButton()
+                    }
+                }
+                launch {
+                    pc.returningUserFlow.collect { returningUser ->
+                        isReturning = returningUser
                     }
                 }
             }
         }
     }
 
+    private fun checkPaymentComponentHeight() {
+        if (resources.getDimension(R.dimen.ghs_payment_component_height) >= resources.getDimension(R.dimen.ghs_accessibility_min_height)) {
+            binding.ghsSelectBankPicker.layoutParams.height = resources.getDimension(R.dimen.ghs_payment_component_height).toInt()
+        }
+    }
+
     private fun restoreBankPickerDefaultState() {
         LOG.debug("Restoring bank picker default state")
         context?.wrappedWithGiniHealthTheme()?.let { context ->
-            binding.ghsSelectBankPicker.ghsPaymentProviderAppIconHolder.root.visibility = View.GONE
-            binding.ghsSelectBankPicker.ghsSelectBankButton.text = context.getString(R.string.ghs_select_bank)
-            binding.ghsSelectBankPicker.ghsSelectBankButton.setCompoundDrawablesWithIntrinsicBounds(
+            binding.ghsPayInvoiceButton.visibility = View.GONE
+            binding.ghsPaymentProviderAppIconHolder.root.visibility = View.GONE
+            binding.ghsSelectBankButton.text = context.getString(R.string.ghs_select_bank)
+            binding.ghsSelectBankButton.setCompoundDrawablesWithIntrinsicBounds(
                 null,
                 null,
                 ContextCompat.getDrawable(context, R.drawable.ghs_chevron_down_icon),
@@ -148,15 +170,16 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
     private fun customizeBankPicker(paymentProviderApp: PaymentProviderApp) {
         LOG.debug("Customizing bank picker for payment provider app: {}", paymentProviderApp.name)
         context?.wrappedWithGiniHealthTheme()?.let { context ->
-            binding.ghsSelectBankPicker.ghsSelectBankButton.text = paymentProviderApp.name
-            binding.ghsSelectBankPicker.ghsSelectBankButton.setCompoundDrawablesWithIntrinsicBounds(
+            binding.ghsSelectBankButton.text = ""
+            binding.ghsSelectBankButton.setCompoundDrawablesWithIntrinsicBounds(
                 null,
                 null,
                 ContextCompat.getDrawable(context, R.drawable.ghs_chevron_down_icon),
                 null
             )
-            binding.ghsSelectBankPicker.ghsPaymentProviderAppIconHolder.ghsPaymentProviderIcon.setImageDrawable(paymentProviderApp.icon)
-            binding.ghsSelectBankPicker.ghsPaymentProviderAppIconHolder.root.visibility = View.VISIBLE
+            binding.ghsPaymentProviderAppIconHolder.ghsPaymentProviderIcon.setImageDrawable(paymentProviderApp.icon)
+            binding.ghsPaymentProviderAppIconHolder.root.visibility = View.VISIBLE
+            binding.ghsPaymentProviderAppIconHolder.root.contentDescription = paymentProviderApp.name
         }
     }
 
@@ -164,16 +187,17 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
         LOG.debug("Customizing pay invoice button for payment provider app: {}", paymentProviderApp.name)
         binding.ghsPayInvoiceButton.setBackgroundTint(paymentProviderApp.colors.backgroundColor, 255)
         binding.ghsPayInvoiceButton.setTextColor(paymentProviderApp.colors.textColor)
+        binding.ghsPayInvoiceButton.visibility = View.VISIBLE
     }
 
     private fun enableBankPicker() {
         LOG.debug("Enabling bank picker")
-        binding.ghsSelectBankPicker.ghsSelectBankButton.isEnabled = true
+        binding.ghsSelectBankButton.isEnabled = true
     }
 
     private fun disableBankPicker() {
         LOG.debug("Disabling bank picker")
-        binding.ghsSelectBankPicker.ghsSelectBankButton.isEnabled = false
+        binding.ghsSelectBankButton.isEnabled = false
     }
 
     private fun enablePayInvoiceButton() {
@@ -213,16 +237,6 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
         coroutineScope = null
     }
 
-    private fun setupMoreInformationLabelAndIcon() {
-        binding.ghsMoreInformationLabel.movementMethod = LinkMovementMethod.getInstance()
-        addMoreInformationUnderlinedClickableText {
-            onMoreInformationClicked()
-        }
-        binding.ghsInfoCircleIcon.setIntervalClickListener {
-            onMoreInformationClicked()
-        }
-    }
-
     /**
      * Resets the internal state of the [PaymentComponentView] to its default state. This should be called before the view is reused.
      */
@@ -237,56 +251,26 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
 
     private fun show() {
         LOG.debug("Showing payment component")
-        binding.ghsPayInvoiceButton.visibility = VISIBLE
-        binding.ghsMoreInformationLabel.visibility = VISIBLE
-        binding.ghsSelectBankLabel.visibility = VISIBLE
-        binding.ghsSelectBankPicker.root.visibility = VISIBLE
-        binding.ghsInfoCircleIcon.visibility = VISIBLE
+        binding.ghsSelectBankPicker.visibility = VISIBLE
         binding.ghsPoweredByGini.visibility = VISIBLE
+        changeLabelsVisibilityIfNeeded()
     }
 
     private fun hide() {
         LOG.debug("Hiding payment component")
-        binding.ghsPayInvoiceButton.visibility = GONE
-        binding.ghsMoreInformationLabel.visibility = GONE
         binding.ghsSelectBankLabel.visibility = GONE
-        binding.ghsSelectBankPicker.root.visibility = GONE
-        binding.ghsInfoCircleIcon.visibility = GONE
+        binding.ghsSelectBankPicker.visibility = GONE
         binding.ghsPoweredByGini.visibility = GONE
+        binding.ghsMoreInformation.visibility = GONE
     }
 
-    private fun addMoreInformationUnderlinedClickableText(clickListener: () -> Unit) {
-        binding.ghsMoreInformationLabel.text = buildSpannedString {
-            append(ContextCompat.getString(context, R.string.ghs_more_information_label))
-            append(" ")
-            append(buildSpannedString {
-                color(ContextCompat.getColor(context, R.color.ghs_payment_component_caption)) {
-                    bold {
-                        inSpans(object : ClickableSpan() {
-                            override fun onClick(widget: View) {
-                                clickListener()
-                            }
-                        }) {
-                            val underlinedPart =
-                                ContextCompat.getString(context, R.string.ghs_more_information_underlined_part)
-                            append(underlinedPart.replace(" ".toRegex(), "\u00A0"))
-                        }
-                    }
-                }
-
-            })
-        }
-    }
-
-    private fun onMoreInformationClicked() {
-        if (paymentComponent == null) {
-            LOG.warn("Cannot call PaymentComponent's listener: PaymentComponent must be set before showing the PaymentComponentView")
-        }
-        paymentComponent?.listener?.onMoreInformationClicked()
+    private fun changeLabelsVisibilityIfNeeded() {
+        binding.ghsSelectBankLabel.visibility = if (isReturning || !isPayable) View.GONE else View.VISIBLE
+        binding.ghsMoreInformation.visibility = if (isReturning || !isPayable) View.GONE else View.VISIBLE
     }
 
     private fun addButtonInputHandlers() {
-        binding.ghsSelectBankPicker.ghsSelectBankButton.setIntervalClickListener {
+        binding.ghsSelectBankButton.setIntervalClickListener {
             if (paymentComponent == null) {
                 LOG.warn("Cannot call PaymentComponent's listener: PaymentComponent must be set before showing the PaymentComponentView")
             }
@@ -297,10 +281,18 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
                 LOG.warn("Cannot call PaymentComponent's listener: PaymentComponent must be set before showing the PaymentComponentView")
             }
             documentId?.let { docId ->
-                paymentComponent?.listener?.onPayInvoiceClicked(docId)
+                coroutineScope?.launch {
+                    paymentComponent?.onPayInvoiceClicked(docId)
+                }
             } ?: run {
                 LOG.warn("Cannot call PaymentComponent's listener: documentId must be set before showing the PaymentComponentView")
             }
+        }
+        binding.ghsMoreInformation.setIntervalClickListener {
+            if (paymentComponent == null) {
+                LOG.warn("Cannot call PaymentComponent's listener: PaymentComponent must be set before showing the PaymentComponentView")
+            }
+            paymentComponent?.listener?.onMoreInformationClicked()
         }
     }
 

@@ -37,6 +37,31 @@ class InvoicesLocalDataSource(private val context: Context) {
         _invoicesFlow.value = storedInvoices
     }
 
+    suspend fun updateInvoice(documentWithExtractions: DocumentWithExtractions) {
+        val documentsList = readInvoicesFromPreferences()
+        val updatedDocument = documentsList.firstOrNull { it.documentId == documentWithExtractions.documentId }
+        updatedDocument ?: return
+        if (updatedDocument.shouldUpdate(documentWithExtractions.amount, documentWithExtractions.recipient)) {
+            updatedDocument.amount = documentWithExtractions.amount
+            updatedDocument.recipient = documentWithExtractions.recipient
+            writeInvoicesToPreferences(documentsList)
+            _invoicesFlow.value = documentsList
+        }
+    }
+
+    suspend fun refreshInvoices(documentsList: List<DocumentWithExtractions>) {
+        val storedDocumentsList = readInvoicesFromPreferences()
+        documentsList.forEach { newDocument ->
+            val document = storedDocumentsList.firstOrNull { it.documentId == newDocument.documentId }
+            document?.let {
+                it.amount = newDocument.amount
+                it.recipient = newDocument.recipient
+            }
+        }
+        writeInvoicesToPreferences(storedDocumentsList)
+        _invoicesFlow.value = storedDocumentsList
+    }
+
     suspend fun appendInvoiceWithExtractions(invoice: DocumentWithExtractions) {
         val storedInvoices = readInvoicesFromPreferences().toMutableList()
         storedInvoices.add(invoice)

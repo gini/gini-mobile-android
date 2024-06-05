@@ -4,12 +4,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.lifecycle.Lifecycle
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.spy
 import com.nhaarman.mockitokotlin2.verify
 import net.gini.android.capture.GiniCapture
-import net.gini.android.capture.R
 import net.gini.android.capture.tracking.CameraScreenEvent
 import net.gini.android.capture.tracking.Event
 import net.gini.android.capture.tracking.EventTracker
@@ -31,11 +32,21 @@ class CameraFragmentTest {
         val eventTracker = spy<EventTracker>()
         GiniCapture.Builder().setEventTracker(eventTracker).build()
 
+        val navController = mock<NavController>()
+
         FragmentScenario.launchInContainer(fragmentClass = CameraFragment::class.java,
             factory = object : FragmentFactory() {
                 override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
                     return CameraFragment().apply {
                         setListener(mock())
+                        setCancelListener(mock())
+                    }.also { fragment ->
+                        fragment.viewLifecycleOwnerLiveData.observeForever { viewLifecycleOwner ->
+                            if (viewLifecycleOwner != null) {
+                                // The fragment’s view has just been created
+                                Navigation.setViewNavController(fragment.requireView(), navController)
+                            }
+                        }
                     }
                 }
             }).use { scenario ->

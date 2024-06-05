@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.content.FileProvider
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsAnimationCompat
@@ -40,31 +41,32 @@ import kotlinx.coroutines.launch
 import net.gini.android.core.api.models.Document
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.R
+import net.gini.android.health.sdk.bankselection.BankSelectionBottomSheet
 import net.gini.android.health.sdk.databinding.GhsFragmentReviewBinding
+import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.health.sdk.preferences.UserPreferences
+import net.gini.android.health.sdk.review.installApp.InstallAppBottomSheet
+import net.gini.android.health.sdk.review.installApp.InstallAppForwardListener
 import net.gini.android.health.sdk.review.model.PaymentDetails
 import net.gini.android.health.sdk.review.model.ResultWrapper
+import net.gini.android.health.sdk.review.openWith.OpenWithBottomSheet
+import net.gini.android.health.sdk.review.openWith.OpenWithForwardListener
+import net.gini.android.health.sdk.review.openWith.OpenWithPreferences
 import net.gini.android.health.sdk.review.pager.DocumentPageAdapter
 import net.gini.android.health.sdk.util.amountWatcher
 import net.gini.android.health.sdk.util.autoCleared
 import net.gini.android.health.sdk.util.clearErrorMessage
+import net.gini.android.health.sdk.util.extensions.getFontScale
+import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthTheme
 import net.gini.android.health.sdk.util.hideErrorMessage
 import net.gini.android.health.sdk.util.hideKeyboard
 import net.gini.android.health.sdk.util.setBackgroundTint
 import net.gini.android.health.sdk.util.setErrorMessage
 import net.gini.android.health.sdk.util.setTextIfDifferent
 import net.gini.android.health.sdk.util.showErrorMessage
-import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
-import net.gini.android.health.sdk.bankselection.BankSelectionBottomSheet
-import net.gini.android.health.sdk.review.installApp.InstallAppBottomSheet
-import net.gini.android.health.sdk.review.installApp.InstallAppForwardListener
-import net.gini.android.health.sdk.review.openWith.OpenWithBottomSheet
-import net.gini.android.health.sdk.review.openWith.OpenWithForwardListener
-import net.gini.android.health.sdk.review.openWith.OpenWithPreferences
-import net.gini.android.health.sdk.util.extensions.getFontScale
-import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthTheme
 import net.gini.android.health.sdk.util.wrappedWithGiniHealthTheme
+import java.io.File
 
 /**
  * Configuration for the [ReviewFragment].
@@ -205,6 +207,11 @@ class ReviewFragment private constructor(
                         }
                     }
                 }
+                launch {
+                    viewModel.paymentNextStep.collect { paymentNextStep ->
+                        handlePaymentNextStep(paymentNextStep)
+                    }
+                }
             }
         }
     }
@@ -236,7 +243,7 @@ class ReviewFragment private constructor(
                 })
             }
 
-            is ResultWrapper.Error -> handleError(getString(R.string.ghs_error_document)) { viewModel.retryDocumentReview() }
+            is ResultWrapper.Error -> handleError(getString(R.string.ghs_generic_error_message)) { viewModel.retryDocumentReview() }
             else -> { // Loading state handled by payment details
             }
         }
@@ -245,7 +252,7 @@ class ReviewFragment private constructor(
     private fun GhsFragmentReviewBinding.handlePaymentResult(paymentResult: ResultWrapper<PaymentDetails>) {
         binding.loading.isVisible = paymentResult is ResultWrapper.Loading
         if (paymentResult is ResultWrapper.Error) {
-            handleError(getString(R.string.ghs_error_payment_details)) { viewModel.retryDocumentReview() }
+            handleError(getString(R.string.ghs_generic_error_message)) { viewModel.retryDocumentReview() }
         }
     }
 
@@ -336,6 +343,7 @@ class ReviewFragment private constructor(
         }
         when (paymentState) {
             is GiniHealth.PaymentState.Success -> {
+                if (viewModel.paymentProviderApp.value?.paymentProvider?.gpcSupported() == false) return
                 try {
                     val intent =
                         paymentState.paymentRequest.bankApp.getIntent(paymentState.paymentRequest.id)
@@ -343,16 +351,15 @@ class ReviewFragment private constructor(
                         startActivity(intent)
                         viewModel.onBankOpened()
                     } else {
-                        // TODO: use more informative error messages (include selected bank app name)
-                        handleError(getString(R.string.ghs_error_bank_not_found)) { viewModel.onPayment() }
+                        handleError(getString(R.string.ghs_generic_error_message)) { viewModel.onPayment() }
                     }
                 } catch (exception: ActivityNotFoundException) {
-                    // TODO: use more informative error messages (include selected bank app name)
-                    handleError(getString(R.string.ghs_error_bank_not_found)) { viewModel.onPayment() }
+                    handleError(getString(R.string.ghs_generic_error_message)) { viewModel.onPayment() }
                 }
             }
-            // TODO: use more informative error messages (include error details)
-            is GiniHealth.PaymentState.Error -> handleError(getString(R.string.ghs_error_open_bank)) { viewModel.onPayment() }
+            is GiniHealth.PaymentState.Error -> {
+                handleError(getString(R.string.ghs_generic_error_message)) { viewModel.onPaymentButtonTapped(requireContext().externalCacheDir) }
+            }
             else -> { // Loading is already handled
             }
         }
@@ -381,8 +388,7 @@ class ReviewFragment private constructor(
         payment.setOnClickListener {
             requireActivity().currentFocus?.clearFocus()
             it.hideKeyboard()
-            val nextStep = viewModel.onPaymentButtonTapped()
-            handlePaymentNextStep(nextStep)
+            viewModel.onPaymentButtonTapped(requireContext().externalCacheDir)
         }
         close.setOnClickListener { view ->
             if (isKeyboardShown) {
@@ -547,7 +553,7 @@ class ReviewFragment private constructor(
     private fun showOpenWithDialog(paymentProviderApp: PaymentProviderApp) {
         OpenWithBottomSheet.newInstance(paymentProviderApp, object: OpenWithForwardListener {
             override fun onForwardSelected() {
-                startSharePdfIntent()
+                viewModel.onForwardToSharePdfTapped(requireContext().externalCacheDir)
             }
         }).also {
             it.show(requireActivity().supportFragmentManager, it::class.java.name)
@@ -555,17 +561,25 @@ class ReviewFragment private constructor(
         viewModel.incrementOpenWithCounter()
     }
 
-    private fun startSharePdfIntent() {
-        //TODO link with downloaded PDF file after backend is ready
+    private fun startSharePdfIntent(paymentRequestFile: File) {
+        val uriForFile = FileProvider.getUriForFile(
+            requireContext(),
+            requireContext().packageName+".health.sdk.fileprovider",
+            paymentRequestFile
+        )
         val shareIntent = Intent(Intent.ACTION_SEND).apply {
             type = "application/pdf"
+            flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+            putExtra(Intent.EXTRA_STREAM, uriForFile)
         }
-        startActivity(Intent.createChooser(shareIntent, ""))
+        startActivity(Intent.createChooser(shareIntent, uriForFile.lastPathSegment))
     }
 
     private fun handlePaymentNextStep(paymentNextStep: ReviewViewModel.PaymentNextStep) {
         when (paymentNextStep) {
-            ReviewViewModel.PaymentNextStep.OpenSharePdf -> startSharePdfIntent()
+            is ReviewViewModel.PaymentNextStep.SetLoadingVisibility -> {
+                binding.loading.isVisible = paymentNextStep.isVisible
+            }
             ReviewViewModel.PaymentNextStep.RedirectToBank -> {
                 viewModel.paymentProviderApp.value?.name?.let {
                     listener?.onToTheBankButtonClicked(it)
@@ -574,6 +588,10 @@ class ReviewFragment private constructor(
             }
             ReviewViewModel.PaymentNextStep.ShowOpenWithSheet -> viewModel.paymentProviderApp.value?.let { showOpenWithDialog(it) }
             ReviewViewModel.PaymentNextStep.ShowInstallApp -> viewModel.paymentProviderApp.value?.let { showInstallAppDialog(it) }
+            is ReviewViewModel.PaymentNextStep.OpenSharePdf -> {
+                binding.loading.isVisible = false
+                startSharePdfIntent(paymentNextStep.file)
+            }
         }
     }
 

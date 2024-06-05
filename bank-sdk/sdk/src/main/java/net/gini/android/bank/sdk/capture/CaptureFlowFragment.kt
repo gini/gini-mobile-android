@@ -25,10 +25,14 @@ import net.gini.android.capture.GiniCaptureFragmentListener
 import net.gini.android.capture.camera.CameraFragmentListener
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
+import net.gini.android.capture.internal.util.CancelListener
 
 class CaptureFlowFragment(private val openWithDocument: Document? = null) :
     Fragment(),
-    GiniCaptureFragmentListener, DigitalInvoiceFragmentListener {
+    GiniCaptureFragmentListener,
+    DigitalInvoiceFragmentListener,
+    CancelListener
+{
 
     private lateinit var navController: NavController
     private lateinit var captureFlowFragmentListener: CaptureFlowFragmentListener
@@ -66,7 +70,7 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        childFragmentManager.fragmentFactory = CaptureFlowFragmentFactory(this, openWithDocument, this)
+        childFragmentManager.fragmentFactory = CaptureFlowFragmentFactory(this, openWithDocument, this, this)
         super.onCreate(savedInstanceState)
         if (GiniCapture.hasInstance() && !GiniCapture.getInstance().allowScreenshots) {
             requireActivity().window.disallowScreenshots()
@@ -175,6 +179,14 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
         ))
     }
 
+    override fun onCancelFlow() {
+        val popBackStack = navController.popBackStack()
+        if (!popBackStack) {
+            didFinishWithResult = true
+            captureFlowFragmentListener.onFinishedWithResult(CaptureResult.Cancel)
+        }
+    }
+
     internal companion object {
         fun createInstance(openWithDocument: Document? = null): CaptureFlowFragment {
             return CaptureFlowFragment(openWithDocument)
@@ -196,7 +208,8 @@ interface CaptureFlowFragmentListener {
 class CaptureFlowFragmentFactory(
     private val giniCaptureFragmentListener: GiniCaptureFragmentListener,
     private val openWithDocument: Document? = null,
-    private val digitalInvoiceListener: DigitalInvoiceFragmentListener
+    private val digitalInvoiceListener: DigitalInvoiceFragmentListener,
+    private val cancelCallback: CancelListener
 ) : FragmentFactory() {
     override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
         return when (className) {
@@ -208,6 +221,7 @@ class CaptureFlowFragmentFactory(
                 }
             DigitalInvoiceFragment::class.java.name -> DigitalInvoiceFragment().apply {
                 listener = digitalInvoiceListener
+                cancelListener = cancelCallback
             }
             else -> super.instantiate(classLoader, className)
         }

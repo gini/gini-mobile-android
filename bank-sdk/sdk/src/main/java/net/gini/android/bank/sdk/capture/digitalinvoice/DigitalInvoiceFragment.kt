@@ -36,6 +36,7 @@ import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsExtraProperties
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen
 import net.gini.android.capture.tracking.useranalytics.mapToAnalyticsValue
+import net.gini.android.capture.internal.util.CancelListener
 import net.gini.android.capture.view.InjectedViewAdapterHolder
 import net.gini.android.capture.view.NavButtonType
 
@@ -67,6 +68,8 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
             field = value
             this.presenter?.listener = value
         }
+
+    lateinit var cancelListener: CancelListener
 
     override val viewLifecycleScope: CoroutineScope
         get() = viewLifecycleOwner.lifecycleScope
@@ -203,7 +206,7 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
                 trackCloseTappedEvent()
             }
             isEnabled = false
-            activity?.onBackPressedDispatcher?.onBackPressed()
+            cancelListener.onCancelFlow()
         }
     }
 
@@ -233,7 +236,7 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
 
                 injectedViewAdapter.setOnNavButtonClickListener {
                     trackCloseTappedEvent()
-                    activity?.onBackPressedDispatcher?.onBackPressed()
+                    cancelListener.onCancelFlow()
                 }
             }
         }
