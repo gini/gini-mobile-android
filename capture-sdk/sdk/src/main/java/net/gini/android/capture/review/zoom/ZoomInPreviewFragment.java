@@ -12,6 +12,7 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 
 import net.gini.android.capture.AsyncCallback;
 import net.gini.android.capture.GiniCapture;
@@ -64,9 +65,8 @@ public class ZoomInPreviewFragment extends Fragment {
 
     private void setupInputHandlers(View view) {
         view.findViewById(R.id.gc_action_close).setOnClickListener(v -> {
-            if (getActivity() != null) {
-                getActivity().getOnBackPressedDispatcher().onBackPressed();
-            }
+            UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(UserAnalyticsEvent.CLOSE_TAPPED, UserAnalyticsScreen.REVIEW_ZOOM);
+            NavHostFragment.findNavController(this).popBackStack();
         });
         handleOnBackPressed();
     }
@@ -77,7 +77,7 @@ public class ZoomInPreviewFragment extends Fragment {
             public void handleOnBackPressed() {
                 UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(UserAnalyticsEvent.CLOSE_TAPPED, UserAnalyticsScreen.REVIEW_ZOOM);
                 remove();
-                requireActivity().getOnBackPressedDispatcher().onBackPressed();
+                NavHostFragment.findNavController(ZoomInPreviewFragment.this).popBackStack();
             }
         });
     }

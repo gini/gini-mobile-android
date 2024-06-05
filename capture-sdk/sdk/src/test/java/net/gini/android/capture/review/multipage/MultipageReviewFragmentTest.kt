@@ -1,18 +1,13 @@
 package net.gini.android.capture.review.multipage
 
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentFactory
 import androidx.fragment.app.testing.FragmentScenario
-import androidx.fragment.app.testing.launchFragment
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.Lifecycle.State.CREATED
-import androidx.lifecycle.Lifecycle.State.RESUMED
+import androidx.navigation.Navigation
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.*
 import jersey.repackaged.jsr166e.CompletableFuture
 import net.gini.android.capture.GiniCapture
-import net.gini.android.capture.GiniCaptureError
 import net.gini.android.capture.GiniCaptureHelper
 import net.gini.android.capture.document.GiniCaptureDocument
 import net.gini.android.capture.document.ImageDocumentFake
@@ -26,10 +21,8 @@ import org.junit.After
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito
-import org.mockito.Mockito.`when`
 import org.mockito.Mockito.any
-import org.robolectric.annotation.LooperMode
-import net.gini.android.capture.R
+import org.mockito.Mockito.`when`
 
 
 /**
@@ -58,6 +51,13 @@ class MultipageReviewFragmentTest {
 
             // When
             scenario.onFragment { fragment ->
+                fragment.setCancelListener(mock())
+                fragment.viewLifecycleOwnerLiveData.observeForever { viewLifecycleOwner ->
+                    if (viewLifecycleOwner != null) {
+                        // The fragment’s view has just been created
+                        Navigation.setViewNavController(fragment.requireView(), mock())
+                    }
+                }
                 try {
                     fragment.requireActivity().onBackPressedDispatcher.onBackPressed()
                 } catch (e: IllegalStateException) {

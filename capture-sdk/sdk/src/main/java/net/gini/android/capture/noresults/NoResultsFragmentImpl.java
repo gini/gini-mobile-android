@@ -27,6 +27,7 @@ import net.gini.android.capture.internal.ui.ClickListenerExtKt;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.ui.IntervalClickListener;
 import net.gini.android.capture.tracking.AnalysisScreenEvent;
+import net.gini.android.capture.internal.util.CancelListener;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker;
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics;
@@ -48,6 +49,7 @@ class NoResultsFragmentImpl {
 
     private final FragmentImplCallback mFragment;
     private final Document mDocument;
+    private final CancelListener mCancelListener;
     private EnterManuallyButtonListener mListener;
     private TextView mTitleTextView;
     private UserAnalyticsEventTracker mUserAnalyticsEventTracker;
@@ -55,9 +57,11 @@ class NoResultsFragmentImpl {
     private InjectedViewContainer<NavigationBarTopAdapter> topAdapterInjectedViewContainer;
 
     NoResultsFragmentImpl(@NonNull final FragmentImplCallback fragment,
-                          @NonNull final Document document) {
+                          @NonNull final Document document,
+                          @NonNull final CancelListener cancelListener) {
         mFragment = fragment;
         mDocument = document;
+        mCancelListener = cancelListener;
     }
 
     void setListener(@Nullable final EnterManuallyButtonListener listener) {
@@ -89,7 +93,7 @@ class NoResultsFragmentImpl {
                 mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.RETAKE_IMAGES_TAPPED, UserAnalyticsScreen.NO_RESULTS);
                 trackAnalysisScreenEvent(AnalysisScreenEvent.RETRY);
                 mFragment.findNavController().navigate(NoResultsFragmentDirections.toCameraFragment());
-
+                mCancelListener.onCancelFlow();
             });
         } else {
             retakeImagesButton.setVisibility(GONE);
@@ -119,7 +123,7 @@ class NoResultsFragmentImpl {
             public void handleOnBackPressed() {
                 mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.CLOSE_TAPPED, UserAnalyticsScreen.NO_RESULTS);
                 remove();
-                mFragment.getActivity().getOnBackPressedDispatcher().onBackPressed();
+
             }
         });
     }
@@ -176,7 +180,7 @@ class NoResultsFragmentImpl {
                         injectedViewAdapter.setNavButtonType(NavButtonType.CLOSE);
                         injectedViewAdapter.setOnNavButtonClickListener(new IntervalClickListener(view -> {
                             if (mFragment.getActivity() != null) {
-                                mFragment.getActivity().getOnBackPressedDispatcher().onBackPressed();
+                                mCancelListener.onCancelFlow();
                             }
                         }));
                     })

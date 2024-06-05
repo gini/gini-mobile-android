@@ -60,6 +60,7 @@ import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker;
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen;
+import net.gini.android.capture.internal.util.CancelListener;
 import net.gini.android.capture.view.InjectedViewAdapterHolder;
 import net.gini.android.capture.view.InjectedViewContainer;
 import net.gini.android.capture.view.NavButtonType;
@@ -115,6 +116,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
     private boolean isBottomNavigationBarLoadingIndicatorActive;
 
     private boolean mShouldScrollToLastPage = false;
+    private CancelListener mCancelListener;
     private int mScrollToPosition = -1;
     private final String KEY_SHOULD_SCROLL_TO_LAST_PAGE = "GC_SHOULD_SCROLL_TO_LAST_PAGE";
     private final String KEY_SCROLL_TO_POSITION = "GC_SHOULD_SCROLL_TO_LAST_PAGE";
@@ -147,9 +149,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
                 mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.CLOSE_TAPPED, UserAnalyticsScreen.REVIEW);
                 setEnabled(false);
                 remove();
-                if (getActivity() != null) {
-                    getActivity().getOnBackPressedDispatcher().onBackPressed();
-                }
+                onBack();
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
@@ -190,6 +190,10 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
         mInstanceStateSaved = true;
         outState.putBoolean(KEY_SHOULD_SCROLL_TO_LAST_PAGE, mShouldScrollToLastPage);
         outState.putInt(KEY_SCROLL_TO_POSITION, mScrollToPosition);
+    }
+
+    public void setCancelListener(CancelListener cancelListener) {
+        mCancelListener = cancelListener;
     }
 
     public void showAlertDialog(@NonNull final String message,
@@ -522,9 +526,9 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
                         injectedViewAdapter.setNavButtonType(NavButtonType.CLOSE);
 
                         injectedViewAdapter.setOnNavButtonClickListener(new IntervalClickListener(v -> {
-                            if (getActivity() != null) {
-                                getActivity().getOnBackPressedDispatcher().onBackPressed();
-                            }
+                            trackReviewScreenEvent(ReviewScreenEvent.BACK);
+                            mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.CLOSE_TAPPED, UserAnalyticsScreen.REVIEW);
+                            onBack();
                         }));
                     }));
         }
@@ -940,6 +944,13 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
             mMultiPageDocument = null; // NOPMD
             GiniCapture.getInstance().internal()
                     .getImageMultiPageDocumentMemoryStore().clear();
+        }
+    }
+
+    private void onBack() {
+        boolean popBackStack = NavHostFragment.findNavController(this).popBackStack();
+        if (!popBackStack) {
+            mCancelListener.onCancelFlow();
         }
     }
 

@@ -15,6 +15,7 @@ import net.gini.android.capture.camera.CameraFragment
 import net.gini.android.capture.camera.CameraFragmentDirections
 import net.gini.android.capture.camera.CameraFragmentListener
 import net.gini.android.capture.error.ErrorFragment
+import net.gini.android.capture.internal.util.CancelListener
 import net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboarding
 import net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboardingAtFirstRun
 import net.gini.android.capture.internal.util.disallowScreenshots
@@ -23,13 +24,15 @@ import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.noresults.NoResultsFragment
-import net.gini.android.capture.tracking.useranalytics.UserAnalytics
+import net.gini.android.capture.review.multipage.MultiPageReviewFragment
 
 class GiniCaptureFragment(private val openWithDocument: Document? = null) :
     Fragment(),
     CameraFragmentListener,
     AnalysisFragmentListener,
-    EnterManuallyButtonListener{
+    EnterManuallyButtonListener,
+    CancelListener
+{
 
     private lateinit var navController: NavController
     private lateinit var giniCaptureFragmentListener: GiniCaptureFragmentListener
@@ -46,7 +49,11 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        childFragmentManager.fragmentFactory = CaptureFragmentFactory(this, this, this)
+        childFragmentManager.fragmentFactory = CaptureFragmentFactory(
+            cameraListener = this,
+            analysisFragmentListener = this,
+            enterManuallyButtonListener = this,
+            cancelListener = this)
         super.onCreate(savedInstanceState)
         if (GiniCapture.hasInstance() && !GiniCapture.getInstance().allowScreenshots) {
             requireActivity().window.disallowScreenshots()
@@ -158,8 +165,7 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
     }
 
     override fun onDefaultPDFAppAlertDialogCancelled() {
-        didFinishWithResult = true
-        giniCaptureFragmentListener.onFinishedWithResult(CaptureSDKResult.Cancel)
+        finishWithCancel()
     }
 
     override fun onExtractionsAvailable(extractions: MutableMap<String, GiniCaptureSpecificExtraction>) {
@@ -178,19 +184,28 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
         giniCaptureFragmentListener.onFinishedWithResult(CaptureSDKResult.EnterManually)
     }
 
+    override fun onCancelFlow() {
+        finishWithCancel()
+    }
+
+    private fun finishWithCancel() {
+        didFinishWithResult = true
+        giniCaptureFragmentListener.onFinishedWithResult(CaptureSDKResult.Cancel)
+    }
+
     companion object {
         @JvmStatic
         fun createInstance(document: Document? = null): GiniCaptureFragment {
             return GiniCaptureFragment(document)
         }
     }
-
 }
 
 class CaptureFragmentFactory(
     private val cameraListener: CameraFragmentListener,
     private val analysisFragmentListener: AnalysisFragmentListener,
-    private val enterManuallyButtonListener: EnterManuallyButtonListener
+    private val enterManuallyButtonListener: EnterManuallyButtonListener,
+    private val cancelListener: CancelListener
 ) : FragmentFactory() {
     override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
         when (className) {
@@ -198,27 +213,39 @@ class CaptureFragmentFactory(
                 setListener(
                     cameraListener
                 )
+                setCancelListener(cancelListener)
             }
 
             AnalysisFragment::class.java.name -> return AnalysisFragment()
                 .apply {
-                setListener(
-                    analysisFragmentListener
-                )
+                    setListener(
+                        analysisFragmentListener
+                    )
+                    setCancelListener(cancelListener)
             }
 
             ErrorFragment::class.java.name -> return ErrorFragment().apply {
                 setListener(
-                    enterManuallyButtonListener
+                    listener = enterManuallyButtonListener,
+                )
+                setCancelListener(
+                    cancelListener = cancelListener
                 )
             }
 
             NoResultsFragment::class.java.name -> return NoResultsFragment()
                 .apply {
-                    setListener(
+                    setListeners(
                         enterManuallyButtonListener
                     )
+                    setCancelListener(
+                        cancelListener
+                    )
                 }
+
+            MultiPageReviewFragment::class.java.name -> return MultiPageReviewFragment().apply {
+                setCancelListener(cancelListener)
+            }
 
             else -> return super.instantiate(classLoader, className)
         }
