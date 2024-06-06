@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="@dimen/ghs_medium"
-    tools:context="net.gini.android.merchant.sdk.exampleapp.MainActivity">
+    tools:context="net.gini.android.health.sdk.exampleapp.MainActivity">
 
     <ScrollView
         android:layout_width="match_parent"

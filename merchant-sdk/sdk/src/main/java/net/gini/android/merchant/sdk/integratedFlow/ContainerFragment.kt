@@ -1,7 +1,6 @@
 package net.gini.android.merchant.sdk.integratedFlow
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,9 +8,6 @@ import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
 import androidx.fragment.app.viewModels
-import androidx.navigation.NavController
-import androidx.navigation.fragment.findNavController
-import net.gini.android.merchant.sdk.R
 import net.gini.android.merchant.sdk.bankselection.BankSelectionBottomSheet
 import net.gini.android.merchant.sdk.databinding.GmsFragmentContainerBinding
 import net.gini.android.merchant.sdk.moreinformation.MoreInformationFragment
@@ -29,12 +25,10 @@ class ContainerFragment private constructor(private val paymentComponent: Paymen
     private val viewModel by viewModels<ContainerViewModel> {
         ContainerViewModel.Factory(paymentComponent)
     }
-    private lateinit var navController: NavController
     private var originalPaymentComponentListener: PaymentComponent.Listener? = null
 
     private val paymentComponentListener = object: PaymentComponent.Listener {
         override fun onMoreInformationClicked() {
-            navController.navigate(R.id.moreInformationFragment)
         }
 
         override fun onBankPickerClicked() {
@@ -69,7 +63,6 @@ class ContainerFragment private constructor(private val paymentComponent: Paymen
     ): View {
         super.onCreateView(inflater, container, savedInstanceState)
         binding = GmsFragmentContainerBinding.inflate(inflater, container, false)
-        navController = (childFragmentManager.fragments[0]).findNavController()
         parentFragmentManager.beginTransaction()
             .setPrimaryNavigationFragment(this)
             .commit()

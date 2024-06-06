@@ -125,7 +125,7 @@ Testing in production
 ---------------------
 
 The steps are almost the same with the only difference, that instead of the development client credentials you will need
-to use production credentials in your app. This will make sure the Gini Health SDK receives only real payment providers
+to use production credentials in your app. This will make sure the Gini Merchant SDK receives only real payment providers
 which open real banking apps.
 
 You will also need to install a banking app which uses the Gini Bank SDK. You should be able to install these from the

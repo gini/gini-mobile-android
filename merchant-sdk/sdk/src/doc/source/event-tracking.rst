@@ -1,10 +1,10 @@
 Event Tracking
 ==============
 
-GiniHealth
+GiniMerchant
 ----------
 
-The ``GiniHealth`` class exposes kotlin flows which you can collect to track events. The following flows are available:
+The ``GiniMerchant`` class exposes kotlin flows which you can collect to track events. The following flows are available:
 
 * ``documentFlow`` is a ``StateFlow`` of ``ResultWrapper<Document>`` which emits the Gini Health API's document used by
   the ``ReviewFragment``. It emits the following states:
@@ -19,7 +19,7 @@ The ``GiniHealth`` class exposes kotlin flows which you can collect to track eve
 * ``openBankState`` is a ``StateFlow`` of ``PaymentState`` which emits the state of opening the banking app. It emits
   the following states:
    * ``PaymentState.NoAction()`` is the idle state.
-   * ``PaymentState.Loading()`` when the user requested to open the banking app and the Health SDK started creating a
+   * ``PaymentState.Loading()`` when the user requested to open the banking app and the Merchant SDK started creating a
      payment request.
    * ``PaymentState.Success(paymentRequest)`` when the payment request is ready and the banking app will be opened.
    * ``PaymentState.Error(throwable)`` when there was an error creating the payment request or opening the banking app.
@@ -61,6 +61,6 @@ the ``ReviewFragmentListener`` and set it on the fragment.
 
         override fun onToTheBankButtonClicked(paymentProviderName: String) {
             // Log or track the used payment provider name.
-            // No action required, the payment process is handled by the Gini Health SDK.
+            // No action required, the payment process is handled by the Gini Merchant SDK.
         }
     }

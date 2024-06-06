@@ -11,7 +11,7 @@ manages interaction with the Gini Health API and ``PaymentComponent`` manages th
 Create the GiniMerchant instance
 ------------------------------
 
-Before creating an instance of ``GiniMerchant`` you need to create an instance of the ``GiniHealthAPI``. The Gini Health
+Before creating an instance of ``GiniMerchant`` you need to create an instance of the ``GiniHealthAPI``. The Gini Merchant
 SDK provides the following two helper methods for creating the  ``GiniHealthAPI`` instance:
 
 * ``getGiniApi(context: Context, clientId: String, clientSecret: String, emailDomain: String)``
@@ -21,13 +21,13 @@ After that you can create an instance of ``GiniMerchant``:
 
 .. code-block:: kotlin
 
-    val giniHealth = GiniHealth(giniHealthApi)
+    val giniMerchant = GiniMerchant(giniHealthApi)
 
 Upload documents
 ----------------
 
 Uploading documents is achieved via the ``GiniHealthAPI`` instance's ``documentManager``. You can access it by using the
-``giniHealth.giniHealthAPI.documentManager`` property. 
+``giniMerchant.giniHealthAPI.documentManager`` property.
 
 For each document page a *partial document* needs to be created. The following example shows how to create a new partial
 document from a byte array containing a JPEG image:
@@ -40,7 +40,7 @@ document from a byte array containing a JPEG image:
     coroutineScope.launch {
         // Create a partial document by uploading the document data
         val partialDocumentResource =
-            giniHealth.giniHealthApi.documentManager.createPartialDocument(imageBytes, "image/jpeg", "document_page_1.jpg")
+            giniMerchant.giniHealthApi.documentManager.createPartialDocument(imageBytes, "image/jpeg", "document_page_1.jpg")
 
         when (partialDocumentResource) {
             is Resource.Success -> {
@@ -63,7 +63,7 @@ into one final document:
     coroutineScope.launch {
         // Create a composite document by uploading the document data
         val compositeDocumentResource =
-            giniHealth.giniHealthApi.documentManager.createCompositeDocument(partialDocuments)
+            giniMerchant.giniHealthApi.documentManager.createCompositeDocument(partialDocuments)
 
         when (compositeDocumentResource) {
             is Resource.Success -> {
@@ -78,7 +78,7 @@ into one final document:
 Check which documents/invoices are payable
 ------------------------------------------
 
-Call ``giniHealth.checkIfDocumentIsPayable()`` with the composite document id for each invoice to check whether it is
+Call ``giniMerchant.checkIfDocumentIsPayable()`` with the composite document id for each invoice to check whether it is
 payable. We recommend performing this check only once right after the invoice has been uploaded and processed by Gini's
 Health API. You can then store the ``isPayable`` state in your own data model.
 
@@ -89,7 +89,7 @@ Health API. You can then store the ``isPayable`` state in your own data model.
     coroutineScope.launch {
         try {
             // Check whether the composite document is payable
-            val isPayable = giniHealth.checkIfDocumentIsPayable(compositeDocument.id)
+            val isPayable = giniMerchant.checkIfDocumentIsPayable(compositeDocument.id)
         } catch (e: Exception) {
             // Handle error
         }
@@ -99,11 +99,11 @@ Create the PaymentComponent instance
 ------------------------------------
 
 For creating an instance of the ``PaymentComponent`` you need to pass in the Android context (either the application or
-an activity context) and the ``GiniHealth`` instance:
+an activity context) and the ``GiniMerchant`` instance:
 
 .. code-block:: kotlin
 
-    val paymentComponent = PaymentComponent(context, giniHealth)
+    val paymentComponent = PaymentComponent(context, giniMerchant)
 
 Add a listener to the PaymentComponent
 --------------------------------------
@@ -146,7 +146,7 @@ The ``PaymentComponentView`` is hidden by default and should be added to the lay
 
 .. code-block:: xml
 
-    <net.gini.android.health.sdk.paymentcomponent.PaymentComponentView
+    <net.gini.android.merchant.sdk.paymentcomponent.PaymentComponentView
         android:id="@+id/payment_component"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -233,7 +233,7 @@ the invoice and the configuration for the screen. Also set a listener to get inf
 
         override fun onToTheBankButtonClicked(paymentProviderName: String) {
             // Log or track the used payment provider name.
-            // No action required, the payment process is handled by the Gini Health SDK.
+            // No action required, the payment process is handled by the Gini Merchant SDK.
         }
     }
 
@@ -249,5 +249,5 @@ The ``ReviewConfiguration`` class contains the following options:
 
 - ``handleErrorsInternally``: If set to ``true``, the ``ReviewFragment`` will handle errors internally and show
   snackbars for errors. If set to ``false``, errors will be ignored by the ``ReviewFragment``. In this case the flows
-  exposed by ``GiniHealth`` should be observed for errors. Default value is ``true``.
+  exposed by ``GiniMerchant`` should be observed for errors. Default value is ``true``.
 - ``showCloseButton``: If set to ``true``, a floating close button will be shown in the top right corner of the screen. Default value is ``false``.

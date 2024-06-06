@@ -203,7 +203,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  ('index', 'GiniHealthSDK.tex', u'Gini Health SDK Documentation',
+  ('index', 'GiniMerchantSDK.tex', u'Gini Merchant SDK Documentation',
    u'Gini', 'manual'),
 ]
 
@@ -274,7 +274,7 @@ if project_version != None:
 else:
     version_path = "/"
 
-root_dokka_path = "https://developer.gini.net/gini-mobile-android/health-sdk/sdk%(version_path)sdokka/" % {"version_path" : version_path}
+root_dokka_path = "https://developer.gini.net/gini-mobile-android/merchant-sdk/sdk%(version_path)sdokka/" % {"version_path" : version_path}
 
 extlinks = {
     "root_dokka_path": (root_dokka_path + "%s", "%s"),

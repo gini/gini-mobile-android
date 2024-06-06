@@ -74,7 +74,7 @@ the following snippet to one of your resources XML file (e.g, ``colors.xml``):
 
 .. note::
 
-    If you overridde the ``GiniHealthTheme``, the theme colors you set there override the color palette customization.
+    If you overridde the ``GiniMerchantTheme``, the theme colors you set there override the color palette customization.
 
 Find the names of the color resources in the color palette (you can also view it in Figma `here
 <https://www.figma.com/file/AJTss4k0M6R2OxH0VQepdP/Android-Gini-Health-SDK-3.0.0-UI-Customisation?type=design&node-id=8502%3A357&mode=design&t=A1pTQWjJWSBUR6Zi-1>`_): 
@@ -115,13 +115,14 @@ application, use the root style as the parent, for example:
 
 .. code-block:: xml
 
-    <style name="GiniHealthTheme.Typography.Body1" parent="Root.GiniHealthTheme.Typography.Body1">
+    <style name="GiniMerchantTheme.Typography.Body1" parent="Root.GiniMerchantTheme.Typography.Body1">
        (...)
     </style>
 
 .. note::
 
-    If you override the ``GiniHealthTheme``, the text appearances you set there override the typography customization. The
+
+    If you override the ``GiniMerchantTheme``, the text appearances you set there override the typography customization. The
     same applies to the override of widget styles where you set a custom text appearance.
 
     We use ``android:lineSpacingMultiplier`` in combination with ``android:textSize`` to support resizing text for accessibility and avoid overlapping text.
