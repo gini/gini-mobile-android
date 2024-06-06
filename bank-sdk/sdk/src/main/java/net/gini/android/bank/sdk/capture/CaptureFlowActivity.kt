@@ -13,7 +13,9 @@ import net.gini.android.capture.EntryPoint
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.internal.util.FileImportValidator
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics
+import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventSuperProperty.EntryPoint as AnalyticsEntryPoint
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsUserProperty
+
 
 /**
  * Entry point for Screen API. It exists for the purpose of communication between Capture SDK's Screen API and Return Assistant.
@@ -107,25 +109,28 @@ internal class CaptureFlowActivity : AppCompatActivity(), CaptureFlowFragmentLis
     }
 
     private fun setAnalyticsEntryPointProperty(isOpenWithDocumentExists: Boolean) {
-        val basicProperties = setOf(
-            UserAnalyticsUserProperty.ReturnAssistantEnabled(
-                GiniBank.getCaptureConfiguration()?.returnAssistantEnabled ?: false
-            ),
-            UserAnalyticsUserProperty.ReturnReasonsEnabled(GiniBank.enableReturnReasons),
-        )
 
         val entryPointProperty = if (isOpenWithDocumentExists) {
-            UserAnalyticsUserProperty.EntryPoint(UserAnalyticsUserProperty.EntryPoint.EntryPointType.OPEN_WITH)
+            AnalyticsEntryPoint(AnalyticsEntryPoint.EntryPointType.OPEN_WITH)
         } else {
-            UserAnalyticsUserProperty.EntryPoint(
+            AnalyticsEntryPoint(
                 when (GiniCapture.getInstance().entryPoint) {
-                    EntryPoint.BUTTON -> UserAnalyticsUserProperty.EntryPoint.EntryPointType.BUTTON
-                    EntryPoint.FIELD -> UserAnalyticsUserProperty.EntryPoint.EntryPointType.FIELD
+                    EntryPoint.BUTTON -> AnalyticsEntryPoint.EntryPointType.BUTTON
+                    EntryPoint.FIELD -> AnalyticsEntryPoint.EntryPointType.FIELD
                 }
             )
         }
 
-        userAnalyticsEventTracker.setUserProperty(basicProperties)
+        userAnalyticsEventTracker.setUserProperty(
+            setOf(
+                UserAnalyticsUserProperty.ReturnAssistantEnabled(
+                    GiniBank.getCaptureConfiguration()?.returnAssistantEnabled ?: false
+                ),
+                UserAnalyticsUserProperty.ReturnReasonsEnabled(GiniBank.enableReturnReasons),
+            )
+        )
+
+        userAnalyticsEventTracker.setEventSuperProperty(entryPointProperty)
     }
 
 }

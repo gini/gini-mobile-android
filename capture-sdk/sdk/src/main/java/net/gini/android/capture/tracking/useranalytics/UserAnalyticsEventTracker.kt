@@ -7,10 +7,16 @@ import android.provider.Settings
 import android.view.accessibility.AccessibilityManager
 import com.mixpanel.android.mpmetrics.MixpanelAPI
 import net.gini.android.capture.R
+import net.gini.android.capture.internal.provider.InstallationIdProvider
+import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventSuperProperty
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsUserProperty
 
 
 interface UserAnalyticsEventTracker {
+
+    fun setEventSuperProperty(property: UserAnalyticsEventSuperProperty)
+
+    fun setEventSuperProperty(property: Set<UserAnalyticsEventSuperProperty>)
 
     fun setUserProperty(userProperty: UserAnalyticsUserProperty)
     fun setUserProperty(userProperties: Set<UserAnalyticsUserProperty>)
@@ -55,7 +61,10 @@ object UserAnalytics {
 }
 
 
-private class MixPanelUserAnalyticsEventTracker(context: Context) : UserAnalyticsEventTracker {
+private class MixPanelUserAnalyticsEventTracker(
+    context: Context,
+    installationIdProvider: InstallationIdProvider = InstallationIdProvider(context)
+) : UserAnalyticsEventTracker {
 
     private val mixpanelAPI: MixpanelAPI
 
@@ -64,12 +73,8 @@ private class MixPanelUserAnalyticsEventTracker(context: Context) : UserAnalytic
             MixpanelAPI.getInstance(context, context.getString(R.string.mixpanel_api_key), false)
         mixpanelAPI.setServerURL(MIXPANEL_SERVER_URL)
 
-        runCatching {
-            Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
-        }.getOrNull()?.let {
-            mixpanelAPI.identify(it)
-        }
-        
+        mixpanelAPI.identify(installationIdProvider.getInstallationId())
+
         trackAccessibilityProperties(context)
     }
 
@@ -106,7 +111,15 @@ private class MixPanelUserAnalyticsEventTracker(context: Context) : UserAnalytic
     }
 
     override fun setUserProperty(userProperties: Set<UserAnalyticsUserProperty>) {
-        mixpanelAPI.people.setMap(userProperties.associate { it.getPair() })
+        mixpanelAPI.people.setOnceMap(userProperties.associate { it.getPair() }.toMutableMap())
+    }
+
+    override fun setEventSuperProperty(property: UserAnalyticsEventSuperProperty) {
+        setEventSuperProperty(setOf(property))
+    }
+
+    override fun setEventSuperProperty(property: Set<UserAnalyticsEventSuperProperty>) {
+        mixpanelAPI.registerSuperPropertiesMap(property.associate { it.getPair() })
     }
 
     override fun setUserProperty(userProperty: UserAnalyticsUserProperty) {
