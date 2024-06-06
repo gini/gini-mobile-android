@@ -396,7 +396,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                     mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.CLOSE_TAPPED, UserAnalyticsScreen.CAMERA);
                 }
                 trackCameraScreenEvent(CameraScreenEvent.EXIT);
-                trackCameraNoPermissionMessageCloseClickedEventIfNeeded();
+                trackCameraAccessPermissionRequiredCloseClickedEventIfNeeded();
                 onBackPressed();
             }
         });
@@ -785,7 +785,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                 }
 
                 injectedViewAdapter.setOnNavButtonClickListener(new IntervalClickListener(v -> {
-                    trackCameraNoPermissionMessageCloseClickedEventIfNeeded();
+                    trackCameraAccessPermissionRequiredCloseClickedEventIfNeeded();
                     onBackPressed();
                 }));
             }));
@@ -803,7 +803,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                         injectedViewAdapter.setBackButtonVisibility(isEmpty ? View.GONE : View.VISIBLE);
 
                         injectedViewAdapter.setOnBackButtonClickListener(new IntervalClickListener(v -> {
-                            trackCameraNoPermissionMessageCloseClickedEventIfNeeded();
+                            trackCameraAccessPermissionRequiredCloseClickedEventIfNeeded();
                             onBackPressed();
                         }));
 
@@ -847,7 +847,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
         trackCameraScreenEvent(CameraScreenEvent.HELP);
 
-        trackCameraNoPermissionMessageHelpClickedEventIfNeeded();
+        trackCameraAccessPermissionRequiredHelpClickedEventIfNeeded();
     }
 
     private void initOnlyQRScanning() {
@@ -1662,7 +1662,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         inflateNoPermissionStub();
         setUpNoPermissionButton();
         if (mLayoutNoPermission != null) {
-            trackCameraNoPermissionMessageShownEvent();
+            trackCameraAccessPermissionRequiredShownEvent();
             mLayoutNoPermission.setVisibility(View.VISIBLE);
         }
     }
@@ -1714,7 +1714,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         }
         final Button button = view.findViewById(R.id.gc_button_camera_no_permission);
         button.setOnClickListener(v -> {
-            trackCameraNoPermissionMessageGetAccessClickedEvent();
+            trackCameraAccessPermissionRequiredGetAccessClickedEvent();
             startApplicationDetailsSettings();
         });
     }
@@ -1913,24 +1913,24 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         }
     }
 
-    private void trackCameraNoPermissionMessageShownEvent() {
+    private void trackCameraAccessPermissionRequiredShownEvent() {
         mUserAnalyticsEventTracker.trackEvent(
                 UserAnalyticsEvent.SCREEN_SHOWN, UserAnalyticsScreen.CAMERA_ACCESS);
     }
 
-    private void trackCameraNoPermissionMessageGetAccessClickedEvent() {
+    private void trackCameraAccessPermissionRequiredGetAccessClickedEvent() {
         mUserAnalyticsEventTracker.trackEvent(
                 UserAnalyticsEvent.GIVE_ACCESS_TAPPED, UserAnalyticsScreen.CAMERA_ACCESS);
     }
 
-    private void trackCameraNoPermissionMessageHelpClickedEventIfNeeded() {
+    private void trackCameraAccessPermissionRequiredHelpClickedEventIfNeeded() {
         if (mLayoutNoPermission.getVisibility() == View.VISIBLE) {
             mUserAnalyticsEventTracker.trackEvent(
                     UserAnalyticsEvent.HELP_TAPPED, UserAnalyticsScreen.CAMERA_ACCESS);
         }
     }
 
-    private void trackCameraNoPermissionMessageCloseClickedEventIfNeeded() {
+    private void trackCameraAccessPermissionRequiredCloseClickedEventIfNeeded() {
         if (mLayoutNoPermission.getVisibility() == View.VISIBLE) {
             mUserAnalyticsEventTracker.trackEvent(
                     UserAnalyticsEvent.CLOSE_TAPPED, UserAnalyticsScreen.CAMERA_ACCESS);
