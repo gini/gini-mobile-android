@@ -111,7 +111,7 @@ private class MixPanelUserAnalyticsEventTracker(
     }
 
     override fun setUserProperty(userProperties: Set<UserAnalyticsUserProperty>) {
-        mixpanelAPI.people.setOnceMap(userProperties.associate { it.getPair() }.toMutableMap())
+        mixpanelAPI.people.setMap(userProperties.associate { it.getPair() }.toMutableMap())
     }
 
     override fun setEventSuperProperty(property: UserAnalyticsEventSuperProperty) {
