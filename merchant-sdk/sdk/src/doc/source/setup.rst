@@ -11,7 +11,7 @@ build.gradle:
 .. code-block:: groovy
 
     dependencies {
-        implementation 'net.gini.android:gini-health-sdk:4.0.0'
+        implementation 'net.gini.android:gini-merchant-sdk:1.0.0'
     }
 
 Gini Pay Deep Link For Your App
@@ -43,4 +43,4 @@ Gini Health API Client Credentials
 
 You should have received Gini Health API client credentials from us. Please get in touch with us in case you don't have them.
 
-Continue to `Authentication <authentication.html>`_ to see how to use the client credentials to initialize the Gini Health SDK.
+Continue to `Authentication <authentication.html>`_ to see how to use the client credentials to initialize the Gini Merchant SDK.

@@ -1,6 +1,5 @@
 package net.gini.android.merchant.sdk.moreinformation
 
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.SpannedString
@@ -8,7 +7,6 @@ import android.text.TextPaint
 import android.text.method.LinkMovementMethod
 import android.text.style.TextAppearanceSpan
 import android.text.style.URLSpan
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,12 +23,12 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.launch
 import net.gini.android.merchant.sdk.R
-import net.gini.android.merchant.sdk.databinding.GhsFragmentPaymentMoreInformationBinding
-import net.gini.android.merchant.sdk.databinding.GhsPaymentProviderIconHolderBinding
+import net.gini.android.merchant.sdk.databinding.GmsFragmentPaymentMoreInformationBinding
+import net.gini.android.merchant.sdk.databinding.GmsPaymentProviderIconHolderBinding
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.util.autoCleared
-import net.gini.android.merchant.sdk.util.getLayoutInflaterWithGiniHealthTheme
+import net.gini.android.merchant.sdk.util.getLayoutInflaterWithGiniMerchantTheme
 
 /**
  * The [MoreInformationFragment] displays information and an FAQ section about the payment feature. It requires a
@@ -40,7 +38,7 @@ class MoreInformationFragment private constructor(private val paymentComponent: 
     Fragment() {
     constructor() : this(paymentComponent = null)
 
-    private var binding: GhsFragmentPaymentMoreInformationBinding by autoCleared()
+    private var binding: GmsFragmentPaymentMoreInformationBinding by autoCleared()
     private val viewModel: MoreInformationViewModel by viewModels {
         MoreInformationViewModel.Factory(
             paymentComponent
@@ -50,18 +48,18 @@ class MoreInformationFragment private constructor(private val paymentComponent: 
     @VisibleForTesting
     internal val faqList: List<Pair<String, CharSequence>> by lazy {
         listOf(
-            getString(R.string.ghs_faq_1) to getString(R.string.ghs_faq_answer_1),
-            getString(R.string.ghs_faq_2) to getString(R.string.ghs_faq_answer_2),
-            getString(R.string.ghs_faq_3) to getString(R.string.ghs_faq_answer_3),
-            getString(R.string.ghs_faq_4) to buildGiniRelatedAnswer(),
-            getString(R.string.ghs_faq_5) to getString(R.string.ghs_faq_answer_5),
-            getString(R.string.ghs_faq_6) to getString(R.string.ghs_faq_answer_6)
+            getString(R.string.gms_faq_1) to getString(R.string.gms_faq_answer_1),
+            getString(R.string.gms_faq_2) to getString(R.string.gms_faq_answer_2),
+            getString(R.string.gms_faq_3) to getString(R.string.gms_faq_answer_3),
+            getString(R.string.gms_faq_4) to buildGiniRelatedAnswer(),
+            getString(R.string.gms_faq_5) to getString(R.string.gms_faq_answer_5),
+            getString(R.string.gms_faq_6) to getString(R.string.gms_faq_answer_6)
         )
     }
 
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
         val inflater = super.onGetLayoutInflater(savedInstanceState)
-        return this.getLayoutInflaterWithGiniHealthTheme(inflater)
+        return this.getLayoutInflaterWithGiniMerchantTheme(inflater)
     }
 
     override fun onCreateView(
@@ -70,21 +68,21 @@ class MoreInformationFragment private constructor(private val paymentComponent: 
         savedInstanceState: Bundle?
     ): View {
         super.onCreateView(inflater, container, savedInstanceState)
-        binding = GhsFragmentPaymentMoreInformationBinding.inflate(inflater, container, false)
+        binding = GmsFragmentPaymentMoreInformationBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.ghsMoreInformationDetails.text = buildSpannedString {
-            append(getString(R.string.ghs_more_information_details))
+        binding.gmsMoreInformationDetails.text = buildSpannedString {
+            append(getString(R.string.gms_more_information_details))
             append(" ")
-            append(createSpanForLink(R.string.ghs_gini_link, R.string.ghs_gini_link_url))
+            append(createSpanForLink(R.string.gms_gini_link, R.string.gms_gini_link_url))
             append(".")
         }
-        binding.ghsMoreInformationDetails.movementMethod = LinkMovementMethod.getInstance()
-        binding.ghsPaymentProvidersIconsList.adapter = PaymentProvidersIconsAdapter(listOf())
-        binding.ghsFaqList.apply {
+        binding.gmsMoreInformationDetails.movementMethod = LinkMovementMethod.getInstance()
+        binding.gmsPaymentProvidersIconsList.adapter = PaymentProvidersIconsAdapter(listOf())
+        binding.gmsFaqList.apply {
             setAdapter(FaqExpandableListAdapter(faqList))
             setOnGroupClickListener { expandableListView, _, group, _ ->
                 setListViewHeight(listView = expandableListView, group = group, isReload = false)
@@ -92,8 +90,8 @@ class MoreInformationFragment private constructor(private val paymentComponent: 
             }
         }
         //Set initial list view height so we can scroll full page
-        binding.ghsFaqList.postDelayed({
-            setListViewHeight(listView = binding.ghsFaqList, group = getExpandedGroupPosition(), isReload = true)
+        binding.gmsFaqList.postDelayed({
+            setListViewHeight(listView = binding.gmsFaqList, group = getExpandedGroupPosition(), isReload = true)
         }, 100)
 
         viewModel.start()
@@ -114,13 +112,13 @@ class MoreInformationFragment private constructor(private val paymentComponent: 
 
     private fun getExpandedGroupPosition(): Int {
         for (i in faqList.indices) {
-            if (binding.ghsFaqList.isGroupExpanded(i)) return i
+            if (binding.gmsFaqList.isGroupExpanded(i)) return i
         }
         return -1
     }
 
     private fun updatePaymentProviderIconsAdapter(paymentProviderApps: List<PaymentProviderApp>) {
-        (binding.ghsPaymentProvidersIconsList.adapter as PaymentProvidersIconsAdapter).apply {
+        (binding.gmsPaymentProvidersIconsList.adapter as PaymentProvidersIconsAdapter).apply {
             dataSet = paymentProviderApps
             notifyDataSetChanged()
         }
@@ -135,7 +133,7 @@ class MoreInformationFragment private constructor(private val paymentComponent: 
                 SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
             )
             setSpan(
-                TextAppearanceSpan(requireContext(), R.style.GiniHealthTheme_Typography_Link),
+                TextAppearanceSpan(requireContext(), R.style.GiniMerchantTheme_Typography_Link),
                 0,
                 this.length,
                 SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -143,10 +141,10 @@ class MoreInformationFragment private constructor(private val paymentComponent: 
         }
 
     private fun buildGiniRelatedAnswer(): SpannedString {
-        val giniLink = createSpanForLink(R.string.ghs_gini_website, R.string.ghs_gini_link_url)
-        val privacyPolicyString = createSpanForLink(R.string.ghs_privacy_policy, R.string.ghs_privacy_policy_link_url)
+        val giniLink = createSpanForLink(R.string.gms_gini_website, R.string.gms_gini_link_url)
+        val privacyPolicyString = createSpanForLink(R.string.gms_privacy_policy, R.string.gms_privacy_policy_link_url)
         val span = buildSpannedString {
-            append(getString(R.string.ghs_faq_answer_4))
+            append(getString(R.string.gms_faq_answer_4))
             replace(indexOf("%s"), indexOf("%s") + 2, giniLink)
             replace(indexOf("%p"), indexOf("%p") + 2, privacyPolicyString)
         }
@@ -190,8 +188,8 @@ class MoreInformationFragment private constructor(private val paymentComponent: 
         RecyclerView.Adapter<PaymentProvidersIconsAdapter.ViewHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-            val view = GhsPaymentProviderIconHolderBinding.inflate(
-                parent.getLayoutInflaterWithGiniHealthTheme(),
+            val view = GmsPaymentProviderIconHolderBinding.inflate(
+                parent.getLayoutInflaterWithGiniMerchantTheme(),
                 parent,
                 false
             )
@@ -202,12 +200,12 @@ class MoreInformationFragment private constructor(private val paymentComponent: 
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val context = holder.binding.root.context
-            holder.binding.ghsPaymentProviderIcon.setImageDrawable(dataSet[position]?.icon)
-            holder.binding.ghsPaymentProviderIcon.contentDescription = dataSet[position]?.paymentProvider?.name + " ${context.getString(
-                R.string.ghs_payment_provider_logo_content_description)}"
+            holder.binding.gmsPaymentProviderIcon.setImageDrawable(dataSet[position]?.icon)
+            holder.binding.gmsPaymentProviderIcon.contentDescription = dataSet[position]?.paymentProvider?.name + " ${context.getString(
+                R.string.gms_payment_provider_logo_content_description)}"
         }
 
-        class ViewHolder(val binding: GhsPaymentProviderIconHolderBinding) :
+        class ViewHolder(val binding: GmsPaymentProviderIconHolderBinding) :
             RecyclerView.ViewHolder(binding.root)
     }
 

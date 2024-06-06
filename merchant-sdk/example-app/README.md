@@ -1,11 +1,11 @@
-Gini Health SDK Example App
+Gini Merchant SDK Example App
 =========================
 
-This example app provides you with a sample usage of the Gini Health SDK.
+This example app provides you with a sample usage of the Gini Merchant SDK.
 
 The Gini Health API Library is used for analyzing documents and creating payment requests.
 
-Before using the Gini Health SDK example app, you need to set your Gini Health API client id and secret by creating a
+Before using the Gini Merchant SDK example app, you need to set your Gini Health API client id and secret by creating a
 `local.properties` file in this folder containing a `clientId` and a `clientSecret` property.
 
 ProGuard 
@@ -17,7 +17,7 @@ The release build is configured to run ProGuard. You need a keystore with a key 
 the `gradle.properties` or as arguments for the build command:
 
 ``` 
-$ ./gradlew health-sdk:example-app:assembleRelease \ 
+$ ./gradlew merchant-sdk:example-app:assembleRelease \ 
     -PreleaseKeystoreFile=<path to keystore> \ 
     -PreleaseKeystorePassword=<keystore password> \ 
     -PreleaseKeyAlias=<key alias> \ 
@@ -34,7 +34,7 @@ is used for creating release builds which can be shared with clients while the `
 for QA purposes. The difference between `prod` and `qa` is that `qa` allows using custom SSL root certificates for
 SSL proxies (e.g. Charles Proxy).
 
-Payment Providers for testing the Health SDK
+Payment Providers for testing the Merchant SDK
 ============================================
 
 Payment Providers for testing are provided by the Gini Bank SDK's example app. Run `bundle exec fastlane install_test_payment_provider_apps` in the repository root to install test payment provider apps 

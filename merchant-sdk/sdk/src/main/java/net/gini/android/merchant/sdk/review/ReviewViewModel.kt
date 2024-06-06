@@ -21,7 +21,7 @@ import kotlinx.coroutines.withContext
 import net.gini.android.core.api.Resource
 import net.gini.android.core.api.models.Document
 import net.gini.android.health.api.models.PaymentRequestInput
-import net.gini.android.merchant.sdk.GiniHealth
+import net.gini.android.merchant.sdk.GiniMerchant
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.merchant.sdk.paymentcomponent.SelectedPaymentProviderAppState
 import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory
 import java.io.File
 
 
-internal class ReviewViewModel(val giniHealth: GiniHealth, val configuration: ReviewConfiguration, val paymentComponent: PaymentComponent) : ViewModel() {
+internal class ReviewViewModel(val giniMerchant: GiniMerchant, val configuration: ReviewConfiguration, val paymentComponent: PaymentComponent) : ViewModel() {
 
     internal var userPreferences: UserPreferences? = null
     internal var openWithPreferences: OpenWithPreferences? = null
@@ -68,16 +68,16 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val configuration: Re
     private var openWithCounter: Int = 0
 
     val isPaymentButtonEnabled: Flow<Boolean> =
-        combine(giniHealth.openBankState, paymentDetails) { paymentState, paymentDetails ->
+        combine(giniMerchant.openBankState, paymentDetails) { paymentState, paymentDetails ->
             val noEmptyFields = paymentDetails.recipient.isNotEmpty() && paymentDetails.iban.isNotEmpty() &&
                     paymentDetails.amount.isNotEmpty() && paymentDetails.purpose.isNotEmpty()
-            val isLoading = (paymentState is GiniHealth.PaymentState.Loading)
+            val isLoading = (paymentState is GiniMerchant.PaymentState.Loading)
             !isLoading && noEmptyFields
         }
 
     init {
         viewModelScope.launch {
-            giniHealth.paymentFlow.collect { extractedPaymentDetails ->
+            giniMerchant.paymentFlow.collect { extractedPaymentDetails ->
                 if (extractedPaymentDetails is ResultWrapper.Success) {
                     val paymentDetails = paymentDetails.value.overwriteEmptyFields(
                         extractedPaymentDetails.value.copy(
@@ -95,7 +95,7 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val configuration: Re
         viewModelScope.launch {
             // Validate payment details only if extracted payment details are not being loaded
             _paymentDetails
-                .combine(giniHealth.paymentFlow.filter { it !is ResultWrapper.Loading }) { paymentDetails, _ -> paymentDetails }
+                .combine(giniMerchant.paymentFlow.filter { it !is ResultWrapper.Loading }) { paymentDetails, _ -> paymentDetails }
                 .withPrev()
                 .collect { (prevPaymentDetails, paymentDetails) ->
                     // Get all validation messages except emptiness validations
@@ -183,7 +183,7 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val configuration: Re
             throw Exception("Cannot create PaymentRequest: No selected payment provider app")
         }
 
-        return when (val createPaymentRequestResource = giniHealth.giniHealthAPI.documentManager.createPaymentRequest(
+        return when (val createPaymentRequestResource = giniMerchant.giniHealthAPI.documentManager.createPaymentRequest(
             PaymentRequestInput(
                 paymentProvider = paymentProviderApp.paymentProvider.id,
                 recipient = paymentDetails.value.recipient,
@@ -203,13 +203,13 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val configuration: Re
         val paymentProviderApp = paymentProviderApp.value
         if (paymentProviderApp == null) {
             LOG.error("No selected payment provider app")
-            giniHealth.setOpenBankState(GiniHealth.PaymentState.Error(Exception("No selected payment provider app")))
+            giniMerchant.setOpenBankState(GiniMerchant.PaymentState.Error(Exception("No selected payment provider app")))
             return
         }
 
         if (paymentProviderApp.installedPaymentProviderApp == null) {
             LOG.error("Payment provider app not installed")
-            giniHealth.setOpenBankState(GiniHealth.PaymentState.Error(Exception("Payment provider app not installed")))
+            giniMerchant.setOpenBankState(GiniMerchant.PaymentState.Error(Exception("Payment provider app not installed")))
             return
         }
 
@@ -217,11 +217,11 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val configuration: Re
             val valid = validatePaymentDetails(paymentDetails.value)
             if (valid) {
                 sendFeedbackAndStartLoading()
-                giniHealth.setOpenBankState(
+                giniMerchant.setOpenBankState(
                     try {
-                        GiniHealth.PaymentState.Success(getPaymentRequest())
+                        GiniMerchant.PaymentState.Success(getPaymentRequest())
                     } catch (throwable: Throwable) {
-                        GiniHealth.PaymentState.Error(throwable)
+                        GiniMerchant.PaymentState.Error(throwable)
                     }
                 )
             }
@@ -232,16 +232,16 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val configuration: Re
         // Schedule on the main dispatcher to allow all collectors to receive the current state before
         // the state is overridden
         viewModelScope.launch(Dispatchers.Main) {
-            giniHealth.setOpenBankState(GiniHealth.PaymentState.NoAction)
+            giniMerchant.setOpenBankState(GiniMerchant.PaymentState.NoAction)
         }
     }
 
     private fun sendFeedback() {
         viewModelScope.launch {
             try {
-                when (val documentResult = giniHealth.documentFlow.value) {
+                when (val documentResult = giniMerchant.documentFlow.value) {
                     is ResultWrapper.Success -> paymentDetails.value.extractions?.let { extractionsContainer ->
-                        giniHealth.giniHealthAPI.documentManager.sendFeedbackForExtractions(
+                        giniMerchant.giniHealthAPI.documentManager.sendFeedbackForExtractions(
                             documentResult.value,
                             extractionsContainer.specificExtractions,
                             extractionsContainer.compoundExtractions.withFeedback(paymentDetails.value)
@@ -259,7 +259,7 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val configuration: Re
 
     fun retryDocumentReview() {
         viewModelScope.launch {
-            giniHealth.retryDocumentReview()
+            giniMerchant.retryDocumentReview()
         }
     }
 
@@ -296,19 +296,19 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val configuration: Re
                 val paymentRequest = try {
                     getPaymentRequest()
                 } catch (throwable: Throwable) {
-                    giniHealth.setOpenBankState(GiniHealth.PaymentState.Error(throwable))
+                    giniMerchant.setOpenBankState(GiniMerchant.PaymentState.Error(throwable))
                     return@withContext
                 }
-                val byteArrayResource = async {  giniHealth.giniHealthAPI.documentManager.getPaymentRequestDocument(paymentRequest.id) }.await()
+                val byteArrayResource = async {  giniMerchant.giniHealthAPI.documentManager.getPaymentRequestDocument(paymentRequest.id) }.await()
                 when (byteArrayResource) {
                     is Resource.Cancelled -> {
-                        giniHealth.setOpenBankState(GiniHealth.PaymentState.Error(Exception("Cancelled")))
+                        giniMerchant.setOpenBankState(GiniMerchant.PaymentState.Error(Exception("Cancelled")))
                     }
                     is Resource.Error -> {
-                        giniHealth.setOpenBankState(GiniHealth.PaymentState.Error(byteArrayResource.exception ?: Exception("Error")))
+                        giniMerchant.setOpenBankState(GiniMerchant.PaymentState.Error(byteArrayResource.exception ?: Exception("Error")))
                     }
                     is Resource.Success -> {
-                        giniHealth.setOpenBankState(GiniHealth.PaymentState.Success(paymentRequest))
+                        giniMerchant.setOpenBankState(GiniMerchant.PaymentState.Success(paymentRequest))
                         val newFile = externalCacheDir?.createTempPdfFile(byteArrayResource.data, "payment-request")
                         newFile?.let {
                             _paymentNextStep.tryEmit(PaymentNextStep.OpenSharePdf(it))
@@ -320,7 +320,7 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val configuration: Re
     }
 
     private fun sendFeedbackAndStartLoading() {
-        giniHealth.setOpenBankState(GiniHealth.PaymentState.Loading)
+        giniMerchant.setOpenBankState(GiniMerchant.PaymentState.Loading)
         // TODO: first get the payment request and handle error before proceeding
         sendFeedback()
     }
@@ -333,11 +333,11 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val configuration: Re
         data class SetLoadingVisibility(val isVisible: Boolean): PaymentNextStep()
     }
 
-    class Factory(private val giniHealth: GiniHealth, private val configuration: ReviewConfiguration, private val paymentComponent: PaymentComponent) :
+    class Factory(private val giniMerchant: GiniMerchant, private val configuration: ReviewConfiguration, private val paymentComponent: PaymentComponent) :
         ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return ReviewViewModel(giniHealth, configuration, paymentComponent) as T
+            return ReviewViewModel(giniMerchant, configuration, paymentComponent) as T
         }
     }
 

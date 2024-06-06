@@ -26,12 +26,12 @@ single place. They are then consistently applied on all screens.
 Theme
 +++++
 
-The theme style is based on Material Design v3 and is named ``GiniHealthTheme``. To override the theme in your
-application, use ``Root.GiniHealthTheme`` as the parent:
+The theme style is based on Material Design v3 and is named ``GiniMerchantTheme``. To override the theme in your
+application, use ``Root.GiniMerchantTheme`` as the parent:
 
 .. code-block:: xml
 
-    <style name="GiniHealthTheme" parent="Root.GiniHealthTheme">
+    <style name="GiniMerchantTheme" parent="Root.GiniMerchantTheme">
       (...)
     </style>
 
@@ -43,7 +43,7 @@ root style as the parent, for example:
 
 .. code-block:: xml
 
-    <style name="GiniHealthTheme.Widget.Button.OutlinedButton" parent="Root.GiniHealthTheme.Widget.Button.OutlinedButton">
+    <style name="GiniMerchantTheme.Widget.Button.OutlinedButton" parent="Root.GiniMerchantTheme.Widget.Button.OutlinedButton">
       (...)
     </style>
 
@@ -65,12 +65,12 @@ Colors
 ~~~~~~
 
 We provide a global color palette which you are free to override. The custom colors are then applied to all screens.
-Customization of colors is done via overriding of color resources. For example to override the color ``ghs_accent_01`` add
+Customization of colors is done via overriding of color resources. For example to override the color ``gms_accent_01`` add
 the following snippet to one of your resources XML file (e.g, ``colors.xml``):
 
 .. code-block:: xml
 
-    <color name="ghs_accent_01">#424242</color>
+    <color name="gms_accent_01">#424242</color>
 
 .. note::
 
@@ -196,7 +196,7 @@ You can also view the UI customisation guide in Figma `here
 
 .. warning::
 
-    You need to override the ``ghs_privacy_policy_link_url`` string resource to provide a link to your company's privacy
+    You need to override the ``gms_privacy_policy_link_url`` string resource to provide a link to your company's privacy
     policy page. This link will be shown to users in the answer to the "Who or what is Gini?" question.
 
 .. note::

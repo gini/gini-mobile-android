@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="ghs_color_01">#212121</color>
-    <color name="ghs_color_02">#121212</color>
-    <color name="ghs_color_03">#313131</color>
-    <color name="ghs_color_04">#4A4A4A</color>
-    <color name="ghs_color_05">#626262</color>
-    <color name="ghs_color_06">#7A7A7A</color>
+    <color name="gms_color_01">#212121</color>
+    <color name="gms_color_02">#121212</color>
+    <color name="gms_color_03">#313131</color>
+    <color name="gms_color_04">#4A4A4A</color>
+    <color name="gms_color_05">#626262</color>
+    <color name="gms_color_06">#7A7A7A</color>
 
-    <color name="ghs_color_contrast_01">#FFFFFF</color>
-    <color name="ghs_color_contrast_02">#F2F2F2</color>
-    <color name="ghs_color_contrast_03">#E5E5E5</color>
-    <color name="ghs_color_contrast_04">#D9D9D9</color>
-    <color name="ghs_color_contrast_05">#CCCCCC</color>
-    <color name="ghs_color_contrast_06">#BFBFBF</color>
+    <color name="gms_color_contrast_01">#FFFFFF</color>
+    <color name="gms_color_contrast_02">#F2F2F2</color>
+    <color name="gms_color_contrast_03">#E5E5E5</color>
+    <color name="gms_color_contrast_04">#D9D9D9</color>
+    <color name="gms_color_contrast_05">#CCCCCC</color>
+    <color name="gms_color_contrast_06">#BFBFBF</color>
 </resources>

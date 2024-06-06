@@ -3,16 +3,16 @@
 
     <!-- region Theme -->
 
-    <style name="GiniHealthTheme" parent="Root.GiniHealthTheme">
-        <item name="colorPrimary">@color/ghs_accent_01</item>
-        <item name="colorPrimaryDark">@color/ghs_dark_01</item>
-        <item name="colorOnPrimary">@color/ghs_light_01</item>
-        <item name="colorSurface">@color/ghs_light_07</item>
-        <item name="backgroundColor">@color/ghs_dark_01</item>
-        <item name="colorOnBackground">@color/ghs_light_01</item>
-        <item name="dividerColor">@color/ghs_dark_02</item>
-        <item name="colorSurfaceInverse">@color/ghs_light_04</item>
-        <item name="colorOnSurfaceInverse">@color/ghs_dark_02</item>
+    <style name="GiniMerchantTheme" parent="Root.GiniMerchantTheme">
+        <item name="colorPrimary">@color/gms_accent_01</item>
+        <item name="colorPrimaryDark">@color/gms_dark_01</item>
+        <item name="colorOnPrimary">@color/gms_light_01</item>
+        <item name="colorSurface">@color/gms_light_07</item>
+        <item name="backgroundColor">@color/gms_dark_01</item>
+        <item name="colorOnBackground">@color/gms_light_01</item>
+        <item name="dividerColor">@color/gms_dark_02</item>
+        <item name="colorSurfaceInverse">@color/gms_light_04</item>
+        <item name="colorOnSurfaceInverse">@color/gms_dark_02</item>
         <item name="android:windowLightStatusBar">false</item>
     </style>
 
@@ -20,25 +20,25 @@
 
     <!-- region Widgets -->
 
-    <style name="GiniHealthTheme.Widget.Button.OutlinedButton" parent="Root.GiniHealthTheme.Widget.Button.OutlinedButton">
-        <item name="strokeColor">@color/ghs_light_05</item>
+    <style name="GiniMerchantTheme.Widget.Button.OutlinedButton" parent="Root.GiniMerchantTheme.Widget.Button.OutlinedButton">
+        <item name="strokeColor">@color/gms_light_05</item>
     </style>
 
-    <style name="GiniHealthTheme.Widget.Button.IconButton" parent="Root.GiniHealthTheme.Widget.Button.IconButton">
-        <item name="iconTint">@color/ghs_light_02</item>
+    <style name="GiniMerchantTheme.Widget.Button.IconButton" parent="Root.GiniMerchantTheme.Widget.Button.IconButton">
+        <item name="iconTint">@color/gms_light_02</item>
     </style>
 
-    <style name="GiniHealthTheme.ThemeOverlay.BottomSheetDialog" parent="Root.GiniHealthTheme.ThemeOverlay.BottomSheetDialog">
-        <item name="colorPrimary">@color/ghs_light_07</item>
-        <item name="bottomSheetStyle">@style/GiniHealthTheme.Widget.BottomSheet</item>
+    <style name="GiniMerchantTheme.ThemeOverlay.BottomSheetDialog" parent="Root.GiniMerchantTheme.ThemeOverlay.BottomSheetDialog">
+        <item name="colorPrimary">@color/gms_light_07</item>
+        <item name="bottomSheetStyle">@style/GiniMerchantTheme.Widget.BottomSheet</item>
     </style>
 
-    <style name="GiniHealthTheme.Widget.BottomSheet" parent="Root.GiniHealthTheme.Widget.BottomSheet">
-        <item name="backgroundTint">@color/ghs_light_07</item>
+    <style name="GiniMerchantTheme.Widget.BottomSheet" parent="Root.GiniMerchantTheme.Widget.BottomSheet">
+        <item name="backgroundTint">@color/gms_light_07</item>
     </style>
 
-    <style name="GiniHealthTheme.Widget.BottomSheet.DragHandle" parent="Root.GiniHealthTheme.Widget.BottomSheet.DragHandle">
-        <item name="tint">@color/ghs_light_05</item>
+    <style name="GiniMerchantTheme.Widget.BottomSheet.DragHandle" parent="Root.GiniMerchantTheme.Widget.BottomSheet.DragHandle">
+        <item name="tint">@color/gms_light_05</item>
     </style>
     <!-- endregion -->
     

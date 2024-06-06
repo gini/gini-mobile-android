@@ -5,9 +5,9 @@ import android.text.method.LinkMovementMethod
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseExpandableListAdapter
-import net.gini.android.merchant.sdk.databinding.GhsItemFaqAnswerBinding
-import net.gini.android.merchant.sdk.databinding.GhsItemFaqLabelBinding
-import net.gini.android.merchant.sdk.util.getLayoutInflaterWithGiniHealthTheme
+import net.gini.android.merchant.sdk.databinding.GmsItemFaqAnswerBinding
+import net.gini.android.merchant.sdk.databinding.GmsItemFaqLabelBinding
+import net.gini.android.merchant.sdk.util.getLayoutInflaterWithGiniMerchantTheme
 
 /**
  * Created by dani on 26/02/2024.
@@ -27,18 +27,18 @@ internal class FaqExpandableListAdapter(val dataSet: List<Pair<String, CharSeque
     override fun hasStableIds(): Boolean = true
 
     override fun getGroupView(position: Int, isExpanded: Boolean, p2: View?, parent: ViewGroup): View {
-        val groupView = GhsItemFaqLabelBinding.inflate(parent.getLayoutInflaterWithGiniHealthTheme(), parent, false)
-        groupView.ghsFaqLabel.text = dataSet[position].first
+        val groupView = GmsItemFaqLabelBinding.inflate(parent.getLayoutInflaterWithGiniMerchantTheme(), parent, false)
+        groupView.gmsFaqLabel.text = dataSet[position].first
         return groupView.root
     }
 
     override fun getChildView(p0: Int, p1: Int, isLastChild: Boolean, convertView: View?, parent: ViewGroup): View {
-        val groupView = GhsItemFaqAnswerBinding.inflate(parent.getLayoutInflaterWithGiniHealthTheme(), parent, false)
+        val groupView = GmsItemFaqAnswerBinding.inflate(parent.getLayoutInflaterWithGiniMerchantTheme(), parent, false)
         val text = getChild(p0, p1)
         if (text is SpannedString) {
-            groupView.ghsFaqAnswerLabel.movementMethod = LinkMovementMethod.getInstance()
+            groupView.gmsFaqAnswerLabel.movementMethod = LinkMovementMethod.getInstance()
         }
-        groupView.ghsFaqAnswerLabel.text = text
+        groupView.gmsFaqAnswerLabel.text = text
         groupView.divider2.visibility = if (p0 != dataSet.size-1) View.VISIBLE else View.GONE
         return groupView.root
     }

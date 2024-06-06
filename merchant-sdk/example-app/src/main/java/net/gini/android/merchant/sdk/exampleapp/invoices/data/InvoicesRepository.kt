@@ -8,13 +8,13 @@ import net.gini.android.core.api.Resource
 import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.models.ExtractionsContainer
 import net.gini.android.health.api.GiniHealthAPI
-import net.gini.android.merchant.sdk.GiniHealth
+import net.gini.android.merchant.sdk.GiniMerchant
 import net.gini.android.merchant.sdk.exampleapp.invoices.data.model.DocumentWithExtractions
 import java.util.Date
 
 class InvoicesRepository(
     private val giniHealthAPI: GiniHealthAPI,
-    val giniHealth: GiniHealth,
+    val giniMerchant: GiniMerchant,
     private val hardcodedInvoicesLocalDataSource: HardcodedInvoicesLocalDataSource,
     private val invoicesLocalDataSource: InvoicesLocalDataSource
 ) {
@@ -76,7 +76,7 @@ class InvoicesRepository(
         invoicesFlow.value.forEach { document ->
             val emptyDocument = createEmptyDocument(document.documentId)
             giniHealthAPI.documentManager.getAllExtractions(createEmptyDocument(documentId = document.documentId)).mapSuccess {
-                val isPayable = giniHealth.checkIfDocumentIsPayable(emptyDocument.id)
+                val isPayable = giniMerchant.checkIfDocumentIsPayable(emptyDocument.id)
                 val documentWithExtractions = DocumentWithExtractions.fromDocumentAndExtractions(
                     emptyDocument,
                     it.data,
@@ -104,7 +104,7 @@ class InvoicesRepository(
     private suspend fun getDocumentWithExtraction(document: Document): Pair<DocumentWithExtractions?, Resource<ExtractionsContainer>> {
         return when (val extractionsResource = giniHealthAPI.documentManager.getAllExtractionsWithPolling(document)) {
             is Resource.Success -> {
-                val isPayable = giniHealth.checkIfDocumentIsPayable(document.id)
+                val isPayable = giniMerchant.checkIfDocumentIsPayable(document.id)
                 val documentWithExtractions = DocumentWithExtractions.fromDocumentAndExtractions(
                     document,
                     extractionsResource.data,

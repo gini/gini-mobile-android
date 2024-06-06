@@ -11,14 +11,14 @@ import kotlinx.coroutines.launch
 import net.gini.android.core.api.MediaTypes
 import net.gini.android.core.api.Resource
 import net.gini.android.health.api.GiniHealthAPI
-import net.gini.android.merchant.sdk.GiniHealth
+import net.gini.android.merchant.sdk.GiniMerchant
 import net.gini.android.merchant.sdk.exampleapp.invoices.data.InvoicesLocalDataSource
 import net.gini.android.merchant.sdk.exampleapp.invoices.data.model.DocumentWithExtractions
 import net.gini.android.merchant.sdk.exampleapp.util.getBytes
 
 class UploadViewModel(
     private val giniHealthAPI: GiniHealthAPI,
-    val giniHealth: GiniHealth,
+    val giniMerchant: GiniMerchant,
     private val invoicesLocalDataSource: InvoicesLocalDataSource
 ) : ViewModel() {
     private val _uploadState: MutableStateFlow<UploadState> = MutableStateFlow(UploadState.Loading)
@@ -55,7 +55,7 @@ class UploadViewModel(
 
                         giniHealthAPI.documentManager.getAllExtractions(polledDocumentResource.data)
                             .mapSuccess { extractionsResource ->
-                                val isPayable = giniHealth.checkIfDocumentIsPayable(polledDocumentResource.data.id)
+                                val isPayable = giniMerchant.checkIfDocumentIsPayable(polledDocumentResource.data.id)
                                 invoicesLocalDataSource.appendInvoiceWithExtractions(
                                     DocumentWithExtractions.fromDocumentAndExtractions(
                                         polledDocumentResource.data,
@@ -75,7 +75,7 @@ class UploadViewModel(
 
     private fun setDocumentForReview(documentId: String) {
         viewModelScope.launch {
-            giniHealth.setDocumentForReview(documentId)
+            giniMerchant.setDocumentForReview(documentId)
         }
     }
 

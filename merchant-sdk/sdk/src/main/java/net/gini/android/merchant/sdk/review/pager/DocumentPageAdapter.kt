@@ -20,23 +20,23 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
-import net.gini.android.merchant.sdk.GiniHealth
-import net.gini.android.merchant.sdk.databinding.GhsItemPageHorizontalBinding
+import net.gini.android.merchant.sdk.GiniMerchant
+import net.gini.android.merchant.sdk.databinding.GmsItemPageHorizontalBinding
 import net.gini.android.merchant.sdk.review.model.ResultWrapper
 import net.gini.android.merchant.sdk.review.model.wrapToResult
 import net.gini.android.merchant.sdk.util.hideKeyboard
 
-internal class DocumentPageAdapter(private val giniHealth: GiniHealth) :
+internal class DocumentPageAdapter(private val giniMerchant: GiniMerchant) :
     ListAdapter<DocumentPageAdapter.Page, DocumentPageAdapter.PageViewHolder>(DiffUtilCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PageViewHolder =
-        HorizontalViewHolder(giniHealth, GhsItemPageHorizontalBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        HorizontalViewHolder(giniMerchant, GmsItemPageHorizontalBinding.inflate(LayoutInflater.from(parent.context), parent, false))
 
     override fun onBindViewHolder(holder: PageViewHolder, position: Int) {
         holder.onBind(currentList[position])
     }
 
-    abstract class PageViewHolder(private val giniHealth: GiniHealth, view: View) : RecyclerView.ViewHolder(view) {
+    abstract class PageViewHolder(private val giniMerchant: GiniMerchant, view: View) : RecyclerView.ViewHolder(view) {
         private val imageLoadingScope = CoroutineScope(Dispatchers.Main)
 
         protected abstract val loadingView: ProgressBar
@@ -47,7 +47,7 @@ internal class DocumentPageAdapter(private val giniHealth: GiniHealth) :
         fun onBind(page: Page) {
             imageLoadingScope.launch {
                 loadingView.isVisible = true
-                when (val imageResult = wrapToResult { giniHealth.giniHealthAPI.documentManager.getPageImage(page.documentId, page.number) }) {
+                when (val imageResult = wrapToResult { giniMerchant.giniHealthAPI.documentManager.getPageImage(page.documentId, page.number) }) {
                     is ResultWrapper.Error -> {
                         loadingView.isVisible = false
                         errorView.isVisible = true
@@ -72,13 +72,13 @@ internal class DocumentPageAdapter(private val giniHealth: GiniHealth) :
     }
 
     class HorizontalViewHolder(
-        giniHealth: GiniHealth,
-        private val binding: GhsItemPageHorizontalBinding,
+        giniMerchant: GiniMerchant,
+        private val binding: GmsItemPageHorizontalBinding,
         override val loadingView: ProgressBar = binding.loading,
         override val imageView: PhotoView = binding.image,
         override val errorView: FrameLayout = binding.error.root,
         override val retry: Button = binding.error.pageErrorRetry,
-    ) : PageViewHolder(giniHealth, binding.root) {
+    ) : PageViewHolder(giniMerchant, binding.root) {
 
         private val photoViewMatrix = Matrix()
 

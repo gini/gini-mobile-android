@@ -13,19 +13,19 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import net.gini.android.merchant.sdk.R
 import net.gini.android.merchant.sdk.bankselection.BankSelectionBottomSheet
-import net.gini.android.merchant.sdk.databinding.GhsFragmentContainerBinding
+import net.gini.android.merchant.sdk.databinding.GmsFragmentContainerBinding
 import net.gini.android.merchant.sdk.moreinformation.MoreInformationFragment
 import net.gini.android.merchant.sdk.paymentComponentBottomSheet.PaymentComponentBottomSheet
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.merchant.sdk.util.BackListener
 import net.gini.android.merchant.sdk.util.autoCleared
-import net.gini.android.merchant.sdk.util.getLayoutInflaterWithGiniHealthTheme
+import net.gini.android.merchant.sdk.util.getLayoutInflaterWithGiniMerchantTheme
 
 
 class ContainerFragment private constructor(private val paymentComponent: PaymentComponent?) : Fragment(), BackListener {
 
 //    constructor(): this()
-    private var binding: GhsFragmentContainerBinding by autoCleared()
+    private var binding: GmsFragmentContainerBinding by autoCleared()
     private val viewModel by viewModels<ContainerViewModel> {
         ContainerViewModel.Factory(paymentComponent)
     }
@@ -44,16 +44,10 @@ class ContainerFragment private constructor(private val paymentComponent: Paymen
         override fun onPayInvoiceClicked(documentId: String) {
             TODO("Not yet implemented")
         }
-
-        override fun onStartIntegratedFlow() {
-            navController.navigate(R.id.action_paymentComponentBottomSheet_to_bankSelectionBottomSheet)
-        }
-
     }
 
     private val backPressHandler = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
-            Log.e("", "----- in on back pressed")
         }
     }
 
@@ -65,7 +59,7 @@ class ContainerFragment private constructor(private val paymentComponent: Paymen
 
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
         val inflater = super.onGetLayoutInflater(savedInstanceState)
-        return this.getLayoutInflaterWithGiniHealthTheme(inflater)
+        return this.getLayoutInflaterWithGiniMerchantTheme(inflater)
     }
 
     override fun onCreateView(
@@ -74,7 +68,7 @@ class ContainerFragment private constructor(private val paymentComponent: Paymen
         savedInstanceState: Bundle?
     ): View {
         super.onCreateView(inflater, container, savedInstanceState)
-        binding = GhsFragmentContainerBinding.inflate(inflater, container, false)
+        binding = GmsFragmentContainerBinding.inflate(inflater, container, false)
         navController = (childFragmentManager.fragments[0]).findNavController()
         parentFragmentManager.beginTransaction()
             .setPrimaryNavigationFragment(this)
@@ -82,10 +76,6 @@ class ContainerFragment private constructor(private val paymentComponent: Paymen
         originalPaymentComponentListener = paymentComponent?.listener
         paymentComponent?.listener = paymentComponentListener
         return binding.root
-    }
-
-    override fun backCalled() {
-        Log.e("", "----- finally here>???@@?@?")
     }
 
     internal class ContainerFragmentFactory(
@@ -124,6 +114,10 @@ class ContainerFragment private constructor(private val paymentComponent: Paymen
 
     companion object {
         fun newInstance(paymentComponent: PaymentComponent) = ContainerFragment(paymentComponent)
+    }
+
+    override fun backCalled() {
+
     }
 }
 

@@ -1,3 +1,3 @@
 # Module sdk
 
-## Gini Health SDK for Android
+## Gini Merchant SDK for Android

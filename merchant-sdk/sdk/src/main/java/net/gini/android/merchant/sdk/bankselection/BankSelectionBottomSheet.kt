@@ -1,12 +1,12 @@
 package net.gini.android.merchant.sdk.bankselection
 
+import android.app.Dialog
 import android.graphics.Paint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -17,34 +17,35 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.imageview.ShapeableImageView
 import kotlinx.coroutines.launch
 import net.gini.android.merchant.sdk.R
-import net.gini.android.merchant.sdk.databinding.GhsBottomSheetBankSelectionBinding
-import net.gini.android.merchant.sdk.databinding.GhsItemPaymentProviderAppBinding
+import net.gini.android.merchant.sdk.databinding.GmsBottomSheetBankSelectionBinding
+import net.gini.android.merchant.sdk.databinding.GmsItemPaymentProviderAppBinding
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
-import net.gini.android.merchant.sdk.util.GhsBottomSheetDialogFragment
+import net.gini.android.merchant.sdk.util.BackListener
+import net.gini.android.merchant.sdk.util.GmsBottomSheetDialogFragment
 import net.gini.android.merchant.sdk.util.autoCleared
-import net.gini.android.merchant.sdk.util.getLayoutInflaterWithGiniHealthTheme
+import net.gini.android.merchant.sdk.util.getLayoutInflaterWithGiniMerchantTheme
 import net.gini.android.merchant.sdk.util.setIntervalClickListener
-import net.gini.android.merchant.sdk.util.wrappedWithGiniHealthTheme
+import net.gini.android.merchant.sdk.util.wrappedWithGiniMerchantTheme
 import org.slf4j.LoggerFactory
 
 /**
  * The [BankSelectionBottomSheet] displays a list of available banks for the user to choose from. If a banking app is not
  * installed it will also display its Play Store link.
  */
-class BankSelectionBottomSheet private constructor(private val paymentComponent: PaymentComponent?) :
-    GhsBottomSheetDialogFragment() {
+class BankSelectionBottomSheet private constructor(private val paymentComponent: PaymentComponent?, private val backListener: BackListener? = null) :
+    GmsBottomSheetDialogFragment() {
 
     constructor() : this(null)
 
-    private var binding: GhsBottomSheetBankSelectionBinding by autoCleared()
+    private var binding: GmsBottomSheetBankSelectionBinding by autoCleared()
     private val viewModel: BankSelectionViewModel by viewModels { BankSelectionViewModel.Factory(paymentComponent) }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = GhsBottomSheetBankSelectionBinding.inflate(inflater, container, false)
+        binding = GmsBottomSheetBankSelectionBinding.inflate(inflater, container, false)
 
-        binding.ghsPaymentProviderAppsList.layoutManager = LinearLayoutManager(requireContext())
-        binding.ghsPaymentProviderAppsList.adapter =
+        binding.gmsPaymentProviderAppsList.layoutManager = LinearLayoutManager(requireContext())
+        binding.gmsPaymentProviderAppsList.adapter =
             PaymentProviderAppsAdapter(emptyList(), object : PaymentProviderAppsAdapter.OnItemClickListener {
                 override fun onItemClick(paymentProviderApp: PaymentProviderApp) {
                     LOG.debug("Selected payment provider app: {}", paymentProviderApp.name)
@@ -54,12 +55,12 @@ class BankSelectionBottomSheet private constructor(private val paymentComponent:
                 }
             })
 
-        binding.ghsCloseButton.setOnClickListener {
+        binding.gmsCloseButton.setOnClickListener {
             dismiss()
         }
 
-        binding.ghsMoreInformationLabel.apply {
-            paintFlags = binding.ghsMoreInformationLabel.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+        binding.gmsMoreInformationLabel.apply {
+            paintFlags = binding.gmsMoreInformationLabel.paintFlags or Paint.UNDERLINE_TEXT_FLAG
             setOnClickListener {
                 paymentComponent?.listener?.onMoreInformationClicked()
                 dismiss()
@@ -84,7 +85,7 @@ class BankSelectionBottomSheet private constructor(private val paymentComponent:
                         PaymentProviderAppsListState.Loading -> {}
 
                         is PaymentProviderAppsListState.Success -> {
-                            (binding.ghsPaymentProviderAppsList.adapter as PaymentProviderAppsAdapter).apply {
+                            (binding.gmsPaymentProviderAppsList.adapter as PaymentProviderAppsAdapter).apply {
                                 dataSet = paymentProviderAppsListState.paymentProviderAppsList
                                 notifyDataSetChanged()
                             }
@@ -100,6 +101,10 @@ class BankSelectionBottomSheet private constructor(private val paymentComponent:
         viewModel.recheckWhichPaymentProviderAppsAreInstalled()
     }
 
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        return super.onCreateDialog(savedInstanceState)
+    }
+
     companion object {
         private val LOG = LoggerFactory.getLogger(BankSelectionBottomSheet::class.java)
 
@@ -112,6 +117,10 @@ class BankSelectionBottomSheet private constructor(private val paymentComponent:
         fun newInstance(paymentComponent: PaymentComponent): BankSelectionBottomSheet {
             return BankSelectionBottomSheet(paymentComponent)
         }
+
+        internal fun newInstance(paymentComponent: PaymentComponent, backListener: BackListener) =
+             BankSelectionBottomSheet(paymentComponent, backListener)
+
     }
 }
 
@@ -120,13 +129,13 @@ internal class PaymentProviderAppsAdapter(
     val onItemClickListener: OnItemClickListener
 ) : RecyclerView.Adapter<PaymentProviderAppsAdapter.ViewHolder>() {
 
-    class ViewHolder(binding: GhsItemPaymentProviderAppBinding, onClickListener: OnClickListener) : RecyclerView.ViewHolder(binding.root) {
+    class ViewHolder(binding: GmsItemPaymentProviderAppBinding, onClickListener: OnClickListener) : RecyclerView.ViewHolder(binding.root) {
         val button: Button
         val iconView: ShapeableImageView
 
         init {
-            iconView = binding.ghsSelectorLayout.ghsPaymentProviderAppIconHolder.ghsPaymentProviderIcon
-            button = binding.ghsSelectorLayout.ghsSelectBankButton
+            iconView = binding.gmsSelectorLayout.gmsPaymentProviderAppIconHolder.gmsPaymentProviderIcon
+            button = binding.gmsSelectorLayout.gmsSelectBankButton
             button.setIntervalClickListener { onClickListener.onClick(adapterPosition) }
         }
 
@@ -136,7 +145,7 @@ internal class PaymentProviderAppsAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = GhsItemPaymentProviderAppBinding.inflate(parent.getLayoutInflaterWithGiniHealthTheme(), parent, false)
+        val view = GmsItemPaymentProviderAppBinding.inflate(parent.getLayoutInflaterWithGiniMerchantTheme(), parent, false)
         val viewHolder = ViewHolder(view, object : ViewHolder.OnClickListener {
             override fun onClick(adapterPosition: Int) {
                 onItemClickListener.onItemClick(dataSet[adapterPosition].paymentProviderApp)
@@ -147,14 +156,14 @@ internal class PaymentProviderAppsAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val paymentProviderAppListItem = dataSet[position]
-        holder.itemView.context.wrappedWithGiniHealthTheme().let { context ->
+        holder.itemView.context.wrappedWithGiniMerchantTheme().let { context ->
             holder.button.text = paymentProviderAppListItem.paymentProviderApp.name
             holder.iconView.setImageDrawable(paymentProviderAppListItem.paymentProviderApp.icon)
             holder.itemView.isSelected = paymentProviderAppListItem.isSelected
             holder.button.setCompoundDrawablesWithIntrinsicBounds(
                 null,
                 null,
-                if (paymentProviderAppListItem.isSelected) ContextCompat.getDrawable(context, R.drawable.ghs_checkmark) else null,
+                if (paymentProviderAppListItem.isSelected) ContextCompat.getDrawable(context, R.drawable.gms_checkmark) else null,
                 null
             )
         }

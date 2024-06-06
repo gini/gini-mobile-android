@@ -1,23 +1,23 @@
 Flow
 ====
 
-``GiniHealth`` and ``PaymentComponent`` are the main classes for interacting with the Gini Health SDK. ``GiniHealth``
+``GiniMerchant`` and ``PaymentComponent`` are the main classes for interacting with the Gini Merchant SDK. ``GiniMerchant``
 manages interaction with the Gini Health API and ``PaymentComponent`` manages the data and state used by every
 ``PaymentComponentView`` and related screens.
 
 .. contents:: The recommended flow is:
    :local:
 
-Create the GiniHealth instance
+Create the GiniMerchant instance
 ------------------------------
 
-Before creating an instance of ``GiniHealth`` you need to create an instance of the ``GiniHealthAPI``. The Gini Health
+Before creating an instance of ``GiniMerchant`` you need to create an instance of the ``GiniHealthAPI``. The Gini Health
 SDK provides the following two helper methods for creating the  ``GiniHealthAPI`` instance:
 
 * ``getGiniApi(context: Context, clientId: String, clientSecret: String, emailDomain: String)``
 * ``getGiniApi(context: Context, sessionManager: SessionManager)``
 
-After that you can create an instance of ``GiniHealth``:
+After that you can create an instance of ``GiniMerchant``:
 
 .. code-block:: kotlin
 
@@ -188,11 +188,11 @@ To instantiate it use ``MoreInformationFragment.newInstance()`` and pass in your
     The ``MoreInformationFragment`` doesn't handle navigation related events and doesn't show a navigation bar. You are
     free to design navigation to and from the fragment as you see fit.
     
-    For the navigation bar title you should use the ``ghs_more_information_fragment_title`` string resource.
+    For the navigation bar title you should use the ``gms_more_information_fragment_title`` string resource.
 
 .. warning::
 
-    You need to override the ``ghs_privacy_policy_link_url`` string resource to provide a link to your company's privacy
+    You need to override the ``gms_privacy_policy_link_url`` string resource to provide a link to your company's privacy
     policy page. This link will be shown to users in the answer to the "Who or what is Gini?" question.
 
 Show the BankSelectionBottomSheet

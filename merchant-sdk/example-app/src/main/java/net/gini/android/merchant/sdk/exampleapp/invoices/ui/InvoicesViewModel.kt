@@ -31,12 +31,12 @@ class InvoicesViewModel(
     val _paymentReviewFragmentFlow = MutableStateFlow<PaymentReviewFragmentState>(PaymentReviewFragmentState.Idle)
     val paymentReviewFragmentStateFlow = _paymentReviewFragmentFlow.asStateFlow()
 
-    val openBankState = invoicesRepository.giniHealth.openBankState
+    val openBankState = invoicesRepository.giniMerchant.openBankState
 
     fun updateDocument() {
         viewModelScope.launch {
             with(invoicesRepository) {
-                requestDocumentExtractionAndSaveToLocal((giniHealth.documentFlow.value as ResultWrapper.Success).value)
+                requestDocumentExtractionAndSaveToLocal((giniMerchant.documentFlow.value as ResultWrapper.Success).value)
             }
         }
     }

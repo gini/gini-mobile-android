@@ -8,12 +8,12 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import net.gini.android.merchant.sdk.GiniHealth
+import net.gini.android.merchant.sdk.GiniMerchant
 import net.gini.android.merchant.sdk.exampleapp.pager.PagerAdapter
 import java.io.File
 
 class MainViewModel(
-    private val giniHealth: GiniHealth,
+    private val giniMerchant: GiniMerchant,
 ) : ViewModel() {
     private val _pages: MutableStateFlow<List<PagerAdapter.Page>> = MutableStateFlow(emptyList())
     val pages: StateFlow<List<PagerAdapter.Page>> = _pages
@@ -40,7 +40,7 @@ class MainViewModel(
 
     fun setDocumentForReview(documentId: String) {
         viewModelScope.launch {
-            giniHealth.setDocumentForReview(documentId)
+            giniMerchant.setDocumentForReview(documentId)
         }
     }
 }

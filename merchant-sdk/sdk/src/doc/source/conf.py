@@ -45,8 +45,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'Gini Health SDK for Android'
-copyright = u'2014-2021, Gini GmbH'
+project = u'Gini Merchant SDK for Android'
+copyright = u'2014-2024, Gini GmbH'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -183,7 +183,7 @@ html_show_copyright = False
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'GiniHealthSDKDoc'
+htmlhelp_basename = 'GiniMerchantSDKDoc'
 
 
 # -- Options for LaTeX output ---------------------------------------------

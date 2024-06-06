@@ -19,7 +19,7 @@ import dev.chrisbanes.insetter.applyInsetter
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import net.gini.android.core.api.models.Document
-import net.gini.android.merchant.sdk.GiniHealth
+import net.gini.android.merchant.sdk.GiniMerchant
 import net.gini.android.merchant.sdk.bankselection.BankSelectionBottomSheet
 import net.gini.android.merchant.sdk.exampleapp.R
 import net.gini.android.merchant.sdk.exampleapp.databinding.ActivityReviewBinding
@@ -45,23 +45,23 @@ class ReviewActivity : AppCompatActivity() {
         override fun onToTheBankButtonClicked(paymentProviderName: String) {
             LOG.debug("to the bank button clicked with payment provider: {}", paymentProviderName)
             lifecycleScope.launch {
-                viewModel.giniHealth.openBankState.collect { paymentState ->
+                viewModel.giniMerchant.openBankState.collect { paymentState ->
                     when (paymentState) {
-                        GiniHealth.PaymentState.Loading -> {
+                        GiniMerchant.PaymentState.Loading -> {
                             LOG.debug("opening bank app")
                         }
 
-                        is GiniHealth.PaymentState.Success -> {
+                        is GiniMerchant.PaymentState.Success -> {
                             LOG.debug("launching bank app: {}", paymentState.paymentRequest.bankApp.name)
                             cancel()
                         }
 
-                        is GiniHealth.PaymentState.Error -> {
+                        is GiniMerchant.PaymentState.Error -> {
                             LOG.error( "failed to open bank app:", paymentState.throwable)
                             cancel()
                         }
 
-                        GiniHealth.PaymentState.NoAction -> {}
+                        GiniMerchant.PaymentState.NoAction -> {}
                     }
                 }
             }
@@ -77,7 +77,7 @@ class ReviewActivity : AppCompatActivity() {
     private val showCloseButton = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        viewModel.giniHealth.setSavedStateRegistryOwner(this, viewModel.viewModelScope)
+        viewModel.giniMerchant.setSavedStateRegistryOwner(this, viewModel.viewModelScope)
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
@@ -104,9 +104,6 @@ class ReviewActivity : AppCompatActivity() {
 
         // Set a listener on the PaymentComponent to receive events from the PaymentComponentView
         viewModel.paymentComponent.listener = object : PaymentComponent.Listener {
-            override fun onStartIntegratedFlow() {
-
-            }
             override fun onMoreInformationClicked() {}
 
             override fun onBankPickerClicked() {
@@ -149,9 +146,9 @@ class ReviewActivity : AppCompatActivity() {
         binding.paymentComponentView.paymentComponent = viewModel.paymentComponent
 
         lifecycleScope.launch {
-            val documentId = (viewModel.giniHealth.documentFlow.value as ResultWrapper.Success<Document>).value.id
+            val documentId = (viewModel.giniMerchant.documentFlow.value as ResultWrapper.Success<Document>).value.id
 
-            val isDocumentPayable = viewModel.giniHealth.checkIfDocumentIsPayable(documentId)
+            val isDocumentPayable = viewModel.giniMerchant.checkIfDocumentIsPayable(documentId)
 
             if (!isDocumentPayable) {
                 AlertDialog.Builder(this@ReviewActivity)

@@ -32,7 +32,7 @@
         android:id="@+id/moreInformationFragment"
         android:name="net.gini.android.merchant.sdk.moreinformation.MoreInformationFragment"
         android:label="MoreInformationFragment"
-        tools:layout="@layout/ghs_fragment_payment_more_information"
+        tools:layout="@layout/gms_fragment_payment_more_information"
         />
     <fragment
         android:id="@+id/reviewFragment"

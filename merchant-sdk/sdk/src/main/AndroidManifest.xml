@@ -4,8 +4,8 @@
 
     <application>
         <provider
-            android:name=".util.HealthSDKFileProvider"
-            android:authorities="${applicationId}.health.sdk.fileprovider"
+            android:name=".util.MerchantSDKFileProvider"
+            android:authorities="${applicationId}.merchant.sdk.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

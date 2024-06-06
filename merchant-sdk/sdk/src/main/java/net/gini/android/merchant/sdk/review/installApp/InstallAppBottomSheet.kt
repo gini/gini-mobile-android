@@ -12,10 +12,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.launch
 import net.gini.android.merchant.sdk.R
-import net.gini.android.merchant.sdk.databinding.GhsBottomSheetInstallAppBinding
+import net.gini.android.merchant.sdk.databinding.GmsBottomSheetInstallAppBinding
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
-import net.gini.android.merchant.sdk.util.GhsBottomSheetDialogFragment
+import net.gini.android.merchant.sdk.util.GmsBottomSheetDialogFragment
 import net.gini.android.merchant.sdk.util.autoCleared
 import net.gini.android.merchant.sdk.util.setBackgroundTint
 import org.slf4j.LoggerFactory
@@ -32,10 +32,10 @@ internal class InstallAppBottomSheet private constructor(
     private val listener: InstallAppForwardListener?,
     private val minHeight: Int?
 ) :
-    GhsBottomSheetDialogFragment() {
+    GmsBottomSheetDialogFragment() {
     constructor() : this(null, null, null)
 
-    private var binding: GhsBottomSheetInstallAppBinding by autoCleared()
+    private var binding: GmsBottomSheetInstallAppBinding by autoCleared()
     private val viewModel: InstallAppViewModel by viewModels {
         InstallAppViewModel.Factory(
             paymentComponent
@@ -47,7 +47,7 @@ internal class InstallAppBottomSheet private constructor(
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = GhsBottomSheetInstallAppBinding.inflate(inflater, container, false)
+        binding = GmsBottomSheetInstallAppBinding.inflate(inflater, container, false)
         minHeight?.let {
             binding.root.minHeight = it
         }
@@ -61,20 +61,15 @@ internal class InstallAppBottomSheet private constructor(
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 viewModel.paymentProviderApp.collect { paymentProviderApp ->
                     if (paymentProviderApp != null) {
-//                        binding.ghsPaymentProviderIcon.ghsPaymentProviderIcon.setImageDrawable(
-//                            paymentProviderApp.icon
-//                        )
-//                        binding.ghsPaymentProviderIcon.ghsPaymentProviderIcon.contentDescription =
-//                            "${paymentProviderApp.name} ${getString(R.string.ghs_payment_provider_logo_content_description)}"
-                        binding.ghsInstallAppTitle.text = String.format(
-                            getString(R.string.ghs_install_app_title),
+                        binding.gmsInstallAppTitle.text = String.format(
+                            getString(R.string.gms_install_app_title),
                             paymentProviderApp.paymentProvider.name
                         )
-                        binding.ghsInstallAppDetails.text = String.format(
-                            getString(R.string.ghs_install_app_detail),
+                        binding.gmsInstallAppDetails.text = String.format(
+                            getString(R.string.gms_install_app_detail),
                             paymentProviderApp.paymentProvider.name
                         )
-                        binding.ghsPlayStoreLogo.setOnClickListener {
+                        binding.gmsPlayStoreLogo.setOnClickListener {
                             paymentProviderApp.paymentProvider.playStoreUrl?.let { openPlayStoreUrl(it) }
                         }
                         if (paymentProviderApp.isInstalled()) {
@@ -91,12 +86,12 @@ internal class InstallAppBottomSheet private constructor(
     }
 
     private fun updateUI(paymentProviderApp: PaymentProviderApp) {
-        binding.ghsInstallAppDetails.text = String.format(
-            getString(R.string.ghs_install_app_tap_to_continue),
+        binding.gmsInstallAppDetails.text = String.format(
+            getString(R.string.gms_install_app_tap_to_continue),
             paymentProviderApp.paymentProvider.name
         )
-        binding.ghsPlayStoreLogo.visibility = View.GONE
-        binding.ghsForwardButton.apply {
+        binding.gmsPlayStoreLogo.visibility = View.GONE
+        binding.gmsForwardButton.apply {
             paymentProviderApp.let { paymentProviderApp ->
                 setBackgroundTint(paymentProviderApp.colors.backgroundColor, 255)
                 setTextColor(paymentProviderApp.colors.textColor)
@@ -104,15 +99,15 @@ internal class InstallAppBottomSheet private constructor(
             visibility = View.VISIBLE
         }
 
-        binding.ghsForwardButton.setOnClickListener {
+        binding.gmsForwardButton.setOnClickListener {
             listener?.onForwardToBankSelected()
             dismiss()
         }
     }
 
     private fun resetUI() {
-        binding.ghsForwardButton.visibility = View.GONE
-        binding.ghsPlayStoreLogo.visibility = View.VISIBLE
+        binding.gmsForwardButton.visibility = View.GONE
+        binding.gmsPlayStoreLogo.visibility = View.VISIBLE
     }
 
     private fun openPlayStoreUrl(playStoreUrl: String) {

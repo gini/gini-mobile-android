@@ -17,7 +17,7 @@ Development Gini Health API client credentials
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In order to test using the Gini Bank SDK's example banking app, you will need to use development client credentials in
-your app for the Gini Health SDK. This will make sure the Gini Health SDK receives test payment providers that work
+your app for the Gini Merchant SDK. This will make sure the Gini Merchant SDK receives test payment providers that work
 with the Gini Bank SDK's example banking app.
 
 End to end testing
@@ -27,7 +27,7 @@ Example banking app
 ~~~~~~~~~~~~~~~~~~~
 
 After you've set the client credentials in the Gini Bank SDK example app you can install it on your device by using the
-``devPaymentProvider1Debug`` build flavor. This will allow the Gini Health SDK to detect it as the banking app for
+``devPaymentProvider1Debug`` build flavor. This will allow the Gini Merchant SDK to detect it as the banking app for
 the ``Gini-Test-Payment-Provider``.
 
 .. note::
@@ -111,7 +111,7 @@ Return to your app
 After the test payment has been executed, the example banking app should show a "Return to Business" button which should
 take you back to your app.
 
-With these steps completed you have verified that your app, the Gini Health API, the Gini Health SDK and the Gini Bank
+With these steps completed you have verified that your app, the Gini Health API, the Gini Merchant SDK and the Gini Bank
 SDK work together correctly.
 
 .. image:: images/testing/BankSDKExampleAppReturnToBusinessApp.png

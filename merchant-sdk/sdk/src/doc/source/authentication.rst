@@ -1,7 +1,7 @@
 Authentication
 ==============
 
-The entry point for the Gini Health SDK is ``GiniHealth`` class which depends
+The entry point for the Gini Merchant SDK is ``GiniMerchant`` class which depends
 on ``GiniHealthAPI`` from the Gini Health API Library to interact with the Gini Health API.
 
 The ``GiniHealthAPI`` class can be built either with client credentials (clientId and clientSecret)

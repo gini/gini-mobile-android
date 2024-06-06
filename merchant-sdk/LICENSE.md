@@ -1,1 +1,1 @@
-Moved to https://developer.gini.net/gini-mobile-android/health-sdk/sdk/html/license.html
+Moved to https://developer.gini.net/gini-mobile-android/merchant-sdk/sdk/html/license.html

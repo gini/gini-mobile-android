@@ -39,9 +39,9 @@ import dev.chrisbanes.insetter.applyInsetter
 import dev.chrisbanes.insetter.windowInsetTypesOf
 import kotlinx.coroutines.launch
 import net.gini.android.core.api.models.Document
-import net.gini.android.merchant.sdk.GiniHealth
+import net.gini.android.merchant.sdk.GiniMerchant
 import net.gini.android.merchant.sdk.R
-import net.gini.android.merchant.sdk.databinding.GhsFragmentReviewBinding
+import net.gini.android.merchant.sdk.databinding.GmsFragmentReviewBinding
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.preferences.UserPreferences
@@ -57,14 +57,14 @@ import net.gini.android.merchant.sdk.util.amountWatcher
 import net.gini.android.merchant.sdk.util.autoCleared
 import net.gini.android.merchant.sdk.util.clearErrorMessage
 import net.gini.android.merchant.sdk.util.extensions.getFontScale
-import net.gini.android.merchant.sdk.util.getLayoutInflaterWithGiniHealthTheme
+import net.gini.android.merchant.sdk.util.getLayoutInflaterWithGiniMerchantTheme
 import net.gini.android.merchant.sdk.util.hideErrorMessage
 import net.gini.android.merchant.sdk.util.hideKeyboard
 import net.gini.android.merchant.sdk.util.setBackgroundTint
 import net.gini.android.merchant.sdk.util.setErrorMessage
 import net.gini.android.merchant.sdk.util.setTextIfDifferent
 import net.gini.android.merchant.sdk.util.showErrorMessage
-import net.gini.android.merchant.sdk.util.wrappedWithGiniHealthTheme
+import net.gini.android.merchant.sdk.util.wrappedWithGiniMerchantTheme
 import java.io.File
 
 /**
@@ -73,7 +73,7 @@ import java.io.File
 data class ReviewConfiguration(
     /**
      * If set to `true`, the [ReviewFragment] will handle errors internally and show snackbars for errors.
-     * If set to `false`, errors will be ignored by the [ReviewFragment]. In this case the flows exposed by [GiniHealth] should be observed for errors.
+     * If set to `false`, errors will be ignored by the [ReviewFragment]. In this case the flows exposed by [GiniMerchant] should be observed for errors.
      *
      * Default value is `true`.
      */
@@ -100,7 +100,7 @@ interface ReviewFragmentListener {
     /**
      * Called when the "to the bank" button was clicked.
      *
-     * Collect the [GiniHealth.openBankState] flow to get details about the payment request creation and about the
+     * Collect the [GiniMerchant.openBankState] flow to get details about the payment request creation and about the
      * selected bank app.
      *
      * @param paymentProviderName the name of the selected payment provider
@@ -123,19 +123,19 @@ class ReviewFragment private constructor(
     constructor() : this(null)
 
     private val viewModel: ReviewViewModel by viewModels { viewModelFactory ?: object : ViewModelProvider.Factory {} }
-    private var binding: GhsFragmentReviewBinding by autoCleared()
+    private var binding: GmsFragmentReviewBinding by autoCleared()
     private var documentPageAdapter: DocumentPageAdapter by autoCleared()
     private var isKeyboardShown = false
 
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
         val inflater = super.onGetLayoutInflater(savedInstanceState)
-        return this.getLayoutInflaterWithGiniHealthTheme(inflater)
+        return this.getLayoutInflaterWithGiniMerchantTheme(inflater)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         super.onCreateView(inflater, container, savedInstanceState)
-        documentPageAdapter = DocumentPageAdapter(viewModel.giniHealth)
-        binding = GhsFragmentReviewBinding.inflate(inflater).apply {
+        documentPageAdapter = DocumentPageAdapter(viewModel.giniMerchant)
+        binding = GmsFragmentReviewBinding.inflate(inflater).apply {
             configureViews()
             configureOrientation()
             applyInsets()
@@ -160,11 +160,11 @@ class ReviewFragment private constructor(
 
         // Set info bar bottom margin programmatically to reuse radius dimension with negative sign
         binding.paymentDetailsInfoBar.updateLayoutParams<ConstraintLayout.LayoutParams> {
-            bottomMargin = -resources.getDimensionPixelSize(R.dimen.ghs_medium_12)
+            bottomMargin = -resources.getDimensionPixelSize(R.dimen.gms_medium_12)
         }
     }
 
-    private fun GhsFragmentReviewBinding.setStateListeners() {
+    private fun GmsFragmentReviewBinding.setStateListeners() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 viewModel.paymentComponent.recheckWhichPaymentProviderAppsAreInstalled()
@@ -173,10 +173,10 @@ class ReviewFragment private constructor(
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
-                    viewModel.giniHealth.documentFlow.collect { handleDocumentResult(it) }
+                    viewModel.giniMerchant.documentFlow.collect { handleDocumentResult(it) }
                 }
                 launch {
-                    viewModel.giniHealth.paymentFlow.collect { handlePaymentResult(it) }
+                    viewModel.giniMerchant.paymentFlow.collect { handlePaymentResult(it) }
                 }
                 launch {
                     viewModel.paymentDetails.collect { setPaymentDetails(it) }
@@ -185,7 +185,7 @@ class ReviewFragment private constructor(
                     viewModel.paymentValidation.collect { handleValidationResult(it) }
                 }
                 launch {
-                    viewModel.giniHealth.openBankState.collect { handlePaymentState(it) }
+                    viewModel.giniMerchant.openBankState.collect { handlePaymentState(it) }
                 }
                 launch {
                     viewModel.isPaymentButtonEnabled.collect { isEnabled ->
@@ -215,11 +215,11 @@ class ReviewFragment private constructor(
         }
     }
 
-    private fun GhsFragmentReviewBinding.showSelectedPaymentProviderApp(paymentProviderApp: PaymentProviderApp) {
+    private fun GmsFragmentReviewBinding.showSelectedPaymentProviderApp(paymentProviderApp: PaymentProviderApp) {
         paymentProviderApp.icon?.let { appIcon ->
             val roundedDrawable =
                 RoundedBitmapDrawableFactory.create(requireContext().resources, appIcon.bitmap).apply {
-                    cornerRadius = resources.getDimension(R.dimen.ghs_small_2)
+                    cornerRadius = resources.getDimension(R.dimen.gms_small_2)
                 }
 
             payment.setCompoundDrawablesWithIntrinsicBounds(
@@ -233,7 +233,7 @@ class ReviewFragment private constructor(
         payment.setTextColor(paymentProviderApp.colors.textColor)
     }
 
-    private fun GhsFragmentReviewBinding.handleDocumentResult(documentResult: ResultWrapper<Document>) {
+    private fun GmsFragmentReviewBinding.handleDocumentResult(documentResult: ResultWrapper<Document>) {
         when (documentResult) {
             is ResultWrapper.Success -> {
                 documentPageAdapter.submitList(viewModel.getPages(documentResult.value).also { pages ->
@@ -242,37 +242,37 @@ class ReviewFragment private constructor(
                 })
             }
 
-            is ResultWrapper.Error -> handleError(getString(R.string.ghs_generic_error_message)) { viewModel.retryDocumentReview() }
+            is ResultWrapper.Error -> handleError(getString(R.string.gms_generic_error_message)) { viewModel.retryDocumentReview() }
             else -> { // Loading state handled by payment details
             }
         }
     }
 
-    private fun GhsFragmentReviewBinding.handlePaymentResult(paymentResult: ResultWrapper<PaymentDetails>) {
+    private fun GmsFragmentReviewBinding.handlePaymentResult(paymentResult: ResultWrapper<PaymentDetails>) {
         binding.loading.isVisible = paymentResult is ResultWrapper.Loading
         if (paymentResult is ResultWrapper.Error) {
-            handleError(getString(R.string.ghs_generic_error_message)) { viewModel.retryDocumentReview() }
+            handleError(getString(R.string.gms_generic_error_message)) { viewModel.retryDocumentReview() }
         }
     }
 
-    private fun GhsFragmentReviewBinding.configureViews() {
+    private fun GmsFragmentReviewBinding.configureViews() {
         close.isGone = !viewModel.configuration.showCloseButton
     }
 
-    private fun GhsFragmentReviewBinding.configureOrientation() {
+    private fun GmsFragmentReviewBinding.configureOrientation() {
         pager.isVisible = true
         pager.adapter = documentPageAdapter
         TabLayoutMediator(indicator, pager) { tab, _ -> tab.view.isClickable = false }.attach()
     }
 
-    private fun GhsFragmentReviewBinding.setPaymentDetails(paymentDetails: PaymentDetails) {
+    private fun GmsFragmentReviewBinding.setPaymentDetails(paymentDetails: PaymentDetails) {
         recipient.setTextIfDifferent(paymentDetails.recipient)
         iban.setTextIfDifferent(paymentDetails.iban)
         amount.setTextIfDifferent(paymentDetails.amount)
         purpose.setTextIfDifferent(paymentDetails.purpose)
     }
 
-    private fun GhsFragmentReviewBinding.setInputListeners() {
+    private fun GmsFragmentReviewBinding.setInputListeners() {
         recipient.addTextChangedListener(onTextChanged = { text, _, _, _ -> viewModel.setRecipient(text.toString()) })
         iban.addTextChangedListener(onTextChanged = { text, _, _, _ -> viewModel.setIban(text.toString()) })
         amount.addTextChangedListener(onTextChanged = { text, _, _, _ -> viewModel.setAmount(text.toString()) })
@@ -288,7 +288,7 @@ class ReviewFragment private constructor(
         if (hasFocus) textInputLayout.hideErrorMessage() else textInputLayout.showErrorMessage()
     }
 
-    private fun GhsFragmentReviewBinding.handleValidationResult(messages: List<ValidationMessage>) {
+    private fun GmsFragmentReviewBinding.handleValidationResult(messages: List<ValidationMessage>) {
         val (fieldsWithError, fieldsWithoutError) = PaymentField.values()
             .map { field -> field to messages.firstOrNull { it.field == field } }
             .partition { (_, message) -> message != null }
@@ -299,14 +299,14 @@ class ReviewFragment private constructor(
                         setErrorMessage(
                             when (message) {
                                 is ValidationMessage.Empty -> when (field) {
-                                    PaymentField.Recipient -> R.string.ghs_error_input_recipient_empty
-                                    PaymentField.Iban -> R.string.ghs_error_input_iban_empty
-                                    PaymentField.Amount -> R.string.ghs_error_input_amount_empty
-                                    PaymentField.Purpose -> R.string.ghs_error_input_purpose_empty
+                                    PaymentField.Recipient -> R.string.gms_error_input_recipient_empty
+                                    PaymentField.Iban -> R.string.gms_error_input_iban_empty
+                                    PaymentField.Amount -> R.string.gms_error_input_amount_empty
+                                    PaymentField.Purpose -> R.string.gms_error_input_purpose_empty
                                 }
 
-                                ValidationMessage.InvalidIban -> R.string.ghs_error_input_invalid_iban
-                                ValidationMessage.AmountFormat -> R.string.ghs_error_input_amount_format
+                                ValidationMessage.InvalidIban -> R.string.gms_error_input_invalid_iban
+                                ValidationMessage.AmountFormat -> R.string.gms_error_input_amount_format
                             }
                         )
                         if (editText?.isFocused == true) {
@@ -324,24 +324,24 @@ class ReviewFragment private constructor(
         }
     }
 
-    private fun GhsFragmentReviewBinding.getTextInputLayout(field: PaymentField) = when (field) {
+    private fun GmsFragmentReviewBinding.getTextInputLayout(field: PaymentField) = when (field) {
         PaymentField.Recipient -> recipientLayout
         PaymentField.Iban -> ibanLayout
         PaymentField.Amount -> amountLayout
         PaymentField.Purpose -> purposeLayout
     }
 
-    private fun GhsFragmentReviewBinding.handlePaymentState(paymentState: GiniHealth.PaymentState) {
-        (paymentState is GiniHealth.PaymentState.Loading).let { isLoading ->
+    private fun GmsFragmentReviewBinding.handlePaymentState(paymentState: GiniMerchant.PaymentState) {
+        (paymentState is GiniMerchant.PaymentState.Loading).let { isLoading ->
             paymentProgress.isVisible = isLoading
             recipientLayout.isEnabled = !isLoading
             ibanLayout.isEnabled = !isLoading
             amountLayout.isEnabled = !isLoading
             purposeLayout.isEnabled = !isLoading
-            payment.text = if (isLoading) "" else getString(R.string.ghs_pay_button)
+            payment.text = if (isLoading) "" else getString(R.string.gms_pay_button)
         }
         when (paymentState) {
-            is GiniHealth.PaymentState.Success -> {
+            is GiniMerchant.PaymentState.Success -> {
                 if (viewModel.paymentProviderApp.value?.paymentProvider?.gpcSupported() == false) return
                 try {
                     val intent =
@@ -350,39 +350,39 @@ class ReviewFragment private constructor(
                         startActivity(intent)
                         viewModel.onBankOpened()
                     } else {
-                        handleError(getString(R.string.ghs_generic_error_message)) { viewModel.onPayment() }
+                        handleError(getString(R.string.gms_generic_error_message)) { viewModel.onPayment() }
                     }
                 } catch (exception: ActivityNotFoundException) {
-                    handleError(getString(R.string.ghs_generic_error_message)) { viewModel.onPayment() }
+                    handleError(getString(R.string.gms_generic_error_message)) { viewModel.onPayment() }
                 }
             }
-            is GiniHealth.PaymentState.Error -> {
-                handleError(getString(R.string.ghs_generic_error_message)) { viewModel.onPaymentButtonTapped(requireContext().externalCacheDir) }
+            is GiniMerchant.PaymentState.Error -> {
+                handleError(getString(R.string.gms_generic_error_message)) { viewModel.onPaymentButtonTapped(requireContext().externalCacheDir) }
             }
             else -> { // Loading is already handled
             }
         }
     }
 
-    private fun GhsFragmentReviewBinding.handleError(text: String, onRetry: () -> Unit) {
+    private fun GmsFragmentReviewBinding.handleError(text: String, onRetry: () -> Unit) {
         if (viewModel.configuration.handleErrorsInternally) {
             showSnackbar(text, onRetry)
         }
     }
 
-    private fun GhsFragmentReviewBinding.showSnackbar(text: String, onRetry: () -> Unit) {
-        val context = requireContext().wrappedWithGiniHealthTheme()
+    private fun GmsFragmentReviewBinding.showSnackbar(text: String, onRetry: () -> Unit) {
+        val context = requireContext().wrappedWithGiniMerchantTheme()
         Snackbar.make(context, root, text, Snackbar.LENGTH_INDEFINITE).apply {
             if (context.getFontScale() < 1.5) {
                 anchorView = paymentDetailsScrollview
             }
             setTextMaxLines(2)
-            setAction(getString(R.string.ghs_snackbar_retry)) { onRetry() }
+            setAction(getString(R.string.gms_snackbar_retry)) { onRetry() }
             show()
         }
     }
 
-    private fun GhsFragmentReviewBinding.setActionListeners(paymentProviderApp: PaymentProviderApp) {
+    private fun GmsFragmentReviewBinding.setActionListeners(paymentProviderApp: PaymentProviderApp) {
         paymentDetails.setOnClickListener { it.hideKeyboard() }
         payment.setOnClickListener {
             requireActivity().currentFocus?.clearFocus()
@@ -398,7 +398,7 @@ class ReviewFragment private constructor(
         }
     }
 
-    private fun GhsFragmentReviewBinding.applyInsets() {
+    private fun GmsFragmentReviewBinding.applyInsets() {
         paymentDetails.applyInsetter {
             type(navigationBars = true, ime = true) {
                 padding(bottom = true)
@@ -411,7 +411,7 @@ class ReviewFragment private constructor(
         }
     }
 
-    private fun GhsFragmentReviewBinding.removePagerConstraintAndSetPreviousHeightIfNeeded(savedHeight: Int) {
+    private fun GmsFragmentReviewBinding.removePagerConstraintAndSetPreviousHeightIfNeeded(savedHeight: Int) {
         root.post {
             ConstraintSet().apply {
                 clone(constraintRoot)
@@ -427,7 +427,7 @@ class ReviewFragment private constructor(
         }
     }
 
-    private fun GhsFragmentReviewBinding.setKeyboardAnimation() {
+    private fun GmsFragmentReviewBinding.setKeyboardAnimation() {
         ViewCompat.setWindowInsetsAnimationCallback(
             paymentDetails,
             object : WindowInsetsAnimationCompat.Callback(DISPATCH_MODE_STOP) {
@@ -487,14 +487,14 @@ class ReviewFragment private constructor(
             })
     }
 
-    private fun GhsFragmentReviewBinding.clearFocus() {
+    private fun GmsFragmentReviewBinding.clearFocus() {
         recipient.clearFocus()
         iban.clearFocus()
         amount.clearFocus()
         purpose.clearFocus()
     }
 
-    private fun GhsFragmentReviewBinding.showInfoBar() {
+    private fun GmsFragmentReviewBinding.showInfoBar() {
         root.doOnLayout {
             // paymentDetailsInfoBar visibility should never be GONE, otherwise the animation won't work
             if (paymentDetailsInfoBar.isInvisible) {
@@ -515,7 +515,7 @@ class ReviewFragment private constructor(
         }
     }
 
-    private fun GhsFragmentReviewBinding.hideInfoBarAnimated() {
+    private fun GmsFragmentReviewBinding.hideInfoBarAnimated() {
         root.doOnLayout {
             if (paymentDetailsInfoBar.isVisible) {
                 TransitionManager.beginDelayedTransition(root, TransitionSet().apply {
@@ -564,7 +564,7 @@ class ReviewFragment private constructor(
     private fun startSharePdfIntent(paymentRequestFile: File) {
         val uriForFile = FileProvider.getUriForFile(
             requireContext(),
-            requireContext().packageName+".health.sdk.fileprovider",
+            requireContext().packageName+".merchant.sdk.fileprovider",
             paymentRequestFile
         )
         val shareIntent = Intent(Intent.ACTION_SEND).apply {
@@ -603,11 +603,11 @@ class ReviewFragment private constructor(
     internal companion object {
         private const val PAGER_HEIGHT = "pager_height"
         fun newInstance(
-            giniHealth: GiniHealth,
+            giniMerchant: GiniMerchant,
             configuration: ReviewConfiguration = ReviewConfiguration(),
             listener: ReviewFragmentListener? = null,
             paymentComponent: PaymentComponent,
-            viewModelFactory: ViewModelProvider.Factory = ReviewViewModel.Factory(giniHealth, configuration, paymentComponent),
+            viewModelFactory: ViewModelProvider.Factory = ReviewViewModel.Factory(giniMerchant, configuration, paymentComponent),
         ): ReviewFragment = ReviewFragment(listener, paymentComponent, viewModelFactory)
     }
 }

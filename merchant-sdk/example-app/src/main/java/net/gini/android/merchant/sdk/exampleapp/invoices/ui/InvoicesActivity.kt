@@ -18,13 +18,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
-import net.gini.android.merchant.sdk.GiniHealth
+import net.gini.android.merchant.sdk.GiniMerchant
 import net.gini.android.merchant.sdk.bankselection.BankSelectionBottomSheet
 import net.gini.android.merchant.sdk.exampleapp.R
 import net.gini.android.merchant.sdk.exampleapp.databinding.ActivityInvoicesBinding
 import net.gini.android.merchant.sdk.exampleapp.invoices.data.UploadHardcodedInvoicesState
 import net.gini.android.merchant.sdk.exampleapp.invoices.ui.model.InvoiceItem
-import net.gini.android.merchant.sdk.integratedFlow.ContainerFragment
 import net.gini.android.merchant.sdk.moreinformation.MoreInformationFragment
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponentView
@@ -132,7 +131,7 @@ class InvoicesActivity : AppCompatActivity() {
                 launch {
                     viewModel.openBankState.collect { paymentState ->
                         when (paymentState) {
-                            is GiniHealth.PaymentState.Success -> {
+                            is GiniMerchant.PaymentState.Success -> {
                                 viewModel.updateDocument()
                             }
                             else -> {}
@@ -172,15 +171,6 @@ class InvoicesActivity : AppCompatActivity() {
 
                 viewModel.getPaymentReviewFragment(documentId)
             }
-
-            override fun onStartIntegratedFlow() {
-                ContainerFragment.newInstance(paymentComponent = viewModel.paymentComponent).apply {
-                    supportFragmentManager.beginTransaction()
-                        .add(R.id.fragment_container,this, this::class.java.simpleName)
-                        .addToBackStack(this::class.java.simpleName)
-                        .commit()
-                }
-            }
         }
 
         // Reattach the listener to the ReviewFragment if it is being shown (in case of configuration changes)
@@ -199,7 +189,7 @@ class InvoicesActivity : AppCompatActivity() {
             title = getString(R.string.title_activity_invoices)
         } else if (supportFragmentManager.fragments.last() is MoreInformationFragment) {
             title =
-                getString(net.gini.android.merchant.sdk.R.string.ghs_more_information_fragment_title)
+                getString(net.gini.android.merchant.sdk.R.string.gms_more_information_fragment_title)
         } else if (supportFragmentManager.fragments.last() is ReviewFragment) {
             title = getString(R.string.title_payment_review)
         }

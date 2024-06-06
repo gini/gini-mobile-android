@@ -156,7 +156,7 @@ internal fun TextInputLayout.showErrorMessage() {
 }
 
 internal fun TextInputLayout.setBackground() {
-    if (isErrorEnabled) editText?.setBackgroundResource(R.drawable.ghs_payment_input_edit_text_error_background) else editText?.setBackgroundResource(R.drawable.ghs_payment_input_edit_text_background)
+    if (isErrorEnabled) editText?.setBackgroundResource(R.drawable.gms_payment_input_edit_text_error_background) else editText?.setBackgroundResource(R.drawable.gms_payment_input_edit_text_background)
 }
 
 private fun String.nonEmpty() = if (isEmpty()) " " else this
@@ -177,13 +177,13 @@ internal suspend fun <T> Flow<T>.withPrev() = flow {
     }
 }
 
-internal fun View.getLayoutInflaterWithGiniHealthTheme(): LayoutInflater =
-    LayoutInflater.from(context.wrappedWithGiniHealthTheme())
+internal fun View.getLayoutInflaterWithGiniMerchantTheme(): LayoutInflater =
+    LayoutInflater.from(context.wrappedWithGiniMerchantTheme())
 
-internal fun Context.wrappedWithGiniHealthTheme(): Context = ContextThemeWrapper(this, R.style.GiniHealthTheme)
+internal fun Context.wrappedWithGiniMerchantTheme(): Context = ContextThemeWrapper(this, R.style.GiniMerchantTheme)
 
-internal fun Fragment.getLayoutInflaterWithGiniHealthTheme(inflater: LayoutInflater): LayoutInflater {
-    return inflater.cloneInContext(requireContext().wrappedWithGiniHealthTheme())
+internal fun Fragment.getLayoutInflaterWithGiniMerchantTheme(inflater: LayoutInflater): LayoutInflater {
+    return inflater.cloneInContext(requireContext().wrappedWithGiniMerchantTheme())
 }
 
 internal fun View.setIntervalClickListener(click: View.OnClickListener?) {

@@ -148,5 +148,5 @@ apply<CodeAnalysisPlugin>()
 apply<SBOMPlugin>()
 
 tasks.getByName<DokkaCollectorTask>("dokkaHtmlSiblingCollector") {
-    this.moduleName.set("Gini Health SDK for Android")
+    this.moduleName.set("Gini Merchant SDK for Android")
 }
