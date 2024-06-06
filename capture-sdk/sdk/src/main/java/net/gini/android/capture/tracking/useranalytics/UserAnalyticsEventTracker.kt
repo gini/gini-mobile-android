@@ -71,7 +71,6 @@ private class MixPanelUserAnalyticsEventTracker(
     init {
         mixpanelAPI =
             MixpanelAPI.getInstance(context, context.getString(R.string.mixpanel_api_key), false)
-        mixpanelAPI.setServerURL(MIXPANEL_SERVER_URL)
 
         mixpanelAPI.identify(installationIdProvider.getInstallationId())
 
@@ -143,8 +142,6 @@ private class MixPanelUserAnalyticsEventTracker(
     }
 
     companion object {
-        private const val MIXPANEL_SERVER_URL = "https://api-eu.mixpanel.com"
-
         private const val SELECT_TO_SPEAK_SERVICE_ID =
             "com.google.android.marvin.talkback/com.google.android.accessibility.selecttospeak.SelectToSpeakService"
         private const val SPEAK_SCREEN_SERVICE_ID =
