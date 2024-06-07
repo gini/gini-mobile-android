@@ -16,6 +16,7 @@
 load 'util/versions.rb'
 load 'util/lanes.rb'
 load 'util/git.rb'
+load 'util/html.rb'
 
 require 'base64'
 
@@ -203,8 +204,9 @@ platform :android do
 
     If the release is a stable release - meaning that the release version has no suffix (e.g., `1.10.23` is stable and 
     `1.11.0-beta01` is not) -, then it updates the project root index.html
-    (at <gh_pages_url>/<project_id>/<module_id>/index.html) and the old documentation
-    root index.html (at <gh_pages_url>/<project_id>/<module_id>/html/index.html)
+    (at <gh_pages_url>/<project_id>/<module_id>/index.html), the old documentation
+    root index.html (at <gh_pages_url>/<project_id>/<module_id>/html/index.html) and
+    the old dokka index.html (at <gh_pages_url>/<project_id>/<module_id>/dokka/index.html).
     to automatically redirect to the released version.
     
     Parameters:
@@ -259,6 +261,8 @@ platform :android do
 
     project_root_path = "#{project_id}/#{module_id}"
     destination_path = "#{project_root_path}/#{project_version}"
+    html_destination_path = "#{destination_path}/html"
+    dokka_destination_path = "#{destination_path}/dokka"
 
     Dir.chdir("gh-pages") do
       UI.message "Clear out the existing documentation"
@@ -275,19 +279,7 @@ platform :android do
           Update the project root index.html and the old documentation root index.html to redirect to this documentation version.
         MESSAGE
 
-        index_html = <<~INDEX_HTML
-        <!DOCTYPE html>
-        <html lang="en">
-          <head>
-            <meta charset="UTF-8">
-            <title>#{documentation_title}</title>
-            <meta http-equiv="refresh" content="0; URL=https://developer.gini.net/gini-mobile-android/#{destination_path}/html/index.html" />
-          </head>
-          <body>
-            Redirecting to the latest stable version...
-          </body>
-        </html>
-        INDEX_HTML
+        index_html = get_redirecting_index_html(documentation_title, html_destination_path, UI)
 
         File.open("#{project_root_path}/index.html", "w") { |f| 
           f.write index_html
@@ -297,8 +289,20 @@ platform :android do
             f.write index_html
           }
         end
+
+        UI.message <<~MESSAGE
+          Update the old dokka index.html to redirect to this documentation version's dokka page.
+        MESSAGE
+
+        index_html = get_redirecting_index_html(documentation_title, dokka_destination_path, UI)
+
+        if File.file?("#{project_root_path}/dokka/index.html")
+          File.open("#{project_root_path}/dokka/index.html", "w") { |f| 
+            f.write index_html
+          }
+        end
       else
-        UI.message "Not changing the project root index.html or the old documentation root index.html."
+        UI.message "Not changing the project root index.html, the old documentation root index.html or the old dokka index.html."
       end
 
       if !dry_run 
@@ -319,7 +323,8 @@ platform :android do
         * git tag             : #{git_tag}
         * destination branch  : gh-pages
         * destination folder  : #{destination_path}
-        * url                 : http://developer.gini.net/gini-mobile-android/#{destination_path}/html
+        * doc url             : http://developer.gini.net/gini-mobile-android/#{html_destination_path}
+        * dokka url           : http://developer.gini.net/gini-mobile-android/#{dokka_destination_path}
     MESSAGE
   end
 

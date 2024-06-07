@@ -81,8 +81,9 @@ Example: <gh_pages_url>/capture-sdk/sdk/1.11.0
 
 If the release is a stable release - meaning that the release version has no suffix (e.g., `1.10.23` is stable and 
 `1.11.0-beta01` is not) -, then it updates the project root index.html
-(at <gh_pages_url>/<project_id>/<module_id>/index.html) and the old documentation
-root index.html (at <gh_pages_url>/<project_id>/<module_id>/html/index.html)
+(at <gh_pages_url>/<project_id>/<module_id>/index.html), the old documentation
+root index.html (at <gh_pages_url>/<project_id>/<module_id>/html/index.html) and
+the old dokka index.html (at <gh_pages_url>/<project_id>/<module_id>/dokka/index.html).
 to automatically redirect to the released version.
 
 Parameters:
