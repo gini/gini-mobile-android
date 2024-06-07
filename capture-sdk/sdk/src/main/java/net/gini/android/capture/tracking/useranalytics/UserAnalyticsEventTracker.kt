@@ -81,7 +81,9 @@ private class MixPanelUserAnalyticsEventTracker(
         val accessibilityManager =
             context.getSystemService(ACCESSIBILITY_SERVICE) as? AccessibilityManager
 
-        val isBoldTextEnabled = context.resources.configuration.fontWeightAdjustment > 0
+        val isBoldTextEnabled = kotlin.runCatching {
+            context.resources.configuration.fontWeightAdjustment
+        }.getOrDefault(0) > 0
 
         val visualServiceList =
             accessibilityManager?.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_ALL_MASK)
