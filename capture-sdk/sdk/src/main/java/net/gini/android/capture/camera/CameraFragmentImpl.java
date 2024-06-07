@@ -224,7 +224,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private Group mImportButtonGroup;
     private String mQRCodeContent;
     private boolean shouldSendUserAnalyticsTrackerForQrCodes = true;
-    private boolean shouldSendUserAnalyticsTrackerForIbanDetection = true;
     private boolean isIbanDetectedOnceForUserAnalytics = false;
 
     private InjectedViewContainer<NavigationBarTopAdapter> topAdapterInjectedViewContainer;
@@ -1844,11 +1843,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     }
 
     private void showIBANsDetectedOnScreen(List<String> ibans) {
-        if (shouldSendUserAnalyticsTrackerForIbanDetection) {
-            mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.IBAN_DETECTED, screenName);
-            shouldSendUserAnalyticsTrackerForIbanDetection = false;
-        }
-
         isIbanDetectedOnceForUserAnalytics = true;
         mIbanDetectedTextView.setVisibility(View.VISIBLE);
         mImageFrame.setImageTintList(ColorStateList.valueOf(

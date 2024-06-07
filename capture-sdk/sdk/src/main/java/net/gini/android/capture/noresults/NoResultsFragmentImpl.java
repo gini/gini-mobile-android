@@ -190,7 +190,7 @@ class NoResultsFragmentImpl {
                         injectedViewAdapter.setNavButtonType(NavButtonType.CLOSE);
                         injectedViewAdapter.setOnNavButtonClickListener(new IntervalClickListener(view -> {
                             if (mFragment.getActivity() != null) {
-                                mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.CLOSE_TAPPED, UserAnalyticsScreen.NO_RESULTS);
+                                mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.CLOSE_TAPPED, screenName);
                                 mCancelListener.onCancelFlow();
                             }
                         }));
