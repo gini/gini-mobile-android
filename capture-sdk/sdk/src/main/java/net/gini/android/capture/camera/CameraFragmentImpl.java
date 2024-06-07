@@ -1924,14 +1924,14 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     }
 
     private void trackCameraAccessPermissionRequiredHelpClickedEventIfNeeded() {
-        if (mLayoutNoPermission.getVisibility() == View.VISIBLE) {
+        if (mLayoutNoPermission!= null && mLayoutNoPermission.getVisibility() == View.VISIBLE) {
             mUserAnalyticsEventTracker.trackEvent(
                     UserAnalyticsEvent.HELP_TAPPED, UserAnalyticsScreen.CAMERA_ACCESS);
         }
     }
 
     private void trackCameraAccessPermissionRequiredCloseClickedEventIfNeeded() {
-        if (mLayoutNoPermission.getVisibility() == View.VISIBLE) {
+        if (mLayoutNoPermission != null && mLayoutNoPermission.getVisibility() == View.VISIBLE) {
             mUserAnalyticsEventTracker.trackEvent(
                     UserAnalyticsEvent.CLOSE_TAPPED, UserAnalyticsScreen.CAMERA_ACCESS);
         }
