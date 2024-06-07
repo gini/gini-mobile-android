@@ -201,9 +201,10 @@ platform :android do
     <gh_pages_url>/<project_id>/<module_id>/<project_version>
     Example: <gh_pages_url>/capture-sdk/sdk/1.11.0
 
-    If the 'is_stable_release' option is set to 'true', then it updates the project root index.html 
-    (at <gh_pages_url>/<project_id>/<module_id>/index.html) and the old documentation 
-    root index.html (at <gh_pages_url>/<project_id>/<module_id>/html/index.html) 
+    If the release is a stable release - meaning that the release version has no suffix (e.g., `1.10.23` is stable and 
+    `1.11.0-beta01` is not) -, then it updates the project root index.html
+    (at <gh_pages_url>/<project_id>/<module_id>/index.html) and the old documentation
+    root index.html (at <gh_pages_url>/<project_id>/<module_id>/html/index.html)
     to automatically redirect to the released version.
     
     Parameters:
@@ -214,14 +215,13 @@ platform :android do
       git_user              - the username to use for git authentication
       git_password          - the password to use for git authentication
       documentation_title   - the title used on the root index page
-      is_stable_release     - set to "true" if it's a stable release that should be shown by default 
       links_to_projects     - (optional) a json array of projects that are linked to in the documentation, for example: [{"project_id": "capture-sdk", "module_id": "sdk"}]
       dry_run               - (optional) executes without permanent side effects
   DOC
   lane :release_documentation do |options|
     # Required options
-    (project_id, module_id, git_tag, ci, git_user, git_password, documentation_title, is_stable_release) = 
-      check_and_get_options(options, [:project_id, :module_id, :git_tag, :ci, :git_user, :git_password, :documentation_title, :is_stable_release], UI)
+    (project_id, module_id, git_tag, ci, git_user, git_password, documentation_title) = 
+      check_and_get_options(options, [:project_id, :module_id, :git_tag, :ci, :git_user, :git_password, :documentation_title], UI)
     # Optional options
     dry_run = options[:dry_run]
 
@@ -270,7 +270,7 @@ platform :android do
       UI.message "Disable jekyll"
       sh("touch .nojekyll")
 
-      if is_stable_release
+      if is_project_version_stable?(project_version, UI)
         UI.message <<~MESSAGE
           Update the project root index.html and the old documentation root index.html to redirect to this documentation version.
         MESSAGE
