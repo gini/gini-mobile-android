@@ -452,6 +452,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
                     GiniCapture.getInstance().internal().getReviewNavigationBarBottomAdapterInstance(),
                     injectedViewAdapter -> {
                         injectedViewAdapter.setOnAddPageButtonClickListener(new IntervalClickListener(v -> {
+                            mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.ADD_PAGES_TAPPED, UserAnalyticsScreen.REVIEW);
                             NavHostFragment.findNavController(this).navigate(MultiPageReviewFragmentDirections.toCameraFragmentForAddingPages());
                         }));
 
