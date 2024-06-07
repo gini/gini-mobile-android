@@ -49,6 +49,7 @@ class ErrorFragmentImpl(
     private var enterManuallyButtonListener: EnterManuallyButtonListener? = null
     private lateinit var retakeImagesButton: Button
     private lateinit var mUserAnalyticsEventTracker: UserAnalyticsEventTracker
+    private val screenName: UserAnalyticsScreen = UserAnalyticsScreen.Error
 
     fun onCreate(savedInstanceState: Bundle?) {
         ActivityHelper.forcePortraitOrientationOnPhones(fragmentCallback.activity)
@@ -76,7 +77,7 @@ class ErrorFragmentImpl(
             retakeImagesButton.setIntervalClickListener {
                 mUserAnalyticsEventTracker.trackEvent(
                     UserAnalyticsEvent.BACK_TO_CAMERA_TAPPED,
-                    UserAnalyticsScreen.Error
+                    screenName
                 )
                 EventTrackingHelper.trackAnalysisScreenEvent(AnalysisScreenEvent.RETRY)
                 fragmentCallback.findNavController()
@@ -90,7 +91,7 @@ class ErrorFragmentImpl(
         enterManuallyButton.setIntervalClickListener {
             mUserAnalyticsEventTracker.trackEvent(
                 UserAnalyticsEvent.ENTER_MANUALLY_TAPPED,
-                UserAnalyticsScreen.Error
+                screenName
             )
             enterManuallyButtonListener?.onEnterManuallyPressed()
         }
@@ -114,7 +115,7 @@ class ErrorFragmentImpl(
     private fun addUserAnalyticEvents() {
         mUserAnalyticsEventTracker.trackEvent(
             UserAnalyticsEvent.SCREEN_SHOWN,
-            UserAnalyticsScreen.Error,
+            screenName,
             mapOf(
                 UserAnalyticsExtraProperties.DOCUMENT_TYPE
                         to  document?.mapToAnalyticsDocumentType().toString(),
@@ -141,7 +142,7 @@ class ErrorFragmentImpl(
                     setOnNavButtonClickListener(IntervalClickListener {
                         mUserAnalyticsEventTracker.trackEvent(
                             UserAnalyticsEvent.CLOSE_TAPPED,
-                            UserAnalyticsScreen.Error
+                            screenName
                         )
                         cancelListener.onCancelFlow()
                     })
@@ -158,7 +159,7 @@ class ErrorFragmentImpl(
                     override fun handleOnBackPressed() {
                         mUserAnalyticsEventTracker.trackEvent(
                             UserAnalyticsEvent.CLOSE_TAPPED,
-                            UserAnalyticsScreen.Error
+                            screenName
                         )
                         remove()
                         cancelListener.onCancelFlow()

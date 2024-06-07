@@ -124,6 +124,8 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
     private final String KEY_SCROLL_TO_POSITION = "GC_SHOULD_SCROLL_TO_LAST_PAGE";
     private UserAnalyticsEventTracker mUserAnalyticsEventTracker;
 
+    private final UserAnalyticsScreen screenName = UserAnalyticsScreen.Review.INSTANCE;
+
     public static MultiPageReviewFragment newInstance() {
 
         Bundle args = new Bundle();
@@ -143,12 +145,12 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
 
         forcePortraitOrientationOnPhones(getActivity());
         mUserAnalyticsEventTracker = UserAnalytics.INSTANCE.getAnalyticsEventTracker();
-        mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.SCREEN_SHOWN, UserAnalyticsScreen.Review.INSTANCE);
+        mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.SCREEN_SHOWN, screenName);
         OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
             @Override
             public void handleOnBackPressed() {
                 trackReviewScreenEvent(ReviewScreenEvent.BACK);
-                mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.CLOSE_TAPPED, UserAnalyticsScreen.Review.INSTANCE);
+                mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.CLOSE_TAPPED, screenName);
                 setEnabled(false);
                 remove();
                 onBack();
@@ -374,7 +376,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
                         int position = mRecyclerView.getChildAdapterPosition(viewAtPosition);
                         updateTabIndicatorPosition(position);
                         setScrollToPosition(position);
-                        UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(UserAnalyticsEvent.PAGE_SWIPED, UserAnalyticsScreen.Review.INSTANCE);
+                        UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(UserAnalyticsEvent.PAGE_SWIPED, screenName);
                         if (position < mMultiPageDocument.getDocuments().size() - 1)
                             mShouldScrollToLastPage = false;
                     }
@@ -529,7 +531,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
 
                         injectedViewAdapter.setOnNavButtonClickListener(new IntervalClickListener(v -> {
                             trackReviewScreenEvent(ReviewScreenEvent.BACK);
-                            mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.CLOSE_TAPPED, UserAnalyticsScreen.Review.INSTANCE);
+                            mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.CLOSE_TAPPED, screenName);
                             onBack();
                         }));
                     }));
@@ -545,7 +547,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
         }
 
         ClickListenerExtKt.setIntervalClickListener(mAddPagesButton, v -> {
-            mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.ADD_PAGES_TAPPED, UserAnalyticsScreen.Review.INSTANCE);
+            mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.ADD_PAGES_TAPPED, screenName);
             NavHostFragment.findNavController(this).navigate(MultiPageReviewFragmentDirections.toCameraFragmentForAddingPages());
         });
     }
@@ -674,7 +676,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
         trackReviewScreenEvent(ReviewScreenEvent.NEXT);
         mUserAnalyticsEventTracker.trackEvent(
                 UserAnalyticsEvent.PROCEED_TAPPED,
-                UserAnalyticsScreen.Review.INSTANCE,
+                screenName,
                 Collections.singletonMap(UserAnalyticsExtraProperties.DOCUMENT_PAGE_NUMBER, String.valueOf(mMultiPageDocument.getDocuments().size()))
         );
         mNextClicked = true;
@@ -972,7 +974,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
 
     @Override
     public void onPageClicked(@NonNull ImageDocument document) {
-        mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.FULL_SCREEN_PAGE_TAPPED, UserAnalyticsScreen.Review.INSTANCE);
+        mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.FULL_SCREEN_PAGE_TAPPED, screenName);
         NavHostFragment.findNavController(this).navigate(MultiPageReviewFragmentDirections.toZoomInPreviewFragment(document));
     }
 

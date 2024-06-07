@@ -59,6 +59,7 @@ class NoResultsFragmentImpl {
     private UserAnalyticsEventTracker mUserAnalyticsEventTracker;
 
     private InjectedViewContainer<NavigationBarTopAdapter> topAdapterInjectedViewContainer;
+    private final UserAnalyticsScreen screenName = UserAnalyticsScreen.NoResults.INSTANCE;
 
     NoResultsFragmentImpl(@NonNull final FragmentImplCallback fragment,
                           @NonNull final Document document,
@@ -91,7 +92,7 @@ class NoResultsFragmentImpl {
         final View retakeImagesButton = view.findViewById(R.id.gc_button_no_results_retake_images);
         handleOnBackPressed();
         mUserAnalyticsEventTracker = UserAnalytics.INSTANCE.getAnalyticsEventTracker();
-        mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.SCREEN_SHOWN, UserAnalyticsScreen.NoResults.INSTANCE,
+        mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.SCREEN_SHOWN, screenName,
                 new HashMap<UserAnalyticsExtraProperties, String>() {{
                     put(UserAnalyticsExtraProperties.DOCUMENT_ID, mDocument.getId());
                     put(UserAnalyticsExtraProperties.DOCUMENT_TYPE, UserAnalyticsMappersKt.mapToAnalyticsDocumentType(mDocument));
@@ -99,7 +100,7 @@ class NoResultsFragmentImpl {
         );
         if (shouldAllowRetakeImages()) {
             ClickListenerExtKt.setIntervalClickListener(retakeImagesButton, v -> {
-                mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.RETAKE_IMAGES_TAPPED, UserAnalyticsScreen.NoResults.INSTANCE);
+                mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.RETAKE_IMAGES_TAPPED, screenName);
                 trackAnalysisScreenEvent(AnalysisScreenEvent.RETRY);
                 mFragment.findNavController().navigate(NoResultsFragmentDirections.toCameraFragment());
                 mCancelListener.onCancelFlow();
@@ -110,7 +111,7 @@ class NoResultsFragmentImpl {
 
         final View enterManuallyButton = view.findViewById(R.id.gc_button_no_results_enter_manually);
         ClickListenerExtKt.setIntervalClickListener(enterManuallyButton, v -> {
-            mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.ENTER_MANUALLY_TAPPED, UserAnalyticsScreen.NoResults.INSTANCE);
+            mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.ENTER_MANUALLY_TAPPED, screenName);
             mListener.onEnterManuallyPressed();
         });
 
@@ -130,7 +131,7 @@ class NoResultsFragmentImpl {
         mFragment.getActivity().getOnBackPressedDispatcher().addCallback(mFragment.getViewLifecycleOwner(), new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.CLOSE_TAPPED, UserAnalyticsScreen.NoResults.INSTANCE);
+                mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.CLOSE_TAPPED, screenName);
                 remove();
 
             }

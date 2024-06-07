@@ -30,6 +30,7 @@ public class ZoomInPreviewFragment extends Fragment {
     private ImageDocument mImageDocument;
 
     private RotatableTouchImageViewContainer mRotatableTouchImageViewContainer;
+    private final UserAnalyticsScreen screenName = UserAnalyticsScreen.ReviewZoom.INSTANCE;
 
     public static ZoomInPreviewFragment newInstance(ImageDocument imageDocument) {
         Bundle args = new Bundle();
@@ -59,13 +60,13 @@ public class ZoomInPreviewFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.gc_fragment_zoom_in_preview, container, false);
         setupInputHandlers(view);
-        UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(UserAnalyticsEvent.SCREEN_SHOWN, UserAnalyticsScreen.ReviewZoom.INSTANCE);
+        UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(UserAnalyticsEvent.SCREEN_SHOWN, screenName);
         return view;
     }
 
     private void setupInputHandlers(View view) {
         view.findViewById(R.id.gc_action_close).setOnClickListener(v -> {
-            UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(UserAnalyticsEvent.CLOSE_TAPPED, UserAnalyticsScreen.ReviewZoom.INSTANCE);
+            UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(UserAnalyticsEvent.CLOSE_TAPPED, screenName);
             NavHostFragment.findNavController(this).popBackStack();
         });
         handleOnBackPressed();
@@ -75,7 +76,7 @@ public class ZoomInPreviewFragment extends Fragment {
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(UserAnalyticsEvent.CLOSE_TAPPED, UserAnalyticsScreen.ReviewZoom.INSTANCE);
+                UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(UserAnalyticsEvent.CLOSE_TAPPED, screenName);
                 remove();
                 NavHostFragment.findNavController(ZoomInPreviewFragment.this).popBackStack();
             }

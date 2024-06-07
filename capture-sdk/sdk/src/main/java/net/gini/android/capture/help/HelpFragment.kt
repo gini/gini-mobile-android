@@ -30,6 +30,7 @@ class HelpFragment : Fragment() {
 
     private val userAnalyticsEventTracker by lazy { UserAnalytics.getAnalyticsEventTracker() }
     private val helpItemsAdapter by lazy { HelpItemsAdapter { helpItem -> launchHelpScreen(helpItem) } }
+    private val screenName: UserAnalyticsScreen = UserAnalyticsScreen.Help
 
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
         val inflater = super.onGetLayoutInflater(savedInstanceState)
@@ -139,7 +140,7 @@ class HelpFragment : Fragment() {
         val helpItems = helpItemsAdapter.items.map { "\"${getString(it.title)}\"" }
 
         userAnalyticsEventTracker.trackEvent(
-            UserAnalyticsEvent.SCREEN_SHOWN, UserAnalyticsScreen.Help, mapOf(
+            UserAnalyticsEvent.SCREEN_SHOWN, screenName, mapOf(
                 UserAnalyticsExtraProperties.HAS_CUSTOM_ITEMS to hasCustomItems.mapToAnalyticsValue(),
                 UserAnalyticsExtraProperties.HELP_ITEMS to helpItems.toString(),
             )
@@ -148,14 +149,14 @@ class HelpFragment : Fragment() {
 
     private fun trackBackTappedEvent() = runCatching {
         userAnalyticsEventTracker.trackEvent(
-            UserAnalyticsEvent.CLOSE_TAPPED, UserAnalyticsScreen.Help
+            UserAnalyticsEvent.CLOSE_TAPPED, screenName
         )
     }
 
     private fun trackHelpItemTappedEvent(helpItem: HelpItem) = runCatching {
         userAnalyticsEventTracker.trackEvent(
             UserAnalyticsEvent.HELP_ITEM_TAPPED,
-            UserAnalyticsScreen.Help,
+            screenName,
             mapOf(UserAnalyticsExtraProperties.ITEM_TAPPED to getString(helpItem.title))
         )
     }

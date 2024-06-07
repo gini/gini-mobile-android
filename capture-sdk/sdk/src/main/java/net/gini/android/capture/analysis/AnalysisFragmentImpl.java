@@ -71,6 +71,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     private InjectedViewContainer<NavigationBarTopAdapter> topAdapterInjectedViewContainer;
     private InjectedViewContainer<CustomLoadingIndicatorAdapter> injectedLoadingIndicatorContainer;
     private boolean isScanAnimationActive;
+    private final UserAnalyticsScreen screenName = UserAnalyticsScreen.Analysis.INSTANCE;
 
     AnalysisFragmentImpl(final FragmentImplCallback fragment,
                          final CancelListener cancelListener,
@@ -97,7 +98,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
         String userAnalysisDocumentType = UserAnalyticsMappersKt.mapToAnalyticsDocumentType(document);
         UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(
                 UserAnalyticsEvent.SCREEN_SHOWN,
-                UserAnalyticsScreen.Analysis.INSTANCE,
+                screenName,
                 Collections.singletonMap(UserAnalyticsExtraProperties.DOCUMENT_TYPE, userAnalysisDocumentType)
         );
     }
@@ -309,7 +310,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     private void onBack() {
         boolean popBackStack = mFragment.findNavController().popBackStack();
         if (!popBackStack) {
-            UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(UserAnalyticsEvent.CLOSE_TAPPED, UserAnalyticsScreen.Analysis.INSTANCE);
+            UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(UserAnalyticsEvent.CLOSE_TAPPED, screenName);
             trackAnalysisScreenEvent(AnalysisScreenEvent.CANCEL);
             mCancelListener.onCancelFlow();
         }
