@@ -63,7 +63,7 @@ private class MixPanelUserAnalyticsEventTracker(context: Context) : UserAnalytic
         properties: Map<UserAnalyticsExtraProperties, Any>
     ) {
         val defaultProperties = mapOf<String, Any>(
-            UserAnalyticsExtraProperties.SCREEN.propertyName to screen.screenName
+            UserAnalyticsExtraProperties.SCREEN.propertyName to screen.name
         )
         val finalProperties = defaultProperties.plus(properties.mapKeys { it.key.propertyName })
         mixpanelAPI.trackMap(eventName.eventName, finalProperties)

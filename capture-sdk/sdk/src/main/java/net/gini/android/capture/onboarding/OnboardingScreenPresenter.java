@@ -5,16 +5,18 @@ import static net.gini.android.capture.tracking.EventTrackingHelper.trackOnboard
 import android.app.Activity;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 import androidx.annotation.VisibleForTesting;
 
 import net.gini.android.capture.GiniCapture;
+import net.gini.android.capture.R;
 import net.gini.android.capture.internal.util.FeatureConfiguration;
 import net.gini.android.capture.tracking.OnboardingScreenEvent;
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsExtraProperties;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsMappersKt;
-import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreenKt;
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen;
 
 import java.util.HashMap;
 import java.util.List;
@@ -30,8 +32,9 @@ class OnboardingScreenPresenter extends OnboardingScreenContract.Presenter {
     private List<OnboardingPage> mPages;
     private int mCurrentPageIndex;
     // used only for user analytics tracking
-    private SwipedORTapped swipedORTapped = SwipedORTapped.SWIPED;
-    private enum SwipedORTapped {
+    private InteractionType mInteractionType = InteractionType.SWIPED;
+
+    private enum InteractionType {
         SWIPED,
         TAPPED
     }
@@ -78,7 +81,7 @@ class OnboardingScreenPresenter extends OnboardingScreenContract.Presenter {
 
     private void scrollToNextPage() {
         addUserAnalyticsEvent(mCurrentPageIndex, UserAnalyticsEvent.NEXT_STEP_TAPPED);
-        swipedORTapped = SwipedORTapped.TAPPED;
+        mInteractionType = InteractionType.TAPPED;
         final int nextPageIndex = mCurrentPageIndex + 1;
         if (nextPageIndex < mPages.size()) {
             getView().scrollToPage(nextPageIndex);
@@ -87,14 +90,14 @@ class OnboardingScreenPresenter extends OnboardingScreenContract.Presenter {
 
     @Override
     void onScrolledToPage(final int pageIndex) {
-        if (swipedORTapped == SwipedORTapped.SWIPED) {
+        if (mInteractionType == InteractionType.SWIPED) {
             addUserAnalyticsEvent(mCurrentPageIndex, UserAnalyticsEvent.PAGE_SWIPED);
         }
         addUserAnalyticsEvent(pageIndex, UserAnalyticsEvent.SCREEN_SHOWN);
         mCurrentPageIndex = pageIndex;
         getView().activatePageIndicatorForPage(mCurrentPageIndex);
         updateButtons();
-        swipedORTapped = SwipedORTapped.SWIPED;
+        mInteractionType = InteractionType.SWIPED;
     }
 
     private void addUserAnalyticsEvent(int pageIndex, UserAnalyticsEvent event) {
@@ -112,17 +115,28 @@ class OnboardingScreenPresenter extends OnboardingScreenContract.Presenter {
         if (hasCustomItems) {
             eventProperties.put(UserAnalyticsExtraProperties.CUSTOM_ONBOARDING_TITLE, String.valueOf(mPages.get(pageIndex).getTitleResId()));
             UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(
-                    event,
-                    UserAnalyticsScreenKt.getOnboardingScreenNameForUserAnalytics(pageIndex),
-                    eventProperties
+                    event, new UserAnalyticsScreen.OnboardingCustom(pageIndex), eventProperties
             );
         } else {
             UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(
                     event,
-                    UserAnalyticsScreenKt.getOnboardingScreenNameForUserAnalytics(mPages.get(pageIndex).getTitleResId()),
+                    getOnBoardingEventScreenName(mPages.get(pageIndex).getTitleResId()),
                     eventProperties
             );
         }
+    }
+
+    private UserAnalyticsScreen getOnBoardingEventScreenName(@StringRes int titleResId) {
+        if (titleResId == R.string.gc_onboarding_qr_code_title) {
+            return UserAnalyticsScreen.OnboardingQrCode.INSTANCE;
+        }
+        if (titleResId == R.string.gc_onboarding_multipage_title) {
+            return UserAnalyticsScreen.OnboardingMultiplePages.INSTANCE;
+        }
+        if (titleResId == R.string.gc_onboarding_lighting_title) {
+            return UserAnalyticsScreen.OnboardingLighting.INSTANCE;
+        }
+        return UserAnalyticsScreen.OnboardingFlatPaper.INSTANCE;
     }
 
     private void updateButtons() {

@@ -139,7 +139,7 @@ class HelpFragment : Fragment() {
         val helpItems = helpItemsAdapter.items.map { "\"${getString(it.title)}\"" }
 
         userAnalyticsEventTracker.trackEvent(
-            UserAnalyticsEvent.SCREEN_SHOWN, UserAnalyticsScreen.HELP, mapOf(
+            UserAnalyticsEvent.SCREEN_SHOWN, UserAnalyticsScreen.Help, mapOf(
                 UserAnalyticsExtraProperties.HAS_CUSTOM_ITEMS to hasCustomItems.mapToAnalyticsValue(),
                 UserAnalyticsExtraProperties.HELP_ITEMS to helpItems.toString(),
             )
@@ -148,14 +148,14 @@ class HelpFragment : Fragment() {
 
     private fun trackBackTappedEvent() = runCatching {
         userAnalyticsEventTracker.trackEvent(
-            UserAnalyticsEvent.CLOSE_TAPPED, UserAnalyticsScreen.HELP
+            UserAnalyticsEvent.CLOSE_TAPPED, UserAnalyticsScreen.Help
         )
     }
 
     private fun trackHelpItemTappedEvent(helpItem: HelpItem) = runCatching {
         userAnalyticsEventTracker.trackEvent(
             UserAnalyticsEvent.HELP_ITEM_TAPPED,
-            UserAnalyticsScreen.HELP,
+            UserAnalyticsScreen.Help,
             mapOf(UserAnalyticsExtraProperties.ITEM_TAPPED to getString(helpItem.title))
         )
     }

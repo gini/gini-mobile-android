@@ -437,14 +437,14 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
     private fun trackScreenShownEvent() {
         userAnalyticsEventTracker.trackEvent(
             UserAnalyticsEvent.SCREEN_SHOWN,
-            UserAnalyticsScreen.EDIT_RETURN_ASSISTANT
+            UserAnalyticsScreen.EditReturnAssistant
         )
     }
 
     private fun trackCloseTappedEvent() {
         userAnalyticsEventTracker.trackEvent(
             UserAnalyticsEvent.CLOSE_TAPPED,
-            UserAnalyticsScreen.EDIT_RETURN_ASSISTANT,
+            UserAnalyticsScreen.EditReturnAssistant,
         )
     }
 
@@ -456,7 +456,7 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
 
         userAnalyticsEventTracker.trackEvent(
             UserAnalyticsEvent.SAVE_TAPPED,
-            UserAnalyticsScreen.EDIT_RETURN_ASSISTANT,
+            UserAnalyticsScreen.EditReturnAssistant,
             mapOf(UserAnalyticsExtraProperties.ITEMS_CHANGED to differenceList)
         )
     }

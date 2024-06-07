@@ -932,7 +932,7 @@ public class TouchImageView extends androidx.appcompat.widget.AppCompatImageView
         @Override
         public void onScaleEnd(final ScaleGestureDetector detector) {
             super.onScaleEnd(detector);
-            UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(UserAnalyticsEvent.PREVIEW_ZOOMED, UserAnalyticsScreen.REVIEW_ZOOM);
+            UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(UserAnalyticsEvent.PREVIEW_ZOOMED, UserAnalyticsScreen.ReviewZoom.INSTANCE);
             setState(State.NONE);
             boolean animateToZoomBoundary = false;
             float targetZoom = normalizedScale;

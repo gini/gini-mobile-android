@@ -32,7 +32,7 @@ import net.gini.android.capture.tracking.useranalytics.UserAnalytics;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsExtraProperties;
-import net.gini.android.capture.tracking.useranalytics.UserAnalyticsHelperKt;
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsMappersKt;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen;
 import net.gini.android.capture.view.InjectedViewAdapterHolder;
 import net.gini.android.capture.view.InjectedViewContainer;
@@ -91,15 +91,15 @@ class NoResultsFragmentImpl {
         final View retakeImagesButton = view.findViewById(R.id.gc_button_no_results_retake_images);
         handleOnBackPressed();
         mUserAnalyticsEventTracker = UserAnalytics.INSTANCE.getAnalyticsEventTracker();
-        mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.SCREEN_SHOWN, UserAnalyticsScreen.NO_RESULTS,
+        mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.SCREEN_SHOWN, UserAnalyticsScreen.NoResults.INSTANCE,
                 new HashMap<UserAnalyticsExtraProperties, String>() {{
                     put(UserAnalyticsExtraProperties.DOCUMENT_ID, mDocument.getId());
-                    put(UserAnalyticsExtraProperties.DOCUMENT_TYPE, UserAnalyticsHelperKt.getDocumentTypeForUserAnalytics(mDocument));
+                    put(UserAnalyticsExtraProperties.DOCUMENT_TYPE, UserAnalyticsMappersKt.mapToAnalyticsDocumentType(mDocument));
                 }}
         );
         if (shouldAllowRetakeImages()) {
             ClickListenerExtKt.setIntervalClickListener(retakeImagesButton, v -> {
-                mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.RETAKE_IMAGES_TAPPED, UserAnalyticsScreen.NO_RESULTS);
+                mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.RETAKE_IMAGES_TAPPED, UserAnalyticsScreen.NoResults.INSTANCE);
                 trackAnalysisScreenEvent(AnalysisScreenEvent.RETRY);
                 mFragment.findNavController().navigate(NoResultsFragmentDirections.toCameraFragment());
                 mCancelListener.onCancelFlow();
@@ -110,7 +110,7 @@ class NoResultsFragmentImpl {
 
         final View enterManuallyButton = view.findViewById(R.id.gc_button_no_results_enter_manually);
         ClickListenerExtKt.setIntervalClickListener(enterManuallyButton, v -> {
-            mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.ENTER_MANUALLY_TAPPED, UserAnalyticsScreen.NO_RESULTS);
+            mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.ENTER_MANUALLY_TAPPED, UserAnalyticsScreen.NoResults.INSTANCE);
             mListener.onEnterManuallyPressed();
         });
 
@@ -130,7 +130,7 @@ class NoResultsFragmentImpl {
         mFragment.getActivity().getOnBackPressedDispatcher().addCallback(mFragment.getViewLifecycleOwner(), new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.CLOSE_TAPPED, UserAnalyticsScreen.NO_RESULTS);
+                mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.CLOSE_TAPPED, UserAnalyticsScreen.NoResults.INSTANCE);
                 remove();
 
             }

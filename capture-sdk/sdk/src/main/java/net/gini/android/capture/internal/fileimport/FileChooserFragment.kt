@@ -144,13 +144,13 @@ class FileChooserFragment : BottomSheetDialogFragment() {
                 if (item in imageProviderItems) {
                     mUserAnalyticsEventTracker.trackEvent(
                         UserAnalyticsEvent.UPLOAD_PHOTOS_TAPPED,
-                        UserAnalyticsScreen.CAMERA
+                        UserAnalyticsScreen.Camera
                     )
 
                 } else {
                     mUserAnalyticsEventTracker.trackEvent(
                         UserAnalyticsEvent.UPLOAD_DOCUMENTS_TAPPED,
-                        UserAnalyticsScreen.CAMERA
+                        UserAnalyticsScreen.Camera
                     )
 
                 }

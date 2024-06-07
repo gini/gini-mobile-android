@@ -179,7 +179,7 @@ internal class DigitalInvoiceScreenPresenter(
     private fun trackScreenShownEvent() = runCatching {
         userAnalyticsEventTracker.trackEvent(
             UserAnalyticsEvent.SCREEN_SHOWN,
-            UserAnalyticsScreen.RETURN_ASSISTANT
+            UserAnalyticsScreen.ReturnAssistant
         )
     }
 }

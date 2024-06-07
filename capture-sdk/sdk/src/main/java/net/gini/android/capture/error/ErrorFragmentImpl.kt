@@ -24,8 +24,8 @@ import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics.getAnalyticsEventTracker
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsExtraProperties
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen
-import net.gini.android.capture.tracking.useranalytics.getDocumentTypeForUserAnalytics
-import net.gini.android.capture.tracking.useranalytics.getErrorTypeForUserAnalytics
+import net.gini.android.capture.tracking.useranalytics.mapToAnalyticsDocumentType
+import net.gini.android.capture.tracking.useranalytics.mapToAnalyticsErrorType
 import net.gini.android.capture.internal.util.CancelListener
 import net.gini.android.capture.view.InjectedViewAdapterHolder
 import net.gini.android.capture.view.InjectedViewContainer
@@ -76,7 +76,7 @@ class ErrorFragmentImpl(
             retakeImagesButton.setIntervalClickListener {
                 mUserAnalyticsEventTracker.trackEvent(
                     UserAnalyticsEvent.BACK_TO_CAMERA_TAPPED,
-                    UserAnalyticsScreen.ERROR
+                    UserAnalyticsScreen.Error
                 )
                 EventTrackingHelper.trackAnalysisScreenEvent(AnalysisScreenEvent.RETRY)
                 fragmentCallback.findNavController()
@@ -90,7 +90,7 @@ class ErrorFragmentImpl(
         enterManuallyButton.setIntervalClickListener {
             mUserAnalyticsEventTracker.trackEvent(
                 UserAnalyticsEvent.ENTER_MANUALLY_TAPPED,
-                UserAnalyticsScreen.ERROR
+                UserAnalyticsScreen.Error
             )
             enterManuallyButtonListener?.onEnterManuallyPressed()
         }
@@ -114,14 +114,14 @@ class ErrorFragmentImpl(
     private fun addUserAnalyticEvents() {
         mUserAnalyticsEventTracker.trackEvent(
             UserAnalyticsEvent.SCREEN_SHOWN,
-            UserAnalyticsScreen.ERROR,
+            UserAnalyticsScreen.Error,
             mapOf(
                 UserAnalyticsExtraProperties.DOCUMENT_TYPE
-                        to  document?.getDocumentTypeForUserAnalytics().toString(),
+                        to  document?.mapToAnalyticsDocumentType().toString(),
                 UserAnalyticsExtraProperties.DOCUMENT_ID
                         to document?.id.toString(),
                 UserAnalyticsExtraProperties.ERROR_TYPE
-                        to errorType?.getErrorTypeForUserAnalytics().toString(),
+                        to errorType?.mapToAnalyticsErrorType().toString(),
                 UserAnalyticsExtraProperties.ERROR_MESSAGE
                         to (customError ?: fragmentCallback.activity?.getString(errorType?.titleTextResource ?: 0).toString())
             ),
@@ -141,7 +141,7 @@ class ErrorFragmentImpl(
                     setOnNavButtonClickListener(IntervalClickListener {
                         mUserAnalyticsEventTracker.trackEvent(
                             UserAnalyticsEvent.CLOSE_TAPPED,
-                            UserAnalyticsScreen.ERROR
+                            UserAnalyticsScreen.Error
                         )
                         cancelListener.onCancelFlow()
                     })
@@ -158,7 +158,7 @@ class ErrorFragmentImpl(
                     override fun handleOnBackPressed() {
                         mUserAnalyticsEventTracker.trackEvent(
                             UserAnalyticsEvent.CLOSE_TAPPED,
-                            UserAnalyticsScreen.ERROR
+                            UserAnalyticsScreen.Error
                         )
                         remove()
                         cancelListener.onCancelFlow()

@@ -34,10 +34,9 @@ import net.gini.android.capture.internal.ui.IntervalClickListener;
 import net.gini.android.capture.internal.util.Size;
 import net.gini.android.capture.tracking.AnalysisScreenEvent;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent;
-import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker;
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsExtraProperties;
-import net.gini.android.capture.tracking.useranalytics.UserAnalyticsHelperKt;
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsMappersKt;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen;
 import net.gini.android.capture.internal.util.CancelListener;
 import net.gini.android.capture.view.CustomLoadingIndicatorAdapter;
@@ -95,10 +94,10 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     }
 
     private void addUserAnalyticEvents(@NonNull Document document) {
-        String userAnalysisDocumentType = UserAnalyticsHelperKt.getDocumentTypeForUserAnalytics(document);
+        String userAnalysisDocumentType = UserAnalyticsMappersKt.mapToAnalyticsDocumentType(document);
         UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(
                 UserAnalyticsEvent.SCREEN_SHOWN,
-                UserAnalyticsScreen.ANALYSIS,
+                UserAnalyticsScreen.Analysis.INSTANCE,
                 Collections.singletonMap(UserAnalyticsExtraProperties.DOCUMENT_TYPE, userAnalysisDocumentType)
         );
     }
@@ -310,7 +309,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     private void onBack() {
         boolean popBackStack = mFragment.findNavController().popBackStack();
         if (!popBackStack) {
-            UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(UserAnalyticsEvent.CLOSE_TAPPED, UserAnalyticsScreen.ANALYSIS);
+            UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(UserAnalyticsEvent.CLOSE_TAPPED, UserAnalyticsScreen.Analysis.INSTANCE);
             trackAnalysisScreenEvent(AnalysisScreenEvent.CANCEL);
             mCancelListener.onCancelFlow();
         }

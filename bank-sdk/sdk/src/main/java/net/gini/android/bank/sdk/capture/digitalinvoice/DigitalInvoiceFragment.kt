@@ -510,21 +510,21 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
     private fun trackCloseTappedEvent() = runCatching {
         userAnalyticsEventTracker.trackEvent(
             UserAnalyticsEvent.CLOSE_TAPPED,
-            UserAnalyticsScreen.RETURN_ASSISTANT,
+            UserAnalyticsScreen.ReturnAssistant,
         )
     }
 
     private fun trackHelpTappedEvent() = runCatching {
         userAnalyticsEventTracker.trackEvent(
             UserAnalyticsEvent.HELP_TAPPED,
-            UserAnalyticsScreen.RETURN_ASSISTANT,
+            UserAnalyticsScreen.ReturnAssistant,
         )
     }
 
     private fun trackItemSwitchTappedTappedEvent(selected: Boolean) = runCatching {
         userAnalyticsEventTracker.trackEvent(
             UserAnalyticsEvent.ITEM_SWITCH_TAPPED,
-            UserAnalyticsScreen.RETURN_ASSISTANT,
+            UserAnalyticsScreen.ReturnAssistant,
             mapOf(UserAnalyticsExtraProperties.SWITCH_ACTIVE to selected.mapToAnalyticsValue())
         )
     }
@@ -532,13 +532,13 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
     private fun trackItemEditTappedTappedEvent() = runCatching {
         userAnalyticsEventTracker.trackEvent(
             UserAnalyticsEvent.EDIT_TAPPED,
-            UserAnalyticsScreen.RETURN_ASSISTANT,
+            UserAnalyticsScreen.ReturnAssistant,
         )
     }
 
     private fun trackProceedTapped() = runCatching {
         userAnalyticsEventTracker.trackEvent(
-            UserAnalyticsEvent.PROCEED_TAPPED, UserAnalyticsScreen.RETURN_ASSISTANT
+            UserAnalyticsEvent.PROCEED_TAPPED, UserAnalyticsScreen.ReturnAssistant
         )
     }
 }

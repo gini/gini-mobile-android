@@ -59,13 +59,13 @@ public class ZoomInPreviewFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.gc_fragment_zoom_in_preview, container, false);
         setupInputHandlers(view);
-        UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(UserAnalyticsEvent.SCREEN_SHOWN, UserAnalyticsScreen.REVIEW_ZOOM);
+        UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(UserAnalyticsEvent.SCREEN_SHOWN, UserAnalyticsScreen.ReviewZoom.INSTANCE);
         return view;
     }
 
     private void setupInputHandlers(View view) {
         view.findViewById(R.id.gc_action_close).setOnClickListener(v -> {
-            UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(UserAnalyticsEvent.CLOSE_TAPPED, UserAnalyticsScreen.REVIEW_ZOOM);
+            UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(UserAnalyticsEvent.CLOSE_TAPPED, UserAnalyticsScreen.ReviewZoom.INSTANCE);
             NavHostFragment.findNavController(this).popBackStack();
         });
         handleOnBackPressed();
@@ -75,7 +75,7 @@ public class ZoomInPreviewFragment extends Fragment {
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(UserAnalyticsEvent.CLOSE_TAPPED, UserAnalyticsScreen.REVIEW_ZOOM);
+                UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(UserAnalyticsEvent.CLOSE_TAPPED, UserAnalyticsScreen.ReviewZoom.INSTANCE);
                 remove();
                 NavHostFragment.findNavController(ZoomInPreviewFragment.this).popBackStack();
             }

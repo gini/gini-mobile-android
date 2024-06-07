@@ -34,7 +34,7 @@ class PreviewPagesAdapter(
             mDeletePage?.setIntervalClickListener {
                 getAnalyticsEventTracker().trackEvent(
                     UserAnalyticsEvent.DELETE_PAGES_TAPPED,
-                    UserAnalyticsScreen.REVIEW
+                    UserAnalyticsScreen.Review
                 )
                 previewFragmentListener.onDeleteDocument(multiPageDocument.documents[absoluteAdapterPosition])
             }
