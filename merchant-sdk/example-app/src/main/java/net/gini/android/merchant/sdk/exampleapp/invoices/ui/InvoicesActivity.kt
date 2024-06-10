@@ -139,6 +139,11 @@ class InvoicesActivity : AppCompatActivity() {
                         }
                     }
                 }
+                launch {
+                    viewModel.startIntegratedPaymentFlow.collect { documentId ->
+                        startIntegratedPaymentFlow(documentId)
+                    }
+                }
             }
         }
 
@@ -149,7 +154,8 @@ class InvoicesActivity : AppCompatActivity() {
 
         binding.invoicesList.layoutManager = LinearLayoutManager(this)
         binding.invoicesList.adapter = InvoicesAdapter(emptyList()) { invoiceItem ->
-            showInvoiceDetailsFragment(invoiceItem)
+            viewModel.setSelectedInvoiceItem(invoiceItem)
+            showInvoiceDetailsFragment()
         }
         binding.invoicesList.addItemDecoration(DividerItemDecoration(this, LinearLayout.VERTICAL))
 
@@ -209,10 +215,8 @@ class InvoicesActivity : AppCompatActivity() {
         binding.loadingIndicator.visibility = View.VISIBLE
     }
 
-    private fun showInvoiceDetailsFragment(invoiceItem: InvoiceItem) {
-        InvoiceDetailsFragment.newInstance(invoiceItem = invoiceItem) { documentId ->
-            startIntegratedPaymentFlow(documentId)
-        }.apply {
+    private fun showInvoiceDetailsFragment() {
+        InvoiceDetailsFragment.newInstance() .apply {
             add()
         }
     }
@@ -259,7 +263,7 @@ class InvoicesActivity : AppCompatActivity() {
 
 class InvoicesAdapter(
     var dataSet: List<InvoiceItem>,
-    private val openInvoiceDetails: (InvoiceItem) -> Unit
+    private val openInvoiceDetails: (InvoiceItem) -> Unit,
 ) :
     RecyclerView.Adapter<InvoicesAdapter.ViewHolder>() {
 
