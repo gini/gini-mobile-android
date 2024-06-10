@@ -55,6 +55,7 @@ class FileChooserFragment : BottomSheetDialogFragment() {
     private var docImportEnabledFileTypes: DocumentImportEnabledFileTypes? = null
     private var binding: GcFragmentFileChooserBinding by autoCleared()
     private lateinit var mUserAnalyticsEventTracker: UserAnalyticsEventTracker
+    private val screenName: UserAnalyticsScreen = UserAnalyticsScreen.Camera
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -144,13 +145,13 @@ class FileChooserFragment : BottomSheetDialogFragment() {
                 if (item in imageProviderItems) {
                     mUserAnalyticsEventTracker.trackEvent(
                         UserAnalyticsEvent.UPLOAD_PHOTOS_TAPPED,
-                        UserAnalyticsScreen.CAMERA
+                        screenName
                     )
 
                 } else {
                     mUserAnalyticsEventTracker.trackEvent(
                         UserAnalyticsEvent.UPLOAD_DOCUMENTS_TAPPED,
-                        UserAnalyticsScreen.CAMERA
+                        screenName
                     )
 
                 }

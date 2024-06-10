@@ -112,10 +112,11 @@ import net.gini.android.capture.requirements.CameraXHolder;
 import net.gini.android.capture.requirements.RequirementReport;
 import net.gini.android.capture.tracking.AnalysisScreenEvent;
 import net.gini.android.capture.tracking.CameraScreenEvent;
+import net.gini.android.capture.tracking.useranalytics.UserAnalytics;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker;
-import net.gini.android.capture.tracking.useranalytics.UserAnalytics;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsExtraProperties;
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsMappersKt;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen;
 import net.gini.android.capture.util.IntentHelper;
 import net.gini.android.capture.util.UriHelper;
@@ -153,6 +154,9 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private static final long HIDE_QRCODE_DETECTED_POPUP_DELAY_MS = 2000;
     private static final long DIFFERENT_QRCODE_DETECTED_POPUP_DELAY_MS = 1000;
     private static final Logger LOG = LoggerFactory.getLogger(CameraFragmentImpl.class);
+
+    private static final UserAnalyticsScreen.CameraAccess sScreenNamePermission =
+            UserAnalyticsScreen.CameraAccess.INSTANCE;
 
     private static final CameraFragmentListener NO_OP_LISTENER = new CameraFragmentListener() {
         @Override
@@ -224,7 +228,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private Group mImportButtonGroup;
     private String mQRCodeContent;
     private boolean shouldSendUserAnalyticsTrackerForQrCodes = true;
-    private boolean shouldSendUserAnalyticsTrackerForIbanDetection = true;
+    private boolean isIbanDetectedOnceForUserAnalytics = false;
 
     private InjectedViewContainer<NavigationBarTopAdapter> topAdapterInjectedViewContainer;
     private InjectedViewContainer<CustomLoadingIndicatorAdapter> mLoadingIndicator;
@@ -232,6 +236,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private IBANRecognizerFilter ibanRecognizerFilter;
     private CropToCameraFrameTextRecognizer cropToCameraFrameTextRecognizer;
+    private final UserAnalyticsScreen screenName = UserAnalyticsScreen.Camera.INSTANCE;
 
     CameraFragmentImpl(@NonNull final FragmentImplCallback fragment, @NonNull final CancelListener cancelListener, final boolean addPages) {
         mFragment = fragment;
@@ -296,11 +301,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     }
 
     private void showQRCodeView(PaymentQRCodeData data, String qrCodeContent) {
-        if (shouldSendUserAnalyticsTrackerForQrCodes) {
-            mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.MULTIPLE_PAGES_CAPTURED_TAPPED, UserAnalyticsScreen.CAMERA);
-            shouldSendUserAnalyticsTrackerForQrCodes = false;
-        }
-
         if (data == null) {
             mQRCodeContent = qrCodeContent;
             showUnsupportedQRCodePopup();
@@ -312,6 +312,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private void showUnsupportedQRCodePopup() {
         if (mIbanDetectedTextView.getVisibility() != View.VISIBLE) {
             mUnsupportedQRCodePopup.show(null);
+            sendQRCodeScannedEventToUserAnalytics(false);
         }
     }
 
@@ -360,7 +361,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                       final Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.gc_fragment_camera, container, false);
         mUserAnalyticsEventTracker = UserAnalytics.INSTANCE.getAnalyticsEventTracker();
-        mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.SCREEN_SHOWN, UserAnalyticsScreen.CAMERA);
+        mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.SCREEN_SHOWN, screenName);
 
         bindViews(view);
         preventPaneClickThrough();
@@ -393,7 +394,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             @Override
             public void handleOnBackPressed() {
                 if (!addPages) {
-                    mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.CLOSE_TAPPED, UserAnalyticsScreen.CAMERA);
+                    mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.CLOSE_TAPPED, screenName);
                 }
                 trackCameraScreenEvent(CameraScreenEvent.EXIT);
                 trackCameraAccessPermissionRequiredCloseClickedEventIfNeeded();
@@ -808,7 +809,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                         }));
 
                         injectedViewAdapter.setOnHelpButtonClickListener(new IntervalClickListener(v -> {
-                            mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.HELP_TAPPED, UserAnalyticsScreen.CAMERA);
+                            mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.HELP_TAPPED, screenName);
                             startHelpActivity();
                         }));
                     }));
@@ -894,27 +895,27 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private void setInputHandlers() {
         ClickListenerExtKt.setIntervalClickListener(mButtonCameraTrigger, v -> {
-            mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.CAPTURE_TAPPED, UserAnalyticsScreen.CAMERA);
+            mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.CAPTURE_TAPPED, screenName, Collections.singletonMap(UserAnalyticsExtraProperties.IBAN_DETECTION_LAYER_VISIBLE, UserAnalyticsMappersKt.mapToAnalyticsValue(isIbanDetectedOnceForUserAnalytics)));
             onCameraTriggerClicked();
         });
 
         ClickListenerExtKt.setIntervalClickListener(mButtonCameraFlashTrigger, v -> {
             mUserAnalyticsEventTracker.trackEvent(
                     UserAnalyticsEvent.FLASH_TAPPED,
-                    UserAnalyticsScreen.CAMERA,
-                    Collections.singletonMap(UserAnalyticsExtraProperties.FLASH_ACTIVE, String.valueOf(mCameraController.isFlashEnabled())))
+                    screenName,
+                    Collections.singletonMap(UserAnalyticsExtraProperties.FLASH_ACTIVE, UserAnalyticsMappersKt.mapToAnalyticsValue(mCameraController.isFlashEnabled())))
             ;
             mIsFlashEnabled = !mCameraController.isFlashEnabled();
             updateCameraFlashState();
         });
 
         ClickListenerExtKt.setIntervalClickListener(mButtonImportDocument, v -> {
-            mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.IMPORT_FILES_TAPPED, UserAnalyticsScreen.CAMERA);
+            mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.IMPORT_FILES_TAPPED, screenName);
             showFileChooser();
         });
 
         ClickListenerExtKt.setIntervalClickListener(mPhotoThumbnail, v -> {
-            mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.MULTIPLE_PAGES_CAPTURED_TAPPED, UserAnalyticsScreen.CAMERA,
+            mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.MULTIPLE_PAGES_CAPTURED_TAPPED, screenName,
                     Collections.singletonMap(UserAnalyticsExtraProperties.DOCUMENT_PAGE_NUMBER, String.valueOf(mMultiPageDocument.getDocuments().size())));
             onBackPressed();
         });
@@ -952,14 +953,28 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             case BEZAHL_CODE:
                 QRCodeDocument mQRCodeDocument = QRCodeDocument.fromPaymentQRCodeData(
                         paymentQRCodeData);
+                sendQRCodeScannedEventToUserAnalytics(true);
                 analyzeQRCode(mQRCodeDocument);
                 break;
             case EPS_PAYMENT:
+                sendQRCodeScannedEventToUserAnalytics(true);
                 handleEPSPaymentQRCode(paymentQRCodeData);
                 break;
             default:
+                sendQRCodeScannedEventToUserAnalytics(false);
                 LOG.error("Unknown payment QR Code format: {}", paymentQRCodeData);
                 break;
+        }
+    }
+
+    private void sendQRCodeScannedEventToUserAnalytics(boolean validQRCode) {
+        if (shouldSendUserAnalyticsTrackerForQrCodes) {
+            mUserAnalyticsEventTracker.trackEvent(
+                    UserAnalyticsEvent.QR_CODE_SCANNED,
+                    screenName,
+                    Collections.singletonMap(UserAnalyticsExtraProperties.QR_CODE_VALID, UserAnalyticsMappersKt.mapToAnalyticsValue(validQRCode))
+            );
+            shouldSendUserAnalyticsTrackerForQrCodes = false;
         }
     }
 
@@ -1411,7 +1426,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private void showGenericInvalidFileError(ErrorType errorType) {
         mUserAnalyticsEventTracker.trackEvent(
                 UserAnalyticsEvent.ERROR_DIALOG_SHOWN,
-                UserAnalyticsScreen.CAMERA,
+                screenName,
                 Collections.singletonMap(UserAnalyticsExtraProperties.ERROR_MESSAGE, mFragment.getActivity().getResources().getString(errorType.getTitleTextResource()))
         );
         final Activity activity = mFragment.getActivity();
@@ -1842,11 +1857,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     }
 
     private void showIBANsDetectedOnScreen(List<String> ibans) {
-        if (shouldSendUserAnalyticsTrackerForIbanDetection) {
-            mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.IBAN_DETECTED, UserAnalyticsScreen.CAMERA);
-            shouldSendUserAnalyticsTrackerForIbanDetection = false;
-        }
-
+        isIbanDetectedOnceForUserAnalytics = true;
         mIbanDetectedTextView.setVisibility(View.VISIBLE);
         mImageFrame.setImageTintList(ColorStateList.valueOf(
                         ContextCompat.getColor(
@@ -1915,25 +1926,25 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private void trackCameraAccessPermissionRequiredShownEvent() {
         mUserAnalyticsEventTracker.trackEvent(
-                UserAnalyticsEvent.SCREEN_SHOWN, UserAnalyticsScreen.CAMERA_ACCESS);
+                UserAnalyticsEvent.SCREEN_SHOWN, UserAnalyticsScreen.CameraAccess.INSTANCE);
     }
 
     private void trackCameraAccessPermissionRequiredGetAccessClickedEvent() {
         mUserAnalyticsEventTracker.trackEvent(
-                UserAnalyticsEvent.GIVE_ACCESS_TAPPED, UserAnalyticsScreen.CAMERA_ACCESS);
+                UserAnalyticsEvent.GIVE_ACCESS_TAPPED, sScreenNamePermission);
     }
 
     private void trackCameraAccessPermissionRequiredHelpClickedEventIfNeeded() {
         if (mLayoutNoPermission!= null && mLayoutNoPermission.getVisibility() == View.VISIBLE) {
             mUserAnalyticsEventTracker.trackEvent(
-                    UserAnalyticsEvent.HELP_TAPPED, UserAnalyticsScreen.CAMERA_ACCESS);
+                    UserAnalyticsEvent.HELP_TAPPED, sScreenNamePermission);
         }
     }
 
     private void trackCameraAccessPermissionRequiredCloseClickedEventIfNeeded() {
         if (mLayoutNoPermission != null && mLayoutNoPermission.getVisibility() == View.VISIBLE) {
             mUserAnalyticsEventTracker.trackEvent(
-                    UserAnalyticsEvent.CLOSE_TAPPED, UserAnalyticsScreen.CAMERA_ACCESS);
+                    UserAnalyticsEvent.CLOSE_TAPPED, sScreenNamePermission);
         }
     }
 }

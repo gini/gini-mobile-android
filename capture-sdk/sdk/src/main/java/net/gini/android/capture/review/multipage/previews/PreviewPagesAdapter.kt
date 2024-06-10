@@ -28,13 +28,14 @@ class PreviewPagesAdapter(
         val mImageViewContainer: RotatableImageViewContainer? =
             view.findViewById(R.id.gc_image_container)
         private val mDeletePage: ImageButton? = view.findViewById(R.id.gc_button_delete)
+        private val screenName: UserAnalyticsScreen = UserAnalyticsScreen.Review
 
         init {
 
             mDeletePage?.setIntervalClickListener {
                 getAnalyticsEventTracker().trackEvent(
                     UserAnalyticsEvent.DELETE_PAGES_TAPPED,
-                    UserAnalyticsScreen.REVIEW
+                    screenName
                 )
                 previewFragmentListener.onDeleteDocument(multiPageDocument.documents[absoluteAdapterPosition])
             }

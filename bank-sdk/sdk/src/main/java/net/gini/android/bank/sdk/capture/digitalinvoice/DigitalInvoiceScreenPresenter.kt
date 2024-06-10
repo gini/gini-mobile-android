@@ -52,6 +52,7 @@ internal class DigitalInvoiceScreenPresenter(
 
     private val digitalInvoice: DigitalInvoice
     private val userAnalyticsEventTracker by lazy { UserAnalytics.getAnalyticsEventTracker() }
+    private val screenName: UserAnalyticsScreen = UserAnalyticsScreen.ReturnAssistant
 
     init {
         view.setPresenter(this)
@@ -179,7 +180,7 @@ internal class DigitalInvoiceScreenPresenter(
     private fun trackScreenShownEvent() = runCatching {
         userAnalyticsEventTracker.trackEvent(
             UserAnalyticsEvent.SCREEN_SHOWN,
-            UserAnalyticsScreen.RETURN_ASSISTANT
+            screenName
         )
     }
 }

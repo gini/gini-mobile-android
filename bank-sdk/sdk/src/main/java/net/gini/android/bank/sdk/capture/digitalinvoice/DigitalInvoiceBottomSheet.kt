@@ -55,6 +55,7 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
     }
 
     private var selectedCurrency = "EUR"
+    private val screenName: UserAnalyticsScreen = UserAnalyticsScreen.EditReturnAssistant
 
     private val userAnalyticsEventTracker by lazy { UserAnalytics.getAnalyticsEventTracker() }
 
@@ -437,14 +438,14 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
     private fun trackScreenShownEvent() {
         userAnalyticsEventTracker.trackEvent(
             UserAnalyticsEvent.SCREEN_SHOWN,
-            UserAnalyticsScreen.EDIT_RETURN_ASSISTANT
+            screenName
         )
     }
 
     private fun trackCloseTappedEvent() {
         userAnalyticsEventTracker.trackEvent(
             UserAnalyticsEvent.CLOSE_TAPPED,
-            UserAnalyticsScreen.EDIT_RETURN_ASSISTANT,
+            screenName,
         )
     }
 
@@ -456,7 +457,7 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
 
         userAnalyticsEventTracker.trackEvent(
             UserAnalyticsEvent.SAVE_TAPPED,
-            UserAnalyticsScreen.EDIT_RETURN_ASSISTANT,
+            screenName,
             mapOf(UserAnalyticsExtraProperties.ITEMS_CHANGED to differenceList)
         )
     }

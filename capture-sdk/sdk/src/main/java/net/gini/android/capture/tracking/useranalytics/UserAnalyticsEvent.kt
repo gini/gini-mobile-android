@@ -18,7 +18,6 @@ enum class UserAnalyticsEvent(val eventName: String) {
     MULTIPLE_PAGES_CAPTURED_TAPPED("multiple_pages_captured_tapped"),
     ERROR_DIALOG_SHOWN("error_dialog_shown"),
     QR_CODE_SCANNED("qr_code_scanned"),
-    IBAN_DETECTED("iban_detected"),
     PROCEED_TAPPED("proceed_tapped"),
     ADD_PAGES_TAPPED("add_pages_tapped"),
     DELETE_PAGES_TAPPED("delete_pages_tapped"),
