@@ -9,12 +9,20 @@ import kotlinx.parcelize.Parcelize
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.R
 import net.gini.android.capture.Document
+import net.gini.android.capture.EntryPoint
+import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.internal.util.FileImportValidator
+import net.gini.android.capture.tracking.useranalytics.UserAnalytics
+import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventSuperProperty.EntryPoint as AnalyticsEntryPoint
+import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsUserProperty
+
 
 /**
  * Entry point for Screen API. It exists for the purpose of communication between Capture SDK's Screen API and Return Assistant.
  */
 internal class CaptureFlowActivity : AppCompatActivity(), CaptureFlowFragmentListener {
+
+    private val userAnalyticsEventTracker by lazy { UserAnalytics.getAnalyticsEventTracker() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,16 +44,21 @@ internal class CaptureFlowActivity : AppCompatActivity(), CaptureFlowFragmentLis
                     )
                 )
             )
+
             is CaptureImportInput.Forward -> initFragment(input.openWithDocument)
             CaptureImportInput.Default -> initFragment()
         }
     }
 
     private fun getCaptureImportInput(intent: Intent): CaptureImportInput =
-        IntentCompat.getParcelableExtra(intent, EXTRA_IN_CAPTURE_IMPORT_INPUT, CaptureImportInput::class.java)
-            ?: CaptureImportInput.Default
+        IntentCompat.getParcelableExtra(
+            intent,
+            EXTRA_IN_CAPTURE_IMPORT_INPUT,
+            CaptureImportInput::class.java
+        ) ?: CaptureImportInput.Default
 
     private fun initFragment(document: Document? = null) {
+        setAnalyticsEntryPointProperty(document != null)
         if (!isFragmentShown()) {
             val fragment = createFragment(document)
             showFragment(fragment)
@@ -95,14 +108,40 @@ internal class CaptureFlowActivity : AppCompatActivity(), CaptureFlowFragmentLis
         const val EXTRA_OUT_RESULT = "GBS_EXTRA_OUT_RESULT"
     }
 
+    private fun setAnalyticsEntryPointProperty(isOpenWithDocumentExists: Boolean) {
+
+        val entryPointProperty = if (isOpenWithDocumentExists) {
+            AnalyticsEntryPoint(AnalyticsEntryPoint.EntryPointType.OPEN_WITH)
+        } else {
+            AnalyticsEntryPoint(
+                when (GiniCapture.getInstance().entryPoint) {
+                    EntryPoint.BUTTON -> AnalyticsEntryPoint.EntryPointType.BUTTON
+                    EntryPoint.FIELD -> AnalyticsEntryPoint.EntryPointType.FIELD
+                }
+            )
+        }
+
+        userAnalyticsEventTracker.setUserProperty(
+            setOf(
+                UserAnalyticsUserProperty.ReturnAssistantEnabled(
+                    GiniBank.getCaptureConfiguration()?.returnAssistantEnabled ?: false
+                ),
+                UserAnalyticsUserProperty.ReturnReasonsEnabled(GiniBank.enableReturnReasons),
+            )
+        )
+
+        userAnalyticsEventTracker.setEventSuperProperty(entryPointProperty)
+    }
 }
 
 /**
  * Input used when a document was shared from another app. It will be created internally.
  */
 @Parcelize
-sealed class CaptureImportInput: Parcelable {
+sealed class CaptureImportInput : Parcelable {
     data class Forward(val openWithDocument: Document) : CaptureImportInput()
-    data class Error(val error: FileImportValidator.Error? = null, val message: String? = null) : CaptureImportInput()
+    data class Error(val error: FileImportValidator.Error? = null, val message: String? = null) :
+        CaptureImportInput()
+
     object Default : CaptureImportInput()
 }
