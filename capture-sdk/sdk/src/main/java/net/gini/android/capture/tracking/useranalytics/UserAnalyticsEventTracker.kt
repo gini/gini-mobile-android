@@ -106,17 +106,6 @@ private class MixPanelUserAnalyticsEventTracker(
         val finalProperties = defaultProperties.plus(properties.mapKeys { it.key.propertyName })
         mixpanelAPI.trackMap(eventName.eventName, finalProperties)
     }
-
-    companion object {
-        private const val SELECT_TO_SPEAK_SERVICE_ID =
-            "com.google.android.marvin.talkback/com.google.android.accessibility.selecttospeak.SelectToSpeakService"
-        private const val SPEAK_SCREEN_SERVICE_ID =
-            "com.google.android.marvin.talkback/.TalkBackService"
-
-        private const val SETTING_NAME_DISPLAY_DALTONIZER = "accessibility_display_daltonizer"
-        private const val SETTING_NAME_DISPLAY_DALTONIZER_ENABLED =
-            "accessibility_display_daltonizer_enabled"
-    }
 }
 
 enum class EventTrackerPlatform {
