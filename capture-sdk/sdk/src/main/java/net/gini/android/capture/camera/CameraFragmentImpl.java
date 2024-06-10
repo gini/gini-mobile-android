@@ -155,6 +155,9 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private static final long DIFFERENT_QRCODE_DETECTED_POPUP_DELAY_MS = 1000;
     private static final Logger LOG = LoggerFactory.getLogger(CameraFragmentImpl.class);
 
+    private static final UserAnalyticsScreen.CameraAccess sScreenNamePermission =
+            UserAnalyticsScreen.CameraAccess.INSTANCE;
+
     private static final CameraFragmentListener NO_OP_LISTENER = new CameraFragmentListener() {
         @Override
         public void onCheckImportedDocument(@NonNull final Document document,
@@ -207,7 +210,8 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private Button mButtonCameraFlashTrigger;
     private Group mCameraFlashButtonGroup;
     private TextView mCameraFlashButtonSubtitle;
-    private ConstraintLayout mLayoutNoPermission;
+    @VisibleForTesting
+    ConstraintLayout mLayoutNoPermission;
     private ViewGroup mButtonImportDocumentWrapper;
     private Button mButtonImportDocument;
     private ConstraintLayout mCameraFrameWrapper;
@@ -393,6 +397,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                     mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.CLOSE_TAPPED, screenName);
                 }
                 trackCameraScreenEvent(CameraScreenEvent.EXIT);
+                trackCameraAccessPermissionRequiredCloseClickedEventIfNeeded();
                 onBackPressed();
             }
         });
@@ -781,6 +786,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                 }
 
                 injectedViewAdapter.setOnNavButtonClickListener(new IntervalClickListener(v -> {
+                    trackCameraAccessPermissionRequiredCloseClickedEventIfNeeded();
                     onBackPressed();
                 }));
             }));
@@ -798,6 +804,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                         injectedViewAdapter.setBackButtonVisibility(isEmpty ? View.GONE : View.VISIBLE);
 
                         injectedViewAdapter.setOnBackButtonClickListener(new IntervalClickListener(v -> {
+                            trackCameraAccessPermissionRequiredCloseClickedEventIfNeeded();
                             onBackPressed();
                         }));
 
@@ -840,6 +847,8 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         mFragment.findNavController().navigate(CameraFragmentDirections.toHelpFragment());
 
         trackCameraScreenEvent(CameraScreenEvent.HELP);
+
+        trackCameraAccessPermissionRequiredHelpClickedEventIfNeeded();
     }
 
     private void initOnlyQRScanning() {
@@ -1668,6 +1677,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         inflateNoPermissionStub();
         setUpNoPermissionButton();
         if (mLayoutNoPermission != null) {
+            trackCameraAccessPermissionRequiredShownEvent();
             mLayoutNoPermission.setVisibility(View.VISIBLE);
         }
     }
@@ -1718,7 +1728,10 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             return;
         }
         final Button button = view.findViewById(R.id.gc_button_camera_no_permission);
-        button.setOnClickListener(v -> startApplicationDetailsSettings());
+        button.setOnClickListener(v -> {
+            trackCameraAccessPermissionRequiredGetAccessClickedEvent();
+            startApplicationDetailsSettings();
+        });
     }
 
     private void hideNoPermissionButton() {
@@ -1908,6 +1921,30 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         boolean popSuccess = mFragment.findNavController().popBackStack();
         if (!popSuccess) {
             mCancelListener.onCancelFlow();
+        }
+    }
+
+    private void trackCameraAccessPermissionRequiredShownEvent() {
+        mUserAnalyticsEventTracker.trackEvent(
+                UserAnalyticsEvent.SCREEN_SHOWN, UserAnalyticsScreen.CameraAccess.INSTANCE);
+    }
+
+    private void trackCameraAccessPermissionRequiredGetAccessClickedEvent() {
+        mUserAnalyticsEventTracker.trackEvent(
+                UserAnalyticsEvent.GIVE_ACCESS_TAPPED, sScreenNamePermission);
+    }
+
+    private void trackCameraAccessPermissionRequiredHelpClickedEventIfNeeded() {
+        if (mLayoutNoPermission!= null && mLayoutNoPermission.getVisibility() == View.VISIBLE) {
+            mUserAnalyticsEventTracker.trackEvent(
+                    UserAnalyticsEvent.HELP_TAPPED, sScreenNamePermission);
+        }
+    }
+
+    private void trackCameraAccessPermissionRequiredCloseClickedEventIfNeeded() {
+        if (mLayoutNoPermission != null && mLayoutNoPermission.getVisibility() == View.VISIBLE) {
+            mUserAnalyticsEventTracker.trackEvent(
+                    UserAnalyticsEvent.CLOSE_TAPPED, sScreenNamePermission);
         }
     }
 }

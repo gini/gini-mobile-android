@@ -2,6 +2,7 @@ package net.gini.android.capture.tracking.useranalytics
 
 sealed class UserAnalyticsScreen(val name: String) {
     object Camera : UserAnalyticsScreen("camera")
+    object CameraAccess : UserAnalyticsScreen("camera_access")
     object Review : UserAnalyticsScreen("review")
     object ReviewZoom : UserAnalyticsScreen("review_zoom")
     object Analysis : UserAnalyticsScreen("analysis")
