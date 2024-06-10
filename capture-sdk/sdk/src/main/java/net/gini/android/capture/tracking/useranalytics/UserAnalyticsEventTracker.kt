@@ -73,42 +73,6 @@ private class MixPanelUserAnalyticsEventTracker(
             MixpanelAPI.getInstance(context, context.getString(R.string.mixpanel_api_key), false)
 
         mixpanelAPI.identify(installationIdProvider.getInstallationId())
-
-        trackAccessibilityProperties(context)
-    }
-
-    private fun trackAccessibilityProperties(context: Context) = runCatching {
-        val accessibilityManager =
-            context.getSystemService(ACCESSIBILITY_SERVICE) as? AccessibilityManager
-
-        val isBoldTextEnabled = runCatching {
-            context.resources.configuration.fontWeightAdjustment
-        }.getOrDefault(0) > 0
-
-        val visualServiceList =
-            accessibilityManager?.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_ALL_MASK)
-                ?: emptyList()
-
-        val isSpeakSelectionEnabled =
-            visualServiceList.find { it.id == SELECT_TO_SPEAK_SERVICE_ID } != null
-        val isSpeakScreenEnabled =
-            visualServiceList.find { it.id == SPEAK_SCREEN_SERVICE_ID } != null
-
-        val isGrayscaleEnabled =
-            Settings.Secure.getInt(
-                context.contentResolver, SETTING_NAME_DISPLAY_DALTONIZER, 0
-            ) == 0 && Settings.Secure.getInt(
-                context.contentResolver, SETTING_NAME_DISPLAY_DALTONIZER_ENABLED, 0
-            ) == 1
-
-        val properties = setOf(
-            UserAnalyticsUserProperty.Accessibility.GrayscaleEnabled(isGrayscaleEnabled),
-            UserAnalyticsUserProperty.Accessibility.BoldTextEnabled(isBoldTextEnabled),
-            UserAnalyticsUserProperty.Accessibility.SpeakScreenEnabled(isSpeakScreenEnabled),
-            UserAnalyticsUserProperty.Accessibility.SpeakSelectionEnabled(isSpeakSelectionEnabled),
-        )
-
-        setUserProperty(properties)
     }
 
     override fun setUserProperty(userProperties: Set<UserAnalyticsUserProperty>) {

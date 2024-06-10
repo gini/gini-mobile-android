@@ -132,7 +132,6 @@ internal class CaptureFlowActivity : AppCompatActivity(), CaptureFlowFragmentLis
 
         userAnalyticsEventTracker.setEventSuperProperty(entryPointProperty)
     }
-
 }
 
 /**
