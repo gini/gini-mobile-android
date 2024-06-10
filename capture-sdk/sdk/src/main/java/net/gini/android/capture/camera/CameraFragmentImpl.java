@@ -308,6 +308,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private void showUnsupportedQRCodePopup() {
         if (mIbanDetectedTextView.getVisibility() != View.VISIBLE) {
             mUnsupportedQRCodePopup.show(null);
+            sendQRCodeScannedEventToUserAnalytics(false);
         }
     }
 
