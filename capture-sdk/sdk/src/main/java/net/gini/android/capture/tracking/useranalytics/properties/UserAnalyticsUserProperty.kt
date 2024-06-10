@@ -12,18 +12,4 @@ sealed class UserAnalyticsUserProperty(key: String, value: String) :
 
     data class ReturnAssistantEnabled(val isEnabled: Boolean) :
         UserAnalyticsUserProperty("return_assistant_enabled", isEnabled.mapToAnalyticsValue())
-
-    sealed class Accessibility {
-        data class GrayscaleEnabled(private val isEnabled: Boolean) :
-            UserAnalyticsUserProperty("grayscale_enabled", isEnabled.mapToAnalyticsValue())
-
-        data class BoldTextEnabled(private val isEnabled: Boolean) :
-            UserAnalyticsUserProperty("bold_text_enabled", isEnabled.mapToAnalyticsValue())
-
-        data class SpeakSelectionEnabled(private val isEnabled: Boolean) :
-            UserAnalyticsUserProperty("speak_selection_enabled", isEnabled.mapToAnalyticsValue())
-
-        data class SpeakScreenEnabled(private val isEnabled: Boolean) :
-            UserAnalyticsUserProperty("speak_screen_enabled", isEnabled.mapToAnalyticsValue())
-    }
 }
