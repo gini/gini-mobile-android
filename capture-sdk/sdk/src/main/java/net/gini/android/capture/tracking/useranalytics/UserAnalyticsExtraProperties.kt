@@ -24,4 +24,5 @@ enum class UserAnalyticsExtraProperties(val propertyName: String) {
     SWITCH_ACTIVE("switch_active"),
     ITEMS_CHANGED("items_changed"),
     // endregion
+    STATUS("status"),
 }

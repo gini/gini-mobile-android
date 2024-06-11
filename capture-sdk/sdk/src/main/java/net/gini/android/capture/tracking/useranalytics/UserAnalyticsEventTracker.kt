@@ -1,10 +1,6 @@
 package net.gini.android.capture.tracking.useranalytics
 
-import android.accessibilityservice.AccessibilityServiceInfo
 import android.content.Context
-import android.content.Context.ACCESSIBILITY_SERVICE
-import android.provider.Settings
-import android.view.accessibility.AccessibilityManager
 import com.mixpanel.android.mpmetrics.MixpanelAPI
 import net.gini.android.capture.R
 import net.gini.android.capture.internal.provider.InstallationIdProvider
@@ -20,11 +16,11 @@ interface UserAnalyticsEventTracker {
 
     fun setUserProperty(userProperty: UserAnalyticsUserProperty)
     fun setUserProperty(userProperties: Set<UserAnalyticsUserProperty>)
-    fun trackEvent(eventName: UserAnalyticsEvent, screen: UserAnalyticsScreen)
+    fun trackEvent(eventName: UserAnalyticsEvent, screen: UserAnalyticsScreen? = null)
 
     fun trackEvent(
         eventName: UserAnalyticsEvent,
-        screen: UserAnalyticsScreen,
+        screen: UserAnalyticsScreen? = null,
         properties: Map<UserAnalyticsExtraProperties, Any>
     )
 }
@@ -39,6 +35,8 @@ object UserAnalytics {
 
         eventTracker =
             createAnalyticsEventTracker(EventTrackerPlatform.MIXPANEL, applicationContext)
+
+        eventTracker?.trackEvent(UserAnalyticsEvent.SDK_OPENED)
     }
 
     fun getAnalyticsEventTracker(
@@ -91,19 +89,20 @@ private class MixPanelUserAnalyticsEventTracker(
         setUserProperty(setOf(userProperty))
     }
 
-    override fun trackEvent(eventName: UserAnalyticsEvent, screen: UserAnalyticsScreen) {
+    override fun trackEvent(eventName: UserAnalyticsEvent, screen: UserAnalyticsScreen?) {
         trackEvent(eventName, screen, emptyMap())
     }
 
     override fun trackEvent(
         eventName: UserAnalyticsEvent,
-        screen: UserAnalyticsScreen,
+        screen: UserAnalyticsScreen?,
         properties: Map<UserAnalyticsExtraProperties, Any>
     ) {
-        val defaultProperties = mapOf<String, Any>(
-            UserAnalyticsExtraProperties.SCREEN.propertyName to screen.name
+        val defaultProperties = listOfNotNull<Pair<String, Any>>(
+            screen?.let { UserAnalyticsExtraProperties.SCREEN.propertyName to screen.name }
         )
-        val finalProperties = defaultProperties.plus(properties.mapKeys { it.key.propertyName })
+        val finalProperties =
+            defaultProperties.toMap().plus(properties.mapKeys { it.key.propertyName })
         mixpanelAPI.trackMap(eventName.eventName, finalProperties)
     }
 }
