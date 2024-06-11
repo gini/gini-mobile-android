@@ -438,14 +438,14 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
     private fun trackScreenShownEvent() {
         userAnalyticsEventTracker.trackEvent(
             UserAnalyticsEvent.SCREEN_SHOWN,
-            screenName
+            setOf(UserAnalyticsEventProperty.Screen(screenName))
         )
     }
 
     private fun trackCloseTappedEvent() {
         userAnalyticsEventTracker.trackEvent(
             UserAnalyticsEvent.CLOSE_TAPPED,
-            screenName,
+            setOf(UserAnalyticsEventProperty.Screen(screenName))
         )
     }
 
@@ -457,8 +457,10 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
 
         userAnalyticsEventTracker.trackEvent(
             UserAnalyticsEvent.SAVE_TAPPED,
-            screenName,
-            setOf(UserAnalyticsEventProperty.ItemsChanged(differenceList))
+            setOf(
+                UserAnalyticsEventProperty.Screen(screenName),
+                UserAnalyticsEventProperty.ItemsChanged(differenceList)
+            )
         )
     }
 

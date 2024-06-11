@@ -9,11 +9,14 @@ sealed class UserAnalyticsScreen(val name: String) {
     object NoResults : UserAnalyticsScreen("no_results")
     object Help : UserAnalyticsScreen("help")
     object Error : UserAnalyticsScreen("error")
-    object OnboardingFlatPaper : UserAnalyticsScreen("onboarding_flat_paper")
-    object OnboardingLighting : UserAnalyticsScreen("onboarding_lighting")
-    object OnboardingMultiplePages : UserAnalyticsScreen("onboarding_multiple_pages")
-    object OnboardingQrCode : UserAnalyticsScreen("onboarding_qr_code")
+    sealed class OnBoarding(name: String) : UserAnalyticsScreen(name) {
+        object FlatPaper : OnBoarding("onboarding_flat_paper")
+        object Lighting : OnBoarding("onboarding_lighting")
+        object MultiplePages : OnBoarding("onboarding_multiple_pages")
+        object QrCode : OnBoarding("onboarding_qr_code")
+        data class Custom(val page: Int) : UserAnalyticsScreen("onboarding_custom_$page")
+    }
+
     object ReturnAssistant : UserAnalyticsScreen("return_assistant")
     object EditReturnAssistant : UserAnalyticsScreen("edit_return_assistant")
-    data class OnboardingCustom(val page: Int) : UserAnalyticsScreen("onboarding_custom_$page")
 }

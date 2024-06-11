@@ -510,37 +510,40 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
     private fun trackCloseTappedEvent() = runCatching {
         userAnalyticsEventTracker.trackEvent(
             UserAnalyticsEvent.CLOSE_TAPPED,
-            screenName,
+            setOf(UserAnalyticsEventProperty.Screen(screenName)),
         )
     }
 
     private fun trackHelpTappedEvent() = runCatching {
         userAnalyticsEventTracker.trackEvent(
             UserAnalyticsEvent.HELP_TAPPED,
-            screenName,
+            setOf(UserAnalyticsEventProperty.Screen(screenName)),
         )
     }
 
     private fun trackItemSwitchTappedTappedEvent(selected: Boolean) = runCatching {
         userAnalyticsEventTracker.trackEvent(
             UserAnalyticsEvent.ITEM_SWITCH_TAPPED,
-            screenName,
-            setOf(UserAnalyticsEventProperty.SwitchActive(selected))
+            setOf(
+                UserAnalyticsEventProperty.Screen(screenName),
+                UserAnalyticsEventProperty.SwitchActive(selected)
+            )
         )
     }
 
     private fun trackItemEditTappedTappedEvent() = runCatching {
         userAnalyticsEventTracker.trackEvent(
             UserAnalyticsEvent.EDIT_TAPPED,
-            screenName,
+            setOf(UserAnalyticsEventProperty.Screen(screenName)),
         )
     }
 
     private fun trackProceedTapped() = runCatching {
         userAnalyticsEventTracker.trackEvent(
-            UserAnalyticsEvent.PROCEED_TAPPED, screenName
+            UserAnalyticsEvent.PROCEED_TAPPED,
+            setOf(UserAnalyticsEventProperty.Screen(screenName))
         )
     }
 }
-    // endregion
+// endregion
 

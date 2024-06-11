@@ -49,6 +49,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
@@ -97,11 +98,14 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     private void addUserAnalyticEvents(@NonNull Document document) {
         UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(
                 UserAnalyticsEvent.SCREEN_SHOWN,
-                screenName,
-                Collections.singleton(
-                        new UserAnalyticsEventProperty.DocumentType(
+                new HashSet<UserAnalyticsEventProperty>() {
+                    {
+                        add(new UserAnalyticsEventProperty.DocumentType(
                                 UserAnalyticsMappersKt.mapToAnalyticsDocumentType(document)
-                        ))
+                        ));
+                        add(new UserAnalyticsEventProperty.Screen(screenName));
+                    }
+                }
         );
     }
 
@@ -312,7 +316,12 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     private void onBack() {
         boolean popBackStack = mFragment.findNavController().popBackStack();
         if (!popBackStack) {
-            UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(UserAnalyticsEvent.CLOSE_TAPPED, screenName);
+            UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(UserAnalyticsEvent.CLOSE_TAPPED,
+                    new HashSet<UserAnalyticsEventProperty>() {
+                        {
+                            add(new UserAnalyticsEventProperty.Screen(screenName));
+                        }
+                    });
             trackAnalysisScreenEvent(AnalysisScreenEvent.CANCEL);
             mCancelListener.onCancelFlow();
         }

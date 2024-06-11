@@ -115,29 +115,28 @@ class OnboardingScreenPresenter extends OnboardingScreenContract.Presenter {
             eventProperties.add(
                     new UserAnalyticsEventProperty.CustomOnboardingTitle(String.valueOf(mPages.get(pageIndex).getTitleResId()))
             );
-            UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(
-                    event, new UserAnalyticsScreen.OnboardingCustom(pageIndex), eventProperties
-            );
-        } else {
+            eventProperties.add(new UserAnalyticsEventProperty.Screen(new UserAnalyticsScreen.OnBoarding.Custom(pageIndex)));
             UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(
                     event,
-                    getOnBoardingEventScreenName(mPages.get(pageIndex).getTitleResId()),
                     eventProperties
             );
+        } else {
+            eventProperties.add(new UserAnalyticsEventProperty.Screen(getOnBoardingEventScreenName(mPages.get(pageIndex).getTitleResId())));
+            UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(event, eventProperties);
         }
     }
 
-    private UserAnalyticsScreen getOnBoardingEventScreenName(@StringRes int titleResId) {
+    private UserAnalyticsScreen.OnBoarding getOnBoardingEventScreenName(@StringRes int titleResId) {
         if (titleResId == R.string.gc_onboarding_qr_code_title) {
-            return UserAnalyticsScreen.OnboardingQrCode.INSTANCE;
+            return UserAnalyticsScreen.OnBoarding.QrCode.INSTANCE;
         }
         if (titleResId == R.string.gc_onboarding_multipage_title) {
-            return UserAnalyticsScreen.OnboardingMultiplePages.INSTANCE;
+            return UserAnalyticsScreen.OnBoarding.MultiplePages.INSTANCE;
         }
         if (titleResId == R.string.gc_onboarding_lighting_title) {
-            return UserAnalyticsScreen.OnboardingLighting.INSTANCE;
+            return UserAnalyticsScreen.OnBoarding.Lighting.INSTANCE;
         }
-        return UserAnalyticsScreen.OnboardingFlatPaper.INSTANCE;
+        return UserAnalyticsScreen.OnBoarding.FlatPaper.INSTANCE;
     }
 
     private void updateButtons() {

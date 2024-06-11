@@ -77,7 +77,7 @@ class ErrorFragmentImpl(
             retakeImagesButton.setIntervalClickListener {
                 mUserAnalyticsEventTracker.trackEvent(
                     UserAnalyticsEvent.BACK_TO_CAMERA_TAPPED,
-                    screenName
+                    setOf(UserAnalyticsEventProperty.Screen(screenName))
                 )
                 EventTrackingHelper.trackAnalysisScreenEvent(AnalysisScreenEvent.RETRY)
                 fragmentCallback.findNavController()
@@ -91,7 +91,7 @@ class ErrorFragmentImpl(
         enterManuallyButton.setIntervalClickListener {
             mUserAnalyticsEventTracker.trackEvent(
                 UserAnalyticsEvent.ENTER_MANUALLY_TAPPED,
-                screenName
+                setOf(UserAnalyticsEventProperty.Screen(screenName))
             )
             enterManuallyButtonListener?.onEnterManuallyPressed()
         }
@@ -117,8 +117,8 @@ class ErrorFragmentImpl(
         fragmentCallback.activity?.getString(errorType?.titleTextResource ?: 0).toString()
         mUserAnalyticsEventTracker.trackEvent(
             UserAnalyticsEvent.SCREEN_SHOWN,
-            screenName,
             setOf(
+                UserAnalyticsEventProperty.Screen(screenName),
                 UserAnalyticsEventProperty.DocumentType(document.mapToAnalyticsDocumentType()),
                 UserAnalyticsEventProperty.DocumentId(document?.id.toString()),
                 UserAnalyticsEventProperty.ErrorType(errorType.mapToAnalyticsErrorType()),
@@ -140,7 +140,7 @@ class ErrorFragmentImpl(
                     setOnNavButtonClickListener(IntervalClickListener {
                         mUserAnalyticsEventTracker.trackEvent(
                             UserAnalyticsEvent.CLOSE_TAPPED,
-                            screenName
+                            setOf(UserAnalyticsEventProperty.Screen(screenName))
                         )
                         cancelListener.onCancelFlow()
                     })
@@ -157,7 +157,7 @@ class ErrorFragmentImpl(
                     override fun handleOnBackPressed() {
                         mUserAnalyticsEventTracker.trackEvent(
                             UserAnalyticsEvent.CLOSE_TAPPED,
-                            screenName
+                            setOf(UserAnalyticsEventProperty.Screen(screenName))
                         )
                         remove()
                         cancelListener.onCancelFlow()

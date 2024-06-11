@@ -17,13 +17,8 @@ interface UserAnalyticsEventTracker {
 
     fun setUserProperty(userProperty: UserAnalyticsUserProperty)
     fun setUserProperty(userProperties: Set<UserAnalyticsUserProperty>)
-    fun trackEvent(eventName: UserAnalyticsEvent, screen: UserAnalyticsScreen)
-
-    fun trackEvent(
-        eventName: UserAnalyticsEvent,
-        screen: UserAnalyticsScreen,
-        properties: Set<UserAnalyticsEventProperty>,
-    )
+    fun trackEvent(eventName: UserAnalyticsEvent)
+    fun trackEvent(eventName: UserAnalyticsEvent, properties: Set<UserAnalyticsEventProperty>)
 }
 
 
@@ -88,18 +83,15 @@ private class MixPanelUserAnalyticsEventTracker(
         setUserProperty(setOf(userProperty))
     }
 
-    override fun trackEvent(eventName: UserAnalyticsEvent, screen: UserAnalyticsScreen) {
-        trackEvent(eventName, screen, emptySet())
+    override fun trackEvent(eventName: UserAnalyticsEvent) {
+        trackEvent(eventName, emptySet())
     }
 
     override fun trackEvent(
         eventName: UserAnalyticsEvent,
-        screen: UserAnalyticsScreen,
         properties: Set<UserAnalyticsEventProperty>
     ) {
-        val defaultProperties = setOf(UserAnalyticsEventProperty.Screen(screen))
-        val finalProperties = defaultProperties.plus(properties)
-        mixpanelAPI.trackMap(eventName.eventName, finalProperties.associate { it.getPair() })
+        mixpanelAPI.trackMap(eventName.eventName, properties.associate { it.getPair() })
     }
 }
 

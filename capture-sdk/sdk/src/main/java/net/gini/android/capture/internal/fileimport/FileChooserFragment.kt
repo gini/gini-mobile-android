@@ -42,6 +42,7 @@ import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen
+import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty
 
 private const val ARG_DOCUMENT_IMPORT_FILE_TYPES = "GC_EXTRA_IN_DOCUMENT_IMPORT_FILE_TYPES"
 private const val GRID_SPAN_COUNT_PHONE = 3
@@ -145,13 +146,13 @@ class FileChooserFragment : BottomSheetDialogFragment() {
                 if (item in imageProviderItems) {
                     mUserAnalyticsEventTracker.trackEvent(
                         UserAnalyticsEvent.UPLOAD_PHOTOS_TAPPED,
-                        screenName
+                        setOf(UserAnalyticsEventProperty.Screen(screenName))
                     )
 
                 } else {
                     mUserAnalyticsEventTracker.trackEvent(
                         UserAnalyticsEvent.UPLOAD_DOCUMENTS_TAPPED,
-                        screenName
+                        setOf(UserAnalyticsEventProperty.Screen(screenName))
                     )
 
                 }
