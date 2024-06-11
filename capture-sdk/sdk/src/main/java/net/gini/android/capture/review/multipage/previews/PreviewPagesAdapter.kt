@@ -3,7 +3,8 @@ package net.gini.android.capture.review.multipage.previews
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.ImageButton
+import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import net.gini.android.capture.AsyncCallback
 import net.gini.android.capture.GiniCapture
@@ -13,9 +14,10 @@ import net.gini.android.capture.document.ImageMultiPageDocument
 import net.gini.android.capture.internal.camera.photo.Photo
 import net.gini.android.capture.internal.ui.setIntervalClickListener
 import net.gini.android.capture.review.RotatableImageViewContainer
-import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics.getAnalyticsEventTracker
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen
+import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty
 
 class PreviewPagesAdapter(
     private val multiPageDocument: ImageMultiPageDocument,
@@ -35,7 +37,7 @@ class PreviewPagesAdapter(
             mDeletePage?.setIntervalClickListener {
                 getAnalyticsEventTracker().trackEvent(
                     UserAnalyticsEvent.DELETE_PAGES_TAPPED,
-                    screenName
+                    setOf(UserAnalyticsEventProperty.Screen(screenName))
                 )
                 previewFragmentListener.onDeleteDocument(multiPageDocument.documents[absoluteAdapterPosition])
             }

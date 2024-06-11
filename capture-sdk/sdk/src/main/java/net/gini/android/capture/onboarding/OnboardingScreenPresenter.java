@@ -14,13 +14,12 @@ import net.gini.android.capture.internal.util.FeatureConfiguration;
 import net.gini.android.capture.tracking.OnboardingScreenEvent;
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent;
-import net.gini.android.capture.tracking.useranalytics.UserAnalyticsExtraProperties;
-import net.gini.android.capture.tracking.useranalytics.UserAnalyticsMappersKt;
+import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen;
 
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by Alpar Szotyori on 20.05.2019.
@@ -107,36 +106,37 @@ class OnboardingScreenPresenter extends OnboardingScreenContract.Presenter {
         }
 
         boolean hasCustomItems = customPages != null && !customPages.isEmpty();
-        Map<UserAnalyticsExtraProperties, Object> eventProperties = new HashMap<>();
+        Set<UserAnalyticsEventProperty> eventProperties = new HashSet<>();
 
         if (event == UserAnalyticsEvent.SCREEN_SHOWN) {
-            eventProperties.put(UserAnalyticsExtraProperties.ONBOARDING_HAS_CUSTOM_ITEMS, UserAnalyticsMappersKt.mapToAnalyticsValue(hasCustomItems));
+            eventProperties.add(new UserAnalyticsEventProperty.OnboardingHasCustomItems(hasCustomItems));
         }
         if (hasCustomItems) {
-            eventProperties.put(UserAnalyticsExtraProperties.CUSTOM_ONBOARDING_TITLE, String.valueOf(mPages.get(pageIndex).getTitleResId()));
-            UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(
-                    event, new UserAnalyticsScreen.OnboardingCustom(pageIndex), eventProperties
+            eventProperties.add(
+                    new UserAnalyticsEventProperty.CustomOnboardingTitle(String.valueOf(mPages.get(pageIndex).getTitleResId()))
             );
-        } else {
+            eventProperties.add(new UserAnalyticsEventProperty.Screen(new UserAnalyticsScreen.OnBoarding.Custom(pageIndex)));
             UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(
                     event,
-                    getOnBoardingEventScreenName(mPages.get(pageIndex).getTitleResId()),
                     eventProperties
             );
+        } else {
+            eventProperties.add(new UserAnalyticsEventProperty.Screen(getOnBoardingEventScreenName(mPages.get(pageIndex).getTitleResId())));
+            UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(event, eventProperties);
         }
     }
 
-    private UserAnalyticsScreen getOnBoardingEventScreenName(@StringRes int titleResId) {
+    private UserAnalyticsScreen.OnBoarding getOnBoardingEventScreenName(@StringRes int titleResId) {
         if (titleResId == R.string.gc_onboarding_qr_code_title) {
-            return UserAnalyticsScreen.OnboardingQrCode.INSTANCE;
+            return UserAnalyticsScreen.OnBoarding.QrCode.INSTANCE;
         }
         if (titleResId == R.string.gc_onboarding_multipage_title) {
-            return UserAnalyticsScreen.OnboardingMultiplePages.INSTANCE;
+            return UserAnalyticsScreen.OnBoarding.MultiplePages.INSTANCE;
         }
         if (titleResId == R.string.gc_onboarding_lighting_title) {
-            return UserAnalyticsScreen.OnboardingLighting.INSTANCE;
+            return UserAnalyticsScreen.OnBoarding.Lighting.INSTANCE;
         }
-        return UserAnalyticsScreen.OnboardingFlatPaper.INSTANCE;
+        return UserAnalyticsScreen.OnBoarding.FlatPaper.INSTANCE;
     }
 
     private void updateButtons() {

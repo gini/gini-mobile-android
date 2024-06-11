@@ -29,8 +29,8 @@ import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker
-import net.gini.android.capture.tracking.useranalytics.UserAnalyticsExtraProperties
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen
+import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty
 
 class CaptureFlowFragment(private val openWithDocument: Document? = null) :
     Fragment(),
@@ -205,8 +205,10 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
 
     private fun trackSdkClosedEvent(screen: UserAnalyticsScreen) = runCatching {
         analyticsEventTracker.trackEvent(
-            UserAnalyticsEvent.SDK_CLOSED, screen, mapOf(
-                UserAnalyticsExtraProperties.STATUS to "successful",
+            UserAnalyticsEvent.SDK_CLOSED,
+            setOf(
+                UserAnalyticsEventProperty.Screen(screen),
+                UserAnalyticsEventProperty.Status(UserAnalyticsEventProperty.Status.StatusType.Successful),
             )
         )
     }

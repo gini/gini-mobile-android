@@ -53,8 +53,8 @@ class OnboardingScreenPresenterTest {
     @Before
     fun setUp() {
         mUserAnalyticsEventTracker = mockk<UserAnalyticsEventTracker>().apply {
+            every { trackEvent(any()) } just Runs
             every { trackEvent(any(), any()) } just Runs
-            every { trackEvent(any(), any(), any()) } just Runs
         }
         mActivity = mockk()
 

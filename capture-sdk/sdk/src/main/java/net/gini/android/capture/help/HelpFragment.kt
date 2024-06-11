@@ -16,9 +16,8 @@ import net.gini.android.capture.internal.util.autoCleared
 import net.gini.android.capture.internal.util.getLayoutInflaterWithGiniCaptureTheme
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
-import net.gini.android.capture.tracking.useranalytics.UserAnalyticsExtraProperties
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen
-import net.gini.android.capture.tracking.useranalytics.mapToAnalyticsValue
+import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty
 import net.gini.android.capture.view.InjectedViewAdapterHolder
 import net.gini.android.capture.view.NavButtonType
 
@@ -140,24 +139,28 @@ class HelpFragment : Fragment() {
         val helpItems = helpItemsAdapter.items.map { "\"${getString(it.title)}\"" }
 
         userAnalyticsEventTracker.trackEvent(
-            UserAnalyticsEvent.SCREEN_SHOWN, screenName, mapOf(
-                UserAnalyticsExtraProperties.HAS_CUSTOM_ITEMS to hasCustomItems.mapToAnalyticsValue(),
-                UserAnalyticsExtraProperties.HELP_ITEMS to helpItems.toString(),
+            UserAnalyticsEvent.SCREEN_SHOWN, setOf(
+                UserAnalyticsEventProperty.Screen(screenName),
+                UserAnalyticsEventProperty.HasCustomItems(hasCustomItems),
+                UserAnalyticsEventProperty.HelpItems(helpItems),
             )
         )
     }
 
     private fun trackBackTappedEvent() = runCatching {
         userAnalyticsEventTracker.trackEvent(
-            UserAnalyticsEvent.CLOSE_TAPPED, screenName
+            UserAnalyticsEvent.CLOSE_TAPPED,
+            setOf(UserAnalyticsEventProperty.Screen(screenName))
         )
     }
 
     private fun trackHelpItemTappedEvent(helpItem: HelpItem) = runCatching {
         userAnalyticsEventTracker.trackEvent(
             UserAnalyticsEvent.HELP_ITEM_TAPPED,
-            screenName,
-            mapOf(UserAnalyticsExtraProperties.ITEM_TAPPED to getString(helpItem.title))
+            setOf(
+                UserAnalyticsEventProperty.Screen(screenName),
+                UserAnalyticsEventProperty.ItemTapped(getString(helpItem.title))
+            )
         )
     }
 

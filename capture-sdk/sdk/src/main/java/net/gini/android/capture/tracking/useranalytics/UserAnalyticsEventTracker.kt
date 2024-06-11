@@ -4,6 +4,7 @@ import android.content.Context
 import com.mixpanel.android.mpmetrics.MixpanelAPI
 import net.gini.android.capture.R
 import net.gini.android.capture.internal.provider.InstallationIdProvider
+import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventSuperProperty
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsUserProperty
 
@@ -16,13 +17,8 @@ interface UserAnalyticsEventTracker {
 
     fun setUserProperty(userProperty: UserAnalyticsUserProperty)
     fun setUserProperty(userProperties: Set<UserAnalyticsUserProperty>)
-    fun trackEvent(eventName: UserAnalyticsEvent, screen: UserAnalyticsScreen? = null)
-
-    fun trackEvent(
-        eventName: UserAnalyticsEvent,
-        screen: UserAnalyticsScreen? = null,
-        properties: Map<UserAnalyticsExtraProperties, Any>
-    )
+    fun trackEvent(eventName: UserAnalyticsEvent)
+    fun trackEvent(eventName: UserAnalyticsEvent, properties: Set<UserAnalyticsEventProperty>)
 }
 
 
@@ -89,21 +85,15 @@ private class MixPanelUserAnalyticsEventTracker(
         setUserProperty(setOf(userProperty))
     }
 
-    override fun trackEvent(eventName: UserAnalyticsEvent, screen: UserAnalyticsScreen?) {
-        trackEvent(eventName, screen, emptyMap())
+    override fun trackEvent(eventName: UserAnalyticsEvent) {
+        trackEvent(eventName, emptySet())
     }
 
     override fun trackEvent(
         eventName: UserAnalyticsEvent,
-        screen: UserAnalyticsScreen?,
-        properties: Map<UserAnalyticsExtraProperties, Any>
+        properties: Set<UserAnalyticsEventProperty>
     ) {
-        val defaultProperties = listOfNotNull<Pair<String, Any>>(
-            screen?.let { UserAnalyticsExtraProperties.SCREEN.propertyName to screen.name }
-        )
-        val finalProperties =
-            defaultProperties.toMap().plus(properties.mapKeys { it.key.propertyName })
-        mixpanelAPI.trackMap(eventName.eventName, finalProperties)
+        mixpanelAPI.trackMap(eventName.eventName, properties.associate { it.getPair() })
     }
 }
 

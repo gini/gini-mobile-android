@@ -17,6 +17,7 @@ import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen
+import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty
 import java.math.BigDecimal
 
 /**
@@ -180,7 +181,7 @@ internal class DigitalInvoiceScreenPresenter(
     private fun trackScreenShownEvent() = runCatching {
         userAnalyticsEventTracker.trackEvent(
             UserAnalyticsEvent.SCREEN_SHOWN,
-            screenName
+            setOf(UserAnalyticsEventProperty.Screen(screenName))
         )
     }
 }

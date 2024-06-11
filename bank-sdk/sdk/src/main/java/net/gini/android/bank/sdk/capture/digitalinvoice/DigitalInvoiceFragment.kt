@@ -33,9 +33,8 @@ import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
-import net.gini.android.capture.tracking.useranalytics.UserAnalyticsExtraProperties
+import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen
-import net.gini.android.capture.tracking.useranalytics.mapToAnalyticsValue
 import net.gini.android.capture.internal.util.CancelListener
 import net.gini.android.capture.view.InjectedViewAdapterHolder
 import net.gini.android.capture.view.NavButtonType
@@ -513,45 +512,49 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
     private fun trackCloseTappedEvent() = runCatching {
         userAnalyticsEventTracker.trackEvent(
             UserAnalyticsEvent.CLOSE_TAPPED,
-            screenName,
+            setOf(UserAnalyticsEventProperty.Screen(screenName)),
         )
     }
 
     private fun trackHelpTappedEvent() = runCatching {
         userAnalyticsEventTracker.trackEvent(
             UserAnalyticsEvent.HELP_TAPPED,
-            screenName,
+            setOf(UserAnalyticsEventProperty.Screen(screenName)),
         )
     }
 
     private fun trackItemSwitchTappedTappedEvent(selected: Boolean) = runCatching {
         userAnalyticsEventTracker.trackEvent(
             UserAnalyticsEvent.ITEM_SWITCH_TAPPED,
-            screenName,
-            mapOf(UserAnalyticsExtraProperties.SWITCH_ACTIVE to selected.mapToAnalyticsValue())
+            setOf(
+                UserAnalyticsEventProperty.Screen(screenName),
+                UserAnalyticsEventProperty.SwitchActive(selected)
+            )
         )
     }
 
     private fun trackItemEditTappedTappedEvent() = runCatching {
         userAnalyticsEventTracker.trackEvent(
             UserAnalyticsEvent.EDIT_TAPPED,
-            screenName,
+            setOf(UserAnalyticsEventProperty.Screen(screenName)),
         )
     }
 
     private fun trackProceedTapped() = runCatching {
         userAnalyticsEventTracker.trackEvent(
-            UserAnalyticsEvent.PROCEED_TAPPED, screenName
+            UserAnalyticsEvent.PROCEED_TAPPED,
+            setOf(UserAnalyticsEventProperty.Screen(screenName))
         )
     }
 
     private fun trackSdkClosedEvent() = runCatching {
         userAnalyticsEventTracker.trackEvent(
-            UserAnalyticsEvent.SDK_CLOSED, screenName, mapOf(
-                UserAnalyticsExtraProperties.STATUS to "successful",
+            UserAnalyticsEvent.SDK_CLOSED, setOf(
+                UserAnalyticsEventProperty.Screen(screenName),
+                UserAnalyticsEventProperty.Status(UserAnalyticsEventProperty.Status.StatusType.Successful)
             )
         )
     }
 }
-    // endregion
+// endregion
 
