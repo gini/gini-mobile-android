@@ -7,6 +7,9 @@ import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import net.gini.android.bank.api.GiniBankAPI
+import net.gini.android.bank.api.GiniBankAPIBuilder
+import net.gini.android.bank.api.models.ResolvePaymentInput
 import net.gini.android.core.api.DocumentManager
 import net.gini.android.core.api.Resource
 import net.gini.android.core.api.internal.GiniCoreAPIBuilder
@@ -33,6 +36,13 @@ import kotlin.time.Duration.Companion.seconds
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
 class GiniHealthAPIIntegrationTest: GiniCoreAPIIntegrationTest<HealthApiDocumentManager, HealthApiDocumentRepository, GiniHealthAPI, ExtractionsContainer>() {
+
+    private lateinit var giniBankApi: GiniBankAPI
+    private lateinit var bankApiUri: String
+
+    override fun onTestPropertiesAvailable(properties: Properties) {
+        bankApiUri = getProperty(properties, "testBankApiUri")
+    }
 
     @Test
     @Throws(Exception::class)
@@ -157,6 +167,25 @@ class GiniHealthAPIIntegrationTest: GiniCoreAPIIntegrationTest<HealthApiDocument
 
     @Test
     @Throws(Exception::class)
+    fun testGetPayment() = runTest(timeout = 30.seconds) {
+        val paymentRequestId = createPaymentRequest()
+        val paymentRequest = giniCoreApi.documentManager.getPaymentRequest(paymentRequestId).dataOrThrow
+        val (_, _, recipient, iban, bic, amount, purpose) = paymentRequest
+        val resolvePaymentInput = ResolvePaymentInput(
+            recipient,
+            iban, amount, purpose, null
+        )
+        val resolvePayment = giniBankApi.documentManager.resolvePaymentRequest(paymentRequestId, resolvePaymentInput).dataOrThrow
+        val retrievedPaymentRequest = giniCoreApi.documentManager.getPayment(paymentRequestId).dataOrThrow
+        Assert.assertEquals(recipient, retrievedPaymentRequest.recipient)
+        Assert.assertEquals(iban, retrievedPaymentRequest.iban)
+        Assert.assertEquals(bic, retrievedPaymentRequest.bic)
+        Assert.assertEquals(amount, retrievedPaymentRequest.amount)
+        Assert.assertEquals(purpose, retrievedPaymentRequest.purpose)
+    }
+
+    @Test
+    @Throws(Exception::class)
     fun testGetImage() = runTest(timeout = 30.seconds) {
         val assetManager = getApplicationContext<Context>().resources.assets
         val testDocumentAsStream = assetManager.open("test.jpg")
@@ -170,14 +199,18 @@ class GiniHealthAPIIntegrationTest: GiniCoreAPIIntegrationTest<HealthApiDocument
         Assert.assertNotNull(BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size))
     }
 
-    override fun onTestPropertiesAvailable(properties: Properties) { }
-
     override fun createGiniCoreAPIBuilder(
         clientId: String,
         clientSecret: String,
         emailDomain: String
-    ): GiniCoreAPIBuilder<HealthApiDocumentManager, GiniHealthAPI, HealthApiDocumentRepository, ExtractionsContainer> =
-        GiniHealthAPIBuilder(getApplicationContext(), clientId, clientSecret, emailDomain)
+    ): GiniCoreAPIBuilder<HealthApiDocumentManager, GiniHealthAPI, HealthApiDocumentRepository, ExtractionsContainer> {
+        giniBankApi = GiniBankAPIBuilder(getApplicationContext(), clientId, clientSecret, emailDomain)
+            .setApiBaseUrl(bankApiUri)
+            .setUserCenterApiBaseUrl(userCenterUri)
+            .setDebuggingEnabled(true)
+            .build()
+        return GiniHealthAPIBuilder(getApplicationContext(), clientId, clientSecret, emailDomain)
+    }
 
     override fun getNetworkSecurityConfigResId(): Int = net.gini.android.health.api.test.R.xml.network_security_config
 
