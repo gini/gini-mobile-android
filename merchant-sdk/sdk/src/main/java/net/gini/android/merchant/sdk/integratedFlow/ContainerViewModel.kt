@@ -8,7 +8,7 @@ import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
 import java.util.Stack
 
 
-internal class ContainerViewModel(val paymentComponent: PaymentComponent?) : ViewModel() {
+internal class ContainerViewModel(val paymentComponent: PaymentComponent?, val documentId: String) : ViewModel() {
 
     private val backstack: Stack<DisplayedScreen> = Stack<DisplayedScreen>().also { it.add(DisplayedScreen.Nothing) }
     private var initialSelectedPaymentProvider: PaymentProviderApp? = null
@@ -48,10 +48,10 @@ internal class ContainerViewModel(val paymentComponent: PaymentComponent?) : Vie
         object ReviewFragment: DisplayedScreen()
     }
 
-    class Factory(val paymentComponent: PaymentComponent?): ViewModelProvider.Factory {
+    class Factory(val paymentComponent: PaymentComponent?, val documentId: String): ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return ContainerViewModel(paymentComponent = paymentComponent) as T
+            return ContainerViewModel(paymentComponent = paymentComponent, documentId = documentId) as T
         }
     }
 }

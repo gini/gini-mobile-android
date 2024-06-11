@@ -216,7 +216,7 @@ class InvoicesActivity : AppCompatActivity() {
     }
 
     private fun showInvoiceDetailsFragment() {
-        InvoiceDetailsFragment.newInstance() .apply {
+        InvoiceDetailsFragment.newInstance().apply {
             add()
         }
     }

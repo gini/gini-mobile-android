@@ -1,5 +1,7 @@
 package net.gini.android.merchant.sdk.bankselection
 
+import android.app.Dialog
+import android.content.DialogInterface
 import android.graphics.Paint
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.imageview.ShapeableImageView
 import kotlinx.coroutines.launch
 import net.gini.android.merchant.sdk.R
@@ -23,6 +26,7 @@ import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.util.BackListener
 import net.gini.android.merchant.sdk.util.GmsBottomSheetDialogFragment
 import net.gini.android.merchant.sdk.util.autoCleared
+import net.gini.android.merchant.sdk.util.extensions.setBackListener
 import net.gini.android.merchant.sdk.util.getLayoutInflaterWithGiniMerchantTheme
 import net.gini.android.merchant.sdk.util.setIntervalClickListener
 import net.gini.android.merchant.sdk.util.wrappedWithGiniMerchantTheme
@@ -32,13 +36,13 @@ import org.slf4j.LoggerFactory
  * The [BankSelectionBottomSheet] displays a list of available banks for the user to choose from. If a banking app is not
  * installed it will also display its Play Store link.
  */
-class BankSelectionBottomSheet private constructor(private val paymentComponent: PaymentComponent?, backListener: BackListener? = null) :
-    GmsBottomSheetDialogFragment(backListener) {
+class BankSelectionBottomSheet private constructor(private val paymentComponent: PaymentComponent?, private val backListener: BackListener? = null) :
+    GmsBottomSheetDialogFragment() {
 
     constructor() : this(null)
 
     private var binding: GmsBottomSheetBankSelectionBinding by autoCleared()
-    private val viewModel: BankSelectionViewModel by viewModels { BankSelectionViewModel.Factory(paymentComponent) }
+    private val viewModel: BankSelectionViewModel by viewModels { BankSelectionViewModel.Factory(paymentComponent, backListener) }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = GmsBottomSheetBankSelectionBinding.inflate(inflater, container, false)
@@ -55,6 +59,7 @@ class BankSelectionBottomSheet private constructor(private val paymentComponent:
             })
 
         binding.gmsCloseButton.setOnClickListener {
+            viewModel.backListener?.backCalled()
             dismiss()
         }
 
@@ -95,9 +100,22 @@ class BankSelectionBottomSheet private constructor(private val paymentComponent:
         }
     }
 
+    override fun onCancel(dialog: DialogInterface) {
+        viewModel.backListener?.backCalled()
+        super.onCancel(dialog)
+    }
+
     override fun onStart() {
         super.onStart()
         viewModel.recheckWhichPaymentProviderAppsAreInstalled()
+    }
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val dialog = super.onCreateDialog(savedInstanceState)
+        viewModel.backListener?.let {
+            (dialog as BottomSheetDialog).setBackListener(it)
+        }
+        return dialog
     }
 
     companion object {

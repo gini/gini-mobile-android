@@ -4,7 +4,6 @@ import android.app.Dialog
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
-import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -12,7 +11,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import net.gini.android.merchant.sdk.R
 
 
-open class GmsBottomSheetDialogFragment (private val cancelListener: BackListener? = null) : BottomSheetDialogFragment() {
+open class GmsBottomSheetDialogFragment: BottomSheetDialogFragment() {
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
         val inflater = super.onGetLayoutInflater(savedInstanceState)
         return this.getLayoutInflaterWithGiniMerchantTheme(inflater)
@@ -29,16 +28,6 @@ open class GmsBottomSheetDialogFragment (private val cancelListener: BackListene
         dialog.behavior.isFitToContents = true
         dialog.behavior.skipCollapsed = true
         dialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
-
-        cancelListener?.let { cancelListener ->
-            dialog.onBackPressedDispatcher.addCallback(object: OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    dismiss()
-                    cancelListener.backCalled()
-                    remove()
-                }
-            })
-        }
 
         return dialog
     }

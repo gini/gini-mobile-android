@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.FileProvider
@@ -54,7 +53,6 @@ import net.gini.android.merchant.sdk.review.openWith.OpenWithBottomSheet
 import net.gini.android.merchant.sdk.review.openWith.OpenWithForwardListener
 import net.gini.android.merchant.sdk.review.openWith.OpenWithPreferences
 import net.gini.android.merchant.sdk.review.pager.DocumentPageAdapter
-import net.gini.android.merchant.sdk.util.BackListener
 import net.gini.android.merchant.sdk.util.amountWatcher
 import net.gini.android.merchant.sdk.util.autoCleared
 import net.gini.android.merchant.sdk.util.clearErrorMessage
@@ -128,7 +126,6 @@ class ReviewFragment private constructor(
     private var binding: GmsFragmentReviewBinding by autoCleared()
     private var documentPageAdapter: DocumentPageAdapter by autoCleared()
     private var isKeyboardShown = false
-    private var backListener: BackListener? = null
 
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
         val inflater = super.onGetLayoutInflater(savedInstanceState)
@@ -164,16 +161,6 @@ class ReviewFragment private constructor(
         // Set info bar bottom margin programmatically to reuse radius dimension with negative sign
         binding.paymentDetailsInfoBar.updateLayoutParams<ConstraintLayout.LayoutParams> {
             bottomMargin = -resources.getDimensionPixelSize(R.dimen.gms_medium_12)
-        }
-
-        backListener?.let {
-            requireActivity().onBackPressedDispatcher.addCallback(object: OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    isEnabled = false
-                    remove()
-                    it.backCalled()
-                }
-            })
         }
     }
 
@@ -606,10 +593,6 @@ class ReviewFragment private constructor(
                 startSharePdfIntent(paymentNextStep.file)
             }
         }
-    }
-
-    fun setBackListener(backListener: BackListener) {
-        this.backListener = backListener
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

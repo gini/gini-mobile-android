@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -18,45 +19,44 @@ import net.gini.android.merchant.sdk.paymentComponentBottomSheet.PaymentComponen
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.merchant.sdk.paymentcomponent.SelectedPaymentProviderAppState
 import net.gini.android.merchant.sdk.review.ReviewConfiguration
-import net.gini.android.merchant.sdk.review.ReviewFragment
 import net.gini.android.merchant.sdk.util.BackListener
 import net.gini.android.merchant.sdk.util.autoCleared
+import net.gini.android.merchant.sdk.util.extensions.add
 import net.gini.android.merchant.sdk.util.getLayoutInflaterWithGiniMerchantTheme
 
-
-class ContainerFragment private constructor(paymentComponent: PaymentComponent?, private val documentId: String) : Fragment(), BackListener {
+class ContainerFragment private constructor(paymentComponent: PaymentComponent?, documentId: String) : Fragment(), BackListener {
 
     constructor(): this(null, "")
     private var binding: GmsFragmentContainerBinding by autoCleared()
     private val viewModel by viewModels<ContainerViewModel> {
-        ContainerViewModel.Factory(paymentComponent)
+        ContainerViewModel.Factory(paymentComponent, documentId)
     }
-    private var originalPaymentComponentListener: PaymentComponent.Listener? = null
 
     private val paymentComponentListener = object: PaymentComponent.Listener {
         override fun onMoreInformationClicked() {
             viewModel.addToBackStack(ContainerViewModel.DisplayedScreen.MoreInformationFragment)
-            childFragmentManager.beginTransaction()
-                .add(binding.gmsFragmentContainerView.id, MoreInformationFragment.newInstance(paymentComponent!!, this@ContainerFragment))
-                .addToBackStack(MoreInformationFragment::class.java.name)
-                .commit()
+            childFragmentManager.add(
+                containerId = binding.gmsFragmentContainerView.id,
+                fragment = MoreInformationFragment.newInstance(viewModel.paymentComponent, this@ContainerFragment),
+                addToBackStack = true
+            )
         }
 
         override fun onBankPickerClicked() {
             viewModel.addToBackStack(ContainerViewModel.DisplayedScreen.BankSelectionBottomSheet)
-            BankSelectionBottomSheet.newInstance(paymentComponent!!, backListener = this@ContainerFragment).show(childFragmentManager, BankSelectionBottomSheet::class.java.name)
+            BankSelectionBottomSheet.newInstance(viewModel.paymentComponent!!, backListener = this@ContainerFragment).show(childFragmentManager, BankSelectionBottomSheet::class.java.name)
         }
 
         override fun onPayInvoiceClicked(documentId: String) {
             viewModel.addToBackStack(ContainerViewModel.DisplayedScreen.ReviewFragment)
             viewModel.viewModelScope.launch {
-                val reviewFragment = paymentComponent?.getPaymentReviewFragment(documentId, ReviewConfiguration())
+                val reviewFragment = viewModel.paymentComponent?.getPaymentReviewFragment(documentId, ReviewConfiguration())
                 reviewFragment?.let {
-                    it.setBackListener(this@ContainerFragment)
-                    childFragmentManager.beginTransaction()
-                        .add(binding.gmsFragmentContainerView.id, it)
-                        .addToBackStack(ReviewFragment::class.java.name)
-                        .commit()
+                    childFragmentManager.add(
+                        containerId = binding.gmsFragmentContainerView.id,
+                        fragment = it,
+                        addToBackStack = true
+                    )
                 }
             }
         }
@@ -74,10 +74,9 @@ class ContainerFragment private constructor(paymentComponent: PaymentComponent?,
                     }
                 }
                 ContainerViewModel.DisplayedScreen.Nothing -> {
-                    viewModel.paymentComponent?.listener = originalPaymentComponentListener
                     requireActivity().supportFragmentManager.popBackStack()
                 }
-                ContainerViewModel.DisplayedScreen.PaymentComponentBottomSheet -> PaymentComponentBottomSheet.newInstance(viewModel.paymentComponent, documentId = documentId,this).show(childFragmentManager, PaymentComponentBottomSheet::class.java.name)
+                ContainerViewModel.DisplayedScreen.PaymentComponentBottomSheet -> PaymentComponentBottomSheet.newInstance(viewModel.paymentComponent, documentId = viewModel.documentId,this).show(childFragmentManager, PaymentComponentBottomSheet::class.java.name)
                 else -> {
 
                 }
@@ -97,7 +96,6 @@ class ContainerFragment private constructor(paymentComponent: PaymentComponent?,
     ): View {
         super.onCreateView(inflater, container, savedInstanceState)
         binding = GmsFragmentContainerBinding.inflate(inflater, container, false)
-        originalPaymentComponentListener = viewModel.paymentComponent?.listener
         viewModel.paymentComponent?.listener = paymentComponentListener
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
@@ -110,9 +108,29 @@ class ContainerFragment private constructor(paymentComponent: PaymentComponent?,
                 }
             }
         }
-        PaymentComponentBottomSheet.newInstance(viewModel.paymentComponent, documentId = documentId, backListener = this@ContainerFragment).show(childFragmentManager, PaymentComponentBottomSheet::class.java.name)
-        viewModel.addToBackStack(ContainerViewModel.DisplayedScreen.PaymentComponentBottomSheet)
+        if (viewModel.getLastBackstackEntry() is ContainerViewModel.DisplayedScreen.Nothing) {
+            showPaymentComponentBottomSheet()
+        }
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object: OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                handleBackFlow()
+            }
+        })
+    }
+
+    private fun showPaymentComponentBottomSheet() {
+        val paymentComponentBottomSheet = PaymentComponentBottomSheet.newInstance(
+            viewModel.paymentComponent,
+            documentId = viewModel.documentId,
+            backListener = this@ContainerFragment
+        )
+        paymentComponentBottomSheet.show(childFragmentManager, PaymentComponentBottomSheet::class.java.name)
+        viewModel.addToBackStack(ContainerViewModel.DisplayedScreen.PaymentComponentBottomSheet)
     }
 
     override fun backCalled() {

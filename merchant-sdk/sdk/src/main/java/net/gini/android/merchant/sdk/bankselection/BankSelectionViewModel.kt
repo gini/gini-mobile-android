@@ -12,9 +12,10 @@ import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentProviderAppsState
 import net.gini.android.merchant.sdk.paymentcomponent.SelectedPaymentProviderAppState
 import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
+import net.gini.android.merchant.sdk.util.BackListener
 import org.slf4j.LoggerFactory
 
-internal class BankSelectionViewModel(val paymentComponent: PaymentComponent?) : ViewModel() {
+internal class BankSelectionViewModel(val paymentComponent: PaymentComponent?, val backListener: BackListener?) : ViewModel() {
 
     private val _paymentProviderAppsListFlow =
         MutableStateFlow<PaymentProviderAppsListState>(PaymentProviderAppsListState.Loading)
@@ -98,10 +99,10 @@ internal class BankSelectionViewModel(val paymentComponent: PaymentComponent?) :
         }
     }
 
-    class Factory(private val paymentComponent: PaymentComponent?) : ViewModelProvider.Factory {
+    class Factory(private val paymentComponent: PaymentComponent?, private val backListener: BackListener? = null) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return BankSelectionViewModel(paymentComponent) as T
+            return BankSelectionViewModel(paymentComponent, backListener) as T
         }
     }
 
