@@ -3,9 +3,11 @@ package net.gini.android.health.api
 import android.content.Context
 import android.graphics.BitmapFactory
 import android.util.Log
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.async
 import kotlinx.coroutines.test.runTest
 import net.gini.android.bank.api.GiniBankAPI
 import net.gini.android.bank.api.GiniBankAPIBuilder
@@ -42,6 +44,24 @@ class GiniHealthAPIIntegrationTest: GiniCoreAPIIntegrationTest<HealthApiDocument
 
     override fun onTestPropertiesAvailable(properties: Properties) {
         bankApiUri = getProperty(properties, "testBankApiUri")
+    }
+
+    @Test
+    @Throws(java.lang.Exception::class)
+    fun getDocumentExpirationDate() = runTest(timeout = 30.seconds) {
+        val assetManager = getApplicationContext<Context>().resources.assets
+        val page1Stream = assetManager.open("test.jpg")
+        Assert.assertNotNull("test image could not be loaded", page1Stream)
+
+        val page = TestUtils.createByteArray(page1Stream)
+
+        val partialDocument = giniCoreApi.documentManager.createPartialDocument(page, "image/png").dataOrThrow
+
+        val documentRotationDeltaMap = linkedMapOf(partialDocument to 0)
+
+        val compositeDocument = giniCoreApi.documentManager.createCompositeDocument(documentRotationDeltaMap).dataOrThrow
+
+        Assert.assertNotNull("IBAN should be found", compositeDocument.expirationDate)
     }
 
     @Test
