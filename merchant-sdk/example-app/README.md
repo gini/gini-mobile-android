@@ -1,11 +1,11 @@
 Gini Merchant SDK Example App
-=========================
+=============================
 
 This example app provides you with a sample usage of the Gini Merchant SDK.
 
 The Gini Health API Library is used for analyzing documents and creating payment requests.
 
-Before using the Gini Merchant SDK example app, you need to set your Gini Health API client id and secret by creating a
+Before using the Gini Merchant SDK example app, you need to set your Gini Merchant API client id and secret by creating a
 `local.properties` file in this folder containing a `clientId` and a `clientSecret` property.
 
 ProGuard 
