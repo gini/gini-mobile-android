@@ -14,13 +14,12 @@ import net.gini.android.capture.internal.util.FeatureConfiguration;
 import net.gini.android.capture.tracking.OnboardingScreenEvent;
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent;
-import net.gini.android.capture.tracking.useranalytics.UserAnalyticsExtraProperties;
-import net.gini.android.capture.tracking.useranalytics.UserAnalyticsMappersKt;
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventProperty;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen;
 
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by Alpar Szotyori on 20.05.2019.
@@ -107,13 +106,15 @@ class OnboardingScreenPresenter extends OnboardingScreenContract.Presenter {
         }
 
         boolean hasCustomItems = customPages != null && !customPages.isEmpty();
-        Map<UserAnalyticsExtraProperties, Object> eventProperties = new HashMap<>();
+        Set<UserAnalyticsEventProperty> eventProperties = new HashSet<>();
 
         if (event == UserAnalyticsEvent.SCREEN_SHOWN) {
-            eventProperties.put(UserAnalyticsExtraProperties.ONBOARDING_HAS_CUSTOM_ITEMS, UserAnalyticsMappersKt.mapToAnalyticsValue(hasCustomItems));
+            eventProperties.add(new UserAnalyticsEventProperty.OnboardingHasCustomItems(hasCustomItems));
         }
         if (hasCustomItems) {
-            eventProperties.put(UserAnalyticsExtraProperties.CUSTOM_ONBOARDING_TITLE, String.valueOf(mPages.get(pageIndex).getTitleResId()));
+            eventProperties.add(
+                    new UserAnalyticsEventProperty.CustomOnboardingTitle(String.valueOf(mPages.get(pageIndex).getTitleResId()))
+            );
             UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(
                     event, new UserAnalyticsScreen.OnboardingCustom(pageIndex), eventProperties
             );

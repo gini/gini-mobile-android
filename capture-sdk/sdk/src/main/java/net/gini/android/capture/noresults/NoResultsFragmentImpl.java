@@ -30,8 +30,8 @@ import net.gini.android.capture.internal.util.CancelListener;
 import net.gini.android.capture.tracking.AnalysisScreenEvent;
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent;
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventProperty;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker;
-import net.gini.android.capture.tracking.useranalytics.UserAnalyticsExtraProperties;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsMappersKt;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen;
 import net.gini.android.capture.view.InjectedViewAdapterHolder;
@@ -39,7 +39,7 @@ import net.gini.android.capture.view.InjectedViewContainer;
 import net.gini.android.capture.view.NavButtonType;
 import net.gini.android.capture.view.NavigationBarTopAdapter;
 
-import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * Main logic implementation for no results UI presented by {@link NoResultsFragment}.
@@ -93,10 +93,12 @@ class NoResultsFragmentImpl {
         handleOnBackPressed();
         mUserAnalyticsEventTracker = UserAnalytics.INSTANCE.getAnalyticsEventTracker();
         mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.SCREEN_SHOWN, screenName,
-                new HashMap<UserAnalyticsExtraProperties, String>() {{
-                    put(UserAnalyticsExtraProperties.DOCUMENT_ID, mDocument.getId());
-                    put(UserAnalyticsExtraProperties.DOCUMENT_TYPE, UserAnalyticsMappersKt.mapToAnalyticsDocumentType(mDocument));
-                }}
+                new HashSet<UserAnalyticsEventProperty>() {
+                    {
+                        add(new UserAnalyticsEventProperty.DocumentId(mDocument.getId()));
+                        add(new UserAnalyticsEventProperty.DocumentType(UserAnalyticsMappersKt.mapToAnalyticsDocumentType(mDocument)));
+                    }
+                }
         );
         if (shouldAllowRetakeImages()) {
             ClickListenerExtKt.setIntervalClickListener(retakeImagesButton, v -> {

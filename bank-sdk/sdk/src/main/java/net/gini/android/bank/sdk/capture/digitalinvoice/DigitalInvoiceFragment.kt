@@ -33,7 +33,7 @@ import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
-import net.gini.android.capture.tracking.useranalytics.UserAnalyticsExtraProperties
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventProperty
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen
 import net.gini.android.capture.tracking.useranalytics.mapToAnalyticsValue
 import net.gini.android.capture.internal.util.CancelListener
@@ -526,7 +526,7 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
         userAnalyticsEventTracker.trackEvent(
             UserAnalyticsEvent.ITEM_SWITCH_TAPPED,
             screenName,
-            mapOf(UserAnalyticsExtraProperties.SWITCH_ACTIVE to selected.mapToAnalyticsValue())
+            setOf(UserAnalyticsEventProperty.SwitchActive(selected))
         )
     }
 

@@ -22,7 +22,7 @@ import net.gini.android.capture.tracking.EventTrackingHelper
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics.getAnalyticsEventTracker
-import net.gini.android.capture.tracking.useranalytics.UserAnalyticsExtraProperties
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventProperty
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen
 import net.gini.android.capture.tracking.useranalytics.mapToAnalyticsDocumentType
 import net.gini.android.capture.tracking.useranalytics.mapToAnalyticsErrorType
@@ -113,18 +113,16 @@ class ErrorFragmentImpl(
     }
 
     private fun addUserAnalyticEvents() {
+        val errorMessage = customError ?:
+        fragmentCallback.activity?.getString(errorType?.titleTextResource ?: 0).toString()
         mUserAnalyticsEventTracker.trackEvent(
             UserAnalyticsEvent.SCREEN_SHOWN,
             screenName,
-            mapOf(
-                UserAnalyticsExtraProperties.DOCUMENT_TYPE
-                        to  document?.mapToAnalyticsDocumentType().toString(),
-                UserAnalyticsExtraProperties.DOCUMENT_ID
-                        to document?.id.toString(),
-                UserAnalyticsExtraProperties.ERROR_TYPE
-                        to errorType?.mapToAnalyticsErrorType().toString(),
-                UserAnalyticsExtraProperties.ERROR_MESSAGE
-                        to (customError ?: fragmentCallback.activity?.getString(errorType?.titleTextResource ?: 0).toString())
+            setOf(
+                UserAnalyticsEventProperty.DocumentType(document.mapToAnalyticsDocumentType()),
+                UserAnalyticsEventProperty.DocumentId(document?.id.toString()),
+                UserAnalyticsEventProperty.ErrorType(errorType.mapToAnalyticsErrorType()),
+                UserAnalyticsEventProperty.ErrorMessage(errorMessage)
             ),
         )
     }

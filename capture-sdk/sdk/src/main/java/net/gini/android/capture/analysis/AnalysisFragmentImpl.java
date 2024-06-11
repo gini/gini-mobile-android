@@ -35,7 +35,7 @@ import net.gini.android.capture.internal.util.Size;
 import net.gini.android.capture.tracking.AnalysisScreenEvent;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent;
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics;
-import net.gini.android.capture.tracking.useranalytics.UserAnalyticsExtraProperties;
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventProperty;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsMappersKt;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen;
 import net.gini.android.capture.internal.util.CancelListener;
@@ -95,11 +95,13 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     }
 
     private void addUserAnalyticEvents(@NonNull Document document) {
-        String userAnalysisDocumentType = UserAnalyticsMappersKt.mapToAnalyticsDocumentType(document);
         UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(
                 UserAnalyticsEvent.SCREEN_SHOWN,
                 screenName,
-                Collections.singletonMap(UserAnalyticsExtraProperties.DOCUMENT_TYPE, userAnalysisDocumentType)
+                Collections.singleton(
+                        new UserAnalyticsEventProperty.DocumentType(
+                                UserAnalyticsMappersKt.mapToAnalyticsDocumentType(document)
+                        ))
         );
     }
 

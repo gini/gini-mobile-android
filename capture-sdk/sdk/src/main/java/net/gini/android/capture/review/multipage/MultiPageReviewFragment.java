@@ -60,7 +60,7 @@ import net.gini.android.capture.tracking.ReviewScreenEvent.UPLOAD_ERROR_DETAILS_
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker;
-import net.gini.android.capture.tracking.useranalytics.UserAnalyticsExtraProperties;
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventProperty;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen;
 import net.gini.android.capture.view.InjectedViewAdapterHolder;
 import net.gini.android.capture.view.InjectedViewContainer;
@@ -678,7 +678,9 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
         mUserAnalyticsEventTracker.trackEvent(
                 UserAnalyticsEvent.PROCEED_TAPPED,
                 screenName,
-                Collections.singletonMap(UserAnalyticsExtraProperties.DOCUMENT_PAGE_NUMBER, String.valueOf(mMultiPageDocument.getDocuments().size()))
+                Collections.singleton(new UserAnalyticsEventProperty
+                        .DocumentPageNumber(mMultiPageDocument.getDocuments().size())
+                )
         );
         mNextClicked = true;
         NavHostFragment.findNavController(this).navigate(MultiPageReviewFragmentDirections.toAnalysisFragment(mMultiPageDocument, ""));

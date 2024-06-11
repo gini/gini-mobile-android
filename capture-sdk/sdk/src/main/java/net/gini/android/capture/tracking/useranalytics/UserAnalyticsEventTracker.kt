@@ -1,10 +1,6 @@
 package net.gini.android.capture.tracking.useranalytics
 
-import android.accessibilityservice.AccessibilityServiceInfo
 import android.content.Context
-import android.content.Context.ACCESSIBILITY_SERVICE
-import android.provider.Settings
-import android.view.accessibility.AccessibilityManager
 import com.mixpanel.android.mpmetrics.MixpanelAPI
 import net.gini.android.capture.R
 import net.gini.android.capture.internal.provider.InstallationIdProvider
@@ -25,7 +21,7 @@ interface UserAnalyticsEventTracker {
     fun trackEvent(
         eventName: UserAnalyticsEvent,
         screen: UserAnalyticsScreen,
-        properties: Map<UserAnalyticsExtraProperties, Any>
+        properties: Set<UserAnalyticsEventProperty>,
     )
 }
 
@@ -92,19 +88,17 @@ private class MixPanelUserAnalyticsEventTracker(
     }
 
     override fun trackEvent(eventName: UserAnalyticsEvent, screen: UserAnalyticsScreen) {
-        trackEvent(eventName, screen, emptyMap())
+        trackEvent(eventName, screen, emptySet())
     }
 
     override fun trackEvent(
         eventName: UserAnalyticsEvent,
         screen: UserAnalyticsScreen,
-        properties: Map<UserAnalyticsExtraProperties, Any>
+        properties: Set<UserAnalyticsEventProperty>
     ) {
-        val defaultProperties = mapOf<String, Any>(
-            UserAnalyticsExtraProperties.SCREEN.propertyName to screen.name
-        )
-        val finalProperties = defaultProperties.plus(properties.mapKeys { it.key.propertyName })
-        mixpanelAPI.trackMap(eventName.eventName, finalProperties)
+        val defaultProperties = setOf(UserAnalyticsEventProperty.Screen(screen))
+        val finalProperties = defaultProperties.plus(properties)
+        mixpanelAPI.trackMap(eventName.eventName, finalProperties.associate { it.getPair() })
     }
 }
 

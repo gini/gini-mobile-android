@@ -16,7 +16,7 @@ import net.gini.android.capture.internal.util.autoCleared
 import net.gini.android.capture.internal.util.getLayoutInflaterWithGiniCaptureTheme
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
-import net.gini.android.capture.tracking.useranalytics.UserAnalyticsExtraProperties
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventProperty
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen
 import net.gini.android.capture.tracking.useranalytics.mapToAnalyticsValue
 import net.gini.android.capture.view.InjectedViewAdapterHolder
@@ -140,9 +140,9 @@ class HelpFragment : Fragment() {
         val helpItems = helpItemsAdapter.items.map { "\"${getString(it.title)}\"" }
 
         userAnalyticsEventTracker.trackEvent(
-            UserAnalyticsEvent.SCREEN_SHOWN, screenName, mapOf(
-                UserAnalyticsExtraProperties.HAS_CUSTOM_ITEMS to hasCustomItems.mapToAnalyticsValue(),
-                UserAnalyticsExtraProperties.HELP_ITEMS to helpItems.toString(),
+            UserAnalyticsEvent.SCREEN_SHOWN, screenName, setOf(
+                UserAnalyticsEventProperty.HasCustomItems(hasCustomItems),
+                UserAnalyticsEventProperty.HelpItems(helpItems),
             )
         )
     }
@@ -157,7 +157,7 @@ class HelpFragment : Fragment() {
         userAnalyticsEventTracker.trackEvent(
             UserAnalyticsEvent.HELP_ITEM_TAPPED,
             screenName,
-            mapOf(UserAnalyticsExtraProperties.ITEM_TAPPED to getString(helpItem.title))
+            setOf(UserAnalyticsEventProperty.ItemTapped(getString(helpItem.title)))
         )
     }
 
