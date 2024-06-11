@@ -22,7 +22,7 @@ import net.gini.android.capture.tracking.EventTrackingHelper
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics.getAnalyticsEventTracker
-import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventProperty
+import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen
 import net.gini.android.capture.tracking.useranalytics.mapToAnalyticsDocumentType
 import net.gini.android.capture.tracking.useranalytics.mapToAnalyticsErrorType

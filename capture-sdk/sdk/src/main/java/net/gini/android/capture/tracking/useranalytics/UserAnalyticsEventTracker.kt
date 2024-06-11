@@ -4,6 +4,7 @@ import android.content.Context
 import com.mixpanel.android.mpmetrics.MixpanelAPI
 import net.gini.android.capture.R
 import net.gini.android.capture.internal.provider.InstallationIdProvider
+import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventSuperProperty
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsUserProperty
 

@@ -14,7 +14,7 @@ import net.gini.android.capture.internal.util.FeatureConfiguration;
 import net.gini.android.capture.tracking.OnboardingScreenEvent;
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent;
-import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventProperty;
+import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen;
 
 import java.util.HashSet;

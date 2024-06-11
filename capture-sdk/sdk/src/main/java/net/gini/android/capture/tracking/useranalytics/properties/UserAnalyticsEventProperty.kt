@@ -1,6 +1,7 @@
-package net.gini.android.capture.tracking.useranalytics
+package net.gini.android.capture.tracking.useranalytics.properties
 
-import net.gini.android.capture.tracking.useranalytics.properties.AnalyticsKeyPairProperty
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen
+import net.gini.android.capture.tracking.useranalytics.mapToAnalyticsValue
 
 sealed class UserAnalyticsEventProperty(key: String, value: String) :
     AnalyticsKeyPairProperty(key, value) {
