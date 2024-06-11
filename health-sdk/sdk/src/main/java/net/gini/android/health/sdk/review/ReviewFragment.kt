@@ -151,6 +151,7 @@ class ReviewFragment private constructor(
         viewModel.userPreferences = UserPreferences(requireContext())
         viewModel.openWithPreferences = OpenWithPreferences(requireContext())
         viewModel.startObservingOpenWithCount()
+        viewModel.loadPaymentDetails()
 
         with(binding) {
             setStateListeners()
@@ -607,7 +608,8 @@ class ReviewFragment private constructor(
             configuration: ReviewConfiguration = ReviewConfiguration(),
             listener: ReviewFragmentListener? = null,
             paymentComponent: PaymentComponent,
-            viewModelFactory: ViewModelProvider.Factory = ReviewViewModel.Factory(giniHealth, configuration, paymentComponent),
+            documentId: String,
+            viewModelFactory: ViewModelProvider.Factory = ReviewViewModel.Factory(giniHealth, configuration, paymentComponent, documentId),
         ): ReviewFragment = ReviewFragment(listener, paymentComponent, viewModelFactory)
     }
 }
