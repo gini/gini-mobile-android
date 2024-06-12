@@ -430,7 +430,7 @@ class PaymentComponentTest {
     }
 
     @Test(expected = IllegalStateException::class)
-    fun `throws exception when trying to create ReviewFragment if no payment provider app is set`() = runTest {
+    fun `throws exception when trying to create ReviewFragment if no payment provider app is set`() {
         // Given
         val reviewConfiguration: ReviewConfiguration = mockk(relaxed = true)
         val paymentComponent = PaymentComponent(context!!, giniHealth!!)
@@ -440,7 +440,7 @@ class PaymentComponentTest {
     }
 
     @Test
-    fun `instantiates review fragment if payment provider app is set`() = runTest {
+    fun `instantiates review fragment if payment provider app is set`() {
         // Given
         val reviewConfiguration: ReviewConfiguration = mockk(relaxed = true)
         val paymentComponent: PaymentComponent = mockk(relaxed = true)

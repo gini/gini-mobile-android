@@ -40,7 +40,12 @@ import org.slf4j.LoggerFactory
 import java.io.File
 
 
-internal class ReviewViewModel(val giniHealth: GiniHealth, val configuration: ReviewConfiguration, val paymentComponent: PaymentComponent) : ViewModel() {
+internal class ReviewViewModel(
+    val giniHealth: GiniHealth,
+    val configuration: ReviewConfiguration,
+    val paymentComponent: PaymentComponent,
+    val documentId: String
+) : ViewModel() {
 
     internal var userPreferences: UserPreferences? = null
     internal var openWithPreferences: OpenWithPreferences? = null
@@ -325,6 +330,12 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val configuration: Re
         sendFeedback()
     }
 
+    fun loadPaymentDetails() {
+        viewModelScope.launch {
+            giniHealth.setDocumentForReview(documentId)
+        }
+    }
+
     sealed class PaymentNextStep {
         object RedirectToBank: PaymentNextStep()
         object ShowOpenWithSheet: PaymentNextStep()
@@ -333,11 +344,16 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val configuration: Re
         data class SetLoadingVisibility(val isVisible: Boolean): PaymentNextStep()
     }
 
-    class Factory(private val giniHealth: GiniHealth, private val configuration: ReviewConfiguration, private val paymentComponent: PaymentComponent) :
+    class Factory(
+        private val giniHealth: GiniHealth,
+        private val configuration: ReviewConfiguration,
+        private val paymentComponent: PaymentComponent,
+        private val documentId: String
+    ) :
         ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return ReviewViewModel(giniHealth, configuration, paymentComponent) as T
+            return ReviewViewModel(giniHealth, configuration, paymentComponent, documentId) as T
         }
     }
 

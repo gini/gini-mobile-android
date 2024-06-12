@@ -1,7 +1,6 @@
 package net.gini.android.health.sdk.paymentcomponent
 
 import android.content.Context
-import android.util.Log
 import androidx.annotation.VisibleForTesting
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -198,10 +197,8 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
      * @param configuration The configuration for the [ReviewFragment]
      * @throws IllegalStateException If no payment provider app has been selected
      */
-    suspend fun getPaymentReviewFragment(documentId: String, configuration: ReviewConfiguration): ReviewFragment {
+    fun getPaymentReviewFragment(documentId: String, configuration: ReviewConfiguration): ReviewFragment {
         LOG.debug("Getting payment review fragment for id: {}", documentId)
-
-        giniHealth.setDocumentForReview(documentId)
 
         when (val selectedPaymentProviderAppState = _selectedPaymentProviderAppFlow.value) {
             is SelectedPaymentProviderAppState.AppSelected -> {
@@ -210,7 +207,8 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
                 return ReviewFragment.newInstance(
                     giniHealth,
                     configuration = configuration,
-                    paymentComponent = this@PaymentComponent
+                    paymentComponent = this@PaymentComponent,
+                    documentId = documentId
                 )
             }
 

@@ -3,8 +3,6 @@ package net.gini.android.health.sdk.exampleapp.invoices.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import net.gini.android.health.sdk.exampleapp.invoices.data.InvoicesRepository
@@ -27,9 +25,6 @@ class InvoicesViewModel(
         }
     }
     val paymentProviderAppsFlow = paymentComponent.paymentProviderAppsFlow
-
-    val _paymentReviewFragmentFlow = MutableStateFlow<PaymentReviewFragmentState>(PaymentReviewFragmentState.Idle)
-    val paymentReviewFragmentStateFlow = _paymentReviewFragmentFlow.asStateFlow()
 
     val openBankState = invoicesRepository.giniHealth.openBankState
 
@@ -60,31 +55,24 @@ class InvoicesViewModel(
         }
     }
 
-    fun getPaymentReviewFragment(documentId: String) {
-        viewModelScope.launch {
-            LOG.debug("Getting payment review fragment for id: {}", documentId)
+    fun getPaymentReviewFragment(documentId: String): Result<ReviewFragment> {
+        val documentWithExtractions =
+            invoicesRepository.invoicesFlow.value.find { it.documentId == documentId }
 
-            _paymentReviewFragmentFlow.value = PaymentReviewFragmentState.Loading
-
-            val documentWithExtractions =
-                invoicesRepository.invoicesFlow.value.find { it.documentId == documentId }
-
-            if (documentWithExtractions != null) {
-                try {
-                    val paymentReviewFragment = paymentComponent.getPaymentReviewFragment(
-                        documentWithExtractions.documentId,
-                        ReviewConfiguration(showCloseButton = true)
-                    )
-                    _paymentReviewFragmentFlow.value = PaymentReviewFragmentState.Success(paymentReviewFragment)
-                } catch (e: Exception) {
-                    LOG.error("Error getting payment review fragment", e)
-                    _paymentReviewFragmentFlow.value = PaymentReviewFragmentState.Error(e)
-                }
-            } else {
-                LOG.error("Document with id {} not found", documentId)
-                _paymentReviewFragmentFlow.value = PaymentReviewFragmentState.Error(IllegalStateException("Document with id $documentId not found"))
+        return if (documentWithExtractions != null) {
+            return try {
+                val paymentReviewFragment = paymentComponent.getPaymentReviewFragment(
+                    documentWithExtractions.documentId,
+                    ReviewConfiguration(showCloseButton = true)
+                )
+                Result.success(paymentReviewFragment)
+            } catch (e: Exception) {
+                LOG.error("Error getting payment review fragment", e)
+                Result.failure(e)
             }
-            _paymentReviewFragmentFlow.emit(PaymentReviewFragmentState.Idle)
+        } else {
+            LOG.error("Document with id {} not found", documentId)
+            Result.failure(IllegalStateException("Document with id $documentId not found"))
         }
     }
 
@@ -92,11 +80,4 @@ class InvoicesViewModel(
         private val LOG = LoggerFactory.getLogger(InvoicesViewModel::class.java)
 
     }
-}
-
-sealed class PaymentReviewFragmentState {
-    object Loading : PaymentReviewFragmentState()
-    data class Success(val fragment: ReviewFragment) : PaymentReviewFragmentState()
-    data class Error(val throwable: Throwable) : PaymentReviewFragmentState()
-    object Idle : PaymentReviewFragmentState()
 }
