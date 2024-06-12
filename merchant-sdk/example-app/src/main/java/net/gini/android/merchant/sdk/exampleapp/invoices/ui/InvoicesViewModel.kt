@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import net.gini.android.merchant.sdk.exampleapp.invoices.data.InvoicesRepository
 import net.gini.android.merchant.sdk.exampleapp.invoices.ui.model.InvoiceItem
+import net.gini.android.merchant.sdk.integratedFlow.ContainerFragment
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.merchant.sdk.review.ReviewConfiguration
 import net.gini.android.merchant.sdk.review.ReviewFragment
@@ -38,7 +39,7 @@ class InvoicesViewModel(
     private val _selectedInvoiceItem: MutableStateFlow<InvoiceItem?> = MutableStateFlow(null)
     val selectedInvoiceItem: StateFlow<InvoiceItem?> = _selectedInvoiceItem
 
-    private val _startIntegratedPaymentFlow = MutableSharedFlow<String>(
+    private val _startIntegratedPaymentFlow = MutableSharedFlow<ContainerFragment>(
         extraBufferCapacity = 1
     )
     val startIntegratedPaymentFlow = _startIntegratedPaymentFlow
@@ -103,7 +104,7 @@ class InvoicesViewModel(
     }
 
     fun startIntegratedPaymentFlow(documentId: String) {
-        _startIntegratedPaymentFlow.tryEmit(documentId)
+        _startIntegratedPaymentFlow.tryEmit(paymentComponent.getContainerFragment(documentId))
     }
 
     companion object {

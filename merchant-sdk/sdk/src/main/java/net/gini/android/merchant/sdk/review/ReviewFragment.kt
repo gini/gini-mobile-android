@@ -53,6 +53,7 @@ import net.gini.android.merchant.sdk.review.openWith.OpenWithBottomSheet
 import net.gini.android.merchant.sdk.review.openWith.OpenWithForwardListener
 import net.gini.android.merchant.sdk.review.openWith.OpenWithPreferences
 import net.gini.android.merchant.sdk.review.pager.DocumentPageAdapter
+import net.gini.android.merchant.sdk.util.GiniPayment
 import net.gini.android.merchant.sdk.util.amountWatcher
 import net.gini.android.merchant.sdk.util.autoCleared
 import net.gini.android.merchant.sdk.util.clearErrorMessage
@@ -150,6 +151,7 @@ class ReviewFragment private constructor(
         viewModel.userPreferences = UserPreferences(requireContext())
         viewModel.openWithPreferences = OpenWithPreferences(requireContext())
         viewModel.startObservingOpenWithCount()
+        viewModel.loadPaymentDetails()
 
         with(binding) {
             setStateListeners()
@@ -546,7 +548,7 @@ class ReviewFragment private constructor(
     }
 
     private fun redirectToBankApp(paymentProviderApp: PaymentProviderApp) {
-        listener?.onToTheBankButtonClicked(paymentProviderApp.name ?: "")
+        listener?.onToTheBankButtonClicked(paymentProviderApp.name)
         viewModel.onPayment()
     }
 
@@ -581,9 +583,8 @@ class ReviewFragment private constructor(
                 binding.loading.isVisible = paymentNextStep.isVisible
             }
             ReviewViewModel.PaymentNextStep.RedirectToBank -> {
-                viewModel.paymentProviderApp.value?.name?.let {
-                    listener?.onToTheBankButtonClicked(it)
-                    viewModel.onPayment()
+                viewModel.paymentProviderApp.value?.let {
+                    redirectToBankApp(it)
                 }
             }
             ReviewViewModel.PaymentNextStep.ShowOpenWithSheet -> viewModel.paymentProviderApp.value?.let { showOpenWithDialog(it) }
@@ -607,7 +608,9 @@ class ReviewFragment private constructor(
             configuration: ReviewConfiguration = ReviewConfiguration(),
             listener: ReviewFragmentListener? = null,
             paymentComponent: PaymentComponent,
-            viewModelFactory: ViewModelProvider.Factory = ReviewViewModel.Factory(giniMerchant, configuration, paymentComponent),
+            documentId: String,
+            giniPayment: GiniPayment = GiniPayment(giniMerchant),
+            viewModelFactory: ViewModelProvider.Factory = ReviewViewModel.Factory(giniMerchant, configuration, paymentComponent, documentId, giniPayment),
         ): ReviewFragment = ReviewFragment(listener, paymentComponent, viewModelFactory)
     }
 }

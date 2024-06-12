@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import net.gini.android.core.api.Resource
 import net.gini.android.health.api.models.PaymentProvider
 import net.gini.android.merchant.sdk.GiniMerchant
+import net.gini.android.merchant.sdk.integratedFlow.ContainerFragment
 import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.paymentprovider.getPaymentProviderApps
 import net.gini.android.merchant.sdk.review.ReviewConfiguration
@@ -195,10 +196,8 @@ class PaymentComponent(private val context: Context, private val giniMerchant: G
      * @param configuration The configuration for the [ReviewFragment]
      * @throws IllegalStateException If no payment provider app has been selected
      */
-    suspend fun getPaymentReviewFragment(documentId: String, configuration: ReviewConfiguration): ReviewFragment {
+    fun getPaymentReviewFragment(documentId: String, configuration: ReviewConfiguration): ReviewFragment {
         LOG.debug("Getting payment review fragment for id: {}", documentId)
-
-        giniMerchant.setDocumentForReview(documentId)
 
         when (val selectedPaymentProviderAppState = _selectedPaymentProviderAppFlow.value) {
             is SelectedPaymentProviderAppState.AppSelected -> {
@@ -207,7 +206,8 @@ class PaymentComponent(private val context: Context, private val giniMerchant: G
                 return ReviewFragment.newInstance(
                     giniMerchant,
                     configuration = configuration,
-                    paymentComponent = this@PaymentComponent
+                    paymentComponent = this@PaymentComponent,
+                    documentId = documentId
                 )
             }
 
@@ -220,6 +220,12 @@ class PaymentComponent(private val context: Context, private val giniMerchant: G
             }
         }
     }
+
+    fun getContainerFragment(documentId: String) = ContainerFragment.newInstance(
+        giniMerchant = giniMerchant,
+        paymentComponent = this,
+        documentId = documentId
+    )
 
     internal suspend fun onPayInvoiceClicked(documentId: String) {
         paymentComponentPreferences.saveReturningUser()

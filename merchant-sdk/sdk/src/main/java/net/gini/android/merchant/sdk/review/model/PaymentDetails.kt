@@ -102,3 +102,11 @@ internal fun MutableMap<String, CompoundExtraction>.withFeedback(paymentDetails:
 }
 
 internal fun MutableMap<String, CompoundExtraction>.getPaymentExtraction(name: String) = this["payment"]?.specificExtractionMaps?.get(0)?.get(name)
+
+internal fun PaymentDetails.overwriteEmptyFields(value: PaymentDetails): PaymentDetails = this.copy(
+    recipient = if (recipient.trim().isEmpty()) value.recipient else recipient,
+    iban = if (iban.trim().isEmpty()) value.iban else iban,
+    amount = if (amount.trim().isEmpty()) value.amount else amount,
+    purpose = if (purpose.trim().isEmpty()) value.purpose else purpose,
+    extractions = extractions ?: value.extractions,
+)

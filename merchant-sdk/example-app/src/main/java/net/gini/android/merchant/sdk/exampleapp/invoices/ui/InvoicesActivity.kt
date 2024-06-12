@@ -140,8 +140,8 @@ class InvoicesActivity : AppCompatActivity() {
                     }
                 }
                 launch {
-                    viewModel.startIntegratedPaymentFlow.collect { documentId ->
-                        startIntegratedPaymentFlow(documentId)
+                    viewModel.startIntegratedPaymentFlow.collect { containerFragment ->
+                        startIntegratedPaymentFlow(containerFragment)
                     }
                 }
             }
@@ -221,8 +221,8 @@ class InvoicesActivity : AppCompatActivity() {
         }
     }
 
-    private fun startIntegratedPaymentFlow(documentId: String) {
-        ContainerFragment.newInstance(paymentComponent = viewModel.paymentComponent, documentId= documentId).apply {
+    private fun startIntegratedPaymentFlow(containerFragment: ContainerFragment) {
+        containerFragment.apply {
             add()
         }
     }
