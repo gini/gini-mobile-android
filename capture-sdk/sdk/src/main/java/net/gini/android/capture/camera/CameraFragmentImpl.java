@@ -196,7 +196,9 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private CameraInterface mCameraController;
     private ImageMultiPageDocument mMultiPageDocument;
     private PaymentQRCodeReader mPaymentQRCodeReader;
-    private UserAnalyticsEventTracker mUserAnalyticsEventTracker;
+
+    @VisibleForTesting
+    UserAnalyticsEventTracker mUserAnalyticsEventTracker;
 
 
     private ConstraintLayout mLayoutRoot;
