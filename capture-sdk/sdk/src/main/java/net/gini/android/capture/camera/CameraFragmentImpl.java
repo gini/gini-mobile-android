@@ -343,8 +343,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         if (savedInstanceState != null) {
             restoreSavedState(savedInstanceState);
         }
-        // TODO Remove it after migration to GiniCapture.initialize(context) - next major release (from version 3 to 4)
-        UserAnalytics.INSTANCE.initialize(this.mFragment.getActivity().getApplicationContext());
 
     }
 

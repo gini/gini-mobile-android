@@ -25,14 +25,16 @@ import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.noresults.NoResultsFragment
 import net.gini.android.capture.review.multipage.MultiPageReviewFragment
+import net.gini.android.capture.tracking.useranalytics.UserAnalytics
+import java.util.UUID
+
 
 class GiniCaptureFragment(private val openWithDocument: Document? = null) :
     Fragment(),
     CameraFragmentListener,
     AnalysisFragmentListener,
     EnterManuallyButtonListener,
-    CancelListener
-{
+    CancelListener {
 
     private lateinit var navController: NavController
     private lateinit var giniCaptureFragmentListener: GiniCaptureFragmentListener
@@ -53,10 +55,26 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
             cameraListener = this,
             analysisFragmentListener = this,
             enterManuallyButtonListener = this,
-            cancelListener = this)
+            cancelListener = this
+        )
         super.onCreate(savedInstanceState)
         if (GiniCapture.hasInstance() && !GiniCapture.getInstance().allowScreenshots) {
             requireActivity().window.disallowScreenshots()
+        }
+
+        if (GiniCapture.hasInstance()) {
+            UserAnalytics.initialize(requireActivity())
+            val networkRequestsManager =
+                GiniCapture.getInstance().internal().networkRequestsManager
+            val response = networkRequestsManager
+                ?.getConfigurations(UUID.randomUUID())
+            response?.thenAcceptAsync { res ->
+                UserAnalytics.setPlatformTokens(
+                    mixpanelToken = res.configuration.mixpanelToken,
+                    amplitudeApiKey = res.configuration.amplitudeApiKey
+                )
+            }
+
         }
     }
 
@@ -87,7 +105,10 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
                 )
             )
         } else {
-            if (shouldShowOnboarding() || (shouldShowOnboardingAtFirstRun() && !oncePerInstallEventStore.containsEvent(OncePerInstallEvent.SHOW_ONBOARDING))) {
+            if (shouldShowOnboarding() || (shouldShowOnboardingAtFirstRun() && !oncePerInstallEventStore.containsEvent(
+                    OncePerInstallEvent.SHOW_ONBOARDING
+                ))
+            ) {
                 oncePerInstallEventStore.saveEvent(OncePerInstallEvent.SHOW_ONBOARDING)
                 navController.navigate(CameraFragmentDirections.toOnboardingFragment())
             }
@@ -222,7 +243,7 @@ class CaptureFragmentFactory(
                         analysisFragmentListener
                     )
                     setCancelListener(cancelListener)
-            }
+                }
 
             ErrorFragment::class.java.name -> return ErrorFragment().apply {
                 setListener(

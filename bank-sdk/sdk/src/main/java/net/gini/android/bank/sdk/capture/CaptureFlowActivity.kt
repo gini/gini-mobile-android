@@ -22,7 +22,8 @@ import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsU
  */
 internal class CaptureFlowActivity : AppCompatActivity(), CaptureFlowFragmentListener {
 
-    private val userAnalyticsEventTracker by lazy { UserAnalytics.getAnalyticsEventTracker() }
+    // TODO: move this to GiniCaptureFragment
+    //private val userAnalyticsEventTracker by lazy { UserAnalytics.getAnalyticsEventTracker() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -108,6 +109,7 @@ internal class CaptureFlowActivity : AppCompatActivity(), CaptureFlowFragmentLis
         const val EXTRA_OUT_RESULT = "GBS_EXTRA_OUT_RESULT"
     }
 
+    // TODO: uncomment the last part and move this to GiniCaptureFragment
     private fun setAnalyticsEntryPointProperty(isOpenWithDocumentExists: Boolean) {
 
         val entryPointProperty = if (isOpenWithDocumentExists) {
@@ -120,17 +122,17 @@ internal class CaptureFlowActivity : AppCompatActivity(), CaptureFlowFragmentLis
                 }
             )
         }
-
-        userAnalyticsEventTracker.setUserProperty(
-            setOf(
-                UserAnalyticsUserProperty.ReturnAssistantEnabled(
-                    GiniBank.getCaptureConfiguration()?.returnAssistantEnabled ?: false
-                ),
-                UserAnalyticsUserProperty.ReturnReasonsEnabled(GiniBank.enableReturnReasons),
-            )
-        )
-
-        userAnalyticsEventTracker.setEventSuperProperty(entryPointProperty)
+//
+//        userAnalyticsEventTracker.setUserProperty(
+//            setOf(
+//                UserAnalyticsUserProperty.ReturnAssistantEnabled(
+//                    GiniBank.getCaptureConfiguration()?.returnAssistantEnabled ?: false
+//                ),
+//                UserAnalyticsUserProperty.ReturnReasonsEnabled(GiniBank.enableReturnReasons),
+//            )
+//        )
+//
+//        userAnalyticsEventTracker.setEventSuperProperty(entryPointProperty)
     }
 }
 
