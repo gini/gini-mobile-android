@@ -90,7 +90,6 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
         )
 
     override fun close() {
-        trackAnalyticsDismissedEvent()
         NavHostFragment.findNavController(this).popBackStack()
     }
 
@@ -180,6 +179,7 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
             viewLifecycleOwner,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
+                    trackAnalyticsDismissedEvent()
                     close()
                     isEnabled = false
                     remove()
