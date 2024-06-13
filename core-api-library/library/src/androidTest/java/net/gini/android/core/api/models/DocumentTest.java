@@ -5,6 +5,7 @@ import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 import static net.gini.android.core.api.helpers.ParcelHelper.doRoundTrip;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import android.net.Uri;
 import androidx.test.filters.SmallTest;
@@ -43,7 +44,7 @@ public class DocumentTest {
     @Test
     public void testDocumentIdGetter() {
         Document document = new Document("1234-5678-9012-3456", Document.ProcessingState.COMPLETED,
-                "foobar.jpg", 1, new Date(),
+                "foobar.jpg", 1, new Date(), null,
                 Document.SourceClassification.NATIVE, Uri.parse(""), new ArrayList<Uri>(),
                 new ArrayList<Uri>());
 
@@ -53,7 +54,7 @@ public class DocumentTest {
     @Test
     public void testDocumentState() {
         Document document = new Document("1234-5678-9012-3456", Document.ProcessingState.COMPLETED,
-                "foobar.jpg", 1, new Date(),
+                "foobar.jpg", 1, new Date(), null,
                 Document.SourceClassification.NATIVE, Uri.parse(""), new ArrayList<Uri>(),
                 new ArrayList<Uri>());
 
@@ -107,10 +108,11 @@ public class DocumentTest {
 
     @Test
     public void testShouldBeParcelable() {
-        final Date date = new Date();
+        final Date creationDate = new Date();
+        final Date expirationDate = new Date();
         final Document originalDocument =
                 new Document("1234-5678-9012-3456", Document.ProcessingState.COMPLETED,
-                        "foobar.jpg", 1, date,
+                        "foobar.jpg", 1, creationDate, expirationDate,
                         Document.SourceClassification.NATIVE, Uri.parse(""), new ArrayList<Uri>(),
                         new ArrayList<Uri>());
 
@@ -120,7 +122,29 @@ public class DocumentTest {
         assertEquals(Document.ProcessingState.COMPLETED, restoredDocument.getState());
         assertEquals("foobar.jpg", restoredDocument.getFilename());
         assertEquals(1, restoredDocument.getPageCount());
-        assertEquals(date, restoredDocument.getCreationDate());
+        assertEquals(creationDate, restoredDocument.getCreationDate());
+        assertEquals(expirationDate, restoredDocument.getExpirationDate());
+        assertEquals(Document.SourceClassification.NATIVE,
+                restoredDocument.getSourceClassification());
+    }
+
+    @Test
+    public void testShouldBeParcelableWithNullExpirationDate() {
+        final Date creationDate = new Date();
+        final Document originalDocument =
+                new Document("1234-5678-9012-3456", Document.ProcessingState.COMPLETED,
+                        "foobar.jpg", 1, creationDate, null,
+                        Document.SourceClassification.NATIVE, Uri.parse(""), new ArrayList<Uri>(),
+                        new ArrayList<Uri>());
+
+        final Document restoredDocument = doRoundTrip(originalDocument, Document.CREATOR);
+
+        assertEquals("1234-5678-9012-3456", restoredDocument.getId());
+        assertEquals(Document.ProcessingState.COMPLETED, restoredDocument.getState());
+        assertEquals("foobar.jpg", restoredDocument.getFilename());
+        assertEquals(1, restoredDocument.getPageCount());
+        assertEquals(creationDate, restoredDocument.getCreationDate());
+        assertNull(restoredDocument.getExpirationDate());
         assertEquals(Document.SourceClassification.NATIVE,
                 restoredDocument.getSourceClassification());
     }

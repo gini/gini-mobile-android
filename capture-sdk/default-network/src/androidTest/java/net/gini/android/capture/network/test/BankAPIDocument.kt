@@ -17,6 +17,7 @@ fun bankAPIDocumentWithId(id: String) =
         "",
         1,
         Date(),
+        Date(),
         Document.SourceClassification.SCANNED,
         Uri.EMPTY,
         emptyList(),

@@ -4,6 +4,7 @@ import android.net.Uri
 import net.gini.android.core.api.models.CompoundExtraction
 import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.models.ExtractionsContainer
+import net.gini.android.core.api.models.Payment
 import net.gini.android.core.api.models.PaymentRequest
 import net.gini.android.core.api.models.SpecificExtraction
 import org.json.JSONObject
@@ -213,6 +214,17 @@ abstract class DocumentManager<out DR: DocumentRepository<E>, E: ExtractionsCont
      */
     suspend fun getPaymentRequests(): Resource<List<PaymentRequest>> =
         documentRepository.getPaymentRequests()
+
+    /**
+     * Get information about the payment of the [PaymentRequest]
+     *
+     * @param id of the paid [PaymentRequest]
+     * @return [Resource] with the [Payment] or information about the error
+     */
+    suspend fun getPayment(
+        id: String,
+    ): Resource<Payment> =
+        documentRepository.getPayment(id)
 
     enum class DocumentType(val apiDoctypeHint: String) {
         BANK_STATEMENT("BankStatement"),
