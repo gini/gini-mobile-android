@@ -137,7 +137,11 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
                         ))
                     } catch (notUsed: DigitalInvoiceException) {
                         didFinishWithResult = true
-                        captureFlowFragmentListener.onFinishedWithResult(interceptSuccessResult(result).toCaptureResult())
+                        val result = interceptSuccessResult(result).toCaptureResult()
+                        captureFlowFragmentListener.onFinishedWithResult(result)
+                        if (result is CaptureResult.Success) {
+                            trackSdkClosedEvent(UserAnalyticsScreen.Analysis)
+                        }
                     }
                 } else {
                     didFinishWithResult = true
