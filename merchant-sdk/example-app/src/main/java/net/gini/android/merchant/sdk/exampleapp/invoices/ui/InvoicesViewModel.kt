@@ -11,7 +11,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import net.gini.android.merchant.sdk.exampleapp.invoices.data.InvoicesRepository
 import net.gini.android.merchant.sdk.exampleapp.invoices.ui.model.InvoiceItem
-import net.gini.android.merchant.sdk.integratedFlow.ContainerFragment
+import net.gini.android.merchant.sdk.integratedFlow.IntegratedFlowConfiguration
+import net.gini.android.merchant.sdk.integratedFlow.IntegratedPaymentContainerFragment
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.merchant.sdk.review.ReviewConfiguration
 import net.gini.android.merchant.sdk.review.ReviewFragment
@@ -20,7 +21,7 @@ import org.slf4j.LoggerFactory
 
 class InvoicesViewModel(
     private val invoicesRepository: InvoicesRepository,
-    val paymentComponent: PaymentComponent
+    val paymentComponent: PaymentComponent,
 ) : ViewModel() {
 
     val uploadHardcodedInvoicesStateFlow = invoicesRepository.uploadHardcodedInvoicesStateFlow
@@ -39,10 +40,12 @@ class InvoicesViewModel(
     private val _selectedInvoiceItem: MutableStateFlow<InvoiceItem?> = MutableStateFlow(null)
     val selectedInvoiceItem: StateFlow<InvoiceItem?> = _selectedInvoiceItem
 
-    private val _startIntegratedPaymentFlow = MutableSharedFlow<ContainerFragment>(
+    private val _startIntegratedPaymentFlow = MutableSharedFlow<IntegratedPaymentContainerFragment>(
         extraBufferCapacity = 1
     )
     val startIntegratedPaymentFlow = _startIntegratedPaymentFlow
+
+    private var integratedFlowConfiguration: IntegratedFlowConfiguration? = null
 
     fun updateDocument() {
         viewModelScope.launch {
@@ -104,7 +107,11 @@ class InvoicesViewModel(
     }
 
     fun startIntegratedPaymentFlow(documentId: String) {
-        _startIntegratedPaymentFlow.tryEmit(paymentComponent.getContainerFragment(documentId))
+        _startIntegratedPaymentFlow.tryEmit(paymentComponent.getContainerFragment(documentId, integratedFlowConfiguration))
+    }
+
+    fun setIntegratedFlowConfiguration(flowConfiguration: IntegratedFlowConfiguration) {
+        this.integratedFlowConfiguration = flowConfiguration
     }
 
     companion object {

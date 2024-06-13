@@ -1,5 +1,6 @@
 package net.gini.android.merchant.sdk.integratedFlow
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -16,7 +17,7 @@ import net.gini.android.merchant.sdk.util.GiniPayment
 import java.util.Stack
 
 
-internal class ContainerViewModel(val paymentComponent: PaymentComponent?, val documentId: String, val flowConfiguration: FlowConfiguration?, val giniPayment: GiniPayment, val giniMerchant: GiniMerchant?) : ViewModel() {
+internal class IntegratedPaymentContainerViewModel(val paymentComponent: PaymentComponent?, val documentId: String, val integratedFlowConfiguration: IntegratedFlowConfiguration?, val giniPayment: GiniPayment, val giniMerchant: GiniMerchant?) : ViewModel() {
 
     private val backstack: Stack<DisplayedScreen> = Stack<DisplayedScreen>().also { it.add(DisplayedScreen.Nothing) }
     private var initialSelectedPaymentProvider: PaymentProviderApp? = null
@@ -44,6 +45,8 @@ internal class ContainerViewModel(val paymentComponent: PaymentComponent?, val d
                 giniMerchant?.setDocumentForReview(documentId, paymentDetails)
             }
         }
+
+        Log.e("", "--- flow config is ${integratedFlowConfiguration?.shouldShowReviewFragment} and amount should not be editable ${integratedFlowConfiguration?.isAmountFieldEditable}")
     }
 
     fun addToBackStack(destination: DisplayedScreen) {
@@ -88,10 +91,10 @@ internal class ContainerViewModel(val paymentComponent: PaymentComponent?, val d
         object ReviewFragment: DisplayedScreen()
     }
 
-    class Factory(val paymentComponent: PaymentComponent?, val documentId: String, val flowConfiguration: FlowConfiguration?, val giniMerchant: GiniMerchant?): ViewModelProvider.Factory {
+    class Factory(val paymentComponent: PaymentComponent?, val documentId: String, val integratedFlowConfiguration: IntegratedFlowConfiguration?, val giniMerchant: GiniMerchant?): ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return ContainerViewModel(paymentComponent = paymentComponent, documentId = documentId, flowConfiguration = flowConfiguration, giniPayment = GiniPayment(giniMerchant), giniMerchant = giniMerchant) as T
+            return IntegratedPaymentContainerViewModel(paymentComponent = paymentComponent, documentId = documentId, integratedFlowConfiguration = integratedFlowConfiguration, giniPayment = GiniPayment(giniMerchant), giniMerchant = giniMerchant) as T
         }
     }
 }

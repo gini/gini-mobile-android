@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import net.gini.android.merchant.sdk.GiniMerchant
 import net.gini.android.merchant.sdk.exampleapp.pager.PagerAdapter
+import net.gini.android.merchant.sdk.integratedFlow.IntegratedFlowConfiguration
 import java.io.File
 
 class MainViewModel(
@@ -20,6 +21,8 @@ class MainViewModel(
 
     private var currentIndex = 0
     private var currentFileUri: Uri? = null
+
+    private var flowConfiguration: IntegratedFlowConfiguration? = null
 
     fun getNextPageUri(context: Context): Uri {
         val uriForFile = FileProvider.getUriForFile(
@@ -43,4 +46,10 @@ class MainViewModel(
             giniMerchant.setDocumentForReview(documentId)
         }
     }
+
+    fun saveConfiguration(flowConfig: IntegratedFlowConfiguration) {
+        flowConfiguration = flowConfig
+    }
+
+    fun getFlowConfiguration() = flowConfiguration
 }

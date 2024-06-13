@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -86,7 +87,15 @@ data class ReviewConfiguration(
      *
      * Default value is `false`.
      */
-    val showCloseButton: Boolean = false
+    val showCloseButton: Boolean = false,
+
+    /**
+     * If set to `true`, the [Amount] field will be editable.
+     * If set to `false` the [Amount] field will be read-only.
+     *
+     * Default value is `true`
+     */
+    val isAmountFieldEditable: Boolean = true
 )
 
 /**
@@ -157,6 +166,7 @@ class ReviewFragment private constructor(
             setStateListeners()
             setInputListeners()
             setKeyboardAnimation()
+            setEditableFields()
             removePagerConstraintAndSetPreviousHeightIfNeeded(documentPagerHeight)
         }
 
@@ -536,6 +546,14 @@ class ReviewFragment private constructor(
             }
         }
     }
+
+    private fun GmsFragmentReviewBinding.setEditableFields() {
+        iban.focusable = View.NOT_FOCUSABLE
+        recipient.focusable = View.NOT_FOCUSABLE
+        purpose.focusable = View.NOT_FOCUSABLE
+        amount.focusable = if (viewModel.configuration.isAmountFieldEditable) View.FOCUSABLE else View.NOT_FOCUSABLE
+    }
+
 
     private fun showInstallAppDialog(paymentProviderApp: PaymentProviderApp) {
         val dialog = InstallAppBottomSheet.newInstance(viewModel.paymentComponent, object :

@@ -9,7 +9,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import net.gini.android.core.api.Resource
 import net.gini.android.health.api.models.PaymentProvider
 import net.gini.android.merchant.sdk.GiniMerchant
-import net.gini.android.merchant.sdk.integratedFlow.ContainerFragment
+import net.gini.android.merchant.sdk.integratedFlow.IntegratedPaymentContainerFragment
+import net.gini.android.merchant.sdk.integratedFlow.IntegratedFlowConfiguration
 import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.paymentprovider.getPaymentProviderApps
 import net.gini.android.merchant.sdk.review.ReviewConfiguration
@@ -221,10 +222,11 @@ class PaymentComponent(private val context: Context, private val giniMerchant: G
         }
     }
 
-    fun getContainerFragment(documentId: String) = ContainerFragment.newInstance(
+    fun getContainerFragment(documentId: String, flowConfiguration: IntegratedFlowConfiguration? = null) = IntegratedPaymentContainerFragment.newInstance(
         giniMerchant = giniMerchant,
         paymentComponent = this,
-        documentId = documentId
+        documentId = documentId,
+        integratedFlowConfiguration = flowConfiguration
     )
 
     internal suspend fun onPayInvoiceClicked(documentId: String) {

@@ -24,7 +24,7 @@
                 android:id="@+id/iv_giniLogo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gms_large_64"
+                android:layout_marginTop="@dimen/gms_large_60"
                 android:src="@drawable/gini_logo"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -117,9 +117,22 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Invoices list"
+                app:layout_constraintBottom_toTopOf="@id/gini_merchant_version"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/gini_merchant_version"
+                style="@style/GiniMerchantTheme.Typography.Caption2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginBottom="@dimen/gms_medium_12"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:text="Gini Merchant SDK v2.0.0-stub1" />
 
             <ProgressBar
                 android:id="@+id/loading_indicator"
@@ -134,5 +147,10 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/configuration_container"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -10,6 +10,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.IntentCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -21,11 +22,13 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import net.gini.android.merchant.sdk.GiniMerchant
 import net.gini.android.merchant.sdk.bankselection.BankSelectionBottomSheet
+import net.gini.android.merchant.sdk.exampleapp.MainActivity
 import net.gini.android.merchant.sdk.exampleapp.R
 import net.gini.android.merchant.sdk.exampleapp.databinding.ActivityInvoicesBinding
 import net.gini.android.merchant.sdk.exampleapp.invoices.data.UploadHardcodedInvoicesState
 import net.gini.android.merchant.sdk.exampleapp.invoices.ui.model.InvoiceItem
-import net.gini.android.merchant.sdk.integratedFlow.ContainerFragment
+import net.gini.android.merchant.sdk.integratedFlow.IntegratedFlowConfiguration
+import net.gini.android.merchant.sdk.integratedFlow.IntegratedPaymentContainerFragment
 import net.gini.android.merchant.sdk.moreinformation.MoreInformationFragment
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.merchant.sdk.review.ReviewFragment
@@ -152,6 +155,10 @@ class InvoicesActivity : AppCompatActivity() {
         viewModel.loadInvoicesWithExtractions()
         viewModel.loadPaymentProviderApps()
 
+        IntentCompat.getParcelableExtra(intent, MainActivity.FLOW_CONFIGURATION, IntegratedFlowConfiguration::class.java)?.let {
+            viewModel.setIntegratedFlowConfiguration(it)
+        }
+
         binding.invoicesList.layoutManager = LinearLayoutManager(this)
         binding.invoicesList.adapter = InvoicesAdapter(emptyList()) { invoiceItem ->
             viewModel.setSelectedInvoiceItem(invoiceItem)
@@ -221,7 +228,7 @@ class InvoicesActivity : AppCompatActivity() {
         }
     }
 
-    private fun startIntegratedPaymentFlow(containerFragment: ContainerFragment) {
+    private fun startIntegratedPaymentFlow(containerFragment: IntegratedPaymentContainerFragment) {
         containerFragment.apply {
             add()
         }

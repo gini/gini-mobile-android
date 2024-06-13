@@ -19,4 +19,9 @@
     <string name="title_payment_review">Your Invoice</string>
 
     <string name="gms_privacy_policy_link_url">https://www.google.com</string>
+    <string name="relaunch_to_use_default_configuration">Please relaunch the app to use the default IntegratedPaymentConfiguration values.</string>
+    <string name="close_screen_for_configurations_to_take_place">The configuration changes will take effect after closing this screen.</string>
+    <string name="show_review_screen">Show the Review Screen</string>
+    <string name="amount_editable">Amount field is editable</string>
+    <string name="gini_merchant_version">Gini Merchant SDk v: </string>
 </resources>

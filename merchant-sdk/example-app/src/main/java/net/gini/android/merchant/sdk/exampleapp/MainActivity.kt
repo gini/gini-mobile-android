@@ -12,6 +12,7 @@ import ch.qos.logback.classic.LoggerContext
 import ch.qos.logback.classic.android.LogcatAppender
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder
 import com.google.android.material.tabs.TabLayoutMediator
+import net.gini.android.merchant.sdk.exampleapp.configuration.ConfigurationFragment
 import net.gini.android.merchant.sdk.exampleapp.databinding.ActivityMainBinding
 import net.gini.android.merchant.sdk.exampleapp.invoices.ui.InvoicesActivity
 import net.gini.android.merchant.sdk.exampleapp.pager.PagerAdapter
@@ -67,10 +68,28 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.invoicesScreen.setOnClickListener {
-            startActivity(Intent(this, InvoicesActivity::class.java))
+            startActivity(Intent(this, InvoicesActivity::class.java).apply {
+                viewModel.getFlowConfiguration()?.let {
+                    putExtra(FLOW_CONFIGURATION, it)
+                }
+            })
+        }
+
+        with(binding.giniMerchantVersion) {
+            text = "${getString(R.string.gini_merchant_version)} ${net.gini.android.merchant.sdk.BuildConfig.VERSION_NAME}"
+            setOnClickListener {
+                openConfigurationScreen()
+            }
         }
 
         configureLogging()
+    }
+
+    private fun openConfigurationScreen() {
+        supportFragmentManager.beginTransaction()
+            .add(binding.configurationContainer.id, ConfigurationFragment.newInstance(), ConfigurationFragment::class.java.name)
+            .addToBackStack(ConfigurationFragment::class.java.name)
+            .commit()
     }
 
     private fun importFile() {
@@ -113,5 +132,6 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         private val LOG = LoggerFactory.getLogger(MainActivity::class.java)
+        val FLOW_CONFIGURATION = "flow_configuration"
     }
 }
