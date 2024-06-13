@@ -196,7 +196,9 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private CameraInterface mCameraController;
     private ImageMultiPageDocument mMultiPageDocument;
     private PaymentQRCodeReader mPaymentQRCodeReader;
-    private UserAnalyticsEventTracker mUserAnalyticsEventTracker;
+
+    @VisibleForTesting
+    UserAnalyticsEventTracker mUserAnalyticsEventTracker;
 
 
     private ConstraintLayout mLayoutRoot;
@@ -361,12 +363,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                       final Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.gc_fragment_camera, container, false);
         mUserAnalyticsEventTracker = UserAnalytics.INSTANCE.getAnalyticsEventTracker();
-        mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.SCREEN_SHOWN,
-                new HashSet<UserAnalyticsEventProperty>() {
-                    {
-                        add(new UserAnalyticsEventProperty.Screen(screenName));
-                    }
-                });
 
         bindViews(view);
         preventPaneClickThrough();
@@ -399,12 +395,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             @Override
             public void handleOnBackPressed() {
                 if (!addPages) {
-                    mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.CLOSE_TAPPED,
-                            new HashSet<UserAnalyticsEventProperty>() {
-                                {
-                                    add(new UserAnalyticsEventProperty.Screen(screenName));
-                                }
-                            });
+                    trackCameraScreenCloseTappedEventIfNeeded();
                 }
                 trackCameraScreenEvent(CameraScreenEvent.EXIT);
                 trackCameraAccessPermissionRequiredCloseClickedEventIfNeeded();
@@ -671,6 +662,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                         }
                     } else {
                         LOG.info("Camera opened");
+                        trackCameraScreenShownEvent();
                         hideNoPermissionView();
                     }
                     return null;
@@ -797,6 +789,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
                 injectedViewAdapter.setOnNavButtonClickListener(new IntervalClickListener(v -> {
                     trackCameraAccessPermissionRequiredCloseClickedEventIfNeeded();
+                    trackCameraScreenCloseTappedEventIfNeeded();
                     onBackPressed();
                 }));
             }));
@@ -815,16 +808,11 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
                         injectedViewAdapter.setOnBackButtonClickListener(new IntervalClickListener(v -> {
                             trackCameraAccessPermissionRequiredCloseClickedEventIfNeeded();
+                            trackCameraScreenCloseTappedEventIfNeeded();
                             onBackPressed();
                         }));
 
                         injectedViewAdapter.setOnHelpButtonClickListener(new IntervalClickListener(v -> {
-                            mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.HELP_TAPPED,
-                                    new HashSet<UserAnalyticsEventProperty>() {
-                                        {
-                                            add(new UserAnalyticsEventProperty.Screen(screenName));
-                                        }
-                                    });
                             startHelpActivity();
                         }));
                     }));
@@ -863,6 +851,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
         trackCameraScreenEvent(CameraScreenEvent.HELP);
 
+        trackCameraScreenHelpTappedIfNeeded();
         trackCameraAccessPermissionRequiredHelpClickedEventIfNeeded();
     }
 
@@ -1970,6 +1959,37 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         boolean popSuccess = mFragment.findNavController().popBackStack();
         if (!popSuccess) {
             mCancelListener.onCancelFlow();
+        }
+    }
+
+    private void trackCameraScreenCloseTappedEventIfNeeded() {
+        if (mLayoutNoPermission == null || mLayoutNoPermission.getVisibility() != View.VISIBLE) {
+            mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.CLOSE_TAPPED,
+                    new HashSet<UserAnalyticsEventProperty>() {
+                        {
+                            add(new UserAnalyticsEventProperty.Screen(screenName));
+                        }
+                    });
+        }
+    }
+
+    private void trackCameraScreenShownEvent() {
+        mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.SCREEN_SHOWN,
+                new HashSet<UserAnalyticsEventProperty>() {
+                    {
+                        add(new UserAnalyticsEventProperty.Screen(screenName));
+                    }
+                });
+    }
+
+    private void trackCameraScreenHelpTappedIfNeeded() {
+        if (mLayoutNoPermission == null || mLayoutNoPermission.getVisibility() != View.VISIBLE) {
+            mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.HELP_TAPPED,
+                    new HashSet<UserAnalyticsEventProperty>() {
+                        {
+                            add(new UserAnalyticsEventProperty.Screen(screenName));
+                        }
+                    });
         }
     }
 
