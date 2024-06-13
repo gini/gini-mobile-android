@@ -111,7 +111,6 @@ class NoResultsFragmentImpl {
                         });
                 trackAnalysisScreenEvent(AnalysisScreenEvent.RETRY);
                 mFragment.findNavController().navigate(NoResultsFragmentDirections.toCameraFragment());
-                mCancelListener.onCancelFlow();
             });
         } else {
             retakeImagesButton.setVisibility(GONE);
