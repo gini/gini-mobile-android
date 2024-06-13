@@ -97,6 +97,7 @@ dependencies {
     androidTestImplementation(libs.androidx.multidex)
     androidTestImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(project(":core-api-library:shared-tests"))
+    androidTestImplementation(project(":bank-api-library:library"))
 
     testImplementation(libs.junit)
     testImplementation(libs.truth)
@@ -123,7 +124,7 @@ tasks.register<CreatePropertiesTask>("injectTestProperties") {
     doFirst {
         propertiesMap.clear()
         propertiesMap.putAll(readLocalPropertiesToMap(project,
-            listOf("testClientId", "testClientSecret", "testApiUri", "testUserCenterUri")))
+            listOf("testClientId", "testClientSecret", "testApiUri", "testUserCenterUri", "testBankApiUri")))
     }
 
     destinations.put(

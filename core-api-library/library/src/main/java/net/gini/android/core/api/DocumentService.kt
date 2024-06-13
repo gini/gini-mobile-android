@@ -4,6 +4,7 @@ import android.net.Uri
 import net.gini.android.core.api.authorization.UserService
 import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.response.PaymentRequestResponse
+import net.gini.android.core.api.response.PaymentResponse
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Response
@@ -44,6 +45,9 @@ interface DocumentService {
 
     @GET("paymentRequests")
     suspend fun getPaymentRequests(@HeaderMap bearer: Map<String, String>): Response<List<PaymentRequestResponse>>
+
+    @GET("paymentRequests/{id}/payment")
+    suspend fun getPayment(@HeaderMap bearer: Map<String, String>, @Path("id") id: String): Response<PaymentResponse>
 
     @GET
     suspend fun getFile(@HeaderMap bearer: Map<String, String>, @Url location:String): Response<ResponseBody>
