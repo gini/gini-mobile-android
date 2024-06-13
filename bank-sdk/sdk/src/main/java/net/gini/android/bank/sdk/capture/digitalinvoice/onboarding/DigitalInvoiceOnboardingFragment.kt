@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
 import androidx.transition.TransitionInflater
@@ -16,6 +17,10 @@ import net.gini.android.bank.sdk.util.getLayoutInflaterWithGiniCaptureTheme
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.internal.ui.IntervalClickListener
 import net.gini.android.capture.onboarding.view.OnboardingIllustrationAdapter
+import net.gini.android.capture.tracking.useranalytics.UserAnalytics
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen
+import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty
 import net.gini.android.capture.view.InjectedViewAdapterHolder
 
 /**
@@ -47,6 +52,10 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
 
     private var presenter: DigitalOnboardingScreenContract.Presenter? = null
 
+    private val userAnalyticsEventTracker by lazy { UserAnalytics.getAnalyticsEventTracker() }
+
+    private val screenName = UserAnalyticsScreen.ReturnAssistantOnBoarding
+
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
         val inflater = super.onGetLayoutInflater(savedInstanceState)
         return this.getLayoutInflaterWithGiniCaptureTheme(inflater)
@@ -69,9 +78,9 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         createPresenter(requireActivity())
-        enterTransition = TransitionInflater.from(requireContext()).inflateTransition(R.transition.fade)
+        enterTransition =
+            TransitionInflater.from(requireContext()).inflateTransition(R.transition.fade)
         exitTransition = enterTransition
-
     }
 
     private fun createPresenter(activity: Activity) =
@@ -81,6 +90,7 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
         )
 
     override fun close() {
+        trackAnalyticsDismissedEvent()
         NavHostFragment.findNavController(this).popBackStack()
     }
 
@@ -126,6 +136,7 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
         setInputHandlers()
         setupImageIllustrationAdapter()
         setupOnboardingBottomNavigationBar()
+        trackAnalyticsScreenShownEvent()
     }
 
 
@@ -149,6 +160,7 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
                     injectedViewAdapter.setGetStartedButtonClickListener(
                         IntervalClickListener {
                             presenter?.dismisOnboarding(false)
+                            trackAnalyticsGetStartedTappedEvent()
                         }
                     )
                 }
@@ -158,6 +170,44 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
     private fun setInputHandlers() {
         binding.doneButton.setOnClickListener {
             presenter?.dismisOnboarding(false)
+            trackAnalyticsGetStartedTappedEvent()
         }
+        handleOnBackPressed()
+    }
+
+    private fun handleOnBackPressed() {
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    close()
+                    isEnabled = false
+                    remove()
+                }
+            })
+    }
+
+    private fun trackAnalyticsScreenShownEvent() {
+        userAnalyticsEventTracker.trackEvent(
+            UserAnalyticsEvent.SCREEN_SHOWN, setOf(
+                UserAnalyticsEventProperty.Screen(screenName)
+            )
+        )
+    }
+
+    private fun trackAnalyticsGetStartedTappedEvent() {
+        userAnalyticsEventTracker.trackEvent(
+            UserAnalyticsEvent.GET_STARTED_TAPPED, setOf(
+                UserAnalyticsEventProperty.Screen(screenName)
+            )
+        )
+    }
+
+    private fun trackAnalyticsDismissedEvent() {
+        userAnalyticsEventTracker.trackEvent(
+            UserAnalyticsEvent.DISMISSED, setOf(
+                UserAnalyticsEventProperty.Screen(screenName)
+            )
+        )
     }
 }

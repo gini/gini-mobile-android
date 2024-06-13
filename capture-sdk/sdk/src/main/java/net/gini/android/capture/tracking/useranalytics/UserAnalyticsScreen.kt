@@ -18,5 +18,7 @@ sealed class UserAnalyticsScreen(val name: String) {
     }
 
     object ReturnAssistant : UserAnalyticsScreen("return_assistant")
+    object ReturnAssistantOnBoarding : UserAnalyticsScreen("onoarding_return_assistant")
+
     object EditReturnAssistant : UserAnalyticsScreen("edit_return_assistant")
 }
