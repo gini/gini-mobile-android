@@ -31,6 +31,8 @@ object UserAnalytics {
 
         eventTracker =
             createAnalyticsEventTracker(EventTrackerPlatform.MIXPANEL, applicationContext)
+
+        eventTracker?.trackEvent(UserAnalyticsEvent.SDK_OPENED)
     }
 
     fun getAnalyticsEventTracker(

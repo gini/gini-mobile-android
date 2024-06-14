@@ -23,9 +23,14 @@ import net.gini.android.capture.GiniCaptureFragment
 import net.gini.android.capture.GiniCaptureFragmentDirections
 import net.gini.android.capture.GiniCaptureFragmentListener
 import net.gini.android.capture.camera.CameraFragmentListener
+import net.gini.android.capture.internal.util.CancelListener
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
-import net.gini.android.capture.internal.util.CancelListener
+import net.gini.android.capture.tracking.useranalytics.UserAnalytics
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen
+import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty
 
 class CaptureFlowFragment(private val openWithDocument: Document? = null) :
     Fragment(),
@@ -42,6 +47,10 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
 
     private var willBeRestored = false
     private var didFinishWithResult = false
+
+    private val analyticsEventTracker: UserAnalyticsEventTracker by lazy {
+        UserAnalytics.getAnalyticsEventTracker()
+    }
 
     fun setListener(listener: CaptureFlowFragmentListener) {
         this.captureFlowFragmentListener = listener
@@ -128,11 +137,16 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
                         ))
                     } catch (notUsed: DigitalInvoiceException) {
                         didFinishWithResult = true
-                        captureFlowFragmentListener.onFinishedWithResult(interceptSuccessResult(result).toCaptureResult())
+                        val result = interceptSuccessResult(result).toCaptureResult()
+                        captureFlowFragmentListener.onFinishedWithResult(result)
+                        if (result is CaptureResult.Success) {
+                            trackSdkClosedEvent(UserAnalyticsScreen.Analysis)
+                        }
                     }
                 } else {
                     didFinishWithResult = true
                     captureFlowFragmentListener.onFinishedWithResult(interceptSuccessResult(result).toCaptureResult())
+                    trackSdkClosedEvent(UserAnalyticsScreen.Analysis)
                 }
             }
             else -> {
@@ -191,6 +205,16 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
         fun createInstance(openWithDocument: Document? = null): CaptureFlowFragment {
             return CaptureFlowFragment(openWithDocument)
         }
+    }
+
+    private fun trackSdkClosedEvent(screen: UserAnalyticsScreen) = runCatching {
+        analyticsEventTracker.trackEvent(
+            UserAnalyticsEvent.SDK_CLOSED,
+            setOf(
+                UserAnalyticsEventProperty.Screen(screen),
+                UserAnalyticsEventProperty.Status(UserAnalyticsEventProperty.Status.StatusType.Successful),
+            )
+        )
     }
 }
 

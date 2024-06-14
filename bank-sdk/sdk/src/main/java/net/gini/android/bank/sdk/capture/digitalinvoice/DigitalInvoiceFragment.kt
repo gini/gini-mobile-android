@@ -262,6 +262,7 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
                     injectedViewAdapter.setOnProceedClickListener {
                         presenter?.pay()
                         trackProceedTapped()
+                        trackSdkClosedEvent()
                     }
 
                     footerDetails?.let {
@@ -303,6 +304,7 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
     override fun payButtonClicked() {
         presenter?.pay()
         trackProceedTapped()
+        trackSdkClosedEvent()
     }
 
     /**
@@ -542,6 +544,15 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
         userAnalyticsEventTracker.trackEvent(
             UserAnalyticsEvent.PROCEED_TAPPED,
             setOf(UserAnalyticsEventProperty.Screen(screenName))
+        )
+    }
+
+    private fun trackSdkClosedEvent() = runCatching {
+        userAnalyticsEventTracker.trackEvent(
+            UserAnalyticsEvent.SDK_CLOSED, setOf(
+                UserAnalyticsEventProperty.Screen(screenName),
+                UserAnalyticsEventProperty.Status(UserAnalyticsEventProperty.Status.StatusType.Successful)
+            )
         )
     }
 }

@@ -87,7 +87,10 @@ sealed class UserAnalyticsEventProperty(key: String, value: String) :
         UserAnalyticsEventProperty("switch_active", switchActive.mapToAnalyticsValue())
 
     data class ItemsChanged(val differences: Set<DifferenceType>) :
-        UserAnalyticsEventProperty("items_changed", differences.map { it.analyticsName }.toString()) {
+        UserAnalyticsEventProperty(
+            "items_changed",
+            differences.map { it.analyticsName }.toString()
+        ) {
         enum class DifferenceType(val analyticsName: String) {
             Name("name"),
             Quantity("quantity"),
@@ -95,4 +98,11 @@ sealed class UserAnalyticsEventProperty(key: String, value: String) :
         }
     }
     // endregion
+
+    data class Status(val statusType: StatusType) :
+        UserAnalyticsEventProperty("status", statusType.analyticsName) {
+        enum class StatusType(val analyticsName: String) {
+            Successful("successful")
+        }
+    }
 }
