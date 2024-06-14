@@ -1,6 +1,6 @@
-package net.gini.android.bank.api.models
+package net.gini.android.core.api.models
 
-import net.gini.android.bank.api.response.PaymentResponse
+import net.gini.android.core.api.response.PaymentResponse
 
 /**
  * Holds information about a payment.

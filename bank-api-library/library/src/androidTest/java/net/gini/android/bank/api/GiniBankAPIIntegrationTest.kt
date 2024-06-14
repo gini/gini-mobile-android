@@ -271,6 +271,7 @@ class GiniBankAPIIntegrationTest: GiniCoreAPIIntegrationTest<BankApiDocumentMana
         giniHealthApi = GiniHealthAPIBuilder(getApplicationContext(), clientId, clientSecret, emailDomain)
             .setApiBaseUrl(healthApiUri)
             .setUserCenterApiBaseUrl(userCenterUri)
+            .setDebuggingEnabled(true)
             .build()
         return GiniBankAPIBuilder(getApplicationContext(), clientId, clientSecret, emailDomain)
     }
