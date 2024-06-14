@@ -37,4 +37,5 @@ enum class UserAnalyticsEvent(val eventName: String) {
     // endregion
     SDK_OPENED("sdk_opened"),
     SDK_CLOSED("sdk_closed"),
+    DISMISSED("dismissed")
 }

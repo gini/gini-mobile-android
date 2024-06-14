@@ -1,4 +1,4 @@
-package net.gini.android.bank.api.response
+package net.gini.android.core.api.response
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
