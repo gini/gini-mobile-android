@@ -13,6 +13,7 @@ import net.gini.android.capture.EntryPoint
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.internal.util.FileImportValidator
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventSuperProperty.EntryPoint as AnalyticsEntryPoint
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsUserProperty
 
@@ -129,8 +130,8 @@ internal class CaptureFlowActivity : AppCompatActivity(), CaptureFlowFragmentLis
                 UserAnalyticsUserProperty.ReturnReasonsEnabled(GiniBank.enableReturnReasons),
             )
         )
-
         userAnalyticsEventTracker.setEventSuperProperty(entryPointProperty)
+        userAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.SDK_OPENED)
     }
 }
 
