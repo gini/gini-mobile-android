@@ -3,7 +3,6 @@ package net.gini.android.merchant.sdk.integratedFlow
 import android.content.ActivityNotFoundException
 import android.os.Bundle
 import android.os.Parcelable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -63,7 +62,14 @@ data class IntegratedFlowConfiguration(
     val isAmountFieldEditable: Boolean = false
 ): Parcelable
 
-class IntegratedPaymentContainerFragment private constructor(giniMerchant: GiniMerchant?, paymentComponent: PaymentComponent?, documentId: String, integratedFlowConfiguration: IntegratedFlowConfiguration?) : Fragment(), BackListener {
+/**
+ * The [IntegratedPaymentContainerFragment] provides a container for all screens that should be displayed for the user
+ * during the payment process (eg. [PaymentComponentBottomSheet], [BankSelectionBottomSheet], [ReviewFragment]).
+ *
+ * It handles the display logic for all screens. A new instance can be created using the [PaymentComponent.getContainerFragment] method.
+ */
+class IntegratedPaymentContainerFragment private constructor(giniMerchant: GiniMerchant?, paymentComponent: PaymentComponent?, documentId: String, integratedFlowConfiguration: IntegratedFlowConfiguration?) : Fragment(),
+    BackListener {
 
     constructor(): this(null,null, "", null)
     private var binding: GmsFragmentContainerBinding by autoCleared()
@@ -217,7 +223,6 @@ class IntegratedPaymentContainerFragment private constructor(giniMerchant: GiniM
                     val intent =
                         paymentState.paymentRequest.bankApp.getIntent(paymentState.paymentRequest.id)
                     if (intent != null) {
-                        Log.e("", "---- in fragment")
                         startActivity(intent)
                         viewModel.onBankOpened()
                     } else {
@@ -236,9 +241,9 @@ class IntegratedPaymentContainerFragment private constructor(giniMerchant: GiniM
     }
 
     private fun GmsFragmentContainerBinding.handleError(text: String, onRetry: () -> Unit) {
-//        if (viewModel.configuration.handleErrorsInternally) {
+        if (viewModel.integratedFlowConfiguration?.shouldHandleErrorsInternally == true) {
             showSnackbar(text, onRetry)
-//        }
+        }
     }
 
     private fun GmsFragmentContainerBinding.showSnackbar(text: String, onRetry: () -> Unit) {

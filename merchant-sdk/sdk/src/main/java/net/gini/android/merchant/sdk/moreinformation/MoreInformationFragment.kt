@@ -226,11 +226,9 @@ class MoreInformationFragment private constructor(private val paymentComponent: 
          * Create a new instance of the [MoreInformationFragment].
          *
          * @param paymentComponent the [PaymentComponent] instance which contains the list of payment provider apps
+         * @param backListener a listener for back events
          */
-        fun newInstance(paymentComponent: PaymentComponent?): MoreInformationFragment =
-            MoreInformationFragment(paymentComponent = paymentComponent)
-
-        fun newInstance(paymentComponent: PaymentComponent?, backListener: BackListener): MoreInformationFragment =
+        fun newInstance(paymentComponent: PaymentComponent?, backListener: BackListener? = null): MoreInformationFragment =
             MoreInformationFragment(paymentComponent = paymentComponent, backListener = backListener)
     }
 

@@ -1,6 +1,5 @@
 package net.gini.android.merchant.sdk.integratedFlow
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -15,7 +14,6 @@ import net.gini.android.merchant.sdk.review.model.PaymentDetails
 import net.gini.android.merchant.sdk.review.model.ResultWrapper
 import net.gini.android.merchant.sdk.util.GiniPayment
 import java.util.Stack
-
 
 internal class IntegratedPaymentContainerViewModel(val paymentComponent: PaymentComponent?, val documentId: String, val integratedFlowConfiguration: IntegratedFlowConfiguration?, val giniPayment: GiniPayment, val giniMerchant: GiniMerchant?) : ViewModel() {
 
@@ -45,8 +43,6 @@ internal class IntegratedPaymentContainerViewModel(val paymentComponent: Payment
                 giniMerchant?.setDocumentForReview(documentId, paymentDetails)
             }
         }
-
-        Log.e("", "--- flow config is ${integratedFlowConfiguration?.shouldShowReviewFragment} and amount should not be editable ${integratedFlowConfiguration?.isAmountFieldEditable}")
     }
 
     fun addToBackStack(destination: DisplayedScreen) {

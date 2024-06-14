@@ -69,7 +69,7 @@ class PaymentComponentBottomSheet private constructor(
     }
 
     companion object {
-        fun newInstance(paymentComponent: PaymentComponent?, documentId: String, backListener: BackListener) = PaymentComponentBottomSheet(paymentComponent, documentId,backListener)
+        internal fun newInstance(paymentComponent: PaymentComponent?, documentId: String, backListener: BackListener) = PaymentComponentBottomSheet(paymentComponent, documentId,backListener)
     }
 
 }

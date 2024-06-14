@@ -30,6 +30,7 @@ import net.gini.android.merchant.sdk.review.model.PaymentDetails
 import net.gini.android.merchant.sdk.review.model.ResultWrapper
 import net.gini.android.merchant.sdk.review.openWith.OpenWithPreferences
 import net.gini.android.merchant.sdk.test.ViewModelTestCoroutineRule
+import net.gini.android.merchant.sdk.util.GiniPayment
 import net.gini.android.merchant.sdk.util.extensions.createTempPdfFile
 import org.junit.After
 import org.junit.Before
@@ -52,12 +53,22 @@ class ReviewViewModelTest {
     val testCoroutineRule = ViewModelTestCoroutineRule()
 
     private var giniMerchant: GiniMerchant? = null
+    private var giniPayment: GiniPayment? = null
     private var userPreferences: UserPreferences? = null
     private var context: Context? = null
+
+    private var paymentDetails = PaymentDetails(
+        recipient = "recipient",
+        iban = "iban",
+        amount = "amount",
+        purpose = "purpose",
+        extractions = null
+    )
 
     @Before
     fun setup() {
         giniMerchant = mockk(relaxed = true)
+        giniPayment = GiniPayment(giniMerchant)
         every { giniMerchant!!.paymentFlow } returns MutableStateFlow<ResultWrapper<PaymentDetails>>(mockk()).asStateFlow()
         userPreferences = mockk(relaxed = true)
         context = getApplicationContext()
@@ -75,8 +86,9 @@ class ReviewViewModelTest {
         val paymentComponent = mockk<PaymentComponent>(relaxed = true)
         every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
             SelectedPaymentProviderAppState.AppSelected(mockk()))
+
         // Given
-        val viewModel = ReviewViewModel(giniMerchant!!, mockk(), paymentComponent).apply {
+        val viewModel = ReviewViewModel(giniMerchant!!, mockk(), paymentComponent, "", giniPayment!!).apply {
             userPreferences = this@ReviewViewModelTest.userPreferences!!
         }
 
@@ -94,7 +106,7 @@ class ReviewViewModelTest {
             SelectedPaymentProviderAppState.AppSelected(mockk()))
 
         // Given
-        val viewModel = ReviewViewModel(giniMerchant!!, mockk(), paymentComponent).apply {
+        val viewModel = ReviewViewModel(giniMerchant!!, mockk(), paymentComponent, "", giniPayment!!).apply {
             userPreferences = this@ReviewViewModelTest.userPreferences!!
         }
 
@@ -105,6 +117,22 @@ class ReviewViewModelTest {
 
         // Then
         assertThat(isVisible).isFalse()
+    }
+
+    @Test
+    fun `loads payment details for documentId`() {
+        val paymentComponent = mockk<PaymentComponent>(relaxed = true)
+        every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(SelectedPaymentProviderAppState.AppSelected(mockk()))
+
+        val documentId = "1234"
+
+        val viewModel = ReviewViewModel(giniMerchant!!, mockk(), paymentComponent, documentId, giniPayment!!)
+
+        // When
+        viewModel.loadPaymentDetails()
+
+
+        coVerify { giniMerchant!!.setDocumentForReview(documentId) }
     }
 
     @Test
@@ -126,7 +154,7 @@ class ReviewViewModelTest {
         every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
             SelectedPaymentProviderAppState.AppSelected(mockk()))
 
-        val viewModel = ReviewViewModel(giniMerchant!!, mockk(), paymentComponent)
+        val viewModel = ReviewViewModel(giniMerchant!!, mockk(), paymentComponent, "",giniPayment!!)
 
         val validationsAsync = async { viewModel.paymentValidation.take(1).toList() }
 
@@ -156,7 +184,7 @@ class ReviewViewModelTest {
         every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
             SelectedPaymentProviderAppState.AppSelected(mockk()))
 
-        val viewModel = ReviewViewModel(giniMerchant!!, mockk(), paymentComponent)
+        val viewModel = ReviewViewModel(giniMerchant!!, mockk(), paymentComponent, "", giniPayment!!)
 
         viewModel.paymentValidation.test {
             // Precondition
@@ -205,7 +233,7 @@ class ReviewViewModelTest {
             every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
                 SelectedPaymentProviderAppState.AppSelected(mockk()))
 
-            val viewModel = ReviewViewModel(giniMerchant!!, mockk(), paymentComponent)
+            val viewModel = ReviewViewModel(giniMerchant!!, mockk(), paymentComponent, "", giniPayment!!)
 
             val validationsAsync = async { viewModel.paymentValidation.take(1).toList() }
 
@@ -238,7 +266,7 @@ class ReviewViewModelTest {
             every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
                 SelectedPaymentProviderAppState.AppSelected(mockk()))
 
-            val viewModel = ReviewViewModel(giniMerchant!!, mockk(), paymentComponent)
+            val viewModel = ReviewViewModel(giniMerchant!!, mockk(), paymentComponent, "", giniPayment!!)
 
             viewModel.paymentValidation.test {
                 // Precondition
@@ -276,7 +304,7 @@ class ReviewViewModelTest {
             every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
                 SelectedPaymentProviderAppState.AppSelected(mockk()))
 
-            val viewModel = ReviewViewModel(giniMerchant!!, mockk(), paymentComponent)
+            val viewModel = ReviewViewModel(giniMerchant!!, mockk(), paymentComponent, "", giniPayment!!)
 
             viewModel.paymentValidation.test {
                 // Precondition
@@ -314,7 +342,7 @@ class ReviewViewModelTest {
             every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
                 SelectedPaymentProviderAppState.AppSelected(mockk()))
 
-            val viewModel = ReviewViewModel(giniMerchant!!, mockk(), paymentComponent)
+            val viewModel = ReviewViewModel(giniMerchant!!, mockk(), paymentComponent, "", giniPayment!!)
 
             viewModel.paymentValidation.test {
                 // When
@@ -334,15 +362,16 @@ class ReviewViewModelTest {
     fun `clears 'input field empty' error if the purpose field is not empty after input`() =
         runTest {
             // Given
+            val paymentDetails = PaymentDetails(
+                recipient = "recipient",
+                iban = "iban",
+                amount = "1",
+                purpose = "",
+                extractions = null
+            )
             every { giniMerchant!!.paymentFlow } returns MutableStateFlow(
                 ResultWrapper.Success(
-                    PaymentDetails(
-                        recipient = "recipient",
-                        iban = "iban",
-                        amount = "1",
-                        purpose = "",
-                        extractions = null
-                    )
+                    paymentDetails
                 )
             )
 
@@ -350,7 +379,7 @@ class ReviewViewModelTest {
             every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
                 SelectedPaymentProviderAppState.AppSelected(mockk()))
 
-            val viewModel = ReviewViewModel(giniMerchant!!, mockk(), paymentComponent)
+            val viewModel = ReviewViewModel(giniMerchant!!, mockk(), paymentComponent, "", giniPayment!!)
 
             viewModel.paymentValidation.test {
                 // When
@@ -389,7 +418,7 @@ class ReviewViewModelTest {
             every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
                 SelectedPaymentProviderAppState.AppSelected(paymentProviderApp))
 
-            val viewModel = ReviewViewModel(giniMerchant!!, mockk(), paymentComponent)
+            val viewModel = ReviewViewModel(giniMerchant!!, mockk(), paymentComponent, "", giniPayment!!)
 
             // Validate all fields to also get an invalid iban validation message
             viewModel.onPayment()
@@ -419,7 +448,7 @@ class ReviewViewModelTest {
         every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
             SelectedPaymentProviderAppState.AppSelected(paymentProviderApp))
 
-        val viewModel = ReviewViewModel(giniMerchant!!, mockk(), paymentComponent).apply {
+        val viewModel = ReviewViewModel(giniMerchant!!, mockk(), paymentComponent, "", giniPayment!!).apply {
             this.openWithPreferences = openWithPreferences
         }
 
@@ -441,7 +470,7 @@ class ReviewViewModelTest {
         every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
             SelectedPaymentProviderAppState.AppSelected(paymentProviderApp))
 
-        val viewModel = ReviewViewModel(giniMerchant!!, mockk(), paymentComponent)
+        val viewModel = ReviewViewModel(giniMerchant!!, mockk(), paymentComponent, "", giniPayment!!)
 
         viewModel.paymentNextStep.test {
             // When
@@ -464,7 +493,7 @@ class ReviewViewModelTest {
         every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
             SelectedPaymentProviderAppState.AppSelected(paymentProviderApp))
 
-        val viewModel = ReviewViewModel(giniMerchant!!, mockk(), paymentComponent)
+        val viewModel = ReviewViewModel(giniMerchant!!, mockk(), paymentComponent, "", giniPayment!!)
 
         viewModel.paymentNextStep.test {
             // When
@@ -491,7 +520,7 @@ class ReviewViewModelTest {
         every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
             SelectedPaymentProviderAppState.AppSelected(paymentProviderApp))
 
-        val viewModel = ReviewViewModel(giniMerchant!!, mockk(), paymentComponent).apply {
+        val viewModel = ReviewViewModel(giniMerchant!!, mockk(), paymentComponent, "", giniPayment!!).apply {
             this.openWithPreferences = openWithPreferences
         }
         viewModel.startObservingOpenWithCount()
@@ -543,7 +572,7 @@ class ReviewViewModelTest {
         coEvery { giniMerchant!!.giniHealthAPI.documentManager.createPaymentRequest(any()) } returns Resource.Success("")
         coEvery { giniMerchant!!.giniHealthAPI.documentManager.getPaymentRequestDocument(any()) } returns Resource.Success(mockByteArray)
 
-        val viewModel = ReviewViewModel(giniMerchant!!, mockk(), paymentComponent).apply {
+        val viewModel = ReviewViewModel(giniMerchant!!, mockk(), paymentComponent, "", giniPayment!!).apply {
             this.openWithPreferences = openWithPreferences
         }
         viewModel.startObservingOpenWithCount()

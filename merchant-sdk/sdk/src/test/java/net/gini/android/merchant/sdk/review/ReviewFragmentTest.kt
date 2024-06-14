@@ -92,8 +92,31 @@ class ReviewFragmentTest {
     }
 
     @Test
+    fun `loads payment details for documentId`() {
+        // Given
+        val documentId = "1234"
+
+        // When
+        launchFragmentInContainer(themeResId = R.style.GiniMerchantTheme) {
+            ReviewFragment.newInstance(
+                giniMerchant = mockk(relaxed = true),
+                listener = mockk(relaxed = true),
+                viewModelFactory = viewModelFactory,
+                paymentComponent = mockk(relaxed = true),
+                documentId = documentId
+            )
+        }
+
+        // Then
+        verify {
+            viewModel.loadPaymentDetails()
+        }
+    }
+
+    @Test
     fun `calls onNextClicked() listener when 'Next' ('Pay') button is clicked`() {
         // Given
+        val documentId = "1234"
         every { viewModel.isPaymentButtonEnabled } returns flowOf(true)
 
         val paymentComponent = mockk<PaymentComponent>(relaxed = true)
@@ -112,7 +135,8 @@ class ReviewFragmentTest {
                 giniMerchant = mockk(relaxed = true),
                 listener = listener,
                 viewModelFactory = viewModelFactory,
-                paymentComponent = paymentComponent
+                paymentComponent = paymentComponent,
+                documentId = documentId
             )
         }
 
@@ -152,7 +176,8 @@ class ReviewFragmentTest {
                 giniMerchant = mockk(relaxed = true),
                 listener = listener,
                 viewModelFactory = viewModelFactory,
-                paymentComponent = paymentComponent
+                paymentComponent = paymentComponent,
+                documentId = ""
             )
         }
 
@@ -195,7 +220,8 @@ class ReviewFragmentTest {
                 giniMerchant = mockk(relaxed = true),
                 listener = listener,
                 viewModelFactory = viewModelFactory,
-                paymentComponent = paymentComponent
+                paymentComponent = paymentComponent,
+                documentId = ""
             )
         }
 
@@ -236,7 +262,8 @@ class ReviewFragmentTest {
                 giniMerchant = mockk(relaxed = true),
                 listener = mockk(relaxed = true),
                 viewModelFactory = viewModelFactory,
-                paymentComponent = paymentComponent
+                paymentComponent = paymentComponent,
+                documentId = ""
             )
         }
 
@@ -276,7 +303,8 @@ class ReviewFragmentTest {
             giniMerchant = mockk(relaxed = true),
             listener = listener,
             viewModelFactory = viewModelFactory,
-            paymentComponent = paymentComponent
+            paymentComponent = paymentComponent,
+            documentId = ""
         )
         launchFragmentInContainer(themeResId = R.style.GiniMerchantTheme) {
             fragment

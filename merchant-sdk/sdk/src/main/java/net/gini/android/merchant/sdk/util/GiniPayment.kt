@@ -14,6 +14,9 @@ import net.gini.android.merchant.sdk.review.model.withFeedback
 import net.gini.android.merchant.sdk.review.validate
 import org.slf4j.LoggerFactory
 
+/**
+ * Handles the validation of payment details, creation of payment request, sending feedback and emitting open bank event.
+ */
 internal class GiniPayment(
     val giniMerchant: GiniMerchant?
 ) {
