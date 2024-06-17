@@ -12,10 +12,10 @@ import net.gini.android.merchant.sdk.paymentcomponent.SelectedPaymentProviderApp
 import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.review.model.PaymentDetails
 import net.gini.android.merchant.sdk.review.model.ResultWrapper
-import net.gini.android.merchant.sdk.util.GiniPayment
+import net.gini.android.merchant.sdk.util.GiniPaymentManager
 import java.util.Stack
 
-internal class IntegratedPaymentContainerViewModel(val paymentComponent: PaymentComponent?, val documentId: String, val integratedFlowConfiguration: IntegratedFlowConfiguration?, val giniPayment: GiniPayment, val giniMerchant: GiniMerchant?) : ViewModel() {
+internal class IntegratedPaymentContainerViewModel(val paymentComponent: PaymentComponent?, val documentId: String, val integratedFlowConfiguration: IntegratedFlowConfiguration?, val giniPaymentManager: GiniPaymentManager, val giniMerchant: GiniMerchant?) : ViewModel() {
 
     private val backstack: Stack<DisplayedScreen> = Stack<DisplayedScreen>().also { it.add(DisplayedScreen.Nothing) }
     private var initialSelectedPaymentProvider: PaymentProviderApp? = null
@@ -64,7 +64,7 @@ internal class IntegratedPaymentContainerViewModel(val paymentComponent: Payment
     }
 
     fun onPayment() = viewModelScope.launch {
-        giniPayment.onPayment(initialSelectedPaymentProvider, _paymentDetails.value)
+        giniPaymentManager.onPayment(initialSelectedPaymentProvider, _paymentDetails.value)
     }
 
     fun loadPaymentDetails() = viewModelScope.launch {
@@ -90,7 +90,7 @@ internal class IntegratedPaymentContainerViewModel(val paymentComponent: Payment
     class Factory(val paymentComponent: PaymentComponent?, val documentId: String, val integratedFlowConfiguration: IntegratedFlowConfiguration?, val giniMerchant: GiniMerchant?): ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return IntegratedPaymentContainerViewModel(paymentComponent = paymentComponent, documentId = documentId, integratedFlowConfiguration = integratedFlowConfiguration, giniPayment = GiniPayment(giniMerchant), giniMerchant = giniMerchant) as T
+            return IntegratedPaymentContainerViewModel(paymentComponent = paymentComponent, documentId = documentId, integratedFlowConfiguration = integratedFlowConfiguration, giniPaymentManager = GiniPaymentManager(giniMerchant), giniMerchant = giniMerchant) as T
         }
     }
 }

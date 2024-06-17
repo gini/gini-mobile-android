@@ -68,7 +68,7 @@ class GiniPaymentTest {
     @Test(expected = Exception::class)
     fun `throws exception if payment provider is null when creating payment request`() = runTest {
         // Given
-        val giniPayment = GiniPayment(giniMerchant)
+        val giniPayment = GiniPaymentManager(giniMerchant)
 
         // When - Then should throw error
         giniPayment.getPaymentRequest(null, paymentDetails)
@@ -78,7 +78,7 @@ class GiniPaymentTest {
     fun `throws exception if payment request was canceled`() = runTest {
         // Given
         coEvery { documentManager.createPaymentRequest(any()) } coAnswers  { Resource.Cancelled() }
-        val giniPayment = GiniPayment(giniMerchant)
+        val giniPayment = GiniPaymentManager(giniMerchant)
 
         // When - Then should throw error
         giniPayment.getPaymentRequest(paymentProviderApp, paymentDetails)
@@ -88,7 +88,7 @@ class GiniPaymentTest {
     fun `throws exception if payment request was not successful`() = runTest {
         // Given
         coEvery { documentManager.createPaymentRequest(any()) } coAnswers  { Resource.Error() }
-        val giniPayment = GiniPayment(giniMerchant)
+        val giniPayment = GiniPaymentManager(giniMerchant)
 
         // When - Then should throw error
         giniPayment.getPaymentRequest(paymentProviderApp, paymentDetails)
@@ -98,7 +98,7 @@ class GiniPaymentTest {
     fun `returns successful if payment request was successful`() = runTest {
         //Given
         coEvery { documentManager.createPaymentRequest(any()) } coAnswers  { Resource.Success("123") }
-        val giniPayment = GiniPayment(giniMerchant)
+        val giniPayment = GiniPaymentManager(giniMerchant)
 
         // Then
         assertThat(giniPayment.getPaymentRequest(paymentProviderApp, paymentDetails)).isInstanceOf(PaymentRequest::class.java)
@@ -107,7 +107,7 @@ class GiniPaymentTest {
     @Test
     fun `emits validation on flow`() = runTest {
         // Given
-        val giniPayment = GiniPayment(giniMerchant)
+        val giniPayment = GiniPaymentManager(giniMerchant)
 
         // When
         giniPayment.emitPaymentValidation(emptyList())

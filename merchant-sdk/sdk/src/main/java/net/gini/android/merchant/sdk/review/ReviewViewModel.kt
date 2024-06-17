@@ -29,7 +29,7 @@ import net.gini.android.merchant.sdk.review.model.ResultWrapper
 import net.gini.android.merchant.sdk.review.model.overwriteEmptyFields
 import net.gini.android.merchant.sdk.review.openWith.OpenWithPreferences
 import net.gini.android.merchant.sdk.review.pager.DocumentPageAdapter
-import net.gini.android.merchant.sdk.util.GiniPayment
+import net.gini.android.merchant.sdk.util.GiniPaymentManager
 import net.gini.android.merchant.sdk.util.adjustToLocalDecimalSeparation
 import net.gini.android.merchant.sdk.util.extensions.createTempPdfFile
 import net.gini.android.merchant.sdk.util.withPrev
@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory
 import java.io.File
 
 
-internal class ReviewViewModel(val giniMerchant: GiniMerchant, val configuration: ReviewConfiguration, val paymentComponent: PaymentComponent, val documentId: String, val giniPayment: GiniPayment) : ViewModel() {
+internal class ReviewViewModel(val giniMerchant: GiniMerchant, val configuration: ReviewConfiguration, val paymentComponent: PaymentComponent, val documentId: String, private val giniPaymentManager: GiniPaymentManager) : ViewModel() {
 
     internal var userPreferences: UserPreferences? = null
     internal var openWithPreferences: OpenWithPreferences? = null
@@ -45,9 +45,9 @@ internal class ReviewViewModel(val giniMerchant: GiniMerchant, val configuration
     private val _paymentDetails = MutableStateFlow(PaymentDetails("", "", "", ""))
     val paymentDetails: StateFlow<PaymentDetails> = _paymentDetails
 
-    val paymentValidation: StateFlow<List<ValidationMessage>> = giniPayment.paymentValidation
+    val paymentValidation: StateFlow<List<ValidationMessage>> = giniPaymentManager.paymentValidation
 
-    private val lastFullyValidatedPaymentDetails = giniPayment.lastFullyValidatedPaymentDetails
+    private val lastFullyValidatedPaymentDetails = giniPaymentManager.lastFullyValidatedPaymentDetails
 
     private var _isInfoBarVisible = MutableStateFlow(true)
     var isInfoBarVisible: StateFlow<Boolean> = _isInfoBarVisible
@@ -114,7 +114,7 @@ internal class ReviewViewModel(val giniMerchant: GiniMerchant, val configuration
                     }
 
                     // Emit all new empty validation messages along with other existing validation messages
-                    giniPayment.emitPaymentValidation(newEmptyValidationMessages + nonEmptyValidationMessages)
+                    giniPaymentManager.emitPaymentValidation(newEmptyValidationMessages + nonEmptyValidationMessages)
                 }
         }
         viewModelScope.launch {
@@ -166,7 +166,7 @@ internal class ReviewViewModel(val giniMerchant: GiniMerchant, val configuration
 
     fun onPayment() {
         viewModelScope.launch {
-            giniPayment.onPayment(paymentProviderApp.value, paymentDetails.value)
+            giniPaymentManager.onPayment(paymentProviderApp.value, paymentDetails.value)
         }
     }
 
@@ -219,9 +219,9 @@ internal class ReviewViewModel(val giniMerchant: GiniMerchant, val configuration
     internal fun getFileAsByteArray(externalCacheDir: File?) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                giniPayment.sendFeedbackAndStartLoading(paymentDetails.value)
+                giniPaymentManager.sendFeedbackAndStartLoading(paymentDetails.value)
                 val paymentRequest = try {
-                    giniPayment.getPaymentRequest(paymentProviderApp.value, paymentDetails.value)
+                    giniPaymentManager.getPaymentRequest(paymentProviderApp.value, paymentDetails.value)
                 } catch (throwable: Throwable) {
                     giniMerchant.setOpenBankState(GiniMerchant.PaymentState.Error(throwable))
                     return@withContext
@@ -259,7 +259,7 @@ internal class ReviewViewModel(val giniMerchant: GiniMerchant, val configuration
         private val configuration: ReviewConfiguration,
         private val paymentComponent: PaymentComponent,
         private val documentId: String,
-        private val giniPayment: GiniPayment = GiniPayment(giniMerchant)) :
+        private val giniPayment: GiniPaymentManager = GiniPaymentManager(giniMerchant)) :
         ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {

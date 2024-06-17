@@ -20,7 +20,7 @@ import net.gini.android.merchant.sdk.paymentcomponent.SelectedPaymentProviderApp
 import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderAppColors
 import net.gini.android.merchant.sdk.test.ViewModelTestCoroutineRule
-import net.gini.android.merchant.sdk.util.GiniPayment
+import net.gini.android.merchant.sdk.util.GiniPaymentManager
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -38,7 +38,7 @@ class IntegratedPaymentContainerViewModelTest {
     private val documentManager: HealthApiDocumentManager = mockk { HealthApiDocumentManager::class.java }
     private var giniMerchant: GiniMerchant? = null
     private var paymentComponent: PaymentComponent? = null
-    private var giniPayment: GiniPayment? = null
+    private var giniPayment: GiniPaymentManager? = null
 
     private var initialPaymentProviderApp =  PaymentProviderApp(
         name = "payment provider",
@@ -96,7 +96,7 @@ class IntegratedPaymentContainerViewModelTest {
             documentId = "1234",
             integratedFlowConfiguration = null,
             giniMerchant = giniMerchant,
-            giniPayment = GiniPayment(giniMerchant)
+            giniPaymentManager = GiniPaymentManager(giniMerchant)
         )
 
         // When
@@ -114,7 +114,7 @@ class IntegratedPaymentContainerViewModelTest {
             documentId = "1234",
             integratedFlowConfiguration = null,
             giniMerchant = giniMerchant,
-            giniPayment = GiniPayment(giniMerchant)
+            giniPaymentManager = GiniPaymentManager(giniMerchant)
         )
 
         // When
@@ -136,7 +136,7 @@ class IntegratedPaymentContainerViewModelTest {
             documentId = "1234",
             integratedFlowConfiguration = null,
             giniMerchant = giniMerchant,
-            giniPayment = GiniPayment(giniMerchant)
+            giniPaymentManager = GiniPaymentManager(giniMerchant)
         )
 
         // When
@@ -155,7 +155,7 @@ class IntegratedPaymentContainerViewModelTest {
             documentId = "1234",
             integratedFlowConfiguration = null,
             giniMerchant = giniMerchant,
-            giniPayment = GiniPayment(giniMerchant)
+            giniPaymentManager = GiniPaymentManager(giniMerchant)
         )
 
         // Then
@@ -171,7 +171,7 @@ class IntegratedPaymentContainerViewModelTest {
             documentId = "1234",
             integratedFlowConfiguration = null,
             giniMerchant = giniMerchant,
-            giniPayment = giniPayment!!
+            giniPaymentManager = giniPayment!!
         )
 
         // Then
@@ -188,7 +188,7 @@ class IntegratedPaymentContainerViewModelTest {
             documentId = "1234",
             integratedFlowConfiguration = null,
             giniMerchant = giniMerchant,
-            giniPayment = giniPayment!!
+            giniPaymentManager = giniPayment!!
         )
 
         // Then

@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory
 /**
  * Handles the validation of payment details, creation of payment request, sending feedback and emitting open bank event.
  */
-internal class GiniPayment(
+internal class GiniPaymentManager(
     val giniMerchant: GiniMerchant?
 ) {
     private val _paymentValidation = MutableStateFlow<List<ValidationMessage>>(emptyList())
@@ -123,6 +123,6 @@ internal class GiniPayment(
     }
 
     companion object {
-        private val LOG = LoggerFactory.getLogger(GiniPayment::class.java)
+        private val LOG = LoggerFactory.getLogger(GiniPaymentManager::class.java)
     }
 }

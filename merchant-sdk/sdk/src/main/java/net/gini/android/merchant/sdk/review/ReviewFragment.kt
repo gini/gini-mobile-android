@@ -53,7 +53,7 @@ import net.gini.android.merchant.sdk.review.openWith.OpenWithBottomSheet
 import net.gini.android.merchant.sdk.review.openWith.OpenWithForwardListener
 import net.gini.android.merchant.sdk.review.openWith.OpenWithPreferences
 import net.gini.android.merchant.sdk.review.pager.DocumentPageAdapter
-import net.gini.android.merchant.sdk.util.GiniPayment
+import net.gini.android.merchant.sdk.util.GiniPaymentManager
 import net.gini.android.merchant.sdk.util.amountWatcher
 import net.gini.android.merchant.sdk.util.autoCleared
 import net.gini.android.merchant.sdk.util.clearErrorMessage
@@ -626,8 +626,8 @@ class ReviewFragment private constructor(
             listener: ReviewFragmentListener? = null,
             paymentComponent: PaymentComponent,
             documentId: String,
-            giniPayment: GiniPayment = GiniPayment(giniMerchant),
-            viewModelFactory: ViewModelProvider.Factory = ReviewViewModel.Factory(giniMerchant, configuration, paymentComponent, documentId, giniPayment),
+            giniPaymentManager: GiniPaymentManager = GiniPaymentManager(giniMerchant),
+            viewModelFactory: ViewModelProvider.Factory = ReviewViewModel.Factory(giniMerchant, configuration, paymentComponent, documentId, giniPaymentManager),
         ): ReviewFragment = ReviewFragment(listener, paymentComponent, viewModelFactory)
     }
 }

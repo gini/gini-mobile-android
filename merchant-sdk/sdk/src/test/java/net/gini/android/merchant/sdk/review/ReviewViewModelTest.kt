@@ -30,7 +30,7 @@ import net.gini.android.merchant.sdk.review.model.PaymentDetails
 import net.gini.android.merchant.sdk.review.model.ResultWrapper
 import net.gini.android.merchant.sdk.review.openWith.OpenWithPreferences
 import net.gini.android.merchant.sdk.test.ViewModelTestCoroutineRule
-import net.gini.android.merchant.sdk.util.GiniPayment
+import net.gini.android.merchant.sdk.util.GiniPaymentManager
 import net.gini.android.merchant.sdk.util.extensions.createTempPdfFile
 import org.junit.After
 import org.junit.Before
@@ -53,7 +53,7 @@ class ReviewViewModelTest {
     val testCoroutineRule = ViewModelTestCoroutineRule()
 
     private var giniMerchant: GiniMerchant? = null
-    private var giniPayment: GiniPayment? = null
+    private var giniPayment: GiniPaymentManager? = null
     private var userPreferences: UserPreferences? = null
     private var context: Context? = null
 
@@ -68,7 +68,7 @@ class ReviewViewModelTest {
     @Before
     fun setup() {
         giniMerchant = mockk(relaxed = true)
-        giniPayment = GiniPayment(giniMerchant)
+        giniPayment = GiniPaymentManager(giniMerchant)
         every { giniMerchant!!.paymentFlow } returns MutableStateFlow<ResultWrapper<PaymentDetails>>(mockk()).asStateFlow()
         userPreferences = mockk(relaxed = true)
         context = getApplicationContext()
