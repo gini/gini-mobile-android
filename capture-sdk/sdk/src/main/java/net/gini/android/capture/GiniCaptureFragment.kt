@@ -26,6 +26,7 @@ import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.noresults.NoResultsFragment
 import net.gini.android.capture.review.multipage.MultiPageReviewFragment
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics
+import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventSuperProperty
 import java.util.UUID
 
 
@@ -45,6 +46,9 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
 
     private var willBeRestored = false
     private var didFinishWithResult = false
+
+    private val userAnalyticsEventTracker by lazy { UserAnalytics.getAnalyticsEventTracker() }
+
 
     fun setListener(listener: GiniCaptureFragmentListener) {
         this.giniCaptureFragmentListener = listener
@@ -97,6 +101,7 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
         super.onViewCreated(view, savedInstanceState)
         navController = (childFragmentManager.fragments[0]).findNavController()
         oncePerInstallEventStore = OncePerInstallEventStore(requireContext())
+        setAnalyticsEntryPointProperty(openWithDocument != null)
         if (openWithDocument != null) {
             navController.navigate(
                 CameraFragmentDirections.toAnalysisFragment(
@@ -212,6 +217,20 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
     private fun finishWithCancel() {
         didFinishWithResult = true
         giniCaptureFragmentListener.onFinishedWithResult(CaptureSDKResult.Cancel)
+    }
+
+    private fun setAnalyticsEntryPointProperty(isOpenWithDocumentExists: Boolean) {
+        val entryPointProperty = if (isOpenWithDocumentExists) {
+            UserAnalyticsEventSuperProperty.EntryPoint(UserAnalyticsEventSuperProperty.EntryPoint.EntryPointType.OPEN_WITH)
+        } else {
+            UserAnalyticsEventSuperProperty.EntryPoint(
+                when (GiniCapture.getInstance().entryPoint) {
+                    EntryPoint.BUTTON -> UserAnalyticsEventSuperProperty.EntryPoint.EntryPointType.BUTTON
+                    EntryPoint.FIELD -> UserAnalyticsEventSuperProperty.EntryPoint.EntryPointType.FIELD
+                }
+            )
+        }
+        userAnalyticsEventTracker.setEventSuperProperty(entryPointProperty)
     }
 
     companion object {

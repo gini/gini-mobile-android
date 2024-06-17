@@ -23,9 +23,11 @@ import net.gini.android.capture.GiniCaptureFragment
 import net.gini.android.capture.GiniCaptureFragmentDirections
 import net.gini.android.capture.GiniCaptureFragmentListener
 import net.gini.android.capture.camera.CameraFragmentListener
+import net.gini.android.capture.internal.util.CancelListener
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
-import net.gini.android.capture.internal.util.CancelListener
+import net.gini.android.capture.tracking.useranalytics.UserAnalytics
+import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsUserProperty
 
 class CaptureFlowFragment(private val openWithDocument: Document? = null) :
     Fragment(),
@@ -42,6 +44,19 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
 
     private var willBeRestored = false
     private var didFinishWithResult = false
+
+    private val userAnalyticsEventTracker by lazy { UserAnalytics.getAnalyticsEventTracker() }
+
+    private fun setReturnAssistantProperty() {
+        userAnalyticsEventTracker.setUserProperty(
+            setOf(
+                UserAnalyticsUserProperty.ReturnAssistantEnabled(
+                    GiniBank.getCaptureConfiguration()?.returnAssistantEnabled ?: false
+                ),
+                UserAnalyticsUserProperty.ReturnReasonsEnabled(GiniBank.enableReturnReasons),
+            )
+        )
+    }
 
     fun setListener(listener: CaptureFlowFragmentListener) {
         this.captureFlowFragmentListener = listener
@@ -65,6 +80,7 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setReturnAssistantProperty()
         navController = (childFragmentManager.fragments[0]).findNavController()
     }
 

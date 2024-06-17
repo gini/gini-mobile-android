@@ -9,21 +9,13 @@ import kotlinx.parcelize.Parcelize
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.R
 import net.gini.android.capture.Document
-import net.gini.android.capture.EntryPoint
-import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.internal.util.FileImportValidator
-import net.gini.android.capture.tracking.useranalytics.UserAnalytics
-import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventSuperProperty.EntryPoint as AnalyticsEntryPoint
-import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsUserProperty
 
 
 /**
  * Entry point for Screen API. It exists for the purpose of communication between Capture SDK's Screen API and Return Assistant.
  */
 internal class CaptureFlowActivity : AppCompatActivity(), CaptureFlowFragmentListener {
-
-    // TODO: move this to GiniCaptureFragment
-    //private val userAnalyticsEventTracker by lazy { UserAnalytics.getAnalyticsEventTracker() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,7 +51,6 @@ internal class CaptureFlowActivity : AppCompatActivity(), CaptureFlowFragmentLis
         ) ?: CaptureImportInput.Default
 
     private fun initFragment(document: Document? = null) {
-        setAnalyticsEntryPointProperty(document != null)
         if (!isFragmentShown()) {
             val fragment = createFragment(document)
             showFragment(fragment)
@@ -109,31 +100,6 @@ internal class CaptureFlowActivity : AppCompatActivity(), CaptureFlowFragmentLis
         const val EXTRA_OUT_RESULT = "GBS_EXTRA_OUT_RESULT"
     }
 
-    // TODO: uncomment the last part and move this to GiniCaptureFragment
-    private fun setAnalyticsEntryPointProperty(isOpenWithDocumentExists: Boolean) {
-
-        val entryPointProperty = if (isOpenWithDocumentExists) {
-            AnalyticsEntryPoint(AnalyticsEntryPoint.EntryPointType.OPEN_WITH)
-        } else {
-            AnalyticsEntryPoint(
-                when (GiniCapture.getInstance().entryPoint) {
-                    EntryPoint.BUTTON -> AnalyticsEntryPoint.EntryPointType.BUTTON
-                    EntryPoint.FIELD -> AnalyticsEntryPoint.EntryPointType.FIELD
-                }
-            )
-        }
-//
-//        userAnalyticsEventTracker.setUserProperty(
-//            setOf(
-//                UserAnalyticsUserProperty.ReturnAssistantEnabled(
-//                    GiniBank.getCaptureConfiguration()?.returnAssistantEnabled ?: false
-//                ),
-//                UserAnalyticsUserProperty.ReturnReasonsEnabled(GiniBank.enableReturnReasons),
-//            )
-//        )
-//
-//        userAnalyticsEventTracker.setEventSuperProperty(entryPointProperty)
-    }
 }
 
 /**
