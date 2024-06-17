@@ -57,7 +57,8 @@ private const val TAG_WHAT_IS_THIS_DIALOG = "TAG_WHAT_IS_THIS_DIALOG"
 /**
  * Internal use only.
  */
-open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.View, LineItemsAdapterListener {
+open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.View,
+    LineItemsAdapterListener {
 
     private var binding by autoCleared<GbsFragmentDigitalInvoiceBinding>()
     private var lineItemsAdapter by autoCleared<LineItemsAdapter>()
@@ -140,7 +141,11 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
                         .toMap()
             }
             returnReasons =
-                (BundleCompat.getParcelableArray(this, ARGS_RETURN_REASONS, GiniCaptureReturnReason::class.java)
+                (BundleCompat.getParcelableArray(
+                    this,
+                    ARGS_RETURN_REASONS,
+                    GiniCaptureReturnReason::class.java
+                )
                     ?.toList() as? List<GiniCaptureReturnReason>) ?: emptyList()
 
             isInaccurateExtraction = getBoolean(ARGS_INACCURATE_EXTRACTION, false)
@@ -226,12 +231,13 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
 
                 if (!GiniCapture.getInstance().isBottomNavigationBarEnabled) {
                     injectedViewAdapter.setMenuResource(R.menu.gbs_menu_digital_invoice)
-                    injectedViewAdapter.setOnMenuItemClickListener(IntervalToolbarMenuItemIntervalClickListener {
-                        if (it.itemId == R.id.help) {
-                            showHelp()
-                        }
-                        true
-                    })
+                    injectedViewAdapter.setOnMenuItemClickListener(
+                        IntervalToolbarMenuItemIntervalClickListener {
+                            if (it.itemId == R.id.help) {
+                                showHelp()
+                            }
+                            true
+                        })
                 }
 
                 injectedViewAdapter.setOnNavButtonClickListener {
@@ -262,6 +268,7 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
                     injectedViewAdapter.setOnProceedClickListener {
                         presenter?.pay()
                         trackProceedTapped()
+                        trackSdkClosedEvent()
                     }
 
                     footerDetails?.let {
@@ -303,6 +310,7 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
     override fun payButtonClicked() {
         presenter?.pay()
         trackProceedTapped()
+        trackSdkClosedEvent()
     }
 
     /**
@@ -344,7 +352,11 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
     }
 
     override fun onEditLineItem(selectableLineItem: SelectableLineItem) {
-        findNavController().navigate(DigitalInvoiceFragmentDirections.toDigitalInvoiceEditItemBottomSheetDialog(selectableLineItem))
+        findNavController().navigate(
+            DigitalInvoiceFragmentDirections.toDigitalInvoiceEditItemBottomSheetDialog(
+                selectableLineItem
+            )
+        )
     }
 
     override fun showOnboarding() {
@@ -457,7 +469,11 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
                 DigitalInvoiceBottomSheet.REQUEST_KEY,
                 viewLifecycleOwner
             ) { _: String?, result: Bundle ->
-                BundleCompat.getParcelable(result, DigitalInvoiceBottomSheet.RESULT_KEY, SelectableLineItem::class.java)
+                BundleCompat.getParcelable(
+                    result,
+                    DigitalInvoiceBottomSheet.RESULT_KEY,
+                    SelectableLineItem::class.java
+                )
                     ?.let { selectableLineItem ->
                         presenter?.updateLineItem(selectableLineItem)
                     }
@@ -542,6 +558,15 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
         userAnalyticsEventTracker.trackEvent(
             UserAnalyticsEvent.PROCEED_TAPPED,
             setOf(UserAnalyticsEventProperty.Screen(screenName))
+        )
+    }
+
+    private fun trackSdkClosedEvent() = runCatching {
+        userAnalyticsEventTracker.trackEvent(
+            UserAnalyticsEvent.SDK_CLOSED, setOf(
+                UserAnalyticsEventProperty.Screen(screenName),
+                UserAnalyticsEventProperty.Status(UserAnalyticsEventProperty.Status.StatusType.Successful)
+            )
         )
     }
 }

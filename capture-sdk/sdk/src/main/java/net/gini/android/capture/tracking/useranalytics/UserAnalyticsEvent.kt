@@ -35,4 +35,7 @@ enum class UserAnalyticsEvent(val eventName: String) {
     // region Camera Permission
     GIVE_ACCESS_TAPPED("give_access_tapped"),
     // endregion
+    SDK_OPENED("sdk_opened"),
+    SDK_CLOSED("sdk_closed"),
+    DISMISSED("dismissed")
 }
