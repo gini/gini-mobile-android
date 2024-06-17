@@ -53,7 +53,7 @@ internal class IntegratedPaymentContainerViewModel(val paymentComponent: Payment
         backstack.pop()
     }
 
-    fun getLastBackstackEntry() = backstack.peek()
+    fun getLastBackstackEntry() = if (backstack.isNotEmpty()) backstack.peek() else DisplayedScreen.Nothing
 
     fun paymentProviderAppChanged(paymentProviderApp: PaymentProviderApp): Boolean {
         if (initialSelectedPaymentProvider?.paymentProvider?.id != paymentProviderApp.paymentProvider.id) {
