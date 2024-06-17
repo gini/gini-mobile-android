@@ -27,6 +27,8 @@ import net.gini.android.capture.noresults.NoResultsFragment
 import net.gini.android.capture.review.multipage.MultiPageReviewFragment
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventSuperProperty
+import net.gini.android.capture.tracking.useranalytics.tracker.AmplitudeUserAnalyticsEventTracker
+import net.gini.android.capture.tracking.useranalytics.tracker.MixPanelUserAnalyticsEventTracker
 import java.util.UUID
 
 
@@ -74,8 +76,12 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
                 ?.getConfigurations(UUID.randomUUID())
             response?.thenAcceptAsync { res ->
                 UserAnalytics.setPlatformTokens(
-                    mixpanelToken = res.configuration.mixpanelToken,
-                    amplitudeApiKey = res.configuration.amplitudeApiKey
+                    MixPanelUserAnalyticsEventTracker.MixpanelAnalyticsApiKey(
+                        res.configuration.mixpanelToken
+                    ),
+                    AmplitudeUserAnalyticsEventTracker.AmplitudeAnalyticsApiKey(
+                        res.configuration.amplitudeApiKey
+                    )
                 )
             }
 

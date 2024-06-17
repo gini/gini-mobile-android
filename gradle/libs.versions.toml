@@ -20,6 +20,7 @@ pmd = "6.0.0"
 jacoco = "0.8.10"
 hilt = "2.46.1"
 navigation_component = "2.7.6"
+amplitude = "1.16.8"
 
 [libraries]
 android-gradle = { module = "com.android.tools.build:gradle", version.ref = "android-gradle-plugin" }
@@ -112,3 +113,4 @@ datastore-preferences = "androidx.datastore:datastore-preferences:1.0.0"
 tomlj = "org.tomlj:tomlj:1.1.1"
 json-testing = "org.json:json:20231013"
 mixpanel = "com.mixpanel.android:mixpanel-android:7.5.2"
+amplitude = { module = "com.amplitude:analytics-android", version.ref = "amplitude" }
