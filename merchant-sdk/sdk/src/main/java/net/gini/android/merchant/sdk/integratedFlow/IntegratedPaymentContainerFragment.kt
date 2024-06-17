@@ -94,8 +94,10 @@ class IntegratedPaymentContainerFragment private constructor(
         }
 
         override fun onBankPickerClicked() {
-            viewModel.addToBackStack(IntegratedPaymentContainerViewModel.DisplayedScreen.BankSelectionBottomSheet)
-            BankSelectionBottomSheet.newInstance(viewModel.paymentComponent!!, backListener = this@IntegratedPaymentContainerFragment).show(childFragmentManager, BankSelectionBottomSheet::class.java.name)
+            viewModel.paymentComponent?.let {
+                viewModel.addToBackStack(IntegratedPaymentContainerViewModel.DisplayedScreen.BankSelectionBottomSheet)
+                BankSelectionBottomSheet.newInstance(it, backListener = this@IntegratedPaymentContainerFragment).show(childFragmentManager, BankSelectionBottomSheet::class.java.name)
+            }
         }
 
         override fun onPayInvoiceClicked(documentId: String) {
