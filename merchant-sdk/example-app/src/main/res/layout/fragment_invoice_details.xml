@@ -10,30 +10,39 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="@dimen/gms_large">
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            style="@style/GiniMerchantTheme.Typography.Headline3"
             android:text="Invoice Number"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            style="@style/GiniMerchantTheme.Typography.Body1"
             android:id="@+id/invoice_number"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/gms_large"
+            style="@style/GiniMerchantTheme.Typography.Headline3"
             android:text="Due Date"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            style="@style/GiniMerchantTheme.Typography.Body1"
             android:id="@+id/due_date"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/gms_large"
+            style="@style/GiniMerchantTheme.Typography.Headline3"
             android:text="Amount"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            style="@style/GiniMerchantTheme.Typography.Body1"
             android:id="@+id/amount"/>
     </LinearLayout>
 
