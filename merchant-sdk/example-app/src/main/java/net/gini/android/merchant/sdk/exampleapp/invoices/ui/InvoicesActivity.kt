@@ -21,7 +21,6 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import net.gini.android.merchant.sdk.GiniMerchant
-import net.gini.android.merchant.sdk.bankselection.BankSelectionBottomSheet
 import net.gini.android.merchant.sdk.exampleapp.MainActivity
 import net.gini.android.merchant.sdk.exampleapp.R
 import net.gini.android.merchant.sdk.exampleapp.databinding.ActivityInvoicesBinding
@@ -30,9 +29,7 @@ import net.gini.android.merchant.sdk.exampleapp.invoices.ui.model.InvoiceItem
 import net.gini.android.merchant.sdk.integratedFlow.IntegratedFlowConfiguration
 import net.gini.android.merchant.sdk.integratedFlow.IntegratedPaymentContainerFragment
 import net.gini.android.merchant.sdk.moreinformation.MoreInformationFragment
-import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.merchant.sdk.review.ReviewFragment
-import net.gini.android.merchant.sdk.review.ReviewFragmentListener
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.slf4j.LoggerFactory
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentProviderAppsState.Loading as LoadingBankApp
@@ -40,14 +37,6 @@ import net.gini.android.merchant.sdk.paymentcomponent.PaymentProviderAppsState.L
 class InvoicesActivity : AppCompatActivity() {
 
     private val viewModel: InvoicesViewModel by viewModel()
-
-    private val reviewFragmentListener = object : ReviewFragmentListener {
-        override fun onCloseReview() {
-            supportFragmentManager.popBackStack()
-        }
-
-        override fun onToTheBankButtonClicked(paymentProviderName: String) {}
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -102,37 +91,6 @@ class InvoicesActivity : AppCompatActivity() {
                     }
                 }
                 launch {
-                    viewModel.paymentReviewFragmentStateFlow.collect { paymentReviewFragmentState ->
-                        when (paymentReviewFragmentState) {
-                            is PaymentReviewFragmentState.Error -> {
-                                AlertDialog.Builder(this@InvoicesActivity)
-                                    .setTitle(getString(R.string.could_not_start_payment_review))
-                                    .setMessage(paymentReviewFragmentState.throwable.message)
-                                    .setPositiveButton(android.R.string.ok, null)
-                                    .show()
-                            }
-
-                            PaymentReviewFragmentState.Idle -> {}
-                            PaymentReviewFragmentState.Loading -> {
-                                showLoadingIndicator(binding)
-                            }
-
-                            is PaymentReviewFragmentState.Success -> {
-                                hideLoadingIndicator(binding)
-
-                                val paymentReviewFragment = paymentReviewFragmentState.fragment
-
-                                paymentReviewFragment.listener = reviewFragmentListener
-
-                                supportFragmentManager.beginTransaction()
-                                    .replace(R.id.fragment_container, paymentReviewFragment, REVIEW_FRAGMENT_TAG)
-                                    .addToBackStack(null)
-                                    .commit()
-                            }
-                        }
-                    }
-                }
-                launch {
                     viewModel.openBankState.collect { paymentState ->
                         when (paymentState) {
                             is GiniMerchant.PaymentState.Success -> {
@@ -165,34 +123,6 @@ class InvoicesActivity : AppCompatActivity() {
             showInvoiceDetailsFragment()
         }
         binding.invoicesList.addItemDecoration(DividerItemDecoration(this, LinearLayout.VERTICAL))
-
-        viewModel.paymentComponent.listener = object: PaymentComponent.Listener {
-            override fun onMoreInformationClicked() {
-                MoreInformationFragment.newInstance(viewModel.paymentComponent).apply {
-                    supportFragmentManager.beginTransaction()
-                        .add(R.id.fragment_container,this, this::class.java.simpleName)
-                        .addToBackStack(this::class.java.simpleName)
-                        .commit()
-                }
-            }
-
-            override fun onBankPickerClicked() {
-                BankSelectionBottomSheet.newInstance(viewModel.paymentComponent).apply {
-                    show(supportFragmentManager, BankSelectionBottomSheet::class.simpleName)
-                }
-            }
-
-            override fun onPayInvoiceClicked(documentId: String) {
-                LOG.debug("Pay invoice clicked")
-
-                viewModel.getPaymentReviewFragment(documentId)
-            }
-        }
-
-        // Reattach the listener to the ReviewFragment if it is being shown (in case of configuration changes)
-        supportFragmentManager.findFragmentByTag(REVIEW_FRAGMENT_TAG)?.let {
-            (it as? ReviewFragment)?.listener = reviewFragmentListener
-        }
 
         supportFragmentManager.addOnBackStackChangedListener {
             setActivityTitle()
