@@ -336,12 +336,7 @@ class ReviewFragment private constructor(
 
     private fun GhsFragmentReviewBinding.handlePaymentState(paymentState: GiniHealth.PaymentState) {
         (paymentState is GiniHealth.PaymentState.Loading).let { isLoading ->
-            paymentProgress.isVisible = isLoading
-            recipientLayout.isEnabled = !isLoading
-            ibanLayout.isEnabled = !isLoading
-            amountLayout.isEnabled = !isLoading
-            purposeLayout.isEnabled = !isLoading
-            payment.text = if (isLoading) "" else getString(R.string.ghs_pay_button)
+            handleLoading(isLoading)
         }
         when (paymentState) {
             is GiniHealth.PaymentState.Success -> {
@@ -367,7 +362,17 @@ class ReviewFragment private constructor(
         }
     }
 
+    private fun GhsFragmentReviewBinding.handleLoading(isLoading: Boolean) {
+        paymentProgress.isVisible = isLoading
+        recipientLayout.isEnabled = !isLoading
+        ibanLayout.isEnabled = !isLoading
+        amountLayout.isEnabled = !isLoading
+        purposeLayout.isEnabled = !isLoading
+        payment.text = if (isLoading) "" else getString(R.string.ghs_pay_button)
+    }
+
     private fun GhsFragmentReviewBinding.handleError(text: String, onRetry: () -> Unit) {
+        handleLoading(false)
         if (viewModel.configuration.handleErrorsInternally) {
             showSnackbar(text, onRetry)
         }
@@ -586,6 +591,7 @@ class ReviewFragment private constructor(
     private fun handlePaymentNextStep(paymentNextStep: ReviewViewModel.PaymentNextStep) {
         when (paymentNextStep) {
             is ReviewViewModel.PaymentNextStep.SetLoadingVisibility -> {
+                binding.handleLoading(paymentNextStep.isVisible)
                 errorSnackbar?.dismiss()
             }
             ReviewViewModel.PaymentNextStep.RedirectToBank -> {
