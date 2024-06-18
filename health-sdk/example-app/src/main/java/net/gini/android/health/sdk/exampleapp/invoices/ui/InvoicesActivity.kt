@@ -35,7 +35,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.slf4j.LoggerFactory
 import net.gini.android.health.sdk.paymentcomponent.PaymentProviderAppsState.Loading as LoadingBankApp
 
-class InvoicesActivity : AppCompatActivity() {
+open class InvoicesActivity : AppCompatActivity() {
 
     private val viewModel: InvoicesViewModel by viewModel()
 
