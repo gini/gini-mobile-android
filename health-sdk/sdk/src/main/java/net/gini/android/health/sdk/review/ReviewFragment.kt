@@ -127,6 +127,7 @@ class ReviewFragment private constructor(
     private var binding: GhsFragmentReviewBinding by autoCleared()
     private var documentPageAdapter: DocumentPageAdapter by autoCleared()
     private var isKeyboardShown = false
+    private var errorSnackbar: Snackbar? = null
 
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
         val inflater = super.onGetLayoutInflater(savedInstanceState)
@@ -335,12 +336,7 @@ class ReviewFragment private constructor(
 
     private fun GhsFragmentReviewBinding.handlePaymentState(paymentState: GiniHealth.PaymentState) {
         (paymentState is GiniHealth.PaymentState.Loading).let { isLoading ->
-            paymentProgress.isVisible = isLoading
-            recipientLayout.isEnabled = !isLoading
-            ibanLayout.isEnabled = !isLoading
-            amountLayout.isEnabled = !isLoading
-            purposeLayout.isEnabled = !isLoading
-            payment.text = if (isLoading) "" else getString(R.string.ghs_pay_button)
+            handleLoading(isLoading)
         }
         when (paymentState) {
             is GiniHealth.PaymentState.Success -> {
@@ -366,7 +362,17 @@ class ReviewFragment private constructor(
         }
     }
 
+    private fun GhsFragmentReviewBinding.handleLoading(isLoading: Boolean) {
+        paymentProgress.isVisible = isLoading
+        recipientLayout.isEnabled = !isLoading
+        ibanLayout.isEnabled = !isLoading
+        amountLayout.isEnabled = !isLoading
+        purposeLayout.isEnabled = !isLoading
+        payment.text = if (isLoading) "" else getString(R.string.ghs_pay_button)
+    }
+
     private fun GhsFragmentReviewBinding.handleError(text: String, onRetry: () -> Unit) {
+        handleLoading(false)
         if (viewModel.configuration.handleErrorsInternally) {
             showSnackbar(text, onRetry)
         }
@@ -374,12 +380,15 @@ class ReviewFragment private constructor(
 
     private fun GhsFragmentReviewBinding.showSnackbar(text: String, onRetry: () -> Unit) {
         val context = requireContext().wrappedWithGiniHealthTheme()
-        Snackbar.make(context, root, text, Snackbar.LENGTH_INDEFINITE).apply {
+        errorSnackbar?.dismiss()
+        errorSnackbar = Snackbar.make(context, root, text, Snackbar.LENGTH_INDEFINITE).apply {
             if (context.getFontScale() < 1.5) {
                 anchorView = paymentDetailsScrollview
             }
             setTextMaxLines(2)
-            setAction(getString(R.string.ghs_snackbar_retry)) { onRetry() }
+            setAction(getString(R.string.ghs_snackbar_retry)) {
+                onRetry()
+            }
             show()
         }
     }
@@ -538,6 +547,7 @@ class ReviewFragment private constructor(
     }
 
     private fun showInstallAppDialog(paymentProviderApp: PaymentProviderApp) {
+        errorSnackbar?.dismiss()
         val dialog = InstallAppBottomSheet.newInstance(viewModel.paymentComponent, object : InstallAppForwardListener {
             override fun onForwardToBankSelected() {
                 redirectToBankApp(paymentProviderApp)
@@ -552,6 +562,7 @@ class ReviewFragment private constructor(
     }
 
     private fun showOpenWithDialog(paymentProviderApp: PaymentProviderApp) {
+        errorSnackbar?.dismiss()
         OpenWithBottomSheet.newInstance(paymentProviderApp, object: OpenWithForwardListener {
             override fun onForwardSelected() {
                 viewModel.onForwardToSharePdfTapped(requireContext().externalCacheDir)
@@ -563,6 +574,7 @@ class ReviewFragment private constructor(
     }
 
     private fun startSharePdfIntent(paymentRequestFile: File) {
+        errorSnackbar?.dismiss()
         val uriForFile = FileProvider.getUriForFile(
             requireContext(),
             requireContext().packageName+".health.sdk.fileprovider",
@@ -579,7 +591,8 @@ class ReviewFragment private constructor(
     private fun handlePaymentNextStep(paymentNextStep: ReviewViewModel.PaymentNextStep) {
         when (paymentNextStep) {
             is ReviewViewModel.PaymentNextStep.SetLoadingVisibility -> {
-                binding.loading.isVisible = paymentNextStep.isVisible
+                binding.handleLoading(paymentNextStep.isVisible)
+                errorSnackbar?.dismiss()
             }
             ReviewViewModel.PaymentNextStep.RedirectToBank -> {
                 viewModel.paymentProviderApp.value?.name?.let {
