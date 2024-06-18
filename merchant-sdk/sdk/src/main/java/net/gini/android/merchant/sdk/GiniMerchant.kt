@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory
 import java.lang.ref.WeakReference
 
 /**
- * [GiniMerchant] is one of the main classes for interacting with the Gini Merchant SDK. It manages interaction with the Gini Health API.
+ * [GiniMerchant] is one of the main classes for interacting with the Gini Merchant SDK.
  *
  *  [documentFlow], [paymentFlow], [openBankState] are used by the [ReviewFragment] to observe their state, but they are public
  *  so that they can be observed anywhere, the main purpose for this is to observe errors.
