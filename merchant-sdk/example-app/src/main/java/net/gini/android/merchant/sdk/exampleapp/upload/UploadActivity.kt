@@ -7,6 +7,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.snackbar.Snackbar
 import net.gini.android.merchant.sdk.exampleapp.R
 import net.gini.android.merchant.sdk.exampleapp.databinding.ActivityUploadBinding
 import net.gini.android.merchant.sdk.exampleapp.review.ReviewActivity
@@ -31,7 +32,15 @@ class UploadActivity : AppCompatActivity() {
         }
 
         binding.payment.setOnClickListener {
-            startActivity(ReviewActivity.getStartIntent(this, intent.pageUris))
+            if (viewModel.uploadState.value is UploadViewModel.UploadState.Success) {
+                val documentId = (viewModel.uploadState.value as UploadViewModel.UploadState.Success).documentId
+                startActivity(ReviewActivity.getStartIntent(this,
+                    pages = intent.pageUris,
+                    documentId = documentId
+                ))
+            } else {
+                Snackbar.make(binding.root, getString(R.string.missing_document_id), Snackbar.LENGTH_SHORT).show()
+            }
         }
     }
 

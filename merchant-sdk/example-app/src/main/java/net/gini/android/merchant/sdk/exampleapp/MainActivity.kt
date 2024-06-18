@@ -41,8 +41,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.importFile.setOnClickListener {
             if (useTestDocument) {
-                viewModel.setDocumentForReview(testDocumentId)
-                startActivity(ReviewActivity.getStartIntent(this))
+                startActivity(ReviewActivity.getStartIntent(this, documentId = testDocumentId))
             } else {
                 importFile()
             }

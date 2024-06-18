@@ -51,7 +51,6 @@ class UploadViewModel(
                     is Resource.Error -> throw Exception(polledDocumentResource.exception)
                     is Resource.Success -> {
                         _uploadState.value = UploadState.Success(polledDocumentResource.data.id)
-                        setDocumentForReview(polledDocumentResource.data.id)
 
                         giniHealthAPI.documentManager.getAllExtractions(polledDocumentResource.data)
                             .mapSuccess { extractionsResource ->
@@ -73,11 +72,12 @@ class UploadViewModel(
         }
     }
 
-    private fun setDocumentForReview(documentId: String) {
-        viewModelScope.launch {
-            giniMerchant.setDocumentForReview(documentId)
-        }
-    }
+    // TODO EC-62: we don't expose the document anymore in the Merchant SDK and instead we pass the document id to the ReviewActivity
+//    private fun setDocumentForReview(documentId: String) {
+//        viewModelScope.launch {
+//            giniMerchant.setDocumentForReview(documentId)
+//        }
+//    }
 
     sealed class UploadState {
         object Loading : UploadState()

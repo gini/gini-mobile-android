@@ -5,6 +5,7 @@
     <string name="payment">Pay</string>
     <string name="upload_failed">Upload failed</string>
     <string name="upload_succeeded">Upload succeeded</string>
+    <string name="missing_document_id">Missing document id</string>
     <string name="document_not_payable_title">Invoice is not payable</string>
     <string name="document_not_payable_message">Please try again with a different invoice.</string>
     <string name="failed_to_load_bank_apps">Failed to load bank apps</string>
@@ -19,4 +20,5 @@
     <string name="title_payment_review">Your Invoice</string>
 
     <string name="gms_privacy_policy_link_url">https://www.google.com</string>
+
 </resources>

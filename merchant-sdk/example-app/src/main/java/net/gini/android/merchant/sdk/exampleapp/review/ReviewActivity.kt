@@ -28,7 +28,6 @@ import net.gini.android.merchant.sdk.paymentcomponent.PaymentProviderAppsState
 import net.gini.android.merchant.sdk.review.ReviewConfiguration
 import net.gini.android.merchant.sdk.review.ReviewFragment
 import net.gini.android.merchant.sdk.review.ReviewFragmentListener
-import net.gini.android.merchant.sdk.review.model.ResultWrapper
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.slf4j.LoggerFactory
 
@@ -52,7 +51,7 @@ class ReviewActivity : AppCompatActivity() {
                         }
 
                         is GiniMerchant.PaymentState.Success -> {
-                            LOG.debug("launching bank app: {}", paymentState.paymentRequest.bankApp.name)
+                            LOG.debug("launching bank app for payment request: {}", paymentState.paymentRequest)
                             cancel()
                         }
 
@@ -146,7 +145,7 @@ class ReviewActivity : AppCompatActivity() {
         binding.paymentComponentView.paymentComponent = viewModel.paymentComponent
 
         lifecycleScope.launch {
-            val documentId = (viewModel.giniMerchant.documentFlow.value as ResultWrapper.Success<Document>).value.id
+            val documentId = intent.documentId
 
             val isDocumentPayable = viewModel.giniMerchant.checkIfDocumentIsPayable(documentId)
 
@@ -162,6 +161,8 @@ class ReviewActivity : AppCompatActivity() {
                     .show()
                 return@launch
             }
+
+            viewModel.giniMerchant.setDocumentForReview(documentId)
 
             // Configure the PaymentComponentView
             binding.paymentComponentView.isPayable = true
@@ -207,16 +208,21 @@ class ReviewActivity : AppCompatActivity() {
         private val LOG = LoggerFactory.getLogger(ReviewActivity::class.java)
 
         private const val EXTRA_URIS = "EXTRA_URIS"
+        private const val EXTRA_DOCUMENT_ID = "EXTRA_DOCUMENT_ID"
 
-        fun getStartIntent(context: Context, pages: List<Uri> = emptyList()): Intent =
+        fun getStartIntent(context: Context, pages: List<Uri> = emptyList(), documentId: String): Intent =
             Intent(context, ReviewActivity::class.java).apply {
                 putParcelableArrayListExtra(
                     EXTRA_URIS,
                     if (pages is ArrayList<Uri>) pages else ArrayList<Uri>().apply { addAll(pages) })
+                putExtra(EXTRA_DOCUMENT_ID, documentId)
             }
 
         private val Intent.pageUris: List<Uri>
             get() = getParcelableArrayListExtra<Uri>(EXTRA_URIS)?.toList() ?: emptyList()
+
+        private val Intent.documentId: String
+            get() = getStringExtra(EXTRA_DOCUMENT_ID) ?: throw Exception("Document ID not found in intent")
     }
 }
 

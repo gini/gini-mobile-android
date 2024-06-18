@@ -12,7 +12,6 @@ import net.gini.android.merchant.sdk.exampleapp.invoices.ui.model.InvoiceItem
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.merchant.sdk.review.ReviewConfiguration
 import net.gini.android.merchant.sdk.review.ReviewFragment
-import net.gini.android.merchant.sdk.review.model.ResultWrapper
 import org.slf4j.LoggerFactory
 
 class InvoicesViewModel(
@@ -36,7 +35,8 @@ class InvoicesViewModel(
     fun updateDocument() {
         viewModelScope.launch {
             with(invoicesRepository) {
-                requestDocumentExtractionAndSaveToLocal((giniMerchant.documentFlow.value as ResultWrapper.Success).value)
+                // TODO EC-62: updating a specific document won't be possible because we don't expose the document in the Merchant SDK
+                //requestDocumentExtractionAndSaveToLocal((giniMerchant.documentFlow.value as ResultWrapper.Success).value)
             }
         }
     }

@@ -98,7 +98,7 @@ class InvoicesRepository(
     }
 
     private fun createEmptyDocument(documentId: String) = Document(
-        documentId, Document.ProcessingState.COMPLETED, "", 0, Date(), Document.SourceClassification.UNKNOWN, Uri.EMPTY, emptyList(), emptyList()
+        documentId, Document.ProcessingState.COMPLETED, "", 0, Date(), Date(), Document.SourceClassification.UNKNOWN, Uri.EMPTY, emptyList(), emptyList()
     )
 
     private suspend fun getDocumentWithExtraction(document: Document): Pair<DocumentWithExtractions?, Resource<ExtractionsContainer>> {
