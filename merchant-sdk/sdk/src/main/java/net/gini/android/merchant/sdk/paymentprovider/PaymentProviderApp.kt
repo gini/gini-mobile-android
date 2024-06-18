@@ -52,8 +52,8 @@ data class PaymentProviderApp(
     val name: String,
     val icon: BitmapDrawable?,
     val colors: PaymentProviderAppColors,
-    val paymentProvider: PaymentProvider,
-    val installedPaymentProviderApp: InstalledPaymentProviderApp? = null,
+    internal val paymentProvider: PaymentProvider,
+    internal val installedPaymentProviderApp: InstalledPaymentProviderApp? = null,
 ) {
 
     fun getIntent(paymentRequestId: String): Intent? = installedPaymentProviderApp?.let {

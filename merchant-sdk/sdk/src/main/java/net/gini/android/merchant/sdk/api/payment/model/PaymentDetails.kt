@@ -1,4 +1,4 @@
-package net.gini.android.merchant.sdk.review.model
+package net.gini.android.merchant.sdk.api.payment.model
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

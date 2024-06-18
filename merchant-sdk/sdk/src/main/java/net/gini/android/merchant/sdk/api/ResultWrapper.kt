@@ -1,4 +1,4 @@
-package net.gini.android.merchant.sdk.review.model
+package net.gini.android.merchant.sdk.api
 
 import net.gini.android.core.api.Resource
 
@@ -6,7 +6,7 @@ import net.gini.android.core.api.Resource
  * Represents the result of processing a document to get its extractions.
  * Wraps the result of the extraction request.
  */
-sealed class ResultWrapper<out T> {
+internal sealed class ResultWrapper<out T> {
 
     /**
      * Request completed successfully and extractions were returned.
@@ -24,7 +24,7 @@ sealed class ResultWrapper<out T> {
     class Loading<T> : ResultWrapper<T>()
 }
 
-suspend inline fun <T> wrapToResult(crossinline block: suspend () -> Resource<T>): ResultWrapper<T> {
+internal suspend inline fun <T> wrapToResult(crossinline block: suspend () -> Resource<T>): ResultWrapper<T> {
     return try {
         when(val resource = block()) {
             is Resource.Cancelled -> ResultWrapper.Error(Exception("Cancelled"))

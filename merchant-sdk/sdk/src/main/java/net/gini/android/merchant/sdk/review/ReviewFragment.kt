@@ -47,8 +47,8 @@ import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.preferences.UserPreferences
 import net.gini.android.merchant.sdk.review.installApp.InstallAppBottomSheet
 import net.gini.android.merchant.sdk.review.installApp.InstallAppForwardListener
-import net.gini.android.merchant.sdk.review.model.PaymentDetails
-import net.gini.android.merchant.sdk.review.model.ResultWrapper
+import net.gini.android.merchant.sdk.api.payment.model.PaymentDetails
+import net.gini.android.merchant.sdk.api.ResultWrapper
 import net.gini.android.merchant.sdk.review.openWith.OpenWithBottomSheet
 import net.gini.android.merchant.sdk.review.openWith.OpenWithForwardListener
 import net.gini.android.merchant.sdk.review.openWith.OpenWithPreferences
@@ -344,8 +344,9 @@ class ReviewFragment private constructor(
             is GiniMerchant.PaymentState.Success -> {
                 if (viewModel.paymentProviderApp.value?.paymentProvider?.gpcSupported() == false) return
                 try {
+                    // TODO EC-62: Move paymentProviderApp into an internal data class when we remove the openBankState flow
                     val intent =
-                        paymentState.paymentRequest.bankApp.getIntent(paymentState.paymentRequest.id)
+                        paymentState.paymentRequest.paymentProviderApp!!.getIntent(paymentState.paymentRequest.id)
                     if (intent != null) {
                         startActivity(intent)
                         viewModel.onBankOpened()

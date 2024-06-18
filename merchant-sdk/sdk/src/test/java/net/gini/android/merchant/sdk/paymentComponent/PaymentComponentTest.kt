@@ -120,7 +120,9 @@ class PaymentComponentTest {
     @Before
     fun setUp() {
         every { giniHealthAPI.documentManager } returns documentManager
-        giniMerchant = GiniMerchant(giniHealthAPI)
+        giniMerchant = GiniMerchant(mockk(relaxed = true)).apply {
+            replaceHealthApiInstance(this@PaymentComponentTest.giniHealthAPI)
+        }
         context = getApplicationContext()
     }
 

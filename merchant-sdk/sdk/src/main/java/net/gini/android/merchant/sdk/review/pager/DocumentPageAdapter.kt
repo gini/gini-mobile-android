@@ -22,8 +22,8 @@ import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
 import net.gini.android.merchant.sdk.GiniMerchant
 import net.gini.android.merchant.sdk.databinding.GmsItemPageHorizontalBinding
-import net.gini.android.merchant.sdk.review.model.ResultWrapper
-import net.gini.android.merchant.sdk.review.model.wrapToResult
+import net.gini.android.merchant.sdk.api.ResultWrapper
+import net.gini.android.merchant.sdk.api.wrapToResult
 import net.gini.android.merchant.sdk.util.hideKeyboard
 
 internal class DocumentPageAdapter(private val giniMerchant: GiniMerchant) :

@@ -26,10 +26,11 @@ import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.merchant.sdk.paymentcomponent.SelectedPaymentProviderAppState
 import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.preferences.UserPreferences
-import net.gini.android.merchant.sdk.review.model.PaymentDetails
-import net.gini.android.merchant.sdk.review.model.PaymentRequest
-import net.gini.android.merchant.sdk.review.model.ResultWrapper
-import net.gini.android.merchant.sdk.review.model.withFeedback
+import net.gini.android.merchant.sdk.api.payment.model.PaymentDetails
+import net.gini.android.merchant.sdk.api.payment.model.PaymentRequest
+import net.gini.android.merchant.sdk.api.ResultWrapper
+import net.gini.android.merchant.sdk.api.payment.model.toPaymentRequest
+import net.gini.android.merchant.sdk.api.payment.model.withFeedback
 import net.gini.android.merchant.sdk.review.openWith.OpenWithPreferences
 import net.gini.android.merchant.sdk.review.pager.DocumentPageAdapter
 import net.gini.android.merchant.sdk.util.adjustToLocalDecimalSeparation
@@ -183,6 +184,8 @@ internal class ReviewViewModel(val giniMerchant: GiniMerchant, val configuration
             throw Exception("Cannot create PaymentRequest: No selected payment provider app")
         }
 
+        var paymentRequestId: String? = null
+
         return when (val createPaymentRequestResource = giniMerchant.giniHealthAPI.documentManager.createPaymentRequest(
             PaymentRequestInput(
                 paymentProvider = paymentProviderApp.paymentProvider.id,
@@ -192,10 +195,17 @@ internal class ReviewViewModel(val giniMerchant: GiniMerchant, val configuration
                 bic = null,
                 purpose = paymentDetails.value.purpose,
             )
-        )) {
+        ).mapSuccess {
+            paymentRequestId = it.data
+            giniMerchant.giniHealthAPI.documentManager.getPaymentRequest(it.data)
+        }) {
             is Resource.Cancelled -> throw Exception("Cancelled")
             is Resource.Error -> throw Exception(createPaymentRequestResource.exception)
-            is Resource.Success -> PaymentRequest(id = createPaymentRequestResource.data, paymentProviderApp)
+            is Resource.Success -> {
+                paymentRequestId?.let {
+                    createPaymentRequestResource.data.toPaymentRequest(it, paymentProviderApp)
+                } ?: throw Exception("Payment request ID is null")
+            }
         }
     }
 
