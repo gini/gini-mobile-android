@@ -65,7 +65,7 @@ internal class AmplitudeUserAnalyticsEventTracker(
         properties: Set<UserAnalyticsEventProperty>
     ) {
         val superPropertiesMap = superProperties.associate { it.getPair() }
-        val propertiesMap = superProperties.associate { it.getPair() }
+        val propertiesMap = properties.associate { it.getPair() }
         val finalProperties = superPropertiesMap.plus(propertiesMap)
 
         amplitude.track(
