@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="net.gini.android.merchant.sdk">
+
+    <application>
+        <provider
+            android:name=".util.MerchantSDKFileProvider"
+            android:authorities="${applicationId}.merchant.sdk.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+    </application>
+
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+            <!-- It has to match the scheme in Bank.kt -->
+            <data android:scheme="ginipay" android:host="payment"/>
+        </intent>
+    </queries>
+
+</manifest>

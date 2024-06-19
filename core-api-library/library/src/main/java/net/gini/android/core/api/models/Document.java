@@ -60,21 +60,24 @@ public class Document implements Parcelable {
     private final Integer mPageCount;
     private final String mFilename;
     private final Date mCreationDate;
+    private final Date mExpirationDate;
     private final SourceClassification mSourceClassification;
     private final Uri mUri;
     private final List<Uri> mCompositeDocuments;
     private final List<Uri> mPartialDocuments;
 
     public Document(final String id, final ProcessingState state, final String filename,
-            final Integer pageCount,
-            final Date creationDate, final SourceClassification sourceClassification,
-            final Uri uri, final List<Uri> compositeDocuments,
-            final List<Uri> partialDocuments) {
+                    final Integer pageCount,
+                    final Date creationDate, final Date expirationDate,
+                    final SourceClassification sourceClassification,
+                    final Uri uri, final List<Uri> compositeDocuments,
+                    final List<Uri> partialDocuments) {
         mId = checkNotNull(id);
         mState = checkNotNull(state);
         mPageCount = pageCount;
         mFilename = filename;
         mCreationDate = creationDate;
+        mExpirationDate = expirationDate;
         mSourceClassification = sourceClassification;
         mUri = uri;
         mCompositeDocuments = compositeDocuments;
@@ -116,6 +119,11 @@ public class Document implements Parcelable {
         return mCreationDate;
     }
 
+    @Nullable
+    public Date getExpirationDate() {
+        return mExpirationDate;
+    }
+
     public Uri getUri() {
         return mUri;
     }
@@ -153,6 +161,8 @@ public class Document implements Parcelable {
         final Integer pageCount = responseData.getInt("pageCount");
         final String fileName = responseData.getString("name");
         final Date creationDate = new Date(responseData.getLong("creationDate"));
+        final long expirationDateTimestamp = responseData.optLong("expirationDate");
+        final Date expirationDate = expirationDateTimestamp == 0 ? null : new Date(expirationDateTimestamp);
         SourceClassification sourceClassification;
         try {
             sourceClassification =
@@ -163,7 +173,7 @@ public class Document implements Parcelable {
         final Uri documentUri = Uri.parse(responseData.getJSONObject("_links").getString("document"));
         final List<Uri> compositeDocumentUris = parseOptionalDocumentLinkArray(responseData.optJSONArray("compositeDocuments"));
         final List<Uri> partialDocumentUris = parseOptionalDocumentLinkArray(responseData.optJSONArray("partialDocuments"));
-        return new Document(documentId, processingState, fileName, pageCount, creationDate,
+        return new Document(documentId, processingState, fileName, pageCount, creationDate, expirationDate,
                 sourceClassification, documentUri, compositeDocumentUris, partialDocumentUris);
     }
 
@@ -189,6 +199,7 @@ public class Document implements Parcelable {
         final int pageCount = in.readInt();
         final String fileName = in.readString();
         final Date creationDate = (Date) in.readSerializable();
+        final Date expirationDate = (Date) in.readSerializable();
         final SourceClassification sourceClassification = SourceClassification.valueOf(
                 in.readString());
         final Uri uri = in.readParcelable(Document.class.getClassLoader());
@@ -197,7 +208,7 @@ public class Document implements Parcelable {
         //noinspection unchecked
         final List<Uri> subdocuments = new ArrayList<>();
         in.readTypedList(subdocuments, Uri.CREATOR);
-        return new Document(documentId, processingState, fileName, pageCount, creationDate,
+        return new Document(documentId, processingState, fileName, pageCount, creationDate, expirationDate,
                 sourceClassification, uri, subdocuments, subdocuments);
     }
 
@@ -213,6 +224,7 @@ public class Document implements Parcelable {
         dest.writeInt(getPageCount());
         dest.writeString(getFilename());
         dest.writeSerializable(getCreationDate());
+        dest.writeSerializable(getExpirationDate());
         dest.writeString(getSourceClassification().toString());
         dest.writeParcelable(getUri(), flags);
         dest.writeTypedList(getCompositeDocuments());
