@@ -162,6 +162,7 @@ class ReviewActivity : AppCompatActivity() {
                 return@launch
             }
 
+            // TODO EC-62: remove when merging with EC-60 - since the instantiation of the container fragment contains the documentId, setting the document for review can be done internally.
             viewModel.giniMerchant.setDocumentForReview(documentId)
 
             // Configure the PaymentComponentView
