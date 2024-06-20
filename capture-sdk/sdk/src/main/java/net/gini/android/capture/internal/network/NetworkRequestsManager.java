@@ -2,7 +2,7 @@ package net.gini.android.capture.internal.network;
 
 /**
  * Created by Alpar Szotyori on 13.04.2018.
- *
+ * <p>
  * Copyright (c) 2018 Gini GmbH.
  */
 
@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.CancellationException;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
@@ -55,19 +56,82 @@ public class NetworkRequestsManager {
             mDocumentDeleteFutures;
     private final Map<String, CompletableFuture<
             AnalysisNetworkRequestResult<GiniCaptureMultiPageDocument>>> mDocumentAnalyzeFutures;
+    private final Map<UUID, CompletableFuture<ConfigurationNetworkResult>> mConfigurationFutures;
 
     private final GiniCaptureNetworkService mGiniCaptureNetworkService;
     private final DocumentDataMemoryCache mDocumentDataMemoryCache;
 
     public NetworkRequestsManager(@NonNull final GiniCaptureNetworkService giniCaptureNetworkService,
-            @NonNull final DocumentDataMemoryCache documentDataMemoryCache) {
+                                  @NonNull final DocumentDataMemoryCache documentDataMemoryCache) {
         mGiniCaptureNetworkService = giniCaptureNetworkService;
         mDocumentDataMemoryCache = documentDataMemoryCache;
         mApiDocumentIds = new HashMap<>();
         mDocumentUploadFutures = new HashMap<>();
         mDocumentDeleteFutures = new HashMap<>();
         mDocumentAnalyzeFutures = new HashMap<>();
+        mConfigurationFutures = new HashMap<>();
     }
+
+    public CompletableFuture<ConfigurationNetworkResult> getConfigurations(UUID id) {
+
+        final CompletableFuture<ConfigurationNetworkResult> configurationFuture =
+                mConfigurationFutures.get(id);
+        if (configurationFuture != null) {
+            return configurationFuture;
+        }
+
+        final CompletableFuture<ConfigurationNetworkResult> future =
+                new CompletableFuture<>();
+        mConfigurationFutures.put(id, future);
+
+        final CancellationToken cancellationToken =
+                mGiniCaptureNetworkService.getConfiguration(
+                        new GiniCaptureNetworkCallback<Configuration, Error>() {
+                            @Override
+                            public void failure(final Error error) {
+                                LOG.error("Get configuration failed for {}: {}",
+                                        id,
+                                        error.getMessage());
+                                ErrorType errorType = ErrorType.typeFromError(error);
+                                future.completeExceptionally(new FailureException(errorType));
+                            }
+
+                            @Override
+                            public void success(final Configuration result) {
+                                LOG.debug("Get configuration success for {}: {}",
+                                        id,
+                                        result);
+                                future.complete(new ConfigurationNetworkResult(result,
+                                        result.getId()));
+                            }
+
+                            @Override
+                            public void cancelled() {
+                                LOG.debug("Get configuration cancelled for {}",
+                                        id);
+                                future.cancel(false);
+
+                            }
+                        });
+
+        future.handle(
+                (requestResult, throwable) -> {
+                    if (throwable != null) {
+                        if (isCancellation(throwable)) {
+                            cancellationToken.cancel();
+                        } else {
+                            ErrorLogger.log(new ErrorLog("Getting configuration failed", throwable));
+                        }
+                    } else if (requestResult != null) {
+                        mConfigurationFutures.remove(id);
+                    }
+                    mConfigurationFutures.remove(id);
+                    return requestResult;
+                });
+
+        return future;
+    }
+
 
     public CompletableFuture<NetworkRequestResult<GiniCaptureDocument>> upload(
             @NonNull final Context context,

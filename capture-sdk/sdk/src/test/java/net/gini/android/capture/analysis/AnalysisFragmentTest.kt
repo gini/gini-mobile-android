@@ -1,6 +1,5 @@
 package net.gini.android.capture.analysis
 
-import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
@@ -19,6 +18,7 @@ import net.gini.android.capture.document.ImageDocument
 import net.gini.android.capture.tracking.AnalysisScreenEvent
 import net.gini.android.capture.tracking.Event
 import net.gini.android.capture.tracking.EventTracker
+import net.gini.android.capture.tracking.useranalytics.UserAnalytics
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -38,6 +38,7 @@ class AnalysisFragmentTest {
         GiniCapture.newInstance(InstrumentationRegistry.getInstrumentation().context)
             .setEventTracker(eventTracker).build()
         GiniCapture.getInstance().internal().imageMultiPageDocumentMemoryStore.setMultiPageDocument(mock())
+        UserAnalytics.initialize(InstrumentationRegistry.getInstrumentation().context)
 
         val bundle = Bundle().apply {
             putParcelable("GC_ARGS_DOCUMENT", mock<ImageDocument>().apply {
