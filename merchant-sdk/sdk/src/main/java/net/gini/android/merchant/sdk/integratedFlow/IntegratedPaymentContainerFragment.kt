@@ -27,6 +27,7 @@ import net.gini.android.merchant.sdk.paymentcomponent.SelectedPaymentProviderApp
 import net.gini.android.merchant.sdk.review.ReviewConfiguration
 import net.gini.android.merchant.sdk.review.ReviewFragment
 import net.gini.android.merchant.sdk.util.BackListener
+import net.gini.android.merchant.sdk.util.DisplayedScreen
 import net.gini.android.merchant.sdk.util.autoCleared
 import net.gini.android.merchant.sdk.util.extensions.add
 import net.gini.android.merchant.sdk.util.getLayoutInflaterWithGiniMerchantTheme
@@ -85,7 +86,7 @@ class IntegratedPaymentContainerFragment private constructor(
 
     private val paymentComponentListener = object: PaymentComponent.Listener {
         override fun onMoreInformationClicked() {
-            viewModel.addToBackStack(IntegratedPaymentContainerViewModel.DisplayedScreen.MoreInformationFragment)
+            viewModel.addToBackStack(DisplayedScreen.MoreInformationFragment)
             childFragmentManager.add(
                 containerId = binding.gmsFragmentContainerView.id,
                 fragment = MoreInformationFragment.newInstance(viewModel.paymentComponent, this@IntegratedPaymentContainerFragment),
@@ -95,62 +96,13 @@ class IntegratedPaymentContainerFragment private constructor(
 
         override fun onBankPickerClicked() {
             viewModel.paymentComponent?.let {
-                viewModel.addToBackStack(IntegratedPaymentContainerViewModel.DisplayedScreen.BankSelectionBottomSheet)
+                viewModel.addToBackStack(DisplayedScreen.BankSelectionBottomSheet)
                 BankSelectionBottomSheet.newInstance(it, backListener = this@IntegratedPaymentContainerFragment).show(childFragmentManager, BankSelectionBottomSheet::class.java.name)
             }
         }
 
         override fun onPayInvoiceClicked(documentId: String) {
             handlePayFlow(documentId)
-        }
-    }
-
-    private fun handleBackFlow() {
-        childFragmentManager.popBackStackImmediate()
-        viewModel.popBackStack()
-
-        if (childFragmentManager.backStackEntryCount == 0) {
-            when (viewModel.getLastBackstackEntry()) {
-                IntegratedPaymentContainerViewModel.DisplayedScreen.BankSelectionBottomSheet -> {
-                    viewModel.paymentComponent?.let {
-                        BankSelectionBottomSheet.newInstance(it, this).show(childFragmentManager, BankSelectionBottomSheet::class.java.name)
-                    }
-                }
-                IntegratedPaymentContainerViewModel.DisplayedScreen.Nothing -> {
-                    requireActivity().supportFragmentManager.popBackStack()
-                }
-                IntegratedPaymentContainerViewModel.DisplayedScreen.PaymentComponentBottomSheet -> PaymentComponentBottomSheet.newInstance(viewModel.paymentComponent, documentId = viewModel.documentId,this).show(childFragmentManager, PaymentComponentBottomSheet::class.java.name)
-                else -> {
-
-                }
-            }
-        }
-    }
-
-    @VisibleForTesting
-    internal fun handlePayFlow(documentId: String) {
-        if (viewModel.integratedFlowConfiguration?.shouldShowReviewFragment == true) {
-            showReviewFragment(documentId)
-            return
-        }
-
-        viewModel.onPayment()
-    }
-
-    @VisibleForTesting
-    internal fun showReviewFragment(documentId: String) {
-        viewModel.addToBackStack(IntegratedPaymentContainerViewModel.DisplayedScreen.ReviewFragment)
-        val reviewFragment = viewModel.paymentComponent?.getPaymentReviewFragment(documentId, ReviewConfiguration(
-            handleErrorsInternally = viewModel.integratedFlowConfiguration?.shouldHandleErrorsInternally == true,
-            showCloseButton = true,
-            isAmountFieldEditable = viewModel.integratedFlowConfiguration?.isAmountFieldEditable == true
-        ))
-        reviewFragment?.let {
-            childFragmentManager.add(
-                containerId = binding.gmsFragmentContainerView.id,
-                fragment = it,
-                addToBackStack = true
-            )
         }
     }
 
@@ -184,7 +136,7 @@ class IntegratedPaymentContainerFragment private constructor(
                 }
             }
         }
-        if (viewModel.getLastBackstackEntry() is IntegratedPaymentContainerViewModel.DisplayedScreen.Nothing) {
+        if (viewModel.getLastBackstackEntry() is DisplayedScreen.Nothing) {
             showPaymentComponentBottomSheet()
         }
         return binding.root
@@ -201,46 +153,12 @@ class IntegratedPaymentContainerFragment private constructor(
 
     private fun GmsFragmentContainerBinding.setStateListeners() {
         viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 launch {
-                    viewModel.giniMerchant?.openBankState?.collect { handlePaymentState(it) }
-                }
-            }
-        }
-    }
-
-    @VisibleForTesting
-    internal fun showPaymentComponentBottomSheet() {
-        val paymentComponentBottomSheet = PaymentComponentBottomSheet.newInstance(
-            viewModel.paymentComponent,
-            documentId = viewModel.documentId,
-            backListener = this@IntegratedPaymentContainerFragment
-        )
-        paymentComponentBottomSheet.show(childFragmentManager, PaymentComponentBottomSheet::class.java.name)
-        viewModel.addToBackStack(IntegratedPaymentContainerViewModel.DisplayedScreen.PaymentComponentBottomSheet)
-    }
-
-    private fun GmsFragmentContainerBinding.handlePaymentState(paymentState: GiniMerchant.PaymentState) {
-
-        when (paymentState) {
-            is GiniMerchant.PaymentState.Success -> {
-                try {
-                    val intent =
-                        paymentState.paymentRequest.bankApp.getIntent(paymentState.paymentRequest.id)
-                    if (intent != null) {
-                        startActivity(intent)
-                        viewModel.onBankOpened()
-                    } else {
-                        handleError(getString(R.string.gms_generic_error_message)) { viewModel.onPayment() }
+                    viewModel.giniMerchant?.eventsFlow?.collect {
+                        handleSDKEvent(it)
                     }
-                } catch (exception: ActivityNotFoundException) {
-                    handleError(getString(R.string.gms_generic_error_message)) { viewModel.onPayment() }
                 }
-            }
-            is GiniMerchant.PaymentState.Error -> {
-                handleError(getString(R.string.gms_generic_error_message)) { viewModel.onPayment() }
-            }
-            else -> { // Loading is already handled
             }
         }
     }
@@ -259,12 +177,93 @@ class IntegratedPaymentContainerFragment private constructor(
             show()
         }
     }
+
+    private fun handleBackFlow() {
+        childFragmentManager.popBackStackImmediate()
+        viewModel.popBackStack()
+
+        if (childFragmentManager.backStackEntryCount == 0) {
+            when (viewModel.getLastBackstackEntry()) {
+                DisplayedScreen.BankSelectionBottomSheet -> {
+                    viewModel.paymentComponent?.let {
+                        BankSelectionBottomSheet.newInstance(it, this).show(childFragmentManager, BankSelectionBottomSheet::class.java.name)
+                    }
+                }
+                DisplayedScreen.PaymentComponentBottomSheet -> PaymentComponentBottomSheet.newInstance(viewModel.paymentComponent, documentId = viewModel.documentId,this).show(childFragmentManager, PaymentComponentBottomSheet::class.java.name)
+                else -> {
+
+                }
+            }
+        }
+    }
+
+    @VisibleForTesting
+    internal fun handlePayFlow(documentId: String) {
+        if (viewModel.integratedFlowConfiguration?.shouldShowReviewFragment == true) {
+            showReviewFragment(documentId)
+            return
+        }
+
+        viewModel.onPayment()
+    }
+
+    @VisibleForTesting
+    internal fun showReviewFragment(documentId: String) {
+        viewModel.addToBackStack(DisplayedScreen.ReviewFragment)
+        val reviewFragment = viewModel.paymentComponent?.getPaymentReviewFragment(documentId, ReviewConfiguration(
+            handleErrorsInternally = viewModel.integratedFlowConfiguration?.shouldHandleErrorsInternally == true,
+            showCloseButton = true,
+            isAmountFieldEditable = viewModel.integratedFlowConfiguration?.isAmountFieldEditable == true
+        ))
+        reviewFragment?.let {
+            childFragmentManager.add(
+                containerId = binding.gmsFragmentContainerView.id,
+                fragment = it,
+                addToBackStack = true
+            )
+        }
+    }
+
+    @VisibleForTesting
+    internal fun showPaymentComponentBottomSheet() {
+        val paymentComponentBottomSheet = PaymentComponentBottomSheet.newInstance(
+            viewModel.paymentComponent,
+            documentId = viewModel.documentId,
+            backListener = this@IntegratedPaymentContainerFragment
+        )
+        paymentComponentBottomSheet.show(childFragmentManager, PaymentComponentBottomSheet::class.java.name)
+        viewModel.addToBackStack(DisplayedScreen.PaymentComponentBottomSheet)
+    }
+
+    private fun GmsFragmentContainerBinding.handleSDKEvent(sdkEvent: GiniMerchant.MerchantSDKEvents) {
+        when (sdkEvent) {
+            is GiniMerchant.MerchantSDKEvents.OnFinishedWithPaymentRequestCreated -> {
+                try {
+                    val intent = viewModel.getPaymentProviderApp()?.getIntent(sdkEvent.paymentRequestId)
+                    if (intent != null) {
+                        startActivity(intent)
+                        viewModel.onBankOpened()
+                    } else {
+                        handleError(getString(R.string.gms_generic_error_message)) { viewModel.onPayment() }
+                    }
+                } catch (exception: ActivityNotFoundException) {
+                    handleError(getString(R.string.gms_generic_error_message)) { viewModel.onPayment() }
+                }
+            }
+            is GiniMerchant.MerchantSDKEvents.OnErrorOccurred -> {
+                handleError(getString(R.string.gms_generic_error_message)) { viewModel.onPayment() }
+            }
+            else -> { // Loading is already handled
+            }
+        }
+    }
+
     override fun backCalled() {
         handleBackFlow()
     }
 
     companion object {
-        fun newInstance(giniMerchant: GiniMerchant, paymentComponent: PaymentComponent, documentId: String, integratedFlowConfiguration: IntegratedFlowConfiguration? = IntegratedFlowConfiguration(),
+        fun newInstance(giniMerchant: GiniMerchant, paymentComponent: PaymentComponent, documentId: String, integratedFlowConfiguration: IntegratedFlowConfiguration,
                         viewModelFactory : ViewModelProvider.Factory = IntegratedPaymentContainerViewModel.Factory(paymentComponent, documentId, integratedFlowConfiguration, giniMerchant)) = IntegratedPaymentContainerFragment(giniMerchant, paymentComponent, documentId, integratedFlowConfiguration, viewModelFactory)
     }
 }

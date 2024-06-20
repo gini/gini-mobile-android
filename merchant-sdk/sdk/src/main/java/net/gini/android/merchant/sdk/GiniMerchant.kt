@@ -7,7 +7,9 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.savedstate.SavedStateRegistry
 import androidx.savedstate.SavedStateRegistryOwner
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
@@ -20,6 +22,7 @@ import net.gini.android.merchant.sdk.review.model.ResultWrapper
 import net.gini.android.merchant.sdk.review.model.getPaymentExtraction
 import net.gini.android.merchant.sdk.review.model.toPaymentDetails
 import net.gini.android.merchant.sdk.review.model.wrapToResult
+import net.gini.android.merchant.sdk.util.DisplayedScreen
 import org.slf4j.LoggerFactory
 import java.lang.ref.WeakReference
 
@@ -50,7 +53,7 @@ class GiniMerchant(
      *
      * It never completes.
      */
-    val documentFlow: StateFlow<ResultWrapper<Document>> = _documentFlow
+    internal val documentFlow: StateFlow<ResultWrapper<Document>> = _documentFlow
 
     private val _paymentFlow = MutableStateFlow<ResultWrapper<PaymentDetails>>(ResultWrapper.Loading())
 
@@ -63,14 +66,16 @@ class GiniMerchant(
      *
      * It never completes.
      */
-    val paymentFlow: StateFlow<ResultWrapper<PaymentDetails>> = _paymentFlow
-
-    private val _openBankState = MutableStateFlow<PaymentState>(PaymentState.NoAction)
+    internal val paymentFlow: StateFlow<ResultWrapper<PaymentDetails>> = _paymentFlow
 
     /**
-     * A flow that exposes the state of opening the bank. You can collect this flow to get information about the errors of this action.
+     * A flow that exposes events from the Merchant SDK. You can collect this flow to be informed about events such as errors,
+     * successful payment requests or which screen is being displayed.
      */
-    val openBankState: StateFlow<PaymentState> = _openBankState
+
+    private val _eventsFlow: MutableSharedFlow<MerchantSDKEvents> = MutableSharedFlow(extraBufferCapacity = 1)
+
+    val eventsFlow: SharedFlow<MerchantSDKEvents> = _eventsFlow
 
     /**
      * Sets a [Document] for review. Results can be collected from [documentFlow] and [paymentFlow].
@@ -99,8 +104,9 @@ class GiniMerchant(
         LOG.debug("Setting document for review with id: $documentId")
 
         capturedArguments = CapturedArguments.DocumentId(documentId, paymentDetails)
+        _eventsFlow.tryEmit(MerchantSDKEvents.OnLoading)
         _paymentFlow.value = ResultWrapper.Loading()
-        _documentFlow.value = ResultWrapper.Loading()
+
         _documentFlow.value = wrapToResult {
             documentManager.getDocument(documentId)
         }
@@ -142,9 +148,13 @@ class GiniMerchant(
         }
     }
 
-    internal fun setOpenBankState(state: PaymentState) {
-        _openBankState.value = state
-        _openBankState.value = PaymentState.NoAction
+    internal fun emitSDKEvent(state: PaymentState) {
+        when (state) {
+            is PaymentState.Success -> _eventsFlow.tryEmit(MerchantSDKEvents.OnFinishedWithPaymentRequestCreated(state.paymentRequest.id, state.paymentRequest.bankApp.name))
+            is PaymentState.Error -> _eventsFlow.tryEmit(MerchantSDKEvents.OnErrorOccurred(state.throwable))
+            PaymentState.Loading -> _eventsFlow.tryEmit(MerchantSDKEvents.OnLoading)
+            else -> {}
+        }
     }
 
     internal suspend fun retryDocumentReview() {
@@ -193,6 +203,10 @@ class GiniMerchant(
         }
     }
 
+    internal fun setDisplayedScreen(displayedScreen: DisplayedScreen) {
+        _eventsFlow.tryEmit(MerchantSDKEvents.OnScreenDisplayed(displayedScreen))
+    }
+
     private val savedStateProvider = SavedStateRegistry.SavedStateProvider {
         Bundle().apply {
             when (capturedArguments) {
@@ -222,6 +236,14 @@ class GiniMerchant(
         object Loading : PaymentState()
         class Success(val paymentRequest: PaymentRequest) : PaymentState()
         class Error(val throwable: Throwable) : PaymentState()
+    }
+
+    sealed class MerchantSDKEvents {
+        object OnLoading: MerchantSDKEvents()
+        class OnScreenDisplayed(val displayedScreen: DisplayedScreen): MerchantSDKEvents()
+        class OnFinishedWithPaymentRequestCreated(val paymentRequestId: String, val paymentProviderName: String): MerchantSDKEvents()
+        class OnFinishedWithCancellation(): MerchantSDKEvents()
+        class OnErrorOccurred(val throwable: Throwable): MerchantSDKEvents()
     }
 
     companion object {

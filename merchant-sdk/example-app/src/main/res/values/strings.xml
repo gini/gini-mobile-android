@@ -17,6 +17,7 @@
     <string name="example_of_merchant_sdk">Example of Gini Pay Connect integration in the insurance app</string>
     <string name="could_not_start_payment_review">Could not start payment review</string>
     <string name="title_payment_review">Your Invoice</string>
+    <string name="invoice_details">Invoice details</string>
 
     <string name="gms_privacy_policy_link_url">https://www.google.com</string>
     <string name="relaunch_to_use_default_configuration">Please relaunch the app to use the default IntegratedPaymentConfiguration values.</string>

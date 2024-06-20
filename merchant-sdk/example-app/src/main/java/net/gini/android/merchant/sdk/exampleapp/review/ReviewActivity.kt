@@ -1,7 +1,6 @@
 package net.gini.android.merchant.sdk.exampleapp.review
 
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -11,24 +10,19 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.core.view.isGone
 import androidx.fragment.app.commit
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewModelScope
 import dev.chrisbanes.insetter.applyInsetter
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import net.gini.android.core.api.models.Document
 import net.gini.android.merchant.sdk.GiniMerchant
 import net.gini.android.merchant.sdk.bankselection.BankSelectionBottomSheet
 import net.gini.android.merchant.sdk.exampleapp.R
 import net.gini.android.merchant.sdk.exampleapp.databinding.ActivityReviewBinding
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
-import net.gini.android.merchant.sdk.paymentcomponent.PaymentProviderAppsState
 import net.gini.android.merchant.sdk.review.ReviewConfiguration
 import net.gini.android.merchant.sdk.review.ReviewFragment
 import net.gini.android.merchant.sdk.review.ReviewFragmentListener
-import net.gini.android.merchant.sdk.review.model.ResultWrapper
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.slf4j.LoggerFactory
 
@@ -45,23 +39,23 @@ class ReviewActivity : AppCompatActivity() {
         override fun onToTheBankButtonClicked(paymentProviderName: String) {
             LOG.debug("to the bank button clicked with payment provider: {}", paymentProviderName)
             lifecycleScope.launch {
-                viewModel.giniMerchant.openBankState.collect { paymentState ->
-                    when (paymentState) {
-                        GiniMerchant.PaymentState.Loading -> {
+                viewModel.giniMerchant.eventsFlow.collect { event ->
+                    when (event) {
+                        GiniMerchant.MerchantSDKEvents.OnLoading -> {
                             LOG.debug("opening bank app")
                         }
 
-                        is GiniMerchant.PaymentState.Success -> {
-                            LOG.debug("launching bank app: {}", paymentState.paymentRequest.bankApp.name)
+                        is GiniMerchant.MerchantSDKEvents.OnFinishedWithPaymentRequestCreated -> {
+                            LOG.debug("launching bank app: {}", event.paymentProviderName)
                             cancel()
                         }
 
-                        is GiniMerchant.PaymentState.Error -> {
-                            LOG.error( "failed to open bank app:", paymentState.throwable)
+                        is GiniMerchant.MerchantSDKEvents.OnErrorOccurred -> {
+                            LOG.error( "failed to open bank app:", event.throwable)
                             cancel()
                         }
 
-                        GiniMerchant.PaymentState.NoAction -> {}
+                        else -> {}
                     }
                 }
             }
@@ -145,55 +139,55 @@ class ReviewActivity : AppCompatActivity() {
         // The PaymentComponentView needs the PaymentComponent to be set before it is shown
         binding.paymentComponentView.paymentComponent = viewModel.paymentComponent
 
-        lifecycleScope.launch {
-            val documentId = (viewModel.giniMerchant.documentFlow.value as ResultWrapper.Success<Document>).value.id
-
-            val isDocumentPayable = viewModel.giniMerchant.checkIfDocumentIsPayable(documentId)
-
-            if (!isDocumentPayable) {
-                AlertDialog.Builder(this@ReviewActivity)
-                    .setTitle(R.string.document_not_payable_title)
-                    .setMessage(R.string.document_not_payable_message)
-                    .setPositiveButton(android.R.string.ok, object : DialogInterface.OnClickListener {
-                        override fun onClick(dialog: DialogInterface, which: Int) {
-                            finish()
-                        }
-                    })
-                    .show()
-                return@launch
-            }
-
-            // Configure the PaymentComponentView
-            binding.paymentComponentView.isPayable = true
-            binding.paymentComponentView.documentId = documentId
-
-            // Load the payment provider apps and show an alert dialog for errors
-            viewModel.paymentComponent.loadPaymentProviderApps()
-
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.paymentComponent.paymentProviderAppsFlow.collect { paymentProviderAppsState ->
-                    when (paymentProviderAppsState) {
-                        is PaymentProviderAppsState.Error -> {
-                            binding.progress.visibility = View.INVISIBLE
-
-                            AlertDialog.Builder(this@ReviewActivity)
-                                .setTitle(R.string.failed_to_load_bank_apps)
-                                .setMessage(paymentProviderAppsState.throwable.message)
-                                .setPositiveButton(android.R.string.ok, null)
-                                .show()
-                        }
-
-                        PaymentProviderAppsState.Loading -> {
-                            binding.progress.visibility = View.VISIBLE
-                        }
-
-                        is PaymentProviderAppsState.Success -> {
-                            binding.progress.visibility = View.INVISIBLE
-                        }
-                    }
-                }
-            }
-        }
+//        lifecycleScope.launch {
+//            val documentId = (viewModel.giniMerchant.documentFlow.value as ResultWrapper.Success<Document>).value.id
+//
+//            val isDocumentPayable = viewModel.giniMerchant.checkIfDocumentIsPayable(documentId)
+//
+//            if (!isDocumentPayable) {
+//                AlertDialog.Builder(this@ReviewActivity)
+//                    .setTitle(R.string.document_not_payable_title)
+//                    .setMessage(R.string.document_not_payable_message)
+//                    .setPositiveButton(android.R.string.ok, object : DialogInterface.OnClickListener {
+//                        override fun onClick(dialog: DialogInterface, which: Int) {
+//                            finish()
+//                        }
+//                    })
+//                    .show()
+//                return@launch
+//            }
+//
+//            // Configure the PaymentComponentView
+//            binding.paymentComponentView.isPayable = true
+//            binding.paymentComponentView.documentId = documentId
+//
+//            // Load the payment provider apps and show an alert dialog for errors
+//            viewModel.paymentComponent.loadPaymentProviderApps()
+//
+//            repeatOnLifecycle(Lifecycle.State.STARTED) {
+//                viewModel.paymentComponent.paymentProviderAppsFlow.collect { paymentProviderAppsState ->
+//                    when (paymentProviderAppsState) {
+//                        is PaymentProviderAppsState.Error -> {
+//                            binding.progress.visibility = View.INVISIBLE
+//
+//                            AlertDialog.Builder(this@ReviewActivity)
+//                                .setTitle(R.string.failed_to_load_bank_apps)
+//                                .setMessage(paymentProviderAppsState.throwable.message)
+//                                .setPositiveButton(android.R.string.ok, null)
+//                                .show()
+//                        }
+//
+//                        PaymentProviderAppsState.Loading -> {
+//                            binding.progress.visibility = View.VISIBLE
+//                        }
+//
+//                        is PaymentProviderAppsState.Success -> {
+//                            binding.progress.visibility = View.INVISIBLE
+//                        }
+//                    }
+//                }
+//            }
+//        }
 
         binding.close.setOnClickListener { finish() }
 

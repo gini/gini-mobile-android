@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.IntentCompat
@@ -18,7 +19,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import net.gini.android.merchant.sdk.GiniMerchant
 import net.gini.android.merchant.sdk.exampleapp.MainActivity
@@ -28,11 +28,9 @@ import net.gini.android.merchant.sdk.exampleapp.invoices.data.UploadHardcodedInv
 import net.gini.android.merchant.sdk.exampleapp.invoices.ui.model.InvoiceItem
 import net.gini.android.merchant.sdk.integratedFlow.IntegratedFlowConfiguration
 import net.gini.android.merchant.sdk.integratedFlow.IntegratedPaymentContainerFragment
-import net.gini.android.merchant.sdk.moreinformation.MoreInformationFragment
-import net.gini.android.merchant.sdk.review.ReviewFragment
+import net.gini.android.merchant.sdk.util.DisplayedScreen
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.slf4j.LoggerFactory
-import net.gini.android.merchant.sdk.paymentcomponent.PaymentProviderAppsState.Loading as LoadingBankApp
 
 class InvoicesActivity : AppCompatActivity() {
 
@@ -57,9 +55,9 @@ class InvoicesActivity : AppCompatActivity() {
                     }
                 }
                 launch {
-                    viewModel.uploadHardcodedInvoicesStateFlow.combine(viewModel.paymentProviderAppsFlow) { a, b -> a to b }
-                        .collect { (uploadState, bankAppsState) ->
-                            if (uploadState == UploadHardcodedInvoicesState.Loading || bankAppsState == LoadingBankApp) {
+                    viewModel.uploadHardcodedInvoicesStateFlow
+                        .collect { uploadState ->
+                            if (uploadState == UploadHardcodedInvoicesState.Loading) {
                                 showLoadingIndicator(binding)
                             } else {
                                 hideLoadingIndicator(binding)
@@ -79,30 +77,22 @@ class InvoicesActivity : AppCompatActivity() {
                     }
                 }
                 launch {
-                    viewModel.paymentProviderAppsFlow.collect { paymentProviderAppsState ->
-                        if (paymentProviderAppsState is Error) {
-                            AlertDialog.Builder(this@InvoicesActivity)
-                                .setTitle(R.string.failed_to_load_bank_apps)
-//                                .setMessage(paymentProviderAppsState.throwable.message)
-                                .setPositiveButton(android.R.string.ok, null)
-                                .show()
-                        }
-
+                    viewModel.startIntegratedPaymentFlow.collect { containerFragment ->
+                        startIntegratedPaymentFlow(containerFragment)
                     }
                 }
                 launch {
-                    viewModel.openBankState.collect { paymentState ->
-                        when (paymentState) {
-                            is GiniMerchant.PaymentState.Success -> {
-                                viewModel.updateDocument()
+                    viewModel.paymentComponent.giniMerchant.eventsFlow.collect { event ->
+                        when (event) {
+                            is GiniMerchant.MerchantSDKEvents.OnScreenDisplayed -> {
+                                when (event.displayedScreen) {
+                                    DisplayedScreen.MoreInformationFragment -> setActivityTitle(net.gini.android.merchant.sdk.R.string.gms_more_information_fragment_title)
+                                    DisplayedScreen.ReviewFragment -> setActivityTitle(R.string.title_payment_review)
+                                    else -> { setActivityTitle(R.string.invoice_details) }
+                                }
                             }
                             else -> {}
                         }
-                    }
-                }
-                launch {
-                    viewModel.startIntegratedPaymentFlow.collect { containerFragment ->
-                        startIntegratedPaymentFlow(containerFragment)
                     }
                 }
             }
@@ -130,16 +120,13 @@ class InvoicesActivity : AppCompatActivity() {
         }
     }
 
-    private fun setActivityTitle() {
+    private fun setActivityTitle(@StringRes screenTitle: Int? = null) {
         if (supportFragmentManager.backStackEntryCount == 0) {
             title = getString(R.string.title_activity_invoices)
-        } else if (supportFragmentManager.fragments.last() is MoreInformationFragment) {
-            title =
-                getString(net.gini.android.merchant.sdk.R.string.gms_more_information_fragment_title)
-        } else if (supportFragmentManager.fragments.last() is ReviewFragment) {
-            title = getString(R.string.title_payment_review)
         } else if (supportFragmentManager.fragments.last() is InvoiceDetailsFragment) {
             title = "Invoice details"
+        } else if (screenTitle != null){
+            title = getString(screenTitle)
         }
     }
     private fun hideLoadingIndicator(binding: ActivityInvoicesBinding) {

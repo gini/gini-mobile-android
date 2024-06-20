@@ -63,10 +63,10 @@ internal class ReviewViewModel(val giniMerchant: GiniMerchant, val configuration
     private var openWithCounter: Int = 0
 
     val isPaymentButtonEnabled: Flow<Boolean> =
-        combine(giniMerchant.openBankState, paymentDetails) { paymentState, paymentDetails ->
+        combine(giniMerchant.paymentFlow, paymentDetails) { paymentState, paymentDetails ->
             val noEmptyFields = paymentDetails.recipient.isNotEmpty() && paymentDetails.iban.isNotEmpty() &&
                     paymentDetails.amount.isNotEmpty() && paymentDetails.purpose.isNotEmpty()
-            val isLoading = (paymentState is GiniMerchant.PaymentState.Loading)
+            val isLoading = (paymentState is ResultWrapper.Loading)
             !isLoading && noEmptyFields
         }
 
@@ -174,7 +174,7 @@ internal class ReviewViewModel(val giniMerchant: GiniMerchant, val configuration
         // Schedule on the main dispatcher to allow all collectors to receive the current state before
         // the state is overridden
         viewModelScope.launch(Dispatchers.Main) {
-            giniMerchant.setOpenBankState(GiniMerchant.PaymentState.NoAction)
+            giniMerchant.emitSDKEvent(GiniMerchant.PaymentState.NoAction)
         }
     }
 
@@ -223,19 +223,19 @@ internal class ReviewViewModel(val giniMerchant: GiniMerchant, val configuration
                 val paymentRequest = try {
                     giniPaymentManager.getPaymentRequest(paymentProviderApp.value, paymentDetails.value)
                 } catch (throwable: Throwable) {
-                    giniMerchant.setOpenBankState(GiniMerchant.PaymentState.Error(throwable))
+                    giniMerchant.emitSDKEvent(GiniMerchant.PaymentState.Error(throwable))
                     return@withContext
                 }
                 val byteArrayResource = async {  giniMerchant.giniHealthAPI.documentManager.getPaymentRequestDocument(paymentRequest.id) }.await()
                 when (byteArrayResource) {
                     is Resource.Cancelled -> {
-                        giniMerchant.setOpenBankState(GiniMerchant.PaymentState.Error(Exception("Cancelled")))
+                        giniMerchant.emitSDKEvent(GiniMerchant.PaymentState.Error(Exception("Cancelled")))
                     }
                     is Resource.Error -> {
-                        giniMerchant.setOpenBankState(GiniMerchant.PaymentState.Error(byteArrayResource.exception ?: Exception("Error")))
+                        giniMerchant.emitSDKEvent(GiniMerchant.PaymentState.Error(byteArrayResource.exception ?: Exception("Error")))
                     }
                     is Resource.Success -> {
-                        giniMerchant.setOpenBankState(GiniMerchant.PaymentState.Success(paymentRequest))
+                        giniMerchant.emitSDKEvent(GiniMerchant.PaymentState.Success(paymentRequest))
                         val newFile = externalCacheDir?.createTempPdfFile(byteArrayResource.data, "payment-request")
                         newFile?.let {
                             _paymentNextStep.tryEmit(PaymentNextStep.OpenSharePdf(it))

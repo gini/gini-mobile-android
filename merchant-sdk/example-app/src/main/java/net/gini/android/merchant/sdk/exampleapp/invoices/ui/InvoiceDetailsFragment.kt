@@ -11,7 +11,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import net.gini.android.merchant.sdk.GiniMerchant
 import net.gini.android.merchant.sdk.exampleapp.databinding.FragmentInvoiceDetailsBinding
+import net.gini.android.merchant.sdk.util.DisplayedScreen
 import net.gini.android.merchant.sdk.util.setIntervalClickListener
 
 class InvoiceDetailsFragment: Fragment() {
@@ -40,6 +42,20 @@ class InvoiceDetailsFragment: Fragment() {
                         binding.dueDate.text = invoice?.dueDate
                         binding.payNowBtn.setIntervalClickListener {
                             viewModel.startIntegratedPaymentFlow(invoice?.documentId ?: "")
+                        }
+                    }
+                }
+                launch {
+                    viewModel.paymentComponent.giniMerchant.eventsFlow.collect { event ->
+                        when (event) {
+                            is GiniMerchant.MerchantSDKEvents.OnFinishedWithPaymentRequestCreated,
+                            is GiniMerchant.MerchantSDKEvents.OnFinishedWithCancellation -> { requireActivity().supportFragmentManager.popBackStack() }
+                            is GiniMerchant.MerchantSDKEvents.OnScreenDisplayed -> {
+                                if (event.displayedScreen == DisplayedScreen.Nothing) {
+                                    requireActivity().supportFragmentManager.popBackStack()
+                                }
+                            }
+                            else -> {}
                         }
                     }
                 }

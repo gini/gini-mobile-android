@@ -12,6 +12,7 @@ import net.gini.android.merchant.sdk.paymentcomponent.SelectedPaymentProviderApp
 import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.review.model.PaymentDetails
 import net.gini.android.merchant.sdk.review.model.ResultWrapper
+import net.gini.android.merchant.sdk.util.DisplayedScreen
 import net.gini.android.merchant.sdk.util.GiniPaymentManager
 import java.util.Stack
 
@@ -47,13 +48,19 @@ internal class IntegratedPaymentContainerViewModel(val paymentComponent: Payment
 
     fun addToBackStack(destination: DisplayedScreen) {
         backstack.add(destination)
+        setDisplayedScreen()
     }
 
     fun popBackStack() {
         backstack.pop()
+        setDisplayedScreen()
     }
 
     fun getLastBackstackEntry() = if (backstack.isNotEmpty()) backstack.peek() else DisplayedScreen.Nothing
+
+    fun setDisplayedScreen() {
+        giniMerchant?.setDisplayedScreen(getLastBackstackEntry())
+    }
 
     fun paymentProviderAppChanged(paymentProviderApp: PaymentProviderApp): Boolean {
         if (initialSelectedPaymentProvider?.paymentProvider?.id != paymentProviderApp.paymentProvider.id) {
@@ -75,17 +82,11 @@ internal class IntegratedPaymentContainerViewModel(val paymentComponent: Payment
         // Schedule on the main dispatcher to allow all collectors to receive the current state before
         // the state is overridden
         viewModelScope.launch(Dispatchers.Main) {
-            giniMerchant?.setOpenBankState(GiniMerchant.PaymentState.NoAction)
+            giniMerchant?.emitSDKEvent(GiniMerchant.PaymentState.NoAction)
         }
     }
 
-    sealed class DisplayedScreen {
-        object Nothing: DisplayedScreen()
-        object PaymentComponentBottomSheet : DisplayedScreen()
-        object BankSelectionBottomSheet: DisplayedScreen()
-        object MoreInformationFragment: DisplayedScreen()
-        object ReviewFragment: DisplayedScreen()
-    }
+    fun getPaymentProviderApp() = initialSelectedPaymentProvider
 
     class Factory(val paymentComponent: PaymentComponent?, val documentId: String, val integratedFlowConfiguration: IntegratedFlowConfiguration?, val giniMerchant: GiniMerchant?): ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")

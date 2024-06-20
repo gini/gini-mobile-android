@@ -13,8 +13,6 @@ import net.gini.android.merchant.sdk.exampleapp.invoices.ui.model.InvoiceItem
 import net.gini.android.merchant.sdk.integratedFlow.IntegratedFlowConfiguration
 import net.gini.android.merchant.sdk.integratedFlow.IntegratedPaymentContainerFragment
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
-import net.gini.android.merchant.sdk.review.ReviewFragment
-import net.gini.android.merchant.sdk.review.model.ResultWrapper
 import org.slf4j.LoggerFactory
 
 class InvoicesViewModel(
@@ -28,9 +26,6 @@ class InvoicesViewModel(
             InvoiceItem.fromInvoice(invoice)
         }
     }
-    val paymentProviderAppsFlow = paymentComponent.paymentProviderAppsFlow
-
-    val openBankState = invoicesRepository.giniMerchant.openBankState
 
     private val _selectedInvoiceItem: MutableStateFlow<InvoiceItem?> = MutableStateFlow(null)
     val selectedInvoiceItem: StateFlow<InvoiceItem?> = _selectedInvoiceItem
@@ -41,14 +36,6 @@ class InvoicesViewModel(
     val startIntegratedPaymentFlow = _startIntegratedPaymentFlow
 
     private var integratedFlowConfiguration: IntegratedFlowConfiguration? = null
-
-    fun updateDocument() {
-        viewModelScope.launch {
-            with(invoicesRepository) {
-                requestDocumentExtractionAndSaveToLocal((giniMerchant.documentFlow.value as ResultWrapper.Success).value)
-            }
-        }
-    }
 
     fun loadInvoicesWithExtractions() {
         viewModelScope.launch {
@@ -85,11 +72,4 @@ class InvoicesViewModel(
         private val LOG = LoggerFactory.getLogger(InvoicesViewModel::class.java)
 
     }
-}
-
-sealed class PaymentReviewFragmentState {
-    object Loading : PaymentReviewFragmentState()
-    data class Success(val fragment: ReviewFragment) : PaymentReviewFragmentState()
-    data class Error(val throwable: Throwable) : PaymentReviewFragmentState()
-    object Idle : PaymentReviewFragmentState()
 }

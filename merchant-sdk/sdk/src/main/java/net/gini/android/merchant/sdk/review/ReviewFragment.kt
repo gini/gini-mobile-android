@@ -125,7 +125,6 @@ interface ReviewFragmentListener {
  */
 class ReviewFragment private constructor(
     var listener: ReviewFragmentListener? = null,
-    private val paymentComponent: PaymentComponent? = null,
     private val viewModelFactory: ViewModelProvider.Factory? = null,
 ) : Fragment() {
 
@@ -196,12 +195,14 @@ class ReviewFragment private constructor(
                     viewModel.paymentValidation.collect { handleValidationResult(it) }
                 }
                 launch {
-                    viewModel.giniMerchant.openBankState.collect { handlePaymentState(it) }
+                    viewModel.giniMerchant.eventsFlow.collect { handlePaymentState(it) }
                 }
                 launch {
                     viewModel.isPaymentButtonEnabled.collect { isEnabled ->
                         payment.isEnabled = isEnabled
                         payment.alpha = if (isEnabled) 1f else 0.4f
+                        payment.text = if (!isEnabled) "" else getString(R.string.gms_pay_button)
+                        paymentProgress.isVisible = !isEnabled
                     }
                 }
                 launch {
@@ -342,21 +343,19 @@ class ReviewFragment private constructor(
         PaymentField.Purpose -> purposeLayout
     }
 
-    private fun GmsFragmentReviewBinding.handlePaymentState(paymentState: GiniMerchant.PaymentState) {
-        (paymentState is GiniMerchant.PaymentState.Loading).let { isLoading ->
-            paymentProgress.isVisible = isLoading
+    private fun GmsFragmentReviewBinding.handlePaymentState(event: GiniMerchant.MerchantSDKEvents) {
+        (event is GiniMerchant.MerchantSDKEvents.OnLoading).let { isLoading ->
             recipientLayout.isEnabled = !isLoading
             ibanLayout.isEnabled = !isLoading
             amountLayout.isEnabled = !isLoading
             purposeLayout.isEnabled = !isLoading
-            payment.text = if (isLoading) "" else getString(R.string.gms_pay_button)
         }
-        when (paymentState) {
-            is GiniMerchant.PaymentState.Success -> {
+        when (event) {
+            is GiniMerchant.MerchantSDKEvents.OnFinishedWithPaymentRequestCreated -> {
                 if (viewModel.paymentProviderApp.value?.paymentProvider?.gpcSupported() == false) return
                 try {
                     val intent =
-                        paymentState.paymentRequest.bankApp.getIntent(paymentState.paymentRequest.id)
+                        viewModel.paymentProviderApp.value?.getIntent(event.paymentRequestId)
                     if (intent != null) {
                         startActivity(intent)
                         viewModel.onBankOpened()
@@ -367,7 +366,7 @@ class ReviewFragment private constructor(
                     handleError(getString(R.string.gms_generic_error_message)) { viewModel.onPayment() }
                 }
             }
-            is GiniMerchant.PaymentState.Error -> {
+            is GiniMerchant.MerchantSDKEvents.OnErrorOccurred -> {
                 handleError(getString(R.string.gms_generic_error_message)) { viewModel.onPaymentButtonTapped(requireContext().externalCacheDir) }
             }
             else -> { // Loading is already handled
@@ -613,6 +612,11 @@ class ReviewFragment private constructor(
         }
     }
 
+
+    private fun handleLoading(isLoading: Boolean) {
+        binding.loading.isVisible = false
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putInt(PAGER_HEIGHT, binding.pager.layoutParams.height)
         super.onSaveInstanceState(outState)
@@ -628,6 +632,6 @@ class ReviewFragment private constructor(
             documentId: String,
             giniPaymentManager: GiniPaymentManager = GiniPaymentManager(giniMerchant),
             viewModelFactory: ViewModelProvider.Factory = ReviewViewModel.Factory(giniMerchant, configuration, paymentComponent, documentId, giniPaymentManager),
-        ): ReviewFragment = ReviewFragment(listener, paymentComponent, viewModelFactory)
+        ): ReviewFragment = ReviewFragment(listener, viewModelFactory)
     }
 }

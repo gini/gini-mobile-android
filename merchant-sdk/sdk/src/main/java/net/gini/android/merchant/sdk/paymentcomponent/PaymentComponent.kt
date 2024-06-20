@@ -9,8 +9,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import net.gini.android.core.api.Resource
 import net.gini.android.health.api.models.PaymentProvider
 import net.gini.android.merchant.sdk.GiniMerchant
-import net.gini.android.merchant.sdk.integratedFlow.IntegratedPaymentContainerFragment
 import net.gini.android.merchant.sdk.integratedFlow.IntegratedFlowConfiguration
+import net.gini.android.merchant.sdk.integratedFlow.IntegratedPaymentContainerFragment
 import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.paymentprovider.getPaymentProviderApps
 import net.gini.android.merchant.sdk.review.ReviewConfiguration
@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory
  *
  * It requires a [GiniMerchant] instance and a [Context] (application or activity) to be created.
  */
-class PaymentComponent(private val context: Context, private val giniMerchant: GiniMerchant) {
+class PaymentComponent(private val context: Context, val giniMerchant: GiniMerchant) {
 
     // Holds the state of the Payment Provider apps as received from the server - no processing is done on this list, to serve as a point of truth
     private val _initialStatePaymentProviderAppsFlow = MutableStateFlow<PaymentProviderAppsState>(PaymentProviderAppsState.Loading)
@@ -226,7 +226,7 @@ class PaymentComponent(private val context: Context, private val giniMerchant: G
         giniMerchant = giniMerchant,
         paymentComponent = this,
         documentId = documentId,
-        integratedFlowConfiguration = flowConfiguration
+        integratedFlowConfiguration = flowConfiguration ?: IntegratedFlowConfiguration()
     )
 
     internal suspend fun onPayInvoiceClicked(documentId: String) {

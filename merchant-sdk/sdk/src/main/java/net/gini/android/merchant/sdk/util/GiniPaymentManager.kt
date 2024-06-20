@@ -40,20 +40,20 @@ internal class GiniPaymentManager(
         }
         if (paymentProviderApp == null) {
             LOG.error("No selected payment provider app")
-            giniMerchant.setOpenBankState(GiniMerchant.PaymentState.Error(Exception("No selected payment provider app")))
+            giniMerchant.emitSDKEvent(GiniMerchant.PaymentState.Error(Exception("No selected payment provider app")))
             return
         }
 
         if (paymentProviderApp.installedPaymentProviderApp == null) {
             LOG.error("Payment provider app not installed")
-            giniMerchant.setOpenBankState(GiniMerchant.PaymentState.Error(Exception("Payment provider app not installed")))
+            giniMerchant.emitSDKEvent(GiniMerchant.PaymentState.Error(Exception("Payment provider app not installed")))
             return
         }
 
         val valid = validatePaymentDetails(paymentDetails)
         if (valid) {
             sendFeedbackAndStartLoading(paymentDetails)
-            giniMerchant.setOpenBankState(
+            giniMerchant.emitSDKEvent(
                 try {
                     GiniMerchant.PaymentState.Success(getPaymentRequest(paymentProviderApp, paymentDetails))
                 } catch (throwable: Throwable) {
@@ -90,7 +90,7 @@ internal class GiniPaymentManager(
     }
 
     suspend fun sendFeedbackAndStartLoading(paymentDetails: PaymentDetails) {
-        giniMerchant?.setOpenBankState(GiniMerchant.PaymentState.Loading)
+        giniMerchant?.emitSDKEvent(GiniMerchant.PaymentState.Loading)
         // TODO: first get the payment request and handle error before proceeding
         sendFeedback(paymentDetails)
     }
