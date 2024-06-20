@@ -5,6 +5,7 @@ import com.amplitude.android.Amplitude
 import com.amplitude.android.Configuration
 import com.amplitude.android.DefaultTrackingOptions
 import com.amplitude.common.Logger
+import com.amplitude.core.ServerZone
 import com.amplitude.core.events.Identify
 import net.gini.android.capture.R
 import net.gini.android.capture.internal.provider.InstallationIdProvider
@@ -31,7 +32,8 @@ internal class AmplitudeUserAnalyticsEventTracker(
         configuration = Configuration(
             apiKey.key,
             context = context.applicationContext,
-            defaultTracking = DefaultTrackingOptions.ALL
+            defaultTracking = DefaultTrackingOptions.ALL,
+            serverZone = ServerZone.EU,
         )
     ).also {
         it.setDeviceId(installationIdProvider.getInstallationId())
