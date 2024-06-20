@@ -22,9 +22,11 @@ import net.gini.android.core.api.models.SpecificExtraction
 import net.gini.android.core.api.test.shared.GiniCoreAPIIntegrationTest
 import net.gini.android.core.api.test.shared.helpers.TestUtils
 import net.gini.android.health.api.models.PaymentRequestInput
+import org.json.JSONException
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.io.IOException
 import java.util.Collections.singletonList
 import java.util.Properties
 import kotlin.time.Duration.Companion.seconds
@@ -44,6 +46,16 @@ class GiniHealthAPIIntegrationTest: GiniCoreAPIIntegrationTest<HealthApiDocument
 
     override fun onTestPropertiesAvailable(properties: Properties) {
         bankApiUri = getProperty(properties, "testBankApiUri")
+    }
+
+    @Test
+    @Throws(IOException::class, InterruptedException::class, JSONException::class)
+    fun processImageByteArrayLargerThan10MBWithCompression() = runTest(timeout = 30.seconds) {
+        val assetManager = ApplicationProvider.getApplicationContext<Context>().resources.assets
+        val testDocumentAsStream = assetManager.open("invoice-12MB.png")
+        Assert.assertNotNull("test image invoice-12MB.png could not be loaded", testDocumentAsStream)
+        val testDocument = TestUtils.createByteArray(testDocumentAsStream)
+        processDocument(testDocument, "image/png", "invoice-12MB.png", DocumentManager.DocumentType.INVOICE)
     }
 
     @Test
