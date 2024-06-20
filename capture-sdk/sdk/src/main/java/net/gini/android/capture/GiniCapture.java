@@ -1,5 +1,9 @@
 package net.gini.android.capture;
 
+import static net.gini.android.capture.internal.util.FileImportValidator.FILE_SIZE_LIMIT;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
+
 import android.content.Context;
 import android.content.Intent;
 
@@ -55,10 +59,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
-import static net.gini.android.capture.internal.util.FileImportValidator.FILE_SIZE_LIMIT;
 
 /**
  * Created by Alpar Szotyori on 22.02.2018.
@@ -186,7 +186,6 @@ public class GiniCapture {
             }
             cleanup(context);
         }
-        UserAnalytics.INSTANCE.initialize(context);
         return new Builder();
     }
 
