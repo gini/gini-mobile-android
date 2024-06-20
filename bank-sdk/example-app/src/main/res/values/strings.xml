@@ -44,12 +44,21 @@
 
     <!-- Strings for ConfigurationActivity -->
     <string name="configuration_activity_title">Configuration</string>
+    <string name="configuration_feature_label">Features</string>
+    <string name="configuration_bottom_nav_label">Bottom navigation bar</string>
+    <string name="configuration_onboarding_label">Onboarding</string>
+    <string name="configuration_camera_label">Camera</string>
+    <string name="configuration_analysis_label">Analysis</string>
+    <string name="configuration_help_label">Help</string>
+    <string name="configuration_return_assistant_label">Return assistant</string>
+    <string name="configuration_ui_customization_label">UI customization</string>
+    <string name="configuration_debug_development_label">Debug and development</string>
     <string name="close_gini_sdk_configuration">Close</string>
     <string name="example_label">Example</string>
     <string name="relaunch_to_use_default_configuration">Please relaunch the app to use the default GiniConfiguration values.</string>
     <string name="close_screen_for_configurations_to_take_place">The configuration changes will take effect after closing this screen.</string>
     <string name="default_sdk_configuration_switch_label">SDK default configurations</string>
-    <string name="file_import_switch_label">File import</string>
+    <string name="open_with_switch_label">Open with</string>
     <string name="qr_code_scanning_switch_label">QR code scanning</string>
     <string name="only_qr_code_scanning_switch_label">QR code scanning only</string>
     <string name="only_qr_code_scanning_switch_description">This will work if the \'Qr code scanning\' switch is also enabled.</string>
@@ -95,11 +104,11 @@
     <string name="custom_navigation_controller_switch_label">Custom navigation controller</string>
     <string name="return_assistant_feature_switch_label">Return assistant feature</string>
     <string name="return_assistant_feature_switch_description">Present a digital representation of the invoice</string>
-    <string name="digital_invoice_onboarding_custom_illustration_switch_label">Digital invoice onboarding custom illustration</string>
-    <string name="digital_invoice_help_bottom_navigation_bar_switch_label">Digital invoice help bottom navigation bar</string>
-    <string name="digital_invoice_bottom_navigation_bar_switch_description">The custom bottom navigation bar is shown if both \`Bottom navigation bar\` and \`Return assistant feature\` are enabled.</string>
-    <string name="digital_invoice_onboarding_bottom_navigation_bar_switch_label">Digital invoice onboarding bottom navigation bar</string>
-    <string name="digital_invoice_bottom_navigation_bar_switch_label">Digital invoice bottom navigation bar</string>
+    <string name="return_assistant_onboarding_custom_illustration_switch_label">Return assistant onboarding custom illustration</string>
+    <string name="return_assistant_help_bottom_navigation_bar_switch_label">Return assistant help bottom navigation bar</string>
+    <string name="return_assistant_bottom_navigation_bar_switch_description">The custom bottom navigation bar is shown if both \`Bottom navigation bar\` and \`Return assistant feature\` are enabled.</string>
+    <string name="return_assistant_onboarding_bottom_navigation_bar_switch_label">Return assistant onboarding bottom navigation bar</string>
+    <string name="return_assistant_bottom_navigation_bar_switch_label">Return assistant bottom navigation bar</string>
     <string name="event_tracker_switch_label">Event tracker</string>
     <string name="return_reasons_dialog_switch_label">Return reasons dialog</string>
     <string name="gini_error_switch_label">Gini error logger</string>
