@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import net.gini.android.merchant.sdk.exampleapp.MainViewModel
 import net.gini.android.merchant.sdk.exampleapp.databinding.FragmentConfigurationBinding
-import net.gini.android.merchant.sdk.integratedFlow.IntegratedFlowConfiguration
+import net.gini.android.merchant.sdk.integratedFlow.MerchantFlowConfiguration
 
 
 class ConfigurationFragment: Fragment() {
@@ -45,7 +45,7 @@ class ConfigurationFragment: Fragment() {
 
     private fun saveConfiguration() {
         viewModel.saveConfiguration(
-            IntegratedFlowConfiguration(
+            MerchantFlowConfiguration(
                 shouldShowReviewFragment = binding.gmsShowReviewFragment.isChecked,
                 isAmountFieldEditable = binding.gmsAmountEditable.isChecked,
                 shouldHandleErrorsInternally = true

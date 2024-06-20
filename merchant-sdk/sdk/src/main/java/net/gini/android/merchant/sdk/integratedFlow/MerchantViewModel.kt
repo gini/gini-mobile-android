@@ -16,7 +16,7 @@ import net.gini.android.merchant.sdk.util.DisplayedScreen
 import net.gini.android.merchant.sdk.util.GiniPaymentManager
 import java.util.Stack
 
-internal class IntegratedPaymentContainerViewModel(val paymentComponent: PaymentComponent?, val documentId: String, val integratedFlowConfiguration: IntegratedFlowConfiguration?, val giniPaymentManager: GiniPaymentManager, val giniMerchant: GiniMerchant?) : ViewModel() {
+internal class MerchantViewModel(val paymentComponent: PaymentComponent?, val documentId: String, val merchantFlowConfiguration: MerchantFlowConfiguration?, val giniPaymentManager: GiniPaymentManager, val giniMerchant: GiniMerchant?) : ViewModel() {
 
     private val backstack: Stack<DisplayedScreen> = Stack<DisplayedScreen>().also { it.add(DisplayedScreen.Nothing) }
     private var initialSelectedPaymentProvider: PaymentProviderApp? = null
@@ -88,10 +88,10 @@ internal class IntegratedPaymentContainerViewModel(val paymentComponent: Payment
 
     fun getPaymentProviderApp() = initialSelectedPaymentProvider
 
-    class Factory(val paymentComponent: PaymentComponent?, val documentId: String, val integratedFlowConfiguration: IntegratedFlowConfiguration?, val giniMerchant: GiniMerchant?): ViewModelProvider.Factory {
+    class Factory(val paymentComponent: PaymentComponent?, val documentId: String, val merchantFlowConfiguration: MerchantFlowConfiguration?, val giniMerchant: GiniMerchant?): ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return IntegratedPaymentContainerViewModel(paymentComponent = paymentComponent, documentId = documentId, integratedFlowConfiguration = integratedFlowConfiguration, giniPaymentManager = GiniPaymentManager(giniMerchant), giniMerchant = giniMerchant) as T
+            return MerchantViewModel(paymentComponent = paymentComponent, documentId = documentId, merchantFlowConfiguration = merchantFlowConfiguration, giniPaymentManager = GiniPaymentManager(giniMerchant), giniMerchant = giniMerchant) as T
         }
     }
 }

@@ -10,8 +10,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import net.gini.android.merchant.sdk.exampleapp.invoices.data.InvoicesRepository
 import net.gini.android.merchant.sdk.exampleapp.invoices.ui.model.InvoiceItem
-import net.gini.android.merchant.sdk.integratedFlow.IntegratedFlowConfiguration
-import net.gini.android.merchant.sdk.integratedFlow.IntegratedPaymentContainerFragment
+import net.gini.android.merchant.sdk.integratedFlow.MerchantFlowConfiguration
+import net.gini.android.merchant.sdk.integratedFlow.MerchantFragment
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
 import org.slf4j.LoggerFactory
 
@@ -30,12 +30,12 @@ class InvoicesViewModel(
     private val _selectedInvoiceItem: MutableStateFlow<InvoiceItem?> = MutableStateFlow(null)
     val selectedInvoiceItem: StateFlow<InvoiceItem?> = _selectedInvoiceItem
 
-    private val _startIntegratedPaymentFlow = MutableSharedFlow<IntegratedPaymentContainerFragment>(
+    private val _startIntegratedPaymentFlow = MutableSharedFlow<MerchantFragment>(
         extraBufferCapacity = 1
     )
     val startIntegratedPaymentFlow = _startIntegratedPaymentFlow
 
-    private var integratedFlowConfiguration: IntegratedFlowConfiguration? = null
+    private var merchantFlowConfiguration: MerchantFlowConfiguration? = null
 
     fun loadInvoicesWithExtractions() {
         viewModelScope.launch {
@@ -61,11 +61,11 @@ class InvoicesViewModel(
     }
 
     fun startIntegratedPaymentFlow(documentId: String) {
-        _startIntegratedPaymentFlow.tryEmit(paymentComponent.getContainerFragment(documentId, integratedFlowConfiguration))
+        _startIntegratedPaymentFlow.tryEmit(paymentComponent.getContainerFragment(documentId, merchantFlowConfiguration))
     }
 
-    fun setIntegratedFlowConfiguration(flowConfiguration: IntegratedFlowConfiguration) {
-        this.integratedFlowConfiguration = flowConfiguration
+    fun setIntegratedFlowConfiguration(flowConfiguration: MerchantFlowConfiguration) {
+        this.merchantFlowConfiguration = flowConfiguration
     }
 
     companion object {

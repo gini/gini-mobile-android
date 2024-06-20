@@ -21,11 +21,11 @@ import org.junit.runner.RunWith
 
 @ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
-class IntegratedPaymentContainerFragmentTest {
+class MerchantFragmentTest {
     private var context: Context? = null
     private var giniMerchant : GiniMerchant? = null
     private var paymentComponent: PaymentComponent? = null
-    private var integratedPaymentContainerViewModel: IntegratedPaymentContainerViewModel? = null
+    private var merchantViewModel: MerchantViewModel? = null
     private lateinit var viewModelFactory: ViewModelProvider.Factory
 
     @Before
@@ -41,13 +41,13 @@ class IntegratedPaymentContainerFragmentTest {
         every { paymentComponent!!.selectedPaymentProviderAppFlow } returns MutableStateFlow(mockk(relaxed = true))
         every { paymentComponent!!.getPaymentReviewFragment("1234", any()) } returns mockk(relaxed = true)
 
-        integratedPaymentContainerViewModel = mockk<IntegratedPaymentContainerViewModel>(relaxed = true)
-        every { integratedPaymentContainerViewModel!!.giniMerchant } returns giniMerchant
-        every { integratedPaymentContainerViewModel!!.paymentComponent } returns paymentComponent
+        merchantViewModel = mockk<MerchantViewModel>(relaxed = true)
+        every { merchantViewModel!!.giniMerchant } returns giniMerchant
+        every { merchantViewModel!!.paymentComponent } returns paymentComponent
         viewModelFactory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 @Suppress("UNCHECKED_CAST")
-                return integratedPaymentContainerViewModel as T
+                return merchantViewModel as T
             }
         }
     }
@@ -55,8 +55,8 @@ class IntegratedPaymentContainerFragmentTest {
     @Test
     fun `shows payment component bottom sheet on startup`() = runTest {
         // Given
-        every { integratedPaymentContainerViewModel!!.getLastBackstackEntry() } returns IntegratedPaymentContainerViewModel.DisplayedScreen.Nothing
-        val fragment = IntegratedPaymentContainerFragment.newInstance(
+        every { merchantViewModel!!.getLastBackstackEntry() } returns MerchantViewModel.DisplayedScreen.Nothing
+        val fragment = MerchantFragment.newInstance(
             giniMerchant = giniMerchant!!,
             paymentComponent = paymentComponent!!,
             documentId = "1234",
@@ -75,20 +75,20 @@ class IntegratedPaymentContainerFragmentTest {
     @Test
     fun `shows review fragment when payment button is tapped and config allows showing of review fragment`() = runTest {
         // Given
-        every { integratedPaymentContainerViewModel!!.addToBackStack(IntegratedPaymentContainerViewModel.DisplayedScreen.ReviewFragment) } returns Unit
-        every { integratedPaymentContainerViewModel!!.integratedFlowConfiguration!!.shouldHandleErrorsInternally } returns false
-        every { integratedPaymentContainerViewModel!!.integratedFlowConfiguration!!.shouldShowReviewFragment } returns true
-        every { integratedPaymentContainerViewModel!!.integratedFlowConfiguration!!.isAmountFieldEditable } returns false
-        every { integratedPaymentContainerViewModel!!.paymentComponent!!.getContainerFragment(any(), any()) } returns mockk(relaxed = true)
-        every { integratedPaymentContainerViewModel!!.paymentComponent!!.selectedPaymentProviderAppFlow } returns MutableStateFlow(
+        every { merchantViewModel!!.addToBackStack(MerchantViewModel.DisplayedScreen.ReviewFragment) } returns Unit
+        every { merchantViewModel!!.merchantFlowConfiguration!!.shouldHandleErrorsInternally } returns false
+        every { merchantViewModel!!.merchantFlowConfiguration!!.shouldShowReviewFragment } returns true
+        every { merchantViewModel!!.merchantFlowConfiguration!!.isAmountFieldEditable } returns false
+        every { merchantViewModel!!.paymentComponent!!.getContainerFragment(any(), any()) } returns mockk(relaxed = true)
+        every { merchantViewModel!!.paymentComponent!!.selectedPaymentProviderAppFlow } returns MutableStateFlow(
             mockk(relaxed = true)
         )
         val documentId = "1234"
-        val fragment = IntegratedPaymentContainerFragment.newInstance(
+        val fragment = MerchantFragment.newInstance(
             giniMerchant = giniMerchant!!,
             paymentComponent = paymentComponent!!,
             documentId = documentId,
-            integratedFlowConfiguration = IntegratedFlowConfiguration(shouldShowReviewFragment = true),
+            merchantFlowConfiguration = MerchantFlowConfiguration(shouldShowReviewFragment = true),
             viewModelFactory = viewModelFactory
         )
 
@@ -106,9 +106,9 @@ class IntegratedPaymentContainerFragmentTest {
     @Test
     fun `forwards payment request to viewModel when config doesn't allow showing ReviewFragment`() = runTest {
         // Given
-        every { integratedPaymentContainerViewModel!!.getLastBackstackEntry() } returns IntegratedPaymentContainerViewModel.DisplayedScreen.Nothing
+        every { merchantViewModel!!.getLastBackstackEntry() } returns MerchantViewModel.DisplayedScreen.Nothing
         val documentId = "1234"
-        val fragment = IntegratedPaymentContainerFragment.newInstance(
+        val fragment = MerchantFragment.newInstance(
             giniMerchant = giniMerchant!!,
             paymentComponent = paymentComponent!!,
             documentId = documentId,
@@ -123,6 +123,6 @@ class IntegratedPaymentContainerFragmentTest {
         fragment.handlePayFlow(documentId)
 
         // Then
-        verify { integratedPaymentContainerViewModel!!.onPayment() }
+        verify { merchantViewModel!!.onPayment() }
     }
 }

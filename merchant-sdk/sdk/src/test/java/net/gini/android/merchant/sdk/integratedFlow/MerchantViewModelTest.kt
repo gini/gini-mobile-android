@@ -30,7 +30,7 @@ import org.junit.runner.RunWith
 
 @ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
-class IntegratedPaymentContainerViewModelTest {
+class MerchantViewModelTest {
     @get:Rule
     val testCoroutineRule = ViewModelTestCoroutineRule()
 
@@ -91,69 +91,69 @@ class IntegratedPaymentContainerViewModelTest {
     @Test
     fun `adds to backstack`() = runTest {
         // Given
-        val viewModel = IntegratedPaymentContainerViewModel(
+        val viewModel = MerchantViewModel(
             paymentComponent = paymentComponent,
             documentId = "1234",
-            integratedFlowConfiguration = null,
+            merchantFlowConfiguration = null,
             giniMerchant = giniMerchant,
             giniPaymentManager = GiniPaymentManager(giniMerchant)
         )
 
         // When
-        viewModel.addToBackStack(IntegratedPaymentContainerViewModel.DisplayedScreen.BankSelectionBottomSheet)
+        viewModel.addToBackStack(MerchantViewModel.DisplayedScreen.BankSelectionBottomSheet)
 
         // Then
-        assertThat(viewModel.getLastBackstackEntry()).isInstanceOf(IntegratedPaymentContainerViewModel.DisplayedScreen.BankSelectionBottomSheet::class.java)
+        assertThat(viewModel.getLastBackstackEntry()).isInstanceOf(MerchantViewModel.DisplayedScreen.BankSelectionBottomSheet::class.java)
     }
 
     @Test
     fun `pops backstack`() = runTest {
         // Given
-        val viewModel = IntegratedPaymentContainerViewModel(
+        val viewModel = MerchantViewModel(
             paymentComponent = paymentComponent,
             documentId = "1234",
-            integratedFlowConfiguration = null,
+            merchantFlowConfiguration = null,
             giniMerchant = giniMerchant,
             giniPaymentManager = GiniPaymentManager(giniMerchant)
         )
 
         // When
-        viewModel.addToBackStack(IntegratedPaymentContainerViewModel.DisplayedScreen.BankSelectionBottomSheet)
-        viewModel.addToBackStack(IntegratedPaymentContainerViewModel.DisplayedScreen.MoreInformationFragment)
+        viewModel.addToBackStack(MerchantViewModel.DisplayedScreen.BankSelectionBottomSheet)
+        viewModel.addToBackStack(MerchantViewModel.DisplayedScreen.MoreInformationFragment)
 
-        assertThat(viewModel.getLastBackstackEntry()).isInstanceOf(IntegratedPaymentContainerViewModel.DisplayedScreen.MoreInformationFragment::class.java)
+        assertThat(viewModel.getLastBackstackEntry()).isInstanceOf(MerchantViewModel.DisplayedScreen.MoreInformationFragment::class.java)
 
         // Then
         viewModel.popBackStack()
-        assertThat(viewModel.getLastBackstackEntry()).isInstanceOf(IntegratedPaymentContainerViewModel.DisplayedScreen.BankSelectionBottomSheet::class.java)
+        assertThat(viewModel.getLastBackstackEntry()).isInstanceOf(MerchantViewModel.DisplayedScreen.BankSelectionBottomSheet::class.java)
     }
 
     @Test
     fun `peek backstack returns last value in backstack`() = runTest {
         // Given
-        val viewModel = IntegratedPaymentContainerViewModel(
+        val viewModel = MerchantViewModel(
             paymentComponent = paymentComponent,
             documentId = "1234",
-            integratedFlowConfiguration = null,
+            merchantFlowConfiguration = null,
             giniMerchant = giniMerchant,
             giniPaymentManager = GiniPaymentManager(giniMerchant)
         )
 
         // When
-        viewModel.addToBackStack(IntegratedPaymentContainerViewModel.DisplayedScreen.BankSelectionBottomSheet)
-        viewModel.addToBackStack(IntegratedPaymentContainerViewModel.DisplayedScreen.MoreInformationFragment)
+        viewModel.addToBackStack(MerchantViewModel.DisplayedScreen.BankSelectionBottomSheet)
+        viewModel.addToBackStack(MerchantViewModel.DisplayedScreen.MoreInformationFragment)
 
         // Then
-        assertThat(viewModel.getLastBackstackEntry()).isInstanceOf(IntegratedPaymentContainerViewModel.DisplayedScreen.MoreInformationFragment::class.java)
+        assertThat(viewModel.getLastBackstackEntry()).isInstanceOf(MerchantViewModel.DisplayedScreen.MoreInformationFragment::class.java)
     }
 
     @Test
     fun `returns true if payment provider app has been changed`() = runTest {
         // Given
-        val viewModel = IntegratedPaymentContainerViewModel(
+        val viewModel = MerchantViewModel(
             paymentComponent = paymentComponent,
             documentId = "1234",
-            integratedFlowConfiguration = null,
+            merchantFlowConfiguration = null,
             giniMerchant = giniMerchant,
             giniPaymentManager = GiniPaymentManager(giniMerchant)
         )
@@ -166,10 +166,10 @@ class IntegratedPaymentContainerViewModelTest {
     fun `forwards on payment action to giniPayment`() = runTest {
         // Given
         coEvery { giniPayment!!.onPayment(any(), any()) } coAnswers {  }
-        val viewModel = IntegratedPaymentContainerViewModel(
+        val viewModel = MerchantViewModel(
             paymentComponent = paymentComponent,
             documentId = "1234",
-            integratedFlowConfiguration = null,
+            merchantFlowConfiguration = null,
             giniMerchant = giniMerchant,
             giniPaymentManager = giniPayment!!
         )
@@ -183,10 +183,10 @@ class IntegratedPaymentContainerViewModelTest {
     fun `forwards load document to giniMerchant`() = runTest {
         // Given
         coEvery { giniPayment!!.onPayment(any(), any()) } coAnswers {  }
-        val viewModel = IntegratedPaymentContainerViewModel(
+        val viewModel = MerchantViewModel(
             paymentComponent = paymentComponent,
             documentId = "1234",
-            integratedFlowConfiguration = null,
+            merchantFlowConfiguration = null,
             giniMerchant = giniMerchant,
             giniPaymentManager = giniPayment!!
         )
