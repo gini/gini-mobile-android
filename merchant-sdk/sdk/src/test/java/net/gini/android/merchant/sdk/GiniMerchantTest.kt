@@ -15,8 +15,8 @@ import net.gini.android.core.api.models.SpecificExtraction
 import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.api.HealthApiDocumentManager
 import net.gini.android.merchant.sdk.review.error.NoPaymentDataExtracted
-import net.gini.android.merchant.sdk.review.model.PaymentDetails
-import net.gini.android.merchant.sdk.review.model.ResultWrapper
+import net.gini.android.merchant.sdk.api.payment.model.PaymentDetails
+import net.gini.android.merchant.sdk.api.ResultWrapper
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -26,7 +26,7 @@ import org.junit.Test
 import java.util.Date
 
 val document =
-    Document("1234", Document.ProcessingState.COMPLETED, "", 1, Date(124), Document.SourceClassification.COMPOSITE, Uri.EMPTY, emptyList(), emptyList())
+    Document("1234", Document.ProcessingState.COMPLETED, "", 1, Date(124), Date(124), Document.SourceClassification.COMPOSITE, Uri.EMPTY, emptyList(), emptyList())
 
 val extractions = ExtractionsContainer(
     emptyMap(),
@@ -57,36 +57,39 @@ class GiniMerchantTest {
     @Before
     fun setUp() {
         every { giniHealthAPI.documentManager } returns documentManager
-        giniMerchant = GiniMerchant(giniHealthAPI)
+        giniMerchant = GiniMerchant(mockk(relaxed = true)).apply {
+            replaceHealthApiInstance(this@GiniMerchantTest.giniHealthAPI)
+        }
     }
 
-    @Test
-    fun `When setting document for review then document and payment flow emit success`() = runTest {
-        coEvery { documentManager.getAllExtractionsWithPolling(document) } returns Resource.Success(extractions)
-        val paymentDetails = PaymentDetails("recipient", "iban", "123.56", "purpose", extractions)
-
-        assert(giniMerchant.documentFlow.value is ResultWrapper.Loading<Document>) { "Expected Loading but was ${giniMerchant.documentFlow.value}" }
-        assert(giniMerchant.paymentFlow.value is ResultWrapper.Loading<PaymentDetails>) { "Expected Loading but was ${giniMerchant.paymentFlow.value}" }
-        giniMerchant.setDocumentForReview(document)
-        assert(giniMerchant.documentFlow.value is ResultWrapper.Success<Document>) { "Expected Success but was ${giniMerchant.documentFlow.value}" }
-        assert(giniMerchant.documentFlow.value is ResultWrapper.Success<Document>) { "Expected Success but was ${giniMerchant.documentFlow.value}" }
-        assert(giniMerchant.paymentFlow.value is ResultWrapper.Success<PaymentDetails>) { "Expected Success but was ${giniMerchant.paymentFlow.value}" }
-        assertEquals(document, (giniMerchant.documentFlow.value as ResultWrapper.Success<Document>).value)
-        assertEquals(paymentDetails, (giniMerchant.paymentFlow.value as ResultWrapper.Success<PaymentDetails>).value)
-    }
-
-    @Test
-    fun `When setting document for review then payment flow emits failure if extractions have no payment details`() = runTest {
-        coEvery { documentManager.getAllExtractionsWithPolling(document) } returns Resource.Success(ExtractionsContainer(
-            emptyMap(),
-            emptyMap()
-        ))
-
-        assert(giniMerchant.paymentFlow.value is ResultWrapper.Loading<PaymentDetails>) { "Expected Loading but was ${giniMerchant.paymentFlow.value}" }
-        giniMerchant.setDocumentForReview(document)
-        assert(giniMerchant.paymentFlow.value is ResultWrapper.Error<PaymentDetails>) { "Expected Success but was ${giniMerchant.paymentFlow.value}" }
-        assertTrue((giniMerchant.paymentFlow.value as ResultWrapper.Error<PaymentDetails>).error is NoPaymentDataExtracted)
-    }
+    // TODO EC-62: Add method and tests for setting image/PDF instead of document or document id
+//    @Test
+//    fun `When setting document for review then document and payment flow emit success`() = runTest {
+//        coEvery { documentManager.getAllExtractionsWithPolling(document) } returns Resource.Success(extractions)
+//        val paymentDetails = PaymentDetails("recipient", "iban", "123.56", "purpose", extractions)
+//
+//        assert(giniMerchant.documentFlow.value is ResultWrapper.Loading<Document>) { "Expected Loading but was ${giniMerchant.documentFlow.value}" }
+//        assert(giniMerchant.paymentFlow.value is ResultWrapper.Loading<PaymentDetails>) { "Expected Loading but was ${giniMerchant.paymentFlow.value}" }
+//        giniMerchant.setDocumentForReview(document)
+//        assert(giniMerchant.documentFlow.value is ResultWrapper.Success<Document>) { "Expected Success but was ${giniMerchant.documentFlow.value}" }
+//        assert(giniMerchant.documentFlow.value is ResultWrapper.Success<Document>) { "Expected Success but was ${giniMerchant.documentFlow.value}" }
+//        assert(giniMerchant.paymentFlow.value is ResultWrapper.Success<PaymentDetails>) { "Expected Success but was ${giniMerchant.paymentFlow.value}" }
+//        assertEquals(document, (giniMerchant.documentFlow.value as ResultWrapper.Success<Document>).value)
+//        assertEquals(paymentDetails, (giniMerchant.paymentFlow.value as ResultWrapper.Success<PaymentDetails>).value)
+//    }
+//
+//    @Test
+//    fun `When setting document for review then payment flow emits failure if extractions have no payment details`() = runTest {
+//        coEvery { documentManager.getAllExtractionsWithPolling(document) } returns Resource.Success(ExtractionsContainer(
+//            emptyMap(),
+//            emptyMap()
+//        ))
+//
+//        assert(giniMerchant.paymentFlow.value is ResultWrapper.Loading<PaymentDetails>) { "Expected Loading but was ${giniMerchant.paymentFlow.value}" }
+//        giniMerchant.setDocumentForReview(document)
+//        assert(giniMerchant.paymentFlow.value is ResultWrapper.Error<PaymentDetails>) { "Expected Success but was ${giniMerchant.paymentFlow.value}" }
+//        assertTrue((giniMerchant.paymentFlow.value as ResultWrapper.Error<PaymentDetails>).error is NoPaymentDataExtracted)
+//    }
 
     @Test
     fun `When setting document id for review with payment details then document flow emits document`() = runTest {

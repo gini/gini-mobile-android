@@ -51,7 +51,6 @@ class UploadViewModel(
                     is Resource.Error -> throw Exception(polledDocumentResource.exception)
                     is Resource.Success -> {
                         _uploadState.value = UploadState.Success(polledDocumentResource.data.id)
-                        setDocumentForReview(polledDocumentResource.data.id)
 
                         giniHealthAPI.documentManager.getAllExtractions(polledDocumentResource.data)
                             .mapSuccess { extractionsResource ->
@@ -70,12 +69,6 @@ class UploadViewModel(
             } catch (throwable: Throwable) {
                 _uploadState.value = UploadState.Failure(throwable)
             }
-        }
-    }
-
-    private fun setDocumentForReview(documentId: String) {
-        viewModelScope.launch {
-            giniMerchant.setDocumentForReview(documentId)
         }
     }
 

@@ -1,17 +1,12 @@
 package net.gini.android.bank.api;
 
 import net.gini.android.bank.api.models.ExtractionsContainer
-import net.gini.android.bank.api.models.Payment
 import net.gini.android.bank.api.models.ResolvePaymentInput
 import net.gini.android.bank.api.models.ResolvedPayment
 import net.gini.android.bank.api.requests.ErrorEvent
 import net.gini.android.core.api.DocumentManager
 import net.gini.android.core.api.Resource
-import net.gini.android.core.api.models.CompoundExtraction
-import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.models.PaymentRequest
-import net.gini.android.core.api.models.SpecificExtraction
-import org.json.JSONException
 
 /**
  * Created by Alpár Szotyori on 25.01.22.
@@ -39,17 +34,6 @@ class BankApiDocumentManager internal constructor(private val documentRepository
         resolvePaymentInput: ResolvePaymentInput,
     ): Resource<ResolvedPayment> =
         documentRepository.resolvePaymentRequest(requestId, resolvePaymentInput)
-
-    /**
-     * Get information about the payment of the [PaymentRequest]
-     *
-     * @param id of the paid [PaymentRequest]
-     * @return [Resource] with the [Payment] or information about the error
-     */
-    suspend fun getPayment(
-        id: String,
-    ): Resource<Payment> =
-        documentRepository.getPayment(id)
 
     /**
      * Send error events to the Gini Bank API.

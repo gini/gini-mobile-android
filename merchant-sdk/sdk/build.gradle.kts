@@ -3,7 +3,7 @@ import net.gini.gradle.CodeAnalysisPlugin
 import net.gini.gradle.DokkaPlugin
 import net.gini.gradle.PublishToMavenPlugin
 import net.gini.gradle.SBOMPlugin
-import net.gini.gradle.extensions.apiProjectDependencyForSBOM
+import net.gini.gradle.extensions.implementationProjectDependencyForSBOM
 import org.jetbrains.dokka.gradle.DokkaCollectorTask
 
 plugins {
@@ -104,9 +104,9 @@ tasks.withType(type = org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 dependencies {
     val healthApiLibrary = project(":health-api-library:library")
     if (properties["createSBOM"] == "true") {
-        apiProjectDependencyForSBOM(healthApiLibrary)
+        implementationProjectDependencyForSBOM(healthApiLibrary)
     } else {
-        api(healthApiLibrary)
+        implementation(healthApiLibrary)
     }
 
     api(libs.slf4j.api)

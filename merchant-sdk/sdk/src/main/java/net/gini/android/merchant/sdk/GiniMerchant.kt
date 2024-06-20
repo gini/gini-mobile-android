@@ -1,7 +1,9 @@
 package net.gini.android.merchant.sdk
 
+import android.content.Context
 import android.os.Bundle
 import android.os.Parcelable
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.savedstate.SavedStateRegistry
@@ -16,26 +18,67 @@ import kotlinx.parcelize.Parcelize
 import net.gini.android.core.api.Resource
 import net.gini.android.core.api.models.Document
 import net.gini.android.health.api.GiniHealthAPI
-import net.gini.android.merchant.sdk.review.model.PaymentDetails
-import net.gini.android.merchant.sdk.review.model.PaymentRequest
-import net.gini.android.merchant.sdk.review.model.ResultWrapper
-import net.gini.android.merchant.sdk.review.model.getPaymentExtraction
-import net.gini.android.merchant.sdk.review.model.toPaymentDetails
-import net.gini.android.merchant.sdk.review.model.wrapToResult
-import net.gini.android.merchant.sdk.util.DisplayedScreen
+import net.gini.android.health.api.GiniHealthAPIBuilder
+import net.gini.android.merchant.sdk.api.payment.model.PaymentDetails
+import net.gini.android.merchant.sdk.api.payment.model.PaymentRequest
+import net.gini.android.merchant.sdk.api.ResultWrapper
+import net.gini.android.merchant.sdk.api.authorization.HealthApiSessionManagerAdapter
+import net.gini.android.merchant.sdk.api.authorization.SessionManager
+import net.gini.android.merchant.sdk.api.payment.model.Payment
+import net.gini.android.merchant.sdk.api.payment.model.getPaymentExtraction
+import net.gini.android.merchant.sdk.api.payment.model.toPayment
+import net.gini.android.merchant.sdk.api.payment.model.toPaymentDetails
+import net.gini.android.merchant.sdk.api.payment.model.toPaymentRequest
+import net.gini.android.merchant.sdk.api.wrapToResult
+import net.gini.android.merchant.sdk.util.extensions.toException
 import org.slf4j.LoggerFactory
 import java.lang.ref.WeakReference
 
 /**
- * [GiniMerchant] is one of the main classes for interacting with the Gini Merchant SDK. It manages interaction with the Gini Health API.
+ * [GiniMerchant] is one of the main classes for interacting with the Gini Merchant SDK.
  *
  *  [documentFlow], [paymentFlow], [openBankState] are used by the [ReviewFragment] to observe their state, but they are public
  *  so that they can be observed anywhere, the main purpose for this is to observe errors.
  */
 class GiniMerchant(
-    val giniHealthAPI: GiniHealthAPI
+    private val context: Context,
+    private val clientId: String = "",
+    private val clientSecret: String = "",
+    private val emailDomain: String = "",
+    private val sessionManager: SessionManager? = null,
+    private val merchantApiBaseUrl: String? = null,
+    private val userCenterApiBaseUrl: String? = null,
+    private val debuggingEnabled: Boolean = false
 ) {
-    private val documentManager = giniHealthAPI.documentManager
+
+    // Lazily initialized backing field for giniHealthAPI to allow mocking it for tests.
+    private var _giniHealthAPI: GiniHealthAPI? = null
+    internal val giniHealthAPI: GiniHealthAPI
+        get() {
+            _giniHealthAPI?.let { return it }
+                ?: run {
+                    val healthAPI = if (sessionManager == null) {
+                        GiniHealthAPIBuilder(
+                            context,
+                            clientId,
+                            clientSecret,
+                            emailDomain
+                        )
+                    } else {
+                        GiniHealthAPIBuilder(context, sessionManager = HealthApiSessionManagerAdapter(sessionManager))
+                    }.apply {
+                        if (merchantApiBaseUrl != null) {
+                            setApiBaseUrl(merchantApiBaseUrl)
+                        }
+                        if (userCenterApiBaseUrl != null) {
+                            setUserCenterApiBaseUrl(userCenterApiBaseUrl)
+                        }
+                        setDebuggingEnabled(debuggingEnabled)
+                    }.build()
+                    _giniHealthAPI = healthAPI
+                    return healthAPI
+                }
+        }
 
     private var registryOwner = WeakReference<SavedStateRegistryOwner?>(null)
     private var savedStateObserver: LifecycleEventObserver? = null
@@ -77,25 +120,32 @@ class GiniMerchant(
 
     val eventsFlow: SharedFlow<MerchantSDKEvents> = _eventsFlow
 
+    @VisibleForTesting
+    internal fun replaceHealthApiInstance(giniHealthAPI: GiniHealthAPI) {
+        _giniHealthAPI = giniHealthAPI
+    }
+
+    // TODO EC-62: Made private because Document is from the Health API Library. This is still needed internally for restoring the saved state.
     /**
      * Sets a [Document] for review. Results can be collected from [documentFlow] and [paymentFlow].
      *
      * @param document document received from Gini API.
      */
-    suspend fun setDocumentForReview(document: Document) {
+    private suspend fun setDocumentForReview(document: Document) {
         capturedArguments = CapturedArguments.DocumentInstance(document)
         _documentFlow.value = ResultWrapper.Success(document)
         _paymentFlow.value = ResultWrapper.Loading()
 
         _paymentFlow.value = wrapToResult {
-            documentManager.getAllExtractionsWithPolling(document).mapSuccess {
+            giniHealthAPI.documentManager.getAllExtractionsWithPolling(document).mapSuccess {
                 Resource.Success(it.data.toPaymentDetails())
             }
         }
     }
 
+    // TODO EC-62: Add method and tests for setting image/PDF instead of document or document id
     /**
-     * Sets a [Document] for review. Results can be collected from [documentFlow] and [paymentFlow].
+     * Sets a Document for review. Results can be collected from [documentFlow] and [paymentFlow].
      *
      * @param documentId id of the document returned by Gini API.
      * @param paymentDetails optional [PaymentDetails] for the document corresponding to [documentId]
@@ -108,15 +158,15 @@ class GiniMerchant(
         _paymentFlow.value = ResultWrapper.Loading()
 
         _documentFlow.value = wrapToResult {
-            documentManager.getDocument(documentId)
+            giniHealthAPI.documentManager.getDocument(documentId)
         }
         if (paymentDetails != null) {
             _paymentFlow.value = ResultWrapper.Success(paymentDetails)
         } else {
-            when (val documentResult = documentFlow.value) {
+            when (val documentResult = _documentFlow.value) {
                 is ResultWrapper.Success -> {
                     _paymentFlow.value =
-                        wrapToResult { documentManager.getAllExtractionsWithPolling(documentResult.value).mapSuccess {
+                        wrapToResult { giniHealthAPI.documentManager.getAllExtractionsWithPolling(documentResult.value).mapSuccess {
                             Resource.Success(it.data.toPaymentDetails()) }
                         }
                 }
@@ -136,9 +186,9 @@ class GiniMerchant(
      * @throws Exception if there was an error while retrieving the document or the extractions
      */
     suspend fun checkIfDocumentIsPayable(documentId: String): Boolean {
-        val extractionsResource = documentManager.getDocument(documentId)
+        val extractionsResource = giniHealthAPI.documentManager.getDocument(documentId)
             .mapSuccess { documentResource ->
-                documentManager.getAllExtractionsWithPolling(documentResource.data)
+                giniHealthAPI.documentManager.getAllExtractionsWithPolling(documentResource.data)
             }
         return when (extractionsResource) {
             is Resource.Cancelled -> false
@@ -148,9 +198,37 @@ class GiniMerchant(
         }
     }
 
+    // TODO EC-62: Use this method in the example app
+    suspend fun getPaymentRequest(paymentRequestId: String): Result<PaymentRequest> {
+        return when (val paymentRequestResource = giniHealthAPI.documentManager.getPaymentRequest(paymentRequestId)) {
+            is Resource.Cancelled -> Result.failure(Exception("Cancelled"))
+            is Resource.Error -> Result.failure(paymentRequestResource.toException())
+            is Resource.Success -> {
+                Result.success(paymentRequestResource.data.toPaymentRequest(paymentRequestId))
+            }
+        }
+    }
+
+    // TODO EC-62: Use this method in the example app
+    suspend fun getPayment(paymentRequestId: String): Result<Payment> {
+        return when (val paymentRequestResource = giniHealthAPI.documentManager.getPayment(paymentRequestId)) {
+            is Resource.Cancelled -> Result.failure(Exception("Cancelled"))
+            is Resource.Error -> Result.failure(paymentRequestResource.toException())
+            is Resource.Success -> {
+                Result.success(paymentRequestResource.data.toPayment())
+            }
+        }
+    }
+
     internal fun emitSDKEvent(state: PaymentState) {
         when (state) {
-            is PaymentState.Success -> _eventsFlow.tryEmit(MerchantSDKEvents.OnFinishedWithPaymentRequestCreated(state.paymentRequest.id, state.paymentRequest.bankApp.name))
+            is PaymentState.Success -> _eventsFlow.tryEmit(
+                MerchantSDKEvents.OnFinishedWithPaymentRequestCreated(
+                    state.paymentRequest.id,
+                    state.paymentRequest.bankApp.name
+                )
+            )
+
             is PaymentState.Error -> _eventsFlow.tryEmit(MerchantSDKEvents.OnErrorOccurred(state.throwable))
             PaymentState.Loading -> _eventsFlow.tryEmit(MerchantSDKEvents.OnLoading)
             else -> {}

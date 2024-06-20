@@ -1,6 +1,6 @@
 package net.gini.android.merchant.sdk.review
 
-import net.gini.android.merchant.sdk.review.model.PaymentDetails
+import net.gini.android.merchant.sdk.api.payment.model.PaymentDetails
 import net.gini.android.merchant.sdk.util.isNumber
 import net.gini.android.merchant.sdk.util.isValidIban
 

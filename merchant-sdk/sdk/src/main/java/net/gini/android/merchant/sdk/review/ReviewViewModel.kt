@@ -24,8 +24,11 @@ import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.merchant.sdk.paymentcomponent.SelectedPaymentProviderAppState
 import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.preferences.UserPreferences
-import net.gini.android.merchant.sdk.review.model.PaymentDetails
-import net.gini.android.merchant.sdk.review.model.ResultWrapper
+import net.gini.android.merchant.sdk.api.payment.model.PaymentDetails
+import net.gini.android.merchant.sdk.api.payment.model.PaymentRequest
+import net.gini.android.merchant.sdk.api.ResultWrapper
+import net.gini.android.merchant.sdk.api.payment.model.toPaymentRequest
+import net.gini.android.merchant.sdk.api.payment.model.withFeedback
 import net.gini.android.merchant.sdk.review.model.overwriteEmptyFields
 import net.gini.android.merchant.sdk.review.openWith.OpenWithPreferences
 import net.gini.android.merchant.sdk.review.pager.DocumentPageAdapter

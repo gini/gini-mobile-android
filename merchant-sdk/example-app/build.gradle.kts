@@ -103,6 +103,8 @@ dependencies {
     implementation(libs.moshi.core)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(project(":merchant-sdk:sdk"))
+    implementation(project(":health-api-library:library"))
+
     kapt(libs.moshi.codegen)
     implementation(libs.logback.android.core)
     implementation(libs.logback.android.classic) {

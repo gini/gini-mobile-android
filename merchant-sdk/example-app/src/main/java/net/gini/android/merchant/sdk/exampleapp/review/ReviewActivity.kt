@@ -201,16 +201,21 @@ class ReviewActivity : AppCompatActivity() {
         private val LOG = LoggerFactory.getLogger(ReviewActivity::class.java)
 
         private const val EXTRA_URIS = "EXTRA_URIS"
+        private const val EXTRA_DOCUMENT_ID = "EXTRA_DOCUMENT_ID"
 
-        fun getStartIntent(context: Context, pages: List<Uri> = emptyList()): Intent =
+        fun getStartIntent(context: Context, pages: List<Uri> = emptyList(), documentId: String): Intent =
             Intent(context, ReviewActivity::class.java).apply {
                 putParcelableArrayListExtra(
                     EXTRA_URIS,
                     if (pages is ArrayList<Uri>) pages else ArrayList<Uri>().apply { addAll(pages) })
+                putExtra(EXTRA_DOCUMENT_ID, documentId)
             }
 
         private val Intent.pageUris: List<Uri>
             get() = getParcelableArrayListExtra<Uri>(EXTRA_URIS)?.toList() ?: emptyList()
+
+        private val Intent.documentId: String
+            get() = getStringExtra(EXTRA_DOCUMENT_ID) ?: throw Exception("Document ID not found in intent")
     }
 }
 

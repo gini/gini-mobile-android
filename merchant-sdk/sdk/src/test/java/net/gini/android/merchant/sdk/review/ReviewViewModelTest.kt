@@ -26,8 +26,8 @@ import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.merchant.sdk.paymentcomponent.SelectedPaymentProviderAppState
 import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.preferences.UserPreferences
-import net.gini.android.merchant.sdk.review.model.PaymentDetails
-import net.gini.android.merchant.sdk.review.model.ResultWrapper
+import net.gini.android.merchant.sdk.api.payment.model.PaymentDetails
+import net.gini.android.merchant.sdk.api.ResultWrapper
 import net.gini.android.merchant.sdk.review.openWith.OpenWithPreferences
 import net.gini.android.merchant.sdk.test.ViewModelTestCoroutineRule
 import net.gini.android.merchant.sdk.util.GiniPaymentManager
@@ -570,6 +570,7 @@ class ReviewViewModelTest {
         every { cacheDir.createTempPdfFile(mockByteArray, any()) } returns mockPdfFile
 
         coEvery { giniMerchant!!.giniHealthAPI.documentManager.createPaymentRequest(any()) } returns Resource.Success("")
+        coEvery { giniMerchant!!.giniHealthAPI.documentManager.getPaymentRequest(any()) } returns Resource.Success(mockk(relaxed = true))
         coEvery { giniMerchant!!.giniHealthAPI.documentManager.getPaymentRequestDocument(any()) } returns Resource.Success(mockByteArray)
 
         val viewModel = ReviewViewModel(giniMerchant!!, mockk(), paymentComponent, "", giniPayment!!).apply {

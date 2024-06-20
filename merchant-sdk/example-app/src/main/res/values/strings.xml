@@ -5,6 +5,7 @@
     <string name="payment">Pay</string>
     <string name="upload_failed">Upload failed</string>
     <string name="upload_succeeded">Upload succeeded</string>
+    <string name="missing_document_id">Missing document id</string>
     <string name="document_not_payable_title">Invoice is not payable</string>
     <string name="document_not_payable_message">Please try again with a different invoice.</string>
     <string name="failed_to_load_bank_apps">Failed to load bank apps</string>
@@ -20,7 +21,7 @@
     <string name="invoice_details">Invoice details</string>
 
     <string name="gms_privacy_policy_link_url">https://www.google.com</string>
-    <string name="relaunch_to_use_default_configuration">Please relaunch the app to use the default IntegratedPaymentConfiguration values.</string>
+    <string name="relaunch_to_use_default_configuration">Please relaunch the app to use the default MerchantFlowConfiguration values.</string>
     <string name="close_screen_for_configurations_to_take_place">The configuration changes will take effect after closing this screen.</string>
     <string name="show_review_screen">Show the Review Screen</string>
     <string name="amount_editable">Amount field is editable</string>

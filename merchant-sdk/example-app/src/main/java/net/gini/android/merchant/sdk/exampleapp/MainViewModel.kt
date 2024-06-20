@@ -41,12 +41,6 @@ class MainViewModel(
         ++currentIndex
     }
 
-    fun setDocumentForReview(documentId: String) {
-        viewModelScope.launch {
-            giniMerchant.setDocumentForReview(documentId)
-        }
-    }
-
     fun saveConfiguration(flowConfig: MerchantFlowConfiguration) {
         flowConfiguration = flowConfig
     }
