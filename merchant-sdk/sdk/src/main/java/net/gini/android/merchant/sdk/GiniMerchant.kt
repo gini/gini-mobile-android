@@ -19,17 +19,18 @@ import net.gini.android.core.api.Resource
 import net.gini.android.core.api.models.Document
 import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.api.GiniHealthAPIBuilder
-import net.gini.android.merchant.sdk.api.payment.model.PaymentDetails
-import net.gini.android.merchant.sdk.api.payment.model.PaymentRequest
 import net.gini.android.merchant.sdk.api.ResultWrapper
 import net.gini.android.merchant.sdk.api.authorization.HealthApiSessionManagerAdapter
 import net.gini.android.merchant.sdk.api.authorization.SessionManager
 import net.gini.android.merchant.sdk.api.payment.model.Payment
+import net.gini.android.merchant.sdk.api.payment.model.PaymentDetails
+import net.gini.android.merchant.sdk.api.payment.model.PaymentRequest
 import net.gini.android.merchant.sdk.api.payment.model.getPaymentExtraction
 import net.gini.android.merchant.sdk.api.payment.model.toPayment
 import net.gini.android.merchant.sdk.api.payment.model.toPaymentDetails
 import net.gini.android.merchant.sdk.api.payment.model.toPaymentRequest
 import net.gini.android.merchant.sdk.api.wrapToResult
+import net.gini.android.merchant.sdk.util.DisplayedScreen
 import net.gini.android.merchant.sdk.util.extensions.toException
 import org.slf4j.LoggerFactory
 import java.lang.ref.WeakReference
@@ -48,7 +49,7 @@ class GiniMerchant(
     private val sessionManager: SessionManager? = null,
     private val merchantApiBaseUrl: String? = null,
     private val userCenterApiBaseUrl: String? = null,
-    private val debuggingEnabled: Boolean = false
+    private val debuggingEnabled: Boolean = false,
 ) {
 
     // Lazily initialized backing field for giniHealthAPI to allow mocking it for tests.
@@ -220,12 +221,14 @@ class GiniMerchant(
         }
     }
 
+    //TODO set payment provider app name after making payment provider app internal
     internal fun emitSDKEvent(state: PaymentState) {
         when (state) {
             is PaymentState.Success -> _eventsFlow.tryEmit(
                 MerchantSDKEvents.OnFinishedWithPaymentRequestCreated(
                     state.paymentRequest.id,
-                    state.paymentRequest.bankApp.name
+                    ""
+//                    state.paymentRequest.paymentProviderApp?.name ?: ""
                 )
             )
 

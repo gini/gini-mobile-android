@@ -5,12 +5,13 @@ import kotlinx.coroutines.flow.StateFlow
 import net.gini.android.core.api.Resource
 import net.gini.android.health.api.models.PaymentRequestInput
 import net.gini.android.merchant.sdk.GiniMerchant
+import net.gini.android.merchant.sdk.api.ResultWrapper
+import net.gini.android.merchant.sdk.api.payment.model.PaymentDetails
+import net.gini.android.merchant.sdk.api.payment.model.PaymentRequest
+import net.gini.android.merchant.sdk.api.payment.model.toPaymentRequest
+import net.gini.android.merchant.sdk.api.payment.model.withFeedback
 import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.review.ValidationMessage
-import net.gini.android.merchant.sdk.review.model.PaymentDetails
-import net.gini.android.merchant.sdk.review.model.PaymentRequest
-import net.gini.android.merchant.sdk.review.model.ResultWrapper
-import net.gini.android.merchant.sdk.review.model.withFeedback
 import net.gini.android.merchant.sdk.review.validate
 import org.slf4j.LoggerFactory
 
@@ -73,6 +74,8 @@ internal class GiniPaymentManager(
             throw Exception("Cannot create PaymentRequest: No selected payment provider app")
         }
 
+        var paymentRequestId: String? = null
+
         return when (val createPaymentRequestResource = giniMerchant.giniHealthAPI.documentManager.createPaymentRequest(
             PaymentRequestInput(
                 paymentProvider = paymentProviderApp.paymentProvider.id,
@@ -82,10 +85,15 @@ internal class GiniPaymentManager(
                 bic = null,
                 purpose = paymentDetails.purpose,
             )
-        )) {
+        ).mapSuccess {
+            paymentRequestId = it.data
+            giniMerchant.giniHealthAPI.documentManager.getPaymentRequest(it.data)
+        }) {
             is Resource.Cancelled -> throw Exception("Cancelled")
             is Resource.Error -> throw Exception(createPaymentRequestResource.exception)
-            is Resource.Success -> PaymentRequest(id = createPaymentRequestResource.data, paymentProviderApp)
+            is Resource.Success -> paymentRequestId?.let {
+                createPaymentRequestResource.data.toPaymentRequest(it)
+            } ?: throw Exception("Payment request ID is null")
         }
     }
 

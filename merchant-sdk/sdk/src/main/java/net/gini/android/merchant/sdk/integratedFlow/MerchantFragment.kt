@@ -61,7 +61,7 @@ data class MerchantFlowConfiguration(
      *
      * Default value is `false`
      */
-    val isAmountFieldEditable: Boolean = false
+    val isAmountFieldEditable: Boolean = true
 ): Parcelable
 
 /**

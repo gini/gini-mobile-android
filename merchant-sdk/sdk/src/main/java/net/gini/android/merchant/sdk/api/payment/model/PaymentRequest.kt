@@ -1,7 +1,5 @@
 package net.gini.android.merchant.sdk.api.payment.model
 
-import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
-
 ///**
 // * A payment request used for starting the bank app. Only the id is sent, but it is associated with a bank.
 // */
@@ -15,8 +13,6 @@ import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
  */
 data class PaymentRequest(
     val id: String,
-    // TODO EC-62: Move paymentProviderApp into an internal data class when we remove the openBankState flow
-    internal val paymentProviderApp: PaymentProviderApp?,
     val paymentProviderId: String?,
     val requesterUri: String?,
     val recipient: String,
@@ -33,10 +29,8 @@ data class PaymentRequest(
 
 internal fun net.gini.android.core.api.models.PaymentRequest.toPaymentRequest(
     paymentRequestId: String,
-    paymentProviderApp: PaymentProviderApp? = null
 ) = PaymentRequest(
     id = paymentRequestId,
-    paymentProviderApp = paymentProviderApp,
     paymentProviderId = paymentProviderId,
     requesterUri = requesterUri,
     recipient = recipient,

@@ -7,11 +7,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import net.gini.android.merchant.sdk.GiniMerchant
+import net.gini.android.merchant.sdk.api.ResultWrapper
+import net.gini.android.merchant.sdk.api.payment.model.PaymentDetails
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.merchant.sdk.paymentcomponent.SelectedPaymentProviderAppState
 import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
-import net.gini.android.merchant.sdk.review.model.PaymentDetails
-import net.gini.android.merchant.sdk.review.model.ResultWrapper
 import net.gini.android.merchant.sdk.util.DisplayedScreen
 import net.gini.android.merchant.sdk.util.GiniPaymentManager
 import java.util.Stack
