@@ -21,11 +21,11 @@ import org.junit.runner.RunWith
 
 @ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
-class MerchantFragmentTest {
+class PaymentFlowFragmentTest {
     private var context: Context? = null
     private var giniMerchant : GiniMerchant? = null
     private var paymentComponent: PaymentComponent? = null
-    private var merchantViewModel: MerchantViewModel? = null
+    private var paymentFlowViewModel: PaymentFlowViewModel? = null
     private lateinit var viewModelFactory: ViewModelProvider.Factory
 
     @Before
@@ -41,13 +41,13 @@ class MerchantFragmentTest {
         every { paymentComponent!!.selectedPaymentProviderAppFlow } returns MutableStateFlow(mockk(relaxed = true))
         every { paymentComponent!!.getPaymentReviewFragment("1234", any()) } returns mockk(relaxed = true)
 
-        merchantViewModel = mockk<MerchantViewModel>(relaxed = true)
-        every { merchantViewModel!!.giniMerchant } returns giniMerchant
-        every { merchantViewModel!!.paymentComponent } returns paymentComponent
+        paymentFlowViewModel = mockk<PaymentFlowViewModel>(relaxed = true)
+        every { paymentFlowViewModel!!.giniMerchant } returns giniMerchant
+        every { paymentFlowViewModel!!.paymentComponent } returns paymentComponent
         viewModelFactory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 @Suppress("UNCHECKED_CAST")
-                return merchantViewModel as T
+                return paymentFlowViewModel as T
             }
         }
     }
@@ -55,8 +55,8 @@ class MerchantFragmentTest {
     @Test
     fun `shows payment component bottom sheet on startup`() = runTest {
         // Given
-        every { merchantViewModel!!.getLastBackstackEntry() } returns MerchantViewModel.DisplayedScreen.Nothing
-        val fragment = MerchantFragment.newInstance(
+        every { paymentFlowViewModel!!.getLastBackstackEntry() } returns PaymentFlowViewModel.DisplayedScreen.Nothing
+        val fragment = PaymentFlowFragment.newInstance(
             giniMerchant = giniMerchant!!,
             paymentComponent = paymentComponent!!,
             documentId = "1234",
@@ -75,20 +75,20 @@ class MerchantFragmentTest {
     @Test
     fun `shows review fragment when payment button is tapped and config allows showing of review fragment`() = runTest {
         // Given
-        every { merchantViewModel!!.addToBackStack(MerchantViewModel.DisplayedScreen.ReviewFragment) } returns Unit
-        every { merchantViewModel!!.merchantFlowConfiguration!!.shouldHandleErrorsInternally } returns false
-        every { merchantViewModel!!.merchantFlowConfiguration!!.shouldShowReviewFragment } returns true
-        every { merchantViewModel!!.merchantFlowConfiguration!!.isAmountFieldEditable } returns false
-        every { merchantViewModel!!.paymentComponent!!.getContainerFragment(any(), any()) } returns mockk(relaxed = true)
-        every { merchantViewModel!!.paymentComponent!!.selectedPaymentProviderAppFlow } returns MutableStateFlow(
+        every { paymentFlowViewModel!!.addToBackStack(PaymentFlowViewModel.DisplayedScreen.ReviewFragment) } returns Unit
+        every { paymentFlowViewModel!!.paymentFlowConfiguration!!.shouldHandleErrorsInternally } returns false
+        every { paymentFlowViewModel!!.paymentFlowConfiguration!!.shouldShowReviewFragment } returns true
+        every { paymentFlowViewModel!!.paymentFlowConfiguration!!.isAmountFieldEditable } returns false
+        every { paymentFlowViewModel!!.paymentComponent!!.getContainerFragment(any(), any()) } returns mockk(relaxed = true)
+        every { paymentFlowViewModel!!.paymentComponent!!.selectedPaymentProviderAppFlow } returns MutableStateFlow(
             mockk(relaxed = true)
         )
         val documentId = "1234"
-        val fragment = MerchantFragment.newInstance(
+        val fragment = PaymentFlowFragment.newInstance(
             giniMerchant = giniMerchant!!,
             paymentComponent = paymentComponent!!,
             documentId = documentId,
-            merchantFlowConfiguration = MerchantFlowConfiguration(shouldShowReviewFragment = true),
+            paymentFlowConfiguration = PaymentFlowConfiguration(shouldShowReviewFragment = true),
             viewModelFactory = viewModelFactory
         )
 
@@ -106,9 +106,9 @@ class MerchantFragmentTest {
     @Test
     fun `forwards payment request to viewModel when config doesn't allow showing ReviewFragment`() = runTest {
         // Given
-        every { merchantViewModel!!.getLastBackstackEntry() } returns MerchantViewModel.DisplayedScreen.Nothing
+        every { paymentFlowViewModel!!.getLastBackstackEntry() } returns PaymentFlowViewModel.DisplayedScreen.Nothing
         val documentId = "1234"
-        val fragment = MerchantFragment.newInstance(
+        val fragment = PaymentFlowFragment.newInstance(
             giniMerchant = giniMerchant!!,
             paymentComponent = paymentComponent!!,
             documentId = documentId,
@@ -123,6 +123,6 @@ class MerchantFragmentTest {
         fragment.handlePayFlow(documentId)
 
         // Then
-        verify { merchantViewModel!!.onPayment() }
+        verify { paymentFlowViewModel!!.onPayment() }
     }
 }

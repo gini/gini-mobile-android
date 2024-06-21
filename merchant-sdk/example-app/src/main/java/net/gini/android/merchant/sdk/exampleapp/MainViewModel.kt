@@ -4,13 +4,11 @@ import android.content.Context
 import android.net.Uri
 import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import net.gini.android.merchant.sdk.GiniMerchant
 import net.gini.android.merchant.sdk.exampleapp.pager.PagerAdapter
-import net.gini.android.merchant.sdk.integratedFlow.MerchantFlowConfiguration
+import net.gini.android.merchant.sdk.integratedFlow.PaymentFlowConfiguration
 import java.io.File
 
 class MainViewModel(
@@ -22,7 +20,7 @@ class MainViewModel(
     private var currentIndex = 0
     private var currentFileUri: Uri? = null
 
-    private var flowConfiguration: MerchantFlowConfiguration? = null
+    private var flowConfiguration: PaymentFlowConfiguration? = null
 
     fun getNextPageUri(context: Context): Uri {
         val uriForFile = FileProvider.getUriForFile(
@@ -41,7 +39,7 @@ class MainViewModel(
         ++currentIndex
     }
 
-    fun saveConfiguration(flowConfig: MerchantFlowConfiguration) {
+    fun saveConfiguration(flowConfig: PaymentFlowConfiguration) {
         flowConfiguration = flowConfig
     }
 

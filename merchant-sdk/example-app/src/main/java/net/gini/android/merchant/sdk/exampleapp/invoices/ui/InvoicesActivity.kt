@@ -26,8 +26,8 @@ import net.gini.android.merchant.sdk.exampleapp.R
 import net.gini.android.merchant.sdk.exampleapp.databinding.ActivityInvoicesBinding
 import net.gini.android.merchant.sdk.exampleapp.invoices.data.UploadHardcodedInvoicesState
 import net.gini.android.merchant.sdk.exampleapp.invoices.ui.model.InvoiceItem
-import net.gini.android.merchant.sdk.integratedFlow.MerchantFlowConfiguration
-import net.gini.android.merchant.sdk.integratedFlow.MerchantFragment
+import net.gini.android.merchant.sdk.integratedFlow.PaymentFlowConfiguration
+import net.gini.android.merchant.sdk.integratedFlow.PaymentFlowFragment
 import net.gini.android.merchant.sdk.util.DisplayedScreen
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.slf4j.LoggerFactory
@@ -103,7 +103,7 @@ class InvoicesActivity : AppCompatActivity() {
         viewModel.loadInvoicesWithExtractions()
         viewModel.loadPaymentProviderApps()
 
-        IntentCompat.getParcelableExtra(intent, MainActivity.FLOW_CONFIGURATION, MerchantFlowConfiguration::class.java)?.let {
+        IntentCompat.getParcelableExtra(intent, MainActivity.FLOW_CONFIGURATION, PaymentFlowConfiguration::class.java)?.let {
             viewModel.setIntegratedFlowConfiguration(it)
         }
 
@@ -145,7 +145,7 @@ class InvoicesActivity : AppCompatActivity() {
         }
     }
 
-    private fun startIntegratedPaymentFlow(containerFragment: MerchantFragment) {
+    private fun startIntegratedPaymentFlow(containerFragment: PaymentFlowFragment) {
         containerFragment.apply {
             add()
         }
