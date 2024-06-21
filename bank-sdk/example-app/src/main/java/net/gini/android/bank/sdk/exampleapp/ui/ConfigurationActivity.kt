@@ -32,7 +32,7 @@ class ConfigurationActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityConfigurationBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        configurationViewModel
+
         configurationViewModel.setConfiguration(
             intent.getParcelableExtra(CONFIGURATION_BUNDLE)!!
         )
