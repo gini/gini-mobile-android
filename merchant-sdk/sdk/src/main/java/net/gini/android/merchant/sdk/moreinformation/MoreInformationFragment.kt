@@ -36,7 +36,7 @@ import net.gini.android.merchant.sdk.util.getLayoutInflaterWithGiniMerchantTheme
  * The [MoreInformationFragment] displays information and an FAQ section about the payment feature. It requires a
  * [PaymentComponent] instance to show the icons of the available payment provider apps.
  */
-class MoreInformationFragment private constructor(private val paymentComponent: PaymentComponent?, private val backListener: BackListener? = null) :
+internal class MoreInformationFragment private constructor(private val paymentComponent: PaymentComponent?, private val backListener: BackListener? = null) :
     Fragment() {
     constructor() : this(paymentComponent = null)
 

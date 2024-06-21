@@ -4,23 +4,16 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.view.View
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.core.view.isGone
-import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import dev.chrisbanes.insetter.applyInsetter
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import net.gini.android.merchant.sdk.GiniMerchant
-import net.gini.android.merchant.sdk.bankselection.BankSelectionBottomSheet
-import net.gini.android.merchant.sdk.exampleapp.R
 import net.gini.android.merchant.sdk.exampleapp.databinding.ActivityReviewBinding
-import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
-import net.gini.android.merchant.sdk.review.ReviewConfiguration
 import net.gini.android.merchant.sdk.review.ReviewFragment
 import net.gini.android.merchant.sdk.review.ReviewFragmentListener
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -95,99 +88,6 @@ class ReviewActivity : AppCompatActivity() {
                 padding(top = true, bottom = true)
             }
         }
-
-        // Set a listener on the PaymentComponent to receive events from the PaymentComponentView
-        viewModel.paymentComponent.listener = object : PaymentComponent.Listener {
-            override fun onMoreInformationClicked() {}
-
-            override fun onBankPickerClicked() {
-                // Show the BankSelectionBottomSheet to allow the user to select a bank app
-                BankSelectionBottomSheet.newInstance(viewModel.paymentComponent).apply {
-                    show(supportFragmentManager, BankSelectionBottomSheet::class.simpleName)
-                }
-            }
-
-            override fun onPayInvoiceClicked(documentId: String) {
-                // Get and show the payment ReviewFragment for the document id
-                lifecycleScope.launch {
-                    binding.progress.visibility = View.VISIBLE
-
-                    try {
-                        val reviewFragment = viewModel.paymentComponent.getPaymentReviewFragment(
-                            documentId = documentId,
-                            configuration = ReviewConfiguration(showCloseButton = showCloseButton),
-                        )
-
-                        reviewFragment.listener = reviewFragmentListener
-
-                        supportFragmentManager.commit {
-                            replace(R.id.review_fragment, reviewFragment, REVIEW_FRAGMENT_TAG)
-                        }
-                    } catch (e: Exception) {
-                        AlertDialog.Builder(this@ReviewActivity)
-                            .setTitle(getString(R.string.could_not_start_payment_review))
-                            .setMessage(e.message)
-                            .setPositiveButton(android.R.string.ok, null)
-                            .show()
-                    } finally {
-                        binding.progress.visibility = View.INVISIBLE
-                    }
-                }
-            }
-        }
-
-        // The PaymentComponentView needs the PaymentComponent to be set before it is shown
-        binding.paymentComponentView.paymentComponent = viewModel.paymentComponent
-
-//        lifecycleScope.launch {
-//            val documentId = (viewModel.giniMerchant.documentFlow.value as ResultWrapper.Success<Document>).value.id
-//
-//            val isDocumentPayable = viewModel.giniMerchant.checkIfDocumentIsPayable(documentId)
-//
-//            if (!isDocumentPayable) {
-//                AlertDialog.Builder(this@ReviewActivity)
-//                    .setTitle(R.string.document_not_payable_title)
-//                    .setMessage(R.string.document_not_payable_message)
-//                    .setPositiveButton(android.R.string.ok, object : DialogInterface.OnClickListener {
-//                        override fun onClick(dialog: DialogInterface, which: Int) {
-//                            finish()
-//                        }
-//                    })
-//                    .show()
-//                return@launch
-//            }
-//
-//            // Configure the PaymentComponentView
-//            binding.paymentComponentView.isPayable = true
-//            binding.paymentComponentView.documentId = documentId
-//
-//            // Load the payment provider apps and show an alert dialog for errors
-//            viewModel.paymentComponent.loadPaymentProviderApps()
-//
-//            repeatOnLifecycle(Lifecycle.State.STARTED) {
-//                viewModel.paymentComponent.paymentProviderAppsFlow.collect { paymentProviderAppsState ->
-//                    when (paymentProviderAppsState) {
-//                        is PaymentProviderAppsState.Error -> {
-//                            binding.progress.visibility = View.INVISIBLE
-//
-//                            AlertDialog.Builder(this@ReviewActivity)
-//                                .setTitle(R.string.failed_to_load_bank_apps)
-//                                .setMessage(paymentProviderAppsState.throwable.message)
-//                                .setPositiveButton(android.R.string.ok, null)
-//                                .show()
-//                        }
-//
-//                        PaymentProviderAppsState.Loading -> {
-//                            binding.progress.visibility = View.VISIBLE
-//                        }
-//
-//                        is PaymentProviderAppsState.Success -> {
-//                            binding.progress.visibility = View.INVISIBLE
-//                        }
-//                    }
-//                }
-//            }
-//        }
 
         binding.close.setOnClickListener { finish() }
 

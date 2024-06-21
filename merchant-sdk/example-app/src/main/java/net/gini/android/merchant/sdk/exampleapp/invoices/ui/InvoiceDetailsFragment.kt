@@ -46,7 +46,7 @@ class InvoiceDetailsFragment: Fragment() {
                     }
                 }
                 launch {
-                    viewModel.paymentComponent.giniMerchant.eventsFlow.collect { event ->
+                    viewModel.giniMerchant.eventsFlow.collect { event ->
                         when (event) {
                             is GiniMerchant.MerchantSDKEvents.OnFinishedWithPaymentRequestCreated,
                             is GiniMerchant.MerchantSDKEvents.OnFinishedWithCancellation -> { requireActivity().supportFragmentManager.popBackStack() }

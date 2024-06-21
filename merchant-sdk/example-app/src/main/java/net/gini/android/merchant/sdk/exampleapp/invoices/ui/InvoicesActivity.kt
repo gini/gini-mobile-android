@@ -82,7 +82,7 @@ class InvoicesActivity : AppCompatActivity() {
                     }
                 }
                 launch {
-                    viewModel.paymentComponent.giniMerchant.eventsFlow.collect { event ->
+                    viewModel.giniMerchant.eventsFlow.collect { event ->
                         when (event) {
                             is GiniMerchant.MerchantSDKEvents.OnScreenDisplayed -> {
                                 when (event.displayedScreen) {

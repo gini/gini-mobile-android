@@ -37,10 +37,10 @@ class PaymentFlowFragmentTest {
         giniMerchant = mockk<GiniMerchant>(relaxed = true)
         every { giniMerchant!!.eventsFlow } returns MutableStateFlow(mockk(relaxed = true))
         every { giniMerchant!!.paymentFlow } returns MutableStateFlow(mockk(relaxed = true))
+        every { giniMerchant!!.getPaymentReviewFragment("1234", any()) } returns mockk(relaxed = true)
 
         paymentComponent = mockk<PaymentComponent>(relaxed = true)
         every { paymentComponent!!.selectedPaymentProviderAppFlow } returns MutableStateFlow(mockk(relaxed = true))
-        every { paymentComponent!!.getPaymentReviewFragment("1234", any()) } returns mockk(relaxed = true)
 
         paymentFlowViewModel = mockk<PaymentFlowViewModel>(relaxed = true)
         every { paymentFlowViewModel!!.giniMerchant } returns giniMerchant
@@ -59,7 +59,6 @@ class PaymentFlowFragmentTest {
         every { paymentFlowViewModel!!.getLastBackstackEntry() } returns DisplayedScreen.Nothing
         val fragment = PaymentFlowFragment.newInstance(
             giniMerchant = giniMerchant!!,
-            paymentComponent = paymentComponent!!,
             documentId = "1234",
             paymentFlowConfiguration = mockk(relaxed = true),
             viewModelFactory = viewModelFactory
@@ -81,14 +80,13 @@ class PaymentFlowFragmentTest {
         every { paymentFlowViewModel!!.paymentFlowConfiguration!!.shouldHandleErrorsInternally } returns false
         every { paymentFlowViewModel!!.paymentFlowConfiguration!!.shouldShowReviewFragment } returns true
         every { paymentFlowViewModel!!.paymentFlowConfiguration!!.isAmountFieldEditable } returns false
-        every { paymentFlowViewModel!!.paymentComponent!!.getContainerFragment(any(), any()) } returns mockk(relaxed = true)
+        every { paymentFlowViewModel!!.giniMerchant!!.getContainerFragment(any(), any()) } returns mockk(relaxed = true)
         every { paymentFlowViewModel!!.paymentComponent!!.selectedPaymentProviderAppFlow } returns MutableStateFlow(
             mockk(relaxed = true)
         )
         val documentId = "1234"
         val fragment = PaymentFlowFragment.newInstance(
             giniMerchant = giniMerchant!!,
-            paymentComponent = paymentComponent!!,
             documentId = documentId,
             paymentFlowConfiguration = PaymentFlowConfiguration(shouldShowReviewFragment = true),
             viewModelFactory = viewModelFactory
@@ -112,7 +110,6 @@ class PaymentFlowFragmentTest {
         val documentId = "1234"
         val fragment = PaymentFlowFragment.newInstance(
             giniMerchant = giniMerchant!!,
-            paymentComponent = paymentComponent!!,
             documentId = documentId,
             paymentFlowConfiguration = mockk(relaxed = true),
             viewModelFactory = viewModelFactory

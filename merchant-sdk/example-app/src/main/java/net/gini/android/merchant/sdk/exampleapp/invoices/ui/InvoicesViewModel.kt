@@ -8,16 +8,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import net.gini.android.merchant.sdk.GiniMerchant
 import net.gini.android.merchant.sdk.exampleapp.invoices.data.InvoicesRepository
 import net.gini.android.merchant.sdk.exampleapp.invoices.ui.model.InvoiceItem
 import net.gini.android.merchant.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.merchant.sdk.integratedFlow.PaymentFlowFragment
-import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
 import org.slf4j.LoggerFactory
 
 class InvoicesViewModel(
     private val invoicesRepository: InvoicesRepository,
-    val paymentComponent: PaymentComponent,
+    val giniMerchant: GiniMerchant
 ) : ViewModel() {
 
     val uploadHardcodedInvoicesStateFlow = invoicesRepository.uploadHardcodedInvoicesStateFlow
@@ -52,7 +52,7 @@ class InvoicesViewModel(
 
     fun loadPaymentProviderApps() {
         viewModelScope.launch {
-            paymentComponent.loadPaymentProviderApps()
+            giniMerchant.loadPaymentProviderApps()
         }
     }
 
@@ -61,7 +61,7 @@ class InvoicesViewModel(
     }
 
     fun startIntegratedPaymentFlow(documentId: String) {
-        _startIntegratedPaymentFlow.tryEmit(paymentComponent.getContainerFragment(documentId, paymentFlowConfiguration))
+        _startIntegratedPaymentFlow.tryEmit(giniMerchant.getContainerFragment(documentId, paymentFlowConfiguration))
     }
 
     fun setIntegratedFlowConfiguration(flowConfiguration: PaymentFlowConfiguration) {

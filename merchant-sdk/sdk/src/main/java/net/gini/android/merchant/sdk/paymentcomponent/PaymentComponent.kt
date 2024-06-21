@@ -7,14 +7,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import net.gini.android.core.api.Resource
+import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.api.models.PaymentProvider
 import net.gini.android.merchant.sdk.GiniMerchant
-import net.gini.android.merchant.sdk.integratedFlow.PaymentFlowConfiguration
-import net.gini.android.merchant.sdk.integratedFlow.PaymentFlowFragment
 import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.paymentprovider.getPaymentProviderApps
-import net.gini.android.merchant.sdk.review.ReviewConfiguration
-import net.gini.android.merchant.sdk.review.ReviewFragment
 import org.slf4j.LoggerFactory
 
 /**
@@ -23,7 +20,7 @@ import org.slf4j.LoggerFactory
  *
  * It requires a [GiniMerchant] instance and a [Context] (application or activity) to be created.
  */
-class PaymentComponent(private val context: Context, val giniMerchant: GiniMerchant) {
+internal class PaymentComponent(@get:VisibleForTesting internal val context: Context, @get:VisibleForTesting internal val healthAPI: GiniHealthAPI) {
 
     // Holds the state of the Payment Provider apps as received from the server - no processing is done on this list, to serve as a point of truth
     private val _initialStatePaymentProviderAppsFlow = MutableStateFlow<PaymentProviderAppsState>(PaymentProviderAppsState.Loading)
@@ -72,7 +69,7 @@ class PaymentComponent(private val context: Context, val giniMerchant: GiniMerch
         LOG.debug("Loading payment providers")
         _paymentProviderAppsFlow.value = PaymentProviderAppsState.Loading
         _paymentProviderAppsFlow.value = try {
-            when (val paymentProvidersResource = giniMerchant.giniHealthAPI.documentManager.getPaymentProviders()) {
+            when (val paymentProvidersResource = healthAPI.documentManager.getPaymentProviders()) {
                 is Resource.Cancelled -> {
                     LOG.debug("Loading payment providers cancelled")
                     _initialStatePaymentProviderAppsFlow.value = PaymentProviderAppsState.Error(Exception("Cancelled"))
@@ -187,48 +184,6 @@ class PaymentComponent(private val context: Context, val giniMerchant: GiniMerch
         }
     }
 
-    /**
-     * Loads the extractions for the given document id and creates an instance of the [ReviewFragment] with the given
-     * configuration.
-     *
-     * You should create and show the [ReviewFragment] in the [Listener.onPayInvoiceClicked] method.
-     *
-     * @param documentId The document id for which the extractions should be loaded
-     * @param configuration The configuration for the [ReviewFragment]
-     * @throws IllegalStateException If no payment provider app has been selected
-     */
-    fun getPaymentReviewFragment(documentId: String, configuration: ReviewConfiguration): ReviewFragment {
-        LOG.debug("Getting payment review fragment for id: {}", documentId)
-
-        when (val selectedPaymentProviderAppState = _selectedPaymentProviderAppFlow.value) {
-            is SelectedPaymentProviderAppState.AppSelected -> {
-                LOG.debug("Creating ReviewFragment for selected payment provider app: {}", selectedPaymentProviderAppState.paymentProviderApp.name)
-
-                return ReviewFragment.newInstance(
-                    giniMerchant,
-                    configuration = configuration,
-                    paymentComponent = this@PaymentComponent,
-                    documentId = documentId
-                )
-            }
-
-            SelectedPaymentProviderAppState.NothingSelected -> {
-                LOG.error("Cannot create ReviewFragment: No selected payment provider app")
-
-                val exception =
-                    IllegalStateException("Cannot create ReviewFragment: No selected payment provider app")
-                throw exception
-            }
-        }
-    }
-
-    fun getContainerFragment(documentId: String, flowConfiguration: PaymentFlowConfiguration? = null) = PaymentFlowFragment.newInstance(
-        giniMerchant = giniMerchant,
-        paymentComponent = this,
-        documentId = documentId,
-        paymentFlowConfiguration = flowConfiguration ?: PaymentFlowConfiguration()
-    )
-
     internal suspend fun onPayInvoiceClicked(documentId: String) {
         paymentComponentPreferences.saveReturningUser()
         listener?.onPayInvoiceClicked(documentId)
@@ -276,7 +231,7 @@ class PaymentComponent(private val context: Context, val giniMerchant: GiniMerch
 /**
  * The states of the payment provider apps loading process.
  */
-sealed class PaymentProviderAppsState {
+internal sealed class PaymentProviderAppsState {
     /**
      * The payment provider apps are being loaded.
      */
@@ -296,7 +251,7 @@ sealed class PaymentProviderAppsState {
 /**
  * The states of the selected payment provider app.
  */
-sealed class SelectedPaymentProviderAppState {
+internal sealed class SelectedPaymentProviderAppState {
     /**
      * No payment provider app is selected.
      */

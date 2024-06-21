@@ -72,16 +72,15 @@ data class PaymentFlowConfiguration(
  */
 class PaymentFlowFragment private constructor(
     giniMerchant: GiniMerchant?,
-    paymentComponent: PaymentComponent?,
     documentId: String,
     paymentFlowConfiguration: PaymentFlowConfiguration?,
     private val viewModelFactory: ViewModelProvider.Factory? = null) : Fragment(),
     BackListener {
 
-    constructor(): this(null,null, "", null)
+    constructor(): this(null,"", null, null)
     private var binding: GmsFragmentMerchantBinding by autoCleared()
     private val viewModel by viewModels<PaymentFlowViewModel> {
-        viewModelFactory ?: PaymentFlowViewModel.Factory(paymentComponent, documentId, paymentFlowConfiguration, giniMerchant)
+        viewModelFactory ?: PaymentFlowViewModel.Factory(giniMerchant?.paymentComponent, documentId, paymentFlowConfiguration, giniMerchant)
     }
 
     private val paymentComponentListener = object: PaymentComponent.Listener {
@@ -210,7 +209,7 @@ class PaymentFlowFragment private constructor(
     @VisibleForTesting
     internal fun showReviewFragment(documentId: String) {
         viewModel.addToBackStack(DisplayedScreen.ReviewFragment)
-        val reviewFragment = viewModel.paymentComponent?.getPaymentReviewFragment(documentId, ReviewConfiguration(
+        val reviewFragment = viewModel.giniMerchant?.getPaymentReviewFragment(documentId, ReviewConfiguration(
             handleErrorsInternally = viewModel.paymentFlowConfiguration?.shouldHandleErrorsInternally == true,
             showCloseButton = true,
             isAmountFieldEditable = viewModel.paymentFlowConfiguration?.isAmountFieldEditable == true
@@ -263,8 +262,8 @@ class PaymentFlowFragment private constructor(
     }
 
     companion object {
-        fun newInstance(giniMerchant: GiniMerchant, paymentComponent: PaymentComponent, documentId: String, paymentFlowConfiguration: PaymentFlowConfiguration,
-                        viewModelFactory : ViewModelProvider.Factory = PaymentFlowViewModel.Factory(paymentComponent, documentId, paymentFlowConfiguration, giniMerchant)) = PaymentFlowFragment(giniMerchant, paymentComponent, documentId, paymentFlowConfiguration, viewModelFactory)
+        fun newInstance(giniMerchant: GiniMerchant, documentId: String, paymentFlowConfiguration: PaymentFlowConfiguration,
+                        viewModelFactory : ViewModelProvider.Factory = PaymentFlowViewModel.Factory(giniMerchant.paymentComponent, documentId, paymentFlowConfiguration, giniMerchant)) = PaymentFlowFragment(giniMerchant, documentId, paymentFlowConfiguration, viewModelFactory)
     }
 }
 

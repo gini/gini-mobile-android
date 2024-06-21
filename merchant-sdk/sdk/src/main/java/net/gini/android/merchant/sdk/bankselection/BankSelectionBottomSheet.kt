@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory
  * The [BankSelectionBottomSheet] displays a list of available banks for the user to choose from. If a banking app is not
  * installed it will also display its Play Store link.
  */
-class BankSelectionBottomSheet private constructor(private val paymentComponent: PaymentComponent?, private val backListener: BackListener? = null) :
+internal class BankSelectionBottomSheet private constructor(private val paymentComponent: PaymentComponent?, private val backListener: BackListener? = null) :
     GmsBottomSheetDialogFragment() {
 
     constructor() : this(null)

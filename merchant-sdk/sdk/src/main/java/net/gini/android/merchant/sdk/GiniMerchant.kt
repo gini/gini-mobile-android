@@ -30,6 +30,12 @@ import net.gini.android.merchant.sdk.api.payment.model.toPayment
 import net.gini.android.merchant.sdk.api.payment.model.toPaymentDetails
 import net.gini.android.merchant.sdk.api.payment.model.toPaymentRequest
 import net.gini.android.merchant.sdk.api.wrapToResult
+import net.gini.android.merchant.sdk.integratedFlow.PaymentFlowConfiguration
+import net.gini.android.merchant.sdk.integratedFlow.PaymentFlowFragment
+import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
+import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent.Listener
+import net.gini.android.merchant.sdk.review.ReviewConfiguration
+import net.gini.android.merchant.sdk.review.ReviewFragment
 import net.gini.android.merchant.sdk.util.DisplayedScreen
 import net.gini.android.merchant.sdk.util.extensions.toException
 import org.slf4j.LoggerFactory
@@ -80,6 +86,8 @@ class GiniMerchant(
                     return healthAPI
                 }
         }
+
+    internal var paymentComponent = PaymentComponent(context, healthAPI = giniHealthAPI)
 
     private var registryOwner = WeakReference<SavedStateRegistryOwner?>(null)
     private var savedStateObserver: LifecycleEventObserver? = null
@@ -221,6 +229,12 @@ class GiniMerchant(
         }
     }
 
+    fun getContainerFragment(documentId: String, flowConfiguration: PaymentFlowConfiguration? = null) = PaymentFlowFragment.newInstance(
+        giniMerchant = this,
+        documentId = documentId,
+        paymentFlowConfiguration = flowConfiguration ?: PaymentFlowConfiguration()
+    )
+
     //TODO set payment provider app name after making payment provider app internal
     internal fun emitSDKEvent(state: PaymentState) {
         when (state) {
@@ -283,9 +297,33 @@ class GiniMerchant(
         }
     }
 
+    /**
+     * Loads the extractions for the given document id and creates an instance of the [ReviewFragment] with the given
+     * configuration.
+     *
+     * You should create and show the [ReviewFragment] in the [Listener.onPayInvoiceClicked] method.
+     *
+     * @param documentId The document id for which the extractions should be loaded
+     * @param configuration The configuration for the [ReviewFragment]
+     * @throws IllegalStateException If no payment provider app has been selected
+     */
+    internal fun getPaymentReviewFragment(documentId: String, configuration: ReviewConfiguration): ReviewFragment {
+        LOG.debug("Getting payment review fragment for id: {}", documentId)
+
+        return ReviewFragment.newInstance(
+            giniMerchant = this,
+            configuration = configuration,
+            paymentComponent = paymentComponent,
+            documentId = documentId
+        )
+    }
+
     internal fun setDisplayedScreen(displayedScreen: DisplayedScreen) {
         _eventsFlow.tryEmit(MerchantSDKEvents.OnScreenDisplayed(displayedScreen))
     }
+
+    // TODO add documentation & load payment providers internally if clients didn't to it when attempting to start flow
+    suspend fun loadPaymentProviderApps() = paymentComponent.loadPaymentProviderApps()
 
     private val savedStateProvider = SavedStateRegistry.SavedStateProvider {
         Bundle().apply {

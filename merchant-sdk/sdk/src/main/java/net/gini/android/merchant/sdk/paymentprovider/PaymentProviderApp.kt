@@ -48,7 +48,7 @@ private fun getPaymentProviderAppQueryIntent() = Intent().apply {
     data = Uri.parse(QueryUri)
 }
 
-data class PaymentProviderApp(
+internal data class PaymentProviderApp(
     val name: String,
     val icon: BitmapDrawable?,
     val colors: PaymentProviderAppColors,
