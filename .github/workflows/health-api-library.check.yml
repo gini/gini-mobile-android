@@ -150,7 +150,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: health-api-library-instrumented-test-results
+          name: health-api-library-instrumented-test-results-api-level-${{ matrix.api-level }}
           path: health-api-library/library/build/outputs/androidTest-results/connected
 
   checkstyle:
