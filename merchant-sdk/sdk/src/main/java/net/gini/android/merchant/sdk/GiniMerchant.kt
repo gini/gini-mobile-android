@@ -227,8 +227,7 @@ class GiniMerchant(
             is PaymentState.Success -> _eventsFlow.tryEmit(
                 MerchantSDKEvents.OnFinishedWithPaymentRequestCreated(
                     state.paymentRequest.id,
-                    ""
-//                    state.paymentRequest.paymentProviderApp?.name ?: ""
+                    state.paymentProviderName
                 )
             )
 
@@ -315,7 +314,7 @@ class GiniMerchant(
     sealed class PaymentState {
         object NoAction : PaymentState()
         object Loading : PaymentState()
-        class Success(val paymentRequest: PaymentRequest) : PaymentState()
+        class Success(val paymentRequest: PaymentRequest, val paymentProviderName: String) : PaymentState()
         class Error(val throwable: Throwable) : PaymentState()
     }
 

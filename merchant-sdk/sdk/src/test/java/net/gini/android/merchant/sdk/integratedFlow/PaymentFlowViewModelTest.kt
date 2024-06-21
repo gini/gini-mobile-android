@@ -1,5 +1,7 @@
 package net.gini.android.merchant.sdk.integratedFlow
 
+import android.content.Context
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
@@ -8,18 +10,18 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.test.runTest
 import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.api.HealthApiDocumentManager
 import net.gini.android.health.api.models.PaymentProvider
 import net.gini.android.merchant.sdk.GiniMerchant
+import net.gini.android.merchant.sdk.R
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
-import net.gini.android.merchant.sdk.paymentcomponent.PaymentProviderAppsState
 import net.gini.android.merchant.sdk.paymentcomponent.SelectedPaymentProviderAppState
 import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderAppColors
 import net.gini.android.merchant.sdk.test.ViewModelTestCoroutineRule
+import net.gini.android.merchant.sdk.util.DisplayedScreen
 import net.gini.android.merchant.sdk.util.GiniPaymentManager
 import org.junit.After
 import org.junit.Before
@@ -39,6 +41,7 @@ class PaymentFlowViewModelTest {
     private var giniMerchant: GiniMerchant? = null
     private var paymentComponent: PaymentComponent? = null
     private var giniPayment: GiniPaymentManager? = null
+    private var context: Context? = null
 
     private var initialPaymentProviderApp =  PaymentProviderApp(
         name = "payment provider",
@@ -74,12 +77,16 @@ class PaymentFlowViewModelTest {
 
     @Before
     fun setUp() {
+        context = ApplicationProvider.getApplicationContext()
+        context!!.setTheme(R.style.GiniMerchantTheme)
         every { giniHealthAPI.documentManager } returns documentManager
-        giniMerchant = GiniMerchant(giniHealthAPI)
-        giniPayment = mockk()
+        giniMerchant = mockk(relaxed = true)
+        giniPayment = mockk(relaxed = true)
         paymentComponent = mockk()
-        every { paymentComponent!!.paymentProviderAppsFlow } returns MutableStateFlow<PaymentProviderAppsState>(mockk()).asStateFlow()
-        every { paymentComponent!!.selectedPaymentProviderAppFlow } returns MutableStateFlow<SelectedPaymentProviderAppState>(SelectedPaymentProviderAppState.AppSelected(initialPaymentProviderApp)).asStateFlow()
+        every { paymentComponent!!.paymentProviderAppsFlow } returns MutableStateFlow(mockk())
+        every { paymentComponent!!.selectedPaymentProviderAppFlow } returns MutableStateFlow<SelectedPaymentProviderAppState>(SelectedPaymentProviderAppState.AppSelected(initialPaymentProviderApp))
+        every { giniMerchant!!.giniHealthAPI } returns giniHealthAPI
+        every { giniMerchant!!.paymentFlow } returns MutableStateFlow(mockk())
     }
 
     @After
@@ -100,10 +107,10 @@ class PaymentFlowViewModelTest {
         )
 
         // When
-        viewModel.addToBackStack(PaymentFlowViewModel.DisplayedScreen.BankSelectionBottomSheet)
+        viewModel.addToBackStack(DisplayedScreen.BankSelectionBottomSheet)
 
         // Then
-        assertThat(viewModel.getLastBackstackEntry()).isInstanceOf(PaymentFlowViewModel.DisplayedScreen.BankSelectionBottomSheet::class.java)
+        assertThat(viewModel.getLastBackstackEntry()).isInstanceOf(DisplayedScreen.BankSelectionBottomSheet::class.java)
     }
 
     @Test
@@ -118,14 +125,14 @@ class PaymentFlowViewModelTest {
         )
 
         // When
-        viewModel.addToBackStack(PaymentFlowViewModel.DisplayedScreen.BankSelectionBottomSheet)
-        viewModel.addToBackStack(PaymentFlowViewModel.DisplayedScreen.MoreInformationFragment)
+        viewModel.addToBackStack(DisplayedScreen.BankSelectionBottomSheet)
+        viewModel.addToBackStack(DisplayedScreen.MoreInformationFragment)
 
-        assertThat(viewModel.getLastBackstackEntry()).isInstanceOf(PaymentFlowViewModel.DisplayedScreen.MoreInformationFragment::class.java)
+        assertThat(viewModel.getLastBackstackEntry()).isInstanceOf(DisplayedScreen.MoreInformationFragment::class.java)
 
         // Then
         viewModel.popBackStack()
-        assertThat(viewModel.getLastBackstackEntry()).isInstanceOf(PaymentFlowViewModel.DisplayedScreen.BankSelectionBottomSheet::class.java)
+        assertThat(viewModel.getLastBackstackEntry()).isInstanceOf(DisplayedScreen.BankSelectionBottomSheet::class.java)
     }
 
     @Test
@@ -140,11 +147,11 @@ class PaymentFlowViewModelTest {
         )
 
         // When
-        viewModel.addToBackStack(PaymentFlowViewModel.DisplayedScreen.BankSelectionBottomSheet)
-        viewModel.addToBackStack(PaymentFlowViewModel.DisplayedScreen.MoreInformationFragment)
+        viewModel.addToBackStack(DisplayedScreen.BankSelectionBottomSheet)
+        viewModel.addToBackStack(DisplayedScreen.MoreInformationFragment)
 
         // Then
-        assertThat(viewModel.getLastBackstackEntry()).isInstanceOf(PaymentFlowViewModel.DisplayedScreen.MoreInformationFragment::class.java)
+        assertThat(viewModel.getLastBackstackEntry()).isInstanceOf(DisplayedScreen.MoreInformationFragment::class.java)
     }
 
     @Test
@@ -182,7 +189,7 @@ class PaymentFlowViewModelTest {
     @Test
     fun `forwards load document to giniMerchant`() = runTest {
         // Given
-        coEvery { giniPayment!!.onPayment(any(), any()) } coAnswers {  }
+//        coEvery { giniPayment!!.onPayment(any(), any()) } coAnswers {  }
         val viewModel = PaymentFlowViewModel(
             paymentComponent = paymentComponent,
             documentId = "1234",

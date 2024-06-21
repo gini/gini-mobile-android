@@ -56,7 +56,7 @@ internal class GiniPaymentManager(
             sendFeedbackAndStartLoading(paymentDetails)
             giniMerchant.emitSDKEvent(
                 try {
-                    GiniMerchant.PaymentState.Success(getPaymentRequest(paymentProviderApp, paymentDetails))
+                    GiniMerchant.PaymentState.Success(getPaymentRequest(paymentProviderApp, paymentDetails), paymentProviderApp.name)
                 } catch (throwable: Throwable) {
                     GiniMerchant.PaymentState.Error(throwable)
                 }

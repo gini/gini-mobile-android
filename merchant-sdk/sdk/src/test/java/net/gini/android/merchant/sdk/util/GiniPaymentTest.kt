@@ -1,5 +1,7 @@
 package net.gini.android.merchant.sdk.util
 
+import android.content.Context
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
@@ -13,11 +15,12 @@ import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.api.HealthApiDocumentManager
 import net.gini.android.health.api.models.PaymentProvider
 import net.gini.android.merchant.sdk.GiniMerchant
+import net.gini.android.merchant.sdk.R
+import net.gini.android.merchant.sdk.api.payment.model.PaymentDetails
+import net.gini.android.merchant.sdk.api.payment.model.PaymentRequest
 import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderAppColors
 import net.gini.android.merchant.sdk.review.ValidationMessage
-import net.gini.android.merchant.sdk.review.model.PaymentDetails
-import net.gini.android.merchant.sdk.review.model.PaymentRequest
 import net.gini.android.merchant.sdk.test.ViewModelTestCoroutineRule
 import org.junit.Before
 import org.junit.Rule
@@ -34,6 +37,8 @@ class GiniPaymentTest {
     private val giniHealthAPI: GiniHealthAPI = mockk(relaxed = true) { GiniHealthAPI::class.java }
     private val documentManager: HealthApiDocumentManager = mockk { HealthApiDocumentManager::class.java }
     private var giniMerchant: GiniMerchant? = null
+    private var context: Context? = null
+
 
     private var paymentProviderApp =  PaymentProviderApp(
             name = "payment provider",
@@ -62,7 +67,10 @@ class GiniPaymentTest {
     @Before
     fun setUp() {
         every { giniHealthAPI.documentManager } returns documentManager
-        giniMerchant = GiniMerchant(giniHealthAPI)
+        context = ApplicationProvider.getApplicationContext()
+        context!!.setTheme(R.style.GiniMerchantTheme)
+        giniMerchant = mockk(relaxed = true)
+        every { giniMerchant!!.giniHealthAPI } returns giniHealthAPI
     }
 
     @Test(expected = Exception::class)
@@ -98,6 +106,7 @@ class GiniPaymentTest {
     fun `returns successful if payment request was successful`() = runTest {
         //Given
         coEvery { documentManager.createPaymentRequest(any()) } coAnswers  { Resource.Success("123") }
+        coEvery { documentManager.getPaymentRequest(any()) } coAnswers  { Resource.Success(mockk(relaxed = true)) }
         val giniPayment = GiniPaymentManager(giniMerchant)
 
         // Then

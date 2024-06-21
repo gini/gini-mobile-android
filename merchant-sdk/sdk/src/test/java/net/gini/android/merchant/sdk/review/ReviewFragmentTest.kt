@@ -75,7 +75,7 @@ class ReviewFragmentTest {
         val giniMerchant = mockk<GiniMerchant>(relaxed = true)
         every { giniMerchant.documentFlow } returns MutableStateFlow(mockk(relaxed = true))
         every { giniMerchant.paymentFlow } returns MutableStateFlow(mockk(relaxed = true))
-        every { giniMerchant.openBankState } returns MutableStateFlow(mockk(relaxed = true))
+        every { giniMerchant.eventsFlow } returns MutableStateFlow(mockk(relaxed = true))
 
         every { viewModel.giniMerchant } returns giniMerchant
         every { viewModel.paymentDetails } returns MutableStateFlow(mockk(relaxed = true))

@@ -15,6 +15,7 @@ import kotlinx.coroutines.test.runTest
 import net.gini.android.merchant.sdk.GiniMerchant
 import net.gini.android.merchant.sdk.R
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
+import net.gini.android.merchant.sdk.util.DisplayedScreen
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -34,7 +35,7 @@ class PaymentFlowFragmentTest {
         context!!.setTheme(R.style.GiniMerchantTheme)
 
         giniMerchant = mockk<GiniMerchant>(relaxed = true)
-        every { giniMerchant!!.openBankState } returns MutableStateFlow(mockk(relaxed = true))
+        every { giniMerchant!!.eventsFlow } returns MutableStateFlow(mockk(relaxed = true))
         every { giniMerchant!!.paymentFlow } returns MutableStateFlow(mockk(relaxed = true))
 
         paymentComponent = mockk<PaymentComponent>(relaxed = true)
@@ -55,11 +56,12 @@ class PaymentFlowFragmentTest {
     @Test
     fun `shows payment component bottom sheet on startup`() = runTest {
         // Given
-        every { paymentFlowViewModel!!.getLastBackstackEntry() } returns PaymentFlowViewModel.DisplayedScreen.Nothing
+        every { paymentFlowViewModel!!.getLastBackstackEntry() } returns DisplayedScreen.Nothing
         val fragment = PaymentFlowFragment.newInstance(
             giniMerchant = giniMerchant!!,
             paymentComponent = paymentComponent!!,
             documentId = "1234",
+            paymentFlowConfiguration = mockk(relaxed = true),
             viewModelFactory = viewModelFactory
         )
 
@@ -75,7 +77,7 @@ class PaymentFlowFragmentTest {
     @Test
     fun `shows review fragment when payment button is tapped and config allows showing of review fragment`() = runTest {
         // Given
-        every { paymentFlowViewModel!!.addToBackStack(PaymentFlowViewModel.DisplayedScreen.ReviewFragment) } returns Unit
+        every { paymentFlowViewModel!!.addToBackStack(DisplayedScreen.ReviewFragment) } returns Unit
         every { paymentFlowViewModel!!.paymentFlowConfiguration!!.shouldHandleErrorsInternally } returns false
         every { paymentFlowViewModel!!.paymentFlowConfiguration!!.shouldShowReviewFragment } returns true
         every { paymentFlowViewModel!!.paymentFlowConfiguration!!.isAmountFieldEditable } returns false
@@ -106,12 +108,13 @@ class PaymentFlowFragmentTest {
     @Test
     fun `forwards payment request to viewModel when config doesn't allow showing ReviewFragment`() = runTest {
         // Given
-        every { paymentFlowViewModel!!.getLastBackstackEntry() } returns PaymentFlowViewModel.DisplayedScreen.Nothing
+        every { paymentFlowViewModel!!.getLastBackstackEntry() } returns DisplayedScreen.Nothing
         val documentId = "1234"
         val fragment = PaymentFlowFragment.newInstance(
             giniMerchant = giniMerchant!!,
             paymentComponent = paymentComponent!!,
             documentId = documentId,
+            paymentFlowConfiguration = mockk(relaxed = true),
             viewModelFactory = viewModelFactory
         )
 

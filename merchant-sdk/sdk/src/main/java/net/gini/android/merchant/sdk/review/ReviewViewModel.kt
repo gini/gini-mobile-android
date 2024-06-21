@@ -235,7 +235,7 @@ internal class ReviewViewModel(val giniMerchant: GiniMerchant, val configuration
                         giniMerchant.emitSDKEvent(GiniMerchant.PaymentState.Error(byteArrayResource.exception ?: Exception("Error")))
                     }
                     is Resource.Success -> {
-                        giniMerchant.emitSDKEvent(GiniMerchant.PaymentState.Success(paymentRequest))
+                        giniMerchant.emitSDKEvent(GiniMerchant.PaymentState.Success(paymentRequest, paymentProviderApp.value?.name ?: ""))
                         val newFile = externalCacheDir?.createTempPdfFile(byteArrayResource.data, "payment-request")
                         newFile?.let {
                             _paymentNextStep.tryEmit(PaymentNextStep.OpenSharePdf(it))

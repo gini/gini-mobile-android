@@ -22,12 +22,12 @@ import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runTest
 import net.gini.android.core.api.Resource
 import net.gini.android.merchant.sdk.GiniMerchant
+import net.gini.android.merchant.sdk.api.ResultWrapper
+import net.gini.android.merchant.sdk.api.payment.model.PaymentDetails
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.merchant.sdk.paymentcomponent.SelectedPaymentProviderAppState
 import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.preferences.UserPreferences
-import net.gini.android.merchant.sdk.api.payment.model.PaymentDetails
-import net.gini.android.merchant.sdk.api.ResultWrapper
 import net.gini.android.merchant.sdk.review.openWith.OpenWithPreferences
 import net.gini.android.merchant.sdk.test.ViewModelTestCoroutineRule
 import net.gini.android.merchant.sdk.util.GiniPaymentManager
@@ -542,6 +542,7 @@ class ReviewViewModelTest {
         val paymentProviderApp = mockk<PaymentProviderApp>()
         every { paymentProviderApp.paymentProvider.gpcSupportedPlatforms } returns listOf()
         every { paymentProviderApp.paymentProvider.id } returns "123"
+        every { paymentProviderApp.name } returns ""
 
         val openWithPreferences = mockk<OpenWithPreferences>()
         every { openWithPreferences.getLiveCountForPaymentProviderId(any()) } returns flowOf(3)
