@@ -75,7 +75,7 @@
         android:drawableStart="@drawable/ghs_info_circle_icon"
         android:drawablePadding="@dimen/ghs_large"/>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/ghs_forward_button"

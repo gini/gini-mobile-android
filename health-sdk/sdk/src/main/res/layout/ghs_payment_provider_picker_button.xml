@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/ghs_select_bank_button"
         style="@style/GiniHealthTheme.Widget.Button.PaymentProviderPicker"
         android:layout_width="0dp"
