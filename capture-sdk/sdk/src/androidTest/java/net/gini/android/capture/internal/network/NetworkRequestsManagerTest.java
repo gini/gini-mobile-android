@@ -18,6 +18,7 @@ import net.gini.android.capture.document.GiniCaptureDocumentHelper;
 import net.gini.android.capture.document.GiniCaptureMultiPageDocument;
 import net.gini.android.capture.document.ImageDocument;
 import net.gini.android.capture.document.ImageMultiPageDocument;
+import net.gini.android.capture.error.ErrorType;
 import net.gini.android.capture.internal.cache.DocumentDataMemoryCache;
 import net.gini.android.capture.network.AnalysisResult;
 import net.gini.android.capture.network.Error;
@@ -79,12 +80,11 @@ public class NetworkRequestsManagerTest {
     @Test
     public void should_throwException_forFailedDocumentUpload() throws Exception {
         // Given
-        final String errorMessage = "Something went wrong.";
         final GiniCaptureNetworkService networkService = new GiniCaptureNetworkServiceStub() {
             @Override
             public CancellationToken upload(@NonNull final Document document,
                     @NonNull final GiniCaptureNetworkCallback<Result, Error> callback) {
-                callback.failure(new Error(errorMessage));
+                callback.failure(new Error("Something went wrong."));
                 return new CallbackCancellationToken(callback);
             }
         };
@@ -100,7 +100,8 @@ public class NetworkRequestsManagerTest {
         }
         // Then
         assertThat(exception).isNotNull();
-        assertThat(exception.getCause().getMessage()).isEqualTo(errorMessage);
+        assertThat(exception.getCause()).isNotNull();
+        assertThat(((FailureException) exception.getCause()).getErrorType()).isEqualTo(ErrorType.GENERAL);
     }
 
     @Test
@@ -173,12 +174,11 @@ public class NetworkRequestsManagerTest {
     @Test
     public void should_throwException_forFailedDocumentDeletion() throws Exception {
         // Given
-        final String errorMessage = "Something went wrong.";
         final GiniCaptureNetworkService networkService = new GiniCaptureNetworkServiceStub() {
             @Override
             public CancellationToken delete(@NonNull final String giniApiDocumentId,
                     @NonNull final GiniCaptureNetworkCallback<Result, Error> callback) {
-                callback.failure(new Error(errorMessage));
+                callback.failure(new Error("Something went wrong."));
                 return new CallbackCancellationToken(callback);
             }
         };
@@ -195,7 +195,8 @@ public class NetworkRequestsManagerTest {
         }
         // Then
         assertThat(exception).isNotNull();
-        assertThat(exception.getCause().getMessage()).isEqualTo(errorMessage);
+        assertThat(exception.getCause()).isNotNull();
+        assertThat(((FailureException) exception.getCause()).getErrorType()).isEqualTo(ErrorType.GENERAL);
     }
 
     @Test
