@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_round_corners"
+    android:padding="8dp">
+
+    <TextView
+        style="@style/Base.TextAppearance.MaterialComponents.Headline6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/gc_medium_12"
+        android:text="@string/configuration_bottom_nav_label" />
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/switch_showBottomNavbar"
+        style="@style/SwitchConfigurationStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/bottom_navbar_switch_label" />
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/switch_onboardingCustomNavBar"
+        style="@style/SwitchConfigurationStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/gc_medium_12"
+        android:text="@string/onboarding_custom_bottom_nav_bar_switch_label" />
+
+    <TextView
+        android:id="@+id/tv_onboardingCustomNavBarDescription"
+        style="@style/TextAppearance.MaterialComponents.Caption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/onboarding_custom_bottom_nav_bar_switch_description" />
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/switch_cameraScreenCustomBottomNavbar"
+        style="@style/SwitchConfigurationStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/gc_medium_12"
+        android:text="@string/camera_screen_custom_bottom_navbar_switch_label" />
+
+    <TextView
+        android:id="@+id/tv_cameraScreenCustomBottomNavbarDescription"
+        style="@style/TextAppearance.MaterialComponents.Caption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/custom_bottom_navbar_switch_description" />
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/switch_showHelpScreenCustomBottomNavbar"
+        style="@style/SwitchConfigurationStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/help_screens_bottom_navbar_switch_label" />
+
+    <TextView
+        android:id="@+id/tv_showHelpScreenCustomBottomNavbarDescription"
+        style="@style/TextAppearance.MaterialComponents.Caption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/custom_bottom_navbar_switch_description" />
+
+
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/switch_reviewScreenCustomBottomNavbar"
+        style="@style/SwitchConfigurationStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/gc_medium_12"
+        android:text="@string/review_screen_custom_bottom_navbar_switch_label" />
+
+    <TextView
+        android:id="@+id/tv_reviewScreenCustomBottomNavbarDescription"
+        style="@style/TextAppearance.MaterialComponents.Caption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/custom_bottom_navbar_switch_description" />
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/switch_digitalInvoiceHelpBottomNavigationBar"
+        style="@style/SwitchConfigurationStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/gc_medium_12"
+        android:text="@string/return_assistant_help_bottom_navigation_bar_switch_label" />
+
+    <TextView
+        android:id="@+id/tv_digitalInvoiceHelpBottomNavigationBarDescription"
+        style="@style/TextAppearance.MaterialComponents.Caption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/return_assistant_bottom_navigation_bar_switch_description" />
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/switch_digitalInvoiceOnboardingBottomNavigationBar"
+        style="@style/SwitchConfigurationStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/gc_medium_12"
+        android:text="@string/return_assistant_onboarding_bottom_navigation_bar_switch_label" />
+
+    <TextView
+        android:id="@+id/tv_digitalInvoiceOnboardingBottomNavigationBarDescription"
+        style="@style/TextAppearance.MaterialComponents.Caption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/return_assistant_bottom_navigation_bar_switch_description" />
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/switch_digitalInvoiceBottomNavigationBar"
+        style="@style/SwitchConfigurationStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/gc_medium_12"
+        android:text="@string/return_assistant_bottom_navigation_bar_switch_label" />
+
+    <TextView
+        android:id="@+id/tv_digitalInvoiceBottomNavigationBarDescription"
+        style="@style/TextAppearance.MaterialComponents.Caption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/return_assistant_bottom_navigation_bar_switch_description" />
+
+</LinearLayout>

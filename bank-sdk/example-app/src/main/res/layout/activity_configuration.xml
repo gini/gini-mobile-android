@@ -1,557 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.ConfigurationActivity">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/gc_color_03"
+        android:orientation="vertical">
 
-    <ScrollView
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginHorizontal="@dimen/gc_large"
+            android:layout_margin="16dp"
+            android:background="@drawable/bg_round_corners"
             android:orientation="vertical"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp">
+            android:padding="8dp">
 
             <TextView
                 android:id="@+id/tv_relaunchForDefaultConfiguration"
                 style="@style/TextAppearance.MaterialComponents.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/relaunch_to_use_default_configuration"
-                 />
+                android:text="@string/relaunch_to_use_default_configuration" />
 
             <TextView
                 android:id="@+id/tv_closeForConfigurationsToTakePlace"
                 style="@style/TextAppearance.MaterialComponents.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/close_screen_for_configurations_to_take_place"
                 android:layout_marginTop="@dimen/gc_medium_12"
-                />
-
-            <com.google.android.material.divider.MaterialDivider
-                android:id="@+id/divider2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gc_medium" />
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/switch_setupSdkWithDefaultConfiguration"
-                style="@style/SwitchConfigurationStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/default_sdk_configuration_switch_label"
-                />
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/switch_openWith"
-                style="@style/SwitchConfigurationStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/file_import_switch_label"
-                />
-
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/switch_qrCodeScanning"
-                style="@style/SwitchConfigurationStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/qr_code_scanning_switch_label" />
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/switch_onlyQRCodeScanning"
-                style="@style/SwitchConfigurationStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/only_qr_code_scanning_switch_label" />
-
-            <TextView
-                android:id="@+id/tv_onlyQrCodeDescription"
-                style="@style/TextAppearance.MaterialComponents.Caption"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/only_qr_code_scanning_switch_description" />
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/switch_multiPage"
-                style="@style/SwitchConfigurationStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gc_medium_12"
-                android:text="@string/multi_page_switch_label" />
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/switch_displayFlashButton"
-                style="@style/SwitchConfigurationStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/flash_button_switch_label" />
-
-            <TextView
-                android:id="@+id/tv_flashButtonDescription"
-                style="@style/TextAppearance.MaterialComponents.Caption"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/flash_button_switch_description" />
-
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/switch_flashOnByDefault"
-                style="@style/SwitchConfigurationStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/flash_on_by_default_switch_label" />
-
-            <TextView
-                android:id="@+id/tv_flashOnByDefaultDescription"
-                style="@style/TextAppearance.MaterialComponents.Caption"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/flash_on_by_default_switch_description" />
-
-            <TextView
-                android:id="@+id/tv_fileImportLabel"
-                style="@style/SwitchConfigurationStyle"                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gc_large"
-                android:text="@string/document_import_file_types_segmented_button_label" />
-
-            <com.google.android.material.button.MaterialButtonToggleGroup
-                android:id="@+id/toggleBtn_fileImportSetup"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                app:selectionRequired="true"
-                app:singleSelection="true">
-
-                <Button
-                    android:id="@+id/btn_fileImportDisabled"
-                    style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/document_import_file_types_disabled_button_label" />
-
-                <Button
-                    android:id="@+id/btn_fileImportOnlyPdf"
-                    style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/document_import_file_types_only_pdf_button_label" />
-
-                <Button
-                    android:id="@+id/btn_fileImportPdfAndImage"
-                    style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/document_import_file_types_pdf_and_image_button_label" />
-            </com.google.android.material.button.MaterialButtonToggleGroup>
-
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/switch_showBottomNavbar"
-                style="@style/SwitchConfigurationStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/bottom_navbar_switch_label" />
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/switch_showHelpScreenCustomBottomNavbar"
-                style="@style/SwitchConfigurationStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/help_screens_bottom_navbar_switch_label" />
-
-            <TextView
-                android:id="@+id/tv_showHelpScreenCustomBottomNavbarDescription"
-                style="@style/TextAppearance.MaterialComponents.Caption"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/custom_bottom_navbar_switch_description" />
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/switch_cameraScreenCustomBottomNavbar"
-                style="@style/SwitchConfigurationStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gc_medium_12"
-                android:text="@string/camera_screen_custom_bottom_navbar_switch_label" />
-
-            <TextView
-                android:id="@+id/tv_cameraScreenCustomBottomNavbarDescription"
-                style="@style/TextAppearance.MaterialComponents.Caption"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/custom_bottom_navbar_switch_description" />
-
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/switch_reviewScreenCustomBottomNavbar"
-                style="@style/SwitchConfigurationStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gc_medium_12"
-                android:text="@string/review_screen_custom_bottom_navbar_switch_label" />
-
-            <TextView
-                android:id="@+id/tv_reviewScreenCustomBottomNavbarDescription"
-                style="@style/TextAppearance.MaterialComponents.Caption"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/custom_bottom_navbar_switch_description" />
-
-
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/switch_onboardingScreensAtFirstRun"
-                style="@style/SwitchConfigurationStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gc_medium_12"
-                android:text="@string/onboarding_screens_at_first_launch_switch_label" />
-
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/switch_onboardingScreensAtEveryLaunch"
-                style="@style/SwitchConfigurationStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gc_medium_12"
-                android:text="@string/onboarding_screens_at_every_launch_switch_label" />
-
-            <TextView
-                android:id="@+id/tv_onboardingScreensAtEveryLaunchDescription"
-                style="@style/TextAppearance.MaterialComponents.Caption"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/onboarding_screens_at_every_launch_switch_description" />
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/switch_customOnboardingPages"
-                style="@style/SwitchConfigurationStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gc_medium_12"
-                android:text="@string/custom_onboarding_pages_switch_label" />
-
-            <TextView
-                android:id="@+id/tv_customOnboardingPagesDescription"
-                style="@style/TextAppearance.MaterialComponents.Caption"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/custom_onboarding_pages_switch_description" />
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/switch_customOnboardingAlignCornersPage"
-                style="@style/SwitchConfigurationStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gc_medium_12"
-                android:text="@string/custom_onboarding_align_corners_page_switch_label" />
-
-            <TextView
-                android:id="@+id/tv_customOnboardingAlignCornerPageDescription"
-                style="@style/TextAppearance.MaterialComponents.Caption"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/custom_onboarding_pages_switch_description" />
-
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/switch_customOnboardingLightingPage"
-                style="@style/SwitchConfigurationStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gc_medium_12"
-                android:text="@string/custom_onboarding_lighting_page_switch_label" />
-
-            <TextView
-                android:id="@+id/tv_customOnboardingLightingPageDescription"
-                style="@style/TextAppearance.MaterialComponents.Caption"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/custom_onboarding_pages_switch_description" />
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/switch_customOnboardingQRCodePage"
-                style="@style/SwitchConfigurationStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gc_medium_12"
-                android:text="@string/custom_onboarding_qr_code_page_switch_label" />
-
-            <TextView
-                android:id="@+id/tv_customOnboardingQRCodePageDescription"
-                style="@style/TextAppearance.MaterialComponents.Caption"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/custom_onboarding_pages_switch_description" />
-
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/switch_customOnboardingMultiPage"
-                style="@style/SwitchConfigurationStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gc_medium_12"
-                android:text="@string/custom_onboarding_multi_page_switch_label" />
-
-            <TextView
-                android:id="@+id/tv_customOnboardingMultiPageDescription"
-                style="@style/TextAppearance.MaterialComponents.Caption"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/custom_onboarding_pages_switch_description" />
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/switch_onboardingCustomNavBar"
-                style="@style/SwitchConfigurationStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gc_medium_12"
-                android:text="@string/onboarding_custom_bottom_nav_bar_switch_label" />
-
-            <TextView
-                android:id="@+id/tv_onboardingCustomNavBarDescription"
-                style="@style/TextAppearance.MaterialComponents.Caption"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/onboarding_custom_bottom_nav_bar_switch_description" />
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/switch_buttonsCustomLoadingIndicator"
-                style="@style/SwitchConfigurationStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gc_medium_12"
-                android:text="@string/buttons_custom_loading_indicator_switch_label" />
-
-            <TextView
-                android:id="@+id/tv_buttonsCustomLoadingIndicatorDescription"
-                style="@style/TextAppearance.MaterialComponents.Caption"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/buttons_custom_loading_indicator_switch_description" />
-
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/switch_screenCustomLoadingIndicator"
-                style="@style/SwitchConfigurationStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gc_medium_12"
-                android:text="@string/screen_custom_loading_indicator_switch_label" />
-
-            <TextView
-                android:id="@+id/tv_screenCustomLoadingIndicatorDescription"
-                style="@style/TextAppearance.MaterialComponents.Caption"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/screen_custom_loading_indicator_switch_description" />
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/switch_supportedFormatsScreen"
-                style="@style/SwitchConfigurationStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gc_medium_12"
-                android:text="@string/supported_formats_screen_switch_label" />
-
-            <TextView
-                android:id="@+id/tv_supportedFormatsScreenDescription"
-                style="@style/TextAppearance.MaterialComponents.Caption"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/supported_formats_screen_switch_description" />
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/switch_customHelpMenuItems"
-                style="@style/SwitchConfigurationStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gc_medium_12"
-                android:text="@string/help_custom_menu_items_switch_label" />
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/switch_customNavigationController"
-                style="@style/SwitchConfigurationStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gc_medium_12"
-                android:text="@string/custom_navigation_controller_switch_label" />
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/switch_returnAssistantFeature"
-                style="@style/SwitchConfigurationStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gc_medium_12"
-                android:text="@string/return_assistant_feature_switch_label" />
-
-
-            <TextView
-                android:id="@+id/tv_returnAssistantFeatureDescription"
-                style="@style/TextAppearance.MaterialComponents.Caption"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/return_assistant_feature_switch_description" />
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/switch_digitalInvoiceOnboardingCustomIllustration"
-                style="@style/SwitchConfigurationStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gc_medium_12"
-                android:text="@string/digital_invoice_onboarding_custom_illustration_switch_label" />
-
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/switch_digitalInvoiceHelpBottomNavigationBar"
-                style="@style/SwitchConfigurationStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gc_medium_12"
-                android:text="@string/digital_invoice_help_bottom_navigation_bar_switch_label" />
-
-            <TextView
-                android:id="@+id/tv_digitalInvoiceHelpBottomNavigationBarDescription"
-                style="@style/TextAppearance.MaterialComponents.Caption"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/digital_invoice_bottom_navigation_bar_switch_description" />
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/switch_digitalInvoiceOnboardingBottomNavigationBar"
-                style="@style/SwitchConfigurationStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gc_medium_12"
-                android:text="@string/digital_invoice_onboarding_bottom_navigation_bar_switch_label" />
-
-            <TextView
-                android:id="@+id/tv_digitalInvoiceOnboardingBottomNavigationBarDescription"
-                style="@style/TextAppearance.MaterialComponents.Caption"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/digital_invoice_bottom_navigation_bar_switch_description" />
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/switch_digitalInvoiceBottomNavigationBar"
-                style="@style/SwitchConfigurationStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gc_medium_12"
-                android:text="@string/digital_invoice_bottom_navigation_bar_switch_label" />
-
-            <TextView
-                android:id="@+id/tv_digitalInvoiceBottomNavigationBarDescription"
-                style="@style/TextAppearance.MaterialComponents.Caption"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/digital_invoice_bottom_navigation_bar_switch_description" />
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/switch_eventTracker"
-                style="@style/SwitchConfigurationStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gc_medium_12"
-                android:text="@string/event_tracker_switch_label" />
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/switch_returnReasonsDialog"
-                style="@style/SwitchConfigurationStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gc_medium_12"
-                android:text="@string/return_reasons_dialog_switch_label" />
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/switch_giniErrorLogger"
-                style="@style/SwitchConfigurationStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gc_medium_12"
-                android:text="@string/gini_error_switch_label" />
-
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/switch_customErrorLogger"
-                style="@style/SwitchConfigurationStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gc_medium_12"
-                android:text="@string/custom_error_switch_label" />
-
-            <TextView
-                android:id="@+id/textView_importedFileSizeBytesLimitTitle"
-                style="@style/SwitchConfigurationStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/imported_file_size_bytes_limit"
-                android:layout_marginTop="@dimen/gc_medium_12"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/textInputLayout_importedFileSizeBytesLimit"
-                style="?attr/textInputOutlinedStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                >
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editText_importedFileSizeBytesLimit"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="18sp"
-                    android:textColor="@drawable/edittext_selector"
-                    android:inputType="number"
-                    android:maxLines="1"
-                    tools:text="Hello@World and stuff and foo and bar and whatchamacallit"/>
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/switch_disableCameraPermission"
-                style="@style/SwitchConfigurationStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gc_medium_12"
-                android:text="@string/disable_camera_permission" />
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/switch_allowScreenshots"
-                style="@style/SwitchConfigurationStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gc_medium_12"
-                android:text="@string/allow_screenshots_label" />
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/switch_debugMode"
-                style="@style/SwitchConfigurationStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gc_medium_12"
-                android:text="@string/debug_mode_switch_label" />
-
+                android:text="@string/close_screen_for_configurations_to_take_place" />
 
         </LinearLayout>
 
+        <include
+            android:id="@+id/layout_featureToggle"
+            layout="@layout/layout_feature_toggles"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="16dp" />
 
-    </ScrollView>
+        <include
+            android:id="@+id/layout_bottomNavigationToggles"
+            layout="@layout/layout_bottom_navigation_toggles"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="16dp" />
+
+        <include
+            android:id="@+id/layout_onboardingToggles"
+            layout="@layout/layout_onboarding_toggles"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="16dp" />
+
+        <include
+            android:id="@+id/layout_cameraToggles"
+            layout="@layout/layout_camera_toggles"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="16dp" />
+
+        <include
+            android:id="@+id/layout_analysisToggles"
+            layout="@layout/layout_analysis_toggles"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="16dp" />
+
+        <include
+            android:id="@+id/layout_helpToggles"
+            layout="@layout/layout_help_toggles"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="16dp" />
+
+        <include
+            android:id="@+id/layout_returnAssistantToggles"
+            layout="@layout/layout_return_assistant_toggles"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="16dp" />
+
+        <include
+            android:id="@+id/layout_generalUiCustomizationToggles"
+            layout="@layout/layout_ui_customization_toggles"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="16dp" />
+
+        <include
+            android:id="@+id/layout_debugDevelopmentOptionsToggles"
+            layout="@layout/layout_debug_development_toggles"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="16dp" />
+
+    </LinearLayout>
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

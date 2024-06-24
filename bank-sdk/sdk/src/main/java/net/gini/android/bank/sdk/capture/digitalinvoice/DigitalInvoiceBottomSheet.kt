@@ -18,6 +18,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import net.gini.android.bank.sdk.R
+import net.gini.android.bank.sdk.analytics.getDifferences
 import net.gini.android.bank.sdk.capture.digitalinvoice.details.LineItemDetailsScreenContract
 import net.gini.android.bank.sdk.capture.digitalinvoice.details.LineItemDetailsScreenPresenter
 import net.gini.android.bank.sdk.capture.digitalinvoice.details.MIN_QUANTITY
@@ -31,6 +32,10 @@ import net.gini.android.bank.sdk.util.wrappedWithGiniCaptureTheme
 import net.gini.android.capture.AmountCurrency
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
+import net.gini.android.capture.tracking.useranalytics.UserAnalytics
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
+import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen
 
 private const val ARGS_SELECTABLE_LINE_ITEM = "GBS_ARGS_SELECTABLE_LINE_ITEM"
 
@@ -41,6 +46,7 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
 
     private lateinit var binding: GbsEditItemBottomSheetBinding
     private var selectableLineItem: SelectableLineItem? = null
+    private var originalSelectableLineItem: SelectableLineItem? = null
     private var quantity: Int = 1
     private val editorListener = TextView.OnEditorActionListener { v, actionId, event ->
         v.clearFocus()
@@ -49,11 +55,15 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
     }
 
     private var selectedCurrency = "EUR"
+    private val screenName: UserAnalyticsScreen = UserAnalyticsScreen.EditReturnAssistant
+
+    private val userAnalyticsEventTracker by lazy { UserAnalytics.getAnalyticsEventTracker() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             selectableLineItem = BundleCompat.getParcelable(it, ARGS_SELECTABLE_LINE_ITEM, SelectableLineItem::class.java)
+            originalSelectableLineItem = selectableLineItem?.copy()
             activity?.let { activity ->
                 createPresenter(activity)
             }
@@ -122,6 +132,8 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
         if (GiniCapture.hasInstance() && !GiniCapture.getInstance().allowScreenshots) {
             dialog?.window?.disallowScreenshots()
         }
+
+        trackScreenShownEvent()
     }
 
     /**
@@ -194,6 +206,7 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
     private fun setupInputHandlers() {
         binding.gbsCloseBottomSheet.setOnClickListener {
             this.dismiss()
+            trackCloseTappedEvent()
         }
 
         binding.gbsAddQuantity.setOnClickListener {
@@ -362,6 +375,7 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
     }
 
     override fun onSave(selectableLineItem: SelectableLineItem) {
+        trackSaveTappedEvent(selectableLineItem)
         setFragmentResult(REQUEST_KEY, Bundle().apply {
             putParcelable(RESULT_KEY, selectableLineItem)
         })
@@ -418,4 +432,38 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
             return convertView
         }
     }
+
+    // region Analytics
+
+    private fun trackScreenShownEvent() {
+        userAnalyticsEventTracker.trackEvent(
+            UserAnalyticsEvent.SCREEN_SHOWN,
+            setOf(UserAnalyticsEventProperty.Screen(screenName))
+        )
+    }
+
+    private fun trackCloseTappedEvent() {
+        userAnalyticsEventTracker.trackEvent(
+            UserAnalyticsEvent.CLOSE_TAPPED,
+            setOf(UserAnalyticsEventProperty.Screen(screenName))
+        )
+    }
+
+    private fun trackSaveTappedEvent(selectableLineItem: SelectableLineItem) {
+        val originalLineItem = originalSelectableLineItem?.lineItem
+        val finalLineItem = selectableLineItem.lineItem
+        val differenceList =
+            originalLineItem?.getDifferences(finalLineItem) ?: emptySet()
+
+        userAnalyticsEventTracker.trackEvent(
+            UserAnalyticsEvent.SAVE_TAPPED,
+            setOf(
+                UserAnalyticsEventProperty.Screen(screenName),
+                UserAnalyticsEventProperty.ItemsChanged(differenceList)
+            )
+        )
+    }
+
+    // endregion
+
 }

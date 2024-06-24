@@ -4,6 +4,7 @@ import androidx.fragment.app.testing.FragmentScenario
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.Navigation
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.*
 import jersey.repackaged.jsr166e.CompletableFuture
@@ -17,6 +18,7 @@ import net.gini.android.capture.tracking.Event
 import net.gini.android.capture.tracking.EventTracker
 import net.gini.android.capture.tracking.ReviewScreenEvent
 import net.gini.android.capture.tracking.ReviewScreenEvent.UPLOAD_ERROR_DETAILS_MAP_KEY.*
+import net.gini.android.capture.tracking.useranalytics.UserAnalytics
 import org.junit.After
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -45,6 +47,7 @@ class MultipageReviewFragmentTest {
         val eventTracker = spy<EventTracker>()
         GiniCapture.Builder().setEventTracker(eventTracker).build()
         GiniCapture.getInstance().internal().imageMultiPageDocumentMemoryStore.setMultiPageDocument(mock())
+        UserAnalytics.initialize(InstrumentationRegistry.getInstrumentation().context)
 
         FragmentScenario.launchInContainer(fragmentClass = MultiPageReviewFragment::class.java).use { scenario ->
             scenario.moveToState(Lifecycle.State.STARTED)
@@ -77,7 +80,7 @@ class MultipageReviewFragmentTest {
             val eventTracker = spy<EventTracker>()
             GiniCapture.Builder().setEventTracker(eventTracker).build()
             GiniCapture.getInstance().internal().imageMultiPageDocumentMemoryStore.setMultiPageDocument(mock())
-
+            UserAnalytics.initialize(InstrumentationRegistry.getInstrumentation().context)
             FragmentScenario.launchInContainer(fragmentClass = MultiPageReviewFragment::class.java).use { scenario ->
                 scenario.moveToState(Lifecycle.State.STARTED)
 

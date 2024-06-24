@@ -2,6 +2,7 @@ package net.gini.android.bank.api
 
 import net.gini.android.bank.api.requests.ErrorEvent
 import net.gini.android.bank.api.requests.ResolvePaymentBody
+import net.gini.android.bank.api.response.ConfigurationResponse
 import net.gini.android.bank.api.response.ResolvePaymentResponse
 import net.gini.android.core.api.DocumentService
 import okhttp3.RequestBody
@@ -19,4 +20,7 @@ internal interface BankApiDocumentService: DocumentService {
 
     @POST("events/error")
     suspend fun logErrorEvent(@HeaderMap bearer: Map<String, String>, @Body errorEvent: ErrorEvent): Response<ResponseBody>
+
+    @GET("configurations")
+    suspend fun getConfigurations(@HeaderMap bearer: Map<String, String>): Response<ConfigurationResponse>
 }

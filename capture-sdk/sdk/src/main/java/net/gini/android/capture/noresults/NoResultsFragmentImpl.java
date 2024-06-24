@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -25,12 +26,20 @@ import net.gini.android.capture.help.SupportedFormatsAdapter;
 import net.gini.android.capture.internal.ui.ClickListenerExtKt;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.ui.IntervalClickListener;
-import net.gini.android.capture.tracking.AnalysisScreenEvent;
 import net.gini.android.capture.internal.util.CancelListener;
+import net.gini.android.capture.tracking.AnalysisScreenEvent;
+import net.gini.android.capture.tracking.useranalytics.UserAnalytics;
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent;
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker;
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsMappersKt;
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen;
+import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty;
 import net.gini.android.capture.view.InjectedViewAdapterHolder;
 import net.gini.android.capture.view.InjectedViewContainer;
 import net.gini.android.capture.view.NavButtonType;
 import net.gini.android.capture.view.NavigationBarTopAdapter;
+
+import java.util.HashSet;
 
 /**
  * Main logic implementation for no results UI presented by {@link NoResultsFragment}.
@@ -47,8 +56,10 @@ class NoResultsFragmentImpl {
     private final CancelListener mCancelListener;
     private EnterManuallyButtonListener mListener;
     private TextView mTitleTextView;
+    private UserAnalyticsEventTracker mUserAnalyticsEventTracker;
 
     private InjectedViewContainer<NavigationBarTopAdapter> topAdapterInjectedViewContainer;
+    private final UserAnalyticsScreen screenName = UserAnalyticsScreen.NoResults.INSTANCE;
 
     NoResultsFragmentImpl(@NonNull final FragmentImplCallback fragment,
                           @NonNull final Document document,
@@ -79,11 +90,27 @@ class NoResultsFragmentImpl {
                       final Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.gc_fragment_noresults, container, false);
         final View retakeImagesButton = view.findViewById(R.id.gc_button_no_results_retake_images);
+        handleOnBackPressed();
+        mUserAnalyticsEventTracker = UserAnalytics.INSTANCE.getAnalyticsEventTracker();
+        mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.SCREEN_SHOWN,
+                new HashSet<UserAnalyticsEventProperty>() {
+                    {
+                        add(new UserAnalyticsEventProperty.Screen(screenName));
+                        add(new UserAnalyticsEventProperty.DocumentId(mDocument.getId()));
+                        add(new UserAnalyticsEventProperty.DocumentType(UserAnalyticsMappersKt.mapToAnalyticsDocumentType(mDocument)));
+                    }
+                }
+        );
         if (shouldAllowRetakeImages()) {
             ClickListenerExtKt.setIntervalClickListener(retakeImagesButton, v -> {
+                mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.RETAKE_IMAGES_TAPPED,
+                        new HashSet<UserAnalyticsEventProperty>() {
+                            {
+                                add(new UserAnalyticsEventProperty.Screen(screenName));
+                            }
+                        });
                 trackAnalysisScreenEvent(AnalysisScreenEvent.RETRY);
                 mFragment.findNavController().navigate(NoResultsFragmentDirections.toCameraFragment());
-
             });
         } else {
             retakeImagesButton.setVisibility(GONE);
@@ -91,6 +118,12 @@ class NoResultsFragmentImpl {
 
         final View enterManuallyButton = view.findViewById(R.id.gc_button_no_results_enter_manually);
         ClickListenerExtKt.setIntervalClickListener(enterManuallyButton, v -> {
+            mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.ENTER_MANUALLY_TAPPED,
+                    new HashSet<UserAnalyticsEventProperty>() {
+                        {
+                            add(new UserAnalyticsEventProperty.Screen(screenName));
+                        }
+                    });
             mListener.onEnterManuallyPressed();
         });
 
@@ -104,6 +137,22 @@ class NoResultsFragmentImpl {
         setUpList(view);
 
         return view;
+    }
+
+    private void handleOnBackPressed() {
+        mFragment.getActivity().getOnBackPressedDispatcher().addCallback(mFragment.getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.CLOSE_TAPPED,
+                        new HashSet<UserAnalyticsEventProperty>() {
+                            {
+                                add(new UserAnalyticsEventProperty.Screen(screenName));
+                            }
+                        });
+                remove();
+
+            }
+        });
     }
 
     private boolean isDocumentFromCameraScreen(Document document) {
@@ -158,6 +207,12 @@ class NoResultsFragmentImpl {
                         injectedViewAdapter.setNavButtonType(NavButtonType.CLOSE);
                         injectedViewAdapter.setOnNavButtonClickListener(new IntervalClickListener(view -> {
                             if (mFragment.getActivity() != null) {
+                                mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.CLOSE_TAPPED,
+                                        new HashSet<UserAnalyticsEventProperty>() {
+                                            {
+                                                add(new UserAnalyticsEventProperty.Screen(screenName));
+                                            }
+                                        });
                                 mCancelListener.onCancelFlow();
                             }
                         }));

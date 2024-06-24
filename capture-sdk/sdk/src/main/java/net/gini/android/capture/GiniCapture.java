@@ -1,5 +1,9 @@
 package net.gini.android.capture;
 
+import static net.gini.android.capture.internal.util.FileImportValidator.FILE_SIZE_LIMIT;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
+
 import android.content.Context;
 import android.content.Intent;
 
@@ -37,6 +41,7 @@ import net.gini.android.capture.tracking.Event;
 import net.gini.android.capture.tracking.EventTracker;
 import net.gini.android.capture.tracking.OnboardingScreenEvent;
 import net.gini.android.capture.tracking.ReviewScreenEvent;
+import net.gini.android.capture.tracking.useranalytics.UserAnalytics;
 import net.gini.android.capture.util.CancellationToken;
 import net.gini.android.capture.view.CustomLoadingIndicatorAdapter;
 import net.gini.android.capture.view.DefaultLoadingIndicatorAdapter;
@@ -54,10 +59,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
-import static net.gini.android.capture.internal.util.FileImportValidator.FILE_SIZE_LIMIT;
 
 /**
  * Created by Alpar Szotyori on 22.02.2018.
@@ -298,6 +299,7 @@ public class GiniCapture {
         sInstance.mImageMultiPageDocumentMemoryStore.clear();
         sInstance.internal().setReviewScreenAnalysisError(null);
         sInstance = null; // NOPMD
+        UserAnalytics.INSTANCE.cleanup();
         ImageDiskStore.clear(context);
     }
 

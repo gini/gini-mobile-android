@@ -45,6 +45,13 @@ class BankApiDocumentRepository(
             }
         }
 
+    suspend fun getConfigurations(): Resource<Configuration> =
+        withAccessToken { accessToken ->
+            wrapInResource {
+                documentRemoteSource.getConfigurations(accessToken)
+            }
+        }
+
     @Throws(JSONException::class)
     private fun parseReturnReason(returnReasonsJson: JSONArray?): List<ReturnReason> {
         if (returnReasonsJson == null) {

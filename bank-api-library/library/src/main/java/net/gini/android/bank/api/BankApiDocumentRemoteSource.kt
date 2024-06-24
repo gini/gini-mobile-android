@@ -1,11 +1,13 @@
 package net.gini.android.bank.api
 
 import kotlinx.coroutines.withContext
+import net.gini.android.bank.api.models.Configuration
 import net.gini.android.bank.api.models.ResolvePaymentInput
 import net.gini.android.bank.api.models.ResolvedPayment
 import net.gini.android.bank.api.models.toResolvedPayment
 import net.gini.android.bank.api.requests.ErrorEvent
 import net.gini.android.bank.api.requests.toResolvePaymentBody
+import net.gini.android.bank.api.response.toConfiguration
 import net.gini.android.core.api.DocumentRemoteSource
 import net.gini.android.core.api.requests.ApiException
 import net.gini.android.core.api.requests.SafeApiRequest
@@ -34,4 +36,11 @@ class BankApiDocumentRemoteSource internal constructor(
                 documentService.logErrorEvent(bearerHeaderMap(accessToken, contentType = giniApiType.giniJsonMediaType), errorEvent)
             }
         }
+
+    suspend fun getConfigurations(accessToken: String): Configuration = withContext(coroutineContext) {
+        val response = SafeApiRequest.apiRequest {
+            documentService.getConfigurations(bearerHeaderMap(accessToken, giniApiType.giniJsonMediaType))
+        }
+        response.body()?.toConfiguration() ?: throw ApiException.forResponse("Empty response body", response)
+    }
 }
