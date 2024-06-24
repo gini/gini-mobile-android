@@ -60,9 +60,9 @@ import net.gini.android.capture.tracking.ReviewScreenEvent.UPLOAD_ERROR_DETAILS_
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker;
-import net.gini.android.capture.tracking.useranalytics.UserAnalyticsMappersKt;
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen;
+import net.gini.android.capture.util.recyclerview.SnappedItemChangeRecyclerViewListener;
 import net.gini.android.capture.view.InjectedViewAdapterHolder;
 import net.gini.android.capture.view.InjectedViewContainer;
 import net.gini.android.capture.view.NavButtonType;
@@ -72,7 +72,6 @@ import net.gini.android.capture.view.OnButtonLoadingIndicatorAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -127,6 +126,8 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
     private UserAnalyticsEventTracker mUserAnalyticsEventTracker;
 
     private final UserAnalyticsScreen screenName = UserAnalyticsScreen.Review.INSTANCE;
+
+    private SnappedItemChangeRecyclerViewListener mAnalyticsPageScrolledListener;
 
     public static MultiPageReviewFragment newInstance() {
 
@@ -352,6 +353,10 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setAdapter(mPreviewPagesAdapter);
 
+        mAnalyticsPageScrolledListener = new SnappedItemChangeRecyclerViewListener(mSnapHelper, pos -> {
+            trackPageSwipedAnalyticsEvent();
+            return Unit.INSTANCE;
+        });
 
         mRecyclerView.postDelayed(this::attachScrollListener, 200);
 
@@ -361,6 +366,10 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
     //Smooth scroll needed when starting screen
     //Ordinary scroll needed when screen rotated
     private void scrollToCorrectPosition(int mSnapViewPosition, boolean isSmooth) {
+        // Notify listener about ongoing programmatic scrolling.
+        // Programmatic scroll detection should be skipped
+        mAnalyticsPageScrolledListener.skipNextEventDetection();
+
         mRecyclerView.post(() -> {
             if (!isSmooth)
                 mRecyclerView.scrollToPosition(mSnapViewPosition);
@@ -388,12 +397,6 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
                         int position = mRecyclerView.getChildAdapterPosition(viewAtPosition);
                         updateTabIndicatorPosition(position);
                         setScrollToPosition(position);
-                        UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(UserAnalyticsEvent.PAGE_SWIPED,
-                                new HashSet<UserAnalyticsEventProperty>() {
-                                    {
-                                        add(new UserAnalyticsEventProperty.Screen(screenName));
-                                    }
-                                });
                         if (position < mMultiPageDocument.getDocuments().size() - 1)
                             mShouldScrollToLastPage = false;
                     }
@@ -424,6 +427,8 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
         if (mMultiPageDocument.getDocuments().size() == 1) {
             mRecyclerView.post(() -> showHideBlueRect(View.VISIBLE));
         }
+
+        mRecyclerView.addOnScrollListener(mAnalyticsPageScrolledListener);
     }
 
 
@@ -1021,4 +1026,12 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
         NavHostFragment.findNavController(this).navigate(MultiPageReviewFragmentDirections.toZoomInPreviewFragment(document));
     }
 
+    private void trackPageSwipedAnalyticsEvent() {
+        UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(UserAnalyticsEvent.PAGE_SWIPED,
+                new HashSet<UserAnalyticsEventProperty>() {
+                    {
+                        add(new UserAnalyticsEventProperty.Screen(screenName));
+                    }
+                });
+    }
 }
