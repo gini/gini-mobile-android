@@ -159,7 +159,7 @@ class ReviewFragment private constructor(
         viewModel.openWithPreferences = OpenWithPreferences(requireContext())
         viewModel.startObservingOpenWithCount()
         viewModel.loadPaymentDetails()
-        
+
         with(binding) {
             setStateListeners()
             setInputListeners()

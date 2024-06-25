@@ -82,7 +82,8 @@ class PaymentFlowViewModelTest {
         every { giniHealthAPI.documentManager } returns documentManager
         giniMerchant = mockk(relaxed = true)
         giniPayment = mockk(relaxed = true)
-        paymentComponent = mockk()
+        paymentComponent = mockk(relaxed = true)
+
         every { paymentComponent!!.paymentProviderAppsFlow } returns MutableStateFlow(mockk())
         every { paymentComponent!!.selectedPaymentProviderAppFlow } returns MutableStateFlow<SelectedPaymentProviderAppState>(SelectedPaymentProviderAppState.AppSelected(initialPaymentProviderApp))
         every { giniMerchant!!.giniHealthAPI } returns giniHealthAPI
