@@ -41,14 +41,14 @@ import kotlinx.coroutines.launch
 import net.gini.android.core.api.models.Document
 import net.gini.android.merchant.sdk.GiniMerchant
 import net.gini.android.merchant.sdk.R
+import net.gini.android.merchant.sdk.api.ResultWrapper
+import net.gini.android.merchant.sdk.api.payment.model.PaymentDetails
 import net.gini.android.merchant.sdk.databinding.GmsFragmentReviewBinding
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.preferences.UserPreferences
 import net.gini.android.merchant.sdk.review.installApp.InstallAppBottomSheet
 import net.gini.android.merchant.sdk.review.installApp.InstallAppForwardListener
-import net.gini.android.merchant.sdk.api.payment.model.PaymentDetails
-import net.gini.android.merchant.sdk.api.ResultWrapper
 import net.gini.android.merchant.sdk.review.openWith.OpenWithBottomSheet
 import net.gini.android.merchant.sdk.review.openWith.OpenWithForwardListener
 import net.gini.android.merchant.sdk.review.openWith.OpenWithPreferences
@@ -159,7 +159,7 @@ class ReviewFragment private constructor(
         viewModel.openWithPreferences = OpenWithPreferences(requireContext())
         viewModel.startObservingOpenWithCount()
         viewModel.loadPaymentDetails()
-
+        
         with(binding) {
             setStateListeners()
             setInputListeners()
@@ -262,6 +262,7 @@ class ReviewFragment private constructor(
 
     private fun GmsFragmentReviewBinding.handlePaymentResult(paymentResult: ResultWrapper<PaymentDetails>) {
         binding.loading.isVisible = paymentResult is ResultWrapper.Loading
+        amountLayout.isEnabled = paymentResult !is ResultWrapper.Loading && viewModel.configuration.isAmountFieldEditable
         if (paymentResult is ResultWrapper.Error) {
             handleError(getString(R.string.gms_generic_error_message)) { viewModel.retryDocumentReview() }
         }
@@ -344,17 +345,10 @@ class ReviewFragment private constructor(
     }
 
     private fun GmsFragmentReviewBinding.handlePaymentState(event: GiniMerchant.MerchantSDKEvents) {
-        (event is GiniMerchant.MerchantSDKEvents.OnLoading).let { isLoading ->
-            recipientLayout.isEnabled = !isLoading
-            ibanLayout.isEnabled = !isLoading
-            amountLayout.isEnabled = !isLoading
-            purposeLayout.isEnabled = !isLoading
-        }
         when (event) {
             is GiniMerchant.MerchantSDKEvents.OnFinishedWithPaymentRequestCreated -> {
                 if (viewModel.paymentProviderApp.value?.paymentProvider?.gpcSupported() == false) return
                 try {
-                    // TODO EC-62: Move paymentProviderApp into an internal data class when we remove the openBankState flow
                     val intent =
                         viewModel.paymentProviderApp.value?.getIntent(event.paymentRequestId)
                     if (intent != null) {

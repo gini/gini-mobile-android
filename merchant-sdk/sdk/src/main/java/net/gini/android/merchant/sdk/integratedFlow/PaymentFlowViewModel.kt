@@ -10,6 +10,7 @@ import net.gini.android.merchant.sdk.GiniMerchant
 import net.gini.android.merchant.sdk.api.ResultWrapper
 import net.gini.android.merchant.sdk.api.payment.model.PaymentDetails
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
+import net.gini.android.merchant.sdk.paymentcomponent.PaymentProviderAppsState
 import net.gini.android.merchant.sdk.paymentcomponent.SelectedPaymentProviderAppState
 import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.util.DisplayedScreen
@@ -42,6 +43,14 @@ internal class PaymentFlowViewModel(val paymentComponent: PaymentComponent?, val
         viewModelScope.launch {
             _paymentDetails.collect {paymentDetails ->
                 giniMerchant?.setDocumentForReview(documentId, paymentDetails)
+            }
+        }
+
+        viewModelScope.launch {
+            paymentComponent?.paymentProviderAppsFlow?.collect {
+                if (it !is PaymentProviderAppsState.Success) {
+                    paymentComponent.loadPaymentProviderApps()
+                }
             }
         }
     }

@@ -86,6 +86,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/import_file"
+                android:visibility="gone"
                 app:layout_constraintBottom_toTopOf="@id/take_photo"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
@@ -96,6 +97,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/take_photo"
+                android:visibility="gone"
                 app:layout_constraintBottom_toTopOf="@id/upload"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
@@ -107,6 +109,7 @@
                 android:layout_height="wrap_content"
                 android:enabled="false"
                 android:text="@string/upload"
+                android:visibility="gone"
                 app:layout_constraintBottom_toTopOf="@id/invoices_screen"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
@@ -117,6 +120,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Invoices list"
+                android:layout_marginBottom="@dimen/gms_large"
                 app:layout_constraintBottom_toTopOf="@id/gini_merchant_version"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

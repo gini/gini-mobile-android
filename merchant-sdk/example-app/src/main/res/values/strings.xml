@@ -15,7 +15,7 @@
     <string name="no_invoices">No invoices</string>
     <string name="upload_test_invoices">Upload Invoices</string>
     <string name="welcome_to_gini">Welcome to Gini</string>
-    <string name="example_of_merchant_sdk">Example of Gini Pay Connect integration in the insurance app</string>
+    <string name="example_of_merchant_sdk">Example of Gini Pay Connect integration in the merchant app</string>
     <string name="could_not_start_payment_review">Could not start payment review</string>
     <string name="title_payment_review">Your Invoice</string>
     <string name="invoice_details">Invoice details</string>
@@ -25,5 +25,5 @@
     <string name="close_screen_for_configurations_to_take_place">The configuration changes will take effect after closing this screen.</string>
     <string name="show_review_screen">Show the Review Screen</string>
     <string name="amount_editable">Amount field is editable</string>
-    <string name="gini_merchant_version">Gini Merchant SDk v: </string>
+    <string name="gini_merchant_version">Gini Merchant SDK v: </string>
 </resources>

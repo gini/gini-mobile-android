@@ -128,7 +128,7 @@ class PaymentFlowFragment private constructor(
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 viewModel.paymentComponent?.selectedPaymentProviderAppFlow?.collect {
                     if (it is SelectedPaymentProviderAppState.AppSelected) {
-                        if (viewModel.paymentProviderAppChanged(it.paymentProviderApp)) {
+                        if (viewModel.paymentProviderAppChanged(it.paymentProviderApp) && viewModel.getLastBackstackEntry() is DisplayedScreen.BankSelectionBottomSheet) {
                             handleBackFlow()
                         }
                     }

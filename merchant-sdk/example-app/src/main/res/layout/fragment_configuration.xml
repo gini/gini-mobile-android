@@ -5,7 +5,8 @@
     android:orientation="vertical"
     android:layout_marginHorizontal="@dimen/gms_medium_12"
     android:layout_marginTop="@dimen/gms_medium_10"
-    android:background="@color/white">
+    android:background="?android:windowBackground"
+    >
     <TextView
         android:id="@+id/tv_relaunchForDefaultConfiguration"
         style="@style/TextAppearance.MaterialComponents.Body1"
