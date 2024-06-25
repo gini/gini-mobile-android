@@ -39,8 +39,8 @@ jobs:
           options: >
             {
               "repo_url": "https://oss.sonatype.org/service/local/staging/deploy/maven2/",
-              "repo_user": "alpar.gini",
-              "repo_password": "${{ secrets.MAVEN_CENTRAL_PASSWORD }}",
+              "repo_user": "${{ secrets.MAVEN_CENTRAL_USER_TOKEN_USERNAME }}",
+              "repo_password": "${{ secrets.MAVEN_CENTRAL_USER_TOKEN_PASSWORD }}",
               "project_id": "bank-api-library",
               "module_id": "library",
               "build_number": "${{ github.run_number }}",
