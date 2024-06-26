@@ -202,7 +202,6 @@ class ReviewFragment private constructor(
                         payment.isEnabled = isEnabled
                         payment.alpha = if (isEnabled) 1f else 0.4f
                         payment.text = if (!isEnabled) "" else getString(R.string.gms_pay_button)
-                        paymentProgress.isVisible = !isEnabled
                     }
                 }
                 launch {
@@ -262,6 +261,7 @@ class ReviewFragment private constructor(
 
     private fun GmsFragmentReviewBinding.handlePaymentResult(paymentResult: ResultWrapper<PaymentDetails>) {
         binding.loading.isVisible = paymentResult is ResultWrapper.Loading
+        binding.paymentProgress.isVisible = paymentResult is ResultWrapper.Loading
         amountLayout.isEnabled = paymentResult !is ResultWrapper.Loading && viewModel.configuration.isAmountFieldEditable
         if (paymentResult is ResultWrapper.Error) {
             handleError(getString(R.string.gms_generic_error_message)) { viewModel.retryDocumentReview() }
