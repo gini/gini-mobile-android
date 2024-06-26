@@ -6,7 +6,6 @@ import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsE
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventSuperProperty
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsUserProperty
 import net.gini.android.capture.tracking.useranalytics.tracker.AmplitudeUserAnalyticsEventTracker
-import net.gini.android.capture.tracking.useranalytics.tracker.MixPanelUserAnalyticsEventTracker
 import org.slf4j.LoggerFactory
 import java.util.Collections
 import java.util.LinkedList
@@ -30,18 +29,6 @@ internal class BufferedUserAnalyticsEventTracker(
     fun setPlatformTokens(vararg tokens: UserAnalytics.AnalyticsApiKey) {
         tokens.forEach { token ->
             when (token) {
-                is MixPanelUserAnalyticsEventTracker.MixpanelAnalyticsApiKey -> {
-                    eventTrackers.removeIf { tracker -> tracker is MixPanelUserAnalyticsEventTracker }
-                    eventTrackers.add(
-                        MixPanelUserAnalyticsEventTracker(
-                            context = context,
-                            apiKey = token,
-                            installationIdProvider = installationIdProvider
-                        )
-                    )
-
-                    LOG.debug("Mixpanel Initialized")
-                }
 
                 is AmplitudeUserAnalyticsEventTracker.AmplitudeAnalyticsApiKey -> {
                     eventTrackers.removeIf { tracker -> tracker is AmplitudeUserAnalyticsEventTracker }

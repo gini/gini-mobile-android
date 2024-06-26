@@ -138,8 +138,6 @@ dependencies {
 
     implementation(libs.navigation.fragment.ktx)
     implementation(libs.navigation.ui.ktx)
-    implementation (libs.mixpanel)
-    implementation(libs.amplitude)
 
     testImplementation(libs.junit)
     testImplementation(libs.truth)
