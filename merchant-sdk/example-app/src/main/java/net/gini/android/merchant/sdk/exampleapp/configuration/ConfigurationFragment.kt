@@ -33,9 +33,7 @@ class ConfigurationFragment: Fragment() {
         gmsShowReviewFragment.setOnCheckedChangeListener { buttonView, isChecked ->
             gmsAmountEditable.isFocusable = isChecked
             gmsAmountEditable.isEnabled = isChecked
-            if (!isChecked) {
-                gmsAmountEditable.isChecked = false
-            }
+            gmsAmountEditable.isChecked = isChecked
             saveConfiguration()
         }
         gmsAmountEditable.setOnCheckedChangeListener { _, _ ->
