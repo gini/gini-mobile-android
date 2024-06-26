@@ -40,4 +40,28 @@
     <string name="gbs_help_online_shops_title">Welche Onlineshops werden unterstützt?</string>
     <string name="gbs_help_online_shops_text">Wir konzentrieren uns derzeit auf die beliebtesten Online-Händler auf dem Markt. Weitere Einzelhändler werden in Zukunft hinzukommen.</string>
     <string name="gbs_articles">Artikel</string>
+    <!-- region Skonto -->
+    <string name="gbs_skonto_screen_title">Skonto-Rechner</string>
+    <!--   region Section Invoice Scan -->
+    <string name="gbs_skonto_section_invoice_scan_title">Ihr Rechnungsscan</string>
+    <string name="gbs_skonto_section_invoice_scan_subtitle">Tippen Sie hier zur Ansicht</string>
+    <!--   endregion  -->
+    <!--   region Section Discount -->
+    <string name="gbs_skonto_section_discount_title">Mit Skonto</string>
+    <string name="gbs_skonto_section_discount_hint_label_enabled">  •  Aktiviert</string>
+    <string name="gbs_skonto_section_discount_info_banner_message">Zahlung in %1$s Tagen: %2$s Skonto.</string>
+    <string name="gbs_skonto_section_discount_field_amount_hint">Betrag nach Abzug</string>
+    <string name="gbs_skonto_section_discount_field_due_date_hint">Fälligkeitsdatum</string>
+    <!--   endregion -->
+    <!--   region Section Without Discount -->
+    <string name="gbs_skonto_section_without_discount_title">Ohne Skonto</string>
+    <string name="gbs_skonto_section_without_discount_hint_label_enabled">  •  Aktiviert</string>
+    <string name="gbs_skonto_section_without_discount_field_amount_hint">Betrag ohne Abzug</string>
+    <!--   endregion -->
+    <!--   region Footer -->
+    <string name="gbs_skonto_section_footer_title">Gesamtpreis</string>
+    <string name="gbs_skonto_section_footer_label_discount">%1$s Skonto</string>
+    <string name="gbs_skonto_section_footer_continue_button_text">Zahlung fortsetzen</string>
+    <!--   endregion -->
+    <!-- endregion -->
 </resources>
