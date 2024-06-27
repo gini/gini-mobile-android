@@ -46,10 +46,6 @@ import net.gini.android.merchant.sdk.databinding.GmsFragmentReviewBinding
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.preferences.UserPreferences
-import net.gini.android.merchant.sdk.review.installApp.InstallAppBottomSheet
-import net.gini.android.merchant.sdk.review.installApp.InstallAppForwardListener
-import net.gini.android.merchant.sdk.review.openWith.OpenWithBottomSheet
-import net.gini.android.merchant.sdk.review.openWith.OpenWithForwardListener
 import net.gini.android.merchant.sdk.review.openWith.OpenWithPreferences
 import net.gini.android.merchant.sdk.review.pager.DocumentPageAdapter
 import net.gini.android.merchant.sdk.util.GiniPaymentManager
@@ -58,6 +54,8 @@ import net.gini.android.merchant.sdk.util.amountWatcher
 import net.gini.android.merchant.sdk.util.autoCleared
 import net.gini.android.merchant.sdk.util.clearErrorMessage
 import net.gini.android.merchant.sdk.util.extensions.getFontScale
+import net.gini.android.merchant.sdk.util.extensions.showInstallAppBottomSheet
+import net.gini.android.merchant.sdk.util.extensions.showOpenWithBottomSheet
 import net.gini.android.merchant.sdk.util.extensions.startSharePdfIntent
 import net.gini.android.merchant.sdk.util.getLayoutInflaterWithGiniMerchantTheme
 import net.gini.android.merchant.sdk.util.hideErrorMessage
@@ -551,13 +549,12 @@ class ReviewFragment private constructor(
 
 
     private fun showInstallAppDialog(paymentProviderApp: PaymentProviderApp) {
-        val dialog = InstallAppBottomSheet.newInstance(viewModel.paymentComponent, object :
-            InstallAppForwardListener {
-            override fun onForwardToBankSelected() {
-                redirectToBankApp(paymentProviderApp)
-            }
-        }, binding.paymentDetailsScrollview.height)
-        dialog.show(requireActivity().supportFragmentManager, InstallAppBottomSheet::class.simpleName)
+        requireActivity().supportFragmentManager.showInstallAppBottomSheet(
+            paymentComponent = viewModel.paymentComponent,
+            minHeight = binding.paymentDetailsScrollview.height
+        ) {
+            redirectToBankApp(paymentProviderApp)
+        }
     }
 
     private fun redirectToBankApp(paymentProviderApp: PaymentProviderApp) {
@@ -566,12 +563,10 @@ class ReviewFragment private constructor(
     }
 
     private fun showOpenWithDialog(paymentProviderApp: PaymentProviderApp) {
-        OpenWithBottomSheet.newInstance(paymentProviderApp, object: OpenWithForwardListener {
-            override fun onForwardSelected() {
-                viewModel.onForwardToSharePdfTapped(requireContext().externalCacheDir)
-            }
-        }).also {
-            it.show(requireActivity().supportFragmentManager, it::class.java.name)
+        requireActivity().supportFragmentManager.showOpenWithBottomSheet(
+            paymentProviderApp = paymentProviderApp
+        ) {
+            viewModel.onForwardToSharePdfTapped(requireContext().externalCacheDir)
         }
         viewModel.incrementOpenWithCounter(viewModel.viewModelScope, paymentProviderApp.paymentProvider.id)
     }
