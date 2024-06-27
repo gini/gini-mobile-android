@@ -1,27 +1,24 @@
 package net.gini.android.merchant.sdk.review
 
-import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import net.gini.android.core.api.Resource
 import net.gini.android.core.api.models.Document
 import net.gini.android.merchant.sdk.GiniMerchant
 import net.gini.android.merchant.sdk.api.ResultWrapper
 import net.gini.android.merchant.sdk.api.payment.model.PaymentDetails
+import net.gini.android.merchant.sdk.api.payment.model.PaymentRequest
 import net.gini.android.merchant.sdk.api.payment.model.overwriteEmptyFields
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.merchant.sdk.paymentcomponent.SelectedPaymentProviderAppState
@@ -29,18 +26,19 @@ import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.preferences.UserPreferences
 import net.gini.android.merchant.sdk.review.openWith.OpenWithPreferences
 import net.gini.android.merchant.sdk.review.pager.DocumentPageAdapter
+import net.gini.android.merchant.sdk.util.FlowBottomSheetsManager
 import net.gini.android.merchant.sdk.util.GiniPaymentManager
+import net.gini.android.merchant.sdk.util.PaymentNextStep
 import net.gini.android.merchant.sdk.util.adjustToLocalDecimalSeparation
-import net.gini.android.merchant.sdk.util.extensions.createTempPdfFile
 import net.gini.android.merchant.sdk.util.withPrev
 import org.slf4j.LoggerFactory
 import java.io.File
 
 
-internal class ReviewViewModel(val giniMerchant: GiniMerchant, val configuration: ReviewConfiguration, val paymentComponent: PaymentComponent, val documentId: String, private val giniPaymentManager: GiniPaymentManager) : ViewModel() {
+internal class ReviewViewModel(val giniMerchant: GiniMerchant, val configuration: ReviewConfiguration, val paymentComponent: PaymentComponent, val documentId: String, private val giniPaymentManager: GiniPaymentManager) : ViewModel(), FlowBottomSheetsManager {
 
     internal var userPreferences: UserPreferences? = null
-    internal var openWithPreferences: OpenWithPreferences? = null
+    override var openWithPreferences: OpenWithPreferences? = null
 
     private val _paymentDetails = MutableStateFlow(PaymentDetails("", "", "", ""))
     val paymentDetails: StateFlow<PaymentDetails> = _paymentDetails
@@ -55,12 +53,13 @@ internal class ReviewViewModel(val giniMerchant: GiniMerchant, val configuration
     private val _paymentProviderApp = MutableStateFlow<PaymentProviderApp?>(null)
     val paymentProviderApp: StateFlow<PaymentProviderApp?> = _paymentProviderApp
 
-    private val _paymentNextStep = MutableSharedFlow<PaymentNextStep>(
+    override val paymentNextStepFlow = MutableSharedFlow<PaymentNextStep>(
         extraBufferCapacity = 1,
     )
-    val paymentNextStep: SharedFlow<PaymentNextStep> = _paymentNextStep
 
-    private var openWithCounter: Int = 0
+    val paymentNextStep: SharedFlow<PaymentNextStep> = paymentNextStepFlow
+
+    override var openWithCounter: Int = 0
 
     val isPaymentButtonEnabled: Flow<Boolean> =
         combine(giniMerchant.paymentFlow, paymentDetails) { paymentState, paymentDetails ->
@@ -132,16 +131,6 @@ internal class ReviewViewModel(val giniMerchant: GiniMerchant, val configuration
         }
     }
 
-    fun startObservingOpenWithCount() {
-        paymentProviderApp.value?.paymentProvider?.id?.let { paymentProviderAppId ->
-            viewModelScope.launch {
-                openWithPreferences?.getLiveCountForPaymentProviderId(paymentProviderAppId)?.collectLatest {
-                    openWithCounter = it ?: 0
-                }
-            }
-        }
-    }
-
     fun getPages(document: Document): List<DocumentPageAdapter.Page> {
         return (1..document.pageCount).map { pageNumber ->
             DocumentPageAdapter.Page(document.id, pageNumber)
@@ -190,68 +179,27 @@ internal class ReviewViewModel(val giniMerchant: GiniMerchant, val configuration
         }
     }
 
-    fun incrementOpenWithCounter() = viewModelScope.launch {
-        paymentProviderApp.value?.paymentProvider?.id?.let {  paymentProviderAppId ->
-            openWithPreferences?.incrementCountForPaymentProviderId(paymentProviderAppId)
+    fun onForwardToSharePdfTapped(externalCacheDir: File?) {
+        sharePdf(paymentProviderApp.value, externalCacheDir, viewModelScope)
+    }
+
+    override fun emitSDKEvent(sdkEvent: GiniMerchant.PaymentState) {
+        giniMerchant.emitSDKEvent(sdkEvent)
+    }
+
+    override fun sendFeedback() {
+        viewModelScope.launch {
+            giniPaymentManager.sendFeedbackAndStartLoading(paymentDetails.value)
         }
     }
+
+    override suspend fun getPaymentRequest(): PaymentRequest = giniPaymentManager.getPaymentRequest(paymentProviderApp.value, paymentDetails.value)
+
+    override suspend fun getPaymentRequestDocument(paymentRequest: PaymentRequest): Resource<ByteArray> =
+        giniMerchant.giniHealthAPI.documentManager.getPaymentRequestDocument(paymentRequest.id)
 
     fun onPaymentButtonTapped(externalCacheDir: File?) {
-        if (paymentProviderApp.value?.paymentProvider?.gpcSupported() == true) {
-            if (paymentProviderApp.value?.isInstalled() == true) _paymentNextStep.tryEmit(PaymentNextStep.RedirectToBank)
-            else _paymentNextStep.tryEmit(PaymentNextStep.ShowInstallApp)
-            return
-        }
-        if (openWithCounter < SHOW_OPEN_WITH_TIMES) {
-            _paymentNextStep.tryEmit(PaymentNextStep.ShowOpenWithSheet)
-        } else {
-            _paymentNextStep.tryEmit(PaymentNextStep.SetLoadingVisibility(true))
-            getFileAsByteArray(externalCacheDir)
-        }
-    }
-
-    fun onForwardToSharePdfTapped(externalCacheDir: File?) {
-        _paymentNextStep.tryEmit(PaymentNextStep.SetLoadingVisibility(true))
-        getFileAsByteArray(externalCacheDir)
-    }
-
-    @VisibleForTesting
-    internal fun getFileAsByteArray(externalCacheDir: File?) {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                giniPaymentManager.sendFeedbackAndStartLoading(paymentDetails.value)
-                val paymentRequest = try {
-                    giniPaymentManager.getPaymentRequest(paymentProviderApp.value, paymentDetails.value)
-                } catch (throwable: Throwable) {
-                    giniMerchant.emitSDKEvent(GiniMerchant.PaymentState.Error(throwable))
-                    return@withContext
-                }
-                val byteArrayResource = async {  giniMerchant.giniHealthAPI.documentManager.getPaymentRequestDocument(paymentRequest.id) }.await()
-                when (byteArrayResource) {
-                    is Resource.Cancelled -> {
-                        giniMerchant.emitSDKEvent(GiniMerchant.PaymentState.Error(Exception("Cancelled")))
-                    }
-                    is Resource.Error -> {
-                        giniMerchant.emitSDKEvent(GiniMerchant.PaymentState.Error(byteArrayResource.exception ?: Exception("Error")))
-                    }
-                    is Resource.Success -> {
-                        giniMerchant.emitSDKEvent(GiniMerchant.PaymentState.Success(paymentRequest, paymentProviderApp.value?.name ?: ""))
-                        val newFile = externalCacheDir?.createTempPdfFile(byteArrayResource.data, "payment-request")
-                        newFile?.let {
-                            _paymentNextStep.tryEmit(PaymentNextStep.OpenSharePdf(it))
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    sealed class PaymentNextStep {
-        object RedirectToBank: PaymentNextStep()
-        object ShowOpenWithSheet: PaymentNextStep()
-        object ShowInstallApp: PaymentNextStep()
-        data class OpenSharePdf(val file: File): PaymentNextStep()
-        data class SetLoadingVisibility(val isVisible: Boolean): PaymentNextStep()
+        checkNextStep(paymentProviderApp.value, externalCacheDir, viewModelScope)
     }
 
     class Factory(

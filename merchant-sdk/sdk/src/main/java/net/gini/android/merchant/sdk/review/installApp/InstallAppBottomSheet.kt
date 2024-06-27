@@ -61,6 +61,11 @@ internal class InstallAppBottomSheet private constructor(
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 viewModel.paymentProviderApp.collect { paymentProviderApp ->
                     if (paymentProviderApp != null) {
+                        binding.gmsPaymentProviderIcon.gmsPaymentProviderIcon.setImageDrawable(
+                            paymentProviderApp.icon
+                        )
+                        binding.gmsPaymentProviderIcon.gmsPaymentProviderIcon.contentDescription =
+                            "${paymentProviderApp.name} ${getString(R.string.gms_payment_provider_logo_content_description)}"
                         binding.gmsInstallAppTitle.text = String.format(
                             getString(R.string.gms_install_app_title),
                             paymentProviderApp.paymentProvider.name
