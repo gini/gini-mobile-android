@@ -9,6 +9,7 @@ import net.gini.android.merchant.sdk.review.installApp.InstallAppBottomSheet
 import net.gini.android.merchant.sdk.review.installApp.InstallAppForwardListener
 import net.gini.android.merchant.sdk.review.openWith.OpenWithBottomSheet
 import net.gini.android.merchant.sdk.review.openWith.OpenWithForwardListener
+import net.gini.android.merchant.sdk.util.BackListener
 
 fun FragmentManager.add(@IdRes containerId: Int, fragment: Fragment, addToBackStack: Boolean) {
     beginTransaction()
@@ -17,20 +18,20 @@ fun FragmentManager.add(@IdRes containerId: Int, fragment: Fragment, addToBackSt
      .commit()
 }
 
-internal fun FragmentManager.showInstallAppBottomSheet(paymentComponent: PaymentComponent, minHeight: Int, buttonClickListener: () -> Unit) {
+internal fun FragmentManager.showInstallAppBottomSheet(paymentComponent: PaymentComponent, minHeight: Int? = null, backListener: BackListener? = null, buttonClickListener: () -> Unit) {
     val dialog = InstallAppBottomSheet.newInstance(paymentComponent, object : InstallAppForwardListener {
         override fun onForwardToBankSelected() {
             buttonClickListener()
         }
-    }, minHeight)
+    }, backListener, minHeight)
     dialog.show(this, InstallAppBottomSheet::class.simpleName)
 }
 
-internal fun FragmentManager.showOpenWithBottomSheet(paymentProviderApp: PaymentProviderApp, buttonClickListener: () -> Unit) {
+internal fun FragmentManager.showOpenWithBottomSheet(paymentProviderApp: PaymentProviderApp, backListener: BackListener? = null,buttonClickListener: () -> Unit) {
     val dialog = OpenWithBottomSheet.newInstance(paymentProviderApp, object: OpenWithForwardListener {
         override fun onForwardSelected() {
             buttonClickListener()
         }
-    })
+    }, backListener)
     dialog.show(this, OpenWithBottomSheet::class.java.name)
 }

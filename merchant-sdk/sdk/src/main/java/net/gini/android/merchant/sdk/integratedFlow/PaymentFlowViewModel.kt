@@ -4,20 +4,27 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
+import net.gini.android.core.api.Resource
 import net.gini.android.merchant.sdk.GiniMerchant
 import net.gini.android.merchant.sdk.api.ResultWrapper
 import net.gini.android.merchant.sdk.api.payment.model.PaymentDetails
+import net.gini.android.merchant.sdk.api.payment.model.PaymentRequest
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentProviderAppsState
-import net.gini.android.merchant.sdk.paymentcomponent.SelectedPaymentProviderAppState
 import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
+import net.gini.android.merchant.sdk.review.openWith.OpenWithPreferences
 import net.gini.android.merchant.sdk.util.DisplayedScreen
+import net.gini.android.merchant.sdk.util.FlowBottomSheetsManager
 import net.gini.android.merchant.sdk.util.GiniPaymentManager
+import net.gini.android.merchant.sdk.util.PaymentNextStep
+import java.io.File
 import java.util.Stack
 
-internal class PaymentFlowViewModel(val paymentComponent: PaymentComponent?, val documentId: String, val paymentFlowConfiguration: PaymentFlowConfiguration?, val giniPaymentManager: GiniPaymentManager, val giniMerchant: GiniMerchant?) : ViewModel() {
+internal class PaymentFlowViewModel(val paymentComponent: PaymentComponent, val documentId: String, val paymentFlowConfiguration: PaymentFlowConfiguration?, val giniPaymentManager: GiniPaymentManager, val giniMerchant: GiniMerchant) : ViewModel(), FlowBottomSheetsManager {
 
     private val backstack: Stack<DisplayedScreen> = Stack<DisplayedScreen>().also { it.add(DisplayedScreen.Nothing) }
     private var initialSelectedPaymentProvider: PaymentProviderApp? = null
@@ -25,15 +32,8 @@ internal class PaymentFlowViewModel(val paymentComponent: PaymentComponent?, val
     private val _paymentDetails = MutableStateFlow(PaymentDetails("", "", "", ""))
 
     init {
-        when (paymentComponent?.selectedPaymentProviderAppFlow?.value) {
-            is SelectedPaymentProviderAppState.AppSelected -> {
-                initialSelectedPaymentProvider = (paymentComponent.selectedPaymentProviderAppFlow.value as SelectedPaymentProviderAppState.AppSelected) .paymentProviderApp
-            }
-            else -> {}
-        }
-
         viewModelScope.launch {
-            giniMerchant?.paymentFlow?.collect { paymentResult ->
+            giniMerchant.paymentFlow.collect { paymentResult ->
                 if (paymentResult is ResultWrapper.Success) {
                     _paymentDetails.tryEmit(paymentResult.value)
                 }
@@ -42,12 +42,12 @@ internal class PaymentFlowViewModel(val paymentComponent: PaymentComponent?, val
 
         viewModelScope.launch {
             _paymentDetails.collect {paymentDetails ->
-                giniMerchant?.setDocumentForReview(documentId, paymentDetails)
+                giniMerchant.setDocumentForReview(documentId, paymentDetails)
             }
         }
 
         viewModelScope.launch {
-            paymentComponent?.paymentProviderAppsFlow?.collect {
+            paymentComponent.paymentProviderAppsFlow.collect {
                 if (it !is PaymentProviderAppsState.Success) {
                     paymentComponent.loadPaymentProviderApps()
                 }
@@ -68,15 +68,25 @@ internal class PaymentFlowViewModel(val paymentComponent: PaymentComponent?, val
     fun getLastBackstackEntry() = if (backstack.isNotEmpty()) backstack.peek() else DisplayedScreen.Nothing
 
     fun setDisplayedScreen() {
-        giniMerchant?.setDisplayedScreen(getLastBackstackEntry())
+        giniMerchant.setDisplayedScreen(getLastBackstackEntry())
     }
 
     fun paymentProviderAppChanged(paymentProviderApp: PaymentProviderApp): Boolean {
+        if (initialSelectedPaymentProvider == null) {
+            observeOpenWithCount(paymentProviderApp.paymentProvider.id)
+        }
         if (initialSelectedPaymentProvider?.paymentProvider?.id != paymentProviderApp.paymentProvider.id) {
             initialSelectedPaymentProvider = paymentProviderApp
+            observeOpenWithCount(paymentProviderApp.paymentProvider.id)
             return true
         }
         return false
+    }
+
+    fun checkBankAppInstallState(paymentProviderApp: PaymentProviderApp) {
+        if (paymentProviderApp.isInstalled() != initialSelectedPaymentProvider?.isInstalled()) {
+            initialSelectedPaymentProvider = paymentProviderApp
+        }
     }
 
     fun onPayment() = viewModelScope.launch {
@@ -84,23 +94,57 @@ internal class PaymentFlowViewModel(val paymentComponent: PaymentComponent?, val
     }
 
     fun loadPaymentDetails() = viewModelScope.launch {
-        giniMerchant?.setDocumentForReview(documentId)
+        giniMerchant.setDocumentForReview(documentId)
     }
 
     fun onBankOpened() {
         // Schedule on the main dispatcher to allow all collectors to receive the current state before
         // the state is overridden
         viewModelScope.launch(Dispatchers.Main) {
-            giniMerchant?.emitSDKEvent(GiniMerchant.PaymentState.NoAction)
+            giniMerchant.emitSDKEvent(GiniMerchant.PaymentState.NoAction)
         }
     }
 
     fun getPaymentProviderApp() = initialSelectedPaymentProvider
 
-    class Factory(val paymentComponent: PaymentComponent?, val documentId: String, val paymentFlowConfiguration: PaymentFlowConfiguration?, val giniMerchant: GiniMerchant?): ViewModelProvider.Factory {
+    private fun observeOpenWithCount(paymentProviderAppId: String) {
+        startObservingOpenWithCount(viewModelScope, paymentProviderAppId)
+    }
+
+    class Factory(val paymentComponent: PaymentComponent, val documentId: String, private val paymentFlowConfiguration: PaymentFlowConfiguration?, val giniMerchant: GiniMerchant): ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return PaymentFlowViewModel(paymentComponent = paymentComponent, documentId = documentId, paymentFlowConfiguration = paymentFlowConfiguration, giniPaymentManager = GiniPaymentManager(giniMerchant), giniMerchant = giniMerchant) as T
         }
+    }
+
+    override var openWithPreferences: OpenWithPreferences? = null
+    override var openWithCounter: Int = 0
+    override val paymentNextStepFlow = MutableSharedFlow<PaymentNextStep>(
+        extraBufferCapacity = 1,
+    )
+
+    val paymentNextStep: SharedFlow<PaymentNextStep> = paymentNextStepFlow
+
+    override fun emitSDKEvent(sdkEvent: GiniMerchant.PaymentState) {
+        giniMerchant.emitSDKEvent(sdkEvent)
+    }
+
+    override fun sendFeedback() {
+        viewModelScope.launch {
+            giniPaymentManager.sendFeedbackAndStartLoading(_paymentDetails.value)
+        }
+    }
+
+    override suspend fun getPaymentRequest(): PaymentRequest = giniPaymentManager.getPaymentRequest(initialSelectedPaymentProvider, _paymentDetails.value)
+
+    override suspend fun getPaymentRequestDocument(paymentRequest: PaymentRequest): Resource<ByteArray> = giniMerchant.giniHealthAPI.documentManager.getPaymentRequestDocument(paymentRequest.id)
+
+    fun onPaymentButtonTapped(externalCacheDir: File?) {
+        checkNextStep(initialSelectedPaymentProvider, externalCacheDir, viewModelScope)
+    }
+
+    fun onForwardToSharePdfTapped(externalCacheDir: File?) {
+        sharePdf(initialSelectedPaymentProvider, externalCacheDir, viewModelScope)
     }
 }

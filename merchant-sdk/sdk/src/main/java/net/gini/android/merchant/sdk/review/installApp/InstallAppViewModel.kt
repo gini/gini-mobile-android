@@ -9,9 +9,10 @@ import kotlinx.coroutines.launch
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.merchant.sdk.paymentcomponent.SelectedPaymentProviderAppState
 import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
+import net.gini.android.merchant.sdk.util.BackListener
 import org.slf4j.LoggerFactory
 
-internal class InstallAppViewModel(private val paymentComponent: PaymentComponent?) : ViewModel() {
+internal class InstallAppViewModel(private val paymentComponent: PaymentComponent?, val backListener: BackListener?) : ViewModel() {
 
     private val _paymentProviderApp = MutableStateFlow<PaymentProviderApp?>(null)
     val paymentProviderApp: StateFlow<PaymentProviderApp?> = _paymentProviderApp
@@ -36,10 +37,10 @@ internal class InstallAppViewModel(private val paymentComponent: PaymentComponen
         private val LOG = LoggerFactory.getLogger(InstallAppViewModel::class.java)
     }
 
-    class Factory(private val paymentComponent: PaymentComponent?) : ViewModelProvider.Factory {
+    class Factory(private val paymentComponent: PaymentComponent?, private val backListener: BackListener?) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return InstallAppViewModel(paymentComponent) as T
+            return InstallAppViewModel(paymentComponent, backListener) as T
         }
     }
 }

@@ -31,10 +31,11 @@ internal interface FlowBottomSheetsManager {
         }
     }
 
-    fun incrementOpenWithCounter(coroutineScope: CoroutineScope, paymentProviderAppId: String) =
+    fun incrementOpenWithCounter(coroutineScope: CoroutineScope, paymentProviderAppId: String) {
         coroutineScope.launch {
             openWithPreferences?.incrementCountForPaymentProviderId(paymentProviderAppId)
         }
+    }
 
     private fun getFileAsByteArray(externalCacheDir: File?, coroutineScope: CoroutineScope) {
         coroutineScope.launch {

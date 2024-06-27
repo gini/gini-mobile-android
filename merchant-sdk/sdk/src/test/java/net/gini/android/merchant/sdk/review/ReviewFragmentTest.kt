@@ -7,6 +7,7 @@ import androidx.core.content.FileProvider
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
@@ -32,6 +33,7 @@ import net.gini.android.merchant.sdk.R
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.merchant.sdk.paymentcomponent.SelectedPaymentProviderAppState
 import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
+import net.gini.android.merchant.sdk.util.PaymentNextStep
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.Matcher
@@ -60,14 +62,14 @@ class ReviewFragmentTest {
     private lateinit var viewModel: ReviewViewModel
     private lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var context: Context
-    private lateinit var paymentNextStepSharedFlow: MutableSharedFlow<ReviewViewModel.PaymentNextStep>
+    private lateinit var paymentNextStepSharedFlow: MutableSharedFlow<PaymentNextStep>
 
     @Before
     fun setup() {
         viewModel = mockk(relaxed = true)
         context = ApplicationProvider.getApplicationContext()
         context.setTheme(R.style.GiniMerchantTheme)
-        paymentNextStepSharedFlow = MutableSharedFlow<ReviewViewModel.PaymentNextStep>(extraBufferCapacity = 1)
+        paymentNextStepSharedFlow = MutableSharedFlow(extraBufferCapacity = 1)
         configureMockViewModel(viewModel)
     }
 
@@ -82,6 +84,8 @@ class ReviewFragmentTest {
         every { viewModel.paymentValidation } returns MutableStateFlow(mockk(relaxed = true))
         every { viewModel.isPaymentButtonEnabled } returns MutableStateFlow(mockk(relaxed = true))
         every { viewModel.isInfoBarVisible } returns MutableStateFlow(mockk(relaxed = true))
+        every { viewModel.paymentProviderApp } returns MutableStateFlow(mockk(relaxed = true))
+        every { viewModel.viewModelScope } returns mockk(relaxed = true)
 
         viewModelFactory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -143,7 +147,7 @@ class ReviewFragmentTest {
         // When
         onView(withId(R.id.payment)).perform(click())
 
-        paymentNextStepSharedFlow.tryEmit(ReviewViewModel.PaymentNextStep.RedirectToBank)
+        paymentNextStepSharedFlow.tryEmit(PaymentNextStep.RedirectToBank)
 
         // Then
         verify {
@@ -184,7 +188,7 @@ class ReviewFragmentTest {
         // When
         onView(withId(R.id.payment)).perform(click())
 
-        paymentNextStepSharedFlow.tryEmit(ReviewViewModel.PaymentNextStep.RedirectToBank)
+        paymentNextStepSharedFlow.tryEmit(PaymentNextStep.RedirectToBank)
 
         // Then
         verify {
@@ -227,7 +231,7 @@ class ReviewFragmentTest {
 
         // When
         onView(withId(R.id.payment)).perform(click())
-        paymentNextStepSharedFlow.tryEmit(ReviewViewModel.PaymentNextStep.ShowInstallApp)
+        paymentNextStepSharedFlow.tryEmit(PaymentNextStep.ShowInstallApp)
 
         ShadowLooper.runUiThreadTasks()
 
@@ -270,7 +274,7 @@ class ReviewFragmentTest {
         // When
         onView(withId(R.id.payment)).perform(click())
 
-        paymentNextStepSharedFlow.tryEmit(ReviewViewModel.PaymentNextStep.ShowOpenWithSheet)
+        paymentNextStepSharedFlow.tryEmit(PaymentNextStep.ShowOpenWithSheet)
 
         ShadowLooper.runUiThreadTasks()
 
@@ -281,7 +285,7 @@ class ReviewFragmentTest {
 
     @Test
     fun `opens 'Share With' chooser after downloading PDF file`() = runTest {
-        Intents.init();
+        Intents.init()
         // Given
         val paymentProviderName = "Test Bank App"
         val paymentProviderApp: PaymentProviderApp = mockk(relaxed = true)
@@ -310,7 +314,7 @@ class ReviewFragmentTest {
             fragment
         }
 
-        paymentNextStepSharedFlow.tryEmit(ReviewViewModel.PaymentNextStep.OpenSharePdf(mockk()))
+        paymentNextStepSharedFlow.tryEmit(PaymentNextStep.OpenSharePdf(mockk()))
 
         val expectedIntent = Matchers.allOf(
             hasAction(Intent.ACTION_SEND),
