@@ -8,4 +8,5 @@ sealed class DisplayedScreen {
     object ReviewFragment : DisplayedScreen()
     object InstallAppBottomSheet: DisplayedScreen()
     object OpenWithBottomSheet: DisplayedScreen()
+    object ShareSheet: DisplayedScreen()
 }

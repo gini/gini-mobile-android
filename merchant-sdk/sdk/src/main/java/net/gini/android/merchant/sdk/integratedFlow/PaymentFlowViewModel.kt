@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -31,6 +32,15 @@ internal class PaymentFlowViewModel(val paymentComponent: PaymentComponent, val 
 
     private val _paymentDetails = MutableStateFlow(PaymentDetails("", "", "", ""))
 
+    override var openWithPreferences: OpenWithPreferences? = null
+    override var openWithCounter: Int = 0
+    override val paymentNextStepFlow = MutableSharedFlow<PaymentNextStep>(
+        extraBufferCapacity = 1,
+    )
+
+    val paymentNextStep: SharedFlow<PaymentNextStep> = paymentNextStepFlow
+
+
     init {
         viewModelScope.launch {
             giniMerchant.paymentFlow.collect { paymentResult ->
@@ -48,11 +58,18 @@ internal class PaymentFlowViewModel(val paymentComponent: PaymentComponent, val 
 
         viewModelScope.launch {
             paymentComponent.paymentProviderAppsFlow.collect {
-                if (it !is PaymentProviderAppsState.Success) {
-                    paymentComponent.loadPaymentProviderApps()
+                if (it is PaymentProviderAppsState.Error) {
+                    giniMerchant.emitSDKEvent(GiniMerchant.PaymentState.Error(it.throwable))
+                    delay(50)
+                    giniMerchant.setFlowCancelled()
                 }
             }
         }
+    }
+
+    fun loadPaymentProviderApps() = viewModelScope.launch {
+        if (paymentComponent.paymentProviderAppsFlow.value is PaymentProviderAppsState.Loading || paymentComponent.paymentProviderAppsFlow.value is PaymentProviderAppsState.Success) return@launch
+        paymentComponent.loadPaymentProviderApps()
     }
 
     fun addToBackStack(destination: DisplayedScreen) {
@@ -111,20 +128,17 @@ internal class PaymentFlowViewModel(val paymentComponent: PaymentComponent, val 
         startObservingOpenWithCount(viewModelScope, paymentProviderAppId)
     }
 
-    class Factory(val paymentComponent: PaymentComponent, val documentId: String, private val paymentFlowConfiguration: PaymentFlowConfiguration?, val giniMerchant: GiniMerchant): ViewModelProvider.Factory {
-        @Suppress("UNCHECKED_CAST")
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return PaymentFlowViewModel(paymentComponent = paymentComponent, documentId = documentId, paymentFlowConfiguration = paymentFlowConfiguration, giniPaymentManager = GiniPaymentManager(giniMerchant), giniMerchant = giniMerchant) as T
-        }
+    fun emitFinishEvent(paymentRequest: PaymentRequest) {
+        giniMerchant.emitSDKEvent(GiniMerchant.PaymentState.Success(paymentRequest, initialSelectedPaymentProvider?.name ?: ""))
     }
 
-    override var openWithPreferences: OpenWithPreferences? = null
-    override var openWithCounter: Int = 0
-    override val paymentNextStepFlow = MutableSharedFlow<PaymentNextStep>(
-        extraBufferCapacity = 1,
-    )
+    fun onPaymentButtonTapped(externalCacheDir: File?) {
+        checkNextStep(initialSelectedPaymentProvider, externalCacheDir, viewModelScope)
+    }
 
-    val paymentNextStep: SharedFlow<PaymentNextStep> = paymentNextStepFlow
+    fun onForwardToSharePdfTapped(externalCacheDir: File?) {
+        sharePdf(initialSelectedPaymentProvider, externalCacheDir, viewModelScope)
+    }
 
     override fun emitSDKEvent(sdkEvent: GiniMerchant.PaymentState) {
         giniMerchant.emitSDKEvent(sdkEvent)
@@ -140,11 +154,10 @@ internal class PaymentFlowViewModel(val paymentComponent: PaymentComponent, val 
 
     override suspend fun getPaymentRequestDocument(paymentRequest: PaymentRequest): Resource<ByteArray> = giniMerchant.giniHealthAPI.documentManager.getPaymentRequestDocument(paymentRequest.id)
 
-    fun onPaymentButtonTapped(externalCacheDir: File?) {
-        checkNextStep(initialSelectedPaymentProvider, externalCacheDir, viewModelScope)
-    }
-
-    fun onForwardToSharePdfTapped(externalCacheDir: File?) {
-        sharePdf(initialSelectedPaymentProvider, externalCacheDir, viewModelScope)
+    class Factory(val paymentComponent: PaymentComponent, val documentId: String, private val paymentFlowConfiguration: PaymentFlowConfiguration?, val giniMerchant: GiniMerchant): ViewModelProvider.Factory {
+        @Suppress("UNCHECKED_CAST")
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            return PaymentFlowViewModel(paymentComponent = paymentComponent, documentId = documentId, paymentFlowConfiguration = paymentFlowConfiguration, giniPaymentManager = GiniPaymentManager(giniMerchant), giniMerchant = giniMerchant) as T
+        }
     }
 }

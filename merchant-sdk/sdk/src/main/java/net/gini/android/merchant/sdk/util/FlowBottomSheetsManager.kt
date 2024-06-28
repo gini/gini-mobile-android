@@ -62,11 +62,9 @@ internal interface FlowBottomSheetsManager {
                         emitSDKEvent(GiniMerchant.PaymentState.Error(byteArrayResource.exception ?: Exception("Error")))
                     }
                     is Resource.Success -> {
-                        // TODO emit it somewhere else? if we emit here the flow is exited...or change it in the example app
-//                        emitSDKEvent(GiniMerchant.PaymentState.Success(paymentRequest, paymentProviderApp?.name ?: ""))
                         val newFile = externalCacheDir?.createTempPdfFile(byteArrayResource.data, "payment-request")
                         newFile?.let {
-                            emitPaymentNextStep(PaymentNextStep.OpenSharePdf(it))
+                            emitPaymentNextStep(PaymentNextStep.OpenSharePdf(file = it, paymentRequest = paymentRequest))
                         }
                     }
                 }

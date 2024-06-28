@@ -586,6 +586,7 @@ class ReviewFragment private constructor(
             is PaymentNextStep.OpenSharePdf -> {
                 binding.loading.isVisible = false
                 startSharePdfIntent(paymentNextStep.file)
+                viewModel.giniMerchant.emitSDKEvent(GiniMerchant.PaymentState.Success(paymentNextStep.paymentRequest, viewModel.paymentProviderApp.value?.name ?: ""))
             }
         }
     }

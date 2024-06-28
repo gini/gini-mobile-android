@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -86,6 +87,7 @@ class PaymentFlowFragment private constructor(
     private val viewModel by viewModels<PaymentFlowViewModel> {
         viewModelFactory ?: object : ViewModelProvider.Factory {}
     }
+    private var snackbar: Snackbar? = null
 
     private val paymentComponentListener = object: PaymentComponent.Listener {
         override fun onMoreInformationClicked() {
@@ -126,9 +128,11 @@ class PaymentFlowFragment private constructor(
         if (viewModel.paymentFlowConfiguration?.shouldShowReviewFragment == false) {
             binding.setStateListeners()
         }
+
         viewModel.paymentComponent.listener = paymentComponentListener
         viewModel.openWithPreferences = OpenWithPreferences(requireContext())
         viewModel.loadPaymentDetails()
+        viewModel.loadPaymentProviderApps()
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 launch {
@@ -162,6 +166,11 @@ class PaymentFlowFragment private constructor(
         })
     }
 
+    override fun onDetach() {
+        snackbar?.dismiss()
+        super.onDetach()
+    }
+
     private fun GmsFragmentMerchantBinding.setStateListeners() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
@@ -188,7 +197,7 @@ class PaymentFlowFragment private constructor(
 
     private fun GmsFragmentMerchantBinding.showSnackbar(text: String, onRetry: () -> Unit) {
         val context = requireContext().wrappedWithGiniMerchantTheme()
-        Snackbar.make(context, root, text, Snackbar.LENGTH_INDEFINITE).apply {
+        snackbar = Snackbar.make(context, root, text, Snackbar.LENGTH_INDEFINITE).apply {
             setTextMaxLines(2)
             setAction(getString(R.string.gms_snackbar_retry)) { onRetry() }
             show()
@@ -255,22 +264,24 @@ class PaymentFlowFragment private constructor(
     private fun GmsFragmentMerchantBinding.handleSDKEvent(sdkEvent: GiniMerchant.MerchantSDKEvents) {
         when (sdkEvent) {
             is GiniMerchant.MerchantSDKEvents.OnFinishedWithPaymentRequestCreated -> {
+                if (viewModel.getLastBackstackEntry() is DisplayedScreen.ShareSheet) return
                 try {
                     val intent = viewModel.getPaymentProviderApp()?.getIntent(sdkEvent.paymentRequestId)
                     if (intent != null) {
                         startActivity(intent)
                         viewModel.onBankOpened()
                     } else {
-                        handleError(getString(R.string.gms_generic_error_message)) { viewModel.onPayment() }
+                        handleError(getString(R.string.gms_generic_error_message)) { viewModel.onPaymentButtonTapped(requireContext().externalCacheDir) }
                     }
                 } catch (exception: ActivityNotFoundException) {
-                    handleError(getString(R.string.gms_generic_error_message)) { viewModel.onPayment() }
+                    handleError(getString(R.string.gms_generic_error_message)) { viewModel.onPaymentButtonTapped(requireContext().externalCacheDir) }
                 }
             }
             is GiniMerchant.MerchantSDKEvents.OnErrorOccurred -> {
-                handleError(getString(R.string.gms_generic_error_message)) { viewModel.onPayment() }
+                binding.loading.isVisible = false
+                handleError(getString(R.string.gms_generic_error_message)) { viewModel.onPaymentButtonTapped(requireContext().externalCacheDir) }
             }
-            else -> { // Loading is already handled
+            else -> {
             }
         }
     }
@@ -278,7 +289,7 @@ class PaymentFlowFragment private constructor(
     private fun handlePaymentNextStep(paymentNextStep: PaymentNextStep) {
         when (paymentNextStep) {
             is PaymentNextStep.SetLoadingVisibility -> {
-//                binding.loading.isVisible = paymentNextStep.isVisible
+                binding.loading.isVisible = paymentNextStep.isVisible
             }
             PaymentNextStep.RedirectToBank -> {
                 viewModel.onPayment()
@@ -286,8 +297,10 @@ class PaymentFlowFragment private constructor(
             PaymentNextStep.ShowOpenWithSheet -> viewModel.getPaymentProviderApp()?.let { showOpenWithDialog(it) }
             PaymentNextStep.ShowInstallApp -> showInstallAppDialog()
             is PaymentNextStep.OpenSharePdf -> {
-//                binding.loading.isVisible = false
+                binding.loading.isVisible = false
                 startSharePdfIntent(paymentNextStep.file)
+                viewModel.addToBackStack(DisplayedScreen.ShareSheet)
+                viewModel.emitFinishEvent(paymentNextStep.paymentRequest)
             }
         }
     }

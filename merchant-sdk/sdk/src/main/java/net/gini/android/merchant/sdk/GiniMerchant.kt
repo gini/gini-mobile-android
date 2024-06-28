@@ -235,7 +235,6 @@ class GiniMerchant(
         paymentFlowConfiguration = flowConfiguration ?: PaymentFlowConfiguration()
     )
 
-    //TODO set payment provider app name after making payment provider app internal
     internal fun emitSDKEvent(state: PaymentState) {
         when (state) {
             is PaymentState.Success -> _eventsFlow.tryEmit(
@@ -320,6 +319,10 @@ class GiniMerchant(
 
     internal fun setDisplayedScreen(displayedScreen: DisplayedScreen) {
         _eventsFlow.tryEmit(MerchantSDKEvents.OnScreenDisplayed(displayedScreen))
+    }
+
+    internal fun setFlowCancelled() {
+        _eventsFlow.tryEmit(MerchantSDKEvents.OnFinishedWithCancellation())
     }
 
     // TODO add documentation & load payment providers internally if clients didn't to it when attempting to start flow

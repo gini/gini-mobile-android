@@ -6,8 +6,6 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentProviderAppsState
@@ -35,7 +33,7 @@ internal class MoreInformationViewModel(private val paymentComponent: PaymentCom
                         processError(paymentProviderAppsState.throwable)
                     }
 
-                    PaymentProviderAppsState.Loading -> {}
+                    PaymentProviderAppsState.Loading, PaymentProviderAppsState.Nothing -> {}
                     is PaymentProviderAppsState.Success -> {
                         if (paymentProviderAppsState.paymentProviderApps.isEmpty()) {
                             LOG.debug("No payment provider apps received")
