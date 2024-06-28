@@ -7,6 +7,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.savedstate.SavedStateRegistry
 import androidx.savedstate.SavedStateRegistryOwner
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -143,9 +144,12 @@ class GiniHealth(
         }
     }
 
-    internal fun setOpenBankState(state: PaymentState) {
+    internal fun setOpenBankState(state: PaymentState, scope: CoroutineScope) {
         _openBankState.value = state
-        _openBankState.value = PaymentState.NoAction
+        scope.launch {
+            delay(50)
+            _openBankState.value = PaymentState.NoAction
+        }
     }
 
     internal suspend fun retryDocumentReview() {

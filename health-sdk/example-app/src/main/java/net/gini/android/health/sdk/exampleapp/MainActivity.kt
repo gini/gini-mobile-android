@@ -15,6 +15,7 @@ import ch.qos.logback.classic.encoder.PatternLayoutEncoder
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.coroutines.launch
 import net.gini.android.health.sdk.exampleapp.databinding.ActivityMainBinding
+import net.gini.android.health.sdk.exampleapp.invoices.ui.AppCompatThemeInvoicesActivity
 import net.gini.android.health.sdk.exampleapp.invoices.ui.InvoicesActivity
 import net.gini.android.health.sdk.exampleapp.pager.PagerAdapter
 import net.gini.android.health.sdk.exampleapp.review.ReviewActivity
@@ -71,6 +72,10 @@ class MainActivity : AppCompatActivity() {
 
         binding.invoicesScreen.setOnClickListener {
             startActivity(Intent(this, InvoicesActivity::class.java))
+        }
+
+        binding.appcompatThemeInvoicesScreen.setOnClickListener {
+            startActivity(Intent(this, AppCompatThemeInvoicesActivity::class.java))
         }
 
         configureLogging()

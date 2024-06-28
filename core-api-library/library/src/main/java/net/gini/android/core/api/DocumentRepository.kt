@@ -11,6 +11,7 @@ import net.gini.android.core.api.models.CompoundExtraction
 import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.models.Extraction
 import net.gini.android.core.api.models.ExtractionsContainer
+import net.gini.android.core.api.models.Payment
 import net.gini.android.core.api.models.PaymentRequest
 import net.gini.android.core.api.models.SpecificExtraction
 import net.gini.android.core.api.models.toPaymentRequest
@@ -61,10 +62,10 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
     private suspend fun getDocumentInternal(accessToken: String, documentId: String): Document =
         Document.fromApiResponse(JSONObject(documentRemoteSource.getDocument(accessToken, documentId)))
 
-    suspend fun createPartialDocument(documentData: ByteArray, contentType: String,
-                                      filename: String? = null,
-                                      documentType: DocumentManager.DocumentType? = null,
-                                      documentMetadata: DocumentMetadata? = null): Resource<Document> =
+    open suspend fun createPartialDocument(documentData: ByteArray, contentType: String,
+                                           filename: String? = null,
+                                           documentType: DocumentManager.DocumentType? = null,
+                                           documentMetadata: DocumentMetadata? = null): Resource<Document> =
         withAccessToken { accessToken ->
             wrapInResource {
                 val uri = documentRemoteSource.uploadDocument(
@@ -260,6 +261,13 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
             }
         }
     }
+
+    suspend fun getPayment(id: String): Resource<Payment> =
+        withAccessToken { accessToken ->
+            wrapInResource {
+                documentRemoteSource.getPayment(accessToken, id)
+            }
+        }
 
     @Throws(JSONException::class)
     fun parseSpecificExtractions(specificExtractionsJson: JSONObject, candidates: Map<String, List<Extraction>>): Map<String, SpecificExtraction> {

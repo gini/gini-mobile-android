@@ -1,2 +1,0 @@
--e git+https://github.com/gini/gini_sphinx_theme_vision.git#egg=gini_sphinx_theme-master
-docutils==0.17.1

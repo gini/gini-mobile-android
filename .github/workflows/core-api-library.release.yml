@@ -8,7 +8,7 @@ on:
 
 jobs:
   check:
-    uses: gini/gini-mobile-android/.github/workflows/core-api-library.check.yml@main
+    uses: ./.github/workflows/core-api-library.check.yml
 
   release:
     needs: check
@@ -37,8 +37,8 @@ jobs:
           options: >
             {
               "repo_url": "https://oss.sonatype.org/service/local/staging/deploy/maven2/",
-              "repo_user": "alpar.gini",
-              "repo_password": "${{ secrets.MAVEN_CENTRAL_PASSWORD }}",
+              "repo_user": "${{ secrets.MAVEN_CENTRAL_USER_TOKEN_USERNAME }}",
+              "repo_password": "${{ secrets.MAVEN_CENTRAL_USER_TOKEN_PASSWORD }}",
               "project_id": "core-api-library",
               "module_id": "library",
               "build_number": "${{ github.run_number }}",

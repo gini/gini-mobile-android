@@ -23,7 +23,7 @@ import org.junit.Before
 import org.junit.Test
 
 val document =
-    Document("1234", Document.ProcessingState.COMPLETED, "", 1, Date(124), Document.SourceClassification.COMPOSITE, Uri.EMPTY, emptyList(), emptyList())
+    Document("1234", Document.ProcessingState.COMPLETED, "", 1, Date(124), Date(100), Document.SourceClassification.COMPOSITE, Uri.EMPTY, emptyList(), emptyList())
 
 val extractions = ExtractionsContainer(
     emptyMap(),

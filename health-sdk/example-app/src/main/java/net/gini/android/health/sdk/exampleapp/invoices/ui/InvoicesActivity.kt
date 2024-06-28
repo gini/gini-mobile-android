@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
@@ -19,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.bankselection.BankSelectionBottomSheet
 import net.gini.android.health.sdk.exampleapp.R
 import net.gini.android.health.sdk.exampleapp.databinding.ActivityInvoicesBinding
@@ -26,8 +26,8 @@ import net.gini.android.health.sdk.exampleapp.invoices.data.UploadHardcodedInvoi
 import net.gini.android.health.sdk.exampleapp.invoices.data.UploadHardcodedInvoicesState.Loading
 import net.gini.android.health.sdk.exampleapp.invoices.ui.model.InvoiceItem
 import net.gini.android.health.sdk.moreinformation.MoreInformationFragment
-import net.gini.android.health.sdk.paymentcomponent.PaymentComponentView
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
+import net.gini.android.health.sdk.paymentcomponent.PaymentComponentView
 import net.gini.android.health.sdk.paymentcomponent.PaymentProviderAppsState.Error
 import net.gini.android.health.sdk.review.ReviewFragment
 import net.gini.android.health.sdk.review.ReviewFragmentListener
@@ -35,7 +35,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.slf4j.LoggerFactory
 import net.gini.android.health.sdk.paymentcomponent.PaymentProviderAppsState.Loading as LoadingBankApp
 
-class InvoicesActivity : AppCompatActivity() {
+open class InvoicesActivity : AppCompatActivity() {
 
     private val viewModel: InvoicesViewModel by viewModel()
 
@@ -100,33 +100,12 @@ class InvoicesActivity : AppCompatActivity() {
                     }
                 }
                 launch {
-                    viewModel.paymentReviewFragmentStateFlow.collect { paymentReviewFragmentState ->
-                        when (paymentReviewFragmentState) {
-                            is PaymentReviewFragmentState.Error -> {
-                                AlertDialog.Builder(this@InvoicesActivity)
-                                    .setTitle(getString(R.string.could_not_start_payment_review))
-                                    .setMessage(paymentReviewFragmentState.throwable.message)
-                                    .setPositiveButton(android.R.string.ok, null)
-                                    .show()
+                    viewModel.openBankState.collect { paymentState ->
+                        when (paymentState) {
+                            is GiniHealth.PaymentState.Success -> {
+                                viewModel.updateDocument()
                             }
-
-                            PaymentReviewFragmentState.Idle -> {}
-                            PaymentReviewFragmentState.Loading -> {
-                                showLoadingIndicator(binding)
-                            }
-
-                            is PaymentReviewFragmentState.Success -> {
-                                hideLoadingIndicator(binding)
-
-                                val paymentReviewFragment = paymentReviewFragmentState.fragment
-
-                                paymentReviewFragment.listener = reviewFragmentListener
-
-                                supportFragmentManager.beginTransaction()
-                                    .replace(R.id.fragment_container, paymentReviewFragment, REVIEW_FRAGMENT_TAG)
-                                    .addToBackStack(null)
-                                    .commit()
-                            }
+                            else -> {}
                         }
                     }
                 }
@@ -162,6 +141,22 @@ class InvoicesActivity : AppCompatActivity() {
                 LOG.debug("Pay invoice clicked")
 
                 viewModel.getPaymentReviewFragment(documentId)
+                    .onSuccess { reviewFragment ->
+                        reviewFragment.listener = reviewFragmentListener
+
+                        supportFragmentManager.beginTransaction()
+                            .replace(R.id.fragment_container, reviewFragment, REVIEW_FRAGMENT_TAG)
+                            .addToBackStack(null)
+                            .commit()
+                    }
+                    .onFailure { throwable ->
+                        LOG.error("Error getting payment review fragment", throwable)
+                        AlertDialog.Builder(this@InvoicesActivity)
+                            .setTitle(getString(R.string.could_not_start_payment_review))
+                            .setMessage(throwable.message)
+                            .setPositiveButton(android.R.string.ok, null)
+                            .show()
+                    }
             }
         }
 

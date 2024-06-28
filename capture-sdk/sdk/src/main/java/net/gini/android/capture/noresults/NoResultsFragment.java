@@ -22,6 +22,7 @@ import net.gini.android.capture.EnterManuallyButtonListener;
 import net.gini.android.capture.R;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.util.AlertDialogHelperCompat;
+import net.gini.android.capture.internal.util.CancelListener;
 
 /**
  * Internal use only.
@@ -31,11 +32,16 @@ public class NoResultsFragment extends Fragment implements FragmentImplCallback 
     private NoResultsFragmentImpl mFragmentImpl;
     private final String ARGS_DOCUMENT = "GC_ARGS_DOCUMENT";
 
-    public void setListener(@Nullable final EnterManuallyButtonListener listener) {
+    public void setListeners(@Nullable final EnterManuallyButtonListener listener) {
         mListener = listener;
     }
 
+    public void setCancelListener(@NonNull final CancelListener cancelListener) {
+        mCancelListener = cancelListener;
+    }
+
     private EnterManuallyButtonListener mListener;
+    private CancelListener mCancelListener;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -80,7 +86,7 @@ public class NoResultsFragment extends Fragment implements FragmentImplCallback 
                                              @NonNull final Bundle arguments) {
         final Document document = arguments.getParcelable(ARGS_DOCUMENT);
         if (document != null) {
-            return new NoResultsFragmentImpl(fragment, document);
+            return new NoResultsFragmentImpl(fragment, document, mCancelListener);
         } else {
             throw new IllegalStateException(
                     "NoResultsFragmentCompat requires a Document. Use the createInstance() method of these classes for instantiating.");

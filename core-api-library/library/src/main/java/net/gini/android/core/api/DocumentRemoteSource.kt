@@ -3,6 +3,8 @@ package net.gini.android.core.api
 import android.net.Uri
 import kotlinx.coroutines.withContext
 import net.gini.android.core.api.authorization.apimodels.SessionToken
+import net.gini.android.core.api.models.Payment
+import net.gini.android.core.api.models.toPayment
 import net.gini.android.core.api.requests.ApiException
 import net.gini.android.core.api.requests.BearerAuthorizatonHeader
 import net.gini.android.core.api.requests.SafeApiRequest
@@ -102,6 +104,13 @@ abstract class DocumentRemoteSource(
             documentService.getPaymentRequests(bearerHeaderMap(accessToken, contentType = giniApiType.giniJsonMediaType))
         }
         response.body() ?: throw ApiException.forResponse("Empty response body", response)
+    }
+
+    suspend fun getPayment(accessToken: String, id: String): Payment = withContext(coroutineContext) {
+        val response = SafeApiRequest.apiRequest {
+            documentService.getPayment(bearerHeaderMap(accessToken, giniApiType.giniJsonMediaType), id)
+        }
+        response.body()?.toPayment() ?: throw ApiException.forResponse("Empty response body", response)
     }
 
     protected fun bearerHeaderMap(

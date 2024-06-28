@@ -8,7 +8,7 @@ on:
 
 jobs:
   check:
-    uses: gini/gini-mobile-android/.github/workflows/health-sdk.check.yml@main
+    uses: ./.github/workflows/health-sdk.check.yml
     secrets:
       GINI_MOBILE_TEST_CLIENT_SECRET: ${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}
       HEALTH_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD: ${{ secrets.HEALTH_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}
@@ -40,8 +40,8 @@ jobs:
           options: >
             {
               "repo_url": "https://oss.sonatype.org/service/local/staging/deploy/maven2/",
-              "repo_user": "alpar.gini",
-              "repo_password": "${{ secrets.MAVEN_CENTRAL_PASSWORD }}",
+              "repo_user": "${{ secrets.MAVEN_CENTRAL_USER_TOKEN_USERNAME }}",
+              "repo_password": "${{ secrets.MAVEN_CENTRAL_USER_TOKEN_PASSWORD }}",
               "project_id": "health-sdk",
               "module_id": "sdk",
               "build_number": "${{ github.run_number }}",
@@ -52,7 +52,7 @@ jobs:
 
   release-documentation:
     needs: release
-    uses: gini/gini-mobile-android/.github/workflows/health-sdk.docs.release.yml@main
+    uses: ./.github/workflows/health-sdk.docs.release.yml
     secrets:
       RELEASE_GITHUB_USER: ${{ secrets.RELEASE_GITHUB_USER }}
       RELEASE_GITHUB_PASSWORD: ${{ secrets.RELEASE_GITHUB_PASSWORD }}

@@ -13,8 +13,12 @@ import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.spyk
 import io.mockk.unmockkAll
+import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import net.gini.android.core.api.Resource
 import net.gini.android.health.api.GiniHealthAPI
@@ -50,6 +54,9 @@ class PaymentComponentTest {
     private var giniHealth: GiniHealth? = null
     private val giniHealthAPI: GiniHealthAPI = mockk(relaxed = true) { GiniHealthAPI::class.java }
     private val documentManager: HealthApiDocumentManager = mockk { HealthApiDocumentManager::class.java }
+    private val testCoroutineDispatcher = StandardTestDispatcher()
+    private val testCoroutineScope =
+        TestScope(testCoroutineDispatcher + Job())
 
     private val paymentProvider = PaymentProvider(
         id = "payment provider id",
@@ -62,7 +69,8 @@ class PaymentComponentTest {
         ),
         icon = byteArrayOf(),
         playStoreUrl = "",
-        gpcSupportedPlatforms = listOf("android")
+        gpcSupportedPlatforms = listOf("android"),
+        openWithSupportedPlatforms = listOf("android")
         )
 
     private val paymentProvider1 = PaymentProvider(
@@ -76,7 +84,8 @@ class PaymentComponentTest {
         ),
         icon = byteArrayOf(),
         playStoreUrl = "",
-        gpcSupportedPlatforms = listOf("android")
+        gpcSupportedPlatforms = listOf("android"),
+        openWithSupportedPlatforms = listOf("android")
         )
 
     private val paymentProvider2 = PaymentProvider(
@@ -90,7 +99,8 @@ class PaymentComponentTest {
         ),
         icon = byteArrayOf(),
         playStoreUrl = "",
-        gpcSupportedPlatforms = listOf("android")
+        gpcSupportedPlatforms = listOf("android"),
+        openWithSupportedPlatforms = listOf("android")
     )
 
     private val noPlayStoreUrlPaymentProvider = PaymentProvider(
@@ -103,7 +113,8 @@ class PaymentComponentTest {
             textColoRGBHex = "ffffff"
         ),
         icon = byteArrayOf(),
-        gpcSupportedPlatforms = listOf("android")
+        gpcSupportedPlatforms = listOf("android"),
+        openWithSupportedPlatforms = listOf("android")
     )
 
     @Before
@@ -115,6 +126,11 @@ class PaymentComponentTest {
 
     @After
     fun tearDown() {
+        testCoroutineScope.runTest {
+            PaymentComponentPreferences(context!!).apply {
+                clearData()
+            }
+        }
         giniHealth = null
         context = null
         unmockkAll()
@@ -414,7 +430,7 @@ class PaymentComponentTest {
     }
 
     @Test(expected = IllegalStateException::class)
-    fun `throws exception when trying to create ReviewFragment if no payment provider app is set`() = runTest {
+    fun `throws exception when trying to create ReviewFragment if no payment provider app is set`() {
         // Given
         val reviewConfiguration: ReviewConfiguration = mockk(relaxed = true)
         val paymentComponent = PaymentComponent(context!!, giniHealth!!)
@@ -424,7 +440,7 @@ class PaymentComponentTest {
     }
 
     @Test
-    fun `instantiates review fragment if payment provider app is set`() = runTest {
+    fun `instantiates review fragment if payment provider app is set`() {
         // Given
         val reviewConfiguration: ReviewConfiguration = mockk(relaxed = true)
         val paymentComponent: PaymentComponent = mockk(relaxed = true)
@@ -506,4 +522,56 @@ class PaymentComponentTest {
 
         paymentComponentPreferences.deleteSelectedPaymentProviderId()
     }
+
+    @Test
+    fun `rechecks returning user`() = runTest {
+        // Given
+        val paymentComponent = PaymentComponent(context!!, giniHealth!!)
+
+        paymentComponent.checkReturningUser()
+
+        paymentComponent.returningUserFlow.test {
+            assertThat(awaitItem()).isEqualTo(false)
+
+            // When
+            paymentComponent.paymentComponentPreferences.saveReturningUser()
+            paymentComponent.checkReturningUser()
+
+            // Then
+            assertThat(awaitItem()).isEqualTo(true)
+        }
+    }
+
+    @Test
+    fun `calls to save returning user`() = runTest {
+        // Given
+        val paymentComponent = PaymentComponent(context!!, giniHealth!!)
+
+        paymentComponent.checkReturningUser()
+
+        paymentComponent.returningUserFlow.test {
+            assertThat(awaitItem()).isEqualTo(false)
+
+            // When
+            paymentComponent.onPayInvoiceClicked("123")
+            paymentComponent.checkReturningUser()
+
+            // Then
+            assertThat(awaitItem()).isEqualTo(true)
+        }
+    }
+
+    @Test
+    fun `forwards onPay call to listener`() = runTest {
+        // Given
+        val paymentComponent = PaymentComponent(context!!, giniHealth!!)
+        paymentComponent.listener = mockk(relaxed = true)
+
+        // When
+        paymentComponent.onPayInvoiceClicked("123")
+
+        // Then
+        verify { paymentComponent.listener?.onPayInvoiceClicked("123") }
+    }
+
 }

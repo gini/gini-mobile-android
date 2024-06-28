@@ -9,6 +9,7 @@ import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import net.gini.android.core.api.response.PaymentRequestResponse
+import net.gini.android.core.api.response.PaymentResponse
 import net.gini.android.health.api.models.PaymentRequestInput
 import net.gini.android.health.api.requests.PaymentRequestBody
 import net.gini.android.health.api.response.AppVersionResponse
@@ -116,6 +117,7 @@ class HealthApiDocumentRemoteSourceTest {
                         Colors("", ""),
                         "",
                         "",
+                        listOf(),
                         listOf()
                     )
                 )
@@ -127,7 +129,7 @@ class HealthApiDocumentRemoteSourceTest {
             documentId: String
         ): Response<PaymentProviderResponse> {
             bearerAuthHeader = bearer["Authorization"]
-            return Response.success(PaymentProviderResponse("", "", "", AppVersionResponse(""), Colors("", ""), "", "", listOf()))
+            return Response.success(PaymentProviderResponse("", "", "", AppVersionResponse(""), Colors("", ""), "", "", listOf("android"), listOf()))
         }
 
         override suspend fun createPaymentRequest(
@@ -136,6 +138,11 @@ class HealthApiDocumentRemoteSourceTest {
         ): Response<ResponseBody> {
             bearerAuthHeader = bearer["Authorization"]
             return Response.success(null, Headers.Builder().set("Location", "somewhere").build())
+        }
+
+        override suspend fun getPayment(bearer: Map<String, String>, id: String): Response<PaymentResponse> {
+            bearerAuthHeader = bearer["Authorization"]
+            return Response.success(PaymentResponse("", "", "", null, "", ""))
         }
 
         override suspend fun uploadDocument(

@@ -1,5 +1,11 @@
 package net.gini.android.capture.review.multipage;
 
+import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
+import static net.gini.android.capture.internal.util.FileImportHelper.showAlertIfOpenWithDocumentAndAppIsDefault;
+import static net.gini.android.capture.internal.util.FragmentExtensionsKt.getLayoutInflaterWithGiniCaptureTheme;
+import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
+import static net.gini.android.capture.tracking.EventTrackingHelper.trackReviewScreenEvent;
+
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.net.Uri;
@@ -50,6 +56,7 @@ import net.gini.android.capture.review.multipage.view.ReviewNavigationBarBottomA
 import net.gini.android.capture.tracking.AnalysisScreenEvent;
 import net.gini.android.capture.tracking.ReviewScreenEvent;
 import net.gini.android.capture.tracking.ReviewScreenEvent.UPLOAD_ERROR_DETAILS_MAP_KEY;
+import net.gini.android.capture.internal.util.CancelListener;
 import net.gini.android.capture.view.InjectedViewAdapterHolder;
 import net.gini.android.capture.view.InjectedViewContainer;
 import net.gini.android.capture.view.NavButtonType;
@@ -64,12 +71,6 @@ import java.util.Map;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
 import kotlin.Unit;
-
-import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
-import static net.gini.android.capture.internal.util.FileImportHelper.showAlertIfOpenWithDocumentAndAppIsDefault;
-import static net.gini.android.capture.internal.util.FragmentExtensionsKt.getLayoutInflaterWithGiniCaptureTheme;
-import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
-import static net.gini.android.capture.tracking.EventTrackingHelper.trackReviewScreenEvent;
 
 /**
  * Created by Alpar Szotyori on 07.05.2018.
@@ -111,6 +112,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
     private boolean isBottomNavigationBarLoadingIndicatorActive;
 
     private boolean mShouldScrollToLastPage = false;
+    private CancelListener mCancelListener;
     private int mScrollToPosition = -1;
     private final String KEY_SHOULD_SCROLL_TO_LAST_PAGE = "GC_SHOULD_SCROLL_TO_LAST_PAGE";
     private final String KEY_SCROLL_TO_POSITION = "GC_SHOULD_SCROLL_TO_LAST_PAGE";
@@ -137,12 +139,9 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
         OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
             @Override
             public void handleOnBackPressed() {
-                trackReviewScreenEvent(ReviewScreenEvent.BACK);
+                onBack();
                 setEnabled(false);
                 remove();
-                if (getActivity() != null) {
-                    getActivity().getOnBackPressedDispatcher().onBackPressed();
-                }
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
@@ -183,6 +182,10 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
         mInstanceStateSaved = true;
         outState.putBoolean(KEY_SHOULD_SCROLL_TO_LAST_PAGE, mShouldScrollToLastPage);
         outState.putInt(KEY_SCROLL_TO_POSITION, mScrollToPosition);
+    }
+
+    public void setCancelListener(CancelListener cancelListener) {
+        mCancelListener = cancelListener;
     }
 
     public void showAlertDialog(@NonNull final String message,
@@ -516,7 +519,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
 
                         injectedViewAdapter.setOnNavButtonClickListener(new IntervalClickListener(v -> {
                             if (getActivity() != null) {
-                                getActivity().getOnBackPressedDispatcher().onBackPressed();
+                                onBack();
                             }
                         }));
                     }));
@@ -931,6 +934,14 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
             mMultiPageDocument = null; // NOPMD
             GiniCapture.getInstance().internal()
                     .getImageMultiPageDocumentMemoryStore().clear();
+        }
+    }
+
+    private void onBack() {
+        boolean popBackStack = NavHostFragment.findNavController(this).popBackStack();
+        if (!popBackStack) {
+            trackReviewScreenEvent(ReviewScreenEvent.BACK);
+            mCancelListener.onCancelFlow();
         }
     }
 

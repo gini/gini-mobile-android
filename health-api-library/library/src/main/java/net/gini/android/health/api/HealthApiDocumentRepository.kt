@@ -1,11 +1,14 @@
 package net.gini.android.health.api
 
 import android.util.Size
+import net.gini.android.core.api.DocumentManager
+import net.gini.android.core.api.DocumentMetadata
 import net.gini.android.core.api.DocumentRepository
 import net.gini.android.core.api.Resource
 import net.gini.android.core.api.Resource.Companion.wrapInResource
 import net.gini.android.core.api.authorization.SessionManager
 import net.gini.android.core.api.models.CompoundExtraction
+import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.models.ExtractionsContainer
 import net.gini.android.core.api.models.SpecificExtraction
 import net.gini.android.health.api.models.Page
@@ -14,6 +17,7 @@ import net.gini.android.health.api.models.PaymentRequestInput
 import net.gini.android.health.api.models.getPageByPageNumber
 import net.gini.android.health.api.models.toPageList
 import net.gini.android.health.api.models.toPaymentProvider
+import net.gini.android.health.api.util.ImageCompression
 import org.json.JSONObject
 
 /**
@@ -30,6 +34,20 @@ class HealthApiDocumentRepository(
     sessionManager: SessionManager,
     private val giniApiType: GiniHealthApiType
 ) : DocumentRepository<ExtractionsContainer>(documentRemoteSource, sessionManager, giniApiType) {
+
+    override suspend fun createPartialDocument(documentData: ByteArray, contentType: String,
+                                               filename: String?,
+                                               documentType: DocumentManager.DocumentType?,
+                                               documentMetadata: DocumentMetadata?
+    ): Resource<Document> {
+        return super.createPartialDocument(
+            ImageCompression.compressIfImageAndExceedsSizeLimit(documentData),
+            contentType,
+            filename,
+            documentType,
+            documentMetadata
+        )
+    }
 
     override fun createExtractionsContainer(
         specificExtractions: Map<String, SpecificExtraction>,
@@ -62,10 +80,14 @@ class HealthApiDocumentRepository(
     suspend fun getPaymentProviders(): Resource<List<PaymentProvider>> {
         return withAccessToken { accessToken ->
             wrapInResource {
-                documentRemoteSource.getPaymentProviders(accessToken).map { paymentProviderResponse ->
-                    val icon = documentRemoteSource.getFile(accessToken, paymentProviderResponse.iconLocation)
-                    paymentProviderResponse.toPaymentProvider(icon)
-                }
+                documentRemoteSource.getPaymentProviders(accessToken)
+                    .filter { paymentProvider ->
+                        paymentProvider.isEnabled()
+                    }
+                    .map { paymentProviderResponse ->
+                        val icon = documentRemoteSource.getFile(accessToken, paymentProviderResponse.iconLocation)
+                        paymentProviderResponse.toPaymentProvider(icon)
+                    }
             }
         }
     }

@@ -1,5 +1,7 @@
 package net.gini.android.capture.camera;
 
+import static net.gini.android.capture.internal.util.FragmentExtensionsKt.getLayoutInflaterWithGiniCaptureTheme;
+
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -15,8 +17,7 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.util.AlertDialogHelperCompat;
-
-import static net.gini.android.capture.internal.util.FragmentExtensionsKt.getLayoutInflaterWithGiniCaptureTheme;
+import net.gini.android.capture.internal.util.CancelListener;
 
 /**
  * Internal use only.
@@ -31,6 +32,8 @@ public class CameraFragment extends Fragment implements CameraFragmentInterface,
     private static final String ARGS_ADD_PAGES = "GC_ARGS_ADD_PAGES";
 
     private CameraFragmentListener mListener;
+
+    private CancelListener mCancelListener;
 
     private CameraFragmentImpl mFragmentImpl;
     private boolean addPages = false;
@@ -68,7 +71,7 @@ public class CameraFragment extends Fragment implements CameraFragmentInterface,
     }
 
     protected CameraFragmentImpl createFragmentImpl() {
-        return new CameraFragmentImpl(this, addPages);
+        return new CameraFragmentImpl(this, mCancelListener, addPages);
     }
 
     @NonNull
@@ -157,6 +160,10 @@ public class CameraFragment extends Fragment implements CameraFragmentInterface,
             mFragmentImpl.setListener(listener);
         }
         mListener = listener;
+    }
+
+    public void setCancelListener(@Nullable final CancelListener listener) {
+        mCancelListener = listener;
     }
 
     @Override

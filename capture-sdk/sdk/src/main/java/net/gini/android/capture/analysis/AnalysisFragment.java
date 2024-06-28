@@ -19,6 +19,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import net.gini.android.capture.Document;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.util.AlertDialogHelperCompat;
+import net.gini.android.capture.internal.util.CancelListener;
 
 /**
  * Internal use only.
@@ -28,6 +29,7 @@ public class AnalysisFragment extends Fragment implements FragmentImplCallback,
 
     private AnalysisFragmentImpl mFragmentImpl;
     private AnalysisFragmentListener mListener;
+    private CancelListener mCancelListener;
 
     /**
      * Internal use only.
@@ -43,7 +45,7 @@ public class AnalysisFragment extends Fragment implements FragmentImplCallback,
 
     @VisibleForTesting
     AnalysisFragmentImpl createFragmentImpl() {
-        final AnalysisFragmentImpl fragmentImpl = AnalysisFragmentHelper.createFragmentImpl(this,
+        final AnalysisFragmentImpl fragmentImpl = AnalysisFragmentHelper.createFragmentImpl(this, mCancelListener,
                 getArguments());
         AnalysisFragmentHelper.setListener(fragmentImpl, getActivity(), mListener);
         return fragmentImpl;
@@ -113,6 +115,10 @@ public class AnalysisFragment extends Fragment implements FragmentImplCallback,
             mFragmentImpl.setListener(listener);
         }
         mListener = listener;
+    }
+
+    public void setCancelListener(@NonNull final CancelListener cancelListener) {
+        mCancelListener = cancelListener;
     }
 
     /**

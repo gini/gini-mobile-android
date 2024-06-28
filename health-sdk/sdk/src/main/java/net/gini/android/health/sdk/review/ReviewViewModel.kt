@@ -40,7 +40,12 @@ import org.slf4j.LoggerFactory
 import java.io.File
 
 
-internal class ReviewViewModel(val giniHealth: GiniHealth, val configuration: ReviewConfiguration, val paymentComponent: PaymentComponent) : ViewModel() {
+internal class ReviewViewModel(
+    val giniHealth: GiniHealth,
+    val configuration: ReviewConfiguration,
+    val paymentComponent: PaymentComponent,
+    val documentId: String
+) : ViewModel() {
 
     internal var userPreferences: UserPreferences? = null
     internal var openWithPreferences: OpenWithPreferences? = null
@@ -203,13 +208,13 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val configuration: Re
         val paymentProviderApp = paymentProviderApp.value
         if (paymentProviderApp == null) {
             LOG.error("No selected payment provider app")
-            giniHealth.setOpenBankState(GiniHealth.PaymentState.Error(Exception("No selected payment provider app")))
+            giniHealth.setOpenBankState(GiniHealth.PaymentState.Error(Exception("No selected payment provider app")), viewModelScope)
             return
         }
 
         if (paymentProviderApp.installedPaymentProviderApp == null) {
             LOG.error("Payment provider app not installed")
-            giniHealth.setOpenBankState(GiniHealth.PaymentState.Error(Exception("Payment provider app not installed")))
+            giniHealth.setOpenBankState(GiniHealth.PaymentState.Error(Exception("Payment provider app not installed")), viewModelScope)
             return
         }
 
@@ -222,7 +227,8 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val configuration: Re
                         GiniHealth.PaymentState.Success(getPaymentRequest())
                     } catch (throwable: Throwable) {
                         GiniHealth.PaymentState.Error(throwable)
-                    }
+                    },
+                    viewModelScope
                 )
             }
         }
@@ -232,7 +238,7 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val configuration: Re
         // Schedule on the main dispatcher to allow all collectors to receive the current state before
         // the state is overridden
         viewModelScope.launch(Dispatchers.Main) {
-            giniHealth.setOpenBankState(GiniHealth.PaymentState.NoAction)
+            giniHealth.setOpenBankState(GiniHealth.PaymentState.NoAction, viewModelScope)
         }
     }
 
@@ -296,19 +302,19 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val configuration: Re
                 val paymentRequest = try {
                     getPaymentRequest()
                 } catch (throwable: Throwable) {
-                    giniHealth.setOpenBankState(GiniHealth.PaymentState.Error(throwable))
+                    giniHealth.setOpenBankState(GiniHealth.PaymentState.Error(throwable), viewModelScope)
                     return@withContext
                 }
                 val byteArrayResource = async {  giniHealth.giniHealthAPI.documentManager.getPaymentRequestDocument(paymentRequest.id) }.await()
                 when (byteArrayResource) {
                     is Resource.Cancelled -> {
-                        giniHealth.setOpenBankState(GiniHealth.PaymentState.Error(Exception("Cancelled")))
+                        giniHealth.setOpenBankState(GiniHealth.PaymentState.Error(Exception("Cancelled")), viewModelScope)
                     }
                     is Resource.Error -> {
-                        giniHealth.setOpenBankState(GiniHealth.PaymentState.Error(byteArrayResource.exception ?: Exception("Error")))
+                        giniHealth.setOpenBankState(GiniHealth.PaymentState.Error(byteArrayResource.exception ?: Exception("Error")), viewModelScope)
                     }
                     is Resource.Success -> {
-                        giniHealth.setOpenBankState(GiniHealth.PaymentState.Success(paymentRequest))
+                        giniHealth.setOpenBankState(GiniHealth.PaymentState.Success(paymentRequest), viewModelScope)
                         val newFile = externalCacheDir?.createTempPdfFile(byteArrayResource.data, "payment-request")
                         newFile?.let {
                             _paymentNextStep.tryEmit(PaymentNextStep.OpenSharePdf(it))
@@ -320,9 +326,15 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val configuration: Re
     }
 
     private fun sendFeedbackAndStartLoading() {
-        giniHealth.setOpenBankState(GiniHealth.PaymentState.Loading)
+        giniHealth.setOpenBankState(GiniHealth.PaymentState.Loading, viewModelScope)
         // TODO: first get the payment request and handle error before proceeding
         sendFeedback()
+    }
+
+    fun loadPaymentDetails() {
+        viewModelScope.launch {
+            giniHealth.setDocumentForReview(documentId)
+        }
     }
 
     sealed class PaymentNextStep {
@@ -333,11 +345,16 @@ internal class ReviewViewModel(val giniHealth: GiniHealth, val configuration: Re
         data class SetLoadingVisibility(val isVisible: Boolean): PaymentNextStep()
     }
 
-    class Factory(private val giniHealth: GiniHealth, private val configuration: ReviewConfiguration, private val paymentComponent: PaymentComponent) :
+    class Factory(
+        private val giniHealth: GiniHealth,
+        private val configuration: ReviewConfiguration,
+        private val paymentComponent: PaymentComponent,
+        private val documentId: String
+    ) :
         ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return ReviewViewModel(giniHealth, configuration, paymentComponent) as T
+            return ReviewViewModel(giniHealth, configuration, paymentComponent, documentId) as T
         }
     }
 
