@@ -47,6 +47,7 @@ class PaymentFlowFragmentTest {
         paymentFlowViewModel = mockk<PaymentFlowViewModel>(relaxed = true)
         every { paymentFlowViewModel!!.giniMerchant } returns giniMerchant!!
         every { paymentFlowViewModel!!.paymentComponent } returns paymentComponent!!
+        every { paymentFlowViewModel!!.backButtonEvent } returns MutableSharedFlow()
         viewModelFactory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 @Suppress("UNCHECKED_CAST")
