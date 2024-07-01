@@ -41,27 +41,27 @@
     <string name="gbs_help_online_shops_text">We are currently focused on the most popular online merchants in the market. More retailers will be added in the future.</string>
     <string name="gbs_articles">Articles</string>
     <!-- region Skonto -->
-    <string name="gbs_skonto_screen_title">Discount calculator</string>
+    <string name="gbs_skonto_screen_title">Skonto</string>
     <!--   region Section Invoice Scan -->
-    <string name="gbs_skonto_section_invoice_scan_title">Your Invoice scan</string>
+    <string name="gbs_skonto_section_invoice_scan_title">Your invoice</string>
     <string name="gbs_skonto_section_invoice_scan_subtitle">Tap here to view</string>
     <!--   endregion  -->
     <!--   region Section Discount -->
-    <string name="gbs_skonto_section_discount_title">With a Discount</string>
+    <string name="gbs_skonto_section_discount_title">With Skonto discount</string>
     <string name="gbs_skonto_section_discount_hint_label_enabled">  •  Active</string>
-    <string name="gbs_skonto_section_discount_info_banner_message">Payment in %1$s day(s): %2$s discount.</string>
+    <string name="gbs_skonto_section_discount_info_banner_message">Pay in %1$s days: %2$s off.</string>
     <string name="gbs_skonto_section_discount_field_amount_hint">Final Amount</string>
-    <string name="gbs_skonto_section_discount_field_due_date_hint">Due Date</string>
+    <string name="gbs_skonto_section_discount_field_due_date_hint">Due date</string>
     <!--   endregion -->
     <!--   region Section Without Discount -->
-    <string name="gbs_skonto_section_without_discount_title">Without a Discount</string>
+    <string name="gbs_skonto_section_without_discount_title">Without Skonto discount</string>
     <string name="gbs_skonto_section_without_discount_hint_label_enabled">  •  Active</string>
-    <string name="gbs_skonto_section_without_discount_field_amount_hint">Final Amount</string>
+    <string name="gbs_skonto_section_without_discount_field_amount_hint">Full amount</string>
     <!--   endregion -->
     <!--   region Footer -->
-    <string name="gbs_skonto_section_footer_title">Total Amount</string>
-    <string name="gbs_skonto_section_footer_label_discount">%1$s Discount</string>
-    <string name="gbs_skonto_section_footer_continue_button_text">Continue payment</string>
+    <string name="gbs_skonto_section_footer_title">Total</string>
+    <string name="gbs_skonto_section_footer_label_discount">%1$s Skonto discount</string>
+    <string name="gbs_skonto_section_footer_continue_button_text">Continue to pay</string>
     <!--   endregion -->
     <!-- endregion -->
 </resources>

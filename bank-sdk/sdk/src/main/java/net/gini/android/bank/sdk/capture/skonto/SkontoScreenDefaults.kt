@@ -1,34 +1,17 @@
 package net.gini.android.bank.sdk.capture.skonto
 
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
+import net.gini.android.bank.sdk.capture.skonto.colors.SkontoScreenColorScheme
+import net.gini.android.bank.sdk.capture.skonto.components.button.filled.GiniButtonColors
+import net.gini.android.bank.sdk.capture.skonto.components.switcher.GiniSwitchColors
 import net.gini.android.bank.sdk.ui.theme.GiniTheme
 
 object SkontoScreenDefaults {
 
     @Composable
-    fun textFieldColors() = with(GiniTheme.colorScheme) {
-        TextFieldDefaults.colors(
-            unfocusedContainerColor = background.inputUnfocused,
-            unfocusedLabelColor = text.secondary,
-            unfocusedTrailingIconColor = text.secondary,
-            unfocusedTextColor = text.primary,
-            unfocusedIndicatorColor = background.divider,
-
-            disabledContainerColor = background.inputUnfocused,
-            disabledLabelColor = text.secondary,
-            disabledTextColor = text.primary,
-            disabledIndicatorColor = Color.Transparent,
-
-            focusedTextColor = text.primary,
-            focusedContainerColor = background.inputUnfocused,
-            focusedIndicatorColor = background.divider,
-            focusedLabelColor = text.secondary,
-            focusedTrailingIconColor = text.secondary,
-        )
+    fun textFieldColors() = with(GiniTheme.colorScheme.textField) {
+        TextFieldDefaults.colors()
     }
 
     @Composable
@@ -45,30 +28,24 @@ object SkontoScreenDefaults {
                 cardBackgroundColor = background.surface,
                 titleTextColor = text.primary,
                 subtitleTextColor = text.secondary,
-                iconBackgroundColor = background.buttonFilled,
-                iconTint = icons.standardTertiary,
-                arrowTint = icons.standardTertiary,
+                iconBackgroundColor = icons.surfaceFilled,
+                iconTint = icons.trailing,
+                arrowTint = icons.trailing,
             ),
             // Discount
-            discountSectionColors = SkontoScreenColorScheme.DiscountSectionColorScheme(
+            discountSectionColors = SkontoScreenColorScheme.SkontoSectionColorScheme(
                 titleTextColor = text.primary,
                 cardBackgroundColor = background.surface,
                 enabledHintTextColor = text.status,
 
-                infoBannerColorScheme = SkontoScreenColorScheme.DiscountSectionColorScheme.InfoBannerColorScheme(
+                infoBannerColorScheme = SkontoScreenColorScheme.SkontoSectionColorScheme.InfoBannerColorScheme(
                     backgroundColor = chips.assistEnabled,
                     textColor = chips.suggestionEnabled,
                     iconTint = chips.suggestionEnabled,
                 ),
                 amountFieldColors = textFieldColors(),
                 dueDateTextFieldColor = textFieldColors(),
-                switchColors = SwitchDefaults.colors(
-                    checkedTrackColor = background.buttonEnabled,
-                    checkedBorderColor = Color.Transparent,
-                    uncheckedBorderColor = Color.Transparent,
-                    uncheckedTrackColor = background.divider,
-                    uncheckedThumbColor = background.surface,
-                ),
+                switchColors = GiniSwitchColors.colors(),
             ),
             // Without Discount
             withoutDiscountSectionColors = SkontoScreenColorScheme.WithoutDiscountSectionColorScheme(
@@ -85,10 +62,11 @@ object SkontoScreenDefaults {
 
                 discountLabelColorScheme = SkontoScreenColorScheme.FooterSectionColorScheme.DiscountLabelColorScheme(
                     backgroundColor = chips.suggestionEnabled,
-                    textColor = text.chipsSuggestionEnabled,
+                    textColor = chips.textSuggestionEnabled,
                 ),
-                continueButtonColors = ButtonDefaults.buttonColors(
-                    containerColor = background.buttonEnabled
+                continueButtonColors = GiniButtonColors(
+                    containerColor = button.surfacePrEnabled,
+                    contentContent = button.textEnabled
                 ),
             )
         )

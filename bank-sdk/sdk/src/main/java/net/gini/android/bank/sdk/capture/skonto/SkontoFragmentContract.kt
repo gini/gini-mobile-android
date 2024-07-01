@@ -8,13 +8,14 @@ object SkontoFragmentContract {
         object Idle : State()
 
         data class Ready(
-            val isDiscountSectionActive: Boolean,
+            val isSkontoSectionActive: Boolean,
             val paymentInDays: Int,
             val discountValue: Float,
-            val amountWithDiscount: Float,
+            val skontoAmount: Float,
             val discountDueDate: LocalDate,
-            val withoutDiscountAmount: Float,
+            val fullAmount: String,
             val totalAmount: Float,
+            val currency: String,
             val totalDiscount: Float,
         ) : State()
     }

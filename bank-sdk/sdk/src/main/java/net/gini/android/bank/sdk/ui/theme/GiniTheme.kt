@@ -1,6 +1,7 @@
 package net.gini.android.bank.sdk.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -44,10 +45,28 @@ internal fun GiniTheme(
         MaterialTheme(
             /* colors = ... */
             content = content,
-            colorScheme = MaterialTheme.colorScheme.copy(),
+            colorScheme = giniColorSchemeBridge(giniPrimitives),
             typography = MaterialTheme.typography.copy()
         )
     }
+}
+
+@Composable
+private fun giniColorSchemeBridge(
+    giniColorPrimitives: GiniColorPrimitives,
+    isLight: Boolean = !isSystemInDarkTheme()
+) = with(giniColorPrimitives) {
+    MaterialTheme.colorScheme.copy(
+        primary = accent01,
+        onPrimary = if (isLight) light01 else light01,
+        background = if (isLight) light02 else dark01,
+        onBackground = if (isLight) dark02 else light01,
+        surface = if (isLight) light01 else dark02,
+        onSurface = if (isLight) dark02 else light02,
+        onSurfaceVariant = if (isLight) dark02 else light02,
+        surfaceVariant = if (isLight) light01 else dark02,
+        inverseOnSurface = if (isLight) dark02 else light02,
+    )
 }
 
 internal object GiniTheme {

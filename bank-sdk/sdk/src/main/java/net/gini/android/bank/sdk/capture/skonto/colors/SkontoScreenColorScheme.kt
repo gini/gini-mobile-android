@@ -1,17 +1,19 @@
-package net.gini.android.bank.sdk.capture.skonto
+package net.gini.android.bank.sdk.capture.skonto.colors
 
-import androidx.compose.material3.ButtonColors
-import androidx.compose.material3.SwitchColors
 import androidx.compose.material3.TextFieldColors
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
+import net.gini.android.bank.sdk.capture.skonto.components.button.filled.GiniButtonColors
+import net.gini.android.bank.sdk.capture.skonto.components.switcher.GiniSwitchColors
+import net.gini.android.bank.sdk.ui.theme.GiniTheme
 
 @Immutable
 data class SkontoScreenColorScheme(
     val backgroundColor: Color,
     val topAppBarColors: TopAppbarColorScheme,
     val invoiceScanSectionColors: InvoiceScanSectionColorScheme,
-    val discountSectionColors: DiscountSectionColorScheme,
+    val discountSectionColors: SkontoSectionColorScheme,
     val withoutDiscountSectionColors: WithoutDiscountSectionColorScheme,
     val footerSectionColorScheme: FooterSectionColorScheme,
 ) {
@@ -20,7 +22,17 @@ data class SkontoScreenColorScheme(
     data class TopAppbarColorScheme(
         val contentColor: Color,
         val backgroundColor: Color,
-    )
+    ) {
+        companion object {
+            @Composable
+            fun default() = with(GiniTheme.colorScheme) {
+                TopAppbarColorScheme(
+                    contentColor = text.primary,
+                    backgroundColor = background.bar,
+                )
+            }
+        }
+    }
 
     @Immutable
     data class InvoiceScanSectionColorScheme(
@@ -33,9 +45,9 @@ data class SkontoScreenColorScheme(
     )
 
     @Immutable
-    data class DiscountSectionColorScheme(
+    data class SkontoSectionColorScheme(
         val titleTextColor: Color,
-        val switchColors: SwitchColors,
+        val switchColors: GiniSwitchColors,
         val cardBackgroundColor: Color,
         val enabledHintTextColor: Color,
         val infoBannerColorScheme: InfoBannerColorScheme,
@@ -64,7 +76,7 @@ data class SkontoScreenColorScheme(
         val titleTextColor: Color,
         val amountTextColor: Color,
         val discountLabelColorScheme: DiscountLabelColorScheme,
-        val continueButtonColors: ButtonColors,
+        val continueButtonColors: GiniButtonColors,
     ) {
 
         data class DiscountLabelColorScheme(

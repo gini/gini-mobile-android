@@ -12,7 +12,7 @@ import net.gini.android.capture.R
  * Use [GiniColorPrimitives.buildColorPrimitivesBasedOnResources] to create a bridge between XML
  * resource colors and this class
  */
-internal data class GiniColorPrimitives(
+data class GiniColorPrimitives(
     val accent01: Color = Color(0xFF0A84FF),
     val accent02: Color = Color(0xFF3193FD),
     val accent03: Color = Color(0xFF62ACFB),
