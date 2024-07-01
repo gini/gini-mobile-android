@@ -96,6 +96,7 @@ dependencies {
     androidTestImplementation(libs.androidx.test.junit)
     androidTestImplementation(libs.androidx.multidex)
     androidTestImplementation(libs.kotlinx.coroutines.test)
+    androidTestImplementation(libs.truth)
     androidTestImplementation(project(":core-api-library:shared-tests"))
     androidTestImplementation(project(":bank-api-library:library"))
 

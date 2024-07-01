@@ -9,7 +9,6 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.IntentCompat
 import androidx.lifecycle.lifecycleScope
-import androidx.test.espresso.idling.CountingIdlingResource
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -130,22 +129,15 @@ class MainActivity : AppCompatActivity() {
                 entryPoint = entryPoint
             )
         )
-        if (configurationViewModel.disableCameraPermissionFlow.value) {
+
+        askCameraPermissionAndRun {
             startGiniBankSdk()
-        } else {
-            checkCameraPermission()
         }
     }
 
-    private fun checkCameraPermission(intent: Intent? = null) {
+    private fun askCameraPermissionAndRun(action: (Boolean) -> Unit) {
         lifecycleScope.launch {
-            if (permissionHandler.grantPermission(Manifest.permission.CAMERA)) {
-                startGiniBankSdk()
-            } else {
-                if (intent != null) {
-                    finish()
-                }
-            }
+            action(permissionHandler.grantPermission(Manifest.permission.CAMERA))
         }
     }
 
