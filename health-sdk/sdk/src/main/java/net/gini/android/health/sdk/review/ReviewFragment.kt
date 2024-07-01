@@ -626,7 +626,7 @@ class ReviewFragment private constructor(
     private fun createSharePendingIntent() =  PendingIntent.getBroadcast(
         requireContext(), CHOOSER_REQUEST_ID,
         Intent(requireContext(), ShareWithBroadcastReceiver::class.java),
-        PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        PendingIntent.FLAG_IMMUTABLE
     )
 
     override fun onSaveInstanceState(outState: Bundle) {
