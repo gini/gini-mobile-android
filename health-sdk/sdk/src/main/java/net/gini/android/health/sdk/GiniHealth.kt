@@ -7,10 +7,12 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.savedstate.SavedStateRegistry
 import androidx.savedstate.SavedStateRegistryOwner
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
 import net.gini.android.core.api.Resource
 import net.gini.android.core.api.models.Document
@@ -147,8 +149,10 @@ class GiniHealth(
     internal fun setOpenBankState(state: PaymentState, scope: CoroutineScope) {
         _openBankState.value = state
         scope.launch {
-            delay(50)
-            _openBankState.value = PaymentState.NoAction
+            withContext(NonCancellable) {
+                delay(50)
+                _openBankState.value = PaymentState.NoAction
+            }
         }
     }
 
