@@ -37,6 +37,7 @@ internal class PaymentFlowViewModel(val paymentComponent: PaymentComponent, val 
     override val paymentNextStepFlow = MutableSharedFlow<PaymentNextStep>(
         extraBufferCapacity = 1,
     )
+    override val paymentRequestFlow: MutableStateFlow<PaymentRequest?> = MutableStateFlow(null)
 
     val paymentNextStep: SharedFlow<PaymentNextStep> = paymentNextStepFlow
 
@@ -128,8 +129,10 @@ internal class PaymentFlowViewModel(val paymentComponent: PaymentComponent, val 
         startObservingOpenWithCount(viewModelScope, paymentProviderAppId)
     }
 
-    fun emitFinishEvent(paymentRequest: PaymentRequest) {
-        giniMerchant.emitSDKEvent(GiniMerchant.PaymentState.Success(paymentRequest, initialSelectedPaymentProvider?.name ?: ""))
+    fun emitFinishEvent() {
+        paymentRequestFlow.value?.let {
+            giniMerchant.emitSDKEvent(GiniMerchant.PaymentState.Success(it, initialSelectedPaymentProvider?.name ?: ""))
+        }
     }
 
     fun onPaymentButtonTapped(externalCacheDir: File?) {

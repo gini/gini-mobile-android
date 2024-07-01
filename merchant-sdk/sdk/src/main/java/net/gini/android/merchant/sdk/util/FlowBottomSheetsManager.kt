@@ -4,6 +4,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -21,6 +22,7 @@ internal interface FlowBottomSheetsManager {
     var openWithPreferences: OpenWithPreferences?
     var openWithCounter: Int
     val paymentNextStepFlow: MutableSharedFlow<PaymentNextStep>
+    val paymentRequestFlow: MutableStateFlow<PaymentRequest?>
 
     fun startObservingOpenWithCount(coroutineScope: CoroutineScope, paymentProviderAppId: String) {
         coroutineScope.launch {
@@ -64,7 +66,8 @@ internal interface FlowBottomSheetsManager {
                     is Resource.Success -> {
                         val newFile = externalCacheDir?.createTempPdfFile(byteArrayResource.data, "payment-request")
                         newFile?.let {
-                            emitPaymentNextStep(PaymentNextStep.OpenSharePdf(file = it, paymentRequest = paymentRequest))
+                            paymentRequestFlow.value = paymentRequest
+                            emitPaymentNextStep(PaymentNextStep.OpenSharePdf(file = it))
                         }
                     }
                 }

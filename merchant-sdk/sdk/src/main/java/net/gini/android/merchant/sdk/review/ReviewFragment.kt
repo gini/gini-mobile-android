@@ -1,6 +1,10 @@
 package net.gini.android.merchant.sdk.review
 
 import android.content.ActivityNotFoundException
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -53,6 +57,7 @@ import net.gini.android.merchant.sdk.util.PaymentNextStep
 import net.gini.android.merchant.sdk.util.amountWatcher
 import net.gini.android.merchant.sdk.util.autoCleared
 import net.gini.android.merchant.sdk.util.clearErrorMessage
+import net.gini.android.merchant.sdk.util.extensions.createShareWithPendingIntent
 import net.gini.android.merchant.sdk.util.extensions.getFontScale
 import net.gini.android.merchant.sdk.util.extensions.showInstallAppBottomSheet
 import net.gini.android.merchant.sdk.util.extensions.showOpenWithBottomSheet
@@ -133,6 +138,12 @@ class ReviewFragment private constructor(
     private var documentPageAdapter: DocumentPageAdapter by autoCleared()
     private var isKeyboardShown = false
 
+    private var shareWithEventBroadcastReceiver = object: BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            viewModel.emitFinishEvent()
+        }
+    }
+
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
         val inflater = super.onGetLayoutInflater(savedInstanceState)
         return this.getLayoutInflaterWithGiniMerchantTheme(inflater)
@@ -182,6 +193,9 @@ class ReviewFragment private constructor(
         }
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    requireActivity().registerReceiver(shareWithEventBroadcastReceiver, IntentFilter().also { it.addAction(GiniMerchant.SHARE_WITH_INTENT_FILTER) }, Context.RECEIVER_NOT_EXPORTED)
+                }
                 launch {
                     viewModel.giniMerchant.documentFlow.collect { handleDocumentResult(it) }
                 }
@@ -585,8 +599,7 @@ class ReviewFragment private constructor(
             PaymentNextStep.ShowInstallApp -> viewModel.paymentProviderApp.value?.let { showInstallAppDialog(it) }
             is PaymentNextStep.OpenSharePdf -> {
                 binding.loading.isVisible = false
-                startSharePdfIntent(paymentNextStep.file)
-                viewModel.giniMerchant.emitSDKEvent(GiniMerchant.PaymentState.Success(paymentNextStep.paymentRequest, viewModel.paymentProviderApp.value?.name ?: ""))
+                startSharePdfIntent(paymentNextStep.file, requireContext().createShareWithPendingIntent())
             }
         }
     }
@@ -594,6 +607,11 @@ class ReviewFragment private constructor(
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putInt(PAGER_HEIGHT, binding.pager.layoutParams.height)
         super.onSaveInstanceState(outState)
+    }
+
+    override fun onStop() {
+        requireActivity().unregisterReceiver(shareWithEventBroadcastReceiver)
+        super.onStop()
     }
 
     internal companion object {

@@ -56,6 +56,7 @@ internal class ReviewViewModel(val giniMerchant: GiniMerchant, val configuration
     override val paymentNextStepFlow = MutableSharedFlow<PaymentNextStep>(
         extraBufferCapacity = 1,
     )
+    override val paymentRequestFlow: MutableStateFlow<PaymentRequest?> = MutableStateFlow(null)
 
     val paymentNextStep: SharedFlow<PaymentNextStep> = paymentNextStepFlow
 
@@ -200,6 +201,12 @@ internal class ReviewViewModel(val giniMerchant: GiniMerchant, val configuration
 
     fun onPaymentButtonTapped(externalCacheDir: File?) {
         checkNextStep(paymentProviderApp.value, externalCacheDir, viewModelScope)
+    }
+
+    fun emitFinishEvent() {
+        paymentRequestFlow.value?.let {
+            giniMerchant.emitSDKEvent(GiniMerchant.PaymentState.Success(it, paymentProviderApp.value?.name ?: ""))
+        }
     }
 
     class Factory(

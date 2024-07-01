@@ -125,7 +125,7 @@ class GiniMerchant(
      * successful payment requests or which screen is being displayed.
      */
 
-    private val _eventsFlow: MutableSharedFlow<MerchantSDKEvents> = MutableSharedFlow(extraBufferCapacity = 1)
+    private val _eventsFlow: MutableSharedFlow<MerchantSDKEvents> = MutableSharedFlow(extraBufferCapacity = 1,replay = 1)
 
     val eventsFlow: SharedFlow<MerchantSDKEvents> = _eventsFlow
 
@@ -376,5 +376,6 @@ class GiniMerchant(
         private const val CAPTURED_ARGUMENTS_TYPE = "CAPTURED_ARGUMENTS_TYPE"
         private const val PROVIDER = "net.gini.android.merchant.sdk.GiniMerchant"
         private const val CAPTURED_ARGUMENTS = "CAPTURED_ARGUMENTS"
+        internal const val SHARE_WITH_INTENT_FILTER = "share_intent_filter"
     }
 }

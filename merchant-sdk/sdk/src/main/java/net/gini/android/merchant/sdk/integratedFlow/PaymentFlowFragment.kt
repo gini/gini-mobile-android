@@ -1,6 +1,10 @@
 package net.gini.android.merchant.sdk.integratedFlow
 
 import android.content.ActivityNotFoundException
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.LayoutInflater
@@ -35,6 +39,7 @@ import net.gini.android.merchant.sdk.util.DisplayedScreen
 import net.gini.android.merchant.sdk.util.PaymentNextStep
 import net.gini.android.merchant.sdk.util.autoCleared
 import net.gini.android.merchant.sdk.util.extensions.add
+import net.gini.android.merchant.sdk.util.extensions.createShareWithPendingIntent
 import net.gini.android.merchant.sdk.util.extensions.showInstallAppBottomSheet
 import net.gini.android.merchant.sdk.util.extensions.showOpenWithBottomSheet
 import net.gini.android.merchant.sdk.util.extensions.startSharePdfIntent
@@ -88,6 +93,11 @@ class PaymentFlowFragment private constructor(
         viewModelFactory ?: object : ViewModelProvider.Factory {}
     }
     private var snackbar: Snackbar? = null
+    private var shareWithEventBroadcastReceiver = object: BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            viewModel.emitFinishEvent()
+        }
+    }
 
     private val paymentComponentListener = object: PaymentComponent.Listener {
         override fun onMoreInformationClicked() {
@@ -100,7 +110,7 @@ class PaymentFlowFragment private constructor(
         }
 
         override fun onBankPickerClicked() {
-            viewModel.paymentComponent?.let {
+            viewModel.paymentComponent.let {
                 viewModel.addToBackStack(DisplayedScreen.BankSelectionBottomSheet)
                 BankSelectionBottomSheet.newInstance(it, backListener = this@PaymentFlowFragment).show(childFragmentManager, BankSelectionBottomSheet::class.java.name)
             }
@@ -136,6 +146,10 @@ class PaymentFlowFragment private constructor(
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 launch {
+                    requireActivity().registerReceiver(shareWithEventBroadcastReceiver, IntentFilter().also { it.addAction(GiniMerchant.SHARE_WITH_INTENT_FILTER) },
+                        Context.RECEIVER_NOT_EXPORTED)
+                }
+                launch {
                     viewModel.paymentComponent.recheckWhichPaymentProviderAppsAreInstalled()
                 }
                 launch {
@@ -147,6 +161,11 @@ class PaymentFlowFragment private constructor(
                                 viewModel.checkBankAppInstallState(it.paymentProviderApp)
                             }
                         }
+                    }
+                }
+                launch {
+                    if (viewModel.getLastBackstackEntry() == DisplayedScreen.ShareSheet) {
+                        viewModel.popBackStack()
                     }
                 }
             }
@@ -215,7 +234,7 @@ class PaymentFlowFragment private constructor(
                         BankSelectionBottomSheet.newInstance(it, this).show(childFragmentManager, BankSelectionBottomSheet::class.java.name)
                     }
                 }
-                DisplayedScreen.PaymentComponentBottomSheet -> PaymentComponentBottomSheet.newInstance(viewModel.paymentComponent, documentId = viewModel.documentId,this).show(childFragmentManager, PaymentComponentBottomSheet::class.java.name)
+                DisplayedScreen.PaymentComponentBottomSheet -> PaymentComponentBottomSheet.newInstance(viewModel.paymentComponent, documentId = viewModel.documentId, viewModel.paymentFlowConfiguration?.shouldShowReviewFragment ?: false, this).show(childFragmentManager, PaymentComponentBottomSheet::class.java.name)
                 else -> {
 
                 }
@@ -255,6 +274,7 @@ class PaymentFlowFragment private constructor(
         val paymentComponentBottomSheet = PaymentComponentBottomSheet.newInstance(
             viewModel.paymentComponent,
             documentId = viewModel.documentId,
+            reviewFragmentShown = viewModel.paymentFlowConfiguration?.shouldShowReviewFragment ?: false,
             backListener = this@PaymentFlowFragment
         )
         paymentComponentBottomSheet.show(childFragmentManager, PaymentComponentBottomSheet::class.java.name)
@@ -298,9 +318,8 @@ class PaymentFlowFragment private constructor(
             PaymentNextStep.ShowInstallApp -> showInstallAppDialog()
             is PaymentNextStep.OpenSharePdf -> {
                 binding.loading.isVisible = false
-                startSharePdfIntent(paymentNextStep.file)
+                startSharePdfIntent(paymentNextStep.file, requireContext().createShareWithPendingIntent())
                 viewModel.addToBackStack(DisplayedScreen.ShareSheet)
-                viewModel.emitFinishEvent(paymentNextStep.paymentRequest)
             }
         }
     }
