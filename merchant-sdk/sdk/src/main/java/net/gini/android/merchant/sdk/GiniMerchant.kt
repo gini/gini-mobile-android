@@ -317,7 +317,7 @@ class GiniMerchant(
         )
     }
 
-    internal fun setDisplayedScreen(displayedScreen: DisplayedScreen) {
+    internal fun setDisplayedScreen(displayedScreen: DisplayedScreen?) {
         _eventsFlow.tryEmit(MerchantSDKEvents.OnScreenDisplayed(displayedScreen))
     }
 
@@ -344,6 +344,10 @@ class GiniMerchant(
         }
     }
 
+    internal fun resetScreens() {
+        _eventsFlow.tryEmit(MerchantSDKEvents.OnScreenDisplayed(DisplayedScreen.Nothing))
+    }
+
     private sealed class CapturedArguments : Parcelable {
         @Parcelize
         class DocumentInstance(val value: Document) : CapturedArguments()
@@ -360,8 +364,9 @@ class GiniMerchant(
     }
 
     sealed class MerchantSDKEvents {
+        object NoAction: MerchantSDKEvents()
         object OnLoading: MerchantSDKEvents()
-        class OnScreenDisplayed(val displayedScreen: DisplayedScreen): MerchantSDKEvents()
+        class OnScreenDisplayed(val displayedScreen: DisplayedScreen?): MerchantSDKEvents()
         class OnFinishedWithPaymentRequestCreated(val paymentRequestId: String, val paymentProviderName: String): MerchantSDKEvents()
         class OnFinishedWithCancellation(): MerchantSDKEvents()
         class OnErrorOccurred(val throwable: Throwable): MerchantSDKEvents()

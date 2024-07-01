@@ -50,7 +50,8 @@ class InvoiceDetailsFragment: Fragment() {
                         when (event) {
                             is GiniMerchant.MerchantSDKEvents.OnFinishedWithPaymentRequestCreated,
                             is GiniMerchant.MerchantSDKEvents.OnFinishedWithCancellation -> {
-                                requireActivity().supportFragmentManager.popBackStack() }
+                                requireActivity().supportFragmentManager.popBackStack()
+                            }
                             is GiniMerchant.MerchantSDKEvents.OnScreenDisplayed -> {
                                 if (event.displayedScreen == DisplayedScreen.Nothing) {
                                     requireActivity().supportFragmentManager.popBackStack()

@@ -18,6 +18,7 @@ import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentProviderAppsState
 import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.review.openWith.OpenWithPreferences
+import net.gini.android.merchant.sdk.util.BackListener
 import net.gini.android.merchant.sdk.util.DisplayedScreen
 import net.gini.android.merchant.sdk.util.FlowBottomSheetsManager
 import net.gini.android.merchant.sdk.util.GiniPaymentManager
@@ -25,7 +26,7 @@ import net.gini.android.merchant.sdk.util.PaymentNextStep
 import java.io.File
 import java.util.Stack
 
-internal class PaymentFlowViewModel(val paymentComponent: PaymentComponent, val documentId: String, val paymentFlowConfiguration: PaymentFlowConfiguration?, val giniPaymentManager: GiniPaymentManager, val giniMerchant: GiniMerchant) : ViewModel(), FlowBottomSheetsManager {
+internal class PaymentFlowViewModel(val paymentComponent: PaymentComponent, val documentId: String, val paymentFlowConfiguration: PaymentFlowConfiguration?, val giniPaymentManager: GiniPaymentManager, val giniMerchant: GiniMerchant) : ViewModel(), FlowBottomSheetsManager, BackListener {
 
     private val backstack: Stack<DisplayedScreen> = Stack<DisplayedScreen>().also { it.add(DisplayedScreen.Nothing) }
     private var initialSelectedPaymentProvider: PaymentProviderApp? = null
@@ -41,6 +42,8 @@ internal class PaymentFlowViewModel(val paymentComponent: PaymentComponent, val 
 
     val paymentNextStep: SharedFlow<PaymentNextStep> = paymentNextStepFlow
 
+    private val _backButtonEvent = MutableSharedFlow<Void?>(extraBufferCapacity = 1)
+    val backButtonEvent: SharedFlow<Void?> = _backButtonEvent
 
     init {
         viewModelScope.launch {
@@ -85,8 +88,11 @@ internal class PaymentFlowViewModel(val paymentComponent: PaymentComponent, val 
 
     fun getLastBackstackEntry() = if (backstack.isNotEmpty()) backstack.peek() else DisplayedScreen.Nothing
 
-    fun setDisplayedScreen() {
+    private fun setDisplayedScreen() = viewModelScope.launch {
         giniMerchant.setDisplayedScreen(getLastBackstackEntry())
+        if (getLastBackstackEntry() is DisplayedScreen.Nothing) {
+            giniMerchant.setDisplayedScreen(null)
+        }
     }
 
     fun paymentProviderAppChanged(paymentProviderApp: PaymentProviderApp): Boolean {
@@ -119,6 +125,7 @@ internal class PaymentFlowViewModel(val paymentComponent: PaymentComponent, val 
         // Schedule on the main dispatcher to allow all collectors to receive the current state before
         // the state is overridden
         viewModelScope.launch(Dispatchers.Main) {
+            giniMerchant.setDisplayedScreen(null)
             giniMerchant.emitSDKEvent(GiniMerchant.PaymentState.NoAction)
         }
     }
@@ -162,5 +169,9 @@ internal class PaymentFlowViewModel(val paymentComponent: PaymentComponent, val 
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return PaymentFlowViewModel(paymentComponent = paymentComponent, documentId = documentId, paymentFlowConfiguration = paymentFlowConfiguration, giniPaymentManager = GiniPaymentManager(giniMerchant), giniMerchant = giniMerchant) as T
         }
+    }
+
+    override fun backCalled() {
+        _backButtonEvent.tryEmit(null)
     }
 }

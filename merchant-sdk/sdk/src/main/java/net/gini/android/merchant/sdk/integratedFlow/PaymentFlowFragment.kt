@@ -34,7 +34,6 @@ import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.review.ReviewConfiguration
 import net.gini.android.merchant.sdk.review.ReviewFragment
 import net.gini.android.merchant.sdk.review.openWith.OpenWithPreferences
-import net.gini.android.merchant.sdk.util.BackListener
 import net.gini.android.merchant.sdk.util.DisplayedScreen
 import net.gini.android.merchant.sdk.util.PaymentNextStep
 import net.gini.android.merchant.sdk.util.autoCleared
@@ -84,8 +83,7 @@ data class PaymentFlowConfiguration(
  * It handles the display logic for all screens. A new instance can be created using the [PaymentComponent.getContainerFragment] method.
  */
 class PaymentFlowFragment private constructor(
-    private val viewModelFactory: ViewModelProvider.Factory? = null) : Fragment(),
-    BackListener {
+    private val viewModelFactory: ViewModelProvider.Factory? = null) : Fragment() {
 
     constructor(): this(null)
     private var binding: GmsFragmentMerchantBinding by autoCleared()
@@ -104,7 +102,7 @@ class PaymentFlowFragment private constructor(
             viewModel.addToBackStack(DisplayedScreen.MoreInformationFragment)
             childFragmentManager.add(
                 containerId = binding.gmsFragmentContainerView.id,
-                fragment = MoreInformationFragment.newInstance(viewModel.paymentComponent, this@PaymentFlowFragment),
+                fragment = MoreInformationFragment.newInstance(viewModel.paymentComponent, viewModel),
                 addToBackStack = true
             )
         }
@@ -112,7 +110,7 @@ class PaymentFlowFragment private constructor(
         override fun onBankPickerClicked() {
             viewModel.paymentComponent.let {
                 viewModel.addToBackStack(DisplayedScreen.BankSelectionBottomSheet)
-                BankSelectionBottomSheet.newInstance(it, backListener = this@PaymentFlowFragment).show(childFragmentManager, BankSelectionBottomSheet::class.java.name)
+                BankSelectionBottomSheet.newInstance(it, backListener = viewModel).show(childFragmentManager, BankSelectionBottomSheet::class.java.name)
             }
         }
 
@@ -166,6 +164,11 @@ class PaymentFlowFragment private constructor(
                 launch {
                     if (viewModel.getLastBackstackEntry() == DisplayedScreen.ShareSheet) {
                         viewModel.popBackStack()
+                    }
+                }
+                launch {
+                    viewModel.backButtonEvent.collect {
+                        handleBackFlow()
                     }
                 }
             }
@@ -231,10 +234,10 @@ class PaymentFlowFragment private constructor(
             when (viewModel.getLastBackstackEntry()) {
                 DisplayedScreen.BankSelectionBottomSheet -> {
                     viewModel.paymentComponent.let {
-                        BankSelectionBottomSheet.newInstance(it, this).show(childFragmentManager, BankSelectionBottomSheet::class.java.name)
+                        BankSelectionBottomSheet.newInstance(it, viewModel).show(childFragmentManager, BankSelectionBottomSheet::class.java.name)
                     }
                 }
-                DisplayedScreen.PaymentComponentBottomSheet -> PaymentComponentBottomSheet.newInstance(viewModel.paymentComponent, documentId = viewModel.documentId, viewModel.paymentFlowConfiguration?.shouldShowReviewFragment ?: false, this).show(childFragmentManager, PaymentComponentBottomSheet::class.java.name)
+                DisplayedScreen.PaymentComponentBottomSheet -> PaymentComponentBottomSheet.newInstance(viewModel.paymentComponent, documentId = viewModel.documentId, viewModel.paymentFlowConfiguration?.shouldShowReviewFragment ?: false, viewModel).show(childFragmentManager, PaymentComponentBottomSheet::class.java.name)
                 else -> {
 
                 }
@@ -275,7 +278,7 @@ class PaymentFlowFragment private constructor(
             viewModel.paymentComponent,
             documentId = viewModel.documentId,
             reviewFragmentShown = viewModel.paymentFlowConfiguration?.shouldShowReviewFragment ?: false,
-            backListener = this@PaymentFlowFragment
+            backListener = viewModel
         )
         paymentComponentBottomSheet.show(childFragmentManager, PaymentComponentBottomSheet::class.java.name)
         viewModel.addToBackStack(DisplayedScreen.PaymentComponentBottomSheet)
@@ -327,7 +330,7 @@ class PaymentFlowFragment private constructor(
     private fun showInstallAppDialog() {
         childFragmentManager.showInstallAppBottomSheet(
             paymentComponent = viewModel.paymentComponent,
-            backListener = this
+            backListener = viewModel
         ) {
             viewModel.onPayment()
         }
@@ -337,16 +340,12 @@ class PaymentFlowFragment private constructor(
     private fun showOpenWithDialog(paymentProviderApp: PaymentProviderApp) {
         requireActivity().supportFragmentManager.showOpenWithBottomSheet(
             paymentProviderApp = paymentProviderApp,
-            backListener = this
+            backListener = viewModel
         ) {
             viewModel.onForwardToSharePdfTapped(requireContext().externalCacheDir)
         }
         viewModel.incrementOpenWithCounter(viewModel.viewModelScope, paymentProviderApp.paymentProvider.id)
         viewModel.addToBackStack(DisplayedScreen.OpenWithBottomSheet)
-    }
-
-    override fun backCalled() {
-        handleBackFlow()
     }
 
     companion object {
