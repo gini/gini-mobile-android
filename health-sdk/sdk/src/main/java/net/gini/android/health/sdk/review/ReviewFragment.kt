@@ -1,7 +1,11 @@
 package net.gini.android.health.sdk.review
 
+import android.app.PendingIntent
 import android.content.ActivityNotFoundException
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -128,6 +132,12 @@ class ReviewFragment private constructor(
     private var documentPageAdapter: DocumentPageAdapter by autoCleared()
     private var isKeyboardShown = false
     private var errorSnackbar: Snackbar? = null
+    private var broadcastReceiver = object: BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            viewModel.setOpenBankStateAfterShareWith()
+        }
+    }
+
 
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
         val inflater = super.onGetLayoutInflater(savedInstanceState)
@@ -213,6 +223,10 @@ class ReviewFragment private constructor(
                     viewModel.paymentNextStep.collect { paymentNextStep ->
                         handlePaymentNextStep(paymentNextStep)
                     }
+                }
+                launch {
+                    requireActivity().registerReceiver(broadcastReceiver, IntentFilter().also { it.addAction(SHARE_INTENT_FILTER) },
+                        Context.RECEIVER_NOT_EXPORTED)
                 }
             }
         }
@@ -585,7 +599,7 @@ class ReviewFragment private constructor(
             flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
             putExtra(Intent.EXTRA_STREAM, uriForFile)
         }
-        startActivity(Intent.createChooser(shareIntent, uriForFile.lastPathSegment))
+        startActivity(Intent.createChooser(shareIntent, uriForFile.lastPathSegment, createSharePendingIntent().intentSender))
     }
 
     private fun handlePaymentNextStep(paymentNextStep: ReviewViewModel.PaymentNextStep) {
@@ -609,13 +623,28 @@ class ReviewFragment private constructor(
         }
     }
 
+    private fun createSharePendingIntent() =  PendingIntent.getBroadcast(
+        requireContext(), CHOOSER_REQUEST_ID,
+        Intent(requireContext(), ShareWithBroadcastReceiver::class.java),
+        PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+    )
+
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putInt(PAGER_HEIGHT, binding.pager.layoutParams.height)
         super.onSaveInstanceState(outState)
     }
 
+    override fun onStop() {
+        requireActivity().unregisterReceiver(broadcastReceiver)
+        super.onStop()
+    }
+
     internal companion object {
         private const val PAGER_HEIGHT = "pager_height"
+        internal const val SHARE_INTENT_FILTER = "share_intent_filter"
+
+        // This is only required to send when creating the pending intent for the share sheet - not actually used anywhere else
+        internal const val CHOOSER_REQUEST_ID = 123
         fun newInstance(
             giniHealth: GiniHealth,
             configuration: ReviewConfiguration = ReviewConfiguration(),
@@ -624,5 +653,11 @@ class ReviewFragment private constructor(
             documentId: String,
             viewModelFactory: ViewModelProvider.Factory = ReviewViewModel.Factory(giniHealth, configuration, paymentComponent, documentId),
         ): ReviewFragment = ReviewFragment(listener, paymentComponent, viewModelFactory)
+    }
+
+    internal class ShareWithBroadcastReceiver: BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            context?.sendBroadcast(Intent().also { it.action = SHARE_INTENT_FILTER })
+        }
     }
 }
